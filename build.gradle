@@ -1,0 +1,62 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.2.RELEASE'
+    }
+    repositories {
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+allprojects {
+    group 'com.diboot'
+    version '2.0-alpha'
+
+    apply plugin: 'idea'
+}
+
+repositories {
+    maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+}
+
+subprojects {
+    apply plugin: 'java'
+    repositories {
+        jcenter()
+    }
+    ext {//依赖版本
+        springBootVersion = "2.1.2.RELEASE"
+        mysqlConnectorVersion = "8.0.13"
+        mybatisStarterVersion = "1.3.2"
+        mybatisPlusVersion = "3.0.7.1"
+        fastjsonVersion = "1.2.54"
+        lombokVersion = "1.18.4"
+    }
+    dependencies {
+        compileOnly("org.projectlombok:lombok:$lombokVersion")
+        compile("javax.servlet:javax.servlet-api:4.0.1")
+        compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+        // Mybatis
+        compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisStarterVersion")
+        // Mybatis-Plus
+        compile("com.baomidou:mybatis-plus-boot-starter:$mybatisPlusVersion")
+        // Log4j2
+        compile("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion")
+        // JDBC Driver
+        compile("mysql:mysql-connector-java:$mysqlConnectorVersion")
+        // JSON
+        compile("com.alibaba:fastjson:$fastjsonVersion")
+        // Apache Commons
+        compile("org.apache.commons:commons-lang3:3.8.1")
+
+        // 测试实现
+        testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+        testCompile("junit:junit:4.12")
+    }
+    configurations {
+        //移除spring boot 默认logger依赖
+        all*.exclude module: 'spring-boot-starter-logging'
+    }
+}
