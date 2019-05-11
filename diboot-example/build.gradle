@@ -1,13 +1,4 @@
-plugins {
-    id 'java'
-}
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
+    compile project(":diboot-core")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
