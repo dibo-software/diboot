@@ -145,12 +145,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
 
     @Override
     public void visit(ExpressionList expressionList) {
-
-    }
-
-    @Override
-    public void visit(NamedExpressionList namedExpressionList) {
-
     }
     @Override
     public void visit(MultiExpressionList multiExprList) {

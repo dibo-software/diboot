@@ -2,13 +2,11 @@ package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ISetter;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,16 +67,56 @@ public class EntityBinder<T> extends BaseBinder<T> {
             log.warn("调用错误：必须调用joinOn()方法连接两个字段.");
         }
         // 提取主键pk列表
-        List pkList = BeanUtils.collectToList(annoObjectList, S.toLowerCaseCamel(annoObjectForeignKey));
-        if(V.isEmpty(pkList)){
+        String annoObjectForeignKeyField = S.toLowerCaseCamel(annoObjectForeignKey);
+        List annoObjectForeignKeyList = BeanUtils.collectToList(annoObjectList, annoObjectForeignKeyField);
+        if(V.isEmpty(annoObjectForeignKeyList)){
             return;
         }
-        // 构建查询条件
-        queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), pkList);
-        // 查询entity列表
-        List<T> list = referencedService.getEntityList(queryWrapper);
-        // 绑定结果
-        bindingResult(S.toLowerCaseCamel(referencedEntityPrimaryKey), list);
+        // 解析中间表查询关联
+        if(middleTable != null){
+            String sql = middleTable.toSQL(annoObjectForeignKeyList);
+            // 执行查询并合并结果
+            String keyName = middleTable.getEqualsToRefEntityPkColumn(), valueName = middleTable.getEqualsToAnnoObjectFKColumn();
+            Map<Object, Object> middleTableResultMap = SqlExecutor.executeQueryAndMergeResult(sql, annoObjectForeignKeyList, keyName, valueName);
+            if(V.notEmpty(middleTableResultMap)){
+                Collection middleTableColumnValueList = middleTableResultMap.keySet();
+                // 构建查询条件
+                queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), middleTableColumnValueList);
+                // 查询entity列表
+                List<T> list = referencedService.getEntityList(queryWrapper);
+                // 绑定结果
+                bindingResult(S.toLowerCaseCamel(referencedEntityPrimaryKey), list, middleTableResultMap);
+            }
+        }
+        else{
+            // 构建查询条件
+            queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), annoObjectForeignKeyList);
+            // 查询entity列表
+            List<T> list = referencedService.getEntityList(queryWrapper);
+            // 绑定结果
+            bindingResult(S.toLowerCaseCamel(referencedEntityPrimaryKey), list);
+        }
+    }
+
+    /***
+     * 绑定结果
+     * @param doPkPropName
+     * @param list
+     */
+    protected void bindingResult(String doPkPropName, List<T> list, Map<Object, Object> middleTableResultMap) {
+        Map<String, T> valueEntityMap = new HashMap<>(list.size());
+        for(T entity : list){
+            Object pkValue = BeanUtils.getProperty(entity, doPkPropName);
+            Object annoObjFK = middleTableResultMap.get(pkValue);
+            if(annoObjFK != null){
+                valueEntityMap.put(String.valueOf(annoObjFK), entity);
+            }
+            else{
+                log.warn("转换结果异常，中间关联条件数据不一致");
+            }
+        }
+        // 绑定
+        BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);
     }
 
     /***
@@ -90,7 +128,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         Map<Object, T> valueEntityMap = new HashMap<>(list.size());
         for(T entity : list){
             Object pkValue = BeanUtils.getProperty(entity, doPkPropName);
-            valueEntityMap.put(pkValue, entity);
+            valueEntityMap.put(String.valueOf(pkValue), entity);
         }
         // 绑定
         BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);

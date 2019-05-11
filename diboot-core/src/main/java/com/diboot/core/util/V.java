@@ -296,8 +296,8 @@ public class V {
 	 * @param target
 	 * @return
 	 */
-	public static boolean notEqual(Object source, Object target){
-		return !equal(source, target);
+	public static boolean notEquals(Object source, Object target){
+		return !equals(source, target);
 	}
 
 	/***
@@ -306,24 +306,19 @@ public class V {
 	 * @param target
 	 * @return
 	 */
-	public static boolean equal(Object source, Object target){
-		// 都为空
+	public static <T> boolean equals(T source, T target){
 		if(source == null && target == null){
 			return true;
-		}// 一个为空一个非空
+		}
 		else if(source == null || target == null){
 			return false;
 		}
-    	else if((source instanceof String && target instanceof String)
-			|| (source instanceof Long && target instanceof Long)
-			|| (source instanceof Integer && target instanceof Integer)
-			|| (source instanceof Float && target instanceof Float)
-			|| (source instanceof Double && target instanceof Double)
-		){
-    		return (source).equals(target);
+		// 不为空，调用equals比较
+		else if(source instanceof Comparable){
+			return (source).equals(target);
 		}
-		else if(source instanceof List && target instanceof List){
-    		List sourceList = (List)source, targetList = (List)target;
+		else if(source instanceof Collection){
+    		Collection sourceList = (Collection)source, targetList = (Collection)target;
 			// size不等
 			if(sourceList.size() != targetList.size()){
     			return false;
@@ -334,10 +329,6 @@ public class V {
 				}
 			}
 			return true;
-		}
-		// 其他类型不一致
-		else if(!source.getClass().getName().equals(target.getClass().getName())){
-			return false;
 		}
 		else{
 			log.warn("暂未实现类型 "+ source.getClass().getSimpleName() + "-"+ target.getClass().getSimpleName() + " 的比对！");
@@ -352,7 +343,7 @@ public class V {
 	 * @return
 	 */
 	public static boolean fuzzyEqual(Object source, Object target){
-		if(equal(source, target)){
+		if(equals(source, target)){
 			return true;
 		}
 		// Boolean-String类型

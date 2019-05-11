@@ -5,6 +5,7 @@ import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.binding.annotation.BindMetadata;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Employee;
+import com.diboot.example.entity.Organization;
 import lombok.Data;
 
 /**
@@ -24,4 +25,8 @@ public class EmployeeVO extends Employee {
 
     @BindField(entity=Department.class, field="name", condition="this.department_id=id AND code IS NOT NULL")
     private String deptName;
+
+    // 通过中间表关联
+    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.deleted=0") // AND deleted=0
+    private Organization organization;
 }

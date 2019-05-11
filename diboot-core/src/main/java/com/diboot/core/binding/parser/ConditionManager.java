@@ -67,10 +67,22 @@ public class ConditionManager {
             return;
         }
         // 解析中间表关联
-        MiddleTable middleTable = parseMiddleTable(expressionList);
-        if(middleTable != null){
-            binder.withMiddleTable(middleTable);
+        String tableName = extractMiddleTableName(expressionList);
+        if(tableName != null){
+            parseMiddleTable(binder, expressionList, tableName);
         }
+        else{
+            parseDirectRelation(binder, expressionList);
+        }
+    }
+
+    /**
+     * 解析直接关联
+     * @param binder
+     * @param expressionList
+     * @param <T>
+     */
+    private static <T> void parseDirectRelation(BaseBinder<T> binder, List<Expression> expressionList) {
         // 解析直接关联
         for(Expression operator : expressionList){
             if(operator instanceof EqualsTo){
@@ -185,59 +197,59 @@ public class ConditionManager {
      * @param expressionList
      * @return
      */
-    private static MiddleTable parseMiddleTable(List<Expression> expressionList) {
+    private static <T> void parseMiddleTable(BaseBinder<T> binder, List<Expression> expressionList, String tableName) {
         // 单一条件不是中间表条件
         if(expressionList.size() <= 1){
-            return null;
-        }
-        // 统计出现次数
-        Map<String, Integer> tableNameCountMap = new HashMap<>();
-        for(Expression operator : expressionList){
-            if(operator instanceof EqualsTo){
-                EqualsTo express = (EqualsTo)operator;
-                // 均为列
-                if(express.getLeftExpression() instanceof Column && express.getRightExpression() instanceof Column){
-                    // 统计左侧列中出现的表名
-                    String leftColumn = express.getLeftExpression().toString();
-                    countTableName(tableNameCountMap, leftColumn);
-                    // 统计右侧列中出现的表名
-                    String rightColumn = express.getRightExpression().toString();
-                    countTableName(tableNameCountMap, rightColumn);
-                }
-            }
-        }
-        if(tableNameCountMap.isEmpty()){
-            return null;
-        }
-        String tableName = null;
-        int count = 0;
-        for(Map.Entry<String, Integer> entry : tableNameCountMap.entrySet()){
-            if(entry.getValue() > count){
-                count = entry.getValue();
-                tableName = entry.getKey();
-            }
+            return;
         }
         // 提取到表
         MiddleTable middleTable = new MiddleTable(tableName);
-        String leftHandColumn = null, rightHandColumn = null;
+        // 中间表两边边连接字段
+        String middleTableEqualsToAnnoObjectFKColumn = null, middleTableEqualsToRefEntityPkColumn = null;
+        // VO与Entity的关联字段
+        String annoObjectForeignKey = null, referencedEntityPrimaryKey = null;
         for(Expression operator : expressionList){
             if(operator instanceof EqualsTo){
                 EqualsTo express = (EqualsTo)operator;
                 // 均为列
                 if(express.getLeftExpression() instanceof Column && express.getRightExpression() instanceof Column){
-                    // 如果左侧为中间表字段
                     String leftColumn = express.getLeftExpression().toString();
-                    if(leftColumn.startsWith(tableName+".")){
-                        // 绑定右手边连接列
-                        rightHandColumn = S.substringAfter(leftColumn, ".");
-                        //TODO entityPkField =
-                    }
-                    // 如果右侧为中间表字段
                     String rightColumn = express.getRightExpression().toString();
+                    // 如果右侧为中间表字段，如: this.departmentId=Department.id
                     if(rightColumn.startsWith(tableName+".")){
                         // 绑定左手边连接列
-                        leftHandColumn = S.substringAfter(leftColumn, ".");
-                        // TODO annoObjectFkField =
+                        String leftHandColumn = getColumnName(leftColumn);
+                        // this. 开头的vo对象字段
+                        if(isVoColumn(leftColumn)){
+                            // 识别到vo对象的属性 departmentId
+                            annoObjectForeignKey = leftHandColumn;
+                            // 对应中间表的关联字段
+                            middleTableEqualsToAnnoObjectFKColumn = getColumnName(rightColumn);
+                        }
+                        else{
+                            // 注解关联的entity主键
+                            referencedEntityPrimaryKey = leftHandColumn;
+                            middleTableEqualsToRefEntityPkColumn = getColumnName(rightColumn);
+                        }
+                        binder.joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
+                        middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
+                    }
+                    // 如果左侧为中间表字段，如: Department.orgId=id  (entity=Organization)
+                    if(leftColumn.startsWith(tableName+".")){
+                        // 绑定右手边连接列
+                        String rightHandColumn = getColumnName(rightColumn);
+                        if(isVoColumn(rightColumn)){
+                            // 识别到vo对象的属性 departmentId
+                            annoObjectForeignKey = rightHandColumn;
+                            // 对应中间表的关联字段
+                            middleTableEqualsToAnnoObjectFKColumn = S.substringAfter(leftColumn, ".");
+                        }
+                        else{
+                            referencedEntityPrimaryKey = rightHandColumn;
+                            middleTableEqualsToRefEntityPkColumn = getColumnName(leftColumn);
+                        }
+                        binder.joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
+                        middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
                     }
                 }
             }
@@ -281,25 +293,63 @@ public class ConditionManager {
                 }
                 if(leftExpression != null && leftExpression.startsWith(tableName+".")){
                     middleTable.addAdditionalCondition(operator.toString());
-                    // TODO 移除
                 }
             }
-
         }
-        //TODO
-        return null;
+        binder.withMiddleTable(middleTable);
     }
 
+    /**
+     * 提取中间表表对象名
+     * @param expressionList
+     * @return
+     */
+    private static String extractMiddleTableName(List<Expression> expressionList){
+        Map<String, Integer> tableNameCountMap = new HashMap<>();
+        for(Expression operator : expressionList){
+            if(operator instanceof EqualsTo){
+                EqualsTo express = (EqualsTo)operator;
+                // 均为列
+                if(express.getLeftExpression() instanceof Column && express.getRightExpression() instanceof Column){
+                    // 统计左侧列中出现的表名
+                    String leftColumn = express.getLeftExpression().toString();
+                    countTableName(tableNameCountMap, leftColumn);
+                    // 统计右侧列中出现的表名
+                    String rightColumn = express.getRightExpression().toString();
+                    countTableName(tableNameCountMap, rightColumn);
+                }
+            }
+        }
+        if(tableNameCountMap.isEmpty()){
+            return null;
+        }
+        String tableName = null;
+        int count = 1;
+        for(Map.Entry<String, Integer> entry : tableNameCountMap.entrySet()){
+            if(entry.getValue() > count){
+                count = entry.getValue();
+                tableName = entry.getKey();
+            }
+        }
+        return tableName;
+    }
+
+    /**
+     * 统计表名出现的次数
+     * @param tableNameCountMap
+     * @param columnStr
+     */
     private static void countTableName(Map<String, Integer> tableNameCountMap, String columnStr) {
         if(columnStr.contains(".")){
-            String tempTableName = S.substringBefore(columnStr, ".");
             // 如果是中间表(非this,self标识的当前表)
-            if(!"this".equals(tempTableName) && !"self".equals(tempTableName)){
+            if(!isVoColumn(columnStr)){
+                String tempTableName = S.substringBefore(columnStr, ".");
                 Integer count = tableNameCountMap.get(tempTableName);
                 if(count == null){
                     count = 0;
                 }
-                tableNameCountMap.put(tempTableName, count++);
+                count++;
+                tableNameCountMap.put(tempTableName, count);
             }
         }
     }
@@ -314,5 +364,17 @@ public class ConditionManager {
         }
         return annoColumn;
     }
+
+    /**
+     * 是否为VO自身属性（以this开头的）
+     * @param expression
+     * @return
+     */
+    private static boolean isVoColumn(String expression){
+        String tempTableName = S.substringBefore(expression, ".");
+        // 如果是中间表(非this,self标识的当前表)
+        return "this".equals(tempTableName) || "self".equals(tempTableName);
+    }
+
 
 }

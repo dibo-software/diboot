@@ -456,7 +456,7 @@ public class BeanUtils {
                 // 获取到当前的属性值
                 Object fieldValue = getProperty(object, getterFieldName);
                 // 获取到当前的value
-                Object value = valueMatchMap.get(fieldValue);
+                Object value = valueMatchMap.get(String.valueOf(fieldValue));
                 // 赋值
                 setProperty(object, setterFieldName, value);
             }
