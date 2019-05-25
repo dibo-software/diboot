@@ -77,13 +77,6 @@ public class MiddleTable {
         if(V.isEmpty(annoObjectForeignKeyList)){
             return null;
         }
-        Object object = annoObjectForeignKeyList.get(0);
-        // 不需要加引号的类型
-        boolean noQuotes = object instanceof Integer
-                || object instanceof Long
-                || object instanceof Double
-                || object instanceof Float
-                || object instanceof BigDecimal;
         // 构建SQL
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT ").append(this.equalsToAnnoObjectFKColumn).append(Cons.SEPARATOR_COMMA)

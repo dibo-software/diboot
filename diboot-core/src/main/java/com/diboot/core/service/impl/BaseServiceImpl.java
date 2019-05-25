@@ -183,8 +183,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<KeyValue> getKeyValueList(Wrapper queryWrapper) {
 		String sqlSelect = queryWrapper.getSqlSelect();
-		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) != 1){
-			log.error("调用错误: getKeyValueList必须用select依次指定返回的键值字段，如: new QueryWrapper<Metadata>().lambda().select(Metadata::getItemName, Metadata::getItemValue)");
+		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
+			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Metadata>().lambda().select(Metadata::getItemName, Metadata::getItemValue)");
 			return Collections.emptyList();
 		}
 		// 获取mapList
@@ -198,6 +198,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		for(Map<String, Object> map : mapList){
 			if(map.get(keyValueArray[0]) != null){
 				KeyValue kv = new KeyValue((String)map.get(keyValueArray[0]), map.get(keyValueArray[1]));
+				if(keyValueArray.length > 2){
+					kv.setExt(map.get(keyValueArray[2]));
+				}
 				keyValueList.add(kv);
 			}
 		}

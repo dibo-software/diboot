@@ -197,6 +197,20 @@ public class BeanUtils {
     }
 
     /***
+     * 获取对象的属性值并转换为String
+     * @param obj
+     * @param field
+     * @return
+     */
+    public static String getStringProperty(Object obj, String field){
+        Object property = getProperty(obj, field);
+        if(property == null){
+            return null;
+        }
+        return String.valueOf(property);
+    }
+
+    /***
      * 设置属性值
      * @param obj
      * @param field
@@ -212,22 +226,22 @@ public class BeanUtils {
      * @param allLists
      * @return
      */
-    public static <T> Map<Object, T> convert2KeyObjectMap(List<T> allLists, String... fields){
+    public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, String... fields){
         if(allLists == null || allLists.isEmpty()){
             return null;
         }
-        Map<Object, T> allListMap = new LinkedHashMap<>(allLists.size());
+        Map<String, T> allListMap = new LinkedHashMap<>(allLists.size());
         // 转换为map
         try{
             for(T model : allLists){
-                Object key = null;
+                String key = null;
                 if(V.isEmpty(fields)){
                     //未指定字段，以id为key
-                    key = getProperty(model, Cons.FieldName.parentId.name());;
+                    key = getStringProperty(model, Cons.FieldName.parentId.name());
                 }
                 // 指定了一个字段，以该字段为key，类型同该字段
                 else if(fields.length == 1){
-                    key = getProperty(model, fields[0]);
+                    key = getStringProperty(model, fields[0]);
                 }
                 else{ // 指定了多个字段，以字段S.join的结果为key，类型为String
                     List list = new ArrayList();
@@ -240,7 +254,7 @@ public class BeanUtils {
                     allListMap.put(key, model);
                 }
                 else{
-                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，BeanUtils.convert2KeyModelMap转换结果需要确认!");
+                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
                 }
             }
         }
@@ -285,10 +299,10 @@ public class BeanUtils {
      */
     private static <T extends BaseEntity> void buildDeeperLevelTree(List<T> parentModels, List<T> allModels){
         List<T> deeperLevelModels = new ArrayList();
-        Map<Object, T> parentLevelModelMap = convert2KeyObjectMap(parentModels);
+        Map<String, T> parentLevelModelMap = convertToStringKeyObjectMap(parentModels);
         for(T model : allModels){
             Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            if(parentLevelModelMap.keySet().contains(parentId) && !parentId.equals(model.getId())){
+            if(parentLevelModelMap.keySet().contains(String.valueOf(parentId)) && !parentId.equals(model.getId())){
                 deeperLevelModels.add(model);
             }
         }
@@ -297,7 +311,7 @@ public class BeanUtils {
         }
         for(T model : deeperLevelModels){
             Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            T parentModel = parentLevelModelMap.get(parentId);
+            T parentModel = parentLevelModelMap.get(String.valueOf(parentId));
             if(parentModel!=null){
                 List children = (List) getProperty(parentModel, Cons.FieldName.children.name());
                 if(children == null){
@@ -454,9 +468,9 @@ public class BeanUtils {
         try{
             for(E object : fromList){
                 // 获取到当前的属性值
-                Object fieldValue = getProperty(object, getterFieldName);
+                String fieldValue = getStringProperty(object, getterFieldName);
                 // 获取到当前的value
-                Object value = valueMatchMap.get(String.valueOf(fieldValue));
+                Object value = valueMatchMap.get(fieldValue);
                 // 赋值
                 setProperty(object, setterFieldName, value);
             }

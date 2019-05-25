@@ -28,6 +28,11 @@ public class KeyValue implements Serializable {
      */
     private Object v;
 
+    /**
+     * 扩展值
+     */
+    private Object ext;
+
     public String getK() {
         return k;
     }
@@ -42,5 +47,13 @@ public class KeyValue implements Serializable {
 
     public void setV(Object v) {
         this.v = v;
+    }
+
+    public Object getExt() {
+        return ext;
+    }
+
+    public void setExt(Object ext) {
+        this.ext = ext;
     }
 }
