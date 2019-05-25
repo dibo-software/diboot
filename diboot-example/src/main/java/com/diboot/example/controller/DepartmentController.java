@@ -68,7 +68,7 @@ public class DepartmentController extends BaseCrudRestController {
     @GetMapping("/kv")
     public JsonResult getKVPairList(HttpServletRequest request){
         Wrapper wrapper = new QueryWrapper<Department>().lambda()
-            .select(Department::getName, Department::getId);
+            .select(Department::getName, Department::getId, Department::getCode);
         List<KeyValue> list = departmentService.getKeyValueList(wrapper);
         return new JsonResult(list);
     }

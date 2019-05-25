@@ -30,9 +30,6 @@ public class JsonResult implements Serializable {
      * 默认成功，无返回数据
       */
     public JsonResult(){
-        this.code = Status.OK.code();
-        this.msg = Status.OK.label();
-        this.data = null;
     }
 
     /**

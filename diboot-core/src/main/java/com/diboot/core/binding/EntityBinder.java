@@ -64,30 +64,37 @@ public class EntityBinder<T> extends BaseBinder<T> {
             return;
         }
         if(referencedEntityPrimaryKey == null){
-            log.warn("调用错误：必须调用joinOn()方法连接两个字段.");
+            log.warn("调用错误：无法从condition中解析出字段关联.");
         }
-        // 提取主键pk列表
+        // 提取注解条件中指定的对应的列表
         String annoObjectForeignKeyField = S.toLowerCaseCamel(annoObjectForeignKey);
         List annoObjectForeignKeyList = BeanUtils.collectToList(annoObjectList, annoObjectForeignKeyField);
         if(V.isEmpty(annoObjectForeignKeyList)){
             return;
         }
-        // 解析中间表查询关联
+        // 通过中间表关联Entity
+        // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.deleted=0")
+        // Organization organization;
         if(middleTable != null){
+            // 提取中间表查询SQL
             String sql = middleTable.toSQL(annoObjectForeignKeyList);
             // 执行查询并合并结果
             String keyName = middleTable.getEqualsToRefEntityPkColumn(), valueName = middleTable.getEqualsToAnnoObjectFKColumn();
-            Map<Object, Object> middleTableResultMap = SqlExecutor.executeQueryAndMergeResult(sql, annoObjectForeignKeyList, keyName, valueName);
+            Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeResult(sql, annoObjectForeignKeyList, keyName, valueName);
             if(V.notEmpty(middleTableResultMap)){
+                // 提取entity主键值集合
                 Collection middleTableColumnValueList = middleTableResultMap.keySet();
                 // 构建查询条件
                 queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), middleTableColumnValueList);
                 // 查询entity列表
                 List<T> list = referencedService.getEntityList(queryWrapper);
-                // 绑定结果
-                bindingResult(S.toLowerCaseCamel(referencedEntityPrimaryKey), list, middleTableResultMap);
+                // 基于中间表查询结果和entity列表绑定结果
+                bindingResultWithMiddleTable(S.toLowerCaseCamel(referencedEntityPrimaryKey), list, middleTableResultMap);
             }
         }
+        // 直接关联Entity
+        // @BindEntity(entity = Department.class, condition="department_id=id")
+        // Department department;
         else{
             // 构建查询条件
             queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), annoObjectForeignKeyList);
@@ -99,20 +106,23 @@ public class EntityBinder<T> extends BaseBinder<T> {
     }
 
     /***
-     * 绑定结果
+     * 基于中间表查询结果和entity列表绑定结果
      * @param doPkPropName
      * @param list
      */
-    protected void bindingResult(String doPkPropName, List<T> list, Map<Object, Object> middleTableResultMap) {
-        Map<String, T> valueEntityMap = new HashMap<>(list.size());
-        for(T entity : list){
-            Object pkValue = BeanUtils.getProperty(entity, doPkPropName);
-            Object annoObjFK = middleTableResultMap.get(pkValue);
-            if(annoObjFK != null){
-                valueEntityMap.put(String.valueOf(annoObjFK), entity);
+    private <E> void bindingResultWithMiddleTable(String doPkPropName, List<E> list, Map<String, List> middleTableResultMap) {
+        // 构建IdString-Entity之间的映射Map
+        Map<String, E> valueEntityMap = new HashMap<>(list.size());
+        for(E entity : list){
+            // 获取主键值
+            String pkValue = BeanUtils.getStringProperty(entity, doPkPropName);
+            // 得到对应Entity
+            List annoObjFKList = middleTableResultMap.get(pkValue);
+            if(V.notEmpty(annoObjFKList)){
+                valueEntityMap.put(String.valueOf(annoObjFKList.get(0)), entity);
             }
             else{
-                log.warn("转换结果异常，中间关联条件数据不一致");
+                log.warn("{}.{}={} 无匹配结果!", entity.getClass().getSimpleName(), doPkPropName, pkValue);
             }
         }
         // 绑定
@@ -124,11 +134,11 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param doPkPropName
      * @param list
      */
-    protected void bindingResult(String doPkPropName, List<T> list) {
-        Map<Object, T> valueEntityMap = new HashMap<>(list.size());
+    private void bindingResult(String doPkPropName, List<T> list) {
+        Map<String, T> valueEntityMap = new HashMap<>(list.size());
         for(T entity : list){
-            Object pkValue = BeanUtils.getProperty(entity, doPkPropName);
-            valueEntityMap.put(String.valueOf(pkValue), entity);
+            String pkValue = BeanUtils.getStringProperty(entity, doPkPropName);
+            valueEntityMap.put(pkValue, entity);
         }
         // 绑定
         BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);

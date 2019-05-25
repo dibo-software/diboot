@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 原生SQL执行类
@@ -21,11 +18,12 @@ public class SqlExecutor {
     private static final Logger log = LoggerFactory.getLogger(SqlExecutor.class);
 
     /***
-     * 执行Select语句
+     * 执行Select语句，如: SELECT user_id,role_id FROM user_role WHERE user_id IN (?,?,?,?)
+     * 查询结果如: [{"user_id":1001,"role_id":101},{"user_id":1001,"role_id":102},{"user_id":1003,"role_id":102},{"user_id":1003,"role_id":103}]
      * @param sql
      * @return
      */
-    public static List<Map<String,Object>> executeQuery(String sql, List params) throws Exception{
+    public static <E> List<Map<String,E>> executeQuery(String sql, List<E> params) throws Exception{
         if(V.isEmpty(sql)){
             return null;
         }
@@ -36,8 +34,10 @@ public class SqlExecutor {
             return null;
         }
         // 替换单个?参数为多个，用于拼接IN参数
-        if(sql.contains("?") && V.notEmpty(params)){
-            sql = S.replace(sql, "?", S.repeat("?", ",", params.size()));
+        if(V.notEmpty(params)){
+            if(params.size() > 2000){
+                log.warn("查询参数集合数量过多, size={}，请检查调用是否合理！", params.size());
+            }
         }
         log.debug("执行查询SQL: "+sql);
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -48,13 +48,13 @@ public class SqlExecutor {
             }
             ResultSet rs = stmt.executeQuery();
             ResultSetMetaData meta = rs.getMetaData();
-            List<Map<String,Object>> mapList = new ArrayList<>();
+            List<Map<String,E>> mapList = new ArrayList<>();
             if(meta.getColumnCount() > 0){
                 // 添加数据行
                 while(rs.next()){
-                    Map<String,Object> dataRow = new HashMap<>();
+                    Map<String,E> dataRow = new HashMap<>();
                     for(int i=1; i<=meta.getColumnCount(); i++){
-                        dataRow.put(meta.getColumnLabel(i), rs.getObject(i));
+                        dataRow.put(meta.getColumnLabel(i), (E)rs.getObject(i));
                     }
                     mapList.add(dataRow);
                 }
@@ -69,14 +69,16 @@ public class SqlExecutor {
         }
     }
 
+
     /**
-     * 执行查询和合并结果
+     * 执行查询和合并结果并将结果Map的key类型转成String
+     *
      * @param sql
      * @param params
      * @return
      */
-    public static Map<Object, Object> executeQueryAndMergeResult(String sql, List params, String keyName, String valueName){
-        List<Map<String,Object>> resultSetMapList = null;
+    public static <E> Map<String, List> executeQueryAndMergeResult(String sql, List<E> params, String keyName, String valueName){
+        List<Map<String, E>> resultSetMapList = null;
         try {
             resultSetMapList = executeQuery(sql, params);
         }
@@ -84,10 +86,16 @@ public class SqlExecutor {
             log.warn("执行查询异常", e);
         }
         // 合并list为map
-        Map<Object, Object> resultMap = new HashMap<>();
+        Map<String, List> resultMap = new HashMap<>();
         if(V.notEmpty(resultSetMapList)){
-            for(Map<String, Object> row : resultSetMapList){
-                resultMap.put(row.get(keyName), row.get(valueName));
+            for(Map<String, E> row : resultSetMapList){
+                String key = String.valueOf(row.get(keyName));
+                List valueList = resultMap.get(key);
+                if(valueList == null){
+                    valueList = new ArrayList();
+                    resultMap.put(key, valueList);
+                }
+                valueList.add(row.get(valueName));
             }
         }
         return resultMap;
