@@ -31,11 +31,11 @@ public class UserVO extends User {
     private Department department;
 
     // 支持级联字段关联
-    //@BindField(entity = Organization.class, field="name", condition="this.departmentId=Department.id AND Department.orgId=id")
+    @BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id")
     private String orgName;
 
     // 通过中间表关联
-    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.deleted=0") // AND deleted=0
+    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id") // AND deleted=0
     private Organization organization;
 
     // 支持多-多Entity实体关联

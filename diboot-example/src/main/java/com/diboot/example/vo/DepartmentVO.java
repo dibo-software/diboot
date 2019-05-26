@@ -27,7 +27,6 @@ public class DepartmentVO extends Department {
     @BindField(entity = Department.class, field = "name", condition = "parent_id=id")
     private String parentName;
 
-    //TODO 该绑定未生效，待检查
     @BindEntityList(entity = Department.class, condition = "id=parent_id")
     private List<Department> children;
 

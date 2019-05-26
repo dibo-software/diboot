@@ -74,17 +74,16 @@ create table user_role
 
 -- 初始化样例数据
 INSERT INTO department (id, parent_id, org_id, name, code)
-VALUES (10001, 0, 100001, '研发部', 'DEV'), (10002, 10001, 100001, '开发组', 'DEVT'), (10003, 10001, 100001, '测试组', 'TST');
+VALUES (10001, 0, 100001, '产品部', 'PROD'), (10002, 10001, 100001, '研发组', 'DEV'), (10003, 10001, 100001, '测试组', 'TST');
 
 INSERT INTO metadata (id, parent_id, type, item_name, item_value, comment, extdata, sort_id, `system`, editable)
 VALUES (1, 0, 'GENDER', '性别', null, '', null, 99, 1, 1), (2, 1, 'GENDER', '男', 'M', null, null, 99, 1, 0), (3, 1, 'GENDER', '女', 'F', null, null, 99, 1, 0);
 
-INSERT INTO organization (id, parent_id, name, telphone, address)
-VALUES (100000, 0, '帝博集团', '0512-12345678', '江苏苏州'), (100001, 100000, '苏州帝博', '0512-62988949', '江苏苏州');
+INSERT INTO organization (id, parent_id, name, telphone, address) VALUES (100001, 0, '苏州帝博', '0512-62988949', '江苏苏州');
 
-INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR'), (103, '只读用户', 'READ'), (104, '项目经理', 'PM');
+INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');
 
 INSERT INTO user (id, department_id, username, gender)
-VALUES (1001, 10002, '张三', 'M'), (1002, 10002, '李四', 'F'), (1003, 10003, '王五', 'M'), (1004, 10001, '马六', 'M');
+VALUES (1001, 10002, '张三', 'M'), (1002, 10002, '李四', 'F');
 
-INSERT INTO user_role (user_id, role_id) VALUES (1001, 101),(1001, 102),(1003, 102),(1003, 103);
+INSERT INTO user_role (user_id, role_id) VALUES (1001, 101),(1001, 102),(1002, 102);
