@@ -118,9 +118,9 @@ public class EntityListBinder<T> extends EntityBinder<T> {
     }
 
     private void bindingResult(String fkName, List<T> list) {
-        Map<Object, List<T>> valueEntityListMap = new HashMap<>(list.size());
+        Map<String, List<T>> valueEntityListMap = new HashMap<>(list.size());
         for(T entity : list){
-            Object keyValue = BeanUtils.getProperty(entity, fkName);
+            String keyValue = BeanUtils.getStringProperty(entity, fkName);
             List<T> entityList = valueEntityListMap.get(keyValue);
             if(entityList == null){
                 entityList = new ArrayList<>();

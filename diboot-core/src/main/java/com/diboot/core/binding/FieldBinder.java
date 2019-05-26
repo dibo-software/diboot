@@ -95,36 +95,26 @@ public class FieldBinder<T> extends BaseBinder<T> {
             return;
         }
         // 将结果list转换成map
-        Map<Object, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
+        Map<String, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
+        // 转换列名为字段名（MyBatis-plus的getMapList结果会将列名转成驼峰式）
+        String referencedEntityPkFieldName = S.toLowerCaseCamel(referencedEntityPkName);
         for(Map<String, Object> map : mapList){
-            if(map.get(referencedEntityPkName) != null){
-                Object pkVal = map.get(referencedEntityPkName);
-                // 将数字类型转换成字符串，以便解决类型不一致的问题
-                Object formatPkVal = getFormatKey(pkVal);
-                referencedEntityPk2DataMap.put(formatPkVal, map);
+            Object pkVal = map.get(referencedEntityPkFieldName);
+            if(pkVal != null){
+                referencedEntityPk2DataMap.put(String.valueOf(pkVal), map);
             }
         }
         // 遍历list并赋值
         for(Object annoObject : annoObjectList){
-            Object annoObjectId = BeanUtils.getProperty(annoObject, annoObjectFkFieldName);
             // 将数字类型转换成字符串，以便解决类型不一致的问题
-            Object formatAnnoObjectId = getFormatKey(annoObjectId);
-            Map<String, Object> relationMap = referencedEntityPk2DataMap.get(formatAnnoObjectId);
+            String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
+            Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectId);
             if(relationMap != null){
                 for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(referencedGetterColumnNameList.get(i)));
+                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(S.toLowerCaseCamel(referencedGetterColumnNameList.get(i))));
                 }
             }
         }
     }
 
-    /**
-     * 获取统一定义的key（避免Mybatis自动转换BigInteger和Long的差异问题）
-     */
-    private Object getFormatKey(Object annoObjectId){
-        if(annoObjectId instanceof BigInteger || annoObjectId instanceof Long || annoObjectId instanceof Integer) {
-            return String.valueOf(annoObjectId);
-        }
-        return annoObjectId;
-    }
 }
