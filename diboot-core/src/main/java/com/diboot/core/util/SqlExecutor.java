@@ -39,7 +39,7 @@ public class SqlExecutor {
                 log.warn("查询参数集合数量过多, size={}，请检查调用是否合理！", params.size());
             }
         }
-        log.debug("执行查询SQL: "+sql);
+        log.debug("==>\tSQL: "+sql);
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
             if(V.notEmpty(params)){
                 for(int i=0; i<params.size(); i++){
@@ -60,13 +60,40 @@ public class SqlExecutor {
                 }
                 rs.close();
             }
-            log.debug("查询结果: "+JSON.stringify(mapList));
+            log.debug("<==\t"+JSON.stringify(mapList));
             return mapList;
         }
         catch(Exception e){
             log.error("执行Sql查询异常", e);
             throw e;
         }
+    }
+
+
+    /**
+     * 执行1-1关联查询和合并结果并将结果Map的key类型转成String
+     *
+     * @param sql
+     * @param params
+     * @return
+     */
+    public static <E> Map<String, Object> executeQueryAndMergeOneToOneResult(String sql, List<E> params, String keyName, String valueName) {
+        List<Map<String, E>> resultSetMapList = null;
+        try {
+            resultSetMapList = executeQuery(sql, params);
+        } catch (Exception e) {
+            log.warn("执行查询异常", e);
+        }
+        // 合并list为map
+        Map<String, Object> resultMap = new HashMap<>();
+        if(V.notEmpty(resultSetMapList)){
+            for(Map<String, E> row : resultSetMapList){
+                String key = String.valueOf(row.get(keyName));
+                Object value = row.get(valueName);
+                resultMap.put(key, value);
+            }
+        }
+        return resultMap;
     }
 
     /**
@@ -76,7 +103,7 @@ public class SqlExecutor {
      * @param params
      * @return
      */
-    public static <E> Map<String, List> executeQueryAndMergeResult(String sql, List<E> params, String keyName, String valueName){
+    public static <E> Map<String, List> executeQueryAndMergeOneToManyResult(String sql, List<E> params, String keyName, String valueName){
         List<Map<String, E>> resultSetMapList = null;
         try {
             resultSetMapList = executeQuery(sql, params);

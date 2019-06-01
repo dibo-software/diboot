@@ -85,60 +85,23 @@ public class FieldBinder<T> extends BaseBinder<T> {
         if(V.isEmpty(annoObjectForeignKeyList)){
             return;
         }
+        // 将结果list转换成map
+        Map<String, Object> middleTableResultMap = null;
         //@BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id")
         //String orgName;
         if(middleTable != null){
-            // 提取中间表查询SQL: SELECT id, org_id FROM department WHERE id IN(?)
-            String sql = middleTable.toSQL(annoObjectForeignKeyList);
-            // 执行查询并合并结果
-            String keyName = middleTable.getEqualsToAnnoObjectFKColumn(), valueName = middleTable.getEqualsToRefEntityPkColumn();
-            Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeResult(sql, annoObjectForeignKeyList, keyName, valueName);
+            middleTableResultMap = middleTable.executeOneToOneQuery(annoObjectForeignKeyList);
             if(V.notEmpty(middleTableResultMap)){
                 // 收集查询结果values集合
-                List middleTableColumnValueList = new ArrayList();
-                for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
-                    if(V.notEmpty(entry.getValue())){
-                        for(Object id : entry.getValue()){
-                            if(!middleTableColumnValueList.contains(id)){
-                                middleTableColumnValueList.add(id);
-                            }
-                        }
-                    }
-                }
+                Collection middleTableColumnValueList = middleTableResultMap.values();
                 // 构建查询条件
                 List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
                 selectColumns.add(referencedEntityPkName);
                 selectColumns.addAll(referencedGetterColumnNameList);
                 queryWrapper.select(S.toStringArray(selectColumns)).in(S.toSnakeCase(referencedEntityPrimaryKey), middleTableColumnValueList);
-                // 获取匹配结果的mapList: SELECT id,name FROM organization
-                List<Map<String, Object>> mapList = referencedService.getMapList(queryWrapper);
-                if(V.isEmpty(mapList)){
-                    return;
-                }
-                // 将结果list转换成map
-                Map<String, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
-                // 转换列名为字段名（MyBatis-plus的getMapList结果会将列名转成驼峰式）
-                String referencedEntityPkFieldName = S.toLowerCaseCamel(referencedEntityPkName);
-                for(Map<String, Object> map : mapList){
-                    Object pkVal = map.get(referencedEntityPkFieldName);
-                    if(pkVal != null){
-                        referencedEntityPk2DataMap.put(String.valueOf(pkVal), map);
-                    }
-                }
-                // 遍历list并赋值
-                for(Object annoObject : annoObjectList){
-                    // 将数字类型转换成字符串，以便解决类型不一致的问题
-                    String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
-                    // 通过中间结果Map转换得到OrgId
-                    List valueList = middleTableResultMap.get(annoObjectId);
-                    String annoObjectFkFieldValue = String.valueOf(valueList.get(0));
-                    Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectFkFieldValue);
-                    if(relationMap != null){
-                        for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                            BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(S.toLowerCaseCamel(referencedGetterColumnNameList.get(i))));
-                        }
-                    }
-                }
+            }
+            else{
+                return;
             }
         }
         else{
@@ -147,33 +110,40 @@ public class FieldBinder<T> extends BaseBinder<T> {
             selectColumns.add(referencedEntityPkName);
             selectColumns.addAll(referencedGetterColumnNameList);
             queryWrapper.select(S.toStringArray(selectColumns)).in(referencedEntityPkName, annoObjectForeignKeyList);
-            // 获取匹配结果的mapList
-            List<Map<String, Object>> mapList = referencedService.getMapList(queryWrapper);
-            if(V.isEmpty(mapList)){
-                return;
+        }
+
+        // 获取匹配结果的mapList
+        List<Map<String, Object>> mapList = referencedService.getMapList(queryWrapper);
+        if(V.isEmpty(mapList)){
+            return;
+        }
+        // 将结果list转换成map
+        Map<String, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
+        // 转换列名为字段名（MyBatis-plus的getMapList结果会将列名转成驼峰式）
+        String referencedEntityPkFieldName = S.toLowerCaseCamel(referencedEntityPkName);
+        for(Map<String, Object> map : mapList){
+            Object pkVal = map.get(referencedEntityPkFieldName);
+            if(pkVal != null){
+                referencedEntityPk2DataMap.put(String.valueOf(pkVal), map);
             }
-            // 将结果list转换成map
-            Map<String, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
-            // 转换列名为字段名（MyBatis-plus的getMapList结果会将列名转成驼峰式）
-            String referencedEntityPkFieldName = S.toLowerCaseCamel(referencedEntityPkName);
-            for(Map<String, Object> map : mapList){
-                Object pkVal = map.get(referencedEntityPkFieldName);
-                if(pkVal != null){
-                    referencedEntityPk2DataMap.put(String.valueOf(pkVal), map);
-                }
+        }
+        // 遍历list并赋值
+        for(Object annoObject : annoObjectList){
+            // 将数字类型转换成字符串，以便解决类型不一致的问题
+            String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
+            // 通过中间结果Map转换得到OrgId
+            if(V.notEmpty(middleTableResultMap)){
+                Object value = middleTableResultMap.get(annoObjectId);
+                annoObjectId = String.valueOf(value);
             }
-            // 遍历list并赋值
-            for(Object annoObject : annoObjectList){
-                // 将数字类型转换成字符串，以便解决类型不一致的问题
-                String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
-                Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectId);
-                if(relationMap != null){
-                    for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                        BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(S.toLowerCaseCamel(referencedGetterColumnNameList.get(i))));
-                    }
+            Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectId);
+            if(relationMap != null){
+                for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
+                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(S.toLowerCaseCamel(referencedGetterColumnNameList.get(i))));
                 }
             }
         }
+
     }
 
 }
