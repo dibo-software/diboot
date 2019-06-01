@@ -1,16 +1,14 @@
 package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 关联字段绑定
@@ -83,12 +81,37 @@ public class FieldBinder<T> extends BaseBinder<T> {
         String referencedEntityPkName = S.toSnakeCase(referencedEntityPrimaryKey);
         String annoObjectFkFieldName = S.toLowerCaseCamel(annoObjectForeignKey);
         // 提取主键pk列表
-        List pkList = BeanUtils.collectToList(annoObjectList, annoObjectFkFieldName);
-        // 构建查询条件
-        List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
-        selectColumns.add(referencedEntityPkName);
-        selectColumns.addAll(referencedGetterColumnNameList);
-        queryWrapper.select(S.toStringArray(selectColumns)).in(referencedEntityPkName, pkList);
+        List annoObjectForeignKeyList = BeanUtils.collectToList(annoObjectList, annoObjectFkFieldName);
+        if(V.isEmpty(annoObjectForeignKeyList)){
+            return;
+        }
+        // 将结果list转换成map
+        Map<String, Object> middleTableResultMap = null;
+        //@BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id")
+        //String orgName;
+        if(middleTable != null){
+            middleTableResultMap = middleTable.executeOneToOneQuery(annoObjectForeignKeyList);
+            if(V.notEmpty(middleTableResultMap)){
+                // 收集查询结果values集合
+                Collection middleTableColumnValueList = middleTableResultMap.values();
+                // 构建查询条件
+                List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
+                selectColumns.add(referencedEntityPkName);
+                selectColumns.addAll(referencedGetterColumnNameList);
+                queryWrapper.select(S.toStringArray(selectColumns)).in(S.toSnakeCase(referencedEntityPrimaryKey), middleTableColumnValueList);
+            }
+            else{
+                return;
+            }
+        }
+        else{
+            // 构建查询条件
+            List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
+            selectColumns.add(referencedEntityPkName);
+            selectColumns.addAll(referencedGetterColumnNameList);
+            queryWrapper.select(S.toStringArray(selectColumns)).in(referencedEntityPkName, annoObjectForeignKeyList);
+        }
+
         // 获取匹配结果的mapList
         List<Map<String, Object>> mapList = referencedService.getMapList(queryWrapper);
         if(V.isEmpty(mapList)){
@@ -108,6 +131,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
         for(Object annoObject : annoObjectList){
             // 将数字类型转换成字符串，以便解决类型不一致的问题
             String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
+            // 通过中间结果Map转换得到OrgId
+            if(V.notEmpty(middleTableResultMap)){
+                Object value = middleTableResultMap.get(annoObjectId);
+                annoObjectId = String.valueOf(value);
+            }
             Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectId);
             if(relationMap != null){
                 for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
@@ -115,6 +143,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 }
             }
         }
+
     }
 
 }

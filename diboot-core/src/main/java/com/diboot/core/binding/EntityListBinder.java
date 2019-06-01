@@ -45,32 +45,35 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         if(V.isEmpty(annoObjectForeignKeyList)){
             return;
         }
+        Map<String, List<T>> valueEntityListMap = new HashMap<>();
         // 解析中间表查询 1-N关联，如：
         //User.class @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
         if(middleTable != null){
-            // 构建查询SQL： SELECT user_id, role_id FROM user_role WHERE user_id IN (?)
-            String sql = middleTable.toSQL(annoObjectForeignKeyList);
-            // 执行查询并合并结果
-            String valueName = middleTable.getEqualsToRefEntityPkColumn(), keyName = middleTable.getEqualsToAnnoObjectFKColumn();
-            Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeResult(sql, annoObjectForeignKeyList, keyName, valueName);
+            Map<String, List> middleTableResultMap = middleTable.executeOneToManyQuery(annoObjectForeignKeyList);
             if(V.notEmpty(middleTableResultMap)){
                 // 收集查询结果values集合
-                List entityIdList = new ArrayList();
-                for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
-                    if(V.notEmpty(entry.getValue())){
-                        for(Object id : entry.getValue()){
-                            if(!entityIdList.contains(id)){
-                                entityIdList.add(id);
-                            }
-                        }
-                    }
-                }
+                List entityIdList = extractIdValueFromMap(middleTableResultMap);
                 // 构建查询条件
                 queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), entityIdList);
                 // 查询entity列表: List<Role>
                 List list = referencedService.getEntityList(queryWrapper);
-                // 绑定结果
-                bindingResultWithMiddleTable(S.toLowerCaseCamel(annoObjectForeignKey), list, middleTableResultMap);
+                // 转换entity列表为Map<ID, Entity>
+                Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
+                for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
+                    // List<roleId>
+                    List annoObjFKList = entry.getValue();
+                    if(V.isEmpty(annoObjFKList)){
+                        continue;
+                    }
+                    List<T> valueList = new ArrayList();
+                    for(Object obj : annoObjFKList){
+                        T ent = entityMap.get(String.valueOf(obj));
+                        if(ent != null){
+                            valueList.add(ent);
+                        }
+                    }
+                    valueEntityListMap.put(entry.getKey(), valueList);
+                }
             }
         }
         else{
@@ -78,58 +81,40 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), annoObjectForeignKeyList);
             // 查询entity列表
             List<T> list = referencedService.getEntityList(queryWrapper);
-            // 绑定结果
-            bindingResult(S.toLowerCaseCamel(referencedEntityPrimaryKey), list);
-        }
-    }
-
-    /***
-     * 基于中间表查询结果和entity列表绑定结果
-     * @param annoObjectForeignKey
-     * @param list
-     */
-    private <E> void bindingResultWithMiddleTable(String annoObjectForeignKey, List<E> list, Map<String, List> middleTableResultMap) {
-        if(V.isEmpty(list)){
-            return;
-        }
-        // 将 List<Role> 转换为 Map<Id,Role>
-        Map<String, E> entityMap = BeanUtils.convertToStringKeyObjectMap(list, annoObjectForeignKey);
-        // 将Map<String, List<Id>> 转换为 Map<String, List<Role>>
-        Map<String, List<E>> valueEntityMap = new HashMap<>(list.size());
-        for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
-            // List<roleId>
-            List annoObjFKList = entry.getValue();
-            if(V.notEmpty(annoObjFKList)){
-                List<E> valueList = new ArrayList();
-                for(Object obj : annoObjFKList){
-                    E ent = entityMap.get(String.valueOf(obj));
-                    if(ent != null){
-                        valueList.add(ent);
+            if(V.notEmpty(list)){
+                for(T entity : list){
+                    String keyValue = BeanUtils.getStringProperty(entity, S.toLowerCaseCamel(referencedEntityPrimaryKey));
+                    List<T> entityList = valueEntityListMap.get(keyValue);
+                    if(entityList == null){
+                        entityList = new ArrayList<>();
+                        valueEntityListMap.put(keyValue, entityList);
                     }
+                    entityList.add(entity);
                 }
-                valueEntityMap.put(entry.getKey(), valueList);
-            }
-            else{
-                log.warn("转换结果异常，中间关联条件数据不一致");
             }
         }
-        // 绑定
-        BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);
+        // 绑定结果
+        BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityListMap);
     }
 
-    private void bindingResult(String fkName, List<T> list) {
-        Map<String, List<T>> valueEntityListMap = new HashMap<>(list.size());
-        for(T entity : list){
-            String keyValue = BeanUtils.getStringProperty(entity, fkName);
-            List<T> entityList = valueEntityListMap.get(keyValue);
-            if(entityList == null){
-                entityList = new ArrayList<>();
-                valueEntityListMap.put(keyValue, entityList);
+    /**
+     * 从Map中提取ID的值
+     * @param middleTableResultMap
+     * @return
+     */
+    private List extractIdValueFromMap(Map<String, List> middleTableResultMap) {
+        List entityIdList = new ArrayList();
+        for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
+            if(V.isEmpty(entry.getValue())){
+                continue;
             }
-            entityList.add(entity);
+            for(Object id : entry.getValue()){
+                if(!entityIdList.contains(id)){
+                    entityIdList.add(id);
+                }
+            }
         }
-        // 绑定
-        BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityListMap);
+        return entityIdList;
     }
 
 }
