@@ -76,7 +76,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.deleted=0")
         // Organization organization;
         if(middleTable != null){
-            // 提取中间表查询SQL
+            // 提取中间表查询SQL: SELECT id, org_id FROM department WHERE id IN(?)
             String sql = middleTable.toSQL(annoObjectForeignKeyList);
             // 执行查询并合并结果
             String keyName = middleTable.getEqualsToRefEntityPkColumn(), valueName = middleTable.getEqualsToAnnoObjectFKColumn();
