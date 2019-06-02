@@ -110,6 +110,11 @@ public class BeanUtils {
             return Collections.emptyList();
         }
         List<T> resultList = new ArrayList<>();
+        // 类型相同，直接跳过
+        if(clazz.getName().equals(sourceList.get(0).getClass().getName())){
+            return sourceList;
+        }
+        // 不同，则转换
         try{
             for(Object source : sourceList){
                 T target = clazz.getConstructor().newInstance();

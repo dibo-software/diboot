@@ -1,6 +1,7 @@
 package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.diboot.core.binding.manager.AnnotationBindingManager;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
@@ -83,14 +84,9 @@ public abstract class BaseCrudRestController extends BaseController {
 		// 构建分页
 		Pagination pagination = buildPagination(request);
 		// 查询当前页的数据
-		List entityList = getService().getEntityList(queryWrapper, pagination);
-		// 转换为VO
-		if(V.notEmpty(entityList) && !clazz.getName().equals(entityList.get(0).getClass().getName())){
-			entityList = BeanUtils.convertList(entityList, clazz);
-		}
-		entityList = getService().getViewObjectList(entityList, clazz);
+		List<T> voList = getService().getViewObjectList(queryWrapper, pagination, clazz);
 		// 返回结果
-		return new JsonResult(Status.OK, entityList).bindPagination(pagination);
+		return new JsonResult(Status.OK, voList).bindPagination(pagination);
 	}
 
 	/***
@@ -195,6 +191,19 @@ public abstract class BaseCrudRestController extends BaseController {
 			log.warn("删除操作未成功，model="+model.getClass().getSimpleName()+", id="+id);
 			return new JsonResult(Status.FAIL_OPERATION);
 		}
+	}
+
+	/**
+	 * 自动转换为VO并绑定关联关系
+	 * @param entityList
+	 * @param voClass
+	 * @param <VO>
+	 * @return
+	 */
+	protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass){
+		// 转换为VO
+		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, voClass);
+		return voList;
 	}
 
 	//============= 供子类继承重写的方法 =================

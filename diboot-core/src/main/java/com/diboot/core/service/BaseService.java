@@ -149,15 +149,6 @@ public interface BaseService<T>{
     <VO> VO getViewObject(Serializable id, Class<VO> voClass);
 
     /**
-     * 获取View Object对象列表
-     * @param entityList
-     * @param voClass vo类
-     * @return
-     * @throws Exception
-     */
-    <VO> List<VO> getViewObjectList(List<T> entityList, Class<VO> voClass);
-
-    /**
      * 根据查询条件获取vo列表
      * @param queryWrapper
      * @param pagination
