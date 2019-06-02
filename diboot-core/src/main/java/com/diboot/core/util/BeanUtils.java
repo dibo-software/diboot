@@ -135,49 +135,50 @@ public class BeanUtils {
             PropertyDescriptor[] propertyDescriptors =  beanInfo.getPropertyDescriptors();
             for (PropertyDescriptor descriptor : propertyDescriptors) {
                 String propertyName = descriptor.getName();
-                if (propMap.containsKey(propertyName)){
-                    Object value = propMap.get(propertyName);
-                    Class type = descriptor.getWriteMethod().getParameterTypes()[0];
-                    Object[] args = new Object[1];
-                    String fieldType = type.getSimpleName();
-                    // 类型不一致，需转型
-                    if(!value.getClass().getTypeName().equals(fieldType)){
-                        if(value instanceof String){
-                            // String to Date
-                            if(fieldType.equalsIgnoreCase(Date.class.getSimpleName())){
-                                args[0] = D.fuzzyConvert((String)value);
-                            }
-                            // Map中的String型转换为其他型
-                            else if(fieldType.equalsIgnoreCase(Boolean.class.getSimpleName())){
-                                args[0] = V.isTrue((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Integer.class.getSimpleName()) || "int".equals(fieldType)) {
-                                args[0] = Integer.parseInt((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Long.class.getSimpleName())) {
-                                args[0] = Long.parseLong((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Double.class.getSimpleName())) {
-                                args[0] = Double.parseDouble((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Float.class.getSimpleName())) {
-                                args[0] = Float.parseFloat((String)value);
-                            }
-                            else{
-                                args[0] = value;
-                                log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型="+fieldType);
-                            }
+                if (!propMap.containsKey(propertyName)){
+                    continue;
+                }
+                Object value = propMap.get(propertyName);
+                Class type = descriptor.getWriteMethod().getParameterTypes()[0];
+                Object[] args = new Object[1];
+                String fieldType = type.getName();
+                // 类型不一致，需转型
+                if(!value.getClass().getTypeName().equals(fieldType)){
+                    if(value instanceof String){
+                        // String to Date
+                        if(fieldType.equalsIgnoreCase(Date.class.getName())){
+                            args[0] = D.fuzzyConvert((String)value);
+                        }
+                        // Map中的String型转换为其他型
+                        else if(fieldType.equalsIgnoreCase(Boolean.class.getName())){
+                            args[0] = V.isTrue((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Integer.class.getName()) || "int".equals(fieldType)) {
+                            args[0] = Integer.parseInt((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Long.class.getName())) {
+                            args[0] = Long.parseLong((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Double.class.getName())) {
+                            args[0] = Double.parseDouble((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Float.class.getName())) {
+                            args[0] = Float.parseFloat((String)value);
                         }
                         else{
                             args[0] = value;
-                            log.warn("类型不一致，且Map中的value非String类型，暂无法自动绑定，请手动转型一致后调用！value="+value);
+                            log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型: {} vs {} ", value.getClass().getTypeName(), fieldType);
                         }
                     }
                     else{
                         args[0] = value;
+                        log.warn("类型不一致，且Map中的value非String类型，暂无法自动绑定，请手动转型一致后调用！ {} vs {} ", value.getClass().getTypeName(), fieldType);
                     }
-                    descriptor.getWriteMethod().invoke(model, args);
                 }
+                else{
+                    args[0] = value;
+                }
+                descriptor.getWriteMethod().invoke(model, args);
             }
         }
         catch (Exception e){
@@ -462,15 +463,22 @@ public class BeanUtils {
      * @param <E>
      */
     public static <E> void bindPropValueOfList(String setterFieldName, List<E> fromList, String getterFieldName, Map valueMatchMap){
-        if(V.isEmpty(fromList)){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
         try{
             for(E object : fromList){
-                // 获取到当前的属性值
-                String fieldValue = getStringProperty(object, getterFieldName);
-                // 获取到当前的value
-                Object value = valueMatchMap.get(fieldValue);
+                Object fieldValue = getProperty(object, getterFieldName);
+                Object value = null;
+                if(valueMatchMap.containsKey(fieldValue)){
+                    value = valueMatchMap.get(fieldValue);
+                }
+                else{
+                    // 获取到当前的属性值
+                    String fieldValueStr = getStringProperty(object, getterFieldName);
+                    // 获取到当前的value
+                    value = valueMatchMap.get(fieldValueStr);
+                }
                 // 赋值
                 setProperty(object, setterFieldName, value);
             }

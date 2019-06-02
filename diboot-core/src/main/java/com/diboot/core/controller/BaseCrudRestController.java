@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.core.vo.Pagination;
@@ -61,18 +61,38 @@ public abstract class BaseCrudRestController extends BaseController {
 	 * @return JsonResult
 	 * @throws Exception
 	 */
-	protected <T> JsonResult getEntityListWithPaging(HttpServletRequest request, Wrapper queryWrapper, Class<T> clazz) throws Exception {
+	protected JsonResult getEntityListWithPaging(HttpServletRequest request, Wrapper queryWrapper) throws Exception {
 		// 构建分页
 		Pagination pagination = buildPagination(request);
-		log.debug(JSON.stringify(pagination));
 		// 查询当前页的数据
 		List entityList = getService().getEntityList(queryWrapper, pagination);
-		// 转换为VO
-		entityList = BeanUtils.convertList(entityList, clazz);
 		// 返回结果
 		return new JsonResult(Status.OK, entityList).bindPagination(pagination);
 	}
-	
+
+	/***
+	 * 获取某VO资源的集合
+	 * <p>
+	 * url参数示例: /metadata/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+	 * </p>
+	 * @param request
+	 * @return JsonResult
+	 * @throws Exception
+	 */
+	protected <T> JsonResult getVOListWithPaging(HttpServletRequest request, Wrapper queryWrapper, Class<T> clazz) throws Exception {
+		// 构建分页
+		Pagination pagination = buildPagination(request);
+		// 查询当前页的数据
+		List entityList = getService().getEntityList(queryWrapper, pagination);
+		// 转换为VO
+		if(V.notEmpty(entityList) && !clazz.getName().equals(entityList.get(0).getClass().getName())){
+			entityList = BeanUtils.convertList(entityList, clazz);
+		}
+		entityList = getService().getViewObjectList(entityList, clazz);
+		// 返回结果
+		return new JsonResult(Status.OK, entityList).bindPagination(pagination);
+	}
+
 	/***
 	 * 根据id获取某资源对象
 	 * @param id

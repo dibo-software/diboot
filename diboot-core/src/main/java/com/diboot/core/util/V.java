@@ -156,11 +156,11 @@ public class V {
         }
         boolean valid = str.matches("^1\\d{10}$");
         if(!valid){
-        	valid = str.matches("^0\\d{2,3}-?\\d{7,8}$");
+        	valid = str.matches("^[0|4]\\d{2,3}-?\\d{7,8}$");
 		}
         return valid;
-    }  
-      
+    }
+
     /** 
      * 判断是否为整型数字
      * @param str 

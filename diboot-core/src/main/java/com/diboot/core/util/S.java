@@ -293,20 +293,4 @@ public class S extends StringUtils{
 		return null;
 	}
 
-	/***
-	 * 批量替换关键字
-	 * @param text
-	 * @param searchList
-	 * @param replacementList
-	 * @return
-	 */
-	public static String replaceEach(String text, List<String> searchList, List<String> replacementList){
-		if(V.isEmpty(searchList) || V.isEmpty(replacementList)){
-			return text;
-		}
-		String[] searchArray = searchList.toArray(new String[searchList.size()]);
-		String[] replacementArray = replacementList.toArray(new String[replacementList.size()]);
-		return replaceEach(text, searchArray, replacementArray);
-	}
-
 }

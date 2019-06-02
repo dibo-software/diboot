@@ -38,11 +38,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
 
 	/***
-	 * VO类与注解的缓存
-	 */
-	private static Map<String, Map<String, Annotation>> CLASS_ANNOTATION_MAP = new ConcurrentHashMap<>();
-
-	/***
 	 * 获取当前的Mapper对象
 	 * @return
 	 */
@@ -183,6 +178,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<KeyValue> getKeyValueList(Wrapper queryWrapper) {
 		String sqlSelect = queryWrapper.getSqlSelect();
+		// 最多支持3个属性：k, v, ext
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
 			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Metadata>().lambda().select(Metadata::getItemName, Metadata::getItemValue)");
 			return Collections.emptyList();
@@ -275,10 +271,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return null;
 		}
 		IPage<T> page = new Page<T>()
-			.setCurrent(pagination.get_pageIndex())
-			.setSize(pagination.get_pageSize())
+			.setCurrent(pagination.getPageIndex())
+			.setSize(pagination.getPageSize())
 			// 如果前端传递过来了缓存的总数，则本次不再count统计
-			.setTotal(pagination.get_totalCount() > 0? -1 : pagination.get_totalCount())
+			.setTotal(pagination.getTotalCount() > 0? -1 : pagination.getTotalCount())
 			.setAscs(S.toSnakeCase(pagination.getAscList()))
 			.setDescs(S.toSnakeCase(pagination.getDescList()));
 		return page;

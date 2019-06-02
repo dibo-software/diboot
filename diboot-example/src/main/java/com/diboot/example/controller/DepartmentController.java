@@ -34,23 +34,23 @@ public class DepartmentController extends BaseCrudRestController {
     private DepartmentService departmentService;
 
     /***
-     * 默认的分页实现
+     * 默认Entity的分页实现
      * <p>
-     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=id&code=TST
      * </p>
      * @return
      * @throws Exception
      */
     @GetMapping("/list")
-    public JsonResult getDefaultVOList(HttpServletRequest request) throws Exception{
+    public JsonResult getEntityList(HttpServletRequest request) throws Exception{
         QueryWrapper<Department> queryWrapper = buildQuery(request);
-        return super.getEntityListWithPaging(request, queryWrapper, DepartmentVO.class);
+        return super.getEntityListWithPaging(request, queryWrapper);
     }
 
     /***
-     * 默认的分页实现
+     * 自定义VO的分页实现
      * <p>
-     * url参数示例: /listVo?page.size=20&page.index=1&page.orderBy=itemValue&type=GENDAR
+     * url参数示例: /listVo?_pageSize=20&_pageIndex=1&_orderBy=id&code=TST
      * </p>
      * @return
      * @throws Exception
@@ -58,11 +58,7 @@ public class DepartmentController extends BaseCrudRestController {
     @GetMapping("/listVo")
     public JsonResult getCustomVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Department> queryWrapper = buildQuery(request);
-        // 查询当前页的数据
-        List entityList = departmentService.getEntityList(queryWrapper);
-        List voList = departmentService.getViewObjectList(entityList, DepartmentVO.class);
-        // 返回结果
-        return new JsonResult(Status.OK, voList);
+        return super.getVOListWithPaging(request, queryWrapper, DepartmentVO.class);
     }
 
     @GetMapping("/kv")
