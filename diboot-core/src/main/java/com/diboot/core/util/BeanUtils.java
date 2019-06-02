@@ -463,15 +463,22 @@ public class BeanUtils {
      * @param <E>
      */
     public static <E> void bindPropValueOfList(String setterFieldName, List<E> fromList, String getterFieldName, Map valueMatchMap){
-        if(V.isEmpty(fromList)){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
         try{
             for(E object : fromList){
-                // 获取到当前的属性值
-                String fieldValue = getStringProperty(object, getterFieldName);
-                // 获取到当前的value
-                Object value = valueMatchMap.get(fieldValue);
+                Object fieldValue = getProperty(object, getterFieldName);
+                Object value = null;
+                if(valueMatchMap.containsKey(fieldValue)){
+                    value = valueMatchMap.get(fieldValue);
+                }
+                else{
+                    // 获取到当前的属性值
+                    String fieldValueStr = getStringProperty(object, getterFieldName);
+                    // 获取到当前的value
+                    value = valueMatchMap.get(fieldValueStr);
+                }
                 // 赋值
                 setProperty(object, setterFieldName, value);
             }

@@ -19,11 +19,19 @@ import java.util.Map;
 public class JSON extends JSONObject{
 	private static final Logger log = LoggerFactory.getLogger(JSON.class);
 
+	/**
+	 * 序列化配置
+	 */
 	private static SerializeConfig serializeConfig = new SerializeConfig();
 	static {
 		serializeConfig.put(Date.class, new SimpleDateFormatSerializer(D.FORMAT_DATETIME_Y4MDHM));
 	}
 
+	/**
+	 * 将Java对象转换为Json String
+	 * @param object
+	 * @return
+	 */
 	public static String stringify(Object object){
 		return toJSONString(object, serializeConfig);
 	}

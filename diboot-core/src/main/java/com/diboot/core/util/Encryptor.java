@@ -18,14 +18,26 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Encryptor {
 	private static final Logger log = LoggerFactory.getLogger(Encryptor.class);
-	
+
+	/**
+	 * 算法
+	 */
 	private static final String KEY_ALGORITHM = "AES";
 	private static final String CIPHER_ALGORITHM = "AES/ECB/PKCS5PADDING";
-	private static final String KEY_DEFAULT = V.notEmpty(BaseConfig.getProperty("diboot.encryptor.seed"))? BaseConfig.getProperty("diboot.encryptor.seed") : "Dibo2017M";
+	/**
+	 * 默认加密seed（可通过配置文件）
+	 */
+	private static final String KEY_DEFAULT = V.notEmpty(BaseConfig.getProperty("diboot.encryptor.seed"))? BaseConfig.getProperty("diboot.encryptor.seed") : "DibootV2";
+
 	private static final String KEY_FILL = "abcdefghijklmnop";
-	// 加密Cipher缓存
+
+	/**
+	 * 加密Cipher缓存
+ 	 */
 	private static Map<String, Cipher> encryptorMap = new ConcurrentHashMap<>();
-	// 解密Cipher缓存
+	/**
+	 * 解密Cipher缓存
+	 */
 	private static Map<String, Cipher> decryptorMap = new ConcurrentHashMap<>();
 
 	/**

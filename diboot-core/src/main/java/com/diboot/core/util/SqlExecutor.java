@@ -98,7 +98,6 @@ public class SqlExecutor {
 
     /**
      * 执行查询和合并结果并将结果Map的key类型转成String
-     *
      * @param sql
      * @param params
      * @return
