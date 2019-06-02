@@ -12,6 +12,7 @@ import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.entity.Metadata;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.MetadataService;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
@@ -31,6 +32,22 @@ import java.util.List;
  */
 public class AnnotationBindingManager {
     private static final Logger log = LoggerFactory.getLogger(AnnotationBindingManager.class);
+
+    /**
+     * 自动转换和绑定VO中的注解关联
+     * @param entityList
+     * @param voClass
+     * @param <E>
+     * @param <VO>
+     * @return
+     */
+    public static <E, VO> List<VO> autoConvertAndBind(List<E> entityList, Class<VO> voClass){
+        // 转换为VO列表
+        List<VO> voList = BeanUtils.convertList(entityList, voClass);
+        // 自动绑定关联对象
+        autoBind(voList);
+        return voList;
+    }
 
     /**
      * 自动绑定关联对象

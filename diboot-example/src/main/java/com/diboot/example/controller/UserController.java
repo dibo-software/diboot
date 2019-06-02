@@ -29,7 +29,7 @@ public class UserController extends BaseCrudRestController {
     private UserService userService;
 
     /***
-     * 默认Entity的分页实现
+     * 查询ViewObject的分页数据 (此为继承父类方法的使用样例，更多自定义案例请参考DepartmentController)
      * <p>
      * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=username&gender=M
      * </p>
@@ -37,21 +37,21 @@ public class UserController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/list")
-    public JsonResult getDefaultVOList(HttpServletRequest request) throws Exception{
+    public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<User> queryWrapper = buildQuery(request);
-        return super.getEntityListWithPaging(request, queryWrapper);
+        return super.getVOListWithPaging(request, queryWrapper, UserVO.class);
     }
 
     /***
-     * 自定义VO的分页实现
+     * 查询ViewObject的分页数据 (此为继承父类方法的使用样例，更多自定义案例请参考DepartmentController)
      * <p>
-     * url参数示例: /listVo?_pageSize=20&_pageIndex=1&_orderBy=username&gender=M
+     * url参数示例: /listAll?_orderBy=username&gender=M
      * </p>
      * @return
      * @throws Exception
      */
-    @GetMapping("/listVo")
-    public JsonResult getCustomVOList(HttpServletRequest request) throws Exception{
+    @GetMapping("/listAll")
+    public JsonResult getAllVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<User> queryWrapper = buildQuery(request);
         return super.getVOListWithPaging(request, queryWrapper, UserVO.class);
     }

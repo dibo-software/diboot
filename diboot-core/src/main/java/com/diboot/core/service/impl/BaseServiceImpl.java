@@ -22,13 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /***
  * CRUD通用接口实现类
- * @author Mazc
+ * @author Mazhicheng
  * @param <M> mapper类
  * @param <T> entity类
  * @version 2.0
@@ -232,32 +230,15 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<T> enityList = new ArrayList<>();
 		enityList.add(entity);
 		// 绑定
-		List<VO> voList = getViewObjectList(enityList, voClass);
+		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(enityList, voClass);
 		return voList.get(0);
-	}
-
-	/**
-	 * 获取View Object对象列表
-	 * @param entityList
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public <VO> List<VO> getViewObjectList(List<T> entityList, Class<VO> voClass){
-		// 转换为VO列表
-		List<VO> voList = BeanUtils.convertList(entityList, voClass);
-		// 自动绑定关联对象
-		AnnotationBindingManager.autoBind(voList);
-		return voList;
 	}
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		List<T> entityList = getEntityList(queryWrapper, null);
-		// 转换为VO列表
-		List<VO> voList = BeanUtils.convertList(entityList, voClass);
-		// 自动绑定关联对象
-		AnnotationBindingManager.autoBind(voList);
+		List<T> entityList = getEntityList(queryWrapper, pagination);
+		// 自动转换为VO并绑定关联对象
+		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, voClass);
 		return voList;
 	}
 

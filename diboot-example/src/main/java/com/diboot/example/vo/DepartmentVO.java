@@ -19,7 +19,7 @@ public class DepartmentVO extends Department {
     private static final long serialVersionUID = -362116388664907913L;
 
     // 直接关联Entity中的某字段
-    @BindField(entity = Organization.class, field = "name", condition = "org_id=id")
+    @BindField(entity = Organization.class, field = "name", condition = "this.org_id=id")
     private String orgName;
 
     // 直接关联Entity
@@ -27,7 +27,7 @@ public class DepartmentVO extends Department {
     private Organization organization;
 
     // 直接关联多个Entity
-    @BindEntityList(entity = Department.class, condition = "id=parent_id")
+    @BindEntityList(entity = Department.class, condition = "this.id=parent_id")
     private List<Department> children;
 
 }
