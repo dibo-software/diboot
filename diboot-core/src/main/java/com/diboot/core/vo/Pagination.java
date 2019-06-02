@@ -54,7 +54,7 @@ public class Pagination implements Serializable {
         set_pageIndex(pageIndex);
     }
 
-    public int get_pageIndex() {
+    public int getPageIndex() {
         return _pageIndex;
     }
 
@@ -62,7 +62,7 @@ public class Pagination implements Serializable {
         this._pageIndex = _pageIndex;
     }
 
-    public int get_pageSize() {
+    public int getPageSize() {
         return _pageSize;
     }
 
@@ -74,7 +74,7 @@ public class Pagination implements Serializable {
         this._pageSize = _pageSize;
     }
 
-    public long get_totalCount() {
+    public long getTotalCount() {
         return _totalCount;
     }
 
@@ -127,7 +127,7 @@ public class Pagination implements Serializable {
      * 获取总的页数
      * @return
      */
-    public int get_totalPage() {
+    public int getTotalPage() {
         if(_totalCount <= 0){
             return 0;
         }

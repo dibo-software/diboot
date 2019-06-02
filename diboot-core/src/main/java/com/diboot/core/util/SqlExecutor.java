@@ -39,7 +39,7 @@ public class SqlExecutor {
                 log.warn("查询参数集合数量过多, size={}，请检查调用是否合理！", params.size());
             }
         }
-        log.debug("==>\tSQL: "+sql);
+        log.debug("==>  SQL: "+sql);
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
             if(V.notEmpty(params)){
                 for(int i=0; i<params.size(); i++){
@@ -60,7 +60,7 @@ public class SqlExecutor {
                 }
                 rs.close();
             }
-            log.debug("<==\t"+JSON.stringify(mapList));
+            log.debug("<==  "+JSON.stringify(mapList));
             return mapList;
         }
         catch(Exception e){
