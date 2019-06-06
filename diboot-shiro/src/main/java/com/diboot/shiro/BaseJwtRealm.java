@@ -1,9 +1,7 @@
 package com.diboot.shiro;
 
-import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
@@ -23,6 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
+ */
 public class BaseJwtRealm extends AuthorizingRealm {
 
     @Autowired

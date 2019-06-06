@@ -5,7 +5,7 @@ import com.diboot.core.entity.BaseEntity;
 import lombok.Data;
 
 /**
- * @author Yangz
+ * @author Yangzhao
  * @version v2.0
  * @date 2019/6/6
  */

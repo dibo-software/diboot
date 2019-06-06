@@ -4,6 +4,12 @@ import com.diboot.core.entity.BaseEntity;
 import com.diboot.shiro.BaseJwtAuthenticationToken;
 import com.diboot.shiro.config.AuthType;
 
+/***
+ * 认证方式接口
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
+ */
 public interface AuthWayService {
 
     /***

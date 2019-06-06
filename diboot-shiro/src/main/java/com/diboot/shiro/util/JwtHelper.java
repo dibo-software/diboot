@@ -13,9 +13,9 @@ import java.util.Date;
 
 /**
  * Token相关操作类
- * @author Mazc@dibo.ltd
- * @version 2017/9/2
- *
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
  */
 public class JwtHelper {
     private static final Logger logger = LoggerFactory.getLogger(JwtHelper.class);

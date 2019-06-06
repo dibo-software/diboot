@@ -2,6 +2,12 @@ package com.diboot.shiro.config;
 
 import lombok.Data;
 
+/***
+ * 认证方式
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
+ */
 public enum AuthType {
 
     USERNAME_PASSWORD(1, true, "账号密码"),

@@ -21,9 +21,9 @@ import java.io.PrintWriter;
 
 /**
  * JWT 认证过滤器
- * @author Mazc@dibo.ltd
- * @version 2018/1/6
- *
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
  */
 public class BaseJwtAuthenticationFilter extends BasicHttpAuthenticationFilter {
     private static final Logger logger =  LoggerFactory.getLogger(BaseJwtAuthenticationFilter.class);
