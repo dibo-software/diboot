@@ -1,9 +1,9 @@
-package com.diboot.example.service.impl;
+package com.diboot.shiro.service.impl;
 
 import com.diboot.core.service.impl.BaseServiceImpl;
-import com.diboot.example.entity.Role;
-import com.diboot.example.mapper.RoleMapper;
-import com.diboot.example.service.RoleService;
+import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.mapper.RoleMapper;
+import com.diboot.shiro.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

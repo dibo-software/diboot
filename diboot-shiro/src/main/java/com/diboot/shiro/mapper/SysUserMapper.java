@@ -1,7 +1,7 @@
-package com.diboot.example.mapper;
+package com.diboot.shiro.mapper;
 
 import com.diboot.core.mapper.BaseCrudMapper;
-import com.diboot.example.entity.Role;
+import com.diboot.shiro.entity.SysUser;
 
 /**
  * 员工Mapper
@@ -9,7 +9,7 @@ import com.diboot.example.entity.Role;
  * @version 2018/12/22
  * Copyright © www.dibo.ltd
  */
-public interface RoleMapper extends BaseCrudMapper<Role> {
+public interface SysUserMapper extends BaseCrudMapper<SysUser> {
 
 }
 

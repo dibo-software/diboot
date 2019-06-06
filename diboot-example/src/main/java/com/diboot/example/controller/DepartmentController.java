@@ -2,7 +2,6 @@ package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
@@ -14,6 +13,8 @@ import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Organization;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -43,6 +44,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("department:list")
     @GetMapping("/list")
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Department> queryWrapper = buildQuery(request);

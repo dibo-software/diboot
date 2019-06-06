@@ -1,7 +1,7 @@
-package com.diboot.example.service;
+package com.diboot.shiro.service;
 
 import com.diboot.core.service.BaseService;
-import com.diboot.example.entity.Role;
+import com.diboot.shiro.entity.Role;
 
 /**
  * 员工相关Service
