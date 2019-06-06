@@ -22,13 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /***
  * CRUD通用接口实现类
- * @author Mazc
+ * @author Mazhicheng
  * @param <M> mapper类
  * @param <T> entity类
  * @version 2.0
@@ -36,11 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl<M, T> implements BaseService<T> {
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
-
-	/***
-	 * VO类与注解的缓存
-	 */
-	private static Map<String, Map<String, Annotation>> CLASS_ANNOTATION_MAP = new ConcurrentHashMap<>();
 
 	/***
 	 * 获取当前的Mapper对象
@@ -183,8 +176,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<KeyValue> getKeyValueList(Wrapper queryWrapper) {
 		String sqlSelect = queryWrapper.getSqlSelect();
-		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) != 1){
-			log.error("调用错误: getKeyValueList必须用select依次指定返回的键值字段，如: new QueryWrapper<Metadata>().lambda().select(Metadata::getItemName, Metadata::getItemValue)");
+		// 最多支持3个属性：k, v, ext
+		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
+			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Metadata>().lambda().select(Metadata::getItemName, Metadata::getItemValue)");
 			return Collections.emptyList();
 		}
 		// 获取mapList
@@ -198,6 +192,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		for(Map<String, Object> map : mapList){
 			if(map.get(keyValueArray[0]) != null){
 				KeyValue kv = new KeyValue((String)map.get(keyValueArray[0]), map.get(keyValueArray[1]));
+				if(keyValueArray.length > 2){
+					kv.setExt(map.get(keyValueArray[2]));
+				}
 				keyValueList.add(kv);
 			}
 		}
@@ -233,32 +230,15 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<T> enityList = new ArrayList<>();
 		enityList.add(entity);
 		// 绑定
-		List<VO> voList = getViewObjectList(enityList, voClass);
+		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(enityList, voClass);
 		return voList.get(0);
-	}
-
-	/**
-	 * 获取View Object对象列表
-	 * @param entityList
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public <VO> List<VO> getViewObjectList(List<T> entityList, Class<VO> voClass){
-		// 转换为VO列表
-		List<VO> voList = BeanUtils.convertList(entityList, voClass);
-		// 自动绑定关联对象
-		AnnotationBindingManager.autoBind(voList);
-		return voList;
 	}
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		List<T> entityList = getEntityList(queryWrapper, null);
-		// 转换为VO列表
-		List<VO> voList = BeanUtils.convertList(entityList, voClass);
-		// 自动绑定关联对象
-		AnnotationBindingManager.autoBind(voList);
+		List<T> entityList = getEntityList(queryWrapper, pagination);
+		// 自动转换为VO并绑定关联对象
+		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, voClass);
 		return voList;
 	}
 
@@ -272,10 +252,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return null;
 		}
 		IPage<T> page = new Page<T>()
-			.setCurrent(pagination.get_pageIndex())
-			.setSize(pagination.get_pageSize())
+			.setCurrent(pagination.getPageIndex())
+			.setSize(pagination.getPageSize())
 			// 如果前端传递过来了缓存的总数，则本次不再count统计
-			.setTotal(pagination.get_totalCount() > 0? -1 : pagination.get_totalCount())
+			.setTotal(pagination.getTotalCount() > 0? -1 : pagination.getTotalCount())
 			.setAscs(S.toSnakeCase(pagination.getAscList()))
 			.setDescs(S.toSnakeCase(pagination.getDescList()));
 		return page;

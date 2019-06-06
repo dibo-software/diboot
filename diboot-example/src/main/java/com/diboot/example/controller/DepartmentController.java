@@ -7,11 +7,14 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Organization;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -34,41 +37,55 @@ public class DepartmentController extends BaseCrudRestController {
     private DepartmentService departmentService;
 
     /***
-     * 默认的分页实现
+     * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
-     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=id&code=TST
      * </p>
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("department:list")
     @GetMapping("/list")
-    public JsonResult getDefaultVOList(HttpServletRequest request) throws Exception{
+    public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Department> queryWrapper = buildQuery(request);
-        return super.getEntityListWithPaging(request, queryWrapper, DepartmentVO.class);
+        // 构建分页
+        Pagination pagination = buildPagination(request);
+        // 查询当前页的Entity主表数据
+        List entityList = getService().getEntityList(queryWrapper, pagination);
+        // 自动转换VO中注解绑定的关联
+        List<DepartmentVO> voList = super.convertToVoAndBindRelations(entityList, DepartmentVO.class);
+        // 返回结果
+        return new JsonResult(Status.OK, voList).bindPagination(pagination);
     }
 
     /***
-     * 默认的分页实现
+     * 查询ViewObject全部数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
-     * url参数示例: /listVo?page.size=20&page.index=1&page.orderBy=itemValue&type=GENDAR
+     * url参数示例: /listAll?_orderBy=id&code=TST
      * </p>
      * @return
      * @throws Exception
      */
-    @GetMapping("/listVo")
-    public JsonResult getCustomVOList(HttpServletRequest request) throws Exception{
+    @GetMapping("/listAll")
+    public JsonResult getAllVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Department> queryWrapper = buildQuery(request);
-        // 查询当前页的数据
-        List entityList = departmentService.getEntityList(queryWrapper);
-        List voList = departmentService.getViewObjectList(entityList, DepartmentVO.class);
+        // 查询当前页的Entity主表数据
+        List entityList = getService().getEntityList(queryWrapper);
+        // 自动转换VO中注解绑定的关联
+        List<DepartmentVO> voList = super.convertToVoAndBindRelations(entityList, DepartmentVO.class);
         // 返回结果
         return new JsonResult(Status.OK, voList);
     }
 
+    /**
+     * ID-Name的映射键值对，用于前端Select控件筛选等
+     * @param request
+     * @return
+     */
     @GetMapping("/kv")
     public JsonResult getKVPairList(HttpServletRequest request){
         Wrapper wrapper = new QueryWrapper<Department>().lambda()
-            .select(Department::getName, Department::getId);
+            .select(Department::getName, Department::getId, Department::getCode);
         List<KeyValue> list = departmentService.getKeyValueList(wrapper);
         return new JsonResult(list);
     }

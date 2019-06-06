@@ -1,0 +1,11 @@
+{
+  "name": "diboot-core-docs",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "serve": "vuepress dev ./",
+    "build": "vuepress build ./"
+  },
+  "author": "yang",
+  "license": "Apache-2.0"
+}

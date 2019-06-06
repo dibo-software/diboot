@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.User;
 import com.diboot.example.service.UserService;
@@ -28,35 +29,31 @@ public class UserController extends BaseCrudRestController {
     private UserService userService;
 
     /***
-     * 默认的分页实现
+     * 查询ViewObject的分页数据 (此为继承父类方法的使用样例，更多自定义案例请参考DepartmentController)
      * <p>
-     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=username&gender=M
      * </p>
      * @return
      * @throws Exception
      */
     @GetMapping("/list")
-    public JsonResult getDefaultVOList(HttpServletRequest request) throws Exception{
+    public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<User> queryWrapper = buildQuery(request);
-        return super.getEntityListWithPaging(request, queryWrapper, UserVO.class);
+        return super.getVOListWithPaging(request, queryWrapper, UserVO.class);
     }
 
     /***
-     * 默认的分页实现
+     * 查询ViewObject的分页数据 (此为继承父类方法的使用样例，更多自定义案例请参考DepartmentController)
      * <p>
-     * url参数示例: /listVo?page.size=20&page.index=1&page.orderBy=itemValue&type=GENDAR
+     * url参数示例: /listAll?_orderBy=username&gender=M
      * </p>
      * @return
      * @throws Exception
      */
-    @GetMapping("/listVo")
-    public JsonResult getCustomVOList(HttpServletRequest request) throws Exception{
+    @GetMapping("/listAll")
+    public JsonResult getAllVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<User> queryWrapper = buildQuery(request);
-        // 查询当前页的数据
-        List entityList = userService.getEntityList(queryWrapper);
-        List voList = userService.getViewObjectList(entityList, UserVO.class);
-        // 返回结果
-        return new JsonResult(Status.OK, voList);
+        return super.getVOListWithPaging(request, queryWrapper, UserVO.class);
     }
 
     @Override

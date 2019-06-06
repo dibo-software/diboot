@@ -110,6 +110,11 @@ public class BeanUtils {
             return Collections.emptyList();
         }
         List<T> resultList = new ArrayList<>();
+        // 类型相同，直接跳过
+        if(clazz.getName().equals(sourceList.get(0).getClass().getName())){
+            return sourceList;
+        }
+        // 不同，则转换
         try{
             for(Object source : sourceList){
                 T target = clazz.getConstructor().newInstance();
@@ -135,49 +140,50 @@ public class BeanUtils {
             PropertyDescriptor[] propertyDescriptors =  beanInfo.getPropertyDescriptors();
             for (PropertyDescriptor descriptor : propertyDescriptors) {
                 String propertyName = descriptor.getName();
-                if (propMap.containsKey(propertyName)){
-                    Object value = propMap.get(propertyName);
-                    Class type = descriptor.getWriteMethod().getParameterTypes()[0];
-                    Object[] args = new Object[1];
-                    String fieldType = type.getSimpleName();
-                    // 类型不一致，需转型
-                    if(!value.getClass().getTypeName().equals(fieldType)){
-                        if(value instanceof String){
-                            // String to Date
-                            if(fieldType.equalsIgnoreCase(Date.class.getSimpleName())){
-                                args[0] = D.fuzzyConvert((String)value);
-                            }
-                            // Map中的String型转换为其他型
-                            else if(fieldType.equalsIgnoreCase(Boolean.class.getSimpleName())){
-                                args[0] = V.isTrue((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Integer.class.getSimpleName()) || "int".equals(fieldType)) {
-                                args[0] = Integer.parseInt((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Long.class.getSimpleName())) {
-                                args[0] = Long.parseLong((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Double.class.getSimpleName())) {
-                                args[0] = Double.parseDouble((String)value);
-                            }
-                            else if (fieldType.equalsIgnoreCase(Float.class.getSimpleName())) {
-                                args[0] = Float.parseFloat((String)value);
-                            }
-                            else{
-                                args[0] = value;
-                                log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型="+fieldType);
-                            }
+                if (!propMap.containsKey(propertyName)){
+                    continue;
+                }
+                Object value = propMap.get(propertyName);
+                Class type = descriptor.getWriteMethod().getParameterTypes()[0];
+                Object[] args = new Object[1];
+                String fieldType = type.getName();
+                // 类型不一致，需转型
+                if(!value.getClass().getTypeName().equals(fieldType)){
+                    if(value instanceof String){
+                        // String to Date
+                        if(fieldType.equalsIgnoreCase(Date.class.getName())){
+                            args[0] = D.fuzzyConvert((String)value);
+                        }
+                        // Map中的String型转换为其他型
+                        else if(fieldType.equalsIgnoreCase(Boolean.class.getName())){
+                            args[0] = V.isTrue((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Integer.class.getName()) || "int".equals(fieldType)) {
+                            args[0] = Integer.parseInt((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Long.class.getName())) {
+                            args[0] = Long.parseLong((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Double.class.getName())) {
+                            args[0] = Double.parseDouble((String)value);
+                        }
+                        else if (fieldType.equalsIgnoreCase(Float.class.getName())) {
+                            args[0] = Float.parseFloat((String)value);
                         }
                         else{
                             args[0] = value;
-                            log.warn("类型不一致，且Map中的value非String类型，暂无法自动绑定，请手动转型一致后调用！value="+value);
+                            log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型: {} vs {} ", value.getClass().getTypeName(), fieldType);
                         }
                     }
                     else{
                         args[0] = value;
+                        log.warn("类型不一致，且Map中的value非String类型，暂无法自动绑定，请手动转型一致后调用！ {} vs {} ", value.getClass().getTypeName(), fieldType);
                     }
-                    descriptor.getWriteMethod().invoke(model, args);
                 }
+                else{
+                    args[0] = value;
+                }
+                descriptor.getWriteMethod().invoke(model, args);
             }
         }
         catch (Exception e){
@@ -197,6 +203,20 @@ public class BeanUtils {
     }
 
     /***
+     * 获取对象的属性值并转换为String
+     * @param obj
+     * @param field
+     * @return
+     */
+    public static String getStringProperty(Object obj, String field){
+        Object property = getProperty(obj, field);
+        if(property == null){
+            return null;
+        }
+        return String.valueOf(property);
+    }
+
+    /***
      * 设置属性值
      * @param obj
      * @param field
@@ -212,22 +232,22 @@ public class BeanUtils {
      * @param allLists
      * @return
      */
-    public static <T> Map<Object, T> convert2KeyObjectMap(List<T> allLists, String... fields){
+    public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, String... fields){
         if(allLists == null || allLists.isEmpty()){
             return null;
         }
-        Map<Object, T> allListMap = new LinkedHashMap<>(allLists.size());
+        Map<String, T> allListMap = new LinkedHashMap<>(allLists.size());
         // 转换为map
         try{
             for(T model : allLists){
-                Object key = null;
+                String key = null;
                 if(V.isEmpty(fields)){
                     //未指定字段，以id为key
-                    key = getProperty(model, Cons.FieldName.parentId.name());;
+                    key = getStringProperty(model, Cons.FieldName.parentId.name());
                 }
                 // 指定了一个字段，以该字段为key，类型同该字段
                 else if(fields.length == 1){
-                    key = getProperty(model, fields[0]);
+                    key = getStringProperty(model, fields[0]);
                 }
                 else{ // 指定了多个字段，以字段S.join的结果为key，类型为String
                     List list = new ArrayList();
@@ -240,7 +260,7 @@ public class BeanUtils {
                     allListMap.put(key, model);
                 }
                 else{
-                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，BeanUtils.convert2KeyModelMap转换结果需要确认!");
+                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
                 }
             }
         }
@@ -285,10 +305,10 @@ public class BeanUtils {
      */
     private static <T extends BaseEntity> void buildDeeperLevelTree(List<T> parentModels, List<T> allModels){
         List<T> deeperLevelModels = new ArrayList();
-        Map<Object, T> parentLevelModelMap = convert2KeyObjectMap(parentModels);
+        Map<String, T> parentLevelModelMap = convertToStringKeyObjectMap(parentModels);
         for(T model : allModels){
             Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            if(parentLevelModelMap.keySet().contains(parentId) && !parentId.equals(model.getId())){
+            if(parentLevelModelMap.keySet().contains(String.valueOf(parentId)) && !parentId.equals(model.getId())){
                 deeperLevelModels.add(model);
             }
         }
@@ -297,7 +317,7 @@ public class BeanUtils {
         }
         for(T model : deeperLevelModels){
             Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            T parentModel = parentLevelModelMap.get(parentId);
+            T parentModel = parentLevelModelMap.get(String.valueOf(parentId));
             if(parentModel!=null){
                 List children = (List) getProperty(parentModel, Cons.FieldName.children.name());
                 if(children == null){
@@ -448,15 +468,22 @@ public class BeanUtils {
      * @param <E>
      */
     public static <E> void bindPropValueOfList(String setterFieldName, List<E> fromList, String getterFieldName, Map valueMatchMap){
-        if(V.isEmpty(fromList)){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
         try{
             for(E object : fromList){
-                // 获取到当前的属性值
                 Object fieldValue = getProperty(object, getterFieldName);
-                // 获取到当前的value
-                Object value = valueMatchMap.get(String.valueOf(fieldValue));
+                Object value = null;
+                if(valueMatchMap.containsKey(fieldValue)){
+                    value = valueMatchMap.get(fieldValue);
+                }
+                else{
+                    // 获取到当前的属性值
+                    String fieldValueStr = getStringProperty(object, getterFieldName);
+                    // 获取到当前的value
+                    value = valueMatchMap.get(fieldValueStr);
+                }
                 // 赋值
                 setProperty(object, setterFieldName, value);
             }

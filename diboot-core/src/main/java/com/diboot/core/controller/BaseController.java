@@ -129,6 +129,9 @@ public class BaseController {
 			}
 			BeanUtils.bindProperties(page, pageParamMap);
 		}
+		if(log.isTraceEnabled()){
+			log.trace(JSON.stringify(page));
+		}
 		return page;
 	}
 

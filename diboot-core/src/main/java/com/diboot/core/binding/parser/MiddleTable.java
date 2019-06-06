@@ -2,11 +2,13 @@ package com.diboot.core.binding.parser;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
+import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 中间表
@@ -69,6 +71,40 @@ public class MiddleTable {
     }
 
     /**
+     * 执行1-1关联查询，得到关联映射Map
+     * @param annoObjectForeignKeyList
+     * @return
+     */
+    public Map<String, Object> executeOneToOneQuery(List annoObjectForeignKeyList){
+        // 提取中间表查询SQL: SELECT id, org_id FROM department WHERE id IN(?)
+        String sql = toSQL(annoObjectForeignKeyList);
+        // 执行查询并合并结果
+        //id
+        String keyName = getEqualsToAnnoObjectFKColumn(),
+        //org_id
+        valueName = getEqualsToRefEntityPkColumn();
+        Map<String, Object> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, annoObjectForeignKeyList, keyName, valueName);
+        return middleTableResultMap;
+    }
+
+    /**
+     * 执行1-N关联查询，得到关联映射Map
+     * @param annoObjectForeignKeyList
+     * @return
+     */
+    public Map<String, List> executeOneToManyQuery(List annoObjectForeignKeyList){
+        // 提取中间表查询SQL: SELECT user_id, role_id FROM user_role WHERE user_id IN(?)
+        String sql = toSQL(annoObjectForeignKeyList);
+        // 执行查询并合并结果
+        //user_id
+        String keyName = getEqualsToAnnoObjectFKColumn(),
+                //role_id
+                valueName = getEqualsToRefEntityPkColumn();
+        Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, annoObjectForeignKeyList, keyName, valueName);
+        return middleTableResultMap;
+    }
+
+    /**
      * 转换查询SQL
      * @param annoObjectForeignKeyList 注解外键值的列表，用于拼接SQL查询
      * @return
@@ -77,18 +113,11 @@ public class MiddleTable {
         if(V.isEmpty(annoObjectForeignKeyList)){
             return null;
         }
-        Object object = annoObjectForeignKeyList.get(0);
-        // 不需要加引号的类型
-        boolean noQuotes = object instanceof Integer
-                || object instanceof Long
-                || object instanceof Double
-                || object instanceof Float
-                || object instanceof BigDecimal;
         // 构建SQL
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT ").append(this.equalsToAnnoObjectFKColumn).append(Cons.SEPARATOR_COMMA)
-          .append(this.equalsToRefEntityPkColumn).append(" FROM ").append(this.table)
-          .append(" WHERE ").append(this.equalsToAnnoObjectFKColumn).append(" IN (");
+                .append(this.equalsToRefEntityPkColumn).append(" FROM ").append(this.table)
+                .append(" WHERE ").append(this.equalsToAnnoObjectFKColumn).append(" IN (");
         String params = S.repeat("?", ",", annoObjectForeignKeyList.size());
         sb.append(params).append(")");
         if(this.additionalConditions != null){

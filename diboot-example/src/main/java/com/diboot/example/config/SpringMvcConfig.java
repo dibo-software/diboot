@@ -5,6 +5,7 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -31,6 +32,7 @@ import java.util.List;
 @EnableAutoConfiguration
 @EnableTransactionManagement(proxyTargetClass=true)
 @ComponentScan(basePackages={"com.diboot"})
+@MapperScan({"com.diboot.*.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer{
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
 
