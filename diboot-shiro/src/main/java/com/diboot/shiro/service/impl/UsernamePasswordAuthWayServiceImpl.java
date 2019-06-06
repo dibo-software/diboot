@@ -14,6 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/***
+ * 用户名密码认证实现
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
+ */
 @Service
 public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
 

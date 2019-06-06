@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * @author Yangz@dibo.ltd
- * @version 2018/1/6
- *
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
  */
 @Component
 public class BaseJwtAuthenticationToken implements AuthenticationToken {

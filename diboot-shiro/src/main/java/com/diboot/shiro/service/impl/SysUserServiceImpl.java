@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * 员工相关Service
- * @author Mazhicheng
- * @version 2018/12/23
- * Copyright © www.dibo.ltd
+ * 用户相关Service
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
  */
 @Service
 @Slf4j

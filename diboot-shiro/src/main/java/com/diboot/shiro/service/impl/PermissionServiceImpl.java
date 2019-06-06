@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * 员工相关Service
+ * 许可授权相关Service
  * @author Mazhicheng
  * @version 2018/12/23
  * Copyright © www.dibo.ltd

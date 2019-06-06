@@ -20,6 +20,12 @@ import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/***
+ *
+ * @author Yangzhao
+ * @version v2.0
+ * @date 2019/6/6
+ */
 @Configuration
 public class ShiroConfig {
     private static final Logger logger = LoggerFactory.getLogger(ShiroConfig.class);
