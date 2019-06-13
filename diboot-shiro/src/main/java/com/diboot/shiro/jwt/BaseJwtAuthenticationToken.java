@@ -1,4 +1,4 @@
-package com.diboot.shiro;
+package com.diboot.shiro.jwt;
 
 import com.diboot.core.util.V;
 import com.diboot.shiro.config.AuthType;

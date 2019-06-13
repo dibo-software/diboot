@@ -1,7 +1,7 @@
 package com.diboot.shiro.service;
 
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.shiro.BaseJwtAuthenticationToken;
+import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.config.AuthType;
 
 /***

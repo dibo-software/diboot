@@ -2,6 +2,7 @@ package com.diboot.shiro.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.shiro.vo.RoleVO;
 import lombok.Data;
 
 import java.util.List;
@@ -30,6 +31,9 @@ public class SysUser extends BaseEntity {
 
     @TableField(exist = false)
     private List<Role> roleList;
+
+    @TableField(exist = false)
+    private List<RoleVO> roleVOList;
 
     @TableField(exist = false)
     private List<Permission> permissionList;

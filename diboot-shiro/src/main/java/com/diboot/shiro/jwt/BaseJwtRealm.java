@@ -1,11 +1,8 @@
-package com.diboot.shiro;
+package com.diboot.shiro.jwt;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
 import com.diboot.shiro.entity.Permission;
-import com.diboot.shiro.entity.Role;
-import com.diboot.shiro.entity.UserRole;
 import com.diboot.shiro.service.*;
 import com.diboot.shiro.vo.RoleVO;
 import org.apache.shiro.authc.AuthenticationException;
@@ -91,27 +88,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
         BaseEntity user = (BaseEntity) principals.getPrimaryPrincipal();
 
         // 根据用户类型与用户id获取roleList
-        QueryWrapper<UserRole> query = new QueryWrapper<>();
-        query.lambda()
-                .eq(UserRole::getUserType, userType)
-                .eq(UserRole::getUserId, user.getId());
-        List<UserRole> userRoleList = userRoleService.getEntityList(query);
-        if (V.isEmpty(userRoleList)){
-            return authorizationInfo;
-        }
-        List<Long> roleIdList = userRoleList.stream()
-                .map(UserRole::getRoleId)
-                .collect(Collectors.toList());
-        if (V.isEmpty(roleIdList)){
-            return authorizationInfo;
-        }
-
-        // 获取角色列表，并使用VO自动多对多关联permission
-        QueryWrapper<Role> roleQuery = new QueryWrapper<>();
-        roleQuery
-                .lambda()
-                .in(Role::getId, roleIdList);
-        List<RoleVO> roleVOList = roleService.getViewObjectList(roleQuery, null, RoleVO.class);
+        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(userType, user.getId());
 
         if (V.isEmpty(roleVOList)){
             return authorizationInfo;
