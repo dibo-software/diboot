@@ -2,9 +2,8 @@ package com.diboot.shiro.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
-import com.diboot.shiro.BaseJwtAuthenticationToken;
+import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.config.AuthType;
 import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;

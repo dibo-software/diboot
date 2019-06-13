@@ -2,7 +2,7 @@ package com.diboot.example.controller;
 
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.BaseJwtAuthenticationToken;
+import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.config.AuthType;
 import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;
@@ -11,17 +11,14 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/auth")
 public class AuthTokenController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenController.class);
@@ -38,7 +35,7 @@ public class AuthTokenController {
      * @throws Exception
      */
     @PostMapping("/login")
-    public JsonResult login(@ModelAttribute SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public JsonResult login(@RequestBody SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception{
         String errorMsg = "登录失败";
         try{
             BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, sysUser.getUsername(), sysUser.getPassword(), AuthType.USERNAME_PASSWORD);

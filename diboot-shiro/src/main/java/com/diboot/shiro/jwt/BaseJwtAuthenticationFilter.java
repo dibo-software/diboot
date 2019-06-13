@@ -1,11 +1,10 @@
-package com.diboot.shiro;
+package com.diboot.shiro.jwt;
 
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.util.JwtHelper;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class BaseJwtAuthenticationFilter extends BasicHttpAuthenticationFilter {
             logger.warn("Token为空！url="+httpRequest.getRequestURL());
             return false;
         }
-        //获取userId
+        //获取username
         String account = JwtHelper.getAccountFromToken(accessToken);
         if(V.notEmpty(account)){
             logger.debug("Token认证成功！account="+account);

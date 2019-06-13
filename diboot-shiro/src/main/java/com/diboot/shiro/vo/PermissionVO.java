@@ -6,7 +6,6 @@ import com.diboot.shiro.entity.Role;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Yangzhao
@@ -14,12 +13,8 @@ import java.util.Set;
  * @date 2019/6/6
  */
 @Data
-public class RoleVO extends Role {
+public class PermissionVO extends Permission {
 
     private static final long serialVersionUID = 860775286174387052L;
-
-    // 支持通过中间表的多-多Entity实体关联
-    @BindEntityList(entity = Permission.class, condition="this.id=role_permission.role_id AND role_permission.permission_id=id")
-    private List<Permission> permissionList;
 
 }

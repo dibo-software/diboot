@@ -1,7 +1,7 @@
 package com.diboot.shiro.config;
 
-import com.diboot.shiro.BaseJwtAuthenticationFilter;
-import com.diboot.shiro.BaseJwtRealm;
+import com.diboot.shiro.jwt.BaseJwtAuthenticationFilter;
+import com.diboot.shiro.jwt.BaseJwtRealm;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -57,9 +57,9 @@ public class ShiroConfig {
 
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
-        filterChainDefinitionMap.put("/token/login", "anon");
+        filterChainDefinitionMap.put("/auth/login", "anon");
         filterChainDefinitionMap.put("/error", "anon");
-        filterChainDefinitionMap.put("/token/logout", "logout");
+        filterChainDefinitionMap.put("/auth/logout", "logout");
         filterChainDefinitionMap.put("/**", "jwt");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
