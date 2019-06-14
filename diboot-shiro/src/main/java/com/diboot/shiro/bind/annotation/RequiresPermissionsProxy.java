@@ -6,6 +6,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import java.lang.annotation.*;
 
 /**
+ * 注解{@link RequiresPermissions}的增强注解，增加权限描述等字段
  * @author : wee
  * @version v2.0
  * @Date 2019-06-14  17:50
