@@ -9,5 +9,3 @@ build/
 out/
 /.idea/
 gradle/
-
-       git commit -m 'update .gitignore'
