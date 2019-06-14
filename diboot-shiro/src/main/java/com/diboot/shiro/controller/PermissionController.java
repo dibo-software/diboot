@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.shiro.bind.annotation.PermissionsMenu;
+import com.diboot.shiro.bind.annotation.RequiresPermissionsProxy;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.vo.PermissionVO;
@@ -28,6 +29,7 @@ import java.util.List;
  * @version 2018/12/23
  * Copyright © www.dibo.ltd
  */
+@PermissionsMenu(menuName = "权限", menuCode = "permission")
 @RestController
 @RequestMapping("/permission")
 public class PermissionController extends BaseCrudRestController {
@@ -45,8 +47,9 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:list")
     @GetMapping("/list")
+    @RequiresPermissionsProxy(value = {"permission:list"}, menuCode = "permission",
+            menuName = "权限", permissionName = "列表")
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Permission> queryWrapper = buildQuery(request);
         // 构建分页
@@ -80,8 +83,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:get")
     @GetMapping("/{id}")
+    @RequiresPermissionsProxy(value = {"permission:get"}, menuCode = "permission", menuName = "权限", permissionName = "查看")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
