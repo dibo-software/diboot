@@ -8,4 +8,6 @@ application-*.properties
 build/
 out/
 /.idea/
-gradle
+gradle/
+
+       git commit -m 'update .gitignore'
