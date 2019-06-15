@@ -20,6 +20,9 @@ public class User extends BaseEntity {
     private String username;
 
     @TableField
+    private String password;
+
+    @TableField
     private String gender;
 
 }

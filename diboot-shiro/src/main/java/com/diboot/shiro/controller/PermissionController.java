@@ -1,20 +1,20 @@
-package com.diboot.example.controller;
+package com.diboot.shiro.controller;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.vo.JsonResult;
-import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
-import com.diboot.example.entity.Department;
-import com.diboot.example.entity.Organization;
-import com.diboot.example.service.DepartmentService;
-import com.diboot.example.vo.DepartmentVO;
+import com.diboot.shiro.bind.annotation.PermissionsMenu;
+import com.diboot.shiro.bind.annotation.RequiresPermissionsProxy;
+import com.diboot.shiro.entity.Permission;
+import com.diboot.shiro.service.PermissionService;
+import com.diboot.shiro.vo.PermissionVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -29,12 +29,15 @@ import java.util.List;
  * @version 2018/12/23
  * Copyright © www.dibo.ltd
  */
+@PermissionsMenu(menuName = "权限", menuCode = "permission")
 @RestController
-@RequestMapping("/department")
-public class DepartmentController extends BaseCrudRestController {
+@RequestMapping("/permission")
+public class PermissionController extends BaseCrudRestController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PermissionService.class);
 
     @Autowired
-    private DepartmentService departmentService;
+    private PermissionService permissionService;
 
     /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
@@ -44,50 +47,19 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("department:list")
     @GetMapping("/list")
+    @RequiresPermissionsProxy(value = {"permission:list"}, menuCode = "permission",
+            menuName = "权限", permissionName = "列表")
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Department> queryWrapper = buildQuery(request);
+        QueryWrapper<Permission> queryWrapper = buildQuery(request);
         // 构建分页
         Pagination pagination = buildPagination(request);
         // 查询当前页的Entity主表数据
         List entityList = getService().getEntityList(queryWrapper, pagination);
         // 自动转换VO中注解绑定的关联
-        List<DepartmentVO> voList = super.convertToVoAndBindRelations(entityList, DepartmentVO.class);
-        // 返回结果
+        List<PermissionVO> voList = super.convertToVoAndBindRelations(entityList, PermissionVO.class);
+
         return new JsonResult(Status.OK, voList).bindPagination(pagination);
-    }
-
-    /***
-     * 查询ViewObject全部数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
-     * <p>
-     * url参数示例: /listAll?_orderBy=id&code=TST
-     * </p>
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/listAll")
-    public JsonResult getAllVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Department> queryWrapper = buildQuery(request);
-        // 查询当前页的Entity主表数据
-        List entityList = getService().getEntityList(queryWrapper);
-        // 自动转换VO中注解绑定的关联
-        List<DepartmentVO> voList = super.convertToVoAndBindRelations(entityList, DepartmentVO.class);
-        // 返回结果
-        return new JsonResult(Status.OK, voList);
-    }
-
-    /**
-     * ID-Name的映射键值对，用于前端Select控件筛选等
-     * @param request
-     * @return
-     */
-    @GetMapping("/kv")
-    public JsonResult getKVPairList(HttpServletRequest request){
-        Wrapper wrapper = new QueryWrapper<Department>().lambda()
-            .select(Department::getName, Department::getId, Department::getCode);
-        List<KeyValue> list = departmentService.getKeyValueList(wrapper);
-        return new JsonResult(list);
     }
 
     /***
@@ -95,11 +67,12 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("permission:add")
     @PostMapping("/")
-    public JsonResult createEntity(@ModelAttribute DepartmentVO viewObject, BindingResult result, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult createEntity(@ModelAttribute PermissionVO viewObject, BindingResult result, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
         // 转换
-        Department entity = BeanUtils.convert(viewObject, Department.class);
+        Permission entity = BeanUtils.convert(viewObject, Permission.class);
         // 创建
         return super.createEntity(entity, result, modelMap);
     }
@@ -111,9 +84,10 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
+    @RequiresPermissionsProxy(value = {"permission:get"}, menuCode = "permission", menuName = "权限", permissionName = "查看")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
-        DepartmentVO vo = departmentService.getViewObject(id, DepartmentVO.class);
+        PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
         return new JsonResult(vo);
     }
 
@@ -123,8 +97,9 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("permission:update")
     @PutMapping("/{id}")
-    public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Organization entity, BindingResult result,
+    public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Permission entity, BindingResult result,
                                   HttpServletRequest request, ModelMap modelMap) throws Exception{
         return super.updateEntity(entity, result, modelMap);
     }
@@ -135,6 +110,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("permission:delete")
     @DeleteMapping("/{id}")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
@@ -142,7 +118,7 @@ public class DepartmentController extends BaseCrudRestController {
 
     @Override
     protected BaseService getService() {
-        return departmentService;
+        return permissionService;
     }
 
 }

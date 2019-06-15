@@ -1,8 +1,9 @@
-package com.diboot.example.config;
+package diboot.core.test.config;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import org.mybatis.spring.annotation.MapperScan;
@@ -26,13 +27,13 @@ import java.util.List;
  * Spring配置文件
  * @author Mazhicheng
  * @version v2.0
- * @date 2019/1/19
+ * @date 2019/6/10
  */
 @Configuration
 @EnableAutoConfiguration
 @EnableTransactionManagement(proxyTargetClass=true)
 @ComponentScan(basePackages={"com.diboot"})
-@MapperScan({"com.diboot.*.mapper"})
+@MapperScan({"com.diboot.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer{
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
 
@@ -61,6 +62,15 @@ public class SpringMvcConfig implements WebMvcConfigurer{
     @Override
     public void addFormatters(FormatterRegistry registry) {
        registry.addConverter(new DateConverter());
+    }
+
+    /**
+     * Mybatis-plus分页插件
+     */
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        return paginationInterceptor;
     }
 
 }

@@ -1,4 +1,7 @@
 dependencies {
+
     compile project(":diboot-core")
+    compile project(":diboot-shiro")
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
