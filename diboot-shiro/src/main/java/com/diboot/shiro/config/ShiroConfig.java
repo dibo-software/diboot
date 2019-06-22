@@ -53,16 +53,7 @@ public class ShiroConfig {
         //用户访问未对其授权的资源时的错误提示页面
         shiroFilterFactoryBean.setUnauthorizedUrl("/error");
 
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-
-        filterChainDefinitionMap.put("/", "anon");
-        filterChainDefinitionMap.put("/static/**", "anon");
-        filterChainDefinitionMap.put("/auth/login", "anon");
-        filterChainDefinitionMap.put("/error", "anon");
-        filterChainDefinitionMap.put("/auth/logout", "logout");
-        filterChainDefinitionMap.put("/**", "jwt");
-
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinition());
 
         // 设置过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
@@ -71,6 +62,22 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilters(filters);
 
         return shiroFilterFactoryBean;
+    }
+
+    @Bean
+    public Map filterChainDefinition(){
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+
+        filterChainDefinitionMap.put("/", "anon");
+        filterChainDefinitionMap.put("/static/**", "anon");
+        filterChainDefinitionMap.put("/auth/login", "anon");
+        filterChainDefinitionMap.put("/auth/buildOAuthUrl", "anon");
+        filterChainDefinitionMap.put("/auth/apply", "anon");
+        filterChainDefinitionMap.put("/error", "anon");
+        filterChainDefinitionMap.put("/auth/logout", "logout");
+        filterChainDefinitionMap.put("/**", "jwt");
+
+        return filterChainDefinitionMap;
     }
 
     /**
