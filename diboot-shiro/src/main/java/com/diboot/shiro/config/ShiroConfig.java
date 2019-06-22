@@ -1,6 +1,6 @@
 package com.diboot.shiro.config;
 
-import com.diboot.shiro.bind.aop.CustomAuthorizationAttributeSourceAdvisor;
+import com.diboot.shiro.authz.aop.CustomAuthorizationAttributeSourceAdvisor;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationFilter;
 import com.diboot.shiro.jwt.BaseJwtRealm;
 import org.apache.shiro.mgt.SecurityManager;

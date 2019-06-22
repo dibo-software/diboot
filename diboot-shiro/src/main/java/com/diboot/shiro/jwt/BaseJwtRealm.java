@@ -31,11 +31,12 @@ public class BaseJwtRealm extends AuthorizingRealm {
     @Autowired
     private RoleService roleService;
 
+    @Override
     public boolean supports(AuthenticationToken token) {
         return token != null && token instanceof BaseJwtAuthenticationToken;
     }
 
-
+    @Override
     public Class<?> getAuthenticationTokenClass() {
         return BaseJwtRealm.class;
     }

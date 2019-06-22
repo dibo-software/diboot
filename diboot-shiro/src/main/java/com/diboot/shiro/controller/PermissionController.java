@@ -7,8 +7,8 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.bind.annotation.PermissionsPrefix;
-import com.diboot.shiro.bind.annotation.RequiresPermissionsWrapper;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.vo.PermissionVO;
@@ -30,7 +30,7 @@ import java.util.List;
  * Copyright © www.dibo.ltd
  */
 @RestController
-@PermissionsPrefix(prefix = "permission", code = "permission", name = "权限")
+@AuthorizationPrefix(prefix = "permission", code = "permission", name = "权限")
 @RequestMapping("/permission")
 public class PermissionController extends BaseCrudRestController {
 
@@ -46,7 +46,7 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    @RequiresPermissionsWrapper(prefix = "permissionSelf", value = {"get"}, name = "查看")
+    @AuthorizationWrapper(value = @RequiresPermissions("get"), name = "查看")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
@@ -62,7 +62,7 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/list")
-    @RequiresPermissionsWrapper(value = {"list"}, name = "列表")
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Permission> queryWrapper = buildQuery(request);
         // 构建分页

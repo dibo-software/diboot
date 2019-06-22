@@ -4,7 +4,6 @@ import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.mapper.PermissionMapper;
 import com.diboot.shiro.service.PermissionService;
-import com.diboot.shiro.service.SysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
