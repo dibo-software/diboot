@@ -26,7 +26,7 @@ public class UserVO extends User {
     private String genderLabel;
 
     // 字段关联，相同条件的entity+condition将合并为一条SQL查询
-    @BindField(entity=Department.class, field="name", condition="this.department_id=id AND code IS NOT NULL")
+    @BindField(entity=Department.class, field="name", condition="this.department_id=id AND parent_id IS NOT NULL")
     private String deptName;
     @BindField(entity=Department.class, field="code", condition="this.department_id=id")
     private String deptCode;
@@ -42,7 +42,7 @@ public class UserVO extends User {
     private Organization organization;
 
     // 支持通过中间表的多-多Entity实体关联
-    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
-    private List<Role> roleList;
+    //@BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
+    //private List<Role> roleList;
 
 }

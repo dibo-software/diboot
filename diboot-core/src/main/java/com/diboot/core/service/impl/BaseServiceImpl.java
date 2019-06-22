@@ -12,7 +12,6 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
