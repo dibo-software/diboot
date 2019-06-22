@@ -58,7 +58,11 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
     protected boolean storagePermissions;
 
     protected AbstractStorageApplicationListener(EnableStorageEnum enableStorageEnum) {
-        this.storagePermissions = enableStorageEnum.isStoragePermissions();
+        if (V.isEmpty(enableStorageEnum)) {
+            this.storagePermissions = true;
+        } else {
+            this.storagePermissions = enableStorageEnum.isStoragePermissions();
+        }
     }
 
     /**

@@ -31,10 +31,10 @@ public @interface AuthorizationPrefix {
     String code();
 
     /**
-     * <h3>{@link AuthorizationWrapper#requiresPermissions()#value()}的前缀</h3>
+     * <h3>{@link AuthorizationWrapper#value()#value()}的前缀</h3>
      * <ul>
      *     <li> value = permissions</li>
-     *     <li>{@link AuthorizationWrapper#requiresPermissions()#value()} = {"list", "get"}</li>
+     *     <li>{@link AuthorizationWrapper#value()#value()} = {"list", "get"}</li>
      *     <li>实际权限为：{"permissions:list", "permissions:list"}</li>
      * </ul>
      * 注：当前注解优先级低于{@link AuthorizationWrapper#prefix()},
