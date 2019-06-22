@@ -11,5 +11,6 @@ rootProject.name = 'diboot-v2'
 include 'diboot-core'
 include 'diboot-example'
 include 'diboot-shiro'
+include 'diboot-shiro-wx-mp'
 include 'diboot-docs'
 

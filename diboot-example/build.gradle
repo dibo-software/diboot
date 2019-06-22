@@ -2,6 +2,7 @@ dependencies {
 
     compile project(":diboot-core")
     compile project(":diboot-shiro")
+    compile project(":diboot-shiro-wx-mp")
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

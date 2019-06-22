@@ -5,8 +5,8 @@ import com.diboot.core.entity.Metadata;
 /**
  * 元数据Mapper
  * @author Mazhicheng
- * @version 2018/12/22
- * Copyright © www.dibo.ltd
+ * @version v2.0
+ * @date 2018/12/22
  */
 public interface MetadataMapper extends BaseCrudMapper<Metadata> {
 

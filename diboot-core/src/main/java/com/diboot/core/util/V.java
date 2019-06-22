@@ -22,7 +22,21 @@ public class V {
 	 * @return
 	 */
 	public static boolean isEmpty(Object obj){
-		return obj == null;
+		if(obj instanceof String){
+			return isEmpty((String)obj);
+		}
+		else if(obj instanceof Collection){
+			return isEmpty((Collection)obj);
+		}
+		else if(obj instanceof Map){
+			return isEmpty((Map)obj);
+		}
+		else if(obj instanceof String[]){
+			return isEmpty((String[])obj);
+		}
+		else{
+			return obj == null;
+		}
 	}
 
 	/***
@@ -67,7 +81,21 @@ public class V {
 	 * @return
 	 */
 	public static boolean notEmpty(Object obj){
-		return obj != null;
+		if(obj instanceof String){
+			return notEmpty((String)obj);
+		}
+		else if(obj instanceof Collection){
+			return notEmpty((Collection)obj);
+		}
+		else if(obj instanceof Map){
+			return notEmpty((Map)obj);
+		}
+		else if(obj instanceof String[]){
+			return notEmpty((String[])obj);
+		}
+		else{
+			return obj != null;
+		}
 	}
 
 	/***

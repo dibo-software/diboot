@@ -1,16 +1,11 @@
 package com.diboot.shiro.config;
 
-import com.diboot.shiro.bind.aop.PermissionProxyAnnotationMethodInterceptor;
+import com.diboot.shiro.bind.aop.CustomAuthorizationAttributeSourceAdvisor;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationFilter;
 import com.diboot.shiro.jwt.BaseJwtRealm;
-import org.apache.shiro.aop.AnnotationResolver;
-import org.apache.shiro.authz.aop.*;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
-import org.apache.shiro.spring.aop.SpringAnnotationResolver;
-import org.apache.shiro.spring.security.interceptor.AopAllianceAnnotationsAuthorizingMethodInterceptor;
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -22,9 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /***
@@ -60,16 +53,7 @@ public class ShiroConfig {
         //用户访问未对其授权的资源时的错误提示页面
         shiroFilterFactoryBean.setUnauthorizedUrl("/error");
 
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-
-        filterChainDefinitionMap.put("/", "anon");
-        filterChainDefinitionMap.put("/static/**", "anon");
-        filterChainDefinitionMap.put("/auth/login", "anon");
-        filterChainDefinitionMap.put("/error", "anon");
-        filterChainDefinitionMap.put("/auth/logout", "logout");
-        filterChainDefinitionMap.put("/**", "jwt");
-
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinition());
 
         // 设置过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
@@ -78,6 +62,22 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setFilters(filters);
 
         return shiroFilterFactoryBean;
+    }
+
+    @Bean
+    public Map filterChainDefinition(){
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+
+        filterChainDefinitionMap.put("/", "anon");
+        filterChainDefinitionMap.put("/static/**", "anon");
+        filterChainDefinitionMap.put("/auth/login", "anon");
+        filterChainDefinitionMap.put("/auth/buildOAuthUrl", "anon");
+        filterChainDefinitionMap.put("/auth/apply", "anon");
+        filterChainDefinitionMap.put("/error", "anon");
+        filterChainDefinitionMap.put("/auth/logout", "logout");
+        filterChainDefinitionMap.put("/**", "jwt");
+
+        return filterChainDefinitionMap;
     }
 
     /**
@@ -101,20 +101,8 @@ public class ShiroConfig {
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
-        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-        AopAllianceAnnotationsAuthorizingMethodInterceptor advice = (AopAllianceAnnotationsAuthorizingMethodInterceptor)authorizationAttributeSourceAdvisor.getAdvice();
-        //重置拦截器，添加新的PermissionProxyAnnotationMethodInterceptor
-        List<AuthorizingAnnotationMethodInterceptor> interceptors =new ArrayList<>(6);
-        AnnotationResolver resolver = new SpringAnnotationResolver();
-        interceptors.add(new PermissionProxyAnnotationMethodInterceptor(resolver));
-        interceptors.add(new RoleAnnotationMethodInterceptor(resolver));
-        interceptors.add(new PermissionAnnotationMethodInterceptor(resolver));
-        interceptors.add(new AuthenticatedAnnotationMethodInterceptor(resolver));
-        interceptors.add(new UserAnnotationMethodInterceptor(resolver));
-        interceptors.add(new GuestAnnotationMethodInterceptor(resolver));
-        advice.setMethodInterceptors(interceptors);
-
+    public CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+        CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new CustomAuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
         return authorizationAttributeSourceAdvisor;
     }
