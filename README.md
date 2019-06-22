@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">
+        <img src="https://img.shields.io/hexpm/l/plug.svg">
+    </a>
+</p>
+
 # diboot-v2
 diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码生成。
 
