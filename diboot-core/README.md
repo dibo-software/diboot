@@ -3,9 +3,9 @@
 1. 多表关联的自动绑定, 实现单表CRUD和多表关联的无SQL化
 2. 提供其他常用开发场景的最佳实践封装。
 
-### 单表CRUD无SQL
+### ** 单表CRUD无SQL
    > 依赖Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
-### 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
+### ** 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
    > 通过注解实现多数场景下的关联查询无SQL
 #### 2.1. 注解自动绑定元数据(枚举值)的显示值Label
 ~~~java
@@ -43,7 +43,7 @@ private List<Department> children;
 private List<Role> roleList;
 ~~~
 
-### 调用方式
+### ** 调用方式
 #### 1. 自动绑定关联（不需要转型）
 ~~~java
 // 调用AnnotationBindingManager自动绑定注解相关关联
