@@ -7,7 +7,7 @@
 # diboot-v2
 diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码生成。
 
-### diboot-core: 精简优化内核
+### ** diboot-core: 精简优化内核
 全新精简内核，主要实现单表CRUD和多表关联绑定的无SQL实现方案，并提供其他常用开发场景的简单封装。
 
 #### 单表CRUD无SQL
@@ -22,15 +22,18 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
 
 具体请查看: [diboot-core 注解自动绑定多表关联](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
 
+ 
+   > ...
+     
 
-### diboot-shiro 基于RBAC+Shiro的权限认证模块
+### ** diboot-shiro: 基于RBAC+Shiro的权限认证模块
 RBAC的角色权限+基于Shiro的细粒度权限控制
 
-### diboot-example: 示例
+### ** diboot-example: 示例
 各组件使用示例项目
    > 运行example需先执行/resources/init-mysql.sql到数据库。 
    
-### diboot-devtools 代码生成工具
+### ** diboot-devtools 代码生成工具
    > 比 1.x 版本更强大的代码生成工具 ...
     
 ...
