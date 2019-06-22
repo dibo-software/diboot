@@ -56,6 +56,8 @@ public class BaseJwtAuthenticationFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         logger.debug("Token认证： onAccessDenied");
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+
         JsonResult jsonResult = new JsonResult(Status.FAIL_INVALID_TOKEN);
         this.responseJson((HttpServletResponse) response, jsonResult);
         return false;

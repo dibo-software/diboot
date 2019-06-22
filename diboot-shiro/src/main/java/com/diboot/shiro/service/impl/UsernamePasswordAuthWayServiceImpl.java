@@ -58,7 +58,7 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
 
     @Override
     public boolean isPasswordMatch() {
-        String password = new String(token.getPassword());
+        String password = token.getPassword();
 
         // 构建查询条件
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();

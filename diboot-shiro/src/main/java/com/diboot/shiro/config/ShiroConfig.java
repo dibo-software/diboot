@@ -1,11 +1,11 @@
 package com.diboot.shiro.config;
 
+import com.diboot.shiro.bind.aop.CustomAuthorizationAttributeSourceAdvisor;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationFilter;
 import com.diboot.shiro.jwt.BaseJwtRealm;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -101,8 +101,8 @@ public class ShiroConfig {
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
-        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+    public CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+        CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new CustomAuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
         return authorizationAttributeSourceAdvisor;
     }

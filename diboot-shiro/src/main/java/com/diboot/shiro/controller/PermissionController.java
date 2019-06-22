@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.shiro.bind.annotation.PermissionsPrefix;
+import com.diboot.shiro.bind.annotation.RequiresPermissionsWrapper;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.vo.PermissionVO;
@@ -29,6 +30,7 @@ import java.util.List;
  * Copyright © www.dibo.ltd
  */
 @RestController
+@PermissionsPrefix(prefix = "permission", code = "permission", name = "权限")
 @RequestMapping("/permission")
 public class PermissionController extends BaseCrudRestController {
 
@@ -38,6 +40,20 @@ public class PermissionController extends BaseCrudRestController {
     private PermissionService permissionService;
 
     /***
+     * 查询Entity
+     * @param id ID
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/{id}")
+    @RequiresPermissionsWrapper(prefix = "permissionSelf", value = {"get"}, name = "查看")
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+            throws Exception{
+        PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
+        return new JsonResult(vo);
+    }
+
+    /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
      * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=id&code=TST
@@ -45,8 +61,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:list")
     @GetMapping("/list")
+    @RequiresPermissionsWrapper(value = {"list"}, name = "列表")
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Permission> queryWrapper = buildQuery(request);
         // 构建分页
@@ -72,20 +88,6 @@ public class PermissionController extends BaseCrudRestController {
         Permission entity = BeanUtils.convert(viewObject, Permission.class);
         // 创建
         return super.createEntity(entity, result, modelMap);
-    }
-
-    /***
-     * 查询Entity
-     * @param id ID
-     * @return
-     * @throws Exception
-     */
-    @RequiresPermissions("permission:get")
-    @GetMapping("/{id}")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
-            throws Exception{
-        PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
-        return new JsonResult(vo);
     }
 
     /***
