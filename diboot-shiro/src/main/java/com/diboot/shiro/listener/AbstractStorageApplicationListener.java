@@ -191,7 +191,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
      */
     private void saveOrUpdateOrDeletePermission(PermissionServiceImpl permissionService) {
         //记录修改和删除的权限数量
-        int modifyCount = 0, removeCount = 0, totalCount = 0;
+        int modifyCount = 0, removeCount = 0, totalCount = loadCodePermissionMap.values().size();;
         List<Permission> saveOrUpdateOrDeletePermissionList = new ArrayList<>();
         //设置删除 or 修改
         for (Map.Entry<String, Permission> entry : dbPermissionMap.entrySet()) {
@@ -219,19 +219,23 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
         //需要操作的数据=》转化为List<Permission>
         List<Permission> saveOrUpdatePermissionList;
         if (V.notEmpty(loadCodePermissionMap)) {
-            totalCount = loadCodePermissionMap.values().size();
+
             List<PermissionStorage> permissionStorageList = loadCodePermissionMap.values().stream().collect(Collectors.toList());
             saveOrUpdatePermissionList = BeanUtils.convertList(permissionStorageList, Permission.class);
             saveOrUpdateOrDeletePermissionList.addAll(saveOrUpdatePermissionList);
         }
-        //保存、更新、删除 权限
-        boolean success = permissionService.saveOrUpdateBatch(saveOrUpdateOrDeletePermissionList);
-        if (success) {
-            log.debug("【初始化权限】<== 成功!共计权限{}个 新增【{}】个, 修改【{}】个,删除【{}】个！",
-                    totalCount, (saveOrUpdateOrDeletePermissionList.size() - modifyCount - removeCount), modifyCount, removeCount);
-        } else {
-            log.debug("【初始化权限】<== 失败!");
+        if (V.notEmpty(saveOrUpdateOrDeletePermissionList)) {
+            //保存、更新、删除 权限
+            boolean success = permissionService.saveOrUpdateBatch(saveOrUpdateOrDeletePermissionList);
+            if (success) {
+                log.debug("【初始化权限】<== 成功!");
+            } else {
+                log.debug("【初始化权限】<== 失败!");
+            }
         }
+        log.debug("当前系统权限共计【{}】个 新增【{}】个, 修改【{}】个,删除【{}】个！",
+                totalCount, (saveOrUpdateOrDeletePermissionList.size() - modifyCount - removeCount), modifyCount, removeCount);
+
     }
 
     /**
