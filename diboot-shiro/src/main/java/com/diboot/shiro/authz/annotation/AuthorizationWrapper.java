@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 /**
  * 权限包装：目前只包装{@link RequiresPermissions},可以根据需要包装{@link RequiresRoles}
  * @author : wee
- * @version v 1.0
+ * @version v 2.0
  * @Date 2019-06-19  00:40
  */
 @Retention(RetentionPolicy.RUNTIME)

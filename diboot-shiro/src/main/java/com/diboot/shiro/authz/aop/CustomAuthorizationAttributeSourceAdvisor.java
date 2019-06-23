@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 /**
  * 自定义切片装配器
  * @author : wee
- * @version : v1.0
+ * @version : v2.0
  * @Date 2019-06-15  12:27
  */
 public class CustomAuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {

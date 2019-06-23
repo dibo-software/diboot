@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 是否开启存储枚举
  * @author : wee
- * @version : v 1.0
+ * @version : v 2.0
  * @Date 2019-06-18  23:06
  */
 @Getter

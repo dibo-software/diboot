@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * @author Yangzhao
+ * 权限临时存储类
+ * @author wee
  * @version v2.0
  * @date 2019/6/6
  */
