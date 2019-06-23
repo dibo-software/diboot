@@ -92,6 +92,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public boolean createOrUpdateEntities(Collection entityList) {
+		if(V.isEmpty(entityList)){
+			warning("createEntities", "参数entityList为空!");
+			return false;
+		}
+		// 批量插入
+		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
+	}
+
+	@Override
 	public boolean deleteEntity(Serializable id) {
 		boolean success = super.removeById(id);
 		return success;

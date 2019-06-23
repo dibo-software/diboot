@@ -2,6 +2,7 @@ package com.diboot.shiro.listener;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -10,6 +11,7 @@ import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.authz.storage.EnableStorageEnum;
 import com.diboot.shiro.authz.storage.PermissionStorage;
 import com.diboot.shiro.entity.Permission;
+import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.impl.PermissionServiceImpl;
 import com.diboot.shiro.util.ProxyToTargetObjectHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,6 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
     /**代码中的所有权限数据 key: {@link PermissionStorage#getPermissionCode()} value: {@link Permission}*/
     private static Map<String, PermissionStorage> loadCodePermissionMap = new ConcurrentHashMap<>();
 
-    private static List<Permission> updateOrCreateOrDeletePermissionList = new ArrayList<>();
     /**
      * 默认开启存储
      */
@@ -100,7 +101,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
             ApplicationContext applicationContext = event.getApplicationContext();
 
             if (V.notEmpty(applicationContext)) {
-                PermissionServiceImpl permissionService = applicationContext.getBean(PermissionServiceImpl.class);
+                PermissionService permissionService = applicationContext.getBean(PermissionServiceImpl.class);
 
                 //获取当前数据库中的有效的所有权限
                 LambdaQueryWrapper<Permission> permissionLambdaQueryWrapper = Wrappers.lambdaQuery();
@@ -193,7 +194,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
      * </p>
      * @param permissionService
      */
-    private void saveOrUpdateOrDeletePermission(PermissionServiceImpl permissionService) {
+    private void saveOrUpdateOrDeletePermission(PermissionService permissionService) {
         //记录修改和删除的权限数量
         int modifyCount = 0, removeCount = 0, totalCount = loadCodePermissionMap.values().size();;
         List<Permission> saveOrUpdateOrDeletePermissionList = new ArrayList<>();
@@ -221,25 +222,40 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
 
         }
         //需要操作的数据=》转化为List<Permission>
-        List<Permission> saveOrUpdatePermissionList;
+        List<Permission> saveOrUpdatePermissionList = new ArrayList<>();
         if (V.notEmpty(loadCodePermissionMap)) {
 
             List<PermissionStorage> permissionStorageList = loadCodePermissionMap.values().stream().collect(Collectors.toList());
             saveOrUpdatePermissionList = BeanUtils.convertList(permissionStorageList, Permission.class);
             saveOrUpdateOrDeletePermissionList.addAll(saveOrUpdatePermissionList);
         }
+        log.debug("当前系统权限共计【{}】个 需新增【{}】个, 需修改【{}】个, 需删除【{}】个！",
+                totalCount, (saveOrUpdateOrDeletePermissionList.size() - modifyCount - removeCount), modifyCount, removeCount);
         if (V.notEmpty(saveOrUpdateOrDeletePermissionList)) {
-            //保存、更新、删除 权限
-            boolean success = permissionService.saveOrUpdateBatch(saveOrUpdateOrDeletePermissionList);
-            if (success) {
-                log.debug("【初始化权限】<== 成功!");
-            } else {
-                log.debug("【初始化权限】<== 失败!");
+            int loopCount = (int) Math.ceil(saveOrUpdateOrDeletePermissionList.size() * 1.0 / BaseConfig.getBatchSize());
+            //截取数据
+            List<Permission> permissionList;
+            int subEndIndex;
+            for (int i = 0; i < loopCount; i++) {
+                //截取的开始下标
+                int subStartIndex = i * BaseConfig.getBatchSize();
+                //截取的结束下标，如果是最后一次需要判断剩余数量是否小于超过配置的可执行数量，如果小于，下标就用剩余量
+                if ((i + 1) == loopCount) {
+                    subEndIndex = saveOrUpdateOrDeletePermissionList.size();
+                } else {
+                    subEndIndex = subStartIndex + BaseConfig.getBatchSize();
+                }
+                //截取
+                permissionList = saveOrUpdateOrDeletePermissionList.subList(subStartIndex, subEndIndex);
+                //保存、更新、删除 权限
+                boolean success = permissionService.createOrUpdateEntities(permissionList);
+                if (success) {
+                    log.debug("【初始化权限】<== 共【{}】批次，第【{}】批次成功，调整【{}】个权限！", loopCount, i + 1, permissionList.size());
+                } else {
+                    log.debug("【初始化权限】<== 共【{}】批次，第【{}】批次失败，调整【{}】个权限！", loopCount, i + 1, permissionList.size());
+                }
             }
         }
-        log.debug("当前系统权限共计【{}】个 新增【{}】个, 修改【{}】个,删除【{}】个！",
-                totalCount, (saveOrUpdateOrDeletePermissionList.size() - modifyCount - removeCount), modifyCount, removeCount);
-
     }
 
     /**
