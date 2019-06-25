@@ -31,8 +31,4 @@ public class Permission extends BaseEntity {
     @TableField
     private String permissionName;
 
-    /**此处覆盖了父类的属性，初始化权限的时候需要设置该值，直接使用父类，无法设置*/
-    @TableField
-    private boolean deleted = false;
-
 }

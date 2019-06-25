@@ -1,6 +1,7 @@
 package com.diboot.example.listener;
 
 import com.diboot.shiro.authz.storage.EnableStorageEnum;
+import com.diboot.shiro.authz.storage.EnvEnum;
 import com.diboot.shiro.listener.AbstractStorageApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class ExampleListener extends AbstractStorageApplicationListener {
 
     /**需要手动实现构造来设置是否开启权限入库操作，默认入库*/
     protected ExampleListener() {
-        super(EnableStorageEnum.TRUE);
+        super(EnableStorageEnum.TRUE, EnvEnum.DEV);
     }
 
     /**

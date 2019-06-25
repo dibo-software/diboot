@@ -9,6 +9,7 @@ import com.diboot.core.util.V;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.authz.storage.EnableStorageEnum;
+import com.diboot.shiro.authz.storage.EnvEnum;
 import com.diboot.shiro.authz.storage.PermissionStorage;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
@@ -58,11 +59,24 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
      */
     protected boolean storagePermissions;
 
-    protected AbstractStorageApplicationListener(EnableStorageEnum enableStorageEnum) {
+    /**入库的环境：
+     * 当为开发环境的时候，可能会存在几个人同时书写系统权限，
+     * 各自启动的时候，所开发的权限可能存在差异，会导致删除自己开发环境不存在的权限
+     * 所以开发环境（dev）下（dev），不会删除权限，只会修改和递增，而生产(prod)上则会删除
+     * 默认环境为：dev
+     */
+    protected String env;
+
+    protected AbstractStorageApplicationListener(EnableStorageEnum enableStorageEnum, EnvEnum envEnum) {
         if (V.isEmpty(enableStorageEnum)) {
-            this.storagePermissions = true;
+            this.storagePermissions = EnableStorageEnum.TRUE.isStoragePermissions();
         } else {
             this.storagePermissions = enableStorageEnum.isStoragePermissions();
+        }
+        if (V.isEmpty(envEnum)) {
+            this.env = EnvEnum.DEV.getEnv();
+        } else {
+            this.env = envEnum.getEnv();
         }
     }
 
@@ -202,7 +216,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
         for (Map.Entry<String, Permission> entry : dbPermissionMap.entrySet()) {
             PermissionStorage permissionStorage = loadCodePermissionMap.get(entry.getKey());
             Permission permission = entry.getValue();
-            //存在则更新（设置ID）
+            //代码中存在则更新（设置ID）
             if (V.notEmpty(permissionStorage)) {
                 if (isNeedModify(permission, permissionStorage)) {
                     modifyCount++;
@@ -214,17 +228,20 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
                     loadCodePermissionMap.remove(entry.getKey());
                 }
             } else {
-                //不存在: 表示需要删除
-                removeCount++;
-                permission.setDeleted(true);
-                saveOrUpdateOrDeletePermissionList.add(permission);
+                //代码中不存在且生产环境: 表示需要删除
+                if (EnvEnum.PROD.getEnv().equals(env)) {
+                    removeCount++;
+                    permission.setDeleted(true);
+                    saveOrUpdateOrDeletePermissionList.add(permission);
+                } else {
+                    log.debug("【初始化权限】<== 当前启动环境为：【{}】, 不删除系统中不存在的权限！" , env);
+                }
             }
 
         }
         //需要操作的数据=》转化为List<Permission>
         List<Permission> saveOrUpdatePermissionList = new ArrayList<>();
         if (V.notEmpty(loadCodePermissionMap)) {
-
             List<PermissionStorage> permissionStorageList = loadCodePermissionMap.values().stream().collect(Collectors.toList());
             saveOrUpdatePermissionList = BeanUtils.convertList(permissionStorageList, Permission.class);
             saveOrUpdateOrDeletePermissionList.addAll(saveOrUpdatePermissionList);
@@ -248,7 +265,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
                 //截取
                 permissionList = saveOrUpdateOrDeletePermissionList.subList(subStartIndex, subEndIndex);
                 //保存、更新、删除 权限
-                boolean success = permissionService.createOrUpdateEntities(permissionList);
+                boolean success = permissionService.createOrUpdateOrDeleteEntities(permissionList, BaseConfig.getBatchSize());
                 if (success) {
                     log.debug("【初始化权限】<== 共【{}】批次，第【{}】批次成功，调整【{}】个权限！", loopCount, i + 1, permissionList.size());
                 } else {
