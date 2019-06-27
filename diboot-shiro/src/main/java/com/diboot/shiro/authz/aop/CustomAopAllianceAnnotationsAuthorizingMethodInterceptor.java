@@ -1,6 +1,5 @@
-package com.diboot.shiro.bind.aop;
+package com.diboot.shiro.authz.aop;
 
-import com.diboot.shiro.bind.aop.PermissionWrapperAnnotationMethodInterceptor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.shiro.aop.AnnotationResolver;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *  自定义AOP拦截
  * @author : wee
  * @version : v2.0
  * @Date 2019-06-15  12:07
@@ -21,7 +21,7 @@ public class CustomAopAllianceAnnotationsAuthorizingMethodInterceptor extends An
         List<AuthorizingAnnotationMethodInterceptor> interceptors =
                 new ArrayList<AuthorizingAnnotationMethodInterceptor>(6);
         AnnotationResolver resolver = new SpringAnnotationResolver();
-        interceptors.add(new PermissionWrapperAnnotationMethodInterceptor(resolver));
+        interceptors.add(new AuthorizationWrapperAnnotationMethodInterceptor(resolver));
         interceptors.add(new RoleAnnotationMethodInterceptor(resolver));
         interceptors.add(new PermissionAnnotationMethodInterceptor(resolver));
         interceptors.add(new AuthenticatedAnnotationMethodInterceptor(resolver));

@@ -21,30 +21,30 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseJwtAuthenticationToken.class);
 
-    // 登录用的账号（此处的这个账号是一种抽象的概念）
+    /**登录用的账号（此处的这个账号是一种抽象的概念*/
     private String account;
 
-    // 登录用的密码 （此处的这个密码也是一种抽象的概念）
+    /**登录用的密码 （此处的这个密码也是一种抽象的概念*/
     private String password;
 
-    // 登录使用方式
+    /**登录使用方式*/
     private AuthType authType;
 
-    // auth token
+    /**authz token*/
     private String authtoken;
 
-    // 申请token的密码
+    /**申请token的密码*/
     private String applyTokenSecret;
 
-    // 签名key (默认SIGN_KEY，配置signKey, 或微信state, 密码等)
+    /**签名key (默认SIGN_KEY，配置signKey, 或微信state, 密码等)*/
     private String signKey = JwtHelper.SIGN_KEY;
 
-    // 过期时间
+    /**过期时间*/
     private long expiresInMinutes = JwtHelper.EXPIRES_IN_MINUTES;
 
     private Map<String, AuthWayService> authWayServiceMap;
 
-    // 默认构造函数
+    /**默认构造函数*/
     public BaseJwtAuthenticationToken(){
 
     }

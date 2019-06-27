@@ -35,11 +35,10 @@ subprojects {
         lombokVersion = "1.18.8"
     }
     dependencies {
-        //gradle 4.7版本以上，使用如下方式
-//        annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+        // Gradle 5.0及以上版本，使用如下方式
+        annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+        //gradle 5.0版本以下，使用如下方式
 //        compileOnly("org.projectlombok:lombok:$lombokVersion")
-        //gradle 4.7版本以下，使用如下方式
-        compileOnly("org.projectlombok:lombok:$lombokVersion")
 
         compile("javax.servlet:javax.servlet-api:4.0.1")
         compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")

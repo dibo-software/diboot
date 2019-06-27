@@ -92,6 +92,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public boolean createOrUpdateEntities(Collection entityList) {
+		if(V.isEmpty(entityList)){
+			warning("createOrUpdateEntities", "参数entityList为空!");
+			return false;
+		}
+		// 批量插入
+		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
+	}
+
+	@Override
 	public boolean deleteEntity(Serializable id) {
 		boolean success = super.removeById(id);
 		return success;
@@ -177,7 +187,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String sqlSelect = queryWrapper.getSqlSelect();
 		// 最多支持3个属性：k, v, ext
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
-			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Metadata>().lambda().select(Metadata::getItemName, Metadata::getItemValue)");
+			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 			return Collections.emptyList();
 		}
 		// 获取mapList

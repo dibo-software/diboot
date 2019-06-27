@@ -1,6 +1,6 @@
-package com.diboot.shiro.bind.aop;
+package com.diboot.shiro.authz.aop;
 
-import com.diboot.shiro.bind.annotation.RequiresPermissionsWrapper;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import org.apache.shiro.authz.annotation.*;
 import org.apache.shiro.mgt.SecurityManager;
 import org.slf4j.Logger;
@@ -12,8 +12,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
+ * 自定义切片装配器
  * @author : wee
- * @version : v1.0
+ * @version : v2.0
  * @Date 2019-06-15  12:27
  */
 public class CustomAuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
@@ -22,7 +23,7 @@ public class CustomAuthorizationAttributeSourceAdvisor extends StaticMethodMatch
 
     private static final Class<? extends Annotation>[] AUTHZ_ANNOTATION_CLASSES =
             new Class[] {
-                    RequiresPermissionsWrapper.class,
+                    AuthorizationWrapper.class,
                     RequiresPermissions.class, RequiresRoles.class,
                     RequiresUser.class, RequiresGuest.class, RequiresAuthentication.class
             };
@@ -48,7 +49,7 @@ public class CustomAuthorizationAttributeSourceAdvisor extends StaticMethodMatch
      * Returns <tt>true</tt> if the method or the class has any Shiro annotations, false otherwise.
      * The annotations inspected are:
      * <ul>
-     * <li>{@link RequiresPermissionsWrapper RequiresPermissionsWrapper}</li>
+     * <li>{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper AuthorizationWrapper}</li>
      * <li>{@link org.apache.shiro.authz.annotation.RequiresAuthentication RequiresAuthentication}</li>
      * <li>{@link org.apache.shiro.authz.annotation.RequiresUser RequiresUser}</li>
      * <li>{@link org.apache.shiro.authz.annotation.RequiresGuest RequiresGuest}</li>

@@ -1,8 +1,7 @@
 package diboot.core.test.binder.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindMetadata;
+import com.diboot.core.binding.annotation.BindDict;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
@@ -27,8 +26,8 @@ public class FieldBinderVO extends User{
     @BindField(entity = Organization.class, field="telphone", condition="this.department_id=department.id AND department.org_id=id")
     private String orgTelphone;
 
-    // 绑定元数据枚举
-    @BindMetadata(type="GENDER", field = "gender")
+    // 绑定数据字典枚举
+    @BindDict(type="GENDER", field = "gender")
     private String genderLabel;
 
     public String getDeptName() {

@@ -1,7 +1,6 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.EntityBinder;
 import com.diboot.core.binding.EntityListBinder;
 import com.diboot.core.binding.FieldBinder;
@@ -72,6 +71,13 @@ public interface BaseService<T> {
     boolean createOrUpdateEntity(T entity);
 
     /**
+     * 批量创建或更新entity（entity.id存在则新建，否则更新）
+     * @param entityList
+     * @return
+     */
+    boolean createOrUpdateEntities(Collection entityList);
+
+    /**
      * 根据主键删除实体
      * @param id 主键
      * @return true:成功, false:失败
@@ -82,13 +88,13 @@ public interface BaseService<T> {
      * 按条件删除实体
      * @param queryWrapper
      * @return
+     * @throws Exception
      */
     boolean deleteEntities(Wrapper queryWrapper) throws Exception;
 
     /**
      * 获取符合条件的entity记录总数
      * @return
-     * @throws Exception
      */
     int getEntityListCount(Wrapper queryWrapper);
 

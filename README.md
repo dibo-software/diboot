@@ -15,7 +15,7 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
 #### 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
    > 通过注解实现多数场景下的关联查询无SQL化自动绑定
    
-##### 1. @BindMetadata 注解自动绑定元数据(枚举值)的显示值Label
+##### 1. @BindDict 注解自动绑定数据字典(枚举值)的显示值Label
 ##### 2. @BindField 注解自动绑定其他表的字段
 ##### 3. @BindEntity 注解自动绑定单个其他表实体Entity
 ##### 4. @BindEntityList 注解自动绑定其他表实体集合List<Entity>
@@ -28,6 +28,15 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
 
 ### ** diboot-shiro: 基于RBAC+Shiro的权限认证模块
 RBAC的角色权限+基于Shiro的细粒度权限控制
+
+#### 1、@AuthorizationPrefix 
+类注解，与@AuthorizationWrapper搭配使用，设置通用权限前缀，作用域为当前类的所有方法
+
+#### 2、@AuthorizationWrapper 
+类/方法注解，在保证shiro的@RequirePermissions注解的功能基础上，增加名称、权限前缀特性，使用方式同@RequiresPermissions
+
+#### 3、AbstractStorageApplicationListener
+实现ApplicationListener接口，继承该类后，系统启动后自动将使用@AuthorizationPrefix和@AuthorizationWrapper设置的权限增量插入至数据库
 
 ### ** diboot-example: 示例
 各组件使用示例项目

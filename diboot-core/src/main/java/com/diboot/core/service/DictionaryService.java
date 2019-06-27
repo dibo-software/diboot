@@ -1,6 +1,6 @@
 package com.diboot.core.service;
 
-import com.diboot.core.entity.Metadata;
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
@@ -8,12 +8,12 @@ import com.diboot.core.vo.KeyValue;
 import java.util.List;
 
 /**
- * 元数据Service
+ * 数据字典Service
  * @author Mazhicheng
  * @version 2.0
  * @date 2019/01/01
  */
-public interface MetadataService extends BaseService<Metadata>{
+public interface DictionaryService extends BaseService<Dictionary>{
 
     /***
      * 获取对应类型的键值对

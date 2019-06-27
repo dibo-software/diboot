@@ -3,7 +3,7 @@ package com.diboot.core.binding.parser;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindMetadata;
+import com.diboot.core.binding.annotation.BindDict;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import java.util.List;
  */
 public class BindAnnotationGroup {
     /**
-     * Metadata注解
+     * Dictionary注解
      */
-    private List<FieldAnnotation> bindMetadataAnnotations;
+    private List<FieldAnnotation> bindDictAnnotations;
     /**
      * 字段关联注解
      */
@@ -39,11 +39,11 @@ public class BindAnnotationGroup {
      * @param annotation
      */
     public void addBindAnnotation(String fieldName, Annotation annotation){
-        if(annotation instanceof BindMetadata){
-            if(bindMetadataAnnotations == null){
-                bindMetadataAnnotations = new ArrayList<>();
+        if(annotation instanceof BindDict){
+            if(bindDictAnnotations == null){
+                bindDictAnnotations = new ArrayList<>();
             }
-            bindMetadataAnnotations.add(new FieldAnnotation(fieldName, annotation));
+            bindDictAnnotations.add(new FieldAnnotation(fieldName, annotation));
         }
         else if(annotation instanceof BindField){
             if(bindFieldAnnotations == null){
@@ -65,8 +65,8 @@ public class BindAnnotationGroup {
         }
     }
 
-    public List<FieldAnnotation> getBindMetadataAnnotations() {
-        return bindMetadataAnnotations;
+    public List<FieldAnnotation> getBindDictAnnotations() {
+        return bindDictAnnotations;
     }
 
     public List<FieldAnnotation> getBindFieldAnnotations() {
@@ -82,6 +82,6 @@ public class BindAnnotationGroup {
     }
 
     public boolean isNotEmpty() {
-        return bindMetadataAnnotations != null || bindFieldAnnotations != null || bindEntityAnnotations != null || bindEntityListAnnotations != null;
+        return bindDictAnnotations != null || bindFieldAnnotations != null || bindEntityAnnotations != null || bindEntityListAnnotations != null;
     }
 }

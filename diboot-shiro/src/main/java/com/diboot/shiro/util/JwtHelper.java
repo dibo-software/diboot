@@ -21,7 +21,7 @@ public class JwtHelper {
     private static final Logger logger = LoggerFactory.getLogger(JwtHelper.class);
 
     private static final String ISSUER = V.notEmpty(BaseConfig.getProperty("diboot.shiro.jwt.issuer")) ? BaseConfig.getProperty("diboot.shiro.jwt.issuer") : "diboot.com";
-    private static final String AUTH_HEADER = V.notEmpty(BaseConfig.getProperty("diboot.shiro.jwt.auth.header.key")) ? BaseConfig.getProperty("diboot.shiro.jwt.auth.header.key") : "authtoken";
+    private static final String AUTH_HEADER = V.notEmpty(BaseConfig.getProperty("diboot.shiro.jwt.authz.header.key")) ? BaseConfig.getProperty("diboot.shiro.jwt.authz.header.key") : "authtoken";
     private static final String TOKEN_PREFIX = V.notEmpty(BaseConfig.getProperty("diboot.shiro.jwt.token.prefix")) ? BaseConfig.getProperty("diboot.shiro.jwt.token.prefix") : "Bearer ";
     public static final String SIGN_KEY = V.notEmpty(BaseConfig.getProperty("diboot.shiro.jwt.signkey"))? BaseConfig.getProperty("diboot.shiro.jwt.signkey") : "Dibo2016Mazc";
 
