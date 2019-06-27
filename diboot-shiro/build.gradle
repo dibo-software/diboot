@@ -1,8 +1,7 @@
 dependencies {
     compile project(":diboot-core")
 
-    compile("org.springframework.boot:spring-boot-configuration-processor",
-            'org.springframework.boot:spring-boot-autoconfigure-processor')
+    compile("org.springframework.boot:spring-boot-configuration-processor")
     compile("org.apache.shiro:shiro-spring:1.4.1")
     compile("com.auth0:java-jwt:3.4.1",
             "io.jsonwebtoken:jjwt:0.9.1")
