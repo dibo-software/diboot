@@ -5,13 +5,13 @@ import com.diboot.core.binding.FieldBinder;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindMetadata;
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
-import com.diboot.core.entity.Metadata;
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.service.MetadataService;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
@@ -62,11 +62,11 @@ public class AnnotationBindingManager {
         Class voClass = voList.get(0).getClass();
         BindAnnotationGroup bindAnnotationGroup = BindAnnotationCacheManager.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isNotEmpty()){
-            // 绑定元数据
-            List<FieldAnnotation> metadataAnnoList = bindAnnotationGroup.getBindMetadataAnnotations();
-            if(metadataAnnoList != null){
-                for(FieldAnnotation annotation : metadataAnnoList){
-                    doBindingMetadata(voList, annotation);
+            // 绑定数据字典
+            List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();
+            if(dictAnnoList != null){
+                for(FieldAnnotation annotation : dictAnnoList){
+                    doBindingDict(voList, annotation);
                 }
             }
             // 绑定Field字段名
@@ -92,16 +92,16 @@ public class AnnotationBindingManager {
     }
 
     /***
-     * 绑定元数据
+     * 绑定数据字典
      * @param voList
      * @param fieldAnno
      * @param <VO>
      */
-    private static <VO> void doBindingMetadata(List<VO> voList, FieldAnnotation fieldAnno) {
-        MetadataService metadataService = (MetadataService) ContextHelper.getBean(MetadataService.class);
-        if(metadataService != null){
-            BindMetadata annotation = (BindMetadata) fieldAnno.getAnnotation();
-            metadataService.bindItemLabel(voList, fieldAnno.getFieldName(), annotation.field(), annotation.type());
+    private static <VO> void doBindingDict(List<VO> voList, FieldAnnotation fieldAnno) {
+        DictionaryService dictionaryService = (DictionaryService) ContextHelper.getBean(DictionaryService.class);
+        if(dictionaryService != null){
+            BindDict annotation = (BindDict) fieldAnno.getAnnotation();
+            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), annotation.field(), annotation.type());
         }
     }
 
@@ -196,8 +196,8 @@ public class AnnotationBindingManager {
      */
     private static BaseService getService(Annotation annotation){
         Class<?> entityClass = null;
-        if(annotation instanceof BindMetadata){
-            entityClass = Metadata.class;
+        if(annotation instanceof BindDict){
+            entityClass = Dictionary.class;
         }
         else if(annotation instanceof BindField){
             BindField bindAnnotation = (BindField)annotation;

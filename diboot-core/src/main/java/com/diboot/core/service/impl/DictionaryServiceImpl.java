@@ -2,9 +2,9 @@ package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.entity.Metadata;
-import com.diboot.core.mapper.MetadataMapper;
-import com.diboot.core.service.MetadataService;
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.mapper.DictionaryMapper;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.KeyValue;
 import org.slf4j.Logger;
@@ -14,29 +14,29 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 元数据相关service实现
+ * 数据字典相关service实现
  * @author Mazhicheng
  * @version 2.0
  * @date 2019/01/01
  */
 @Service
-public class MetadataServiceImpl extends BaseServiceImpl<MetadataMapper, Metadata> implements MetadataService{
-    private static final Logger log = LoggerFactory.getLogger(MetadataServiceImpl.class);
+public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
+    private static final Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
 
-    private static final String FIELD_NAME_ITEM_NAME = BeanUtils.convertToFieldName(Metadata::getItemName);
-    private static final String FIELD_NAME_ITEM_VALUE = BeanUtils.convertToFieldName(Metadata::getItemValue);
-    private static final String FIELD_NAME_TYPE = BeanUtils.convertToFieldName(Metadata::getType);
-    private static final String FIELD_NAME_PARENT_ID = BeanUtils.convertToFieldName(Metadata::getParentId);
+    private static final String FIELD_NAME_ITEM_NAME = BeanUtils.convertToFieldName(Dictionary::getItemName);
+    private static final String FIELD_NAME_ITEM_VALUE = BeanUtils.convertToFieldName(Dictionary::getItemValue);
+    private static final String FIELD_NAME_TYPE = BeanUtils.convertToFieldName(Dictionary::getType);
+    private static final String FIELD_NAME_PARENT_ID = BeanUtils.convertToFieldName(Dictionary::getParentId);
 
     @Override
     public List<KeyValue> getKeyValueList(String type) {
         // 构建查询条件
-        Wrapper queryMetadata = new QueryWrapper<Metadata>().lambda()
-                .select(Metadata::getItemName, Metadata::getItemValue)
-                .eq(Metadata::getType, type)
-                .gt(Metadata::getParentId, 0);
+        Wrapper queryDictionary = new QueryWrapper<Dictionary>().lambda()
+                .select(Dictionary::getItemName, Dictionary::getItemValue)
+                .eq(Dictionary::getType, type)
+                .gt(Dictionary::getParentId, 0);
         // 返回构建条件
-        return getKeyValueList(queryMetadata);
+        return getKeyValueList(queryDictionary);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class MetadataServiceImpl extends BaseServiceImpl<MetadataMapper, Metadat
             return;
         }
         bindingFieldTo(voList)
-            .link(Metadata::getItemName, setFieldLabelFn)
-            .joinOn(getFieldIdFn, Metadata::getItemValue)
+            .link(Dictionary::getItemName, setFieldLabelFn)
+            .joinOn(getFieldIdFn, Dictionary::getItemValue)
             .andEQ(FIELD_NAME_TYPE, type)
             .andGT(FIELD_NAME_PARENT_ID, 0)
             .bind();

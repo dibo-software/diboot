@@ -40,7 +40,7 @@ public abstract class BaseCrudRestController extends BaseController {
 	/***
 	 * 获取某资源的集合
 	 * <p>
-	 * url参数示例: /metadata/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+	 * url参数示例: /dictionary/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
 	 * </p>
 	 * @param request
 	 * @return JsonResult
@@ -56,7 +56,7 @@ public abstract class BaseCrudRestController extends BaseController {
 	/***
 	 * 获取某资源的集合
 	 * <p>
-	 * url参数示例: /metadata/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+	 * url参数示例: /dictionary/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
 	 * </p>
 	 * @param request
 	 * @return JsonResult
@@ -74,7 +74,7 @@ public abstract class BaseCrudRestController extends BaseController {
 	/***
 	 * 获取某VO资源的集合
 	 * <p>
-	 * url参数示例: /metadata/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+	 * url参数示例: /dictionary/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
 	 * </p>
 	 * @param request
 	 * @return JsonResult
