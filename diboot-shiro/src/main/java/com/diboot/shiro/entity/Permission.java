@@ -1,8 +1,6 @@
 package com.diboot.shiro.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Data;
 
@@ -15,9 +13,6 @@ import lombok.Data;
 public class Permission extends BaseEntity {
 
     private static final long serialVersionUID = 7713768302925692987L;
-
-    @TableField
-    private Long menuId;
 
     @TableField
     private String menuCode;

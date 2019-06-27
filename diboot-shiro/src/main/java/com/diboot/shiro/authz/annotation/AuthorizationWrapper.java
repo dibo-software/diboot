@@ -1,8 +1,12 @@
 package com.diboot.shiro.authz.annotation;
 
-import org.apache.shiro.authz.annotation.*;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 权限包装：目前只包装{@link RequiresPermissions},可以根据需要包装{@link RequiresRoles}

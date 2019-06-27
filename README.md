@@ -35,8 +35,10 @@ RBAC的角色权限+基于Shiro的细粒度权限控制
 #### 2、@AuthorizationWrapper 
 类/方法注解，在保证shiro的@RequirePermissions注解的功能基础上，增加名称、权限前缀特性，使用方式同@RequiresPermissions
 
-#### 3、AbstractStorageApplicationListener
-实现ApplicationListener接口，继承该类后，系统启动后自动将使用@AuthorizationPrefix和@AuthorizationWrapper设置的权限增量插入至数据库
+#### 3、AuthorizationProperties
+提供自动入库的配置：包括权限环境变量 和权限是否入库
+#### 4、AuthorizationStorage
+调用该类autoStorage传入spring上下文参数，使用参考diboot-example 中ExampleListener类
 
 ### ** diboot-example: 示例
 各组件使用示例项目
