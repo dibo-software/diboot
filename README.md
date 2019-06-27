@@ -15,7 +15,7 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
 #### 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
    > 通过注解实现多数场景下的关联查询无SQL化自动绑定
    
-##### 1. @BindMetadata 注解自动绑定元数据(枚举值)的显示值Label
+##### 1. @BindDict 注解自动绑定数据字典(枚举值)的显示值Label
 ##### 2. @BindField 注解自动绑定其他表的字段
 ##### 3. @BindEntity 注解自动绑定单个其他表实体Entity
 ##### 4. @BindEntityList 注解自动绑定其他表实体集合List<Entity>

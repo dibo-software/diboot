@@ -11,16 +11,16 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface BindMetadata {
+public @interface BindDict {
 
     /***
-     * 绑定元数据类型
+     * 绑定数据字典类型
      * @return
      */
     String type();
 
     /***
-     * 元数据项取值字段
+     * 数据字典项取值字段
      * @return
      */
     String field();

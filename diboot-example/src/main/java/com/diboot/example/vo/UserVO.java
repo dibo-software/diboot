@@ -1,16 +1,12 @@
 package com.diboot.example.vo;
 
 import com.diboot.core.binding.annotation.BindEntity;
-import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindMetadata;
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Organization;
-import com.diboot.example.entity.Role;
 import com.diboot.example.entity.User;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author Mazhicheng
@@ -21,8 +17,8 @@ import java.util.List;
 public class UserVO extends User {
     private static final long serialVersionUID = 3526115343377985725L;
 
-    // 绑定元数据枚举
-    @BindMetadata(type="GENDER", field = "gender")
+    // 绑定数据字典枚举
+    @BindDict(type="GENDER", field = "gender")
     private String genderLabel;
 
     // 字段关联，相同条件的entity+condition将合并为一条SQL查询

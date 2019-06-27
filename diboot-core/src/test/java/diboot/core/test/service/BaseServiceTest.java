@@ -2,8 +2,8 @@ package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.entity.Metadata;
-import com.diboot.core.service.MetadataService;
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
@@ -27,33 +27,33 @@ import java.util.List;
 public class BaseServiceTest {
 
     @Autowired
-    MetadataService metadataService;
+    DictionaryService dictionaryService;
 
     @Test
     public void testGet(){
         // 查询总数
-        int count = metadataService.getEntityListCount(null);
+        int count = dictionaryService.getEntityListCount(null);
         Assert.assertTrue(count > 0);
         // 查询list
-        List<Metadata> metadataList = metadataService.getEntityList(null);
-        Assert.assertTrue(V.notEmpty(metadataList));
-        Assert.assertTrue(metadataList.size() == count);
+        List<Dictionary> dictionaryList = dictionaryService.getEntityList(null);
+        Assert.assertTrue(V.notEmpty(dictionaryList));
+        Assert.assertTrue(dictionaryList.size() == count);
         // 第一页数据
-        List<Metadata> pageList = metadataService.getEntityList(null, new Pagination());
+        List<Dictionary> pageList = dictionaryService.getEntityList(null, new Pagination());
         Assert.assertTrue(pageList.size() > 0 && pageList.size() <= BaseConfig.getPageSize());
 
         // 查询单个记录
-        Long id = metadataList.get(0).getId();
-        Metadata first = metadataService.getEntity(id);
+        Long id = dictionaryList.get(0).getId();
+        Dictionary first = dictionaryService.getEntity(id);
         Assert.assertTrue(first != null);
 
         // 只查询第一条记录对应type类型的
-        LambdaQueryWrapper<Metadata> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Metadata::getType, first.getType());
-        metadataList = metadataService.getEntityList(queryWrapper);
-        Assert.assertTrue(V.notEmpty(metadataList));
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dictionary::getType, first.getType());
+        dictionaryList = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(V.notEmpty(dictionaryList));
         // 结果type值一致
-        metadataList.stream().forEach( m -> {
+        dictionaryList.stream().forEach(m -> {
             Assert.assertTrue(m.getType().equals(first.getType()));
         });
     }
@@ -62,28 +62,28 @@ public class BaseServiceTest {
     public void testCreateUpdateAndDelete(){
         // 创建
         String TYPE = "ID_TYPE";
-        Metadata metadata = new Metadata();
-        metadata.setType(TYPE);
-        metadata.setItemName("证件品类");
-        metadata.setParentId(0L);
-        metadataService.createEntity(metadata);
+        Dictionary dictionary = new Dictionary();
+        dictionary.setType(TYPE);
+        dictionary.setItemName("证件品类");
+        dictionary.setParentId(0L);
+        dictionaryService.createEntity(dictionary);
 
         // 查询是否创建成功
-        LambdaQueryWrapper<Metadata> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Metadata::getType, TYPE);
-        List<Metadata> metadataList = metadataService.getEntityList(queryWrapper);
-        Assert.assertTrue(V.notEmpty(metadataList));
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dictionary::getType, TYPE);
+        List<Dictionary> dictionaryList = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(V.notEmpty(dictionaryList));
 
         // 更新
-        metadata.setItemName("证件类型");
-        metadataService.updateEntity(metadata);
-        Metadata metadata2 = metadataService.getEntity(metadata.getId());
-        Assert.assertTrue(metadata2.getItemName().equals(metadata.getItemName()));
+        dictionary.setItemName("证件类型");
+        dictionaryService.updateEntity(dictionary);
+        Dictionary dictionary2 = dictionaryService.getEntity(dictionary.getId());
+        Assert.assertTrue(dictionary2.getItemName().equals(dictionary.getItemName()));
 
         // 删除
-        metadataService.deleteEntity(metadata.getId());
-        metadata2 = metadataService.getEntity(metadata.getId());
-        Assert.assertTrue(metadata2 == null);
+        dictionaryService.deleteEntity(dictionary.getId());
+        dictionary2 = dictionaryService.getEntity(dictionary.getId());
+        Assert.assertTrue(dictionary2 == null);
     }
 
 }
