@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version : v2.0
  * @Date 2019-06-27  10:16
  */
-@ConfigurationProperties(prefix = "diboot.shiro.authorization")
+@ConfigurationProperties(prefix = "diboot.shiro.auth")
 @Data
 public class AuthorizationProperties {
 
