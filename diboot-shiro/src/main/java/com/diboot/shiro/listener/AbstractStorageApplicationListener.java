@@ -229,7 +229,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
             saveOrUpdatePermissionList = BeanUtils.convertList(permissionStorageList, Permission.class);
             saveOrUpdateOrDeletePermissionList.addAll(saveOrUpdatePermissionList);
         }
-        log.debug("当前系统权限共计【{}】个 需新增【{}】个, 需修改【{}】个, 需删除【{}】个！",
+        log.debug("当前系统权限共计【{}】个 已自动 新增【{}】个, 修改【{}】个, 删除【{}】个！",
                 totalCount, (saveOrUpdateOrDeletePermissionList.size() - modifyCount - removeCount), modifyCount, removeCount);
         if (V.notEmpty(saveOrUpdateOrDeletePermissionList)) {
             int loopCount = (int) Math.ceil(saveOrUpdateOrDeletePermissionList.size() * 1.0 / BaseConfig.getBatchSize());
