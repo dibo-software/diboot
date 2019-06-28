@@ -3,6 +3,7 @@ buildscript {
         springBootVersion = '2.1.4.RELEASE'
     }
     repositories {
+        mavenLocal() //优先查找本地maven库，性能最好
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     dependencies {
@@ -18,12 +19,17 @@ allprojects {
 // 子项目的配置
 subprojects {
     apply plugin: 'java'
-    
+    apply plugin: 'maven'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     
     [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
     repositories {
+        mavenLocal() //优先查找本地maven库，性能最好
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     ext {//依赖版本
@@ -35,10 +41,9 @@ subprojects {
         lombokVersion = "1.18.8"
     }
     dependencies {
-        //gradle 4.7版本以上，使用如下方式
+        // Gradle 5.0及以上版本，使用如下方式
 //        annotationProcessor("org.projectlombok:lombok:$lombokVersion")
-//        compileOnly("org.projectlombok:lombok:$lombokVersion")
-        //gradle 4.7版本以下，使用如下方式
+        //gradle 5.0版本以下，使用如下方式
         compileOnly("org.projectlombok:lombok:$lombokVersion")
 
         compile("javax.servlet:javax.servlet-api:4.0.1")

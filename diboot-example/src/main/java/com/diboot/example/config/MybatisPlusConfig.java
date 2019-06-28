@@ -1,5 +1,6 @@
 package com.diboot.example.config;
 
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -32,7 +33,7 @@ public class MybatisPlusConfig {
      */
     @Bean
     public ISqlInjector sqlInjector() {
-        return new LogicSqlInjector();
+        return new DefaultSqlInjector();
     }
 
 }

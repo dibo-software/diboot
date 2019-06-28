@@ -7,12 +7,12 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 /**
- * 元数据实体
+ * 数据字典实体
  * @author Mazhicheng
  * @version v2.0
  * @date 2018/12/27
  */
-public class Metadata extends BaseExtEntity {
+public class Dictionary extends BaseExtEntity {
     private static final long serialVersionUID = 11301L;
 
     /***
@@ -23,32 +23,32 @@ public class Metadata extends BaseExtEntity {
     private Long parentId = 0L;
 
     /***
-     * 元数据类型
+     * 数据字典类型
      */
-    @NotNull(message = "元数据类型不能为空！")
-    @Length(max = 50, message = "元数据类型长度超长！")
+    @NotNull(message = "数据字典类型不能为空！")
+    @Length(max = 50, message = "数据字典类型长度超长！")
     @TableField
     private String type;
 
     /***
-     * 元数据项的显示名称
+     * 数据字典项的显示名称
      */
-    @NotNull(message = "元数据项名称不能为空！")
-    @Length(max = 100, message = "元数据项名称长度超长！")
+    @NotNull(message = "数据字典项名称不能为空！")
+    @Length(max = 100, message = "数据字典项名称长度超长！")
     @TableField
     private String itemName;
 
     /***
-     * 元数据项的存储值（编码）
+     * 数据字典项的存储值（编码）
      */
-    @Length(max = 100, message = "元数据项编码长度超长！")
+    @Length(max = 100, message = "数据字典项编码长度超长！")
     @TableField
     private String itemValue;
 
     /***
      * 备注信息
      */
-    @Length(max = 200, message = "元数据备注长度超长！")
+    @Length(max = 200, message = "数据字典备注长度超长！")
     @TableField
     private String comment;
 

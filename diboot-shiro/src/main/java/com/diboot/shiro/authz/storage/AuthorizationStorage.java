@@ -1,6 +1,5 @@
-package com.diboot.shiro.listener;
+package com.diboot.shiro.authz.storage;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.BeanUtils;
@@ -8,18 +7,19 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
-import com.diboot.shiro.authz.storage.EnableStorageEnum;
-import com.diboot.shiro.authz.storage.PermissionStorage;
+import com.diboot.shiro.authz.properties.AuthorizationProperties;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.impl.PermissionServiceImpl;
 import com.diboot.shiro.util.ProxyToTargetObjectHelper;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,89 +29,52 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * {@link AbstractStorageApplicationListener}实现{@link ApplicationListener}接口,
- * <br/>
- * 并重新对外提供抽象{@link AbstractStorageApplicationListener#customExecute}，功能等同于{@link ApplicationListener#onApplicationEvent};
- * <br/>
- * {@link AbstractStorageApplicationListener}中封装了将{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper}权限自动入库的操作,
+ * {@link AuthorizationStorage}中封装了将{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper}权限自动入库的操作,
  * <strong>注：权限入库每个Controller需要加上类注解{@link AuthorizationPrefix}用于识别</strong>
  * <br/>
- * 当你使用注解{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper}，建议直接继承{@link AbstractStorageApplicationListener},
+ * 当你使用注解{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper}, 且需要自动让权限入库，请实现{@link ApplicationListener}并注入该类，
  * <br/>
- * 且你的实现类需要手动设置一个默认构造函数来设置{@link AbstractStorageApplicationListener#storagePermissions}，传递是否自动权限入库
- *
+ * 调用类中方法{@link AuthorizationStorage#autoStorage(ApplicationContext)}
  * @author : wee
- * @version : v 2.0
- * @Date 2019-06-18  23:12
+ * @version : v2.0
+ * @Date 2019-06-27  10:01
  */
 @Slf4j
-public abstract class AbstractStorageApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+public class AuthorizationStorage {
+
+    private String env;
+
+    private boolean storage;
+
+    public AuthorizationStorage(String env, boolean storage) {
+        this.env = env;
+        this.storage = storage;
+    }
 
     /**存储数据库中已经存在的permissionCode和ID的关系，主要用于更新数据*/
     private static Map<String, Permission> dbPermissionMap = new HashMap<>();
 
-    /**代码中的所有权限数据 key: {@link PermissionStorage#getPermissionCode()} value: {@link Permission}*/
-    private static Map<String, PermissionStorage> loadCodePermissionMap = new ConcurrentHashMap<>();
+    /**代码中的所有权限数据 key: {@link PermissionStorageEntity#getPermissionCode()} value: {@link Permission}*/
+    private static Map<String, PermissionStorageEntity> loadCodePermissionMap = new ConcurrentHashMap<>();
 
     /**
-     * 默认开启存储
+     * 系统启动后存储权限
+     * @param applicationContext
      */
-    protected boolean storagePermissions;
-
-    protected AbstractStorageApplicationListener(EnableStorageEnum enableStorageEnum) {
-        if (V.isEmpty(enableStorageEnum)) {
-            this.storagePermissions = true;
-        } else {
-            this.storagePermissions = enableStorageEnum.isStoragePermissions();
+    public void autoStorage(ApplicationContext applicationContext) {
+        if (!storage) {
+            log.debug("【初始化权限】<==未配置自动存储权限");
+            return;
         }
-    }
-
-    /**
-     * Handle an application event.
-     *
-     * @param event the event to respond to
-     */
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        //防止重复执行
-        if (V.isEmpty(event.getApplicationContext().getParent())) {
-            /*自定义处理内容*/
-            customExecute(event);
-            /*判断客户是否开启存储权限，如果开启那么执行存储权限*/
-            if (storagePermissions) {
-                storagePermissions(event);
-            }
-        }
-    }
-
-    /**
-     * 系统启动后，客户自定义事件
-     *
-     * @param event
-     */
-    protected abstract void customExecute(ContextRefreshedEvent event);
-
-    /**
-     * 执行完自动权限后，自动赋值
-     *
-     * @param event
-     */
-    private void storagePermissions(ContextRefreshedEvent event) {
         try {
-            ApplicationContext applicationContext = event.getApplicationContext();
-
             if (V.notEmpty(applicationContext)) {
                 PermissionService permissionService = applicationContext.getBean(PermissionServiceImpl.class);
-
                 //获取当前数据库中的有效的所有权限
-                LambdaQueryWrapper<Permission> permissionLambdaQueryWrapper = Wrappers.lambdaQuery();
-                permissionLambdaQueryWrapper.eq(Permission::isDeleted, false);
-                List<Permission> permissionList = permissionService.getEntityList(permissionLambdaQueryWrapper);
+                List<Permission> permissionList = permissionService.getEntityList(Wrappers.emptyWrapper());
                 //存储数据库值
                 for (Permission permission : permissionList) {
                     dbPermissionMap.put(permission.getPermissionCode(), permission);
                 }
-
                 //初始化数据：获取所有注解为AuthPrefix的代理bean<bean名称，bean的代理对象>
                 Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(AuthorizationPrefix.class);
                 if (V.isEmpty(beansWithAnnotation)) {
@@ -165,22 +128,22 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
         //设置单个权限code和name
         String permissionName = "";
         String permissionCode = "";
-        PermissionStorage permissionStorage;
+        PermissionStorageEntity permissionStorageEntity;
         for (int i = 0; i < value.length; i++) {
             //如果权限名称和值无法一一对应，那么当前权限组的所有数据的名称全部设置为最后一个name值
             permissionName = value.length != name.length ? name[name.length - 1] : name[i];
             //拼接权限值
             permissionCode = V.notEmpty(prefix) ? S.join(prefix, ":", value[i]) : value[i];
-            PermissionStorage existPermission = loadCodePermissionMap.get(permissionCode);
+            PermissionStorageEntity existPermission = loadCodePermissionMap.get(permissionCode);
             //如果不存在权限构建；当前存在的权限不是是高优先级的时候替换
             if (V.isEmpty(existPermission) || !existPermission.isHighPriority()) {
                 //组装需要存储的权限
-                permissionStorage = PermissionStorage.builder()
-                        .menuId(3L).menuCode(menuCode).menuName(menuName)
+                permissionStorageEntity = PermissionStorageEntity.builder()
+                        .menuCode(menuCode).menuName(menuName)
                         .permissionCode(permissionCode).permissionName(permissionName)
                         .deleted(false).highPriority(highPriority).build();
                 //设置缓存
-                loadCodePermissionMap.put(permissionCode, permissionStorage);
+                loadCodePermissionMap.put(permissionCode, permissionStorageEntity);
             }
         }
     }
@@ -200,33 +163,37 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
         List<Permission> saveOrUpdateOrDeletePermissionList = new ArrayList<>();
         //设置删除 or 修改
         for (Map.Entry<String, Permission> entry : dbPermissionMap.entrySet()) {
-            PermissionStorage permissionStorage = loadCodePermissionMap.get(entry.getKey());
+            PermissionStorageEntity permissionStorageEntity = loadCodePermissionMap.get(entry.getKey());
             Permission permission = entry.getValue();
-            //存在则更新（设置ID）
-            if (V.notEmpty(permissionStorage)) {
-                if (isNeedModify(permission, permissionStorage)) {
+            //代码中存在则更新（设置ID）
+            if (V.notEmpty(permissionStorageEntity)) {
+                if (isNeedModify(permission, permissionStorageEntity)) {
                     modifyCount++;
-                    permissionStorage.setId(permission.getId());
+                    permissionStorageEntity.setId(permission.getId());
                     //重置
-                    loadCodePermissionMap.put(entry.getKey(), permissionStorage);
+                    loadCodePermissionMap.put(entry.getKey(), permissionStorageEntity);
                 } else {
                     //数据库中不需要修改的，在加载的数据中删除
                     loadCodePermissionMap.remove(entry.getKey());
                 }
             } else {
-                //不存在: 表示需要删除
-                removeCount++;
-                permission.setDeleted(true);
-                saveOrUpdateOrDeletePermissionList.add(permission);
+                //代码中不存在且生产环境/测试环境: 表示需要删除
+                if (AuthorizationProperties.EnvEnum.PROD.getEnv().equals(this.env) ||
+                        AuthorizationProperties.EnvEnum.TEST.getEnv().equals(this.env)) {
+                    removeCount++;
+                    permission.setDeleted(true);
+                    saveOrUpdateOrDeletePermissionList.add(permission);
+                } else {
+                    log.debug("【初始化权限】<== 当前启动环境为：【{}】, 不删除系统中不存在的权限！" , env);
+                }
             }
 
         }
         //需要操作的数据=》转化为List<Permission>
         List<Permission> saveOrUpdatePermissionList = new ArrayList<>();
         if (V.notEmpty(loadCodePermissionMap)) {
-
-            List<PermissionStorage> permissionStorageList = loadCodePermissionMap.values().stream().collect(Collectors.toList());
-            saveOrUpdatePermissionList = BeanUtils.convertList(permissionStorageList, Permission.class);
+            List<PermissionStorageEntity> permissionStorageEntityList = loadCodePermissionMap.values().stream().collect(Collectors.toList());
+            saveOrUpdatePermissionList = BeanUtils.convertList(permissionStorageEntityList, Permission.class);
             saveOrUpdateOrDeletePermissionList.addAll(saveOrUpdatePermissionList);
         }
         log.debug("当前系统权限共计【{}】个 已自动 新增【{}】个, 修改【{}】个, 删除【{}】个！",
@@ -248,7 +215,7 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
                 //截取
                 permissionList = saveOrUpdateOrDeletePermissionList.subList(subStartIndex, subEndIndex);
                 //保存、更新、删除 权限
-                boolean success = permissionService.createOrUpdateEntities(permissionList);
+                boolean success = permissionService.createOrUpdateOrDeleteEntities(permissionList, BaseConfig.getBatchSize());
                 if (success) {
                     log.debug("【初始化权限】<== 共【{}】批次，第【{}】批次成功，调整【{}】个权限！", loopCount, i + 1, permissionList.size());
                 } else {
@@ -261,19 +228,52 @@ public abstract class AbstractStorageApplicationListener implements ApplicationL
     /**
      * 比较两个对象的属性是否相同，如果存在一处不同那么就需要修改
      * @param permission
-     * @param permissionStorage
+     * @param permissionStorageEntity
      * @return
      */
-    public boolean isNeedModify(Permission permission, PermissionStorage permissionStorage){
-        if (!V.equals(permission.getMenuId(), permissionStorage.getMenuId())
-            || !V.equals(permission.getMenuCode(), permissionStorage.getMenuCode())
-            || !V.equals(permission.getMenuName(), permissionStorage.getMenuName())
-            || !V.equals(permission.getPermissionCode(), permissionStorage.getPermissionCode())
-            || !V.equals(permission.getPermissionName(), permissionStorage.getPermissionName())
+    private boolean isNeedModify(Permission permission, PermissionStorageEntity permissionStorageEntity){
+        if (!V.equals(permission.getMenuCode(), permissionStorageEntity.getMenuCode())
+                || !V.equals(permission.getMenuName(), permissionStorageEntity.getMenuName())
+                || !V.equals(permission.getPermissionCode(), permissionStorageEntity.getPermissionCode())
+                || !V.equals(permission.getPermissionName(), permissionStorageEntity.getPermissionName())
         ) {
             return true;
         }
         return false;
     }
 
+    /**
+     * 权限临时存储类
+     * @author wee
+     * @version v2.0
+     * @date 2019/6/6
+     */
+    @Data
+    @Builder
+    private static class PermissionStorageEntity implements Serializable {
+
+        private static final long serialVersionUID = 147840093814049689L;
+
+        /***
+         * 默认逻辑删除标记，deleted=0有效
+         */
+        private boolean deleted = false;
+
+        /**菜单编码*/
+        private String menuCode;
+
+        /**菜单名称*/
+        private String menuName;
+
+        /**权限编码*/
+        private String permissionCode;
+
+        /**权限名称*/
+        private String permissionName;
+
+        /**是否高优先级：方法上的优先级高于类上，同时出现以方法为准*/
+        private boolean highPriority;
+
+        private Long id;
+    }
 }

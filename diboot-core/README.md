@@ -7,9 +7,9 @@
    > 依赖Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
 ### ** 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
    > 通过注解实现多数场景下的关联查询无SQL
-#### 2.1. 注解自动绑定元数据(枚举值)的显示值Label
+#### 2.1. 注解自动绑定数据字典(枚举值)的显示值Label
 ~~~java
-@BindMetadata(type="GENDER", field = "gender")
+@BindDict(type="GENDER", field = "gender")
 private String genderLabel;
 ~~~  
 #### 2. 注解自动绑定其他表的字段

@@ -13,18 +13,18 @@ create table department
 )
   comment '组织单位' charset=utf8mb4;
 
-create table metadata
+create table dictionary
 (
   id int unsigned auto_increment comment 'ID'
     primary key,
   parent_id int unsigned not null comment '父ID',
-  type varchar(50) not null comment '元数据类型',
-  item_name varchar(100) not null comment '元数据项显示名',
-  item_value varchar(100) null comment '元数据项存储值',
+  type varchar(50) not null comment '字典类型',
+  item_name varchar(100) not null comment '字典项显示名',
+  item_value varchar(100) null comment '字典项存储值',
   comment varchar(200) null comment '备注',
   extdata varchar(200) null comment '扩展属性',
   sort_id smallint(6) default 99 not null comment '排序号',
-  `system` tinyint(1) default 0 not null comment '是否是系统预置',
+  `system` tinyint(1) default 0 not null comment '是否系统预置',
   editable tinyint(1) default 1 not null comment '是否可编辑',
   deleted tinyint(1) default 0 not null comment '已删除',
   create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间'
@@ -74,7 +74,7 @@ create table user_role
 INSERT INTO department (id, parent_id, org_id, name)
 VALUES (10001, 0, 100001, '产品部'), (10002, 10001, 100001, '研发组'), (10003, 10001, 100001, '测试组');
 
-INSERT INTO metadata (id, parent_id, type, item_name, item_value, comment, extdata, sort_id, `system`, editable)
+INSERT INTO dictionary (id, parent_id, type, item_name, item_value, comment, extdata, sort_id, `system`, editable)
 VALUES (1, 0, 'GENDER', '性别', null, '', null, 99, 1, 1), (2, 1, 'GENDER', '男', 'M', null, null, 99, 1, 0), (3, 1, 'GENDER', '女', 'F', null, null, 99, 1, 0);
 
 INSERT INTO organization (id, parent_id, name, telphone) VALUES (100001, 0, '苏州帝博', '0512-62988949');
