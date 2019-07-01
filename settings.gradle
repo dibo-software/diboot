@@ -13,4 +13,5 @@ include 'diboot-example'
 include 'diboot-shiro'
 include 'diboot-shiro-wx-mp'
 include 'diboot-docs'
+include 'diboot-shiro-wx-cp'
 
