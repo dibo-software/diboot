@@ -3,7 +3,6 @@ package com.diboot.shiro.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
-import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.entity.UserRole;
 import com.diboot.shiro.mapper.RoleMapper;
@@ -15,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

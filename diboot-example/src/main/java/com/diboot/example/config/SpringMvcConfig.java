@@ -32,7 +32,7 @@ import java.util.List;
 @EnableAutoConfiguration
 @EnableTransactionManagement(proxyTargetClass=true)
 @ComponentScan(basePackages={"com.diboot"})
-@MapperScan({"com.diboot.*.mapper"})
+@MapperScan({"com.diboot.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer{
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
 

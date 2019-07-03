@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/1/19
  */
 @Configuration
-@MapperScan(basePackages={"com.diboot.*.mapper*"})
+@MapperScan(basePackages={"com.diboot.**.mapper*"})
 public class MybatisPlusConfig {
 
     /**

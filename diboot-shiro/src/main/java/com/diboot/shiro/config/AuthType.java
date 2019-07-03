@@ -1,7 +1,5 @@
 package com.diboot.shiro.config;
 
-import lombok.Data;
-
 /***
  * 认证方式
  * @author Yangzhao

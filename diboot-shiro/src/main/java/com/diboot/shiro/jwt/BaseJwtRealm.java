@@ -3,7 +3,9 @@ package com.diboot.shiro.jwt;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
 import com.diboot.shiro.entity.Permission;
-import com.diboot.shiro.service.*;
+import com.diboot.shiro.service.AuthWayService;
+import com.diboot.shiro.service.RoleService;
+import com.diboot.shiro.service.UserRoleService;
 import com.diboot.shiro.vo.RoleVO;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -15,7 +17,9 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
