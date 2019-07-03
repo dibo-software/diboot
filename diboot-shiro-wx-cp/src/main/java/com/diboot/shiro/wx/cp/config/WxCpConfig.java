@@ -3,6 +3,7 @@ package com.diboot.shiro.wx.cp.config;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
+import com.diboot.shiro.wx.cp.service.impl.WxCpServiceExtImpl;
 import com.google.common.collect.Maps;
 import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
@@ -41,7 +42,7 @@ public class WxCpConfig {
 
         if(V.notEmpty(appMapList)){
             for(Map app : appMapList){
-                WxCpService service = new WxCpServiceImpl();
+                WxCpService service = new WxCpServiceExtImpl();
                 WxCpInMemoryConfigStorage inMemoryConfigStorage = new WxCpInMemoryConfigStorage();
                 Integer agentId = Integer.parseInt(app.get(AGENT_ID).toString());
                 String secret = app.get(SECRET).toString();

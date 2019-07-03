@@ -8,6 +8,7 @@ import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.wx.cp.config.WxCpConfig;
+import com.diboot.shiro.wx.cp.service.impl.WxCpServiceExtImpl;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.cp.api.WxCpService;
 import org.apache.shiro.SecurityUtils;
@@ -33,7 +34,7 @@ public class CpAuthTokenController {
     private Map<String, AuthWayService> authWayServiceMap;
 
     @Autowired
-    private WxCpService wxCpService;
+    private WxCpServiceExtImpl wxCpService;
 
     /**
      * 企业微信创建OAuth认证链接(为了获取授权所需code)
@@ -48,7 +49,7 @@ public class CpAuthTokenController {
         if (V.isEmpty(url)){
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"url为空，获取OAuth链接失败"});
         }
-        wxCpService = WxCpConfig.getCpService(Integer.parseInt(agentId));
+        wxCpService = (WxCpServiceExtImpl)WxCpConfig.getCpService(Integer.parseInt(agentId));
 
         String oauthUrl = wxCpService.getOauth2Service().buildAuthorizationUrl(url, null, WxConsts.OAuth2Scope.SNSAPI_PRIVATEINFO);
         return new JsonResult(Status.OK, oauthUrl, new String[]{"获取OAuth链接成功"});
