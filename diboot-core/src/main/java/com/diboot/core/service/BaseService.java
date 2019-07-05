@@ -1,6 +1,7 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.EntityBinder;
 import com.diboot.core.binding.EntityListBinder;
 import com.diboot.core.binding.FieldBinder;
@@ -99,7 +100,7 @@ public interface BaseService<T> {
     int getEntityListCount(Wrapper queryWrapper);
 
     /**
-     * 获取model列表
+     * 获取指定条件的Entity集合
      * @param queryWrapper
      * @return
      * @throws Exception
@@ -107,13 +108,20 @@ public interface BaseService<T> {
     List<T> getEntityList(Wrapper queryWrapper);
 
     /**
-     * 获取model列表
+     * 获取指定条件的Entity集合
      * @param queryWrapper
      * @param pagination
      * @return
      * @throws Exception
      */
     List<T> getEntityList(Wrapper queryWrapper, Pagination pagination);
+
+    /**
+     * 获取指定条件的Entity集合
+     * @param ids
+     * @return
+     */
+    List<T> getEntityListByIds(List ids);
 
     /**
      * 获取指定数量的entity记录
