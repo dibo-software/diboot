@@ -1,3 +1,5 @@
+apply plugin: 'org.springframework.boot'
+
 dependencies {
 
     compile project(":diboot-shiro-wx-mp")
