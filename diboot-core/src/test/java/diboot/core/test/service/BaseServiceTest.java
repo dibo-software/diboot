@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,6 +58,11 @@ public class BaseServiceTest {
         dictionaryList.stream().forEach(m -> {
             Assert.assertTrue(m.getType().equals(first.getType()));
         });
+
+        // 根据id集合去批量查询
+        List<Long> ids = BeanUtils.collectIdToList(dictionaryList);
+        dictionaryList = dictionaryService.getEntityListByIds(ids);
+        Assert.assertTrue(V.notEmpty(dictionaryList));
     }
 
     @Test

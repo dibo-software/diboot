@@ -1,6 +1,7 @@
 package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -152,6 +153,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		IPage<T> page = new Page<>(1, limitCount);
 		page = super.page(page, queryWrapper);
 		return page.getRecords();
+	}
+
+	@Override
+	public List<T> getEntityListByIds(List ids) {
+		QueryWrapper<T> queryWrapper = new QueryWrapper();
+		queryWrapper.in(Cons.FieldName.id.name(), ids);
+		return getEntityList(queryWrapper);
 	}
 
 	@Override
