@@ -60,3 +60,16 @@ logging.level.org.springframework=info
 logging.level.com.zaxxer.hikari=info
 logging.level.com.diboot=debug
 logging.level.org.mybatis=debug
+
+
+#邮件发送配置
+#发送方邮箱
+email.sender.address=
+#发送方授权码
+email.sender.password=
+#SMTP发送服务器的名字
+email.sender.host=smtp.163.com
+#发送端口
+email.sender.sslport=
+#发送方称呼
+email.sender.name=wangyl

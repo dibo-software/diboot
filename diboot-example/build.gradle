@@ -4,6 +4,7 @@ dependencies {
 
     compile project(":diboot-shiro-wx-mp")
     compile project(":diboot-shiro-wx-cp")
+    compile project(":diboot-components-msg")
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
