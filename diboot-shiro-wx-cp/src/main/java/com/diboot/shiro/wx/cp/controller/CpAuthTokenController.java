@@ -16,10 +16,7 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -43,13 +40,11 @@ public class CpAuthTokenController {
      * @throws Exception
      */
     @GetMapping("/buildOAuthUrl")
-    public JsonResult buildOAuthUrl4cp(HttpServletRequest request) throws Exception{
-        String url = request.getParameter("url");
-        String agentId = request.getParameter("agentId");//应用ID
+    public JsonResult buildOAuthUrl4cp(@RequestParam("url") String url,@RequestParam("agentId") Integer agentId, HttpServletRequest request) throws Exception{
         if (V.isEmpty(url)){
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"url为空，获取OAuth链接失败"});
         }
-        wxCpService = (WxCpServiceExtImpl)WxCpConfig.getCpService(Integer.parseInt(agentId));
+        wxCpService = (WxCpServiceExtImpl)WxCpConfig.getCpService(agentId);
 
         String oauthUrl = wxCpService.getOauth2Service().buildAuthorizationUrl(url, null, WxConsts.OAuth2Scope.SNSAPI_PRIVATEINFO);
         return new JsonResult(Status.OK, oauthUrl, new String[]{"获取OAuth链接成功"});
@@ -62,8 +57,7 @@ public class CpAuthTokenController {
      * @throws Exception
      */
     @PostMapping("/apply")
-    public JsonResult applyTokenByOAuth2cp(HttpServletRequest request) throws Exception{
-        String code = request.getParameter("code");
+    public JsonResult applyTokenByOAuth2cp(@RequestParam("code") String code, HttpServletRequest request) throws Exception{
         String userId = "";
         if (JwtHelper.isRequestTokenEffective(request)){
             String account = JwtHelper.getAccountFromToken(JwtHelper.getRequestToken(request));

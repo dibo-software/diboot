@@ -51,7 +51,6 @@ public class SysUserController extends BaseCrudRestController {
 
     @GetMapping("/list")
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        System.out.println(SysUser.class.getSimpleName());
         QueryWrapper<SysUser> queryWrapper = buildQuery(request);
         // 构建分页
         Pagination pagination = buildPagination(request);
@@ -174,7 +173,7 @@ public class SysUserController extends BaseCrudRestController {
     * 校验用户名是否重复
     * */
     @GetMapping("/checkUsernameRepeat")
-    public JsonResult checkUsernameRepeat(Long id, String username, HttpServletRequest request){
+    public JsonResult checkUsernameRepeat(@RequestParam("id") Long id,@RequestParam("username") String username, HttpServletRequest request){
         if(V.notEmpty(username)){
             QueryWrapper<SysUser> wrapper = new QueryWrapper();
             wrapper.lambda().eq(SysUser::getUsername, username);
