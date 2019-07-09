@@ -3,7 +3,6 @@ package com.diboot.core.binding.parser;
 import com.diboot.core.binding.BaseBinder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -87,9 +86,9 @@ public class ConditionManager {
         for(Expression operator : expressionList){
             if(operator instanceof EqualsTo){
                 EqualsTo express = (EqualsTo)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
-                    String entityColumn = getColumnName(express.getRightExpression().toString());
+                    String entityColumn = removeLeftAlias(express.getRightExpression().toString());
                     binder.joinOn(annoColumn, entityColumn);
                 }
                 else{
@@ -98,7 +97,7 @@ public class ConditionManager {
             }
             else if(operator instanceof NotEqualsTo){
                 NotEqualsTo express = (NotEqualsTo)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     binder.andApply(S.toSnakeCase(annoColumn) + " != " + S.toSnakeCase(express.getRightExpression().toString()));
                 }
@@ -108,7 +107,7 @@ public class ConditionManager {
             }
             else if(operator instanceof GreaterThan){
                 GreaterThan express = (GreaterThan)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     binder.andApply(S.toSnakeCase(annoColumn) + " > "+ S.toSnakeCase(express.getRightExpression().toString()));
                 }
@@ -118,7 +117,7 @@ public class ConditionManager {
             }
             else if(operator instanceof GreaterThanEquals){
                 GreaterThanEquals express = (GreaterThanEquals)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     binder.andApply(S.toSnakeCase(annoColumn) + " >= "+ express.getRightExpression().toString());
                 }
@@ -128,7 +127,7 @@ public class ConditionManager {
             }
             else if(operator instanceof MinorThan){
                 MinorThan express = (MinorThan)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     binder.andApply(S.toSnakeCase(annoColumn) + " < "+ express.getRightExpression().toString());
                 }
@@ -138,7 +137,7 @@ public class ConditionManager {
             }
             else if(operator instanceof MinorThanEquals){
                 MinorThanEquals express = (MinorThanEquals)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     binder.andApply(S.toSnakeCase(annoColumn) + " <= "+ express.getRightExpression().toString());
                 }
@@ -148,7 +147,7 @@ public class ConditionManager {
             }
             else if(operator instanceof IsNullExpression){
                 IsNullExpression express = (IsNullExpression)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.isNot() == false){
                     binder.andIsNull(annoColumn);
                 }
@@ -158,7 +157,7 @@ public class ConditionManager {
             }
             else if(operator instanceof InExpression){
                 InExpression express = (InExpression)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.isNot() == false){
                     binder.andApply(S.toSnakeCase(annoColumn) + " IN " + express.getRightItemsList().toString());
                 }
@@ -168,7 +167,7 @@ public class ConditionManager {
             }
             else if(operator instanceof Between){
                 Between express = (Between)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.isNot() == false){
                     binder.andBetween(annoColumn, express.getBetweenExpressionStart().toString(), express.getBetweenExpressionEnd().toString());
                 }
@@ -178,7 +177,7 @@ public class ConditionManager {
             }
             else if(operator instanceof LikeExpression){
                 LikeExpression express = (LikeExpression)operator;
-                String annoColumn = getColumnName(express.getLeftExpression().toString());
+                String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.isNot() == false){
                     binder.andLike(annoColumn, express.getStringExpression());
                 }
@@ -218,18 +217,18 @@ public class ConditionManager {
                     // 如果右侧为中间表字段，如: this.departmentId=Department.id
                     if(rightColumn.startsWith(tableName+".")){
                         // 绑定左手边连接列
-                        String leftHandColumn = getColumnName(leftColumn);
+                        String leftHandColumn = removeLeftAlias(leftColumn);
                         // this. 开头的vo对象字段
                         if(isVoColumn(leftColumn)){
                             // 识别到vo对象的属性 departmentId
                             annoObjectForeignKey = leftHandColumn;
                             // 对应中间表的关联字段
-                            middleTableEqualsToAnnoObjectFKColumn = getColumnName(rightColumn);
+                            middleTableEqualsToAnnoObjectFKColumn = removeLeftAlias(rightColumn);
                         }
                         else{
                             // 注解关联的entity主键
                             referencedEntityPrimaryKey = leftHandColumn;
-                            middleTableEqualsToRefEntityPkColumn = getColumnName(rightColumn);
+                            middleTableEqualsToRefEntityPkColumn = removeLeftAlias(rightColumn);
                         }
                         binder.joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
                         middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
@@ -237,7 +236,7 @@ public class ConditionManager {
                     // 如果左侧为中间表字段，如: Department.orgId=id  (entity=Organization)
                     if(leftColumn.startsWith(tableName+".")){
                         // 绑定右手边连接列
-                        String rightHandColumn = getColumnName(rightColumn);
+                        String rightHandColumn = removeLeftAlias(rightColumn);
                         if(isVoColumn(rightColumn)){
                             // 识别到vo对象的属性 departmentId
                             annoObjectForeignKey = rightHandColumn;
@@ -246,10 +245,16 @@ public class ConditionManager {
                         }
                         else{
                             referencedEntityPrimaryKey = rightHandColumn;
-                            middleTableEqualsToRefEntityPkColumn = getColumnName(leftColumn);
+                            middleTableEqualsToRefEntityPkColumn = removeLeftAlias(leftColumn);
                         }
                         binder.joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
                         middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
+                    }
+                }
+                else{ // equals附加条件，暂只支持列在左侧，如 department.deleted=0
+                    String leftExpression = express.getLeftExpression().toString();
+                    if(leftExpression != null && leftExpression.startsWith(tableName+".")){
+                        middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
                     }
                 }
             }
@@ -292,7 +297,7 @@ public class ConditionManager {
                     leftExpression = express.getLeftExpression().toString();
                 }
                 if(leftExpression != null && leftExpression.startsWith(tableName+".")){
-                    middleTable.addAdditionalCondition(operator.toString());
+                    middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
                 }
             }
         }
@@ -358,7 +363,7 @@ public class ConditionManager {
      * 注解列
      * @return
      */
-    private static String getColumnName(String annoColumn){
+    private static String removeLeftAlias(String annoColumn){
         if(annoColumn.contains(".")){
             annoColumn = S.substringAfter(annoColumn, ".");
         }
@@ -375,6 +380,5 @@ public class ConditionManager {
         // 如果是中间表(非this,self标识的当前表)
         return "this".equals(tempTableName) || "self".equals(tempTableName);
     }
-
 
 }

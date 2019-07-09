@@ -19,9 +19,9 @@ import java.util.Objects;
 
 /**
  * 许可授权相关Service
- * @author Mazhicheng
- * @version 2018/12/23
- * Copyright © www.dibo.ltd
+ * @author Wuyue
+ * @version v2.0
+ * @date 2019/6/20
  */
 @Service
 @Slf4j

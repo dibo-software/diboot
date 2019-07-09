@@ -24,10 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * Organization相关Controller
- * @author Mazhicheng
- * @version 2018/12/23
- * Copyright © www.dibo.ltd
+ * 权限资源相关Controller
+ * @author Wangyongliang
+ * @version v2.0
+ * @date 2019/6/20
  */
 @RestController
 @AuthorizationPrefix(prefix = "permission", code = "permission", name = "权限")

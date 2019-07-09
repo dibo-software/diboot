@@ -19,6 +19,23 @@ spring.datasource.hikari.data-source-properties.nullCatalogMeansCurrent=true
 # 数据库驱动
 spring.datasource.hikari.driver-class-name=com.mysql.cj.jdbc.Driver
 
+# wechat mp config   公众号
+wechat.appId=wx123321
+wechat.secret=VZJJDHILLD
+wechat.token=abcdefg
+wechat.aesKey=7XUDHHEIJDLKJD
+wechat.state=state1
+
+# wechat cp config  企业微信
+wechat.cp.corpId=wwa987654321
+# 企业微信应用
+wechat.cp.apps={\
+                "apps":[\
+                        {"agentId":"1000001", "secret":"XqM54PDq1rIrFAVi4kmFEF-v5hsDHyufMlw"},\
+                        {"agentId":"1000002", "secret":"BJ0irh1uITkaIHvE4Bzi8O9hpDFIkPit6Wo"}\
+                       ]\
+               }
+
 #字符集utf-8
 spring.http.encoding.charset=UTF-8
 spring.http.encoding.enabled=true

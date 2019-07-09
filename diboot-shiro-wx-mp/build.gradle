@@ -5,6 +5,8 @@ plugins {
 group 'com.diboot'
 version '2.0-alpha'
 
+apply plugin: 'org.springframework.boot'
+
 sourceCompatibility = 1.8
 
 repositories {

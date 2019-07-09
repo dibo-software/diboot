@@ -126,4 +126,36 @@ public class SqlExecutor {
         return resultMap;
     }
 
+    public static boolean executeUpdate(String sql, List params) throws Exception{
+        if (V.isEmpty(sql)){
+            return false;
+        }
+
+        // 获取SqlSessionFactory实例
+        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
+        if (sqlSessionFactory == null){
+            log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
+            return false;
+        }
+
+        if (V.notEmpty(params)){
+            if (params.size() > 2000){
+                log.warn("SQL语句参数集合数量过多，size={}，请检查调用是否合理！", params.size());
+            }
+        }
+        log.debug("==>  SQL:" + sql);
+        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+            if (V.notEmpty(params)){
+                for (int i=0; i<params.size(); i++){
+                    stmt.setObject(i + 1, params.get(i));
+                }
+            }
+            int rs = stmt.executeUpdate();
+            return rs >= 0;
+        } catch(Exception e){
+            log.error("执行sql查询异常", e);
+            throw e;
+        }
+    }
+
 }

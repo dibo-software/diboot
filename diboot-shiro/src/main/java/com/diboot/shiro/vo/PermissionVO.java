@@ -1,11 +1,7 @@
 package com.diboot.shiro.vo;
 
-import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.shiro.entity.Permission;
-import com.diboot.shiro.entity.Role;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author Yangzhao

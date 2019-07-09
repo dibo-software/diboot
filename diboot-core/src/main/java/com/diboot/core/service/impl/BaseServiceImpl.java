@@ -1,6 +1,7 @@
 package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -155,6 +156,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public List<T> getEntityListByIds(List ids) {
+		QueryWrapper<T> queryWrapper = new QueryWrapper();
+		queryWrapper.in(Cons.FieldName.id.name(), ids);
+		return getEntityList(queryWrapper);
+	}
+
+	@Override
 	public List<Map<String, Object>> getMapList(Wrapper queryWrapper) {
 		return getMapList(queryWrapper, null);
 	}
@@ -199,15 +207,36 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
 		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
-			if(map.get(keyValueArray[0]) != null){
-				KeyValue kv = new KeyValue((String)map.get(keyValueArray[0]), map.get(keyValueArray[1]));
+			if(map.get(convert2Hump(keyValueArray[0])) != null){
+				KeyValue kv = new KeyValue((String)map.get(convert2Hump(keyValueArray[0])), map.get(convert2Hump(keyValueArray[1])));
 				if(keyValueArray.length > 2){
-					kv.setExt(map.get(keyValueArray[2]));
+					kv.setExt(map.get(convert2Hump(keyValueArray[2])));
 				}
 				keyValueList.add(kv);
 			}
 		}
 		return keyValueList;
+	}
+
+	//将含有_下划线的字符串变成驼峰形式的字符串
+	public String convert2Hump(String str){
+		if(str.indexOf("_") < 0){
+			return str;
+		}
+		StringBuffer strBuffer = new StringBuffer();
+		String [] strs = str.split("_");
+		if(V.notEmpty(strs)){
+			for(int i=0; i<strs.length; i++){
+				String tempStr = null;
+				if(i > 0){
+					tempStr = strs[i].substring(0,1).toUpperCase() + strs[i].substring(1);
+				}else{
+					tempStr = strs[i];
+				}
+				strBuffer.append(tempStr);
+			}
+		}
+		return strBuffer.toString();
 	}
 
 	@Override
