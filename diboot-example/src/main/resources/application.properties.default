@@ -6,6 +6,19 @@ spring.server.protocol=org.apache.coyote.http11.Http11Nio2Protocol
 spring.server.redirectPort=443
 spring.server.compression=on
 
+#文件请求大小
+spring.server.MaxFileSize=10MB
+spring.server.MaxRequestSize=50MB
+
+#文件本地存放路径
+files.storage.directory=C:/Users/wuweiqing/Downloads/upload/
+
+#七牛
+qiniu.key.access=xJPWOwatadCt8ANWPaxrhj3Dj8DGIFoN9jD29SCP
+qiniu.key.secret=IbWRTTXdOKoD8qdpug7Xm+rTXX2yhKuh8tfY6Ov4t1SDq/P1oT4cbREWnbgXofwt
+qiniu.bucket.name=thirdparty
+qiniu.image.domain=http://thirdparty.dibo.ltd/
+
 # spring config
 spring.devtools.restart.enabled=true
 
@@ -60,3 +73,16 @@ logging.level.org.springframework=info
 logging.level.com.zaxxer.hikari=info
 logging.level.com.diboot=debug
 logging.level.org.mybatis=debug
+
+
+#邮件发送配置
+#发送方邮箱
+email.sender.address=
+#发送方授权码
+email.sender.password=
+#SMTP发送服务器的名字
+email.sender.host=smtp.163.com
+#发送端口
+email.sender.sslport=
+#发送方称呼
+email.sender.name=wangyl

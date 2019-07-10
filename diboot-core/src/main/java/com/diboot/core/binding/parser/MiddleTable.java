@@ -122,7 +122,7 @@ public class MiddleTable {
         sb.append(params).append(")");
         if(this.additionalConditions != null){
             for(String condition : this.additionalConditions){
-                sb.append(" AND ").append(condition);
+                sb.append(" AND (").append(condition).append(")");
             }
         }
         return sb.toString();

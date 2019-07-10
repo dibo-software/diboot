@@ -119,10 +119,8 @@ public class FieldBinder<T> extends BaseBinder<T> {
         }
         // 将结果list转换成map
         Map<String, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
-        // 转换列名为字段名（MyBatis-plus的getMapList结果会将列名转成驼峰式）
-        String referencedEntityPkFieldName = S.toLowerCaseCamel(referencedEntityPkName);
         for(Map<String, Object> map : mapList){
-            Object pkVal = map.get(referencedEntityPkFieldName);
+            Object pkVal = map.get(referencedEntityPkName);
             if(pkVal != null){
                 referencedEntityPk2DataMap.put(String.valueOf(pkVal), map);
             }
@@ -139,7 +137,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectId);
             if(relationMap != null){
                 for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(S.toLowerCaseCamel(referencedGetterColumnNameList.get(i))));
+                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(referencedGetterColumnNameList.get(i)));
                 }
             }
         }
