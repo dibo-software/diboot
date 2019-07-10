@@ -2,6 +2,7 @@ package com.diboot.shiro.service.impl;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.shiro.entity.Permission;
