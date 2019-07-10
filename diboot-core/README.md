@@ -58,5 +58,6 @@ List<User> entityList = userService.getEntityList(queryWrapper);
 List<MyUserVO> voList = AnnotationBindingManager.autoConvertAndBind(userList, MyUserVO.class);
 ~~~
 
-   > 本地运行test单元测试需先执行/test/resources/init-{db}.sql到你的数据库（暂提供Mysql脚本）。 
-   > 注解自动绑定实现基于Mybatis-plus，需确保你的{Entity}对应的Service,ServiceImpl,Mapper存在。
+
+##### 使用样例请参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
+
