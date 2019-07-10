@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 分页
+ * 分页 (属性以下划线开头以避免与提交参数字段冲突)
  * @author Mazhicheng
  * @version v2.0
  * @date 2019/01/01
