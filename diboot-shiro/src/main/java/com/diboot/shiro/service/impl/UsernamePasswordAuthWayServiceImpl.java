@@ -8,6 +8,8 @@ import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.SysUserService;
+import com.diboot.shiro.util.AuthHelper;
+import com.diboot.shiro.util.ProxyToTargetObjectHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,13 +65,19 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
         // 构建查询条件
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(SysUser::getUsername, token.getAccount())
-                .eq(SysUser::getPassword, password);
+                .eq(SysUser::getUsername, token.getAccount());
 
         // 获取单条用户记录
         List<SysUser> userList = sysUserService.getEntityList(queryWrapper);
-
-        return V.notEmpty(userList);
+        if (V.isEmpty(userList)) {
+            return false;
+        }
+        SysUser sysUser = userList.get(0);
+        //加密后比较
+        if (!V.equals(AuthHelper.encryptMD5(password, sysUser.getSalt(), true), sysUser.getPassword())) {
+            return false;
+        }
+        return true;
     }
 
     @Override

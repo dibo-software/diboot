@@ -8,6 +8,7 @@ import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.config.AuthType;
 import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;
+import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.wx.mp.service.WxMpServiceExt;
 import me.chanjar.weixin.common.api.WxConsts;
@@ -38,6 +39,29 @@ public class AuthTokenController {
     @Autowired
     private WxMpServiceExt wxMpService;
 
+    @Autowired
+    private SysUserService sysUserService;
+
+
+    /**
+     * 注册用户： 注册成功之后会自动登陆
+     * @param sysUser
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/register")
+    public JsonResult register(@RequestBody SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String password = sysUser.getPassword();
+        boolean register = sysUserService.register(sysUser);
+        if (register) {
+            //注册成功后自动登陆:注册后密码被加密，重新设置为不加密的密码然后进行登陆
+            sysUser.setPassword(password);
+            return login(sysUser, request, response);
+        }
+        return new JsonResult(Status.FAIL_OPERATION);
+    }
     /***
      * 用户名密码登录接口
      * @param sysUser
@@ -94,9 +118,9 @@ public class AuthTokenController {
      * @throws Exception
      */
     @PostMapping("/apply")
-    public JsonResult applyTokenByOAuth2mp(HttpServletRequest request) throws Exception{
-        String code = request.getParameter("code");
-        String state = request.getParameter("state");
+    public JsonResult applyTokenByOAuth2mp(@RequestParam("code") String code,
+                                           @RequestParam("state") String state,
+                                           HttpServletRequest request) throws Exception{
         String openid = "";
         if (JwtHelper.isRequestTokenEffective(request)){
             String account = JwtHelper.getAccountFromToken(JwtHelper.getRequestToken(request));
@@ -143,7 +167,7 @@ public class AuthTokenController {
             //验证是否登录成功
             if(subject.isAuthenticated()){
                 token = (String)authToken.getCredentials();
-                logger.debug("openid[" + openid + "]申请token成功！authtoken="+token);
+                logger.debug("openid[{}]申请token成功！authtoken={}", openid, token);
             }
         }
         catch(Exception e){

@@ -70,9 +70,13 @@ public class ShiroConfig {
 
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
+        filterChainDefinitionMap.put("/error/**", "anon");
+        filterChainDefinitionMap.put("/*.html", "anon");
         filterChainDefinitionMap.put("/auth/login", "anon");
         filterChainDefinitionMap.put("/auth/buildOAuthUrl", "anon");
         filterChainDefinitionMap.put("/auth/apply", "anon");
+        filterChainDefinitionMap.put("/auth/register", "anon");
+        filterChainDefinitionMap.put("/auth/static", "anon");
         filterChainDefinitionMap.put("/error", "anon");
         filterChainDefinitionMap.put("/auth/logout", "logout");
         filterChainDefinitionMap.put("/**", "jwt");
