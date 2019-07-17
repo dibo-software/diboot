@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.manager.AnnotationBindingManager;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import com.diboot.shiro.entity.Permission;
@@ -58,9 +59,11 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
                     HashSet menuSet = new HashSet();
                     Set<Long> idSet = new HashSet<>();//资源id  set
                     for(Permission permission : permissionList){
-                        idSet.add(permission.getId());
-                        if(menuSet.add(permission.getMenuCode())){
-                            menuList.add(permission);
+                        //克隆roleVO.permissionList中的每一个permission，解决查出来的列表页数据重复的问题
+                        Permission temp = BeanUtils.convert(permission, Permission.class);
+                        idSet.add(temp.getId());
+                        if(menuSet.add(temp.getMenuCode())){
+                            menuList.add(temp);
                         }
                     }
                     //获取菜单资源下的该角色已有的权限资源
