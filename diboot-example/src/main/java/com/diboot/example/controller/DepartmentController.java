@@ -14,7 +14,6 @@ import com.diboot.example.entity.Organization;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
