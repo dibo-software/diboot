@@ -1,7 +1,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.core.binding.manager.RelationsBinder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -9,7 +9,6 @@ import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.EntityBinderVO;
 import diboot.core.test.binder.vo.EntityListComplexBinderVO;
 import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
 import diboot.core.test.config.SpringMvcConfig;

@@ -1,4 +1,4 @@
-package com.diboot.core.binding.manager;
+package com.diboot.core.binding.parser;
 
 import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.util.V;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0<br>
  * @date 2019/04/03 <br>
  */
-public class BindAnnotationCacheManager {
+public class BindAnnotationGroupCache {
     /**
      * VO类-绑定注解缓存
      */

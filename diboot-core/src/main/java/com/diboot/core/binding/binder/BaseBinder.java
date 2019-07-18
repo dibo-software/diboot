@@ -1,8 +1,7 @@
-package com.diboot.core.binding;
+package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.config.BaseConfig;
@@ -10,7 +9,6 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.S;
-import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

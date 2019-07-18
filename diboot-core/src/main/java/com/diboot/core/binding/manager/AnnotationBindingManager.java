@@ -1,30 +1,9 @@
 package com.diboot.core.binding.manager;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.binding.BaseBinder;
-import com.diboot.core.binding.EntityBinder;
-import com.diboot.core.binding.EntityListBinder;
-import com.diboot.core.binding.FieldBinder;
-import com.diboot.core.binding.annotation.BindEntity;
-import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.binding.parser.BindAnnotationGroup;
-import com.diboot.core.binding.parser.ConditionManager;
-import com.diboot.core.binding.parser.FieldAnnotation;
-import com.diboot.core.entity.Dictionary;
-import com.diboot.core.service.BaseService;
-import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.V;
+import com.diboot.core.binding.RelationsBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,7 +11,7 @@ import java.util.List;
  * @author Mazhicheng
  * @version v2.0
  * @date 2019/3/30
- * @see com.diboot.core.binding.manager.RelationsBinder
+ * @see RelationsBinder
  */
 @Deprecated
 public class AnnotationBindingManager {

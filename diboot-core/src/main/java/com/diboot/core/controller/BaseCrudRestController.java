@@ -1,7 +1,7 @@
 package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.diboot.core.binding.manager.RelationsBinder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.JsonResult;

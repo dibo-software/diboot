@@ -2,7 +2,7 @@ package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.RelationsBinder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;

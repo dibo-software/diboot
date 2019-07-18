@@ -1,14 +1,11 @@
-package com.diboot.core.binding;
+package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigInteger;
 import java.util.*;
 
 /**

@@ -35,9 +35,9 @@ public class ContextHelper implements ApplicationContextAware {
     private static ApplicationContext APPLICATION_CONTEXT = null;
 
     /**
-     * Entity-对应的Mapper缓存
+     * Entity-对应的Service缓存
      */
-    private static Map<String, IService> entityToMapperCacheMap = new ConcurrentHashMap<>();
+    private static Map<String, IService> ENTITY_SERVICE_CACHE = null;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -109,18 +109,19 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static IService getServiceByEntity(Class entity){
-        if(entityToMapperCacheMap.isEmpty()){
+        if(ENTITY_SERVICE_CACHE == null){
+            ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
                     String entityClassName = getEntityClassByServiceImpl(entry.getValue().getClass());
                     if(V.notEmpty(entityClassName)){
-                        entityToMapperCacheMap.put(entityClassName, entry.getValue());
+                        ENTITY_SERVICE_CACHE.put(entityClassName, entry.getValue());
                     }
                 }
             }
         }
-        return entityToMapperCacheMap.get(entity.getName());
+        return ENTITY_SERVICE_CACHE.get(entity.getName());
     }
 
     /**

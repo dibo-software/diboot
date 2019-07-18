@@ -2,7 +2,7 @@ package com.diboot.shiro.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.RelationsBinder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -16,7 +16,6 @@ import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RolePermissionService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.UserRoleService;
-import com.diboot.shiro.vo.PermissionVO;
 import com.diboot.shiro.vo.RoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
