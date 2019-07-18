@@ -11,4 +11,12 @@ import com.diboot.shiro.entity.SysUser;
  */
 public interface SysUserService extends BaseService<SysUser> {
 
+    /**
+     * 注册用户
+     * @param sysUser
+     * @return
+     * @throws Exception
+     */
+    boolean register(SysUser sysUser) throws Exception;
+
 }

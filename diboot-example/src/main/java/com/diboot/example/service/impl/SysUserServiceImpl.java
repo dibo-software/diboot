@@ -2,7 +2,7 @@ package com.diboot.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
@@ -40,7 +40,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     @Override
     public List<SysUserVO> getSysUserList(Wrapper queryWrapper, Pagination pagination) {
         List<SysUser> sysUserList = super.getEntityList(queryWrapper, pagination);
-        List<SysUserVO> sysUserVOList = AnnotationBindingManager.autoConvertAndBind(sysUserList, SysUserVO.class);
+        List<SysUserVO> sysUserVOList = RelationsBinder.convertAndBind(sysUserList, SysUserVO.class);
         if(V.notEmpty(sysUserVOList)){
             for(SysUserVO sysUserVO : sysUserVOList){
                 List<Role> roleList = sysUserVO.getRoleList();

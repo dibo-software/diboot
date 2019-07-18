@@ -1,7 +1,7 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.BaseService;
@@ -47,7 +47,7 @@ public class DictionaryController extends BaseCrudRestController {
         //获取实体list
         List<Dictionary> dictionaryList =  dictionaryService.getEntityList(queryWrapper, pagination);
         //筛选出在列表页展示的字段
-        List<DictionaryListVO> dicVoList = AnnotationBindingManager.autoConvertAndBind(dictionaryList, DictionaryListVO.class);
+        List<DictionaryListVO> dicVoList = RelationsBinder.convertAndBind(dictionaryList, DictionaryListVO.class);
         //返回结果
         return new JsonResult(Status.OK, dicVoList).bindPagination(pagination);
     }

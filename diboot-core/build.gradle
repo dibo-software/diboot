@@ -1,3 +1,5 @@
+apply plugin: 'org.springframework.boot'
 dependencies {
+    compile("org.springframework.boot:spring-boot-configuration-processor")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

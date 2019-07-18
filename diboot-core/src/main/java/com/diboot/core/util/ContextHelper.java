@@ -1,5 +1,7 @@
 package com.diboot.core.util;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,7 @@ public class ContextHelper implements ApplicationContextAware {
     /**
      * Entity-对应的Mapper缓存
      */
-    private static Map<String, BaseService> entityToMapperCacheMap = new ConcurrentHashMap<>();
+    private static Map<String, IService> entityToMapperCacheMap = new ConcurrentHashMap<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -106,11 +108,11 @@ public class ContextHelper implements ApplicationContextAware {
      * @param entity
      * @return
      */
-    public static BaseService getServiceByEntity(Class entity){
+    public static IService getServiceByEntity(Class entity){
         if(entityToMapperCacheMap.isEmpty()){
-            Map<String, BaseService> serviceMap =  getApplicationContext().getBeansOfType(BaseService.class);
+            Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
             if(V.notEmpty(serviceMap)){
-                for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){
+                for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
                     String entityClassName = getEntityClassByServiceImpl(entry.getValue().getClass());
                     if(V.notEmpty(entityClassName)){
                         entityToMapperCacheMap.put(entityClassName, entry.getValue());

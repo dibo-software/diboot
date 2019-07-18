@@ -11,13 +11,13 @@ spring.server.MaxFileSize=10MB
 spring.server.MaxRequestSize=50MB
 
 #文件本地存放路径
-files.storage.directory=C:/Users/wuweiqing/Downloads/upload/
+files.storage.directory=
 
-#七牛
-qiniu.key.access=xJPWOwatadCt8ANWPaxrhj3Dj8DGIFoN9jD29SCP
-qiniu.key.secret=IbWRTTXdOKoD8qdpug7Xm+rTXX2yhKuh8tfY6Ov4t1SDq/P1oT4cbREWnbgXofwt
-qiniu.bucket.name=thirdparty
-qiniu.image.domain=http://thirdparty.dibo.ltd/
+#七牛配置
+qiniu.key.access=xxx
+qiniu.key.secret=xxx
+qiniu.bucket.name=xxx
+qiniu.image.domain=xxx
 
 # spring config
 spring.devtools.restart.enabled=true
@@ -85,4 +85,19 @@ email.sender.host=smtp.163.com
 #发送端口
 email.sender.sslport=
 #发送方称呼
-email.sender.name=wangyl
+email.sender.name=
+
+
+#权限配置
+#是否存储数据库：默认不开启
+diboot.shiro.auth.storage=true
+#存储环境：默认dev环境，不会删除代码中不存在的权限
+diboot.shiro.auth.env=dev
+
+#------web页面访问的时候需要如下配置----
+spring.mvc.view.prefix=/static
+spring.mvc.view.suffix=.html
+#自定义web异常页面
+diboot.web.error.page.status-400=/400.html
+diboot.web.error.page.status-403=/403.html
+diboot.web.error.page.status-500=/500.html

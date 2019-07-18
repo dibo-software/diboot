@@ -2,7 +2,7 @@ package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
@@ -57,7 +57,7 @@ public class SysUserController extends BaseCrudRestController {
         // 查询当前页的Entity主表数据
         List<SysUserVO> voList = sysUserService.getSysUserList(queryWrapper, pagination);
         //筛选出在列表页展示的字段
-        List<SysUserListVO> userVoList = AnnotationBindingManager.autoConvertAndBind(voList, SysUserListVO.class);
+        List<SysUserListVO> userVoList = RelationsBinder.convertAndBind(voList, SysUserListVO.class);
         // 返回结果
         return new JsonResult(Status.OK, userVoList).bindPagination(pagination);
     }

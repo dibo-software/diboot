@@ -1,7 +1,6 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":diboot-core")
     compile project(":diboot-shiro")
 
     // 微信开发组件

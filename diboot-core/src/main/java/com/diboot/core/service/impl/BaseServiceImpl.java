@@ -3,12 +3,13 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
 import com.diboot.core.binding.EntityBinder;
 import com.diboot.core.binding.EntityListBinder;
 import com.diboot.core.binding.FieldBinder;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.mapper.BaseCrudMapper;
@@ -247,7 +248,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<T> enityList = new ArrayList<>();
 		enityList.add(entity);
 		// 绑定
-		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(enityList, voClass);
+		List<VO> voList = RelationsBinder.convertAndBind(enityList, voClass);
 		return voList.get(0);
 	}
 
@@ -255,7 +256,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
-		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, voClass);
+		List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
 		return voList;
 	}
 
@@ -264,17 +265,26 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @param pagination
 	 * @return
 	 */
-	protected IPage<T> convertToIPage(Pagination pagination){
+	protected Page<T> convertToIPage(Pagination pagination){
 		if(pagination == null){
 			return null;
 		}
-		IPage<T> page = new Page<T>()
+		Page<T> page = new Page<T>()
 			.setCurrent(pagination.getPageIndex())
 			.setSize(pagination.getPageSize())
 			// 如果前端传递过来了缓存的总数，则本次不再count统计
-			.setTotal(pagination.getTotalCount() > 0? -1 : pagination.getTotalCount())
-			.setAscs(S.toSnakeCase(pagination.getAscList()))
-			.setDescs(S.toSnakeCase(pagination.getDescList()));
+			.setTotal(pagination.getTotalCount() > 0? -1 : pagination.getTotalCount());
+			// 排序
+			if(V.notEmpty(pagination.getAscList())){
+				pagination.getAscList().forEach(s -> {
+					page.addOrder(OrderItem.asc(s));
+				});
+			}
+			if(V.notEmpty(pagination.getDescList())){
+				pagination.getDescList().forEach(s -> {
+					page.addOrder(OrderItem.desc(s));
+				});
+			}
 		return page;
 	}
 
