@@ -24,6 +24,7 @@ public class WebException extends RuntimeException {
     public WebException() {
         //默认跳转400页面
         this.httpStatus = HttpStatus.BAD_REQUEST;
+        this.msg = HttpStatus.BAD_REQUEST.getReasonPhrase();
     }
 
     /**
@@ -33,6 +34,7 @@ public class WebException extends RuntimeException {
      */
     public WebException(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
+        this.msg = httpStatus.getReasonPhrase();
     }
 
     /**

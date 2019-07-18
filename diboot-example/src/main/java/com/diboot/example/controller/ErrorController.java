@@ -60,7 +60,7 @@ public class ErrorController extends BaseController {
     @GetMapping("/web/{num}")
     public ModelAndView testWeb(@PathVariable("num") Integer num) {
         if (num == 1) {
-            throw new WebException(HttpStatus.NOT_FOUND);
+            throw new WebException(HttpStatus.BAD_REQUEST);
         }
         if (num == 2) {
             throw new WebException(HttpStatus.FORBIDDEN);
@@ -70,6 +70,9 @@ public class ErrorController extends BaseController {
         }
         if (num == 4) {
             throw new ExampleWebException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (num == 5) {
+            throw new ExampleWebException(HttpStatus.BAD_GATEWAY);
         }
         return new ModelAndView("redirect:/index.html");
     }

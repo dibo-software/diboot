@@ -10,12 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 异常统一捕获类：只捕获{@link RestException} 和 {@link WebException}及其子类
@@ -71,6 +77,12 @@ public class GlobalExceptionHandler {
             //存在页面跳转至自定义页面
             return new ModelAndView("redirect:" + redirectUrl);
         }
-        return new ModelAndView();
+        //默认提示信息
+        Map<String, Object> model = new HashMap<>(16);
+        model.put("exception", we.getClass().getName());
+        model.put("status", we.getHttpStatus().value());
+        model.put("message", StringUtils.isEmpty(we.getMsg()) ? "No message available" : we.getMsg());
+        model.put("timestamp", new Date());
+        return new ModelAndView("error", model);
     }
 }
