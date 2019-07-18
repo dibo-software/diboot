@@ -1,6 +1,7 @@
 package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
@@ -33,7 +34,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
      * @param serviceInstance
      * @param voList
      */
-    public FieldBinder(BaseService<T> serviceInstance, List voList){
+    public FieldBinder(IService<T> serviceInstance, List voList){
         this.referencedService = serviceInstance;
         this.annoObjectList = voList;
         this.queryWrapper = new QueryWrapper<T>();
@@ -113,7 +114,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
         }
 
         // 获取匹配结果的mapList
-        List<Map<String, Object>> mapList = referencedService.getMapList(queryWrapper);
+        List<Map<String, Object>> mapList = getMapList(queryWrapper);
         if(V.isEmpty(mapList)){
             return;
         }

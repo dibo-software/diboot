@@ -32,7 +32,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @ControllerAdvice
 public class DefaultExceptionAdviceHandler {
-
     private final static Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @Autowired
@@ -71,6 +70,5 @@ public class DefaultExceptionAdviceHandler {
             return new ModelAndView("redirect:" + errorUrl);
         }
         return new ModelAndView();
-
     }
 }

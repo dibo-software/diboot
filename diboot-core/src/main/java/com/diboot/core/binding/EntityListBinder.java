@@ -1,6 +1,7 @@
 package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -25,7 +26,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
      * @param serviceInstance
      * @param voList
      */
-    public EntityListBinder(BaseService<T> serviceInstance, List voList){
+    public EntityListBinder(IService<T> serviceInstance, List voList){
         this.referencedService = serviceInstance;
         this.annoObjectList = voList;
         this.queryWrapper = new QueryWrapper<T>();
@@ -56,7 +57,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 // 构建查询条件
                 queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), entityIdList);
                 // 查询entity列表: List<Role>
-                List list = referencedService.getEntityList(queryWrapper);
+                List list = getEntityList(queryWrapper);
                 // 转换entity列表为Map<ID, Entity>
                 Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
                 for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
@@ -80,7 +81,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             // 构建查询条件
             queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), annoObjectForeignKeyList);
             // 查询entity列表
-            List<T> list = referencedService.getEntityList(queryWrapper);
+            List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
                 for(T entity : list){
                     String keyValue = BeanUtils.getStringProperty(entity, S.toLowerCaseCamel(referencedEntityPrimaryKey));

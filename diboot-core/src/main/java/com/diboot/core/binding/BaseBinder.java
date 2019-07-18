@@ -1,16 +1,23 @@
 package com.diboot.core.binding;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.parser.MiddleTable;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.S;
+import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 关系绑定Binder父类
@@ -31,7 +38,7 @@ public abstract class BaseBinder<T> {
     /**
      * 被关联对象的Service实例
      */
-    protected BaseService<T> referencedService;
+    protected IService<T> referencedService;
     /***
      * DO对象中的主键属性名
      */
@@ -141,4 +148,48 @@ public abstract class BaseBinder<T> {
      */
     public abstract void bind();
 
+    /**
+     * 获取EntityList
+     * @param queryWrapper
+     * @return
+     */
+    protected List<T> getEntityList(Wrapper queryWrapper) {
+        if(referencedService instanceof BaseService){
+            return ((BaseService)referencedService).getEntityList(queryWrapper, null);
+        }
+        else{
+            List<T> list = referencedService.list(queryWrapper);
+            return checkedList(list);
+        }
+    }
+
+    /**
+     * 获取Map结果
+     * @param queryWrapper
+     * @return
+     */
+    protected List<Map<String, Object>> getMapList(Wrapper queryWrapper) {
+        if(referencedService instanceof BaseService){
+            return ((BaseService)referencedService).getMapList(queryWrapper);
+        }
+        else{
+            List<Map<String, Object>> list = referencedService.listMaps(queryWrapper);
+            return checkedList(list);
+        }
+    }
+
+    /**
+     * 检查list，结果过多打印warn
+     * @param list
+     * @return
+     */
+    private List checkedList(List list){
+        if(list == null){
+            list = Collections.emptyList();
+        }
+        else if(list.size() > BaseConfig.getBatchSize()){
+            log.warn("单次查询记录数量过大，返回结果数={}，请检查！", list.size());
+        }
+        return list;
+    }
 }

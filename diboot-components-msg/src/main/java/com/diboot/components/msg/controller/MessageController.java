@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.components.msg.entity.Message;
 import com.diboot.components.msg.service.MessageService;
 import com.diboot.components.msg.vo.MessageVO;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.JsonResult;
@@ -39,7 +39,7 @@ public class MessageController extends BaseCrudRestController {
         // 查询当前页的Entity主表数据
         List<Message> entityList =  getService().getEntityList(queryWrapper, pagination);
         // 自动转换VO中注解绑定的关联
-        List<MessageVO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, MessageVO.class);
+        List<MessageVO> voList = RelationsBinder.convertAndBind(entityList, MessageVO.class);
         //返回结果
         return new JsonResult(Status.OK, voList).bindPagination(pagination);
     }

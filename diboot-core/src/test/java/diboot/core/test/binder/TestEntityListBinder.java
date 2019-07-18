@@ -1,8 +1,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -51,7 +50,7 @@ public class TestEntityListBinder {
         queryWrapper.eq(Department::getId, 10001L);
         List<Department> entityList = departmentService.getEntityList(queryWrapper);
         // 自动绑定
-        List<EntityListSimpleBinderVO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, EntityListSimpleBinderVO.class);
+        List<EntityListSimpleBinderVO> voList = RelationsBinder.convertAndBind(entityList, EntityListSimpleBinderVO.class);
         // 验证绑定结果
         if(V.notEmpty(voList)){
             for(EntityListSimpleBinderVO vo : voList){
@@ -76,9 +75,9 @@ public class TestEntityListBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.getEntityList(queryWrapper);
+        List<User> userList = userService.list(queryWrapper);
         // 自动绑定
-        List<EntityListComplexBinderVO> voList = AnnotationBindingManager.autoConvertAndBind(userList, EntityListComplexBinderVO.class);
+        List<EntityListComplexBinderVO> voList = RelationsBinder.convertAndBind(userList, EntityListComplexBinderVO.class);
         // 验证绑定结果
         if(V.notEmpty(voList)){
             for(EntityListComplexBinderVO vo : voList){

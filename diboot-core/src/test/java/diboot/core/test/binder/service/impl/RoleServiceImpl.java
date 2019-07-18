@@ -1,5 +1,6 @@
 package diboot.core.test.binder.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.mapper.RoleMapper;
@@ -13,6 +14,6 @@ import org.springframework.stereotype.Service;
  * Copyright © www.dibo.ltd
  */
 @Service
-public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implements RoleService {
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
 }

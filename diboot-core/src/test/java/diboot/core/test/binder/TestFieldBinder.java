@@ -1,10 +1,9 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.UserService;
@@ -39,9 +38,9 @@ public class TestFieldBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.getEntityList(queryWrapper);
+        List<User> userList = userService.list(queryWrapper);
         // 自动绑定
-        List<FieldBinderVO> voList = AnnotationBindingManager.autoConvertAndBind(userList, FieldBinderVO.class);
+        List<FieldBinderVO> voList = RelationsBinder.convertAndBind(userList, FieldBinderVO.class);
         // 验证绑定结果
         if(V.notEmpty(voList)){
             for(FieldBinderVO vo : voList){

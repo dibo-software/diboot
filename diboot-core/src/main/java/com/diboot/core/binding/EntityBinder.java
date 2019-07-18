@@ -1,6 +1,7 @@
 package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param referencedService
      * @param voList
      */
-    public EntityBinder(BaseService<T> referencedService, List voList){
+    public EntityBinder(IService<T> referencedService, List voList){
         this.referencedService = referencedService;
         this.annoObjectList = voList;
         this.queryWrapper = new QueryWrapper<T>();
@@ -85,7 +86,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 // 构建查询条件
                 queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), middleTableColumnValueList);
                 // 查询entity列表
-                List<T> list = referencedService.getEntityList(queryWrapper);
+                List<T> list = getEntityList(queryWrapper);
                 if(V.notEmpty(list)){
                     // 转换entity列表为Map<ID, Entity>
                     Map<String, T> listMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
@@ -108,7 +109,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             // 构建查询条件
             queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), annoObjectForeignKeyList);
             // 查询entity列表
-            List<T> list = referencedService.getEntityList(queryWrapper);
+            List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
                 String refEntityPKFieldName = S.toLowerCaseCamel(referencedEntityPrimaryKey);
                 for(T entity : list){

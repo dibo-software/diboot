@@ -2,7 +2,7 @@ package com.diboot.shiro.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -49,7 +49,7 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
     @Override
     public List<RoleVO> getRoleList(Wrapper queryWrapper, Pagination pagination) {
         List<Role> roleList = super.getEntityList(queryWrapper, pagination);
-        List<RoleVO> roleVOList = AnnotationBindingManager.autoConvertAndBind(roleList, RoleVO.class);
+        List<RoleVO> roleVOList = RelationsBinder.convertAndBind(roleList, RoleVO.class);
         if(V.notEmpty(roleVOList)){
             for(RoleVO roleVO : roleVOList){
                 List<Permission> permissionList = roleVO.getPermissionList();
