@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Yangzhao
  * @version v2.0
@@ -25,5 +28,13 @@ public class Permission extends BaseEntity {
 
     @TableField
     private String permissionName;
+
+    //某角色是否拥有该权限
+    @TableField(exist = false)
+    private boolean own = false;
+
+    //菜单下的各种权限资源
+    @TableField(exist = false)
+    private List<Permission> permissionList;
 
 }

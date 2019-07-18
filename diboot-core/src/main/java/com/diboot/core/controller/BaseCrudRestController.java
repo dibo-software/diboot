@@ -1,11 +1,9 @@
 package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
+import com.diboot.core.binding.manager.RelationsBinder;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.core.vo.Pagination;
@@ -202,7 +200,7 @@ public abstract class BaseCrudRestController extends BaseController {
 	 */
 	protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass){
 		// 转换为VO
-		List<VO> voList = AnnotationBindingManager.autoConvertAndBind(entityList, voClass);
+		List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
 		return voList;
 	}
 

@@ -1,7 +1,6 @@
 package com.diboot.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.manager.AnnotationBindingManager;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.impl.BaseServiceImpl;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

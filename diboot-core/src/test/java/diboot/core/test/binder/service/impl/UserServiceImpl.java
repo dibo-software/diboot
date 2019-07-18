@@ -1,5 +1,6 @@
 package diboot.core.test.binder.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.mapper.UserMapper;
@@ -13,6 +14,6 @@ import org.springframework.stereotype.Service;
  * Copyright © www.dibo.ltd
  */
 @Service
-public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 }

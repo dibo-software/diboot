@@ -8,11 +8,13 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.List;
  * @date 2019/06/15
  */
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
 @SpringBootTest(classes = {StartupApplication.class})
 public class BaseServiceTest {
 

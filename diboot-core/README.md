@@ -48,14 +48,14 @@ private List<Role> roleList;
 ~~~java
 // 调用AnnotationBindingManager自动绑定注解相关关联
 //List<MyUserVO> voList = ...; 
-AnnotationBindingManager.autoBind(voList);
+RelationsBinder.bind(voList);
 ~~~
 #### 2. 自动转型并绑定关联（需要转型）
 ~~~java
 // 获取Entity列表
 List<User> entityList = userService.getEntityList(queryWrapper);
 // 调用AnnotationBindingManager自动绑定注解相关关联
-List<MyUserVO> voList = AnnotationBindingManager.autoConvertAndBind(userList, MyUserVO.class);
+List<MyUserVO> voList = RelationsBinder.convertAndBind(userList, MyUserVO.class);
 ~~~
 
 
