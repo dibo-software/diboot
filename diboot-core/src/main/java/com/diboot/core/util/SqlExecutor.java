@@ -33,13 +33,14 @@ public class SqlExecutor {
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return null;
         }
+        log.debug("==>  SQL: "+sql);
         // 替换单个?参数为多个，用于拼接IN参数
         if(V.notEmpty(params)){
+            log.debug("==>  Params: {}", JSON.stringify(params));
             if(params.size() > 2000){
                 log.warn("查询参数集合数量过多, size={}，请检查调用是否合理！", params.size());
             }
         }
-        log.debug("==>  SQL: "+sql);
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
             if(V.notEmpty(params)){
                 for(int i=0; i<params.size(); i++){
@@ -60,7 +61,7 @@ public class SqlExecutor {
                 }
                 rs.close();
             }
-            log.debug("<==  "+JSON.stringify(mapList));
+            log.debug("<==  {}", JSON.stringify(mapList));
             return mapList;
         }
         catch(Exception e){
@@ -126,24 +127,31 @@ public class SqlExecutor {
         return resultMap;
     }
 
+    /**
+     * 执行更新操作
+     * @param sql
+     * @param params
+     * @return
+     * @throws Exception
+     */
     public static boolean executeUpdate(String sql, List params) throws Exception{
         if (V.isEmpty(sql)){
             return false;
         }
-
         // 获取SqlSessionFactory实例
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
         if (sqlSessionFactory == null){
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return false;
         }
-
-        if (V.notEmpty(params)){
-            if (params.size() > 2000){
-                log.warn("SQL语句参数集合数量过多，size={}，请检查调用是否合理！", params.size());
+        log.debug("==>  SQL: "+sql);
+        // 替换单个?参数为多个，用于拼接IN参数
+        if(V.notEmpty(params)){
+            log.debug("==>  Params: {}", JSON.stringify(params));
+            if(params.size() > 2000){
+                log.warn("更新参数集合数量过多, size={}，请检查调用是否合理！", params.size());
             }
         }
-        log.debug("==>  SQL:" + sql);
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
             if (V.notEmpty(params)){
                 for (int i=0; i<params.size(); i++){

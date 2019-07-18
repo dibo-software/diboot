@@ -69,7 +69,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                     for(Object obj : annoObjFKList){
                         T ent = entityMap.get(String.valueOf(obj));
                         if(ent != null){
-                            valueList.add(ent);
+                            valueList.add(cloneEntity(ent));
                         }
                     }
                     valueEntityListMap.put(entry.getKey(), valueList);
@@ -89,7 +89,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                         entityList = new ArrayList<>();
                         valueEntityListMap.put(keyValue, entityList);
                     }
-                    entityList.add(entity);
+                    entityList.add(cloneEntity(entity));
                 }
             }
         }

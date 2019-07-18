@@ -13,11 +13,13 @@ import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.EntityBinderVO;
 import diboot.core.test.binder.vo.EntityListComplexBinderVO;
 import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
+import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.List;
  * @date 2019/06/22
  */
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
 @SpringBootTest(classes = {StartupApplication.class})
 public class TestEntityListBinder {
 
@@ -55,6 +58,12 @@ public class TestEntityListBinder {
                 // 验证直接关联的绑定
                 Assert.assertTrue(V.notEmpty(vo.getChildren()));
                 System.out.println(JSON.stringify(vo));
+
+                if(vo.getChildren() != null){
+                    for(Department dept : vo.getChildren()){
+                        System.out.println(dept.toString());
+                    }
+                }
             }
         }
     }

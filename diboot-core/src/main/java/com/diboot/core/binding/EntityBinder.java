@@ -96,7 +96,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                         }
                         String key = entry.getKey();
                         T value = listMap.get(String.valueOf(fetchValueId));
-                        valueEntityMap.put(key, value);
+                        valueEntityMap.put(key, cloneEntity(value));
                     }
                 }
             }
@@ -113,12 +113,31 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 String refEntityPKFieldName = S.toLowerCaseCamel(referencedEntityPrimaryKey);
                 for(T entity : list){
                     String pkValue = BeanUtils.getStringProperty(entity, refEntityPKFieldName);
-                    valueEntityMap.put(pkValue, entity);
+                    valueEntityMap.put(pkValue, cloneEntity(entity));
                 }
             }
         }
         // 绑定结果
         BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);
+    }
+
+    /**
+     * 克隆对象
+     * @param ent
+     * @param <T>
+     * @return
+     */
+    protected <T> T cloneEntity(T ent){
+        // 克隆对象
+        try{
+            T cloneEnt = (T)org.springframework.beans.BeanUtils.instantiateClass(ent.getClass());
+            BeanUtils.copyProperties(ent ,cloneEnt);
+            return cloneEnt;
+        }
+        catch (Exception e){
+            log.warn("Clone Object "+ent.getClass().getSimpleName()+" error", e);
+            return ent;
+        }
     }
 
 }

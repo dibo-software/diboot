@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +30,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/6/10
  */
-@Configuration
-@EnableAutoConfiguration
-@EnableTransactionManagement(proxyTargetClass=true)
+@TestConfiguration
 @ComponentScan(basePackages={"com.diboot", "diboot.core"})
 @MapperScan({"com.diboot.**.mapper", "diboot.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer{
