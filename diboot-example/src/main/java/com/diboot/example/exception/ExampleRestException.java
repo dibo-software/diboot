@@ -5,6 +5,7 @@ import com.diboot.core.vo.Status;
 
 /**
  * 自定义继承的rest异常
+ *
  * @author : wee
  * @version : v2.0
  * @Date 2019-07-11  15:37

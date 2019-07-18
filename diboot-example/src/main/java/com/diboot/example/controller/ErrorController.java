@@ -1,12 +1,13 @@
 package com.diboot.example.controller;
 
-import com.diboot.core.enumerate.ErrorPageEnum;
+import com.diboot.core.controller.BaseController;
 import com.diboot.core.exception.RestException;
 import com.diboot.core.exception.WebException;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.example.exception.ExampleRestException;
 import com.diboot.example.exception.ExampleWebException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping("/error")
-public class ErrorController {
+public class ErrorController extends BaseController {
 
     /**
      * 测试自定义
@@ -49,22 +50,26 @@ public class ErrorController {
         if (num == 5) {
             throw new ExampleRestException(Status.FAIL_NO_PERMISSION, num, "继承rest异常");
         }
+
+        if (num == 6) {
+            throw new RuntimeException("eeeeeee");
+        }
         return new JsonResult();
     }
 
     @GetMapping("/web/{num}")
     public ModelAndView testWeb(@PathVariable("num") Integer num) {
         if (num == 1) {
-            throw new WebException(ErrorPageEnum.STATUS_400);
+            throw new WebException(HttpStatus.NOT_FOUND);
         }
         if (num == 2) {
-            throw new WebException(ErrorPageEnum.STATUS_500);
+            throw new WebException(HttpStatus.FORBIDDEN);
         }
         if (num == 3) {
-            throw new WebException(ErrorPageEnum.STATUS_403);
+            throw new WebException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (num == 4) {
-            throw new ExampleWebException(ErrorPageEnum.STATUS_403);
+            throw new ExampleWebException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ModelAndView("redirect:/index.html");
     }

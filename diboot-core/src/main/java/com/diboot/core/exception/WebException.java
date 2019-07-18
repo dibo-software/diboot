@@ -1,6 +1,6 @@
 package com.diboot.core.exception;
 
-import com.diboot.core.enumerate.ErrorPageEnum;
+import org.springframework.http.HttpStatus;
 
 /**
  * 默认web风格异常类：系统自定义web异常可以继承该类，将会被自动捕获
@@ -12,9 +12,9 @@ import com.diboot.core.enumerate.ErrorPageEnum;
 public class WebException extends RuntimeException {
 
     /**
-     * 错误页面枚举： {@link ErrorPageEnum}
+     * 错误页面枚举： {@link HttpStatus}
      */
-    private ErrorPageEnum errorPage;
+    private HttpStatus httpStatus;
 
     /**
      * 错误的一些信息描述，用于设置{@link RuntimeException#getMessage()}
@@ -23,35 +23,35 @@ public class WebException extends RuntimeException {
 
     public WebException() {
         //默认跳转400页面
-        this.errorPage = ErrorPageEnum.STATUS_400;
+        this.httpStatus = HttpStatus.BAD_REQUEST;
     }
 
     /**
      * 自定义界面
      *
-     * @param errorPage
+     * @param httpStatus
      */
-    public WebException(ErrorPageEnum errorPage) {
-        this.errorPage = errorPage;
+    public WebException(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 
     /**
      * 自定义界面: 设置自定义提示信息
      *
-     * @param errorPage
+     * @param httpStatus
      */
-    public WebException(ErrorPageEnum errorPage, String msg) {
+    public WebException(HttpStatus httpStatus, String msg) {
         super(msg);
         this.msg = msg;
-        this.errorPage = errorPage;
+        this.httpStatus = httpStatus;
     }
 
-    public ErrorPageEnum getErrorPage() {
-        return errorPage;
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
-    public void setErrorPage(ErrorPageEnum errorPage) {
-        this.errorPage = errorPage;
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 
     public String getMsg() {

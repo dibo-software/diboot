@@ -1,6 +1,5 @@
 package com.diboot.core.handle;
 
-import com.diboot.core.enumerate.ErrorPageEnum;
 import com.diboot.core.exception.RestException;
 import com.diboot.core.exception.WebException;
 import com.diboot.core.properties.DibootProperties;
@@ -10,20 +9,23 @@ import com.diboot.core.vo.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 异常统一捕获类：只捕获{@link RestException} 和 {@link WebException}及其子类
  *
  * <p>
- *     如果没有特殊要求，系统中可以直接抛出{@link RestException} 和 {@link WebException}异常<br/>
- *     如果想对每个异常有个具体的描述，方便排查，可以继承上述两个类，进行异常细化描述
+ * 如果没有特殊要求，系统中可以直接抛出{@link RestException} 和 {@link WebException}异常<br/>
+ * 如果想对每个异常有个具体的描述，方便排查，可以继承上述两个类，进行异常细化描述
  * </p>
  * <p>
- *     如果上述两个异常不满足要求，可以自定义异常捕获
+ * 如果上述两个异常不满足要求，可以自定义异常捕获
  * </p>
  *
  * @author : wee
@@ -31,9 +33,9 @@ import org.springframework.web.servlet.ModelAndView;
  * @Date 2019-07-11  11:13
  */
 @ControllerAdvice
-public class DefaultExceptionAdviceHandler {
+public class GlobalExceptionHandler {
 
-    private final static Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
+    private final static Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @Autowired
     private DibootProperties dibootProperties;
@@ -55,22 +57,20 @@ public class DefaultExceptionAdviceHandler {
     /**
      * 捕获{@link WebException}及其子类异常，
      * <p>如果配置了自定义错误页面，那么跳转到指定的错误页面，否则返回spring错误页面</p>
-     * <p>错误页面目前提供三种类型的枚举:{@link ErrorPageEnum}，有且仅可返回这三种类型错误</p>
+     * <p>错误页面提供页面类型{@link org.springframework.http.HttpStatus}</p>
      *
      * @param we
      * @return
      */
-    @ResponseBody
     @ExceptionHandler(WebException.class)
     public ModelAndView advice(WebException we) {
         log.error("【web错误】<==", we);
         //获取配置信息
-        String errorUrl = dibootProperties.getError().getPage().get(we.getErrorPage());
-        if (V.notEmpty(errorUrl)) {
+        String redirectUrl = dibootProperties.getException().getPage().get(we.getHttpStatus());
+        if (V.notEmpty(redirectUrl)) {
             //存在页面跳转至自定义页面
-            return new ModelAndView("redirect:" + errorUrl);
+            return new ModelAndView("redirect:" + redirectUrl);
         }
         return new ModelAndView();
-
     }
 }

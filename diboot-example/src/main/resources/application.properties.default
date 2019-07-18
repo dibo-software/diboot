@@ -98,6 +98,6 @@ diboot.shiro.auth.env=dev
 spring.mvc.view.prefix=/static
 spring.mvc.view.suffix=.html
 #自定义web异常页面
-diboot.web.error.page.status-400=/400.html
-diboot.web.error.page.status-403=/403.html
-diboot.web.error.page.status-500=/500.html
+diboot.web.exception.page.bad-request=/400.html
+diboot.web.exception.page.forbidden=/403.html
+diboot.web.exception.page.internal-server-error=/405.html

@@ -107,4 +107,5 @@ public class RestException extends RuntimeException {
     public void setData(Object data) {
         this.data = data;
     }
+
 }
