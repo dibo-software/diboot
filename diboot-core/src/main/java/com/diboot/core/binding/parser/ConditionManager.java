@@ -1,6 +1,6 @@
 package com.diboot.core.binding.parser;
 
-import com.diboot.core.binding.BaseBinder;
+import com.diboot.core.binding.binder.BaseBinder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import net.sf.jsqlparser.expression.Expression;
