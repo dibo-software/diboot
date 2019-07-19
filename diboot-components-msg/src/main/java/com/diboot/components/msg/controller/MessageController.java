@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.components.msg.entity.Message;
 import com.diboot.components.msg.service.MessageService;
 import com.diboot.components.msg.vo.MessageVO;
-import com.diboot.core.binding.manager.RelationsBinder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.JsonResult;
