@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
@@ -20,6 +21,7 @@ import com.diboot.example.vo.SysUserListVO;
 import com.diboot.example.vo.SysUserVO;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.service.RoleService;
+import com.diboot.shiro.util.AuthHelper;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
 import org.slf4j.Logger;
@@ -71,7 +73,6 @@ public class SysUserController extends BaseCrudRestController {
     @PostMapping("/")
     public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
-        //TODO: 执行注册流程
         return super.createEntity(entity, result, modelMap);
     }
 
@@ -168,7 +169,33 @@ public class SysUserController extends BaseCrudRestController {
         return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
     }
 
+    @Override
+    protected void beforeCreate(BaseEntity entity, ModelMap modelMap) throws Exception {
+        SysUser sysUser = (SysUser) entity;
+        if (V.notEmpty(sysUser.getPassword())){
+            this.encryptPassword(sysUser);
+        }
+    }
 
+    @Override
+    protected void beforeUpdate(BaseEntity entity, ModelMap modelMap) throws Exception {
+        SysUser sysUser = (SysUser) entity;
+        if (V.notEmpty(sysUser.getPassword())){
+            this.encryptPassword(sysUser);
+        }
+    }
+
+    /***
+     * 设置加密密码相关的数据
+     * @param sysUser
+     */
+    private void encryptPassword(SysUser sysUser) {
+        String salt = AuthHelper.createSalt();
+        String password = AuthHelper.encryptMD5(sysUser.getPassword(), salt, true);
+        sysUser.setSalt(salt);
+        sysUser.setDepartmentId(0L);
+        sysUser.setPassword(password);
+    }
 
     /***
      * 获取登录用户信息

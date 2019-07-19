@@ -41,12 +41,4 @@ public class SysUser extends BaseEntity {
 
     @TableField(exist = false)
     private List<Permission> permissionList;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

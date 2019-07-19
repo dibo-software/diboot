@@ -36,7 +36,6 @@ import java.util.List;
 @EnableAutoConfiguration(exclude = {MultipartAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass=true)
 @ComponentScan(basePackages={"com.diboot"})
-@MapperScan({"com.diboot.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer{
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
 
