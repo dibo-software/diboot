@@ -1,6 +1,7 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
@@ -62,7 +63,6 @@ public class SysUserController extends BaseCrudRestController {
         return new JsonResult(Status.OK, userVoList).bindPagination(pagination);
     }
 
-
     /***
      * 创建Entity
      * @return
@@ -71,12 +71,8 @@ public class SysUserController extends BaseCrudRestController {
     @PostMapping("/")
     public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
-        boolean success = sysUserService.createSysUser(entity);
-        if(success){
-            return new JsonResult(Status.OK);
-        }else{
-            return new JsonResult(Status.FAIL_OPERATION);
-        }
+        //TODO: 执行注册流程
+        return super.createEntity(entity, result, modelMap);
     }
 
 
@@ -89,21 +85,8 @@ public class SysUserController extends BaseCrudRestController {
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody SysUser entity, BindingResult result,
                                   HttpServletRequest request, ModelMap modelMap) throws Exception{
-        // Model属性值验证结果
-        if(result.hasErrors()) {
-            return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
-        }
-        if(modelMap.get(ERROR) != null){
-            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
-        }
-
         entity.setId(id);
-        boolean success = sysUserService.updateSysUser(entity);
-        if(success){
-            return new JsonResult(Status.OK);
-        }else{
-            return new JsonResult(Status.FAIL_OPERATION);
-        }
+        return super.updateEntity(entity, result, modelMap);
     }
 
     /***
@@ -127,12 +110,7 @@ public class SysUserController extends BaseCrudRestController {
      */
     @DeleteMapping("/{id}")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
-        boolean success = sysUserService.deleteSysUser(id);
-        if(success){
-            return new JsonResult(Status.OK);
-        }else{
-            return new JsonResult(Status.FAIL_OPERATION );
-        }
+        return super.deleteEntity(id);
     }
 
     /***
@@ -173,35 +151,21 @@ public class SysUserController extends BaseCrudRestController {
     * 校验用户名是否重复
     * */
     @GetMapping("/checkUsernameRepeat")
-    public JsonResult checkUsernameRepeat(@RequestParam("id") Long id,@RequestParam("username") String username, HttpServletRequest request){
-        if(V.notEmpty(username)){
-            QueryWrapper<SysUser> wrapper = new QueryWrapper();
-            wrapper.lambda().eq(SysUser::getUsername, username);
-            List<SysUser> sysUserList = sysUserService.getEntityList(wrapper);
-            if(V.isEmpty(id)){//新建时
-                if(V.notEmpty(sysUserList)){
-                    return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
-                }
-            }else{//更新时
-                SysUser sysUser = sysUserService.getEntity(id);
-                if(V.notEmpty(sysUser)){
-                    if(V.notEmpty(sysUserList)){
-                        if(sysUserList.size() >= 2){
-                            return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
-                        }else if(!(sysUser.getId().equals(sysUserList.get(0).getId()))){
-                            return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
-                        }
-                    }
-                }else{
-                    if(V.notEmpty(sysUserList)){
-                        return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
-                    }
-                }
-            }
-
+    public JsonResult checkUsernameRepeat(@RequestParam(required = false) Long id,@RequestParam String username, HttpServletRequest request){
+        if(V.isEmpty(username)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getUsername, username);
+        if (id != null){
+            queryWrapper.ne(SysUser::getId, id);
         }
 
-        return new JsonResult(Status.OK);
+        List<SysUser> sysUserList = sysUserService.getEntityList(queryWrapper);
+        if (V.isEmpty(sysUserList)){
+            return new JsonResult(Status.OK, "用户名可用");
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
     }
 
 
