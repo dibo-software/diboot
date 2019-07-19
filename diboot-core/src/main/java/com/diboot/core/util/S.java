@@ -75,11 +75,7 @@ public class S extends StringUtils{
 	 * @return
 	 */
 	public static String[] toStringArray(List<String> stringList){
-		String[] array = new String[stringList.size()];
-		for(int i=0; i<stringList.size(); i++){
-			array[i] = stringList.get(i);
-		}
-		return array;
+		return stringList.toArray(new String[stringList.size()]);
 	}
 
 	/***

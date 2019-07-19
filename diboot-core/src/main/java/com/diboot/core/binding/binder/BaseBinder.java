@@ -153,7 +153,7 @@ public abstract class BaseBinder<T> {
      */
     protected List<T> getEntityList(Wrapper queryWrapper) {
         if(referencedService instanceof BaseService){
-            return ((BaseService)referencedService).getEntityList(queryWrapper, null);
+            return ((BaseService)referencedService).getEntityList(queryWrapper);
         }
         else{
             List<T> list = referencedService.list(queryWrapper);
