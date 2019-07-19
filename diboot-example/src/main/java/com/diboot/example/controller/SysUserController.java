@@ -73,7 +73,12 @@ public class SysUserController extends BaseCrudRestController {
     @PostMapping("/")
     public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request, ModelMap modelMap)
             throws Exception{
-        return super.createEntity(entity, result, modelMap);
+        boolean success = sysUserService.createSysUser(entity);
+        if(success){
+            return new JsonResult(Status.OK);
+        }else{
+            return new JsonResult(Status.FAIL_OPERATION);
+        }
     }
 
 
@@ -86,8 +91,21 @@ public class SysUserController extends BaseCrudRestController {
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody SysUser entity, BindingResult result,
                                   HttpServletRequest request, ModelMap modelMap) throws Exception{
+        // Model属性值验证结果
+        if(result.hasErrors()) {
+            return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
+        }
+        if(modelMap.get(ERROR) != null){
+            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
+        }
+
         entity.setId(id);
-        return super.updateEntity(entity, result, modelMap);
+        boolean success = sysUserService.updateSysUser(entity);
+        if(success){
+            return new JsonResult(Status.OK, "更新成功");
+        }else{
+            return new JsonResult(Status.FAIL_OPERATION, "更新失败");
+        }
     }
 
     /***
@@ -111,7 +129,12 @@ public class SysUserController extends BaseCrudRestController {
      */
     @DeleteMapping("/{id}")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
-        return super.deleteEntity(id);
+        boolean success = sysUserService.deleteSysUser(id);
+        if(success){
+            return new JsonResult(Status.OK);
+        }else{
+            return new JsonResult(Status.FAIL_OPERATION );
+        }
     }
 
     /***
@@ -169,33 +192,6 @@ public class SysUserController extends BaseCrudRestController {
         return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
     }
 
-    @Override
-    protected void beforeCreate(BaseEntity entity, ModelMap modelMap) throws Exception {
-        SysUser sysUser = (SysUser) entity;
-        if (V.notEmpty(sysUser.getPassword())){
-            this.encryptPassword(sysUser);
-        }
-    }
-
-    @Override
-    protected void beforeUpdate(BaseEntity entity, ModelMap modelMap) throws Exception {
-        SysUser sysUser = (SysUser) entity;
-        if (V.notEmpty(sysUser.getPassword())){
-            this.encryptPassword(sysUser);
-        }
-    }
-
-    /***
-     * 设置加密密码相关的数据
-     * @param sysUser
-     */
-    private void encryptPassword(SysUser sysUser) {
-        String salt = AuthHelper.createSalt();
-        String password = AuthHelper.encryptMD5(sysUser.getPassword(), salt, true);
-        sysUser.setSalt(salt);
-        sysUser.setDepartmentId(0L);
-        sysUser.setPassword(password);
-    }
 
     /***
      * 获取登录用户信息
