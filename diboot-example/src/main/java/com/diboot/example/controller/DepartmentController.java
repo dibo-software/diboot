@@ -95,12 +95,12 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    public JsonResult createEntity(@ModelAttribute DepartmentVO viewObject, BindingResult result, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult createEntity(@ModelAttribute DepartmentVO viewObject, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 转换
         Department entity = BeanUtils.convert(viewObject, Department.class);
         // 创建
-        return super.createEntity(entity, result, modelMap);
+        return super.createEntity(entity, result);
     }
 
     /***
@@ -124,8 +124,8 @@ public class DepartmentController extends BaseCrudRestController {
      */
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Organization entity, BindingResult result,
-                                  HttpServletRequest request, ModelMap modelMap) throws Exception{
-        return super.updateEntity(entity, result, modelMap);
+                                  HttpServletRequest request) throws Exception{
+        return super.updateEntity(entity, result);
     }
 
     /***

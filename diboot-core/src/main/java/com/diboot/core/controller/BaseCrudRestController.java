@@ -45,7 +45,7 @@ public abstract class BaseCrudRestController extends BaseController {
      * @return JsonResult
      * @throws Exception
      */
-    protected <T> JsonResult getEntityList(HttpServletRequest request, Wrapper queryWrapper) throws Exception {
+    protected JsonResult getEntityList(HttpServletRequest request, Wrapper queryWrapper) throws Exception {
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper);
         // 返回结果
@@ -89,43 +89,27 @@ public abstract class BaseCrudRestController extends BaseController {
     }
 
     /***
-     * 根据id获取某资源对象
-     * @param id
-     * @return JsonResult
-     * @throws Exception
-     */
-    protected JsonResult getEntity(Long id) throws Exception {
-        Object entity = getService().getEntity(id);
-        return new JsonResult(Status.OK, entity);
-    }
-
-    /***
      * 创建资源对象
      * @param entity
      * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(BaseEntity entity, BindingResult result, ModelMap modelMap) throws Exception {
+    protected JsonResult createEntity(BaseEntity entity, BindingResult result) throws Exception {
         // Model属性值验证结果
         if (result != null && result.hasErrors()) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
         }
-        if (modelMap.get(ERROR) != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
-        }
-
         // 执行创建资源前的操作
-        this.beforeCreate(entity, modelMap);
-        if (modelMap.get(ERROR) != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
+        String validateResult = this.beforeCreate(entity);
+        if (validateResult != null) {
+            return new JsonResult(Status.FAIL_VALIDATION, validateResult);
         }
-
         // 执行保存操作
         boolean success = getService().createEntity(entity);
         if (success) {
             // 执行创建成功后的操作
-            this.afterCreated(entity, modelMap);
+            this.afterCreated(entity);
             // 组装返回结果
             Map<String, Object> data = new HashMap<>(2);
             data.put(PARAM_ID, entity.getId());
@@ -144,26 +128,21 @@ public abstract class BaseCrudRestController extends BaseController {
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(BaseEntity entity, BindingResult result, ModelMap modelMap) throws Exception {
+    protected JsonResult updateEntity(BaseEntity entity, BindingResult result) throws Exception {
         // Model属性值验证结果
         if (result.hasErrors()) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
         }
-        if (modelMap.get(ERROR) != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
-        }
-
         // 执行更新资源前的操作
-        this.beforeUpdate(entity, modelMap);
-        if (modelMap.get(ERROR) != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
+        String validateResult = this.beforeUpdate(entity);
+        if (validateResult != null) {
+            return new JsonResult(Status.FAIL_VALIDATION, validateResult);
         }
-
         // 执行保存操作
         boolean success = getService().updateEntity(entity);
         if (success) {
             // 执行更新成功后的操作
-            this.afterUpdated(entity, modelMap);
+            this.afterUpdated(entity);
             // 组装返回结果
             Map<String, Object> data = new HashMap<>(2);
             data.put(PARAM_ID, entity.getId());
@@ -188,10 +167,10 @@ public abstract class BaseCrudRestController extends BaseController {
         // 是否有权限删除
         BaseEntity model = (BaseEntity) getService().getEntity(id);
         // 执行删除操作
-        String error = beforeDelete(model);
-        if (error != null) {
+        String validateResult = beforeDelete(model);
+        if (validateResult != null) {
             // 返回json
-            return new JsonResult(Status.FAIL_OPERATION, error);
+            return new JsonResult(Status.FAIL_OPERATION, validateResult);
         }
         // 执行删除操作
         boolean success = getService().deleteEntity(id);
@@ -222,48 +201,41 @@ public abstract class BaseCrudRestController extends BaseController {
     }
 
     //============= 供子类继承重写的方法 =================
-
     /***
      * 创建前的相关处理
      * @param entity
      * @return
      */
-    protected void beforeCreate(BaseEntity entity, ModelMap modelMap) throws Exception {
+    protected String beforeCreate(BaseEntity entity) throws Exception {
+        return null;
     }
-
-    //============= 供子类继承重写的方法 =================
 
     /***
      * 创建成功后的相关处理
      * @param entity
      * @return
      */
-    protected String afterCreated(BaseEntity entity, ModelMap modelMap) throws Exception {
+    protected String afterCreated(BaseEntity entity) throws Exception {
         return null;
     }
-
-    //============= 供子类继承重写的方法 =================
 
     /***
      * 更新前的相关处理
      * @param entity
      * @return
      */
-    protected void beforeUpdate(BaseEntity entity, ModelMap modelMap) throws Exception {
+    protected String beforeUpdate(BaseEntity entity) throws Exception {
+        return null;
     }
-
-    //============= 供子类继承重写的方法 =================
 
     /***
      * 更新成功后的相关处理
      * @param entity
      * @return
      */
-    protected String afterUpdated(BaseEntity entity, ModelMap modelMap) throws Exception {
+    protected String afterUpdated(BaseEntity entity) throws Exception {
         return null;
     }
-
-    //============= 供子类继承重写的方法 =================
 
     /***
      * 是否有删除权限，如不可删除返回错误提示信息，如 Status.FAIL_NO_PERMISSION.label()

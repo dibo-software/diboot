@@ -59,9 +59,9 @@ public class MessageTemplateController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    public JsonResult createEntity(@ModelAttribute MessageTemplate entity, BindingResult result, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult createEntity(@ModelAttribute MessageTemplate entity, BindingResult result, HttpServletRequest request)
             throws Exception{
-        return super.createEntity(entity, result, modelMap);
+        return super.createEntity(entity, result);
     }
 
     /***
@@ -73,7 +73,7 @@ public class MessageTemplateController extends BaseCrudRestController {
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute MessageTemplate entity, BindingResult result,
                                   HttpServletRequest request, ModelMap modelMap) throws Exception{
-        return super.updateEntity(entity, result, modelMap);
+        return super.updateEntity(entity, result);
     }
 
     /***
