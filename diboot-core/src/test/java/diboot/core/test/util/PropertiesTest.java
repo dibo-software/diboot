@@ -15,7 +15,7 @@ public class PropertiesTest {
     @Test
     public void testGetString(){
         String str1 = PropertiesUtils.get("spring.datasource.url");
-        String str2 = PropertiesUtils.get("spring.datasource.url", "application.properties.bak");
+        String str2 = PropertiesUtils.get("spring.datasource.url", "application.properties");
         Assert.assertNotNull(str1);
         Assert.assertNotNull(str2);
     }
