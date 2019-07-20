@@ -47,7 +47,7 @@ public class PermissionController extends BaseCrudRestController {
      */
     @GetMapping("/{id}")
     @AuthorizationWrapper(value = @RequiresPermissions("get"), name = "查看")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
         return new JsonResult(vo);
@@ -82,12 +82,12 @@ public class PermissionController extends BaseCrudRestController {
      */
     @RequiresPermissions("permission:add")
     @PostMapping("/")
-    public JsonResult createEntity(@ModelAttribute PermissionVO viewObject, BindingResult result, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult createEntity(@ModelAttribute PermissionVO viewObject, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 转换
         Permission entity = BeanUtils.convert(viewObject, Permission.class);
         // 创建
-        return super.createEntity(entity, result, modelMap);
+        return super.createEntity(entity, result);
     }
 
     /***
@@ -99,8 +99,8 @@ public class PermissionController extends BaseCrudRestController {
     @RequiresPermissions("permission:update")
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Permission entity, BindingResult result,
-                                  HttpServletRequest request, ModelMap modelMap) throws Exception{
-        return super.updateEntity(entity, result, modelMap);
+                                  HttpServletRequest request) throws Exception{
+        return super.updateEntity(entity, result);
     }
 
     /***
