@@ -110,7 +110,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         DepartmentVO vo = departmentService.getViewObject(id, DepartmentVO.class);
         return new JsonResult(vo);

@@ -47,7 +47,7 @@ public class PermissionController extends BaseCrudRestController {
      */
     @GetMapping("/{id}")
     @AuthorizationWrapper(value = @RequiresPermissions("get"), name = "查看")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
         return new JsonResult(vo);

@@ -71,7 +71,7 @@ public class SysUserController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         boolean success = sysUserService.createSysUser(entity);
         if(success){
@@ -90,15 +90,11 @@ public class SysUserController extends BaseCrudRestController {
      */
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody SysUser entity, BindingResult result,
-                                  HttpServletRequest request, ModelMap modelMap) throws Exception{
+                                  HttpServletRequest request) throws Exception{
         // Model属性值验证结果
         if(result.hasErrors()) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
         }
-        if(modelMap.get(ERROR) != null){
-            return new JsonResult(Status.FAIL_VALIDATION, (String) modelMap.get(ERROR));
-        }
-
         entity.setId(id);
         boolean success = sysUserService.updateSysUser(entity);
         if(success){
@@ -115,7 +111,7 @@ public class SysUserController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         SysUserVO sysUserVO = sysUserService.getSysUser(id);
         return new JsonResult(sysUserVO);

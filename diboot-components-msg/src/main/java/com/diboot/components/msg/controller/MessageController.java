@@ -51,7 +51,7 @@ public class MessageController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         MessageVO entityVO = messageService.getViewObject(id, MessageVO.class);
         return new JsonResult(entityVO);
