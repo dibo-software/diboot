@@ -7,10 +7,10 @@
    > 依赖Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
 ## ** 二. 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
    > 通过注解实现多数场景下的关联查询无SQL
-### 1. 注解自动绑定数据字典(枚举值)的显示值Label
+### 1. 注解自动绑定数据字典(自定义枚举)的显示值Label
 ~~~java
-@BindDict(type="GENDER", field = "gender")
-private String genderLabel;
+@BindDict(type="USER_STATUS", field = "status")
+private String statusLabel;
 ~~~  
 ### 2. 注解自动绑定其他表的字段
 ~~~java
@@ -44,7 +44,7 @@ private List<Role> roleList;
 ~~~
 
 ## ** 三. 使用方式
-### 引入依赖
+### 1. 引入依赖
 Gradle:
 ~~~gradle
 compile("com.diboot:diboot-core:2.0.1")
@@ -57,9 +57,9 @@ compile("com.diboot:diboot-core:2.0.1")
     <version>2.0.1</version>
 </dependency>
 ~~~
-### 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
+### 2. 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
 
-### 使用注解绑定：
+### 3. 使用注解绑定：
 调用RelationsBinder自动绑定注解相关关联：
 #### 方式1. 自动绑定关联（不需要转型）
 ~~~java
@@ -73,4 +73,4 @@ RelationsBinder.bind(voList);
 List<MyUserVO> voList = RelationsBinder.convertAndBind(userList, MyUserVO.class);
 ~~~
 
-## 使用样例请参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
+## 四. 样例参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
