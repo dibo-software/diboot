@@ -1,6 +1,7 @@
 package com.diboot.shiro.config;
 
 import com.diboot.shiro.authz.aop.CustomAuthorizationAttributeSourceAdvisor;
+import com.diboot.shiro.authz.properties.AuthorizationProperties;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationFilter;
 import com.diboot.shiro.jwt.BaseJwtRealm;
 import org.apache.shiro.mgt.SecurityManager;
@@ -12,6 +13,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -27,8 +30,12 @@ import java.util.Map;
  * @date 2019/6/6
  */
 @Configuration
+@EnableConfigurationProperties(AuthorizationProperties.class)
 public class ShiroConfig {
     private static final Logger logger = LoggerFactory.getLogger(ShiroConfig.class);
+
+    @Autowired
+    private AuthorizationProperties authorizationProperties;
 
     @Bean
     public Realm realm(){
@@ -88,7 +95,7 @@ public class ShiroConfig {
      * Shiro生命周期处理器
      */
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
@@ -106,9 +113,8 @@ public class ShiroConfig {
 
     @Bean
     public CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
-        CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new CustomAuthorizationAttributeSourceAdvisor();
+        CustomAuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new CustomAuthorizationAttributeSourceAdvisor(authorizationProperties);
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
         return authorizationAttributeSourceAdvisor;
     }
-
 }

@@ -37,4 +37,10 @@ public class AuthorizationWrapperController {
     public JsonResult getAll() {
         return new  JsonResult("ok");
     }
+
+    @GetMapping("/admin")
+    @AuthorizationWrapper(value = @RequiresPermissions("adminRole"), name = "测试角色具有所有权限")
+    public JsonResult permission() {
+        return new JsonResult();
+    }
 }

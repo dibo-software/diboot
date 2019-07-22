@@ -4,6 +4,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.authz.properties.AuthorizationProperties;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.AuthorizationException;
@@ -23,10 +24,16 @@ import java.lang.annotation.Annotation;
 public class AuthorizationWrapperAnnotationHandler extends AuthorizingAnnotationHandler {
 
     /**
+     * 使用配置中的所有权限角色
+     */
+    private AuthorizationProperties authorizationProperties;
+
+    /**
      * 标记服务的注解
      */
-    public AuthorizationWrapperAnnotationHandler() {
+    public AuthorizationWrapperAnnotationHandler(AuthorizationProperties authorizationProperties) {
         super(AuthorizationWrapper.class);
+        this.authorizationProperties = authorizationProperties;
     }
 
 
@@ -55,6 +62,19 @@ public class AuthorizationWrapperAnnotationHandler extends AuthorizingAnnotation
         AuthorizationWrapper authorizationWrapper = (AuthorizationWrapper)resolver.getAnnotation(mi, AuthorizationWrapper.class);
         String[] perms = getAnnotationValue(authorizationWrapper);
         Subject subject = getSubject();
+        //当系统配置的所有权限角色集合 ： 如果当前用户包含其中任意一个角色，直接允许访问，否则对当前用户进行资源校验
+        if (V.notEmpty(authorizationProperties.getHasAllPermissionsRoleList())) {
+            for (String role : authorizationProperties.getHasAllPermissionsRoleList()) {
+                if (subject.hasRole(role)) {
+                    return;
+                }
+            }
+        } else {
+            //当权限没配置的时候，默认ADMIN为最高权限
+            if (subject.hasRole("ADMIN")) {
+                return;
+            }
+        }
         //如果忽略前缀，那么则不拼接前缀
         perms = addPrefix(resolver, mi, authorizationWrapper, perms);
         if (perms.length == 1) {

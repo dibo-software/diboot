@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.annotation.Order;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 权限入库配置文件
@@ -11,8 +15,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version : v2.0
  * @Date 2019-06-27  10:16
  */
-@ConfigurationProperties(prefix = "diboot.shiro.auth")
 @Data
+@ConfigurationProperties(prefix = "diboot.shiro.auth")
 public class AuthorizationProperties {
 
     /**设置权限存储的环境：其中开发环境权限不会替换删除，测试和生产会替换删除*/
@@ -20,6 +24,9 @@ public class AuthorizationProperties {
 
     /**是否开启存储权限*/
     private boolean storage = false;
+
+    /**具有所有权限的角色*/
+    private List<String> hasAllPermissionsRoleList;
 
     @Getter
     @AllArgsConstructor

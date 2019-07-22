@@ -1,6 +1,7 @@
 package com.diboot.shiro.authz.aop;
 
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.authz.properties.AuthorizationProperties;
 import org.apache.shiro.authz.annotation.*;
 import org.apache.shiro.mgt.SecurityManager;
 import org.slf4j.Logger;
@@ -33,8 +34,8 @@ public class CustomAuthorizationAttributeSourceAdvisor extends StaticMethodMatch
     /**
      * Create a new AuthorizationAttributeSourceAdvisor.
      */
-    public CustomAuthorizationAttributeSourceAdvisor() {
-        setAdvice(new CustomAopAllianceAnnotationsAuthorizingMethodInterceptor());
+    public CustomAuthorizationAttributeSourceAdvisor(AuthorizationProperties authorizationProperties) {
+        setAdvice(new CustomAopAllianceAnnotationsAuthorizingMethodInterceptor(authorizationProperties));
     }
 
     public SecurityManager getSecurityManager() {
