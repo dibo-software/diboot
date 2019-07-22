@@ -51,7 +51,7 @@ public class MessageController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         MessageVO entityVO = messageService.getViewObject(id, MessageVO.class);
         return new JsonResult(entityVO);
@@ -63,9 +63,9 @@ public class MessageController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    public JsonResult createEntity(@ModelAttribute Message entity, BindingResult result, HttpServletRequest request, ModelMap modelMap)
+    public JsonResult createEntity(@ModelAttribute Message entity, BindingResult result, HttpServletRequest request)
             throws Exception{
-        return super.createEntity(entity, result, modelMap);
+        return super.createEntity(entity, result);
     }
 
     /***
@@ -76,8 +76,8 @@ public class MessageController extends BaseCrudRestController {
      */
     @PutMapping("/{id}")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Message entity, BindingResult result,
-                                  HttpServletRequest request, ModelMap modelMap) throws Exception{
-        return super.updateEntity(entity, result, modelMap);
+                                  HttpServletRequest request) throws Exception{
+        return super.updateEntity(entity, result);
     }
 
     /***

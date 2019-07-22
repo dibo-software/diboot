@@ -13,6 +13,7 @@ import com.diboot.example.vo.SysUserVO;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.entity.UserRole;
 import com.diboot.shiro.service.UserRoleService;
+import com.diboot.shiro.util.AuthHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     @Override
     @Transactional
     public boolean createSysUser(SysUser user) {
+        // 对密码进行处理
+        if (V.notEmpty(user.getPassword())){
+            this.encryptPassword(user);
+        }
+
         //新建用户信息
         boolean success = super.createEntity(user);
         if(!success){
@@ -102,6 +108,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     @Override
     @Transactional
     public boolean updateSysUser(SysUser user) {
+        // 对密码进行处理
+        if (V.notEmpty(user.getPassword())){
+            this.encryptPassword(user);
+        }
         //更新用户信息
         boolean success = super.updateEntity(user);
         if(!success){
@@ -181,5 +191,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         }
 
         return true;
+    }
+
+    /***
+     * 设置加密密码相关的数据
+     * @param sysUser
+     */
+    private void encryptPassword(SysUser sysUser) {
+        String salt = AuthHelper.createSalt();
+        String password = AuthHelper.encryptMD5(sysUser.getPassword(), salt, true);
+        sysUser.setSalt(salt);
+        sysUser.setPassword(password);
     }
 }

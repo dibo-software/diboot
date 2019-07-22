@@ -1,18 +1,18 @@
-## diboot-core: 全新优化内核
+# diboot-core: 全新优化内核
 主要实现：
 1. 多表关联的自动绑定, 实现单表CRUD和多表关联的无SQL化
 2. 提供其他常用开发场景的最佳实践封装。
 
-### ** 单表CRUD无SQL
+## ** 一. 单表CRUD无SQL
    > 依赖Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
-### ** 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
+## ** 二. 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
    > 通过注解实现多数场景下的关联查询无SQL
-#### 2.1. 注解自动绑定数据字典(枚举值)的显示值Label
+### 1. 注解自动绑定数据字典(自定义枚举)的显示值Label
 ~~~java
-@BindDict(type="GENDER", field = "gender")
-private String genderLabel;
+@BindDict(type="USER_STATUS", field = "status")
+private String statusLabel;
 ~~~  
-#### 2. 注解自动绑定其他表的字段
+### 2. 注解自动绑定其他表的字段
 ~~~java
 // 支持关联条件+附加条件绑定字段
 @BindField(entity=Department.class, field="name", condition="department_id=id AND parent_id>=0")
@@ -22,7 +22,7 @@ private String deptName;
 @BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id")
 private String orgName;
 ~~~
-#### 3. 注解自动绑定其他表实体Entity
+### 3. 注解自动绑定其他表实体Entity
 ~~~java
 // 支持关联条件+附加条件绑定Entity
 @BindEntity(entity = Department.class, condition="department_id=id")
@@ -32,7 +32,7 @@ private Department department;
 @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.deleted=0")
 private Organization organization;
 ~~~
-#### 4. 注解自动绑定其他表实体集合List<Entity>
+### 4. 注解自动绑定其他表实体集合List<Entity>
 ~~~java
 // 支持关联条件+附加条件绑定多个Entity
 @BindEntityList(entity = Department.class, condition = "id=parent_id")
@@ -43,21 +43,34 @@ private List<Department> children;
 private List<Role> roleList;
 ~~~
 
-### ** 调用方式
-#### 1. 自动绑定关联（不需要转型）
+## ** 三. 使用方式
+### 1. 引入依赖
+Gradle:
+~~~gradle
+compile("com.diboot:diboot-core:2.0.1")
+~~~
+或Maven
+~~~xml
+<dependency>
+    <groupId>com.diboot</groupId>
+    <artifactId>diboot-core</artifactId>
+    <version>2.0.1</version>
+</dependency>
+~~~
+### 2. 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
+
+### 3. 使用注解绑定：
+调用RelationsBinder自动绑定注解相关关联：
+#### 方式1. 自动绑定关联（不需要转型）
 ~~~java
-// 调用AnnotationBindingManager自动绑定注解相关关联
 //List<MyUserVO> voList = ...; 
 RelationsBinder.bind(voList);
 ~~~
-#### 2. 自动转型并绑定关联（需要转型）
+#### 方式2. 自动转型并绑定关联（需要转型）
 ~~~java
-// 获取Entity列表
-List<User> entityList = userService.getEntityList(queryWrapper);
-// 调用AnnotationBindingManager自动绑定注解相关关联
+// 查询单表获取Entity集合
+// List<User> entityList = userService.list(queryWrapper);
 List<MyUserVO> voList = RelationsBinder.convertAndBind(userList, MyUserVO.class);
 ~~~
 
-
-##### 使用样例请参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
-
+## 四. 样例参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)

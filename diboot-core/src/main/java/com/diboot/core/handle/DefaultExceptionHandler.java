@@ -26,9 +26,6 @@ import java.util.Map;
 public class DefaultExceptionHandler {
     private final static Logger log = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
-    @Autowired
-    private ServerProperties serverProperties;
-
     /**
      * 统一异常处理类
      * @param request
