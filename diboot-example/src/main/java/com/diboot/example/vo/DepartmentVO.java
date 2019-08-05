@@ -22,12 +22,15 @@ public class DepartmentVO extends Department {
     @BindField(entity = Organization.class, field = "name", condition = "this.org_id=id")
     private String orgName;
 
+    @BindField(entity = Department.class, field = "name", condition = "this.parent_id=id")
+    private String parentName;
+
     // 直接关联Entity
-    @BindEntity(entity = Organization.class, condition="this.org_id=id")
-    private Organization organization;
+    /*@BindEntity(entity = Organization.class, condition="this.org_id=id")
+    private Organization organization;*/
 
     // 直接关联多个Entity
-    @BindEntityList(entity = Department.class, condition = "this.id=parent_id")
-    private List<Department> children;
+    /*@BindEntityList(entity = Department.class, condition = "this.id=parent_id")
+    private List<Department> children;*/
 
 }

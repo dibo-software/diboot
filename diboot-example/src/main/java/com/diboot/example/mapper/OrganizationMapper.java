@@ -4,7 +4,7 @@ import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.example.entity.Organization;
 
 /**
- * 单位Mapper
+ * 组织Mapper
  * @author Mazhicheng
  * @version 2018/12/22
  * Copyright © www.dibo.ltd
