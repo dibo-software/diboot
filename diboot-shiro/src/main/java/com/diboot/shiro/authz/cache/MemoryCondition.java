@@ -20,6 +20,7 @@ public class MemoryCondition implements Condition {
         Boolean enableCached = context.getEnvironment().getProperty(AuthCacheProperties.CACHE_PREFIX + ".permission-caching-enabled", Boolean.class);
         enableCached = enableCached == null ? true : enableCached;
         AuthCacheProperties.CacheWay cacheWay = context.getEnvironment().getProperty(AuthCacheProperties.CACHE_PREFIX + ".cache-way", AuthCacheProperties.CacheWay.class);
+        cacheWay = cacheWay == null ? AuthCacheProperties.CacheWay.MEMORY : cacheWay;
         return enableCached && AuthCacheProperties.CacheWay.MEMORY.equals(cacheWay);
     }
 }
