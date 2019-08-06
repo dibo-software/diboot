@@ -2,6 +2,7 @@ package com.diboot.shiro.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.V;
 import lombok.Data;
 
 import java.util.List;
@@ -34,4 +35,11 @@ public class Role extends BaseEntity {
     @TableField(exist = false)
     private List<Permission> permissionList;
 
+    /***
+     * 是否是管理员权限
+     * @return
+     */
+    public boolean isAdmin(){
+        return V.equals(code, "ADMIN");
+    }
 }

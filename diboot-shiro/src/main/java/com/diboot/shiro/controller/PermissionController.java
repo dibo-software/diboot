@@ -30,8 +30,8 @@ import java.util.List;
  * @date 2019/6/20
  */
 @RestController
-@AuthorizationPrefix(prefix = "permission", code = "permission", name = "权限")
 @RequestMapping("/permission")
+@AuthorizationPrefix(prefix = "permission", code = "permission", name = "权限管理")
 public class PermissionController extends BaseCrudRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(PermissionService.class);
@@ -46,7 +46,7 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    @AuthorizationWrapper(value = @RequiresPermissions("get"), name = "查看")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
@@ -78,8 +78,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:add")
     @PostMapping("/")
+//    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@ModelAttribute PermissionVO viewObject, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 转换
@@ -94,8 +94,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:update")
     @PutMapping("/{id}")
+//    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Permission entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         return super.updateEntity(entity, result);
@@ -107,8 +107,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:delete")
     @DeleteMapping("/{id}")
+//    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
     }

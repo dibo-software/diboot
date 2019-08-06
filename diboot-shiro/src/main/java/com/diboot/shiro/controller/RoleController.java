@@ -28,7 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/role")
-@AuthorizationPrefix(prefix = "role", code = "role", name = "权限")
+@AuthorizationPrefix(prefix = "role", code = "role", name = "角色管理")
 public class RoleController extends BaseCrudRestController {
 
     @Autowired
@@ -61,24 +61,12 @@ public class RoleController extends BaseCrudRestController {
     }
 
     /***
-     * 显示创建页面
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/toCreatePage")
-    public JsonResult toCreatePage(HttpServletRequest request, ModelMap modelMap)
-            throws Exception{
-        List<Permission> menuList = roleService.getAllMenu();
-        modelMap.put("menuList", menuList);
-        return new JsonResult(modelMap);
-    }
-
-    /***
      * 创建Entity
      * @return
      * @throws Exception
      */
     @PostMapping("/")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody Role entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 创建
@@ -91,25 +79,13 @@ public class RoleController extends BaseCrudRestController {
     }
 
     /***
-     * 显示更新页面
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/toUpdatePage/{id}")
-    public JsonResult toUpdatePage(@PathVariable("id")Long id, HttpServletRequest request)
-            throws Exception{
-        RoleVO roleVO = roleService.toUpdatePage(id);
-        return new JsonResult(roleVO);
-    }
-
-
-    /***
      * 更新Entity
      * @param id ID
      * @return
      * @throws Exception
      */
     @PutMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody Role entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         // Model属性值验证结果
@@ -134,6 +110,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         RoleVO roleVO = roleService.getRole(id);
@@ -147,6 +124,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @DeleteMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         boolean success = roleService.deleteRole(id);
         if(success){
@@ -155,6 +133,34 @@ public class RoleController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_OPERATION );
         }
     }
+
+
+    /***
+     * 显示创建页面
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/toCreatePage")
+    public JsonResult toCreatePage(HttpServletRequest request, ModelMap modelMap)
+            throws Exception{
+        List<Permission> menuList = roleService.getAllMenu();
+        modelMap.put("menuList", menuList);
+        return new JsonResult(modelMap);
+    }
+
+
+    /***
+     * 显示更新页面
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/toUpdatePage/{id}")
+    public JsonResult toUpdatePage(@PathVariable("id")Long id, HttpServletRequest request)
+            throws Exception{
+        RoleVO roleVO = roleService.toUpdatePage(id);
+        return new JsonResult(roleVO);
+    }
+
 
     /***
      * 获取所有菜单,以及每个菜单下的所有权限
