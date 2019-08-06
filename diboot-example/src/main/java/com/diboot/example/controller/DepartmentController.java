@@ -165,8 +165,8 @@ public class DepartmentController extends BaseCrudRestController {
     /*
      * 根据组织ID获取部门kv list
      * */
-    @GetMapping("/getDepartment/{orgId}")
-    public JsonResult getDepartment(@PathVariable Long orgId, HttpServletRequest request){
+    @GetMapping("/getDepartmentKV/{orgId}")
+    public JsonResult getDepartmentKV(@PathVariable Long orgId, HttpServletRequest request){
         Wrapper wrapper = null;
         //获取部门KV
         wrapper = new QueryWrapper<Department>()
@@ -176,6 +176,21 @@ public class DepartmentController extends BaseCrudRestController {
         List<KeyValue> deptKvList = departmentService.getKeyValueList(wrapper);
 
         return new JsonResult(deptKvList);
+    }
+
+    /*
+     * 根据组织ID获取部门list
+     * */
+    @GetMapping("/getDepartmentList/{orgId}")
+    public JsonResult getDepartmentList(@PathVariable Long orgId, HttpServletRequest request) throws Exception {
+        // 构建分页
+        Pagination pagination = buildPagination(request);
+        Wrapper wrapper = new QueryWrapper<Department>()
+                .lambda()
+                .eq(Department::getOrgId, orgId);
+        List<DepartmentVO> voList = departmentService.getViewObjectList(wrapper, pagination, DepartmentVO.class);
+
+        return new JsonResult(voList);
     }
 
     @Override

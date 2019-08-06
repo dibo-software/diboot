@@ -5,6 +5,8 @@ import com.diboot.core.binding.annotation.BindField;
 import com.diboot.example.entity.Organization;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author wangyongliang
  * @version v2.0
@@ -21,5 +23,7 @@ public class OrganizationVO extends Organization {
     // 元数据关联
     @BindDict(type = "INDUSTRY", field = "industry")
     private String industryLabel;
+
+    private List<OrganizationVO> children;
 
 }
