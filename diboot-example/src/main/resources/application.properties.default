@@ -98,6 +98,10 @@ diboot.shiro.auth.has-all-permissions-role-list[0]=ALL1
 diboot.shiro.auth.has-all-permissions-role-list[1]=ALL2
 diboot.shiro.auth.has-all-permissions-role-list[2]=ALL3
 
+#权限缓存机制
+diboot.shiro.cache.permission-caching-enabled=true
+diboot.shiro.cache.cache-way=memory
+
 #------web页面访问的时候需要如下配置----
 spring.mvc.view.prefix=/static
 spring.mvc.view.suffix=.html
