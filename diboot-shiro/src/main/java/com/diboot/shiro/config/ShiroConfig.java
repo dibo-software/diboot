@@ -77,7 +77,7 @@ public class ShiroConfig {
         if (authCacheProperties.isPermissionCachingEnabled()) {
             //设置权限缓存
             realm.setCachingEnabled(true);
-            CacheManager cacheManager = V.notEmpty(memoryCacheManager())? memoryCacheManager(): redisCacheManager();
+            CacheManager cacheManager = V.notEmpty(redisCacheManager())? redisCacheManager(): memoryCacheManager();
             realm.setCacheManager(cacheManager);
         }
         return realm;
