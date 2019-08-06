@@ -5,6 +5,7 @@ dependencies {
 
 //    compile("org.springframework.boot:spring-boot-configuration-processor")
     compile("org.apache.shiro:shiro-spring:1.4.1")
+    compile("org.aspectj:aspectjweaver")
     compile("com.auth0:java-jwt:3.4.1",
             "io.jsonwebtoken:jjwt:0.9.1")
 

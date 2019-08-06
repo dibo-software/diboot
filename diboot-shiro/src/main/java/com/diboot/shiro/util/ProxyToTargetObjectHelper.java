@@ -16,6 +16,7 @@ public class ProxyToTargetObjectHelper {
 
     /**
      * 获取代理对象的目标对象
+     * 对象可能被多次代理，所以需要递归获取原始对象
      * @param proxy
      * @return
      * @throws Exception
@@ -27,12 +28,13 @@ public class ProxyToTargetObjectHelper {
         }
         //判断是jdk动态代理还是cglib代理
         if(AopUtils.isJdkDynamicProxy(proxy)) {
-            return getJdkDynamicProxyTargetObject(proxy);
+            proxy = getJdkDynamicProxyTargetObject(proxy);
         }
         //cglib
         else {
-            return getCglibProxyTargetObject(proxy);
+            proxy = getCglibProxyTargetObject(proxy);
         }
+        return getTarget(proxy);
     }
 
 
