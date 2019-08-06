@@ -10,10 +10,14 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.shiro.authz.annotation.AuthorizationCache;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.vo.RoleVO;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -24,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/role")
+@AuthorizationPrefix(prefix = "role", code = "role", name = "权限")
 public class RoleController extends BaseCrudRestController {
 
     @Autowired
@@ -43,6 +48,8 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/list")
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
+    @AuthorizationCache
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Role> queryWrapper = buildQuery(request);
         // 构建分页
