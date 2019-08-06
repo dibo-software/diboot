@@ -12,6 +12,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Organization;
 import com.diboot.example.service.DepartmentService;
+import com.diboot.example.service.OrganizationService;
 import com.diboot.example.vo.DepartmentVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * Organization相关Controller
+ * 部门相关Controller
  * @author Mazhicheng
  * @version 2018/12/23
  * Copyright © www.dibo.ltd
@@ -34,6 +35,9 @@ public class DepartmentController extends BaseCrudRestController {
 
     @Autowired
     private DepartmentService departmentService;
+
+    @Autowired
+    private OrganizationService organizationService;
 
     /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
@@ -84,7 +88,7 @@ public class DepartmentController extends BaseCrudRestController {
     @GetMapping("/kv")
     public JsonResult getKVPairList(HttpServletRequest request){
         Wrapper wrapper = new QueryWrapper<Department>().lambda()
-            .select(Department::getName, Department::getId, Department::getCode);
+            .select(Department::getName, Department::getId, Department::getNumber);
         List<KeyValue> list = departmentService.getKeyValueList(wrapper);
         return new JsonResult(list);
     }
@@ -95,12 +99,13 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    public JsonResult createEntity(@ModelAttribute DepartmentVO viewObject, BindingResult result, HttpServletRequest request)
+    public JsonResult createEntity(@RequestBody Department entity, BindingResult result, HttpServletRequest request)
             throws Exception{
-        // 转换
-        Department entity = BeanUtils.convert(viewObject, Department.class);
-        // 创建
-        return super.createEntity(entity, result);
+        boolean success = departmentService.createEntity(entity);
+        if(!success){
+            return new JsonResult(Status.FAIL_OPERATION);
+        }
+        return new JsonResult(Status.OK);
     }
 
     /***
@@ -123,9 +128,14 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PutMapping("/{id}")
-    public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Organization entity, BindingResult result,
+    public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody Department entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
-        return super.updateEntity(entity, result);
+        entity.setId(id);
+        boolean success = departmentService.updateEntity(entity);
+        if(!success){
+            return new JsonResult(Status.FAIL_OPERATION);
+        }
+        return new JsonResult(Status.OK);
     }
 
     /***
@@ -137,6 +147,35 @@ public class DepartmentController extends BaseCrudRestController {
     @DeleteMapping("/{id}")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
+    }
+
+    @GetMapping("/attachMore")
+    public JsonResult attachMore(HttpServletRequest request, ModelMap modelMap){
+        Wrapper wrapper = null;
+        //获取组织机构KV
+        wrapper = new QueryWrapper<Organization>()
+                .lambda()
+                .select(Organization::getName, Organization::getId);
+        List<KeyValue> orgKvList = organizationService.getKeyValueList(wrapper);
+        modelMap.put("orgKvList", orgKvList);
+
+        return new JsonResult(modelMap);
+    }
+
+    /*
+     * 根据组织ID获取部门kv list
+     * */
+    @GetMapping("/getDepartment/{orgId}")
+    public JsonResult getDepartment(@PathVariable Long orgId, HttpServletRequest request){
+        Wrapper wrapper = null;
+        //获取部门KV
+        wrapper = new QueryWrapper<Department>()
+                .lambda()
+                .select(Department::getName, Department::getId)
+                .eq(Department::getOrgId, orgId);
+        List<KeyValue> deptKvList = departmentService.getKeyValueList(wrapper);
+
+        return new JsonResult(deptKvList);
     }
 
     @Override

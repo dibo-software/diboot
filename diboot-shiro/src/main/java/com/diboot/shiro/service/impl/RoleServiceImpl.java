@@ -58,11 +58,9 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
                     HashSet menuSet = new HashSet();
                     Set<Long> idSet = new HashSet<>();//资源id  set
                     for(Permission permission : permissionList){
-                        //克隆roleVO.permissionList中的每一个permission，解决查出来的列表页数据重复的问题
-                        Permission temp = BeanUtils.convert(permission, Permission.class);
-                        idSet.add(temp.getId());
-                        if(menuSet.add(temp.getMenuCode())){
-                            menuList.add(temp);
+                        idSet.add(permission.getId());
+                        if(menuSet.add(permission.getMenuCode())){
+                            menuList.add(permission);
                         }
                     }
                     //获取菜单资源下的该角色已有的权限资源
@@ -155,45 +153,59 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
     @Override
     public RoleVO toUpdatePage(Long id) {
         RoleVO roleVO = super.getViewObject(id, RoleVO.class);
-        //角色已拥有的权限列表
+        //角色已拥有的资源列表
         List<Permission> ownPermissionList = roleVO.getPermissionList();
         //角色已拥有的菜单资源
-        List<Permission> ownMenuList = null;
+        List<Permission> ownMenuList = new ArrayList();
+        Set<Long> idSet = new HashSet<>();
+        HashSet<String> ownMenuSet = new HashSet();
         if(V.notEmpty(ownPermissionList)){
             //获取这个角色拥有的菜单资源
-            ownMenuList = new ArrayList();
-            HashSet set = new HashSet();
             for(Permission permission : ownPermissionList){
-                if(set.add(permission.getMenuCode())){
+                idSet.add(permission.getId());
+                if(ownMenuSet.add(permission.getMenuCode())){
                     ownMenuList.add(permission);
                 }
             }
         }
 
-        //获取所有菜单及菜单下的权限信息
-        List<Permission> allMenuList = getAllMenu();
+        //获取菜单资源下的该角色已有的权限资源
+        Map<String, Permission> ownMenuMap = new HashMap();
+        for(Permission menu : ownMenuList){
+            QueryWrapper<Permission> query = new QueryWrapper();
+            query.lambda().in(Permission::getId, idSet)
+                    .eq(Permission::getMenuCode, menu.getMenuCode());
+            List<Permission> menuPermissionList = permissionService.getEntityList(query);
+            menu.setPermissionList(menuPermissionList);
+            ownMenuMap.put(menu.getMenuCode(), menu);
+        }
 
+        //获取所有菜单及菜单下的资源信息
+        List<Permission> allMenuList = getAllMenu();
         if(V.notEmpty(allMenuList)){
             for(Permission menu : allMenuList){
-                List<Permission> allPermissionList = menu.getPermissionList();
-                //判断该角色是否有该菜单资源，若有设为true
-                if(V.notEmpty(ownMenuList)){
-                    for(Permission m : ownMenuList){
-                        if(menu.getMenuCode().equals(m.getMenuCode())){
-                            menu.setOwn(true);
-                        }
-                    }
-                }
-                //判断该角色是否有该资源权限，若有设为true
-                if(V.notEmpty(allPermissionList) && V.notEmpty(ownPermissionList)){
-                    for(Permission permission : allPermissionList){
-                        for(Permission p : ownPermissionList){
-                            if(permission.getId().equals(p.getId())){
-                                permission.setOwn(true);
-                            }
-                        }
-                    }
-                }
+               if(ownMenuSet.contains(menu.getMenuCode())){
+                   Permission ownMenu = ownMenuMap.get(menu.getMenuCode());
+                   List<Permission> allPermissionList = menu.getPermissionList();
+                   int ownPermissionCount = 0;
+                   if(V.notEmpty(allPermissionList) && V.notEmpty(ownMenu.getPermissionList())){
+                       for(Permission permission : allPermissionList){
+                           for(Permission p : ownMenu.getPermissionList()){
+                               if(permission.getId().equals(p.getId())){
+                                   permission.setOwn(true);
+                                   ownPermissionCount++;
+                                   break;
+                               }
+                           }
+                       }
+                   }
+                   if(ownPermissionCount == allPermissionList.size()){
+                       menu.setChecked(true);
+                   }
+                   if(ownPermissionCount != 0 && ownPermissionCount < allPermissionList.size()){
+                       menu.setIndeterminate(true);
+                   }
+               }
             }
         }
 

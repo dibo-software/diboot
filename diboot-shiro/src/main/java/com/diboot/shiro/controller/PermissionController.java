@@ -68,11 +68,9 @@ public class PermissionController extends BaseCrudRestController {
         // 构建分页
         Pagination pagination = buildPagination(request);
         // 查询当前页的Entity主表数据
-        List entityList = getService().getEntityList(queryWrapper, pagination);
-        // 自动转换VO中注解绑定的关联
-        List<PermissionVO> voList = super.convertToVoAndBindRelations(entityList, PermissionVO.class);
+        List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
 
-        return new JsonResult(Status.OK, voList).bindPagination(pagination);
+        return new JsonResult(Status.OK, entityList).bindPagination(pagination);
     }
 
     /***

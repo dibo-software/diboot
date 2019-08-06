@@ -1,10 +1,17 @@
 package com.diboot.shiro.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.Pagination;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.mapper.PermissionMapper;
 import com.diboot.shiro.service.PermissionService;
@@ -16,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,6 +35,22 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class PermissionServiceImpl extends BaseServiceImpl<PermissionMapper, Permission> implements PermissionService {
+
+    @Override
+    public List<Permission> getPermissionList(QueryWrapper<Permission> queryWrapper, Pagination pagination) {
+        queryWrapper.lambda().groupBy(Permission::getMenuCode);
+        List<Permission> menuList = super.getEntityList(queryWrapper, pagination);
+        if(V.notEmpty(menuList)){
+           for(Permission menu : menuList){
+               LambdaQueryWrapper<Permission> wrapper = new LambdaQueryWrapper();
+               wrapper.eq(Permission::getMenuCode, menu.getMenuCode());
+               List<Permission> permissionList = super.getEntityList(wrapper);
+               menu.setPermissionList(permissionList);
+           }
+        }
+
+        return menuList;
+    }
 
     /**
      * 批量创建或更新或删除entity（entity.id存在：【如果deleted = 1表示逻辑删除，=0表示更新】，若entity.id不存在否则新建）

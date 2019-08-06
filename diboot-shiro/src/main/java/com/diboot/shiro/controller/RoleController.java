@@ -1,5 +1,6 @@
 package com.diboot.shiro.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
@@ -188,35 +189,21 @@ public class RoleController extends BaseCrudRestController {
      * 校验角色code是否重复
      * */
     @GetMapping("/checkCodeRepeat")
-    public JsonResult checkCodeRepeat(Long id, String code, HttpServletRequest request){
+    public JsonResult checkCodeRepeat(@RequestParam(required = false) Long id, @RequestParam String code, HttpServletRequest request){
         if(V.notEmpty(code)){
-            QueryWrapper<Role> wrapper = new QueryWrapper();
-            wrapper.lambda().eq(Role::getCode, code);
-            List<Role> roleList = roleService.getEntityList(wrapper);
-            if(V.isEmpty(id)){//新建时
-                if(V.notEmpty(roleList)){
-                    return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                }
-            }else{//更新时
-                Role role = roleService.getEntity(id);
-                if(V.notEmpty(role)){
-                    if(V.notEmpty(roleList)){
-                        if(roleList.size() >= 2){
-                            return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                        }else if(!(role.getId().equals(roleList.get(0).getId()))){
-                            return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                        }
-                    }
-                }else{
-                    if(V.notEmpty(roleList)){
-                        return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                    }
-                }
+            LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper();
+            wrapper.eq(Role::getCode, code);
+            if(V.notEmpty(id)){
+                wrapper.ne(Role::getId, id);
             }
-
+            List<Role> roleList = roleService.getEntityList(wrapper);
+            if(V.isEmpty(roleList)){
+                return new JsonResult(Status.OK, "code可用");
+            }
+            return new JsonResult(Status.FAIL_OPERATION, "code已存在");
         }
 
-        return new JsonResult(Status.OK);
+        return new JsonResult(Status.OK,"code可用");
     }
 
 
