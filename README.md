@@ -35,6 +35,11 @@ RBAC的角色权限+基于Shiro的细粒度权限控制
 #### 2、@AuthorizationWrapper 
 类/方法注解，在保证shiro的@RequirePermissions注解的功能基础上，增加名称、权限前缀特性，使用方式同@RequiresPermissions
 
+#### 3、@AuthorizationCache 
+方法注解，在资源授权校验过程中，系统会频繁与数据库进行交互，故而提供缓存机制
+ * 缓存时机：缓存会在用户第一次进行权限验证的之后缓存数据
+ * 当前注解作用：如果通过系统调整权限，只需要将该注解加在更新或添加权限处，将会清空权限缓存，下次进入将重新加载权限
+
 #### 3、AuthorizationProperties
 提供一些权限相关的配置，主要包括：
 - 权限环境变量：提供dev、test、prod三种选项
@@ -54,6 +59,11 @@ diboot.shiro.auth.env=dev
 diboot.shiro.auth.has-all-permissions-role-list[0]=ALL1
 diboot.shiro.auth.has-all-permissions-role-list[1]=ALL2
 diboot.shiro.auth.has-all-permissions-role-list[2]=ALL3
+#配置权限缓存机制
+##是否开启缓存
+diboot.shiro.cache.permission-caching-enabled=true
+##缓存方式：暂时提供shiro内置的内存缓存
+diboot.shiro.cache.cache-way=memory
 ```
 
 #### 4、AuthorizationStorage

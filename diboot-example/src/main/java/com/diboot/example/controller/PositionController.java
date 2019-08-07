@@ -114,8 +114,8 @@ public class PositionController extends BaseCrudRestController {
     /*
      * 根据部门ID获取职位kv list
      * */
-    @GetMapping("/getPosition/{deptId}")
-    public JsonResult getPosition(@PathVariable Long deptId, HttpServletRequest request){
+    @GetMapping("/getPositionKV/{deptId}")
+    public JsonResult getPositionKV(@PathVariable Long deptId, HttpServletRequest request){
         Wrapper wrapper = null;
         List<Long> positionIdList = new ArrayList<>();
         wrapper  = new LambdaQueryWrapper<PositionDepartment>()

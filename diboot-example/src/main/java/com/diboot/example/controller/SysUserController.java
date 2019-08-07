@@ -18,10 +18,15 @@ import com.diboot.example.service.DepartmentService;
 import com.diboot.example.service.SysUserService;
 import com.diboot.example.vo.SysUserListVO;
 import com.diboot.example.vo.SysUserVO;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sysUser")
+@AuthorizationPrefix(name = "用户管理", code = "sysUser", prefix = "sysUser")
 public class SysUserController extends BaseCrudRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(SysUserController.class);
@@ -48,11 +54,18 @@ public class SysUserController extends BaseCrudRestController {
     private RoleService roleService;
 
     @Autowired
+    private PermissionService permissionService;
+
+    @Autowired
     private DepartmentService departmentService;
 
+
     @GetMapping("/list")
-    public JsonResult getVOList(SysUser sysUser, Pagination pagination, HttpServletRequest request) throws Exception{
-        QueryWrapper<SysUser> queryWrapper = super.buildQueryWrapper(sysUser);
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
+    public JsonResult getVOList(HttpServletRequest request) throws Exception{
+        QueryWrapper<SysUser> queryWrapper = buildQuery(request);
+        // 构建分页
+        Pagination pagination = buildPagination(request);
         // 查询当前页的Entity主表数据
         List<SysUserVO> voList = sysUserService.getSysUserList(queryWrapper, pagination);
         //筛选出在列表页展示的字段
@@ -67,6 +80,7 @@ public class SysUserController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         boolean success = sysUserService.createSysUser(entity);
@@ -85,6 +99,7 @@ public class SysUserController extends BaseCrudRestController {
      * @throws Exception
      */
     @PutMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody SysUser entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         // Model属性值验证结果
@@ -107,6 +122,7 @@ public class SysUserController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         SysUserVO sysUserVO = sysUserService.getSysUser(id);
@@ -120,6 +136,7 @@ public class SysUserController extends BaseCrudRestController {
      * @throws Exception
      */
     @DeleteMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         boolean success = sysUserService.deleteSysUser(id);
         if(success){
@@ -215,7 +232,16 @@ public class SysUserController extends BaseCrudRestController {
 
         List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(SysUser.class.getSimpleName(), user.getId());
         if (V.isEmpty(roleVOList)){
-            return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取用户角色失败"});
+            return new JsonResult(Status.FAIL_OPERATION, new String[]{"用户未配置角色，获取数据失败"});
+        }
+
+        // 如果具有管理员角色，则赋予所有权限
+        for (RoleVO roleVO : roleVOList){
+            if (roleVO.isAdmin()){
+                List<Permission> allPermissionList = permissionService.getEntityList(null);
+                roleVO.setPermissionList(allPermissionList);
+                break;
+            }
         }
 
         user.setRoleVOList(roleVOList);
