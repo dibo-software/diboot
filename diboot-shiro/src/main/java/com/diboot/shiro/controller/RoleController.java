@@ -1,5 +1,6 @@
 package com.diboot.shiro.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
@@ -9,10 +10,14 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.shiro.authz.annotation.AuthorizationCache;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.vo.RoleVO;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -23,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/role")
+@AuthorizationPrefix(prefix = "role", code = "role", name = "角色管理")
 public class RoleController extends BaseCrudRestController {
 
     @Autowired
@@ -42,6 +48,8 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/list")
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
+    @AuthorizationCache
     public JsonResult getVOList(HttpServletRequest request) throws Exception{
         QueryWrapper<Role> queryWrapper = buildQuery(request);
         // 构建分页
@@ -53,24 +61,12 @@ public class RoleController extends BaseCrudRestController {
     }
 
     /***
-     * 显示创建页面
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/toCreatePage")
-    public JsonResult toCreatePage(HttpServletRequest request, ModelMap modelMap)
-            throws Exception{
-        List<Permission> menuList = roleService.getAllMenu();
-        modelMap.put("menuList", menuList);
-        return new JsonResult(modelMap);
-    }
-
-    /***
      * 创建Entity
      * @return
      * @throws Exception
      */
     @PostMapping("/")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody Role entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 创建
@@ -83,25 +79,13 @@ public class RoleController extends BaseCrudRestController {
     }
 
     /***
-     * 显示更新页面
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/toUpdatePage/{id}")
-    public JsonResult toUpdatePage(@PathVariable("id")Long id, HttpServletRequest request)
-            throws Exception{
-        RoleVO roleVO = roleService.toUpdatePage(id);
-        return new JsonResult(roleVO);
-    }
-
-
-    /***
      * 更新Entity
      * @param id ID
      * @return
      * @throws Exception
      */
     @PutMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody Role entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         // Model属性值验证结果
@@ -126,6 +110,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         RoleVO roleVO = roleService.getRole(id);
@@ -139,6 +124,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @DeleteMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         boolean success = roleService.deleteRole(id);
         if(success){
@@ -147,6 +133,34 @@ public class RoleController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_OPERATION );
         }
     }
+
+
+    /***
+     * 显示创建页面
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/toCreatePage")
+    public JsonResult toCreatePage(HttpServletRequest request, ModelMap modelMap)
+            throws Exception{
+        List<Permission> menuList = roleService.getAllMenu();
+        modelMap.put("menuList", menuList);
+        return new JsonResult(modelMap);
+    }
+
+
+    /***
+     * 显示更新页面
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/toUpdatePage/{id}")
+    public JsonResult toUpdatePage(@PathVariable("id")Long id, HttpServletRequest request)
+            throws Exception{
+        RoleVO roleVO = roleService.toUpdatePage(id);
+        return new JsonResult(roleVO);
+    }
+
 
     /***
      * 获取所有菜单,以及每个菜单下的所有权限
@@ -181,35 +195,21 @@ public class RoleController extends BaseCrudRestController {
      * 校验角色code是否重复
      * */
     @GetMapping("/checkCodeRepeat")
-    public JsonResult checkCodeRepeat(Long id, String code, HttpServletRequest request){
+    public JsonResult checkCodeRepeat(@RequestParam(required = false) Long id, @RequestParam String code, HttpServletRequest request){
         if(V.notEmpty(code)){
-            QueryWrapper<Role> wrapper = new QueryWrapper();
-            wrapper.lambda().eq(Role::getCode, code);
-            List<Role> roleList = roleService.getEntityList(wrapper);
-            if(V.isEmpty(id)){//新建时
-                if(V.notEmpty(roleList)){
-                    return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                }
-            }else{//更新时
-                Role role = roleService.getEntity(id);
-                if(V.notEmpty(role)){
-                    if(V.notEmpty(roleList)){
-                        if(roleList.size() >= 2){
-                            return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                        }else if(!(role.getId().equals(roleList.get(0).getId()))){
-                            return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                        }
-                    }
-                }else{
-                    if(V.notEmpty(roleList)){
-                        return new JsonResult(Status.FAIL_OPERATION, "code已存在");
-                    }
-                }
+            LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper();
+            wrapper.eq(Role::getCode, code);
+            if(V.notEmpty(id)){
+                wrapper.ne(Role::getId, id);
             }
-
+            List<Role> roleList = roleService.getEntityList(wrapper);
+            if(V.isEmpty(roleList)){
+                return new JsonResult(Status.OK, "code可用");
+            }
+            return new JsonResult(Status.FAIL_OPERATION, "code已存在");
         }
 
-        return new JsonResult(Status.OK);
+        return new JsonResult(Status.OK,"code可用");
     }
 
 

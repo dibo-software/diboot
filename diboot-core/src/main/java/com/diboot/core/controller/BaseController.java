@@ -1,27 +1,19 @@
 package com.diboot.core.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.JsonResult;
-import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 /***
@@ -30,14 +22,9 @@ import java.util.*;
  * @version 2.0
  * @date 2019/01/01
  */
-@Controller
 public class BaseController {
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-	/***
-	 * 分页参数列表
-	 */
-	protected static final List<String> PARAM_PAGES = Arrays.asList("_pageIndex", "_pageSize", "_totalCount", "_orderBy");
 	/***
 	 * 字段
 	 */
@@ -48,11 +35,6 @@ public class BaseController {
 	 */
 	protected static final String PARAM_ID = Cons.FieldName.id.name();
 
-	/**
-	 * 错误关键字
-	 */
-	protected static final String ERROR = "error";
-	
 	/**
 	 * 解析所有的验证错误信息，转换为JSON
 	 * @param result
@@ -71,68 +53,23 @@ public class BaseController {
 	}
 
 	/***
-	 * 构建查询wrapper
-	 * @param request
+	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @param <T>
 	 * @return
 	 */
-	public <T extends BaseEntity> QueryWrapper<T> buildQuery(HttpServletRequest request) throws Exception{
-		if(!RequestMethod.GET.name().equalsIgnoreCase(request.getMethod())){
-			log.warn("调用错误: 非GET请求，无需构建查询条件！");
-			return null;
-		}
-		//TODO 是否需要先拿到Entity定义的属性列表，只映射该列表中的属性?
-		QueryWrapper query = new QueryWrapper<T>();
-		Map<String, Object> requestMap = getParamsMap(request);
-		if(V.notEmpty(requestMap)){
-			if(requestMap.containsKey(PARAM_FIELDS) && V.notEmpty(requestMap.get(PARAM_FIELDS))){
-				if(requestMap.get(PARAM_FIELDS) instanceof String){
-					String fields = (String) requestMap.get(PARAM_FIELDS);
-					query.select(fields);
-				}
-			}
-			for(Map.Entry<String, Object> entry : requestMap.entrySet()){
-				Object value = entry.getValue();
-				if(!entry.getKey().startsWith("_") && value != null){
-					if(value instanceof Set || value instanceof List || value.getClass().isArray()){
-						query.in(S.toSnakeCase(entry.getKey()), value);
-					}
-					else if(value instanceof String){
-						query.eq(S.toSnakeCase(entry.getKey()), value);
-					}
-				}
-			}
-		}
-		return query;
+	public <T,DTO> QueryWrapper<T> buildQueryWrapper(DTO entityOrDto) throws Exception{
+		return QueryBuilder.toQueryWrapper(entityOrDto);
 	}
 
 	/***
-	 * 构建分页对象
-	 * @param request
+	 * 构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @param <T>
 	 * @return
 	 */
-	protected Pagination buildPagination(HttpServletRequest request) throws Exception{
-		return buildPagination(request, true);
-	}
-
-	/***
-	 * 构建分页对象
-	 * @param request
-	 * @return
-	 */
-	protected Pagination buildPagination(HttpServletRequest request, boolean newInstanceIfNull) throws Exception{
-		Pagination page = newInstanceIfNull? new Pagination() : null;
-		Map<String, Object> pageParamMap = getParamsMap(request, PARAM_PAGES);
-		if(V.notEmpty(pageParamMap)){
-			if(page == null){
-				page = new Pagination();
-			}
-			BeanUtils.bindProperties(page, pageParamMap);
-		}
-		if(log.isTraceEnabled()){
-			log.trace(JSON.stringify(page));
-		}
-		return page;
+	public <T,DTO> LambdaQueryWrapper<T> buildLambdaQueryWrapper(DTO entityOrDto) throws Exception{
+		return QueryBuilder.toLambdaQueryWrapper(entityOrDto);
 	}
 
 	/***
@@ -194,31 +131,6 @@ public class BaseController {
 	}
 
 	/***
-	 * 返回json格式错误信息
-	 * @param response
-	 * @param jsonResult
-	 */
-	protected static void responseJson(HttpServletResponse response, JsonResult jsonResult){
-		// 处理异步请求
-		PrintWriter pw = null;
-		try {
-			response.setStatus(HttpStatus.OK.value());
-			response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-			pw = response.getWriter();
-			pw.write(JSON.stringify(jsonResult));
-			pw.flush();
-		}
-		catch (IOException e) {
-			log.error("处理异步请求异常", e);
-		}
-		finally {
-			if (pw != null) {
-				pw.close();
-			}
-		}
-	}
-
-	/***
 	 * 将请求参数值转换为Map
 	 * @param request
 	 * @return
@@ -243,15 +155,6 @@ public class BaseController {
 			}
 		}
 		return result;
-	}
-
-	/***
-	 * 将请求参数值绑定成Model
-	 * @param request
-	 */
-	public static void buildEntity(BaseEntity entity, HttpServletRequest request){
-		Map<String, Object> propMap = convertParams2Map(request);
-		BeanUtils.bindProperties(entity, propMap);
 	}
 
 	/***

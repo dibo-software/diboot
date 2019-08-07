@@ -57,6 +57,7 @@ compile("com.diboot:diboot-core:2.0.1")
     <version>2.0.1</version>
 </dependency>
 ~~~
+> 注: @BindDict注解需要依赖dictionary表，初始化SQL需执行/META-INF/sql/init-mysql.sql
 ### 2. 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
 
 ### 3. 使用注解绑定：

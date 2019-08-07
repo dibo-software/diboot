@@ -93,6 +93,14 @@ email.sender.name=
 diboot.shiro.auth.storage=true
 #存储环境：默认dev环境，不会删除代码中不存在的权限
 diboot.shiro.auth.env=dev
+#配置所有权限均可访问的角色
+diboot.shiro.auth.has-all-permissions-role-list[0]=ALL1
+diboot.shiro.auth.has-all-permissions-role-list[1]=ALL2
+diboot.shiro.auth.has-all-permissions-role-list[2]=ALL3
+
+#权限缓存机制
+diboot.shiro.cache.permission-caching-enabled=true
+diboot.shiro.cache.cache-way=memory
 
 #------web页面访问的时候需要如下配置----
 spring.mvc.view.prefix=/static

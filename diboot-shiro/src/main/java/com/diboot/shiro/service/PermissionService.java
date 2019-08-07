@@ -1,10 +1,13 @@
 package com.diboot.shiro.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.vo.Pagination;
 import com.diboot.shiro.entity.Permission;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 许可授权相关Service
@@ -13,6 +16,9 @@ import java.util.Collection;
  * @date 2019/6/6
  */
 public interface PermissionService extends BaseService<Permission> {
+
+    //获取权限资源列表
+    List<Permission> getPermissionList(QueryWrapper<Permission> queryWrapper, Pagination pagination);
 
     /**
      * 批量创建或更新或删除entity（entity.id存在：【如果deleted = 1表示逻辑删除，=0表示更新】，若entity.id不存在否则新建）

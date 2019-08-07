@@ -1,5 +1,6 @@
 package com.diboot.example.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
@@ -37,13 +38,11 @@ public class DictionaryController extends BaseCrudRestController {
     * 获取列表页数据
     * */
     @GetMapping("/list")
-    public JsonResult list(HttpServletRequest request) throws Exception {
+    public JsonResult list(Dictionary dictionary, Pagination pagination, HttpServletRequest request) throws Exception {
         //构建查询条件
-        QueryWrapper<Dictionary> queryWrapper = buildQuery(request);
+        QueryWrapper<Dictionary> queryWrapper = super.buildQueryWrapper(dictionary);
         queryWrapper.lambda().eq(Dictionary::getParentId, 0)
                              .orderByAsc(Dictionary::getSortId);
-        //构建分页
-        Pagination pagination = buildPagination(request);
         //获取实体list
         List<Dictionary> dictionaryList =  dictionaryService.getEntityList(queryWrapper, pagination);
         //筛选出在列表页展示的字段
@@ -105,34 +104,19 @@ public class DictionaryController extends BaseCrudRestController {
      * 校验类型编码是否重复
      * */
     @GetMapping("/checkTypeRepeat")
-    public JsonResult checkUsernameRepeat(@RequestParam("id") Long id,@RequestParam("type") String type, HttpServletRequest request){
+    public JsonResult checkTypeRepeat(@RequestParam(required = false) Long id,@RequestParam String type, HttpServletRequest request){
         if(V.notEmpty(type)){
-            QueryWrapper<Dictionary> wrapper = new QueryWrapper();
-            wrapper.lambda().eq(Dictionary::getType, type)
-                            .eq(Dictionary::getParentId, 0)
-                            ;
-            List<Dictionary> dictionaryList = dictionaryService.getEntityList(wrapper);
-            if(V.isEmpty(id)){//新建时
-                if(V.notEmpty(dictionaryList)){
-                    return new JsonResult(Status.FAIL_OPERATION, "类型编码已存在");
-                }
-            }else{//更新时
-                Dictionary dictionary = dictionaryService.getEntity(id);
-                if(V.notEmpty(dictionary)){
-                    if(V.notEmpty(dictionaryList)){
-                        if(dictionaryList.size() >= 2){
-                            return new JsonResult(Status.FAIL_OPERATION, "类型编码已存在");
-                        }else if(!(dictionary.getId().equals(dictionaryList.get(0).getId()))){
-                            return new JsonResult(Status.FAIL_OPERATION, "类型编码已存在");
-                        }
-                    }
-                }else{
-                    if(V.notEmpty(dictionaryList)){
-                        return new JsonResult(Status.FAIL_OPERATION, "类型编码已存在");
-                    }
-                }
+            LambdaQueryWrapper<Dictionary> wrapper = new LambdaQueryWrapper();
+            wrapper.eq(Dictionary::getType, type)
+                   .eq(Dictionary::getParentId, 0);
+            if(V.notEmpty(id)){
+                wrapper.ne(Dictionary::getId, id);
             }
-
+            List<Dictionary> dictionaryList = dictionaryService.getEntityList(wrapper);
+            if(V.isEmpty(dictionaryList)){
+                return new JsonResult(Status.OK);
+            }
+            return new JsonResult(Status.FAIL_OPERATION, "类型编码已存在");
         }
 
         return new JsonResult(Status.OK);

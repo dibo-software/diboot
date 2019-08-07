@@ -30,8 +30,8 @@ import java.util.List;
  * @date 2019/6/20
  */
 @RestController
-@AuthorizationPrefix(prefix = "permission", code = "permission", name = "权限")
 @RequestMapping("/permission")
+@AuthorizationPrefix(prefix = "permission", code = "permission", name = "权限管理")
 public class PermissionController extends BaseCrudRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(PermissionService.class);
@@ -46,7 +46,7 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    @AuthorizationWrapper(value = @RequiresPermissions("get"), name = "查看")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
@@ -56,23 +56,19 @@ public class PermissionController extends BaseCrudRestController {
     /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
-     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=id&code=TST
+     * url参数示例: /list?pageSize=20&pageIndex=1&orderBy=id&code=TST
      * </p>
      * @return
      * @throws Exception
      */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Permission> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(Permission permission, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<Permission> queryWrapper = super.buildQueryWrapper(permission);
         // 查询当前页的Entity主表数据
-        List entityList = getService().getEntityList(queryWrapper, pagination);
-        // 自动转换VO中注解绑定的关联
-        List<PermissionVO> voList = super.convertToVoAndBindRelations(entityList, PermissionVO.class);
+        List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
 
-        return new JsonResult(Status.OK, voList).bindPagination(pagination);
+        return new JsonResult(Status.OK, entityList).bindPagination(pagination);
     }
 
     /***
@@ -80,8 +76,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:add")
     @PostMapping("/")
+//    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@ModelAttribute PermissionVO viewObject, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 转换
@@ -96,8 +92,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:update")
     @PutMapping("/{id}")
+//    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Permission entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         return super.updateEntity(entity, result);
@@ -109,8 +105,8 @@ public class PermissionController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("permission:delete")
     @DeleteMapping("/{id}")
+//    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
     }

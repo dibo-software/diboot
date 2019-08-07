@@ -29,12 +29,20 @@ public class Permission extends BaseEntity {
     @TableField
     private String permissionName;
 
+    //菜单下的各种权限资源
+    @TableField(exist = false)
+    private List<Permission> permissionList;
+
     //某角色是否拥有该权限
     @TableField(exist = false)
     private boolean own = false;
 
-    //菜单下的各种权限资源
+    //指定当前是否选中，更新时显示菜单选择状态会用到
     @TableField(exist = false)
-    private List<Permission> permissionList;
+    private boolean checked = false;
+
+    //是否全选，更新时显示菜单选择状态会用到
+    @TableField(exist = false)
+    private boolean indeterminate = false;
 
 }

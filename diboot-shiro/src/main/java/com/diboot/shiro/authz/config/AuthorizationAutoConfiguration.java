@@ -1,6 +1,7 @@
 package com.diboot.shiro.authz.config;
 
 import com.diboot.shiro.authz.properties.AuthorizationProperties;
+import com.diboot.shiro.authz.properties.AuthCacheProperties;
 import com.diboot.shiro.authz.storage.AuthorizationStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date 2019-06-27  10:30
  */
 @Configuration
-@EnableConfigurationProperties(AuthorizationProperties.class)
+@EnableConfigurationProperties({AuthorizationProperties.class, AuthCacheProperties.class})
 public class AuthorizationAutoConfiguration {
 
     @Autowired
