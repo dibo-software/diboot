@@ -41,8 +41,7 @@ public class QueryBuilder {
      * @return
      */
     public static <T,DTO> LambdaQueryWrapper<T> toLambdaQueryWrapper(DTO dto){
-        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
-        return (LambdaQueryWrapper<T>) dtoToWrapper(wrapper, dto);
+        return (LambdaQueryWrapper<T>) toQueryWrapper(dto).lambda();
     }
 
     /**
@@ -52,7 +51,7 @@ public class QueryBuilder {
      * @param <T>
      * @return
      */
-    private static <T,DTO> Wrapper<T> dtoToWrapper(AbstractWrapper wrapper, DTO dto){
+    private static <T,DTO> QueryWrapper<T> dtoToWrapper(QueryWrapper wrapper, DTO dto){
         Field[] declaredFields = dto.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
             BindQuery query = field.getAnnotation(BindQuery.class);

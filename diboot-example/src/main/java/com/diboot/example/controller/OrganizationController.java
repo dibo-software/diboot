@@ -1,6 +1,7 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
@@ -37,11 +38,9 @@ public class OrganizationController extends BaseCrudRestController {
     private DictionaryService dictionaryService;
 
     @GetMapping("/list")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Organization> queryWrapper = buildQuery(request);
-        queryWrapper.lambda().eq(Organization::getParentId, 0);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(Organization org, Pagination pagination, HttpServletRequest request) throws Exception{
+        LambdaQueryWrapper<Organization> queryWrapper = super.buildLambdaQueryWrapper(org);
+        queryWrapper.eq(Organization::getParentId, 0);
         // 查询当前页的Entity主表数据
         List<OrganizationVO> voList = organizationService.getOrganizatioList(queryWrapper, pagination);
         // 返回结果
