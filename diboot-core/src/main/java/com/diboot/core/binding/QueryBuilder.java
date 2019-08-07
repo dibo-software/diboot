@@ -179,9 +179,9 @@ public class QueryBuilder {
      */
     private static List<Field> getAllFields(Class clazz){
         List<Field> fieldList = new ArrayList<>() ;
-        while (clazz != null) {//当父类为null的时候说明到达了最上层的父类(Object类).
+        while (clazz != null) {
             fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            clazz = clazz.getSuperclass(); //得到父类,然后赋给自己
+            clazz = clazz.getSuperclass();
         }
         return fieldList;
     }
