@@ -14,10 +14,12 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.SysUser;
+import com.diboot.example.entity.User;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.service.SysUserService;
 import com.diboot.example.vo.SysUserListVO;
 import com.diboot.example.vo.SysUserVO;
+import com.diboot.example.vo.UserVO;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.entity.Permission;
@@ -62,16 +64,9 @@ public class SysUserController extends BaseCrudRestController {
 
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<SysUser> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
-        // 查询当前页的Entity主表数据
-        List<SysUserVO> voList = sysUserService.getSysUserList(queryWrapper, pagination);
-        //筛选出在列表页展示的字段
-        List<SysUserListVO> userVoList = RelationsBinder.convertAndBind(voList, SysUserListVO.class);
-        // 返回结果
-        return new JsonResult(Status.OK, userVoList).bindPagination(pagination);
+    public JsonResult getVOList(SysUser sysUser, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<User> queryWrapper = super.buildQueryWrapper(sysUser);
+        return super.getVOListWithPaging(queryWrapper, pagination, UserVO.class);
     }
 
     /***

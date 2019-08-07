@@ -50,10 +50,8 @@ public class RoleController extends BaseCrudRestController {
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     @AuthorizationCache
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Role> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(HttpServletRequest request, Pagination pagination) throws Exception{
+        QueryWrapper<Role> queryWrapper = buildQueryWrapper(request);
         // 获取结果
         List<RoleVO> voList = roleService.getRoleList(queryWrapper, pagination);
         // 返回结果
