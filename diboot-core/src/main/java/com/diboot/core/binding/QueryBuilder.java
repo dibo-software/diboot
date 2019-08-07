@@ -1,7 +1,6 @@
 package com.diboot.core.binding;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.query.BindQuery;
@@ -12,6 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * QueryWrapper构建器 - Entity，DTO -> 注解绑定查询条件 并转换为QueryWrapper对象
@@ -52,8 +55,20 @@ public class QueryBuilder {
      * @return
      */
     private static <T,DTO> QueryWrapper<T> dtoToWrapper(QueryWrapper wrapper, DTO dto){
-        Field[] declaredFields = dto.getClass().getDeclaredFields();
+        List<Field> declaredFields = getAllFields(dto.getClass());
         for (Field field : declaredFields) {
+            //忽略static，以及final，transient
+            boolean isStatic = Modifier.isStatic(field.getModifiers());
+            boolean isFinal = Modifier.isFinal(field.getModifiers());
+            boolean isTransient = Modifier.isTransient(field.getModifiers());
+            if(isStatic || isFinal || isTransient){
+                continue;
+            }
+            //忽略注解 @TableField(exist = false) 的字段
+            TableField tableField = field.getAnnotation(TableField.class);
+            if(tableField != null && tableField.exist() == false){
+                continue;
+            }
             BindQuery query = field.getAnnotation(BindQuery.class);
             if(query != null && query.ignore()){ //忽略字段
                 continue;
@@ -155,6 +170,20 @@ public class QueryBuilder {
             return annotation.field();
         }
         return S.toSnakeCase(field.getName());
+    }
+
+    /**
+     * 获取类所有属性（包含父类）
+     * @param clazz
+     * @return
+     */
+    private static List<Field> getAllFields(Class clazz){
+        List<Field> fieldList = new ArrayList<>() ;
+        while (clazz != null) {//当父类为null的时候说明到达了最上层的父类(Object类).
+            fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass(); //得到父类,然后赋给自己
+        }
+        return fieldList;
     }
 
 }
