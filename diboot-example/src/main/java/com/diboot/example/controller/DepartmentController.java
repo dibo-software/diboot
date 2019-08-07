@@ -180,9 +180,7 @@ public class DepartmentController extends BaseCrudRestController {
      * 根据组织ID获取部门list
      * */
     @GetMapping("/getDepartmentList/{orgId}")
-    public JsonResult getDepartmentList(@PathVariable Long orgId, HttpServletRequest request) throws Exception {
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getDepartmentList(@PathVariable Long orgId, Pagination pagination, HttpServletRequest request) throws Exception {
         Wrapper wrapper = new QueryWrapper<Department>()
                 .lambda()
                 .eq(Department::getOrgId, orgId);
