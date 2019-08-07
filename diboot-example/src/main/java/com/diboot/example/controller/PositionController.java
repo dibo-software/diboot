@@ -50,10 +50,8 @@ public class PositionController extends BaseCrudRestController {
     private DictionaryService dictionaryService;
 
     @GetMapping("/list")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Position> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(Position position, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<Position> queryWrapper = super.buildQueryWrapper(position);
         // 查询当前页的Entity主表数据
         List<Position> entityList = positionService.getEntityList(queryWrapper, pagination);
         //筛选出在列表页展示的字段

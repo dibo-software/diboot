@@ -51,10 +51,8 @@ public class SysUserController extends BaseCrudRestController {
     private DepartmentService departmentService;
 
     @GetMapping("/list")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<SysUser> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(SysUser sysUser, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<SysUser> queryWrapper = super.buildQueryWrapper(sysUser);
         // 查询当前页的Entity主表数据
         List<SysUserVO> voList = sysUserService.getSysUserList(queryWrapper, pagination);
         //筛选出在列表页展示的字段

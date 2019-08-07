@@ -133,7 +133,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			page = super.page(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.isSearchCount()){
-				pagination.set_totalCount(page.getTotal());
+				pagination.setTotalCount(page.getTotal());
 			}
 			return page.getRecords();
 		}
@@ -175,7 +175,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			IPage<Map<String, Object>> resultPage = super.pageMaps(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.isSearchCount()){
-				pagination.set_totalCount(page.getTotal());
+				pagination.setTotalCount(page.getTotal());
 			}
 			return resultPage.getRecords();
 		}

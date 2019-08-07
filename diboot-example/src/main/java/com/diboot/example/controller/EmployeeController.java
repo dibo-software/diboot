@@ -35,9 +35,8 @@ public class EmployeeController extends BaseCrudRestController {
 
 
     @RequestMapping("/list")
-    public JsonResult list(HttpServletRequest request) throws Exception{
-        QueryWrapper<Employee> queryWrapper = super.buildQuery(request);
-        Pagination pagination = super.buildPagination(request);
+    public JsonResult list(Employee employee, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<Employee> queryWrapper = super.buildQueryWrapper(employee);
         List<Employee> entityList =  getService().getEntityList(queryWrapper, pagination);
         List<EmployeeVO> voList = RelationsBinder.convertAndBind(entityList, EmployeeVO.class);
         return new JsonResult(Status.OK, voList).bindPagination(pagination);

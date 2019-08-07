@@ -1,6 +1,4 @@
-SET FOREIGN_KEY_CHECKS=0;
 -- 数据字典表
--- DROP TABLE IF EXISTS `dictionary`;
 CREATE TABLE `dictionary` (
   `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `parent_id` int unsigned NOT NULL COMMENT '父ID',

@@ -26,15 +26,15 @@ public class Pagination implements Serializable {
     /***
      * 当前页
      */
-    private int _pageIndex = 1;
+    private int pageIndex = 1;
     /***
      * 默认每页数量10
      */
-    private int _pageSize = BaseConfig.getPageSize();
+    private int pageSize = BaseConfig.getPageSize();
     /***
      * count总数
      */
-    private long _totalCount = 0;
+    private long totalCount = 0;
     /***
      * 排序-升序排列的字段
      */
@@ -51,66 +51,67 @@ public class Pagination implements Serializable {
      * 指定当前页数
      */
     public Pagination(int pageIndex){
-        set_pageIndex(pageIndex);
+        setPageIndex(pageIndex);
     }
 
     public int getPageIndex() {
-        return _pageIndex;
+        return pageIndex;
     }
 
-    public void set_pageIndex(int _pageIndex) {
-        this._pageIndex = _pageIndex;
+    public void setPageIndex(int pageIndex) {
+        this.pageIndex = pageIndex;
     }
 
     public int getPageSize() {
-        return _pageSize;
+        return pageSize;
     }
 
-    public void set_pageSize(int _pageSize) {
-        if(_pageSize > 1000){
-            log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize="+_pageSize);
-            _pageSize = 1000;
+    public void setPageSize(int pageSize) {
+        if(pageSize > 1000){
+            log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize="+ pageSize);
+            pageSize = 1000;
         }
-        this._pageSize = _pageSize;
+        this.pageSize = pageSize;
     }
 
     public long getTotalCount() {
-        return _totalCount;
+        return totalCount;
     }
 
-    public void set_totalCount(long _totalCount) {
-        this._totalCount = _totalCount;
+    public void setTotalCount(long totalCount) {
+        this.totalCount = totalCount;
     }
 
-    public void set_orderBy(String orderBy){
-        if(V.notEmpty(orderBy)){
-            // 先清空默认排序规则
-            clearDefaultOrder();
-            // 指定新的排序规则
-            String[] orderByFields = S.split(orderBy);
-            for(String field : orderByFields){
-                // orderBy=name:DESC,age:ASC,birthdate
-                if(field.contains(":")){
-                    String[] fieldAndOrder = S.split(field, ":");
-                    if("DESC".equalsIgnoreCase(fieldAndOrder[1])){
-                        if(descList == null){
-                            descList = new ArrayList<>();
-                        }
-                        descList.add(fieldAndOrder[0]);
+    public void setOrderBy(String orderBy){
+        if(V.isEmpty(orderBy)){
+            return;
+        }
+        // 先清空默认排序规则
+        clearDefaultOrder();
+        // 指定新的排序规则
+        String[] orderByFields = S.split(orderBy);
+        for(String field : orderByFields){
+            // orderBy=name:DESC,age:ASC,birthdate
+            if(field.contains(":")){
+                String[] fieldAndOrder = S.split(field, ":");
+                if("DESC".equalsIgnoreCase(fieldAndOrder[1])){
+                    if(descList == null){
+                        descList = new ArrayList<>();
                     }
-                    else{
-                        if(ascList == null){
-                            ascList = new ArrayList<>();
-                        }
-                        ascList.add(fieldAndOrder[0]);
-                    }
+                    descList.add(fieldAndOrder[0]);
                 }
                 else{
                     if(ascList == null){
                         ascList = new ArrayList<>();
                     }
-                    ascList.add(field);
+                    ascList.add(fieldAndOrder[0]);
                 }
+            }
+            else{
+                if(ascList == null){
+                    ascList = new ArrayList<>();
+                }
+                ascList.add(field);
             }
         }
     }
@@ -128,10 +129,10 @@ public class Pagination implements Serializable {
      * @return
      */
     public int getTotalPage() {
-        if(_totalCount <= 0){
+        if(totalCount <= 0){
             return 0;
         }
-        return  (int)Math.ceil((float)_totalCount/_pageSize);
+        return  (int)Math.ceil((float) totalCount / pageSize);
     }
 
     /***

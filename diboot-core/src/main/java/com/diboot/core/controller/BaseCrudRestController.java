@@ -9,9 +9,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -25,7 +23,6 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
-@RestController
 public abstract class BaseCrudRestController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
 
@@ -39,13 +36,12 @@ public abstract class BaseCrudRestController extends BaseController {
     /***
      * 获取某资源的集合
      * <p>
-     * url参数示例: /dictionary/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+     * url参数示例: /dictionary/list?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
      * </p>
-     * @param request
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult getEntityList(HttpServletRequest request, Wrapper queryWrapper) throws Exception {
+    protected JsonResult getEntityList(Wrapper queryWrapper) throws Exception {
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper);
         // 返回结果
@@ -55,15 +51,12 @@ public abstract class BaseCrudRestController extends BaseController {
     /***
      * 获取某资源的集合
      * <p>
-     * url参数示例: /dictionary/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+     * url参数示例: /dictionary/list?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
      * </p>
-     * @param request
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult getEntityListWithPaging(HttpServletRequest request, Wrapper queryWrapper) throws Exception {
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    protected JsonResult getEntityListWithPaging(Wrapper queryWrapper, Pagination pagination) throws Exception {
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper, pagination);
         // 返回结果
@@ -73,15 +66,12 @@ public abstract class BaseCrudRestController extends BaseController {
     /***
      * 获取某VO资源的集合
      * <p>
-     * url参数示例: /dictionary/list?_pageSize=20&_pageIndex=1&_orderBy=itemValue&type=GENDAR
+     * url参数示例: /dictionary/list?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
      * </p>
-     * @param request
      * @return JsonResult
      * @throws Exception
      */
-    protected <T> JsonResult getVOListWithPaging(HttpServletRequest request, Wrapper queryWrapper, Class<T> clazz) throws Exception {
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    protected <T> JsonResult getVOListWithPaging(Wrapper queryWrapper, Pagination pagination, Class<T> clazz) throws Exception {
         // 查询当前页的数据
         List<T> voList = getService().getViewObjectList(queryWrapper, pagination, clazz);
         // 返回结果

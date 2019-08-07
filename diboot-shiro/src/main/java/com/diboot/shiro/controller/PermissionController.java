@@ -56,17 +56,15 @@ public class PermissionController extends BaseCrudRestController {
     /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
-     * url参数示例: /list?_pageSize=20&_pageIndex=1&_orderBy=id&code=TST
+     * url参数示例: /list?pageSize=20&pageIndex=1&orderBy=id&code=TST
      * </p>
      * @return
      * @throws Exception
      */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Permission> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(Permission permission, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<Permission> queryWrapper = super.buildQueryWrapper(permission);
         // 查询当前页的Entity主表数据
         List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
 

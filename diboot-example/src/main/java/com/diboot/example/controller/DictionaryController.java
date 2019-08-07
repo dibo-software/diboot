@@ -38,13 +38,11 @@ public class DictionaryController extends BaseCrudRestController {
     * 获取列表页数据
     * */
     @GetMapping("/list")
-    public JsonResult list(HttpServletRequest request) throws Exception {
+    public JsonResult list(Dictionary dictionary, Pagination pagination, HttpServletRequest request) throws Exception {
         //构建查询条件
-        QueryWrapper<Dictionary> queryWrapper = buildQuery(request);
+        QueryWrapper<Dictionary> queryWrapper = super.buildQueryWrapper(dictionary);
         queryWrapper.lambda().eq(Dictionary::getParentId, 0)
                              .orderByAsc(Dictionary::getSortId);
-        //构建分页
-        Pagination pagination = buildPagination(request);
         //获取实体list
         List<Dictionary> dictionaryList =  dictionaryService.getEntityList(queryWrapper, pagination);
         //筛选出在列表页展示的字段

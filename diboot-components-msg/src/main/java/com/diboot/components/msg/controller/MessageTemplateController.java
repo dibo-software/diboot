@@ -29,11 +29,9 @@ public class MessageTemplateController extends BaseCrudRestController {
     }
 
     @GetMapping("/list")
-    public JsonResult list(HttpServletRequest request) throws Exception {
+    public JsonResult list(MessageTemplate messageTemplate, Pagination pagination, HttpServletRequest request) throws Exception {
         //构建查询条件
-        QueryWrapper<MessageTemplate> queryWrapper = buildQuery(request);
-        //构建分页
-        Pagination pagination = buildPagination(request);
+        QueryWrapper<MessageTemplate> queryWrapper = super.buildQueryWrapper(messageTemplate);
         // 查询当前页的Entity主表数据
         List<MessageTemplate> entityList =  getService().getEntityList(queryWrapper, pagination);
         //返回结果

@@ -36,10 +36,8 @@ public class OrganizationController extends BaseCrudRestController {
     private DictionaryService dictionaryService;
 
     @GetMapping("/list")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Organization> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(Organization organization, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<Organization> queryWrapper = super.buildQueryWrapper(organization);
         // 查询当前页的Entity主表数据
         List<Organization> entityList = organizationService.getEntityList(queryWrapper, pagination);
         //筛选出在列表页展示的字段

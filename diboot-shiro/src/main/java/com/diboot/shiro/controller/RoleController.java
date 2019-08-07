@@ -43,10 +43,8 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/list")
-    public JsonResult getVOList(HttpServletRequest request) throws Exception{
-        QueryWrapper<Role> queryWrapper = buildQuery(request);
-        // 构建分页
-        Pagination pagination = buildPagination(request);
+    public JsonResult getVOList(Role role, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<Role> queryWrapper = super.buildQueryWrapper(role);
         // 获取结果
         List<RoleVO> voList = roleService.getRoleList(queryWrapper, pagination);
         // 返回结果

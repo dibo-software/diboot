@@ -31,11 +31,9 @@ public class MessageController extends BaseCrudRestController {
     }
 
     @GetMapping("/list")
-    public JsonResult list(HttpServletRequest request) throws Exception {
+    public JsonResult list(Message message, Pagination pagination, HttpServletRequest request) throws Exception {
         //构建查询条件
-        QueryWrapper<Message> queryWrapper = buildQuery(request);
-        //构建分页
-        Pagination pagination = buildPagination(request);
+        QueryWrapper<Message> queryWrapper = super.buildQueryWrapper(message);
         // 查询当前页的Entity主表数据
         List<Message> entityList =  getService().getEntityList(queryWrapper, pagination);
         // 自动转换VO中注解绑定的关联
