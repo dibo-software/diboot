@@ -2,17 +2,15 @@ package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.Organization;
+import com.diboot.example.entity.Tree;
 import com.diboot.example.service.OrganizationService;
 import com.diboot.example.vo.OrganizationVO;
 import org.slf4j.Logger;
@@ -38,11 +36,11 @@ public class OrganizationController extends BaseCrudRestController {
     private DictionaryService dictionaryService;
 
     @GetMapping("/list")
-    public JsonResult getVOList(Organization org, Pagination pagination, HttpServletRequest request) throws Exception{
-        LambdaQueryWrapper<Organization> queryWrapper = super.buildLambdaQueryWrapper(org);
+    public JsonResult getVOList(Organization entity, Pagination pagination, HttpServletRequest request) throws Exception{
+        LambdaQueryWrapper<Organization> queryWrapper = super.buildLambdaQueryWrapper(entity);
         queryWrapper.eq(Organization::getParentId, 0);
         // 查询当前页的Entity主表数据
-        List<OrganizationVO> voList = organizationService.getOrganizatioList(queryWrapper, pagination);
+        List<OrganizationVO> voList = organizationService.getOrganizationList(queryWrapper, pagination);
         // 返回结果
         return new JsonResult(Status.OK, voList).bindPagination(pagination);
     }
@@ -84,38 +82,17 @@ public class OrganizationController extends BaseCrudRestController {
     @GetMapping("/attachMore")
     public JsonResult attachMore(HttpServletRequest request, ModelMap modelMap){
         Wrapper wrapper = null;
-        //获取父组织机构KV
-        wrapper = new QueryWrapper<Organization>()
-                .lambda()
-                .select(Organization::getName, Organization::getId)
-                .eq(Organization::getParentId, 0);
-        List<KeyValue> orgKvList = organizationService.getKeyValueList(wrapper);
-        modelMap.put("orgKvList", orgKvList);
-
         //获取所属行业KV
-        List<KeyValue> industryKvList = dictionaryService.getKeyValueList(Organization.INDUSTRY);
+        List<KeyValue> industryKvList = dictionaryService.getKeyValueList(Organization.DICT_INDUSTRY);
         modelMap.put("industryKvList", industryKvList);
 
         return new JsonResult(modelMap);
     }
 
-    @GetMapping("/getOrgTree")
-    public JsonResult getOrgTree() throws Exception{
-        QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Organization::getParentId, 0);
-        List<Organization> orgList = organizationService.getEntityList(queryWrapper);
-        List<OrganizationVO> voList = RelationsBinder.convertAndBind(orgList, OrganizationVO.class);
-        if(V.notEmpty(voList)){
-            for(OrganizationVO vo : voList){
-                queryWrapper = new QueryWrapper<>();
-                queryWrapper.lambda()
-                            .eq(Organization::getParentId, vo.getId());
-                List<Organization> childList = organizationService.getEntityList(queryWrapper);
-                List<OrganizationVO> childvVoList = RelationsBinder.convertAndBind(childList, OrganizationVO.class);
-                vo.setChildren(childvVoList);
-            }
-        }
-        return new JsonResult(orgList);
+    @GetMapping("/getViewTreeList")
+    public JsonResult getViewTreeList() throws Exception{
+        List<Tree> treeList = organizationService.getViewTreeList();
+        return new JsonResult(treeList);
     }
 
     @Override
