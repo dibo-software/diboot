@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
@@ -12,9 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * QueryWrapper构建器 - Entity，DTO -> 注解绑定查询条件 并转换为QueryWrapper对象
@@ -55,7 +54,7 @@ public class QueryBuilder {
      * @return
      */
     private static <T,DTO> QueryWrapper<T> dtoToWrapper(QueryWrapper wrapper, DTO dto){
-        List<Field> declaredFields = getAllFields(dto.getClass());
+        List<Field> declaredFields = BeanUtils.extractAllFields(dto.getClass());
         for (Field field : declaredFields) {
             //忽略static，以及final，transient
             boolean isStatic = Modifier.isStatic(field.getModifiers());
@@ -170,20 +169,6 @@ public class QueryBuilder {
             return annotation.field();
         }
         return S.toSnakeCase(field.getName());
-    }
-
-    /**
-     * 获取类所有属性（包含父类）
-     * @param clazz
-     * @return
-     */
-    private static List<Field> getAllFields(Class clazz){
-        List<Field> fieldList = new ArrayList<>() ;
-        while (clazz != null) {
-            fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            clazz = clazz.getSuperclass();
-        }
-        return fieldList;
     }
 
 }

@@ -14,6 +14,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -526,6 +527,29 @@ public class BeanUtils {
             log.warn("无效的setter方法: "+methodName);
         }
         return S.uncapFirst(S.substringAfter(methodName, "set"));
+    }
+
+     /**
+     * 获取类所有属性（包含父类）
+     * @param clazz
+     * @return
+     */
+    public static List<Field> extractAllFields(Class clazz){
+        List<Field> fieldList = new ArrayList<>();
+        Set<String> fieldNameSet = new HashSet<>();
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
+                Arrays.stream(fields).forEach((field)->{
+                    if(!fieldNameSet.contains(field.getName())){
+                        fieldList.add(field);
+                        fieldNameSet.add(field.getName());
+                    }
+                });
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return fieldList;
     }
 
     /***
