@@ -16,6 +16,9 @@ import java.util.Date;
 @Data
 @TableName(value = "if_employee")
 public class Employee extends BaseEntity {
+    private static final long serialVersionUID = 4157654270639938145L;
+
+    public static final String DICT_GENDER = "GENDER";
 
     @TableField
     private String number;//工号

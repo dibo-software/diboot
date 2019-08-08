@@ -25,6 +25,8 @@ public class DepartmentVO extends Department {
     @BindField(entity = Department.class, field = "name", condition = "this.parent_id=id")
     private String parentName;
 
+    private List<DepartmentVO> children;
+
     // 直接关联Entity
     /*@BindEntity(entity = Organization.class, condition="this.org_id=id")
     private Organization organization;*/

@@ -1,22 +1,33 @@
 package com.diboot.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Employee;
 import com.diboot.example.entity.EmployeePositionDepartment;
 import com.diboot.example.entity.PositionDepartment;
 import com.diboot.example.mapper.EmployeeMapper;
+import com.diboot.example.service.DepartmentService;
 import com.diboot.example.service.EmployeePositionDepartmentService;
 import com.diboot.example.service.EmployeeService;
 import com.diboot.example.vo.EmployeeVO;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,9 +39,32 @@ import java.util.List;
 @Service
 @Slf4j
 public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employee> implements EmployeeService {
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
     @Autowired
     private EmployeePositionDepartmentService employeePositionDepartmentService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Override
+    public List<EmployeeVO> getEmployeeList(QueryWrapper<Employee> wrapper, Pagination pagination, Long orgId) {
+        Wrapper queryWrapper = null;
+        queryWrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId);
+        List<Department> deptList = departmentService.getEntityList(queryWrapper);
+        List<Long> deptIdList = getIdList(deptList);
+
+        queryWrapper = new LambdaQueryWrapper<EmployeePositionDepartment>()
+                .in(EmployeePositionDepartment::getDepartmentId, deptIdList);
+        List<EmployeePositionDepartment> epdList = employeePositionDepartmentService.getEntityList(queryWrapper);
+        List<Long> empIdList = getIdList(epdList, "getEmployeeId");
+
+        wrapper.lambda().in(Employee::getId, empIdList);
+        List<Employee> empList = super.getEntityList(wrapper, pagination);
+        List<EmployeeVO> voList = RelationsBinder.convertAndBind(empList, EmployeeVO.class);
+        return voList;
+    }
 
     @Override
     @Transactional
@@ -80,6 +114,7 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
                 query.lambda()
                      .eq(EmployeePositionDepartment::getEmployeeId, employeeVO.getId());
                 employeePositionDepartmentService.deleteEntities(query);
+                empPosiDept.setEmployeeId(employeeVO.getId());
                 employeePositionDepartmentService.createEntity(empPosiDept);
             }
 
@@ -107,5 +142,34 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         }
 
         return true;
+    }
+
+    //默认获取Long类型主键ID list，若idType参数有值，则取相应的ID  list
+    private <T extends BaseEntity> List<Long> getIdList(List<T> entityList, String... idGetMethod){
+        List<Long> idList = new ArrayList<>();
+        try {
+            if(V.notEmpty(entityList)){
+                if(V.notEmpty(idGetMethod)){
+                    String getMethod = idGetMethod[0];
+                    for(T entity : entityList){
+                        Class clazz = entity.getClass();
+                        Method method = clazz.getMethod(getMethod);
+                        Object obj = method.invoke(entity);
+                        if(V.notEmpty(obj)){
+                            idList.add((Long)obj);
+                        }
+                    }
+                }else{
+                    for(T entity : entityList){
+                        idList.add(entity.getId());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("获取idList失败");
+           return null;
+        }
+
+        return idList;
     }
 }

@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.Department;
-import com.diboot.example.entity.Organization;
+import com.diboot.example.entity.Tree;
 import com.diboot.example.service.DepartmentService;
-import com.diboot.example.service.OrganizationService;
 import com.diboot.example.vo.DepartmentVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +34,6 @@ public class DepartmentController extends BaseCrudRestController {
     @Autowired
     private DepartmentService departmentService;
 
-    @Autowired
-    private OrganizationService organizationService;
 
     /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
@@ -51,10 +47,9 @@ public class DepartmentController extends BaseCrudRestController {
     @GetMapping("/list")
     public JsonResult getVOList(Department department, Pagination pagination, HttpServletRequest request) throws Exception{
         QueryWrapper<Department> queryWrapper = super.buildQueryWrapper(department);
+        queryWrapper.lambda().eq(Department::getParentId, 0);
         // 查询当前页的Entity主表数据
-        List entityList = getService().getEntityList(queryWrapper, pagination);
-        // 自动转换VO中注解绑定的关联
-        List<DepartmentVO> voList = super.convertToVoAndBindRelations(entityList, DepartmentVO.class);
+        List<DepartmentVO> voList = departmentService.getDepartmentList(queryWrapper, pagination, department.getOrgId());
         // 返回结果
         return new JsonResult(Status.OK, voList).bindPagination(pagination);
     }
@@ -150,43 +145,15 @@ public class DepartmentController extends BaseCrudRestController {
     @GetMapping("/attachMore")
     public JsonResult attachMore(HttpServletRequest request, ModelMap modelMap){
         Wrapper wrapper = null;
-        //获取组织机构KV
-        wrapper = new QueryWrapper<Organization>()
-                .lambda()
-                .select(Organization::getName, Organization::getId);
-        List<KeyValue> orgKvList = organizationService.getKeyValueList(wrapper);
-        modelMap.put("orgKvList", orgKvList);
 
         return new JsonResult(modelMap);
     }
 
-    /*
-     * 根据组织ID获取部门kv list
-     * */
-    @GetMapping("/getDepartmentKV/{orgId}")
-    public JsonResult getDepartmentKV(@PathVariable Long orgId, HttpServletRequest request){
-        Wrapper wrapper = null;
-        //获取部门KV
-        wrapper = new QueryWrapper<Department>()
-                .lambda()
-                .select(Department::getName, Department::getId)
-                .eq(Department::getOrgId, orgId);
-        List<KeyValue> deptKvList = departmentService.getKeyValueList(wrapper);
-
-        return new JsonResult(deptKvList);
-    }
-
-    /*
-     * 根据组织ID获取部门list
-     * */
-    @GetMapping("/getDepartmentList/{orgId}")
-    public JsonResult getDepartmentList(@PathVariable Long orgId, Pagination pagination, HttpServletRequest request) throws Exception {
-        Wrapper wrapper = new QueryWrapper<Department>()
-                .lambda()
-                .eq(Department::getOrgId, orgId);
-        List<DepartmentVO> voList = departmentService.getViewObjectList(wrapper, pagination, DepartmentVO.class);
-
-        return new JsonResult(voList);
+    @GetMapping("/getViewTreeList")
+    public JsonResult getViewTreeList(@RequestParam(required = false) Long orgId) throws Exception{
+        List<DepartmentVO> voList = departmentService.getEntityTreeList(orgId);
+        List<Tree> treeList = departmentService.getViewTreeList(voList);
+        return new JsonResult(treeList);
     }
 
     @Override

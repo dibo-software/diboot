@@ -19,7 +19,7 @@ public class Organization extends BaseEntity {
     private static final long serialVersionUID = -5889309041570465909L;
 
     // industry字段的关联元数据
-    public static final String INDUSTRY = "INDUSTRY";
+    public static final String DICT_INDUSTRY = "INDUSTRY";
 
     @TableField
     private Long parentId;//上级组织
