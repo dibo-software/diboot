@@ -67,7 +67,7 @@ public class DepartmentServiceImpl extends BaseServiceImpl<DepartmentMapper, Dep
     public List<Tree> getViewTreeList(List<DepartmentVO> voList) {
         List<Tree> treeList = null;
         try {
-            treeList = TreeUtil.getTreeList(voList, "getName", "getId", null, "getChildren" ,null);
+            treeList = TreeUtil.getTreeList(voList, "getName", "getId", "getId", "getChildren" ,true);
         } catch (Exception e) {
             logger.warn("部门树转化失败");
             return null;

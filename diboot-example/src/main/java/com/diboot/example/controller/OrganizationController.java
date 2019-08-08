@@ -91,7 +91,8 @@ public class OrganizationController extends BaseCrudRestController {
 
     @GetMapping("/getViewTreeList")
     public JsonResult getViewTreeList() throws Exception{
-        List<Tree> treeList = organizationService.getViewTreeList();
+        List<OrganizationVO> voList = organizationService.getEntityTreeList();
+        List<Tree> treeList = organizationService.getViewTreeList(voList);
         return new JsonResult(treeList);
     }
 

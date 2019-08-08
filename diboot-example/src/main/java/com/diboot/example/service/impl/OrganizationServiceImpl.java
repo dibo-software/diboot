@@ -59,11 +59,10 @@ public class OrganizationServiceImpl extends BaseServiceImpl<OrganizationMapper,
     }
 
     @Override
-    public List<Tree> getViewTreeList() {
+    public List<Tree> getViewTreeList(List<OrganizationVO> voList) {
         List<Tree> treeList = null;
-        List<OrganizationVO> entityTreeList = getEntityTreeList();
         try {
-            treeList = TreeUtil.getTreeList(entityTreeList, "getName", "getId", null, "getChildren" ,null);
+            treeList = TreeUtil.getTreeList(voList, "getName", "getId", "getId", "getChildren" ,true);
         } catch (Exception e) {
             logger.warn("组织机构树转化失败");
             return null;

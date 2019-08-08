@@ -21,6 +21,6 @@ public interface OrganizationService extends BaseService<Organization> {
 
     List<OrganizationVO> getEntityTreeList();
 
-    List<Tree> getViewTreeList();
+    List<Tree> getViewTreeList(List<OrganizationVO> voList);
 
 }

@@ -13,9 +13,10 @@ import lombok.Data;
 @Data
 @TableName(value = "if_position")
 public class Position extends BaseEntity {
+    private static final long serialVersionUID = 6014662395912029448L;
 
-    // industry字段的关联元数据
-    public static final String POSITION_LEVEL = "POSITION_LEVEL";
+    // level字段的关联元数据
+    public static final String DICT_POSITION_LEVEL = "POSITION_LEVEL";
 
     private Long parentId;//上级职位
 
