@@ -244,7 +244,7 @@ public class BeanUtils {
                 String key = null;
                 if(V.isEmpty(fields)){
                     //未指定字段，以id为key
-                    key = getStringProperty(model, Cons.FieldName.parentId.name());
+                    key = getStringProperty(model, Cons.FieldName.id.name());
                 }
                 // 指定了一个字段，以该字段为key，类型同该字段
                 else if(fields.length == 1){
@@ -306,7 +306,7 @@ public class BeanUtils {
      */
     private static <T extends BaseEntity> void buildDeeperLevelTree(List<T> parentModels, List<T> allModels){
         List<T> deeperLevelModels = new ArrayList();
-        Map<String, T> parentLevelModelMap = convertToStringKeyObjectMap(parentModels);
+        Map<String, T> parentLevelModelMap = convertToStringKeyObjectMap(parentModels, Cons.FieldName.id.name());
         for(T model : allModels){
             Object parentId = getProperty(model, Cons.FieldName.parentId.name());
             if(parentLevelModelMap.keySet().contains(String.valueOf(parentId)) && !parentId.equals(model.getId())){
