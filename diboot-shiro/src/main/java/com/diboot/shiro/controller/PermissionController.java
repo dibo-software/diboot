@@ -40,20 +40,6 @@ public class PermissionController extends BaseCrudRestController {
     private PermissionService permissionService;
 
     /***
-     * 查询Entity
-     * @param id ID
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/{id}")
-    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
-    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
-            throws Exception{
-        PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
-        return new JsonResult(vo);
-    }
-
-    /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
      * url参数示例: /list?pageSize=20&pageIndex=1&orderBy=id&code=TST
@@ -69,6 +55,20 @@ public class PermissionController extends BaseCrudRestController {
         List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
 
         return new JsonResult(Status.OK, entityList).bindPagination(pagination);
+    }
+
+    /***
+     * 查询Entity
+     * @param id ID
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
+    public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
+            throws Exception{
+        PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
+        return new JsonResult(vo);
     }
 
     /***
