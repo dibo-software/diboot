@@ -16,9 +16,6 @@ import java.util.List;
  */
 public interface SysUserService extends BaseService<SysUser> {
 
-    //获取列表数据
-    List<SysUserVO> getSysUserList(Wrapper queryWrapper, Pagination pagination);
-
     //获取详细
     SysUserVO getSysUser(Long id);
 

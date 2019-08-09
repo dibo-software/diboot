@@ -39,25 +39,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
     private UserRoleService userRoleService;
 
     @Override
-    public List<SysUserVO> getSysUserList(Wrapper queryWrapper, Pagination pagination) {
-        List<SysUser> sysUserList = super.getEntityList(queryWrapper, pagination);
-        List<SysUserVO> sysUserVOList = RelationsBinder.convertAndBind(sysUserList, SysUserVO.class);
-        if(V.notEmpty(sysUserVOList)){
-            for(SysUserVO sysUserVO : sysUserVOList){
-                List<Role> roleList = sysUserVO.getRoleList();
-                if(V.notEmpty(roleList)){
-                    List<String> roleNameList = new ArrayList();
-                    for(Role role : roleList){
-                        roleNameList.add(role.getName());
-                    }
-                    sysUserVO.setRoleNameList(roleNameList);
-                }
-            }
-        }
-        return sysUserVOList;
-    }
-
-    @Override
     public SysUserVO getSysUser(Long id) {
         SysUserVO sysUserVO = super.getViewObject(id, SysUserVO.class);
         if(V.notEmpty(sysUserVO)){
