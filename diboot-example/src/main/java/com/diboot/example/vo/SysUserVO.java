@@ -21,9 +21,6 @@ public class SysUserVO extends SysUser {
 
     private static final long serialVersionUID = 5921846275434221060L;
 
-    @BindField(entity=Department.class, field="name", condition="this.department_id=id")
-    private String departmentName;
-
     @BindDict(type="GENDER", field="gender")
     private String genderLabel;
 
@@ -35,8 +32,5 @@ public class SysUserVO extends SysUser {
 
     @TableField(exist = false)
     private List<Long> roleIdList;
-
-    @TableField(exist = false)
-    private List<String> roleNameList;
 
 }
