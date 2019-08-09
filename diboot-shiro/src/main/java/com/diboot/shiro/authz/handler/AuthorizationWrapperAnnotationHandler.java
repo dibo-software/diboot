@@ -1,10 +1,13 @@
 package com.diboot.shiro.authz.handler;
 
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.authz.properties.AuthorizationProperties;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.AuthorizationException;
@@ -58,10 +61,14 @@ public class AuthorizationWrapperAnnotationHandler extends AuthorizingAnnotation
      * 校验注解{@link AuthorizationWrapper}
      */
     public void assertAuthorized(AnnotationResolver resolver, MethodInvocation mi) throws AuthorizationException {
+        //检查缓存
+        Subject subject = SecurityUtils.getSubject();
+        if (V.isEmpty(subject) || V.isEmpty(subject.getPrincipals())) {
+            throw new BusinessException(Status.MEMORY_EMPTY_LOST);
+        }
         //如果方法上存在AuthorizationWrapper注解，那么resolver.getAnnotation()获取的是AuthorizationWrapper注解，会优先从缓存读取
         AuthorizationWrapper authorizationWrapper = (AuthorizationWrapper)resolver.getAnnotation(mi, AuthorizationWrapper.class);
         String[] perms = getAnnotationValue(authorizationWrapper);
-        Subject subject = getSubject();
         //当系统配置的所有权限角色集合 ： 如果当前用户包含其中任意一个角色，直接允许访问，否则对当前用户进行资源校验
         if (V.notEmpty(authorizationProperties.getHasAllPermissionsRoleList())) {
             for (String role : authorizationProperties.getHasAllPermissionsRoleList()) {

@@ -55,7 +55,12 @@ public enum Status {
     /***
      * 系统异常
      */
-    FAIL_EXCEPTION(5000, "系统异常");
+    FAIL_EXCEPTION(5000, "系统异常"),
+
+    /***
+     * 系统异常
+     */
+    MEMORY_EMPTY_LOST(9999, "缓存清空");
 
     private int code;
     private String label;
