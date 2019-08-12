@@ -58,15 +58,11 @@ public class SysUserController extends BaseCrudRestController {
     @Autowired
     private PermissionService permissionService;
 
-    @Autowired
-    private DepartmentService departmentService;
-
-
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     public JsonResult getVOList(SysUser sysUser, Pagination pagination, HttpServletRequest request) throws Exception{
         QueryWrapper<User> queryWrapper = super.buildQueryWrapper(sysUser);
-        return super.getVOListWithPaging(queryWrapper, pagination, UserVO.class);
+        return super.getVOListWithPaging(queryWrapper, pagination, SysUserVO.class);
     }
 
     /***
@@ -156,13 +152,6 @@ public class SysUserController extends BaseCrudRestController {
                         .select(Role::getName, Role::getId);
         List<KeyValue> roleKvList = roleService.getKeyValueList(wrapper);
         modelMap.put("roleKvList", roleKvList);
-
-        //获取部门KV
-        wrapper = new QueryWrapper<Department>()
-                .lambda()
-                .select(Department::getName, Department::getId);
-        List<KeyValue> departmentKvList = departmentService.getKeyValueList(wrapper);
-        modelMap.put("departmentKvList", departmentKvList);
 
         //获取用户状态KV
         List<KeyValue> userStatusKvList = dictionaryService.getKeyValueList(SysUser.USER_STATUS);
