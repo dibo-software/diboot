@@ -54,12 +54,16 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
                 .eq(Department::getOrgId, orgId);
         List<Department> deptList = departmentService.getEntityList(queryWrapper);
         List<Long> deptIdList = getIdList(deptList);
-
+        if(V.isEmpty(deptIdList)){
+            return null;
+        }
         queryWrapper = new LambdaQueryWrapper<EmployeePositionDepartment>()
                 .in(EmployeePositionDepartment::getDepartmentId, deptIdList);
         List<EmployeePositionDepartment> epdList = employeePositionDepartmentService.getEntityList(queryWrapper);
         List<Long> empIdList = getIdList(epdList, "getEmployeeId");
-
+        if(V.isEmpty(empIdList)){
+            return null;
+        }
         wrapper.lambda().in(Employee::getId, empIdList);
         List<Employee> empList = super.getEntityList(wrapper, pagination);
         List<EmployeeVO> voList = RelationsBinder.convertAndBind(empList, EmployeeVO.class);

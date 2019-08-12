@@ -27,7 +27,7 @@ public class PositionVO extends Position {
     @BindEntity(entity = Position.class, condition = "this.parent_id = id")
     private Position parentPosition;
 
-    @BindEntityList(entity = Department.class, condition = "this.id = if_position_department.position_id AND if_position_department.department_id = id")
+    @BindEntityList(entity = Department.class, condition = "this.id = if_position_department.position_id AND if_position_department.department_id = id AND if_position_department.deleted = 0")
     private List<Department> departmentList;
 
     private List<PositionVO> children;

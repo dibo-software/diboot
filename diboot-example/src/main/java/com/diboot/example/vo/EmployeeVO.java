@@ -19,10 +19,10 @@ public class EmployeeVO extends Employee {
     @BindDict(type="GENDER", field="gender")
     private String genderLabel;
 
-    @BindEntity(entity = Department.class, condition = "this.id = if_employee_position_department.employee_id AND if_employee_position_department.department_id = id")
+    @BindEntity(entity = Department.class, condition = "this.id = if_employee_position_department.employee_id AND if_employee_position_department.department_id = id AND if_employee_position_department.deleted = 0")
     private Department department;
 
-    @BindEntity(entity = Position.class, condition = "this.id = if_employee_position_department.employee_id AND if_employee_position_department.position_id = id")
+    @BindEntity(entity = Position.class, condition = "this.id = if_employee_position_department.employee_id AND if_employee_position_department.position_id = id AND if_employee_position_department.deleted = 0")
     private Position position;
 
     private EmployeePositionDepartment empPosiDept;
