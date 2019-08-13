@@ -197,6 +197,9 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
                 deptIdList.add(dept.getId());
             }
         }
+        if(V.isEmpty(deptIdList)){
+            return null;
+        }
         //获取部门-职位对应信息
         wrapper = new LambdaQueryWrapper<PositionDepartment>()
                 .in(PositionDepartment::getDepartmentId, deptIdList);
@@ -206,6 +209,9 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
             for(PositionDepartment pd : pdList){
                 positionIdList.add(pd.getPositionId());
             }
+        }
+        if(V.isEmpty(positionIdList)){
+            return null;
         }
         //获取职位
         List<Position> positionList = super.getEntityListByIds(positionIdList);
