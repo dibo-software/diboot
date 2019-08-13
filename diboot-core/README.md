@@ -1,11 +1,12 @@
 # diboot-core: 全新优化内核
 主要实现：
-1. 多表关联的自动绑定, 实现单表CRUD和多表关联的无SQL化
-2. 提供其他常用开发场景的最佳实践封装。
+1. 单表CRUD和多表关联查询的无SQL化
+2. Entity/DTO自动转换为QueryWrapper（@BindQuery注解绑定字段参数对应的查询条件，无注解默认映射为等于=条件）
+3. 提供其他常用开发场景的最佳实践封装。
 
 ## ** 一. 单表CRUD无SQL
-   > 依赖Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
-## ** 二. 多表关联查询无SQL（适用于大多数场景，拆分成单表查询自动实现结果绑定）
+   > 依赖Mybatis-plus实现（Mybatis-plus具备通用Mapper方案和灵活的查询构造器）
+## ** 二. 多表关联查询无SQL（通过注解绑定关联，自动拆分成单表查询并绑定结果）
    > 通过注解实现多数场景下的关联查询无SQL
 ### 1. 注解自动绑定数据字典(自定义枚举)的显示值Label
 ~~~java
@@ -43,21 +44,22 @@ private List<Department> children;
 private List<Role> roleList;
 ~~~
 
-## ** 三. 使用方式
+## ** 三. 注解绑定关联的使用方式
 ### 1. 引入依赖
 Gradle:
 ~~~gradle
-compile("com.diboot:diboot-core:2.0.1")
+compile("com.diboot:diboot-core-spring-boot-starter:2.0.2")
 ~~~
 或Maven
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
-    <artifactId>diboot-core</artifactId>
-    <version>2.0.1</version>
+    <artifactId>diboot-core-spring-boot-starter</artifactId>
+    <version>2.0.2</version>
 </dependency>
 ~~~
-> 注: @BindDict注解需要依赖dictionary表，初始化SQL需执行/META-INF/sql/init-mysql.sql
+> 注: @BindDict注解需要依赖dictionary表，可配置参数 diboot.core.init-sql=true 初次启动时starter会自动安装 init-{db}.sql。
+如不支持自动安装的数据库，需手动执行 diboot-core-*.jar/META-INF/sql/init-{db}.sql 。
 ### 2. 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
 
 ### 3. 使用注解绑定：
@@ -74,4 +76,34 @@ RelationsBinder.bind(voList);
 List<MyUserVO> voList = RelationsBinder.convertAndBind(userList, MyUserVO.class);
 ~~~
 
-## 四. 样例参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
+## ** 四. Entity/DTO自动转换为QueryWrapper的使用方式
+### 1. Entity/DTO中声明映射查询条件
+示例代码：
+~~~java 
+public class UserDTO{
+    // 无@BindQuery注解默认会映射为=条件
+    private Long gender;
+    
+    // 有注解，映射为注解指定条件
+    @BindQuery(comparison = Comparison.LIKE)
+    private String realname;
+    
+    //... getter, setter
+}
+~~~
+### 2. 调用QueryBuilder.toQueryWrapper(entityOrDto)进行转换
+~~~java
+/**
+ * url参数示例: /list?gender=M&realname=张
+ * 将映射为 queryWrapper.eq("gender", "M").like("realname", "张")
+ */
+@GetMapping("/list")
+public JsonResult getVOList(UserDto userDto) throws Exception{
+    //调用super.buildQueryWrapper(entityOrDto) 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行转换
+    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto);
+    //... 查询list
+    return new JsonResult(Status.OK, list);
+}
+~~~
+
+## 五. 样例参考 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)

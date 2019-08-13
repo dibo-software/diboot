@@ -5,9 +5,10 @@
 </p>
 
 # diboot-v2
-diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-components-*基础组件 + diboot-devtools代码生成器。
+diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-components-*基础组件 + diboot-devtools代码生成平台。
+### 技术交流QQ群: 731690096
 
-## ** diboot-core: 精简优化内核
+## 一、 diboot-core: 精简优化内核
 全新精简内核，主要实现<font color="red">单表CRUD无SQL 和 多表关联查询绑定的无SQL</font>实现方案，并提供其他常用开发场景的简单封装。
 
 ### 单表CRUD无SQL
@@ -20,13 +21,13 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-components-*�
 ##### 3. @BindEntity 注解自动绑定单个其他表实体Entity
 ##### 4. @BindEntityList 注解自动绑定其他表实体集合List<Entity>
 
-具体请查看: [diboot-core 注解自动绑定多表关联](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
+具体请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
 
  
    > .
      
 
-## ** diboot-shiro: 基于RBAC+Shiro的权限认证模块
+## 二、 diboot-shiro: 基于RBAC+Shiro的权限认证模块
 RBAC的角色权限+基于Shiro的细粒度权限控制
 
 ### 1、@AuthorizationPrefix 
@@ -70,10 +71,7 @@ diboot.shiro.cache.cache-way=memory
 调用该类autoStorage传入spring上下文参数，使用参考diboot-example 中ExampleListener类
 
 
-## ** diboot-devtools 代码生成工具
+## 三、 diboot-devtools 代码生成工具
    > 比 1.x 版本更强大的代码生成工具 ...
     
 ...
-
-## 技术支持
-您可以通过加入QQ群，获取相关的技术支持。群号: 731690096
