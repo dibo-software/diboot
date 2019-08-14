@@ -7,6 +7,7 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Position;
@@ -25,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 职位相关Service实现
@@ -77,6 +77,35 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
         }
 
         return positionList;
+    }
+
+    @Override
+    public List<Position> getPositionList(Long orgId) {
+        List<Position> positionList = new ArrayList<>();
+        LambdaQueryWrapper wrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId);
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.notEmpty(deptList)){
+            List<Long> deptIdList = new ArrayList<>();
+            for(Department dept : deptList){
+                deptIdList.add(dept.getId());
+            }
+            if(V.notEmpty(deptIdList)){
+                wrapper = new LambdaQueryWrapper<PositionDepartment>().in(PositionDepartment::getDepartmentId, deptIdList);
+                List<PositionDepartment> pdList = positionDepartmentService.getEntityList(wrapper);
+                Set<Long> positionIdSet = new HashSet<>();
+                if(V.notEmpty(pdList)){
+                    for(PositionDepartment pd : pdList){
+                        positionIdSet.add(pd.getPositionId());
+                    }
+                }
+                if(V.notEmpty(positionIdSet)){
+                    positionList = super.getEntityListByIds(new ArrayList(positionIdSet));
+                }
+            }
+        }
+
+       return positionList;
     }
 
     @Override

@@ -18,7 +18,11 @@ import java.util.List;
  */
 public interface EmployeeService extends BaseService<Employee> {
 
+    //获取列表页数据
     List<EmployeeVO> getEmployeeList(QueryWrapper<Employee> wrapper, Pagination pagination, Long orgId);
+
+    //获取某公司下的所有员工
+    List<Employee> getEmployeeList(Long orgId);
 
     boolean createEmployee(EmployeeVO employeeVO);
 

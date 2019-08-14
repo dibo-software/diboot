@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
@@ -20,6 +21,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 /*
 * 组织结构 controller
@@ -94,6 +96,52 @@ public class OrganizationController extends BaseCrudRestController {
         List<OrganizationVO> voList = organizationService.getEntityTreeList();
         List<Tree> treeList = organizationService.getViewTreeList(voList);
         return new JsonResult(treeList);
+    }
+
+    @GetMapping("/checkNameRepeat")
+    public JsonResult checkNameRepeat(@RequestParam(required = false) Long id, @RequestParam String name){
+        if(V.isEmpty(name)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<Organization> wrapper = new LambdaQueryWrapper<Organization>().eq(Organization::getName, name);
+        if(V.notEmpty(id)){
+            wrapper.ne(Organization::getId, id);
+        }
+        List<Organization> orgList = organizationService.getEntityList(wrapper);
+        if(V.isEmpty(orgList)){
+            return new JsonResult(Status.OK);
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "公司名称已存在");
+    }
+
+    @GetMapping("/checkCodeRepeat")
+    public JsonResult checkCodeRepeat(@RequestParam(required = false) Long id, @RequestParam String code){
+        if(V.isEmpty(code)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<Organization> wrapper = new LambdaQueryWrapper<Organization>().eq(Organization::getCode, code);
+        if(V.notEmpty(id)){
+            wrapper.ne(Organization::getId, id);
+        }
+        List<Organization> orgList = organizationService.getEntityList(wrapper);
+        if(V.isEmpty(orgList)){
+            return new JsonResult(Status.OK);
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "公司编码已存在");
+    }
+
+    @GetMapping("/checkEstablishTime")
+    public JsonResult checkEstablishTime(@RequestParam Long parentId, @RequestParam Date establishTime){
+        if(V.isEmpty(parentId) || V.isEmpty(establishTime)){
+            return new JsonResult(Status.OK);
+        }
+        Organization org = organizationService.getEntity(parentId);
+        if(V.notEmpty(org)){
+            if(V.notEmpty(org.getEstablishTime()) && org.getEstablishTime().getTime() > establishTime.getTime()){
+                return new JsonResult(Status.FAIL_OPERATION, "公司成立时间应晚于上级公司成立时间");
+            }
+        }
+        return new JsonResult(Status.OK);
     }
 
     @Override

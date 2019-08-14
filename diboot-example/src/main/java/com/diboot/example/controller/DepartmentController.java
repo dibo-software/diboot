@@ -1,14 +1,17 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.Department;
+import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.Tree;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
@@ -45,7 +48,10 @@ public class DepartmentController extends BaseCrudRestController {
      */
     @RequiresPermissions("department:list")
     @GetMapping("/list")
-    public JsonResult getVOList(Department department, Pagination pagination, HttpServletRequest request) throws Exception{
+    public JsonResult getVOList(Long orgId, Department department, Pagination pagination, HttpServletRequest request) throws Exception{
+        if(V.isEmpty(orgId)){
+            return new JsonResult(Status.FAIL_OPERATION, "请先选择所属公司").bindPagination(pagination);
+        }
         QueryWrapper<Department> queryWrapper = super.buildQueryWrapper(department);
         queryWrapper.lambda().eq(Department::getParentId, 0);
         // 查询当前页的Entity主表数据
@@ -154,6 +160,42 @@ public class DepartmentController extends BaseCrudRestController {
         List<DepartmentVO> voList = departmentService.getEntityTreeList(orgId);
         List<Tree> treeList = departmentService.getViewTreeList(voList);
         return new JsonResult(treeList);
+    }
+
+    @GetMapping("/checkNameRepeat")
+    public JsonResult checkNameRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String name){
+        if(V.isEmpty(name)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId)
+                .eq(Department::getName, name);
+        if(V.notEmpty(id)){
+            wrapper.ne(Department::getId, id);
+        }
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.isEmpty(deptList)){
+            return new JsonResult(Status.OK);
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "部门名称已存在");
+    }
+
+    @GetMapping("/checkNumberRepeat")
+    public JsonResult checkNumberRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String number){
+        if(V.isEmpty(number)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId)
+                .eq(Department::getNumber, number);
+        if(V.notEmpty(id)){
+            wrapper.ne(Department::getId, id);
+        }
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.isEmpty(deptList)){
+            return new JsonResult(Status.OK);
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "部门编号已存在");
     }
 
     @Override

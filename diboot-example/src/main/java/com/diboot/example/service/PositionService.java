@@ -20,6 +20,9 @@ public interface PositionService extends BaseService<Position> {
     //获取列表页数据
     List<PositionVO> getPositionList(Wrapper wrapper, Pagination pagination, Long orgId);
 
+    //获取某公司下的所有职位
+    List<Position> getPositionList(Long orgId);
+
     //新建
     boolean createPosition(PositionVO positionVO);
 
