@@ -27,8 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 员工相关Service实现
@@ -68,6 +67,34 @@ public class EmployeeServiceImpl extends BaseServiceImpl<EmployeeMapper, Employe
         List<Employee> empList = super.getEntityList(wrapper, pagination);
         List<EmployeeVO> voList = RelationsBinder.convertAndBind(empList, EmployeeVO.class);
         return voList;
+    }
+
+    @Override
+    public List<Employee> getEmployeeList(Long orgId) {
+        List<Employee> empList = new ArrayList<>();
+        Wrapper wrapper = new LambdaQueryWrapper<Department>().eq(Department::getOrgId, orgId);
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.notEmpty(deptList)){
+            List<Long> deptIdList = new ArrayList<>();
+            for(Department dept : deptList){
+                deptIdList.add(dept.getId());
+            }
+            if(V.notEmpty(deptIdList)){
+                wrapper = new LambdaQueryWrapper<EmployeePositionDepartment>().in(EmployeePositionDepartment::getDepartmentId, deptIdList);
+                List<EmployeePositionDepartment> epdList = employeePositionDepartmentService.getEntityList(wrapper);
+                if(V.notEmpty(epdList)){
+                    Set<Long> empIdSet = new HashSet<>();
+                    for(EmployeePositionDepartment epd : epdList){
+                        empIdSet.add(epd.getEmployeeId());
+                    }
+                    if(V.notEmpty(empIdSet)){
+                        empList = super.getEntityListByIds(new ArrayList(empIdSet));
+                    }
+                }
+            }
+        }
+
+        return empList;
     }
 
     @Override

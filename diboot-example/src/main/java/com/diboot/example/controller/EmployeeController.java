@@ -1,6 +1,7 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
@@ -10,6 +11,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Employee;
 import com.diboot.example.service.EmployeeService;
 import com.diboot.example.vo.EmployeeVO;
@@ -37,7 +39,7 @@ public class EmployeeController extends BaseCrudRestController {
     @RequestMapping("/list")
     public JsonResult list(Long orgId, Employee employee, Pagination pagination, HttpServletRequest request) throws Exception{
         if(V.isEmpty(orgId)){
-            return new JsonResult(Status.FAIL_OPERATION, "请先选择所属公司");
+            return new JsonResult(Status.FAIL_OPERATION, "请先选择所属公司").bindPagination(pagination);
         }
         QueryWrapper<Employee> queryWrapper = super.buildQueryWrapper(employee);
         List<EmployeeVO> voList = employeeService.getEmployeeList(queryWrapper, pagination, orgId);
@@ -87,6 +89,62 @@ public class EmployeeController extends BaseCrudRestController {
         modelMap.put("genderKvList", genderKvList);
 
         return new JsonResult(modelMap);
+    }
+
+    @GetMapping("/checkNumberRepeat")
+    public JsonResult checkNumberRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String number){
+        if(V.isEmpty(number)){
+            return new JsonResult(Status.OK);
+        }
+        List<Employee> empList = employeeService.getEmployeeList(orgId);
+        if(V.isEmpty(empList)){
+            return new JsonResult(Status.OK);
+        }
+        int count = 0;
+        for(Employee emp : empList){
+            if(number.equals(emp.getNumber())){
+                if(V.isEmpty(id)){
+                    count++;
+                }else{
+                    if(V.notEquals(id, emp.getId())){
+                        count++;
+                    }
+                }
+            }
+        }
+        if(count == 0){
+            return new JsonResult(Status.OK);
+        }
+
+        return new JsonResult(Status.FAIL_OPERATION, "员工工号已存在");
+    }
+
+    @GetMapping("/checkAccountRepeat")
+    public JsonResult checkAccountRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String account){
+        if(V.isEmpty(account)){
+            return new JsonResult(Status.OK);
+        }
+        List<Employee> empList = employeeService.getEmployeeList(orgId);
+        if(V.isEmpty(empList)){
+            return new JsonResult(Status.OK);
+        }
+        int count = 0;
+        for(Employee emp : empList){
+            if(account.equals(emp.getAccount())){
+                if(V.isEmpty(id)){
+                    count++;
+                }else{
+                    if(V.notEquals(id, emp.getId())){
+                        count++;
+                    }
+                }
+            }
+        }
+        if(count == 0){
+            return new JsonResult(Status.OK);
+        }
+
+        return new JsonResult(Status.FAIL_OPERATION, "用户名已存在");
     }
 
     @Override
