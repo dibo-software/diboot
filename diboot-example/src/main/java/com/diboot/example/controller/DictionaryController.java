@@ -13,6 +13,9 @@ import com.diboot.core.vo.Status;
 import com.diboot.example.service.DictionaryService;
 import com.diboot.example.vo.DictionaryListVO;
 import com.diboot.example.vo.DictionaryVO;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dictionary")
+@AuthorizationPrefix(name = "数据字典", code = "dictionary", prefix = "dictionary")
 public class DictionaryController extends BaseCrudRestController {
     private static final Logger logger = LoggerFactory.getLogger(DictionaryController.class);
 
@@ -38,6 +42,7 @@ public class DictionaryController extends BaseCrudRestController {
     * 获取列表页数据
     * */
     @GetMapping("/list")
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     public JsonResult list(Dictionary dictionary, Pagination pagination, HttpServletRequest request) throws Exception {
         //构建查询条件
         QueryWrapper<Dictionary> queryWrapper = super.buildQueryWrapper(dictionary);
@@ -55,6 +60,7 @@ public class DictionaryController extends BaseCrudRestController {
      * 获取entity详细数据
      * */
     @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getEntity(@PathVariable("id") Long id, HttpServletRequest request){
         DictionaryVO vo = dictionaryService.getViewObject(id, DictionaryVO.class);
         return new JsonResult(vo);
@@ -64,6 +70,7 @@ public class DictionaryController extends BaseCrudRestController {
     * 新建
     * */
     @PostMapping("/")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult create(@RequestBody DictionaryVO entityVO, HttpServletRequest request){
        boolean success = dictionaryService.createDictionary(entityVO);
         if(success){
@@ -77,6 +84,7 @@ public class DictionaryController extends BaseCrudRestController {
      * 更新
      * */
     @PutMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult update(@PathVariable("id")Long id, @RequestBody DictionaryVO entityVO, HttpServletRequest request){
         entityVO.setId(id);
         boolean success = dictionaryService.updateDictionary(entityVO);
@@ -91,6 +99,7 @@ public class DictionaryController extends BaseCrudRestController {
      * 删除
      * */
     @DeleteMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult delete(@PathVariable("id") Long id){
         boolean success = dictionaryService.deleteDictionary(id);
         if(success){

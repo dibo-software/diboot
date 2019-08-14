@@ -15,6 +15,8 @@ import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.Tree;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -32,6 +34,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/department")
+@AuthorizationPrefix(name = "部门管理", code = "department", prefix = "department")
 public class DepartmentController extends BaseCrudRestController {
 
     @Autowired
@@ -46,8 +49,8 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("department:list")
     @GetMapping("/list")
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     public JsonResult getVOList(Long orgId, Department department, Pagination pagination, HttpServletRequest request) throws Exception{
         if(V.isEmpty(orgId)){
             return new JsonResult(Status.FAIL_OPERATION, "请先选择所属公司").bindPagination(pagination);
@@ -98,6 +101,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody Department entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         boolean success = departmentService.createEntity(entity);
@@ -114,6 +118,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         DepartmentVO vo = departmentService.getViewObject(id, DepartmentVO.class);
@@ -127,6 +132,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PutMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody Department entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         entity.setId(id);
@@ -144,6 +150,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @DeleteMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
     }
