@@ -12,6 +12,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.example.dto.SysUserDto;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.SysUser;
 import com.diboot.example.entity.User;
@@ -60,8 +61,8 @@ public class SysUserController extends BaseCrudRestController {
 
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(SysUser sysUser, Pagination pagination, HttpServletRequest request) throws Exception{
-        QueryWrapper<User> queryWrapper = super.buildQueryWrapper(sysUser);
+    public JsonResult getVOList(SysUserDto sysUserDto, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<SysUserDto> queryWrapper = super.buildQueryWrapper(sysUserDto);
         return super.getVOListWithPaging(queryWrapper, pagination, SysUserVO.class);
     }
 

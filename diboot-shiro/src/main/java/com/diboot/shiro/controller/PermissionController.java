@@ -9,6 +9,7 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.dto.PermissionDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.vo.PermissionVO;
@@ -49,8 +50,8 @@ public class PermissionController extends BaseCrudRestController {
      */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(Permission permission, Pagination pagination, HttpServletRequest request) throws Exception{
-        QueryWrapper<Permission> queryWrapper = super.buildQueryWrapper(permission);
+    public JsonResult getVOList(PermissionDto permissionDto, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<PermissionDto> queryWrapper = super.buildQueryWrapper(permissionDto);
         // 查询当前页的Entity主表数据
         List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
 

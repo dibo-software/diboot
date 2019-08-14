@@ -272,6 +272,56 @@ public class BeanUtils {
     }
 
     /***
+     * Key-Object-List列表Map
+     * @param allLists
+     * @param fields
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<String, List<T>> convertToStringKeyObjectListMap(List<T> allLists, String... fields){
+        if (allLists == null || allLists.isEmpty()){
+            return null;
+        }
+        Map<String, List<T>> allListMap = new LinkedHashMap<>(allLists.size());
+        // 转换为map
+        try {
+            for (T model : allLists){
+                String key = null;
+                if(V.isEmpty(fields)){
+                    //未指定字段，以id为key
+                    key = getStringProperty(model, Cons.FieldName.id.name());
+                }
+                // 指定了一个字段，以该字段为key，类型同该字段
+                else if(fields.length == 1){
+                    key = getStringProperty(model, fields[0]);
+                }
+                else{ // 指定了多个字段，以字段S.join的结果为key，类型为String
+                    List list = new ArrayList();
+                    for(String fld : fields){
+                        list.add(getProperty(model, fld));
+                    }
+                    key = S.join(list);
+                }
+                if(key != null){
+                    List<T> list = allListMap.get(key);
+                    if (list == null){
+                        list = new ArrayList<T>();
+                        allListMap.put(key, list);
+                    }
+                    list.add(model);
+                }
+                else{
+                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
+                }
+            }
+        } catch (Exception e){
+            log.warn("转换key-model-list异常", e);
+        }
+
+        return allListMap;
+    }
+
+    /***
      * 构建上下级关联的树形结构的model
      * @param allModels
      * @param <T>
