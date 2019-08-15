@@ -380,7 +380,9 @@ public class BeanUtils {
             }
             //递归调用
             buildTree(children, allModels);
-            setProperty(parent, Cons.FieldName.children.name(), children);
+            if(V.notEmpty(children)){
+                setProperty(parent, Cons.FieldName.children.name(), children);
+            }
         }
 
         return parentModels;
