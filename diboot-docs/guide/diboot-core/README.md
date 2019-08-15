@@ -102,6 +102,8 @@ private List<Long> userIdList;
 
 ## 接口的艺术（Controller）
 
+## 查询条件（DTO）
+
 ## 单表关联
 
 ## 多表关联
@@ -109,6 +111,10 @@ private List<Long> userIdList;
 ## 数据字典关联
 
 ## 异常处理
+
+## 常用工具类
+
+
 
 
 
