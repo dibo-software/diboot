@@ -183,7 +183,7 @@ public class RoleController extends BaseCrudRestController {
             throws Exception{
 
         //获取角色状态KV
-        List<KeyValue> roleStatusKvList = dictionaryService.getKeyValueList(Role.METATYPE_STATUS);
+        List<KeyValue> roleStatusKvList = dictionaryService.getKeyValueList(Role.DICT_STATUS);
         modelMap.put("roleStatusKvList", roleStatusKvList);
 
         return new JsonResult(modelMap);

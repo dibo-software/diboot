@@ -348,6 +348,44 @@ public class BeanUtils {
         return topLevelModels;
     }
 
+    /*
+     * 构建上下级关联的树形结构，去除顶层父级实体的parentId必须是为null或0的限制
+     * 注:通常情况下parentModels参数传null值就可以
+     * */
+    public static <T extends BaseEntity> List<T> buildTree(List<T> parentModels, List<T> allModels){
+        if(V.isEmpty(allModels)){
+            return null;
+        }
+        //获取顶层父级实体，根据一个实体的parentId是否是allModels中的某个实体的主键来判断该实体是否为顶层父级实体
+        if(parentModels == null){
+            parentModels = new ArrayList<>();
+            Set<Long> idSet = new HashSet<>();
+            for(T model : allModels){
+                idSet.add(model.getId());
+            }
+            for(T model : allModels){
+                if(!idSet.contains((Long)getProperty(model, Cons.FieldName.parentId.name()))){
+                    parentModels.add(model);
+                }
+            }
+        }
+
+        for(T parent : parentModels){
+            List<T> children = new ArrayList<>();
+            for(T model : allModels){
+                if(V.fuzzyEqual(parent.getId(), getProperty(model, Cons.FieldName.parentId.name()))
+                        && !V.fuzzyEqual(model.getId(), getProperty(model, Cons.FieldName.parentId.name()))){ //解除自循环，如：实体的id==parentId的情况
+                    children.add(model);
+                }
+            }
+            //递归调用
+            buildTree(children, allModels);
+            setProperty(parent, Cons.FieldName.children.name(), children);
+        }
+
+        return parentModels;
+    }
+
     /***
      * 构建下一层级树形结构
      * @param parentModels

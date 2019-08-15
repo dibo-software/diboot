@@ -10,6 +10,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.example.dto.DepartmentDto;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.Tree;
@@ -51,14 +52,14 @@ public class DepartmentController extends BaseCrudRestController {
      */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(Long orgId, Department department, Pagination pagination, HttpServletRequest request) throws Exception{
-        if(V.isEmpty(orgId)){
+    public JsonResult getVOList(DepartmentDto dto, Pagination pagination, HttpServletRequest request) throws Exception{
+        if(V.isEmpty(dto.getOrgId())){
             return new JsonResult(Status.FAIL_OPERATION, "请先选择所属公司").bindPagination(pagination);
         }
-        QueryWrapper<Department> queryWrapper = super.buildQueryWrapper(department);
+        QueryWrapper<Department> queryWrapper = super.buildQueryWrapper(dto);
         queryWrapper.lambda().eq(Department::getParentId, 0);
         // 查询当前页的Entity主表数据
-        List<DepartmentVO> voList = departmentService.getDepartmentList(queryWrapper, pagination, department.getOrgId());
+        List<DepartmentVO> voList = departmentService.getDepartmentList(queryWrapper, pagination, dto.getOrgId());
         // 返回结果
         return new JsonResult(Status.OK, voList).bindPagination(pagination);
     }
@@ -155,6 +156,12 @@ public class DepartmentController extends BaseCrudRestController {
         return super.deleteEntity(id);
     }
 
+    /***
+     * 加载更多数据
+     * @param request
+     * @param modelMap
+     * @return
+     */
     @GetMapping("/attachMore")
     public JsonResult attachMore(HttpServletRequest request, ModelMap modelMap){
         Wrapper wrapper = null;
@@ -162,6 +169,12 @@ public class DepartmentController extends BaseCrudRestController {
         return new JsonResult(modelMap);
     }
 
+    /***
+     * 获取部门树结构
+     * @param orgId
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/getViewTreeList")
     public JsonResult getViewTreeList(@RequestParam(required = false) Long orgId) throws Exception{
         List<DepartmentVO> voList = departmentService.getEntityTreeList(orgId);
@@ -169,6 +182,13 @@ public class DepartmentController extends BaseCrudRestController {
         return new JsonResult(treeList);
     }
 
+    /***
+     * 校验部门名称唯一性
+     * @param orgId
+     * @param id
+     * @param name
+     * @return
+     */
     @GetMapping("/checkNameRepeat")
     public JsonResult checkNameRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String name){
         if(V.isEmpty(name)){
@@ -187,6 +207,13 @@ public class DepartmentController extends BaseCrudRestController {
         return new JsonResult(Status.FAIL_OPERATION, "部门名称已存在");
     }
 
+    /***
+     * 校验部门编号唯一性
+     * @param orgId
+     * @param id
+     * @param number
+     * @return
+     */
     @GetMapping("/checkNumberRepeat")
     public JsonResult checkNumberRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String number){
         if(V.isEmpty(number)){

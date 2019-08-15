@@ -40,6 +40,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * 用户相关Controller
+ * @author wangyonglaing
+ * @version 2.0
+ * @time 2018/8/5
+ */
 @RestController
 @RequestMapping("/sysUser")
 @AuthorizationPrefix(name = "用户管理", code = "sysUser", prefix = "sysUser")
@@ -59,6 +65,14 @@ public class SysUserController extends BaseCrudRestController {
     @Autowired
     private PermissionService permissionService;
 
+    /***
+     * 获取列表页数据
+     * @param sysUserDto
+     * @param pagination
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     public JsonResult getVOList(SysUserDto sysUserDto, Pagination pagination, HttpServletRequest request) throws Exception{

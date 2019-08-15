@@ -19,7 +19,12 @@ import java.util.List;
  */
 public interface PermissionService extends BaseService<Permission> {
 
-    //获取权限资源列表
+    /***
+     * 获取权限资源列表
+     * @param queryWrapper
+     * @param pagination
+     * @return
+     */
     List<Permission> getPermissionList(QueryWrapper queryWrapper, Pagination pagination);
 
     /**

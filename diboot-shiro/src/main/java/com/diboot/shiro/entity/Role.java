@@ -18,7 +18,7 @@ public class Role extends BaseEntity {
     private static final long serialVersionUID = 5433209472424293571L;
 
     // status字段的关联元数据
-    public static final String METATYPE_STATUS = "ROLE_STATUS";
+    public static final String DICT_STATUS = "ROLE_STATUS";
 
     @TableField
     private String name;
