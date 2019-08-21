@@ -27,5 +27,7 @@ execute sp_addextendedproperty 'MS_Description', '是否系统预置', 'user', '
 execute sp_addextendedproperty 'MS_Description', '是否可编辑', 'user', '${SCHEMA}', 'table', 'dictionary', 'column', 'editable';
 execute sp_addextendedproperty 'MS_Description', '删除标记', 'user', '${SCHEMA}', 'table', 'dictionary', 'column', 'deleted';
 execute sp_addextendedproperty 'MS_Description', '创建时间', 'user', '${SCHEMA}', 'table', 'dictionary', 'column', 'create_time';
+
+execute sp_addextendedproperty 'MS_Description','数据字典','user','${SCHEMA}','table','dictionary',null,null;
 -- 创建索引
 create nonclustered index idx_directory on dictionary(type, item_value);
