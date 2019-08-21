@@ -138,8 +138,8 @@ protected BaseService getService() {
 //方法定义
 protected JsonResult getEntityList(Wrapper queryWrapper) {...}
 //方法调用示例
-JsonResult res = super.getEntityList(queryWrapper);
-System.out.println(res.getCode()==0);
+JsonResult jsonResult = super.getEntityList(queryWrapper);
+System.out.println(jsonResult.getCode()==0);
 //执行结果
 ===> true
 ```
@@ -151,8 +151,8 @@ System.out.println(res.getCode()==0);
 //方法定义
 protected JsonResult getEntityListWithPaging(Wrapper queryWrapper, Pagination pagination) {...}
 //方法调用示例
-JsonResult res = super.getEntityList(queryWrapper,pagination);
-System.out.println(res.getCode()==0);
+JsonResult jsonResult = super.getEntityListWithPaging(queryWrapper,pagination);
+System.out.println(jsonResult.getCode()==0);
 //执行结果
 ===> true
 ```
@@ -164,8 +164,8 @@ System.out.println(res.getCode()==0);
 //方法定义
 protected <T> JsonResult getVOListWithPaging(Wrapper queryWrapper, Pagination pagination, Class<T> clazz) {...}
 //方法调用示例
-JsonResult res = super.getVOListWithPaging(queryWrapper,pagination,Organization.class);
-System.out.println(res.getCode()==0);
+JsonResult jsonResult = super.getVOListWithPaging(queryWrapper,pagination,Organization.class);
+System.out.println(jsonResult.getCode()==0);
 //执行结果
 ===> true
 ```
@@ -177,8 +177,8 @@ System.out.println(res.getCode()==0);
 //方法定义
 protected JsonResult createEntity(BaseEntity entity, BindingResult result) {...}
 //方法调用示例
-JsonResult res = super.createEntity(entity,result);
-System.out.println(res.getCode()==0);
+JsonResult jsonResult = super.createEntity(entity,result);
+System.out.println(jsonResult.getCode()==0);
 //执行结果
 ===> true
 ```
@@ -189,8 +189,8 @@ System.out.println(res.getCode()==0);
 //方法定义
 protected JsonResult updateEntity(BaseEntity entity, BindingResult result) {...}
 //方法调用示例
-JsonResult res = super.updateEntity(entity,result);
-System.out.println(res.getCode()==0);
+JsonResult jsonResult = super.updateEntity(entity,result);
+System.out.println(jsonResult.getCode()==0);
 //执行结果
 ===> true
 ```
@@ -201,8 +201,8 @@ System.out.println(res.getCode()==0);
  //方法定义
 protected JsonResult deleteEntity(Serializable id) {...}
 //方法调用示例
-JsonResult res = super.deleteEntity(id);
-System.out.println(res.getCode()==0);
+JsonResult jsonResult = super.deleteEntity(id);
+System.out.println(jsonResult.getCode()==0);
 //执行结果
 ===> true
 ```
@@ -213,8 +213,8 @@ System.out.println(res.getCode()==0);
 //方法定义
 protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass) {...}
 //方法调用示例
-List list = super.convertToVoAndBindRelations(entityList, vo.getClass);
-System.out.println(list.size()>0);
+List<OrganizationVO> orgVOList = super.convertToVoAndBindRelations(entityList, OrganizationVO.class);
+System.out.println(orgVOList.size()>0);
 //执行结果
 ===> true
 ```
@@ -226,7 +226,7 @@ System.out.println(list.size()>0);
 //方法定义
 protected String beforeCreate(BaseEntity entity){...}
 //方法调用示例
-String res = this.beforeCreate(entity);
+String str = this.beforeCreate(entity);
 ```
 该方法用来处理新建数据之前的逻辑，如数据校验等，需要子类继承BaseCrudRestController时重写并实现具体处理逻辑。
 
@@ -235,7 +235,7 @@ String res = this.beforeCreate(entity);
  //方法定义
  protected String afterCreated(BaseEntity entity){...}
  //方法调用示例
- String res = this.afterCreated(entity);
+ String str = this.afterCreated(entity);
 ```
 该方法用来处理新建数据之后的逻辑，需要子类继承BaseCrudRestController时重写并实现具体处理逻辑。
 
@@ -244,7 +244,7 @@ String res = this.beforeCreate(entity);
 //方法定义
 protected String beforeUpdate(BaseEntity entity){...}
 //方法调用示例
-String res = this.beforeUpdate(entity);
+String str = this.beforeUpdate(entity);
 ```
 该方法用来处理更新数据之前的逻辑，需要子类继承BaseCrudRestController时重写并实现具体处理逻辑。
 
@@ -253,7 +253,7 @@ String res = this.beforeUpdate(entity);
 //方法定义
 protected String afterUpdated(BaseEntity entity){...}
 //方法调用示例
-String res = this.afterUpdated(entity);
+String str = this.afterUpdated(entity);
 ```
 该方法用来处理更新数据之后的逻辑，需要子类继承BaseCrudRestController时重写并实现具体处理逻辑。
 
@@ -262,7 +262,7 @@ String res = this.afterUpdated(entity);
 //方法定义
 protected String beforeDelete(BaseEntity entity){...}
 //方法调用示例
-String res = this.beforeDelete(entity);
+String str = this.beforeDelete(entity);
 ```
 该方法主要用来处理删除数据之前的逻辑，如检验是否具有删除权限等，需要子类继承BaseCrudRestController时重写并实现具体处理逻辑。
 
@@ -334,7 +334,7 @@ type表示关联的数据字典类型，field表示关联字段。
 //方法定义
 public static Object copyProperties(Object source, Object target){...}
 //方法调用示例
-Object res = BeanUtils.copyProperties(source, target);
+Object obj = BeanUtils.copyProperties(source, target);
 ```
 该方法用来复制一个对象的属性到另一个对象，入参为被复制对象（source）、作为返回值的目标对象（target）。
 
@@ -343,7 +343,10 @@ Object res = BeanUtils.copyProperties(source, target);
 //方法定义
 public static <T> T convert(Object source, Class<T> clazz){...}
 //方法调用示例
-Organization res = BeanUtils.convert(source, Organization.class);
+Organization org = BeanUtils.convert(source, Organization.class);
+System.out.println(org.getName());
+//执行结果
+===> xxx有限公司
 ```
 该方法用来将一个对象转换为另外的对象实例，入参为被转化对象（source）、目标对象的类类型（clazz）。
 
@@ -352,7 +355,10 @@ Organization res = BeanUtils.convert(source, Organization.class);
 //方法定义
 public static <T> List<T> convertList(List sourceList, Class<T> clazz){...}
 //方法调用示例
-List<Organization> res = BeanUtils.convertList(sourceList, Organization.class);
+List<Organization> orgList = BeanUtils.convertList(sourceList, Organization.class);
+System.out.println(orgList.get(0).getName());
+//执行结果
+===> xxx有限公司
 ```
 该方法用来将对象集合转换为另外的对象集合实例，入参为被转化对象集合（sourceList）、目标对象的类类型（clazz）。
 
@@ -370,7 +376,7 @@ BeanUtils.bindProperties(model, propMap);
 //方法定义
 public static Object getProperty(Object obj, String field){...}
 //方法调用示例
-Object res = BeanUtils.getProperty(obj, field);
+Object obj = BeanUtils.getProperty(obj, field);
 ```
 该方法用来获取对象的属性值，入参为目标对象（obj）、对象字段名（field）。
 
@@ -379,7 +385,7 @@ Object res = BeanUtils.getProperty(obj, field);
 //方法定义
 public static String getStringProperty(Object obj, String field){...}
 //方法调用示例
-String res = BeanUtils.getStringProperty(obj, field);
+String str = BeanUtils.getStringProperty(obj, field);
 ```
 该方法用来获取对象的属性值并转换为字符串类型，入参为目标对象（obj）、字段名（field）。
 
@@ -397,7 +403,7 @@ BeanUtils.setProperty(obj, field, value);
 //方法定义
 public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, String... fields){...}
 //方法调用示例
-Map res = BeanUtils.convertToStringKeyObjectMap(allLists, fields);
+Map map = BeanUtils.convertToStringKeyObjectMap(allLists, fields);
 ```
 该方法用来将对象集合转化成键值对为String-Object的Map形式，入参为目标对象集合（allLists）、字段名（fields）。
 
@@ -406,7 +412,7 @@ Map res = BeanUtils.convertToStringKeyObjectMap(allLists, fields);
 //方法定义
 public static <T> Map<String, List<T>> convertToStringKeyObjectListMap(List<T> allLists, String... fields){...}
 //方法调用示例
-Map res = BeanUtils.convertToStringKeyObjectListMap(allLists, fields);
+Map map = BeanUtils.convertToStringKeyObjectListMap(allLists, fields);
 ```
 该方法用来将对象集合转化成键值对为String-List的Map形式，入参为目标对象集合（allLists）、字段名（fields）。
 
@@ -416,13 +422,13 @@ Map res = BeanUtils.convertToStringKeyObjectListMap(allLists, fields);
 //方法定义
 public static <T extends BaseEntity> List<T> buildTree(List<T> allModels){...}
 //方法调用示例
-List res = BeanUtils.buildTree(allModels);
+List list = BeanUtils.buildTree(allModels);
 
 //该方法用来构建上下级关联的实体关系树形结构，去除顶层父级实体的parentId必须是为null或0的限制，入参为对象集合（allModels）
 //方法定义
 public static <T extends BaseEntity> List<T> buildTree(List<T> parentModels, List<T> allModels){...}
 //方法调用示例
-List res = BeanUtils.buildTree(parentModels, allModels);
+List list = BeanUtils.buildTree(parentModels, allModels);
 ```
 
 * extractDiff 方法
@@ -431,13 +437,13 @@ List res = BeanUtils.buildTree(parentModels, allModels);
 //方法定义
 public static String extractDiff(BaseEntity oldModel, BaseEntity newModel){...}
 //方法调用示例
-String res = BeanUtils.extractDiff(oldModel, newModel);
+String str = BeanUtils.extractDiff(oldModel, newModel);
 
 //该方法用来提取两个model的差异值，只对比指定字段，入参为两个实体对象oldModel、newModel,以及指定字段fields
 //方法定义
 public static String extractDiff(BaseEntity oldModel, BaseEntity newModel, Set<String> fields){...}
 //方法调用示例
-String res = BeanUtils.extractDiff(oldModel, newModel, fields);
+String str = BeanUtils.extractDiff(oldModel, newModel, fields);
 ```
 
 * collectToList 方法
@@ -446,13 +452,13 @@ String res = BeanUtils.extractDiff(oldModel, newModel, fields);
 //方法定义
 public static <E,T> List collectToList(List<E> objectList, IGetter<T> getterFn){...}
 //方法调用示例
-List res = BeanUtils.collectToList(objectList, getterFn);
+List list = BeanUtils.collectToList(objectList, getterFn);
 
 //该方法用来从集合列表中提取指定属性值到新的集合，入参为对象集合（objectList）、字段名（getterPropName）
 //方法定义
 public static <E> List collectToList(List<E> objectList, String getterPropName){...}
 //方法调用示例
-List res = BeanUtils.collectToList(objectList, getterPropName);
+List list = BeanUtils.collectToList(objectList, getterPropName);
 ```
 
 * collectIdToList 方法
@@ -460,7 +466,7 @@ List res = BeanUtils.collectToList(objectList, getterPropName);
 //方法定义
 public static <E> List collectIdToList(List<E> objectList){...}
 //方法调用示例
-List res = BeanUtils.collectIdToList(objectList);
+List list = BeanUtils.collectIdToList(objectList);
 ```
 该方法用来从集合列表中提取Id主键值到新的集合，入参为对象集合（objectList）。
 
@@ -481,21 +487,17 @@ BeanUtils.bindPropValueOfList(setterFieldName, fromList, getterFieldName, valueM
 
 * convertToFieldName 方法
 ```java
-/***
-* 该方法用来转换方法引用为属性名，入参为IGetter对象。
-*/
+//该方法用来转换方法引用为属性名，入参为IGetter对象。
 //方法定义
 public static <T> String convertToFieldName(IGetter<T> fn){...}
 //方法调用示例
-String res = BeanUtils.convertToFieldName(fn);
+String str = BeanUtils.convertToFieldName(fn);
 
-/***
-* 该方法用来转换方法引用为属性名，入参为ISetter对象。
-*/
+//该方法用来转换方法引用为属性名，入参为ISetter对象。
 //方法定义
 public static <T,R> String convertToFieldName(ISetter<T,R> fn){...}
 //方法调用示例
-String res = BeanUtils.convertToFieldName(fn);
+String str = BeanUtils.convertToFieldName(fn);
 ```
 
 * extractAllFields 方法
@@ -503,7 +505,7 @@ String res = BeanUtils.convertToFieldName(fn);
 //方法定义
 public static List<Field> extractAllFields(Class clazz){...}
 //方法调用示例
-List<Field> res = BeanUtils.extractAllFields(Organization.class);
+List<Field> list = BeanUtils.extractAllFields(Organization.class);
 ```
 该方法用来获取类的所有属性（包含父类），入参为类类型（clazz）。
 
@@ -523,27 +525,23 @@ ContextHelper.setApplicationContext(applicationContext);
 //方法定义
 public static ApplicationContext getApplicationContext(){...}
 //方法调用示例
-ApplicationContext res = ContextHelper.getApplicationContext();
+ApplicationContext context = ContextHelper.getApplicationContext();
 ```
 该方法用来获取ApplicationContext上下文。
 
 * getBean 方法
 ```java
-/***
-* 该方法用来根据beanId获取Bean实例，入参为beanId
-*/
+//该方法用来根据beanId获取Bean实例，入参为beanId
 //方法定义
 public static Object getBean(String beanId){...}
 //方法调用示例
-Object res = ContextHelper.getBean(beanId);
+Object obj = ContextHelper.getBean(beanId);
 
-/***
-* 该方法用来获取指定类型的单个Bean实例，入参为类类型（type）
-*/
+//该方法用来获取指定类型的单个Bean实例，入参为类类型（type）
 //方法定义
 public static Object getBean(Class type){...}
 //方法调用示例
-Object res = ContextHelper.getBean(Organization.class);
+Object obj = ContextHelper.getBean(Organization.class);
 ```
 
 * getBeans 方法
@@ -551,7 +549,10 @@ Object res = ContextHelper.getBean(Organization.class);
 //方法定义
 public static <T> List<T> getBeans(Class<T> type){...}
 //方法调用示例
-List res = ContextHelper.getBeans(Organization.class);
+List<Organization> orgList = ContextHelper.getBeans(Organization.class);
+System.out.println(orgList.get(0).getName());
+//执行结果
+===> xxx有限公司
 ```
 该方法用来获取指定类型的全部实例，入参为类类型（type）。
 
@@ -560,7 +561,7 @@ List res = ContextHelper.getBeans(Organization.class);
 //方法定义
 public static List<Object> getBeansByAnnotation(Class<? extends Annotation> annotationType){...}
 //方法调用示例
-List<Object> res = ContextHelper.getBeansByAnnotation(Organization.class);
+List<Object> objList = ContextHelper.getBeansByAnnotation(Organization.class);
 ```
 该方法用来根据注解获取beans，入参为类类型（annotationType）。
 
@@ -569,7 +570,8 @@ List<Object> res = ContextHelper.getBeansByAnnotation(Organization.class);
 //方法定义
 public static IService getServiceByEntity(Class entity){...}
 //方法调用示例
-IService res = ContextHelper.getServiceByEntity(Organization.class);
+IService service = ContextHelper.getServiceByEntity(Organization.class);
+List list = service.list();
 ```
 该方法用来根据Entity获取对应的Service，入参为类类型（entity）。
 
@@ -597,8 +599,8 @@ protected static final String[] WEEK = new String[]{"星期日", "星期一", "�
 //方法定义
 public static String now(String format){...}
 //方法调用示例
-String res = D.now("yyyy-MM-dd");
-System.out.println(res);
+String nowDateStr = D.now("yyyy-MM-dd");
+System.out.println(nowDateStr);
 //执行结果
 ===> 2019-08-20
 ```
@@ -609,8 +611,8 @@ System.out.println(res);
 //方法定义
 public static String toTimestamp(Date date){...}
 //方法调用示例
-String res = D.toTimestamp(date);
-System.out.println(res);
+String dateStr = D.toTimestamp(date);
+System.out.println(dateStr);
 //执行结果
 ===> 190820094202
 ```
@@ -621,8 +623,8 @@ System.out.println(res);
 //方法定义
 public static String getMonth(){...}
 //方法调用示例
-String res = D.getMonth();
-System.out.println(res);
+String monthStr = D.getMonth();
+System.out.println(monthStr);
 //执行结果
 ===> 1908
 ```
@@ -633,8 +635,8 @@ System.out.println(res);
 //方法定义
 public static String today(){...}
 //方法调用示例
-String res = D.today();
-System.out.println(res);
+String todayStr = D.today();
+System.out.println(todayStr);
 //执行结果
 ===> 20190820
 ```
@@ -645,8 +647,8 @@ System.out.println(res);
 //方法定义
 public static Date convert2FormatDate(String datetime, String fmt){...}
 //方法调用示例
-Date res = D.convert2FormatDate("2019-08-20", "yyyy-MM-dd");
-System.out.println(res);
+Date date = D.convert2FormatDate("2019-08-20", "yyyy-MM-dd");
+System.out.println(date);
 //执行结果
 ===> Tue Aug 20 00:00:00 CST 2019
 ```
@@ -657,8 +659,8 @@ System.out.println(res);
 //方法定义
 public static String convert2FormatString(Date date, String fmt){...}
 //方法调用示例
-String res = D.convert2FormatString(new Date(), "yyyy-MM-dd");
-System.out.println(res);
+String dateStr = D.convert2FormatString(new Date(), "yyyy-MM-dd");
+System.out.println(dateStr);
 //执行结果
 ===> 2019-08-20
 ```
@@ -669,8 +671,8 @@ System.out.println(res);
 //方法定义
 public static String getDate(Date date, int... daysOffset){...}
 //方法调用示例
-String res = D.getDate(new Date(), 0);
-System.out.println(res);
+String dateStr = D.getDate(new Date(), 0);
+System.out.println(dateStr);
 //执行结果
 ===> 2019-08-20
 ```
@@ -681,8 +683,8 @@ System.out.println(res);
 //方法定义
 public static String getDateTime(Date date, int... daysOffset){...}
 //方法调用示例
-String res = D.getDateTime(new Date(), 0);
-System.out.println(res);
+String dateTimeStr = D.getDateTime(new Date(), 0);
+System.out.println(dateTimeStr);
 //执行结果
 ===> 2019-08-20 09:53
 ```
@@ -693,8 +695,8 @@ System.out.println(res);
 //方法定义
 public static boolean isWorkingTime(){...}
 //方法调用示例
-boolean res = D.isWorkingTime();
-System.out.println(res);
+boolean isWorkingTime = D.isWorkingTime();
+System.out.println(isWorkingTime);
 //执行结果
 ===> true
 ```
@@ -705,8 +707,8 @@ System.out.println(res);
 //方法定义
 public static String getAmPm(){...}
 //方法调用示例
-String res = D.getAmPm();
-System.out.println(res);
+String timeStr = D.getAmPm();
+System.out.println(timeStr);
 //执行结果
 ===> 早上
 ```
@@ -717,8 +719,8 @@ System.out.println(res);
 //方法定义
 public static String getYearMonth(){...}
 //方法调用示例
-String res = D.getYearMonth();
-System.out.println(res);
+String yearMonthStr = D.getYearMonth();
+System.out.println(yearMonthStr);
 //执行结果
 ===> 1908
 ```
@@ -729,8 +731,8 @@ System.out.println(res);
 //方法定义
 public static String getYearMonthDay(){...}
 //方法调用示例
-String res = D.getYearMonthDay();
-System.out.println(res);
+String yearMonthDayStr = D.getYearMonthDay();
+System.out.println(yearMonthDayStr);
 //执行结果
 ===> 190820
 ```
@@ -741,8 +743,8 @@ System.out.println(res);
 //方法定义
 public static int getDay(){...}
 //方法调用示例
-int res = D.getDay();
-System.out.println(res);
+int day = D.getDay();
+System.out.println(day);
 //执行结果
 ===> 20
 ```
@@ -753,8 +755,8 @@ System.out.println(res);
 //方法定义
 public static String getWeek(Date date){...}
 //方法调用示例
-String res = D.getWeek(new Date());
-System.out.println(res);
+String week = D.getWeek(new Date());
+System.out.println(week);
 //执行结果
 ===> 星期三
 ```
@@ -765,8 +767,8 @@ System.out.println(res);
 //方法定义
 public static Date timeMillis2Date(Long timeMillis){...}
 //方法调用示例
-Date res = D.timeMillis2Date(System.currentTimeMillis());
-System.out.println(res);
+Date date = D.timeMillis2Date(System.currentTimeMillis());
+System.out.println(date);
 //执行结果
 ===> Tue Aug 20 10:06:12 CST 2019
 ```
@@ -777,8 +779,8 @@ System.out.println(res);
 //方法定义
 public static Date datetimeString2Date(String value){...}
 //方法调用示例
-Date res = D.datetimeString2Date("2019-08-20 10:11:20");
-System.out.println(res);
+Date date = D.datetimeString2Date("2019-08-20 10:11:20");
+System.out.println(date);
 //执行结果
 ===> Tue Aug 20 10:11:20 CST 2019
 ```
@@ -789,8 +791,8 @@ System.out.println(res);
 //方法定义
 public static Date convert2Date(String date){...}
 //方法调用示例
-Date res = D.convert2Date("2019-08-20");
-System.out.println(res);
+Date date = D.convert2Date("2019-08-20");
+System.out.println(date);
 //执行结果
 ===> Tue Aug 20 00:00:00 CST 2019
 ```
@@ -801,8 +803,8 @@ System.out.println(res);
 //方法定义
 public static Date convert2DateTime(String dateTime, String... dateFormat){...}
 //方法调用示例
-Date res = D.convert2DateTime("2019-08-20 10:14:20", "yyyy-MM-dd HH:mm:ss");
-System.out.println(res);
+Date date = D.convert2DateTime("2019-08-20 10:14:20", "yyyy-MM-dd HH:mm:ss");
+System.out.println(date);
 //执行结果
 ===> Tue Aug 20 10:14:20 CST 2019
 ```
@@ -813,8 +815,8 @@ System.out.println(res);
 //方法定义
 public static Date fuzzyConvert(String dateString){...}
 //方法调用示例
-Date res = D.fuzzyConvert("2019-08-20 10:14:20");
-System.out.println(res);
+Date date = D.fuzzyConvert("2019-08-20 10:14:20");
+System.out.println(date);
 //执行结果
 ===> Tue Aug 20 10:14:20 CST 2019
 ```
@@ -827,8 +829,8 @@ System.out.println(res);
 //方法定义
 public static String encrypt(String input, String... key){...}
 //方法调用示例
-String res = Encryptor.encrypt("123456", "admin");
-System.out.println(res);
+String encryptStr = Encryptor.encrypt("123456", "admin");
+System.out.println(encryptStr);
 //执行结果
 ===> ZVmTuAFJIjD5PLwkURuvRw==
 ```
@@ -839,8 +841,8 @@ System.out.println(res);
 //方法定义
 public static String decrypt(String input, String... key){...}
 //方法调用示例
-String res = Encryptor.decrypt("ZVmTuAFJIjD5PLwkURuvRw==", "admin");
-System.out.println(res);
+String decryptStr = Encryptor.decrypt("ZVmTuAFJIjD5PLwkURuvRw==", "admin");
+System.out.println(decryptStr);
 //执行结果
 ===> 123456
 ```
@@ -853,8 +855,8 @@ System.out.println(res);
 //方法定义
 public static String stringify(Object object){...}
 //方法调用示例
-String res = JSON.stringify(new Dictionary());
-System.out.println(res);
+String str = JSON.stringify(new Dictionary());
+System.out.println(str);
 //执行结果
 ===> {"editable":false,"parentId":0,"sortId":99,"system":true}
 ```
@@ -865,8 +867,8 @@ System.out.println(res);
 //方法定义
 public static Map toMap(String jsonStr){...}
 //方法调用示例
-Map res = JSON.toMap("{"editable":false,"parentId":0,"sortId":99,"system":true}");
-System.out.println(res);
+Map map = JSON.toMap("{"editable":false,"parentId":0,"sortId":99,"system":true}");
+System.out.println(map);
 //执行结果
 ===> {"system":true,"editable":false,"sortId":99,"parentId":0}
 ```
@@ -877,8 +879,8 @@ System.out.println(res);
 //方法定义
 public static LinkedHashMap toLinkedHashMap(String jsonStr){...}
 //方法调用示例
-LinkedHashMap res = JSON.toLinkedHashMap("{"editable":false,"parentId":0,"sortId":99,"system":true}");
-System.out.println(res);
+LinkedHashMap linkedMap = JSON.toLinkedHashMap("{"editable":false,"parentId":0,"sortId":99,"system":true}");
+System.out.println(linkedMap);
 //执行结果
 ===> {editable=false, parentId=0, sortId=99, system=true}
 ```
@@ -889,7 +891,10 @@ System.out.println(res);
 //方法定义
 public static <T> T toJavaObject(String jsonStr, Class<T> clazz){...}
 //方法调用示例
-Dictionary res = JSON.toJavaObject("{"editable":false,"parentId":0,"sortId":99,"system":true}", Dictionary.class );
+Dictionary dictionary = JSON.toJavaObject("{"editable":false,"parentId":0,"sortId":99,"system":true}", Dictionary.class );
+System.out.pringtln(dictionary.getSystem());
+//执行结果
+===> true
 ```
 该方法用来将JSON字符串转换为java对象，入参为JSON字符串（jsonStr）、类类型（clazz）。
 
@@ -900,8 +905,8 @@ Dictionary res = JSON.toJavaObject("{"editable":false,"parentId":0,"sortId":99,"
 //方法定义
 public static String get(String key, String... propertiesFileName){...}
 //方法调用示例
-String res = PropertiesUtils.get("database.port","system.properties");
-System.out.println(res);
+String portStr = PropertiesUtils.get("database.port","system.properties");
+System.out.println(portStr);
 //执行结果
 ===> 3306
 ```
@@ -912,8 +917,8 @@ System.out.println(res);
 //方法定义
 public static Integer getInteger(String key, String... propertiesFileName){...}
 //方法调用示例
-Integer res = PropertiesUtils.getInteger("database.port","system.properties");
-System.out.println(res);
+Integer portInt = PropertiesUtils.getInteger("database.port","system.properties");
+System.out.println(portInt);
 //执行结果
 ===> 3306
 ```
@@ -924,8 +929,8 @@ System.out.println(res);
 //方法定义
 public static boolean getBoolean(String key, String... propertiesFileName){...}
 //方法调用示例
-boolean res = PropertiesUtils.getInteger("database.open","system.properties");
-System.out.println(res);
+boolean isOpen = PropertiesUtils.getBoolean("database.open","system.properties");
+System.out.println(isOpen);
 //执行结果
 ===> true
 ```
@@ -939,8 +944,8 @@ System.out.println(res);
 //方法定义
 public static String cut(String input){...}
 //方法调用示例
-String res = S.cut("ABCDE");
-System.out.println(res);
+String cutStr = S.cut("ABCDE");
+System.out.println(cutStr);
 //执行结果
 ===> ABCDE
 
@@ -948,8 +953,8 @@ System.out.println(res);
 //方法定义
 public static String cut(String input, int cutLength){...}
 //方法调用示例
-String res = S.cut("ABCDE", 1);
-System.out.println(res);
+String cutStr = S.cut("ABCDE", 1);
+System.out.println(cutStr);
 //执行结果
 ===> A
 ```
@@ -960,8 +965,8 @@ System.out.println(res);
 //方法定义
 public static String join(List<String> stringList){...}
 //方法调用示例
-String res = S.join(new ArrayList<String>(){{add("A");add("B");add("C");}});
-System.out.println(res);
+String joinStr = S.join(new ArrayList<String>(){{add("A");add("B");add("C");}});
+System.out.println(joinStr);
 //执行结果
 ===> A,B,C
 
@@ -969,8 +974,8 @@ System.out.println(res);
 //方法定义
 public static String join(String[] stringArray){...}
 //方法调用示例
-String res = S.join(new String[]{"A","B","C"});
-System.out.println(res);
+String joinStr = S.join(new String[]{"A","B","C"});
+System.out.println(joinStr);
 //执行结果
 ===> A,B,C
 ```
@@ -980,8 +985,8 @@ System.out.println(res);
 //方法定义
 public static String[] split(String joinedStr){...}
 //方法调用示例
-String[] res = S.split("A,B,C");
-System.out.println(res[0]);
+String[] strArray = S.split("A,B,C");
+System.out.println(strArray[0]);
 //执行结果
 ===> A
 ```
@@ -992,7 +997,7 @@ System.out.println(res[0]);
 //方法定义
 public static String[] toStringArray(List<String> stringList){...}
 //方法调用示例
-String[] res = S.toStringArray(stringList);
+String[] strArray = S.toStringArray(stringList);
 ```
 该方法用来转换为String数组，入参为字符串集合（stringList）。
 
@@ -1001,8 +1006,8 @@ String[] res = S.toStringArray(stringList);
 //方法定义
 public static String toSnakeCase(String camelCaseStr){...}
 //方法调用示例
-String res = S.toSnakeCase("userName");
-System.out.println(res);
+String userName = S.toSnakeCase("userName");
+System.out.println(userName);
 //执行结果
 ===> user_name
 ```
@@ -1013,8 +1018,8 @@ System.out.println(res);
 //方法定义
 public static String toLowerCaseCamel(String snakeCaseStr){...}
 //方法调用示例
-String res = S.toLowerCaseCamel("user_name");
-System.out.println(res);
+String userName = S.toLowerCaseCamel("user_name");
+System.out.println(userName);
 //执行结果
 ===> userName
 ```
@@ -1025,7 +1030,7 @@ System.out.println(res);
 //方法定义
 public static Long toLong(String strValue){...}
 //方法调用示例
-Long res = S.toLong("1");
+Long longValue = S.toLong("1");
 ```
 该方法用来转换为Long类型，入参为字符串（strValue）。
 
@@ -1034,7 +1039,7 @@ Long res = S.toLong("1");
 //方法定义
 public static Integer toInt(String strValue){...}
 //方法调用示例
-Integer res = S.toInt("1");
+Integer intValue = S.toInt("1");
 ```
 该方法用来转换为Integer类型，入参为字符串（strValue）。
 
@@ -1043,8 +1048,8 @@ Integer res = S.toInt("1");
 //方法定义
 public static boolean toBoolean(String strValue){...}
 //方法调用示例
-boolean res = S.toBoolean("1");
-System.out.println(res);
+boolean isTrue = S.toBoolean("1");
+System.out.println(isTrue);
 //执行结果
 ===> true
 ```
@@ -1055,8 +1060,8 @@ System.out.println(res);
 //方法定义
 public static String removeDuplicateBlank(String input){...}
 //方法调用示例
-String res = S.removeDuplicateBlank("A     B");
-System.out.println(res);
+String str = S.removeDuplicateBlank("A     B");
+System.out.println(str);
 //执行结果
 ===> A B
 ```
@@ -1067,8 +1072,8 @@ System.out.println(res);
 //方法定义
 public static String newUuid(){...}
 //方法调用示例
-String res = S.newUuid();
-System.out.println(res);
+String uuid = S.newUuid();
+System.out.println(uuid);
 //执行结果
 ===> c8b735798cfe4e0ba897a460d6107b8a
 ```
@@ -1079,8 +1084,8 @@ System.out.println(res);
 //方法定义
 public static String newRandomNum(int length){...}
 //方法调用示例
-String res = S.newRandomNum(6);
-System.out.println(res);
+String randomNum = S.newRandomNum(6);
+System.out.println(randomNum);
 //执行结果
 ===> 513987
 ```
@@ -1091,8 +1096,8 @@ System.out.println(res);
 //方法定义
 public static String uncapFirst(String input){...}
 //方法调用示例
-String res = S.uncapFirst("ABC");
-System.out.println(res);
+String str = S.uncapFirst("ABC");
+System.out.println(str);
 //执行结果
 ===> aBC
 ```
@@ -1103,8 +1108,8 @@ System.out.println(res);
 //方法定义
 public static String capFirst(String input){...}
 //方法调用示例
-String res = S.uncapFirst("abc");
-System.out.println(res);
+String str = S.capFirst("abc");
+System.out.println(str);
 //执行结果
 ===> Abc
 ```
@@ -1117,7 +1122,7 @@ System.out.println(res);
 //方法定义
 public static <E> List<Map<String,E>> executeQuery(String sql, List<E> params){...}
 //方法调用示例
-List res = SqlExecutor.executeQuery(sql, params);
+List list = SqlExecutor.executeQuery(sql, params);
 ```
 该方法用来执行Select语句，入参为SQL语句（sql）、查询参数（params）。
 
@@ -1126,7 +1131,7 @@ List res = SqlExecutor.executeQuery(sql, params);
 //方法定义
 public static <E> Map<String, Object> executeQueryAndMergeOneToOneResult(String sql, List<E> params, String keyName, String valueName){...}
 //方法调用示例
-Map res = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, params, keyName, valueName);
+Map map = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, params, keyName, valueName);
 ```
 该方法用来执行一对一关联查询和合并结果并将结果Map的key转成String类型，入参为SQL语句（sql）、查询参数（params）、字段名（keyName）、字段名（valueName）。
 
@@ -1135,7 +1140,7 @@ Map res = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, params, keyName, v
 //方法定义
 public static <E> Map<String, List> executeQueryAndMergeOneToManyResult(String sql, List<E> params, String keyName, String valueName){...}
 //方法调用示例
-Map res = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, params, keyName, valueName);
+Map map = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, params, keyName, valueName);
 ```
 该方法用来执行查询和合并结果并将结果Map的key转成String类型，入参为SQL语句（sql）、查询参数（params）、字段名（keyName）、字段名（valueName）。
 
@@ -1144,7 +1149,7 @@ Map res = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, params, keyName, 
 //方法定义
 public static boolean executeUpdate(String sql, List params){...}
 //方法调用示例
-boolean res = SqlExecutor.executeUpdate(sql, params);
+boolean success = SqlExecutor.executeUpdate(sql, params);
 ```
 该方法用来执行更新操作，入参为SQL语句（sql）、更新参数（params）。
 
@@ -1156,31 +1161,31 @@ boolean res = SqlExecutor.executeUpdate(sql, params);
 //方法定义
 public static boolean isEmpty(Object obj){...}
 //方法调用示例
-boolean res = V.isEmpty(obj);
+boolean isEmpty = V.isEmpty(obj);
 
 //该方法用来判断字符串是否为空, 为空返回true，不为空返回false
 //方法定义
 public static boolean isEmpty(String value){...}
 //方法调用示例
-boolean res = V.isEmpty(value);
+boolean isEmpty = V.isEmpty(value);
 
 //该方法用来判断字符串数组是否为空, 为空返回true，不为空返回false
 //方法定义
 public static boolean isEmpty(String[] values){...}
 //方法调用示例
-boolean res = V.isEmpty(values);
+boolean isEmpty = V.isEmpty(values);
 
 //该方法用来判断集合是否为空, 为空返回true，不为空返回false
 //方法定义
 public static <T> boolean isEmpty(Collection<T> list){...}
 //方法调用示例
-boolean res = V.isEmpty(list);
+boolean isEmpty = V.isEmpty(list);
 
 //该方法用来判断Map是否为空, 为空返回true，不为空返回false
 //方法定义
 public static boolean isEmpty(Map obj){...}
 //方法调用示例
-boolean res = V.isEmpty(obj);
+boolean isEmpty = V.isEmpty(obj);
 ```
 
 * notEmpty 方法
@@ -1189,31 +1194,31 @@ boolean res = V.isEmpty(obj);
 //方法定义
 public static boolean notEmpty(Object obj){...}
 //方法调用示例
-boolean res = V.notEmpty(obj);
+boolean notEmpty = V.notEmpty(obj);
 
 //判断字符串是否不为空, 为空返回false，不为空返回true
 //方法定义
 public static boolean notEmpty(String value){...}
 //方法调用示例
-boolean res = V.notEmpty(value);
+boolean notEmpty = V.notEmpty(value);
 
 //判断数组是否不为空, 为空返回false，不为空返回true
 //方法定义
 public static boolean notEmpty(String[] values){...}
 //方法调用示例
-boolean res = V.notEmpty(values);
+boolean notEmpty = V.notEmpty(values);
 
 //判断集合是否不为空, 为空返回false，不为空返回true
 //方法定义
 public static <T> boolean notEmpty(Collection<T> list){...}
 //方法调用示例
-boolean res = V.notEmpty(list);
+boolean notEmpty = V.notEmpty(list);
 
 //判断Map是否不为空, 为空返回false，不为空返回true
 //方法定义
 public static boolean notEmpty(Map obj){...}
 //方法调用示例
-boolean res = V.notEmpty(obj);
+boolean notEmpty = V.notEmpty(obj);
 ```
 
 * notEmptyOrZero 方法
@@ -1222,13 +1227,13 @@ boolean res = V.notEmpty(obj);
 //方法定义
 public static boolean notEmptyOrZero(Long longObj){...}
 //方法调用示例
-boolean res = V.notEmptyOrZero(longObj);
+boolean notEmptyOrZero = V.notEmptyOrZero(longObj);
 
 //判断Integer类型对象是否不为空且不为0，是返回true，否返回false
 //方法定义
 public static boolean notEmptyOrZero(Integer intObj){...}
 //方法调用示例
-boolean res = V.notEmptyOrZero(intObj);
+boolean notEmptyOrZero = V.notEmptyOrZero(intObj);
 ```
 
 * isNumber 方法
@@ -1236,7 +1241,7 @@ boolean res = V.notEmptyOrZero(intObj);
 //方法定义
 public static boolean isNumber(String str){...}
 //方法调用示例
-boolean res = V.isNumber(str);
+boolean isNumber = V.isNumber(str);
 ```
 该方法用来判断是否为整型数字，是返回true，否返回false。
 
@@ -1245,7 +1250,7 @@ boolean res = V.isNumber(str);
 //方法定义
 public static boolean isNumeric(String str){...}
 //方法调用示例
-boolean res = V.isNumeric(str);
+boolean isNumeric = V.isNumeric(str);
 ```
 该方法用来判断是否为数字（允许小数点），是返回true，否返回false。
 
@@ -1254,7 +1259,7 @@ boolean res = V.isNumeric(str);
 //方法定义
 public static boolean isEmail(String str){...}
 //方法调用示例
-boolean res = V.isEmail(str);
+boolean isEmail = V.isEmail(str);
 ```
 该方法用来判断是否为正确的邮件格式，是返回true，否返回false。
 
@@ -1263,7 +1268,7 @@ boolean res = V.isEmail(str);
 //方法定义
 public static boolean isPhone(String str){...}
 //方法调用示例
-boolean res = V.isPhone(str);
+boolean isPhone = V.isPhone(str);
 ```
 该方法用来判断是否为电话号码，是返回true，否返回false。
 
@@ -1272,7 +1277,7 @@ boolean res = V.isPhone(str);
 //方法定义
 public static boolean isValidBoolean(String value){...}
 //方法调用示例
-boolean res = V.isValidBoolean(value);
+boolean isValidBoolean = V.isValidBoolean(value);
 ```
 该方法用来判断是否为合法boolean类型，是返回true，否返回false。
 
@@ -1281,7 +1286,7 @@ boolean res = V.isValidBoolean(value);
 //方法定义
 public static boolean isTrue(String value){...}
 //方法调用示例
-boolean res = V.isTrue(value);
+boolean isTrue = V.isTrue(value);
 ```
 该方法用来判定是否为true。
 
@@ -1290,7 +1295,7 @@ boolean res = V.isTrue(value);
 //方法定义
 public static String validate(String value, String validation){...}
 //方法调用示例
-String res = V.validate(value, validation);
+String validateResult = V.validate(value, validation);
 ```
 该方法用来根据指定规则校验字符串的值是否合法，入参为需要校验的字符串（value）、校验种类（validation）。
 
@@ -1299,7 +1304,7 @@ String res = V.validate(value, validation);
 //方法定义
 public static boolean notEquals(Object source, Object target){...}
 //方法调用示例
-boolean res = V.notEquals(source, target);
+boolean notEquals = V.notEquals(source, target);
 ```
 该方法用来判定两个对象是否不同类型或不同值，是返回true，否返回false。
 
@@ -1308,7 +1313,7 @@ boolean res = V.notEquals(source, target);
 //方法定义
 public static <T> boolean equals(T source, T target){...}
 //方法调用示例
-boolean res = V.equals(source, target);
+boolean equals = V.equals(source, target);
 ```
 该方法用来判定两个对象是否类型相同值相等，是返回true，否返回false。
 
@@ -1317,6 +1322,6 @@ boolean res = V.equals(source, target);
 //方法定义
 public static boolean fuzzyEqual(Object source, Object target){...}
 //方法调用示例
-boolean res = V.fuzzyEqual(source, target);
+boolean fuzzyEqual = V.fuzzyEqual(source, target);
 ```
 该方法用来模糊对比是否相等（类型不同的转成String对比），是返回true，否返回false。
