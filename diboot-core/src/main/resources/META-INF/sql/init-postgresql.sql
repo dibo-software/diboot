@@ -27,5 +27,7 @@ comment on column dictionary.system is '是否系统预置';
 comment on column dictionary.editable is '是否可编辑';
 comment on column dictionary.deleted is '删除标记';
 comment on column dictionary.create_time is '创建时间';
+
+comment on table dictionary is '数据字典';
 -- 创建索引
 create index idx_directory on dictionary(type, item_value);
