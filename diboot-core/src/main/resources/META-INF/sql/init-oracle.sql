@@ -1,6 +1,6 @@
 -- 建表
 create table "dictionary" (
-   "id"                 serial PRIMARY KEY,
+   "id"                 INTEGER  generated as identity ( start with 1 nocycle noorder)  not null,
    "parent_id"          INTEGER               not null,
    "type"               VARCHAR2(50)          not null,
    "item_name"          VARCHAR2(100)         not null,
@@ -11,7 +11,8 @@ create table "dictionary" (
    "system"             SMALLINT             default 0  not null,
    "editable"           SMALLINT             default 1  not null,
    "deleted"            SMALLINT             default 0  not null,
-   "create_time"        TIMESTAMP            default 'CURRENT_TIMESTAMP'  not null
+   "create_time"        TIMESTAMP            default CURRENT_TIMESTAMP  not null,
+   constraint "PK_dictionary" primary key ("id")
 );
 -- 添加备注
 comment on column "dictionary"."id" is 'ID';
@@ -31,3 +32,5 @@ comment on table "dictionary" is '数据字典';
 
 -- 创建索引
 create index "idx_directory" on "dictionary" ("type", "item_value");
+
+
