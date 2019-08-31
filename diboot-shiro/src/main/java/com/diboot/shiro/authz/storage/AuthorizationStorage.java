@@ -32,9 +32,6 @@ import java.util.stream.Collectors;
  * {@link AuthorizationStorage}中封装了将{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper}权限自动入库的操作,
  * <strong>注：权限入库每个Controller需要加上类注解{@link AuthorizationPrefix}用于识别</strong>
  * <br/>
- * 当你使用注解{@link com.diboot.shiro.authz.annotation.AuthorizationWrapper}, 且需要自动让权限入库，请实现{@link ApplicationListener}并注入该类，
- * <br/>
- * 调用类中方法{@link AuthorizationStorage#autoStorage(ApplicationContext)}
  * @author : wee
  * @version : v2.0
  * @Date 2019-06-27  10:01
