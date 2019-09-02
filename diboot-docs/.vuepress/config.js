@@ -37,7 +37,9 @@ module.exports = {
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-
+                        ['/guide/diboot-shiro/安装', '安装'],
+                        ['/guide/diboot-shiro/权限设置', '权限设置'],
+                        ['/guide/diboot-shiro/权限缓存', '权限缓存'],
                     ]
                 }
             ],
@@ -61,7 +63,7 @@ module.exports = {
             text: '学习',
             items: [
                 {text: 'diboot-core指南', link: '/guide/diboot-core/安装'},
-                {text: 'diboot-shiro指南', link: '/guide/diboot-shiro/'},
+                {text: 'diboot-shiro指南', link: '/guide/diboot-shiro/安装'},
                 {text: 'diboot-devtools指南', link: '/guide/diboot-devtools/安装'}
             ]
         }, {
@@ -70,7 +72,7 @@ module.exports = {
                 {text: 'diboot-core', link: '/api/diboot-core/'}
             ]
         },{
-            text: '1.x', link: 'https://diboot.com'
+            text: '1.x', link: 'https://www.diboot.com'
         }, {
             text: 'GitHub', link: 'https://github.com/dibo-software/diboot-v2'
         }]
