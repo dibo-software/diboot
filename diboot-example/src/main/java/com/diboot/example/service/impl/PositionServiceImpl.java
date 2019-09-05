@@ -253,8 +253,8 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
         }
         //获取职位
         List<Position> positionList = super.getEntityListByIds(positionIdList);
-        List<PositionVO> volist = RelationsBinder.convertAndBind(positionList, PositionVO.class);
-        List<PositionVO> voTreeList = BeanUtils.buildTree(null, volist);
+        List<PositionVO> voList = RelationsBinder.convertAndBind(positionList, PositionVO.class);
+        List<PositionVO> voTreeList = BeanUtils.buildTree(null, voList);
         return voTreeList;
     }
 

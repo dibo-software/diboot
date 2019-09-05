@@ -169,8 +169,8 @@ public class SysUserController extends BaseCrudRestController {
         modelMap.put("roleKvList", roleKvList);
 
         //获取用户状态KV
-        List<KeyValue> userStatusKvList = dictionaryService.getKeyValueList(SysUser.USER_STATUS);
-        modelMap.put("userStatusKvList", userStatusKvList);
+        List<KeyValue> statusKvList = dictionaryService.getKeyValueList(SysUser.USER_STATUS);
+        modelMap.put("statusKvList", statusKvList);
 
         //获取用户性别KV
         List<KeyValue> genderKvList = dictionaryService.getKeyValueList(SysUser.GENDER);
