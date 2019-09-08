@@ -50,7 +50,7 @@ public class Dictionary extends BaseExtEntity {
      */
     @Length(max = 200, message = "数据字典备注长度超长！")
     @TableField
-    private String comment;
+    private String description;
 
     /***
      * 排序号
@@ -62,7 +62,7 @@ public class Dictionary extends BaseExtEntity {
      * 是否为系统预置（预置不可删除）
      */
     @TableField
-    private boolean system = true;
+    private boolean deletable = false;
 
     /***
      * 是否可编辑
@@ -102,12 +102,12 @@ public class Dictionary extends BaseExtEntity {
         this.itemValue = itemValue;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getSortId() {
@@ -118,12 +118,12 @@ public class Dictionary extends BaseExtEntity {
         this.sortId = sortId;
     }
 
-    public boolean isSystem() {
-        return system;
+    public boolean isDeletable() {
+        return deletable;
     }
 
-    public void setSystem(boolean system) {
-        this.system = system;
+    public void setDeletable(boolean deletable) {
+        this.deletable = deletable;
     }
 
     public boolean isEditable() {

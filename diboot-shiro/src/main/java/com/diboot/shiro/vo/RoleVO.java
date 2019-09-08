@@ -23,7 +23,7 @@ public class RoleVO extends Role {
     private String statusLabel;
 
     /**支持通过中间表的多-多Entity实体关联*/
-    @BindEntityList(entity = Permission.class, condition="this.id=role_permission.role_id AND role_permission.permission_id=id AND role_permission.deleted=0")
+    @BindEntityList(entity = Permission.class, condition="this.id=role_permission.role_id AND role_permission.permission_id=id AND role_permission.is_deleted=0")
     private List<Permission> permissionList;
 
     @TableField(exist = false)

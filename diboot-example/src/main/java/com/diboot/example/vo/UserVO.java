@@ -34,7 +34,7 @@ public class UserVO extends User {
     private String orgTelphone;
 
     // 通过中间表关联Entity
-    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id") // AND deleted=0
+    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id") // AND is_deleted=0
     private Organization organization;
 
     // 支持通过中间表的多-多Entity实体关联

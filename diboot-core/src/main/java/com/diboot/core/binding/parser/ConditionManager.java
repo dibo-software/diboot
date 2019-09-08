@@ -251,7 +251,7 @@ public class ConditionManager {
                         middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
                     }
                 }
-                else{ // equals附加条件，暂只支持列在左侧，如 department.deleted=0
+                else{ // equals附加条件，暂只支持列在左侧，如 department.is_deleted=0
                     String leftExpression = express.getLeftExpression().toString();
                     if(leftExpression != null && leftExpression.startsWith(tableName+".")){
                         middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
