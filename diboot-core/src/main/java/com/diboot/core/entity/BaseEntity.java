@@ -27,10 +27,11 @@ public abstract class BaseEntity implements Serializable {
     private Long id;
 
     /***
-     * 默认逻辑删除标记，deleted=0有效
+     * 默认逻辑删除标记，is_deleted=0有效
      */
     @TableLogic
     @JSONField(serialize = false)
+    @TableField("is_deleted")
     private boolean deleted = false;
 
     /***
