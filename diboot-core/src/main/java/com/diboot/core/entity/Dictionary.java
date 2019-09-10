@@ -61,13 +61,13 @@ public class Dictionary extends BaseExtEntity {
     /***
      * 是否为系统预置（预置不可删除）
      */
-    @TableField
+    @TableField("is_deletable")
     private boolean deletable = false;
 
     /***
      * 是否可编辑
      */
-    @TableField
+    @TableField("is_editable")
     private boolean editable = false;
 
     public Long getParentId() {
