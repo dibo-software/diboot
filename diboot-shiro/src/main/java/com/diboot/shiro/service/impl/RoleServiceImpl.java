@@ -55,21 +55,23 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
                 if(V.notEmpty(permissionList)){
                     //获取这个角色拥有的菜单资源,并去重
                     List<Permission> menuList = new ArrayList();//菜单资源
-                    HashSet menuSet = new HashSet();
-                    Set<Long> idSet = new HashSet<>();//资源id  set
+                    Set<String> menuCodeSet = new HashSet<>();
                     for(Permission permission : permissionList){
-                        idSet.add(permission.getId());
-                        if(menuSet.add(permission.getMenuCode())){
+                        if(menuCodeSet.add(permission.getMenuCode())){
                             menuList.add(permission);
                         }
                     }
                     //获取菜单资源下的该角色已有的权限资源
                     if(V.notEmpty(menuList)){
                         for(Permission menu : menuList){
-                            QueryWrapper<Permission> query = new QueryWrapper();
-                            query.lambda().in(Permission::getId, idSet)
-                                          .eq(Permission::getMenuCode, menu.getMenuCode());
-                            List<Permission> menuPermissionList = permissionService.getEntityList(query);
+                            List<Permission> menuPermissionList = new ArrayList<>();
+                            for(Permission p : permissionList){
+                                if(menu.getMenuCode().equals(p.getMenuCode())){
+                                    //对象转化一下，解决死循环的问题
+                                    Permission permission = BeanUtils.convert(p, Permission.class);
+                                    menuPermissionList.add(permission);
+                                }
+                            }
                             menu.setPermissionList(menuPermissionList);
                         }
                     }
@@ -91,26 +93,26 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
         List<Permission> ownPermissionList = roleVO.getPermissionList();
         //角色已拥有的菜单资源
         List<Permission> ownMenuList = null;
-        Set<Long> idSet = new HashSet<>();
         if(V.notEmpty(ownPermissionList)){
             //获取这个角色拥有的菜单资源
             ownMenuList = new ArrayList();
             HashSet set = new HashSet();
             for(Permission permission : ownPermissionList){
-                idSet.add(permission.getId());
                 if(set.add(permission.getMenuCode())){
                     ownMenuList.add(permission);
                 }
             }
         }
-
         //获取菜单资源下的该角色已有的权限资源
         if(V.notEmpty(ownMenuList)){
             for(Permission menu : ownMenuList){
-                QueryWrapper<Permission> query = new QueryWrapper();
-                query.lambda().in(Permission::getId, idSet)
-                        .eq(Permission::getMenuCode, menu.getMenuCode());
-                List<Permission> menuPermissionList = permissionService.getEntityList(query);
+               List<Permission> menuPermissionList = new ArrayList<>();
+               for(Permission permission : ownPermissionList){
+                   if(menu.getMenuCode().equals(permission.getMenuCode())){
+                       Permission p = BeanUtils.convert(permission, Permission.class);
+                       menuPermissionList.add(p);
+                   }
+               }
                 menu.setPermissionList(menuPermissionList);
             }
         }
@@ -136,11 +138,15 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
             //新建角色权限信息
             List<Permission> permissionList = role.getPermissionList();
             if(V.notEmpty(permissionList)){
+                List<RolePermission> rpList = new ArrayList<>();
                 for(Permission p : permissionList){
                     RolePermission rolePermission = new RolePermission();
                     rolePermission.setRoleId(role.getId());
                     rolePermission.setPermissionId(p.getId());
-                    rolePermissionService.createEntity(rolePermission);
+                    rpList.add(rolePermission);
+                }
+                if(V.notEmpty(rpList)){
+                    rolePermissionService.createEntities(rpList);
                 }
             }
         }catch(Exception e){
@@ -157,29 +163,30 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
         List<Permission> ownPermissionList = roleVO.getPermissionList();
         //角色已拥有的菜单资源
         List<Permission> ownMenuList = new ArrayList();
-        Set<Long> idSet = new HashSet<>();
         HashSet<String> ownMenuSet = new HashSet();
         if(V.notEmpty(ownPermissionList)){
             //获取这个角色拥有的菜单资源
             for(Permission permission : ownPermissionList){
-                idSet.add(permission.getId());
                 if(ownMenuSet.add(permission.getMenuCode())){
                     ownMenuList.add(permission);
                 }
             }
         }
-
         //获取菜单资源下的该角色已有的权限资源
         Map<String, Permission> ownMenuMap = new HashMap();
-        for(Permission menu : ownMenuList){
-            QueryWrapper<Permission> query = new QueryWrapper();
-            query.lambda().in(Permission::getId, idSet)
-                    .eq(Permission::getMenuCode, menu.getMenuCode());
-            List<Permission> menuPermissionList = permissionService.getEntityList(query);
-            menu.setPermissionList(menuPermissionList);
-            ownMenuMap.put(menu.getMenuCode(), menu);
+        if(V.notEmpty(ownMenuList)){
+            for(Permission menu : ownMenuList){
+                List<Permission> menuPermissionList = new ArrayList<>();
+                for(Permission permission : ownPermissionList){
+                    if(menu.getMenuCode().equals(permission.getMenuCode())){
+                        Permission p = BeanUtils.convert(permission, Permission.class);
+                        menuPermissionList.add(p);
+                    }
+                }
+                menu.setPermissionList(menuPermissionList);
+                ownMenuMap.put(menu.getMenuCode(), menu);
+            }
         }
-
         //获取所有菜单及菜单下的资源信息
         List<Permission> allMenuList = getAllMenu();
         if(V.notEmpty(allMenuList)){
@@ -244,7 +251,6 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
                     newBuffer.append(p.getId()).append(",");
                 }
             }
-
             //删除页面取消选择的角色权限
             if(V.notEmpty(oldPermissionList)){
                 for(RolePermission rp : oldPermissionList){
@@ -253,16 +259,19 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
                     }
                 }
             }
-
             //新增页面选择的角色权限
             if(V.notEmpty(newPermissionList)){
+                List<RolePermission> rpList = new ArrayList<>();
                 for(Permission p : newPermissionList){
                     if(!(oldBuffer.toString().contains(p.getId().toString()))){
                         RolePermission entity = new RolePermission();
                         entity.setRoleId(role.getId());
                         entity.setPermissionId(p.getId());
-                        rolePermissionService.createEntity(entity);
+                        rpList.add(entity);
                     }
+                }
+                if(V.notEmpty(rpList)){
+                    rolePermissionService.createEntities(rpList);
                 }
             }
 
@@ -281,16 +290,10 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
             if(!success){
                 return false;
             }
-            //获取角色原来拥有的权限信息
+            //删除角色原来拥有的权限信息
             QueryWrapper<RolePermission> query = new QueryWrapper();
             query.lambda().eq(RolePermission::getRoleId, id);
-            List<RolePermission> rolePermissionList = rolePermissionService.getEntityList(query);
-            //删除角色权限
-            if(V.notEmpty(rolePermissionList)){
-                for(RolePermission rp : rolePermissionList){
-                    rolePermissionService.deleteEntity(rp.getId());
-                }
-            }
+            rolePermissionService.deleteEntities(query);
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -304,17 +307,22 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
         Wrapper wrapper = new QueryWrapper<Permission>()
                 .lambda()
                 .groupBy(Permission::getMenuCode)
-                .select()
                 ;
         List<Permission> menuList = permissionService.getEntityList(wrapper);
-
+        //获取所有资源
+        List<Permission> permissionList = permissionService.getEntityList(null);
+        //把资源根据菜单分类
         if(V.notEmpty(menuList)){
             for(Permission menu : menuList){
-                //获取一个菜单的所有权限资源
-                QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
-                queryWrapper.lambda().eq(Permission::getMenuCode, menu.getMenuCode());
-                List<Permission> allPermissionList = permissionService.getEntityList(queryWrapper);
-                menu.setPermissionList(allPermissionList);
+                if(V.notEmpty(permissionList)){
+                    List<Permission> menuPermissionList = new ArrayList<>();
+                    for(Permission permission : permissionList){
+                        if(menu.getMenuCode().equals(permission.getMenuCode())){
+                            menuPermissionList.add(permission);
+                        }
+                    }
+                    menu.setPermissionList(menuPermissionList);
+                }
             }
         }
 

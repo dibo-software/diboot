@@ -17,10 +17,27 @@ import java.util.List;
  */
 public interface DepartmentService extends BaseService<Department> {
 
+    /***
+     * 获取列表页数据
+     * @param wrapper
+     * @param pagination
+     * @param orgId
+     * @return
+     */
     List<DepartmentVO> getDepartmentList(Wrapper wrapper, Pagination pagination, Long orgId);
 
+    /***
+     * 获取部门实体树结构
+     * @param orgId
+     * @return
+     */
     List<DepartmentVO> getEntityTreeList(Long orgId);
 
+    /***
+     * 获取部门树结构
+     * @param voList
+     * @return
+     */
     List<Tree> getViewTreeList(List<DepartmentVO> voList);
 
 }

@@ -12,6 +12,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.example.dto.SysUserDto;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.SysUser;
 import com.diboot.example.entity.User;
@@ -39,6 +40,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * 用户相关Controller
+ * @author wangyonglaing
+ * @version 2.0
+ * @time 2018/8/5
+ */
 @RestController
 @RequestMapping("/sysUser")
 @AuthorizationPrefix(name = "用户管理", code = "sysUser", prefix = "sysUser")
@@ -58,10 +65,18 @@ public class SysUserController extends BaseCrudRestController {
     @Autowired
     private PermissionService permissionService;
 
+    /***
+     * 获取列表页数据
+     * @param sysUserDto
+     * @param pagination
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    public JsonResult getVOList(SysUser sysUser, Pagination pagination, HttpServletRequest request) throws Exception{
-        QueryWrapper<User> queryWrapper = super.buildQueryWrapper(sysUser);
+    public JsonResult getVOList(SysUserDto sysUserDto, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<SysUserDto> queryWrapper = super.buildQueryWrapper(sysUserDto);
         return super.getVOListWithPaging(queryWrapper, pagination, SysUserVO.class);
     }
 
@@ -154,8 +169,8 @@ public class SysUserController extends BaseCrudRestController {
         modelMap.put("roleKvList", roleKvList);
 
         //获取用户状态KV
-        List<KeyValue> userStatusKvList = dictionaryService.getKeyValueList(SysUser.USER_STATUS);
-        modelMap.put("userStatusKvList", userStatusKvList);
+        List<KeyValue> statusKvList = dictionaryService.getKeyValueList(SysUser.USER_STATUS);
+        modelMap.put("statusKvList", statusKvList);
 
         //获取用户性别KV
         List<KeyValue> genderKvList = dictionaryService.getKeyValueList(SysUser.GENDER);

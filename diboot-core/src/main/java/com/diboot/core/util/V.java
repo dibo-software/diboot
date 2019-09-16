@@ -157,8 +157,9 @@ public class V {
      * @param str 
      * @return true Or false 
      */  
-    public static boolean isNumeric(String str){
-          return S.isNumeric(str);
+    public static boolean isNumber(String str){
+		String regex = "^(-?[1-9]\\d*\\.?\\d*)|(-?0\\.\\d*[1-9])|(-?[0])|(-?[0]\\.\\d*)$";
+		return str.matches(regex);
     }
 
     /** 
@@ -187,22 +188,6 @@ public class V {
         	valid = str.matches("^[0|4]\\d{2,3}-?\\d{7,8}$");
 		}
         return valid;
-    }
-
-    /** 
-     * 判断是否为整型数字
-     * @param str 
-     * @return 
-     */  
-    public static boolean isNumber(String str) {
-        try{
-        	S.isNumeric(str);
-            Integer.parseInt(str);
-            return true;
-        }
-        catch(Exception ex){  
-            return false;  
-        }
     }
 
 	/**

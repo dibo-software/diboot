@@ -1,5 +1,6 @@
 package com.diboot.shiro.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
@@ -10,8 +11,10 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
+import com.diboot.shiro.dto.PermissionDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.mapper.PermissionMapper;
 import com.diboot.shiro.service.PermissionService;
@@ -24,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 许可授权相关Service
@@ -37,23 +42,44 @@ import java.util.Objects;
 public class PermissionServiceImpl extends BaseServiceImpl<PermissionMapper, Permission> implements PermissionService {
 
     @Override
-    public List<Permission> getPermissionList(QueryWrapper<Permission> queryWrapper, Pagination pagination) {
-        queryWrapper.lambda().groupBy(Permission::getMenuCode);
-        List<Permission> menuList = super.getEntityList(queryWrapper, pagination);
-        if(V.notEmpty(menuList)){
-           for(Permission menu : menuList){
-               LambdaQueryWrapper<Permission> wrapper = new LambdaQueryWrapper();
-               wrapper.eq(Permission::getMenuCode, menu.getMenuCode());
-               List<Permission> permissionList = super.getEntityList(wrapper);
-               menu.setPermissionList(permissionList);
-           }
+    public List<Permission> getPermissionList(QueryWrapper queryWrapper, Pagination pagination) {
+        queryWrapper.groupBy("menu_code");
+        List<Permission> parentPermissionList = super.getEntityList(queryWrapper, pagination);
+        if (V.isEmpty(parentPermissionList)){
+            return parentPermissionList;
         }
 
-        return menuList;
+        // 获取权限编码列表
+        List<String> permissionMenuCodeList = parentPermissionList.stream()
+                .map(Permission::getMenuCode)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (V.isEmpty(permissionMenuCodeList)){
+            return parentPermissionList;
+        }
+
+        LambdaQueryWrapper<Permission> allSubListQueryWrapper = new LambdaQueryWrapper<>();
+        allSubListQueryWrapper.in(Permission::getMenuCode, permissionMenuCodeList);
+
+        // 获取所有子级权限列表
+        List<Permission> allSubPermissionList = super.getEntityList(allSubListQueryWrapper);
+        // 整理出每一个父级下的所有子级权限列表
+        Map<String, List<Permission>> subPermissionListMap = BeanUtils.convertToStringKeyObjectListMap(allSubPermissionList,
+                BeanUtils.convertToFieldName(Permission::getMenuCode));
+
+        for (Permission permission : parentPermissionList){
+            List<Permission> subPermissionList = subPermissionListMap.get(permission.getMenuCode());
+            if (V.notEmpty(subPermissionList)){
+                permission.setPermissionList(subPermissionList);
+            }
+        }
+
+        return parentPermissionList;
     }
 
     /**
-     * 批量创建或更新或删除entity（entity.id存在：【如果deleted = 1表示逻辑删除，=0表示更新】，若entity.id不存在否则新建）
+     * 批量创建或更新或删除entity（entity.id存在：【如果is_deleted = 1表示逻辑删除，=0表示更新】，若entity.id不存在否则新建）
      *
      * @param entityList
      * @return

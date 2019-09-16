@@ -1,17 +1,23 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
+import com.diboot.example.dto.DepartmentDto;
 import com.diboot.example.entity.Department;
+import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.Tree;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
+import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
+import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -29,6 +35,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/department")
+@AuthorizationPrefix(name = "部门管理", code = "department", prefix = "department")
 public class DepartmentController extends BaseCrudRestController {
 
     @Autowired
@@ -43,13 +50,16 @@ public class DepartmentController extends BaseCrudRestController {
      * @return
      * @throws Exception
      */
-    @RequiresPermissions("department:list")
     @GetMapping("/list")
-    public JsonResult getVOList(Department department, Pagination pagination, HttpServletRequest request) throws Exception{
-        QueryWrapper<Department> queryWrapper = super.buildQueryWrapper(department);
+    @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
+    public JsonResult getVOList(DepartmentDto dto, Pagination pagination, HttpServletRequest request) throws Exception{
+        if(V.isEmpty(dto.getOrgId())){
+            return new JsonResult(Status.FAIL_OPERATION, "请先选择所属公司").bindPagination(pagination);
+        }
+        QueryWrapper<Department> queryWrapper = super.buildQueryWrapper(dto);
         queryWrapper.lambda().eq(Department::getParentId, 0);
         // 查询当前页的Entity主表数据
-        List<DepartmentVO> voList = departmentService.getDepartmentList(queryWrapper, pagination, department.getOrgId());
+        List<DepartmentVO> voList = departmentService.getDepartmentList(queryWrapper, pagination, dto.getOrgId());
         // 返回结果
         return new JsonResult(Status.OK, voList).bindPagination(pagination);
     }
@@ -92,6 +102,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody Department entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         boolean success = departmentService.createEntity(entity);
@@ -108,6 +119,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         DepartmentVO vo = departmentService.getViewObject(id, DepartmentVO.class);
@@ -121,6 +133,7 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @PutMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody Department entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         entity.setId(id);
@@ -138,10 +151,17 @@ public class DepartmentController extends BaseCrudRestController {
      * @throws Exception
      */
     @DeleteMapping("/{id}")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
     }
 
+    /***
+     * 加载更多数据
+     * @param request
+     * @param modelMap
+     * @return
+     */
     @GetMapping("/attachMore")
     public JsonResult attachMore(HttpServletRequest request, ModelMap modelMap){
         Wrapper wrapper = null;
@@ -149,11 +169,67 @@ public class DepartmentController extends BaseCrudRestController {
         return new JsonResult(modelMap);
     }
 
+    /***
+     * 获取部门树结构
+     * @param orgId
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/getViewTreeList")
     public JsonResult getViewTreeList(@RequestParam(required = false) Long orgId) throws Exception{
         List<DepartmentVO> voList = departmentService.getEntityTreeList(orgId);
         List<Tree> treeList = departmentService.getViewTreeList(voList);
         return new JsonResult(treeList);
+    }
+
+    /***
+     * 校验部门名称唯一性
+     * @param orgId
+     * @param id
+     * @param name
+     * @return
+     */
+    @GetMapping("/checkNameRepeat")
+    public JsonResult checkNameRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String name){
+        if(V.isEmpty(name)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId)
+                .eq(Department::getName, name);
+        if(V.notEmpty(id)){
+            wrapper.ne(Department::getId, id);
+        }
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.isEmpty(deptList)){
+            return new JsonResult(Status.OK);
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "部门名称已存在");
+    }
+
+    /***
+     * 校验部门编号唯一性
+     * @param orgId
+     * @param id
+     * @param number
+     * @return
+     */
+    @GetMapping("/checkNumberRepeat")
+    public JsonResult checkNumberRepeat(@RequestParam Long orgId, @RequestParam(required = false) Long id, @RequestParam String number){
+        if(V.isEmpty(number)){
+            return new JsonResult(Status.OK);
+        }
+        LambdaQueryWrapper<Department> wrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId)
+                .eq(Department::getNumber, number);
+        if(V.notEmpty(id)){
+            wrapper.ne(Department::getId, id);
+        }
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.isEmpty(deptList)){
+            return new JsonResult(Status.OK);
+        }
+        return new JsonResult(Status.FAIL_OPERATION, "部门编号已存在");
     }
 
     @Override

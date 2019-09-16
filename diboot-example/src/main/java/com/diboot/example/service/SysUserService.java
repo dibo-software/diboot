@@ -16,15 +16,31 @@ import java.util.List;
  */
 public interface SysUserService extends BaseService<SysUser> {
 
-    //获取详细
+    /***
+     * 获取详细
+     * @param id
+     * @return
+     */
     SysUserVO getSysUser(Long id);
 
-    //新增
+    /***
+     * 新建
+     * @param user
+     * @return
+     */
     boolean createSysUser(SysUser user);
 
-    //更新
+    /***
+     * 更新
+     * @param user
+     * @return
+     */
     boolean updateSysUser(SysUser user);
 
-    //删除
+    /***
+     * 删除
+     * @param id
+     * @return
+     */
     boolean deleteSysUser(Long id);
 }

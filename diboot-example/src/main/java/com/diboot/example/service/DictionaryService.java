@@ -12,12 +12,24 @@ import com.diboot.example.vo.DictionaryVO;
  */
 public interface DictionaryService extends BaseService<Dictionary> {
 
-    //新增
+    /***
+     * 新增
+     * @param entity
+     * @return
+     */
     boolean createDictionary(DictionaryVO entity);
 
-    //更新
+    /***
+     * 更新
+     * @param entity
+     * @return
+     */
     boolean updateDictionary(DictionaryVO entity);
 
-    //删除
+    /***
+     * 删除
+     * @param id
+     * @return
+     */
     boolean deleteDictionary(Long id);
 }
