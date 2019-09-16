@@ -119,6 +119,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/error/**", "anon");
         filterChainDefinitionMap.put("/*.html", "anon");
+        filterChainDefinitionMap.put("/diboot/**", "anon");
+
         filterChainDefinitionMap.put("/auth/login", "anon");
         filterChainDefinitionMap.put("/auth/buildOAuthUrl", "anon");
         filterChainDefinitionMap.put("/auth/apply", "anon");
