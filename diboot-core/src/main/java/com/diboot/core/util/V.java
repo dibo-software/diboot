@@ -341,6 +341,11 @@ public class V {
     				return false;
 				}
 			}
+			for(Object obj : targetList){
+				if(!sourceList.contains(obj)){
+					return false;
+				}
+			}
 			return true;
 		}
 		else{
