@@ -38,6 +38,7 @@ subprojects {
         mybatisPlusVersion = "3.2.0"
         fastjsonVersion = "1.2.60"
         lombokVersion = "1.18.8"
+
     }
     dependencies {
         // Gradle 5.0及以上版本，使用如下方式
