@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.6.RELEASE'
+        springBootVersion = '2.1.8.RELEASE'
     }
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
@@ -13,7 +13,7 @@ buildscript {
 // 全局配置
 allprojects {
     group 'com.diboot'
-    version '2.0.1'
+    version '2.0.3'
     apply plugin: 'idea'
 }
 // 子项目的配置
@@ -32,12 +32,13 @@ subprojects {
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     ext {//依赖版本
-        springBootVersion = "2.1.6.RELEASE"
+        springBootVersion = "2.1.8.RELEASE"
         mysqlConnectorVersion = "8.0.16"
-        mybatisStarterVersion = "2.0.1"
-        mybatisPlusVersion = "3.1.2"
+        mybatisStarterVersion = "2.1.0"
+        mybatisPlusVersion = "3.2.0"
         fastjsonVersion = "1.2.60"
         lombokVersion = "1.18.8"
+
     }
     dependencies {
         // Gradle 5.0及以上版本，使用如下方式

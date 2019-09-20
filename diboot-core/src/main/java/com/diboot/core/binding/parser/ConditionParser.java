@@ -146,6 +146,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(ExpressionList expressionList) {
     }
+
+    @Override
+    public void visit(NamedExpressionList namedExpressionList) {
+
+    }
+
     @Override
     public void visit(MultiExpressionList multiExprList) {
     }
@@ -239,6 +245,19 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(NotExpression aThis) {
     }
+
+    @Override
+    public void visit(NextValExpression aThis) {
+    }
+
+    @Override
+    public void visit(CollateExpression aThis) {
+    }
+
+    @Override
+    public void visit(SimilarToExpression aThis) {
+    }
+
     @Override
     public void visit(BitwiseRightShift aThis) {
     }
