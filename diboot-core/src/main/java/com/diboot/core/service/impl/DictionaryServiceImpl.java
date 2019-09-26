@@ -6,10 +6,12 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.*;
+import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -65,5 +67,35 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 .andEQ(FIELD_NAME_TYPE, type)
                 .andGT(FIELD_NAME_PARENT_ID, 0)
                 .bind();
+    }
+
+    @Override
+    @Transactional
+    public boolean addDictTree(DictionaryVO dictVO) {
+        //将DictionaryVO转化为Dictionary
+        Dictionary dictionary = new Dictionary();
+        dictionary = (Dictionary) BeanUtils.copyProperties(dictVO, dictionary);
+        if(!super.createEntity(dictionary)){
+            log.warn("新建父数据字典失败，type="+dictVO.getType());
+            return false;
+        }
+        List<Dictionary> children = dictVO.getChildren();
+        if(V.notEmpty(children)){
+            try {
+                for(Dictionary dict : children){
+                    dict.setParentId(dictionary.getId());
+                    dict.setType(dictionary.getType());
+                }
+                if(!super.createEntities(children)){
+                    log.warn("新建子数据字典失败，type="+dictVO.getType());
+                    throw new RuntimeException();
+                }
+            } catch (Exception e) {
+                log.warn("新建子数据字典失败，type="+dictVO.getType());
+                throw new RuntimeException();
+            }
+        }
+
+        return true;
     }
 }
