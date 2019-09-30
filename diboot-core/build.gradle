@@ -1,5 +1,16 @@
 apply plugin: 'org.springframework.boot'
+
 dependencies {
     compile("org.springframework.boot:spring-boot-configuration-processor")
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar.enabled = true
+
+jar{
+    manifest {
+        attributes('Implementation-Title': 'Diboot core',
+                'Implementation-Version': '2.0.3'
+        )
+    }
 }

@@ -3,6 +3,7 @@ package com.diboot.core.service;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
+import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
 
 import java.util.List;
@@ -41,4 +42,11 @@ public interface DictionaryService extends BaseService<Dictionary>{
      * @param getFieldName
      */
     void bindItemLabel(List voList, String setFieldName, String getFieldName, String type);
+
+    /***
+     * 添加多层级数据字典
+     * @param dictionaryVO
+     * @return
+     */
+    boolean addDictTree(DictionaryVO dictionaryVO);
 }

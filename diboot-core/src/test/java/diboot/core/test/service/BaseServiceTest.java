@@ -1,10 +1,12 @@
 package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
@@ -13,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -32,6 +35,7 @@ import java.util.List;
 public class BaseServiceTest {
 
     @Autowired
+    @Qualifier("dictionaryService")
     DictionaryService dictionaryService;
 
     @Test
@@ -74,7 +78,7 @@ public class BaseServiceTest {
         String TYPE = "ID_TYPE";
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
-        dictionary.setItemName("证件品类");
+        dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
         dictionaryService.createEntity(dictionary);
 
@@ -85,15 +89,62 @@ public class BaseServiceTest {
         Assert.assertTrue(V.notEmpty(dictionaryList));
 
         // 更新
-        dictionary.setItemName("证件类型");
+        dictionary.setItemName("证件类型定义");
         dictionaryService.updateEntity(dictionary);
         Dictionary dictionary2 = dictionaryService.getEntity(dictionary.getId());
         Assert.assertTrue(dictionary2.getItemName().equals(dictionary.getItemName()));
 
         // 删除
-        dictionaryService.deleteEntity(dictionary.getId());
+        clearTestData(TYPE);
         dictionary2 = dictionaryService.getEntity(dictionary.getId());
         Assert.assertTrue(dictionary2 == null);
+    }
+
+    @Test
+    public void testBatchCreate(){
+        // 创建
+        String TYPE = "ID_TYPE";
+        // 定义
+        Dictionary dictionary = new Dictionary();
+        dictionary.setType(TYPE);
+        dictionary.setItemName("证件类型");
+        dictionary.setParentId(0L);
+        boolean success = dictionaryService.createEntity(dictionary);
+        Assert.assertTrue(success);
+
+        // 子项
+        List<Dictionary> dictionaryList = new ArrayList<>();
+        String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
+        for(int i=0; i<itemNames.length; i++){
+            Dictionary dict = new Dictionary();
+            dict.setType(TYPE);
+            dict.setItemName(itemNames[i]);
+            dict.setItemValue(itemValues[i]);
+            dict.setParentId(dictionary.getId());
+            dictionaryList.add(dict);
+        }
+        success = dictionaryService.createEntities(dictionaryList);
+        Assert.assertTrue(success);
+
+        success = clearTestData(TYPE);
+        Assert.assertTrue(success);
+    }
+
+    /**
+     * 清空测试数据
+     * @param type
+     * @return
+     */
+    private boolean clearTestData(String type){
+        List params = new ArrayList();
+        params.add(type);
+        try{
+            SqlExecutor.executeUpdate("DELETE FROM dictionary WHERE type=?", params);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
 }

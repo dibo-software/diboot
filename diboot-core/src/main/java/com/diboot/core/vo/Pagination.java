@@ -40,9 +40,9 @@ public class Pagination implements Serializable {
      */
     private List<String> ascList = null;
     /***
-     * 降序排列的字段（默认以ID降序排列，当指定了其他排列方式时以用户指定为准）
+     * 降序排列的字段（默认以create_time降序排列，当指定了其他排列方式时以用户指定为准）
      */
-    private List<String> descList = new ArrayList<>(Arrays.asList(Cons.FieldName.id.name()));
+    private List<String> descList = new ArrayList<>(Arrays.asList("create_time"));
 
     public Pagination(){
     }

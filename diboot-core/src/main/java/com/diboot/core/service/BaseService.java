@@ -90,7 +90,7 @@ public interface BaseService<T> {
      * @return
      * @throws Exception
      */
-    boolean deleteEntities(Wrapper queryWrapper) throws Exception;
+    boolean deleteEntities(Wrapper queryWrapper);
 
     /**
      * 获取符合条件的entity记录总数
