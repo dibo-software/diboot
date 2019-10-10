@@ -22,7 +22,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/7/8
  */
-@Service("dictionaryService")
+@Service("exampleDictionaryService")
 @Slf4j
 public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
     private static final Logger logger = LoggerFactory.getLogger(DictionaryServiceImpl.class);
