@@ -171,7 +171,7 @@ public class QueryBuilder {
         if (field.isAnnotationPresent(BindQuery.class)) {
             columnName = field.getAnnotation(BindQuery.class).field();
         }
-        if (field.isAnnotationPresent(TableField.class)) {
+        else if (field.isAnnotationPresent(TableField.class)) {
             columnName = field.getAnnotation(TableField.class).value();
         }
         return V.notEmpty(columnName) ? columnName : S.toSnakeCase(field.getName());
