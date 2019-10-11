@@ -1,8 +1,8 @@
 package com.diboot.example.vo;
 
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.User;

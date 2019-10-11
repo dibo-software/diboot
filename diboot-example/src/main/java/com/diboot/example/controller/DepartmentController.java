@@ -12,7 +12,6 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.dto.DepartmentDto;
 import com.diboot.example.entity.Department;
-import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.Tree;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;

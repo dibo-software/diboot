@@ -1,7 +1,6 @@
 package diboot.core.test.binder.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.diboot.core.service.impl.BaseServiceImpl;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.mapper.RoleMapper;
 import diboot.core.test.binder.service.RoleService;

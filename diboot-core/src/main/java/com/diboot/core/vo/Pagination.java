@@ -1,7 +1,6 @@
 package com.diboot.core.vo;
 
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;

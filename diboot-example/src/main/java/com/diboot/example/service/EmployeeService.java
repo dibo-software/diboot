@@ -1,12 +1,10 @@
 package com.diboot.example.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.Employee;
 import com.diboot.example.vo.EmployeeVO;
-import com.diboot.example.vo.PositionVO;
 
 import java.util.List;
 

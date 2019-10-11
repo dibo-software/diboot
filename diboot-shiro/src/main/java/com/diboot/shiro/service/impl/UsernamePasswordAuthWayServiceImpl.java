@@ -9,7 +9,6 @@ import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.util.AuthHelper;
-import com.diboot.shiro.util.ProxyToTargetObjectHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

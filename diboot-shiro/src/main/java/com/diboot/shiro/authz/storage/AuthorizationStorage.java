@@ -17,7 +17,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;

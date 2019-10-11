@@ -1,6 +1,5 @@
 package com.diboot.shiro.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
@@ -14,7 +13,6 @@ import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
-import com.diboot.shiro.dto.PermissionDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.mapper.PermissionMapper;
 import com.diboot.shiro.service.PermissionService;

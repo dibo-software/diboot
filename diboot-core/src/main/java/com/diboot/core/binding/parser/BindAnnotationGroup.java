@@ -1,9 +1,9 @@
 package com.diboot.core.binding.parser;
 
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.annotation.BindDict;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

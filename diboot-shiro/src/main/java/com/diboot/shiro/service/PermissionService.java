@@ -1,10 +1,8 @@
 package com.diboot.shiro.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.Pagination;
-import com.diboot.shiro.dto.PermissionDto;
 import com.diboot.shiro.entity.Permission;
 import org.springframework.transaction.annotation.Transactional;
 

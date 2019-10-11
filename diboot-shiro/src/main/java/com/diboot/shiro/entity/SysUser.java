@@ -2,7 +2,6 @@ package com.diboot.shiro.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.S;
 import com.diboot.shiro.vo.RoleVO;
 import lombok.Data;
 

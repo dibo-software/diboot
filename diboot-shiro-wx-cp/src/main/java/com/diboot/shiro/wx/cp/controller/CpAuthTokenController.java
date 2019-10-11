@@ -10,7 +10,6 @@ import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.wx.cp.config.WxCpConfig;
 import com.diboot.shiro.wx.cp.service.impl.WxCpServiceExtImpl;
 import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.cp.api.WxCpService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;

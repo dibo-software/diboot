@@ -3,8 +3,6 @@ package com.diboot.example.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
-import com.diboot.example.entity.Department;
 import com.diboot.example.entity.SysUser;
 import com.diboot.shiro.entity.Role;
 import lombok.Data;

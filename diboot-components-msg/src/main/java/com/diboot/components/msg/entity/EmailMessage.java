@@ -1,6 +1,5 @@
 package com.diboot.components.msg.entity;
 
-import com.diboot.components.msg.config.MsgCons;
 import lombok.Data;
 
 /*

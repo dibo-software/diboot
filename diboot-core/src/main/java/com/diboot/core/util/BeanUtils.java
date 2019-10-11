@@ -584,6 +584,25 @@ public class BeanUtils {
         }
     }
 
+    /**
+     * 克隆对象
+     * @param ent
+     * @param <T>
+     * @return
+     */
+    public static <T> T cloneBean(T ent){
+        // 克隆对象
+        try{
+            T cloneObj = (T)org.springframework.beans.BeanUtils.instantiateClass(ent.getClass());
+            copyProperties(ent ,cloneObj);
+            return cloneObj;
+        }
+        catch (Exception e){
+            log.warn("Clone Object "+ent.getClass().getSimpleName()+" error", e);
+            return ent;
+        }
+    }
+
     /***
      * 转换方法引用为属性名
      * @param fn

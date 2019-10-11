@@ -3,8 +3,6 @@ package com.diboot.example.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author Yangzhao
  * @version v2.0

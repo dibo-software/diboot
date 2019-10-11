@@ -1,7 +1,6 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
@@ -12,7 +11,6 @@ import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.dto.EmployeeDto;
-import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Employee;
 import com.diboot.example.service.EmployeeService;
 import com.diboot.example.vo.EmployeeVO;

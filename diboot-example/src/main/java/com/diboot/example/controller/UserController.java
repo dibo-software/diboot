@@ -1,7 +1,6 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.JsonResult;
@@ -10,10 +9,11 @@ import com.diboot.core.vo.Status;
 import com.diboot.example.dto.UserDto;
 import com.diboot.example.entity.User;
 import com.diboot.example.service.UserService;
-import com.diboot.example.vo.DepartmentVO;
 import com.diboot.example.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

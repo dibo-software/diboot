@@ -1,12 +1,8 @@
 package com.diboot.example.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.SysUser;
 import com.diboot.example.mapper.SysUserMapper;
 import com.diboot.example.service.SysUserService;

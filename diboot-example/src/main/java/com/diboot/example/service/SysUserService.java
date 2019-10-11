@@ -1,12 +1,8 @@
 package com.diboot.example.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.SysUser;
 import com.diboot.example.vo.SysUserVO;
-
-import java.util.List;
 
 /**
  * 用户相关Service

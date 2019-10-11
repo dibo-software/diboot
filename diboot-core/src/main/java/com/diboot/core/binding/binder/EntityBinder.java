@@ -2,7 +2,10 @@ package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ISetter;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +99,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                         }
                         String key = entry.getKey();
                         T value = listMap.get(String.valueOf(fetchValueId));
-                        valueEntityMap.put(key, cloneEntity(value));
+                        valueEntityMap.put(key, BeanUtils.cloneBean(value));
                     }
                 }
             }
@@ -113,31 +116,11 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 String refEntityPKFieldName = S.toLowerCaseCamel(referencedEntityPrimaryKey);
                 for(T entity : list){
                     String pkValue = BeanUtils.getStringProperty(entity, refEntityPKFieldName);
-                    valueEntityMap.put(pkValue, cloneEntity(entity));
+                    valueEntityMap.put(pkValue, BeanUtils.cloneBean(entity));
                 }
             }
         }
         // 绑定结果
         BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);
     }
-
-    /**
-     * 克隆对象
-     * @param ent
-     * @param <T>
-     * @return
-     */
-    protected <T> T cloneEntity(T ent){
-        // 克隆对象
-        try{
-            T cloneEnt = (T)org.springframework.beans.BeanUtils.instantiateClass(ent.getClass());
-            BeanUtils.copyProperties(ent ,cloneEnt);
-            return cloneEnt;
-        }
-        catch (Exception e){
-            log.warn("Clone Object "+ent.getClass().getSimpleName()+" error", e);
-            return ent;
-        }
-    }
-
 }
