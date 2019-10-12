@@ -1,6 +1,6 @@
 package com.diboot.shiro.authz.cache;
 
-import com.diboot.shiro.authz.properties.AuthCacheProperties;
+import com.diboot.shiro.authz.config.AuthConfiguration;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -17,10 +17,10 @@ public class MemoryCondition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
         //获取配置信息
-        Boolean enableCached = context.getEnvironment().getProperty(AuthCacheProperties.CACHE_PREFIX + ".permission-caching-enabled", Boolean.class);
+        Boolean enableCached = context.getEnvironment().getProperty("diboot.shiro.auth-configuration.cache.permission-caching-enabled", Boolean.class);
         enableCached = enableCached == null ? true : enableCached;
-        AuthCacheProperties.CacheWay cacheWay = context.getEnvironment().getProperty(AuthCacheProperties.CACHE_PREFIX + ".cache-way", AuthCacheProperties.CacheWay.class);
-        cacheWay = cacheWay == null ? AuthCacheProperties.CacheWay.MEMORY : cacheWay;
-        return enableCached && AuthCacheProperties.CacheWay.MEMORY.equals(cacheWay);
+        AuthConfiguration.Cache.CacheWay cacheWay = context.getEnvironment().getProperty("diboot.shiro.auth-configuration.cache.cache-way", AuthConfiguration.Cache.CacheWay.class);
+        cacheWay = cacheWay == null ? AuthConfiguration.Cache.CacheWay.MEMORY : cacheWay;
+        return enableCached && AuthConfiguration.Cache.CacheWay.MEMORY.equals(cacheWay);
     }
 }

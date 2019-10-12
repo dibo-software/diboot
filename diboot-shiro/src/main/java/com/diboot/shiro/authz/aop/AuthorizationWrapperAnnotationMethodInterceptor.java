@@ -1,8 +1,8 @@
 package com.diboot.shiro.authz.aop;
 
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.authz.config.AuthConfiguration;
 import com.diboot.shiro.authz.handler.AuthorizationWrapperAnnotationHandler;
-import com.diboot.shiro.authz.properties.AuthorizationProperties;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.AuthorizationException;
@@ -19,16 +19,16 @@ public class AuthorizationWrapperAnnotationMethodInterceptor extends Authorizing
      * Default no-argument constructor that ensures this interceptor looks for
      * {@link AuthorizationWrapper AuthorizationWrapper} annotations in a method declaration.
      */
-    public AuthorizationWrapperAnnotationMethodInterceptor(AuthorizationProperties authorizationProperties) {
-        super( new AuthorizationWrapperAnnotationHandler(authorizationProperties) );
+    public AuthorizationWrapperAnnotationMethodInterceptor(AuthConfiguration.Auth auth) {
+        super( new AuthorizationWrapperAnnotationHandler(auth) );
     }
 
     /**
      * @param resolver
      * @since 1.1
      */
-    public AuthorizationWrapperAnnotationMethodInterceptor(AnnotationResolver resolver, AuthorizationProperties authorizationProperties) {
-        super( new AuthorizationWrapperAnnotationHandler(authorizationProperties), resolver);
+    public AuthorizationWrapperAnnotationMethodInterceptor(AnnotationResolver resolver, AuthConfiguration.Auth auth) {
+        super( new AuthorizationWrapperAnnotationHandler(auth), resolver);
     }
 
     /**

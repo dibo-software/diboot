@@ -1,6 +1,8 @@
 package com.diboot.shiro.authz.storage;
 
 import com.diboot.core.util.V;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -12,10 +14,10 @@ import org.springframework.stereotype.Component;
  * @version : v1.0
  * @Date 2019-08-28  10:44
  */
-@Component
+@Setter
+@Getter
 public class StorageListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Autowired
     private AuthorizationStorage authorizationStorage;
 
     @Override

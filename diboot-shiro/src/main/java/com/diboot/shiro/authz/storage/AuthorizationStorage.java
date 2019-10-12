@@ -7,7 +7,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
-import com.diboot.shiro.authz.properties.AuthorizationProperties;
+import com.diboot.shiro.authz.config.AuthConfiguration;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.impl.PermissionServiceImpl;
@@ -174,8 +174,8 @@ public class AuthorizationStorage {
                 }
             } else {
                 //代码中不存在且生产环境/测试环境: 表示需要删除
-                if (AuthorizationProperties.EnvEnum.PROD.getEnv().equals(this.env) ||
-                        AuthorizationProperties.EnvEnum.TEST.getEnv().equals(this.env)) {
+                if (AuthConfiguration.Auth.EnvEnum.PROD.getEnv().equals(this.env) ||
+                        AuthConfiguration.Auth.EnvEnum.TEST.getEnv().equals(this.env)) {
                     removeCount++;
                     permission.setDeleted(true);
                     saveOrUpdateOrDeletePermissionList.add(permission);

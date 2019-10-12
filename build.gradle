@@ -4,6 +4,7 @@ buildscript {
     }
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
+        maven{ url 'http://maven.diboot.com/repository/diboot'}
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     dependencies {
@@ -29,6 +30,7 @@ subprojects {
     [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
+        maven{ url 'http://maven.diboot.com/repository/diboot/'}
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     ext {//依赖版本

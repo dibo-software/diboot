@@ -40,6 +40,7 @@ module.exports = {
                         ['/guide/diboot-shiro/安装', '安装'],
                         ['/guide/diboot-shiro/权限设置', '权限设置'],
                         ['/guide/diboot-shiro/权限缓存', '权限缓存'],
+                        ['/guide/diboot-shiro/URL配置', 'URL配置'],
                     ]
                 }
             ],

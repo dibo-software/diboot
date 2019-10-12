@@ -3,7 +3,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
 //    compile("com.diboot:diboot-shiro:2.0.1")
     compile project(":diboot-shiro-wx-mp")
-    compile project(":diboot-shiro-wx-cp")
+//    compile project(":diboot-shiro-wx-cp")
     compile project(":diboot-components-msg")
 
     // 七牛
