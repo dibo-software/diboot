@@ -1,13 +1,14 @@
 package com.diboot.example.controller;
 
-import com.diboot.core.config.BaseConfig;
-import com.diboot.core.util.S;
+import com.diboot.commons.entity.BaseFile;
+import com.diboot.commons.file.FileHelper;
+import com.diboot.commons.service.BaseFileService;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +25,24 @@ import java.util.List;
 public class FileUploadController {
     private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
 
-    private static String SAVE_PATH = BaseConfig.getProperty("files.storage.directory");
+    @Autowired
+    private BaseFileService baseFileService;
 
     /*
-    * 单图片
-    * */
+     * 单图片
+     * */
     @PostMapping("/image")
     public JsonResult imageUpload(@RequestParam("image") MultipartFile image, ModelMap modelMap, HttpServletRequest request){
-
-        String fileName = saveFile(image);
-        if(V.notEmpty(fileName)){
+        String fileName = image.getOriginalFilename();
+        String ext = fileName.substring(fileName.lastIndexOf(".")+1);
+        String newFileName = com.diboot.commons.utils.S.newUuid() + "." + ext;
+        String filePath = FileHelper.saveImage(image, newFileName);
+        BaseFile file = new BaseFile();
+        file.setName(image.getOriginalFilename());
+        file.setFileType(ext);
+        file.setPath(filePath);
+        baseFileService.createEntity(file);
+        if(V.notEmpty(filePath)){
             modelMap.put("url", fileName);
             modelMap.put("status", "done");
             return new JsonResult(modelMap);
@@ -53,7 +60,7 @@ public class FileUploadController {
         if(V.notEmpty(images)){
             List<String> fileNameList = new ArrayList();
             for(MultipartFile image : images){
-                String fileName = saveFile(image);
+                String fileName = FileHelper.saveImage(image);
                 if(V.notEmpty(fileName)){
                     fileNameList.add(fileName);
                 }else{
@@ -73,11 +80,11 @@ public class FileUploadController {
     }
 
     /*
-    * 单文件
-    * */
+     * 单文件
+     * */
     @PostMapping("/office")
     public JsonResult officeUpload(@RequestParam("office") MultipartFile office, ModelMap modelMap, HttpServletRequest request){
-        String fileName = saveFile(office);
+        String fileName = FileHelper.saveImage(office);
         if(V.notEmpty(fileName)){
             modelMap.put("url", fileName);
             modelMap.put("status", "done");
@@ -95,7 +102,7 @@ public class FileUploadController {
         if(V.notEmpty(offices)){
             List<String> fileNameList = new ArrayList();
             for(MultipartFile office : offices){
-                String fileName = saveFile(office);
+                String fileName = FileHelper.saveImage(office);
                 if(V.notEmpty(fileName)){
                     fileNameList.add(fileName);
                 }else{
@@ -110,37 +117,6 @@ public class FileUploadController {
             }
         }
         return new JsonResult(Status.FAIL_OPERATION, modelMap);
-    }
-
-    public String saveFile(MultipartFile file){
-        if(V.isEmpty(file)){
-            return null;
-        }
-        String fileName = file.getOriginalFilename();
-        String ext = fileName.substring(fileName.lastIndexOf(".")+1);
-        String newFileName = S.newUuid() + "." + ext;
-        String fullPath = SAVE_PATH + newFileName;
-        File f = new File(fullPath);
-        if(!f.exists()){
-            try {
-                FileUtils.writeByteArrayToFile(f, file.getBytes());
-                if(logger.isDebugEnabled()){
-                    logger.info("文件保存成功");
-                    return fullPath;
-                    //如果上传文件到七牛，打开此注释
-                    /*String link = QiniuHelper.uploadFile2Qiniu(newFileName, SAVE_PATH);
-                    if(V.notEmpty(link)){
-                        logger.info("文件上传七牛成功");
-                        return link;
-                    }*/
-                }
-            } catch (IOException e) {
-                logger.error("文件保存失败");
-                e.printStackTrace();
-            }
-        }
-
-        return null;
     }
 
 }

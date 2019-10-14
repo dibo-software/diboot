@@ -15,4 +15,7 @@ include 'diboot-shiro-wx-mp'
 include 'diboot-docs'
 include 'diboot-shiro-wx-cp'
 include 'diboot-components-msg'
+include 'diboot-report'
+include 'dibo-commons-file'
+include 'dibo-commons-excel'
 

@@ -1,4 +1,4 @@
-package com.diboot.core.util;
+package com.diboot.commons.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,24 +126,6 @@ public class V {
 	}
 
 	/***
-	 * 对象不为空且不为0
-	 * @param longObj
-	 * @return
-	 */
-	public static boolean notEmptyOrZero(Long longObj){
-		return longObj != null && longObj.longValue() != 0;
-	}
-
-	/***
-	 * 对象不为空且不为0
-	 * @param intObj
-	 * @return
-	 */
-	public static boolean notEmptyOrZero(Integer intObj){
-		return intObj != null && intObj.intValue() != 0;
-	}
-	
-	/***
 	 * Map为空
 	 * @param obj
 	 * @return
@@ -151,44 +133,6 @@ public class V {
 	public static boolean notEmpty(Map obj){
 		return obj != null && !obj.isEmpty();
 	}
-	
-	/** 
-     * 判断是否为数字（允许小数点）
-     * @param str 
-     * @return true Or false 
-     */  
-    public static boolean isNumber(String str){
-		String regex = "^(-?[1-9]\\d*\\.?\\d*)|(-?0\\.\\d*[1-9])|(-?[0])|(-?[0]\\.\\d*)$";
-		return str.matches(regex);
-    }
-
-    /** 
-     * 判断是否为正确的邮件格式 
-     * @param str 
-     * @return boolean 
-     */  
-    public static boolean isEmail(String str){  
-        if(isEmpty(str)) {
-			return false;
-		}
-        return str.matches("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$");  
-    }  
-      
-    /** 
-     * 判断字符串是否为电话号码
-     * @param str 
-     * @return boolean 
-     */  
-    public static boolean isPhone(String str){  
-        if(isEmpty(str)){  
-            return false;
-        }
-        boolean valid = str.matches("^1\\d{10}$");
-        if(!valid){
-        	valid = str.matches("^[0|4]\\d{2,3}-?\\d{7,8}$");
-		}
-        return valid;
-    }
 
 	/**
 	 * 是否boolean值范围
@@ -201,19 +145,6 @@ public class V {
 	}};
 
 	/***
-	 * 是否为boolean类型
-	 * @param value
-	 * @return
-	 */
-	public static boolean isValidBoolean(String value){
-		if(value == null){
-			return false;
-		}
-		value = S.trim(value).toLowerCase();
-		return TRUE_SET.contains(value) || FALSE_SET.contains(value);
-	}
-
-	/***
 	 * 转换为boolean类型, 并判定是否为true
 	 * @param value
 	 * @return
@@ -224,85 +155,6 @@ public class V {
 		}
 		value = S.trim(value).toLowerCase();
 		return TRUE_SET.contains(value);
-	}
-
-	/***
-	 * 根据指定规则校验字符串的值是否合法
-	 * @param value
-	 * @param validation
-	 * @return
-	 */
-    public static String validate(String value, String validation){
-    	if(isEmpty(validation)){
-    		return null;
-		}
-		List<String> errorMsgList = new ArrayList<>();
-		String[] rules = validation.split(",");
-    	for(String rule : rules){
-			if ("NotNull".equalsIgnoreCase(rule)){
-				if (isEmpty(value)) {
-					errorMsgList.add("不能为空");
-				}
-			}
-			else if ("Number".equalsIgnoreCase(rule)){
-				if (!isNumber(value)) {
-					errorMsgList.add("非数字格式");
-				}
-			}
-			else if ("Boolean".equalsIgnoreCase(rule)){
-				if (!isValidBoolean(value)) {
-					errorMsgList.add("非Boolean格式");
-				}
-			}
-			else if ("Date".equalsIgnoreCase(rule)){
-				if (D.fuzzyConvert(value) == null) {
-					errorMsgList.add("非日期格式");
-				}
-			}
-			else if (rule.toLowerCase().startsWith("length")) {
-				String range = rule.substring(rule.indexOf("(") + 1, rule.lastIndexOf(")"));
-				if (range.contains("-")) {
-					String[] arr = range.split("-");
-					if (notEmpty(arr[0])) {
-						if (V.isEmpty(value) || value.length() < Integer.parseInt(arr[0])) {
-							errorMsgList.add("长度少于最小限制数: " + arr[0]);
-						}
-					}
-					if (notEmpty(arr[1])) {
-						if(V.notEmpty(value)){
-							if (value.length() > Integer.parseInt(arr[1])) {
-								errorMsgList.add("长度超出最大限制数: " + arr[1]);
-							}
-						}
-					}
-				}
-				else {
-					if (V.isEmpty(value) || !(value.length() == Integer.parseInt(range))) {
-						errorMsgList.add("长度限制: " + range + "位");
-					}
-				}
-			}
-			else if ("Email".equalsIgnoreCase(rule)) {
-				if (!isEmail(value)) {
-					errorMsgList.add("非Email格式");
-				}
-			}
-			else if ("Phone".equalsIgnoreCase(rule)) {
-				if (!isPhone(value)) {
-					errorMsgList.add("非电话号码格式");
-				}
-			}
-			else{
-				//TODO 无法识别的格式
-			}
-		}
-		// 返回校验不通过的结果
-		if(errorMsgList.isEmpty()){
-    		return null;
-		}
-		else{
-			return S.join(errorMsgList);
-		}
 	}
 
 	/***
@@ -341,11 +193,6 @@ public class V {
 			for(Object obj : sourceList){
     			if(!targetList.contains(obj)){
     				return false;
-				}
-			}
-			for(Object obj : targetList){
-				if(!sourceList.contains(obj)){
-					return false;
 				}
 			}
 			return true;
