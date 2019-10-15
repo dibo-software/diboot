@@ -1,9 +1,8 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-//    compile project(":diboot-core")
+    compile project(":diboot-core")
 
-    compile("com.diboot:diboot-core-spring-boot-starter:2.0.3")
     compile("org.apache.shiro:shiro-spring:1.4.1")
     compile("org.aspectj:aspectjweaver")
     compile("com.auth0:java-jwt:3.4.1",
