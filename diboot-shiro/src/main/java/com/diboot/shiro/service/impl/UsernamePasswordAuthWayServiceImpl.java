@@ -1,17 +1,23 @@
 package com.diboot.shiro.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
 import com.diboot.shiro.config.AuthType;
 import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.util.AuthHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /***
@@ -22,6 +28,8 @@ import java.util.List;
  */
 @Service
 public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
+
+    private final Logger logger = LoggerFactory.getLogger(UsernamePasswordAuthWayServiceImpl.class);
 
     @Autowired
     private SysUserService sysUserService;
@@ -42,9 +50,10 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
 
     @Override
     public BaseEntity getUser() {
-        QueryWrapper<SysUser> query = new QueryWrapper();
-        query.lambda()
-                .eq(SysUser::getUsername, token.getAccount());
+        logger.debug("【获取用户】==>当前 登陆用户：{}-{}", token.getAccount(), token.getIUserType().getType());
+        LambdaQueryWrapper<SysUser> query = Wrappers.<SysUser>lambdaQuery()
+                .eq(SysUser::getUsername, token.getAccount())
+                .eq(SysUser::getUserType, token.getIUserType().getType());
         List<SysUser> userList = sysUserService.getEntityList(query);
         if (V.isEmpty(userList)){
             return null;

@@ -2,6 +2,7 @@ package com.diboot.shiro.service;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.enums.IUserType;
 
 /**
  * 用户相关Service
@@ -14,9 +15,10 @@ public interface SysUserService extends BaseService<SysUser> {
     /**
      * 注册用户
      * @param sysUser
+     * @param iUserType 用户类型
      * @return
      * @throws Exception
      */
-    boolean register(SysUser sysUser) throws Exception;
+    boolean register(SysUser sysUser, IUserType iUserType) throws Exception;
 
 }

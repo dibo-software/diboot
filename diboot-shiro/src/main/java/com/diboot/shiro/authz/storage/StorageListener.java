@@ -4,6 +4,7 @@ import com.diboot.core.util.V;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,10 @@ public class StorageListener implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (V.isEmpty(event.getApplicationContext().getParent())) {
+        //容器加载多次，需要判断根容器父级是不是为空，或者祖父级别，为空的时候
+        ApplicationContext parent = event.getApplicationContext().getParent();
+        if (V.isEmpty(parent) ||
+                (V.notEmpty(parent) && V.isEmpty(parent.getParent()))){
             authorizationStorage.autoStorage(event.getApplicationContext());
         }
     }
