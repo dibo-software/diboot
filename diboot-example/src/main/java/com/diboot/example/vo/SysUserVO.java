@@ -25,7 +25,7 @@ public class SysUserVO extends SysUser {
     @BindDict(type="USER_STATUS", field="status")
     private String statusLabel;
 
-    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id AND user_role.user_type='SysUser'")
+    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id AND user_role.user_type='SysUser' AND user_role.is_deleted = 0")
     private List<Role> roleList;
 
     @TableField(exist = false)
