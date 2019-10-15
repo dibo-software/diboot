@@ -47,7 +47,7 @@ public class DefaultExceptionHandler {
         }
         if(isJsonRequest(request)) {
             log.warn("JSON请求异常", e);
-            return new ResponseEntity<>(map, status);
+            return new ResponseEntity<>(map, HttpStatus.OK);
         }
         else {
             //获取错误页面
