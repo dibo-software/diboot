@@ -17,10 +17,25 @@ import java.util.List;
  */
 public interface OrganizationService extends BaseService<Organization> {
 
+    /***
+     * 获取列表页数据
+     * @param wrapper
+     * @param pagination
+     * @return
+     */
     List<OrganizationVO> getOrganizationList(Wrapper wrapper, Pagination pagination);
 
+    /***
+     * 获取组织实体树结构
+     * @return
+     */
     List<OrganizationVO> getEntityTreeList();
 
+    /***
+     * 获取组织树结构
+     * @param voList
+     * @return
+     */
     List<Tree> getViewTreeList(List<OrganizationVO> voList);
 
 }

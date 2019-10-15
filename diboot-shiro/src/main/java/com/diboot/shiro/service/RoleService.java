@@ -17,25 +17,53 @@ import java.util.List;
  */
 public interface RoleService extends BaseService<Role> {
 
-    //获取角色列表
+    /***
+     * 获取角色列表
+     * @param queryWrapper
+     * @param pagination
+     * @return
+     */
     List<RoleVO> getRoleList(Wrapper queryWrapper, Pagination pagination);
 
-    //获取角色信息
+    /***
+     * 获取角色信息
+     * @param id
+     * @return
+     */
     RoleVO getRole(Long id);
 
-    //新建角色信息
+    /***
+     * 新建角色信息
+     * @param role
+     * @return
+     */
     boolean createRole(Role role);
 
-    //显示更新页面
+    /***
+     * 显示更新页面
+     * @param id
+     * @return
+     */
     RoleVO toUpdatePage(Long id);
 
-    //修改角色信息
+    /***
+     * 修改角色信息
+     * @param role
+     * @return
+     */
     boolean updateRole(Role role);
 
-    //删除角色信息
+    /***
+     * 删除角色信息
+     * @param id
+     * @return
+     */
     boolean deleteRole(Long id);
 
-    //获取所有菜单
+    /***
+     * 获取所有菜单,以及菜单下的资源
+     * @return
+     */
     List<Permission> getAllMenu();
 
     /***

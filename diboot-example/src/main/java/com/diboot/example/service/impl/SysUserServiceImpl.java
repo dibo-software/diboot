@@ -1,6 +1,7 @@
 package com.diboot.example.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
@@ -61,7 +62,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         if (V.notEmpty(user.getPassword())){
             this.encryptPassword(user);
         }
-
         //新建用户信息
         boolean success = super.createEntity(user);
         if(!success){
@@ -70,16 +70,20 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         //新建用户-角色信息
         List<Role> roleList = user.getRoleList();
         if(V.notEmpty(roleList)){
+            List<UserRole> urList = new ArrayList<>();
             for(Role role : roleList){
                 UserRole userRole = new UserRole();
                 userRole.setRoleId(role.getId());
                 userRole.setUserId(user.getId());
                 userRole.setUserType(user.getClass().getSimpleName());
-                try {
-                    userRoleService.createEntity(userRole);
-                } catch (Exception e) {
-                    throw new RuntimeException();
+                urList.add(userRole);
+            }
+            try {
+                if(V.notEmpty(urList)){
+                    userRoleService.createEntities(urList);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException();
             }
         }
 
@@ -118,34 +122,42 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
                 newBuffer.append(r.getId()).append(",");
             }
         }
-
         //删除页面取消选择的用户角色
         if(V.notEmpty(oldUserRoleList)){
+            List<Long> idList = new ArrayList<>();
             for(UserRole ur : oldUserRoleList){
                 if(!(newBuffer.toString().contains(ur.getRoleId().toString()))){
-                    try {
-                        userRoleService.deleteEntity(ur.getId());
-                    } catch (Exception e) {
-                        throw new RuntimeException();
-                    }
+                    idList.add(ur.getId());
                 }
             }
+            try {
+                if(V.notEmpty(idList)){
+                    wrapper = new QueryWrapper();
+                    wrapper.lambda().in(UserRole::getId, idList);
+                    userRoleService.deleteEntities(wrapper);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
         }
-
         //新增页面选择的用户角色
         if(V.notEmpty(newRolelist)){
+            List<UserRole> urList = new ArrayList<>();
             for(Role role : newRolelist){
                 if(!(oldBuffer.toString().contains(role.getId().toString()))){
                     UserRole entity = new UserRole();
                     entity.setRoleId(role.getId());
                     entity.setUserId(user.getId());
                     entity.setUserType(user.getClass().getSimpleName());
-                    try {
-                        userRoleService.createEntity(entity);
-                    } catch (Exception e) {
-                        throw new RuntimeException();
-                    }
+                    urList.add(entity);
                 }
+            }
+            try {
+                if(V.notEmpty(urList)){
+                    userRoleService.createEntities(urList);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException();
             }
         }
 

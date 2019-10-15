@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class DictionaryVO extends Dictionary {
 
-    @BindEntityList(entity=Dictionary.class, condition="this.type=type AND parent_id>0 AND deleted=0")
+    @BindEntityList(entity=Dictionary.class, condition="this.type=type AND parent_id>0 AND is_deleted=0")
     private List<Dictionary> children;
 
 }

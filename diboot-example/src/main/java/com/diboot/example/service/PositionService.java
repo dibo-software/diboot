@@ -17,21 +17,55 @@ import java.util.List;
  */
 public interface PositionService extends BaseService<Position> {
 
-    //获取列表页数据
+    /***
+     * 获取列表页数据
+     * @param wrapper
+     * @param pagination
+     * @param orgId
+     * @return
+     */
     List<PositionVO> getPositionList(Wrapper wrapper, Pagination pagination, Long orgId);
 
-    //新建
+    /***
+     * 获取某公司下的所有职位
+     * @param orgId
+     * @return
+     */
+    List<Position> getPositionList(Long orgId);
+
+    /***
+     * 新建
+     * @param positionVO
+     * @return
+     */
     boolean createPosition(PositionVO positionVO);
 
-    //更新
+    /***
+     * 更新
+     * @param positionVO
+     * @return
+     */
     boolean updatePosition(PositionVO positionVO);
 
-    //删除
+    /***
+     * 删除
+     * @param id
+     * @return
+     */
     boolean deletePosition(Long id);
 
-    //根据组织ID获取职位实体树
-    List<PositionVO> getEntityTreeList(Long orgId);
+    /***
+     * 根据组织ID获取职位实体树结构
+     * @param orgId
+     * @param deptId
+     * @return
+     */
+    List<PositionVO> getEntityTreeList(Long orgId, Long deptId);
 
-    //根据组织ID获取职位树
+    /***
+     * 获取职位树结构
+     * @param voList
+     * @return
+     */
     List<Tree> getViewTreeList(List<PositionVO> voList);
 }

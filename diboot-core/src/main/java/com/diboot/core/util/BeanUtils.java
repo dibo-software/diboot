@@ -272,6 +272,56 @@ public class BeanUtils {
     }
 
     /***
+     * Key-Object-List列表Map
+     * @param allLists
+     * @param fields
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<String, List<T>> convertToStringKeyObjectListMap(List<T> allLists, String... fields){
+        if (allLists == null || allLists.isEmpty()){
+            return null;
+        }
+        Map<String, List<T>> allListMap = new LinkedHashMap<>(allLists.size());
+        // 转换为map
+        try {
+            for (T model : allLists){
+                String key = null;
+                if(V.isEmpty(fields)){
+                    //未指定字段，以id为key
+                    key = getStringProperty(model, Cons.FieldName.id.name());
+                }
+                // 指定了一个字段，以该字段为key，类型同该字段
+                else if(fields.length == 1){
+                    key = getStringProperty(model, fields[0]);
+                }
+                else{ // 指定了多个字段，以字段S.join的结果为key，类型为String
+                    List list = new ArrayList();
+                    for(String fld : fields){
+                        list.add(getProperty(model, fld));
+                    }
+                    key = S.join(list);
+                }
+                if(key != null){
+                    List<T> list = allListMap.get(key);
+                    if (list == null){
+                        list = new ArrayList<T>();
+                        allListMap.put(key, list);
+                    }
+                    list.add(model);
+                }
+                else{
+                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
+                }
+            }
+        } catch (Exception e){
+            log.warn("转换key-model-list异常", e);
+        }
+
+        return allListMap;
+    }
+
+    /***
      * 构建上下级关联的树形结构的model
      * @param allModels
      * @param <T>
@@ -296,6 +346,46 @@ public class BeanUtils {
         buildDeeperLevelTree(topLevelModels, allModels);
         // 返回第一层级节点（二级及以上子级通过children属性获取）
         return topLevelModels;
+    }
+
+    /*
+     * 构建上下级关联的树形结构，去除顶层父级实体的parentId必须是为null或0的限制
+     * 注:通常情况下parentModels参数传null值就可以
+     * */
+    public static <T extends BaseEntity> List<T> buildTree(List<T> parentModels, List<T> allModels){
+        if(V.isEmpty(allModels)){
+            return null;
+        }
+        //获取顶层父级实体，根据一个实体的parentId是否是allModels中的某个实体的主键来判断该实体是否为顶层父级实体
+        if(parentModels == null){
+            parentModels = new ArrayList<>();
+            Set<Long> idSet = new HashSet<>();
+            for(T model : allModels){
+                idSet.add(model.getId());
+            }
+            for(T model : allModels){
+                if(!idSet.contains((Long)getProperty(model, Cons.FieldName.parentId.name()))){
+                    parentModels.add(model);
+                }
+            }
+        }
+
+        for(T parent : parentModels){
+            List<T> children = new ArrayList<>();
+            for(T model : allModels){
+                if(V.fuzzyEqual(parent.getId(), getProperty(model, Cons.FieldName.parentId.name()))
+                        && !V.fuzzyEqual(model.getId(), getProperty(model, Cons.FieldName.parentId.name()))){ //解除自循环，如：实体的id==parentId的情况
+                    children.add(model);
+                }
+            }
+            //递归调用
+            buildTree(children, allModels);
+            if(V.notEmpty(children)){
+                setProperty(parent, Cons.FieldName.children.name(), children);
+            }
+        }
+
+        return parentModels;
     }
 
     /***

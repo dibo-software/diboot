@@ -160,15 +160,22 @@ public class QueryBuilder {
 
     /**
      * 获取数据表的列名（驼峰转下划线蛇形命名）
+     * <br>
+     * 列名取值优先级： @BindQuery.field > @TableField.value > field.name
+     *
      * @param field
      * @return
      */
     private static String getColumnName(Field field){
-        BindQuery annotation = field.getAnnotation(BindQuery.class);
-        if (annotation != null && V.notEmpty(annotation.field())){
-            return annotation.field();
+        String columnName = "";
+        if (field.isAnnotationPresent(BindQuery.class)) {
+            columnName = field.getAnnotation(BindQuery.class).field();
         }
-        return S.toSnakeCase(field.getName());
+        else if (field.isAnnotationPresent(TableField.class)) {
+            columnName = field.getAnnotation(TableField.class).value();
+        }
+        return V.notEmpty(columnName) ? columnName : S.toSnakeCase(field.getName());
     }
+
 
 }

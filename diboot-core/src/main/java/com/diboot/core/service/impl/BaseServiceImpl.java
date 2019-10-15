@@ -110,10 +110,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public boolean deleteEntities(Wrapper queryWrapper) throws Exception{
+	public boolean deleteEntities(Wrapper queryWrapper){
 		// 执行
-		boolean success = super.remove(queryWrapper);
-		return success;
+		return super.remove(queryWrapper);
 	}
 
 	@Override

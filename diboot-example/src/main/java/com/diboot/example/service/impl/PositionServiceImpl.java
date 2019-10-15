@@ -7,6 +7,7 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Position;
@@ -25,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 职位相关Service实现
@@ -63,7 +63,7 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
                 }
             }
         }
-        List<PositionVO> positionVOList = getEntityTreeList(orgId);
+        List<PositionVO> positionVOList = getEntityTreeList(orgId, null);
         if(V.notEmpty(list)){
             for(PositionVO vo1 : list){
                 if(V.notEmpty(positionVOList)){
@@ -80,6 +80,35 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
     }
 
     @Override
+    public List<Position> getPositionList(Long orgId) {
+        List<Position> positionList = new ArrayList<>();
+        LambdaQueryWrapper wrapper = new LambdaQueryWrapper<Department>()
+                .eq(Department::getOrgId, orgId);
+        List<Department> deptList = departmentService.getEntityList(wrapper);
+        if(V.notEmpty(deptList)){
+            List<Long> deptIdList = new ArrayList<>();
+            for(Department dept : deptList){
+                deptIdList.add(dept.getId());
+            }
+            if(V.notEmpty(deptIdList)){
+                wrapper = new LambdaQueryWrapper<PositionDepartment>().in(PositionDepartment::getDepartmentId, deptIdList);
+                List<PositionDepartment> pdList = positionDepartmentService.getEntityList(wrapper);
+                Set<Long> positionIdSet = new HashSet<>();
+                if(V.notEmpty(pdList)){
+                    for(PositionDepartment pd : pdList){
+                        positionIdSet.add(pd.getPositionId());
+                    }
+                }
+                if(V.notEmpty(positionIdSet)){
+                    positionList = super.getEntityListByIds(new ArrayList(positionIdSet));
+                }
+            }
+        }
+
+       return positionList;
+    }
+
+    @Override
     @Transactional
     public boolean createPosition(PositionVO positionVO) {
         Position position = BeanUtils.convert(positionVO, Position.class);
@@ -91,11 +120,15 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
         try {
             List<Department> departmentList = positionVO.getDepartmentList();
             if(V.notEmpty(departmentList)){
+                List<PositionDepartment> pdList = new ArrayList<>();
                 for(Department department : departmentList){
                     PositionDepartment positionDepartment = new PositionDepartment();
                     positionDepartment.setPositionId(position.getId());
                     positionDepartment.setDepartmentId(department.getId());
-                    positionDepartmentService.createEntity(positionDepartment);
+                    pdList.add(positionDepartment);
+                }
+                if(V.notEmpty(pdList)){
+                    positionDepartmentService.createEntities(pdList);
                 }
             }
         } catch (Exception e) {
@@ -118,13 +151,13 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
             //获取职位-部门对应信息
             QueryWrapper<PositionDepartment> query = new QueryWrapper();
             query.lambda().eq(PositionDepartment::getPositionId, positionVO.getId());
-            List<PositionDepartment> oldDepartmentList = positionDepartmentService.getEntityList(query);
+            List<PositionDepartment> oldList = positionDepartmentService.getEntityList(query);
 
             List<Department> newDepartmentList = positionVO.getDepartmentList();
             StringBuffer oldBuffer = new StringBuffer();
             StringBuffer newBuffer = new StringBuffer();
-            if(V.notEmpty(oldDepartmentList)){
-                for(PositionDepartment pd : oldDepartmentList){
+            if(V.notEmpty(oldList)){
+                for(PositionDepartment pd : oldList){
                     oldBuffer.append(pd.getDepartmentId()).append(",");
                 }
             }
@@ -133,25 +166,30 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
                     newBuffer.append(d.getId()).append(",");
                 }
             }
-
             //删除页面取消选择的部门
-            if(V.notEmpty(oldDepartmentList)){
-                for(PositionDepartment pd : oldDepartmentList){
+            if(V.notEmpty(oldList)){
+                List<Long> idList = new ArrayList<>();
+                for(PositionDepartment pd : oldList){
                     if(!(newBuffer.toString().contains(pd.getDepartmentId().toString()))){
-                        positionDepartmentService.deleteEntity(pd.getId());
+                        idList.add(pd.getId());
                     }
                 }
+                Wrapper wrapper = new LambdaQueryWrapper<PositionDepartment>().in(PositionDepartment::getId, idList);
+                positionDepartmentService.deleteEntities(wrapper);
             }
-
             //新增页面选择的部门
             if(V.notEmpty(newDepartmentList)){
+                List<PositionDepartment> pdList = new ArrayList<>();
                 for(Department d : newDepartmentList){
                     if(!(oldBuffer.toString().contains(d.getId().toString()))){
                         PositionDepartment entity = new PositionDepartment();
                         entity.setDepartmentId(d.getId());
                         entity.setPositionId(positionVO.getId());
-                        positionDepartmentService.createEntity(entity);
+                        pdList.add(entity);
                     }
+                }
+                if(V.notEmpty(pdList)){
+                    positionDepartmentService.createEntities(pdList);
                 }
             }
         } catch (Exception e) {
@@ -182,15 +220,15 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
 
 
     @Override
-    public List<PositionVO> getEntityTreeList(Long orgId) {
-        LambdaQueryWrapper wrapper = null;
+    public List<PositionVO> getEntityTreeList(Long orgId, Long deptId) {
         //获取公司下的部门
-        if(V.notEmpty(orgId)){
-            wrapper = new LambdaQueryWrapper<Department>()
-                    .eq(Department::getOrgId, orgId)
-                    .select(Department::getId);
+        LambdaQueryWrapper<Department> deptWrapper = new LambdaQueryWrapper<Department>()
+                                    .eq(Department::getOrgId, orgId)
+                                    .select(Department::getId);
+        if(V.notEmpty(deptId)){
+            deptWrapper.eq(Department::getId, deptId);
         }
-        List<Department> deptList = departmentService.getEntityList(wrapper);
+        List<Department> deptList = departmentService.getEntityList(deptWrapper);
         List<Long> deptIdList = new ArrayList<>();
         if(V.notEmpty(deptList)){
             for(Department dept : deptList){
@@ -201,9 +239,9 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
             return null;
         }
         //获取部门-职位对应信息
-        wrapper = new LambdaQueryWrapper<PositionDepartment>()
+        LambdaQueryWrapper<PositionDepartment> pdWrapper = new LambdaQueryWrapper<PositionDepartment>()
                 .in(PositionDepartment::getDepartmentId, deptIdList);
-        List<PositionDepartment> pdList = positionDepartmentService.getEntityList(wrapper);
+        List<PositionDepartment> pdList = positionDepartmentService.getEntityList(pdWrapper);
         List<Long> positionIdList = new ArrayList<>();
         if(V.notEmpty(pdList)){
             for(PositionDepartment pd : pdList){
@@ -215,8 +253,8 @@ public class PositionServiceImpl extends BaseServiceImpl<PositionMapper, Positio
         }
         //获取职位
         List<Position> positionList = super.getEntityListByIds(positionIdList);
-        List<PositionVO> volist = RelationsBinder.convertAndBind(positionList, PositionVO.class);
-        List<PositionVO> voTreeList = BeanUtils.buildTree(volist);
+        List<PositionVO> voList = RelationsBinder.convertAndBind(positionList, PositionVO.class);
+        List<PositionVO> voTreeList = BeanUtils.buildTree(null, voList);
         return voTreeList;
     }
 

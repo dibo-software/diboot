@@ -75,7 +75,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         // 结果转换Map
         Map<String, T> valueEntityMap = new HashMap<>();
         // 通过中间表关联Entity
-        // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.deleted=0")
+        // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.is_deleted=0")
         // Organization organization;
         if(middleTable != null){
             Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(annoObjectForeignKeyList);

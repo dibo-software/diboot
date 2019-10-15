@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.ContextLoader;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -50,6 +51,9 @@ public class ContextHelper implements ApplicationContextAware {
      * 获取ApplicationContext上下文
      */
     public static ApplicationContext getApplicationContext() {
+        if (APPLICATION_CONTEXT == null){
+            return ContextLoader.getCurrentWebApplicationContext();
+        }
         return APPLICATION_CONTEXT;
     }
 

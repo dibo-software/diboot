@@ -13,6 +13,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.shiro.authz.annotation.AuthorizationCache;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.dto.RoleDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.service.RoleService;
@@ -50,8 +51,8 @@ public class RoleController extends BaseCrudRestController {
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     @AuthorizationCache
-    public JsonResult getVOList(Role role, Pagination pagination, HttpServletRequest request) throws Exception{
-        QueryWrapper<Role> queryWrapper = super.buildQueryWrapper(role);
+    public JsonResult getVOList(RoleDto roleDto, Pagination pagination, HttpServletRequest request) throws Exception{
+        QueryWrapper<RoleDto> queryWrapper = super.buildQueryWrapper(roleDto);
         // 获取结果
         List<RoleVO> voList = roleService.getRoleList(queryWrapper, pagination);
         // 返回结果
@@ -182,7 +183,7 @@ public class RoleController extends BaseCrudRestController {
             throws Exception{
 
         //获取角色状态KV
-        List<KeyValue> roleStatusKvList = dictionaryService.getKeyValueList(Role.METATYPE_STATUS);
+        List<KeyValue> roleStatusKvList = dictionaryService.getKeyValueList(Role.DICT_STATUS);
         modelMap.put("roleStatusKvList", roleStatusKvList);
 
         return new JsonResult(modelMap);
