@@ -6,6 +6,7 @@ import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.exception.ShiroCustomException;
 import com.diboot.shiro.mapper.SysUserMapper;
 import com.diboot.shiro.service.SysUserService;
@@ -31,13 +32,15 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
      * @throws Exception
      */
     @Override
-    public boolean register(SysUser sysUser) throws Exception {
+    public boolean register(SysUser sysUser, IUserType iUserType) throws Exception {
 
         if (V.isEmpty(sysUser.getUsername()) || V.isEmpty(sysUser.getPassword())) {
             throw new ShiroCustomException(Status.FAIL_INVALID_PARAM, "用户名密码不能为空!");
         }
         LambdaQueryWrapper<SysUser> wrapper = Wrappers.<SysUser>lambdaQuery()
-                .eq(SysUser::getUsername, sysUser.getUsername());
+                .eq(SysUser::getUsername, sysUser.getUsername())
+                .eq(SysUser::getUserType, iUserType.getType())
+                ;
         SysUser dbSysUser = getOne(wrapper);
         //校验数据库中数据是否已经存在
         if (V.notEmpty(dbSysUser)) {

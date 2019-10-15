@@ -1,7 +1,10 @@
 package com.diboot.shiro.jwt;
 
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.shiro.config.AuthType;
+import com.diboot.shiro.entity.TokenAccountInfo;
+import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.util.JwtHelper;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,6 +33,11 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
 
     /**登录使用方式*/
     private AuthType authType;
+
+    /**
+     * 用户类型枚举
+     */
+    private IUserType iUserType;
 
     /**authz token*/
     private String authtoken;
@@ -55,44 +64,54 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
 
     /***
      * 用户名码形式的授权
+     * @param authWayServiceMap  //所有认证业务service
      * @param account
      * @param password
+     * @param iUserType     //用户类型
      */
-    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap, String account, String password){
+    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap, String account, String password, IUserType iUserType){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.password = password;
         // 设置为默认登录方式
         this.authType = AuthType.USERNAME_PASSWORD;
+        this.iUserType = iUserType;
 
         this.initJwtAuthenticationToken(account, signKey, false);
     }
 
     /***
      * 以用户名密码这类形式的其他类型授权
+     * @param authWayServiceMap //所有认证业务service map
      * @param account
      * @param password
-     * @param authType
+     * @param authType          //具体认证业务类型
+     * @param iUserType
      */
-    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap, String account, String password, AuthType authType){
+    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap,
+                                      String account, String password, AuthType authType, IUserType iUserType){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.password = password;
         this.authType = authType;
+        this.iUserType = iUserType;
 
         this.initJwtAuthenticationToken(account, signKey, getAuthWayService().isPreliminaryVerified());
     }
 
     /***
      * 其他授权种类的适配构造函数
+     * @param authWayServiceMap
      * @param account
      * @param authType
+     * @param iUserType
      */
-    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap, String account, AuthType authType){
+    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap,
+                                      String account, AuthType authType, IUserType iUserType){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.authType = authType;
-
+        this.iUserType = iUserType;
         this.initJwtAuthenticationToken(account, signKey, getAuthWayService().isPreliminaryVerified());
     }
 
@@ -120,7 +139,8 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
         if(this.account != null){
             Long expiresInMinutes = this.getAuthWayService().getExpiresInMinutes();
             this.expiresInMinutes = V.notEmpty(expiresInMinutes) ? expiresInMinutes : this.expiresInMinutes;
-            this.authtoken = JwtHelper.generateToken(this.account, this.signKey, this.expiresInMinutes);
+            String user = JSON.stringify(new TokenAccountInfo(this.account, this.iUserType.getType()));
+            this.authtoken = JwtHelper.generateToken(user, this.signKey, this.expiresInMinutes);
         }
     }
 
@@ -203,5 +223,13 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
 
     public void setAuthWayServiceMap(Map<String, AuthWayService> authWayServiceMap) {
         this.authWayServiceMap = authWayServiceMap;
+    }
+
+    public IUserType getIUserType() {
+        return iUserType;
+    }
+
+    public void setIUserType(IUserType iUserType) {
+        this.iUserType = iUserType;
     }
 }

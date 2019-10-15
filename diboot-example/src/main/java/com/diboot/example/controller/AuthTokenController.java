@@ -4,8 +4,10 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
+import com.diboot.example.enums.UserTypeEnum;
 import com.diboot.shiro.config.AuthType;
 import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.SysUserService;
@@ -54,7 +56,7 @@ public class AuthTokenController {
     @PostMapping("/register")
     public JsonResult register(@RequestBody SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String password = sysUser.getPassword();
-        boolean register = sysUserService.register(sysUser);
+        boolean register = sysUserService.register(sysUser, UserTypeEnum.SYS_USER);
         if (register) {
             //注册成功后自动登陆:注册后密码被加密，重新设置为不加密的密码然后进行登陆
             sysUser.setPassword(password);
@@ -74,12 +76,12 @@ public class AuthTokenController {
     public JsonResult login(@RequestBody SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception{
         String errorMsg = "登录失败";
         try{
-            BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, sysUser.getUsername(), sysUser.getPassword(), AuthType.USERNAME_PASSWORD);
+            BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, sysUser.getUsername(), sysUser.getPassword(), AuthType.USERNAME_PASSWORD, UserTypeEnum.SYS_USER);
             Subject subject = SecurityUtils.getSubject();
             subject.login(authToken);
 
             if (subject.isAuthenticated()){
-                logger.debug("申请token成功！authtoken="+authToken.getCredentials());
+                logger.debug("申请token成功！authtoken={}", authToken.getCredentials());
                 String token = (String)authToken.getCredentials();
                 // 跳转到首页
                 return new JsonResult(token, "Token申请成功");
@@ -123,14 +125,14 @@ public class AuthTokenController {
                                            HttpServletRequest request) throws Exception{
         String openid = "";
         if (JwtHelper.isRequestTokenEffective(request)){
-            String account = JwtHelper.getAccountFromToken(JwtHelper.getRequestToken(request));
-            if (account == null){
+            TokenAccountInfo account = JwtHelper.getAccountFromToken(JwtHelper.getRequestToken(request));
+            if (V.isEmpty(account)){
                 // 如果有code并且token已过期，则使用code获取openid
                 if (V.isEmpty(code)){
                     return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"token已过期"});
                 }
             } else {
-                openid = account;
+                openid = account.getAccount();
             }
         }
 
@@ -156,7 +158,7 @@ public class AuthTokenController {
         }
 
         // 设置token
-        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, openid, AuthType.WX_MP);
+        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, openid, AuthType.WX_MP, UserTypeEnum.WX_MP_USER);
         // 获取当前的Subject
         Subject subject = SecurityUtils.getSubject();
         String token = null;

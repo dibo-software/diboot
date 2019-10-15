@@ -1,7 +1,9 @@
 package com.diboot.shiro.util;
 
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
+import com.diboot.shiro.entity.TokenAccountInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -30,12 +32,18 @@ public class JwtHelper {
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
     /***
-     * 从token中获取用户名
+     * 从token中获取用户名 + 用户类型
+     * <br>
+     * 返回格式：
+     * <code>{username:xxx, userType:xxx}</code>
      * @param token
      * @return
      */
-    public static String getAccountFromToken(String token){
-        return getAccountFromToken(token, SIGN_KEY);
+    public static TokenAccountInfo getAccountFromToken(String token){
+//        {}
+        String accountFromToken = getAccountFromToken(token, SIGN_KEY);
+        TokenAccountInfo tokenAccountInfo = JSON.toJavaObject(accountFromToken, TokenAccountInfo.class);
+        return tokenAccountInfo;
     }
 
     /***
@@ -50,15 +58,15 @@ public class JwtHelper {
             // 校验过期时间
             if(claims.getExpiration().getTime() >= System.currentTimeMillis()){
                 username = claims.getSubject();
-                logger.debug("token有效，username=" + username);
+                logger.debug("token有效，用户信息={}",  username);
             }
             else{
-                logger.warn("token已过期:" + token);
+                logger.warn("token已过期:{}", token);
                 username = null;
             }
         }
         catch (Exception e) {
-            logger.warn("解析token异常，无效的token:" + token);
+            logger.warn("解析token异常，无效的token:{}", token);
             username = null;
         }
         return username;
@@ -86,7 +94,7 @@ public class JwtHelper {
     public static boolean isRequestTokenEffective(HttpServletRequest request){
         String authToken = getRequestToken(request);
         if(V.notEmpty(authToken)){
-            String account = getAccountFromToken(authToken);
+            TokenAccountInfo account = getAccountFromToken(authToken);
             return V.notEmpty(account);
         }
         return false;
@@ -122,7 +130,7 @@ public class JwtHelper {
      * @param expiresInMinutes
      * @return
      */
-    public static String generateToken(String user, String issuer, SignatureAlgorithm signAlgorithm, String signKey, long expiresInMinutes) {
+    public static String generateToken(String user,String issuer, SignatureAlgorithm signAlgorithm, String signKey, long expiresInMinutes) {
         Date currentTime = generateCurrentDate();
         Date expiration = generateExpirationDate(currentTime, expiresInMinutes);
         String jwsToken = Jwts.builder()

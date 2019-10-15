@@ -1,11 +1,18 @@
 package com.diboot.shiro.wx.mp.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import com.diboot.shiro.config.AuthType;
+import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.enums.IUserType;
+import com.diboot.shiro.exception.ShiroCustomException;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
+import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.wx.mp.entity.WxMpMember;
 import com.diboot.shiro.wx.mp.service.WxMpMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +32,9 @@ public class WxMpAuthWayServiceImpl implements AuthWayService {
     @Autowired
     private WxMpMemberService wxMpMemberService;
 
+    @Autowired
+    private SysUserService sysUserService;
+
     private AuthType authType = AuthType.WX_MP;
 
     private BaseJwtAuthenticationToken token;
@@ -41,15 +51,21 @@ public class WxMpAuthWayServiceImpl implements AuthWayService {
 
     @Override
     public BaseEntity getUser() {
-        QueryWrapper<WxMpMember> query = new QueryWrapper();
-        query.lambda()
+        LambdaQueryWrapper<WxMpMember> query = Wrappers.<WxMpMember>lambdaQuery()
                 .eq(WxMpMember::getOpenid, token.getAccount());
-
         List<WxMpMember> wxMpMemberList = wxMpMemberService.getEntityList(query);
         if (V.isEmpty(wxMpMemberList)){
             return null;
         }
-        return wxMpMemberList.get(0);
+        WxMpMember wxMpMember = wxMpMemberList.get(0);
+        //绑定账户
+        if (V.notEmpty(wxMpMember.getSysUserId())) {
+            SysUser sysUser = sysUserService.getEntity(wxMpMember.getSysUserId());
+            if (V.isEmpty(sysUser)) {
+                throw new ShiroCustomException(Status.FAIL_NO_PERMISSION, "绑定用户后登陆");
+            }
+        }
+        return wxMpMember;
     }
 
     @Override

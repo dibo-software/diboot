@@ -19,10 +19,12 @@ import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
+import com.sun.tools.internal.ws.wscompile.AuthInfo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,14 +210,15 @@ public class SysUserController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
         }
 
-        String username = JwtHelper.getAccountFromToken(token);
-        if (V.isEmpty(username)){
+        TokenAccountInfo account = JwtHelper.getAccountFromToken(token);
+        if (V.isEmpty(account)){
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
         }
 
         QueryWrapper<SysUser> query = new QueryWrapper<>();
         query.lambda()
-                .eq(SysUser::getUsername, username);
+                .eq(SysUser::getUsername, account.getAccount())
+                .eq(SysUser::getUserType, account.getUserType());
         List<SysUser> userList = sysUserService.getEntityList(query);
         if (V.isEmpty(userList)){
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
