@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -117,11 +119,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
             throw new ShiroCustomException(Status.FAIL_VALIDATION, "删除用户失败！");
         }
         //删除账户绑定的角色信息
-        LambdaQueryWrapper<UserRole> queryWrapper = Wrappers.<UserRole>lambdaQuery()
-                .eq(UserRole::getUserId, id)
-                .eq(UserRole::getUserType, iUserType.getType());
+        Map<String, Object> criteria = new HashMap(){{
+            put("userId", id);
+            put("userType", iUserType.getType());
+        }};
 
-        if (userRoleService.deleteEntities(queryWrapper)) {
+        if (userRoleService.deletePhysics(criteria)) {
             throw new ShiroCustomException(Status.FAIL_VALIDATION, "删除用户失败！");
         }
         return true;

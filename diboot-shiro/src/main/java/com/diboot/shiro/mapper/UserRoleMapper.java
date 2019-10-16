@@ -6,6 +6,8 @@ import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.shiro.entity.UserRole;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Map;
+
 /**
  * 用户角色Mapper
  * @author Yangzhao
@@ -19,6 +21,6 @@ public interface UserRoleMapper extends BaseCrudMapper<UserRole> {
      * @param wrapper
      * @return
      */
-    int deletePhysics(@Param("ew") Wrapper<UserRole> wrapper);
+    int deletePhysics(@Param("ew")Map<String, Object> criteria);
 }
 
