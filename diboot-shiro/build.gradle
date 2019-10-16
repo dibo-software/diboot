@@ -1,8 +1,9 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    compile project(":diboot-core")
+//    compile project(":diboot-core")
 
+    compile("com.diboot:diboot-core-spring-boot-starter:2.0.3")
     compile("org.apache.shiro:shiro-spring:1.4.1")
     compile("org.aspectj:aspectjweaver")
     compile("com.auth0:java-jwt:3.4.1",
@@ -10,4 +11,39 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     
+}
+
+
+jar.enabled=true
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://maven.diboot.com/repository/diboot/") {
+                authentication(userName: "deploy", password: "Ddibo@18bt")
+            }
+            //私有库快照
+//            snapshotRepository(url: "${mavenSnapshot}") {
+//                authentication(userName: "${mavenSnapshotUserName}", password: "${mavenSnapshotPwd}")
+//            }
+            println "$version"
+            pom.version = "$version"
+            pom.artifactId = "$archivesBaseName"
+            pom.groupId = "$project.group"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/java"
+            include '**/*.xml'
+            include '**/*.dtd'
+            include '**/*.class'
+        }
+        resources {
+            srcDirs "src/main/resources"
+            include '**'
+        }
+    }
 }

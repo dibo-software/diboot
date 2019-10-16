@@ -7,6 +7,7 @@ import com.diboot.shiro.entity.UserRole;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * 用户角色Service
@@ -26,10 +27,10 @@ public interface UserRoleService extends BaseService<UserRole> {
     boolean createOrUpdateOrDeleteEntities(Collection<UserRole> entityList, int batchSize);
 
     /**
-     * 根据条件物理删除
-     * @param wrapper
+     * 根据条件物理删除 必传选项(userId、userType、roleId)
+     * @param criteria
      * @return
      */
-    boolean deletePhysics(Wrapper<UserRole> wrapper);
+    boolean deletePhysics(Map<String, Object> criteria);
 
 }

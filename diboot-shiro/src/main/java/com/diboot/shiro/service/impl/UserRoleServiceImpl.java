@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -59,7 +61,12 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRoleMapper, UserRol
                 }
                 //此处物理删除
                 else if (entity.isDeleted()){
-                    deletePhysics(queryWrapper);
+                    Map<String, Object> criteria = new HashMap(){{
+                       put("roleId", entity.getRoleId());
+                       put("userId", entity.getUserId());
+                       put("userType", entity.getUserType());
+                    }};
+                    deletePhysics(criteria);
                 }
                 //更新数据
                 else {
@@ -78,8 +85,8 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRoleMapper, UserRol
     }
 
     @Override
-    public boolean deletePhysics(Wrapper<UserRole> wrapper) {
-        return getBaseMapper().deletePhysics(wrapper) > 0;
+    public boolean deletePhysics(Map<String, Object> criteria) {
+        return getBaseMapper().deletePhysics(criteria) > 0;
     }
 
 }
