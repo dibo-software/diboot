@@ -4,9 +4,10 @@ dependencies {
 //    compile("com.diboot:diboot-shiro:2.0.1")
     compile project(":diboot-shiro-wx-mp")
 //    compile project(":diboot-shiro-wx-cp")
-    compile project(":diboot-components-msg")
-    compile project(":dibo-commons-file")
-    compile project(":dibo-commons-excel")
+    compile project(":diboot-component-msg")
+    compile project(":diboot-component-msg-email")
+    compile project(":diboot-component-file")
+    compile project(":diboot-component-file-excel")
 
     // 七牛
     compile ("com.qiniu:qiniu-java-sdk:7.2.7")
