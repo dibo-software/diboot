@@ -1,7 +1,7 @@
 package com.diboot.component.excel.mapper;
 
-import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.component.excel.entity.ExcelImportRecord;
+import com.diboot.core.mapper.BaseCrudMapper;
 
 /**
  * @author Lishuaifei

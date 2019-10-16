@@ -1,8 +1,8 @@
 package com.diboot.component.file.file;
 
 import com.diboot.component.file.file.http.CustomSSLSocketFactory;
-import com.diboot.component.file.utils.PropertiesUtils;
-import com.diboot.component.file.utils.S;
+import com.diboot.core.util.PropertiesUtils;
+import com.diboot.core.util.S;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
@@ -24,11 +24,14 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /***
  * 文件操作辅助类
- * @author Mazc@com.ltd
+ * @author Mazc
  */
 public class FileHelper{
 	private static final Logger logger = LoggerFactory.getLogger(FileHelper.class);

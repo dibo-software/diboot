@@ -28,7 +28,7 @@ import java.security.cert.X509Certificate;
 
 /****
  * HttpClient工厂类， 解决HTTPS验证问题
- * @author Mazc@com.ltd
+ * @author Mazc
  * @version 2017年8月8日
  *
  */

@@ -1,20 +1,20 @@
 package com.diboot.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.diboot.component.excel.controller.BaseExcelImportController;
+import com.diboot.component.excel.listener.BaseExcelDataListener;
+import com.diboot.component.excel.utils.EasyExcelHelper;
 import com.diboot.component.file.entity.BaseFile;
 import com.diboot.component.file.file.FileHelper;
-import com.diboot.component.file.vo.JsonResult;
-import com.diboot.component.file.vo.Pagination;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.entity.DictionaryExcelData;
 import com.diboot.example.listener.DictionaryExcelDataListener;
-import com.diboot.component.excel.controller.BaseExcelImportController;
-import com.diboot.component.excel.listener.BaseExcelDataListener;
-import com.diboot.component.excel.utils.EasyExcelHelper;
 import com.diboot.shiro.service.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +83,7 @@ public class RoleImportController extends BaseExcelImportController {
     * 预览数据
     * @throws Exception
     */
+    @Override
     @PostMapping("/preview")
     public JsonResult preview( HttpServletRequest request) throws Exception {
         return super.preview(request);

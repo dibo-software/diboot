@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 /***
  * Dibo 音频处理类
- * @author Mazc@com.ltd
+ * @author Mazc
  * @version 2016年11月7日
  * Copyright @ www.com.ltd
  */

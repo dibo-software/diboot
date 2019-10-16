@@ -7,7 +7,6 @@ import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.UserRoleService;
-import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

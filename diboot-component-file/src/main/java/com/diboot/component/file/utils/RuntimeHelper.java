@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 /***
  * Java执行命令行辅助类
- * @author Mazc@com.ltd
+ * @author Mazc
  */
 public class RuntimeHelper {
 	private static final Logger logger = LoggerFactory.getLogger(RuntimeHelper.class);

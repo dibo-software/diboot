@@ -25,7 +25,6 @@ import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
 import com.diboot.shiro.vo.SysUserVO;
-import com.sun.tools.internal.ws.wscompile.AuthInfo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

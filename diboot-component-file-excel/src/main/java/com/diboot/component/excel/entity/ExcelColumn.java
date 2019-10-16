@@ -6,7 +6,7 @@ import lombok.Data;
 
 /**
 * Excel列定义
-* @author Mazc@com.ltd
+* @author Mazc
 * @version 2017-09-18
 * Copyright @ www.com.ltd
 */

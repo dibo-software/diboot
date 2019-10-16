@@ -5,7 +5,6 @@ import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import com.diboot.core.util.V;
 
 public class BooleanConverter implements Converter<Boolean> {
     @Override

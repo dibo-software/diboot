@@ -1,22 +1,22 @@
 package com.diboot.component.excel.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.component.file.entity.BaseFile;
-import com.diboot.component.file.file.FileHelper;
-import com.diboot.component.file.service.BaseFileService;
-import com.diboot.component.file.utils.S;
-import com.diboot.component.file.utils.V;
-import com.diboot.component.file.vo.JsonResult;
-import com.diboot.component.file.vo.Pagination;
-import com.diboot.component.file.vo.Status;
-import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.service.BaseService;
 import com.diboot.component.excel.entity.BaseExcelDataEntity;
 import com.diboot.component.excel.entity.ExcelColumn;
 import com.diboot.component.excel.listener.BaseExcelDataListener;
 import com.diboot.component.excel.service.ExcelColumnService;
 import com.diboot.component.excel.service.ExcelImportRecordService;
 import com.diboot.component.excel.utils.EasyExcelHelper;
+import com.diboot.component.file.entity.BaseFile;
+import com.diboot.component.file.file.FileHelper;
+import com.diboot.component.file.service.BaseFileService;
+import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.service.BaseService;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.Pagination;
+import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * Excel导入基类
- * @author Mazc@com.ltd
+ * @author Mazc
  * @version 2017/9/18
  * Copyright @ www.com.ltd
  */
@@ -75,7 +75,7 @@ public abstract class BaseExcelImportController <T extends BaseExcelDataEntity> 
      */
     protected abstract BaseExcelDataListener getExcelDataListener();
 
-    protected com.diboot.component.file.service.BaseService getService() {
+    protected BaseService getService() {
         return baseFileService;
     }
 
@@ -90,7 +90,7 @@ public abstract class BaseExcelImportController <T extends BaseExcelDataEntity> 
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper, pagination);
         // 返回结果
-        return new JsonResult(com.diboot.component.file.vo.Status.OK, entityList).bindPagination(pagination);
+        return new JsonResult(Status.OK, entityList).bindPagination(pagination);
     }
 
     /***
@@ -148,7 +148,7 @@ public abstract class BaseExcelImportController <T extends BaseExcelDataEntity> 
                     logger.warn("数据导入成功，但保存导入历史记录信息失败！fileUuid="+importUid);
                 }
             }else{
-                logger.error("数据上传失败:"+S.join(getExcelDataListener().getErrorMsgs(), "<br/>"));
+                logger.error("数据上传失败:"+ S.join(getExcelDataListener().getErrorMsgs(), "<br/>"));
                 return new JsonResult(Status.FAIL_OPERATION, S.join(getExcelDataListener().getErrorMsgs(), "<br/>"));
             }
         }

@@ -1,7 +1,5 @@
 package com.diboot.shiro.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.shiro.entity.UserRole;
 import org.apache.ibatis.annotations.Param;

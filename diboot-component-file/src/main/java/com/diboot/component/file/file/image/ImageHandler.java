@@ -1,6 +1,5 @@
 package com.diboot.component.file.file.image;
 
-import com.diboot.component.file.utils.Base64;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.commons.io.FileUtils;
@@ -11,10 +10,11 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 
 /***
  *  图片操作辅助类
- * @author Mazc@com.ltd
+ * @author Mazc
  */
 public class ImageHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ImageHandler.class);
@@ -39,7 +39,7 @@ public class ImageHandler {
 			base64Str = base64Str.substring(base64Str.indexOf(BASE_64_FLAG)+ BASE_64_FLAG.length());
 		}
 		try{
-			byte[] data = Base64.decodeFast(base64Str);
+			byte[] data = Base64.getDecoder().decode(base64Str);
 			File file = new File(fullFilePath);
 			FileUtils.writeByteArrayToFile(file, data);
 			data = null;

@@ -1,25 +1,12 @@
-plugins {
-    id 'java'
-    id 'org.springframework.boot'
-}
 
-group 'com-component-excel'
-version '2.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-ext {
-mysqlConnectorVersion = "8.0.16"
-mybatisStarterVersion = "2.0.1"
-mybatisPlusVersion = "3.1.1"
-}
 dependencies {
-    compile project(":diboot-component-file")
     compile project(":diboot-core")
+    compile project(":diboot-component-file")
 
+    def poiversion = "3.17"
+    // office文件相关依赖
+    compile("org.apache.poi:poi:$poiversion",
+            "org.apache.poi:poi-ooxml:$poiversion")
     //easyexcel
     compile("com.alibaba:easyexcel:2.0.5")
 

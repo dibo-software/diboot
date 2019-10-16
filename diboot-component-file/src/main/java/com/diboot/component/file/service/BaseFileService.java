@@ -2,6 +2,7 @@ package com.diboot.component.file.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.component.file.entity.BaseFile;
+import com.diboot.core.service.BaseService;
 import org.springframework.stereotype.Component;
 
 /**

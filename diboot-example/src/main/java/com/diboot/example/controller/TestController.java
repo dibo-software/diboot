@@ -3,7 +3,6 @@ package com.diboot.example.controller;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**

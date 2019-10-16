@@ -1,13 +1,11 @@
 package com.diboot.shiro.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.entity.UserRole;
 import com.diboot.shiro.enums.IUserType;
@@ -17,7 +15,6 @@ import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.service.UserRoleService;
 import com.diboot.shiro.util.AuthHelper;
 import com.diboot.shiro.vo.SysUserVO;
-import com.sun.org.apache.bcel.internal.generic.IUSHR;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 用户相关Service

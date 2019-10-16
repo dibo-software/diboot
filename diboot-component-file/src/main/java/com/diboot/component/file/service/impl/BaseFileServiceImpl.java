@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.component.file.entity.BaseFile;
 import com.diboot.component.file.mapper.BaseFileMapper;
 import com.diboot.component.file.service.BaseFileService;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -15,7 +15,7 @@ import java.util.zip.ZipOutputStream;
 
 /***
  * 文件压缩操作辅助类
- * @author Mazc@com.ltd
+ * @author Mazc
  */
 public class ZipHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ZipHelper.class);
