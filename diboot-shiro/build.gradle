@@ -13,26 +13,6 @@ dependencies {
     
 }
 
-
-jar.enabled=true
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "http://maven.diboot.com/repository/diboot/") {
-                authentication(userName: "deploy", password: "Ddibo@18bt")
-            }
-            //私有库快照
-//            snapshotRepository(url: "${mavenSnapshot}") {
-//                authentication(userName: "${mavenSnapshotUserName}", password: "${mavenSnapshotPwd}")
-//            }
-            println "$version"
-            pom.version = "$version"
-            pom.artifactId = "$archivesBaseName"
-            pom.groupId = "$project.group"
-        }
-    }
-}
-
 sourceSets {
     main {
         resources {
