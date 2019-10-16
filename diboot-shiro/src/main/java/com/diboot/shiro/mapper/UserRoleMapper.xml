@@ -2,4 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd">
 <mapper namespace="com.diboot.shiro.mapper.UserRoleMapper">
 
+    <delete id="deletePhysics" parameterType="com.baomidou.mybatisplus.core.conditions.Wrapper">
+        DELETE
+        FROM user_role
+        <where>
+            <choose>
+                <when test="ew != null">
+                    #{ew.expression.sqlSegment}
+                </when>
+                <otherwise>
+                    is_deleted=1
+                </otherwise>
+            </choose>
+        </where>
+    </delete>
 </mapper>

@@ -3,9 +3,11 @@ package com.diboot.shiro.jwt;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
 import com.diboot.shiro.entity.Permission;
+import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.UserRoleService;
+import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -87,13 +89,10 @@ public class BaseJwtRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-
-        // 获取用户类型
-        String userType = principals.getPrimaryPrincipal().getClass().getSimpleName();
-        BaseEntity user = (BaseEntity) principals.getPrimaryPrincipal();
+        SysUser user = (SysUser) principals.getPrimaryPrincipal();
 
         // 根据用户类型与用户id获取roleList
-        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(userType, user.getId());
+        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(user.getUserType(), user.getId());
 
         if (V.isEmpty(roleVOList)){
             return authorizationInfo;

@@ -56,7 +56,7 @@ public class AuthTokenController {
     @PostMapping("/register")
     public JsonResult register(@RequestBody SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String password = sysUser.getPassword();
-        boolean register = sysUserService.register(sysUser, UserTypeEnum.SYS_USER);
+        boolean register = sysUserService.createSysUser(sysUser, UserTypeEnum.SYS_USER);
         if (register) {
             //注册成功后自动登陆:注册后密码被加密，重新设置为不加密的密码然后进行登陆
             sysUser.setPassword(password);

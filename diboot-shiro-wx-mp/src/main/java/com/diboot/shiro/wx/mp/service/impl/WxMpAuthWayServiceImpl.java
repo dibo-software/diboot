@@ -50,22 +50,15 @@ public class WxMpAuthWayServiceImpl implements AuthWayService {
     }
 
     @Override
-    public BaseEntity getUser() {
+    public SysUser getUser() {
         LambdaQueryWrapper<WxMpMember> query = Wrappers.<WxMpMember>lambdaQuery()
                 .eq(WxMpMember::getOpenid, token.getAccount());
         List<WxMpMember> wxMpMemberList = wxMpMemberService.getEntityList(query);
         if (V.isEmpty(wxMpMemberList)){
             return null;
         }
-        WxMpMember wxMpMember = wxMpMemberList.get(0);
-        //绑定账户
-        if (V.notEmpty(wxMpMember.getSysUserId())) {
-            SysUser sysUser = sysUserService.getEntity(wxMpMember.getSysUserId());
-            if (V.isEmpty(sysUser)) {
-                throw new ShiroCustomException(Status.FAIL_NO_PERMISSION, "绑定用户后登陆");
-            }
-        }
-        return wxMpMember;
+        //查看绑定的账户
+        return sysUserService.getEntity(wxMpMemberList.get(0).getSysUserId());
     }
 
     @Override

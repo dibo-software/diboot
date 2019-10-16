@@ -11,19 +11,20 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
-import com.diboot.example.dto.SysUserDto;
-import com.diboot.example.entity.SysUser;
-import com.diboot.example.service.SysUserService;
-import com.diboot.example.vo.SysUserVO;
+import com.diboot.example.enums.UserTypeEnum;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.dto.SysUserDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RoleService;
+import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
+import com.diboot.shiro.vo.SysUserVO;
 import com.sun.tools.internal.ws.wscompile.AuthInfo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -85,7 +86,8 @@ public class SysUserController extends BaseCrudRestController {
     @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request)
             throws Exception{
-        boolean success = sysUserService.createSysUser(entity);
+        entity.setUserId(0L);
+        boolean success = sysUserService.createSysUser(entity, UserTypeEnum.SYS_USER);
         if(success){
             return new JsonResult(Status.OK);
         }else{
@@ -109,7 +111,7 @@ public class SysUserController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
         }
         entity.setId(id);
-        boolean success = sysUserService.updateSysUser(entity);
+        boolean success = sysUserService.updateSysUser(entity, UserTypeEnum.SYS_USER);
         if(success){
             return new JsonResult(Status.OK, "更新成功");
         }else{
@@ -140,7 +142,7 @@ public class SysUserController extends BaseCrudRestController {
     @DeleteMapping("/{id}")
     @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
-        boolean success = sysUserService.deleteSysUser(id);
+        boolean success = sysUserService.deleteSysUser(id, UserTypeEnum.SYS_USER);
         if(success){
             return new JsonResult(Status.OK);
         }else{

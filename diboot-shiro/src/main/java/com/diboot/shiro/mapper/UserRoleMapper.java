@@ -1,7 +1,10 @@
 package com.diboot.shiro.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.shiro.entity.UserRole;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户角色Mapper
@@ -11,5 +14,11 @@ import com.diboot.shiro.entity.UserRole;
  */
 public interface UserRoleMapper extends BaseCrudMapper<UserRole> {
 
+    /**
+     * 物理删除
+     * @param wrapper
+     * @return
+     */
+    int deletePhysics(@Param("ew") Wrapper<UserRole> wrapper);
 }
 

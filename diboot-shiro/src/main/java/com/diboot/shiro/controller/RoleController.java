@@ -27,6 +27,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * @author wee
+ * @author Wangyongliang
+ * @version v2.0
+ * @date 2019/6/20
+ */
 @RestController
 @RequestMapping("/role")
 @AuthorizationPrefix(prefix = "role", code = "role", name = "角色管理")
@@ -50,7 +56,6 @@ public class RoleController extends BaseCrudRestController {
      */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    @AuthorizationCache
     public JsonResult getVOList(RoleDto roleDto, Pagination pagination, HttpServletRequest request) throws Exception{
         QueryWrapper<RoleDto> queryWrapper = super.buildQueryWrapper(roleDto);
         // 获取结果
@@ -65,7 +70,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "添加")
     public JsonResult createEntity(@RequestBody Role entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 创建
@@ -109,7 +114,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "查看")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         RoleVO roleVO = roleService.getRole(id);
@@ -190,9 +195,13 @@ public class RoleController extends BaseCrudRestController {
     }
 
 
-    /*
+    /**
      * 校验角色code是否重复
-     * */
+     * @param id
+     * @param code
+     * @param request
+     * @return
+     */
     @GetMapping("/checkCodeRepeat")
     public JsonResult checkCodeRepeat(@RequestParam(required = false) Long id, @RequestParam String code, HttpServletRequest request){
         if(V.notEmpty(code)){

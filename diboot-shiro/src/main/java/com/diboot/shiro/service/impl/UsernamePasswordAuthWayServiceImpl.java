@@ -49,7 +49,7 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
     }
 
     @Override
-    public BaseEntity getUser() {
+    public SysUser getUser() {
         logger.debug("【获取用户】==>当前 登陆用户：{}-{}", token.getAccount(), token.getIUserType().getType());
         LambdaQueryWrapper<SysUser> query = Wrappers.<SysUser>lambdaQuery()
                 .eq(SysUser::getUsername, token.getAccount())

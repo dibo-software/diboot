@@ -11,7 +11,7 @@ import com.diboot.shiro.enums.IUserType;
  */
 public enum  UserTypeEnum implements IUserType {
 
-    SYS_USER("MS_USER", "系统用户"),
+    SYS_USER("SysUser", "系统用户"),
     WX_MP_USER("WX_MP", "服务号用户"),
     ;
 

@@ -32,6 +32,9 @@ public class Role extends BaseEntity {
     @TableField
     private String comment;
 
+    @TableField
+    private String userType;
+
     @TableField(exist = false)
     private List<Permission> permissionList;
 
