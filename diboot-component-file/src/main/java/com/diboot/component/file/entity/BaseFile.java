@@ -75,6 +75,10 @@ public class BaseFile extends BaseEntity {
         return uuid;
     }
 
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     public String getRelObjType() {
         return this.relObjType;
     }
