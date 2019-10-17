@@ -1,12 +1,10 @@
 package com.diboot.component.file.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
+import com.diboot.core.entity.BaseEntity;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * file基础父类
@@ -15,32 +13,22 @@ import java.util.Date;
  * @date 2019/07/18
  */
 @TableName("file")
-public class BaseFile implements Serializable {
+public class BaseFile extends BaseEntity {
     private static final long serialVersionUID = 201L;
 
     public enum FILE_STATUS {
             S,
             F
     }
+    // 废弃默认主键
+    @TableField(exist = false)
+    private Long id;
 
+    // 声明新主键uuid
     @NotNull(message = "编号不能为空！")
     @Length(max = 32, message = "编号长度超出了最大限制！")
     @TableId(type = IdType.UUID)
     private String uuid = null;
-
-    /***
-     * 默认逻辑删除标记，deleted=0有效
-     */
-    @TableLogic
-    @JSONField(serialize = false)
-    @TableField("is_deleted")
-    private boolean deleted = false;
-
-    /***
-     * 默认记录创建时间字段，新建时由数据库赋值
-     */
-    @TableField(update="now()")
-    private Date createTime;
 
     @NotNull(message = "关联对象类型不能为空！")
     @Length(max = 50, message = "关联对象类型长度超出了最大限制！")
@@ -85,26 +73,6 @@ public class BaseFile implements Serializable {
 
     public String getUuid() {
         return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public String getRelObjType() {
