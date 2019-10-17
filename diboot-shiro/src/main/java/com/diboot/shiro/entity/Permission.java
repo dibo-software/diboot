@@ -28,6 +28,12 @@ public class Permission extends BaseEntity {
     @TableField
     private String permissionName;
 
+    /**
+     * 权限所属应用
+     */
+    @TableField
+    private String application;
+
     //菜单下的各种权限资源
     @TableField(exist = false)
     private List<Permission> permissionList;
@@ -43,5 +49,11 @@ public class Permission extends BaseEntity {
     //是否全选，更新时显示菜单选择状态会用到
     @TableField(exist = false)
     private boolean indeterminate = false;
+
+    /**
+     * 角色id
+     */
+    @TableField(exist = false)
+    private Long roleId;
 
 }

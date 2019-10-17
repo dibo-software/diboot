@@ -11,6 +11,7 @@ import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.entity.RolePermission;
 import com.diboot.shiro.entity.UserRole;
+import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.mapper.RoleMapper;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RolePermissionService;
@@ -354,5 +355,10 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
                 .in(Role::getId, roleIdList);
         List<RoleVO> roleVOList = this.getViewObjectList(roleQuery, null, RoleVO.class);
         return roleVOList;
+    }
+
+    @Override
+    public List<RoleVO> getRoleByUserIdList(List<Long> userIdList) {
+        return this.getBaseMapper().getRoleByUserIdList(userIdList);
     }
 }

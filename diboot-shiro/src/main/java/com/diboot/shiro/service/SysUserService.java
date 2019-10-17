@@ -2,8 +2,12 @@ package com.diboot.shiro.service;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.vo.SysUserVO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户相关Service
@@ -47,5 +51,21 @@ public interface SysUserService extends BaseService<SysUser> {
      * @throws Exception
      */
     boolean deleteSysUser(Long id, IUserType iUserType) throws Exception;
+
+    /**
+     * 获取已经登录的账号信息（sysUser-绑定角色 + 权限）
+     * @param account
+     * @return
+     * @throws Exception
+     */
+    SysUser getLoginAccountInfo(TokenAccountInfo account) throws Exception;
+
+    /**
+     * 根据用户信息的id  和  用户类型，获取对应的账户 和 账户关联的信息
+     * @param userIdList
+     * @param iUserType
+     * @return 用户id - 账户
+     */
+    Map<Long, SysUser> getSysUserListWithRolesAndPermissionsByUserIdList(List<Long> userIdList, IUserType iUserType);
 
 }

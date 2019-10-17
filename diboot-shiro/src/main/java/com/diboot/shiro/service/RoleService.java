@@ -5,9 +5,12 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.Pagination;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.vo.RoleVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 角色相关Service
@@ -73,5 +76,12 @@ public interface RoleService extends BaseService<Role> {
      * @return
      */
     List<RoleVO> getRelatedRoleAndPermissionListByUser(String userType, Long userId);
+
+    /**
+     * 根据用户id获取所有角色
+     * @param userIdList
+     * @return
+     */
+    List<RoleVO> getRoleByUserIdList(List<Long> userIdList);
 
 }

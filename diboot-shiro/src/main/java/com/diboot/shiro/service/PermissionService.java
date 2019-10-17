@@ -33,4 +33,11 @@ public interface PermissionService extends BaseService<Permission> {
      */
     @Transactional(rollbackFor = Exception.class)
     boolean createOrUpdateOrDeleteEntities(Collection<Permission> entityList, int batchSize);
+
+    /**
+     * 获取权限和角色之间的关系
+     * @param roleIdList
+     * @return
+     */
+    List<Permission> getPermissionListByRoleIdList(List<Long> roleIdList);
 }

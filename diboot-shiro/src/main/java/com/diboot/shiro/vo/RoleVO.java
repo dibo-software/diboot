@@ -29,4 +29,9 @@ public class RoleVO extends Role {
     @TableField(exist = false)
     private List<Permission> menuList;
 
+    /**
+     * 扩展账户id
+     */
+    private Long userId;
+
 }

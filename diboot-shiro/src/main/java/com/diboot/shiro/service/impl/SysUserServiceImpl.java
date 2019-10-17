@@ -7,15 +7,16 @@ import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.entity.Role;
-import com.diboot.shiro.entity.SysUser;
-import com.diboot.shiro.entity.UserRole;
+import com.diboot.shiro.entity.*;
 import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.exception.ShiroCustomException;
 import com.diboot.shiro.mapper.SysUserMapper;
+import com.diboot.shiro.service.PermissionService;
+import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.service.UserRoleService;
 import com.diboot.shiro.util.AuthHelper;
+import com.diboot.shiro.vo.RoleVO;
 import com.diboot.shiro.vo.SysUserVO;
 import com.sun.org.apache.bcel.internal.generic.IUSHR;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @Override
     public SysUserVO getSysUser(Long id) {
@@ -128,6 +135,99 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
             throw new ShiroCustomException(Status.FAIL_VALIDATION, "删除用户失败！");
         }
         return true;
+    }
+
+    /**
+     * 获取登录的账号信息
+     * @param account
+     * @return
+     */
+    @Override
+    public SysUser getLoginAccountInfo(TokenAccountInfo account) {
+        LambdaQueryWrapper<SysUser> sysUserLambdaQueryWrapper = Wrappers.<SysUser>lambdaQuery()
+                .eq(SysUser::getUsername, account.getAccount())
+                .eq(SysUser::getUserType, account.getUserType());
+        List<SysUser> userList = getEntityList(sysUserLambdaQueryWrapper);
+        if (V.isEmpty(userList)){
+            throw new ShiroCustomException(Status.FAIL_OPERATION, "获取数据失败!");
+        }
+        SysUser sysUser = userList.get(0);
+        //获取账户绑定的角色权限
+        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(account.getUserType(), sysUser.getId());
+        if (V.isEmpty(roleVOList)){
+            throw new ShiroCustomException(Status.FAIL_OPERATION, "未配置角色，获取数据失败");
+        }
+        // 如果具有管理员角色，则赋予所有权限
+        for (RoleVO roleVO : roleVOList){
+            if (roleVO.isAdmin()){
+                List<Permission> allPermissionList = permissionService.getEntityList(null);
+                roleVO.setPermissionList(allPermissionList);
+                break;
+            }
+        }
+        sysUser.setRoleVOList(roleVOList);
+        return sysUser;
+    }
+
+    @Override
+    public Map<Long, SysUser> getSysUserListWithRolesAndPermissionsByUserIdList(List<Long> userIdList, IUserType iUserType) {
+        //1、获取账户信息
+        LambdaQueryWrapper<SysUser> sysUserQueryWrapper = Wrappers.<SysUser>lambdaQuery()
+                .in(SysUser::getUserId, userIdList)
+                .eq(SysUser::getUserType, iUserType.getType());
+        List<SysUser> sysUserList = getEntityList(sysUserQueryWrapper);
+        return buildSysUserAndRoleAndPermissionRelation(sysUserList);
+    }
+
+    /**
+     * 组装账户 1-n 角色 1-n 权限关系
+     * @param sysUserList
+     * @return
+     */
+    private Map<Long, SysUser> buildSysUserAndRoleAndPermissionRelation(List<SysUser> sysUserList) {
+        Map<Long, SysUser> userIdSysUserMap = new HashMap<>(32);
+        List<Long> sysUserIdList = sysUserList.stream().map(SysUser::getId).collect(Collectors.toList());
+
+        // 1.1 获取账户对应的角色信息
+        List<RoleVO> roleVOList = roleService.getRoleByUserIdList(sysUserIdList);
+        if (V.notEmpty(roleVOList)) {
+            List<Long> roleIdList = roleVOList.stream().map(roleVO -> roleVO.getId()).collect(Collectors.toList());
+            //1.2 获取角色对应的权限
+            List<Permission> permissionList =  permissionService.getPermissionListByRoleIdList(roleIdList);
+            //1.3 构建角色和权限的关系
+            Map<Long, List<Permission>> roleIdPermissionListMap = new HashMap<>(128);
+            if (V.notEmpty(permissionList)) {
+                permissionList.stream().forEach(permission -> {
+                    List<Permission> roleIdPermissionList = roleIdPermissionListMap.get(permission.getRoleId());
+                    if (V.notEmpty(roleIdPermissionList)) {
+                        roleIdPermissionList = new ArrayList<>();
+                    }
+                    roleIdPermissionList.add(permission);
+                    roleIdPermissionListMap.put(permission.getRoleId(), roleIdPermissionList);
+                });
+                //1.4 绑定角色和权限，构建账户和角色关系
+                Map<Long, List<RoleVO>> userIdRoleVoListMap = new HashMap<>(16);
+                roleVOList.stream().forEach(roleVO -> {
+                    //1.4.1 绑定角色和权限关系
+                    roleVO.setPermissionList(roleIdPermissionListMap.get(roleVO.getId()));
+                    //1.4.2 构建角色和账户关系
+                    List<RoleVO> userIdRoleVoList = userIdRoleVoListMap.get(roleVO.getUserId());
+                    if (V.notEmpty(userIdRoleVoList)) {
+                        userIdRoleVoList = new ArrayList<>();
+                    }
+                    userIdRoleVoList.add(roleVO);
+                    userIdRoleVoListMap.put(roleVO.getUserId(), userIdRoleVoList);
+                });
+                //1.5 绑定账户和角色关系， 构建用户和账户关系
+                sysUserList.stream().forEach(sysUser -> {
+                    //1.5.1 绑定账户和角色关系
+                    sysUser.setRoleVOList(userIdRoleVoListMap.get(sysUser.getId()));
+                    //1.5.2 构建用户和账户关系
+                    userIdSysUserMap.put(sysUser.getUserId(), sysUser);
+                });
+            }
+        }
+        return userIdSysUserMap;
     }
 
     /**

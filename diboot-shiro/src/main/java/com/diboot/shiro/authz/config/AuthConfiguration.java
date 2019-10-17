@@ -27,6 +27,11 @@ public class AuthConfiguration {
     private AuthConfiguration.Auth auth = new Auth();
 
     /**
+     * 权限所在应用
+     */
+    private String application;
+
+    /**
      * 忽略认证的url,使用，分割
      */
     private String ignoreAuthUrls;
