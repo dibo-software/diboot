@@ -3,11 +3,9 @@ package com.diboot.shiro.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
 import com.diboot.shiro.config.AuthType;
 import com.diboot.shiro.entity.SysUser;
-import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.SysUserService;
@@ -17,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 /***

@@ -1,12 +1,11 @@
 package com.diboot.example.listener;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.component.excel.listener.BaseExcelDataListener;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
 import com.diboot.example.entity.DictionaryExcelData;
-import com.diboot.excel.listener.BaseExcelDataListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

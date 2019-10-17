@@ -1,8 +1,6 @@
 package com.diboot.shiro.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.service.BaseService;
-import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.UserRole;
 import org.springframework.transaction.annotation.Transactional;
 

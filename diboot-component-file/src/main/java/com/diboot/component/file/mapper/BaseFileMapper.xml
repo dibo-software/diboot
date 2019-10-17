@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "./mybatis-3-mapper.dtd">
+<mapper namespace="com.diboot.component.file.mapper.BaseFileMapper">
+
+    <sql id="setValues">
+        <set>
+            <if test="m.relObjType != null">rel_obj_type = #{m.relObjType},</if>
+            <if test="m.relObjId != null">rel_obj_id = #{m.relObjId},</if>
+            <if test="m.name != null">name = #{m.name},</if>
+            <if test="m.link != null">link = #{m.link},</if>
+            <if test="m.path != null">path = #{m.path},</if>
+            <if test="m.fileType != null">file_type = #{m.fileType},</if>
+            <if test="m.dataCount != null">data_count = #{m.dataCount},</if>
+            <if test="m.size != null">size = #{m.size},</if>
+            <if test="m.status != null">status = #{m.status},</if>
+            <if test="m.comment != null">comment = #{m.comment},</if>
+            <if test="m.deleted != null">is_deleted = #{m.deleted},</if>
+        </set>
+    </sql>
+
+    <update id="updateModel" parameterType="String">
+        UPDATE file <include refid="setValues"/>
+        WHERE uuid = #{m.uuid, jdbcType=VARCHAR}
+    </update>
+
+</mapper>

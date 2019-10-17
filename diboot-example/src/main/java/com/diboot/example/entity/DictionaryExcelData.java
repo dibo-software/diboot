@@ -1,8 +1,8 @@
 package com.diboot.example.entity;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.diboot.excel.converter.StringConverter;
-import com.diboot.excel.entity.BaseExcelDataEntity;
+import com.diboot.component.excel.converter.StringConverter;
+import com.diboot.component.excel.entity.BaseExcelDataEntity;
 import lombok.Data;
 /*
 * dictionary数据导入导出实体类

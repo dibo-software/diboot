@@ -1,16 +1,13 @@
-apply plugin: 'org.springframework.boot'
 
 dependencies {
-//    compile project(":diboot-core")
-
-    compile("com.diboot:diboot-core-spring-boot-starter:2.0.3")
+    compile project(":diboot-core")
+    
     compile("org.apache.shiro:shiro-spring:1.4.1")
     compile("org.aspectj:aspectjweaver")
     compile("com.auth0:java-jwt:3.4.1",
             "io.jsonwebtoken:jjwt:0.9.1")
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    
 }
 
 sourceSets {

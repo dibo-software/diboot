@@ -10,7 +10,6 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.authz.annotation.AuthorizationCache;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.dto.RoleDto;

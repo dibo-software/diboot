@@ -1,8 +1,9 @@
 package com.diboot.example.controller;
 
-import com.diboot.commons.entity.BaseFile;
-import com.diboot.commons.file.FileHelper;
-import com.diboot.commons.service.BaseFileService;
+import com.diboot.component.file.entity.BaseFile;
+import com.diboot.component.file.file.FileHelper;
+import com.diboot.component.file.service.BaseFileService;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
@@ -35,7 +36,7 @@ public class FileUploadController {
     public JsonResult imageUpload(@RequestParam("image") MultipartFile image, ModelMap modelMap, HttpServletRequest request){
         String fileName = image.getOriginalFilename();
         String ext = fileName.substring(fileName.lastIndexOf(".")+1);
-        String newFileName = com.diboot.commons.utils.S.newUuid() + "." + ext;
+        String newFileName = S.newUuid() + "." + ext;
         String filePath = FileHelper.saveImage(image, newFileName);
         BaseFile file = new BaseFile();
         file.setName(image.getOriginalFilename());
