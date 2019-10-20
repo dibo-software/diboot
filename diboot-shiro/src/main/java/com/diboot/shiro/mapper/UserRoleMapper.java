@@ -16,7 +16,7 @@ public interface UserRoleMapper extends BaseCrudMapper<UserRole> {
 
     /**
      * 物理删除
-     * @param wrapper
+     * @param criteria
      * @return
      */
     int deletePhysics(@Param("ew")Map<String, Object> criteria);

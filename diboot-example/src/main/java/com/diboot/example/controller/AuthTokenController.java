@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -76,7 +77,9 @@ public class AuthTokenController {
     public JsonResult login(@RequestBody SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws Exception{
         String errorMsg = "登录失败";
         try{
-            BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, sysUser.getUsername(), sysUser.getPassword(), AuthType.USERNAME_PASSWORD, UserTypeEnum.SYS_USER);
+
+            BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, sysUser.getUsername(), sysUser.getPassword(),
+                    AuthType.USERNAME_PASSWORD, UserTypeEnum.SYS_USER, Arrays.asList("NORMAL"));
             Subject subject = SecurityUtils.getSubject();
             subject.login(authToken);
 
@@ -158,7 +161,8 @@ public class AuthTokenController {
         }
 
         // 设置token
-        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, openid, AuthType.WX_MP, UserTypeEnum.WX_MP_USER);
+        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, openid, AuthType.WX_MP, UserTypeEnum.WX_MP_USER,
+                Arrays.asList("NORMAL"));
         // 获取当前的Subject
         Subject subject = SecurityUtils.getSubject();
         String token = null;

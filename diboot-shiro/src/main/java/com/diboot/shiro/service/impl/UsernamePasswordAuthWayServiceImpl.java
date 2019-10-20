@@ -47,10 +47,11 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
 
     @Override
     public SysUser getUser() {
-        logger.debug("【获取用户】==>当前 登陆用户：{}-{}", token.getAccount(), token.getIUserType().getType());
+        logger.debug("【获取用户】==>当前登陆用户类型 - {}，- 账号{}", token.getIUserType().getType(), token.getAccount());
         LambdaQueryWrapper<SysUser> query = Wrappers.<SysUser>lambdaQuery()
                 .eq(SysUser::getUsername, token.getAccount())
-                .eq(SysUser::getUserType, token.getIUserType().getType());
+                .eq(SysUser::getUserType, token.getIUserType().getType())
+                .in(SysUser::getStatus, token.getStatusList());
         List<SysUser> userList = sysUserService.getEntityList(query);
         if (V.isEmpty(userList)){
             return null;

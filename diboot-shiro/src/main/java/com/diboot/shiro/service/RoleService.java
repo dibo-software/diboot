@@ -1,8 +1,10 @@
 package com.diboot.shiro.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.Pagination;
+import com.diboot.shiro.dto.RoleDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
 import com.diboot.shiro.enums.IUserType;
@@ -21,7 +23,7 @@ import java.util.Map;
 public interface RoleService extends BaseService<Role> {
 
     /***
-     * 获取角色列表
+     * 获取角色列表 - 绑定权限
      * @param queryWrapper
      * @param pagination
      * @return
@@ -63,25 +65,19 @@ public interface RoleService extends BaseService<Role> {
      */
     boolean deleteRole(Long id);
 
-    /***
-     * 获取所有菜单,以及菜单下的资源
-     * @return
-     */
-    List<Permission> getAllMenu();
-
-    /***
-     * 根据用户类型和用户id获取角色关联权限列表
-     * @param userType
-     * @param userId
-     * @return
-     */
-    List<RoleVO> getRelatedRoleAndPermissionListByUser(String userType, Long userId);
-
     /**
      * 根据用户id获取所有角色
      * @param userIdList
      * @return
      */
     List<RoleVO> getRoleByUserIdList(List<Long> userIdList);
+
+    /**
+     * 获取用户-角色-权限关系
+     *
+     * @param sysUserIdList
+     * @return
+     */
+    List<RoleVO> getSysUserRelRole(List<Long> sysUserIdList);
 
 }

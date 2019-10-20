@@ -45,12 +45,12 @@ public interface SysUserService extends BaseService<SysUser> {
 
     /***
      * 删除
-     * @param id
-     * @param iUserType
+     * @param userId  用户id
+     * @param iUserType 用户类型
      * @return
      * @throws Exception
      */
-    boolean deleteSysUser(Long id, IUserType iUserType) throws Exception;
+    boolean deleteSysUser(Long userId, IUserType iUserType) throws Exception;
 
     /**
      * 获取已经登录的账号信息（sysUser-绑定角色 + 权限）
@@ -67,5 +67,13 @@ public interface SysUserService extends BaseService<SysUser> {
      * @return 用户id - 账户
      */
     Map<Long, SysUser> getSysUserListWithRolesAndPermissionsByUserIdList(List<Long> userIdList, IUserType iUserType);
+
+    /**
+     * 根据用户信息获取 和 用户类型，获取对应的账户
+     * @param userId
+     * @param iUserType
+     * @return
+     */
+    SysUser getSysUser(Long userId, IUserType iUserType);
 
 }

@@ -216,34 +216,9 @@ public class SysUserController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
         }
 
-        QueryWrapper<SysUser> query = new QueryWrapper<>();
-        query.lambda()
-                .eq(SysUser::getUsername, account.getAccount())
-                .eq(SysUser::getUserType, account.getUserType());
-        List<SysUser> userList = sysUserService.getEntityList(query);
-        if (V.isEmpty(userList)){
-            return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
-        }
+        SysUser sysUser = sysUserService.getLoginAccountInfo(account);
 
-        SysUser user = userList.get(0);
-
-        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(SysUser.class.getSimpleName(), user.getId());
-        if (V.isEmpty(roleVOList)){
-            return new JsonResult(Status.FAIL_OPERATION, new String[]{"用户未配置角色，获取数据失败"});
-        }
-
-        // 如果具有管理员角色，则赋予所有权限
-        for (RoleVO roleVO : roleVOList){
-            if (roleVO.isAdmin()){
-                List<Permission> allPermissionList = permissionService.getEntityList(null);
-                roleVO.setPermissionList(allPermissionList);
-                break;
-            }
-        }
-
-        user.setRoleVOList(roleVOList);
-
-        return new JsonResult(Status.OK, user, new String[]{"获取角色列表成功"});
+        return new JsonResult(Status.OK, sysUser, new String[]{"获取角色列表成功"});
     }
 
     @Override

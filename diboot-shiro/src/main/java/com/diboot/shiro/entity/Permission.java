@@ -42,11 +42,15 @@ public class Permission extends BaseEntity {
     @TableField(exist = false)
     private boolean own = false;
 
-    //指定当前是否选中，更新时显示菜单选择状态会用到
+    /**
+     * 指定当前是否选中，更新时显示菜单选择状态会用到
+     */
     @TableField(exist = false)
     private boolean checked = false;
 
-    //是否全选，更新时显示菜单选择状态会用到
+    /**
+     * 是否全选，更新时显示菜单选择状态会用到
+     */
     @TableField(exist = false)
     private boolean indeterminate = false;
 

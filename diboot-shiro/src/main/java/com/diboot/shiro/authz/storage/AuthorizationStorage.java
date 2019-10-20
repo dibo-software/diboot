@@ -66,6 +66,7 @@ public class AuthorizationStorage {
             log.debug("【初始化权限】<==未配置自动存储权限 或 未配置所在应用");
             return;
         }
+        log.debug("【初始化权限】准备中。。。");
         try {
             if (V.notEmpty(applicationContext)) {
                 PermissionService permissionService = applicationContext.getBean(PermissionServiceImpl.class);

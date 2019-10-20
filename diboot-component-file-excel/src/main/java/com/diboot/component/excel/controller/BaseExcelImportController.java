@@ -218,7 +218,7 @@ public abstract class BaseExcelImportController <T extends BaseExcelDataEntity> 
             throw new Exception("文件保存失败");
         }
         BaseFile fileObj = new BaseFile();
-        fileObj.setUuid(uuid);
+//        fileObj.setUuid(uuid);
         fileObj.setName(fileName);
         fileObj.setRelObjType(model.getClass().getSimpleName());
         fileObj.setRelObjId(model.getId());

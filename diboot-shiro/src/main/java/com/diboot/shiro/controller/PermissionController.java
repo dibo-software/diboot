@@ -55,7 +55,6 @@ public class PermissionController extends BaseCrudRestController {
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
     public JsonResult getVOList(PermissionDto permissionDto, Pagination pagination, HttpServletRequest request) throws Exception{
         QueryWrapper<PermissionDto> queryWrapper = super.buildQueryWrapper(permissionDto);
-        queryWrapper.eq("application", systemParamConfig.getApplication());
         // 查询当前页的Entity主表数据
         List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
         return new JsonResult(Status.OK, entityList).bindPagination(pagination);

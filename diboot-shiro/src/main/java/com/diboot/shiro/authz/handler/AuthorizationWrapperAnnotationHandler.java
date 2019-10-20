@@ -78,7 +78,7 @@ public class AuthorizationWrapperAnnotationHandler extends AuthorizingAnnotation
             }
         } else {
             //当权限没配置的时候，默认ADMIN为最高权限
-            if (subject.hasRole("ADMIN")) {
+            if (subject.hasRole("ADMIN") || subject.hasRole("admin")) {
                 return;
             }
         }

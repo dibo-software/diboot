@@ -40,4 +40,10 @@ public interface PermissionService extends BaseService<Permission> {
      * @return
      */
     List<Permission> getPermissionListByRoleIdList(List<Long> roleIdList);
+
+    /**
+     * 获取应用下的所有权限
+     * @return
+     */
+    List<Permission> getApplicationAllPermissionList();
 }

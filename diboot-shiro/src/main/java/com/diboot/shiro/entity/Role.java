@@ -38,11 +38,9 @@ public class Role extends BaseEntity {
     @TableField(exist = false)
     private List<Permission> permissionList;
 
-    /***
-     * 是否是管理员权限
-     * @return
+    /**
+     * 是否具有所有权限
      */
-    public boolean isAdmin(){
-        return V.equals(code, "ADMIN");
-    }
+    @TableField(exist = false)
+    private Boolean admin;
 }

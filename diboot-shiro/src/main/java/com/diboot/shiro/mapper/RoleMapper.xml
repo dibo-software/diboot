@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd">
 <mapper namespace="com.diboot.shiro.mapper.RoleMapper">
 
-    <select id="getRoleByUserIdList" parameterType="java.util.List" resultType="java.util.List">
+    <select id="getRoleByUserIdList" parameterType="java.util.List" resultType="com.diboot.shiro.vo.RoleVO">
         SELECT self.*, ur.user_id
         FROM role self
         LEFT JOIN user_role ur ON self.id = ur.role_id

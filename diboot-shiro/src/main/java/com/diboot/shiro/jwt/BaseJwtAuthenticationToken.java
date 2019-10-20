@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +38,11 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
      * 用户类型枚举
      */
     private IUserType iUserType;
+
+    /**
+     * 可登陆状态
+     */
+    private List<String> statusList;
 
     /**authz token*/
     private String authtoken;
@@ -68,13 +74,16 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
      * @param password
      * @param iUserType     //用户类型
      */
-    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap, String account, String password, IUserType iUserType){
+    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap,
+                                      String account, String password, IUserType iUserType,
+                                      List<String> statusList){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.password = password;
         // 设置为默认登录方式
         this.authType = AuthType.USERNAME_PASSWORD;
         this.iUserType = iUserType;
+        this.statusList = statusList;
 
         this.initJwtAuthenticationToken(account, signKey, false);
     }
@@ -88,12 +97,14 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
      * @param iUserType
      */
     public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap,
-                                      String account, String password, AuthType authType, IUserType iUserType){
+                                      String account, String password, AuthType authType,
+                                      IUserType iUserType, List<String> statusList){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.password = password;
         this.authType = authType;
         this.iUserType = iUserType;
+        this.statusList = statusList;
 
         this.initJwtAuthenticationToken(account, signKey, getAuthWayService().isPreliminaryVerified());
     }
@@ -106,11 +117,13 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
      * @param iUserType
      */
     public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap,
-                                      String account, AuthType authType, IUserType iUserType){
+                                      String account, AuthType authType, IUserType iUserType,
+                                      List<String> statusList){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.authType = authType;
         this.iUserType = iUserType;
+        this.statusList = statusList;
         this.initJwtAuthenticationToken(account, signKey, getAuthWayService().isPreliminaryVerified());
     }
 
@@ -230,5 +243,13 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
 
     public void setIUserType(IUserType iUserType) {
         this.iUserType = iUserType;
+    }
+
+    public List<String> getStatusList() {
+        return statusList;
+    }
+
+    public void setStatusList(List<String> statusList) {
+        this.statusList = statusList;
     }
 }

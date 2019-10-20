@@ -1,14 +1,12 @@
 package com.diboot.shiro.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -46,36 +44,7 @@ public class PermissionServiceImpl extends BaseServiceImpl<PermissionMapper, Per
         queryWrapper.eq("application", systemParamConfig.getApplication());
         //获取所有的权限
         List<Permission> allPermissionList = super.getEntityList(queryWrapper, pagination);
-        if (V.isEmpty(allPermissionList)){
-            return allPermissionList;
-        }
-        //获取父级权限，即根据menu_code进行去重
-        List<Permission> parentPermissionList = new ArrayList<>();
-        // 获取权限编码列表
-        Set<String> permissionMenuCodeSet = new HashSet<>();
-        allPermissionList.stream()
-                .forEach(permission -> {
-                    if (permissionMenuCodeSet.add(permission.getMenuCode())) {
-                        parentPermissionList.add(permission);
-                    }
-                });
-        LambdaQueryWrapper<Permission> allSubListQueryWrapper = new LambdaQueryWrapper<>();
-        allSubListQueryWrapper.in(Permission::getMenuCode, permissionMenuCodeSet)
-                .eq(Permission::getApplication, systemParamConfig.getApplication());
-
-        // 获取所有子级权限列表
-        List<Permission> allSubPermissionList = super.getEntityList(allSubListQueryWrapper);
-        // 整理出每一个父级下的所有子级权限列表
-        Map<String, List<Permission>> subPermissionListMap = BeanUtils.convertToStringKeyObjectListMap(allSubPermissionList,
-                BeanUtils.convertToFieldName(Permission::getMenuCode));
-
-        for (Permission permission : parentPermissionList){
-            List<Permission> subPermissionList = subPermissionListMap.get(permission.getMenuCode());
-            if (V.notEmpty(subPermissionList)){
-                permission.setPermissionList(subPermissionList);
-            }
-        }
-        return parentPermissionList;
+        return getParentWithSubPermissions(allPermissionList);
     }
 
     /**
@@ -118,6 +87,53 @@ public class PermissionServiceImpl extends BaseServiceImpl<PermissionMapper, Per
             batchSqlSession.flushStatements();
         }
         return true;
+    }
+
+    @Override
+    public List<Permission> getApplicationAllPermissionList() {
+        LambdaQueryWrapper<Permission> queryWrapper = Wrappers.<Permission>lambdaQuery()
+                .eq(Permission::getApplication, systemParamConfig.getApplication());
+        //获取所有的权限
+        List<Permission> allApplicationPermissionList = super.getEntityList(queryWrapper);
+        return getParentWithSubPermissions(allApplicationPermissionList);
+    }
+
+    /**
+     * 构建树形权限结构
+     * @param allApplicationPermissionList
+     * @return
+     */
+    private List<Permission> getParentWithSubPermissions(List<Permission> allApplicationPermissionList) {
+        if (V.isEmpty(allApplicationPermissionList)) {
+            return allApplicationPermissionList;
+        }
+        //获取父级权限，即根据menu_code进行去重
+        List<Permission> parentPermissionList = new ArrayList<>();
+        // 获取权限编码列表
+        Set<String> permissionMenuCodeSet = new HashSet<>();
+        allApplicationPermissionList.stream()
+                .forEach(permission -> {
+                    if (permissionMenuCodeSet.add(permission.getMenuCode())) {
+                        parentPermissionList.add(permission);
+                    }
+                });
+        LambdaQueryWrapper<Permission> allSubListQueryWrapper = new LambdaQueryWrapper<>();
+        allSubListQueryWrapper.in(Permission::getMenuCode, permissionMenuCodeSet)
+                .eq(Permission::getApplication, systemParamConfig.getApplication());
+
+        // 获取所有子级权限列表
+        List<Permission> allSubPermissionList = super.getEntityList(allSubListQueryWrapper);
+        // 整理出每一个父级下的所有子级权限列表
+        Map<String, List<Permission>> subPermissionListMap = BeanUtils.convertToStringKeyObjectListMap(allSubPermissionList,
+                BeanUtils.convertToFieldName(Permission::getMenuCode));
+
+        for (Permission permission : parentPermissionList) {
+            List<Permission> subPermissionList = subPermissionListMap.get(permission.getMenuCode());
+            if (V.notEmpty(subPermissionList)) {
+                permission.setPermissionList(subPermissionList);
+            }
+        }
+        return parentPermissionList;
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -86,9 +87,9 @@ public class CpAuthTokenController {
         if (V.isEmpty(userId)){
             return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"获取信息失败"});
         }
-
+        String[] status = new String[]{"ON_JOB"};
         // 设置token
-        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, userId, AuthType.WX_CP, UserTypeEnum.WX_CP_USER);
+        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, userId, AuthType.WX_CP, UserTypeEnum.WX_CP_USER, Arrays.asList(status));
         // 获取当前的Subject
         Subject subject = SecurityUtils.getSubject();
         String token = null;

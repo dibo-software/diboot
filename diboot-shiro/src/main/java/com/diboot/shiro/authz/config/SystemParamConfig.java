@@ -3,6 +3,8 @@ package com.diboot.shiro.authz.config;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * 系统配置
  * @author : wee
@@ -17,4 +19,9 @@ public class SystemParamConfig {
      * 应用名称
      */
     private String application;
+
+    /**
+     * 系统权限
+     */
+    private List<String> auth;
 }

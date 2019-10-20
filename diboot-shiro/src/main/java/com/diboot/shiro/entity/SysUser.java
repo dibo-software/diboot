@@ -53,7 +53,7 @@ public class SysUser extends BaseEntity {
      * 用户类型
      */
     @TableField
-    private String userType = "MS";
+    private String userType;
 
     /**
      * 用户id
@@ -81,4 +81,7 @@ public class SysUser extends BaseEntity {
 
     @TableField(exist = false)
     private List<Permission> permissionList;
+
+    @TableField(exist = false)
+    private Boolean admin;
 }
