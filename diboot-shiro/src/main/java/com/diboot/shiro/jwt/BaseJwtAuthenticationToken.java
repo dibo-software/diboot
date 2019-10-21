@@ -114,16 +114,11 @@ public class BaseJwtAuthenticationToken implements AuthenticationToken {
      * @param authWayServiceMap
      * @param account
      * @param authType
-     * @param iUserType
      */
-    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap,
-                                      String account, AuthType authType, IUserType iUserType,
-                                      List<String> statusList){
+    public BaseJwtAuthenticationToken(Map<String, AuthWayService> authWayServiceMap, String account, AuthType authType){
         this.authWayServiceMap = authWayServiceMap;
         this.account = account;
         this.authType = authType;
-        this.iUserType = iUserType;
-        this.statusList = statusList;
         this.initJwtAuthenticationToken(account, signKey, getAuthWayService().isPreliminaryVerified());
     }
 
