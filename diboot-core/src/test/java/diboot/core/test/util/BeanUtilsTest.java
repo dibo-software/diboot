@@ -92,4 +92,9 @@ public class BeanUtilsTest {
         Assert.assertEquals(dictionaryList.get(2).getItemName(), "离职");
     }
 
+    @Test
+    public void testLambdaGetterSetter(){
+        Assert.assertEquals("itemName", BeanUtils.convertToFieldName(Dictionary::getItemName));
+        Assert.assertEquals("itemName", BeanUtils.convertToFieldName(Dictionary::setItemName));
+    }
 }
