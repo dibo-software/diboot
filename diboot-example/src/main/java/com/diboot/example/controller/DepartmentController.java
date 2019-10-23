@@ -12,7 +12,6 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.example.dto.DepartmentDto;
 import com.diboot.example.entity.Department;
-import com.diboot.example.entity.Organization;
 import com.diboot.example.entity.Tree;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.vo.DepartmentVO;
@@ -105,11 +104,7 @@ public class DepartmentController extends BaseCrudRestController {
     @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody Department entity, BindingResult result, HttpServletRequest request)
             throws Exception{
-        boolean success = departmentService.createEntity(entity);
-        if(!success){
-            return new JsonResult(Status.FAIL_OPERATION);
-        }
-        return new JsonResult(Status.OK);
+        return super.createEntity(entity, result);
     }
 
     /***
@@ -137,11 +132,7 @@ public class DepartmentController extends BaseCrudRestController {
     public JsonResult updateModel(@PathVariable("id")Long id, @RequestBody Department entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
         entity.setId(id);
-        boolean success = departmentService.updateEntity(entity);
-        if(!success){
-            return new JsonResult(Status.FAIL_OPERATION);
-        }
-        return new JsonResult(Status.OK);
+        return super.updateEntity(entity, result);
     }
 
     /***

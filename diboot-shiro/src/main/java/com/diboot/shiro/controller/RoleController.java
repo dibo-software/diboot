@@ -10,12 +10,13 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.authz.annotation.AuthorizationCache;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
 import com.diboot.shiro.dto.RoleDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.enums.IUserType;
+import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.vo.RoleVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,6 +28,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * 角色管理
+ *
+ * @author Wangyongliang
+ * @version v2.0
+ * @date 2019/6/20
+ */
 @RestController
 @RequestMapping("/role")
 @AuthorizationPrefix(prefix = "role", code = "role", name = "角色管理")
@@ -34,6 +42,9 @@ public class RoleController extends BaseCrudRestController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private PermissionService permissionService;
+
     @Autowired
     private DictionaryService dictionaryService;
 
@@ -50,7 +61,6 @@ public class RoleController extends BaseCrudRestController {
      */
     @GetMapping("/list")
     @AuthorizationWrapper(value = @RequiresPermissions("list"), name = "列表")
-    @AuthorizationCache
     public JsonResult getVOList(RoleDto roleDto, Pagination pagination, HttpServletRequest request) throws Exception{
         QueryWrapper<RoleDto> queryWrapper = super.buildQueryWrapper(roleDto);
         // 获取结果
@@ -65,16 +75,11 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "添加")
     public JsonResult createEntity(@RequestBody Role entity, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 创建
-        boolean success = roleService.createRole(entity);
-        if(success){
-            return new JsonResult(Status.OK);
-        }else{
-            return new JsonResult(Status.FAIL_OPERATION);
-        }
+        return roleService.createRole(entity) ? new JsonResult(Status.OK) : new JsonResult(Status.FAIL_OPERATION);
     }
 
     /***
@@ -91,15 +96,9 @@ public class RoleController extends BaseCrudRestController {
         if(result.hasErrors()) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
         }
-
         entity.setId(id);
-        boolean success = roleService.updateRole(entity);
-
-        if(success){
-            return new JsonResult(Status.OK);
-        }else{
-            return new JsonResult(Status.FAIL_OPERATION);
-        }
+        roleService.updateRole(entity);
+        return new JsonResult(Status.OK);
     }
 
     /***
@@ -109,7 +108,7 @@ public class RoleController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "查看")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         RoleVO roleVO = roleService.getRole(id);
@@ -142,8 +141,7 @@ public class RoleController extends BaseCrudRestController {
     @GetMapping("/toCreatePage")
     public JsonResult toCreatePage(HttpServletRequest request, ModelMap modelMap)
             throws Exception{
-        List<Permission> menuList = roleService.getAllMenu();
-        modelMap.put("menuList", menuList);
+        modelMap.put("menuList", permissionService.getApplicationAllPermissionList());
         return new JsonResult(modelMap);
     }
 
@@ -169,8 +167,7 @@ public class RoleController extends BaseCrudRestController {
     @GetMapping("/getAllMenu")
     public JsonResult getAllMenu(HttpServletRequest request)
             throws Exception{
-        List<Permission> list = roleService.getAllMenu();
-        return new JsonResult(list);
+        return new JsonResult(permissionService.getApplicationAllPermissionList());
     }
 
     /***
@@ -190,9 +187,13 @@ public class RoleController extends BaseCrudRestController {
     }
 
 
-    /*
+    /**
      * 校验角色code是否重复
-     * */
+     * @param id
+     * @param code
+     * @param request
+     * @return
+     */
     @GetMapping("/checkCodeRepeat")
     public JsonResult checkCodeRepeat(@RequestParam(required = false) Long id, @RequestParam String code, HttpServletRequest request){
         if(V.notEmpty(code)){

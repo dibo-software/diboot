@@ -13,7 +13,6 @@ import com.diboot.example.mapper.DepartmentMapper;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.util.TreeUtil;
 import com.diboot.example.vo.DepartmentVO;
-import com.diboot.example.vo.OrganizationVO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

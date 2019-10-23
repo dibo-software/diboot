@@ -6,13 +6,14 @@
  * Detailed information about configuring a multi-project build in Gradle can be found
  * in the user guide at https://docs.gradle.org/5.0/userguide/multi_project_builds.html
  */
-
 rootProject.name = 'diboot-v2'
 include 'diboot-core'
 include 'diboot-example'
 include 'diboot-shiro'
 include 'diboot-shiro-wx-mp'
-include 'diboot-docs'
 include 'diboot-shiro-wx-cp'
-include 'diboot-components-msg'
-
+include 'diboot-docs'
+include 'diboot-component-file'
+include 'diboot-component-file-excel'
+include 'diboot-component-msg'
+include 'diboot-component-msg-email'

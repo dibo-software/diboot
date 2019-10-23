@@ -8,7 +8,10 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Entity集合绑定实现
@@ -68,7 +71,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                     for(Object obj : annoObjFKList){
                         T ent = entityMap.get(String.valueOf(obj));
                         if(ent != null){
-                            valueList.add(cloneEntity(ent));
+                            valueList.add(BeanUtils.cloneBean(ent));
                         }
                     }
                     valueEntityListMap.put(entry.getKey(), valueList);
@@ -88,7 +91,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                         entityList = new ArrayList<>();
                         valueEntityListMap.put(keyValue, entityList);
                     }
-                    entityList.add(cloneEntity(entity));
+                    entityList.add(BeanUtils.cloneBean(entity));
                 }
             }
         }

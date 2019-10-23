@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.List;
 
 /**
  * QueryWrapper构建器 - Entity，DTO -> 注解绑定查询条件 并转换为QueryWrapper对象
@@ -176,6 +176,5 @@ public class QueryBuilder {
         }
         return V.notEmpty(columnName) ? columnName : S.toSnakeCase(field.getName());
     }
-
 
 }

@@ -3,8 +3,6 @@ package com.diboot.example.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
-import com.diboot.example.entity.Department;
 import com.diboot.example.entity.SysUser;
 import com.diboot.shiro.entity.Role;
 import lombok.Data;
@@ -27,7 +25,7 @@ public class SysUserVO extends SysUser {
     @BindDict(type="USER_STATUS", field="status")
     private String statusLabel;
 
-    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id AND user_role.user_type='SysUser'")
+    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id AND user_role.user_type='SysUser' AND user_role.is_deleted = 0")
     private List<Role> roleList;
 
     @TableField(exist = false)

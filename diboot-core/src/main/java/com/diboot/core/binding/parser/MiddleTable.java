@@ -4,8 +4,9 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @date 2019/04/01 <br>
  */
 public class MiddleTable {
+    private static final Logger log = LoggerFactory.getLogger(MiddleTable.class);
     /**
      * 中间表
      */
@@ -45,6 +47,12 @@ public class MiddleTable {
      * @return
      */
     public MiddleTable connect(String equalsToAnnoObjectFKColumn, String equalsToRefEntityPkColumn) {
+        if(V.notEmpty(this.equalsToAnnoObjectFKColumn) && V.notEquals(this.equalsToAnnoObjectFKColumn, equalsToAnnoObjectFKColumn)){
+            log.warn("中间表关联字段被覆盖: {}->{}，暂仅支持单字段关联，请检查注解条件！", this.equalsToAnnoObjectFKColumn, equalsToAnnoObjectFKColumn);
+        }
+        if(V.notEmpty(this.equalsToRefEntityPkColumn) && V.notEquals(this.equalsToRefEntityPkColumn, equalsToRefEntityPkColumn)){
+            log.warn("中间表关联字段被覆盖: {}->{}，暂仅支持单字段关联，请检查注解条件！", this.equalsToRefEntityPkColumn, equalsToRefEntityPkColumn);
+        }
         this.equalsToAnnoObjectFKColumn = equalsToAnnoObjectFKColumn;
         this.equalsToRefEntityPkColumn = equalsToRefEntityPkColumn;
         return this;

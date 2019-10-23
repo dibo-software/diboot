@@ -77,27 +77,27 @@ public abstract class BaseBinder<T> {
     }
 
     public BaseBinder<T> andEQ(String fieldName, Object value){
-        queryWrapper.eq(S.toSnakeCase(fieldName), value);
+        queryWrapper.eq(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andNE(String fieldName, Object value){
-        queryWrapper.ne(S.toSnakeCase(fieldName), value);
+        queryWrapper.ne(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andGT(String fieldName, Object value){
-        queryWrapper.gt(S.toSnakeCase(fieldName), value);
+        queryWrapper.gt(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andGE(String fieldName, Object value){
-        queryWrapper.ge(S.toSnakeCase(fieldName), value);
+        queryWrapper.ge(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andLT(String fieldName, Object value){
-        queryWrapper.lt(S.toSnakeCase(fieldName), value);
+        queryWrapper.lt(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andLE(String fieldName, Object value){
-        queryWrapper.le(S.toSnakeCase(fieldName), value);
+        queryWrapper.le(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andIsNotNull(String fieldName){
@@ -109,11 +109,11 @@ public abstract class BaseBinder<T> {
         return this;
     }
     public BaseBinder<T> andBetween(String fieldName, Object begin, Object end){
-        queryWrapper.between(S.toSnakeCase(fieldName), begin, end);
+        queryWrapper.between(S.toSnakeCase(fieldName), formatValue(begin), formatValue(end));
         return this;
     }
     public BaseBinder<T> andLike(String fieldName, String value){
-        queryWrapper.like(S.toSnakeCase(fieldName), value);
+        queryWrapper.like(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andIn(String fieldName, Collection valueList){
@@ -125,11 +125,11 @@ public abstract class BaseBinder<T> {
         return this;
     }
     public BaseBinder<T> andNotBetween(String fieldName, Object begin, Object end){
-        queryWrapper.notBetween(S.toSnakeCase(fieldName), begin, end);
+        queryWrapper.notBetween(S.toSnakeCase(fieldName), formatValue(begin), formatValue(end));
         return this;
     }
     public BaseBinder<T> andNotLike(String fieldName, String value){
-        queryWrapper.notLike(S.toSnakeCase(fieldName), value);
+        queryWrapper.notLike(S.toSnakeCase(fieldName), formatValue(value));
         return this;
     }
     public BaseBinder<T> andApply(String applySql){
@@ -189,5 +189,17 @@ public abstract class BaseBinder<T> {
             log.warn("单次查询记录数量过大，返回结果数={}，请检查！", list.size());
         }
         return list;
+    }
+
+    /**
+     * 格式化条件值
+     * @param value
+     * @return
+     */
+    private Object formatValue(Object value){
+        if(value instanceof String && S.contains((String)value, "'")){
+            value = S.replace((String)value, "'", "");
+        }
+        return value;
     }
 }

@@ -6,7 +6,6 @@ import com.diboot.core.util.V;
 import com.diboot.shiro.wx.cp.service.impl.WxCpServiceExtImpl;
 import com.google.common.collect.Maps;
 import me.chanjar.weixin.cp.api.WxCpService;
-import me.chanjar.weixin.cp.api.impl.WxCpServiceImpl;
 import me.chanjar.weixin.cp.config.WxCpInMemoryConfigStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

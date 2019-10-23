@@ -2,4 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd">
 <mapper namespace="com.diboot.shiro.mapper.RolePermissionMapper">
 
+    <delete id="deletePhysics" parameterType="java.util.Map">
+        DELETE
+        FROM role_permission
+        <where>
+            <choose>
+                <when test="ew != null">
+                    is_deleted=0
+                    <if test="ew.roleId">
+                        AND role_id = #{ew.roleId}
+                    </if>
+                    <if test="ew.permission_id">
+                        AND user_type = #{ew.userType}
+                    </if>
+                </when>
+                <otherwise>
+                    is_deleted=1
+                </otherwise>
+            </choose>
+        </where>
+    </delete>
 </mapper>

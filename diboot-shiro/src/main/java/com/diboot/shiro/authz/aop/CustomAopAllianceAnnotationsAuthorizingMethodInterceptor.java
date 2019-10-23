@@ -1,6 +1,6 @@
 package com.diboot.shiro.authz.aop;
 
-import com.diboot.shiro.authz.properties.AuthorizationProperties;
+import com.diboot.shiro.authz.config.AuthConfiguration;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.shiro.aop.AnnotationResolver;
@@ -18,7 +18,7 @@ import java.util.List;
  * @Date 2019-06-15  12:07
  */
 public class CustomAopAllianceAnnotationsAuthorizingMethodInterceptor extends AnnotationsAuthorizingMethodInterceptor implements MethodInterceptor {
-    public CustomAopAllianceAnnotationsAuthorizingMethodInterceptor(AuthorizationProperties authorizationProperties) {
+    public CustomAopAllianceAnnotationsAuthorizingMethodInterceptor(AuthConfiguration.Auth authorizationProperties) {
         List<AuthorizingAnnotationMethodInterceptor> interceptors =
                 new ArrayList<AuthorizingAnnotationMethodInterceptor>(6);
         AnnotationResolver resolver = new SpringAnnotationResolver();

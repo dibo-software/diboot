@@ -1,6 +1,5 @@
 package com.diboot.example.controller;
 
-import com.diboot.core.util.JSON;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;

@@ -2,6 +2,7 @@ package com.diboot.shiro.wx.mp.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.shiro.entity.SysUser;
 import lombok.Data;
 
 /***
@@ -16,5 +17,14 @@ public class WxMpMember extends BaseEntity {
 
     @TableField
     private String openid;
+
+    /**
+     * 绑定用户的认证
+     */
+    @TableField
+    private Long sysUserId;
+
+    @TableField(exist = false)
+    private SysUser sysUser;
 
 }

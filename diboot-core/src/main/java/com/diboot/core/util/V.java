@@ -264,18 +264,20 @@ public class V {
 				if (range.contains("-")) {
 					String[] arr = range.split("-");
 					if (notEmpty(arr[0])) {
-						if ((value.length() < Integer.parseInt(arr[0]))) {
+						if (V.isEmpty(value) || value.length() < Integer.parseInt(arr[0])) {
 							errorMsgList.add("长度少于最小限制数: " + arr[0]);
 						}
 					}
 					if (notEmpty(arr[1])) {
-						if (value.length() > Integer.parseInt(arr[1])) {
-							errorMsgList.add("长度超出最大限制数: " + arr[1]);
+						if(V.notEmpty(value)){
+							if (value.length() > Integer.parseInt(arr[1])) {
+								errorMsgList.add("长度超出最大限制数: " + arr[1]);
+							}
 						}
 					}
 				}
 				else {
-					if (!(value.length() == Integer.parseInt(range))) {
+					if (V.isEmpty(value) || !(value.length() == Integer.parseInt(range))) {
 						errorMsgList.add("长度限制: " + range + "位");
 					}
 				}

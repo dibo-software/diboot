@@ -6,7 +6,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
-import com.diboot.shiro.authz.properties.AuthorizationProperties;
+import com.diboot.shiro.authz.config.AuthConfiguration;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
@@ -29,14 +29,14 @@ public class AuthorizationWrapperAnnotationHandler extends AuthorizingAnnotation
     /**
      * 使用配置中的所有权限角色
      */
-    private AuthorizationProperties authorizationProperties;
+    private AuthConfiguration.Auth auth;
 
     /**
      * 标记服务的注解
      */
-    public AuthorizationWrapperAnnotationHandler(AuthorizationProperties authorizationProperties) {
+    public AuthorizationWrapperAnnotationHandler(AuthConfiguration.Auth auth) {
         super(AuthorizationWrapper.class);
-        this.authorizationProperties = authorizationProperties;
+        this.auth = auth;
     }
 
 
@@ -70,15 +70,15 @@ public class AuthorizationWrapperAnnotationHandler extends AuthorizingAnnotation
         AuthorizationWrapper authorizationWrapper = (AuthorizationWrapper)resolver.getAnnotation(mi, AuthorizationWrapper.class);
         String[] perms = getAnnotationValue(authorizationWrapper);
         //当系统配置的所有权限角色集合 ： 如果当前用户包含其中任意一个角色，直接允许访问，否则对当前用户进行资源校验
-        if (V.notEmpty(authorizationProperties.getHasAllPermissionsRoleList())) {
-            for (String role : authorizationProperties.getHasAllPermissionsRoleList()) {
+        if (V.notEmpty(auth.getHasAllPermissionsRoleList())) {
+            for (String role : auth.getHasAllPermissionsRoleList()) {
                 if (subject.hasRole(role)) {
                     return;
                 }
             }
         } else {
             //当权限没配置的时候，默认ADMIN为最高权限
-            if (subject.hasRole("ADMIN")) {
+            if (subject.hasRole("ADMIN") || subject.hasRole("admin")) {
                 return;
             }
         }

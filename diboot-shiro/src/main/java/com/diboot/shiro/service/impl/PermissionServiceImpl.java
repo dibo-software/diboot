@@ -6,29 +6,24 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
-import com.diboot.shiro.dto.PermissionDto;
+import com.diboot.shiro.authz.config.SystemParamConfig;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.mapper.PermissionMapper;
 import com.diboot.shiro.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,41 +36,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PermissionServiceImpl extends BaseServiceImpl<PermissionMapper, Permission> implements PermissionService {
 
+    @Autowired
+    private SystemParamConfig systemParamConfig;
+
     @Override
     public List<Permission> getPermissionList(QueryWrapper queryWrapper, Pagination pagination) {
-        queryWrapper.groupBy("menu_code");
-        List<Permission> parentPermissionList = super.getEntityList(queryWrapper, pagination);
-        if (V.isEmpty(parentPermissionList)){
-            return parentPermissionList;
-        }
-
-        // 获取权限编码列表
-        List<String> permissionMenuCodeList = parentPermissionList.stream()
-                .map(Permission::getMenuCode)
-                .distinct()
-                .collect(Collectors.toList());
-
-        if (V.isEmpty(permissionMenuCodeList)){
-            return parentPermissionList;
-        }
-
-        LambdaQueryWrapper<Permission> allSubListQueryWrapper = new LambdaQueryWrapper<>();
-        allSubListQueryWrapper.in(Permission::getMenuCode, permissionMenuCodeList);
-
-        // 获取所有子级权限列表
-        List<Permission> allSubPermissionList = super.getEntityList(allSubListQueryWrapper);
-        // 整理出每一个父级下的所有子级权限列表
-        Map<String, List<Permission>> subPermissionListMap = BeanUtils.convertToStringKeyObjectListMap(allSubPermissionList,
-                BeanUtils.convertToFieldName(Permission::getMenuCode));
-
-        for (Permission permission : parentPermissionList){
-            List<Permission> subPermissionList = subPermissionListMap.get(permission.getMenuCode());
-            if (V.notEmpty(subPermissionList)){
-                permission.setPermissionList(subPermissionList);
-            }
-        }
-
-        return parentPermissionList;
+        queryWrapper.eq("application", systemParamConfig.getApplication());
+        //获取所有的权限
+        List<Permission> allPermissionList = super.getEntityList(queryWrapper, pagination);
+        return getParentWithSubPermissions(allPermissionList);
     }
 
     /**
@@ -118,5 +87,57 @@ public class PermissionServiceImpl extends BaseServiceImpl<PermissionMapper, Per
             batchSqlSession.flushStatements();
         }
         return true;
+    }
+
+    @Override
+    public List<Permission> getApplicationAllPermissionList() {
+        LambdaQueryWrapper<Permission> queryWrapper = Wrappers.<Permission>lambdaQuery()
+                .eq(Permission::getApplication, systemParamConfig.getApplication());
+        //获取所有的权限
+        List<Permission> allApplicationPermissionList = super.getEntityList(queryWrapper);
+        return getParentWithSubPermissions(allApplicationPermissionList);
+    }
+
+    /**
+     * 构建树形权限结构
+     * @param allApplicationPermissionList
+     * @return
+     */
+    private List<Permission> getParentWithSubPermissions(List<Permission> allApplicationPermissionList) {
+        if (V.isEmpty(allApplicationPermissionList)) {
+            return allApplicationPermissionList;
+        }
+        //获取父级权限，即根据menu_code进行去重
+        List<Permission> parentPermissionList = new ArrayList<>();
+        // 获取权限编码列表
+        Set<String> permissionMenuCodeSet = new HashSet<>();
+        allApplicationPermissionList.stream()
+                .forEach(permission -> {
+                    if (permissionMenuCodeSet.add(permission.getMenuCode())) {
+                        parentPermissionList.add(permission);
+                    }
+                });
+        LambdaQueryWrapper<Permission> allSubListQueryWrapper = new LambdaQueryWrapper<>();
+        allSubListQueryWrapper.in(Permission::getMenuCode, permissionMenuCodeSet)
+                .eq(Permission::getApplication, systemParamConfig.getApplication());
+
+        // 获取所有子级权限列表
+        List<Permission> allSubPermissionList = super.getEntityList(allSubListQueryWrapper);
+        // 整理出每一个父级下的所有子级权限列表
+        Map<String, List<Permission>> subPermissionListMap = BeanUtils.convertToStringKeyObjectListMap(allSubPermissionList,
+                BeanUtils.convertToFieldName(Permission::getMenuCode));
+
+        for (Permission permission : parentPermissionList) {
+            List<Permission> subPermissionList = subPermissionListMap.get(permission.getMenuCode());
+            if (V.notEmpty(subPermissionList)) {
+                permission.setPermissionList(subPermissionList);
+            }
+        }
+        return parentPermissionList;
+    }
+
+    @Override
+    public List<Permission> getPermissionListByRoleIdList(List<Long> roleIdList) {
+        return this.getBaseMapper().getPermissionListByRoleIdList(roleIdList);
     }
 }

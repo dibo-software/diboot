@@ -1,6 +1,5 @@
 package com.diboot.core.binding.parser;
 
-import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.util.V;
 
 import java.lang.annotation.Annotation;

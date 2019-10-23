@@ -1,10 +1,8 @@
 package com.diboot.shiro.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.Pagination;
-import com.diboot.shiro.dto.PermissionDto;
 import com.diboot.shiro.entity.Permission;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,4 +33,17 @@ public interface PermissionService extends BaseService<Permission> {
      */
     @Transactional(rollbackFor = Exception.class)
     boolean createOrUpdateOrDeleteEntities(Collection<Permission> entityList, int batchSize);
+
+    /**
+     * 获取权限和角色之间的关系
+     * @param roleIdList
+     * @return
+     */
+    List<Permission> getPermissionListByRoleIdList(List<Long> roleIdList);
+
+    /**
+     * 获取应用下的所有权限
+     * @return
+     */
+    List<Permission> getApplicationAllPermissionList();
 }

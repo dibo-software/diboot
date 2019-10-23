@@ -9,6 +9,7 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.authz.config.SystemParamConfig;
 import com.diboot.shiro.dto.PermissionDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
@@ -17,7 +18,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +40,9 @@ public class PermissionController extends BaseCrudRestController {
     @Autowired
     private PermissionService permissionService;
 
+    @Autowired
+    private SystemParamConfig systemParamConfig;
+
     /***
      * 查询ViewObject的分页数据 (此为非继承的自定义使用案例，更简化的调用父类案例请参考UserController)
      * <p>
@@ -54,7 +57,6 @@ public class PermissionController extends BaseCrudRestController {
         QueryWrapper<PermissionDto> queryWrapper = super.buildQueryWrapper(permissionDto);
         // 查询当前页的Entity主表数据
         List<Permission> entityList = permissionService.getPermissionList(queryWrapper, pagination);
-
         return new JsonResult(Status.OK, entityList).bindPagination(pagination);
     }
 
@@ -65,7 +67,7 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @GetMapping("/{id}")
-    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "读取")
+    @AuthorizationWrapper(value = @RequiresPermissions("read"), name = "查看")
     public JsonResult getModel(@PathVariable("id")Long id, HttpServletRequest request)
             throws Exception{
         PermissionVO vo = permissionService.getViewObject(id, PermissionVO.class);
@@ -78,12 +80,13 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @PostMapping("/")
-//    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
+    @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@ModelAttribute PermissionVO viewObject, BindingResult result, HttpServletRequest request)
             throws Exception{
         // 转换
         Permission entity = BeanUtils.convert(viewObject, Permission.class);
         // 创建
+        entity.setApplication(systemParamConfig.getApplication());
         return super.createEntity(entity, result);
     }
 
@@ -94,9 +97,10 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @PutMapping("/{id}")
-//    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
+    @AuthorizationWrapper(value = @RequiresPermissions("update"), name = "更新")
     public JsonResult updateModel(@PathVariable("id")Long id, @ModelAttribute Permission entity, BindingResult result,
                                   HttpServletRequest request) throws Exception{
+        entity.setApplication(systemParamConfig.getApplication());
         return super.updateEntity(entity, result);
     }
 
@@ -107,7 +111,7 @@ public class PermissionController extends BaseCrudRestController {
      * @throws Exception
      */
     @DeleteMapping("/{id}")
-//    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
+    @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
         return super.deleteEntity(id);
     }

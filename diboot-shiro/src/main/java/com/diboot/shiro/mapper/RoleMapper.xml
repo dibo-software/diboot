@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd">
 <mapper namespace="com.diboot.shiro.mapper.RoleMapper">
 
+    <select id="getRoleByUserIdList" parameterType="java.util.List" resultType="com.diboot.shiro.vo.RoleVO">
+        SELECT self.*, ur.user_id
+        FROM role self
+        LEFT JOIN user_role ur ON self.id = ur.role_id
+        WHERE self.is_deleted = 0 AND ur.is_deleted = 0
+                AND ur.user_id IN <foreach collection="list" separator="," open="(" close=")" item="userId">
+                                        #{userId}
+                                    </foreach>
+    </select>
+
 </mapper>

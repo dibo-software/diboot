@@ -3,7 +3,6 @@ package com.diboot.example.controller;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.controller.BaseCrudRestController;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
@@ -12,23 +11,20 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
-import com.diboot.example.dto.SysUserDto;
-import com.diboot.example.entity.Department;
-import com.diboot.example.entity.SysUser;
-import com.diboot.example.entity.User;
-import com.diboot.example.service.DepartmentService;
-import com.diboot.example.service.SysUserService;
-import com.diboot.example.vo.SysUserListVO;
-import com.diboot.example.vo.SysUserVO;
-import com.diboot.example.vo.UserVO;
+import com.diboot.example.enums.UserTypeEnum;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
+import com.diboot.shiro.dto.SysUserDto;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.Role;
+import com.diboot.shiro.entity.SysUser;
+import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.RoleService;
+import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
+import com.diboot.shiro.vo.SysUserVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +85,8 @@ public class SysUserController extends BaseCrudRestController {
     @AuthorizationWrapper(value = @RequiresPermissions("create"), name = "新建")
     public JsonResult createEntity(@RequestBody SysUser entity, BindingResult result, HttpServletRequest request)
             throws Exception{
-        boolean success = sysUserService.createSysUser(entity);
+        entity.setUserId(0L);
+        boolean success = sysUserService.createSysUser(entity, UserTypeEnum.SYS_USER);
         if(success){
             return new JsonResult(Status.OK);
         }else{
@@ -113,7 +110,7 @@ public class SysUserController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
         }
         entity.setId(id);
-        boolean success = sysUserService.updateSysUser(entity);
+        boolean success = sysUserService.updateSysUser(entity, UserTypeEnum.SYS_USER);
         if(success){
             return new JsonResult(Status.OK, "更新成功");
         }else{
@@ -144,7 +141,7 @@ public class SysUserController extends BaseCrudRestController {
     @DeleteMapping("/{id}")
     @AuthorizationWrapper(value = @RequiresPermissions("delete"), name = "删除")
     public JsonResult deleteModel(@PathVariable("id")Long id, HttpServletRequest request) throws Exception{
-        boolean success = sysUserService.deleteSysUser(id);
+        boolean success = sysUserService.deleteSysUser(id, UserTypeEnum.SYS_USER);
         if(success){
             return new JsonResult(Status.OK);
         }else{
@@ -214,38 +211,14 @@ public class SysUserController extends BaseCrudRestController {
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
         }
 
-        String username = JwtHelper.getAccountFromToken(token);
-        if (V.isEmpty(username)){
+        TokenAccountInfo account = JwtHelper.getAccountFromToken(token);
+        if (V.isEmpty(account)){
             return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
         }
 
-        QueryWrapper<SysUser> query = new QueryWrapper<>();
-        query.lambda()
-                .eq(SysUser::getUsername, username);
-        List<SysUser> userList = sysUserService.getEntityList(query);
-        if (V.isEmpty(userList)){
-            return new JsonResult(Status.FAIL_OPERATION, new String[]{"获取数据失败"});
-        }
+        SysUser sysUser = sysUserService.getLoginAccountInfo(account);
 
-        SysUser user = userList.get(0);
-
-        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(SysUser.class.getSimpleName(), user.getId());
-        if (V.isEmpty(roleVOList)){
-            return new JsonResult(Status.FAIL_OPERATION, new String[]{"用户未配置角色，获取数据失败"});
-        }
-
-        // 如果具有管理员角色，则赋予所有权限
-        for (RoleVO roleVO : roleVOList){
-            if (roleVO.isAdmin()){
-                List<Permission> allPermissionList = permissionService.getEntityList(null);
-                roleVO.setPermissionList(allPermissionList);
-                break;
-            }
-        }
-
-        user.setRoleVOList(roleVOList);
-
-        return new JsonResult(Status.OK, user, new String[]{"获取角色列表成功"});
+        return new JsonResult(Status.OK, sysUser, new String[]{"获取角色列表成功"});
     }
 
     @Override

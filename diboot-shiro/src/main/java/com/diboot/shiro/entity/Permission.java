@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +28,12 @@ public class Permission extends BaseEntity {
     @TableField
     private String permissionName;
 
+    /**
+     * 权限所属应用
+     */
+    @TableField
+    private String application;
+
     //菜单下的各种权限资源
     @TableField(exist = false)
     private List<Permission> permissionList;
@@ -37,12 +42,22 @@ public class Permission extends BaseEntity {
     @TableField(exist = false)
     private boolean own = false;
 
-    //指定当前是否选中，更新时显示菜单选择状态会用到
+    /**
+     * 指定当前是否选中，更新时显示菜单选择状态会用到
+     */
     @TableField(exist = false)
     private boolean checked = false;
 
-    //是否全选，更新时显示菜单选择状态会用到
+    /**
+     * 是否全选，更新时显示菜单选择状态会用到
+     */
     @TableField(exist = false)
     private boolean indeterminate = false;
+
+    /**
+     * 角色id
+     */
+    @TableField(exist = false)
+    private Long roleId;
 
 }

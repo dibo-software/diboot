@@ -44,10 +44,6 @@ public class BeanUtils {
      * 缓存BeanCopier
      */
     private static Map<String, BeanCopier> BEAN_COPIER_INST_MAP = new ConcurrentHashMap<>();
-    /***
-     * 缓存类-Lambda的映射关系
-     */
-    private static Map<Class, SerializedLambda> CLASS_LAMDBA_CACHE = new ConcurrentHashMap<>();
 
     /***
      * 获取实例
@@ -584,6 +580,25 @@ public class BeanUtils {
         }
     }
 
+    /**
+     * 克隆对象
+     * @param ent
+     * @param <T>
+     * @return
+     */
+    public static <T> T cloneBean(T ent){
+        // 克隆对象
+        try{
+            T cloneObj = (T)org.springframework.beans.BeanUtils.instantiateClass(ent.getClass());
+            copyProperties(ent ,cloneObj);
+            return cloneObj;
+        }
+        catch (Exception e){
+            log.warn("Clone Object "+ent.getClass().getSimpleName()+" error", e);
+            return ent;
+        }
+    }
+
     /***
      * 转换方法引用为属性名
      * @param fn
@@ -648,17 +663,14 @@ public class BeanUtils {
      * @return
      */
     private static SerializedLambda getSerializedLambda(Serializable fn){
-        SerializedLambda lambda = CLASS_LAMDBA_CACHE.get(fn.getClass());
-        if(lambda == null){
-            try{
-                Method method = fn.getClass().getDeclaredMethod("writeReplace");
-                method.setAccessible(Boolean.TRUE);
-                lambda = (SerializedLambda) method.invoke(fn);
-                CLASS_LAMDBA_CACHE.put(fn.getClass(), lambda);
-            }
-            catch (Exception e){
-                log.error("获取SerializedLambda异常, class="+fn.getClass().getSimpleName(), e);
-            }
+        SerializedLambda lambda = null;
+        try{
+            Method method = fn.getClass().getDeclaredMethod("writeReplace");
+            method.setAccessible(Boolean.TRUE);
+            lambda = (SerializedLambda) method.invoke(fn);
+        }
+        catch (Exception e){
+            log.error("获取SerializedLambda异常, class="+fn.getClass().getSimpleName(), e);
         }
         return lambda;
     }

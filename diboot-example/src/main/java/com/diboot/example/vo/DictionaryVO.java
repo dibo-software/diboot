@@ -1,6 +1,5 @@
 package com.diboot.example.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.entity.Dictionary;
 import lombok.Data;

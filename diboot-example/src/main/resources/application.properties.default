@@ -77,30 +77,31 @@ logging.level.org.mybatis=debug
 
 #邮件发送配置
 #发送方邮箱
-email.sender.address=
+email.address=
 #发送方授权码
-email.sender.password=
+email.password=
 #SMTP发送服务器的名字
-email.sender.host=smtp.163.com
+email.host=smtp.163.com
 #发送端口
-email.sender.sslport=
+email.sslport=
 #发送方称呼
-email.sender.name=
+email.name=
 
 
 #权限配置
 #是否存储数据库：默认不开启
-diboot.shiro.auth.storage=true
+diboot.shiro.configuration.auth.storage=true
 #存储环境：默认dev环境，不会删除代码中不存在的权限
-diboot.shiro.auth.env=dev
+diboot.shiro.configuration.auth.env=dev
 #配置所有权限均可访问的角色
-diboot.shiro.auth.has-all-permissions-role-list[0]=ALL1
-diboot.shiro.auth.has-all-permissions-role-list[1]=ALL2
-diboot.shiro.auth.has-all-permissions-role-list[2]=ALL3
-
+#diboot.shiro.auth.has-all-permissions-role-list[0]=ALL1
+#diboot.shiro.auth.has-all-permissions-role-list[1]=ALL2
+#diboot.shiro.auth.has-all-permissions-role-list[2]=ALL3
 #权限缓存机制
-diboot.shiro.cache.permission-caching-enabled=true
-diboot.shiro.cache.cache-way=memory
+diboot.shiro.configuration.cache.cache-way=memory
+diboot.shiro.configuration.cache.permission-caching-enabled=true
+
+diboot.shiro.configuration.ignore-auth-urls=/public/**
 
 #------web页面访问的时候需要如下配置----
 spring.mvc.view.prefix=/static

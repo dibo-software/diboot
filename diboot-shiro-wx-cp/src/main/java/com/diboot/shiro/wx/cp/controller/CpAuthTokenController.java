@@ -4,13 +4,14 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.config.AuthType;
+import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.jwt.BaseJwtAuthenticationToken;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.wx.cp.config.WxCpConfig;
+import com.diboot.shiro.wx.cp.enums.UserTypeEnum;
 import com.diboot.shiro.wx.cp.service.impl.WxCpServiceExtImpl;
 import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.cp.api.WxCpService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -60,14 +62,14 @@ public class CpAuthTokenController {
     public JsonResult applyTokenByOAuth2cp(@RequestParam("code") String code, HttpServletRequest request) throws Exception{
         String userId = "";
         if (JwtHelper.isRequestTokenEffective(request)){
-            String account = JwtHelper.getAccountFromToken(JwtHelper.getRequestToken(request));
-            if (account == null){
+            TokenAccountInfo account = JwtHelper.getAccountFromToken(JwtHelper.getRequestToken(request));
+            if (V.isEmpty(account)){
                 // 如果有code并且token已过期，则使用code获取userId
                 if (V.isEmpty(code)){
                     return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"token已过期"});
                 }
             } else {
-                userId = account;
+                userId = account.getAccount();
             }
         }
 
@@ -85,9 +87,9 @@ public class CpAuthTokenController {
         if (V.isEmpty(userId)){
             return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"获取信息失败"});
         }
-
+        String[] status = new String[]{"ON_JOB"};
         // 设置token
-        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, userId, AuthType.WX_CP);
+        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, userId, AuthType.WX_CP, UserTypeEnum.WX_CP_USER, Arrays.asList(status));
         // 获取当前的Subject
         Subject subject = SecurityUtils.getSubject();
         String token = null;

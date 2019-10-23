@@ -3,6 +3,7 @@ package com.diboot.shiro.jwt;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
 import com.diboot.shiro.entity.Permission;
+import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.UserRoleService;
@@ -13,14 +14,13 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,9 +30,6 @@ import java.util.stream.Collectors;
  * @date 2019/6/6
  */
 public class BaseJwtRealm extends AuthorizingRealm {
-
-    @Autowired
-    private UserRoleService userRoleService;
 
     @Autowired
     private RoleService roleService;
@@ -89,13 +86,10 @@ public class BaseJwtRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-
-        // 获取用户类型
-        String userType = principals.getPrimaryPrincipal().getClass().getSimpleName();
-        BaseEntity user = (BaseEntity) principals.getPrimaryPrincipal();
+        SysUser user = (SysUser) principals.getPrimaryPrincipal();
 
         // 根据用户类型与用户id获取roleList
-        List<RoleVO> roleVOList = roleService.getRelatedRoleAndPermissionListByUser(userType, user.getId());
+        List<RoleVO> roleVOList = roleService.getSysUserRelRole(Arrays.asList(user.getId()));
 
         if (V.isEmpty(roleVOList)){
             return authorizationInfo;

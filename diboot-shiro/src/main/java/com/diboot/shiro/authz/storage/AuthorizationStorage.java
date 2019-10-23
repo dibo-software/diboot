@@ -1,5 +1,6 @@
 package com.diboot.shiro.authz.storage;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.BeanUtils;
@@ -7,7 +8,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.shiro.authz.annotation.AuthorizationPrefix;
 import com.diboot.shiro.authz.annotation.AuthorizationWrapper;
-import com.diboot.shiro.authz.properties.AuthorizationProperties;
+import com.diboot.shiro.authz.config.AuthConfiguration;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.service.PermissionService;
 import com.diboot.shiro.service.impl.PermissionServiceImpl;
@@ -17,7 +18,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -43,9 +43,12 @@ public class AuthorizationStorage {
 
     private boolean storage;
 
-    public AuthorizationStorage(String env, boolean storage) {
+    private String applicationName;
+
+    public AuthorizationStorage(String env, boolean storage, String applicationName) {
         this.env = env;
         this.storage = storage;
+        this.applicationName = applicationName;
     }
 
     /**存储数据库中已经存在的permissionCode和ID的关系，主要用于更新数据*/
@@ -59,18 +62,22 @@ public class AuthorizationStorage {
      * @param applicationContext
      */
     public void autoStorage(ApplicationContext applicationContext) {
-        if (!storage) {
-            log.debug("【初始化权限】<==未配置自动存储权限");
+        if (!storage || V.isEmpty(this.applicationName)) {
+            log.debug("【初始化权限】<==未配置自动存储权限 或 未配置所在应用");
             return;
         }
+        log.debug("【初始化权限】准备中。。。");
         try {
             if (V.notEmpty(applicationContext)) {
                 PermissionService permissionService = applicationContext.getBean(PermissionServiceImpl.class);
-                //获取当前数据库中的有效的所有权限
-                List<Permission> permissionList = permissionService.getEntityList(Wrappers.emptyWrapper());
-                //存储数据库值
-                for (Permission permission : permissionList) {
-                    dbPermissionMap.put(permission.getPermissionCode(), permission);
+                //获取当前数据库中的当前系统的有效的所有权限
+                LambdaQueryWrapper<Permission> queryWrapper = Wrappers.<Permission>lambdaQuery().eq(Permission::getApplication, this.applicationName);
+                List<Permission> permissionList = permissionService.getEntityList(queryWrapper);
+                if (V.notEmpty(permissionList)) {
+                    //存储数据库值
+                    for (Permission permission : permissionList) {
+                        dbPermissionMap.put(permission.getPermissionCode(), permission);
+                    }
                 }
                 //初始化数据：获取所有注解为AuthPrefix的代理bean<bean名称，bean的代理对象>
                 Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(AuthorizationPrefix.class);
@@ -137,7 +144,9 @@ public class AuthorizationStorage {
                 //组装需要存储的权限
                 permissionStorageEntity = PermissionStorageEntity.builder()
                         .menuCode(menuCode).menuName(menuName)
-                        .permissionCode(permissionCode).permissionName(permissionName)
+                        .permissionCode(permissionCode)
+                        .permissionName(permissionName)
+                        .application(this.applicationName)
                         .deleted(false).highPriority(highPriority).build();
                 //设置缓存
                 loadCodePermissionMap.put(permissionCode, permissionStorageEntity);
@@ -175,8 +184,8 @@ public class AuthorizationStorage {
                 }
             } else {
                 //代码中不存在且生产环境/测试环境: 表示需要删除
-                if (AuthorizationProperties.EnvEnum.PROD.getEnv().equals(this.env) ||
-                        AuthorizationProperties.EnvEnum.TEST.getEnv().equals(this.env)) {
+                if (AuthConfiguration.Auth.EnvEnum.PROD.getEnv().equals(this.env) ||
+                        AuthConfiguration.Auth.EnvEnum.TEST.getEnv().equals(this.env)) {
                     removeCount++;
                     permission.setDeleted(true);
                     saveOrUpdateOrDeletePermissionList.add(permission);
@@ -267,6 +276,9 @@ public class AuthorizationStorage {
 
         /**权限名称*/
         private String permissionName;
+
+        /**权限所在应用*/
+        private String application;
 
         /**是否高优先级：方法上的优先级高于类上，同时出现以方法为准*/
         private boolean highPriority;

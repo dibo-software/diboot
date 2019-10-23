@@ -12,7 +12,6 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.example.entity.Department;
 import com.diboot.example.entity.Employee;
 import com.diboot.example.entity.EmployeePositionDepartment;
-import com.diboot.example.entity.PositionDepartment;
 import com.diboot.example.mapper.EmployeeMapper;
 import com.diboot.example.service.DepartmentService;
 import com.diboot.example.service.EmployeePositionDepartmentService;
@@ -25,9 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 员工相关Service实现

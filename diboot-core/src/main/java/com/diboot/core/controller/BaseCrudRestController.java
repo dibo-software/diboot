@@ -5,13 +5,12 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.JsonResult;
-import com.diboot.core.vo.Status;
 import com.diboot.core.vo.Pagination;
+import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +87,7 @@ public abstract class BaseCrudRestController extends BaseController {
     protected JsonResult createEntity(BaseEntity entity, BindingResult result) throws Exception {
         // Model属性值验证结果
         if (result != null && result.hasErrors()) {
-            return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
+            return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
         }
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
@@ -105,7 +104,7 @@ public abstract class BaseCrudRestController extends BaseController {
             data.put(PARAM_ID, entity.getId());
             return new JsonResult(Status.OK, data);
         } else {
-            log.warn("创建操作未成功，model=" + entity.getClass().getSimpleName());
+            log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
             // 组装返回结果
             return new JsonResult(Status.FAIL_OPERATION);
         }
@@ -119,9 +118,9 @@ public abstract class BaseCrudRestController extends BaseController {
      * @throws Exception
      */
     protected JsonResult updateEntity(BaseEntity entity, BindingResult result) throws Exception {
-        // Model属性值验证结果
+        // Entity属性值验证结果
         if (result.hasErrors()) {
-            return new JsonResult(Status.FAIL_INVALID_PARAM, super.getBindingError(result));
+            return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
         }
         // 执行更新资源前的操作
         String validateResult = this.beforeUpdate(entity);
@@ -138,7 +137,7 @@ public abstract class BaseCrudRestController extends BaseController {
             data.put(PARAM_ID, entity.getId());
             return new JsonResult(Status.OK, data);
         } else {
-            log.warn("更新操作失败，model=" + entity.getClass().getSimpleName() + ", id=" + entity.getId());
+            log.warn("更新操作失败，{}:{}", entity.getClass().getSimpleName(), entity.getId());
             // 返回操作结果
             return new JsonResult(Status.FAIL_OPERATION);
         }
@@ -155,9 +154,9 @@ public abstract class BaseCrudRestController extends BaseController {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
         // 是否有权限删除
-        BaseEntity model = (BaseEntity) getService().getEntity(id);
+        BaseEntity entity = (BaseEntity) getService().getEntity(id);
         // 执行删除操作
-        String validateResult = beforeDelete(model);
+        String validateResult = beforeDelete(entity);
         if (validateResult != null) {
             // 返回json
             return new JsonResult(Status.FAIL_OPERATION, validateResult);
@@ -165,13 +164,13 @@ public abstract class BaseCrudRestController extends BaseController {
         // 执行删除操作
         boolean success = getService().deleteEntity(id);
         if (success) {
-            log.info("删除操作成功，model=" + model.getClass().getSimpleName() + ", id=" + id);
+            log.info("删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
             // 组装返回结果
             Map<String, Object> data = new HashMap<>(2);
-            data.put(PARAM_ID, model.getId());
+            data.put(PARAM_ID, entity.getId());
             return new JsonResult(Status.OK, data);
         } else {
-            log.warn("删除操作未成功，model=" + model.getClass().getSimpleName() + ", id=" + id);
+            log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
             return new JsonResult(Status.FAIL_OPERATION);
         }
     }

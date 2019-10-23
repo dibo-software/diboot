@@ -4,6 +4,7 @@ buildscript {
     }
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
+        maven{ url 'http://maven.diboot.com/repository/diboot'}
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     dependencies {
@@ -20,6 +21,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
+    apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
 
@@ -29,6 +31,7 @@ subprojects {
     [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
+        maven{ url 'http://maven.diboot.com/repository/diboot'}
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     ext {//依赖版本
@@ -36,9 +39,9 @@ subprojects {
         mysqlConnectorVersion = "8.0.16"
         mybatisStarterVersion = "2.1.0"
         mybatisPlusVersion = "3.2.0"
-        fastjsonVersion = "1.2.60"
+        fastjsonVersion = "1.2.62"
         lombokVersion = "1.18.8"
-
+        validatorVersion = "6.0.17.Final"
     }
     dependencies {
         // Gradle 5.0及以上版本，使用如下方式
@@ -58,6 +61,8 @@ subprojects {
         compile("mysql:mysql-connector-java:$mysqlConnectorVersion")
         // JSON
         compile("com.alibaba:fastjson:$fastjsonVersion")
+        // 数据校验
+        compile("org.hibernate.validator:hibernate-validator:$validatorVersion")
         // Apache Commons
         compile("org.apache.commons:commons-lang3:3.8.1",
                 "commons-fileupload:commons-fileupload:1.3.3",

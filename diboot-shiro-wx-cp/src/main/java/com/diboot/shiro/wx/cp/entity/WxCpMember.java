@@ -16,4 +16,7 @@ public class WxCpMember extends BaseEntity {
     @TableField
     private String userId;
 
+    @TableField
+    private Long sysUserId;
+
 }
