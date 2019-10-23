@@ -254,6 +254,18 @@ public class S extends StringUtils{
     }
 
 	/***
+	 * 将object转换为字符串
+	 * @param o
+	 * @return
+	 */
+	public static String valueOf(Object o) {
+    	if (o == null){
+    		return null;
+		}
+    	return String.valueOf(o);
+	}
+
+	/***
 	 * 生成指定位数的数字/验证码
 	 */
 	private static final String NUMBER_SET = "12345678901";
