@@ -20,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -124,6 +125,10 @@ public class BaseServiceTest {
         }
         success = dictionaryService.createEntities(dictionaryList);
         Assert.assertTrue(success);
+
+        dictionaryList.get(2).setCreateTime(new Date());
+        dictionaryList.get(2).setItemValue("HZ2");
+        dictionaryService.updateEntity(dictionaryList.get(2));
 
         success = clearTestData(TYPE);
         Assert.assertTrue(success);
