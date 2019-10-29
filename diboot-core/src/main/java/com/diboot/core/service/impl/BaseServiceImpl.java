@@ -208,7 +208,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
 			if(map.get(keyValueArray[0]) != null){
-				KeyValue kv = new KeyValue((String)map.get(keyValueArray[0]), map.get(keyValueArray[1]));
+				KeyValue kv = new KeyValue(S.valueOf(map.get(keyValueArray[0])), map.get(keyValueArray[1]));
 				if(keyValueArray.length > 2){
 					kv.setExt(map.get(keyValueArray[2]));
 				}
