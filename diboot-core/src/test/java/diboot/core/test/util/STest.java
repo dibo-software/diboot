@@ -14,9 +14,10 @@ public class STest {
 
     @Test
     public void testToSnakeCase(){
-        String str = "myOrgName";
+        String camelCaseStr = "myOrgName";
         String snakeCaseStr = "my_org_name";
-        Assert.assertEquals(S.toSnakeCase(str), snakeCaseStr);
+        Assert.assertEquals(S.toSnakeCase(camelCaseStr), snakeCaseStr);
+        Assert.assertEquals(S.toSnakeCase(S.capFirst(camelCaseStr)), snakeCaseStr);
     }
 
     @Test
@@ -24,6 +25,7 @@ public class STest {
         String snakeCaseStr = "my_org_name";
         String camelCaseStr = "myOrgName";
         Assert.assertEquals(S.toLowerCaseCamel(snakeCaseStr), camelCaseStr);
+        Assert.assertEquals(S.toLowerCaseCamel(snakeCaseStr.toUpperCase()), camelCaseStr);
     }
 
     @Test

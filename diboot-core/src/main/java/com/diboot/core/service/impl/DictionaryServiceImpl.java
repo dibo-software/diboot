@@ -62,7 +62,6 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
         if(V.isEmpty(voList)){
             return;
         }
-        getFieldName = S.toLowerCaseCamel(getFieldName);
         bindingFieldTo(voList)
                 .link(FIELD_NAME_ITEM_NAME, setFieldName)
                 .joinOn(getFieldName, FIELD_NAME_ITEM_VALUE)
