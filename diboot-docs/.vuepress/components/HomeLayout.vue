@@ -3,31 +3,30 @@
     <div class="home">
       <div class="hero">
         <p class="action">
-          <!--<a href="" class="nav-link action-button">快速上手 →</a>-->
-          <!--<a href="javascript:;" class="nav-link action-button" @click="showVideo">了解diboot2.0</a>-->
-
-          <a href="" class="button white">快速上手</a>
+          <a :href="$withBase('/guide/diboot-core/安装.html')" class="button white">快速上手</a>
+          <!--
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
           <a href="javascript:;" class="button has-icon" @click="showVideo">
             <img class="icon" src="/play-circle.png" alt="">
             了解diboot2.0
           </a>
+          -->
         </p>
       </div>
       <div class="custom content">
         <div class="features">
           <div class="feature">
-            <h2>简明优先</h2>
-            <p>对以 markdown 为中心的项目结构，做最简化的配置，帮助你专注于创作。</p>
+            <h2>单表CRUD无SQL</h2>
+            <p>借助强大的mybatis-plus，单表CRUD无SQL。</p>
           </div>
           <div class="feature">
-            <h2>Vue 驱动</h2>
-            <p>享用 Vue + webpack 开发环境，在 markdown 中使用 Vue 组件，并通过 Vue 开发自定义主题。</p>
+            <h2>关联无SQL</h2>
+            <p>单表直接关联、中间表多表关联、数据字典关联等，都将无SQL轻松实现。</p>
           </div>
           <div class="feature">
-            <h2>性能高效</h2>
-            <p>VuePress 将每个页面生成为预渲染的静态 HTML，每个页面加载之后，然后作为单页面应用程序(SPA)运行。</p>
+            <h2>自动化工具Devtools</h2>
+            <p>支持五大数据库的数据结构维护、数据结构图形化展示、从实体类到Rest接口的代码生成与更新等。</p>
           </div>
         </div>
       </div>
@@ -44,6 +43,7 @@
               <li>电话：0512-62988949</li>
               <li>Q Q：281550336</li>
               <li>邮箱：service@dibo.ltd</li>
+              <li>技术交流QQ群：731690096</li>
             </ul>
           </div>
           <div class="footer-item"></div>
