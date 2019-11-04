@@ -1,12 +1,12 @@
 # 实体Entity
 
-> diboot-core中的实体与1.x版本的model一样，我们为了命名更加规范，这里改用entity，下文简称实体。
+> diboot-core中的实体Entity是与数据库表对应的映射对象，下文简称实体。
 
-所有实体统一存放在entity包名下，命名一般将表名转换为驼峰命名法命名再首字母大写即可，比如**sys_user**的实体名为**SysUser。**
+所有实体统一存放在entity包名下，命名采用将表名转换为首字母大写的驼峰命名法命名，比如**sys_user**的实体名为**SysUser。**
 
 ## BaseEntity
 
-> BaseEntity是diboot-core提供的基础实体类，提供了我们默认数据表结构的默认字段，比如id、deleted、create_time等，默认的方法如toMap、toString方法等。
+> BaseEntity是diboot-core提供的基础实体类，提供了我们默认数据表结构的默认字段，比如id、is_deleted、create_time等，默认的方法如toMap等。
 
 ## BaseExtEntity
 

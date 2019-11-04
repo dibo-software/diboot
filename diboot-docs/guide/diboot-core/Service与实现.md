@@ -2,7 +2,7 @@
 
 ## Service类
 
-> 对于一个自定义的entity，您可以像以往的习惯一样开发service相关代码，如果需要使用diboot-core中封装好的一些接口，需要继承diboot-core中的BaSeService类，并传入对应的实体类。
+> 对于一个自定义的entity，您可以像以往的习惯一样开发service相关代码，但我们推荐您继承diboot-core中封装好的BaseService接口及BaseServiceImpl实现。
 
 ```java
 package com.example.demo.service;

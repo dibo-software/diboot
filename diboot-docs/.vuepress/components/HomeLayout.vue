@@ -42,8 +42,8 @@
             <ul>
               <li>电话：0512-62988949</li>
               <li>Q Q：281550336</li>
+              <li>QQ群：731690096</li>
               <li>邮箱：service@dibo.ltd</li>
-              <li>技术交流QQ群：731690096</li>
             </ul>
           </div>
           <div class="footer-item"></div>

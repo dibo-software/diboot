@@ -1,6 +1,7 @@
 package com.diboot.shiro.service;
 
 import com.diboot.core.service.BaseService;
+import com.diboot.shiro.dto.AccountDTO;
 import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.entity.TokenAccountInfo;
 import com.diboot.shiro.enums.IUserType;
@@ -59,6 +60,13 @@ public interface SysUserService extends BaseService<SysUser> {
      * @throws Exception
      */
     SysUser getLoginAccountInfo(TokenAccountInfo account) throws Exception;
+    /**
+     * 通过账户和类别获取用户
+     * @param account
+     * @return
+     * @throws Exception
+     */
+    SysUser getByAccountInfo(TokenAccountInfo account) throws Exception;
 
     /**
      * 根据用户信息的id  和  用户类型，获取对应的账户 和 账户关联的信息
@@ -75,5 +83,19 @@ public interface SysUserService extends BaseService<SysUser> {
      * @return
      */
     SysUser getSysUser(Long userId, IUserType iUserType);
+
+    /**
+     * 修改密码
+     * @param accountDTO
+     * @return
+     */
+    boolean changePassword(AccountDTO accountDTO);
+
+    /**
+     * 修改账号
+     * @param accountDTO
+     * @return
+     */
+    boolean changeAccount(AccountDTO accountDTO);
 
 }

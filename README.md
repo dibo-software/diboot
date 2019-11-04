@@ -4,17 +4,15 @@
     </a>
 </p>
 
-# diboot-v2
-diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-shiro-*权限控制 + diboot-components-*基础组件 + diboot-devtools代码生成平台。
+# diboot-v2   (重复的工作自动做)
+diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + 基础功能组件。
 
 > diboot的设计目标：面向开发人员的低代码开发平台，提高开发效率和质量，提高代码可维护性。
 
 ## 技术交流QQ群: 731690096
 
-> 复杂的事情简单化，简单的事情标准化，标准的事情流程化，流程的事情自动化
+> 把重复有规律的事情自动化
 
-**2.0版devtools预计将于10月份发布，敬请期待。**
-   
    
 ## 一、 diboot-core: 精简优化内核
 全新精简内核，主要实现<font color="red">单表CRUD无SQL 和 多表关联查询绑定的无SQL</font>实现方案，并提供查询绑定等常用开发场景的简单封装。
@@ -37,19 +35,15 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-shiro-*权限�
 
  
    > .
-     
 
-## 二、 diboot-shiro*: 基于RBAC+Shiro的权限认证模块
-RBAC的角色权限+基于Shiro的细粒度权限控制
+## 二、 diboot-devtools 代码生成工具
+#### 1. 支持常用的五大数据库（MySQL，MariaDB，ORACLE，SQLServer, PostgreSQL）。
+#### 2. 使用简单，只需在项目中引入devtools依赖，添加相关配置信息后，即可启动运行。
+#### 3. 基于主流框架（SpringBoot + Mybatis-Plus），打造全新优化内核，保证生成的代码更简洁，质量更高。
+#### 4. 功能强大，实现数据结构变更与代码联动同步，更方便维护数据库表结构及关联关系，一键生成/更新代码。
+#### 5. 通过devtools维护数据结构，标准化了数据结构定义，同时数据结构变动SQL会被自动记录，便于同步更新生产等环境数据库。
+#### 6. 使用灵活，可按需启用更多功能。例如：是否开启引入 `Lombok`、`Swagger`等。
 
-### diboot-shiro 权限基础模块
-
-### diboot-shiro-wx-* 微信服务号/企业号相关权限
-
-具体请查看: [diboot-shiro README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-shiro "注解自动绑定多表关联"). 
-
-
-## 三、 diboot-devtools 代码生成工具
-   > 比 [diboot devtools 1.x 版本](https://www.diboot.com/) 更通用更强大的代码生成工具 ...
+>  [我要试试](https://github.com/dibo-software/diboot-v2/blob/master/diboot-docs/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.md)
     
 ...

@@ -84,4 +84,10 @@ public class SysUser extends BaseEntity {
 
     @TableField(exist = false)
     private Boolean admin;
+
+    /**
+     * 默认需要创建角色，如果不需要设置为false即可
+     */
+    @TableField(exist = false)
+    private Boolean createRole = true;
 }
