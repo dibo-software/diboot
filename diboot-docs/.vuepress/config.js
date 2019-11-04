@@ -21,7 +21,7 @@ module.exports = {
                         ['/guide/diboot-core/实体Entity', '实体Entity'],
                         ['/guide/diboot-core/Service与实现', 'Service与实现'],
                         ['/guide/diboot-core/Mapper及自定义', 'Mapper及自定义'],
-                        ['/guide/diboot-core/接口的艺术Controller', '接口的艺术Controller'],
+                        ['/guide/diboot-core/Controller接口', 'Controller接口'],
                         ['/guide/diboot-core/查询条件DTO', '查询条件DTO'],
                         ['/guide/diboot-core/无SQL关联', '无SQL关联'],
                         ['/guide/diboot-core/常用工具类', '常用工具类']
