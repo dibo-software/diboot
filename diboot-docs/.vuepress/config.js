@@ -23,10 +23,7 @@ module.exports = {
                         ['/guide/diboot-core/Mapper及自定义', 'Mapper及自定义'],
                         ['/guide/diboot-core/接口的艺术Controller', '接口的艺术Controller'],
                         ['/guide/diboot-core/查询条件DTO', '查询条件DTO'],
-                        ['/guide/diboot-core/单表关联', '单表关联'],
-                        ['/guide/diboot-core/多表关联', '多表关联'],
-                        ['/guide/diboot-core/数据字典关联', '数据字典关联'],
-                        ['/guide/diboot-core/异常处理', '异常处理'],
+                        ['/guide/diboot-core/无SQL关联', '无SQL关联'],
                         ['/guide/diboot-core/常用工具类', '常用工具类']
                     ]
                 }
@@ -50,8 +47,8 @@ module.exports = {
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/diboot-devtools/安装', '安装'],
-                        ['/guide/diboot-devtools/启动', '启动'],
+                        ['/guide/diboot-devtools/介绍', '介绍'],
+                        ['/guide/diboot-devtools/开始使用', '开始使用'],
                         ['/guide/diboot-devtools/数据表管理', '数据表管理'],
                         ['/guide/diboot-devtools/代码生成与更新', '代码生成与更新']
                     ]
@@ -61,17 +58,11 @@ module.exports = {
         nav: [{
             text: '首页', link: '/'
         }, {
-            text: '学习',
-            items: [
-                {text: 'diboot-core指南', link: '/guide/diboot-core/安装'},
-                {text: 'diboot-shiro指南', link: '/guide/diboot-shiro/安装'},
-                {text: 'diboot-devtools指南', link: '/guide/diboot-devtools/安装'}
-            ]
+            text: 'core指南',
+            link: '/guide/diboot-core/安装'
         }, {
-            text: 'API',
-            items: [
-                {text: 'diboot-core', link: '/api/diboot-core/'}
-            ]
+            text: 'devtools指南',
+            link: '/guide/diboot-devtools/介绍'
         },{
             text: '1.x', link: 'https://www.diboot.com'
         }, {

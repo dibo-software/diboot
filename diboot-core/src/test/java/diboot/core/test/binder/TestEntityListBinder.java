@@ -51,16 +51,15 @@ public class TestEntityListBinder {
         // 自动绑定
         List<EntityListSimpleBinderVO> voList = RelationsBinder.convertAndBind(entityList, EntityListSimpleBinderVO.class);
         // 验证绑定结果
-        if(V.notEmpty(voList)){
-            for(EntityListSimpleBinderVO vo : voList){
-                // 验证直接关联的绑定
-                Assert.assertTrue(V.notEmpty(vo.getChildren()));
-                System.out.println(JSON.stringify(vo));
+        Assert.assertTrue(V.notEmpty(voList));
+        for(EntityListSimpleBinderVO vo : voList){
+            // 验证直接关联的绑定
+            Assert.assertTrue(V.notEmpty(vo.getChildren()));
+            System.out.println(JSON.stringify(vo));
 
-                if(vo.getChildren() != null){
-                    for(Department dept : vo.getChildren()){
-                        System.out.println(dept.toString());
-                    }
+            if(vo.getChildren() != null){
+                for(Department dept : vo.getChildren()){
+                    System.out.println(dept.toString());
                 }
             }
         }
@@ -78,12 +77,11 @@ public class TestEntityListBinder {
         // 自动绑定
         List<EntityListComplexBinderVO> voList = RelationsBinder.convertAndBind(userList, EntityListComplexBinderVO.class);
         // 验证绑定结果
-        if(V.notEmpty(voList)){
-            for(EntityListComplexBinderVO vo : voList){
-                // 验证通过中间表间接关联的绑定
-                Assert.assertTrue(V.notEmpty(vo.getRoleList()));
-                System.out.println(JSON.stringify(vo));
-            }
+        Assert.assertTrue(V.notEmpty(voList));
+        for(EntityListComplexBinderVO vo : voList){
+            // 验证通过中间表间接关联的绑定
+            Assert.assertTrue(V.notEmpty(vo.getRoleList()));
+            System.out.println(JSON.stringify(vo));
         }
     }
 
