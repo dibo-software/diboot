@@ -1,0 +1,2 @@
+# Ignore Gradle project-specific cache directory
+node_modules/

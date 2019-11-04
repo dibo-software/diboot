@@ -50,8 +50,7 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
         logger.debug("【获取用户】==>当前登陆用户类型 - {}，- 账号{}", token.getIUserType().getType(), token.getAccount());
         LambdaQueryWrapper<SysUser> query = Wrappers.<SysUser>lambdaQuery()
                 .eq(SysUser::getUsername, token.getAccount())
-                .eq(SysUser::getUserType, token.getIUserType().getType())
-                .in(SysUser::getStatus, token.getStatusList());
+                .eq(SysUser::getUserType, token.getIUserType().getType());
         List<SysUser> userList = sysUserService.getEntityList(query);
         if (V.isEmpty(userList)){
             return null;
@@ -66,12 +65,17 @@ public class UsernamePasswordAuthWayServiceImpl implements AuthWayService {
 
     @Override
     public boolean isPasswordMatch() {
+        if (V.isEmpty(token.getIUserType())) {
+            logger.debug("用户名密码登陆，用户类型不能为空");
+            return false;
+        }
         String password = token.getPassword();
 
         // 构建查询条件
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(SysUser::getUsername, token.getAccount());
+                .eq(SysUser::getUsername, token.getAccount())
+                .eq(SysUser::getUserType, token.getIUserType().getType());
 
         // 获取单条用户记录
         List<SysUser> userList = sysUserService.getEntityList(queryWrapper);
