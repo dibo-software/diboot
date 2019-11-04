@@ -61,7 +61,7 @@
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2019 <a href="https://www.dibo.ltd">苏州帝博信息技术有限公司</a></p></p>
+        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p></p>
       </div>
     </div>
 
@@ -100,7 +100,7 @@
   .hero {
     text-align: center;
     .action {
-      margin: 1.8rem auto;
+      margin: 1.6rem auto;
     }
     .action-button {
       display: inline-block;
@@ -133,7 +133,7 @@
   .feature {
     flex-grow: 1;
     flex-basis: 30%;
-    max-width: 30%;
+    max-width: 50%;
     h2 {
       font-size: 1.4rem;
       font-weight: 500;

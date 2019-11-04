@@ -1,6 +1,6 @@
 module.exports = {
     title: 'Diboot 轻代码开发平台',
-    description: 'Diboot 2.0，更好用的轻代码开发平台',
+    description: '2.0 - 更好更强的轻代码开发平台',
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],
@@ -60,7 +60,7 @@ module.exports = {
             text: 'core内核 使用指南',
             link: '/guide/diboot-core/安装'
         }, {
-            text: 'devtools开发助手 使用指南',
+            text: 'devtools助理 使用指南',
             link: '/guide/diboot-devtools/介绍'
         },{
             text: '捐助Diboot团队',
