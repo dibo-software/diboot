@@ -16,7 +16,7 @@
       </div>
       <div class="custom content">
         <div class="features">
-          <div class="feature">
+          <div class="feature" style="max-width: 35%;">
             <h2>diboot-core 精简高效内核</h2>
             <p>
             <ul>
@@ -28,7 +28,7 @@
             </ul>
             </p>
           </div>
-          <div class="feature">
+          <div class="feature" style="max-width: 60%">
             <h2>diboot-devtools 强大开发助理</h2>
             <p>
                 <ul>
@@ -95,7 +95,7 @@
 <style scoped lang="stylus" rel="stylesheet">
 .home {
   padding: 0 2rem 0;
-  max-width: 960px;
+  max-width: 1160px;
   margin: 0 auto;
   .hero {
     text-align: center;
@@ -160,6 +160,7 @@
         flex-grow: 1;
         flex-basis: 25%;
         max-width: 25%;
+        text-align: center;
         h4 {
           font-size: 18px;
           font-weight: 400;
