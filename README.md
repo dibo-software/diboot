@@ -38,7 +38,7 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
 ## 三、技术交流群
 如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。我们不喝咖啡，所有捐助费用都将用于Diboot服务器支出。
 <p align="center">
-    <img src="https://www.diboot.com/img/donate.jpg" width = "500" alt="支持Diboot发展">
+    <img src="https://www.diboot.com/donate.jpg" width = "500" alt="支持Diboot发展">
 </p>
 如果您有技术问题，欢迎加群交流：
 
