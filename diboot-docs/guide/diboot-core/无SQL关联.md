@@ -22,7 +22,7 @@ public class DemoVO extends Demo  {
 ```
 
 :::warning
-注：@BindDict注解需要依赖dictionary表，可配置参数 diboot.core.init-sql=true 初次启动时starter会自动安装 init-{db}.sql。 如不支持自动安装的数据库，需手动执行 diboot-core-*.jar/META-INF/sql/init-{db}.sql 。
+注：@BindDict注解需要依赖dictionary表，初次启动时starter会自动安装。
 :::
 
 ## 处理方式

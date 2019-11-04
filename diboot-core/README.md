@@ -48,18 +48,18 @@ private List<Role> roleList;
 ### 1. 引入依赖
 Gradle:
 ~~~gradle
-compile("com.diboot:diboot-core-spring-boot-starter:2.0.2")
+compile("com.diboot:diboot-core-spring-boot-starter:2.0.3")
 ~~~
 或Maven
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
 </dependency>
 ~~~
-> 注: @BindDict注解需要依赖dictionary表，可配置参数 diboot.core.init-sql=true 初次启动时starter会自动安装 init-{db}.sql。
-如不支持自动安装的数据库，需手动执行 diboot-core-*.jar/META-INF/sql/init-{db}.sql 。
+> 注: @BindDict注解需要依赖dictionary表，初次启动时starter会自动创建该表。
+
 ### 2. 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
 
 ### 3. 使用注解绑定：
