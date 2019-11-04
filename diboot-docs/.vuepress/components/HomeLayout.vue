@@ -34,8 +34,8 @@
         <div class="footer-content">
           <div class="footer-item"></div>
           <div class="footer-item">
-            <h4>捐助我们</h4>
-            <img src="../public/donation_qrcode.png" alt="" width="100">
+            <h4>微信（扫码进群）</h4>
+            <img src="../public/add_wechat.png" alt="" width="120">
           </div>
           <div class="footer-item">
             <h4>联系我们</h4>
@@ -46,7 +46,8 @@
               <li>邮箱：service@dibo.ltd</li>
             </ul>
           </div>
-          <div class="footer-item"></div>
+          <div class="footer-item">
+          </div>
         </div>
         <p class="copy-right">© 2015-2019 苏州帝博信息技术有限公司</p>
       </div>
@@ -223,5 +224,11 @@ a.button.white {
   left: 10%;
   top: 10%;
   box-shadow: 0 0 15px black;
+}
+.donate-image{
+  display: block;
+  margin: 10px auto;
+  width: 500px;
+  height: auto;
 }
 </style>

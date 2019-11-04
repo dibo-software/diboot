@@ -6,7 +6,7 @@ module.exports = {
     ],
     host: '0.0.0.0',
     port: '9090',
-    base: '/docs/',
+    base: '/devtools-static/',
     themeConfig: {
         // sidebar: 'auto',
 
@@ -63,6 +63,9 @@ module.exports = {
         }, {
             text: 'devtools指南',
             link: '/guide/diboot-devtools/介绍'
+        },{
+            text: '捐助我们',
+            link: '/guide/donate/'
         },{
             text: '1.x', link: 'https://www.diboot.com'
         }, {
