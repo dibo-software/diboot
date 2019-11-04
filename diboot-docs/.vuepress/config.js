@@ -6,7 +6,7 @@ module.exports = {
     ],
     host: '0.0.0.0',
     port: '9090',
-    base: '/devtools-static/',
+    base: '/',
     themeConfig: {
         // sidebar: 'auto',
         sidebar: {
@@ -71,7 +71,7 @@ module.exports = {
          },{
             text: 'GitHub', link: 'https://github.com/dibo-software/diboot-v2'
         },{
-            text: '1.x旧版', link: 'https://www.diboot.com'
+            text: '1.x旧版', link: 'https://www.diboot.com/diboot-v1/'
         }]
     }
 }
