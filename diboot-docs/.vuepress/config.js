@@ -1,36 +1,35 @@
 module.exports = {
-    title: 'Diboot2.0',
-    description: 'Diboot2.0，更好用的轻代码开发平台',
+    title: 'Diboot 轻代码开发平台',
+    description: '2.0 - 更好更强的轻代码开发平台',
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],
     host: '0.0.0.0',
     port: '9090',
-    base: '/docs/',
+    base: '/devtools-static/',
     themeConfig: {
         // sidebar: 'auto',
-
         sidebar: {
             '/guide/diboot-core/': [
                 {
-                    title: 'diboot-core指南',
+                    title: 'diboot-core 使用指南',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
                         ['/guide/diboot-core/安装', '安装'],
-                        ['/guide/diboot-core/实体Entity', '实体Entity'],
-                        ['/guide/diboot-core/Service与实现', 'Service与实现'],
-                        ['/guide/diboot-core/Mapper及自定义', 'Mapper及自定义'],
-                        ['/guide/diboot-core/接口的艺术Controller', '接口的艺术Controller'],
+                        ['/guide/diboot-core/实体Entity', 'Entity相关'],
+                        ['/guide/diboot-core/Service与实现', 'Service相关'],
+                        ['/guide/diboot-core/Mapper及自定义', 'Mapper相关'],
+                        ['/guide/diboot-core/Controller接口', 'Controller相关'],
+                        ['/guide/diboot-core/无SQL关联', '无SQL关联绑定'],
                         ['/guide/diboot-core/查询条件DTO', '查询条件DTO'],
-                        ['/guide/diboot-core/无SQL关联', '无SQL关联'],
                         ['/guide/diboot-core/常用工具类', '常用工具类']
                     ]
                 }
             ],
             '/guide/diboot-shiro/': [
                 {
-                    title: 'shiro使用指南',
+                    title: 'shiro 使用指南',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
@@ -43,7 +42,7 @@ module.exports = {
             ],
             '/guide/diboot-devtools/': [
                 {
-                    title: 'diboot-devtools指南',
+                    title: 'diboot-devtools 使用指南',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
@@ -58,15 +57,21 @@ module.exports = {
         nav: [{
             text: '首页', link: '/'
         }, {
-            text: 'core指南',
+            text: 'core内核 使用指南',
             link: '/guide/diboot-core/安装'
         }, {
-            text: 'devtools指南',
+            text: 'devtools助理 使用指南',
             link: '/guide/diboot-devtools/介绍'
         },{
-            text: '1.x', link: 'https://www.diboot.com'
-        }, {
-            text: 'GitHub', link: 'https://github.com/dibo-software/diboot-v2'
+            text: '捐助Diboot团队',
+            link: '/guide/donate/'
+        },{
+            text: '项目合作',
+            link:'http://www.dibo.ltd/contect.html'
+         },{
+            text: 'Diboot GitHub', link: 'https://github.com/dibo-software/diboot-v2'
+        },{
+            text: '1.x旧版', link: 'https://www.diboot.com'
         }]
     }
 }

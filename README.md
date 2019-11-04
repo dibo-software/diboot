@@ -19,7 +19,7 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
    > 通过@BindDict注解实现数据字典(枚举)的存储值value与显示值name的转换。
 #### 4. Entity/DTO自动转换为QueryWrapper
    > @BindQuery注解绑定字段参数对应的查询条件类型，Controller中直接绑定转换为QueryWrapper，无需再手动构建QueryWrapper查询条件
-#### 4. 其他常用开发场景的最佳实践封装
+#### 5. 其他常用工具类的最佳实践封装
    > 字符串处理、常用校验、BeanUtils、DateUtils等
    
 更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
@@ -28,16 +28,15 @@ diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码
 
 ## 二、 diboot-devtools 代码生成工具 [(我要试试)](https://github.com/dibo-software/diboot-v2/blob/master/diboot-docs/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.md)
 
-##### 1. 支持常用的五大数据库（MySQL，MariaDB，ORACLE，SQLServer, PostgreSQL）。
-##### 2. 使用简单，只需在项目中引入devtools依赖，添加相关配置信息后，即可启动运行。
-##### 3. 基于主流框架（SpringBoot + Mybatis-Plus）打造的优化内核，保证生成的代码更简洁，质量更高。
-##### 4. 功能强大，实现数据结构变更与代码联动同步，方便维护数据结构及关联，一键生成/更新代码。
-##### 5. 通过devtools维护数据结构，标准化了数据结构定义，同时数据结构变动SQL会被自动记录，便于同步更新生产等环境数据库。
-##### 6. 使用灵活，可按需启用更多功能。例如：是否开启引入 `Lombok`、`Swagger`等。
+##### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
+##### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
+##### 3. 功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）
+##### 4. 配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）
+##### 5. 代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
 
 
 ## 三、技术交流群
-如果Diboot对您有用，欢迎您为Diboot的发展提供赞助。我们不喝咖啡，所有赞助费用都将用于Diboot服务器支出。
+如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。我们不喝咖啡，所有捐助费用都将用于Diboot服务器支出。
 <p align="center">
     <img src="https://www.diboot.com/img/donate.jpg" width = "500" alt="支持Diboot发展">
 </p>
