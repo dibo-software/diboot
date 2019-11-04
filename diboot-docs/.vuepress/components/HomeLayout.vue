@@ -9,7 +9,7 @@
 
           <a href="javascript:;" class="button has-icon" @click="showVideo">
             <img class="icon" src="/play-circle.png" alt="">
-            了解diboot2.0
+            了解 diboot 2.0
           </a>
           -->
         </p>
@@ -17,16 +17,28 @@
       <div class="custom content">
         <div class="features">
           <div class="feature">
-            <h2>单表CRUD无SQL</h2>
-            <p>借助强大的mybatis-plus，单表CRUD无SQL。</p>
+            <h2>diboot-core 精简高效内核</h2>
+            <p>
+            <ul>
+                <li>单表CRUD无SQL</li>
+                <li>关联查询无SQL - 注解自动绑定</li>
+                <li>数据字典无SQL - 注解自动绑定</li>
+                <li>Entity/DTO自动转换查询对象</li>
+                <li>常用工具类的最佳实践封装</li>
+            </ul>
+            </p>
           </div>
           <div class="feature">
-            <h2>关联无SQL</h2>
-            <p>单表直接关联、中间表多表关联、数据字典关联等，都将无SQL轻松实现。</p>
-          </div>
-          <div class="feature">
-            <h2>自动化工具Devtools</h2>
-            <p>支持五大数据库的数据结构维护、数据结构图形化展示、从实体类到Rest接口的代码生成与更新等。</p>
+            <h2>diboot-devtools 强大开发助理</h2>
+            <p>
+                <ul>
+                    <li>支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）</li>
+                    <li>使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）</li>
+                    <li>功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）</li>
+                    <li>配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）</li>
+                    <li>代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）</li>
+                </ul>
+            </p>
           </div>
         </div>
       </div>
@@ -49,7 +61,7 @@
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2019 苏州帝博信息技术有限公司</p>
+        <p class="copy-right">© 2015-2019 <a href="https://www.dibo.ltd">苏州帝博信息技术有限公司</a></p></p>
       </div>
     </div>
 
