@@ -42,14 +42,13 @@ public class TestEntityBinder {
         // 自动绑定
         List<EntityBinderVO> voList = RelationsBinder.convertAndBind(userList, EntityBinderVO.class);
         // 验证绑定结果
-        if(V.notEmpty(voList)){
-            for(EntityBinderVO vo : voList){
-                // 验证直接关联和通过中间表间接关联的绑定
-                Assert.assertEquals(vo.getDepartmentId(), vo.getDepartment().getId());
-                Assert.assertNotNull(vo.getDepartment().getOrgId());
-                Assert.assertNotNull(vo.getOrganization());
-                System.out.println(JSON.stringify(vo));
-            }
+        Assert.assertTrue(V.notEmpty(voList));
+        for(EntityBinderVO vo : voList){
+            // 验证直接关联和通过中间表间接关联的绑定
+            Assert.assertEquals(vo.getDepartmentId(), vo.getDepartment().getId());
+            Assert.assertNotNull(vo.getDepartment().getOrgId());
+            Assert.assertNotNull(vo.getOrganization());
+            System.out.println(JSON.stringify(vo));
         }
     }
 

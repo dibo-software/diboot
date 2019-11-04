@@ -177,6 +177,22 @@ public abstract class BaseBinder<T> {
     }
 
     /**
+     * 从map中取值，如直接取为null尝试转换大写后再取，以支持ORACLE等大写命名数据库
+     * @param map
+     * @param key
+     * @return
+     */
+    protected Object getValueIgnoreKeyCase(Map<String, Object> map, String key){
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        if(map.containsKey(key.toUpperCase())){
+            return map.get(key.toUpperCase());
+        }
+        return null;
+    }
+
+    /**
      * 检查list，结果过多打印warn
      * @param list
      * @return

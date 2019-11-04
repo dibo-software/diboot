@@ -119,6 +119,15 @@ public class S extends StringUtils{
 		if(V.isEmpty(camelCaseStr)){
 			return null;
 		}
+		// 全小写
+		if(camelCaseStr.toLowerCase().equals(camelCaseStr)){
+			return camelCaseStr;
+		}
+		// 全大写直接return小写
+		if(camelCaseStr.toUpperCase().equals(camelCaseStr)){
+			return camelCaseStr.toLowerCase();
+		}
+		// 大小写混合，则遇“大写”转换为“_小写”
 		char[] chars = camelCaseStr.toCharArray();
 		StringBuilder sb = new StringBuilder();
 		for (char c : chars){

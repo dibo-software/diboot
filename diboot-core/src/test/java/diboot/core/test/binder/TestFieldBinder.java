@@ -47,17 +47,16 @@ public class TestFieldBinder {
         // 自动绑定
         List<FieldBinderVO> voList = RelationsBinder.convertAndBind(userList, FieldBinderVO.class);
         // 验证绑定结果
-        if(V.notEmpty(voList)){
-            for(FieldBinderVO vo : voList){
-                // 验证直接关联和通过中间表间接关联的绑定
-                Assert.assertNotNull(vo.getDeptName());
-                Assert.assertNotNull(vo.getOrgName());
-                Assert.assertNotNull(vo.getOrgTelphone());
-                // 验证枚举值已绑定
-                Assert.assertNotNull(vo.getGenderLabel());
+        Assert.assertTrue(V.notEmpty(voList));
+        for(FieldBinderVO vo : voList){
+            // 验证直接关联和通过中间表间接关联的绑定
+            Assert.assertNotNull(vo.getDeptName());
+            Assert.assertNotNull(vo.getOrgName());
+            Assert.assertNotNull(vo.getOrgTelphone());
+            // 验证枚举值已绑定
+            Assert.assertNotNull(vo.getGenderLabel());
 
-                System.out.println(JSON.stringify(vo));
-            }
+            System.out.println(JSON.stringify(vo));
         }
     }
 
