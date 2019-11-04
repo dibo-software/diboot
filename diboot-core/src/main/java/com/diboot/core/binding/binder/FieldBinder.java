@@ -118,9 +118,9 @@ public class FieldBinder<T> extends BaseBinder<T> {
         // 将结果list转换成map
         Map<String, Map<String, Object>> referencedEntityPk2DataMap = new HashMap<>(mapList.size());
         for(Map<String, Object> map : mapList){
-            Object pkVal = map.get(referencedEntityPkName);
-            if(pkVal != null){
-                referencedEntityPk2DataMap.put(String.valueOf(pkVal), map);
+            Object valObj = getValueIgnoreKeyCase(map, referencedEntityPkName);
+            if(valObj != null){
+                referencedEntityPk2DataMap.put(S.valueOf(valObj), map);
             }
         }
         // 遍历list并赋值
@@ -135,7 +135,8 @@ public class FieldBinder<T> extends BaseBinder<T> {
             Map<String, Object> relationMap = referencedEntityPk2DataMap.get(annoObjectId);
             if(relationMap != null){
                 for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), relationMap.get(referencedGetterColumnNameList.get(i)));
+                    Object valObj = getValueIgnoreKeyCase(relationMap, referencedGetterColumnNameList.get(i));
+                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), valObj);
                 }
             }
         }

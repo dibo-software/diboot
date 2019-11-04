@@ -1,10 +1,7 @@
 package com.diboot.core.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.util.JSON;
 
 import java.io.Serializable;
@@ -37,7 +34,7 @@ public abstract class BaseEntity implements Serializable {
     /***
      * 默认记录创建时间字段，新建时由数据库赋值
      */
-    @TableField(update="now()")
+    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
     private Date createTime;
 
     public Long getId() {

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 加解密工具类 （提供AES加解密，MD5多次哈希...）
+ * 加解密工具类 （提供AES加解密）
  * @author Mazhicheng
  * @version v2.0
  * @date 2019/01/01

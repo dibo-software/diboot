@@ -1,5 +1,6 @@
 package com.diboot.core.vo;
 
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 
 import java.io.Serializable;
@@ -38,10 +39,8 @@ public class JsonResult implements Serializable {
     public JsonResult(Object data, String... additionalMsg){
         this.code = Status.OK.code();
         this.msg = Status.OK.label();
+        initMsg(additionalMsg);
         this.data = data;
-        if(V.notEmpty(additionalMsg)){
-            this.msg += ": " + additionalMsg[0];
-        }
     }
 
     /***
@@ -52,9 +51,7 @@ public class JsonResult implements Serializable {
     public JsonResult(Status status, String... additionalMsg){
         this.code = status.code();
         this.msg = status.label();
-        if(V.notEmpty(additionalMsg)){
-            this.msg += ": " + additionalMsg[0];
-        }
+        initMsg(additionalMsg);
         this.data = null;
     }
 
@@ -64,9 +61,7 @@ public class JsonResult implements Serializable {
     public JsonResult(Status status, Object data, String... additionalMsg){
         this.code = status.code();
         this.msg = status.label();
-        if(V.notEmpty(additionalMsg)){
-            this.msg += ": " + additionalMsg[0];
-        }
+        initMsg(additionalMsg);
         this.data = data;
     }
 
@@ -99,4 +94,20 @@ public class JsonResult implements Serializable {
     public Object getData() {
         return data;
     }
+
+    /**
+     * 赋值msg（去掉重复前缀以支持与BusinessException嵌套使用）
+     * @param additionalMsg
+     */
+    private void initMsg(String... additionalMsg){
+        if(V.notEmpty(additionalMsg)){
+            if(S.startsWith(additionalMsg[0], this.msg)){
+                this.msg = additionalMsg[0];
+            }
+            else{
+                this.msg += ": " + additionalMsg[0];
+            }
+        }
+    }
+
 }

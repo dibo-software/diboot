@@ -111,7 +111,7 @@ public class S extends StringUtils{
 	}
 
 	/***
-	 * 转换成蛇形命名（用于Java属性转换为数据库列名）
+	 * 转换成小写蛇形命名（用于Java属性转换为小写数据库列名）
 	 * @param camelCaseStr
 	 * @return
 	 */
@@ -119,6 +119,15 @@ public class S extends StringUtils{
 		if(V.isEmpty(camelCaseStr)){
 			return null;
 		}
+		// 全小写
+		if(camelCaseStr.toLowerCase().equals(camelCaseStr)){
+			return camelCaseStr;
+		}
+		// 全大写直接return小写
+		if(camelCaseStr.toUpperCase().equals(camelCaseStr)){
+			return camelCaseStr.toLowerCase();
+		}
+		// 大小写混合，则遇“大写”转换为“_小写”
 		char[] chars = camelCaseStr.toCharArray();
 		StringBuilder sb = new StringBuilder();
 		for (char c : chars){
@@ -126,11 +135,8 @@ public class S extends StringUtils{
 				if(sb.length() > 0){
 					sb.append(Cons.SEPARATOR_UNDERSCORE);
 				}
-				sb.append(Character.toLowerCase(c));
 			}
-			else{
-				sb.append(c);
-			}
+			sb.append(Character.toLowerCase(c));
 		}
 		return sb.toString();
 	}
@@ -144,27 +150,31 @@ public class S extends StringUtils{
 		if(V.isEmpty(snakeCaseStr)){
 			return null;
 		}
-		// 不包含_，直接return
+		// 不包含_
 		if(!snakeCaseStr.contains(Cons.SEPARATOR_UNDERSCORE)){
-			return snakeCaseStr;
-		}
-		char[] chars = snakeCaseStr.toCharArray();
-		StringBuilder sb = new StringBuilder();
-		boolean upperCase = false;
-		for (char c : chars){
-			if(Cons.SEPARATOR_UNDERSCORE.equals(Character.toString(c))){
-				upperCase = true;
-				continue;
+			// 全大写直接return小写
+			if(snakeCaseStr.toUpperCase().equals(snakeCaseStr)){
+				return snakeCaseStr.toLowerCase();
 			}
-			if(upperCase){
-				sb.append(Character.toUpperCase(c));
-				upperCase = false;
-			}
+			// 其他return 首字母小写
 			else{
-				sb.append(c);
+				return uncapFirst(snakeCaseStr);
 			}
 		}
-		return sb.toString();
+		// 包含_
+		String result = null;
+		String[] words = snakeCaseStr.split(Cons.SEPARATOR_UNDERSCORE);
+		for(String word : words){
+			if(V.notEmpty(word)){
+				if(result == null){
+					result = word.toLowerCase();
+				}
+				else{
+					result += word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+				}
+			}
+		}
+		return result;
 	}
 
 	/***
@@ -254,6 +264,18 @@ public class S extends StringUtils{
     }
 
 	/***
+	 * 将object转换为字符串
+	 * @param o
+	 * @return
+	 */
+	public static String valueOf(Object o) {
+    	if (o == null){
+    		return null;
+		}
+    	return String.valueOf(o);
+	}
+
+	/***
 	 * 生成指定位数的数字/验证码
 	 */
 	private static final String NUMBER_SET = "12345678901";
@@ -273,7 +295,7 @@ public class S extends StringUtils{
 	 */
 	public static String uncapFirst(String input){
 		if(input != null){
-			return String.valueOf(input.charAt(0)).toLowerCase() + input.substring(1);
+			return Character.toLowerCase(input.charAt(0)) + input.substring(1);
 		}
 		return null;
 	}
@@ -284,7 +306,7 @@ public class S extends StringUtils{
 	 */
 	public static String capFirst(String input){
 		if(input != null){
-			return String.valueOf(input.charAt(0)).toUpperCase() + input.substring(1);
+			return Character.toUpperCase(input.charAt(0)) + input.substring(1);
 		}
 		return null;
 	}

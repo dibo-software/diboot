@@ -10,6 +10,7 @@ import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.List;
  * @version 2.0
  * @date 2019/01/01
  */
+@Primary
 @Service("dictionaryService")
 public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
@@ -60,7 +62,6 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
         if(V.isEmpty(voList)){
             return;
         }
-        getFieldName = S.toLowerCaseCamel(getFieldName);
         bindingFieldTo(voList)
                 .link(FIELD_NAME_ITEM_NAME, setFieldName)
                 .joinOn(getFieldName, FIELD_NAME_ITEM_VALUE)
