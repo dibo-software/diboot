@@ -2,12 +2,14 @@ package com.diboot.shiro.jwt;
 
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import com.diboot.shiro.entity.Permission;
 import com.diboot.shiro.entity.SysUser;
 import com.diboot.shiro.service.AuthWayService;
 import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.UserRoleService;
 import com.diboot.shiro.vo.RoleVO;
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -55,7 +57,6 @@ public class BaseJwtRealm extends AuthorizingRealm {
         BaseJwtAuthenticationToken jwtToken = (BaseJwtAuthenticationToken) token;
 
         String account = (String) jwtToken.getPrincipal();
-
         if (V.isEmpty(account)){
             throw new AuthenticationException("无效的token");
         }
@@ -63,11 +64,14 @@ public class BaseJwtRealm extends AuthorizingRealm {
             // 获取认证方式
             AuthWayService authWayService = jwtToken.getAuthWayService();
 
-            BaseEntity user = authWayService.getUser();
+            SysUser user = authWayService.getUser();
 
             // 登录失败则抛出相关异常
             if (user == null){
                 throw new AuthenticationException("用户不存在");
+            }
+            if (!jwtToken.getStatusList().contains(user.getStatus())) {
+                throw new AuthenticationException("用户暂时不可用!");
             }
 
             if (authWayService.requirePassword() && !authWayService.isPasswordMatch()){

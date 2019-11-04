@@ -1,13 +1,17 @@
 package com.diboot.shiro.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.shiro.authz.config.SystemParamConfig;
+import com.diboot.shiro.dto.AccountDTO;
 import com.diboot.shiro.entity.*;
 import com.diboot.shiro.enums.IUserType;
 import com.diboot.shiro.exception.ShiroCustomException;
@@ -17,6 +21,7 @@ import com.diboot.shiro.service.RoleService;
 import com.diboot.shiro.service.SysUserService;
 import com.diboot.shiro.service.UserRoleService;
 import com.diboot.shiro.util.AuthHelper;
+import com.diboot.shiro.util.JwtHelper;
 import com.diboot.shiro.vo.RoleVO;
 import com.diboot.shiro.vo.SysUserVO;
 import lombok.extern.slf4j.Slf4j;
@@ -83,10 +88,13 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         if(!success){
             throw new ShiroCustomException(Status.FAIL_VALIDATION, "创建用户失败！");
         }
-        //构建 + 创建（账户-角色）关系
-        success = this.createUserRole(sysUser);
-        if (!success) {
-            throw new ShiroCustomException(Status.FAIL_VALIDATION, "创建用户失败！");
+        //设置是否创建角色
+        if (sysUser.getCreateRole()) {
+            //构建 + 创建（账户-角色）关系
+            success = this.createUserRole(sysUser);
+            if (!success) {
+                throw new ShiroCustomException(Status.FAIL_VALIDATION, "创建用户失败！");
+            }
         }
         return true;
     }
@@ -163,10 +171,18 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         //构建关系
         Map<Long, SysUser> sysUserMap = buildSysUserAndRoleAndPermissionRelation(sysUserList);
         SysUser sysUser = sysUserMap.get(sysUserList.get(0).getUserId());
-        if (V.isEmpty(sysUser.getRoleVOList())) {
-            throw new ShiroCustomException(Status.FAIL_OPERATION, "未配置角色，获取数据失败");
-        }
+//        if (V.isEmpty(sysUser.getRoleVOList())) {
+//            throw new ShiroCustomException(Status.FAIL_OPERATION, "未配置角色，获取数据失败");
+//        }
         return sysUser;
+    }
+
+    @Override
+    public SysUser getByAccountInfo(TokenAccountInfo account) throws Exception {
+        LambdaQueryWrapper<SysUser> sysUserLambdaQueryWrapper = Wrappers.<SysUser>lambdaQuery()
+                .eq(SysUser::getUsername, account.getAccount())
+                .eq(SysUser::getUserType, account.getUserType());
+        return getOne(sysUserLambdaQueryWrapper);
     }
 
     @Override
@@ -199,6 +215,39 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
             return sysUserVO;
         }
         return null;
+    }
+
+    @Override
+    public boolean changePassword(AccountDTO accountDTO) {
+        SysUser dbSysUser = getById(accountDTO.getAccountId());
+        if (V.isEmpty(dbSysUser)) {
+            throw new ShiroCustomException(Status.FAIL_OPERATION, "用户不存在，修改密码失败");
+        }
+        if (V.isEmpty(accountDTO.getPassword()) || V.isEmpty(accountDTO.getRePassword()) || V.isEmpty(accountDTO.getOldPassword())) {
+            throw new ShiroCustomException(Status.FAIL_OPERATION, "新旧密码不能为空");
+        }
+        if (!accountDTO.getPassword().equals(accountDTO.getRePassword())) {
+            throw new ShiroCustomException(Status.FAIL_OPERATION, "两次密码不一致");
+        }
+
+        if (!S.equals(AuthHelper.encryptMD5(accountDTO.getOldPassword(), dbSysUser.getSalt(), true), dbSysUser.getPassword())){
+            throw new ShiroCustomException(Status.FAIL_OPERATION, "原密码错误");
+        }
+        //生成新的加密盐
+        String newSalt = AuthHelper.createSalt();
+        LambdaUpdateWrapper<SysUser> updateWrapper = Wrappers.<SysUser>lambdaUpdate()
+                .set(true, SysUser::getPassword, AuthHelper.encryptMD5(accountDTO.getPassword(), newSalt, true))
+                .set(true, SysUser::getSalt, newSalt)
+                .eq(SysUser::getId, accountDTO.getAccountId());
+        return update(updateWrapper);
+    }
+
+    @Override
+    public boolean changeAccount(AccountDTO accountDTO) {
+        LambdaUpdateWrapper<SysUser> updateWrapper = Wrappers.<SysUser>lambdaUpdate()
+                .set(true, SysUser::getUsername, accountDTO.getUsername())
+                .eq(SysUser::getId, accountDTO.getAccountId());
+        return update(updateWrapper);
     }
 
     /**
