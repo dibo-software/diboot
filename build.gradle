@@ -39,7 +39,7 @@ subprojects {
         mysqlConnectorVersion = "8.0.16"
         mybatisStarterVersion = "2.1.0"
         mybatisPlusVersion = "3.2.0"
-        fastjsonVersion = "1.2.62"
+        fastjsonVersion = "1.2.60"
         lombokVersion = "1.18.8"
         validatorVersion = "6.0.17.Final"
     }

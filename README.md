@@ -4,10 +4,11 @@
     </a>
 </p>
 
-# diboot-v2   (重复的工作自动做)
-diboot 2.0版本项目，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + 基础功能组件。
+# diboot-v2  
+>  [diboot的设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
-> diboot的设计目标：面向开发人员的低代码开发平台，提高开发效率和质量，提高代码可维护性。
+diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + 基础功能组件。
+
    
 ## 一、 diboot-core: 精简优化内核
 全新精简内核，(基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比1.x版本减少60%+），主要实现：
