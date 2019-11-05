@@ -6,7 +6,7 @@ module.exports = {
     ],
     host: '0.0.0.0',
     port: '9090',
-    base: '/devtools-static/',
+    base: '/',
     themeConfig: {
         // sidebar: 'auto',
         sidebar: {
@@ -57,10 +57,10 @@ module.exports = {
         nav: [{
             text: '首页', link: '/'
         }, {
-            text: 'core内核 使用指南',
+            text: 'core内核 指南',
             link: '/guide/diboot-core/安装'
         }, {
-            text: 'devtools助理 使用指南',
+            text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'
         },{
             text: '捐助Diboot团队',
@@ -69,9 +69,9 @@ module.exports = {
             text: '项目合作',
             link:'http://www.dibo.ltd/contect.html'
          },{
-            text: 'Diboot GitHub', link: 'https://github.com/dibo-software/diboot-v2'
+            text: 'GitHub', link: 'https://github.com/dibo-software/diboot-v2'
         },{
-            text: '1.x旧版', link: 'https://www.diboot.com'
+            text: '1.x旧版', link: 'https://www.diboot.com/diboot-v1/'
         }]
     }
 }
