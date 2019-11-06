@@ -58,7 +58,8 @@ compile("com.diboot:diboot-core-spring-boot-starter:2.0.3-RC1")
     <version>2.0.3-RC1</version>
 </dependency>
 ~~~
-> 注: @BindDict注解需要依赖dictionary表，初次启动时starter会自动创建该表。
+> * 使用diboot-devtools，会自动引入diboot-core，无需配置此依赖。
+> * @BindDict注解需要依赖dictionary表，初次启动时starter会自动创建该表。
 
 ### 2. 定义你的Service（继承diboot的BaseService或Mybatis-plus的ISerivice）及Mapper
 
