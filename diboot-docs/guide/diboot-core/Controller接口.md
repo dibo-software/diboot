@@ -163,3 +163,35 @@ protected String beforeDelete(BaseEntity entity){...}
 String str = this.beforeDelete(entity);
 ```
 该方法主要用来处理删除数据之前的逻辑，如检验是否具有删除权限等，需要子类继承BaseCrudRestController时重写并实现具体处理逻辑。
+
+## 数据校验
+
+> 默认使用**hibernate-validator**进行后端数据校验。进行数据校验至少需要两步操作，在entity中设置每个字段的校验规则，以及在controller中对实体添加@Valid注解。
+
+* 在entity中对字段进行校验规则的设置
+
+```java
+@NotNull(message = "名称不能为空")
+@Length(max=100, message="名称长度应小于100")
+@TableField()
+private String name;
+```
+
+* 在controller中添加@Valid注解
+
+```java
+@PostMapping("/")
+public JsonResult createEntity(@Valid Demo entity, BindingResult result, HttpServletRequest request)
+        throws Exception{
+    return super.createEntity(entity, result);
+}
+```
+
+* 如果您使用**json格式**进行数据提交，那么可以在@RequestBody注解前添加@Valid注解，如下：
+```java
+public JsonResult createEntity(@Valid @RequestBody Demo entity, BindingResult result, HttpServletRequest request)
+        throws Exception{
+    return super.createEntity(entity, result);
+}
+```
+
