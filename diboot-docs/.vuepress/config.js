@@ -4,7 +4,7 @@ module.exports = {
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],
-    host: '0.0.0.0',
+    host: 'localhost',
     port: '9090',
     base: '/',
     themeConfig: {

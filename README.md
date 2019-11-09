@@ -5,7 +5,7 @@
 </p>
 
 # diboot-v2  
->  [diboot的设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
+>  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
 diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + 基础功能组件。
 
@@ -27,7 +27,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 
 
-## 二、 diboot-devtools 代码生成工具 [(我要试试)](https://github.com/dibo-software/diboot-v2/blob/master/diboot-docs/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.md)
+## 二、 diboot-devtools 代码生成工具 [(我要试试)](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
 ##### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
 ##### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
