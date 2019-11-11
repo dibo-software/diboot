@@ -3,6 +3,7 @@ package com.diboot.core.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -159,6 +160,20 @@ public class BaseController {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * 自动转换为VO并绑定关联关系
+	 *
+	 * @param entityList
+	 * @param voClass
+	 * @param <VO>
+	 * @return
+	 */
+	protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass) {
+		// 转换为VO
+		List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
+		return voList;
 	}
 
 	/***

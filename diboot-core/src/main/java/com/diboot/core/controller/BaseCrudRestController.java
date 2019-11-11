@@ -1,43 +1,68 @@
 package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.diboot.core.binding.RelationsBinder;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /***
- * 增删改查通用管理功能-父类
+ * CRUD增删改查通用RestController-父类
  * @author Mazhicheng
  * @version 2.0
  * @date 2019/01/01
  */
-public abstract class BaseCrudRestController extends BaseController {
+public class BaseCrudRestController<E extends BaseEntity, VO extends Serializable> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
 
     /**
-     * 获取service实例
-     *
+     * 查询ViewObject，用于字类重写的方法
+     * @param id
+     * @param request
      * @return
+     * @throws Exception
      */
-    protected abstract BaseService getService();
+    protected JsonResult getViewObject(Serializable id, HttpServletRequest request) throws Exception{
+        VO vo = (VO)getService().getViewObject(id, getVOClass());
+        return new JsonResult(vo);
+    }
 
     /***
-     * 获取某资源的集合
+     * 获取某VO资源的集合，用于字类重写的方法
      * <p>
-     * url参数示例: /dictionary/list?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
+     * url参数示例: /${bindURL}?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
      * </p>
      * @return JsonResult
+     * @throws Exception
+     */
+    protected JsonResult getViewObjectList(E entity, Pagination pagination, HttpServletRequest request) throws Exception {
+        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity);
+        // 查询当前页的数据
+        List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, getVOClass());
+        // 返回结果
+        return new JsonResult(Status.OK, voList).bindPagination(pagination);
+    }
+
+    /**
+     * 获取符合查询条件的全部数据（不分页）
+     * @param queryWrapper
+     * @return
      * @throws Exception
      */
     protected JsonResult getEntityList(Wrapper queryWrapper) throws Exception {
@@ -48,9 +73,9 @@ public abstract class BaseCrudRestController extends BaseController {
     }
 
     /***
-     * 获取某资源的集合
+     * 获取符合查询条件的某页数据（有分页）
      * <p>
-     * url参数示例: /dictionary/list?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
+     * url参数示例: /${bindURL}?pageSize=20&pageIndex=1
      * </p>
      * @return JsonResult
      * @throws Exception
@@ -63,28 +88,13 @@ public abstract class BaseCrudRestController extends BaseController {
     }
 
     /***
-     * 获取某VO资源的集合
-     * <p>
-     * url参数示例: /dictionary/list?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
-     * </p>
-     * @return JsonResult
-     * @throws Exception
-     */
-    protected <T> JsonResult getVOListWithPaging(Wrapper queryWrapper, Pagination pagination, Class<T> clazz) throws Exception {
-        // 查询当前页的数据
-        List<T> voList = getService().getViewObjectList(queryWrapper, pagination, clazz);
-        // 返回结果
-        return new JsonResult(Status.OK, voList).bindPagination(pagination);
-    }
-
-    /***
-     * 创建资源对象
+     * 创建资源对象，用于字类重写的方法
      * @param entity
      * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(BaseEntity entity, BindingResult result) throws Exception {
+    protected JsonResult createEntity(E entity, BindingResult result, HttpServletRequest request) throws Exception {
         // Model属性值验证结果
         if (result != null && result.hasErrors()) {
             return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
@@ -111,13 +121,14 @@ public abstract class BaseCrudRestController extends BaseController {
     }
 
     /***
-     * 根据ID更新资源对象
+     * 根据ID更新资源对象，用于字类重写的方法
      * @param entity
      * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(BaseEntity entity, BindingResult result) throws Exception {
+    protected JsonResult updateEntity(Serializable id, E entity, BindingResult result,
+                                   HttpServletRequest request) throws Exception {
         // Entity属性值验证结果
         if (result.hasErrors()) {
             return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
@@ -144,12 +155,12 @@ public abstract class BaseCrudRestController extends BaseController {
     }
 
     /***
-     * 根据id删除资源对象
+     * 根据id删除资源对象，绑定了URL的方法 用于字类重写的方法
      * @param id
      * @return
      * @throws Exception
      */
-    protected JsonResult deleteEntity(Serializable id) throws Exception {
+    protected JsonResult deleteEntity(Serializable id, HttpServletRequest request) throws Exception {
         if (id == null) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
@@ -173,20 +184,6 @@ public abstract class BaseCrudRestController extends BaseController {
             log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
             return new JsonResult(Status.FAIL_OPERATION);
         }
-    }
-
-    /**
-     * 自动转换为VO并绑定关联关系
-     *
-     * @param entityList
-     * @param voClass
-     * @param <VO>
-     * @return
-     */
-    protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass) {
-        // 转换为VO
-        List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
-        return voList;
     }
 
     //============= 供子类继承重写的方法 =================
@@ -235,4 +232,32 @@ public abstract class BaseCrudRestController extends BaseController {
         return null;
     }
 
+    /**
+     * 得到service
+     * @return
+     */
+    protected BaseService getService() {
+        Class<E> clazz = getEntityClass();
+        BaseService service = ContextHelper.getBaseServiceByEntity(clazz);
+        if(service == null){
+            log.warn("Entity: {} 无相关的Service定义，请检查！", clazz.getName());
+        }
+        return service;
+    }
+
+    /**
+     * 获取Entity的class
+     * @return
+     */
+    protected Class<E> getEntityClass(){
+        return  (Class<E>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    /**
+     * 获取VO的class
+     * @return
+     */
+    protected Class<VO> getVOClass(){
+        return  (Class<VO>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
 }
