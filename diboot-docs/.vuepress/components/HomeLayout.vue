@@ -4,14 +4,12 @@
       <div class="hero">
         <p class="action">
           <a :href="$withBase('/guide/diboot-core/安装.html')" class="button white">快速上手</a>
-          <!--
-          <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
+          <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
           <a href="javascript:;" class="button has-icon" @click="showVideo">
-            <img class="icon" src="/play-circle.png" alt="">
+            <img class="icon" src="../public/play-circle.png" alt="">
             了解 diboot 2.0
           </a>
-          -->
         </p>
       </div>
       <div class="custom content">
@@ -19,13 +17,13 @@
           <div class="feature" style="max-width: 35%;">
             <h2>diboot-core 精简高效内核</h2>
             <p>
-            <ul>
-                <li>单表CRUD无SQL</li>
-                <li>关联查询无SQL - 注解自动绑定</li>
-                <li>数据字典无SQL - 注解自动绑定</li>
-                <li>Entity/DTO自动转换查询对象</li>
-                <li>常用工具类的最佳实践封装</li>
-            </ul>
+              <ul>
+                  <li>单表CRUD无SQL</li>
+                  <li>关联查询无SQL - 注解自动绑定</li>
+                  <li>数据字典无SQL - 注解自动绑定</li>
+                  <li>Entity/DTO自动转换查询对象</li>
+                  <li>常用工具类的最佳实践封装</li>
+              </ul>
             </p>
           </div>
           <div class="feature" style="max-width: 60%">
@@ -61,13 +59,13 @@
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p></p>
+        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p>
       </div>
     </div>
 
     <div class="modal-cover" v-show="showModal" @click="closeModal">
       <div class="modal-content">
-        <iframe width='100%' height='100%' src="//player.bilibili.com/player.html?aid=35545861&cid=62326072&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+        <iframe width='100%' height='100%' src="//player.bilibili.com/player.html?aid=75305809&page=1&high_quality=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
       </div>
     </div>
   </div>
@@ -229,13 +227,15 @@ a.button.white {
   box-shadow: 0 0 5px black;
 }
 .modal-content{
-  z-index: 1100;
+  position: fixed;
   width: 1180px;
   height: 666px;
+  top: 50%;
+  left: 50%;
+  margin-top: -333px;
+  margin-left: -590px;
+  z-index: 1100;
   background-color: white;
-  position: fixed;
-  left: 10%;
-  top: 10%;
   box-shadow: 0 0 15px black;
 }
 .donate-image{
