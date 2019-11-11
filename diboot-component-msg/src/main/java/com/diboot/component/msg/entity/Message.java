@@ -19,7 +19,7 @@ public class Message extends BaseExtEntity {
     private String businessType;
 
     @TableField
-    private String businessId;
+    private Long businessId;
 
     @TableField
     private String sender;
@@ -45,5 +45,7 @@ public class Message extends BaseExtEntity {
     @TableField
     private String response;
 
+    @TableField
+    private Long createBy;
 
 }
