@@ -11,11 +11,8 @@ import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
@@ -30,6 +27,16 @@ import java.util.Map;
  */
 public class BaseCrudRestController<E extends BaseEntity, VO extends Serializable> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
+    /**
+     * Entity，VO对应的class
+     */
+    private Class<E> entityClass;
+    private Class<VO> voClasss;
+
+    public BaseCrudRestController(){
+        this.entityClass = (Class<E>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        this.voClasss = (Class<VO>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
 
     /**
      * 查询ViewObject，用于字类重写的方法
@@ -250,7 +257,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      */
     protected Class<E> getEntityClass(){
-        return  (Class<E>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        return this.entityClass;
     }
 
     /**
@@ -258,6 +265,6 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      */
     protected Class<VO> getVOClass(){
-        return  (Class<VO>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        return this.voClasss;
     }
 }
