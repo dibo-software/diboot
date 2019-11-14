@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ResolvableType;
 import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,18 +27,13 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
-public class BaseCrudRestController<E extends BaseEntity, VO extends Serializable> extends BaseController {
+public class BaseCrudRestController<E extends BaseEntity, VO> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
     /**
      * Entity，VO对应的class
      */
     private Class<E> entityClass;
     private Class<VO> voClasss;
-
-    public BaseCrudRestController(){
-        this.entityClass = (Class<E>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        this.voClasss = (Class<VO>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    }
 
     /**
      * 查询ViewObject，用于字类重写的方法
@@ -257,6 +254,9 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      */
     protected Class<E> getEntityClass(){
+         if(this.entityClass == null){
+             initEntityVOClass();
+        }
         return this.entityClass;
     }
 
@@ -265,6 +265,26 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      */
     protected Class<VO> getVOClass(){
+        if(this.voClasss == null){
+            initEntityVOClass();
+        }
         return this.voClasss;
+    }
+
+    /**
+     * 初始化Entity和VO的class
+     */
+    private void initEntityVOClass(){
+        try{
+            ResolvableType superType = ResolvableType.forClass(this.getClass()).getSuperType();
+            ResolvableType[] genericsTypes = superType.getSuperType().getGenerics();
+            if(V.notEmpty(genericsTypes)){
+                this.entityClass = (Class<E>) Class.forName(genericsTypes[0].toString());
+                this.voClasss = (Class<VO>) Class.forName(genericsTypes[1].toString());
+            }
+        }
+        catch (Exception e){
+            log.warn("初始化Entity,VO class异常: "+ e.getMessage());
+        }
     }
 }
