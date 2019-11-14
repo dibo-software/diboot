@@ -27,7 +27,7 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
-public class BaseCrudRestController<E extends BaseEntity, VO> extends BaseController {
+public class BaseCrudRestController<E extends BaseEntity, VO extends Serializable> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
     /**
      * Entity，VO对应的class
