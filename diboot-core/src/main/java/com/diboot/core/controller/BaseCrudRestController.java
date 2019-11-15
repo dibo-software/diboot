@@ -16,7 +16,6 @@ import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     private Class<E> entityClass;
     private Class<VO> voClasss;
+    /**
+     * Service实现类
+     */
+    private BaseService baseService;
 
     /**
      * 查询ViewObject，用于字类重写的方法
@@ -241,12 +244,16 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      */
     protected BaseService getService() {
-        Class<E> clazz = getEntityClass();
-        BaseService service = ContextHelper.getBaseServiceByEntity(clazz);
-        if(service == null){
-            log.warn("Entity: {} 无相关的Service定义，请检查！", clazz.getName());
+        if(this.baseService == null){
+            Class<E> clazz = getEntityClass();
+            if(clazz != null){
+                this.baseService = ContextHelper.getBaseServiceByEntity(clazz);
+            }
+            if(this.baseService == null){
+                log.warn("Entity: {} 无对应的Service定义，请检查！", clazz.getName());
+            }
         }
-        return service;
+        return this.baseService;
     }
 
     /**
@@ -254,7 +261,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      */
     protected Class<E> getEntityClass(){
-         if(this.entityClass == null){
+        if(this.entityClass == null){
              initEntityVOClass();
         }
         return this.entityClass;
@@ -276,11 +283,11 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     private void initEntityVOClass(){
         try{
-            ResolvableType superType = ResolvableType.forClass(this.getClass()).getSuperType();
-            ResolvableType[] genericsTypes = superType.getSuperType().getGenerics();
-            if(V.notEmpty(genericsTypes)){
-                this.entityClass = (Class<E>) Class.forName(genericsTypes[0].toString());
-                this.voClasss = (Class<VO>) Class.forName(genericsTypes[1].toString());
+            ResolvableType resolvableType = ResolvableType.forClass(this.getClass()).getSuperType();
+            ResolvableType[] types = resolvableType.getSuperType().getGenerics();
+            if(V.notEmpty(types)){
+                this.entityClass = (Class<E>) types[0].resolve();
+                this.voClasss = (Class<VO>) types[1].resolve();
             }
         }
         catch (Exception e){

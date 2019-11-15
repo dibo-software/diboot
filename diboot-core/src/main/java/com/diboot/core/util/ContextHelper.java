@@ -163,14 +163,6 @@ public class ContextHelper implements ApplicationContextAware {
     }
 
     /**
-     * 初始化Entity-Service缓存
-     * @return
-     */
-    private static void initEntity2ServiceCache(){
-
-    }
-
-    /**
      * 根据Service实现类的bean解析出Entity类名
      * @param currentClass
      * @return
