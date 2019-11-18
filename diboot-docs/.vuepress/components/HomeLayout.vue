@@ -64,28 +64,58 @@
     </div>
 
     <div class="modal-cover" v-show="showModal" @click="closeModal">
-      <div class="modal-content">
-        <iframe width='100%' height='100%' src="//player.bilibili.com/player.html?aid=75305809&page=1&high_quality=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+      <div class="modal-content" @click="onModalContentClick($event)">
+        <video-player  class="video-player-box"
+                       ref="videoPlayer"
+                       :playsinline="true"
+                       :options="playerOptions"
+                       customEventName="customstatechangedeventname">
+        </video-player>
+
+<!--        <iframe width='100%' height='100%' src="//player.bilibili.com/player.html?aid=75305809&page=1&high_quality=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>-->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import 'video.js/dist/video-js.css'
+  import { videoPlayer } from 'vue-video-player'
   export default {
     name: "HomeLayout",
     data () {
       return {
-        showModal: false
+        showModal: false,
+        playerOptions: {
+          muted: false,
+          autoplay: false,
+          height: '666',
+          language: 'zh-CN',
+          playbackRates: [0.7, 1.0, 1.5, 2.0],
+          sources: [{
+            type: "video/mp4",
+            src: "https://diboot.oss-cn-shanghai.aliyuncs.com/file/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8diboot%E4%B8%8E%E5%85%B3%E8%81%94%E6%BC%94%E7%A4%BA_%E5%AD%97%E5%B9%95.mp4?nsukey=Z8MYZulBJM0GZXYNQgYGJGxRDvYMIWMsGj%2FkV%2BQpZD2aN7hsk7hreW1mXv71kxX7W5Sd61warYIPAAT4xDifYZEv3cQiiQiVW%2BqF%2FqomaxhPm1ht5jV5YkWLGiwcqQKeHmN5jn9%2FRWzaWTNweSZjWuif%2FZIciG6BX8UddZ0klnyyGfrtdB2eWCBAh%2F5n5rMPGdyUhYXAzzDsdPtyBxcY7w%3D%3D"
+          }],
+          poster: "../public/logo.png",
+        }
       }
     },
     methods: {
       showVideo () {
         this.showModal = true
+        this.$refs.videoPlayer.player.play()
       },
       closeModal () {
         this.showModal = false
+        this.$refs.videoPlayer.player.pause()
+      },
+      onModalContentClick(e){
+        e.preventDefault()
+        e.stopPropagation()
       }
+    },
+    components: {
+      videoPlayer
     }
   }
 </script>
