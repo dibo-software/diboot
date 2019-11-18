@@ -9,6 +9,5 @@
   "author": "yang",
   "license": "Apache-2.0",
   "dependencies": {
-    "vue-video-player": "^5.0.2"
   }
 }
