@@ -62,15 +62,6 @@ public abstract class BaseEntity implements Serializable {
     }
 
     /***
-     * 是否为新建
-     * @return
-     */
-    @JSONField(serialize = false)
-    public boolean isNew(){
-        return getId() != null;
-    }
-
-    /***
      * model对象转为map
      * @return
      */

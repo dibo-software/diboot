@@ -1,6 +1,7 @@
 package com.diboot.component.excel.utils;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.component.excel.entity.BaseExcelDataEntity;
 import com.diboot.component.excel.listener.BaseExcelDataListener;
 import com.diboot.core.util.V;
@@ -74,6 +75,24 @@ public class EasyExcelHelper {
     public static <T extends BaseExcelDataEntity> boolean simpleWrite(String filePath, Class<T> clazz, String sheetName, List dataList) throws Exception{
         try {
             EasyExcel.write(filePath, clazz).sheet(sheetName).doWrite(dataList);
+        } catch (Exception e) {
+            logger.error("数据写入excel文件失败",e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 简单将数据写入excel文件,列宽自适应数据长度
+     * @param filePath
+     * @param clazz
+     * @param dataList
+     * @param <T>
+     * @return
+     */
+    public static <T extends BaseExcelDataEntity> boolean simpleWriteWithAdaptColumnWidth(String filePath, Class<T> clazz, List dataList) throws Exception{
+        try {
+            EasyExcel.write(filePath, clazz).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).sheet().doWrite(dataList);
         } catch (Exception e) {
             logger.error("数据写入excel文件失败",e);
             return false;

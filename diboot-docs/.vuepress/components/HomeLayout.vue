@@ -4,14 +4,12 @@
       <div class="hero">
         <p class="action">
           <a :href="$withBase('/guide/diboot-core/安装.html')" class="button white">快速上手</a>
-          <!--
-          <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
+          <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
           <a href="javascript:;" class="button has-icon" @click="showVideo">
-            <img class="icon" src="/play-circle.png" alt="">
+            <img class="icon" src="../public/play-circle.png" alt="">
             了解 diboot 2.0
           </a>
-          -->
         </p>
       </div>
       <div class="custom content">
@@ -19,13 +17,13 @@
           <div class="feature" style="max-width: 35%;">
             <h2>diboot-core 精简高效内核</h2>
             <p>
-            <ul>
-                <li>单表CRUD无SQL</li>
-                <li>关联查询无SQL - 注解自动绑定</li>
-                <li>数据字典无SQL - 注解自动绑定</li>
-                <li>Entity/DTO自动转换查询对象</li>
-                <li>常用工具类的最佳实践封装</li>
-            </ul>
+              <ul>
+                  <li>单表CRUD无SQL</li>
+                  <li>关联查询无SQL - 注解自动绑定</li>
+                  <li>数据字典无SQL - 注解自动绑定</li>
+                  <li>Entity/DTO自动转换查询对象</li>
+                  <li>常用工具类的最佳实践封装</li>
+              </ul>
             </p>
           </div>
           <div class="feature" style="max-width: 60%">
@@ -61,13 +59,15 @@
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p></p>
+        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p>
       </div>
     </div>
 
     <div class="modal-cover" v-show="showModal" @click="closeModal">
-      <div class="modal-content">
-        <iframe width='100%' height='100%' src="//player.bilibili.com/player.html?aid=35545861&cid=62326072&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+      <div class="modal-content" @click="onModalContentClick($event)">
+        <video src="https://diboot.oss-cn-shanghai.aliyuncs.com/file/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8diboot%E4%B8%8E%E5%85%B3%E8%81%94%E6%BC%94%E7%A4%BA_%E5%AD%97%E5%B9%95.mp4?nsukey=Z8MYZulBJM0GZXYNQgYGJGxRDvYMIWMsGj%2FkV%2BQpZD2aN7hsk7hreW1mXv71kxX7W5Sd61warYIPAAT4xDifYZEv3cQiiQiVW%2BqF%2FqomaxhPm1ht5jV5YkWLGiwcqQKeHmN5jn9%2FRWzaWTNweSZjWuif%2FZIciG6BX8UddZ0klnyyGfrtdB2eWCBAh%2F5n5rMPGdyUhYXAzzDsdPtyBxcY7w%3D%3D"
+            class="homeVideo" id="homeVideo" height="666" controls>
+        </video>
       </div>
     </div>
   </div>
@@ -84,9 +84,15 @@
     methods: {
       showVideo () {
         this.showModal = true
+        document.querySelector("#homeVideo").play()
       },
       closeModal () {
         this.showModal = false
+        document.querySelector("#homeVideo").pause()
+      },
+      onModalContentClick(e){
+        e.preventDefault()
+        e.stopPropagation()
       }
     }
   }
@@ -229,13 +235,15 @@ a.button.white {
   box-shadow: 0 0 5px black;
 }
 .modal-content{
-  z-index: 1100;
+  position: fixed;
   width: 1180px;
   height: 666px;
+  top: 50%;
+  left: 50%;
+  margin-top: -333px;
+  margin-left: -590px;
+  z-index: 1100;
   background-color: white;
-  position: fixed;
-  left: 10%;
-  top: 10%;
   box-shadow: 0 0 15px black;
 }
 .donate-image{

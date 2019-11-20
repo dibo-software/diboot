@@ -5,7 +5,6 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
