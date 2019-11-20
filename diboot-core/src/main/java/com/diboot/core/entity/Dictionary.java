@@ -55,7 +55,7 @@ public class Dictionary extends BaseExtEntity {
      * 排序号
      */
     @TableField
-    private int sortId = 99;
+    private Integer sortId;
 
     /***
      * 是否为系统预置（预置不可删除）
@@ -109,11 +109,11 @@ public class Dictionary extends BaseExtEntity {
         this.description = description;
     }
 
-    public int getSortId() {
+    public Integer getSortId() {
         return sortId;
     }
 
-    public void setSortId(int sortId) {
+    public void setSortId(Integer sortId) {
         this.sortId = sortId;
     }
 
