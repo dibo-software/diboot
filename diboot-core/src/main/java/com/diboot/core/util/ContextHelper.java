@@ -1,6 +1,7 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -37,6 +38,10 @@ public class ContextHelper implements ApplicationContextAware {
      * Entity-对应的Service缓存
      */
     private static Map<String, IService> ENTITY_SERVICE_CACHE = null;
+    /**
+     * Entity-对应的BaseService缓存
+     */
+    private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = null;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -106,11 +111,21 @@ public class ContextHelper implements ApplicationContextAware {
     }
 
     /**
-     * 根据Entity获取对应的Service
+     * 根据Entity获取对应的Service (已废弃，请调用getIServiceByEntity)
      * @param entity
      * @return
      */
+    @Deprecated
     public static IService getServiceByEntity(Class entity){
+        return getIServiceByEntity(entity);
+    }
+
+    /**
+     * 根据Entity获取对应的IService实现
+     * @param entity
+     * @return
+     */
+    public static IService getIServiceByEntity(Class entity){
         if(ENTITY_SERVICE_CACHE == null){
             ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
@@ -124,6 +139,27 @@ public class ContextHelper implements ApplicationContextAware {
             }
         }
         return ENTITY_SERVICE_CACHE.get(entity.getName());
+    }
+
+    /**
+     * 根据Entity获取对应的BaseService实现
+     * @param entity
+     * @return
+     */
+    public static BaseService getBaseServiceByEntity(Class entity){
+        if(ENTITY_BASE_SERVICE_CACHE == null){
+            ENTITY_BASE_SERVICE_CACHE = new ConcurrentHashMap<>();
+            Map<String, BaseService> serviceMap = getApplicationContext().getBeansOfType(BaseService.class);
+            if(V.notEmpty(serviceMap)){
+                for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){
+                    String entityClassName = getEntityClassByServiceImpl(entry.getValue().getClass());
+                    if(V.notEmpty(entityClassName)){
+                        ENTITY_BASE_SERVICE_CACHE.put(entityClassName, entry.getValue());
+                    }
+                }
+            }
+        }
+        return ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
     }
 
     /**

@@ -11,7 +11,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
    
 ## 一、 diboot-core: 精简优化内核
-全新精简内核，(基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比1.x版本减少60%+），主要实现：
+全新精简内核，(基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比1.x版本减少70%+），主要实现：
 #### 1. 单表CRUD无SQL
    > 基于Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
 #### 2. 关联查询无SQL（注解自动绑定）
@@ -39,7 +39,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 ## 三、技术交流群
 如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。我们不喝咖啡，所有捐助费用都将用于Diboot服务器支出。
 <p align="center">
-    <img src="https://www.diboot.com/img/donate.jpg" width = "500" alt="支持Diboot发展">
+    <img src="https://www.diboot.com/donate.jpg" width = "500" alt="支持Diboot发展">
 </p>
 如果您有技术问题，欢迎加群交流：
 
