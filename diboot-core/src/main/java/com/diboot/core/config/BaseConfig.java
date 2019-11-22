@@ -18,28 +18,26 @@ public class BaseConfig {
 	 * @param key
 	 * @return
 	 */
-	public static String getProperty(String key, String... propertiesFileName){
-		return PropertiesUtils.get(key, propertiesFileName);
+	public static String getProperty(String key){
+		return PropertiesUtils.get(key);
 	}
 
 	/***
 	 *  从默认的/指定的 Properties文件获取boolean值
 	 * @param key
-	 * @param propertiesFileName
 	 * @return
 	 */
-	public static boolean isTrue(String key, String... propertiesFileName){
-		return PropertiesUtils.getBoolean(key, propertiesFileName);
+	public static boolean isTrue(String key){
+		return PropertiesUtils.getBoolean(key);
 	}
 
 	/***
 	 * 获取int类型
 	 * @param key
-	 * @param propertiesFileName
 	 * @return
 	 */
-	public static int getInteger(String key, String... propertiesFileName){
-		return PropertiesUtils.getInteger(key, propertiesFileName);
+	public static int getInteger(String key){
+		return PropertiesUtils.getInteger(key);
 	}
 
 	/***

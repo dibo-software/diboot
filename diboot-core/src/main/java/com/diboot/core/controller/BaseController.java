@@ -57,11 +57,12 @@ public class BaseController {
 	 * @param <T>
 	 * @return
 	 */
-	public <T,DTO> QueryWrapper<T> buildQueryWrapper(DTO entityOrDto) throws Exception{
+	public <T,DTO> QueryWrapper<T> buildQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-		return QueryBuilder.toQueryWrapper(entityOrDto);
+
+		return QueryBuilder.toQueryWrapper(entityOrDto, extractParams(request));
 	}
 
 	/***
@@ -70,11 +71,11 @@ public class BaseController {
 	 * @param <T>
 	 * @return
 	 */
-	public <T,DTO> LambdaQueryWrapper<T> buildLambdaQueryWrapper(DTO entityOrDto) throws Exception{
+	public <T,DTO> LambdaQueryWrapper<T> buildLambdaQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-		return QueryBuilder.toLambdaQueryWrapper(entityOrDto);
+		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractParams(request));
 	}
 
 	/***
@@ -133,6 +134,19 @@ public class BaseController {
 			return S.replace(request.getRequestURI(), contextPath, "");
 		}
 		return request.getRequestURI();
+	}
+
+	/**
+	 * 提取请求参数名集合
+	 * @param request
+	 * @return
+	 */
+	private static Set<String> extractParams(HttpServletRequest request){
+		Map<String, Object> paramValueMap = convertParams2Map(request);
+		if(V.notEmpty(paramValueMap)){
+			return paramValueMap.keySet();
+		}
+		return Collections.EMPTY_SET;
 	}
 
 	/***
