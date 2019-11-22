@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,7 +35,20 @@ public class QueryBuilder {
      */
     public static <T,DTO> QueryWrapper<T> toQueryWrapper(DTO dto){
         QueryWrapper<T> wrapper = new QueryWrapper<>();
-        return (QueryWrapper<T>) dtoToWrapper(wrapper, dto);
+        return (QueryWrapper<T>) dtoToWrapper(wrapper, dto, null);
+    }
+
+    /**
+     * Entity或者DTO对象转换为QueryWrapper
+     * @param dto
+     * @param fields 指定参与转换的属性值
+     * @param <T>
+     * @param <DTO>
+     * @return
+     */
+    public static <T,DTO> QueryWrapper<T> toQueryWrapper(DTO dto, Collection<String> fields){
+        QueryWrapper<T> wrapper = new QueryWrapper<>();
+        return (QueryWrapper<T>) dtoToWrapper(wrapper, dto, fields);
     }
 
     /**
@@ -46,6 +61,18 @@ public class QueryBuilder {
         return (LambdaQueryWrapper<T>) toQueryWrapper(dto).lambda();
     }
 
+
+    /**
+     * Entity或者DTO对象转换为LambdaQueryWrapper
+     * @param dto
+     * @param fields 指定参与转换的属性值
+     * @param <T>
+     * @return
+     */
+    public static <T,DTO> LambdaQueryWrapper<T> toLambdaQueryWrapper(DTO dto, Collection<String> fields){
+        return (LambdaQueryWrapper<T>) toQueryWrapper(dto, fields).lambda();
+    }
+
     /**
      * 转换具体实现
      * @param wrapper
@@ -53,9 +80,14 @@ public class QueryBuilder {
      * @param <T>
      * @return
      */
-    private static <T,DTO> QueryWrapper<T> dtoToWrapper(QueryWrapper wrapper, DTO dto){
+    private static <T,DTO> QueryWrapper<T> dtoToWrapper(QueryWrapper wrapper, DTO dto, Collection<String> fields){
+        // 转换
         List<Field> declaredFields = BeanUtils.extractAllFields(dto.getClass());
         for (Field field : declaredFields) {
+            // 非指定属性，非逻辑删除字段，跳过
+            if(fields != null && !fields.contains(field.getName()) && !Cons.FieldName.deleted.name().equals(field.getName())){
+                continue;
+            }
             //忽略static，以及final，transient
             boolean isStatic = Modifier.isStatic(field.getModifiers());
             boolean isFinal = Modifier.isFinal(field.getModifiers());
@@ -167,7 +199,7 @@ public class QueryBuilder {
      * @return
      */
     private static String getColumnName(Field field){
-        String columnName = "";
+        String columnName = null;
         if (field.isAnnotationPresent(BindQuery.class)) {
             columnName = field.getAnnotation(BindQuery.class).field();
         }

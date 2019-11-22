@@ -32,7 +32,11 @@ public class Cons {
         /**
          * 子节点属性名
          */
-        children
+        children,
+        /**
+         * 逻辑删除标记字段
+         */
+        deleted
     }
 
 }

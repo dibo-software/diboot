@@ -59,7 +59,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @throws Exception
      */
     protected JsonResult getViewObjectList(E entity, Pagination pagination, HttpServletRequest request) throws Exception {
-        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity);
+        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity, request);
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, getVOClass());
         // 返回结果
