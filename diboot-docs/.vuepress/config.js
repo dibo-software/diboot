@@ -55,7 +55,7 @@ module.exports = {
             ]
         },
         nav: [{
-            text: '首页', link: '/'
+            text: '首页', link: '/index.html'
         }, {
             text: 'core内核 指南',
             link: '/guide/diboot-core/安装'
