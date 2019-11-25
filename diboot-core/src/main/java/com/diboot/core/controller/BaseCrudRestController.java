@@ -12,7 +12,6 @@ import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ResolvableType;
-import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -97,15 +96,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     /***
      * 创建资源对象，用于字类重写的方法
      * @param entity
-     * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(E entity, BindingResult result, HttpServletRequest request) throws Exception {
-        // Model属性值验证结果
-        if (result != null && result.hasErrors()) {
-            return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
-        }
+    protected JsonResult createEntity(E entity, HttpServletRequest request) throws Exception {
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
@@ -130,16 +124,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     /***
      * 根据ID更新资源对象，用于字类重写的方法
      * @param entity
-     * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(Serializable id, E entity, BindingResult result,
-                                   HttpServletRequest request) throws Exception {
-        // Entity属性值验证结果
-        if (result.hasErrors()) {
-            return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
-        }
+    protected JsonResult updateEntity(Serializable id, E entity, HttpServletRequest request) throws Exception {
         // 执行更新资源前的操作
         String validateResult = this.beforeUpdate(entity);
         if (validateResult != null) {
