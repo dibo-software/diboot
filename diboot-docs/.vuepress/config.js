@@ -63,12 +63,14 @@ module.exports = {
             text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'
         },{
-            text: '捐助Diboot团队',
+            text: '捐助我们',
             link: '/guide/donate/'
         },{
             text: '项目合作',
             link:'http://www.dibo.ltd/contect.html'
          },{
+            text: 'Gitee', link: 'https://gitee.com/dibo_software/diboot-v2'
+        },{
             text: 'GitHub', link: 'https://github.com/dibo-software/diboot-v2'
         },{
             text: '1.x旧版', link: 'https://www.diboot.com/diboot-v1/'
