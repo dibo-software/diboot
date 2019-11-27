@@ -2,6 +2,8 @@ package com.diboot.core.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -383,6 +385,23 @@ public class V {
 		else{
 			return String.valueOf(source).equals(String.valueOf(target));
 		}
+	}
+
+	/**
+	 * 解析所有的验证错误信息，转换为JSON
+	 * @param result
+	 * @return
+	 */
+	public static String getBindingError(BindingResult result){
+		if(result == null || !result.hasErrors()){
+			return null;
+		}
+		List<ObjectError> errors = result.getAllErrors();
+		List<String> allErrors = new ArrayList<>(errors.size());
+		for(ObjectError error : errors){
+			allErrors.add(error.getDefaultMessage().replaceAll("\"", "'"));
+		}
+		return S.join(allErrors);
 	}
 
 }

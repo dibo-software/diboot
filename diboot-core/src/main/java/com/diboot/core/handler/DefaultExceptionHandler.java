@@ -1,7 +1,8 @@
-package com.diboot.core.handle;
+package com.diboot.core.handler;
 
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class DefaultExceptionHandler {
         }
         if (br != null && br.hasErrors()) {
             map.put("code", Status.FAIL_VALIDATION.code());
-            String validateErrorMsg = getBindingError(br);
+            String validateErrorMsg = V.getBindingError(br);
             map.put("msg", validateErrorMsg);
             log.warn("数据校验失败, {}: {}", br.getObjectName(), validateErrorMsg);
         }
@@ -122,23 +123,6 @@ public class DefaultExceptionHandler {
         catch (Exception ex) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
-    }
-
-    /**
-     * 解析所有的验证错误信息，转换为JSON
-     * @param result
-     * @return
-     */
-    protected String getBindingError(BindingResult result){
-        if(result == null || !result.hasErrors()){
-            return null;
-        }
-        List<ObjectError> errors = result.getAllErrors();
-        List<String> allErrors = new ArrayList<>(errors.size());
-        for(ObjectError error : errors){
-            allErrors.add(error.getDefaultMessage().replaceAll("\"", "'"));
-        }
-        return S.join(allErrors);
     }
 
 }

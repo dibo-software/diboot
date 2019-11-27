@@ -1,6 +1,6 @@
 package com.diboot.example.handle;
 
-import com.diboot.core.handle.DefaultExceptionHandler;
+import com.diboot.core.handler.DefaultExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 /**
