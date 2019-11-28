@@ -227,7 +227,7 @@ a.button.white {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   text-align: center;
@@ -292,6 +292,9 @@ a.button.white {
   }
   .homeVideo{
     height: 180px;
+  }
+  a.button.white{
+    margin-right: 0;
   }
 }
 </style>
