@@ -34,7 +34,7 @@ public class JsonResult implements Serializable {
     }
 
     /**
-     * 默认成功，有返回数据（及附加提示信息）
+     * 默认成功，有返回数据
      */
     public JsonResult(Object data){
         this.code = Status.OK.code();
@@ -44,7 +44,7 @@ public class JsonResult implements Serializable {
     }
 
     /**
-     * 默认成功，有返回数据（及附加提示信息）
+     * 默认成功，有返回数据、及附加提示信息
      */
     public JsonResult(Object data, String additionalMsg){
         this.code = Status.OK.code();
@@ -54,7 +54,7 @@ public class JsonResult implements Serializable {
     }
 
     /***
-     * 非成功，指定状态（及附加提示信息）
+     * 非成功，指定状态
      * @param status
      */
     public JsonResult(Status status){
@@ -65,7 +65,7 @@ public class JsonResult implements Serializable {
     }
 
     /***
-     * 非成功，指定状态（及附加提示信息）
+     * 非成功，指定状态及附加提示信息
      * @param status
      * @param additionalMsg
      */
@@ -77,7 +77,9 @@ public class JsonResult implements Serializable {
     }
 
     /**
-     * 非成功，指定状态、返回数据（及附加提示信息）
+     * 非成功，指定状态、返回数据
+     * @param status
+     * @param data
      */
     public JsonResult(Status status, Object data){
         this.code = status.code();
@@ -87,7 +89,7 @@ public class JsonResult implements Serializable {
     }
 
     /**
-     * 非成功，指定状态、返回数据（及附加提示信息）
+     * 非成功，指定状态、返回数据、及附加提示信息
       */
     public JsonResult(Status status, Object data, String additionalMsg){
         this.code = status.code();
