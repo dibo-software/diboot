@@ -36,7 +36,17 @@ public class JsonResult implements Serializable {
     /**
      * 默认成功，有返回数据（及附加提示信息）
      */
-    public JsonResult(Object data, String... additionalMsg){
+    public JsonResult(Object data){
+        this.code = Status.OK.code();
+        this.msg = Status.OK.label();
+        initMsg(null);
+        this.data = data;
+    }
+
+    /**
+     * 默认成功，有返回数据（及附加提示信息）
+     */
+    public JsonResult(Object data, String additionalMsg){
         this.code = Status.OK.code();
         this.msg = Status.OK.label();
         initMsg(additionalMsg);
@@ -46,9 +56,20 @@ public class JsonResult implements Serializable {
     /***
      * 非成功，指定状态（及附加提示信息）
      * @param status
+     */
+    public JsonResult(Status status){
+        this.code = status.code();
+        this.msg = status.label();
+        initMsg(null);
+        this.data = null;
+    }
+
+    /***
+     * 非成功，指定状态（及附加提示信息）
+     * @param status
      * @param additionalMsg
      */
-    public JsonResult(Status status, String... additionalMsg){
+    public JsonResult(Status status, String additionalMsg){
         this.code = status.code();
         this.msg = status.label();
         initMsg(additionalMsg);
@@ -57,8 +78,18 @@ public class JsonResult implements Serializable {
 
     /**
      * 非成功，指定状态、返回数据（及附加提示信息）
+     */
+    public JsonResult(Status status, Object data){
+        this.code = status.code();
+        this.msg = status.label();
+        initMsg(null);
+        this.data = data;
+    }
+
+    /**
+     * 非成功，指定状态、返回数据（及附加提示信息）
       */
-    public JsonResult(Status status, Object data, String... additionalMsg){
+    public JsonResult(Status status, Object data, String additionalMsg){
         this.code = status.code();
         this.msg = status.label();
         initMsg(additionalMsg);
@@ -99,13 +130,13 @@ public class JsonResult implements Serializable {
      * 赋值msg（去掉重复前缀以支持与BusinessException嵌套使用）
      * @param additionalMsg
      */
-    private void initMsg(String... additionalMsg){
+    private void initMsg(String additionalMsg){
         if(V.notEmpty(additionalMsg)){
-            if(S.startsWith(additionalMsg[0], this.msg)){
-                this.msg = additionalMsg[0];
+            if(S.startsWith(additionalMsg, this.msg)){
+                this.msg = additionalMsg;
             }
             else{
-                this.msg += ": " + additionalMsg[0];
+                this.msg += ": " + additionalMsg;
             }
         }
     }
