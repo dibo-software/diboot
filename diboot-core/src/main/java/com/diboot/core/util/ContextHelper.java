@@ -71,11 +71,11 @@ public class ContextHelper implements ApplicationContextAware {
 
     /***
      * 获取指定类型的单个Bean实例
-     * @param type
+     * @param clazz
      * @return
      */
-    public static Object getBean(Class type){
-        return getApplicationContext().getBean(type);
+    public static <T> T getBean(Class<T> clazz){
+        return getApplicationContext().getBean(clazz);
     }
 
     /***
