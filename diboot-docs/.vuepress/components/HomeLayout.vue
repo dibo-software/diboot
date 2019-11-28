@@ -14,7 +14,7 @@
       </div>
       <div class="custom content">
         <div class="features">
-          <div class="feature" style="max-width: 35%;">
+          <div class="feature col-1">
             <h2>diboot-core 精简高效内核</h2>
             <p>
               <ul>
@@ -26,7 +26,7 @@
               </ul>
             </p>
           </div>
-          <div class="feature" style="max-width: 60%">
+          <div class="feature col-2">
             <h2>diboot-devtools 强大开发助理</h2>
             <p>
                 <ul>
@@ -66,7 +66,7 @@
     <div class="modal-cover" v-show="showModal" @click="closeModal">
       <div class="modal-content" @click="onModalContentClick($event)">
         <video src="https://diboot.oss-cn-shanghai.aliyuncs.com/file/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8diboot%E4%B8%8E%E5%85%B3%E8%81%94%E6%BC%94%E7%A4%BA_%E5%AD%97%E5%B9%95.mp4?nsukey=Z8MYZulBJM0GZXYNQgYGJGxRDvYMIWMsGj%2FkV%2BQpZD2aN7hsk7hreW1mXv71kxX7W5Sd61warYIPAAT4xDifYZEv3cQiiQiVW%2BqF%2FqomaxhPm1ht5jV5YkWLGiwcqQKeHmN5jn9%2FRWzaWTNweSZjWuif%2FZIciG6BX8UddZ0klnyyGfrtdB2eWCBAh%2F5n5rMPGdyUhYXAzzDsdPtyBxcY7w%3D%3D"
-            class="homeVideo" id="homeVideo" height="666" controls>
+            class="homeVideo" id="homeVideo" controls>
         </video>
       </div>
     </div>
@@ -246,10 +246,52 @@ a.button.white {
   background-color: white;
   box-shadow: 0 0 15px black;
 }
+.homeVideo{
+  height: 666px;
+}
 .donate-image{
   display: block;
   margin: 10px auto;
   width: 500px;
   height: auto;
+}
+.feature.col-1{
+  max-width: 35%;
+}
+.feature.col-2{
+  max-width: 60%;
+}
+@media screen and (max-width: 750px) {
+  .button.has-icon{
+    margin-top: 15px;
+  }
+  .home {
+    padding: 0;
+  }
+  .home .feature{
+    padding: 0;
+  }
+  .feature.col-1{
+    max-width: 100%;
+  }
+  .feature.col-2{
+    max-width: 100%;
+  }
+  .home .footer{
+    padding: 1rem 0;
+  }
+  .home .footer .footer-content .footer-item{
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+  .modal-content{
+    width: 320px;
+    height: 180px;
+    margin-top: -90px;
+    margin-left: -160px;
+  }
+  .homeVideo{
+    height: 180px;
+  }
 }
 </style>
