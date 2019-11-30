@@ -12,10 +12,12 @@ public class Cons {
      */
     public static final String CHARSET_UTF8 = "UTF-8";
     /**
-     * 分隔符 ,
+     * 逗号分隔符 ,
      */
     public static final String SEPARATOR_COMMA = ",";
-
+    /**
+     * 下划线分隔符_
+     */
     public static final String SEPARATOR_UNDERSCORE = "_";
     /***
      * 默认字段名定义
@@ -36,7 +38,11 @@ public class Cons {
         /**
          * 逻辑删除标记字段
          */
-        deleted
+        deleted,
+        /**
+         * 创建时间字段
+         */
+        createTime
     }
 
 }

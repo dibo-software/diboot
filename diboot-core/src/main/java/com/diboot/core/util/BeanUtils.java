@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.core.ResolvableType;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -635,7 +636,7 @@ public class BeanUtils {
     }
 
      /**
-     * 获取类所有属性（包含父类）
+     * 获取类所有属性（包含父类中属性）
      * @param clazz
      * @return
      */
@@ -655,6 +656,40 @@ public class BeanUtils {
             clazz = clazz.getSuperclass();
         }
         return fieldList;
+    }
+
+    /**
+     * 获取类的指定属性（包含父类中属性）
+     * @param clazz
+     * @param fieldName
+     * @return
+     */
+    public static Field extractField(Class clazz, String fieldName){
+        List<Field> allFields = extractAllFields(clazz);
+        if(V.notEmpty(allFields)){
+            for(Field field : allFields){
+                if(field.getName().equals(fieldName)){
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从宿主类定义中获取泛型定义类class
+     * @param hostClass
+     * @param index
+     * @return
+     */
+    public static Class getGenericityClass(Class hostClass, int index){
+        ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
+        ResolvableType[] types = resolvableType.getSuperType().getGenerics();
+        if(V.notEmpty(types) && types.length > index){
+            return types[index].resolve();
+        }
+        log.warn("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
+        return null;
     }
 
     /***

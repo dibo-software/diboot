@@ -22,11 +22,6 @@ import java.util.*;
 public class BaseController {
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-	/***
-	 * 字段
-	 */
-	protected static final String PARAM_FIELDS = "_fields";
-
 	/**
 	 * ID参数名
 	 */

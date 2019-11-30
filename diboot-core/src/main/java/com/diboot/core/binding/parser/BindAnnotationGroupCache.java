@@ -1,9 +1,11 @@
 package com.diboot.core.binding.parser;
 
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +32,7 @@ public class BindAnnotationGroupCache {
             // 获取注解并缓存
             group = new BindAnnotationGroup();
             // 获取当前VO的注解
-            Field[] fields = voClass.getDeclaredFields();
+            List<Field> fields = BeanUtils.extractAllFields(voClass);
             if(fields != null){
                 for (Field field : fields) {
                     //遍历属性

@@ -8,7 +8,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
@@ -131,9 +130,9 @@ public class ContextHelper implements ApplicationContextAware {
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
-                    String entityClassName = getEntityClassByServiceImpl(entry.getValue().getClass());
-                    if(V.notEmpty(entityClassName)){
-                        ENTITY_SERVICE_CACHE.put(entityClassName, entry.getValue());
+                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue().getClass(), 1);
+                    if(entityClass != null){
+                        ENTITY_SERVICE_CACHE.put(entityClass.getName(), entry.getValue());
                     }
                 }
             }
@@ -152,31 +151,13 @@ public class ContextHelper implements ApplicationContextAware {
             Map<String, BaseService> serviceMap = getApplicationContext().getBeansOfType(BaseService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){
-                    String entityClassName = getEntityClassByServiceImpl(entry.getValue().getClass());
-                    if(V.notEmpty(entityClassName)){
-                        ENTITY_BASE_SERVICE_CACHE.put(entityClassName, entry.getValue());
+                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue().getClass(), 1);
+                    if(entityClass != null){
+                        ENTITY_BASE_SERVICE_CACHE.put(entityClass.getName(), entry.getValue());
                     }
                 }
             }
         }
         return ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
     }
-
-    /**
-     * 根据Service实现类的bean解析出Entity类名
-     * @param currentClass
-     * @return
-     */
-    private static String getEntityClassByServiceImpl(Class currentClass){
-        ResolvableType superType = ResolvableType.forClass(currentClass).getSuperType();
-        ResolvableType[] genericsTypes = superType.getSuperType().getGenerics();
-        if(V.notEmpty(genericsTypes) && genericsTypes.length >= 2){
-            log.debug("Entity-Service: {} -> {}", genericsTypes[1].toString(), currentClass.getName());
-            return genericsTypes[1].toString();
-        }
-        else{
-            return null;
-        }
-    }
-
 }

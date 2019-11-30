@@ -1,6 +1,8 @@
 package diboot.core.test.util;
 
 import com.diboot.core.util.D;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,4 +29,16 @@ public class DTest {
         }
     }
 
+    @Test
+    public void test(){
+        String token = "token";
+        JsonResult j1 = new JsonResult(token);
+        JsonResult j2 = new JsonResult(token, "申请token成功");
+        JsonResult j3 = new JsonResult(Status.OK, token);
+        JsonResult j4 = new JsonResult(Status.OK, token, "申请token成功");
+        System.out.println(j1.getData());
+        System.out.println(j2.getData());
+        System.out.println(j3.getData());
+        System.out.println(j4.getData());
+    }
 }

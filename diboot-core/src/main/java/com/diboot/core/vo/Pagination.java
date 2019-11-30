@@ -1,6 +1,8 @@
 package com.diboot.core.vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
@@ -38,10 +40,12 @@ public class Pagination implements Serializable {
      * 排序-升序排列的字段
      */
     private List<String> ascList = null;
+
     /***
-     * 降序排列的字段（默认以create_time降序排列，当指定了其他排列方式时以用户指定为准）
+     * 降序排列的字段（默认以id降序排列(等同于cretae_time)，当指定了其他排列方式时以用户指定为准）
      */
-    private List<String> descList = new ArrayList<>(Arrays.asList("create_time"));
+    private List<String> DEFAULT_ORDER_LIST = new ArrayList<>(Arrays.asList(Cons.FieldName.id.name()));
+    private List<String> descList = DEFAULT_ORDER_LIST;
 
     public Pagination(){
     }
@@ -150,4 +154,12 @@ public class Pagination implements Serializable {
         return descList;
     }
 
+    /**
+     * 是否为默认排序
+     * @return
+     */
+    @JSONField(serialize = false)
+    public boolean isDefaultOrder(){
+        return V.equals(descList, DEFAULT_ORDER_LIST);
+    }
 }
