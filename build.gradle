@@ -1,10 +1,9 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.8.RELEASE'
+        springBootVersion = '2.2.1.RELEASE'
     }
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
-        maven{ url 'http://maven.diboot.com/repository/diboot'}
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     dependencies {
@@ -31,17 +30,15 @@ subprojects {
     [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
     repositories {
         mavenLocal() //优先查找本地maven库，性能最好
-        maven{ url 'http://maven.diboot.com/repository/diboot'}
         maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     }
     ext {//依赖版本
-        springBootVersion = "2.1.8.RELEASE"
+        springBootVersion = "2.2.1.RELEASE"
         mysqlConnectorVersion = "8.0.16"
-        mybatisStarterVersion = "2.1.0"
         mybatisPlusVersion = "3.2.0"
         fastjsonVersion = "1.2.60"
-        lombokVersion = "1.18.8"
-        validatorVersion = "6.0.17.Final"
+        lombokVersion = "1.18.10"
+        validatorVersion = "6.0.18.Final"
     }
     dependencies {
         // Gradle 5.0及以上版本，使用如下方式
@@ -51,8 +48,6 @@ subprojects {
 
         compile("javax.servlet:javax.servlet-api:4.0.1")
         compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
-        // Mybatis
-        compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatisStarterVersion")
         // Mybatis-Plus
         compile("com.baomidou:mybatis-plus-boot-starter:$mybatisPlusVersion")
         // Log4j2
@@ -65,7 +60,7 @@ subprojects {
         compile("org.hibernate.validator:hibernate-validator:$validatorVersion")
         // Apache Commons
         compile("org.apache.commons:commons-lang3:3.8.1",
-                "commons-fileupload:commons-fileupload:1.3.3",
+               // "commons-fileupload:commons-fileupload:1.3.3",
                 "commons-io:commons-io:2.6")
         
         // 单元测试

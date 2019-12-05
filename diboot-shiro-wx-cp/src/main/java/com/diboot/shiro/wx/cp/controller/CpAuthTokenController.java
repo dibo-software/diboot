@@ -44,12 +44,12 @@ public class CpAuthTokenController {
     @GetMapping("/buildOAuthUrl")
     public JsonResult buildOAuthUrl4cp(@RequestParam("url") String url,@RequestParam("agentId") Integer agentId, HttpServletRequest request) throws Exception{
         if (V.isEmpty(url)){
-            return new JsonResult(Status.FAIL_OPERATION, new String[]{"url为空，获取OAuth链接失败"});
+            return new JsonResult(Status.FAIL_OPERATION, "url为空，获取OAuth链接失败");
         }
         wxCpService = (WxCpServiceExtImpl)WxCpConfig.getCpService(agentId);
 
         String oauthUrl = wxCpService.getOauth2Service().buildAuthorizationUrl(url, null, WxConsts.OAuth2Scope.SNSAPI_PRIVATEINFO);
-        return new JsonResult(Status.OK, oauthUrl, new String[]{"获取OAuth链接成功"});
+        return new JsonResult(Status.OK, oauthUrl, "获取OAuth链接成功");
     }
 
     /**
@@ -66,7 +66,7 @@ public class CpAuthTokenController {
             if (V.isEmpty(account)){
                 // 如果有code并且token已过期，则使用code获取userId
                 if (V.isEmpty(code)){
-                    return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"token已过期"});
+                    return new JsonResult(Status.FAIL_INVALID_TOKEN, "token已过期");
                 }
             } else {
                 userId = account.getAccount();
@@ -77,7 +77,7 @@ public class CpAuthTokenController {
         if (V.isEmpty(userId)){
             if (V.isEmpty(code)){
                 // 如果没有code参数，则返回提示信息
-                return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"请重新进入页面"});
+                return new JsonResult(Status.FAIL_INVALID_TOKEN, "请重新进入页面");
             }
             String[] res = wxCpService.getOauth2Service().getUserInfo(code);
             userId = res[0];
@@ -85,11 +85,11 @@ public class CpAuthTokenController {
 
         // 如果没有获取到userId，则返回提示信息
         if (V.isEmpty(userId)){
-            return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{"获取信息失败"});
+            return new JsonResult(Status.FAIL_INVALID_TOKEN, "获取信息失败");
         }
         String[] status = new String[]{"ON_JOB"};
         // 设置token
-        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, userId, AuthType.WX_CP, UserTypeEnum.WX_CP_USER, Arrays.asList(status));
+        BaseJwtAuthenticationToken authToken = new BaseJwtAuthenticationToken(authWayServiceMap, userId, null,AuthType.WX_CP, UserTypeEnum.WX_CP_USER, Arrays.asList(status));
         // 获取当前的Subject
         Subject subject = SecurityUtils.getSubject();
         String token = null;
@@ -111,8 +111,7 @@ public class CpAuthTokenController {
             String msg = V.notEmpty(errorMsg) ? errorMsg : "申请token失败";
             return new JsonResult(Status.FAIL_INVALID_TOKEN, new String[]{msg});
         }
-
-        return new JsonResult(Status.OK, token, new String[]{"申请token成功"});
+        return new JsonResult(Status.OK, token, "申请token成功");
     }
 
 }
