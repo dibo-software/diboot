@@ -44,22 +44,17 @@
         <div class="footer-content">
           <div class="footer-item"></div>
           <div class="footer-item">
-            <h4>微信（扫码进群）</h4>
-            <img src="../public/add_wechat.png" alt="" width="120">
+            <h4>QQ群: 731690096</h4>
+
           </div>
           <div class="footer-item">
-            <h4>联系我们</h4>
-            <ul>
-              <li>电话：0512-62988949</li>
-              <li>Q Q：281550336</li>
-              <li>QQ群：731690096</li>
-              <li>邮箱：service@dibo.ltd</li>
-            </ul>
+            <h4>微信群（备注diboot）</h4>
+            <img src="../public/add_wechat.png" alt="" width="120">
           </div>
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p>
+        <p class="copy-right">© 2015-2020 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p>
       </div>
     </div>
 

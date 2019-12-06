@@ -37,7 +37,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 
 ## 三、技术交流群
-如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。我们不喝咖啡，所有捐助费用都将用于Diboot服务器支出。
+如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。
 <p align="center">
     <img src="https://www.diboot.com/donate.jpg" width = "500" alt="支持Diboot发展">
 </p>
@@ -45,4 +45,4 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 > QQ群: [731690096]() 
 
-> 微信群加: [wx20201024]()
+> 微信群（备注diboot）加: [wx20201024]()  
