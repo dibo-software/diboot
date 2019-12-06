@@ -60,7 +60,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean createEntity(T entity) {
 		if(entity == null){
-			warning("createModel", "参数entity为null");
+			warning("createEntity", "参数entity为null");
 			return false;
 		}
 		return super.save(entity);

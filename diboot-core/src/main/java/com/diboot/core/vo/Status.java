@@ -58,7 +58,7 @@ public enum Status {
     FAIL_EXCEPTION(5000, "系统异常"),
 
     /***
-     * 系统异常
+     * 缓存清空
      */
     MEMORY_EMPTY_LOST(9999, "缓存清空");
 

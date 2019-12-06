@@ -27,7 +27,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 
 
-## 二、 diboot-devtools 代码生成工具 [(我要试试)](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
+## 二、 diboot-devtools 自动化开发助理 [(我要试试)](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
 ##### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
 ##### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
