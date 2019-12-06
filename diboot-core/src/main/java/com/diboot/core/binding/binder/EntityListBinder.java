@@ -47,7 +47,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         if(V.isEmpty(annoObjectForeignKeyList)){
             return;
         }
-        Map<String, List<T>> valueEntityListMap = new HashMap<>();
+        Map<String, List> valueEntityListMap = new HashMap<>();
         // 解析中间表查询 1-N关联，如：
         //User.class @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
         if(middleTable != null){
@@ -67,11 +67,11 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                     if(V.isEmpty(annoObjFKList)){
                         continue;
                     }
-                    List<T> valueList = new ArrayList();
+                    List valueList = new ArrayList();
                     for(Object obj : annoObjFKList){
                         T ent = entityMap.get(String.valueOf(obj));
                         if(ent != null){
-                            valueList.add(BeanUtils.cloneBean(ent));
+                            valueList.add(cloneOrConvertBean(ent));
                         }
                     }
                     valueEntityListMap.put(entry.getKey(), valueList);
@@ -86,12 +86,12 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.notEmpty(list)){
                 for(T entity : list){
                     String keyValue = BeanUtils.getStringProperty(entity, S.toLowerCaseCamel(referencedEntityPrimaryKey));
-                    List<T> entityList = valueEntityListMap.get(keyValue);
+                    List entityList = valueEntityListMap.get(keyValue);
                     if(entityList == null){
                         entityList = new ArrayList<>();
                         valueEntityListMap.put(keyValue, entityList);
                     }
-                    entityList.add(BeanUtils.cloneBean(entity));
+                    entityList.add(cloneOrConvertBean(entity));
                 }
             }
         }

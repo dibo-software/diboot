@@ -5,6 +5,8 @@ import com.diboot.core.util.V;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +43,16 @@ public class BindAnnotationGroupCache {
                         continue;
                     }
                     for (Annotation annotation : annotations) {
-                        group.addBindAnnotation(field.getName(), annotation);
+                        Class<?> setterObjClazz = field.getType();
+                        if(setterObjClazz.equals(java.util.List.class) || setterObjClazz.equals(java.util.Collections.class)){
+                            // 如果是集合，获取其泛型参数class
+                            Type genericType = field.getGenericType();
+                            if(genericType instanceof ParameterizedType){
+                                ParameterizedType pt = (ParameterizedType) genericType;
+                                setterObjClazz = (Class<?>)pt.getActualTypeArguments()[0];
+                            }
+                        }
+                        group.addBindAnnotation(field.getName(), setterObjClazz, annotation);
                     }
                 }
             }

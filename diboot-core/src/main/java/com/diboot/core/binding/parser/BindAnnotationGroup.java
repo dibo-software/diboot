@@ -38,30 +38,30 @@ public class BindAnnotationGroup {
      * @param fieldName
      * @param annotation
      */
-    public void addBindAnnotation(String fieldName, Annotation annotation){
+    public void addBindAnnotation(String fieldName, Class<?> fieldClass, Annotation annotation){
         if(annotation instanceof BindDict){
             if(bindDictAnnotations == null){
                 bindDictAnnotations = new ArrayList<>();
             }
-            bindDictAnnotations.add(new FieldAnnotation(fieldName, annotation));
+            bindDictAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
         else if(annotation instanceof BindField){
             if(bindFieldAnnotations == null){
                 bindFieldAnnotations = new ArrayList<>();
             }
-            bindFieldAnnotations.add(new FieldAnnotation(fieldName, annotation));
+            bindFieldAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
         else if(annotation instanceof BindEntity){
             if(bindEntityAnnotations == null){
                 bindEntityAnnotations = new ArrayList<>();
             }
-            bindEntityAnnotations.add(new FieldAnnotation(fieldName, annotation));
+            bindEntityAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
         else if(annotation instanceof BindEntityList){
             if(bindEntityListAnnotations == null){
                 bindEntityListAnnotations = new ArrayList<>();
             }
-            bindEntityListAnnotations.add(new FieldAnnotation(fieldName, annotation));
+            bindEntityListAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
     }
 
