@@ -19,6 +19,10 @@ public class Cons {
      * 下划线分隔符_
      */
     public static final String SEPARATOR_UNDERSCORE = "_";
+    /**
+     * 排序 - 降序标记
+     */
+    public static final String ORDER_DESC = "DESC";
     /***
      * 默认字段名定义
      */

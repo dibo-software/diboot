@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.binding.RelationsBinder;
@@ -279,42 +278,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return null;
 		}
 		// 优化排序
-		optimizeDefaultOrder(queryWrapper, pagination);
-		Page<T> page = new Page<T>()
-			.setCurrent(pagination.getPageIndex())
-			.setSize(pagination.getPageSize())
-			// 如果前端传递过来了缓存的总数，则本次不再count统计
-			.setTotal(pagination.getTotalCount() > 0? -1 : pagination.getTotalCount());
-			// 排序
-			if(V.notEmpty(pagination.getAscList())){
-				pagination.getAscList().forEach(s -> {
-					page.addOrder(OrderItem.asc(s));
-				});
-			}
-			if(V.notEmpty(pagination.getDescList())){
-				pagination.getDescList().forEach(s -> {
-					page.addOrder(OrderItem.desc(s));
-				});
-			}
-		return page;
-	}
-
-	/**
-	 * 优化排序
-	 * create_time替换为等效但效率更高的id
-	 * @param pagination
-	 */
-	protected void optimizeDefaultOrder(Wrapper queryWrapper, Pagination pagination){
 		String defaultOrderBy = getDefaultOrderField(queryWrapper);
 		//默认id属性存在
-		if(Cons.FieldName.id.name().equals(defaultOrderBy)){
-			return;
+		if(!Cons.FieldName.id.name().equals(defaultOrderBy)){
+			// 最佳字段不是id（如create_time），但默认查询字段为id，需要清空默认值以免报错
+			pagination.clearDefaultOrder();
 		}
-		// 最佳字段不是id（如create_time），但默认查询字段为id，需要清空默认值以免报错
-		if(pagination.isDefaultOrder()){
-			// 如果未检测到默认字段，但默认id
-			pagination.getDescList().clear();
-		}
+		return (Page<T>)pagination.toIPage();
 	}
 
 	/***

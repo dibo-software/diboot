@@ -1,6 +1,8 @@
 package com.diboot.core.vo;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
@@ -10,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,16 +37,14 @@ public class Pagination implements Serializable {
      * count总数
      */
     private long totalCount = 0;
-    /***
-     * 排序-升序排列的字段
+    /**
+     * 默认排序
      */
-    private List<String> ascList = null;
-
-    /***
-     * 降序排列的字段（默认以id降序排列(等同于cretae_time)，当指定了其他排列方式时以用户指定为准）
+    private static final String DEFAULT_ORDER_BY = Cons.FieldName.id.name()+":"+Cons.ORDER_DESC;
+    /**
+     * 排序
      */
-    private List<String> DEFAULT_ORDER_LIST = new ArrayList<>(Arrays.asList(Cons.FieldName.id.name()));
-    private List<String> descList = DEFAULT_ORDER_LIST;
+    private String orderBy = DEFAULT_ORDER_BY;
 
     public Pagination(){
     }
@@ -85,46 +84,20 @@ public class Pagination implements Serializable {
         this.totalCount = totalCount;
     }
 
-    public void setOrderBy(String orderBy){
-        if(V.isEmpty(orderBy)){
-            return;
-        }
-        // 先清空默认排序规则
-        clearDefaultOrder();
-        // 指定新的排序规则
-        String[] orderByFields = S.split(orderBy);
-        for(String field : orderByFields){
-            // orderBy=name:DESC,age:ASC,birthdate
-            if(field.contains(":")){
-                String[] fieldAndOrder = S.split(field, ":");
-                if("DESC".equalsIgnoreCase(fieldAndOrder[1])){
-                    if(descList == null){
-                        descList = new ArrayList<>();
-                    }
-                    descList.add(fieldAndOrder[0]);
-                }
-                else{
-                    if(ascList == null){
-                        ascList = new ArrayList<>();
-                    }
-                    ascList.add(fieldAndOrder[0]);
-                }
-            }
-            else{
-                if(ascList == null){
-                    ascList = new ArrayList<>();
-                }
-                ascList.add(field);
-            }
-        }
+    /***
+     * 获取数据库字段的列排序
+     * @return
+     */
+    public String getOrderBy() {
+        return this.orderBy;
     }
 
-    /***
-     * 清除默认排序
+    /**
+     * 设置排序
+     * @param orderBy
      */
-    public void clearDefaultOrder(){
-        ascList = null;
-        descList = null;
+    public void setOrderBy(String orderBy){
+        this.orderBy = orderBy;
     }
 
     /***
@@ -138,28 +111,52 @@ public class Pagination implements Serializable {
         return  (int)Math.ceil((float) totalCount / pageSize);
     }
 
-    /***
-     * 获取数据库字段的列排序，用于service层调用
-     * @return
+    /**
+     * 清空默认排序
      */
-    public List<String> getAscList() {
-        return ascList;
-    }
-
-    /***
-     * 获取数据库字段的列排序,，用于service层调用
-     * @return
-     */
-    public List<String> getDescList() {
-        return descList;
+    public void clearDefaultOrder(){
+        // 是否为默认排序
+        if(V.equals(orderBy, DEFAULT_ORDER_BY)){
+            orderBy = null;
+        }
     }
 
     /**
-     * 是否为默认排序
+     * 转换为IPage
+     * @param <T>
      * @return
      */
-    @JSONField(serialize = false)
-    public boolean isDefaultOrder(){
-        return V.equals(descList, DEFAULT_ORDER_LIST);
+    public <T> IPage<T> toIPage(){
+        List<OrderItem> orderItemList = null;
+        // 解析排序
+        if(V.notEmpty(this.orderBy)){
+            orderItemList = new ArrayList<>();
+            // orderBy=shortName:DESC,age:ASC,birthdate
+            String[] orderByFields = S.split(this.orderBy);
+            for(String field : orderByFields){
+                if(field.contains(":")){
+                    String[] fieldAndOrder = S.split(field, ":");
+                    String columnName = S.toSnakeCase(fieldAndOrder[0]);
+                    if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
+                        orderItemList.add(OrderItem.desc(columnName));
+                    }
+                    else{
+                        orderItemList.add(OrderItem.asc(columnName));
+                    }
+                }
+                else{
+                    orderItemList.add(OrderItem.asc(S.toSnakeCase(field)));
+                }
+            }
+        }
+        IPage<T> page = new Page<T>()
+                .setCurrent(getPageIndex())
+                .setSize(getPageSize())
+                // 如果前端传递过来了缓存的总数，则本次不再count统计
+                .setTotal(getTotalCount() > 0? -1 : getTotalCount());
+        if(orderItemList != null){
+            ((Page<T>) page).addOrder(orderItemList);
+        }
+        return page;
     }
 }
