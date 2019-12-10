@@ -7,6 +7,7 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.config.SpringMvcConfig;
@@ -132,6 +133,13 @@ public class BaseServiceTest {
 
         success = clearTestData(TYPE);
         Assert.assertTrue(success);
+    }
+
+    @Test
+    public void testKV(){
+        List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
+        Assert.assertTrue(keyValues.size() == 2);
+        Assert.assertTrue(keyValues.get(0).getV().equals("M"));
     }
 
     /**

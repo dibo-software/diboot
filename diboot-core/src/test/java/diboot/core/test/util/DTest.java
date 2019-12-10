@@ -30,15 +30,17 @@ public class DTest {
     }
 
     @Test
-    public void test(){
+    public void testJsonResult(){
         String token = "token";
         JsonResult j1 = new JsonResult(token);
         JsonResult j2 = new JsonResult(token, "申请token成功");
         JsonResult j3 = new JsonResult(Status.OK, token);
         JsonResult j4 = new JsonResult(Status.OK, token, "申请token成功");
+        JsonResult j5 = new JsonResult(Status.OK);
         System.out.println(j1.getData());
         System.out.println(j2.getData());
         System.out.println(j3.getData());
         System.out.println(j4.getData());
+        System.out.println(j5.getData());
     }
 }
