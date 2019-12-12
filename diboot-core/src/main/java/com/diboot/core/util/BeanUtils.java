@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.core.ResolvableType;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -37,7 +38,7 @@ public class BeanUtils {
      * 忽略对比的字段
      */
     private static final Set<String> IGNORE_FIELDS = new HashSet<String>(){{
-        add("createTime");
+        add(Cons.FieldName.createTime.name());
     }};
 
     /***
@@ -145,26 +146,26 @@ public class BeanUtils {
                 Object[] args = new Object[1];
                 String fieldType = type.getName();
                 // 类型不一致，需转型
-                if(!value.getClass().getTypeName().equals(fieldType)){
+                if(value != null && !value.getClass().getTypeName().equals(fieldType)){
                     if(value instanceof String){
                         // String to Date
-                        if(fieldType.equalsIgnoreCase(Date.class.getName())){
+                        if(fieldType.equals(Date.class.getName())){
                             args[0] = D.fuzzyConvert((String)value);
                         }
                         // Map中的String型转换为其他型
-                        else if(fieldType.equalsIgnoreCase(Boolean.class.getName())){
+                        else if(fieldType.equals(Boolean.class.getName())){
                             args[0] = V.isTrue((String)value);
                         }
-                        else if (fieldType.equalsIgnoreCase(Integer.class.getName()) || "int".equals(fieldType)) {
+                        else if (fieldType.equals(Integer.class.getName()) || "int".equals(fieldType)) {
                             args[0] = Integer.parseInt((String)value);
                         }
-                        else if (fieldType.equalsIgnoreCase(Long.class.getName())) {
+                        else if (fieldType.equals(Long.class.getName())) {
                             args[0] = Long.parseLong((String)value);
                         }
-                        else if (fieldType.equalsIgnoreCase(Double.class.getName())) {
+                        else if (fieldType.equals(Double.class.getName())) {
                             args[0] = Double.parseDouble((String)value);
                         }
-                        else if (fieldType.equalsIgnoreCase(Float.class.getName())) {
+                        else if (fieldType.equals(Float.class.getName())) {
                             args[0] = Float.parseFloat((String)value);
                         }
                         else{
@@ -172,9 +173,19 @@ public class BeanUtils {
                             log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型: {} vs {} ", value.getClass().getTypeName(), fieldType);
                         }
                     }
+                    // Integer 向上转型为 Long 绑定
+                    else if(value.getClass().getTypeName().equals(Integer.class.getName()) && fieldType.equals(Long.class.getName())){
+                        Integer intValue = (Integer)value;
+                        args[0] = intValue.longValue();
+                    }
+                    // Float 向上转型为 Double 绑定
+                    else if(value.getClass().getTypeName().equals(Float.class.getName()) && fieldType.equals(Double.class.getName())){
+                        Float floatValue = (Float)value;
+                        args[0] = floatValue.doubleValue();
+                    }
                     else{
                         args[0] = value;
-                        log.warn("类型不一致，且Map中的value非String类型，暂无法自动绑定，请手动转型一致后调用！ {} vs {} ", value.getClass().getTypeName(), fieldType);
+                        log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！ {} vs {} ", value.getClass().getTypeName(), fieldType);
                     }
                 }
                 else{
@@ -318,104 +329,74 @@ public class BeanUtils {
     }
 
     /***
-     * 构建上下级关联的树形结构的model
-     * @param allModels
+     * 构建上下级关联的树形结构的model（上级parentId、子节点children），根节点=0
+     * @param allNodes 所有节点对象
      * @param <T>
      * @return
      */
-    public static <T extends BaseEntity> List<T> buildTree(List<T> allModels){
-        if(V.isEmpty(allModels)){
+    public static <T> List<T> buildTree(List<T> allNodes){
+        return buildTree(allNodes, 0);
+    }
+
+    /***
+     * 构建指定根节点的上下级关联的树形结构（上级parentId、子节点children）
+     * @param allNodes 所有节点对象
+     * @param rootNodeId 跟节点ID
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId){
+        if(V.isEmpty(allNodes)){
             return null;
         }
         // 提取所有的top level对象
         List<T> topLevelModels = new ArrayList();
-        for(T model : allModels){
+        for(T model : allNodes){
             Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            if(parentId == null || V.fuzzyEqual(parentId, 0)){
+            if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
                 topLevelModels.add(model);
             }
         }
         if(V.isEmpty(topLevelModels)){
             return topLevelModels;
         }
-        // 提取向下一层的对象
-        buildDeeperLevelTree(topLevelModels, allModels);
-        // 返回第一层级节点（二级及以上子级通过children属性获取）
+        // 遍历第一级节点，并挂载 children 子节点
+        for(T node : allNodes) {
+            Object nodeId = getProperty(node, Cons.FieldName.id.name());
+            List<T> children = buildTreeChildren(nodeId, allNodes);
+            setProperty(node, Cons.FieldName.children.name(), children);
+        }
         return topLevelModels;
     }
 
-    /*
-     * 构建上下级关联的树形结构，去除顶层父级实体的parentId必须是为null或0的限制
-     * 注:通常情况下parentModels参数传null值就可以
-     * */
-    public static <T extends BaseEntity> List<T> buildTree(List<T> parentModels, List<T> allModels){
-        if(V.isEmpty(allModels)){
-            return null;
-        }
-        //获取顶层父级实体，根据一个实体的parentId是否是allModels中的某个实体的主键来判断该实体是否为顶层父级实体
-        if(parentModels == null){
-            parentModels = new ArrayList<>();
-            Set<Long> idSet = new HashSet<>();
-            for(T model : allModels){
-                idSet.add(model.getId());
-            }
-            for(T model : allModels){
-                if(!idSet.contains((Long)getProperty(model, Cons.FieldName.parentId.name()))){
-                    parentModels.add(model);
-                }
-            }
-        }
-
-        for(T parent : parentModels){
-            List<T> children = new ArrayList<>();
-            for(T model : allModels){
-                if(V.fuzzyEqual(parent.getId(), getProperty(model, Cons.FieldName.parentId.name()))
-                        && !V.fuzzyEqual(model.getId(), getProperty(model, Cons.FieldName.parentId.name()))){ //解除自循环，如：实体的id==parentId的情况
-                    children.add(model);
-                }
-            }
-            //递归调用
-            buildTree(children, allModels);
-            if(V.notEmpty(children)){
-                setProperty(parent, Cons.FieldName.children.name(), children);
-            }
-        }
-
-        return parentModels;
-    }
-
-    /***
-     * 构建下一层级树形结构
-     * @param parentModels
-     * @param allModels
-     * @param <T>
+    /**
+     * 递归构建树节点的子节点
+     * @param parentId
+     * @param nodeList
+     * @return
      */
-    private static <T extends BaseEntity> void buildDeeperLevelTree(List<T> parentModels, List<T> allModels){
-        List<T> deeperLevelModels = new ArrayList();
-        Map<String, T> parentLevelModelMap = convertToStringKeyObjectMap(parentModels, Cons.FieldName.id.name());
-        for(T model : allModels){
-            Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            if(parentLevelModelMap.keySet().contains(String.valueOf(parentId)) && !parentId.equals(model.getId())){
-                deeperLevelModels.add(model);
-            }
-        }
-        if(V.isEmpty(deeperLevelModels)){
-            return;
-        }
-        for(T model : deeperLevelModels){
-            Object parentId = getProperty(model, Cons.FieldName.parentId.name());
-            T parentModel = parentLevelModelMap.get(String.valueOf(parentId));
-            if(parentModel!=null){
-                List children = (List) getProperty(parentModel, Cons.FieldName.children.name());
+    private static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList) {
+        List<T> children = null;
+        for(T node : nodeList) {
+            Object nodeParentId = getProperty(node, Cons.FieldName.parentId.name());
+            if(nodeParentId != null && V.equals(nodeParentId, parentId)) {
                 if(children == null){
-                    children = new ArrayList();
-                    setProperty(parentModel, Cons.FieldName.children.name(), children);
+                    children = new ArrayList<>();
                 }
-                children.add(model);
+                children.add(node);
             }
         }
-        // 递归进入下一层级
-        buildDeeperLevelTree(deeperLevelModels, allModels);
+        if(children != null){
+            for(T child : children) {
+                Object nodeId = getProperty(child, Cons.FieldName.id.name());
+                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList);
+                if(childNodeChildren == null) {
+                    childNodeChildren = new ArrayList<>();
+                }
+                setProperty(child, Cons.FieldName.children.name(), childNodeChildren);
+            }
+        }
+        return children;
     }
 
     /***
@@ -635,7 +616,7 @@ public class BeanUtils {
     }
 
      /**
-     * 获取类所有属性（包含父类）
+     * 获取类所有属性（包含父类中属性）
      * @param clazz
      * @return
      */
@@ -655,6 +636,40 @@ public class BeanUtils {
             clazz = clazz.getSuperclass();
         }
         return fieldList;
+    }
+
+    /**
+     * 获取类的指定属性（包含父类中属性）
+     * @param clazz
+     * @param fieldName
+     * @return
+     */
+    public static Field extractField(Class clazz, String fieldName){
+        List<Field> allFields = extractAllFields(clazz);
+        if(V.notEmpty(allFields)){
+            for(Field field : allFields){
+                if(field.getName().equals(fieldName)){
+                    return field;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从宿主类定义中获取泛型定义类class
+     * @param hostClass
+     * @param index
+     * @return
+     */
+    public static Class getGenericityClass(Class hostClass, int index){
+        ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
+        ResolvableType[] types = resolvableType.getSuperType().getGenerics();
+        if(V.notEmpty(types) && types.length > index){
+            return types[index].resolve();
+        }
+        log.warn("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
+        return null;
     }
 
     /***

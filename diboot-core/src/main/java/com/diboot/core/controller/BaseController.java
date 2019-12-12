@@ -9,8 +9,6 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -24,32 +22,10 @@ import java.util.*;
 public class BaseController {
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-	/***
-	 * 字段
-	 */
-	protected static final String PARAM_FIELDS = "_fields";
-
 	/**
 	 * ID参数名
 	 */
 	protected static final String PARAM_ID = Cons.FieldName.id.name();
-
-	/**
-	 * 解析所有的验证错误信息，转换为JSON
-	 * @param result
-	 * @return
-	 */
-	protected String getBindingError(BindingResult result){
-		if(result == null || !result.hasErrors()){
-			return null;
-		}
-		List<ObjectError> errors = result.getAllErrors();
-		List<String> allErrors = new ArrayList<>(errors.size());
-		for(ObjectError error : errors){
-			allErrors.add(error.getDefaultMessage().replaceAll("\"", "'"));
-		}
-		return S.join(allErrors);
-	}
 
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)

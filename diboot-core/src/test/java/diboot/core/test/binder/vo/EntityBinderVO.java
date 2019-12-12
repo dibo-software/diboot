@@ -19,19 +19,20 @@ public class EntityBinderVO extends User {
 
     // 通过中间表关联Entity
     @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id") // AND ...
-    private Organization organization;
-
+    private OrganizationVO organizationVO;
 
     public Department getDepartment() {
         return department;
     }
+
     public void setDepartment(Department department) {
         this.department = department;
     }
-    public Organization getOrganization() {
-        return organization;
+
+    public OrganizationVO getOrganizationVO() {
+        return organizationVO;
     }
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
+    public void setOrganizationVO(OrganizationVO organizationVO) {
+        this.organizationVO = organizationVO;
     }
 }

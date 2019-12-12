@@ -27,7 +27,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 
 
-## 二、 diboot-devtools 代码生成工具 [(我要试试)](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
+## 二、 diboot-devtools 自动化开发助理 [(我要试试)](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
 ##### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
 ##### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
@@ -37,7 +37,7 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 
 ## 三、技术交流群
-如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。我们不喝咖啡，所有捐助费用都将用于Diboot服务器支出。
+如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。
 <p align="center">
     <img src="https://www.diboot.com/donate.jpg" width = "500" alt="支持Diboot发展">
 </p>
@@ -45,4 +45,4 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 
 > QQ群: [731690096]() 
 
-> 微信群加: [wx20201024]()
+> 微信群（备注diboot）加: [wx20201024]()  

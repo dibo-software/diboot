@@ -15,13 +15,13 @@ public class EntityListSimpleBinderVO extends Department {
 
     // 直接关联多个Entity
     @BindEntityList(entity = Department.class, condition = "this.id=parent_id")
-    private List<Department> children;
+    private List<DepartmentVO> children;
 
-    public List<Department> getChildren() {
+    public List<DepartmentVO> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Department> children) {
+    public void setChildren(List<DepartmentVO> children) {
         this.children = children;
     }
 }

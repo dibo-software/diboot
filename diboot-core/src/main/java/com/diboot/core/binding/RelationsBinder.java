@@ -148,7 +148,7 @@ public class RelationsBinder {
         EntityBinder binder = buildEntityBinder(annotation, voList);
         if(binder != null){
             // 构建binder
-            binder.set(fieldAnnotation.getFieldName());
+            binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
             // 解析条件并且执行绑定
             parseConditionsAndBinding(binder, annotation.condition());
         }
@@ -165,7 +165,7 @@ public class RelationsBinder {
         // 构建binder
         EntityListBinder binder = buildEntityListBinder(bindAnnotation, voList);
         if(binder != null){
-            binder.set(fieldAnnotation.getFieldName());
+            binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
             // 解析条件并且执行绑定
             parseConditionsAndBinding(binder, bindAnnotation.condition());
         }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Model的List包装类，用于接收List并绑定校验的情况
+ * Entity的List包装类，用于接收List并绑定校验的情况
  * @author Mazhicheng
  * @version 2.0
  * @date 2018/11/8
@@ -23,7 +23,7 @@ public class EntityList<T extends BaseEntity> {
         this.entityList = entityList;
     }
 
-    public List<T> getModelList(){
+    public List<T> getEntityList(){
         return entityList;
     }
 

@@ -1,4 +1,5 @@
 # diboot-shiro: RBAC角色权限+基于Shiro的细粒度权限控制
+> 注: diboot-shiro组件下个版本将进行重构优化，此版本代码仅供参考
 
 ## 1、@AuthorizationPrefix 
 类注解，与@AuthorizationWrapper搭配使用，设置通用权限前缀，作用域为当前类的所有方法

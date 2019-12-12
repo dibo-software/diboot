@@ -62,7 +62,7 @@ public abstract class BaseEntity implements Serializable {
     }
 
     /***
-     * model对象转为map
+     * Entity对象转为map
      * @return
      */
     public Map<String, Object> toMap(){
@@ -71,7 +71,7 @@ public abstract class BaseEntity implements Serializable {
     }
 
     /**
-     * model对象转为String
+     * Entity对象转为String
      * @return
      */
     @Override
