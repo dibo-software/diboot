@@ -108,6 +108,7 @@ private String orgName;
 
 ### 绑定单个实体
 > 绑定单个实体使用**@BindEntity**注解进行处理，将得到关联表对应的单个实体。
+> 如果属性类型为VO等非Entity对象类型，将自动转换为您指定的类型再绑定。
 * 使用@BindEntity注解时需传两个参数，分别是entity和condition。
     * entity表示关联实体类；
     * condition表示关联条件。
@@ -124,6 +125,7 @@ private Organization organization;
 
 ### 绑定实体列表
 > 绑定实体列表使用**@BindEntityList**注解进行处理，将得到关联表对应的实体列表。
+> 如果待绑定List中的泛型参数类型为VO等非Entity对象，将自动转换为您指定的类型再绑定。
 * 使用@BindEntityList注解时需传两个参数，分别是entity和condition。
     * entity表示关联实体类；
     * condition表示关联条件。

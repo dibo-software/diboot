@@ -48,14 +48,14 @@ private List<Role> roleList;
 ### 1. 引入依赖
 Gradle:
 ~~~gradle
-compile("com.diboot:diboot-core-spring-boot-starter:2.0.3-RC2")
+compile("com.diboot:diboot-core-spring-boot-starter:2.0.3")
 ~~~
 或Maven
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>2.0.3-RC2</version>
+    <version>2.0.3</version>
 </dependency>
 ~~~
 > * 使用diboot-devtools，会自动引入diboot-core，无需配置此依赖。
@@ -99,9 +99,9 @@ public class UserDTO{
  * 将映射为 queryWrapper.eq("gender", "M").like("realname", "张")
  */
 @GetMapping("/list")
-public JsonResult getVOList(UserDto userDto) throws Exception{
-    //调用super.buildQueryWrapper(entityOrDto) 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行转换
-    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto);
+public JsonResult getVOList(UserDto userDto, HttpServletRequest request) throws Exception{
+    //调用super.buildQueryWrapper(entityOrDto, request) 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行转换
+    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto, request);
     //... 查询list
     return new JsonResult(Status.OK, list);
 }

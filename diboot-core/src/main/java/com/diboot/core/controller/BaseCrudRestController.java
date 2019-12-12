@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.ResolvableType;
-import org.springframework.validation.BindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -97,15 +95,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     /***
      * 创建资源对象，用于字类重写的方法
      * @param entity
-     * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(E entity, BindingResult result, HttpServletRequest request) throws Exception {
-        // Model属性值验证结果
-        if (result != null && result.hasErrors()) {
-            return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
-        }
+    protected JsonResult createEntity(E entity, HttpServletRequest request) throws Exception {
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
@@ -130,16 +123,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     /***
      * 根据ID更新资源对象，用于字类重写的方法
      * @param entity
-     * @param result
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(Serializable id, E entity, BindingResult result,
-                                   HttpServletRequest request) throws Exception {
-        // Entity属性值验证结果
-        if (result.hasErrors()) {
-            return new JsonResult(Status.FAIL_VALIDATION, super.getBindingError(result));
-        }
+    protected JsonResult updateEntity(Serializable id, E entity, HttpServletRequest request) throws Exception {
         // 执行更新资源前的操作
         String validateResult = this.beforeUpdate(entity);
         if (validateResult != null) {
@@ -262,7 +249,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     protected Class<E> getEntityClass(){
         if(this.entityClass == null){
-             initEntityVOClass();
+             this.entityClass = BeanUtils.getGenericityClass(this.getClass(), 0);
         }
         return this.entityClass;
     }
@@ -273,25 +260,8 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     protected Class<VO> getVOClass(){
         if(this.voClasss == null){
-            initEntityVOClass();
+            this.voClasss = BeanUtils.getGenericityClass(this.getClass(), 1);
         }
         return this.voClasss;
-    }
-
-    /**
-     * 初始化Entity和VO的class
-     */
-    private void initEntityVOClass(){
-        try{
-            ResolvableType resolvableType = ResolvableType.forClass(this.getClass()).getSuperType();
-            ResolvableType[] types = resolvableType.getSuperType().getGenerics();
-            if(V.notEmpty(types)){
-                this.entityClass = (Class<E>) types[0].resolve();
-                this.voClasss = (Class<VO>) types[1].resolve();
-            }
-        }
-        catch (Exception e){
-            log.warn("初始化Entity,VO class异常: "+ e.getMessage());
-        }
     }
 }

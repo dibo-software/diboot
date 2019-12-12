@@ -3,6 +3,7 @@
 *.iml
 application.properties
 application-*.properties
+.DS_Store
 
 # Ignore Gradle build output directory
 build/

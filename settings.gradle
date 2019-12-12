@@ -8,12 +8,7 @@
  */
 rootProject.name = 'diboot-v2'
 include 'diboot-core'
-include 'diboot-example'
 include 'diboot-shiro'
 include 'diboot-shiro-wx-mp'
 include 'diboot-shiro-wx-cp'
 include 'diboot-docs'
-include 'diboot-component-file'
-include 'diboot-component-file-excel'
-include 'diboot-component-msg'
-include 'diboot-component-msg-email'

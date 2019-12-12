@@ -47,7 +47,9 @@ public class TestEntityBinder {
             // 验证直接关联和通过中间表间接关联的绑定
             Assert.assertEquals(vo.getDepartmentId(), vo.getDepartment().getId());
             Assert.assertNotNull(vo.getDepartment().getOrgId());
-            Assert.assertNotNull(vo.getOrganization());
+            // 测试绑定VO
+            Assert.assertNotNull(vo.getOrganizationVO());
+            System.out.println(JSON.stringify(vo.getOrganizationVO()));
             System.out.println(JSON.stringify(vo));
         }
     }

@@ -1,9 +1,9 @@
 package com.diboot.core.service.impl;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.binding.RelationsBinder;
@@ -14,6 +14,7 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
@@ -23,7 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /***
  * CRUD通用接口实现类
@@ -35,6 +38,10 @@ import java.util.*;
  */
 public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl<M, T> implements BaseService<T> {
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
+	/**
+	 * Entity类与最佳排序字段间的映射缓存
+	 */
+	private static Map<String, String> ENTITY_ORDER_FIELD_CACHE_MAP = new ConcurrentHashMap<>();
 
 	/***
 	 * 获取当前的Mapper对象
@@ -52,7 +59,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean createEntity(T entity) {
 		if(entity == null){
-			warning("createModel", "参数entity为null");
+			warning("createEntity", "参数entity为null");
 			return false;
 		}
 		return super.save(entity);
@@ -94,6 +101,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public boolean createOrUpdateEntities(Collection entityList) {
 		if(V.isEmpty(entityList)){
 			warning("createOrUpdateEntities", "参数entityList为空!");
@@ -128,7 +136,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<T> getEntityList(Wrapper queryWrapper, Pagination pagination) {
 		if(pagination != null){
-			IPage<T> page = convertToIPage(pagination);
+			IPage<T> page = convertToIPage(queryWrapper, pagination);
 			page = super.page(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.isSearchCount()){
@@ -170,7 +178,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<Map<String, Object>> getMapList(Wrapper queryWrapper, Pagination pagination) {
 		if(pagination != null){
-			IPage<T> page = convertToIPage(pagination);
+			IPage<T> page = convertToIPage(queryWrapper, pagination);
 			IPage<Map<String, Object>> resultPage = super.pageMaps(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.isSearchCount()){
@@ -261,30 +269,22 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	/***
 	 * 转换为IPage
-	 * @param pagination
+	 * @param queryWrapper 查询条件
+	 * @param pagination 分页
 	 * @return
 	 */
-	protected Page<T> convertToIPage(Pagination pagination){
+	protected Page<T> convertToIPage(Wrapper queryWrapper, Pagination pagination){
 		if(pagination == null){
 			return null;
 		}
-		Page<T> page = new Page<T>()
-			.setCurrent(pagination.getPageIndex())
-			.setSize(pagination.getPageSize())
-			// 如果前端传递过来了缓存的总数，则本次不再count统计
-			.setTotal(pagination.getTotalCount() > 0? -1 : pagination.getTotalCount());
-			// 排序
-			if(V.notEmpty(pagination.getAscList())){
-				pagination.getAscList().forEach(s -> {
-					page.addOrder(OrderItem.asc(s));
-				});
-			}
-			if(V.notEmpty(pagination.getDescList())){
-				pagination.getDescList().forEach(s -> {
-					page.addOrder(OrderItem.desc(s));
-				});
-			}
-		return page;
+		// 优化排序
+		String defaultOrderBy = getDefaultOrderField(queryWrapper);
+		//默认id属性存在
+		if(!Cons.FieldName.id.name().equals(defaultOrderBy)){
+			// 最佳字段不是id（如create_time），但默认查询字段为id，需要清空默认值以免报错
+			pagination.clearDefaultOrder();
+		}
+		return (Page<T>)pagination.toIPage();
 	}
 
 	/***
@@ -295,4 +295,30 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	private void warning(String method, String message){
 		log.warn(this.getClass().getName() + "."+ method +" 调用错误: "+message+", 请检查！");
 	}
+
+	/**
+	 * 初始化Entity和VO的class
+	 */
+	private String getDefaultOrderField(Wrapper queryWrapper){
+		Class entityClass = BeanUtils.getGenericityClass(this.getClass(), 1);
+		if(entityClass == null){
+			return null;
+		}
+		if(!ENTITY_ORDER_FIELD_CACHE_MAP.containsKey(entityClass.getName())){
+			// 提取字段，如果有升序id首选id
+			Field field = BeanUtils.extractField(entityClass, Cons.FieldName.id.name());
+			if(field != null){
+				TableField tableFieldAnno = field.getAnnotation(TableField.class);
+				if(tableFieldAnno == null || tableFieldAnno.exist() == true){
+					ENTITY_ORDER_FIELD_CACHE_MAP.put(entityClass.getName(), Cons.FieldName.id.name());
+				}
+			}
+			if(!ENTITY_ORDER_FIELD_CACHE_MAP.containsKey(entityClass.getName())){
+				ENTITY_ORDER_FIELD_CACHE_MAP.put(entityClass.getName(), "");
+				log.warn("{} 的默认排序字段id不存在，请自行指定！", entityClass.getName());
+			}
+		}
+		return ENTITY_ORDER_FIELD_CACHE_MAP.get(entityClass.getName());
+	}
+
 }

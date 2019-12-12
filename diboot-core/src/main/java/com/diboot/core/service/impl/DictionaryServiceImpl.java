@@ -3,6 +3,7 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.Dictionary;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
@@ -11,6 +12,7 @@ import com.diboot.core.util.ISetter;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -74,32 +76,33 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean addDictTree(DictionaryVO dictVO) {
         //将DictionaryVO转化为Dictionary
         Dictionary dictionary = new Dictionary();
         dictionary = (Dictionary) BeanUtils.copyProperties(dictVO, dictionary);
         if(!super.createEntity(dictionary)){
-            log.warn("新建父数据字典失败，type="+dictVO.getType());
+            log.warn("新建数据字典定义失败，type="+dictVO.getType());
             return false;
         }
         List<Dictionary> children = dictVO.getChildren();
         if(V.notEmpty(children)){
-            try {
-                for(Dictionary dict : children){
-                    dict.setParentId(dictionary.getId());
-                    dict.setType(dictionary.getType());
+            boolean success = true;
+            for(Dictionary dict : children){
+                dict.setParentId(dictionary.getId());
+                dict.setType(dictionary.getType());
+                boolean insertOK = super.createEntity(dict);
+                if (!insertOK){
+                    log.warn("dictionary插入数据字典失败，请检查！");
+                    success = false;
                 }
-                if(!super.createEntities(children)){
-                    log.warn("新建子数据字典失败，type="+dictVO.getType());
-                    throw new RuntimeException();
-                }
-            } catch (Exception e) {
-                log.warn("新建子数据字典失败，type="+dictVO.getType());
-                throw new RuntimeException();
+            }
+            if(!success){
+                String errorMsg = "新建数据字典子项失败，type="+dictVO.getType();
+                log.warn(errorMsg);
+                throw new BusinessException(Status.FAIL_OPERATION, errorMsg);
             }
         }
-
         return true;
     }
 }

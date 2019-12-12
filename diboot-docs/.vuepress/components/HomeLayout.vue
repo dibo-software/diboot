@@ -14,7 +14,7 @@
       </div>
       <div class="custom content">
         <div class="features">
-          <div class="feature" style="max-width: 35%;">
+          <div class="feature col-1">
             <h2>diboot-core 精简高效内核</h2>
             <p>
               <ul>
@@ -26,7 +26,7 @@
               </ul>
             </p>
           </div>
-          <div class="feature" style="max-width: 60%">
+          <div class="feature col-2">
             <h2>diboot-devtools 强大开发助理</h2>
             <p>
                 <ul>
@@ -44,29 +44,31 @@
         <div class="footer-content">
           <div class="footer-item"></div>
           <div class="footer-item">
-            <h4>微信（扫码进群）</h4>
-            <img src="../public/add_wechat.png" alt="" width="120">
+            <h4>QQ群: 731690096</h4>
+            <img src="../public/add_qqqun.png" alt="" width="120">
           </div>
           <div class="footer-item">
-            <h4>联系我们</h4>
-            <ul>
-              <li>电话：0512-62988949</li>
-              <li>Q Q：281550336</li>
-              <li>QQ群：731690096</li>
-              <li>邮箱：service@dibo.ltd</li>
-            </ul>
+            <h4>微信群: wx20201024</h4>
+            <img src="../public/add_wechat.png" alt="" width="120">
           </div>
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2019 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p>
+        <p class="copy-right">© 2015-2020 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a>
+          <br>
+          <a class="ba-a" href="http://www.beian.miit.gov.cn/">
+            <u>
+              苏ICP备15013001号
+            </u>
+          </a>
+        </p>
       </div>
     </div>
 
     <div class="modal-cover" v-show="showModal" @click="closeModal">
       <div class="modal-content" @click="onModalContentClick($event)">
         <video src="https://diboot.oss-cn-shanghai.aliyuncs.com/file/%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8diboot%E4%B8%8E%E5%85%B3%E8%81%94%E6%BC%94%E7%A4%BA_%E5%AD%97%E5%B9%95.mp4?nsukey=Z8MYZulBJM0GZXYNQgYGJGxRDvYMIWMsGj%2FkV%2BQpZD2aN7hsk7hreW1mXv71kxX7W5Sd61warYIPAAT4xDifYZEv3cQiiQiVW%2BqF%2FqomaxhPm1ht5jV5YkWLGiwcqQKeHmN5jn9%2FRWzaWTNweSZjWuif%2FZIciG6BX8UddZ0klnyyGfrtdB2eWCBAh%2F5n5rMPGdyUhYXAzzDsdPtyBxcY7w%3D%3D"
-            class="homeVideo" id="homeVideo" height="666" controls>
+            class="homeVideo" id="homeVideo" controls>
         </video>
       </div>
     </div>
@@ -152,7 +154,7 @@
     }
   }
   .footer {
-    padding: 1rem 2.5rem 2.5rem;
+    padding: 1rem 2.5rem .5rem 2.5rem;
     border-top: 1px solid #eaecef;
     text-align: left;
     color: #4e6e8e;
@@ -227,7 +229,7 @@ a.button.white {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   text-align: center;
@@ -246,10 +248,64 @@ a.button.white {
   background-color: white;
   box-shadow: 0 0 15px black;
 }
+.homeVideo{
+  height: 666px;
+}
 .donate-image{
   display: block;
   margin: 10px auto;
   width: 500px;
   height: auto;
+}
+.feature.col-1{
+  max-width: 35%;
+}
+.feature.col-2{
+  max-width: 60%;
+}
+.ba-line{
+  margin: 0;
+  line-height: 28px;
+  text-align: center;
+}
+.copy-right .ba-a{
+  font-size: 16px;
+  color: #999;
+}
+@media screen and (max-width: 750px) {
+  .button.has-icon{
+    margin-top: 15px;
+  }
+  .home {
+    padding: 0;
+  }
+  .home .feature{
+    padding: 0;
+  }
+  .feature.col-1{
+    max-width: 100%;
+  }
+  .feature.col-2{
+    max-width: 100%;
+  }
+  .home .footer{
+    padding: 1rem 0;
+  }
+  .home .footer .footer-content .footer-item{
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+  .modal-content{
+    width: 320px;
+    height: 180px;
+    margin-top: -90px;
+    margin-left: -160px;
+  }
+  .homeVideo{
+    height: 180px;
+  }
+  a.button.white{
+    margin-right: 0;
+  }
 }
 </style>

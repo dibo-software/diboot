@@ -1,0 +1,3 @@
+yarn
+yarn build
+gulp

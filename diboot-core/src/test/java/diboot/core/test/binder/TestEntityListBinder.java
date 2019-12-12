@@ -9,6 +9,7 @@ import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.binder.vo.EntityListComplexBinderVO;
 import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -58,7 +59,7 @@ public class TestEntityListBinder {
             System.out.println(JSON.stringify(vo));
 
             if(vo.getChildren() != null){
-                for(Department dept : vo.getChildren()){
+                for(DepartmentVO dept : vo.getChildren()){
                     System.out.println(dept.toString());
                 }
             }

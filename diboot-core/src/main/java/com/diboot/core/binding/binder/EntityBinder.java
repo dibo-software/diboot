@@ -27,6 +27,10 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * 给待绑定list中VO对象赋值的setter属性名
      */
     protected String annoObjectField;
+    /***
+     * 给待绑定list中VO对象赋值的setter属性class类型
+     */
+    protected Class<?> annoObjectFieldClass;
 
     public EntityBinder(){}
     /***
@@ -47,8 +51,8 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param <R> set方法参数类型
      * @return
      */
-    public <T1,R> BaseBinder<T> set(ISetter<T1, R> voSetter){
-        return set(BeanUtils.convertToFieldName(voSetter));
+    public <T1,R> BaseBinder<T> set(ISetter<T1, R> voSetter, Class annoObjectFieldClass){
+        return set(BeanUtils.convertToFieldName(voSetter), annoObjectFieldClass);
     }
 
     /***
@@ -56,8 +60,9 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param annoObjectField VO中调用赋值的setter属性
      * @return
      */
-    public BaseBinder<T> set(String annoObjectField){
+    public BaseBinder<T> set(String annoObjectField, Class annoObjectFieldClass){
         this.annoObjectField = annoObjectField;
+        this.annoObjectFieldClass = annoObjectFieldClass;
         return this;
     }
 
@@ -76,7 +81,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             return;
         }
         // 结果转换Map
-        Map<String, T> valueEntityMap = new HashMap<>();
+        Map<String, Object> valueEntityMap = new HashMap<>();
         // 通过中间表关联Entity
         // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.is_deleted=0")
         // Organization organization;
@@ -98,8 +103,8 @@ public class EntityBinder<T> extends BaseBinder<T> {
                             continue;
                         }
                         String key = entry.getKey();
-                        T value = listMap.get(String.valueOf(fetchValueId));
-                        valueEntityMap.put(key, BeanUtils.cloneBean(value));
+                        T entity = listMap.get(String.valueOf(fetchValueId));
+                        valueEntityMap.put(key, cloneOrConvertBean(entity));
                     }
                 }
             }
@@ -116,11 +121,24 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 String refEntityPKFieldName = S.toLowerCaseCamel(referencedEntityPrimaryKey);
                 for(T entity : list){
                     String pkValue = BeanUtils.getStringProperty(entity, refEntityPKFieldName);
-                    valueEntityMap.put(pkValue, BeanUtils.cloneBean(entity));
+                    valueEntityMap.put(pkValue, cloneOrConvertBean(entity));
                 }
             }
         }
         // 绑定结果
         BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);
+    }
+
+    /**
+     * 克隆Entity/VO对象（如果与Entity类型不一致，如VO则先转型）
+     * @param value
+     */
+    protected Object cloneOrConvertBean(T value){
+        if(value.getClass().getName().equals(annoObjectFieldClass.getName())){
+            return BeanUtils.cloneBean(value);
+        }
+        else{
+            return BeanUtils.convert(value, annoObjectFieldClass);
+        }
     }
 }
