@@ -45,16 +45,23 @@
           <div class="footer-item"></div>
           <div class="footer-item">
             <h4>QQ群: 731690096</h4>
-
+            <img src="../public/add_qqqun.png" alt="" width="120">
           </div>
           <div class="footer-item">
-            <h4>微信群（备注diboot）</h4>
+            <h4>微信群: wx20201024</h4>
             <img src="../public/add_wechat.png" alt="" width="120">
           </div>
           <div class="footer-item">
           </div>
         </div>
-        <p class="copy-right">© 2015-2020 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a></p>
+        <p class="copy-right">© 2015-2020 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a>
+          <br>
+          <a class="ba-a" href="http://www.beian.miit.gov.cn/">
+            <u>
+              苏ICP备15013001号
+            </u>
+          </a>
+        </p>
       </div>
     </div>
 
@@ -147,7 +154,7 @@
     }
   }
   .footer {
-    padding: 1rem 2.5rem 2.5rem;
+    padding: 1rem 2.5rem .5rem 2.5rem;
     border-top: 1px solid #eaecef;
     text-align: left;
     color: #4e6e8e;
@@ -255,6 +262,15 @@ a.button.white {
 }
 .feature.col-2{
   max-width: 60%;
+}
+.ba-line{
+  margin: 0;
+  line-height: 28px;
+  text-align: center;
+}
+.copy-right .ba-a{
+  font-size: 16px;
+  color: #999;
 }
 @media screen and (max-width: 750px) {
   .button.has-icon{
