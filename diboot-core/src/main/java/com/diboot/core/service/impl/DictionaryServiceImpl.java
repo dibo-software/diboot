@@ -43,7 +43,8 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
         Wrapper queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue)
                 .eq(Dictionary::getType, type)
-                .gt(Dictionary::getParentId, 0);
+                .gt(Dictionary::getParentId, 0)
+                .orderByAsc(Dictionary::getSortId);
         // 返回构建条件
         return getKeyValueList(queryDictionary);
     }
