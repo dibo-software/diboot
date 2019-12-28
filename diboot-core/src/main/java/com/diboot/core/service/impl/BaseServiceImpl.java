@@ -300,7 +300,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * 初始化Entity和VO的class
 	 */
 	private String getDefaultOrderField(Wrapper queryWrapper){
-		Class entityClass = BeanUtils.getGenericityClass(this.getClass(), 1);
+		Class entityClass = BeanUtils.getGenericityClass(this, 1);
 		if(entityClass == null){
 			return null;
 		}

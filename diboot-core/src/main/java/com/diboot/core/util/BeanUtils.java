@@ -5,6 +5,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.cglib.beans.BeanCopier;
@@ -657,14 +658,18 @@ public class BeanUtils {
     }
 
     /**
-     * 从宿主类定义中获取泛型定义类class
-     * @param hostClass
+     * 从实例中获取目标对象的泛型定义类class
+     * @param instance 对象实例
      * @param index
      * @return
      */
-    public static Class getGenericityClass(Class hostClass, int index){
+    public static Class getGenericityClass(Object instance, int index){
+        Class hostClass = AopUtils.getTargetClass(instance);
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
-        ResolvableType[] types = resolvableType.getSuperType().getGenerics();
+        ResolvableType[] types = resolvableType.getGenerics();
+        if(V.isEmpty(types) || index >= types.length){
+            types = resolvableType.getSuperType().getGenerics();
+        }
         if(V.notEmpty(types) && types.length > index){
             return types[index].resolve();
         }
@@ -689,5 +694,4 @@ public class BeanUtils {
         }
         return lambda;
     }
-
 }

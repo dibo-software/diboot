@@ -255,11 +255,7 @@ public class RelationsBinder {
             return null;
         }
         // 根据entity获取Service
-        IService service = ContextHelper.getIServiceByEntity(entityClass);
-        if(service == null){
-            log.error("未能识别到Entity: "+entityClass.getName()+" 的Service实现！");
-        }
-        return service;
+        return ContextHelper.getIServiceByEntity(entityClass);
     }
 
 }

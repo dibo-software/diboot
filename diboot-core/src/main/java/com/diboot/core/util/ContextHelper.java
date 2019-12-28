@@ -130,14 +130,18 @@ public class ContextHelper implements ApplicationContextAware {
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
-                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue().getClass(), 1);
+                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
                     if(entityClass != null){
                         ENTITY_SERVICE_CACHE.put(entityClass.getName(), entry.getValue());
                     }
                 }
             }
         }
-        return ENTITY_SERVICE_CACHE.get(entity.getName());
+        IService iService = ENTITY_SERVICE_CACHE.get(entity.getName());
+        if(iService == null){
+            log.error("未能识别到Entity: "+entity.getName()+" 的IService实现！");
+        }
+        return iService;
     }
 
     /**
@@ -151,13 +155,17 @@ public class ContextHelper implements ApplicationContextAware {
             Map<String, BaseService> serviceMap = getApplicationContext().getBeansOfType(BaseService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){
-                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue().getClass(), 1);
+                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
                     if(entityClass != null){
                         ENTITY_BASE_SERVICE_CACHE.put(entityClass.getName(), entry.getValue());
                     }
                 }
             }
         }
-        return ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
+        BaseService baseService =  ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
+        if(baseService == null){
+            log.error("未能识别到Entity: "+entity.getName()+" 的Service实现！");
+        }
+        return baseService;
     }
 }
