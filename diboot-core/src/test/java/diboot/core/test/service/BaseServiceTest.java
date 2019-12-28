@@ -5,7 +5,6 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +74,7 @@ public class BaseServiceTest {
     }
 
     @Test
+    @Transactional
     public void testCreateUpdateAndDelete(){
         // 创建
         String TYPE = "ID_TYPE";
@@ -94,14 +95,10 @@ public class BaseServiceTest {
         dictionaryService.updateEntity(dictionary);
         Dictionary dictionary2 = dictionaryService.getEntity(dictionary.getId());
         Assert.assertTrue(dictionary2.getItemName().equals(dictionary.getItemName()));
-
-        // 删除
-        clearTestData(TYPE);
-        dictionary2 = dictionaryService.getEntity(dictionary.getId());
-        Assert.assertTrue(dictionary2 == null);
     }
 
     @Test
+    @Transactional
     public void testBatchCreate(){
         // 创建
         String TYPE = "ID_TYPE";
@@ -130,8 +127,6 @@ public class BaseServiceTest {
         dictionaryList.get(2).setCreateTime(new Date());
         dictionaryList.get(2).setItemValue("HZ2");
         dictionaryService.updateEntity(dictionaryList.get(2));
-
-        success = clearTestData(TYPE);
         Assert.assertTrue(success);
     }
 
@@ -140,23 +135,6 @@ public class BaseServiceTest {
         List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
         Assert.assertTrue(keyValues.size() == 2);
         Assert.assertTrue(keyValues.get(0).getV().equals("M"));
-    }
-
-    /**
-     * 清空测试数据
-     * @param type
-     * @return
-     */
-    private boolean clearTestData(String type){
-        List params = new ArrayList();
-        params.add(type);
-        try{
-            SqlExecutor.executeUpdate("DELETE FROM dictionary WHERE type=?", params);
-            return true;
-        }
-        catch (Exception e){
-            return false;
-        }
     }
 
 }
