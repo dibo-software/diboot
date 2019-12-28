@@ -1,6 +1,9 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -11,6 +14,7 @@ import javax.validation.constraints.NotNull;
  * @version v2.0
  * @date 2018/12/27
  */
+@Getter @Setter @Accessors(chain = true)
 public class Dictionary extends BaseExtEntity {
     private static final long serialVersionUID = 11301L;
 
@@ -68,69 +72,5 @@ public class Dictionary extends BaseExtEntity {
      */
     @TableField("is_editable")
     private boolean editable = false;
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getItemValue() {
-        return itemValue;
-    }
-
-    public void setItemValue(String itemValue) {
-        this.itemValue = itemValue;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getSortId() {
-        return sortId;
-    }
-
-    public void setSortId(Integer sortId) {
-        this.sortId = sortId;
-    }
-
-    public boolean isDeletable() {
-        return deletable;
-    }
-
-    public void setDeletable(boolean deletable) {
-        this.deletable = deletable;
-    }
-
-    public boolean isEditable() {
-        return editable;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
 
 }

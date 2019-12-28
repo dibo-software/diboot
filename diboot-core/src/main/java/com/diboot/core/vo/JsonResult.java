@@ -110,6 +110,39 @@ public class JsonResult implements Serializable {
         this.data = data;
     }
 
+    /**
+     * 设置status，如果msg为空则msg设置为status.label
+     * @param status
+     * @return
+     */
+    public JsonResult status(Status status){
+        this.code = status.code();
+        if(this.msg == null){
+            this.msg = status.label();
+        }
+        return this;
+    }
+
+    /**
+     * 设置返回数据
+     * @param data
+     * @return
+     */
+    public JsonResult data(Object data){
+        this.data = data;
+        return this;
+    }
+
+    /**
+     * 设置msg
+     * @param additionalMsg
+     * @return
+     */
+    public JsonResult msg(String additionalMsg){
+        initMsg(additionalMsg);
+        return this;
+    }
+
     /***
      * 绑定分页信息
      * @param pagination

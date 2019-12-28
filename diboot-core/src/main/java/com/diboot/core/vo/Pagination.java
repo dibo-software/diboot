@@ -7,6 +7,9 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/01/01
  */
+@Getter @Setter @Accessors(chain = true)
 public class Pagination implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(Pagination.class);
 
@@ -56,48 +60,12 @@ public class Pagination implements Serializable {
         setPageIndex(pageIndex);
     }
 
-    public int getPageIndex() {
-        return pageIndex;
-    }
-
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
     public void setPageSize(int pageSize) {
         if(pageSize > 1000){
             log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize="+ pageSize);
             pageSize = 1000;
         }
         this.pageSize = pageSize;
-    }
-
-    public long getTotalCount() {
-        return totalCount;
-    }
-
-    public void setTotalCount(long totalCount) {
-        this.totalCount = totalCount;
-    }
-
-    /***
-     * 获取数据库字段的列排序
-     * @return
-     */
-    public String getOrderBy() {
-        return this.orderBy;
-    }
-
-    /**
-     * 设置排序
-     * @param orderBy
-     */
-    public void setOrderBy(String orderBy){
-        this.orderBy = orderBy;
     }
 
     /***
