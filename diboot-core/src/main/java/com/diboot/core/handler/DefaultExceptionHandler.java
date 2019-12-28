@@ -69,7 +69,12 @@ public class DefaultExceptionHandler {
         else{
             map = new HashMap<>();
             map.put("code", status.value());
-            map.put("msg", e.getMessage());
+            String msg = e.getMessage();
+            //空指针异常
+            if(msg == null){
+                msg = e.getClass().getSimpleName();
+            }
+            map.put("msg", msg);
         }
         log.warn("请求处理异常", e);
         if(isJsonRequest(request)) {
