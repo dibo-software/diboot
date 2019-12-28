@@ -159,7 +159,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
         // 是否有权限删除
-        BaseEntity entity = (BaseEntity) getService().getEntity(id);
+        E entity = (E) getService().getEntity(id);
         // 执行删除操作
         String validateResult = beforeDelete(entity);
         if (validateResult != null) {
@@ -169,6 +169,8 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 执行删除操作
         boolean success = getService().deleteEntity(id);
         if (success) {
+            // 执行更新成功后的操作
+            this.afterDeleted(entity);
             log.info("删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
             // 组装返回结果
             Map<String, Object> data = new HashMap<>(2);
@@ -186,7 +188,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String beforeCreate(BaseEntity entity) throws Exception {
+    protected String beforeCreate(E entity) throws Exception {
         return null;
     }
 
@@ -195,7 +197,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String afterCreated(BaseEntity entity) throws Exception {
+    protected String afterCreated(E entity) throws Exception {
         return null;
     }
 
@@ -204,7 +206,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String beforeUpdate(BaseEntity entity) throws Exception {
+    protected String beforeUpdate(E entity) throws Exception {
         return null;
     }
 
@@ -213,7 +215,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String afterUpdated(BaseEntity entity) throws Exception {
+    protected String afterUpdated(E entity) throws Exception {
         return null;
     }
 
@@ -222,7 +224,16 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String beforeDelete(BaseEntity entity) {
+    protected String beforeDelete(E entity) throws Exception{
+        return null;
+    }
+
+    /***
+     * 删除成功后的相关处理
+     * @param entity
+     * @return
+     */
+    protected String afterDeleted(E entity) throws Exception {
         return null;
     }
 
@@ -249,7 +260,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     protected Class<E> getEntityClass(){
         if(this.entityClass == null){
-             this.entityClass = BeanUtils.getGenericityClass(this.getClass(), 0);
+             this.entityClass = BeanUtils.getGenericityClass(this, 0);
         }
         return this.entityClass;
     }
@@ -260,7 +271,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     protected Class<VO> getVOClass(){
         if(this.voClasss == null){
-            this.voClasss = BeanUtils.getGenericityClass(this.getClass(), 1);
+            this.voClasss = BeanUtils.getGenericityClass(this, 1);
         }
         return this.voClasss;
     }
