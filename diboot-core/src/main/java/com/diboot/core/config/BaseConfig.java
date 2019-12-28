@@ -14,12 +14,23 @@ public class BaseConfig {
 	private static final Logger log = LoggerFactory.getLogger(BaseConfig.class);
 
 	/**
-	 * 从默认的/指定的 Properties文件获取配置
+	 * 从当前配置文件获取配置参数值
 	 * @param key
 	 * @return
 	 */
 	public static String getProperty(String key){
 		return PropertiesUtils.get(key);
+	}
+
+	/**
+	 * 从当前配置文件获取配置参数值
+	 * @param key
+	 * @param defaultValue 默认值
+	 * @return
+	 */
+	public static String getProperty(String key, String defaultValue){
+		String value = PropertiesUtils.get(key);
+		return value != null? value : defaultValue;
 	}
 
 	/***
@@ -36,8 +47,18 @@ public class BaseConfig {
 	 * @param key
 	 * @return
 	 */
-	public static int getInteger(String key){
+	public static Integer getInteger(String key){
 		return PropertiesUtils.getInteger(key);
+	}
+
+	/***
+	 * 获取int类型
+	 * @param key
+	 * @return
+	 */
+	public static Integer getInteger(String key, int defaultValue){
+		Integer value = PropertiesUtils.getInteger(key);
+		return value != null? value : defaultValue;
 	}
 
 	/***
