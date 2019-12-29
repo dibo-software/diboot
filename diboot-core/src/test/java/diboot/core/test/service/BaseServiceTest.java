@@ -1,13 +1,18 @@
 package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
+import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
+import com.diboot.core.vo.PagingJsonResult;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -37,7 +42,7 @@ public class BaseServiceTest {
 
     @Autowired
     @Qualifier("dictionaryService")
-    DictionaryService dictionaryService;
+    DictionaryServiceImpl dictionaryService;
 
     @Test
     public void testGet(){
@@ -135,6 +140,22 @@ public class BaseServiceTest {
         List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
         Assert.assertTrue(keyValues.size() == 2);
         Assert.assertTrue(keyValues.get(0).getV().equals("M"));
+    }
+
+    @Test
+    public void testIpage2PagingJsonResult(){
+        // 查询是否创建成功
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dictionary::getType, "GENDER");
+        queryWrapper.orderByDesc(Dictionary::getId);
+        IPage<Dictionary> dp = new Page<>();
+        ((Page<Dictionary>) dp).addOrder(OrderItem.desc("id"));
+
+        IPage<Dictionary> dictionaryPage = dictionaryService.page(dp, queryWrapper);
+
+        PagingJsonResult pagingJsonResult = new PagingJsonResult(dictionaryPage);
+        Assert.assertTrue(V.notEmpty(pagingJsonResult));
+        Assert.assertTrue(pagingJsonResult.getPage().getOrderBy().equals("id:DESC"));
     }
 
 }
