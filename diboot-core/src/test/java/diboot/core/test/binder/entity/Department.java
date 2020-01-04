@@ -2,6 +2,9 @@ package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * 定时任务
@@ -9,6 +12,9 @@ import com.diboot.core.entity.BaseEntity;
  * @version v2.0
  * @date 2018/12/27
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class Department extends BaseEntity {
     private static final long serialVersionUID = -4849732665419794547L;
 
@@ -20,28 +26,4 @@ public class Department extends BaseEntity {
 
     @TableField
     private String name;
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
-
-    public Long getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(Long orgId) {
-        this.orgId = orgId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

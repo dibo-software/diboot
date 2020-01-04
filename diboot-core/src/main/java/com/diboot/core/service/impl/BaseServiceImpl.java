@@ -113,14 +113,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean deleteEntity(Serializable id) {
-		boolean success = super.removeById(id);
-		return success;
+		return super.removeById(id);
 	}
 
 	@Override
 	public boolean deleteEntities(Wrapper queryWrapper){
 		// 执行
 		return super.remove(queryWrapper);
+	}
+
+	@Override
+	public boolean deleteEntities(Collection<? extends Serializable> entityIds) {
+		return super.removeByIds(entityIds);
 	}
 
 	@Override
@@ -161,6 +165,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		IPage<T> page = new Page<>(1, limitCount);
 		page = super.page(page, queryWrapper);
 		return page.getRecords();
+	}
+
+	@Override
+	public boolean exists(Wrapper queryWrapper) {
+		List<T> entityList = getEntityListLimit(queryWrapper, 1);
+		boolean isExists = V.notEmpty(entityList) && entityList.size() > 0;
+		entityList = null;
+		return isExists;
 	}
 
 	@Override

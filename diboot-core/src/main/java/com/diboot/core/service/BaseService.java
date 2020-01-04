@@ -93,6 +93,14 @@ public interface BaseService<T> {
     boolean deleteEntities(Wrapper queryWrapper);
 
     /**
+     * 批量删除指定id的实体
+     * @param entityIds
+     * @return
+     * @throws Exception
+     */
+    boolean deleteEntities(Collection<? extends Serializable> entityIds);
+
+    /**
      * 获取符合条件的entity记录总数
      * @return
      */
@@ -130,6 +138,13 @@ public interface BaseService<T> {
      * @throws Exception
      */
     List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount);
+
+    /**
+     * 是否存在符合条件的记录
+     * @param queryWrapper
+     * @return
+     */
+    boolean exists(Wrapper queryWrapper);
 
     /**
      * 获取指定属性的Map列表

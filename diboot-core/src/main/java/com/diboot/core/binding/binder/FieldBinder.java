@@ -125,7 +125,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
         }
         // 遍历list并赋值
         for(Object annoObject : annoObjectList){
-            // 将数字类型转换成字符串，以便解决类型不一致的问题
+            // 将数子类型转换成字符串，以便解决类型不一致的问题
             String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
             // 通过中间结果Map转换得到OrgId
             if(V.notEmpty(middleTableResultMap)){

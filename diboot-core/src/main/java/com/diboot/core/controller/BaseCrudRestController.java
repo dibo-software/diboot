@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     private BaseService baseService;
 
     /**
-     * 查询ViewObject，用于字类重写的方法
+     * 查询ViewObject，用于子类重写的方法
      * @param id
      * @param request
      * @return
@@ -49,7 +49,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     }
 
     /***
-     * 获取某VO资源的集合，用于字类重写的方法
+     * 获取某VO资源的集合，用于子类重写的方法
      * <p>
      * url参数示例: /${bindURL}?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
      * </p>
@@ -93,7 +93,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     }
 
     /***
-     * 创建资源对象，用于字类重写的方法
+     * 创建资源对象，用于子类重写的方法
      * @param entity
      * @return JsonResult
      * @throws Exception
@@ -121,7 +121,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     }
 
     /***
-     * 根据ID更新资源对象，用于字类重写的方法
+     * 根据ID更新资源对象，用于子类重写的方法
      * @param entity
      * @return JsonResult
      * @throws Exception
@@ -149,7 +149,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     }
 
     /***
-     * 根据id删除资源对象，绑定了URL的方法 用于字类重写的方法
+     * 根据id删除资源对象，用于子类重写的方法
      * @param id
      * @return
      * @throws Exception
@@ -160,7 +160,6 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         }
         // 是否有权限删除
         E entity = (E) getService().getEntity(id);
-        // 执行删除操作
         String validateResult = beforeDelete(entity);
         if (validateResult != null) {
             // 返回json
@@ -182,6 +181,35 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         }
     }
 
+    /***
+     * 根据id批量删除资源对象，用于子类重写的方法
+     * @param ids
+     * @return
+     * @throws Exception
+     */
+    protected JsonResult batchDeleteEntities(Collection<? extends Serializable> ids, HttpServletRequest request) throws Exception {
+        if (V.isEmpty(ids)) {
+            return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
+        }
+        // 是否有权限删除
+        String validateResult = beforeBatchDelete(ids);
+        if (validateResult != null) {
+            // 返回json
+            return new JsonResult(Status.FAIL_OPERATION, validateResult);
+        }
+        // 执行删除操作
+        boolean success = getService().deleteEntities(ids);
+        if (success) {
+            // 执行更新成功后的操作
+            this.afterBatchDeleted(ids);
+            log.info("删除操作成功，{}:{}", getEntityClass().getSimpleName(), S.join(ids));
+            return new JsonResult();
+        } else {
+            log.warn("删除操作未成功，{}:{}",getEntityClass().getSimpleName(), S.join(ids));
+            return new JsonResult(Status.FAIL_OPERATION);
+        }
+    }
+
     //============= 供子类继承重写的方法 =================
     /***
      * 创建前的相关处理
@@ -197,8 +225,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String afterCreated(E entity) throws Exception {
-        return null;
+    protected void afterCreated(E entity) throws Exception {
     }
 
     /***
@@ -215,8 +242,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String afterUpdated(E entity) throws Exception {
-        return null;
+    protected void afterUpdated(E entity) throws Exception {
     }
 
     /***
@@ -233,8 +259,24 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @param entity
      * @return
      */
-    protected String afterDeleted(E entity) throws Exception {
+    protected void afterDeleted(E entity) throws Exception {
+    }
+
+    /***
+     * 是否有批量删除权限，如不可删除返回错误提示信息，如 Status.FAIL_NO_PERMISSION.label()
+     * @param ids
+     * @return
+     */
+    protected String beforeBatchDelete(Collection<? extends Serializable> ids) throws Exception{
         return null;
+    }
+
+    /***
+     * 批量删除成功后的相关处理
+     * @param ids
+     * @return
+     */
+    protected void afterBatchDeleted(Collection<? extends Serializable> ids) throws Exception {
     }
 
     /**

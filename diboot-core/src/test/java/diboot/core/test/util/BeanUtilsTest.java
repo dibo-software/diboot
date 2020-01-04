@@ -1,10 +1,15 @@
 package diboot.core.test.util;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.JSON;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +55,7 @@ public class BeanUtilsTest {
     }
 
     @Test
-    public void testConvert(){
+    public void testCollect(){
         List<Dictionary> dictionaryList = new ArrayList<>();
         for(long id=1001; id<1005; id++){
             Dictionary dictionary1 = new Dictionary();
@@ -96,5 +101,12 @@ public class BeanUtilsTest {
     public void testLambdaGetterSetter(){
         Assert.assertEquals("itemName", BeanUtils.convertToFieldName(Dictionary::getItemName));
         Assert.assertEquals("itemName", BeanUtils.convertToFieldName(Dictionary::setItemName));
+    }
+
+    @Test
+    public void getField(){
+        Field field = BeanUtils.extractField(Dictionary.class, "id");
+        TableId id = field.getAnnotation(TableId.class);
+        Assert.assertTrue(id != null);
     }
 }
