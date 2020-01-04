@@ -45,8 +45,23 @@ public interface DictionaryService extends BaseService<Dictionary>{
 
     /***
      * 添加多层级数据字典
-     * @param dictionaryVO
+     * @param dictVO
      * @return
      */
-    boolean addDictTree(DictionaryVO dictionaryVO);
+    boolean addDictTree(DictionaryVO dictVO);
+
+    /**
+     * 更新字典定义及其子项
+     * @param dictVO
+     * @return
+     */
+    boolean updateDictAndChildren(DictionaryVO dictVO);
+
+    /**
+     * 删除字典定义及其子项
+     * @param id
+     * @return
+     */
+    boolean deleteDictAndChildren(Long id);
+
 }
