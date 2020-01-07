@@ -140,6 +140,13 @@ public interface BaseService<T> {
     List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount);
 
     /**
+     * 获取符合条件的一个Entity实体
+     * @param queryWrapper 主键
+     * @return entity
+     */
+    T getSingleEntity(Wrapper queryWrapper);
+
+    /**
      * 是否存在符合条件的记录
      * @param queryWrapper
      * @return

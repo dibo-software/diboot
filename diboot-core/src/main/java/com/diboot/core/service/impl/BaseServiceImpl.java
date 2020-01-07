@@ -168,6 +168,15 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public T getSingleEntity(Wrapper queryWrapper) {
+		List<T> entityList = getEntityListLimit(queryWrapper, 1);
+		if(V.notEmpty(entityList)){
+			return entityList.get(0);
+		}
+		return null;
+	}
+
+	@Override
 	public boolean exists(Wrapper queryWrapper) {
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		boolean isExists = V.notEmpty(entityList) && entityList.size() > 0;
