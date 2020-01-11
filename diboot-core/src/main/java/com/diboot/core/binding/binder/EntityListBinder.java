@@ -59,22 +59,24 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), entityIdList);
                 // 查询entity列表: List<Role>
                 List list = getEntityList(queryWrapper);
-                // 转换entity列表为Map<ID, Entity>
-                Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
-                for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
-                    // List<roleId>
-                    List annoObjFKList = entry.getValue();
-                    if(V.isEmpty(annoObjFKList)){
-                        continue;
-                    }
-                    List valueList = new ArrayList();
-                    for(Object obj : annoObjFKList){
-                        T ent = entityMap.get(String.valueOf(obj));
-                        if(ent != null){
-                            valueList.add(cloneOrConvertBean(ent));
+                if(V.notEmpty(list)){
+                    // 转换entity列表为Map<ID, Entity>
+                    Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
+                    for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
+                        // List<roleId>
+                        List annoObjFKList = entry.getValue();
+                        if(V.isEmpty(annoObjFKList)){
+                            continue;
                         }
+                        List valueList = new ArrayList();
+                        for(Object obj : annoObjFKList){
+                            T ent = entityMap.get(String.valueOf(obj));
+                            if(ent != null){
+                                valueList.add(cloneOrConvertBean(ent));
+                            }
+                        }
+                        valueEntityListMap.put(entry.getKey(), valueList);
                     }
-                    valueEntityListMap.put(entry.getKey(), valueList);
                 }
             }
         }

@@ -85,7 +85,7 @@ public class QueryBuilder {
         List<Field> declaredFields = BeanUtils.extractAllFields(dto.getClass());
         for (Field field : declaredFields) {
             // 非指定属性，非逻辑删除字段，跳过
-            if(fields != null && !fields.contains(field.getName()) && !Cons.FieldName.deleted.name().equals(field.getName())){
+            if(fields != null && !fields.contains(field.getName())){
                 continue;
             }
             //忽略static，以及final，transient

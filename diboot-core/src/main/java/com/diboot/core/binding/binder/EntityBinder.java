@@ -83,7 +83,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         // 结果转换Map
         Map<String, Object> valueEntityMap = new HashMap<>();
         // 通过中间表关联Entity
-        // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.is_deleted=0")
+        // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.level=1")
         // Organization organization;
         if(middleTable != null){
             Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(annoObjectForeignKeyList);
@@ -97,14 +97,16 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 if(V.notEmpty(list)){
                     // 转换entity列表为Map<ID, Entity>
                     Map<String, T> listMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
-                    for(Map.Entry<String, Object> entry : middleTableResultMap.entrySet()){
-                        Object fetchValueId = entry.getValue();
-                        if(fetchValueId == null){
-                            continue;
+                    if(V.notEmpty(listMap)){
+                        for(Map.Entry<String, Object> entry : middleTableResultMap.entrySet()){
+                            Object fetchValueId = entry.getValue();
+                            if(fetchValueId == null){
+                                continue;
+                            }
+                            String key = entry.getKey();
+                            T entity = listMap.get(String.valueOf(fetchValueId));
+                            valueEntityMap.put(key, cloneOrConvertBean(entity));
                         }
-                        String key = entry.getKey();
-                        T entity = listMap.get(String.valueOf(fetchValueId));
-                        valueEntityMap.put(key, cloneOrConvertBean(entity));
                     }
                 }
             }
@@ -134,6 +136,9 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param value
      */
     protected Object cloneOrConvertBean(T value){
+        if(value == null){
+            return value;
+        }
         if(value.getClass().getName().equals(annoObjectFieldClass.getName())){
             return BeanUtils.cloneBean(value);
         }
