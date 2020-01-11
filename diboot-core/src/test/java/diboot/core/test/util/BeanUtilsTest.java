@@ -1,19 +1,13 @@
 package diboot.core.test.util;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.JSON;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * BeanUtils测试
@@ -109,4 +103,25 @@ public class BeanUtilsTest {
         TableId id = field.getAnnotation(TableId.class);
         Assert.assertTrue(id != null);
     }
+
+    @Test
+    public void testLambdaDistinct(){
+        List<Dictionary> dictionaryList = new ArrayList<>();
+        for(long id=1001; id<=1005; id++){
+            Dictionary dictionary1 = new Dictionary();
+            dictionary1.setId(id);
+            dictionaryList.add(dictionary1);
+        }
+        for(long id=1003; id<=1007; id++){
+            Dictionary dictionary1 = new Dictionary();
+            dictionary1.setId(id);
+            dictionaryList.add(dictionary1);
+        }
+        List<Dictionary> dictionaryList2 = BeanUtils.distinctByKey(dictionaryList, Dictionary::getId);
+        Assert.assertEquals(dictionaryList2.size(), 7);
+    }
+
+
+
+
 }
