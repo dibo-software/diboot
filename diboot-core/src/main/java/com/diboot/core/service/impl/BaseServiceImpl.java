@@ -47,7 +47,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * 获取当前的Mapper对象
 	 * @return
 	 */
-	protected M getMapper(){
+	@Override
+	public M getMapper(){
 		return baseMapper;
 	}
 

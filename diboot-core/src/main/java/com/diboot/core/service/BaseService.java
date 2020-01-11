@@ -1,6 +1,7 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -19,6 +20,13 @@ import java.util.Map;
  * @date 2019/01/01
  */
 public interface BaseService<T> {
+
+    /**
+     * 获取对应 entity 的 BaseMapper
+     *
+     * @return BaseMapper
+     */
+    BaseMapper<T> getMapper();
 
     /**
      * 获取Entity实体

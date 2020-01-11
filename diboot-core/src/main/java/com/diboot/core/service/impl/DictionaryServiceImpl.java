@@ -81,9 +81,13 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean addDictTree(DictionaryVO dictVO) {
-        //将DictionaryVO转化为Dictionary
-        Dictionary dictionary = new Dictionary();
-        dictionary = (Dictionary) BeanUtils.copyProperties(dictVO, dictionary);
+        return createDictAndChildren(dictVO);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean createDictAndChildren(DictionaryVO dictVO) {
+        Dictionary dictionary = (Dictionary)dictVO;
         if(!super.createEntity(dictionary)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
             return false;
@@ -95,7 +99,7 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 dict.setParentId(dictionary.getId());
                 dict.setType(dictionary.getType());
                 boolean insertOK = super.createEntity(dict);
-                if (!insertOK){
+                if(!insertOK){
                     log.warn("dictionary插入数据字典失败，请检查！");
                     success = false;
                 }
@@ -110,6 +114,7 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateDictAndChildren(DictionaryVO dictVO) {
         //将DictionaryVO转化为Dictionary
         Dictionary dictionary = (Dictionary)dictVO;

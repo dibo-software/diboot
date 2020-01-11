@@ -44,11 +44,19 @@ public interface DictionaryService extends BaseService<Dictionary>{
     void bindItemLabel(List voList, String setFieldName, String getFieldName, String type);
 
     /***
-     * 添加多层级数据字典
+     * 添加多层级数据字典 (已废弃，请调用createDictAndChildren)
      * @param dictVO
      * @return
      */
+    @Deprecated
     boolean addDictTree(DictionaryVO dictVO);
+
+    /**
+     * 添加字典定义及其子项
+     * @param dictVO
+     * @return
+     */
+    boolean createDictAndChildren(DictionaryVO dictVO);
 
     /**
      * 更新字典定义及其子项
