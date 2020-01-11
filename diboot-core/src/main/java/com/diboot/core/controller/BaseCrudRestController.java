@@ -1,8 +1,13 @@
 package com.diboot.core.controller;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.JsonResult;
@@ -10,9 +15,11 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +51,18 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @throws Exception
      */
     protected JsonResult getViewObject(Serializable id, HttpServletRequest request) throws Exception{
+        // 检查String类型id
+        if(id instanceof String){
+            // 如果当前id为Long类型则阻止并报错
+            Field field = ReflectionUtils.findField(getEntityClass(), Cons.FieldName.id.name());
+            TableField tableField = field.getAnnotation(TableField.class);
+            if(tableField == null || tableField.exist() == true){
+                TableId tableId = field.getAnnotation(TableId.class);
+                if(tableId != null && (tableId.type().equals(IdType.AUTO) || tableId.type().equals(IdType.ID_WORKER))){
+                    throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数类型不匹配！");
+                }
+            }
+        }
         VO vo = (VO)getService().getViewObject(id, getVOClass());
         return new JsonResult(vo);
     }
