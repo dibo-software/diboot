@@ -7,9 +7,9 @@
 # diboot-v2  
 >  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
-diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + 基础功能组件。
+diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + IAM等基础功能组件。
 
-   
+
 ## 一、 diboot-core: 精简优化内核
 全新精简内核，(基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比1.x版本减少70%+），主要实现：
 #### 1. 单表CRUD无SQL
@@ -26,17 +26,27 @@ diboot 2.0版本，实现: diboot-core全新内核 + diboot-devtools代码生成
 更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
 
 
+## 二、 diboot-devtools 自动化开发助理
 
-## 二、 diboot-devtools 自动化开发助理 [(我要试试)](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
+#### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
+#### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
+#### 3. 功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）
+#### 4. 配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）
+#### 5. 代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
+> [我要试试](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
-##### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
-##### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
-##### 3. 功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）
-##### 4. 配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）
-##### 5. 代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
+## 三、iam-base 身份认证基础组件
+
+#### 1. RBAC角色权限模型 + JWT的认证授权 实现
+#### 2. BindPermission注解, 支持两级权限控制 + 自动鉴权
+#### 3. BindPermission注解, 支持自动收集权限码并更新数据库
+#### 4. 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
+
+更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot-v2/tree/master/iam-base-starter "身份认证管理组件"). 
+> 其他组件逐步开发中 ...
 
 
-## 三、技术交流群
+## 四、技术交流群
 如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。
 <p align="center">
     <img src="https://www.diboot.com/donate.jpg" width = "500" alt="支持Diboot发展">
