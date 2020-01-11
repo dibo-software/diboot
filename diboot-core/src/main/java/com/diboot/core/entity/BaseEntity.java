@@ -3,6 +3,9 @@ package com.diboot.core.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.util.JSON;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +17,9 @@ import java.util.Map;
  * @version v2.0
  * @date 2018/12/27
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public abstract class BaseEntity implements Serializable {
     private static final long serialVersionUID = 10203L;
 
@@ -36,30 +42,6 @@ public abstract class BaseEntity implements Serializable {
      */
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
     private Date createTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getCreateTime() {
-        return this.createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
 
     /***
      * Entity对象转为map
