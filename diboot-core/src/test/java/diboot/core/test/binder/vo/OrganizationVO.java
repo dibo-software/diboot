@@ -1,7 +1,5 @@
 package diboot.core.test.binder.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-
 /**
  * <Description>
  *

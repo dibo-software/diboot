@@ -1,6 +1,9 @@
 package com.diboot.core.util;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +45,10 @@ public class ContextHelper implements ApplicationContextAware {
      * Entity-对应的BaseService缓存
      */
     private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = null;
+    /**
+     * 存储主键字段非id的Entity
+     */
+    private static Map<String, String> PK_NID_ENTITY_CACHE = new ConcurrentHashMap<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -167,5 +175,32 @@ public class ContextHelper implements ApplicationContextAware {
             log.error("未能识别到Entity: "+entity.getName()+" 的Service实现！");
         }
         return baseService;
+    }
+
+    /**
+     * 获取Entity主键
+     * @return
+     */
+    public static String getPrimaryKey(Class entity){
+        if(!PK_NID_ENTITY_CACHE.containsKey(entity.getName())){
+            String pk = Cons.FieldName.id.name();
+            List<Field> fields = BeanUtils.extractAllFields(entity);
+            if(V.notEmpty(fields)){
+                for(Field fld : fields){
+                    TableId tableId = fld.getAnnotation(TableId.class);
+                    if(tableId == null){
+                        continue;
+                    }
+                    TableField tableField = fld.getAnnotation(TableField.class);
+                    if(tableField != null && tableField.exist() == false){
+                        continue;
+                    }
+                    pk = fld.getName();
+                    break;
+                }
+            }
+            PK_NID_ENTITY_CACHE.put(entity.getName(), pk);
+        }
+        return PK_NID_ENTITY_CACHE.get(entity.getName());
     }
 }

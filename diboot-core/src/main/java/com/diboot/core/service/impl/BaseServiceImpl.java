@@ -1,6 +1,5 @@
 package com.diboot.core.service.impl;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,6 +14,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
@@ -24,9 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /***
  * CRUD通用接口实现类
@@ -38,10 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl<M, T> implements BaseService<T> {
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
-	/**
-	 * Entity类与最佳排序字段间的映射缓存
-	 */
-	private static Map<String, String> ENTITY_ORDER_FIELD_CACHE_MAP = new ConcurrentHashMap<>();
 
 	/***
 	 * 获取当前的Mapper对象
@@ -299,12 +293,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(pagination == null){
 			return null;
 		}
-		// 优化排序
-		String defaultOrderBy = getDefaultOrderField(queryWrapper);
-		//默认id属性存在
-		if(!Cons.FieldName.id.name().equals(defaultOrderBy)){
-			// 最佳字段不是id（如create_time），但默认查询字段为id，需要清空默认值以免报错
-			pagination.clearDefaultOrder();
+		// 如果是默认id排序
+		if(pagination.isDefaultOrderBy()){
+			// 优化排序
+			Class entityClass = BeanUtils.getGenericityClass(this, 1);
+			if(entityClass != null){
+				String pk = ContextHelper.getPrimaryKey(entityClass);
+				// 主键非有序id字段，需要清空默认排序以免报错
+				if(!Cons.FieldName.id.name().equals(pk)){
+					log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
+					pagination.clearDefaultOrder();
+				}
+			}
 		}
 		return (Page<T>)pagination.toIPage();
 	}
@@ -316,31 +316,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	private void warning(String method, String message){
 		log.warn(this.getClass().getName() + "."+ method +" 调用错误: "+message+", 请检查！");
-	}
-
-	/**
-	 * 初始化Entity和VO的class
-	 */
-	private String getDefaultOrderField(Wrapper queryWrapper){
-		Class entityClass = BeanUtils.getGenericityClass(this, 1);
-		if(entityClass == null){
-			return null;
-		}
-		if(!ENTITY_ORDER_FIELD_CACHE_MAP.containsKey(entityClass.getName())){
-			// 提取字段，如果有升序id首选id
-			Field field = BeanUtils.extractField(entityClass, Cons.FieldName.id.name());
-			if(field != null){
-				TableField tableFieldAnno = field.getAnnotation(TableField.class);
-				if(tableFieldAnno == null || tableFieldAnno.exist() == true){
-					ENTITY_ORDER_FIELD_CACHE_MAP.put(entityClass.getName(), Cons.FieldName.id.name());
-				}
-			}
-			if(!ENTITY_ORDER_FIELD_CACHE_MAP.containsKey(entityClass.getName())){
-				ENTITY_ORDER_FIELD_CACHE_MAP.put(entityClass.getName(), "");
-				log.warn("{} 的默认排序字段id不存在，请自行指定！", entityClass.getName());
-			}
-		}
-		return ENTITY_ORDER_FIELD_CACHE_MAP.get(entityClass.getName());
 	}
 
 }

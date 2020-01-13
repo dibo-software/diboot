@@ -1,5 +1,6 @@
 package com.diboot.core.vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -84,9 +85,18 @@ public class Pagination implements Serializable {
      */
     public void clearDefaultOrder(){
         // 是否为默认排序
-        if(V.equals(orderBy, DEFAULT_ORDER_BY)){
+        if(isDefaultOrderBy()){
             orderBy = null;
         }
+    }
+
+    /**
+     * 是否为默认排序
+     * @return
+     */
+    @JSONField(serialize = false)
+    public boolean isDefaultOrderBy(){
+        return V.equals(orderBy, DEFAULT_ORDER_BY);
     }
 
     /**

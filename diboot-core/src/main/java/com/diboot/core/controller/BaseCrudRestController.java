@@ -1,25 +1,23 @@
 package com.diboot.core.controller;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -52,15 +50,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      */
     protected JsonResult getViewObject(Serializable id, HttpServletRequest request) throws Exception{
         // 检查String类型id
-        if(id instanceof String){
-            // 如果当前id为Long类型则阻止并报错
-            Field field = ReflectionUtils.findField(getEntityClass(), Cons.FieldName.id.name());
-            TableField tableField = field.getAnnotation(TableField.class);
-            if(tableField == null || tableField.exist() == true){
-                TableId tableId = field.getAnnotation(TableId.class);
-                if(tableId != null && (tableId.type().equals(IdType.AUTO) || tableId.type().equals(IdType.ID_WORKER))){
-                    throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数类型不匹配！");
-                }
+        if(id instanceof String && !S.isNumeric((String)id)){
+            String pk = ContextHelper.getPrimaryKey(getEntityClass());
+            if(Cons.FieldName.id.name().equals(pk)){
+                throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
             }
         }
         VO vo = (VO)getService().getViewObject(id, getVOClass());
@@ -129,8 +122,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             // 执行创建成功后的操作
             this.afterCreated(entity);
             // 组装返回结果
-            Map<String, Object> data = new HashMap<>(2);
-            data.put(PARAM_ID, entity.getId());
+            Map<String, Object> data = buildPKDataMap(entity);
             return new JsonResult(Status.OK, data);
         } else {
             log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
@@ -146,6 +138,17 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @throws Exception
      */
     protected JsonResult updateEntity(Serializable id, E entity, HttpServletRequest request) throws Exception {
+        // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
+        if(entity.getId() == null){
+            String pk = ContextHelper.getPrimaryKey(getEntityClass());
+            if(Cons.FieldName.id.name().equals(pk)){
+                Long longId = (id instanceof Long)? (Long)id : Long.parseLong((String)id);
+                entity.setId(longId);
+            }
+            else if(BeanUtils.getProperty(entity, pk) == null){
+                BeanUtils.setProperty(entity, pk, id);
+            }
+        }
         // 执行更新资源前的操作
         String validateResult = this.beforeUpdate(entity);
         if (validateResult != null) {
@@ -156,10 +159,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         if (success) {
             // 执行更新成功后的操作
             this.afterUpdated(entity);
-            // 组装返回结果
-            Map<String, Object> data = new HashMap<>(2);
-            data.put(PARAM_ID, entity.getId());
-            return new JsonResult(Status.OK, data);
+            return new JsonResult(Status.OK);
         } else {
             log.warn("更新操作失败，{}:{}", entity.getClass().getSimpleName(), entity.getId());
             // 返回操作结果
@@ -190,10 +190,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             // 执行更新成功后的操作
             this.afterDeleted(entity);
             log.info("删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
-            // 组装返回结果
-            Map<String, Object> data = new HashMap<>(2);
-            data.put(PARAM_ID, entity.getId());
-            return new JsonResult(Status.OK, data);
+            return new JsonResult(Status.OK);
         } else {
             log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
             return new JsonResult(Status.FAIL_OPERATION);
@@ -227,6 +224,20 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             log.warn("删除操作未成功，{}:{}",getEntityClass().getSimpleName(), S.join(ids));
             return new JsonResult(Status.FAIL_OPERATION);
         }
+    }
+
+    /**
+     * 构建主键的返回值Data
+     * @param entity
+     * @return
+     */
+    private Map<String, Object> buildPKDataMap(E entity){
+        // 组装返回结果
+        Map<String, Object> data = new HashMap<>(2);
+        String pk = ContextHelper.getPrimaryKey(getEntityClass());
+        Object pkValue = (Cons.FieldName.id.name().equals(pk))? entity.getId() : BeanUtils.getProperty(entity, pk);
+        data.put(pk, pkValue);
+        return data;
     }
 
     //============= 供子类继承重写的方法 =================

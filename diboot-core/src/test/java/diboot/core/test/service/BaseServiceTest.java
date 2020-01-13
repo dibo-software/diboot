@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
