@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * VO绑定注解的归类分组，用于缓存解析后的结果
- * @author Mazhicheng<br>
+ * @author mazc@dibo.ltd<br>
  * @version 1.0<br>
  * @date 2019/04/03 <br>
  */

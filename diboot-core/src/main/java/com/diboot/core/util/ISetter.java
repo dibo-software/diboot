@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * setter方法接口定义
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/17
  */

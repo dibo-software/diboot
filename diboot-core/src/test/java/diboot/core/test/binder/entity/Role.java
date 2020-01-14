@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 /**
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/30
  */

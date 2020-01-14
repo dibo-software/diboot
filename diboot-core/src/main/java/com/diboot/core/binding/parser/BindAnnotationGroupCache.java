@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *  VO对象中的绑定注解 缓存管理类
- * @author Mazhicheng<br>
+ * @author mazc@dibo.ltd<br>
  * @version 1.0<br>
  * @date 2019/04/03 <br>
  */

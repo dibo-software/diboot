@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * KeyValue键值对形式的VO（用于构建显示名Name-存储值Value形式的结果）
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/4
  */

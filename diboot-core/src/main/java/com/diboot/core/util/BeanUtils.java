@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * Bean相关处理工具类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */

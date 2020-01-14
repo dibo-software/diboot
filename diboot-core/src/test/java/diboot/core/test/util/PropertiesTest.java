@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * 配置文件读取测试
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 1.0
  * @date 2019/06/02
  */

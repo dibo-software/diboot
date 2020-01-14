@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Entity实体绑定Binder，用于绑定当前一个entity到目标对象的属性
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/19
  */

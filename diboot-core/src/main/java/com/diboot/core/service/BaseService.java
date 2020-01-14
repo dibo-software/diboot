@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * 基础服务Service
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */

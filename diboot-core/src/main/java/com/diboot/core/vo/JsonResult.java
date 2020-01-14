@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * JSON返回结果
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */

@@ -3,7 +3,7 @@ package diboot.core.test.binder.vo;
 /**
  * <Description>
  *
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/06
  */

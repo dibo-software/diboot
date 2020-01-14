@@ -6,7 +6,7 @@ import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
 
 /**
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/30
  */

@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * DibootCore自动配置类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/08/01
  */

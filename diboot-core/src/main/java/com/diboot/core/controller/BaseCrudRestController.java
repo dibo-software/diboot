@@ -25,7 +25,7 @@ import java.util.Map;
 
 /***
  * CRUD增删改查通用RestController-父类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */

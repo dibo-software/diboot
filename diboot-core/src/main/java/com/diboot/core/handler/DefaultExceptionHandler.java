@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * 全局异常统一处理的默认实现
  * （继承自该类并添加@ControllerAdvice注解即可自动支持兼容页面和JSON的异常处理）
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/07/19
  */

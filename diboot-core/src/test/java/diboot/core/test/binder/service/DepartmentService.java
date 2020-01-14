@@ -5,7 +5,7 @@ import diboot.core.test.binder.entity.Department;
 
 /**
  * 部门相关Service
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/30
  */

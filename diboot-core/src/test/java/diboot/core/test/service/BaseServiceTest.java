@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  *  BaseService接口实现测试 (需先执行example中的初始化SQL)
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/06/15
  */

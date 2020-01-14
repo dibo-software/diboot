@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 数据字典Service
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */

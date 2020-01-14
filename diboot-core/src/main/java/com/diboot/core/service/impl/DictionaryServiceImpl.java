@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * 数据字典相关service实现
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */

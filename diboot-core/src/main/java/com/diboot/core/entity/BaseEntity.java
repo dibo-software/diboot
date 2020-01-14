@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Entity基础父类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/12/27
  */

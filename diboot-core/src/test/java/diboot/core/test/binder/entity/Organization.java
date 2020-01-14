@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 单位Entity
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/5
  */

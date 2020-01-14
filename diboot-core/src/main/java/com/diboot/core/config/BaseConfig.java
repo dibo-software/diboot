@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 /***
  * 系统默认配置
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */
