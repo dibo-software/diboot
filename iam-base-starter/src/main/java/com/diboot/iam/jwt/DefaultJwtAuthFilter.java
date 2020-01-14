@@ -1,14 +1,14 @@
-package com.diboot.shiro.jwt;
+package com.diboot.iam.jwt;
 
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
-import com.diboot.shiro.entity.TokenAccountInfo;
-import com.diboot.shiro.util.JwtHelper;
+import com.diboot.iam.config.Cons;
+import com.diboot.iam.util.JwtUtils;
+import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -25,28 +25,32 @@ import java.io.PrintWriter;
  * @version v2.0
  * @date 2019/6/6
  */
-public class BaseJwtAuthenticationFilter extends BasicHttpAuthenticationFilter {
-    private static final Logger logger =  LoggerFactory.getLogger(BaseJwtAuthenticationFilter.class);
+@Slf4j
+public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
 
     /**
-     * Shiro权限拦截核心方法 返回true允许访问，这里使用JWT进行认证
+     * Shiro权限拦截核心方法 使用JWT进行认证 返回true允许访问
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        // 获取Token
-        String accessToken = JwtHelper.getRequestToken(httpRequest);
-        if (V.isEmpty(accessToken)) {
-            logger.warn("Token为空！url={}", httpRequest.getRequestURL());
+        // 从header获取Token
+        Claims claims = JwtUtils.getClaimsFromRequest(httpRequest);
+        if (V.isEmpty(claims)) {
             return false;
         }
-        //获取username
-        TokenAccountInfo account = JwtHelper.getAccountFromToken(accessToken);
-        if(V.notEmpty(account)){
-            logger.debug("Token认证成功！account={}", account.toString());
+        //解密是否成功
+        if(V.notEmpty(claims.getSubject())){
+            log.debug("Token验证成功！account={}", claims.getSubject());
+            // 如果临近过期，则生成新的token返回
+            String refreshToken = JwtUtils.generateNewTokenIfRequired(claims);
+            if(refreshToken != null){
+                // 写入response header中
+                JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
+            }
             return true;
         }
-        logger.debug("Token认证失败！");
+        log.debug("Token验证失败！");
         return false;
     }
 
@@ -56,9 +60,7 @@ public class BaseJwtAuthenticationFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        logger.debug("Token认证： onAccessDenied");
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
+        log.debug("Token认证失败： onAccessDenied");
         JsonResult jsonResult = new JsonResult(Status.FAIL_INVALID_TOKEN);
         this.responseJson((HttpServletResponse) response, jsonResult);
         return false;
@@ -71,21 +73,15 @@ public class BaseJwtAuthenticationFilter extends BasicHttpAuthenticationFilter {
      */
     protected void responseJson(HttpServletResponse response, JsonResult jsonResult){
         // 处理异步请求
-        PrintWriter pw = null;
-        try {
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-            pw = response.getWriter();
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(Cons.CHARSET_UTF8);
+        try (PrintWriter pw = response.getWriter()){
             pw.write(JSON.stringify(jsonResult));
             pw.flush();
         }
         catch (IOException e) {
-            logger.error("处理异步请求异常", e);
-        }
-        finally {
-            if (pw != null) {
-                pw.close();
-            }
+            log.error("处理异步请求异常", e);
         }
     }
 
