@@ -31,7 +31,7 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
         String[] methodAndUrl = extractRequestMethodAndMappingUrl(method);
         String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
         // 赋值权限和方法
-        if(V.notEmpty(url)){
+        if(V.notEmpty(requestMethod) && V.notEmpty(url)){
             for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
                 for(String u : url.split(Cons.SEPARATOR_COMMA)){
                     if(V.notEmpty(controllerMappingUri)){
@@ -79,13 +79,19 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
             requestMethod = RequestMethod.PATCH.name();
             url = getNotEmptyStr(anno.value(), anno.path());
         }
-        else if(method.getAnnotation(RequestMapping.class) != null){
+        else if(AnnotationUtils.getAnnotation(method, RequestMapping.class) != null){
             RequestMapping anno = AnnotationUtils.getAnnotation(method, RequestMapping.class);
             if(V.notEmpty(anno.method())){
                 List<String> methods = Arrays.stream(anno.method()).map(m -> m.name()).collect(Collectors.toList());
                 requestMethod = S.join(methods);
             }
+            else{
+                requestMethod = "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS,TRACE";
+            }
             url = getNotEmptyStr(anno.value(), anno.path());
+        }
+        else{
+            log.warn("无法识别到URL Mapping相关注解: "+method.getName());
         }
         return new String[]{requestMethod, url};
     }

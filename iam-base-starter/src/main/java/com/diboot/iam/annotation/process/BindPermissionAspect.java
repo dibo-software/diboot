@@ -61,12 +61,7 @@ public class BindPermissionAspect {
         }
         BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
         String annoPermissionCode = ":"+bindPermission.code();
-        // 先看Class是否有BindPermission注解,如果有则拼接: 目前获取不到?
-        //BindPermission parentAnno = AnnotationUtils.findAnnotation(method.getDeclaringClass(), BindPermission.class);
-        //if(parentAnno != null){
-        //    annoPermissionCode = parentAnno.code() + ":" + annoPermissionCode;
-        //}
-        if(annoPermissionCode.endsWith(annoPermissionCode)){
+        if(permissionCode.endsWith(annoPermissionCode)){
             try{
                 IamSecurityUtils.getSubject().checkPermission(permissionCode);
             }
