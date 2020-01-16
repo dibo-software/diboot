@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  BaseService接口实现测试 (需先执行example中的初始化SQL)
@@ -139,6 +140,8 @@ public class BaseServiceTest {
         List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
         Assert.assertTrue(keyValues.size() == 2);
         Assert.assertTrue(keyValues.get(0).getV().equals("M"));
+        Map<String, Object> kvMap = BeanUtils.convertKeyValueList2Map(keyValues);
+        Assert.assertTrue(kvMap.get("女").equals("F"));
     }
 
     @Test

@@ -243,6 +243,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public Map<String, Object> getKeyValueMap(Wrapper queryWrapper) {
+		List<KeyValue> keyValueList = getKeyValueList(queryWrapper);
+		return BeanUtils.convertKeyValueList2Map(keyValueList);
+	}
+
+	@Override
 	public FieldBinder<T> bindingFieldTo(List voList){
 		return new FieldBinder<>(this, voList);
 	}

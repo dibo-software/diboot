@@ -184,6 +184,14 @@ public interface BaseService<T> {
      */
     List<KeyValue> getKeyValueList(Wrapper queryWrapper);
 
+    /***
+     * 获取键值对的Map
+     *
+     * @param queryWrapper
+     * @return
+     */
+    Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
+
     /**
      * 获取View Object对象
      * @param id 主键

@@ -3,6 +3,7 @@ package com.diboot.core.util;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.vo.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -651,6 +652,18 @@ public class BeanUtils {
     }
 
     /**
+     * 转换keyValue集合为Map
+     * @param keyValueList
+     * @return
+     */
+    public static Map<String, Object> convertKeyValueList2Map(List<KeyValue> keyValueList) {
+        if(V.notEmpty(keyValueList)){
+            return keyValueList.stream().collect(Collectors.toMap(KeyValue::getK, KeyValue::getV));
+        }
+        return Collections.EMPTY_MAP;
+    }
+
+    /**
      * 根据指定Key对list去重
      * @param list
      * @param getterFn
@@ -689,4 +702,5 @@ public class BeanUtils {
         }
         return lambda;
     }
+
 }
