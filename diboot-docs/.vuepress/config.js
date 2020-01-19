@@ -57,6 +57,12 @@ module.exports = {
         nav: [{
             text: '首页', link: '/index.html'
         }, {
+            text: '基础组件 指南',
+            items: [
+                { text: 'core内核', link: '/guide/diboot-core/安装' },
+                { text: 'IAM身份认证', link: '/guide/diboot-iam/开始使用' }
+            ]
+        }, {
             text: 'core内核 指南',
             link: '/guide/diboot-core/安装'
         }, {
