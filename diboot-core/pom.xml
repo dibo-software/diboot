@@ -16,7 +16,11 @@
     <description>diboot core project</description>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
