@@ -44,7 +44,7 @@ create table iam_role
   id          int auto_increment comment 'ID'    primary key,
   name        varchar(20)                          not null comment '名称',
   code        varchar(20)                          not null comment '编码',
-  comment     varchar(100)                         null comment '备注',
+  description     varchar(100)                         null comment '备注',
   is_deleted  tinyint(1) default 0                not null comment '是否删除',
   create_time timestamp  default CURRENT_TIMESTAMP null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色';

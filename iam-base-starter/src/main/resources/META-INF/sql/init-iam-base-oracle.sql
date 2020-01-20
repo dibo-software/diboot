@@ -73,7 +73,7 @@ create table ${SCHEMA}.iam_role
     id NUMBER(11) generated as identity ( start with 10000 nocycle noorder),
     name VARCHAR2(20)   not null,
     code VARCHAR2(20)   not null,
-    comment VARCHAR2(100)   null,
+    description VARCHAR2(100)   null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   null,
     constraint PK_iam_role primary key (id)
@@ -81,7 +81,7 @@ create table ${SCHEMA}.iam_role
 comment on column ${SCHEMA}.iam_role.id is 'ID';
 comment on column ${SCHEMA}.iam_role.name is '名称';
 comment on column ${SCHEMA}.iam_role.code is '编码';
-comment on column ${SCHEMA}.iam_role.comment is '备注';
+comment on column ${SCHEMA}.iam_role.description is '备注';
 comment on column ${SCHEMA}.iam_role.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_role.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_role is '角色';

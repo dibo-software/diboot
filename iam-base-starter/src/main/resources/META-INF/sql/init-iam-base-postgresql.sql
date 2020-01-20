@@ -71,14 +71,14 @@ create table iam_role
   id serial not null,
   name varchar(20) not null,
   code varchar(20) not null,
-  comment varchar(100) null,
+  description varchar(100) null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP null
 );
 comment on column iam_role.id is 'ID';
 comment on column iam_role.name is '名称';
 comment on column iam_role.code is '编码';
-comment on column iam_role.comment is '备注';
+comment on column iam_role.description is '备注';
 comment on column iam_role.is_deleted is '是否删除';
 comment on column iam_role.create_time is '创建时间';
 comment on table iam_role is '角色';

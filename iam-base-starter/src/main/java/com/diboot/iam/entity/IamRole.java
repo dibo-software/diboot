@@ -36,6 +36,6 @@ public class IamRole extends BaseEntity {
 
     // 备注
     @TableField()
-    private String comment;
+    private String description;
 
 }
