@@ -1,10 +1,8 @@
 package com.diboot.iam.starter;
 
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.JSON;
 import com.diboot.core.vo.DictionaryVO;
-import com.diboot.iam.annotation.process.AnnotationExtractor;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
@@ -14,27 +12,20 @@ import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
- * IAM相关的初始化Listener
+ * IAM组件相关的初始化
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/23
  */
 @Component
-public class IamBaseInitListener implements ApplicationListener<ContextRefreshedEvent> {
+@Slf4j
+public class IamBaseInitializer{
 
-    @Autowired
-    private AnnotationExtractor annotationExtractor;
-    @Autowired
-    private IamBaseProperties iamBaseProperties;
-    @Autowired
-    private Environment environment;
     @Autowired
     private DictionaryService dictionaryService;
     @Autowired
@@ -43,39 +34,13 @@ public class IamBaseInitListener implements ApplicationListener<ContextRefreshed
     private IamUserService iamUserService;
     @Autowired
     private IamUserRoleService iamUserRoleService;
-
     @Autowired
     private IamAccountService iamAccountService;
-
-
-    // 验证SQL
-    private static final String VALIDATE_SQL = "SELECT id FROM ${SCHEMA}.iam_permission WHERE id=0";
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        // 初始化数据库表
-        initTableStructureAndData();
-        // 异步更新注解
-        annotationExtractor.updatePermissions();
-    }
-
-    /**
-     * 初始化表结构及数据
-     */
-    private void initTableStructureAndData(){
-        // 检查数据库字典是否已存在
-        if(iamBaseProperties.isInitSql() && SqlHandler.checkIsTableExists(VALIDATE_SQL) == false){
-            // 执行初始化SQL
-            SqlHandler.initBootstrapSql(this.getClass(), environment, "iam-base");
-            // 插入相关数据：Dict，Role等
-            insertInitData();
-        }
-    }
 
     /**
      * 插入初始化数据
      */
-    private void insertInitData(){
+    public void insertInitData(){
         // 插入iam-base所需的数据字典
         String[] DICT_INIT_DATA = {
             "{\"type\":\"AUTH_TYPE\", \"itemName\":\"登录认证方式\", \"description\":\"IAM用户登录认证方式\", \"children\":[{\"itemName\":\"用户名密码\", \"itemValue\":\"PWD\", \"sortId\":1},{\"itemName\":\"公众号\", \"itemValue\":\"WX_MP\", \"sortId\":2},{\"itemName\":\"企业微信\", \"itemValue\":\"WX_CP\", \"sortId\":3}]}",

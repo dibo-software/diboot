@@ -3,20 +3,25 @@ package com.diboot.iam.starter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import com.diboot.core.util.V;
+import com.diboot.iam.annotation.process.AnnotationExtractor;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
+import com.diboot.iam.service.impl.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -48,12 +54,28 @@ import java.util.Map;
 @EnableAsync
 @EnableConfigurationProperties({IamBaseProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
-@AutoConfigureAfter(value = ShiroProxyConfig.class)
-@Order(3)
+@MapperScan(basePackages={"com.diboot.iam.mapper"})
+@AutoConfigureAfter(value = {DictionaryServiceImpl.class,
+        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamUserRoleServiceImpl.class, IamAccountServiceImpl.class, IamPermissionServiceImpl.class,
+        IamBaseInitializer.class, AnnotationExtractor.class, ShiroProxyConfig.class})
+@Order(2)
 public class IamBaseAutoConfig implements WebMvcConfigurer {
 
     @Autowired
+    Environment environment;
+
+    @Autowired
     IamBaseProperties iamBaseProperties;
+
+    @Bean
+    @ConditionalOnMissingBean(IamBasePluginManager.class)
+    public IamBasePluginManager iamBasePluginManager(){
+        log.info("开始初始化IamBasePluginManager");
+        IamBasePluginManager pluginManager = new IamBasePluginManager();
+        pluginManager.initPlugin(iamBaseProperties);
+        log.info("IamBasePluginManager初始化完成");
+        return pluginManager;
+    }
 
     /**
      * 根据用户配置的缓存类初始化CacheManager，默认为Shiro内存缓存MemoryConstrainedCacheManager

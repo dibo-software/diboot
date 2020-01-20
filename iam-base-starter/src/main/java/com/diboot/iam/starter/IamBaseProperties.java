@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * 认证相关的配置参数
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @version v2.0
  * @date 2019/12/23
  */
-@Component
 @Getter @Setter
 @ConfigurationProperties(prefix = "diboot.iam")
 public class IamBaseProperties {

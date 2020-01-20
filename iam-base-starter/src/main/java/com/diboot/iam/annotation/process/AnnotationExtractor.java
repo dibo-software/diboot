@@ -6,7 +6,6 @@ import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.service.IamPermissionService;
-import com.diboot.iam.starter.IamBaseProperties;
 import com.diboot.iam.util.AnnotationUtils;
 import com.diboot.iam.vo.PermissionVO;
 import lombok.extern.slf4j.Slf4j;
@@ -34,16 +33,13 @@ public class AnnotationExtractor {
     @Autowired
     private IamPermissionService iamPermissionService;
 
-    @Autowired
-    private IamBaseProperties iamBaseProperties;
-
     /**
      * 更新permissions
      */
-    public void updatePermissions(){
+    public void updatePermissions(boolean isEnablePermissionUpdate){
         // 提取到的全部注解（必须先执行该初始化，确保url和permissionCode被加载）
-        List<PermissionVO> voListInCode = AnnotationExtractor.extractAllPermissions();
-        if(!iamBaseProperties.isEnablePermissionUpdate()){
+        List<PermissionVO> voListInCode = extractAllPermissions();
+        if(!isEnablePermissionUpdate){
             return;
         }
         log.info("diboot-iam 开始异步更新权限 ...");
