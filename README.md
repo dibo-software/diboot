@@ -48,12 +48,8 @@ diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成�
 更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot-v2/tree/master/iam-base-starter "身份认证管理组件"). 
 > 其他组件逐步开发中 ...
 
-
 ## 四、技术交流群
-如果Diboot对您有用，欢迎您为Diboot的发展提供捐助。
-<p align="center">
-    <img src="https://www.diboot.com/donate.jpg" width = "500" alt="支持Diboot发展">
-</p>
+
 如果您有技术问题，欢迎加群交流：
 
 > QQ群: [731690096]() 
