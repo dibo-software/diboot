@@ -12,8 +12,8 @@ create table ${SCHEMA}.iam_user
    avatar_url varchar(200) null,
    status varchar(10) not null default 'A',
    extdata varchar(100) null,
-   is_deleted tinyint not null DEFAULT FALSE,
-   create_time timestamp not null default CURRENT_TIMESTAMP
+   is_deleted tinyint not null DEFAULT 0,
+   create_time datetime not null default CURRENT_TIMESTAMP,
    constraint PK_iam_user primary key (id)
 );
 -- 添加备注
@@ -49,7 +49,7 @@ create table ${SCHEMA}.iam_account
    status varchar(10) default 'A' not null,
    extdata varchar(100) null,
    is_deleted tinyint default 0 not null,
-   create_time timestamp default CURRENT_TIMESTAMP not null
+   create_time datetime default CURRENT_TIMESTAMP not null,
    constraint PK_iam_account primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'id';
@@ -75,7 +75,7 @@ create table ${SCHEMA}.iam_role
    code varchar(20) not null,
    description varchar(100) null,
    is_deleted tinyint default 0 not null,
-   create_time timestamp default CURRENT_TIMESTAMP null
+   create_time datetime default CURRENT_TIMESTAMP null,
    constraint PK_iam_role primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role, 'column', 'id';
@@ -94,7 +94,7 @@ create table ${SCHEMA}.iam_user_role
    user_id bigint not null,
    role_id int not null,
    is_deleted tinyint default 0 not null,
-   create_time timestamp default CURRENT_TIMESTAMP not null
+   create_time datetime default CURRENT_TIMESTAMP not null,
       constraint PK_iam_user_role primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_user_role, 'column', 'id';
@@ -121,8 +121,8 @@ create table ${SCHEMA}.iam_permission
    sort_id smallint default 999 not null,
    extdata varchar(100) null,
    is_deleted tinyint default 0 not null,
-   create_time timestamp default CURRENT_TIMESTAMP not null,
-   update_time timestamp null
+   create_time datetime default CURRENT_TIMESTAMP not null,
+   update_time datetime null,
    constraint PK_iam_permission primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_permission, 'column', 'id';
@@ -149,7 +149,7 @@ create table ${SCHEMA}.iam_role_permission
    role_id int not null ,
    permission_id int not null ,
    is_deleted tinyint default 0 not null ,
-   create_time timestamp default CURRENT_TIMESTAMP not null
+   create_time datetime default CURRENT_TIMESTAMP not null,
    constraint PK_iam_role_permission primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'id';
@@ -172,8 +172,8 @@ create table ${SCHEMA}.iam_login_trace
    ip_address varchar(50) null ,
    user_agent varchar(200) null ,
    extdata varchar(100) null ,
-   is_success tinyint default 0 not null ,
-   create_time timestamp default CURRENT_TIMESTAMP not null
+   is_success tinyint default 0 not null,
+   create_time datetime default CURRENT_TIMESTAMP not null,
    constraint PK_iam_login_trace primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'id';
