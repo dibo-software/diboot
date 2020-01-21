@@ -119,7 +119,7 @@ private Department department;
 ```
 * 通过中间表进行多表关联的级联关联 **（多表关联）** 绑定对应单个实体，示例如下：
 ```java
-@BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.is_deleted=0")
+@BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id")
 private Organization organization;
 ```
 

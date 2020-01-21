@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * 关系绑定Binder父类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/19
  */

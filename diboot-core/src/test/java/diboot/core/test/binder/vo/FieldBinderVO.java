@@ -9,7 +9,7 @@ import diboot.core.test.binder.entity.User;
 /**
  * <Description>
  *
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/06/22
  */
@@ -21,9 +21,9 @@ public class FieldBinderVO extends User{
     private String deptName;
 
     // 支持级联字段关联，相同条件的entity+condition将合并为一条SQL查询
-    @BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id AND department.is_deleted=0")
+    @BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id")
     private String orgName;
-    @BindField(entity = Organization.class, field="telphone", condition="this.department_id=department.id AND department.org_id=id AND department.is_deleted=0")
+    @BindField(entity = Organization.class, field="telphone", condition="this.department_id=department.id AND department.org_id=id")
     private String orgTelphone;
 
     // 绑定数据字典枚举

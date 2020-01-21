@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * 中间表
- * @author Mazhicheng<br>
+ * @author mazc@dibo.ltd<br>
  * @version 1.0<br>
  * @date 2019/04/01 <br>
  */

@@ -3,12 +3,14 @@ package com.diboot.core.util;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.vo.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.ReflectionUtils;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -19,10 +21,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Bean相关处理工具类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */
@@ -41,36 +46,14 @@ public class BeanUtils {
         add(Cons.FieldName.createTime.name());
     }};
 
-    /***
-     * 缓存BeanCopier
-     */
-    private static Map<String, BeanCopier> BEAN_COPIER_INST_MAP = new ConcurrentHashMap<>();
-
-    /***
-     * 获取实例
-     * @param source
-     * @param target
-     * @return
-     */
-    private static BeanCopier getBeanCopierInstance(Object source, Object target){
-        //build key
-        String beanCopierKey =  source.getClass().toString() +"_"+ target.getClass().toString();
-        BeanCopier copierInst =  BEAN_COPIER_INST_MAP.get(beanCopierKey);
-        if(copierInst == null){
-            copierInst = BeanCopier.create(source.getClass(), target.getClass(), false);
-            BEAN_COPIER_INST_MAP.put(beanCopierKey, copierInst);
-        }
-        return copierInst;
-    }
-
     /**
      * Copy属性到另一个对象
      * @param source
      * @param target
      */
     public static Object copyProperties(Object source, Object target){
-        BeanCopier copierInst =  getBeanCopierInstance(source, target);
-        copierInst.copy(source, target, null);
+        // 链式调用无法使用BeanCopier拷贝，换用BeanUtils
+        org.springframework.beans.BeanUtils.copyProperties(source, target);
         return target;
     }
 
@@ -242,7 +225,7 @@ public class BeanUtils {
      */
     public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, String... fields){
         if(allLists == null || allLists.isEmpty()){
-            return null;
+            return Collections.EMPTY_MAP;
         }
         Map<String, T> allListMap = new LinkedHashMap<>(allLists.size());
         // 转换为map
@@ -645,31 +628,61 @@ public class BeanUtils {
      * @return
      */
     public static Field extractField(Class clazz, String fieldName){
-        List<Field> allFields = extractAllFields(clazz);
-        if(V.notEmpty(allFields)){
-            for(Field field : allFields){
-                if(field.getName().equals(fieldName)){
-                    return field;
-                }
-            }
-        }
-        return null;
+        return ReflectionUtils.findField(clazz, fieldName);
     }
 
     /**
-     * 从宿主类定义中获取泛型定义类class
-     * @param hostClass
+     * 从实例中获取目标对象的泛型定义类class
+     * @param instance 对象实例
      * @param index
      * @return
      */
-    public static Class getGenericityClass(Class hostClass, int index){
+    public static Class getGenericityClass(Object instance, int index){
+        Class hostClass = (instance instanceof Class)? (Class)instance : AopUtils.getTargetClass(instance);
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
-        ResolvableType[] types = resolvableType.getSuperType().getGenerics();
+        ResolvableType[] types = resolvableType.getGenerics();
+        if(V.isEmpty(types) || index >= types.length){
+            types = resolvableType.getSuperType().getGenerics();
+        }
         if(V.notEmpty(types) && types.length > index){
             return types[index].resolve();
         }
         log.warn("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
         return null;
+    }
+
+    /**
+     * 转换keyValue集合为Map
+     * @param keyValueList
+     * @return
+     */
+    public static Map<String, Object> convertKeyValueList2Map(List<KeyValue> keyValueList) {
+        if(V.notEmpty(keyValueList)){
+            return keyValueList.stream().collect(Collectors.toMap(KeyValue::getK, KeyValue::getV));
+        }
+        return Collections.EMPTY_MAP;
+    }
+
+    /**
+     * 根据指定Key对list去重
+     * @param list
+     * @param getterFn
+     * @param <T>
+     * @return 去重后的list
+     */
+    public static <T> List<T> distinctByKey(List<T> list, Function<? super T, ?> getterFn){
+        return list.stream().filter(distinctPredicate(getterFn)).collect(Collectors.toList());
+    }
+
+    /**
+     * 去重的辅助方法
+     * @param getterFn
+     * @param <T>
+     * @return
+     */
+    private static <T> Predicate<T> distinctPredicate(Function<? super T, ?> getterFn) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(getterFn.apply(t));
     }
 
     /***

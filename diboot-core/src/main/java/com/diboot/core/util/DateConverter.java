@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * Spring表单自动绑定到Java属性时的日期格式转换
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */

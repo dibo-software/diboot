@@ -15,7 +15,7 @@ import java.util.*;
 
 /***
  * Controller的父类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */
@@ -140,7 +140,7 @@ public class BaseController {
 			String paramName = (String) paramNames.nextElement();
 			String[] values = request.getParameterValues(paramName);
 			if(V.notEmpty(values)){
-				if(values.length == 1){
+				if(values.length == 1 && V.notEmpty(values[0])){
 					result.put(paramName, values[0]);
 				}
 				else{

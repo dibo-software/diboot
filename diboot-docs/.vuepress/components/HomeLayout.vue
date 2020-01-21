@@ -56,7 +56,7 @@
         </div>
         <p class="copy-right">© 2015-2020 <a href="http://www.dibo.ltd">苏州帝博信息技术有限公司</a>
           <br>
-          <a class="ba-a" href="http://www.beian.miit.gov.cn/">
+          <a class="ba-a" href="http://www.beian.miit.gov.cn/" target="_blank">
             <u>
               苏ICP备15013001号
             </u>

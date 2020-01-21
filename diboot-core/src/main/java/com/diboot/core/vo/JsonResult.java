@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * JSON返回结果
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */
@@ -108,6 +108,39 @@ public class JsonResult implements Serializable {
         this.code = code;
         this.msg = label;
         this.data = data;
+    }
+
+    /**
+     * 设置status，如果msg为空则msg设置为status.label
+     * @param status
+     * @return
+     */
+    public JsonResult status(Status status){
+        this.code = status.code();
+        if(this.msg == null){
+            this.msg = status.label();
+        }
+        return this;
+    }
+
+    /**
+     * 设置返回数据
+     * @param data
+     * @return
+     */
+    public JsonResult data(Object data){
+        this.data = data;
+        return this;
+    }
+
+    /**
+     * 设置msg
+     * @param additionalMsg
+     * @return
+     */
+    public JsonResult msg(String additionalMsg){
+        initMsg(additionalMsg);
+        return this;
     }
 
     /***

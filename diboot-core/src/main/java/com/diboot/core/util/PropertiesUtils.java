@@ -1,17 +1,18 @@
 package com.diboot.core.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 /**
  * 配置文件工具类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */
+@Slf4j
 public class PropertiesUtils {
-    private static final Logger log = LoggerFactory.getLogger(PropertiesUtils.class);
 
     /**
      * Spring配置环境变量
@@ -27,6 +28,10 @@ public class PropertiesUtils {
         // 获取配置值
         if(environment == null){
             environment = ContextHelper.getApplicationContext().getEnvironment();
+        }
+        if(environment == null){
+            log.warn("无法获取上下文Environment !");
+            return null;
         }
         String value = environment.getProperty(key);
         // 任何password相关的参数需解密

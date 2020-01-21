@@ -2,7 +2,7 @@ package com.diboot.core.config;
 
 /**
  * 基础常量定义
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */
