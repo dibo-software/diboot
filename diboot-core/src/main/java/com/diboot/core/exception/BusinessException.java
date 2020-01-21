@@ -76,4 +76,11 @@ public class BusinessException extends RuntimeException {
         return map;
     }
 
+    /**
+     * 获取status，以便复用
+     * @return
+     */
+    public Status getStatus(){
+        return this.status;
+    }
 }

@@ -19,11 +19,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 数据字典相关service实现
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */
@@ -43,7 +45,8 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
         Wrapper queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue)
                 .eq(Dictionary::getType, type)
-                .gt(Dictionary::getParentId, 0);
+                .gt(Dictionary::getParentId, 0)
+                .orderByAsc(Dictionary::getSortId);
         // 返回构建条件
         return getKeyValueList(queryDictionary);
     }
@@ -78,9 +81,13 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean addDictTree(DictionaryVO dictVO) {
-        //将DictionaryVO转化为Dictionary
-        Dictionary dictionary = new Dictionary();
-        dictionary = (Dictionary) BeanUtils.copyProperties(dictVO, dictionary);
+        return createDictAndChildren(dictVO);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean createDictAndChildren(DictionaryVO dictVO) {
+        Dictionary dictionary = (Dictionary)dictVO;
         if(!super.createEntity(dictionary)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
             return false;
@@ -92,7 +99,7 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 dict.setParentId(dictionary.getId());
                 dict.setType(dictionary.getType());
                 boolean insertOK = super.createEntity(dict);
-                if (!insertOK){
+                if(!insertOK){
                     log.warn("dictionary插入数据字典失败，请检查！");
                     success = false;
                 }
@@ -103,6 +110,63 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 throw new BusinessException(Status.FAIL_OPERATION, errorMsg);
             }
         }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateDictAndChildren(DictionaryVO dictVO) {
+        //将DictionaryVO转化为Dictionary
+        Dictionary dictionary = (Dictionary)dictVO;
+        if(!super.updateEntity(dictionary)){
+            log.warn("更新数据字典定义失败，type="+dictVO.getType());
+            return false;
+        }
+        //获取原 子数据字典list
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper();
+        queryWrapper.lambda().eq(Dictionary::getParentId, dictVO.getId());
+        List<Dictionary> oldDictList = super.getEntityList(queryWrapper);
+        List<Dictionary> newDictList = dictVO.getChildren();
+        Set<Long> dictItemIds = new HashSet<>();
+        if(V.notEmpty(newDictList)){
+            for(Dictionary dict : newDictList){
+                dict.setType(dictVO.getType()).setParentId(dictVO.getId());
+                if(V.notEmpty(dict.getId())){
+                    dictItemIds.add(dict.getId());
+                    if(!super.updateEntity(dict)){
+                        log.warn("更新字典子项失败，itemName=" + dict.getItemName());
+                        throw new BusinessException(Status.FAIL_EXCEPTION, "更新字典子项异常");
+                    }
+                }
+                else{
+                    if(!super.createEntity(dict)){
+                        log.warn("新建字典子项失败，itemName=" + dict.getItemName());
+                        throw new BusinessException(Status.FAIL_EXCEPTION, "新建字典子项异常");
+                    }
+                }
+            }
+        }
+        if(V.notEmpty(oldDictList)){
+            for(Dictionary dict : oldDictList){
+                if(!dictItemIds.contains(dict.getId())){
+                    if(!super.deleteEntity(dict.getId())){
+                        log.warn("删除子数据字典失败，itemName="+dict.getItemName());
+                        throw new RuntimeException();
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean deleteDictAndChildren(Long id) {
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper();
+        queryWrapper.lambda()
+                .eq(Dictionary::getId, id)
+                .or()
+                .eq(Dictionary::getParentId, id);
+        deleteEntities(queryWrapper);
         return true;
     }
 }

@@ -1,13 +1,10 @@
 package diboot.core.test.binder.vo;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.entity.BaseEntity;
-import diboot.core.test.binder.entity.Department;
 
 /**
  * 定时任务
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/12/27
  */

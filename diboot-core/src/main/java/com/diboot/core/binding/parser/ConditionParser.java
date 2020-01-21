@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * 关联注解条件解析器
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/3/30
  */

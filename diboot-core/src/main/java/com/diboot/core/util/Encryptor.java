@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 加解密工具类 （提供AES加解密）
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */
@@ -24,10 +24,6 @@ public class Encryptor {
 	 */
 	private static final String KEY_ALGORITHM = "AES";
 	private static final String CIPHER_ALGORITHM = "AES/ECB/PKCS5PADDING";
-	/**
-	 * 默认加密seed（可通过配置文件）
-	 */
-	private static final String KEY_DEFAULT = V.notEmpty(BaseConfig.getProperty("diboot.encryptor.seed"))? BaseConfig.getProperty("diboot.encryptor.seed") : "DibootV2";
 
 	private static final String KEY_FILL = "abcdefghijklmnop";
 
@@ -48,7 +44,7 @@ public class Encryptor {
 	 * @throws Exception
 	 */
 	public static String encrypt(String input, String... key){
-		String seedKey = V.notEmpty(key)? key[0] : KEY_DEFAULT;
+		String seedKey = V.notEmpty(key)? key[0] : getDefaultKey();
 		try{
 			Cipher cipher = getEncryptor(seedKey);
 			byte[] enBytes = cipher.doFinal(input.getBytes());
@@ -71,7 +67,7 @@ public class Encryptor {
 		if(V.isEmpty(input)){
 			return input;
 		}
-		String seedKey = V.notEmpty(key)? key[0] : KEY_DEFAULT;
+		String seedKey = V.notEmpty(key)? key[0] : getDefaultKey();
 		try{
 			Cipher cipher = getDecryptor(seedKey);
 			byte[] deBytes = Base64.getDecoder().decode(input.getBytes());
@@ -128,7 +124,7 @@ public class Encryptor {
 	 */
 	private static byte[] getKey(String seed){
 		if(V.isEmpty(seed)){
-			seed = KEY_DEFAULT;
+			seed = getDefaultKey();
 		}
 		if(seed.length() < 16){
 			seed = seed + S.cut(KEY_FILL, 16-seed.length());
@@ -139,4 +135,11 @@ public class Encryptor {
 		return seed.getBytes();
 	}
 
+	/**
+	 * 默认加密seed（可通过配置文件）
+	 */
+	private static String getDefaultKey(){
+		String defaultKey = BaseConfig.getProperty("diboot.encryptor.seed");
+		return V.notEmpty(defaultKey)? defaultKey : "DibootV2";
+	}
 }

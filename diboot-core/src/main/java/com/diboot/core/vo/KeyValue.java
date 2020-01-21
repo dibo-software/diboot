@@ -1,13 +1,18 @@
 package com.diboot.core.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 
 /**
  * KeyValue键值对形式的VO（用于构建显示名Name-存储值Value形式的结果）
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/4
  */
+@Getter @Setter @Accessors(chain = true)
 public class KeyValue implements Serializable {
     private static final long serialVersionUID = -2358161241655186720L;
 
@@ -33,27 +38,4 @@ public class KeyValue implements Serializable {
      */
     private Object ext;
 
-    public String getK() {
-        return k;
-    }
-
-    public void setK(String k) {
-        this.k = k;
-    }
-
-    public Object getV() {
-        return v;
-    }
-
-    public void setV(Object v) {
-        this.v = v;
-    }
-
-    public Object getExt() {
-        return ext;
-    }
-
-    public void setExt(Object ext) {
-        this.ext = ext;
-    }
 }

@@ -1,6 +1,7 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -14,11 +15,18 @@ import java.util.Map;
 
 /**
  * 基础服务Service
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */
 public interface BaseService<T> {
+
+    /**
+     * 获取对应 entity 的 BaseMapper
+     *
+     * @return BaseMapper
+     */
+    BaseMapper<T> getMapper();
 
     /**
      * 获取Entity实体
@@ -93,6 +101,14 @@ public interface BaseService<T> {
     boolean deleteEntities(Wrapper queryWrapper);
 
     /**
+     * 批量删除指定id的实体
+     * @param entityIds
+     * @return
+     * @throws Exception
+     */
+    boolean deleteEntities(Collection<? extends Serializable> entityIds);
+
+    /**
      * 获取符合条件的entity记录总数
      * @return
      */
@@ -132,6 +148,20 @@ public interface BaseService<T> {
     List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount);
 
     /**
+     * 获取符合条件的一个Entity实体
+     * @param queryWrapper 主键
+     * @return entity
+     */
+    T getSingleEntity(Wrapper queryWrapper);
+
+    /**
+     * 是否存在符合条件的记录
+     * @param queryWrapper
+     * @return
+     */
+    boolean exists(Wrapper queryWrapper);
+
+    /**
      * 获取指定属性的Map列表
      * @param queryWrapper
      * @return
@@ -153,6 +183,14 @@ public interface BaseService<T> {
      * @return
      */
     List<KeyValue> getKeyValueList(Wrapper queryWrapper);
+
+    /***
+     * 获取键值对的Map
+     *
+     * @param queryWrapper
+     * @return
+     */
+    Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
 
     /**
      * 获取View Object对象

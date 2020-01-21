@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 数据字典Service
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version 2.0
  * @date 2019/01/01
  */
@@ -44,9 +44,32 @@ public interface DictionaryService extends BaseService<Dictionary>{
     void bindItemLabel(List voList, String setFieldName, String getFieldName, String type);
 
     /***
-     * 添加多层级数据字典
-     * @param dictionaryVO
+     * 添加多层级数据字典 (已废弃，请调用createDictAndChildren)
+     * @param dictVO
      * @return
      */
-    boolean addDictTree(DictionaryVO dictionaryVO);
+    @Deprecated
+    boolean addDictTree(DictionaryVO dictVO);
+
+    /**
+     * 添加字典定义及其子项
+     * @param dictVO
+     * @return
+     */
+    boolean createDictAndChildren(DictionaryVO dictVO);
+
+    /**
+     * 更新字典定义及其子项
+     * @param dictVO
+     * @return
+     */
+    boolean updateDictAndChildren(DictionaryVO dictVO);
+
+    /**
+     * 删除字典定义及其子项
+     * @param id
+     * @return
+     */
+    boolean deleteDictAndChildren(Long id);
+
 }

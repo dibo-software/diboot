@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 条件表达式的管理器
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/4/1
  */
@@ -251,7 +251,7 @@ public class ConditionManager {
                         middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
                     }
                 }
-                else{ // equals附加条件，暂只支持列在左侧，如 department.is_deleted=0
+                else{ // equals附加条件，暂只支持列在左侧，如 department.level=1
                     String leftExpression = express.getLeftExpression().toString();
                     if(leftExpression != null && leftExpression.startsWith(tableName+".")){
                         middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));

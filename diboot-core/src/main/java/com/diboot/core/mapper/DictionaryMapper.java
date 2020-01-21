@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 数据字典Mapper
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/12/22
  */

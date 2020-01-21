@@ -2,7 +2,7 @@ package com.diboot.core.binding.query;
 
 /**
  * 比较条件枚举类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/08/06
  */

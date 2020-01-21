@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * 附带extdata扩展字段的Entity父类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/12/27
  */
@@ -29,10 +29,11 @@ public abstract class BaseExtEntity extends BaseEntity {
         return JSON.toJSONString(this.extdataMap);
     }
 
-    public void setExtdata(String extdata) {
+    public BaseExtEntity setExtdata(String extdata) {
         if(V.notEmpty(extdata)){
             this.extdataMap = JSON.toLinkedHashMap(extdata);
         }
+        return this;
     }
 
     /***
@@ -52,14 +53,15 @@ public abstract class BaseExtEntity extends BaseEntity {
      * @param extAttrName
      * @param extAttrValue
      */
-    public void addIntoExt(String extAttrName, Object extAttrValue){
+    public BaseExtEntity addIntoExt(String extAttrName, Object extAttrValue){
         if(extAttrName == null && extAttrValue == null){
-            return;
+            return this;
         }
         if(this.extdataMap == null){
             this.extdataMap = new LinkedHashMap<>();
         }
         this.extdataMap.put(extAttrName, extAttrValue);
+        return this;
     }
 
 }

@@ -2,7 +2,7 @@ package com.diboot.core.plugin;
 
 /**
  * 插件管理器
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/10/23
  */

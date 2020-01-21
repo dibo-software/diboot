@@ -27,16 +27,15 @@ module.exports = {
                     ]
                 }
             ],
-            '/guide/diboot-shiro/': [
+            '/guide/diboot-iam/': [
                 {
-                    title: 'shiro 使用指南',
+                    title: 'IMA-base组件 使用指南',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/diboot-shiro/安装', '安装'],
-                        ['/guide/diboot-shiro/权限设置', '权限设置'],
-                        ['/guide/diboot-shiro/权限缓存', '权限缓存'],
-                        ['/guide/diboot-shiro/URL配置', 'URL配置'],
+                        ['/guide/diboot-iam/介绍', '介绍'],
+                        ['/guide/diboot-iam/开始使用', '开始使用'],
+                        ['/guide/diboot-iam/自定义扩展', '自定义扩展'],
                     ]
                 }
             ],
@@ -57,8 +56,11 @@ module.exports = {
         nav: [{
             text: '首页', link: '/index.html'
         }, {
-            text: 'core内核 指南',
-            link: '/guide/diboot-core/安装'
+            text: '基础组件 指南',
+            items: [
+                { text: 'core基础内核', link: '/guide/diboot-core/安装' },
+                { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' }
+            ]
         }, {
             text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'

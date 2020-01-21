@@ -10,7 +10,7 @@ import java.util.*;
 
 /***
  * Validator校验类
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  *

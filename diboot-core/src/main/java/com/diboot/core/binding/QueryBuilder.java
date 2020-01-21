@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -19,7 +18,7 @@ import java.util.List;
 
 /**
  * QueryWrapper构建器 - Entity，DTO -> 注解绑定查询条件 并转换为QueryWrapper对象
- * @author Mazhicheng
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/07/27
  */
@@ -85,7 +84,7 @@ public class QueryBuilder {
         List<Field> declaredFields = BeanUtils.extractAllFields(dto.getClass());
         for (Field field : declaredFields) {
             // 非指定属性，非逻辑删除字段，跳过
-            if(fields != null && !fields.contains(field.getName()) && !Cons.FieldName.deleted.name().equals(field.getName())){
+            if(fields != null && !fields.contains(field.getName())){
                 continue;
             }
             //忽略static，以及final，transient
