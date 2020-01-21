@@ -25,12 +25,12 @@ public class IamBasePluginManager implements PluginManager {
             Environment environment = ContextHelper.getApplicationContext().getEnvironment();
             SqlHandler.init(environment);
             if(SqlHandler.checkIsTableExists(VALIDATE_SQL) == false){
-                log.info("执行初始化SQL");
+                log.info("执行IAM SQL初始化 ...");
                 // 执行初始化SQL
                 SqlHandler.initBootstrapSql(this.getClass(), environment, "iam-base");
                 // 插入相关数据：Dict，Role等
                 ContextHelper.getBean(IamBaseInitializer.class).insertInitData();
-                log.info("初始化SQL执行完成");
+                log.info("IAM SQL初始化完成.");
             }
         }
         // 异步更新注解

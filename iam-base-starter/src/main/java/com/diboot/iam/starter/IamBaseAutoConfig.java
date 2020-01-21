@@ -70,10 +70,8 @@ public class IamBaseAutoConfig implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(IamBasePluginManager.class)
     public IamBasePluginManager iamBasePluginManager(){
-        log.info("开始初始化IamBasePluginManager");
         IamBasePluginManager pluginManager = new IamBasePluginManager();
         pluginManager.initPlugin(iamBaseProperties);
-        log.info("IamBasePluginManager初始化完成");
         return pluginManager;
     }
 

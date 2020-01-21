@@ -9,6 +9,7 @@ import com.diboot.iam.service.IamPermissionService;
 import com.diboot.iam.vo.PermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,21 +46,21 @@ public class IamPermissionServiceImpl extends BaseIamServiceImpl<IamPermissionMa
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updatePermissionAndChildren(PermissionVO oldPermission, PermissionVO newPermission) {
         // 全部新增
         if(oldPermission == null && newPermission != null){
             // 保存父节点
             IamPermission parent = (IamPermission)newPermission;
-            createEntity(parent);
+            super.createEntity(parent);
             // 保存子节点
             if(V.notEmpty(newPermission.getChildren())){
-                List<IamPermission> children = new ArrayList<>();
                 for(PermissionVO vo : newPermission.getChildren()){
                     IamPermission child = (IamPermission)vo;
                     child.setParentId(parent.getId());
-                    children.add(child);
+                    // 兼容多数据库，逐条插入
+                    createEntity(child);
                 }
-                createEntities(children);
             }
             return true;
         }
@@ -130,7 +131,9 @@ public class IamPermissionServiceImpl extends BaseIamServiceImpl<IamPermissionMa
                 }
             }// 新增
             else{
-                createEntities(newChildren);
+                for(PermissionVO newVo : newChildren){
+                    createEntity((IamPermission)newVo);
+                }
             }
         }
         // 需要删除的权限

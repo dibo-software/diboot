@@ -88,7 +88,7 @@ public class AnnotationExtractor {
      * 提取所有的权限定义
      * @return
      */
-    public static List<PermissionVO> extractAllPermissions(){
+    public List<PermissionVO> extractAllPermissions(){
         List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
         if(V.notEmpty(controllerList)) {
             List<PermissionVO> permissionList = new ArrayList<>();
