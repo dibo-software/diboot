@@ -3,14 +3,14 @@
         <img src="https://img.shields.io/hexpm/l/plug.svg">
     </a>
     <a href="https://mvnrepository.com/artifact/com.diboot" target="_blank">
-        <img src="https://img.shields.io/maven-central/v/com.diboot/diboot-core">
+        <img src="https://img.shields.io/maven-central/v/com.diboot/diboot-core-spring-boot-starter">
     </a>
 </p>
 
-# diboot  
+# diboot 
 >  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
-diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + IAM等基础功能组件。
+diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + IAM身份认证等基础功能组件。
 
 
 ## 一、 diboot-core: 精简优化内核
@@ -32,10 +32,10 @@ diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成�
 ## 二、 diboot-devtools 自动化开发助理
 
 #### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
-#### 2. 使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）
-#### 3. 功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）
+#### 2. 使用很简单（UI界面操作，引入依赖jar，配置参数后，即可随SpringBoot启动运行）
+#### 3. 功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL、维护索引）
 #### 4. 配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）
-#### 5. 代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
+#### 5. SQL与代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
 > [我要试试](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
 ## 三、iam-base 身份认证基础组件
