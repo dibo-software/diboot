@@ -37,6 +37,14 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
      */
     boolean createRolePermissionRelations(Long roleId, List<Long> permissionIdList);
 
+    /***
+     * 批量更新角色与权限集的关系
+     * @param roleId
+     * @param permissionIdList
+     * @return
+     */
+    boolean updateRolePermissionRelations(Long roleId, List<Long> permissionIdList);
+
     /**
      * 获取RoleService实例
      * @return
