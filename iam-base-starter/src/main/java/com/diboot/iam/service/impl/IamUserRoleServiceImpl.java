@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -94,12 +95,19 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public boolean createUserRoleRelations(String userType, Long userId, List<Long> roleIds) {
+        if(V.isEmpty(roleIds)){
+            return true;
+        }
         Long superAdminRoleId = getSuperAdminRoleId();
         // 给用户赋予了超级管理员，需确保当前用户为超级管理员权限
         if(superAdminRoleId != null && roleIds.contains(superAdminRoleId)){
             checkSuperAdminIdentity();
         }
-        return false;
+        List<IamUserRole> entityList = new ArrayList<>();
+        for(Long roleId : roleIds){
+            entityList.add(new IamUserRole(userType, userId, roleId));
+        }
+        return super.createEntities(entityList);
     }
 
     /**
