@@ -1,5 +1,6 @@
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.iam.entity.IamPermission;
 import com.diboot.iam.entity.IamRolePermission;
@@ -53,6 +54,23 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     @Transactional(rollbackFor = Exception.class)
     public boolean createRolePermissionRelations(Long roleId, List<Long> permissionIdList) {
         // 批量创建
+        List<IamRolePermission> rolePermissionList = new ArrayList<>();
+        for(Long permissionId : permissionIdList){
+            IamRolePermission rolePermission = new IamRolePermission(roleId, permissionId);
+            rolePermissionList.add(rolePermission);
+        }
+        return createEntities(rolePermissionList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateRolePermissionRelations(Long roleId, List<Long> permissionIdList) {
+        // 删除新列表中不存在的关联记录
+        this.deleteEntities(
+                Wrappers.<IamRolePermission>lambdaQuery()
+                        .eq(IamRolePermission::getRoleId, roleId)
+        );
+        // 批量新增
         List<IamRolePermission> rolePermissionList = new ArrayList<>();
         for(Long permissionId : permissionIdList){
             IamRolePermission rolePermission = new IamRolePermission(roleId, permissionId);
