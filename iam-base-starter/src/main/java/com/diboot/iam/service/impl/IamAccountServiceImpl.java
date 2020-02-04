@@ -1,14 +1,12 @@
 package com.diboot.iam.service.impl;
 
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.Encryptor;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.mapper.IamAccountMapper;
 import com.diboot.iam.service.IamAccountService;
+import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +26,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
     @Override
     public boolean createEntity(IamAccount iamAccount) {
         // 生成加密盐并加密
-        encryptSecret(iamAccount);
+        IamSecurityUtils.encryptPwd(iamAccount);
         // 保存
         try{
             return super.createEntity(iamAccount);
@@ -45,7 +43,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
         if(V.notEmpty(accountList)){
             accountList.stream().forEach(account->{
                 // 生成加密盐并加密
-                encryptSecret(account);
+                IamSecurityUtils.encryptPwd(account);
             });
         }
         // 保存
@@ -55,22 +53,6 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
         catch (Exception e){ // 重复账号创建会异常
             log.warn("保存账号异常: "+e.getMessage(), e);
             throw new BusinessException(Status.FAIL_VALIDATION, "账号中可能包含已存在账号，请检查！");
-        }
-    }
-
-    /**
-     * 加密账号密码
-     * @param iamAccount
-     */
-    private void encryptSecret(IamAccount iamAccount){
-        if(Cons.DICTCODE_AUTH_TYPE.PWD.name().equals(iamAccount.getAuthType())){
-            if(V.isEmpty(iamAccount.getSecretSalt())){
-                // 生成加密盐并加密
-                String salt = S.cut(S.newUuid(), 8);
-                iamAccount.setSecretSalt(salt);
-            }
-            String encryptedStr = Encryptor.encrypt(iamAccount.getAuthSecret(), iamAccount.getSecretSalt());
-            iamAccount.setAuthSecret(encryptedStr);
         }
     }
 }

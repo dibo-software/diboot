@@ -101,8 +101,10 @@ public class PwdAuthServiceImpl implements AuthService {
      */
     private static boolean isPasswordMatched(IamAccount account, BaseJwtAuthToken jwtToken){
         //加密后比较
-        String encryptedStr = Encryptor.encrypt(jwtToken.getAuthSecret(), account.getSecretSalt());
-        return encryptedStr.equals(account.getAuthSecret());
+        String encryptedStr = IamSecurityUtils.encryptPwd(jwtToken.getAuthSecret(), account.getSecretSalt());
+        // 暂时兼容RC2版本，后期移除
+        String oldEncryptedStr = Encryptor.encrypt(jwtToken.getAuthSecret(), account.getSecretSalt());
+        return encryptedStr.equals(account.getAuthSecret()) || oldEncryptedStr.equals(account.getAuthSecret());
     }
 
     /**
