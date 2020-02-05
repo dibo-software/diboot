@@ -1,6 +1,7 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamPermission;
 import com.diboot.iam.entity.IamRole;
 import lombok.Data;
@@ -20,5 +21,13 @@ public class IamRoleVO extends IamRole {
     // 字段关联：this.id=iam_role_permission.role_id AND iam_role_permission.permission_id=id
     @BindEntityList(entity = IamPermission.class, condition = "this.id=iam_role_permission.role_id AND iam_role_permission.permission_id=id AND iam_role_permission.is_deleted=0")
     private List<IamPermission> permissionList;
+
+    /***
+     * 是否为超级管理员
+     * @return
+     */
+    public boolean isSuperAdmin(){
+        return Cons.ROLE_SUPER_ADMIN.equals(getCode());
+    }
 
 }
