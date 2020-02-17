@@ -87,4 +87,4 @@ diboot.iam.enable-permission-update=true
 diboot.iam.cache-manager-class=org.apache.shiro.cache.MemoryConstrainedCacheManager
 ```
 
-## 7、样例参考 - [diboot-iam-example](https://github.com/dibo-software/diboot-v2-example/diboot-iam-example)
+## 7、样例参考 - [diboot-iam-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-iam-example)
