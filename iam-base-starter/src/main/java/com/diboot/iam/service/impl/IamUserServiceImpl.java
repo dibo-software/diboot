@@ -8,6 +8,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.dto.ChangePwdDTO;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.mapper.IamUserMapper;
