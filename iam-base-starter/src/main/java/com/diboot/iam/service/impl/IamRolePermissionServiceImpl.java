@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,17 +38,26 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     private IamRolePermissionMapper iamRolePermissionMapper;
 
     @Override
-    public List<PermissionVO> getPermissionsByRoleId(String application, Long roleId) {
+    public List<PermissionVO> getPermissionVOList(String application, Long roleId) {
         List<Long> roleIdList = new ArrayList<>();
         roleIdList.add(roleId);
-        return getPermissionsByRoleIds(application, roleIdList);
+        return getPermissionVOList(application, roleIdList);
     }
 
     @Override
-    public List<PermissionVO> getPermissionsByRoleIds(String application, List<Long> roleIds) {
-        List<IamPermission> list = iamRolePermissionMapper.getPermissionsByRoleIds(application, roleIds);
+    public List<PermissionVO> getPermissionVOList(String application, List<Long> roleIds) {
+        List<IamPermission> list = getPermissionList(application, roleIds);
         List<PermissionVO> voList = BeanUtils.convertList(list, PermissionVO.class);
         return BeanUtils.buildTree(voList);
+    }
+
+    @Override
+    public List<IamPermission> getPermissionList(String application, List<Long> roleIds) {
+        List<IamPermission> list = iamRolePermissionMapper.getPermissionsByRoleIds(application, roleIds);
+        if(list == null){
+            list = Collections.emptyList();
+        }
+        return list;
     }
 
     @Override

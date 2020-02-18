@@ -1,5 +1,6 @@
 package com.diboot.iam.service;
 
+import com.diboot.iam.entity.IamPermission;
 import com.diboot.iam.entity.IamRolePermission;
 import com.diboot.iam.vo.PermissionVO;
 
@@ -14,12 +15,20 @@ import java.util.List;
 public interface IamRolePermissionService extends BaseIamService<IamRolePermission> {
 
     /**
-     * 获取指定角色对应的权限集
+     * 获取指定角色对应的权限集（转换为树形结构VO）
      * @param application
      * @param roleId
      * @return
      */
-    List<PermissionVO> getPermissionsByRoleId(String application, Long roleId);
+    List<PermissionVO> getPermissionVOList(String application, Long roleId);
+
+    /**
+     * 获取指定角色集合对应的权限VO集合（转换为树形结构VO）
+     * @param application
+     * @param roleIds
+     * @return
+     */
+    List<PermissionVO> getPermissionVOList(String application, List<Long> roleIds);
 
     /**
      * 获取指定角色集合对应的权限集
@@ -27,7 +36,7 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
      * @param roleIds
      * @return
      */
-    List<PermissionVO> getPermissionsByRoleIds(String application, List<Long> roleIds);
+    List<IamPermission> getPermissionList(String application, List<Long> roleIds);
 
     /**
      * 批量创建角色与权限集的关系
