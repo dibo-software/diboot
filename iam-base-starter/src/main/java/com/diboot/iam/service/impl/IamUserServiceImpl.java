@@ -108,7 +108,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 .setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name())
                 .setStatus(userAccountDTO.getStatus());
         // 设置密码
-        IamSecurityUtils.encryptPwd(iamAccount);
+        if (V.notEmpty(iamAccount.getAuthSecret())){
+            IamSecurityUtils.encryptPwd(iamAccount);
+        }
         boolean accountSuccess = iamAccountService.createEntity(iamAccount);
 
         // 批量创建角色关联关系
