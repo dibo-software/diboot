@@ -28,7 +28,9 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
     @Override
     public boolean createEntity(IamAccount iamAccount) {
         // 生成加密盐并加密
-        IamSecurityUtils.encryptPwd(iamAccount);
+        if (V.notEmpty(iamAccount.getAuthSecret())){
+            IamSecurityUtils.encryptPwd(iamAccount);
+        }
         // 保存
         try{
             return super.createEntity(iamAccount);
