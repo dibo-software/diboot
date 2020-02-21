@@ -8,8 +8,8 @@ CREATE TABLE ${SCHEMA}.upload_file (
     file_type varchar(20),
     data_count int  not null DEFAULT 0,
     description varchar(100),
-    is_deleted BOOLEAN not null DEFAULT FALSE,
-    create_time  timestamp   not null default CURRENT_TIMESTAMP,
+    is_deleted tinyint not null DEFAULT 0,
+    create_time datetime not null default CURRENT_TIMESTAMP,
     constraint PK_upload_file primary key (uuid)
 );
 -- 添加备注,

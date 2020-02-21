@@ -1,5 +1,6 @@
 package com.diboot.component.file.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -41,12 +42,10 @@ public class UploadFile extends BaseEntity {
     private String fileName;
 
     @TableField
-    @NotNull(message = "文件路径不能为空！")
-    @Length(max = 200, message = "文件路径长度超出了最大限制！")
+    @JSONField(serialize = false)
     private String storagePath;
 
     @TableField
-    @Length(max = 20, message = "文件类型长度超出了最大限制！")
     private String fileType;
 
     /**

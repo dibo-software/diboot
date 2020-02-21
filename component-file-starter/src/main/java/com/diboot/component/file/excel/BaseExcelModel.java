@@ -1,5 +1,6 @@
 package com.diboot.component.file.excel;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
@@ -15,9 +16,11 @@ public class BaseExcelModel implements Serializable {
     /**
      * 验证错误
      */
+    @ExcelIgnore
     @JSONField(serialize = false)
     private String validateError;
 
+    @ExcelIgnore
     @JSONField(serialize = false)
     private int rowIndex;
 

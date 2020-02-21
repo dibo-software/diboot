@@ -69,7 +69,7 @@ public abstract class BaseFileController extends BaseController {
         String description = getString(request, "description");
         // 保存文件上传记录
         createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, description);
-        return new JsonResult(Status.OK);
+        return new JsonResult(Status.OK).data(fileUid);
     }
 
     /**

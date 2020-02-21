@@ -68,7 +68,7 @@ public class ExcelHelper {
      * @param dataList
      * @return
      */
-    public static boolean writeData(String filePath, String sheetName, List<List<String>> dataList) throws Exception{
+    public static boolean writeDynamicData(String filePath, String sheetName, List<List<String>> dataList) throws Exception{
         try {
             EasyExcel.write(filePath).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).sheet(sheetName).doWrite(dataList);
             return true;
@@ -87,10 +87,10 @@ public class ExcelHelper {
      * @param <T>
      * @return
      */
-    public static <T extends BaseExcelModel> boolean writeDate(String filePath, String sheetName, List<T> dataList) throws Exception{
+    public static <T extends BaseExcelModel> boolean writeData(String filePath, String sheetName, List<T> dataList) throws Exception{
         try {
             if(V.isEmpty(dataList)){
-                return writeData(filePath, sheetName, Collections.emptyList());
+                return writeDynamicData(filePath, sheetName, Collections.emptyList());
             }
             Class<T> tClass = (Class<T>) dataList.get(0).getClass();
             EasyExcel.write(filePath, tClass).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).sheet(sheetName).doWrite(dataList);

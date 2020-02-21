@@ -10,11 +10,12 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.HibernateValidator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import java.util.*;
 
 /***
  * excel数据导入导出listener基类
@@ -117,7 +118,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         // 校验数据是否合法
         if(V.notEmpty(dataList)){
             dataList.stream().forEach(data->{
-                String errMsg = V.validateBean(data);
+                String errMsg = validateBean(data);
                 if(V.notEmpty(errMsg)){
                     data.addValidateError(errMsg);
                 }
@@ -182,4 +183,24 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         return BeanUtils.getGenericityClass(this, 0);
     }
 
+    /**
+     * hibernate注解验证
+     */
+    private static Validator VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
+    /**
+     * 注解验证，下个版本调用core中V工具类
+     * @param obj
+     */
+    private static <E> String validateBean(E obj) {
+        // 校验
+        Set<ConstraintViolation<E>> errors = VALIDATOR.validate(obj);
+        if(errors == null || errors.size() == 0){
+            return null;
+        }
+        List<String> allErrors = new ArrayList<>(errors.size());
+        for(ConstraintViolation<E> err : errors){
+            allErrors.add(err.getMessage());
+        }
+        return S.join(allErrors);
+    }
 }
