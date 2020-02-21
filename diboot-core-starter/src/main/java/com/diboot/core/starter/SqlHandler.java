@@ -30,7 +30,7 @@ import java.util.Map;
  * @date 2019/08/01
  */
 public class SqlHandler {
-    private static final Logger logger = LoggerFactory.getLogger(SqlHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(SqlHandler.class);
 
     // 数据字典SQL
     private static final String DICTIONARY_SQL = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
@@ -78,7 +78,7 @@ public class SqlHandler {
         // 获取SqlSessionFactory实例
         SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
         if(sqlSessionFactory == null){
-            logger.warn("无法获取SqlSessionFactory实例，安装SQL将无法执行，请手动安装！");
+            log.warn("无法获取SqlSessionFactory实例，安装SQL将无法执行，请手动安装！");
             return false;
         }
         sqlStatement = buildPureSqlStatement(sqlStatement);
@@ -174,11 +174,11 @@ public class SqlHandler {
             try{
                 boolean success = SqlExecutor.executeUpdate(sqlStatement, null);
                 if(success){
-                    logger.info("初始化SQL执行完成: "+ S.substring(sqlStatement, 0, 60) + "...");
+                    log.info("初始化SQL执行完成: "+ S.substring(sqlStatement, 0, 60) + "...");
                 }
             }
             catch (Exception e){
-                logger.error("初始化SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
+                log.error("初始化SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
             }
         }
         return true;
@@ -196,10 +196,10 @@ public class SqlHandler {
             lines = IOUtils.readLines(is, "UTF-8");
         }
         catch (FileNotFoundException fe){
-            logger.warn("暂未发现数据库SQL: "+sqlPath + "， 请参考其他数据库定义DDL手动初始化。");
+            log.warn("暂未发现数据库SQL: "+sqlPath + "， 请参考其他数据库定义DDL手动初始化。");
         }
         catch (Exception e){
-            logger.warn("读取SQL文件异常: "+sqlPath, e);
+            log.warn("读取SQL文件异常: "+sqlPath, e);
         }
         return lines;
     }
@@ -326,7 +326,7 @@ public class SqlHandler {
             }
         }
         catch(Exception e){
-            logger.error("获取SqlServer默认Schema异常: {}", e.getMessage());
+            log.error("获取SqlServer默认Schema异常: {}", e.getMessage());
         }
         return null;
     }

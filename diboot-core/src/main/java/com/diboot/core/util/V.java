@@ -1,10 +1,14 @@
 package com.diboot.core.util;
 
+import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -17,6 +21,10 @@ import java.util.*;
  */
 public class V {
 	private static final Logger log = LoggerFactory.getLogger(V.class);
+	/**
+	 * hibernate注解验证
+	 */
+	private static Validator VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
 
 	/***
 	 * 对象是否为空
@@ -234,6 +242,7 @@ public class V {
 	 * @param validation
 	 * @return
 	 */
+	@Deprecated
     public static String validate(String value, String validation){
     	if(isEmpty(validation)){
     		return null;
@@ -400,6 +409,25 @@ public class V {
 		List<String> allErrors = new ArrayList<>(errors.size());
 		for(ObjectError error : errors){
 			allErrors.add(error.getDefaultMessage().replaceAll("\"", "'"));
+		}
+		return S.join(allErrors);
+	}
+
+	/**
+	 * 功能描述: <br>
+	 * 〈注解验证参数〉
+	 *
+	 * @param obj
+	 */
+	public static <T> String validateBean(T obj) {
+		// 校验
+		Set<ConstraintViolation<T>> errors = VALIDATOR.validate(obj);
+		if(errors == null || errors.size() == 0){
+			return null;
+		}
+		List<String> allErrors = new ArrayList<>(errors.size());
+		for(ConstraintViolation<T> err : errors){
+			allErrors.add(err.getMessage());
 		}
 		return S.join(allErrors);
 	}

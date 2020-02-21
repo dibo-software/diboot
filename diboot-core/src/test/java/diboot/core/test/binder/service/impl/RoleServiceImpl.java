@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
  * 员工相关Service
  * @author mazc@dibo.ltd
  * @version 2018/12/23
- * Copyright © www.dibo.ltd
  */
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
