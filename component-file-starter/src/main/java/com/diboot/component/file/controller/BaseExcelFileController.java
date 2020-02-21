@@ -1,5 +1,6 @@
 package com.diboot.component.file.controller;
 
+import com.diboot.component.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.component.file.excel.listener.FixedHeadExcelListener;
 import com.diboot.component.file.util.ExcelHelper;
 import com.diboot.component.file.util.FileHelper;
@@ -93,18 +94,26 @@ public abstract class BaseExcelFileController extends BaseFileController {
         String newFileName = S.newUuid() + "." + ext;
         String fullPath = FileHelper.saveFile(file, newFileName);
         // 预览
-        FixedHeadExcelListener listener = getExcelDataListener();
-        List dataList = null;
+        DynamicHeadExcelListener listener = new DynamicHeadExcelListener() {
+            @Override
+            protected void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList) {
+            }
+        };
         try {
-            dataList = ExcelHelper.previewRead(fullPath, listener);
+            ExcelHelper.readDynamicHeadExcel(fullPath, listener);
         }
         catch (Exception e) {
             log.warn("解析并校验excel文件失败", e);
-            throw new Exception(e.getMessage().replaceAll("; ", "<br/>"));
+            if(V.notEmpty(e.getMessage())){
+                throw new Exception(e.getMessage().replaceAll("; ", "<br/>"));
+            }
+            throw e;
         }
         // 绑定属性到model
-        dataMap.put("header", listener.getHeadList());
+        dataMap.put("header", listener.getHeadMap());
+        dataMap.put("originFileName", fileName);
         dataMap.put(PREVIEW_FILE_NAME, newFileName);
+        List dataList = listener.getDataList();
         if(V.notEmpty(dataList) && dataList.size() > BaseConfig.getPageSize()){
             dataList = dataList.subList(0, BaseConfig.getPageSize());
         }
@@ -124,7 +133,10 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         catch(Exception e){
             log.warn("上传数据错误: "+ e.getMessage(), e);
-            throw new Exception(e.getMessage().replaceAll("; ", "<br/>"));
+            if(V.notEmpty(e.getMessage())){
+                throw new Exception(e.getMessage().replaceAll("; ", "<br/>"));
+            }
+            throw e;
         }
         return listener.getDataList().size();
     }

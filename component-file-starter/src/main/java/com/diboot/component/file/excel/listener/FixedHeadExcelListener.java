@@ -153,20 +153,6 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     }
 
     /**
-     * 返回按顺序的string表头
-     * @return
-     */
-    public List<String> getHeadList(){
-        Integer[] indexArray = (Integer[]) this.headMap.keySet().toArray();
-        Arrays.sort(indexArray);
-        List<String> headList = new ArrayList<>(indexArray.length);
-        for(Integer idx : indexArray){
-            headList.add(this.headMap.get(idx));
-        }
-        return headList;
-    }
-
-    /**
      * 返回数据
      * @return
      */

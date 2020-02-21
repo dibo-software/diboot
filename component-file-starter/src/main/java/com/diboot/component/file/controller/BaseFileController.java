@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Excel导入基类Controller
@@ -69,7 +71,9 @@ public abstract class BaseFileController extends BaseController {
         String description = getString(request, "description");
         // 保存文件上传记录
         createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, description);
-        return new JsonResult(Status.OK).data(fileUid);
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("uuid", fileUid);
+        return new JsonResult(Status.OK).data(dataMap);
     }
 
     /**
