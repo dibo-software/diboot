@@ -414,8 +414,7 @@ public class V {
 	}
 
 	/**
-	 * 功能描述:
-	 * 〈注解验证参数〉
+	 * 基于Bean中的validator注解校验
 	 * @param obj
 	 */
 	public static <T> String validateBean(T obj) {

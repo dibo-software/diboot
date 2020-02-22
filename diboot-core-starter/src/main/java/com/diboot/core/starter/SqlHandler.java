@@ -2,23 +2,16 @@ package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
 import org.apache.commons.io.IOUtils;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,24 +68,8 @@ public class SqlHandler {
      * @return
      */
     public static boolean checkIsTableExists(String sqlStatement){
-        // 获取SqlSessionFactory实例
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
-        if(sqlSessionFactory == null){
-            log.warn("无法获取SqlSessionFactory实例，安装SQL将无法执行，请手动安装！");
-            return false;
-        }
         sqlStatement = buildPureSqlStatement(sqlStatement);
-        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sqlStatement)){
-            ResultSet rs = stmt.executeQuery();
-            ResultSetMetaData meta = rs.getMetaData();
-            if(meta.getColumnCount() > 0){
-                rs.close();
-            }
-            return true;
-        }
-        catch(Exception e){
-            return false;
-        }
+        return SqlExecutor.validateQuery(sqlStatement);
     }
 
     /***
