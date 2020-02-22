@@ -23,5 +23,5 @@ public @interface BindDict {
      * 数据字典项取值字段
      * @return
      */
-    String field();
+    String field() default "";
 }

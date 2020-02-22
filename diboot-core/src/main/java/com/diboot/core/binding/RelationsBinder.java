@@ -17,6 +17,7 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +105,11 @@ public class RelationsBinder {
         DictionaryService dictionaryService = (DictionaryService) ContextHelper.getBean(DictionaryService.class);
         if(dictionaryService != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
-            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), annotation.field(), annotation.type());
+            String dictValueField = annotation.field();
+            if(V.isEmpty(dictValueField)){
+                dictValueField = S.replace(fieldAnno.getFieldName(), "Label", "");
+            }
+            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
         }
     }
 
