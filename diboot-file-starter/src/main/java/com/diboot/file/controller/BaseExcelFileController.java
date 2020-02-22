@@ -105,7 +105,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         catch (Exception e) {
             log.warn("解析并校验excel文件失败", e);
             if(V.notEmpty(e.getMessage())){
-                throw new Exception(e.getMessage().replaceAll("; ", "<br/>"));
+                throw new Exception(e.getMessage()); //.replaceAll("; ", "<br/>")
             }
             throw e;
         }
@@ -134,7 +134,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         catch(Exception e){
             log.warn("上传数据错误: "+ e.getMessage(), e);
             if(V.notEmpty(e.getMessage())){
-                throw new Exception(e.getMessage().replaceAll("; ", "<br/>"));
+                throw new Exception(e.getMessage());
             }
             throw e;
         }

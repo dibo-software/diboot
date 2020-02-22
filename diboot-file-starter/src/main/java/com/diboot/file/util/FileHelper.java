@@ -77,24 +77,6 @@ public class FileHelper{
 	}
 
 	/***
-	 * 将文件保存到系统临时目录
-	 * @param file
-	 * @param fileName
-	 * @return
-	 */
-	public static String saveFile2TempDir(MultipartFile file, String fileName){
-		String fullPath = getSystemTempDir() + fileName;
-		try {
-			FileUtils.writeByteArrayToFile(new File(fullPath), file.getBytes());
-			return fileName;
-		}
-		catch (IOException e1) {
-			log.error("保存原图片失败(image=" + fileName + "): ", e1);
-			return null;
-		}
-	}
-	
-	/***
 	 * 上传文件
 	 * @param file 上传文件
 	 * @param fileName 文件名
