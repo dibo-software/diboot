@@ -22,11 +22,6 @@ import java.util.*;
 public class BaseController {
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
-	/**
-	 * ID参数名
-	 */
-	protected static final String PARAM_ID = Cons.FieldName.id.name();
-
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)

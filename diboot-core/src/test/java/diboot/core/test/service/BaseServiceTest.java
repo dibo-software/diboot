@@ -88,7 +88,7 @@ public class BaseServiceTest {
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
         dictionaryService.createEntity(dictionary);
-
+        Assert.assertTrue(dictionary.getPrimaryKey() != null);
         // 查询是否创建成功
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dictionary::getType, TYPE);
@@ -159,5 +159,65 @@ public class BaseServiceTest {
         Assert.assertTrue(V.notEmpty(pagingJsonResult));
         Assert.assertTrue(pagingJsonResult.getPage().getOrderBy().equals("id:DESC"));
     }
+
+    /**
+     * 测试1-多的批量新建/更新/删除操作
+     */
+    @Test
+    @Transactional
+    public void testCreateUpdateDeleteEntityAndRelatedEntities(){
+        // 创建
+        String TYPE = "ID_TYPE";
+        // 定义
+        Dictionary dictionary = new Dictionary();
+        dictionary.setType(TYPE);
+        dictionary.setItemName("证件类型");
+        dictionary.setParentId(0L);
+        // 子项
+        List<Dictionary> dictionaryList = new ArrayList<>();
+        String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
+        for(int i=0; i<itemNames.length; i++){
+            Dictionary dict = new Dictionary();
+            dict.setType(TYPE);
+            dict.setItemName(itemNames[i]);
+            dict.setItemValue(itemValues[i]);
+            dict.setParentId(dictionary.getId());
+            dictionaryList.add(dict);
+        }
+        boolean success = dictionaryService.createEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
+        Assert.assertTrue(success);
+
+        dictionary.setItemName(dictionary.getItemName()+"_2");
+        dictionaryList.remove(1);
+
+        Dictionary dict = new Dictionary();
+        dict.setType(TYPE);
+        dict.setItemName("港澳通行证");
+        dict.setItemValue("GATXZ");
+        dictionaryList.add(dict);
+        success = dictionaryService.updateEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
+        Assert.assertTrue(success);
+
+        // 查询是否创建成功
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dictionary::getType, TYPE).ne(Dictionary::getParentId, 0);
+
+        List<Dictionary> dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(V.notEmpty(dictionaryList2));
+        List<String> itemNames2 = BeanUtils.collectToList(dictionaryList2, Dictionary::getItemName);
+        Assert.assertTrue(itemNames2.contains("港澳通行证"));
+
+        //success = dictionaryService.updateEntityAndRelatedEntities(dictionary, null, Dictionary::setParentId);
+        //Assert.assertTrue(success);
+        //dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
+        //Assert.assertTrue(V.isEmpty(dictionaryList2));
+
+        success = dictionaryService.deleteEntityAndRelatedEntities(dictionary.getId(), Dictionary.class, Dictionary::setParentId);
+        Assert.assertTrue(success);
+        dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(V.isEmpty(dictionaryList2));
+
+    }
+
 
 }

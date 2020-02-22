@@ -23,6 +23,30 @@ import java.util.Map;
 public class SqlExecutor {
     private static final Logger log = LoggerFactory.getLogger(SqlExecutor.class);
 
+    /**
+     * 检查SQL是否可以正常执行
+     * @param sqlStatement
+     * @return
+     */
+    public static boolean validateQuery(String sqlStatement){
+        // 获取SqlSessionFactory实例
+        SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
+        if(sqlSessionFactory == null){
+            log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
+            return false;
+        }
+        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sqlStatement)){
+            ResultSet rs = stmt.executeQuery();
+            rs.close();
+            log.trace("执行验证SQL:{} 成功", sqlStatement);
+            return true;
+        }
+        catch(Exception e){
+            log.trace("执行验证SQL:{} 失败:{}", sqlStatement, e.getMessage());
+            return false;
+        }
+    }
+
     /***
      * 执行Select语句，如: SELECT user_id,role_id FROM user_role WHERE user_id IN (?,?,?,?)
      * 查询结果如: [{"user_id":1001,"role_id":101},{"user_id":1001,"role_id":102},{"user_id":1003,"role_id":102},{"user_id":1003,"role_id":103}]
@@ -34,7 +58,7 @@ public class SqlExecutor {
             return null;
         }
         // 获取SqlSessionFactory实例
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
+        SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
         if(sqlSessionFactory == null){
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return null;
@@ -145,7 +169,7 @@ public class SqlExecutor {
             return false;
         }
         // 获取SqlSessionFactory实例
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
+        SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
         if (sqlSessionFactory == null){
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return false;

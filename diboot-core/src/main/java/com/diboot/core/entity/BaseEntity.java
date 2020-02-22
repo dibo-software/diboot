@@ -2,6 +2,9 @@ package com.diboot.core.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
+import com.diboot.core.config.Cons;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +53,19 @@ public abstract class BaseEntity implements Serializable {
     public Map<String, Object> toMap(){
         String jsonStr = JSON.stringify(this);
         return JSON.toMap(jsonStr);
+    }
+
+    /**
+     * 获取主键值
+     * @return
+     */
+    @JSONField(serialize = false)
+    public Object getPrimaryKey(){
+        String pk = ContextHelper.getPrimaryKey(this.getClass());
+        if(Cons.FieldName.id.name().equals(pk)){
+            return getId();
+        }
+        return BeanUtils.getProperty(this, pk);
     }
 
     /**

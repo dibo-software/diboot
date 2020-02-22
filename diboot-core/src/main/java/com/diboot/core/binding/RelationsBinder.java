@@ -10,7 +10,7 @@ import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
-import com.diboot.core.binding.parser.BindAnnotationGroupCache;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.entity.Dictionary;
@@ -64,7 +64,7 @@ public class RelationsBinder {
         }
         // 获取VO类
         Class voClass = voList.get(0).getClass();
-        BindAnnotationGroup bindAnnotationGroup = BindAnnotationGroupCache.getBindAnnotationGroup(voClass);
+        BindAnnotationGroup bindAnnotationGroup = ParserCache.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isNotEmpty()){
             // 绑定数据字典
             List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();

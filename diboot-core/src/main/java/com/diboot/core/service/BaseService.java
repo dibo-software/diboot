@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 
@@ -50,6 +52,15 @@ public interface BaseService<T> {
     boolean createEntities(Collection<T> entityList);
 
     /**
+     * 添加entity 及 其关联子项entities
+     * @param entity 主表entity
+     * @param relatedEntities 关联表entities
+     * @param relatedEntitySetter 关联Entity类的setter
+     * @return
+     */
+    <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+
+    /**
      * 更新Entity实体
      * @param entity
      * @return
@@ -84,6 +95,24 @@ public interface BaseService<T> {
      * @return
      */
     boolean createOrUpdateEntities(Collection entityList);
+
+    /**
+     * 添加entity 及 其关联子项entities
+     * @param entity 主表entity
+     * @param relatedEntities 关联表entities
+     * @param relatedEntitySetter 关联Entity类的setter
+     * @return
+     */
+    <RE,R> boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+
+    /**
+     * 删除entity 及 其关联子项entities
+     * @param id 待删除entity的主键
+     * @param relatedEntityClass 待删除关联Entity类
+     * @param  relatedEntitySetter 待删除类的setter方法
+     * @return
+     */
+    <RE,R> boolean deleteEntityAndRelatedEntities(Serializable id, Class<RE> relatedEntityClass, ISetter<RE, R> relatedEntitySetter);
 
     /**
      * 根据主键删除实体

@@ -92,4 +92,16 @@ public class BaseConfig {
 	public static int getBatchSize() {
 		return 1000;
 	}
+
+	private static String ACTIVE_FLAG_VALUE = null;
+	/**
+	 * 获取有效记录的标记值，如 0
+	 * @return
+	 */
+	public static String getActiveFlagValue(){
+		if(ACTIVE_FLAG_VALUE == null){
+			ACTIVE_FLAG_VALUE = getProperty("mybatis-plus.global-config.db-config.logic-not-delete-value", "0");
+		}
+		return ACTIVE_FLAG_VALUE;
+	}
 }

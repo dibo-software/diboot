@@ -130,7 +130,7 @@ public class Encryptor {
 			seed = seed + S.cut(KEY_FILL, 16-seed.length());
 		}
 		else if(seed.length() > 16){
-			seed = S.cut(KEY_FILL, 16);
+			seed = S.cut(seed, 16);
 		}
 		return seed.getBytes();
 	}

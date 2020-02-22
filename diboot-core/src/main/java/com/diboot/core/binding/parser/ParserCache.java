@@ -1,6 +1,7 @@
 package com.diboot.core.binding.parser;
 
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
 
 import java.lang.annotation.Annotation;
@@ -14,14 +15,18 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *  VO对象中的绑定注解 缓存管理类
  * @author mazc@dibo.ltd<br>
- * @version 1.0<br>
+ * @version 2.0<br>
  * @date 2019/04/03 <br>
  */
-public class BindAnnotationGroupCache {
+public class ParserCache {
     /**
      * VO类-绑定注解缓存
      */
     private static Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
+    /**
+     * 中间表是否包含is_deleted列 缓存
+     */
+    private static Map<String, Boolean> middleTableHasDeletedCacheMap = new ConcurrentHashMap<>();
 
     /**
      * 获取指定class对应的Bind相关注解
@@ -62,4 +67,16 @@ public class BindAnnotationGroupCache {
         return group;
     }
 
+    /**
+     * 是否有is_deleted列
+     * @return
+     */
+    public static boolean hasDeletedColumn(String middleTable){
+        if(middleTableHasDeletedCacheMap.containsKey(middleTable)){
+            return middleTableHasDeletedCacheMap.get(middleTable);
+        }
+        boolean hasColumn = SqlExecutor.validateQuery("SELECT is_deleted FROM "+middleTable);
+        middleTableHasDeletedCacheMap.put(middleTable, hasColumn);
+        return hasColumn;
+    }
 }
