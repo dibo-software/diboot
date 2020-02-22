@@ -8,10 +8,10 @@ import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.entity.IamPermission;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
+import com.diboot.iam.vo.PermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -119,13 +119,15 @@ public class BaseJwtRealm extends AuthorizingRealm {
         });
         // 整理所有权限许可列表
         Set<String> allPermissionCodes = new HashSet<>();
-        List<IamPermission> permissionList = iamRolePermissionService.getPermissionList(Cons.APPLICATION, roleIds);
+        List<PermissionVO> permissionList = iamRolePermissionService.getPermissionVOList(Cons.APPLICATION, roleIds);
         if(V.notEmpty(permissionList)){
             permissionList.stream().forEach(p->{
-                if(V.notEmpty(p.getOperationCode())){
-                    allPermissionCodes.add(p.getOperationCode());
+                if(p.getChildren() != null){
+                    p.getChildren().stream().forEach(c->{
+                        allPermissionCodes.add(c.getOperationCode());
+                    });
                 }
-                else if(V.equals(p.getParentId(), 0L) && V.notEmpty(p.getCode())){
+                else{
                     allPermissionCodes.add(p.getCode());
                 }
             });
