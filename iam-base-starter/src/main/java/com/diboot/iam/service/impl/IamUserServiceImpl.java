@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 系统用户相关Service实现
@@ -55,9 +56,11 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         attachExtraPermissions(roleVOList);
         // 对RoleList做聚合处理，以适配前端
         List<String> nameList = new ArrayList<>();
+        List<String> codeList = new ArrayList<>();
         List<IamPermission> allPermissionList = new ArrayList<>();
         roleVOList.forEach(vo -> {
             nameList.add(vo.getName());
+            codeList.add(vo.getCode());
             if (V.notEmpty(vo.getPermissionList())){
                 allPermissionList.addAll(vo.getPermissionList());
             }
@@ -66,6 +69,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         List permissionList = BeanUtils.distinctByKey(allPermissionList, IamPermission::getId);
         IamRoleVO roleVO = new IamRoleVO();
         roleVO.setName(S.join(nameList));
+        roleVO.setCode(S.join(codeList));
         roleVO.setPermissionList(permissionList);
 
         return roleVO;

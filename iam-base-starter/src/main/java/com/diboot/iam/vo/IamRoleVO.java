@@ -1,6 +1,7 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamPermission;
 import com.diboot.iam.entity.IamRole;
@@ -27,7 +28,10 @@ public class IamRoleVO extends IamRole {
      * @return
      */
     public boolean isSuperAdmin(){
-        return Cons.ROLE_SUPER_ADMIN.equals(getCode());
+        if (V.isEmpty(getCode())){
+            return false;
+        }
+        return getCode().contains(Cons.ROLE_SUPER_ADMIN + ",") || getCode().contains("," + Cons.ROLE_SUPER_ADMIN) || Cons.ROLE_SUPER_ADMIN.equals(getCode());
     }
 
 }
