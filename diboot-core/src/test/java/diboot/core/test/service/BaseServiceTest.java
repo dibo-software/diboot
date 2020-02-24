@@ -9,9 +9,7 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.KeyValue;
-import com.diboot.core.vo.Pagination;
-import com.diboot.core.vo.PagingJsonResult;
+import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -24,10 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  BaseService接口实现测试 (需先执行example中的初始化SQL)
@@ -219,5 +214,19 @@ public class BaseServiceTest {
 
     }
 
+    @Test
+    public void testJsonResult(){
+        Map map = new HashMap();
+        map.put("k", "123");
+        JsonResult jsonResult = new JsonResult(Status.OK, map);
+        JsonResult jsonResult2 = JsonResult.OK(map);
+        Assert.assertEquals(jsonResult.getData(), jsonResult2.getData());
+
+        String msg = "参数name不匹配";
+        jsonResult = new JsonResult(Status.FAIL_VALIDATION, msg);
+        jsonResult2 = JsonResult.FAIL_VALIDATION(msg);
+        Assert.assertTrue(jsonResult.getMsg().endsWith(msg));
+        Assert.assertTrue(jsonResult2.getMsg().endsWith(msg));
+    }
 
 }
