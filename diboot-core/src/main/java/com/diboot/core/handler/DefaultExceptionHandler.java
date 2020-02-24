@@ -67,6 +67,10 @@ public class DefaultExceptionHandler {
             BusinessException be = (BusinessException)e;
             map = be.toMap();
         }
+        else if(e.getCause() instanceof BusinessException){
+            BusinessException be = (BusinessException)e.getCause();
+            map = be.toMap();
+        }
         else{
             map = new HashMap<>();
             map.put("code", status.value());

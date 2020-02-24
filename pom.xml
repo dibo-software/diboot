@@ -20,7 +20,7 @@
         <module>diboot-core</module>
         <module>diboot-core-starter</module>
         <module>iam-base-starter</module>
-        <module>component-file-starter</module>
+        <module>diboot-file-starter</module>
     </modules>
 
     <properties>
