@@ -154,7 +154,7 @@ public class ApiPermissionExtractor {
                 if(V.notEmpty(urlPrefix)){
                     for(String path : urlPrefix.split(Cons.SEPARATOR_COMMA)){
                         ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
-                        apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(path + u).setPermissionCode(permissionCode);
+                        apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(path + u).setPermissionCode(permissionCode).setValue(m + ":" + path + u);
                         apiPermissions.add(apiPermission);
                     }
                 }
