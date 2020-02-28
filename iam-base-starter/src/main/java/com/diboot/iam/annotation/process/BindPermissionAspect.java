@@ -51,17 +51,17 @@ public class BindPermissionAspect {
         // 获取当前uri
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
-        // 需要验证
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
         // 根据uri获取对应权限标识
-        String permissionCode = BindPermissionCache.getPermissionCode(request.getMethod(), formatUrl(request));
+        String uriMapping = formatUriMapping(request);
+        String permissionCode = ApiPermissionCache.getPermissionCode(request.getMethod(), uriMapping);
         if (permissionCode == null){
             return;
         }
+        // 需要验证
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
         BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
-        String annoPermissionCode = ":"+bindPermission.code();
-        if(permissionCode.endsWith(annoPermissionCode)){
+        if(permissionCode.endsWith(":"+bindPermission.code())){
             try{
                 IamSecurityUtils.getSubject().checkPermission(permissionCode);
             }
@@ -76,7 +76,7 @@ public class BindPermissionAspect {
      * @param request
      * @return
      */
-    private String formatUrl(HttpServletRequest request){
+    private String formatUriMapping(HttpServletRequest request){
         boolean hasContextPath = (V.notEmpty(request.getContextPath()) && !request.getContextPath().equals("/"));
         String url = hasContextPath? S.substringAfter(request.getRequestURI(), request.getContextPath()) : request.getRequestURI();
         Map<String, Object> map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);

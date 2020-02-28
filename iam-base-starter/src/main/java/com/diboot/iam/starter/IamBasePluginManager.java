@@ -4,6 +4,7 @@ import com.diboot.core.plugin.PluginManager;
 import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.iam.annotation.process.AnnotationExtractor;
+import com.diboot.iam.annotation.process.ApiPermissionExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 
@@ -34,6 +35,6 @@ public class IamBasePluginManager implements PluginManager {
             }
         }
         // 异步更新注解
-        ContextHelper.getBean(AnnotationExtractor.class).updatePermissions(iamBaseProperties.isEnablePermissionUpdate());
+        ContextHelper.getBean(ApiPermissionExtractor.class).extractAllApiPermissions();
     }
 }

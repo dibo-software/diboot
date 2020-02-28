@@ -13,6 +13,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,7 @@ import java.util.*;
 @Slf4j
 @Async
 @Component
+@Deprecated
 public class AnnotationExtractor {
 
     @Autowired
@@ -89,9 +91,24 @@ public class AnnotationExtractor {
      * @return
      */
     public List<PermissionVO> extractAllPermissions(){
+        List<PermissionVO> permissionList = new ArrayList<>();
+        // 提取rest controller
         List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
+        extractPermissionVoList(controllerList, permissionList);
+        // 提取controller
+        controllerList = ContextHelper.getBeansByAnnotation(Controller.class);
+        extractPermissionVoList(controllerList, permissionList);
+
+        return permissionList;
+    }
+
+    /**
+     * 提取permission
+     * @param controllerList
+     * @param permissionList
+     */
+    private void extractPermissionVoList(List<Object> controllerList, List<PermissionVO> permissionList){
         if(V.notEmpty(controllerList)) {
-            List<PermissionVO> permissionList = new ArrayList<>();
             for (Object obj : controllerList) {
                 Class controllerClass = AopUtils.getTargetClass(obj);
                 BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
@@ -109,9 +126,7 @@ public class AnnotationExtractor {
                 // 添加到对象中
                 permissionList.add(permission);
             }
-            return permissionList;
         }
-        return Collections.EMPTY_LIST;
     }
 
     /**
@@ -131,7 +146,7 @@ public class AnnotationExtractor {
                 log.warn("无法获取{}相关的Entity，请指定注解BindPermission.code参数！", controllerClass.getName());
             }
         }
-        permission.setName(bindPermission.name()).setCode(code).setSortId(bindPermission.sortId());
+        permission.setName(bindPermission.name()).setCode(code);
         return permission;
     }
 
@@ -152,7 +167,7 @@ public class AnnotationExtractor {
                 PermissionVO child = BeanUtils.cloneBean(clonePermission);
                 BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
                 String permissionCode = clonePermission.getCode()+":"+bindPermission.code();
-                child.setOperationName(bindPermission.name()).setOperationCode(permissionCode).setSortId(bindPermission.sortId());
+                child.setOperationName(bindPermission.name()).setOperationCode(permissionCode);
                 permissions.add(child);
                 // 提取请求url-permission code的关系
                 AnnotationUtils.extractAndCacheUrl2PermissionCode(method, urlPrefix, permissionCode);

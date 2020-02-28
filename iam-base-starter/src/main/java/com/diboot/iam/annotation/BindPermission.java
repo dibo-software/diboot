@@ -25,16 +25,4 @@ public @interface BindPermission {
      * @return
      */
     String code() default  "";
-
-    /**
-     * 类型 - Controller类上的注解默认为菜单MENU，方法注解默认为OPERATION
-     * @return
-     */
-    //String type() default "MENU";
-
-    /**
-     * 排序号
-     * @return
-     */
-    int sortId() default 99;
 }

@@ -2,6 +2,7 @@ package com.diboot.iam.util;
 
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.iam.annotation.process.ApiPermission;
 import com.diboot.iam.annotation.process.BindPermissionCache;
 import com.diboot.iam.config.Cons;
 import lombok.extern.slf4j.Slf4j;

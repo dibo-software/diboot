@@ -118,6 +118,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
             roleIds.add(role.getId());
         });
         // 整理所有权限许可列表
+        //TODO 此处改成从缓存匹配
         Set<String> allPermissionCodes = new HashSet<>();
         List<PermissionVO> permissionList = iamRolePermissionService.getPermissionVOList(Cons.APPLICATION, roleIds);
         if(V.notEmpty(permissionList)){

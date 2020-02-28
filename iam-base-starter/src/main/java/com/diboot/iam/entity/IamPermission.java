@@ -17,6 +17,7 @@ import java.util.Date;
 * @date 2019-12-03
 */
 @Getter @Setter @Accessors(chain = true)
+@Deprecated
 public class IamPermission extends BaseExtEntity {
     private static final long serialVersionUID = -1234249053749049729L;
 

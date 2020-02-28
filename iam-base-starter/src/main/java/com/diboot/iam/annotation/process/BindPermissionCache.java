@@ -9,6 +9,7 @@ import java.util.Map;
  * @version v2.0
  * @date 2019/12/30
  */
+@Deprecated
 public class BindPermissionCache {
     /**
      * url-permission 缓存
