@@ -23,6 +23,8 @@ public class IamRoleVO extends IamRole {
     @BindEntityList(entity = IamFrontendPermission.class, condition = "this.id=iam_role_permission.role_id AND iam_role_permission.permission_id=id AND iam_role_permission.is_deleted=0")
     private List<IamFrontendPermission> permissionList;
 
+    private List<IamFrontendPermissionListVO> permissionVOList;
+
     /***
      * 是否为超级管理员
      * @return
