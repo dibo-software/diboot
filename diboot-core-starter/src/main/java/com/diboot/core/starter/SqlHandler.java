@@ -38,8 +38,8 @@ public class SqlHandler {
      */
     public static void init(Environment env) {
         environment = env;
-        String jdbcUrl = environment.getProperty("spring.datasource.url");
-        dbType = SqlHandler.extractDatabaseType(jdbcUrl);
+        String jdbcUrl = getJdbcUrl(environment);
+        dbType = extractDatabaseType(jdbcUrl);
     }
 
     /***
@@ -179,6 +179,20 @@ public class SqlHandler {
             log.warn("读取SQL文件异常: "+sqlPath, e);
         }
         return lines;
+    }
+
+    /**
+     * 获取JDBC url
+     * @param environment
+     * @return
+     */
+    public static String getJdbcUrl(Environment environment){
+        String jdbcUrl = environment.getProperty("spring.datasource.url");
+        if(jdbcUrl == null){
+            String master = environment.getProperty("spring.datasource.dynamic.primary");
+            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+        }
+        return jdbcUrl;
     }
 
     /***

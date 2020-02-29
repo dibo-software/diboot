@@ -3,8 +3,9 @@ package com.diboot.core.util;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.entity.Dictionary;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -335,10 +336,14 @@ public class BeanUtils {
         }
         // 提取所有的top level对象
         List<T> topLevelModels = new ArrayList();
-        for(T model : allNodes){
-            Object parentId = getProperty(model, Cons.FieldName.parentId.name());
+        for(T node : allNodes){
+            Object parentId = getProperty(node, Cons.FieldName.parentId.name());
             if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
-                topLevelModels.add(model);
+                topLevelModels.add(node);
+            }
+            Object nodeId = getProperty(node, Cons.FieldName.id.name());
+            if(V.equals(nodeId, parentId)){
+                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName()+":"+nodeId);
             }
         }
         if(V.isEmpty(topLevelModels)){
