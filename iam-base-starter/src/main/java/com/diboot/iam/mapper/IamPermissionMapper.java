@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @date 2019-12-03
 */
 @Mapper
+@Deprecated
 public interface IamPermissionMapper extends BaseCrudMapper<IamPermission> {
 
 }

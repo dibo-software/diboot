@@ -1,7 +1,6 @@
 package com.diboot.iam.dto;
 
 import com.diboot.iam.entity.IamUser;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

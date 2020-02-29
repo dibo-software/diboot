@@ -24,20 +24,31 @@ public class ApiPermissionCache {
 
     /**
      * 缓存全部permissions
-     * @param apiPermissionWrappers
      */
-    public static void cacheAllApiPermissions(List<ApiPermissionWrapper> apiPermissionWrappers){
-        API_PERMISSION_WRAPPER_LIST = apiPermissionWrappers;
-        if(V.notEmpty(API_PERMISSION_WRAPPER_LIST)){
-            for(ApiPermissionWrapper wrapper : API_PERMISSION_WRAPPER_LIST){
-                if(wrapper.getChildren() != null){
-                    for(ApiPermission apiPermission : wrapper.getChildren()){
-                        // 缓存url-permission
-                        URL_PERMISSIONCODE_CACHE.put(apiPermission.getApiMethod().toUpperCase()+":"+apiPermission.getApiUri(), apiPermission.getPermissionCode());
+    public static void initCacheAllApiPermissions(){
+        if(API_PERMISSION_WRAPPER_LIST == null){
+            API_PERMISSION_WRAPPER_LIST = ApiPermissionExtractor.extractAllApiPermissions();
+            if(V.notEmpty(API_PERMISSION_WRAPPER_LIST)){
+                for(ApiPermissionWrapper wrapper : API_PERMISSION_WRAPPER_LIST){
+                    if(wrapper.getChildren() != null){
+                        for(ApiPermission apiPermission : wrapper.getChildren()){
+                            // 缓存url-permission
+                            URL_PERMISSIONCODE_CACHE.put(apiPermission.getApiMethod().toUpperCase()+":"+apiPermission.getApiUri(), apiPermission.getPermissionCode());
+                        }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * 读取缓存permission
+     * @param requestMethodAndUrl
+     * @return
+     */
+    public static String getPermissionCode(String requestMethodAndUrl){
+        initCacheAllApiPermissions();
+        return URL_PERMISSIONCODE_CACHE.get(requestMethodAndUrl);
     }
 
     /**
@@ -47,6 +58,7 @@ public class ApiPermissionCache {
      * @return
      */
     public static String getPermissionCode(String requestMethod, String url){
+        initCacheAllApiPermissions();
         return URL_PERMISSIONCODE_CACHE.get(requestMethod.toUpperCase()+":"+url);
     }
 
@@ -55,6 +67,7 @@ public class ApiPermissionCache {
      * @return
      */
     public static List<ApiPermissionWrapper> getApiPermissionVoList(){
+        initCacheAllApiPermissions();
         return API_PERMISSION_WRAPPER_LIST;
     }
 

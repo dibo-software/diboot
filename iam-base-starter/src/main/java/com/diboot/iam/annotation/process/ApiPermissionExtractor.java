@@ -7,19 +7,17 @@ import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.util.AnnotationUtils;
-import com.diboot.iam.vo.PermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 注解提取器
@@ -28,15 +26,13 @@ import java.util.*;
  * @date 2019/12/23
  */
 @Slf4j
-@Async
-@Component
 public class ApiPermissionExtractor {
 
     /**
      * 提取所有的权限定义
      * @return
      */
-    public void extractAllApiPermissions(){
+    public static List<ApiPermissionWrapper> extractAllApiPermissions(){
         List<ApiPermissionWrapper> apiPermissionWrappers = new ArrayList<>();
         // 提取rest controller
         List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
@@ -45,7 +41,7 @@ public class ApiPermissionExtractor {
         controllerList = ContextHelper.getBeansByAnnotation(Controller.class);
         extractApiPermissions(controllerList, apiPermissionWrappers);
         // 缓存抓取结果
-        ApiPermissionCache.cacheAllApiPermissions(apiPermissionWrappers);
+        return apiPermissionWrappers;
     }
 
     /**
@@ -53,7 +49,7 @@ public class ApiPermissionExtractor {
      * @param controllerList
      * @param apiPermissionWrappers
      */
-    private void extractApiPermissions(List<Object> controllerList, List<ApiPermissionWrapper> apiPermissionWrappers){
+    private static void extractApiPermissions(List<Object> controllerList, List<ApiPermissionWrapper> apiPermissionWrappers){
         if(V.notEmpty(controllerList)) {
             for (Object obj : controllerList) {
                 Class controllerClass = AopUtils.getTargetClass(obj);
@@ -81,7 +77,9 @@ public class ApiPermissionExtractor {
                 }
                 ApiPermissionWrapper wrapper = new ApiPermissionWrapper(title);
                 buildApiPermissionsInClass(wrapper, controllerClass, codePrefix);
-                apiPermissionWrappers.add(wrapper);
+                if(V.notEmpty(wrapper.getChildren())){
+                    apiPermissionWrappers.add(wrapper);
+                }
             }
         }
     }
@@ -92,7 +90,7 @@ public class ApiPermissionExtractor {
      * @param controllerClass
      * @param codePrefix
      */
-    private void buildApiPermissionsInClass(ApiPermissionWrapper wrapper, Class controllerClass, String codePrefix) {
+    private static void buildApiPermissionsInClass(ApiPermissionWrapper wrapper, Class controllerClass, String codePrefix) {
         String urlPrefix = "";
         RequestMapping requestMapping = AnnotationUtils.findAnnotation(controllerClass, RequestMapping.class);
         if(requestMapping != null){
@@ -132,7 +130,9 @@ public class ApiPermissionExtractor {
                 }
             }
             // 添加至wrapper
-            wrapper.setChildren(apiPermissions);
+            if(apiPermissions.size() > 0){
+                wrapper.setChildren(apiPermissions);
+            }
         }
     }
 
@@ -146,7 +146,7 @@ public class ApiPermissionExtractor {
      * @param methodAndUrl
      * @param apiName
      */
-    private void buildApiPermission(List<ApiPermission> apiPermissions, Class controllerClass, String urlPrefix, String title,
+    private static void buildApiPermission(List<ApiPermission> apiPermissions, Class controllerClass, String urlPrefix, String title,
                                     String permissionCode, String[] methodAndUrl, String apiName){
         String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){

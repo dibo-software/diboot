@@ -8,7 +8,6 @@ import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamRole;
-import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamUserRoleMapper;

@@ -4,6 +4,7 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
+import com.diboot.iam.annotation.process.ApiPermissionCache;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
@@ -11,7 +12,6 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.vo.PermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -117,19 +117,16 @@ public class BaseJwtRealm extends AuthorizingRealm {
             allRoleCodes.add(role.getCode());
             roleIds.add(role.getId());
         });
-        // 整理所有权限许可列表
-        //TODO 此处改成从缓存匹配
+        // 整理所有权限许可列表，从缓存匹配
         Set<String> allPermissionCodes = new HashSet<>();
-        List<PermissionVO> permissionList = iamRolePermissionService.getPermissionVOList(Cons.APPLICATION, roleIds);
-        if(V.notEmpty(permissionList)){
-            permissionList.stream().forEach(p->{
-                if(p.getChildren() != null){
-                    p.getChildren().stream().forEach(c->{
-                        allPermissionCodes.add(c.getOperationCode());
-                    });
-                }
-                else{
-                    allPermissionCodes.add(p.getCode());
+        List<String> apiUrlList = iamRolePermissionService.getApiUrlList(Cons.APPLICATION, roleIds);
+        if(V.notEmpty(apiUrlList)){
+            apiUrlList.stream().forEach(set->{
+                for(String uri : set.split(Cons.SEPARATOR_COMMA)){
+                    String permissionCode = ApiPermissionCache.getPermissionCode(uri);
+                    if(permissionCode != null){
+                        allPermissionCodes.add(permissionCode);
+                    }
                 }
             });
         }

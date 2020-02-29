@@ -15,6 +15,7 @@ import java.util.List;
  * @date 2019/12/23
  */
 @Getter @Setter @Accessors(chain = true)
+@Deprecated
 public class PermissionVO extends IamPermission {
     private static final long serialVersionUID = 3140824759716297175L;
     public PermissionVO(){}

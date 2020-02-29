@@ -13,6 +13,7 @@ import java.util.List;
 * @date 2019-12-03
 */
 @Data
+@Deprecated
 public class IamPermissionVO extends IamPermission {
     private static final long serialVersionUID = -5053188875259947594L;
 

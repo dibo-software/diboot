@@ -7,7 +7,6 @@ import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import com.diboot.core.util.V;
-import com.diboot.iam.annotation.process.AnnotationExtractor;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
@@ -56,8 +55,8 @@ import java.util.Map;
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages={"com.diboot.iam.mapper"})
 @AutoConfigureAfter(value = {DictionaryServiceImpl.class,
-        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamUserRoleServiceImpl.class, IamAccountServiceImpl.class, IamPermissionServiceImpl.class,
-        IamBaseInitializer.class, AnnotationExtractor.class, ShiroProxyConfig.class})
+        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamUserRoleServiceImpl.class, IamAccountServiceImpl.class, IamFrontendPermissionServiceImpl.class,
+        IamBaseInitializer.class, ShiroProxyConfig.class})
 @Order(2)
 public class IamBaseAutoConfig implements WebMvcConfigurer {
 

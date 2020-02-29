@@ -2,13 +2,13 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.iam.entity.IamPermission;
+import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.entity.IamRolePermission;
 import com.diboot.iam.mapper.IamRolePermissionMapper;
-import com.diboot.iam.service.IamPermissionService;
+import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamRoleService;
-import com.diboot.iam.vo.PermissionVO;
+import com.diboot.iam.vo.IamFrontendPermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,28 +32,37 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     private IamRoleService iamRoleService;
 
     @Autowired
-    private IamPermissionService iamPermissionService;
+    private IamFrontendPermissionService iamFrontendPermissionService;
 
     @Autowired
     private IamRolePermissionMapper iamRolePermissionMapper;
 
     @Override
-    public List<PermissionVO> getPermissionVOList(String application, Long roleId) {
+    public List<IamFrontendPermissionVO> getPermissionVOList(String application, Long roleId) {
         List<Long> roleIdList = new ArrayList<>();
         roleIdList.add(roleId);
         return getPermissionVOList(application, roleIdList);
     }
 
     @Override
-    public List<PermissionVO> getPermissionVOList(String application, List<Long> roleIds) {
-        List<IamPermission> list = getPermissionList(application, roleIds);
-        List<PermissionVO> voList = BeanUtils.convertList(list, PermissionVO.class);
+    public List<IamFrontendPermissionVO> getPermissionVOList(String application, List<Long> roleIds) {
+        List<IamFrontendPermission> list = getPermissionList(application, roleIds);
+        List<IamFrontendPermissionVO> voList = BeanUtils.convertList(list, IamFrontendPermissionVO.class);
         return BeanUtils.buildTree(voList);
     }
 
     @Override
-    public List<IamPermission> getPermissionList(String application, List<Long> roleIds) {
-        List<IamPermission> list = iamRolePermissionMapper.getPermissionsByRoleIds(application, roleIds);
+    public List<IamFrontendPermission> getPermissionList(String application, List<Long> roleIds) {
+        List<IamFrontendPermission> list = iamRolePermissionMapper.getPermissionsByRoleIds(roleIds);
+        if(list == null){
+            list = Collections.emptyList();
+        }
+        return list;
+    }
+
+    @Override
+    public List<String> getApiUrlList(String application, List<Long> roleIds) {
+        List<String> list = iamRolePermissionMapper.getApiUrlList(roleIds);
         if(list == null){
             list = Collections.emptyList();
         }
@@ -95,7 +104,7 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     }
 
     @Override
-    public IamPermissionService getPermissionService() {
-        return iamPermissionService;
+    public IamFrontendPermissionService getPermissionService() {
+        return iamFrontendPermissionService;
     }
 }

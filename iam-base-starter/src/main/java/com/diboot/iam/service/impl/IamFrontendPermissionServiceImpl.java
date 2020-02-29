@@ -114,7 +114,7 @@ public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFron
             throw new BusinessException(Status.FAIL_OPERATION, "父级节点不可设置在自己的子节点上");
         }
         // 清理脏数据
-        this.clearDirtyData();
+        //this.clearDirtyData();
     }
 
     @Override
@@ -143,6 +143,13 @@ public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFron
                 this.deleteMenuAndPermissions(menuId);
             });
         }
+    }
+
+    @Override
+    public List<IamFrontendPermission> getAllFrontendPermissions(String application) {
+        // 查询数据库中的所有权限
+        List<IamFrontendPermission> entList = this.getEntityList(null);
+        return entList;
     }
 
     /***

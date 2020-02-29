@@ -36,7 +36,7 @@ public class ApiPermission implements Serializable {
     // 接口URI
     private String apiUri;
 
-    // 授权URI
+    // ID标识
     private String value;
 
     // 权限许可编码

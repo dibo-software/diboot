@@ -3,8 +3,6 @@ package com.diboot.iam.starter;
 import com.diboot.core.plugin.PluginManager;
 import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.ContextHelper;
-import com.diboot.iam.annotation.process.AnnotationExtractor;
-import com.diboot.iam.annotation.process.ApiPermissionExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 
@@ -34,7 +32,5 @@ public class IamBasePluginManager implements PluginManager {
                 log.info("IAM SQL初始化完成.");
             }
         }
-        // 异步更新注解
-        ContextHelper.getBean(ApiPermissionExtractor.class).extractAllApiPermissions();
     }
 }

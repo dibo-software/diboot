@@ -8,15 +8,15 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.dto.ChangePwdDTO;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.service.IamPermissionService;
+import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamSecurityUtils;
+import com.diboot.iam.vo.IamFrontendPermissionVO;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * 系统用户相关Service实现
@@ -41,7 +40,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     private IamUserRoleService iamUserRoleService;
 
     @Autowired
-    private IamPermissionService iamPermissionService;
+    private IamFrontendPermissionService iamFrontendPermissionService;
 
     @Autowired
     private IamAccountService iamAccountService;
@@ -57,7 +56,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         // 对RoleList做聚合处理，以适配前端
         List<String> nameList = new ArrayList<>();
         List<String> codeList = new ArrayList<>();
-        List<IamPermission> allPermissionList = new ArrayList<>();
+        List<IamFrontendPermission> allPermissionList = new ArrayList<>();
         roleVOList.forEach(vo -> {
             nameList.add(vo.getName());
             codeList.add(vo.getCode());
@@ -66,7 +65,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             }
         });
         // 对permissionList进行去重
-        List permissionList = BeanUtils.distinctByKey(allPermissionList, IamPermission::getId);
+        List permissionList = BeanUtils.distinctByKey(allPermissionList, IamFrontendPermission::getId);
         IamRoleVO roleVO = new IamRoleVO();
         roleVO.setName(S.join(nameList));
         roleVO.setCode(S.join(codeList));
@@ -91,8 +90,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         }
         for (IamRoleVO roleVO : roleVOList){
             if (Cons.ROLE_SUPER_ADMIN.equalsIgnoreCase(roleVO.getCode())){
-                List<IamPermission> iamPermissions = iamPermissionService.getAllPermissions(Cons.APPLICATION);
+                List<IamFrontendPermission> iamPermissions = iamFrontendPermissionService.getAllFrontendPermissions(Cons.APPLICATION);
                 roleVO.setPermissionList(iamPermissions);
+                return;
             }
         }
     }

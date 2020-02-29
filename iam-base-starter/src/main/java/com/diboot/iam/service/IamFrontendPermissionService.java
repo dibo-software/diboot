@@ -4,6 +4,8 @@ package com.diboot.iam.service;
 import com.diboot.iam.dto.IamFrontendPermissionDTO;
 import com.diboot.iam.entity.IamFrontendPermission;
 
+import java.util.List;
+
 /**
 * 前端菜单相关Service
 * @author yangzhao
@@ -30,4 +32,11 @@ public interface IamFrontendPermissionService extends BaseIamService<IamFrontend
      * @param id
      */
     void deleteMenuAndPermissions(Long id);
+
+    /**
+     * 获取所有前端权限定义
+     * @param application
+     * @return
+     */
+    List<IamFrontendPermission> getAllFrontendPermissions(String application);
 }

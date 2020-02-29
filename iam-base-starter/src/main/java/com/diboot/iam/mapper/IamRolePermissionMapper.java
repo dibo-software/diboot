@@ -1,7 +1,7 @@
 package com.diboot.iam.mapper;
 
 import com.diboot.core.mapper.BaseCrudMapper;
-import com.diboot.iam.entity.IamPermission;
+import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.entity.IamRolePermission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,7 +21,13 @@ public interface IamRolePermissionMapper extends BaseCrudMapper<IamRolePermissio
      * @param roleIds
      * @return
      */
-    List<IamPermission> getPermissionsByRoleIds(@Param("application") String application, @Param("roleIds") List<Long> roleIds);
+    List<IamFrontendPermission> getPermissionsByRoleIds(@Param("roleIds") List<Long> roleIds);
 
+    /**
+     * 获取角色相关的权限集合
+     * @param roleIds
+     * @return
+     */
+    List<String> getApiUrlList(@Param("roleIds") List<Long> roleIds);
 }
 

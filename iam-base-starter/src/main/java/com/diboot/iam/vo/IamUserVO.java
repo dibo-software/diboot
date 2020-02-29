@@ -2,7 +2,6 @@ package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.iam.entity.IamPermission;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
 import lombok.Data;

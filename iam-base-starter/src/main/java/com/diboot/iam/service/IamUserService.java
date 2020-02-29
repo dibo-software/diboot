@@ -1,8 +1,6 @@
 package com.diboot.iam.service;
 
-import com.diboot.iam.dto.ChangePwdDTO;
 import com.diboot.iam.dto.IamUserAccountDTO;
-import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.vo.IamRoleVO;
 

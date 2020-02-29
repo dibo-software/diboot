@@ -1,6 +1,5 @@
 package com.diboot.iam.annotation.process;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
