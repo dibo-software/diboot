@@ -113,6 +113,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public boolean updateEntities(Collection<T> entityList) {
+		boolean success = super.updateBatchById(entityList);
+		return success;
+	}
+
+	@Override
 	public boolean createOrUpdateEntity(T entity) {
 		boolean success = super.saveOrUpdate(entity);
 		return success;
