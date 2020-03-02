@@ -53,6 +53,10 @@ public class IamFrontendPermission extends BaseEntity {
     @TableField()
     private String apiSet;
 
+    // 排序号
+    @TableField
+    private Long sortId;
+
     // 创建人
     @TableField()
     private Long createBy;
