@@ -243,53 +243,53 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     //============= 供子类继承重写的方法 =================
     /***
      * 创建前的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected String beforeCreate(E entity) throws Exception {
+    protected String beforeCreate(Object entityOrDto) throws Exception {
         return null;
     }
 
     /***
      * 创建成功后的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected void afterCreated(E entity) throws Exception {
+    protected void afterCreated(Object entityOrDto) throws Exception {
     }
 
     /***
      * 更新前的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected String beforeUpdate(E entity) throws Exception {
+    protected String beforeUpdate(Object entityOrDto) throws Exception {
         return null;
     }
 
     /***
      * 更新成功后的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected void afterUpdated(E entity) throws Exception {
+    protected void afterUpdated(Object entityOrDto) throws Exception {
     }
 
     /***
      * 是否有删除权限，如不可删除返回错误提示信息，如 Status.FAIL_NO_PERMISSION.label()
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected String beforeDelete(E entity) throws Exception{
+    protected String beforeDelete(Object entityOrDto) throws Exception{
         return null;
     }
 
     /***
      * 删除成功后的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected void afterDeleted(E entity) throws Exception {
+    protected void afterDeleted(Object entityOrDto) throws Exception {
     }
 
     /***
@@ -333,6 +333,9 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     protected Class<E> getEntityClass(){
         if(this.entityClass == null){
              this.entityClass = BeanUtils.getGenericityClass(this, 0);
+             if(this.entityClass == null) {
+                log.warn("无法从 {} 类定义中获取泛型类entityClass", this.getClass().getName());
+             }
         }
         return this.entityClass;
     }
@@ -344,6 +347,9 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     protected Class<VO> getVOClass(){
         if(this.voClasss == null){
             this.voClasss = BeanUtils.getGenericityClass(this, 1);
+            if(this.voClasss == null) {
+                log.warn("无法从 {} 类定义中获取泛型类voClasss", this.getClass().getName());
+            }
         }
         return this.voClasss;
     }
