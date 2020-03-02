@@ -82,6 +82,13 @@ public interface BaseService<T> {
      */
     boolean updateEntity(Wrapper updateWrapper);
 
+    /**
+     * 批量更新entity
+     * @param entityList
+     * @return
+     */
+    boolean updateEntities(Collection<T> entityList);
+
     /***
      * 创建或更新entity（entity.id存在则新建，否则更新）
      * @param entity
