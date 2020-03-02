@@ -39,4 +39,10 @@ public interface IamFrontendPermissionService extends BaseIamService<IamFrontend
      * @return
      */
     List<IamFrontendPermission> getAllFrontendPermissions(String application);
+
+    /***
+     * 对列表进行排序
+     * @param permissionList
+     */
+    void sortList(List<IamFrontendPermission> permissionList);
 }

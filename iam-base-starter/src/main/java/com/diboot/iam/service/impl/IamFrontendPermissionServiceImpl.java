@@ -6,6 +6,7 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamFrontendPermissionDTO;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -150,6 +152,35 @@ public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFron
         // 查询数据库中的所有权限
         List<IamFrontendPermission> entList = this.getEntityList(null);
         return entList;
+    }
+
+    @Override
+    public void sortList(List<IamFrontendPermission> permissionList) {
+        if (V.isEmpty(permissionList)) {
+            throw new BusinessException(Status.FAIL_OPERATION, "排序列表不能为空");
+        }
+        List<Long> sortIdList = new ArrayList();
+        // 先将所有序号重新设置为自身当前id
+        for (IamFrontendPermission item : permissionList) {
+            item.setSortId(item.getId());
+            sortIdList.add(item.getSortId());
+        }
+        // 将序号列表倒序排序
+        sortIdList = sortIdList.stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+        // 整理需要更新的列表
+        List<IamFrontendPermission> updateList = new ArrayList<>();
+        for (int i=0; i<permissionList.size(); i++) {
+            IamFrontendPermission item = permissionList.get(i);
+            IamFrontendPermission updateItem = new IamFrontendPermission();
+            updateItem.setId(item.getId());
+            updateItem.setSortId(sortIdList.get(i));
+            updateList.add(updateItem);
+        }
+        if (updateList.size() > 0) {
+            super.updateBatchById(updateList);
+        }
     }
 
     /***
