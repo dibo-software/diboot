@@ -43,4 +43,7 @@ public class ApiPermission implements Serializable {
     @JSONField(serialize = false)
     private String permissionCode;
 
+    public String buildUniqueKey(){
+        return apiMethod + "," + apiUri + "," + permissionCode;
+    }
 }
