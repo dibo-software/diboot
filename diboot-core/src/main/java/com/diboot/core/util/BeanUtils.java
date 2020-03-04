@@ -663,7 +663,7 @@ public class BeanUtils {
         if(V.notEmpty(types) && types.length > index){
             return types[index].resolve();
         }
-        log.warn("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
+        log.debug("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
         return null;
     }
 

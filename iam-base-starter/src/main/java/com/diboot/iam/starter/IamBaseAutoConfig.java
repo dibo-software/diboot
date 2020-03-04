@@ -32,7 +32,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
@@ -50,7 +49,6 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
-@EnableAsync
 @EnableConfigurationProperties({IamBaseProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages={"com.diboot.iam.mapper"})

@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 注解提取器
@@ -99,6 +101,7 @@ public class ApiPermissionExtractor {
         List<Method> annoMethods = AnnotationUtils.extractAnnotationMethods(controllerClass, BindPermission.class);
         if(V.notEmpty(annoMethods)){
             List<ApiPermission> apiPermissions = new ArrayList<>();
+            Set<String> existKey = new HashSet<>();
             for(Method method : annoMethods){
                 // 忽略私有方法
                 if(Modifier.isPrivate(method.getModifiers())){
@@ -118,14 +121,14 @@ public class ApiPermissionExtractor {
                 if(bindPermission != null){
                     String permissionCode = (codePrefix != null)? codePrefix+":"+bindPermission.code() : bindPermission.code();
                     // 提取请求url-permission code的关系
-                    buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name());
+                    buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name(), existKey);
                 }
                 // 处理RequirePermissions注解
-                if(requiresPermissions != null){
+                else if(requiresPermissions != null){
                     String[] permissionCodes = requiresPermissions.value();
                     for(String permissionCode : permissionCodes){
                         // 提取请求url-permission code的关系
-                        buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, null);
+                        buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, null, existKey);
                     }
                 }
             }
@@ -147,7 +150,7 @@ public class ApiPermissionExtractor {
      * @param apiName
      */
     private static void buildApiPermission(List<ApiPermission> apiPermissions, Class controllerClass, String urlPrefix, String title,
-                                    String permissionCode, String[] methodAndUrl, String apiName){
+                                    String permissionCode, String[] methodAndUrl, String apiName, Set<String> existKey){
         String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
@@ -155,13 +158,19 @@ public class ApiPermissionExtractor {
                     for(String path : urlPrefix.split(Cons.SEPARATOR_COMMA)){
                         ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
                         apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(path + u).setPermissionCode(permissionCode).setValue(m + ":" + path + u);
-                        apiPermissions.add(apiPermission);
+                        if(!existKey.contains(apiPermission.buildUniqueKey())){
+                            apiPermissions.add(apiPermission);
+                            existKey.add(apiPermission.buildUniqueKey());
+                        }
                     }
                 }
                 else{
                     ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
                     apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(u).setPermissionCode(permissionCode);
-                    apiPermissions.add(apiPermission);
+                    if(!existKey.contains(apiPermission.buildUniqueKey())){
+                        apiPermissions.add(apiPermission);
+                        existKey.add(apiPermission.buildUniqueKey());
+                    }
                 }
             }
         }
