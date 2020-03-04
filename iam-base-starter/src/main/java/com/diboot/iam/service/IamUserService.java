@@ -39,7 +39,7 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @param userAccountDTO
      * @return
      */
-    boolean createUserAndAccount(IamUserAccountDTO userAccountDTO);
+    boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
 
     /***
      * 更新用户和账号
