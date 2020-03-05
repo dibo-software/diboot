@@ -147,25 +147,6 @@ public class IamBaseAutoConfig implements WebMvcConfigurer {
         return shiroFilterFactoryBean;
     }
 
-    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverters() {
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
-        List<MediaType> fastMediaTypes = new ArrayList<>();
-        fastMediaTypes.add(MediaType.APPLICATION_JSON);
-        converter.setSupportedMediaTypes(fastMediaTypes);
-        // 配置转换格式
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        // 设置fastjson的序列化参数：禁用循环依赖检测，数据兼容浏览器端（避免JS端Long精度丢失问题）
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect,
-                SerializerFeature.BrowserCompatible);
-        fastJsonConfig.setDateFormat(D.FORMAT_DATETIME_Y4MDHM);
-        converter.setFastJsonConfig(fastJsonConfig);
-
-        HttpMessageConverter<?> httpMsgConverter = converter;
-        return new HttpMessageConverters(httpMsgConverter);
-    }
-
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new DateConverter());
