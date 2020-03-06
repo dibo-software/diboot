@@ -186,6 +186,20 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         return this.fieldHeadMap;
     }
 
+    public List<Map<String, String>> getFieldHeaders(){
+        if (V.isEmpty(this.fieldHeadMap)) {
+            return Collections.emptyList();
+        }
+        List<Map<String, String>> fieldHeaders = new ArrayList<>();
+        for (Map.Entry<String, String> fieldHead : this.fieldHeadMap.entrySet()) {
+            fieldHeaders.add(new HashMap<String, String>(){{
+                put("key", fieldHead.getKey());
+                put("title", fieldHead.getValue());
+            }});
+        }
+        return fieldHeaders;
+    }
+
     /**
      * 返回数据
      * @return
