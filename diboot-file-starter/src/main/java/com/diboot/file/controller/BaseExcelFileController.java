@@ -25,6 +25,8 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class BaseExcelFileController extends BaseFileController {
+    // 初始文件名参数
+    protected static final String ORIGIN_FILE_NAME = "originFileName";
     // 预览文件名参数
     protected static final String PREVIEW_FILE_NAME = "previewFileName";
 
@@ -106,7 +108,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         // 绑定属性到model
         dataMap.put("header", listener.getHeadMap());
-        dataMap.put("originFileName", fileName);
+        dataMap.put(ORIGIN_FILE_NAME, fileName);
         dataMap.put(PREVIEW_FILE_NAME, newFileName);
         List dataList = listener.getDataList();
         if(V.notEmpty(dataList) && dataList.size() > BaseConfig.getPageSize()){

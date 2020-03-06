@@ -3,6 +3,7 @@ package com.diboot.core.starter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.D;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +57,9 @@ public class CoreAutoConfiguration{
     @Bean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        //处理中文乱码问题
+        converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
         List<MediaType> fastMediaTypes = new ArrayList<>();
-        fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+        fastMediaTypes.add(MediaType.APPLICATION_JSON);
         converter.setSupportedMediaTypes(fastMediaTypes);
         // 配置转换格式
         FastJsonConfig fastJsonConfig = new FastJsonConfig();

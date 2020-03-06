@@ -99,9 +99,74 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) {
+    public boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception {
         // 创建用户信息
-        boolean userSuccess = this.createEntity(userAccountDTO);
+        this.createEntity(userAccountDTO);
+        // 如果提交的有账号信息，则新建账号信息
+        if (V.notEmpty(userAccountDTO.getUsername())) {
+            // 新建account账号
+            this.createAccount(userAccountDTO);
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception {
+        // 更新用户信息
+        this.updateEntity(userAccountDTO);
+
+        IamAccount iamAccount = iamAccountService.getSingleEntity(
+                Wrappers.<IamAccount>lambdaQuery()
+                        .eq(IamAccount::getUserType, IamUser.class.getSimpleName())
+                        .eq(IamAccount::getUserId, userAccountDTO.getId())
+        );
+
+        if (iamAccount == null) {
+            if (V.isEmpty(userAccountDTO.getUsername())){
+                return true;
+            } else {
+                // 新建account账号
+                this.createAccount(userAccountDTO);
+            }
+        } else {
+            if (V.isEmpty(userAccountDTO.getUsername())) {
+                // 删除账号
+                this.deleteAccount(userAccountDTO.getId());
+            } else {
+                // 更新账号
+                iamAccount.setAuthAccount(userAccountDTO.getUsername())
+                        .setStatus(userAccountDTO.getStatus());
+                // 设置密码
+                if (V.notEmpty(userAccountDTO.getPassword())){
+                    iamAccount.setAuthSecret(userAccountDTO.getPassword());
+                    IamSecurityUtils.encryptPwd(iamAccount);
+                }
+                iamAccountService.updateEntity(iamAccount);
+
+                // 批量更新角色关联关系
+                iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
+            }
+        }
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteUserAndAccount(Long id) throws Exception {
+        IamUser iamUser = this.getEntity(id);
+        if (iamUser == null){
+            throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
+        }
+        // 删除用户信息
+        this.deleteEntity(id);
+        // 删除账号信息
+        this.deleteAccount(id);
+
+        return true;
+    }
+
+    private void createAccount(IamUserAccountDTO userAccountDTO) throws Exception{
         // 创建账号信息
         IamAccount iamAccount = new IamAccount();
         iamAccount
@@ -115,73 +180,25 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         if (V.notEmpty(iamAccount.getAuthSecret())){
             IamSecurityUtils.encryptPwd(iamAccount);
         }
-        boolean accountSuccess = iamAccountService.createEntity(iamAccount);
+        iamAccountService.createEntity(iamAccount);
 
         // 批量创建角色关联关系
-        boolean relationsSuccess = iamUserRoleService.createUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
-
-        if (!userSuccess || !accountSuccess || !relationsSuccess){
-            throw new BusinessException(Status.FAIL_OPERATION, "创建用户失败");
-        }
-        return true;
+        iamUserRoleService.createUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) {
-        // 更新用户信息
-        boolean userSuccess = this.updateEntity(userAccountDTO);
-
-        // 更新账号信息
-        IamAccount iamAccount = iamAccountService.getSingleEntity(
-                Wrappers.<IamAccount>lambdaQuery()
-                        .eq(IamAccount::getUserType, IamUser.class.getSimpleName())
-                        .eq(IamAccount::getUserId, userAccountDTO.getId())
-        );
-        iamAccount.setAuthAccount(userAccountDTO.getUsername())
-                .setStatus(userAccountDTO.getStatus());
-        // 设置密码
-        if (V.notEmpty(userAccountDTO.getPassword())){
-            iamAccount.setAuthSecret(userAccountDTO.getPassword());
-            IamSecurityUtils.encryptPwd(iamAccount);
-        }
-        boolean accountSuccess = iamAccountService.updateEntity(iamAccount);
-
-        // 批量更新角色关联关系
-        boolean relationsSuccess = iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
-
-        if (!userSuccess || !accountSuccess || !relationsSuccess){
-            throw new BusinessException(Status.FAIL_OPERATION, "更新用户失败");
-        }
-        return true;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean deleteUserAndAccount(Long id) throws Exception {
-        IamUser iamUser = this.getEntity(id);
-        if (iamUser == null){
-            throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
-        }
-        // 删除用户信息
-        boolean userSuccess = this.deleteEntity(id);
+    private void deleteAccount(Long userId) throws Exception {
         // 删除账号信息
-        boolean accountSuccess = iamAccountService.deleteEntities(
+        iamAccountService.deleteEntities(
                 Wrappers.<IamAccount>lambdaQuery()
                         .eq(IamAccount::getUserType, IamUser.class.getSimpleName())
-                        .eq(IamAccount::getUserId, id)
+                        .eq(IamAccount::getUserId, userId)
         );
         // 删除用户角色关联关系列表
-        boolean relationsSuccess = iamUserRoleService.deleteEntities(
+        iamUserRoleService.deleteEntities(
                 Wrappers.<IamUserRole>lambdaQuery()
                         .eq(IamUserRole::getUserType, IamUser.class.getSimpleName())
-                        .eq(IamUserRole::getUserId, id)
+                        .eq(IamUserRole::getUserId, userId)
         );
-
-        if (!userSuccess || !accountSuccess || !relationsSuccess){
-            throw new BusinessException(Status.FAIL_OPERATION, "删除用户失败");
-        }
-        return true;
     }
 
 }
