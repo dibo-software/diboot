@@ -107,8 +107,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
             throw e;
         }
         // 绑定属性到model
-        dataMap.put("header", listener.getHeadMap());
-        dataMap.put("fieldHeaders", listener.getFieldHeaders());
+        dataMap.put("header", listener.getFieldHeadMap());
         dataMap.put(ORIGIN_FILE_NAME, fileName);
         dataMap.put(PREVIEW_FILE_NAME, newFileName);
         List dataList = listener.getDataList();
