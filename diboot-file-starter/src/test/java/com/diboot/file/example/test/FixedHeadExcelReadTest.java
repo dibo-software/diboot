@@ -35,6 +35,7 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
             DepartmentImportListener listener = new DepartmentImportListener();
             boolean success = ExcelHelper.previewReadExcel(getTempFilePath(), listener);
             Assert.assertTrue(success);
+            System.out.println(JSON.stringify(listener.getFieldHeadMap()));
             System.out.println(JSON.stringify(listener.getDataList()));
         }
         catch (Exception e){

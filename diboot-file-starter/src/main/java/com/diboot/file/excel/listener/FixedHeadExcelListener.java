@@ -3,6 +3,8 @@ package com.diboot.file.excel.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
+import com.alibaba.excel.metadata.Head;
+import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
@@ -12,7 +14,6 @@ import com.diboot.core.vo.Status;
 import com.diboot.file.excel.cache.DictTempCache;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /***
@@ -24,6 +25,8 @@ import java.util.*;
 public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends AnalysisEventListener<T> {
     //解析出的excel表头
     protected Map<Integer, String> headMap;
+    // 字段名-列名的映射
+    protected LinkedHashMap<String, String> fieldHeadMap;
     //解析后的数据实体list
     protected List<T> dataList = new ArrayList<>();
     //错误信息
@@ -69,7 +72,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         // 收集校验异常信息
         if(V.notEmpty(dataList)){
             //自定义数据校验
-            additionalValidate(dataList);
+            additionalValidate(dataList, requestParams);
             // 提取校验结果
             dataList.stream().forEach(data->{
                 if(V.notEmpty(data.getValidateError())){
@@ -124,6 +127,14 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         // 刷新字典缓存
         Class<T> modelClass = BeanUtils.getGenericityClass(this, 0);
         DictTempCache.refreshDictCache(modelClass);
+
+        ExcelReadHeadProperty excelReadHeadProperty = context.currentReadHolder().excelReadHeadProperty();
+        fieldHeadMap = new LinkedHashMap<>();
+        for(Map.Entry<Integer, Head> entry : excelReadHeadProperty.getHeadMap().entrySet()){
+            Head head = entry.getValue();
+            String columnName = S.join(head.getHeadNameList());
+            fieldHeadMap.put(head.getFieldName(), columnName);
+        }
     }
 
     /**
@@ -144,7 +155,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     /**
      * 自定义数据检验方式，例：数据重复性校验等,返回校验日志信息
      **/
-    protected abstract void additionalValidate(List<T> dataList);
+    protected abstract void additionalValidate(List<T> dataList, Map<String, Object> requestParams);
 
     /**
      * 保存数据
@@ -165,6 +176,14 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
      */
     public Map<Integer, String> getHeadMap(){
         return this.headMap;
+    }
+
+    /**
+     * 获取fieldName-headName映射列表，按顺序
+     * @return
+     */
+    public LinkedHashMap<String, String> getFieldHeadMap(){
+        return this.fieldHeadMap;
     }
 
     /**

@@ -27,7 +27,7 @@ public class DepartmentImportListener extends FixedHeadExcelListener<DepartmentE
      * @param dataList
      */
     @Override
-    protected void additionalValidate(List<DepartmentExcelModel> dataList) {
+    protected void additionalValidate(List<DepartmentExcelModel> dataList, Map<String, Object> paramsMap) {
         dataList.stream().forEach(data->{
             if(!"dibo".equals(data.getOrgName())){
                 data.addValidateError("单位名称不匹配");
