@@ -12,6 +12,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.file.excel.cache.DictTempCache;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /***
@@ -29,8 +30,19 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     private List<String> validateErrorMsgs = new ArrayList<>();
     // 导入文件的uuid
     protected String uploadFileUuid;
+    // 是否为预览模式
+    private boolean preview = false;
+    // 注入request
+    private Map<String, Object> requestParams;
 
     public FixedHeadExcelListener(){
+    }
+
+    public void setPreview(boolean isPrevieew){
+        this.preview = isPrevieew;
+    }
+    public void setRequestParams(Map<String, Object> requestParams){
+        this.requestParams = requestParams;
     }
 
     public void setUploadFileUuid(String uploadFileUuid){
@@ -70,9 +82,9 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
             throw new BusinessException(Status.FAIL_VALIDATION, S.join(this.validateErrorMsgs, "; "));
         }
         // 保存
-        if(V.notEmpty(dataList)){
+        if(preview == false && V.notEmpty(dataList)){
             // 保存数据
-            saveData(dataList);
+            saveData(dataList, requestParams);
         }
     }
 
@@ -137,7 +149,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     /**
      * 保存数据
      */
-    protected abstract void saveData(List<T> dataList);
+    protected abstract void saveData(List<T> dataList, Map<String, Object> requestParams);
 
     /**
      * 校验错误信息

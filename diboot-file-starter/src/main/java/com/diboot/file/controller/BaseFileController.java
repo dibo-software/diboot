@@ -68,9 +68,8 @@ public abstract class BaseFileController extends BaseController {
         String fileUid = S.newUuid();
         String newFileName = fileUid + "." + ext;
         String fullPath = FileHelper.saveFile(file, newFileName);
-        String description = getString(request, "description");
         // 保存文件上传记录
-        createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, description);
+        createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, request);
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("uuid", fileUid);
         return new JsonResult(Status.OK).data(dataMap);
@@ -83,17 +82,18 @@ public abstract class BaseFileController extends BaseController {
      * @param originFileName
      * @param storagePath
      * @param fileType
-     * @param description
+     * @param request
      * @param <T>
      * @throws Exception
      */
-    protected <T> void createUploadFile(Class<T> entityClass, String fileUid, String originFileName, String storagePath, String fileType, String description) throws Exception{
+    protected <T> void createUploadFile(Class<T> entityClass, String fileUid, String originFileName, String storagePath, String fileType, HttpServletRequest request) throws Exception{
         // 保存文件之后的处理逻辑
-        int dataCount = extractDataCount(fileUid, storagePath);
+        int dataCount = extractDataCount(fileUid, storagePath, request);
         UploadFile uploadFile = new UploadFile();
         uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(fileType);
         uploadFile.setRelObjType(entityClass.getSimpleName()).setStoragePath(storagePath);
         // 初始设置为0，批量保存数据后更新
+        String description = getString(request, "description");
         uploadFile.setDataCount(dataCount).setDescription(description);
         // 保存文件上传记录
         uploadFileService.createEntity(uploadFile);
@@ -102,7 +102,7 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 保存文件之后的处理逻辑，如解析excel
      */
-    protected int extractDataCount(String fileUuid, String fullPath) throws Exception{
+    protected int extractDataCount(String fileUuid, String fullPath, HttpServletRequest request) throws Exception{
         return 0;
     }
 

@@ -1,6 +1,5 @@
 package com.diboot.file.controller;
 
-import com.diboot.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.file.excel.listener.FixedHeadExcelListener;
 import com.diboot.file.util.ExcelHelper;
 import com.diboot.file.util.FileHelper;
@@ -61,9 +60,8 @@ public abstract class BaseExcelFileController extends BaseFileController {
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
-        String description = getString(request, "description");
         // 保存文件上传记录
-        createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, description);
+        createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, request);
         return new JsonResult(Status.OK);
     }
 
@@ -94,13 +92,10 @@ public abstract class BaseExcelFileController extends BaseFileController {
         String newFileName = S.newUuid() + "." + ext;
         String fullPath = FileHelper.saveFile(file, newFileName);
         // 预览
-        DynamicHeadExcelListener listener = new DynamicHeadExcelListener() {
-            @Override
-            protected void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList) {
-            }
-        };
+        FixedHeadExcelListener listener = getExcelDataListener();
+        listener.setRequestParams(super.getParamsMap(request));
         try {
-            ExcelHelper.readDynamicHeadExcel(fullPath, listener);
+            ExcelHelper.previewReadExcel(fullPath, listener);
         }
         catch (Exception e) {
             log.warn("解析并校验excel文件失败", e);
@@ -125,11 +120,13 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * 保存文件之后的处理逻辑，如解析excel
      */
     @Override
-    protected int extractDataCount(String fileUuid, String fullPath) throws Exception{
+    protected int extractDataCount(String fileUuid, String fullPath, HttpServletRequest request) throws Exception{
         FixedHeadExcelListener listener = getExcelDataListener();
         listener.setUploadFileUuid(fileUuid);
+        listener.setPreview(false);
+        listener.setRequestParams(super.getParamsMap(request));
         try{
-            ExcelHelper.readAndSave(fullPath, listener);
+            ExcelHelper.readAndSaveExcel(fullPath, listener);
         }
         catch(Exception e){
             log.warn("上传数据错误: "+ e.getMessage(), e);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <Description>
@@ -39,7 +40,7 @@ public class DepartmentImportListener extends FixedHeadExcelListener<DepartmentE
      * @param dataList
      */
     @Override
-    protected void saveData(List<DepartmentExcelModel> dataList) {
+    protected void saveData(List<DepartmentExcelModel> dataList, Map<String,Object> paramsMap) {
         // 转换数据
         List<Department> departmentList = BeanUtils.convertList(getDataList(), Department.class);
         // 保存数据

@@ -24,12 +24,23 @@ import java.util.List;
 public class ExcelHelper {
 
     /**
-     * 简单读取excel文件数据并保存到数据库
+     * 预览读取excel文件数据
      * @param filePath
      * @param listener
      * @return
      */
-    public static <T extends BaseExcelModel> boolean readAndSave(String filePath, FixedHeadExcelListener listener) throws Exception{
+    public static <T extends BaseExcelModel> boolean previewReadExcel(String filePath, FixedHeadExcelListener listener) throws Exception{
+        listener.setPreview(true);
+        return readAndSaveExcel(filePath, listener);
+    }
+
+    /**
+     * 读取excel文件数据并保存到数据库
+     * @param filePath
+     * @param listener
+     * @return
+     */
+    public static <T extends BaseExcelModel> boolean readAndSaveExcel(String filePath, FixedHeadExcelListener listener) throws Exception{
         File excel = getExcelFile(filePath);
         Class<T> headClazz = BeanUtils.getGenericityClass(listener, 0);
         EasyExcel.read(excel).registerReadListener(listener).head(headClazz).sheet().doRead();

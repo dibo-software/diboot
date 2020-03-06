@@ -33,7 +33,7 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
             prepareNormalDataExcel();
             // 读且保存
             DepartmentImportListener listener = new DepartmentImportListener();
-            boolean success = ExcelHelper.readAndSave(getTempFilePath(), listener);
+            boolean success = ExcelHelper.previewReadExcel(getTempFilePath(), listener);
             Assert.assertTrue(success);
             System.out.println(JSON.stringify(listener.getDataList()));
         }
@@ -54,7 +54,7 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
             // 预览读
             //ExcelHelper.previewRead(getTempFilePath(), new DepartmentImportListener());
             // 读且保存
-            ExcelHelper.readAndSave(getTempFilePath(), new DepartmentImportListener());
+            ExcelHelper.previewReadExcel(getTempFilePath(), new DepartmentImportListener());
         }
         catch (Exception e){
             e.printStackTrace();
