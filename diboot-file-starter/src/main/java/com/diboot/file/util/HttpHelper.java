@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +164,7 @@ public class HttpHelper {
             response.setContentType(getContextType(fileName));
             response.setHeader("Content-disposition", "attachment; filename="+ fileName);
             response.setHeader("Content-Length", String.valueOf(fileLength));
+            response.setHeader("filename", URLEncoder.encode(exportFileName, StandardCharsets.UTF_8.name()));
             bis = new BufferedInputStream(new FileInputStream(localFilePath));
             bos = new BufferedOutputStream(response.getOutputStream());
             byte[] buff = new byte[2048];
