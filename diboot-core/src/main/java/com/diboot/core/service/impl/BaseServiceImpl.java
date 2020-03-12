@@ -290,6 +290,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public boolean exists(IGetter<T> getterFn, Object value) {
+		QueryWrapper<T> queryWrapper = new QueryWrapper();
+		queryWrapper.eq(BeanUtils.convertToFieldName(getterFn), value);
+		return exists(queryWrapper);
+	}
+
+	@Override
 	public boolean exists(Wrapper queryWrapper) {
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		boolean isExists = V.notEmpty(entityList) && entityList.size() > 0;

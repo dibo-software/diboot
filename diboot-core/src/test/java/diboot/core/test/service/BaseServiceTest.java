@@ -229,4 +229,10 @@ public class BaseServiceTest {
         Assert.assertTrue(jsonResult2.getMsg().endsWith(msg));
     }
 
+    @Test
+    public void testExist(){
+        boolean exists = dictionaryService.exists(Dictionary::getType, "GENDER");
+        Assert.assertTrue(exists);
+
+    }
 }

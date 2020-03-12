@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
-import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
@@ -189,6 +189,14 @@ public interface BaseService<T> {
      * @return entity
      */
     T getSingleEntity(Wrapper queryWrapper);
+
+    /**
+     * 是否存在符合条件的记录
+     * @param getterFn entity的getter方法
+     * @param value 需要检查的值
+     * @return
+     */
+    boolean exists(IGetter<T> getterFn, Object value);
 
     /**
      * 是否存在符合条件的记录
