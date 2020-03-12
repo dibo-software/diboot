@@ -43,7 +43,7 @@ public abstract class BaseFileController extends BaseController {
         // 查询当前页的数据
         List entityList = uploadFileService.getEntityList(queryWrapper, pagination);
         // 返回结果
-        return new JsonResult(Status.OK, entityList).bindPagination(pagination);
+        return JsonResult.OK(entityList).bindPagination(pagination);
     }
 
     /***
@@ -62,39 +62,55 @@ public abstract class BaseFileController extends BaseController {
             log.debug("非法的文件类型: " + originFileName);
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的文件格式！");
         }
+        // 保存文件
+        UploadFile uploadFile = saveFile(file, entityClass, request);
+        // 保存上传记录
+        createUploadFile(uploadFile, request);
+        // 返回结果
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("uuid", uploadFile.getUuid());
+        dataMap.put("accessUrl", uploadFile.getAccessUrl());
+        return JsonResult.OK(dataMap);
+    }
+
+    /**
+     * 保存文件
+     * @param file
+     * @param entityClass
+     * @param request
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    protected <T> UploadFile saveFile(MultipartFile file, Class<T> entityClass, HttpServletRequest request) throws Exception{
         // 文件后缀
-        String ext = FileHelper.getFileExtByName(originFileName);
+        String originFileName = file.getOriginalFilename();
+        String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
         // 先保存文件
         String fileUid = S.newUuid();
         String newFileName = fileUid + "." + ext;
-        String fullPath = FileHelper.saveFile(file, newFileName);
-        // 保存文件上传记录
-        createUploadFile(entityClass, fileUid, originFileName, fullPath, ext, request);
-        Map<String, String> dataMap = new HashMap<>();
-        dataMap.put("uuid", fileUid);
-        return new JsonResult(Status.OK).data(dataMap);
+        String storageFullPath = FileHelper.saveFile(file, newFileName);
+
+        UploadFile uploadFile = new UploadFile();
+        uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(ext);
+        uploadFile.setRelObjType(entityClass.getSimpleName()).setStoragePath(storageFullPath);
+
+        String description = getString(request, "description");
+        uploadFile.setDescription(description);
+        // 返回uploadFile对象
+        return uploadFile;
     }
 
     /**
      * 保存上传文件信息
-     * @param entityClass
-     * @param fileUid
-     * @param originFileName
-     * @param storagePath
-     * @param fileType
+     * @param uploadFile
      * @param request
-     * @param <T>
      * @throws Exception
      */
-    protected <T> void createUploadFile(Class<T> entityClass, String fileUid, String originFileName, String storagePath, String fileType, HttpServletRequest request) throws Exception{
+    protected void createUploadFile(UploadFile uploadFile, HttpServletRequest request) throws Exception{
         // 保存文件之后的处理逻辑
-        int dataCount = extractDataCount(fileUid, storagePath, request);
-        UploadFile uploadFile = new UploadFile();
-        uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(fileType);
-        uploadFile.setRelObjType(entityClass.getSimpleName()).setStoragePath(storagePath);
-        // 初始设置为0，批量保存数据后更新
-        String description = getString(request, "description");
-        uploadFile.setDataCount(dataCount).setDescription(description);
+        int dataCount = extractDataCount(uploadFile.getUuid(), uploadFile.getStoragePath(), request);
+        uploadFile.setDataCount(dataCount);
         // 保存文件上传记录
         uploadFileService.createEntity(uploadFile);
     }

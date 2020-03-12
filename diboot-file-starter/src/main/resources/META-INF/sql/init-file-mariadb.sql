@@ -6,6 +6,7 @@ CREATE TABLE upload_file (
   file_name varchar(100) NOT NULL COMMENT '文件名',
   storage_path varchar(200) NOT NULL COMMENT '存储路径',
   file_type varchar(20) DEFAULT NULL COMMENT '文件类型',
+  access_url varchar(200) NULL COMMENT '访问地址',
   data_count int DEFAULT 0 COMMENT '数据量',
   description varchar(100) DEFAULT NULL COMMENT '备注',
   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',

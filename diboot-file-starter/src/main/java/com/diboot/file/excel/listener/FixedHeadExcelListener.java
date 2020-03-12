@@ -26,17 +26,17 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     //解析出的excel表头
     protected Map<Integer, String> headMap;
     // 字段名-列名的映射
-    protected LinkedHashMap<String, String> fieldHeadMap;
+    private LinkedHashMap<String, String> fieldHeadMap;
     //解析后的数据实体list
-    protected List<T> dataList = new ArrayList<>();
+    private List<T> dataList = new ArrayList<>();
     //错误信息
     private List<String> validateErrorMsgs = new ArrayList<>();
-    // 导入文件的uuid
-    protected String uploadFileUuid;
-    // 是否为预览模式
-    private boolean preview = false;
     // 注入request
     private Map<String, Object> requestParams;
+    // 是否为预览模式
+    private boolean preview = false;
+    // 导入文件的uuid
+    protected String uploadFileUuid;
 
     public FixedHeadExcelListener(){
     }
@@ -186,6 +186,10 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         return this.fieldHeadMap;
     }
 
+    /**
+     * 获取FieldHeadMap顺序转换的list列表
+     * @return
+     */
     public List<Map<String, String>> getFieldHeaders(){
         if (V.isEmpty(this.fieldHeadMap)) {
             return Collections.emptyList();

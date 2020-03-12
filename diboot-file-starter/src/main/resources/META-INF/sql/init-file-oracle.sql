@@ -5,6 +5,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
      rel_obj_id NUMBER(20),
      file_name VARCHAR2(100) NOT NULL,
      storage_path VARCHAR2(200) NOT NULL,
+     access_url VARCHAR2(200),
      file_type VARCHAR2(20),
      data_count NUMBER(9)   DEFAULT 0 not null,
      description VARCHAR2(100),
@@ -18,6 +19,7 @@ comment on column ${SCHEMA}.upload_file.rel_obj_type is '关联对象类';
 comment on column ${SCHEMA}.upload_file.rel_obj_id is '关联对象ID';
 comment on column ${SCHEMA}.upload_file.file_name is '文件名';
 comment on column ${SCHEMA}.upload_file.storage_path is '存储路径';
+comment on column ${SCHEMA}.upload_file.access_url is '访问地址';
 comment on column ${SCHEMA}.upload_file.file_type is '文件类型';
 comment on column ${SCHEMA}.upload_file.data_count is '数据量';
 comment on column ${SCHEMA}.upload_file.description is '备注';

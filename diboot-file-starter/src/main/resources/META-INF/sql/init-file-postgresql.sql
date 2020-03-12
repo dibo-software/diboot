@@ -5,6 +5,7 @@ CREATE TABLE upload_file (
    rel_obj_id bigint,
    file_name varchar(100) NOT NULL,
    storage_path varchar(200) NOT NULL,
+   access_url varchar(200),
    file_type varchar(20),
    data_count int  not null DEFAULT 0,
    description varchar(100),
@@ -18,6 +19,7 @@ comment on column upload_file.rel_obj_type is '关联对象类';
 comment on column upload_file.rel_obj_id is '关联对象ID';
 comment on column upload_file.file_name is '文件名';
 comment on column upload_file.storage_path is '存储路径';
+comment on column upload_file.access_url is '访问地址';
 comment on column upload_file.file_type is '文件类型';
 comment on column upload_file.data_count is '数据量';
 comment on column upload_file.description is '备注';

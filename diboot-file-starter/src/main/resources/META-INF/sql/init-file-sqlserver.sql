@@ -5,6 +5,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
     rel_obj_id bigint,
     file_name varchar(100) NOT NULL,
     storage_path varchar(200) NOT NULL,
+    access_url varchar(200) NULL,
     file_type varchar(20),
     data_count int  not null DEFAULT 0,
     description varchar(100),
@@ -18,6 +19,7 @@ execute sp_addextendedproperty 'MS_Description', N'关联对象类', 'SCHEMA', '
 execute sp_addextendedproperty 'MS_Description', N'关联对象ID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_id';
 execute sp_addextendedproperty 'MS_Description', N'文件名', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'file_name';
 execute sp_addextendedproperty 'MS_Description', N'存储路径', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'storage_path';
+execute sp_addextendedproperty 'MS_Description', N'访问地址', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'access_url';
 execute sp_addextendedproperty 'MS_Description', N'文件类型', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'file_type';
 execute sp_addextendedproperty 'MS_Description', N'数据量', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'data_count';
 execute sp_addextendedproperty 'MS_Description', N'备注', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'description';

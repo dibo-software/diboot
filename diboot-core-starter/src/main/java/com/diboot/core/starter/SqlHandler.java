@@ -191,6 +191,9 @@ public class SqlHandler {
         if(jdbcUrl == null){
             String master = environment.getProperty("spring.datasource.dynamic.primary");
             jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+            if(jdbcUrl == null){
+                log.warn("无法获取 datasource url 配置，请检查！");
+            }
         }
         return jdbcUrl;
     }

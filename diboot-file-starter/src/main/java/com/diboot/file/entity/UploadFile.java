@@ -45,6 +45,12 @@ public class UploadFile extends BaseEntity {
     @JSONField(serialize = false)
     private String storagePath;
 
+    /**
+     * 访问URL
+     */
+    @TableField
+    private String accessUrl;
+
     @TableField
     private String fileType;
 
