@@ -48,14 +48,14 @@ private List<Role> roleList;
 ### 1. 引入依赖
 Gradle:
 ~~~gradle
-compile("com.diboot:diboot-core-spring-boot-starter:2.0.4")
+compile("com.diboot:diboot-core-spring-boot-starter:2.0.5")
 ~~~
 或Maven
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.5</version>
 </dependency>
 ~~~
 > * 使用diboot-devtools，会自动引入diboot-core，无需配置此依赖。
