@@ -49,7 +49,7 @@ public class IamFrontendPermission extends BaseEntity {
     private String frontendCode;
 
     // 接口列表
-    @Length(max=5120, message="接口列表长度应小于5120")
+    @Length(max=5000, message="接口列表长度应小于5000")
     @TableField()
     private String apiSet;
 
