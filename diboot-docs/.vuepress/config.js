@@ -39,6 +39,20 @@ module.exports = {
                     ]
                 }
             ],
+            '/guide/diboot-antd-admin/': [
+                {
+                    title: 'Diboot-antd-admin 项目指南',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/diboot-antd-admin/介绍', '介绍'],
+                        ['/guide/diboot-antd-admin/开始使用', '开始使用'],
+                        ['/guide/diboot-antd-admin/添加页面', '添加页面'],
+                        ['/guide/diboot-antd-admin/权限控制', '权限控制'],
+                        ['/guide/diboot-antd-admin/CRUD快速集成', 'CRUD快速集成'],
+                    ]
+                }
+            ],
             '/guide/diboot-devtools/': [
                 {
                     title: 'diboot-devtools 使用指南',
@@ -60,6 +74,12 @@ module.exports = {
             items: [
                 { text: 'core基础内核', link: '/guide/diboot-core/安装' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' }
+            ]
+        }, {
+            text: '前端项目 指南',
+            items: [
+                { text: 'diboot-antd-admin', link: '/guide/diboot-antd-admin/介绍' },
+                { text: 'diboot-element-admin', link: '/guide/diboot-antd-admin/介绍' }
             ]
         }, {
             text: 'devtools助理 指南',
