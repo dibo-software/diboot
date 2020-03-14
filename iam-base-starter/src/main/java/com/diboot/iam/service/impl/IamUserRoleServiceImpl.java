@@ -11,6 +11,7 @@ import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamUserRoleMapper;
+import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamSecurityUtils;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,7 +40,10 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private IamUserRoleMapper iamUserRoleMapper;
     @Autowired
     private IamRoleService iamRoleService;
+    @Autowired
+    private IamAccountService iamAccountService;
 
+    // 扩展接口
     private IamExtensible iamExtensible;
     private boolean iamExtensibleImplChecked = false;
 
@@ -73,26 +78,39 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         if(superAdminRoleId != null && superAdminRoleId.equals(entity.getRoleId())){
             checkSuperAdminIdentity();
         }
-        return super.createEntity(entity);
+        boolean success = super.createEntity(entity);
+        if(success){
+            // 清空缓存
+            clearUserAuthCache(entity.getUserType(), entity.getUserId());
+        }
+        return success;
     }
 
     @Override
     @Transactional(rollbackFor = {Exception.class})
     public boolean createEntities(Collection entityList) {
-        if (V.notEmpty(entityList)) {
-            Long superAdminRoleId = getSuperAdminRoleId();
-            boolean hasSuperAdmin = false;
-            for(Object entity : entityList){
-                IamUserRole iamUserRole = (IamUserRole)entity;
-                if(superAdminRoleId != null && superAdminRoleId.equals(iamUserRole.getRoleId())){
-                    hasSuperAdmin = true;
-                }
-            }
-            if(hasSuperAdmin){
-                checkSuperAdminIdentity();
+        if (V.isEmpty(entityList)) {
+            return true;
+        }
+
+        Long superAdminRoleId = getSuperAdminRoleId();
+        boolean hasSuperAdmin = false;
+        for(Object entity : entityList){
+            IamUserRole iamUserRole = (IamUserRole)entity;
+            if(superAdminRoleId != null && superAdminRoleId.equals(iamUserRole.getRoleId())){
+                hasSuperAdmin = true;
             }
         }
-        return super.createEntities(entityList);
+        if(hasSuperAdmin){
+            checkSuperAdminIdentity();
+        }
+        boolean success = super.createEntities(entityList);
+        if(success){
+            // 清空用户缓存
+            IamUserRole entity = ((List<IamUserRole>) entityList).get(0);
+            clearUserAuthCache(entity.getUserType(), entity.getUserId());
+        }
+        return success;
     }
 
     @Override
@@ -110,7 +128,12 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         for(Long roleId : roleIds){
             entityList.add(new IamUserRole(userType, userId, roleId));
         }
-        return super.createEntities(entityList);
+        boolean success = super.createEntities(entityList);
+        if(success){
+            // 清空用户缓存
+            clearUserAuthCache(userType, userId);
+        }
+        return success;
     }
 
     @Override
@@ -148,7 +171,12 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         for(Long roleId : roleIds){
             entityList.add(new IamUserRole(userType, userId, roleId));
         }
-        return super.createEntities(entityList);
+        boolean success = super.createEntities(entityList);
+        if(success){
+            // 清空用户缓存
+            clearUserAuthCache(userType, userId);
+        }
+        return success;
     }
 
     /**
@@ -176,4 +204,17 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
             throw new PermissionException("非超级管理员用户不可授予其他用户超级管理员权限！");
         }
     }
+
+    /**
+     * 清空用户的认证缓存，以便权限变化及时生效
+     * @param userType
+     * @param userId
+     */
+    private void clearUserAuthCache(String userType, Long userId){
+        String username = iamAccountService.getAuthAccount(userType, userId);
+        if(V.notEmpty(username)){
+            IamSecurityUtils.clearAuthorizationCache(username);
+        }
+    }
+
 }

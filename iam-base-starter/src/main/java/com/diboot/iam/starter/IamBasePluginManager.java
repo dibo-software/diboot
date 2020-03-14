@@ -16,7 +16,7 @@ import org.springframework.core.env.Environment;
 public class IamBasePluginManager implements PluginManager {
 
     // 验证SQL
-    private static final String VALIDATE_SQL = "SELECT id FROM ${SCHEMA}.iam_permission WHERE id=0";
+    private static final String VALIDATE_SQL = "SELECT id FROM ${SCHEMA}.iam_role WHERE id=0";
 
     public void initPlugin(IamBaseProperties iamBaseProperties){
         // 检查数据库字典是否已存在

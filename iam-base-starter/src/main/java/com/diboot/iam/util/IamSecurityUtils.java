@@ -4,8 +4,13 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamAccount;
+import com.diboot.iam.jwt.BaseJwtRealm;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.cache.Cache;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
 
@@ -17,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version v2.0
  * @date 2019/12/26
  */
+@Slf4j
 public class IamSecurityUtils extends SecurityUtils {
 
     /**
@@ -44,6 +50,38 @@ public class IamSecurityUtils extends SecurityUtils {
         Subject subject = getSubject();
         if(subject.isAuthenticated() || subject.getPrincipals() != null){
             subject.logout();
+        }
+    }
+
+    /**
+     * 清空指定用户账户的权限信息的缓存 使其立即生效
+     */
+    public static void clearAuthorizationCache(String username){
+        RealmSecurityManager rsm = (RealmSecurityManager) IamSecurityUtils.getSecurityManager();
+        BaseJwtRealm baseJwtRealm = (BaseJwtRealm)rsm.getRealms().iterator().next();
+        if(baseJwtRealm != null){
+            Cache<Object, AuthorizationInfo> cache = baseJwtRealm.getAuthorizationCache();
+            if(cache != null) {
+                cache.remove(username);
+                log.debug("已清空账号 {} 的权限缓存，以便新权限生效.", username);
+            }
+        }
+    }
+
+    /**
+     * 清空所有权限信息的缓存 使其立即生效
+     */
+    public static void clearAllAuthorizationCache(){
+        RealmSecurityManager rsm = (RealmSecurityManager) IamSecurityUtils.getSecurityManager();
+        BaseJwtRealm baseJwtRealm = (BaseJwtRealm)rsm.getRealms().iterator().next();
+        if(baseJwtRealm != null){
+            Cache<Object, AuthorizationInfo> cache = baseJwtRealm.getAuthorizationCache();
+            if(cache != null) {
+                for(Object key : cache.keys()) {
+                    cache.remove(key);
+                }
+                log.debug("已清空全部登录用户的权限缓存，以便新权限生效.");
+            }
         }
     }
 
