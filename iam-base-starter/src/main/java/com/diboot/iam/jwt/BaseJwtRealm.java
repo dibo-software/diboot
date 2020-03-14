@@ -12,7 +12,9 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
+import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -89,6 +91,8 @@ public class BaseJwtRealm extends AuthorizingRealm {
             if(userObject == null){
                 throw new AuthenticationException("用户不存在");
             }
+            // 清空当前用户缓存
+            this.clearCachedAuthorizationInfo(IamSecurityUtils.getSubject().getPrincipals());
             return new SimpleAuthenticationInfo(userObject, jwtToken.getCredentials(), this.getName());
         }
     }

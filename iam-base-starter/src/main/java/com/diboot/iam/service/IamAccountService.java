@@ -36,4 +36,12 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
      */
     boolean changePwd(ChangePwdDTO changePwdDTO, IamAccount iamAccount) throws Exception;
 
+    /**
+     * 获取认证账号username
+     * @param userType
+     * @param userId
+     * @return
+     */
+    String getAuthAccount(String userType, Long userId);
+
 }

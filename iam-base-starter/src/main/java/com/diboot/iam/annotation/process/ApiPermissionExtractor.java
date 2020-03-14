@@ -31,27 +31,38 @@ import java.util.Set;
 public class ApiPermissionExtractor {
 
     /**
+     * 接口权限缓存
+     */
+    private static List<ApiPermissionWrapper> API_PERMISSION_CACHE = null;
+    /**
+     * 唯一KEY
+     */
+    private static Set<String> UNIQUE_KEY_SET = null;
+
+    /**
      * 提取所有的权限定义
      * @return
      */
     public static List<ApiPermissionWrapper> extractAllApiPermissions(){
-        List<ApiPermissionWrapper> apiPermissionWrappers = new ArrayList<>();
-        // 提取rest controller
-        List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
-        extractApiPermissions(controllerList, apiPermissionWrappers);
-        // 提取controller
-        controllerList = ContextHelper.getBeansByAnnotation(Controller.class);
-        extractApiPermissions(controllerList, apiPermissionWrappers);
-        // 缓存抓取结果
-        return apiPermissionWrappers;
+        if(API_PERMISSION_CACHE == null){
+            API_PERMISSION_CACHE = new ArrayList<>();
+            UNIQUE_KEY_SET = new HashSet<>();
+            // 初始化
+            // 提取rest controller
+            List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
+            extractApiPermissions(controllerList);
+            // 提取controller
+            controllerList = ContextHelper.getBeansByAnnotation(Controller.class);
+            extractApiPermissions(controllerList);
+        }
+        return API_PERMISSION_CACHE;
     }
 
     /**
      * 提取permission
      * @param controllerList
-     * @param apiPermissionWrappers
      */
-    private static void extractApiPermissions(List<Object> controllerList, List<ApiPermissionWrapper> apiPermissionWrappers){
+    private static void extractApiPermissions(List<Object> controllerList){
         if(V.notEmpty(controllerList)) {
             for (Object obj : controllerList) {
                 Class controllerClass = AopUtils.getTargetClass(obj);
@@ -80,7 +91,7 @@ public class ApiPermissionExtractor {
                 ApiPermissionWrapper wrapper = new ApiPermissionWrapper(title);
                 buildApiPermissionsInClass(wrapper, controllerClass, codePrefix);
                 if(V.notEmpty(wrapper.getChildren())){
-                    apiPermissionWrappers.add(wrapper);
+                    API_PERMISSION_CACHE.add(wrapper);
                 }
             }
         }
@@ -101,7 +112,6 @@ public class ApiPermissionExtractor {
         List<Method> annoMethods = AnnotationUtils.extractAnnotationMethods(controllerClass, BindPermission.class);
         if(V.notEmpty(annoMethods)){
             List<ApiPermission> apiPermissions = new ArrayList<>();
-            Set<String> existKey = new HashSet<>();
             for(Method method : annoMethods){
                 // 忽略私有方法
                 if(Modifier.isPrivate(method.getModifiers())){
@@ -121,14 +131,14 @@ public class ApiPermissionExtractor {
                 if(bindPermission != null){
                     String permissionCode = (codePrefix != null)? codePrefix+":"+bindPermission.code() : bindPermission.code();
                     // 提取请求url-permission code的关系
-                    buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name(), existKey);
+                    buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name());
                 }
                 // 处理RequirePermissions注解
                 else if(requiresPermissions != null){
                     String[] permissionCodes = requiresPermissions.value();
                     for(String permissionCode : permissionCodes){
                         // 提取请求url-permission code的关系
-                        buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, null, existKey);
+                        buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, null);
                     }
                 }
             }
@@ -150,7 +160,7 @@ public class ApiPermissionExtractor {
      * @param apiName
      */
     private static void buildApiPermission(List<ApiPermission> apiPermissions, Class controllerClass, String urlPrefix, String title,
-                                    String permissionCode, String[] methodAndUrl, String apiName, Set<String> existKey){
+                                    String permissionCode, String[] methodAndUrl, String apiName){
         String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
@@ -158,18 +168,18 @@ public class ApiPermissionExtractor {
                     for(String path : urlPrefix.split(Cons.SEPARATOR_COMMA)){
                         ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
                         apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(path + u).setPermissionCode(permissionCode).setValue(m + ":" + path + u);
-                        if(!existKey.contains(apiPermission.buildUniqueKey())){
+                        if(!UNIQUE_KEY_SET.contains(apiPermission.buildUniqueKey())){
                             apiPermissions.add(apiPermission);
-                            existKey.add(apiPermission.buildUniqueKey());
+                            UNIQUE_KEY_SET.add(apiPermission.buildUniqueKey());
                         }
                     }
                 }
                 else{
                     ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
                     apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(u).setPermissionCode(permissionCode);
-                    if(!existKey.contains(apiPermission.buildUniqueKey())){
+                    if(!UNIQUE_KEY_SET.contains(apiPermission.buildUniqueKey())){
                         apiPermissions.add(apiPermission);
-                        existKey.add(apiPermission.buildUniqueKey());
+                        UNIQUE_KEY_SET.add(apiPermission.buildUniqueKey());
                     }
                 }
             }

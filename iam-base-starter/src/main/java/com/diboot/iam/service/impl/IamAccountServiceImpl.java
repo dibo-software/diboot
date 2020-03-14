@@ -1,5 +1,7 @@
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -60,7 +62,6 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
         }
     }
 
-
     @Override
     public boolean changePwd(ChangePwdDTO changePwdDTO, IamAccount iamAccount) throws Exception {
         // 验证账号信息是否存在
@@ -88,4 +89,15 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
 
         return success;
     }
+
+    @Override
+    public String getAuthAccount(String userType, Long userId) {
+        LambdaQueryWrapper<IamAccount> queryWrapper = new QueryWrapper<IamAccount>().lambda()
+                .select(IamAccount::getAuthAccount)
+                .eq(IamAccount::getUserType, userType)
+                .eq(IamAccount::getUserId, userId);
+        IamAccount account = getSingleEntity(queryWrapper);
+        return account!=null? account.getAuthAccount() : null;
+    }
+
 }

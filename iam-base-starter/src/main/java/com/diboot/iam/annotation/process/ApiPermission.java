@@ -44,6 +44,6 @@ public class ApiPermission implements Serializable {
     private String permissionCode;
 
     public String buildUniqueKey(){
-        return apiMethod + "," + apiUri + "," + permissionCode;
+        return className + "," + apiMethod + "," + apiUri + "," + permissionCode;
     }
 }

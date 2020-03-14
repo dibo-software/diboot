@@ -8,6 +8,7 @@ import com.diboot.iam.mapper.IamRolePermissionMapper;
 import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamRoleService;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamFrontendPermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,9 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
             IamRolePermission rolePermission = new IamRolePermission(roleId, permissionId);
             rolePermissionList.add(rolePermission);
         }
-        return createEntities(rolePermissionList);
+        boolean success = createEntities(rolePermissionList);
+        IamSecurityUtils.clearAllAuthorizationCache();
+        return success;
     }
 
     @Override
@@ -95,8 +98,11 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
             IamRolePermission rolePermission = new IamRolePermission(roleId, permissionId);
             rolePermissionList.add(rolePermission);
         }
-        return createEntities(rolePermissionList);
+        boolean success = createEntities(rolePermissionList);
+        IamSecurityUtils.clearAllAuthorizationCache();
+        return success;
     }
+
 
     @Override
     public IamRoleService getRoleService() {
