@@ -41,7 +41,7 @@ module.exports = {
             ],
             '/guide/diboot-antd-admin/': [
                 {
-                    title: 'Diboot-antd-admin 项目指南',
+                    title: 'diboot-antd-admin 项目指南',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
@@ -50,6 +50,20 @@ module.exports = {
                         ['/guide/diboot-antd-admin/添加页面', '添加页面'],
                         ['/guide/diboot-antd-admin/权限控制', '权限控制'],
                         ['/guide/diboot-antd-admin/CRUD快速集成', 'CRUD快速集成'],
+                    ]
+                }
+            ],
+            '/guide/diboot-element-admin/': [
+                {
+                    title: 'diboot-element-admin 指南',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/diboot-element-admin/介绍', '介绍'],
+                        ['/guide/diboot-element-admin/开始使用', '开始使用'],
+                        ['/guide/diboot-element-admin/添加页面', '添加页面'],
+                        ['/guide/diboot-element-admin/权限控制', '权限控制'],
+                        ['/guide/diboot-element-admin/CRUD快速集成', 'CRUD快速集成'],
                     ]
                 }
             ],
@@ -79,7 +93,7 @@ module.exports = {
             text: '前端项目 指南',
             items: [
                 { text: 'diboot-antd-admin', link: '/guide/diboot-antd-admin/介绍' },
-                { text: 'diboot-element-admin', link: '/guide/diboot-antd-admin/介绍' }
+                { text: 'diboot-element-admin', link: '/guide/diboot-element-admin/介绍' }
             ]
         }, {
             text: 'devtools助理 指南',
