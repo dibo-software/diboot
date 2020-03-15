@@ -1,4 +1,4 @@
-#### 助力抗击疫情，diboot 团队紧急上线公益“轻统计工具”，无需注册，Excel一键生成在线填报表单、快速收集统计数据。[<点我使用>](http://s.dibo.ltd/#/g "注解自动绑定多表关联")
+> 助力抗击疫情，diboot 团队紧急上线公益“轻统计工具”，无需注册，Excel一键生成在线填报表单、快速收集统计数据。[<点我使用>](http://s.dibo.ltd/#/g "注解自动绑定多表关联")
 
 # diboot
 <p align="center">
@@ -10,10 +10,9 @@
     </a>
 </p>
 
->  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
+>  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性，成为你项目开发的坚实地基和高效脚手架。
 
-diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + IAM身份认证等基础功能组件。
-
+diboot v2版本，目前实现: diboot-core全新内核 + diboot-devtools开发助理 + IAM身份认证、file文件处理等基础组件 + diboot-admin基础后台。
 
 ## 一、 diboot-core: 精简优化内核
 全新精简内核，(基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比1.x版本减少70%+），主要实现：
@@ -25,7 +24,7 @@ diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成�
    > 通过@BindDict注解实现数据字典(枚举)的存储值value与显示值name的转换。
 #### 4. Entity/DTO自动转换为QueryWrapper
    > @BindQuery注解绑定字段参数对应的查询条件类型，Controller中直接绑定转换为QueryWrapper，无需再手动构建QueryWrapper查询条件
-#### 5. 其他常用工具类的最佳实践封装
+#### 5. 其他常用Service接口、工具类的最佳实践封装
    > 字符串处理、常用校验、BeanUtils、DateUtils等
    
 更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
@@ -34,23 +33,35 @@ diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成�
 ## 二、 diboot-devtools 自动化开发助理
 
 #### 1. 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
-#### 2. 使用很简单（UI界面操作，引入依赖jar，配置参数后，即可随SpringBoot启动运行）
-#### 3. 功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL、维护索引）
-#### 4. 配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）
+#### 2. 使用很简单（UI界面操作，引入依赖jar，配置参数后，即可随SpringBoot本地项目启动运行）
+#### 3. 功能很强大（数据结构变更与代码联动同步，一键生成&非覆盖式更新代码，自动记录变更SQL、维护索引）
+#### 4. 配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`等）
 #### 5. SQL与代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
 > [我要试试](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
-## 三、iam-base 身份认证基础组件
+## 三、iam-base 身份认证基础组件 及 配套VUE前端框架（diboot-admin-antd、diboot-admib-element）
 
-#### 1. RBAC角色权限模型 + JWT的认证授权 实现
-#### 2. BindPermission注解, 支持两级权限控制 + 自动鉴权
-#### 3. BindPermission注解, 支持自动收集权限码并更新数据库
+#### 1. RBAC角色权限模型 + JWT的认证授权 实现，支持刷新token
+#### 2. 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
+#### 3. 自动提取需要验证的后端接口, 借助前端功能方便绑定前后端菜单按钮权限
 #### 4. 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
+#### 5. Starter启动自动安装依赖的数据表
+#### 6. 启用devtools，自动生成初始controller代码到本地
 
 更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot-v2/tree/master/iam-base-starter "身份认证管理组件"). 
+
+## 四、diboot-file 文件相关处理组件
+
+#### 1. EasyExcel轻量封装，支持Java注解校验与@BindDict注解实现字典name-value转换，提供完善的校验错误提示
+#### 2. 封装常用的文件本地存储、上传下载、图片压缩水印等常用处理
+#### 3. Starter启动自动安装依赖的数据表
+#### 4. 启用devtools，自动生成初始样例controller代码到本地
+
+更多介绍请查看: [diboot-file-starter README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-file-starter "文件组件"). 
+
 > 其他组件逐步开发中 ...
 
-## 四、技术交流群
+## 五、技术交流群
 
 如果您有技术问题，欢迎加群交流：
 

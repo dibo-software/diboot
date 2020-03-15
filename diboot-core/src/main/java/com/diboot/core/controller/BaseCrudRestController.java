@@ -73,7 +73,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, getVOClass());
         // 返回结果
-        return new JsonResult(Status.OK, voList).bindPagination(pagination);
+        return JsonResult.OK(voList).bindPagination(pagination);
     }
 
     /**
@@ -86,7 +86,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper);
         // 返回结果
-        return new JsonResult(Status.OK, entityList);
+        return JsonResult.OK(entityList);
     }
 
     /***
@@ -101,7 +101,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper, pagination);
         // 返回结果
-        return new JsonResult(Status.OK, entityList).bindPagination(pagination);
+        return JsonResult.OK(entityList).bindPagination(pagination);
     }
 
     /***
@@ -114,7 +114,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, validateResult);
+            return JsonResult.FAIL_VALIDATION(validateResult);
         }
         // 执行保存操作
         boolean success = getService().createEntity(entity);
@@ -123,7 +123,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             this.afterCreated(entity);
             // 组装返回结果
             Map<String, Object> data = buildPKDataMap(entity);
-            return new JsonResult(Status.OK, data);
+            return JsonResult.OK(data);
         } else {
             log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
             // 组装返回结果
@@ -152,14 +152,14 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 执行更新资源前的操作
         String validateResult = this.beforeUpdate(entity);
         if (validateResult != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, validateResult);
+            return JsonResult.FAIL_VALIDATION(validateResult);
         }
         // 执行保存操作
         boolean success = getService().updateEntity(entity);
         if (success) {
             // 执行更新成功后的操作
             this.afterUpdated(entity);
-            return new JsonResult(Status.OK);
+            return JsonResult.OK();
         } else {
             log.warn("更新操作失败，{}:{}", entity.getClass().getSimpleName(), entity.getId());
             // 返回操作结果
@@ -190,7 +190,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             // 执行更新成功后的操作
             this.afterDeleted(entity);
             log.info("删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
-            return new JsonResult(Status.OK);
+            return JsonResult.OK();
         } else {
             log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
             return new JsonResult(Status.FAIL_OPERATION);

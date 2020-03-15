@@ -39,6 +39,18 @@ module.exports = {
                     ]
                 }
             ],
+            '/guide/diboot-file/': [
+                {
+                    title: '文件组件 使用指南',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/diboot-file/介绍', '介绍'],
+                        ['/guide/diboot-file/开始使用', '开始使用'],
+                        ['/guide/diboot-file/自定义扩展', '自定义扩展'],
+                    ]
+                }
+            ],
             '/guide/diboot-antd-admin/': [
                 {
                     title: 'diboot-antd-admin 项目指南',
@@ -87,7 +99,8 @@ module.exports = {
             text: '基础组件 指南',
             items: [
                 { text: 'core基础内核', link: '/guide/diboot-core/安装' },
-                { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' }
+                { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
+                { text: '文件处理组件', link: '/guide/diboot-file/介绍' }
             ]
         }, {
             text: '前端项目 指南',

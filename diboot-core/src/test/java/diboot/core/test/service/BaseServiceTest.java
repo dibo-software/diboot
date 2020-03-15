@@ -218,7 +218,7 @@ public class BaseServiceTest {
     public void testJsonResult(){
         Map map = new HashMap();
         map.put("k", "123");
-        JsonResult jsonResult = new JsonResult(Status.OK, map);
+        JsonResult jsonResult = JsonResult.OK(map);
         JsonResult jsonResult2 = JsonResult.OK(map);
         Assert.assertEquals(jsonResult.getData(), jsonResult2.getData());
 

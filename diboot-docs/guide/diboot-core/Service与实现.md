@@ -2,7 +2,7 @@
 
 ## Service类
 
-> 对于一个自定义的entity，您可以像以往的习惯一样开发service相关代码，但我们推荐您继承diboot-core中封装好的BaseService接口及BaseServiceImpl实现。
+> 对于一个自定义的entity，我们推荐您继承diboot-core中封装好的BaseService接口及BaseServiceImpl实现。
 
 ```java
 package com.example.demo.service;
@@ -95,6 +95,29 @@ System.out.println(success);
 // 输出
 ===> true
 ```
+
+### createEntityAndRelatedEntities
+```java
+/**
+ * 添加entity 及 其关联子项entities
+ * @param entity 主表entity
+ * @param relatedEntities 从表/关联表entities
+ * @param relatedEntitySetter 设置关联从表绑定id的setter，如Dictionary::setParentId
+ * @return
+ */
+boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+```
+> 该接口将对一个1对多关联数据的设置关联id并批量保存，如：
+```java
+boolean success = dictionaryService.createEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
+// 输出
+===> true
+```
+类似的还有1对多数据的批量更新与删除：
+~~~java
+boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+boolean deleteEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+~~~
 
 ### deleteEntity
 ```java
