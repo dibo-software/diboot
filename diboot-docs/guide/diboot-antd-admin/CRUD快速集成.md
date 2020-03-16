@@ -43,8 +43,9 @@ export default {
 ```
 5. 删除数据：直接在删除按钮上调用remove函数即可，传入需要删除的当前id。
 6. 导出数据：直接在导出按钮上调用exportData函数即可，将会传入当前查询参数，并异步下载文件。
-6. 钩子函数：afterLoadList，在列表加载完毕将会执行该操作，另外，删除函数返回的是 Promise对象，所以可以使用.then在删除完毕时执行某些操作。
-7. 相关配置：
+7. 自定义查询参数处理方法：重写rebuildQuery方法，接收mixins中已经定义的customQueryParam与queryParam的合并值，返回处理后的值，该方法将会在获取列表数据前或导出数据前被调用。
+8. 钩子函数：afterLoadList，在列表加载完毕将会执行该操作，另外，删除函数返回的是 Promise对象，所以可以使用.then在删除完毕时执行某些操作。
+9. 相关配置：
     * customQueryParam: 不会被搜索栏改变的初始查询参数对象，一般用于页面固定的查询参数
     * queryParam：与查询条件绑定的查询参数对象
     * advanced：用于构建可收缩/展开的查询框的状态参数
