@@ -40,6 +40,11 @@
           </div>
         </div>
       </div>
+      <div class="custom content">
+        <div class="features">
+          <img src="../public/structure.png" alt="" style="display: block; margin: 0 auto; width: 100%; max-width: 800px; height: auto;">
+        </div>
+      </div>
       <div class="footer">
         <div class="footer-content">
           <div class="footer-item"></div>
