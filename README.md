@@ -10,8 +10,9 @@
     </a>
 </p>
 
->  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性，成为你项目开发的坚实地基和高效脚手架。
+>  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
+![diboot平台组成结构图](diboot-docs/guide/diboot-core/images/structure.png)
 diboot v2版本，目前实现: diboot-core全新内核 + diboot-devtools开发助理 + IAM身份认证、file文件处理等基础组件 + diboot-admin基础后台。
 
 ## 一、 diboot-core: 精简优化内核
