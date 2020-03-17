@@ -61,6 +61,7 @@ module.exports = {
                         ['/guide/diboot-antd-admin/开始使用', '开始使用'],
                         ['/guide/diboot-antd-admin/添加页面', '添加页面'],
                         ['/guide/diboot-antd-admin/权限控制', '权限控制'],
+                        ['/guide/diboot-antd-admin/接口请求', '接口请求'],
                         ['/guide/diboot-antd-admin/CRUD快速集成', 'CRUD快速集成'],
                     ]
                 }
@@ -75,6 +76,7 @@ module.exports = {
                         ['/guide/diboot-element-admin/开始使用', '开始使用'],
                         ['/guide/diboot-element-admin/添加页面', '添加页面'],
                         ['/guide/diboot-element-admin/权限控制', '权限控制'],
+                        ['/guide/diboot-antd-admin/接口请求', '接口请求'],
                         ['/guide/diboot-element-admin/CRUD快速集成', 'CRUD快速集成'],
                     ]
                 }
@@ -100,7 +102,7 @@ module.exports = {
             items: [
                 { text: 'core基础内核', link: '/guide/diboot-core/安装' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
-                { text: '文件处理组件', link: '/guide/diboot-file/介绍' }
+                { text: 'File文件组件', link: '/guide/diboot-file/介绍' }
             ]
         }, {
             text: '前端项目 指南',
