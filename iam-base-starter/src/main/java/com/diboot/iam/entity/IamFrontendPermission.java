@@ -57,10 +57,6 @@ public class IamFrontendPermission extends BaseEntity {
     @TableField
     private Long sortId;
 
-    // 创建人
-    @TableField()
-    private Long createBy;
-
     // 更新时间
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
     private Date updateTime;
