@@ -189,11 +189,12 @@ public class FileHelper{
 	 * 删除文件
 	 * @param fileStoragePath
 	 */
-	public static void deleteFile(String fileStoragePath) {
+	public static boolean deleteFile(String fileStoragePath) {
 		File file = new File(fileStoragePath);
 		if(file.exists()){
-			file.delete();
+			return file.delete();
 		}
+		return false;
 	}
 
 }

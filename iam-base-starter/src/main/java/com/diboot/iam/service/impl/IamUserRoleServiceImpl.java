@@ -95,10 +95,16 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
         Long superAdminRoleId = getSuperAdminRoleId();
         boolean hasSuperAdmin = false;
+        String userType = null;
+        Long userId = null;
         for(Object entity : entityList){
             IamUserRole iamUserRole = (IamUserRole)entity;
             if(superAdminRoleId != null && superAdminRoleId.equals(iamUserRole.getRoleId())){
                 hasSuperAdmin = true;
+            }
+            if(userId == null){
+                userType = iamUserRole.getUserType();
+                userId = iamUserRole.getUserId();
             }
         }
         if(hasSuperAdmin){
@@ -107,8 +113,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         boolean success = super.createEntities(entityList);
         if(success){
             // 清空用户缓存
-            IamUserRole entity = ((List<IamUserRole>) entityList).get(0);
-            clearUserAuthCache(entity.getUserType(), entity.getUserId());
+            clearUserAuthCache(userType, userId);
         }
         return success;
     }

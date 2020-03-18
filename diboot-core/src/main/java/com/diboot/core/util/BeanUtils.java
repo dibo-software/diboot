@@ -106,7 +106,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("对象转换异常, class="+clazz.getName());
+            log.warn("对象转换异常, class: {}, error: {}", clazz.getName(), e.getMessage());
         }
         return resultList;
     }
@@ -157,6 +157,10 @@ public class BeanUtils {
                             args[0] = value;
                             log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型: {} vs {} ", value.getClass().getTypeName(), fieldType);
                         }
+                    }
+                    // boolean vs Boolean
+                    else if(value.getClass().getTypeName().equalsIgnoreCase(Boolean.class.getName()) && fieldType.equalsIgnoreCase(Boolean.class.getName())){
+                        //args[0] = (Boolean).valueOf();
                     }
                     // Integer 向上转型为 Long 绑定
                     else if(value.getClass().getTypeName().equals(Integer.class.getName()) && fieldType.equals(Long.class.getName())){

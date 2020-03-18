@@ -1,5 +1,5 @@
 # IAM-base: 身份认证组件 (基础版)
-> 该组件配套的前端基础框架有antd、element-ui，前端代码参考: diboot-admin-antd 及 diboot-admin-element
+> 该组件配套的前端基础框架有antd、element-ui，前端代码参考: diboot-antd-admin 及 diboot-element-admin
 ## 组件特性
 * 开箱即用的RBAC角色权限模型
 * 基于JWT的认证授权，支持申请token、刷新token

@@ -71,7 +71,6 @@ public class ZipHelper {
             				continue;
             			}
             		}
-            		childFileList[n].getAbsolutePath().indexOf(file.getAbsolutePath());
             	    zipFile(srcRootDir, childFileList[n], zos, matchKeyword);
             	}
         	}
