@@ -20,7 +20,7 @@ public class IamRoleVO extends IamRole {
     private static final long serialVersionUID = -6778550575399070076L;
 
     // 字段关联：this.id=iam_role_permission.role_id AND iam_role_permission.permission_id=id
-    @BindEntityList(entity = IamFrontendPermission.class, condition = "this.id=iam_role_permission.role_id AND iam_role_permission.permission_id=id AND iam_role_permission.is_deleted=0")
+    @BindEntityList(entity = IamFrontendPermission.class, condition = "this.id=iam_role_permission.role_id AND iam_role_permission.permission_id=id")
     private List<IamFrontendPermission> permissionList;
 
     private List<IamFrontendPermissionListVO> permissionVOList;

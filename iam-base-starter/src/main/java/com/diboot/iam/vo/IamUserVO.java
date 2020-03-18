@@ -27,6 +27,6 @@ public class IamUserVO extends IamUser {
     private String statusLabel;
 
     // 字段关联：this.id=iam_user_role.user_id AND iam_user_role.role_id=id
-    @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.is_deleted=0")
+    @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id")
     private List<IamRole> roleList;
 }

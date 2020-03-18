@@ -20,9 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper, IamUserRole> implements IamUserRoleService {
 
     @Autowired
-    private IamUserRoleMapper iamUserRoleMapper;
+    private IamUserRoleService iamUserRoleService;
     @Autowired
     private IamRoleService iamRoleService;
     @Autowired
@@ -54,7 +54,20 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRole> getUserRoleList(String userType, Long userId) {
-        List<IamRole> roles = iamUserRoleMapper.getUserRoleList(userType, userId);
+        List<IamUserRole> userRoleList = iamUserRoleService.getEntityList(Wrappers.<IamUserRole>lambdaQuery()
+                .select(IamUserRole::getRoleId)
+                .eq(IamUserRole::getUserType, userType)
+                .eq(IamUserRole::getUserId, userId)
+        );
+        if(V.isEmpty(userRoleList)){
+            return Collections.emptyList();
+        }
+        List<Long> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
+        // 查询当前角色
+        List<IamRole> roles = iamRoleService.getEntityList(Wrappers.<IamRole>lambdaQuery()
+                .select(IamRole::getId, IamRole::getName, IamRole::getCode)
+                .in(IamRole::getId, roleIds));
+        // 加载扩展角色
         if(!iamExtensibleImplChecked){
             try{
                 iamExtensible = ContextHelper.getBean(IamExtensible.class);

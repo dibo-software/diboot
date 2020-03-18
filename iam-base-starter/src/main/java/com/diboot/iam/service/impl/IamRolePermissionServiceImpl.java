@@ -2,6 +2,7 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.entity.IamRolePermission;
 import com.diboot.iam.mapper.IamRolePermissionMapper;
@@ -35,9 +36,6 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     @Autowired
     private IamFrontendPermissionService iamFrontendPermissionService;
 
-    @Autowired
-    private IamRolePermissionMapper iamRolePermissionMapper;
-
     @Override
     public List<IamFrontendPermissionVO> getPermissionVOList(String application, Long roleId) {
         List<Long> roleIdList = new ArrayList<>();
@@ -54,7 +52,12 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
 
     @Override
     public List<IamFrontendPermission> getPermissionList(String application, List<Long> roleIds) {
-        List<IamFrontendPermission> list = iamRolePermissionMapper.getPermissionsByRoleIds(roleIds);
+        List<Long> permissionIds = getPermissionIdsByRoleIds(application, roleIds);
+        if(V.isEmpty(permissionIds)){
+            return Collections.emptyList();
+        }
+        List<IamFrontendPermission> list = iamFrontendPermissionService.getEntityList(Wrappers.<IamFrontendPermission>lambdaQuery()
+                .in(IamFrontendPermission::getId, permissionIds));
         if(list == null){
             list = Collections.emptyList();
         }
@@ -63,10 +66,18 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
 
     @Override
     public List<String> getApiUrlList(String application, List<Long> roleIds) {
-        List<String> list = iamRolePermissionMapper.getApiUrlList(roleIds);
-        if(list == null){
-            list = Collections.emptyList();
+        List<Long> permissionIds = getPermissionIdsByRoleIds(application, roleIds);
+        // 查询权限
+        List<IamFrontendPermission> frontendPermissions = iamFrontendPermissionService.getEntityList(
+            Wrappers.<IamFrontendPermission>lambdaQuery()
+            .select(IamFrontendPermission::getApiSet)
+            .in(IamFrontendPermission::getId, permissionIds)
+        );
+        if(frontendPermissions == null){
+            return Collections.emptyList();
         }
+        // 转换为string list
+        List<String> list = BeanUtils.collectToList(frontendPermissions, IamFrontendPermission::getApiSet);
         return list;
     }
 
@@ -112,5 +123,21 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     @Override
     public IamFrontendPermissionService getPermissionService() {
         return iamFrontendPermissionService;
+    }
+
+    /**
+     * 获取角色关联的权限id集合
+     * @param roleIds
+     * @return
+     */
+    private List<Long> getPermissionIdsByRoleIds(String application, List<Long> roleIds){
+        List<IamRolePermission> permissions = getEntityList(Wrappers.<IamRolePermission>lambdaQuery()
+                .select(IamRolePermission::getPermissionId)
+                .in(IamRolePermission::getRoleId, roleIds));
+        if(V.isEmpty(permissions)){
+            return Collections.emptyList();
+        }
+        List<Long> permissionIds = BeanUtils.collectToList(permissions, IamRolePermission::getPermissionId);
+        return permissionIds;
     }
 }
