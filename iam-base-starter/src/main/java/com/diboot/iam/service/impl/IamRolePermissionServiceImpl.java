@@ -52,6 +52,9 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
 
     @Override
     public List<IamFrontendPermission> getPermissionList(String application, List<Long> roleIds) {
+        if (V.isEmpty(roleIds)) {
+            return Collections.emptyList();
+        }
         List<Long> permissionIds = getPermissionIdsByRoleIds(application, roleIds);
         if(V.isEmpty(permissionIds)){
             return Collections.emptyList();
@@ -66,7 +69,13 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
 
     @Override
     public List<String> getApiUrlList(String application, List<Long> roleIds) {
+        if (V.isEmpty(roleIds)) {
+            return Collections.emptyList();
+        }
         List<Long> permissionIds = getPermissionIdsByRoleIds(application, roleIds);
+        if (V.isEmpty(permissionIds)) {
+            return Collections.emptyList();
+        }
         // 查询权限
         List<IamFrontendPermission> frontendPermissions = iamFrontendPermissionService.getEntityList(
             Wrappers.<IamFrontendPermission>lambdaQuery()
@@ -131,6 +140,9 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
      * @return
      */
     private List<Long> getPermissionIdsByRoleIds(String application, List<Long> roleIds){
+        if (V.isEmpty(roleIds)) {
+            return Collections.emptyList();
+        }
         List<IamRolePermission> permissions = getEntityList(Wrappers.<IamRolePermission>lambdaQuery()
                 .select(IamRolePermission::getPermissionId)
                 .in(IamRolePermission::getRoleId, roleIds));

@@ -70,7 +70,7 @@ create table iam_frontend_permission
   display_type  varchar(20)                          not null comment '展现类型',
   display_name  varchar(100)                         not null comment '显示名称',
   frontend_code varchar(100)                         not null comment '前端编码',
-  api_set       varchar(5000)                        null comment '接口列表',
+  api_set       varchar(3000)                        null comment '接口列表',
   sort_id       bigint                               null comment '排序号',
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
   create_time    timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',

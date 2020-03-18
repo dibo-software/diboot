@@ -115,7 +115,7 @@ create table ${SCHEMA}.iam_frontend_permission
     display_type VARCHAR2(20) not null,
     display_name VARCHAR2(100) not null,
     frontend_code VARCHAR2(100)   null,
-    api_set VARCHAR2(5000)   null,
+    api_set VARCHAR2(3000)   null,
     sort_id NUMBER(20)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
