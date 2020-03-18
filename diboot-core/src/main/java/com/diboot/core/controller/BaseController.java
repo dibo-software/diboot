@@ -135,8 +135,10 @@ public class BaseController {
 			String paramName = (String) paramNames.nextElement();
 			String[] values = request.getParameterValues(paramName);
 			if(V.notEmpty(values)){
-				if(values.length == 1 && V.notEmpty(values[0])){
-					result.put(paramName, values[0]);
+				if(values.length == 1){
+					if(V.notEmpty(values[0])){
+						result.put(paramName, values[0]);
+					}
 				}
 				else{
 					// 多个值需传递到后台SQL的in语句
