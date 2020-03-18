@@ -116,6 +116,7 @@ create table ${SCHEMA}.iam_frontend_permission
    display_name varchar(100) not null,
    frontend_code varchar(100)   null,
    api_set varchar(5000)   null,
+   sort_id bigint   null,
    is_deleted tinyint default 0 not null,
    create_time datetime default CURRENT_TIMESTAMP not null,
    update_time datetime null,
@@ -127,6 +128,7 @@ execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'display_name';
 execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'frontend_code';
 execute sp_addextendedproperty 'MS_Description', N'接口列表', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'api_set';
+execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'update_time';

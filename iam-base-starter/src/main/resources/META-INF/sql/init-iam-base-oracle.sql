@@ -116,6 +116,7 @@ create table ${SCHEMA}.iam_frontend_permission
     display_name VARCHAR2(100) not null,
     frontend_code VARCHAR2(100)   null,
     api_set VARCHAR2(5000)   null,
+    sort_id NUMBER(20)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp   null,
@@ -127,6 +128,7 @@ comment on column ${SCHEMA}.iam_frontend_permission.display_type is '展现类�
 comment on column ${SCHEMA}.iam_frontend_permission.display_name is '显示名称';
 comment on column ${SCHEMA}.iam_frontend_permission.frontend_code is '前端编码';
 comment on column ${SCHEMA}.iam_frontend_permission.api_set is '接口列表';
+comment on column ${SCHEMA}.iam_frontend_permission.sort_id is '排序号';
 comment on column ${SCHEMA}.iam_frontend_permission.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_frontend_permission.create_time is '创建时间';
 comment on column ${SCHEMA}.iam_frontend_permission.update_time is '更新时间';
