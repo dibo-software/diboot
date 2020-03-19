@@ -3,6 +3,7 @@ package com.diboot.iam.service;
 
 import com.diboot.iam.dto.IamFrontendPermissionDTO;
 import com.diboot.iam.entity.IamFrontendPermission;
+import com.diboot.iam.vo.IamFrontendPermissionListVO;
 
 import java.util.List;
 
@@ -14,6 +15,12 @@ import java.util.List;
  * Copyright © diboot.com
 */
 public interface IamFrontendPermissionService extends BaseIamService<IamFrontendPermission> {
+
+    /***
+     * 深度创建菜单权限及其所有子列表
+     * @param iamFrontendPermissionListVO
+     */
+    void deepCreatePermissionAndChildren(IamFrontendPermissionListVO iamFrontendPermissionListVO);
 
     /***
      * 创建菜单和按钮/权限列表

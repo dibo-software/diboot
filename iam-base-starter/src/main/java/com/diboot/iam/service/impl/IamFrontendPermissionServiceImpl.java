@@ -13,6 +13,7 @@ import com.diboot.iam.dto.IamFrontendPermissionDTO;
 import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.mapper.IamFrontendPermissionMapper;
 import com.diboot.iam.service.IamFrontendPermissionService;
+import com.diboot.iam.vo.IamFrontendPermissionListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,23 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFrontendPermissionMapper, IamFrontendPermission> implements IamFrontendPermissionService {
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deepCreatePermissionAndChildren(IamFrontendPermissionListVO iamFrontendPermissionListVO) {
+        IamFrontendPermission iamFrontendPermission = (IamFrontendPermission) iamFrontendPermissionListVO;
+        if(!super.createEntity(iamFrontendPermission)){
+            log.warn("新建菜单权限失败，displayType="+iamFrontendPermission.getDisplayType());
+            throw new BusinessException(Status.FAIL_OPERATION, "新建菜单权限失败");
+        }
+        List<IamFrontendPermissionListVO> children = iamFrontendPermissionListVO.getChildren();
+        if (V.notEmpty(children)) {
+            for (IamFrontendPermissionListVO vo : children) {
+                vo.setParentId(iamFrontendPermission.getId());
+                this.deepCreatePermissionAndChildren(vo);
+            }
+        }
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
