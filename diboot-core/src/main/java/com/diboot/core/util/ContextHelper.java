@@ -215,6 +215,20 @@ public class ContextHelper implements ApplicationContextAware {
         return PK_NID_ENTITY_CACHE.get(entity.getName());
     }
 
+    /***
+     * 获取JdbcUrl
+     * @return
+     */
+    public static String getJdbcUrl() {
+        Environment environment = getApplicationContext().getEnvironment();
+        String jdbcUrl = environment.getProperty("spring.datasource.url");
+        if(jdbcUrl == null){
+            String master = environment.getProperty("spring.datasource.dynamic.primary");
+            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+        }
+        return jdbcUrl;
+    }
+
     /**
      * 获取数据库类型
      * @return
@@ -223,12 +237,7 @@ public class ContextHelper implements ApplicationContextAware {
         if(DATABASE_TYPE != null){
             return DATABASE_TYPE;
         }
-        Environment environment = getApplicationContext().getEnvironment();
-        String jdbcUrl = environment.getProperty("spring.datasource.url");
-        if(jdbcUrl == null){
-            String master = environment.getProperty("spring.datasource.dynamic.primary");
-            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
-        }
+        String jdbcUrl = getJdbcUrl();
         if(jdbcUrl != null){
             DbType dbType = JdbcUtils.getDbType(jdbcUrl);
             DATABASE_TYPE = dbType.getDb();
