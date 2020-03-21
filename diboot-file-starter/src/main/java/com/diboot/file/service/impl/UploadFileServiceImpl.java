@@ -2,10 +2,10 @@ package com.diboot.file.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.file.entity.UploadFile;
 import com.diboot.file.mapper.UploadFileMapper;
 import com.diboot.file.service.UploadFileService;
-import com.diboot.core.service.impl.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

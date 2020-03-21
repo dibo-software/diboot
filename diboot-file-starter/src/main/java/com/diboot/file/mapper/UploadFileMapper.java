@@ -1,7 +1,7 @@
 package com.diboot.file.mapper;
 
-import com.diboot.file.entity.UploadFile;
 import com.diboot.core.mapper.BaseCrudMapper;
+import com.diboot.file.entity.UploadFile;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

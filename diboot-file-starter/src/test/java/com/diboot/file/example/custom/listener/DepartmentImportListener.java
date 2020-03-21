@@ -1,12 +1,10 @@
 package com.diboot.file.example.custom.listener;
 
-import com.diboot.file.excel.listener.FixedHeadExcelListener;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.file.example.custom.Department;
 import com.diboot.file.example.custom.DepartmentExcelModel;
-import com.diboot.file.example.custom.service.DepartmentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.diboot.file.excel.listener.FixedHeadExcelListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

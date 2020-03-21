@@ -1,9 +1,9 @@
 package com.diboot.file.example.test;
 
 import com.diboot.file.entity.UploadFile;
-import com.diboot.file.service.UploadFileService;
 import com.diboot.file.example.ApplicationTest;
 import com.diboot.file.example.custom.Department;
+import com.diboot.file.service.UploadFileService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

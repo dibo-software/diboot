@@ -4,8 +4,6 @@ import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamRolePermission;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
-
 /**
 * 角色权限关联Mapper
 * @author mazc@dibo.ltd

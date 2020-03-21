@@ -16,7 +16,6 @@ import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamSecurityUtils;
-import com.diboot.iam.vo.IamFrontendPermissionVO;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

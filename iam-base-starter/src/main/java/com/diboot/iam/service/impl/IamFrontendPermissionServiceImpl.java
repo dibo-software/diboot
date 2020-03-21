@@ -6,7 +6,6 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamFrontendPermissionDTO;
@@ -63,10 +62,11 @@ public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFron
         }
 
         // 批量创建按钮/权限列表
-        List<IamFrontendPermissionDTO> permissionList = iamFrontendPermissionDTO.getPermissionList();
-        if (V.isEmpty(permissionList)){
+        List<IamFrontendPermissionDTO> permissionDTOList = iamFrontendPermissionDTO.getPermissionList();
+        if (V.isEmpty(permissionDTOList)){
             return;
         }
+        List<IamFrontendPermission> permissionList = BeanUtils.convertList(permissionDTOList, IamFrontendPermission.class);
         // 设置每一条按钮/权限的parentId与接口列表
         permissionList.forEach(p -> {
             p.setParentId(iamFrontendPermissionDTO.getId());
@@ -98,7 +98,7 @@ public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFron
                 .filter(p -> V.notEmpty(p.getId()))
                 .collect(Collectors.toList());
         // 需要新建的列表
-        List<IamFrontendPermissionDTO> createPermissionList = permissionList.stream()
+        List<IamFrontendPermissionDTO> createPermissionDTOList = permissionList.stream()
                 .filter(p -> V.isEmpty(p.getId()))
                 .collect(Collectors.toList());
         List<Long> updatePermissionIdList = updatePermissionList.stream()
@@ -120,7 +120,8 @@ public class IamFrontendPermissionServiceImpl extends BaseIamServiceImpl<IamFron
             this.deleteEntities(deleteWrapper);
         }
         // 批量新建按钮/权限列表
-        if (V.notEmpty(createPermissionList)) {
+        if (V.notEmpty(createPermissionDTOList)) {
+            List<IamFrontendPermission> createPermissionList = BeanUtils.convertList(createPermissionDTOList, IamFrontendPermission.class);
             this.createEntities(createPermissionList);
         }
         // 批量更新按钮/权限列表
