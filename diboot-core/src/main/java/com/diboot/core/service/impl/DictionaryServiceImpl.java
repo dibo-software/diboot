@@ -99,7 +99,7 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 dict.setType(dictionary.getType());
             }
             // 批量保存
-            boolean success = super.saveBatch(children);
+            boolean success = super.createEntities(children);
             if(!success){
                 String errorMsg = "新建数据字典子项失败，type="+dictVO.getType();
                 log.warn(errorMsg);
