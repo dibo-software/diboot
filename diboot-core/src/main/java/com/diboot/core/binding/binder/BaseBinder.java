@@ -5,15 +5,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.IGetter;
+import com.diboot.core.util.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 关系绑定Binder父类
@@ -221,33 +224,8 @@ public abstract class BaseBinder<T> {
         if(this.referencedEntityClass != null){
             Field field = BeanUtils.extractField(this.referencedEntityClass, S.toLowerCaseCamel(fieldName));
             if(field != null){
-                String valueStr = S.valueOf(value);
-                String type = field.getGenericType().getTypeName();
-                if(Integer.class.getName().equals(type)){
-                    return Integer.parseInt(valueStr);
-                }
-                else if(Long.class.getName().equals(type)){
-                    return Long.parseLong(valueStr);
-                }
-                else if(Double.class.getName().equals(type)){
-                    return Double.parseDouble(valueStr);
-                }
-                else if(BigDecimal.class.getName().equals(type)){
-                    return new BigDecimal(valueStr);
-                }
-                else if(Float.class.getName().equals(type)){
-                    return Float.parseFloat(valueStr);
-                }
-                else if(Boolean.class.getName().equals(type)){
-                    return V.isTrue(valueStr);
-                }
-                else if(type.contains(Date.class.getSimpleName())){
-                    return D.fuzzyConvert(valueStr);
-                }
+                return BeanUtils.convertValueToFieldType(value, field);
             }
-        }
-        else{
-            throw new BusinessException("dddd");
         }
         return value;
     }

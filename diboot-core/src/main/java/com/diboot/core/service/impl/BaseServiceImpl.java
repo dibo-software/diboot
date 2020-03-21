@@ -365,10 +365,22 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
 		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
-			if(map.get(keyValueArray[0]) != null){
-				KeyValue kv = new KeyValue(S.valueOf(map.get(keyValueArray[0])), map.get(keyValueArray[1]));
+			String key = keyValueArray[0], value = keyValueArray[1], ext = null;
+			// 兼容oracle大写
+			if(map.containsKey(key) == false && map.containsKey(key.toUpperCase())){
+				key = key.toUpperCase();
+			}
+			if(map.containsKey(value) == false && map.containsKey(value.toUpperCase())){
+				value = value.toUpperCase();
+			}
+			if(map.containsKey(key)){
+				KeyValue kv = new KeyValue(S.valueOf(map.get(key)), map.get(value));
 				if(keyValueArray.length > 2){
-					kv.setExt(map.get(keyValueArray[2]));
+					ext = keyValueArray[2];
+					if(map.containsKey(ext) == false && map.containsKey(ext.toUpperCase())){
+						ext = ext.toUpperCase();
+					}
+					kv.setExt(map.get(ext));
 				}
 				keyValueList.add(kv);
 			}

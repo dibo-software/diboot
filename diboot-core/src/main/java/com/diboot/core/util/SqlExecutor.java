@@ -119,9 +119,15 @@ public class SqlExecutor {
         Map<String, Object> resultMap = new HashMap<>();
         if(V.notEmpty(resultSetMapList)){
             for(Map<String, E> row : resultSetMapList){
-                String key = String.valueOf(row.get(keyName));
-                Object value = row.get(valueName);
-                resultMap.put(key, value);
+                Object keyObj = row.get(keyName);
+                if(keyObj == null && row.get(keyName.toUpperCase()) != null){
+                    keyObj = row.get(keyName.toUpperCase());
+                }
+                Object valueObj = row.get(valueName);
+                if(valueObj == null && row.get(valueName.toUpperCase()) != null){
+                    valueObj = row.get(valueName.toUpperCase());
+                }
+                resultMap.put(S.valueOf(keyObj), valueObj);
             }
         }
         return resultMap;
@@ -145,13 +151,21 @@ public class SqlExecutor {
         Map<String, List> resultMap = new HashMap<>();
         if(V.notEmpty(resultSetMapList)){
             for(Map<String, E> row : resultSetMapList){
-                String key = String.valueOf(row.get(keyName));
+                Object keyObj = row.get(keyName);
+                if(keyObj == null && row.get(keyName.toUpperCase()) != null){
+                    keyObj = row.get(keyName.toUpperCase());
+                }
+                String key = S.valueOf(keyObj);
                 List valueList = resultMap.get(key);
                 if(valueList == null){
                     valueList = new ArrayList();
                     resultMap.put(key, valueList);
                 }
-                valueList.add(row.get(valueName));
+                Object valueObj = row.get(valueName);
+                if(valueObj == null && row.get(valueName.toUpperCase()) != null){
+                    valueObj = row.get(valueName.toUpperCase());
+                }
+                valueList.add(valueObj);
             }
         }
         return resultMap;

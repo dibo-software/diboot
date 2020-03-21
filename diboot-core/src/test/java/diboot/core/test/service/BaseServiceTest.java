@@ -240,6 +240,6 @@ public class BaseServiceTest {
     public void testContextHelper(){
         String database = ContextHelper.getDatabaseType();
         System.out.println(database);
-        Assert.assertTrue(database.equals("mysql"));
+        Assert.assertTrue(database.equals("mysql") || database.equals("oracle"));
     }
 }
