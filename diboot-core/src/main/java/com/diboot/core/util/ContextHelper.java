@@ -241,6 +241,9 @@ public class ContextHelper implements ApplicationContextAware {
         if(jdbcUrl != null){
             DbType dbType = JdbcUtils.getDbType(jdbcUrl);
             DATABASE_TYPE = dbType.getDb();
+            if(DATABASE_TYPE.startsWith(DbType.SQL_SERVER.getDb())){
+                DATABASE_TYPE = DbType.SQL_SERVER.getDb();
+            }
         }
         else{
             SqlSessionFactory sqlSessionFactory = getBean(SqlSessionFactory.class);
