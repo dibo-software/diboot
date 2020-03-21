@@ -8,6 +8,7 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
@@ -233,6 +234,12 @@ public class BaseServiceTest {
     public void testExist(){
         boolean exists = dictionaryService.exists(Dictionary::getType, "GENDER");
         Assert.assertTrue(exists);
+    }
 
+    @Test
+    public void testContextHelper(){
+        String database = ContextHelper.getDatabaseType();
+        System.out.println(database);
+        Assert.assertTrue(database.equals("mysql"));
     }
 }

@@ -1,5 +1,6 @@
 package com.diboot.core.service.impl;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -86,12 +87,20 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean createEntities(Collection entityList){
+	public boolean createEntities(Collection<T> entityList){
 		if(V.isEmpty(entityList)){
 			return false;
 		}
-		// 批量插入
-		return super.saveBatch(entityList, BaseConfig.getBatchSize());
+		if(DbType.SQL_SERVER.getDb().equalsIgnoreCase(ContextHelper.getDatabaseType())){
+			for(T entity : entityList){
+				createEntity(entity);
+			}
+			return true;
+		}
+		else{
+			// 批量插入
+			return super.saveBatch(entityList, BaseConfig.getBatchSize());
+		}
 	}
 
 	@Override

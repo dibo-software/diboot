@@ -1,7 +1,7 @@
 package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
@@ -28,7 +28,6 @@ public class SqlHandler {
     // 数据字典SQL
     private static final String DICTIONARY_SQL = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
     private static final String MYBATIS_PLUS_SCHEMA_CONFIG = "mybatis-plus.global-config.db-config.schema";
-    private static String dbType;
     private static String CURRENT_SCHEMA = null;
     private static Environment environment;
 
@@ -38,8 +37,6 @@ public class SqlHandler {
      */
     public static void init(Environment env) {
         environment = env;
-        String jdbcUrl = getJdbcUrl(environment);
-        dbType = extractDatabaseType(jdbcUrl);
     }
 
     /***
@@ -47,9 +44,8 @@ public class SqlHandler {
      * @return
      */
     public static void initBootstrapSql(Class inst, Environment environment, String module){
-        if(dbType == null){
-            init(environment);
-        }
+        init(environment);
+        String dbType = getDbType();
         String sqlPath = "META-INF/sql/init-"+module+"-"+dbType+".sql";
         extractAndExecuteSqls(inst, sqlPath);
     }
@@ -125,10 +121,10 @@ public class SqlHandler {
         sqlStatement = clearComments(sqlStatement);
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
-            if(dbType.equals(DbType.SQL_SERVER.getDb())){
+            if(getDbType().equals(DbType.SQL_SERVER.getDb())){
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getSqlServerCurrentSchema());
             }
-            else if(dbType.equals(DbType.ORACLE.getDb())){
+            else if(getDbType().equals(DbType.ORACLE.getDb())){
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getOracleCurrentSchema());
             }
             else{
@@ -181,23 +177,6 @@ public class SqlHandler {
         return lines;
     }
 
-    /**
-     * 获取JDBC url
-     * @param environment
-     * @return
-     */
-    public static String getJdbcUrl(Environment environment){
-        String jdbcUrl = environment.getProperty("spring.datasource.url");
-        if(jdbcUrl == null){
-            String master = environment.getProperty("spring.datasource.dynamic.primary");
-            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
-            if(jdbcUrl == null){
-                log.warn("无法获取 datasource url 配置，请检查！");
-            }
-        }
-        return jdbcUrl;
-    }
-
     /***
      * 剔除SQL中的注释，提取可执行的实际SQL
      * @param inputSql
@@ -240,20 +219,6 @@ public class SqlHandler {
             return removeMultipleLineComments(inputSql);
         }
         return inputSql;
-    }
-
-    /**
-     * 提取数据库类型
-     * @param jdbcUrl
-     * @return
-     */
-    public static String extractDatabaseType(String jdbcUrl){
-        DbType dbType = JdbcUtils.getDbType(jdbcUrl);
-        String dbName = dbType.getDb();
-        if(dbName.startsWith(DbType.SQL_SERVER.getDb()) && !dbName.equals(DbType.SQL_SERVER.getDb())){
-            dbName = DbType.SQL_SERVER.getDb();
-        }
-        return dbName;
     }
 
     //SQL Server查询当前schema
@@ -330,6 +295,6 @@ public class SqlHandler {
      * @return
      */
     public static String getDbType(){
-        return dbType;
+        return ContextHelper.getDatabaseType();
     }
 }

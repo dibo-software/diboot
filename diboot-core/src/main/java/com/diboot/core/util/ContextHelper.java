@@ -1,16 +1,22 @@
 package com.diboot.core.util;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.diboot.core.config.Cons;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
@@ -49,6 +55,10 @@ public class ContextHelper implements ApplicationContextAware {
      * 存储主键字段非id的Entity
      */
     private static Map<String, String> PK_NID_ENTITY_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 数据库类型
+     */
+    private static String DATABASE_TYPE = null;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -132,6 +142,7 @@ public class ContextHelper implements ApplicationContextAware {
      * @param entity
      * @return
      */
+    @Deprecated
     public static IService getIServiceByEntity(Class entity){
         if(ENTITY_SERVICE_CACHE == null){
             ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
@@ -203,4 +214,35 @@ public class ContextHelper implements ApplicationContextAware {
         }
         return PK_NID_ENTITY_CACHE.get(entity.getName());
     }
+
+    /**
+     * 获取数据库类型
+     * @return
+     */
+    public static String getDatabaseType(){
+        if(DATABASE_TYPE != null){
+            return DATABASE_TYPE;
+        }
+        Environment environment = getApplicationContext().getEnvironment();
+        String jdbcUrl = environment.getProperty("spring.datasource.url");
+        if(jdbcUrl == null){
+            String master = environment.getProperty("spring.datasource.dynamic.primary");
+            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+        }
+        if(jdbcUrl != null){
+            DbType dbType = JdbcUtils.getDbType(jdbcUrl);
+            DATABASE_TYPE = dbType.getDb();
+        }
+        else{
+            SqlSessionFactory sqlSessionFactory = getBean(SqlSessionFactory.class);
+            if(sqlSessionFactory != null){
+                DATABASE_TYPE = sqlSessionFactory.getConfiguration().getDatabaseId();
+            }
+        }
+        if(DATABASE_TYPE == null){
+            log.warn("无法识别数据库类型，请检查配置！");
+        }
+        return DATABASE_TYPE;
+    }
+
 }
