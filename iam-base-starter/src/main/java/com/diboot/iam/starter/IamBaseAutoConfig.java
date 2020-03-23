@@ -1,7 +1,6 @@
 package com.diboot.iam.starter;
 
 import com.diboot.core.service.impl.DictionaryServiceImpl;
-import com.diboot.core.util.DateConverter;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
@@ -24,8 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -46,7 +43,7 @@ import java.util.Map;
         IamRoleServiceImpl.class, IamUserServiceImpl.class, IamUserRoleServiceImpl.class, IamAccountServiceImpl.class, IamFrontendPermissionServiceImpl.class,
         IamBaseInitializer.class, ShiroProxyConfig.class})
 @Order(2)
-public class IamBaseAutoConfig implements WebMvcConfigurer {
+public class IamBaseAutoConfig{
 
     @Autowired
     Environment environment;
@@ -137,8 +134,4 @@ public class IamBaseAutoConfig implements WebMvcConfigurer {
         return shiroFilterFactoryBean;
     }
 
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new DateConverter());
-    }
 }
