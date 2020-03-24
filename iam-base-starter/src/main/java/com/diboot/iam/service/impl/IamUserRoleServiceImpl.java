@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper, IamUserRole> implements IamUserRoleService {
 
     @Autowired
-    private IamUserRoleService iamUserRoleService;
-    @Autowired
     private IamRoleService iamRoleService;
     @Autowired
     private IamAccountService iamAccountService;
@@ -54,7 +52,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRole> getUserRoleList(String userType, Long userId) {
-        List<IamUserRole> userRoleList = iamUserRoleService.getEntityList(Wrappers.<IamUserRole>lambdaQuery()
+        List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
                 .eq(IamUserRole::getUserId, userId)

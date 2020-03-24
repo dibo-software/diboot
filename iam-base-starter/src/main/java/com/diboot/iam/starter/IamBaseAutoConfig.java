@@ -40,7 +40,7 @@ import java.util.Map;
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages={"com.diboot.iam.mapper"})
 @AutoConfigureAfter(value = {DictionaryServiceImpl.class,
-        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamUserRoleServiceImpl.class, IamAccountServiceImpl.class, IamFrontendPermissionServiceImpl.class,
+        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamAccountServiceImpl.class, IamFrontendPermissionServiceImpl.class,
         IamBaseInitializer.class, ShiroProxyConfig.class})
 @Order(2)
 public class IamBaseAutoConfig{
