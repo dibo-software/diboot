@@ -1,12 +1,12 @@
 package com.diboot.iam.annotation.process;
 
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.util.AnnotationUtils;
+import com.diboot.iam.util.BeanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.aop.support.AopUtils;

@@ -1,7 +1,6 @@
 package com.diboot.iam.jwt;
 
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.annotation.process.ApiPermissionCache;
@@ -12,6 +11,7 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
+import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -106,7 +106,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         Object currentUser = principals.getPrimaryPrincipal();
         // 根据用户类型与用户id获取roleList
-        Long userId = (Long)BeanUtils.getProperty(currentUser, Cons.FieldName.id.name());
+        Long userId = (Long) BeanUtils.getProperty(currentUser, Cons.FieldName.id.name());
         List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), userId);
         // 如果没有任何角色，返回
         if (V.isEmpty(roleList)){

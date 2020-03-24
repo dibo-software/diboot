@@ -2,7 +2,6 @@ package com.diboot.iam.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.Encryptor;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.AuthService;
@@ -13,6 +12,7 @@ import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.jwt.BaseJwtAuthToken;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamLoginTraceService;
+import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
