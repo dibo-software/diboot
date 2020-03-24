@@ -1,5 +1,6 @@
 package com.diboot.core.service.impl;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,10 +14,7 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
@@ -61,14 +59,48 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public boolean createEntities(Collection entityList){
-		if(V.isEmpty(entityList)){
-			warning("createEntities", "参数entityList为空!");
+	public <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter) {
+		boolean success = createEntity(entity);
+		if(!success){
+			log.warn("新建Entity失败: {}", entity.toString());
 			return false;
 		}
-		// 批量插入
-		return super.saveBatch(entityList, BaseConfig.getBatchSize());
+		if(V.isEmpty(relatedEntities)){
+			return success;
+		}
+		Class relatedEntityClass = BeanUtils.getTargetClass(relatedEntities.get(0));
+		// 获取关联对象对应的Service
+		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		if(relatedEntityService == null){
+			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
+			return false;
+		}
+		// 获取主键
+		Object pkValue = getPrimaryKeyValue(entity);
+		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
+		// 填充关联关系
+		relatedEntities.stream().forEach(relatedEntity->{
+			BeanUtils.setProperty(relatedEntity, attributeName, pkValue);
+		});
+		return relatedEntityService.createEntities(relatedEntities);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public boolean createEntities(Collection<T> entityList){
+		if(V.isEmpty(entityList)){
+			return false;
+		}
+		if(DbType.SQL_SERVER.getDb().equalsIgnoreCase(ContextHelper.getDatabaseType())){
+			for(T entity : entityList){
+				createEntity(entity);
+			}
+			return true;
+		}
+		else{
+			// 批量插入
+			return super.saveBatch(entityList, BaseConfig.getBatchSize());
+		}
 	}
 
 	@Override
@@ -90,6 +122,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public boolean updateEntities(Collection<T> entityList) {
+		boolean success = super.updateBatchById(entityList);
+		return success;
+	}
+
+	@Override
 	public boolean createOrUpdateEntity(T entity) {
 		boolean success = super.saveOrUpdate(entity);
 		return success;
@@ -104,6 +142,95 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		// 批量插入
 		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public <RE,R> boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE,R> relatedEntitySetter) {
+		boolean success = updateEntity(entity);
+		if(!success){
+			log.warn("更新Entity失败: {}", entity.toString());
+			return false;
+		}
+		// 获取关联entity的类
+		Class relatedEntityClass = null;
+		if(V.notEmpty(relatedEntities)){
+			relatedEntityClass = BeanUtils.getTargetClass(relatedEntities.get(0));
+		}
+		else{
+			try{
+				relatedEntityClass = Class.forName(BeanUtils.getSerializedLambda(relatedEntitySetter).getImplClass().replaceAll("/", "."));
+			}
+			catch (Exception e){
+				log.warn("无法识别关联Entity的Class", e.getMessage());
+				return false;
+			}
+		}
+		// 获取关联对象对应的Service
+		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		if(relatedEntityService == null){
+			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
+			return false;
+		}
+		// 获取主键
+		Object pkValue = getPrimaryKeyValue(entity);
+		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
+		//获取原 关联entity list
+		QueryWrapper<RE> queryWrapper = new QueryWrapper();
+		queryWrapper.eq(S.toSnakeCase(attributeName), pkValue);
+		List<RE> oldRelatedEntities = relatedEntityService.getEntityList(queryWrapper);
+
+		// 遍历更新关联对象
+		Set relatedEntityIds = new HashSet();
+		if(V.notEmpty(relatedEntities)){
+			// 新建 修改 删除
+			List<RE> newRelatedEntities = new ArrayList<>();
+			for(RE relatedEntity : relatedEntities){
+				BeanUtils.setProperty(relatedEntity, attributeName, pkValue);
+				Object relPkValue = getPrimaryKeyValue(relatedEntity);
+				if(V.notEmpty(relPkValue)){
+					relatedEntityService.updateEntity(relatedEntity);
+				}
+				else{
+					newRelatedEntities.add(relatedEntity);
+				}
+				relatedEntityIds.add(relPkValue);
+			}
+			relatedEntityService.createEntities(newRelatedEntities);
+		}
+		// 遍历已有关联对象
+		if(V.notEmpty(oldRelatedEntities)){
+			List deleteRelatedEntityIds = new ArrayList();
+			for(RE relatedEntity : oldRelatedEntities){
+				Object relPkValue = getPrimaryKeyValue(relatedEntity);
+				if(!relatedEntityIds.contains(relPkValue)){
+					deleteRelatedEntityIds.add(relPkValue);
+				}
+			}
+			relatedEntityService.deleteEntities(deleteRelatedEntityIds);
+		}
+		return true;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public <RE,R> boolean deleteEntityAndRelatedEntities(Serializable id, Class<RE> relatedEntityClass, ISetter<RE,R> relatedEntitySetter) {
+		boolean success = deleteEntity(id);
+		if(!success){
+			log.warn("删除Entity失败: {}",id);
+			return false;
+		}
+		// 获取关联对象对应的Service
+		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		if(relatedEntityService == null){
+			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getClass().getName());
+			return false;
+		}
+		// 获取主键的关联属性
+		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
+		QueryWrapper<RE> queryWrapper = new QueryWrapper<RE>().eq(S.toSnakeCase(attributeName), id);
+		// 删除关联子表数据
+		return relatedEntityService.deleteEntities(queryWrapper);
 	}
 
 	@Override
@@ -172,6 +299,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public boolean exists(IGetter<T> getterFn, Object value) {
+		QueryWrapper<T> queryWrapper = new QueryWrapper();
+		queryWrapper.eq(BeanUtils.convertToFieldName(getterFn), value);
+		return exists(queryWrapper);
+	}
+
+	@Override
 	public boolean exists(Wrapper queryWrapper) {
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		boolean isExists = V.notEmpty(entityList) && entityList.size() > 0;
@@ -231,10 +365,22 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
 		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
-			if(map.get(keyValueArray[0]) != null){
-				KeyValue kv = new KeyValue(S.valueOf(map.get(keyValueArray[0])), map.get(keyValueArray[1]));
+			String key = keyValueArray[0], value = keyValueArray[1], ext = null;
+			// 兼容oracle大写
+			if(map.containsKey(key) == false && map.containsKey(key.toUpperCase())){
+				key = key.toUpperCase();
+			}
+			if(map.containsKey(value) == false && map.containsKey(value.toUpperCase())){
+				value = value.toUpperCase();
+			}
+			if(map.containsKey(key)){
+				KeyValue kv = new KeyValue(S.valueOf(map.get(key)), map.get(value));
 				if(keyValueArray.length > 2){
-					kv.setExt(map.get(keyValueArray[2]));
+					ext = keyValueArray[2];
+					if(map.containsKey(ext) == false && map.containsKey(ext.toUpperCase())){
+						ext = ext.toUpperCase();
+					}
+					kv.setExt(map.get(ext));
 				}
 				keyValueList.add(kv);
 			}
@@ -313,6 +459,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			}
 		}
 		return (Page<T>)pagination.toIPage();
+	}
+
+	/**
+	 * 获取主键值
+	 * @param entity
+	 * @return
+	 */
+	private Object getPrimaryKeyValue(Object entity){
+		String pk = ContextHelper.getPrimaryKey(entity.getClass());
+		return BeanUtils.getProperty(entity, pk);
 	}
 
 	/***

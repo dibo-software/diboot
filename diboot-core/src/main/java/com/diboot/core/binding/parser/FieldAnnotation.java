@@ -6,7 +6,7 @@ import java.lang.annotation.Annotation;
  * 字段名与注解的包装对象关系 <br>
  *
  * @author mazc@dibo.ltd<br>
- * @version 1.0<br>
+ * @version 2.0<br>
  * @date 2019/04/04 <br>
  */
 public class FieldAnnotation{

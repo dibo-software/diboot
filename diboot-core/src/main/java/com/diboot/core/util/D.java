@@ -36,7 +36,7 @@ public class D extends DateUtils{
 	/***
 	 * 星期
 	 */
-	protected static final String[] WEEK = new String[]{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+	public static final String[] WEEK = new String[]{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
 
 	/***
 	 * 当前的日期时间

@@ -45,7 +45,7 @@ public class IamBaseProperties {
     /**
      * 是否开启权限自动更新
      */
-    private boolean enablePermissionUpdate = true;
+    //private boolean enablePermissionUpdate = true;
 
     /**
      * 缓存Manager类

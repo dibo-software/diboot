@@ -42,6 +42,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         this.referencedService = referencedService;
         this.annoObjectList = voList;
         this.queryWrapper = new QueryWrapper<T>();
+        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
     }
 
     /***

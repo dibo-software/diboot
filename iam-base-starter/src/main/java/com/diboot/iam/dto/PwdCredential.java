@@ -37,6 +37,9 @@ public class PwdCredential extends AuthCredential {
     @NotNull(message = "密码不能为空")
     private String password;
 
+    // 登录的验证码
+    private String captcha;
+
     @Override
     public String getAuthAccount() {
         return this.username;

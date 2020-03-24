@@ -2,8 +2,11 @@ package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.DictionaryVO;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
@@ -39,6 +42,9 @@ public class TestEntityListBinder {
 
     @Autowired
     DepartmentService departmentService;
+
+    @Autowired
+    DictionaryService dictionaryService;
 
     /**
      * 验证直接关联的绑定
@@ -86,4 +92,14 @@ public class TestEntityListBinder {
         }
     }
 
+    @Test
+    public void testDictionaryBinder(){
+        // 查询是否创建成功
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dictionary::getType, "GENDER");
+
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        DictionaryVO vo = RelationsBinder.convertAndBind(dictionary, DictionaryVO.class);
+        Assert.assertTrue(vo.getChildren().size() > 0);
+    }
 }

@@ -67,6 +67,10 @@ public class DefaultExceptionHandler {
             BusinessException be = (BusinessException)e;
             map = be.toMap();
         }
+        else if(e.getCause() instanceof BusinessException){
+            BusinessException be = (BusinessException)e.getCause();
+            map = be.toMap();
+        }
         else{
             map = new HashMap<>();
             map.put("code", status.value());
@@ -108,9 +112,13 @@ public class DefaultExceptionHandler {
      * @param request
      * @return
      */
-    private boolean isJsonRequest(HttpServletRequest request){
-        return S.contains(request.getHeader("Accept"),"json")
-                || S.contains(request.getHeader("content-type"), "json");
+    protected boolean isJsonRequest(HttpServletRequest request){
+        if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+            return true;
+        }
+        return S.containsIgnoreCase(request.getHeader("Accept"),"json")
+                || S.containsIgnoreCase(request.getHeader("content-type"), "json")
+                || S.containsIgnoreCase(request.getContentType(), "json");
     }
 
     /**

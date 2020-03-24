@@ -2,8 +2,6 @@ package com.diboot.iam.util;
 
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.iam.annotation.process.BindPermissionCache;
-import com.diboot.iam.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,30 +20,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class AnnotationUtils extends org.springframework.core.annotation.AnnotationUtils {
-
-    /**
-     * 填充请求方法和url
-     * @param method
-     */
-    public static void extractAndCacheUrl2PermissionCode(Method method, String controllerMappingUri, String permissionCode){
-        String[] methodAndUrl = extractRequestMethodAndMappingUrl(method);
-        String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
-        // 赋值权限和方法
-        if(V.notEmpty(requestMethod) && V.notEmpty(url)){
-            for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
-                for(String u : url.split(Cons.SEPARATOR_COMMA)){
-                    if(V.notEmpty(controllerMappingUri)){
-                        for(String path : controllerMappingUri.split(Cons.SEPARATOR_COMMA)){
-                            BindPermissionCache.cacheUrl2PermissionCode(m,path + u, permissionCode);
-                        }
-                    }
-                    else{
-                        BindPermissionCache.cacheUrl2PermissionCode(m, u, permissionCode);
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * 从Method中提取请求方法和URL

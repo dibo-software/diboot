@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
  * 单位相关Service实现
  * @author mazc@dibo.ltd
  * @version 2018/12/23
- * Copyright © www.dibo.ltd
  */
 @Service
 public class OrganizationServiceImpl extends BaseServiceImpl<OrganizationMapper, Organization> implements OrganizationService {

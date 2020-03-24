@@ -41,10 +41,10 @@ create unique index idx_iam_account on iam_account(auth_account, auth_type, user
 -- 角色表
 create table iam_role
 (
-  id          int auto_increment comment 'ID'    primary key,
+  id          bigint auto_increment comment 'ID'    primary key,
   name        varchar(20)                          not null comment '名称',
   code        varchar(20)                          not null comment '编码',
-  description     varchar(100)                         null comment '备注',
+  description varchar(100)                         null comment '备注',
   is_deleted  tinyint(1) default 0                not null comment '是否删除',
   create_time timestamp  default CURRENT_TIMESTAMP null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色';
@@ -52,42 +52,40 @@ create table iam_role
 -- 用户角色表
 create table iam_user_role
 (
-  id          int auto_increment comment 'ID'      primary key,
+  id          bigint auto_increment comment 'ID'      primary key,
   user_type   varchar(100) default 'IamUser'       not null comment '用户类型',
   user_id     bigint                                 not null comment '用户ID',
-  role_id     int                                    not null comment '角色ID',
+  role_id     bigint                                    not null comment '角色ID',
   is_deleted  tinyint(1)   default 0                 not null comment '是否删除',
   create_time timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '用户角色关联';
 -- 索引
 create index idx_iam_user_role on iam_user_role (user_type, user_id);
 
--- 权限表
-create table iam_permission
+-- 前端资源权限表
+create table iam_frontend_permission
 (
-  id             int auto_increment comment 'ID'    primary key,
-  parent_id      int         default 0                 not null comment '上级ID',
-  application    varchar(50) default 'MS'              not null comment '所属应用',
-  type           varchar(10) default 'MENU'            not null comment '权限类别',
-  name           varchar(20)                           not null comment '名称',
-  code           varchar(50)                           null comment '编码',
-  operation_name varchar(50)                           null comment '操作名称',
-  operation_code varchar(50)                           null comment '操作编码',
-  sort_id        smallint(6) default 999               not null comment '排序号',
-  extdata        varchar(100)                          null comment '扩展属性',
+  id            bigint  auto_increment comment 'ID' primary key,
+  parent_id     bigint     default 0                 not null comment '父级菜单',
+  display_type  varchar(20)                          not null comment '展现类型',
+  display_name  varchar(100)                         not null comment '显示名称',
+  frontend_code varchar(100)                         not null comment '前端编码',
+  api_set       varchar(3000)                        null comment '接口列表',
+  sort_id       bigint                               null comment '排序号',
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
   create_time    timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
   update_time    timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
-)AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '权限';
+)AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '前端菜单';
+
 -- 索引
-create index idx_iam_permission on iam_permission (code);
+create index idx_iam_frontend_permission on iam_frontend_permission (parent_id);
 
 -- 角色-权限
 create table iam_role_permission
 (
-  id            int auto_increment comment 'ID'    primary key,
-  role_id       int                                  not null comment '角色ID',
-  permission_id int                                  not null comment '权限ID',
+  id            bigint auto_increment comment 'ID'    primary key,
+  role_id       bigint                               not null comment '角色ID',
+  permission_id bigint                               not null comment '权限ID',
   is_deleted    tinyint(1) default 0                 not null comment '是否删除',
   create_time   timestamp  default CURRENT_TIMESTAMP not null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色权限';

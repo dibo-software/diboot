@@ -1,5 +1,6 @@
 package com.diboot.iam.service;
 
+import com.diboot.iam.dto.ChangePwdDTO;
 import com.diboot.iam.entity.IamAccount;
 
 import java.util.List;
@@ -25,5 +26,22 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
      * @return
      */
     boolean createEntities(List<IamAccount> accountList);
+
+    /***
+     * 更改密码
+     * @param changePwdDTO
+     * @param iamAccount
+     * @return
+     * @throws Exception
+     */
+    boolean changePwd(ChangePwdDTO changePwdDTO, IamAccount iamAccount) throws Exception;
+
+    /**
+     * 获取认证账号username
+     * @param userType
+     * @param userId
+     * @return
+     */
+    String getAuthAccount(String userType, Long userId);
 
 }

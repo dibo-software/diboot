@@ -57,6 +57,14 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义内容提示
+     * @param msg
+     */
+    public BusinessException(String msg) {
+        super( msg);
+    }
+
+    /**
+     * 自定义内容提示
      * @param status
      * @param msg
      */

@@ -10,13 +10,14 @@ import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
-import com.diboot.core.binding.parser.BindAnnotationGroupCache;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +38,24 @@ public class RelationsBinder {
     private static final Logger log = LoggerFactory.getLogger(RelationsBinder.class);
 
     /**
-     * 自动转换和绑定VO中的注解关联
-     * @param entityList
-     * @param voClass
+     * 自动转换和绑定单个VO中的注解关联（禁止循环调用，多个对象请调用convertAndBind(voList, voClass)）
+     * @param voClass 需要转换的VO class
+     * @param <E>
+     * @param <VO>
+     * @return
+     */
+    public static <E, VO> VO convertAndBind(E entity, Class<VO> voClass){
+        // 转换为VO列表
+        VO vo = BeanUtils.convert(entity, voClass);
+        // 自动绑定关联对象
+        bind(vo);
+        return vo;
+    }
+
+    /**
+     * 自动转换和绑定多个VO中的注解关联
+     * @param entityList 需要转换的VO list
+     * @param voClass VO class
      * @param <E>
      * @param <VO>
      * @return
@@ -53,7 +69,20 @@ public class RelationsBinder {
     }
 
     /**
-     * 自动绑定关联对象
+     * 自动绑定单个VO的关联对象（禁止循环调用，多个对象请调用bind(voList)）
+     * @param vo 需要注解绑定的对象
+     * @return
+     * @throws Exception
+     */
+    public static <VO> void bind(VO vo){
+        List<VO> voList = new ArrayList<>(1);
+        voList.add(vo);
+        bind(voList);
+    }
+
+    /**
+     * 自动绑定多个VO集合的关联对象
+     * @param voList 需要注解绑定的对象集合
      * @return
      * @throws Exception
      */
@@ -63,7 +92,7 @@ public class RelationsBinder {
         }
         // 获取VO类
         Class voClass = voList.get(0).getClass();
-        BindAnnotationGroup bindAnnotationGroup = BindAnnotationGroupCache.getBindAnnotationGroup(voClass);
+        BindAnnotationGroup bindAnnotationGroup = ParserCache.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isNotEmpty()){
             // 绑定数据字典
             List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();
@@ -104,7 +133,11 @@ public class RelationsBinder {
         DictionaryService dictionaryService = (DictionaryService) ContextHelper.getBean(DictionaryService.class);
         if(dictionaryService != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
-            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), annotation.field(), annotation.type());
+            String dictValueField = annotation.field();
+            if(V.isEmpty(dictValueField)){
+                dictValueField = S.replace(fieldAnno.getFieldName(), "Label", "");
+            }
+            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
         }
     }
 

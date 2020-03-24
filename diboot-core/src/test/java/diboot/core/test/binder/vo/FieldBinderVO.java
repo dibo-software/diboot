@@ -5,6 +5,9 @@ import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <Description>
@@ -13,6 +16,9 @@ import diboot.core.test.binder.entity.User;
  * @version v2.0
  * @date 2019/06/22
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class FieldBinderVO extends User{
     private static final long serialVersionUID = 3526115343377985725L;
 
@@ -30,30 +36,4 @@ public class FieldBinderVO extends User{
     @BindDict(type="GENDER", field = "gender")
     private String genderLabel;
 
-    public String getDeptName() {
-        return deptName;
-    }
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
-    }
-    public String getOrgName() {
-        return orgName;
-    }
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
-    public String getOrgTelphone() {
-        return orgTelphone;
-    }
-    public void setOrgTelphone(String orgTelphone) {
-        this.orgTelphone = orgTelphone;
-    }
-
-    public String getGenderLabel() {
-        return genderLabel;
-    }
-
-    public void setGenderLabel(String genderLabel) {
-        this.genderLabel = genderLabel;
-    }
 }

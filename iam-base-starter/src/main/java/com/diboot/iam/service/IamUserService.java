@@ -1,5 +1,6 @@
 package com.diboot.iam.service;
 
+import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.vo.IamRoleVO;
 
@@ -32,5 +33,27 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @param roleVOList
      */
     void attachExtraPermissions(List<IamRoleVO> roleVOList);
+
+    /***
+     * 添加用户和账号
+     * @param userAccountDTO
+     * @return
+     */
+    boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
+
+    /***
+     * 更新用户和账号
+     * @param userAccountDTO
+     * @return
+     */
+    boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
+
+    /***
+     * 删除用户和账号
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    boolean deleteUserAndAccount(Long id) throws Exception;
 
 }

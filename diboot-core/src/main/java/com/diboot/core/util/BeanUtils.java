@@ -3,7 +3,9 @@ package com.diboot.core.util;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -12,13 +14,11 @@ import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ReflectionUtils;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -104,7 +104,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("对象转换异常, class="+clazz.getName());
+            log.warn("对象转换异常, class: {}, error: {}", clazz.getName(), e.getMessage());
         }
         return resultList;
     }
@@ -115,70 +115,22 @@ public class BeanUtils {
      * @param propMap
      */
     public static void bindProperties(Object model, Map<String, Object> propMap){
-        try{// 获取类属性
-            BeanInfo beanInfo = Introspector.getBeanInfo(model.getClass());
-            // 给 JavaBean 对象的属性赋值
-            PropertyDescriptor[] propertyDescriptors =  beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor descriptor : propertyDescriptors) {
-                String propertyName = descriptor.getName();
-                if (!propMap.containsKey(propertyName)){
-                    continue;
-                }
-                Object value = propMap.get(propertyName);
-                Class type = descriptor.getWriteMethod().getParameterTypes()[0];
-                Object[] args = new Object[1];
-                String fieldType = type.getName();
-                // 类型不一致，需转型
-                if(value != null && !value.getClass().getTypeName().equals(fieldType)){
-                    if(value instanceof String){
-                        // String to Date
-                        if(fieldType.equals(Date.class.getName())){
-                            args[0] = D.fuzzyConvert((String)value);
-                        }
-                        // Map中的String型转换为其他型
-                        else if(fieldType.equals(Boolean.class.getName())){
-                            args[0] = V.isTrue((String)value);
-                        }
-                        else if (fieldType.equals(Integer.class.getName()) || "int".equals(fieldType)) {
-                            args[0] = Integer.parseInt((String)value);
-                        }
-                        else if (fieldType.equals(Long.class.getName())) {
-                            args[0] = Long.parseLong((String)value);
-                        }
-                        else if (fieldType.equals(Double.class.getName())) {
-                            args[0] = Double.parseDouble((String)value);
-                        }
-                        else if (fieldType.equals(Float.class.getName())) {
-                            args[0] = Float.parseFloat((String)value);
-                        }
-                        else{
-                            args[0] = value;
-                            log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！字段类型: {} vs {} ", value.getClass().getTypeName(), fieldType);
-                        }
-                    }
-                    // Integer 向上转型为 Long 绑定
-                    else if(value.getClass().getTypeName().equals(Integer.class.getName()) && fieldType.equals(Long.class.getName())){
-                        Integer intValue = (Integer)value;
-                        args[0] = intValue.longValue();
-                    }
-                    // Float 向上转型为 Double 绑定
-                    else if(value.getClass().getTypeName().equals(Float.class.getName()) && fieldType.equals(Double.class.getName())){
-                        Float floatValue = (Float)value;
-                        args[0] = floatValue.doubleValue();
-                    }
-                    else{
-                        args[0] = value;
-                        log.warn("类型不一致，暂无法自动绑定，请手动转型一致后调用！ {} vs {} ", value.getClass().getTypeName(), fieldType);
-                    }
-                }
-                else{
-                    args[0] = value;
-                }
-                descriptor.getWriteMethod().invoke(model, args);
-            }
+        if(V.isEmpty(propMap)){
+            return;
         }
-        catch (Exception e){
-            log.warn("复制Map属性到Model异常: " + e.getMessage(), e);
+        List<Field> fields = extractAllFields(model.getClass());
+        Map<String, Field> fieldNameMaps = convertToStringKeyObjectMap(fields, "name");
+        for(Map.Entry<String, Object> entry : propMap.entrySet()){
+            Field field = fieldNameMaps.get(entry.getKey());
+            if(field != null){
+                try{
+                    Object value = convertValueToFieldType(entry.getValue(), field);
+                    setProperty(model, entry.getKey(), value);
+                }
+                catch (Exception e){
+                    log.warn("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
+                }
+            }
         }
     }
 
@@ -216,6 +168,41 @@ public class BeanUtils {
     public static void setProperty(Object obj, String field, Object value) {
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         wrapper.setPropertyValue(field, value);
+    }
+
+    /**
+     * 转换为field对应的类型
+     * @param value
+     * @param field
+     * @return
+     */
+    public static Object convertValueToFieldType(Object value, Field field){
+        String type = field.getGenericType().getTypeName();
+        if(value.getClass().getName().equals(type)){
+            return value;
+        }
+        if(Integer.class.getName().equals(type)){
+            return Integer.parseInt(S.valueOf(value));
+        }
+        else if(Long.class.getName().equals(type)){
+            return Long.parseLong(S.valueOf(value));
+        }
+        else if(Double.class.getName().equals(type)){
+            return Double.parseDouble(S.valueOf(value));
+        }
+        else if(BigDecimal.class.getName().equals(type)){
+            return new BigDecimal(S.valueOf(value));
+        }
+        else if(Float.class.getName().equals(type)){
+            return Float.parseFloat(S.valueOf(value));
+        }
+        else if(Boolean.class.getName().equals(type)){
+            return V.isTrue(S.valueOf(value));
+        }
+        else if(type.contains(Date.class.getSimpleName())){
+            return D.fuzzyConvert(S.valueOf(value));
+        }
+        return value;
     }
 
     /***
@@ -334,10 +321,14 @@ public class BeanUtils {
         }
         // 提取所有的top level对象
         List<T> topLevelModels = new ArrayList();
-        for(T model : allNodes){
-            Object parentId = getProperty(model, Cons.FieldName.parentId.name());
+        for(T node : allNodes){
+            Object parentId = getProperty(node, Cons.FieldName.parentId.name());
             if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
-                topLevelModels.add(model);
+                topLevelModels.add(node);
+            }
+            Object nodeId = getProperty(node, Cons.FieldName.id.name());
+            if(V.equals(nodeId, parentId)){
+                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName()+":"+nodeId);
             }
         }
         if(V.isEmpty(topLevelModels)){
@@ -632,13 +623,23 @@ public class BeanUtils {
     }
 
     /**
+     * 获取目标类
+     * @param instance
+     * @return
+     */
+    public static Class getTargetClass(Object instance){
+        Class targetClass = (instance instanceof Class)? (Class)instance : AopUtils.getTargetClass(instance);
+        return targetClass;
+    }
+
+    /**
      * 从实例中获取目标对象的泛型定义类class
      * @param instance 对象实例
      * @param index
      * @return
      */
     public static Class getGenericityClass(Object instance, int index){
-        Class hostClass = (instance instanceof Class)? (Class)instance : AopUtils.getTargetClass(instance);
+        Class hostClass = getTargetClass(instance);
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
         if(V.isEmpty(types) || index >= types.length){
@@ -647,7 +648,7 @@ public class BeanUtils {
         if(V.notEmpty(types) && types.length > index){
             return types[index].resolve();
         }
-        log.warn("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
+        log.debug("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
         return null;
     }
 
@@ -690,7 +691,7 @@ public class BeanUtils {
      * @param fn
      * @return
      */
-    private static SerializedLambda getSerializedLambda(Serializable fn){
+    public static SerializedLambda getSerializedLambda(Serializable fn){
         SerializedLambda lambda = null;
         try{
             Method method = fn.getClass().getDeclaredMethod("writeReplace");

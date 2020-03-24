@@ -21,7 +21,8 @@ public class Cons extends com.diboot.core.config.Cons {
         ORG_TYPE,
         PERMISSION_TYPE,
         POSITION_GRADE,
-        GENDER
+        GENDER,
+        FRONTEND_PERMISSION_CODE
     }
 
     /**
@@ -76,6 +77,14 @@ public class Cons extends com.diboot.core.config.Cons {
         MENU,
         OPERATION,
         OTHER
+    }
+
+    /**
+     * 前端权限类型
+     */
+    public static enum FRONTEND_PERMISSION_DISPLAY_TYPE{
+        MENU,
+        PERMISSION
     }
 
     /**

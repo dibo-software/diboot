@@ -8,10 +8,9 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.KeyValue;
-import com.diboot.core.vo.Pagination;
-import com.diboot.core.vo.PagingJsonResult;
+import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -24,10 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  BaseService接口实现测试 (需先执行example中的初始化SQL)
@@ -88,7 +84,7 @@ public class BaseServiceTest {
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
         dictionaryService.createEntity(dictionary);
-
+        Assert.assertTrue(dictionary.getPrimaryKey() != null);
         // 查询是否创建成功
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dictionary::getType, TYPE);
@@ -160,4 +156,90 @@ public class BaseServiceTest {
         Assert.assertTrue(pagingJsonResult.getPage().getOrderBy().equals("id:DESC"));
     }
 
+    /**
+     * 测试1-多的批量新建/更新/删除操作
+     */
+    @Test
+    @Transactional
+    public void testCreateUpdateDeleteEntityAndRelatedEntities(){
+        // 创建
+        String TYPE = "ID_TYPE";
+        // 定义
+        Dictionary dictionary = new Dictionary();
+        dictionary.setType(TYPE);
+        dictionary.setItemName("证件类型");
+        dictionary.setParentId(0L);
+        // 子项
+        List<Dictionary> dictionaryList = new ArrayList<>();
+        String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
+        for(int i=0; i<itemNames.length; i++){
+            Dictionary dict = new Dictionary();
+            dict.setType(TYPE);
+            dict.setItemName(itemNames[i]);
+            dict.setItemValue(itemValues[i]);
+            dict.setParentId(dictionary.getId());
+            dictionaryList.add(dict);
+        }
+        boolean success = dictionaryService.createEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
+        Assert.assertTrue(success);
+
+        dictionary.setItemName(dictionary.getItemName()+"_2");
+        dictionaryList.remove(1);
+
+        Dictionary dict = new Dictionary();
+        dict.setType(TYPE);
+        dict.setItemName("港澳通行证");
+        dict.setItemValue("GATXZ");
+        dictionaryList.add(dict);
+        success = dictionaryService.updateEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
+        Assert.assertTrue(success);
+
+        // 查询是否创建成功
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Dictionary::getType, TYPE).ne(Dictionary::getParentId, 0);
+
+        List<Dictionary> dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(V.notEmpty(dictionaryList2));
+        List<String> itemNames2 = BeanUtils.collectToList(dictionaryList2, Dictionary::getItemName);
+        Assert.assertTrue(itemNames2.contains("港澳通行证"));
+
+        //success = dictionaryService.updateEntityAndRelatedEntities(dictionary, null, Dictionary::setParentId);
+        //Assert.assertTrue(success);
+        //dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
+        //Assert.assertTrue(V.isEmpty(dictionaryList2));
+
+        success = dictionaryService.deleteEntityAndRelatedEntities(dictionary.getId(), Dictionary.class, Dictionary::setParentId);
+        Assert.assertTrue(success);
+        dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(V.isEmpty(dictionaryList2));
+
+    }
+
+    @Test
+    public void testJsonResult(){
+        Map map = new HashMap();
+        map.put("k", "123");
+        JsonResult jsonResult = JsonResult.OK(map);
+        JsonResult jsonResult2 = JsonResult.OK(map);
+        Assert.assertEquals(jsonResult.getData(), jsonResult2.getData());
+
+        String msg = "参数name不匹配";
+        jsonResult = new JsonResult(Status.FAIL_VALIDATION, msg);
+        jsonResult2 = JsonResult.FAIL_VALIDATION(msg);
+        Assert.assertTrue(jsonResult.getMsg().endsWith(msg));
+        Assert.assertTrue(jsonResult2.getMsg().endsWith(msg));
+    }
+
+    @Test
+    public void testExist(){
+        boolean exists = dictionaryService.exists(Dictionary::getType, "GENDER");
+        Assert.assertTrue(exists);
+    }
+
+    @Test
+    public void testContextHelper(){
+        String database = ContextHelper.getDatabaseType();
+        System.out.println(database);
+        Assert.assertTrue(database.equals("mysql") || database.equals("oracle"));
+    }
 }

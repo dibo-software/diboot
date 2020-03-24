@@ -31,6 +31,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         this.referencedService = serviceInstance;
         this.annoObjectList = voList;
         this.queryWrapper = new QueryWrapper<T>();
+        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
     }
 
     @Override

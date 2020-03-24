@@ -30,4 +30,13 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      */
     boolean createUserRoleRelations(String userType, Long userId, List<Long> roleIds);
 
+    /***
+     * 批量更新用户-角色的关系
+     * @param userType
+     * @param userId
+     * @param roleIds
+     * @return
+     */
+    boolean updateUserRoleRelations(String userType, Long userId, List<Long> roleIds);
+
 }

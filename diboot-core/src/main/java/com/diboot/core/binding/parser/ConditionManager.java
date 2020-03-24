@@ -10,6 +10,7 @@ import net.sf.jsqlparser.schema.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,10 @@ public class ConditionManager {
         // 解析中间表关联
         String tableName = extractMiddleTableName(expressionList);
         if(tableName != null){
-            parseMiddleTable(binder, expressionList, tableName);
+            List<Expression> additionalExpress = parseMiddleTable(binder, expressionList, tableName);
+            if(V.notEmpty(additionalExpress)){
+                parseDirectRelation(binder, additionalExpress);
+            }
         }
         else{
             parseDirectRelation(binder, expressionList);
@@ -196,11 +200,13 @@ public class ConditionManager {
      * @param expressionList
      * @return
      */
-    private static <T> void parseMiddleTable(BaseBinder<T> binder, List<Expression> expressionList, String tableName) {
+    private static <T> List<Expression> parseMiddleTable(BaseBinder<T> binder, List<Expression> expressionList, String tableName) {
         // 单一条件不是中间表条件
         if(expressionList.size() <= 1){
-            return;
+            return expressionList;
         }
+        // 非中间表的附加条件表达式
+        List<Expression> additionalExpressions = new ArrayList<>();
         // 提取到表
         MiddleTable middleTable = new MiddleTable(tableName);
         // 中间表两边边连接字段
@@ -253,8 +259,13 @@ public class ConditionManager {
                 }
                 else{ // equals附加条件，暂只支持列在左侧，如 department.level=1
                     String leftExpression = express.getLeftExpression().toString();
-                    if(leftExpression != null && leftExpression.startsWith(tableName+".")){
-                        middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
+                    if(leftExpression != null){
+                        if(leftExpression.startsWith(tableName+".")){
+                            middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
+                        }
+                        else{
+                            additionalExpressions.add(express);
+                        }
                     }
                 }
             }
@@ -296,12 +307,18 @@ public class ConditionManager {
                     LikeExpression express = (LikeExpression)operator;
                     leftExpression = express.getLeftExpression().toString();
                 }
-                if(leftExpression != null && leftExpression.startsWith(tableName+".")){
-                    middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
+                if(leftExpression != null){
+                    if(leftExpression.startsWith(tableName+".")){
+                        middleTable.addAdditionalCondition(removeLeftAlias(operator.toString()));
+                    }
+                    else{
+                        additionalExpressions.add(operator);
+                    }
                 }
             }
         }
         binder.withMiddleTable(middleTable);
+        return additionalExpressions;
     }
 
     /**

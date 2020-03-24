@@ -35,6 +35,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
         this.referencedService = serviceInstance;
         this.annoObjectList = voList;
         this.queryWrapper = new QueryWrapper<T>();
+        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
     }
 
     /***
