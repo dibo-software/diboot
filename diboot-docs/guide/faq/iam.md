@@ -6,4 +6,4 @@
 
 2. **为何引入iam后启动报错？**
 
-答：请确保您配置了**@EnableTransactionManagement**注解，可参考[IAM参数配置](/guide/diboot-iam/开始使用.html#_2、参数配置：)
+答：请确保您配置了**@EnableTransactionManagement**注解，可参考[IAM参数配置-注解配置](/guide/diboot-iam/开始使用.html#_2、参数配置：)
