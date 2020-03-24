@@ -93,6 +93,17 @@ module.exports = {
                         ['/guide/diboot-devtools/代码生成与更新', '代码生成与更新']
                     ]
                 }
+            ],
+            '/guide/faq/': [
+                {
+                    title: 'F&Q',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/faq/devtools', 'devtools开发助理'],
+                        ['/guide/faq/iam', 'IAM 组件']
+                    ]
+                }
             ]
         },
         nav: [{
@@ -100,6 +111,7 @@ module.exports = {
         }, {
             text: '基础组件 指南',
             items: [
+                { text: 'F&Q', link: '/guide/faq/devtools' },
                 { text: 'core基础内核', link: '/guide/diboot-core/安装' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
                 { text: 'File文件组件', link: '/guide/diboot-file/介绍' }
