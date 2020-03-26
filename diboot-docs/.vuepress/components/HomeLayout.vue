@@ -4,8 +4,14 @@
       <div class="hero">
         <p class="action">
           <a :href="$withBase('/guide/diboot-core/安装.html')" class="button white">快速上手</a>
-
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
+
+          <a href="https://devtools-v2.diboot.com/antd/" class="button white" target="_blank">Antd项目案例</a>
+          <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
+
+          <a :href="$withBase('https://devtools-v2.diboot.com/element/')" class="button white" target="_blank">Element项目案例</a>
+          <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
+
           <a href="javascript:;" class="button has-icon" @click="showVideo">
             <img class="icon" src="../public/play-circle.png" alt="">
             了解 diboot 2.0
@@ -279,7 +285,8 @@ a.button.white {
 }
 @media screen and (max-width: 750px) {
   .button.has-icon{
-    margin-top: 15px;
+    display: block;
+    margin-top: 5px;
   }
   .home {
     padding: 0;
@@ -310,6 +317,8 @@ a.button.white {
     height: 180px;
   }
   a.button.white{
+    display: block;
+    margin-bottom: 10px;
     margin-right: 0;
   }
 }

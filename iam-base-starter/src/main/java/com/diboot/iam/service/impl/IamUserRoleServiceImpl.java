@@ -1,8 +1,22 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamExtensible;
@@ -14,6 +28,7 @@ import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
+import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +52,6 @@ import java.util.stream.Collectors;
 public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper, IamUserRole> implements IamUserRoleService {
 
     @Autowired
-    private IamUserRoleService iamUserRoleService;
-    @Autowired
     private IamRoleService iamRoleService;
     @Autowired
     private IamAccountService iamAccountService;
@@ -54,7 +67,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRole> getUserRoleList(String userType, Long userId) {
-        List<IamUserRole> userRoleList = iamUserRoleService.getEntityList(Wrappers.<IamUserRole>lambdaQuery()
+        List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
                 .eq(IamUserRole::getUserId, userId)
