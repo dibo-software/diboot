@@ -20,6 +20,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
+import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,30 +138,26 @@ public class MiddleTable {
         if(V.isEmpty(annoObjectForeignKeyList)){
             return null;
         }
-        // 构建SQL
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT ").append(this.equalsToAnnoObjectFKColumn).append(Cons.SEPARATOR_COMMA)
-                .append(this.equalsToRefEntityPkColumn).append(" FROM ").append(this.table)
-                .append(" WHERE ").append(this.equalsToAnnoObjectFKColumn).append(" IN (");
         String params = S.repeat("?", ",", annoObjectForeignKeyList.size());
-        sb.append(params).append(")");
-        // 添加删除标记
-        boolean appendDeleteFlag = true;
-        if(this.additionalConditions != null){
-            for(String condition : this.additionalConditions){
-                sb.append(" AND (").append(condition).append(")");
-                if(S.containsIgnoreCase(condition, "is_" + Cons.FieldName.deleted.name())){
-                    appendDeleteFlag = false;
+        // 构建SQL
+        return new SQL(){{
+            SELECT(equalsToAnnoObjectFKColumn + Cons.SEPARATOR_COMMA + equalsToRefEntityPkColumn);
+            FROM(table);
+            WHERE(equalsToAnnoObjectFKColumn + " IN (" + params + ")");
+            // 添加删除标记
+            boolean appendDeleteFlag = true;
+            if(additionalConditions != null){
+                for(String condition : additionalConditions){
+                    WHERE(condition);
+                    if(S.containsIgnoreCase(condition, Cons.COLUMN_IS_DELETED)){
+                        appendDeleteFlag = false;
+                    }
                 }
             }
-        }
-        // 如果需要删除
-        if(appendDeleteFlag){
-            if(ParserCache.hasDeletedColumn(this.table)){
-                sb.append(" AND is_deleted = ").append(BaseConfig.getActiveFlagValue());
+            // 如果需要删除
+            if(appendDeleteFlag && ParserCache.hasDeletedColumn(table)){
+                WHERE(Cons.COLUMN_IS_DELETED + " = " + BaseConfig.getActiveFlagValue());
             }
-        }
-        return sb.toString();
+        }}.toString();
     }
-
 }

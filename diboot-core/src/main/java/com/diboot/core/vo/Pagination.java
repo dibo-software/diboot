@@ -16,7 +16,6 @@
 package com.diboot.core.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.config.BaseConfig;
@@ -119,7 +118,7 @@ public class Pagination implements Serializable {
      * @param <T>
      * @return
      */
-    public <T> IPage<T> toIPage(){
+    public <T> Page<T> toPage(){
         List<OrderItem> orderItemList = null;
         // 解析排序
         if(V.notEmpty(this.orderBy)){
@@ -142,13 +141,13 @@ public class Pagination implements Serializable {
                 }
             }
         }
-        IPage<T> page = new Page<T>()
+        Page<T> page = new Page<T>()
                 .setCurrent(getPageIndex())
                 .setSize(getPageSize())
                 // 如果前端传递过来了缓存的总数，则本次不再count统计
                 .setTotal(getTotalCount() > 0? -1 : getTotalCount());
         if(orderItemList != null){
-            ((Page<T>) page).addOrder(orderItemList);
+            page.addOrder(orderItemList);
         }
         return page;
     }

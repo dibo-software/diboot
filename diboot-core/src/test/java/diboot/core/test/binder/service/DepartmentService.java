@@ -15,8 +15,13 @@
  */
 package diboot.core.test.binder.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.vo.Pagination;
+import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.entity.Department;
+
+import java.util.List;
 
 /**
  * 部门相关Service
@@ -26,4 +31,5 @@ import diboot.core.test.binder.entity.Department;
  */
 public interface DepartmentService extends BaseService<Department> {
 
+    List<Department> getDepartmentSqlList(QueryWrapper<DepartmentDTO> queryWrapper, Pagination pagination);
 }

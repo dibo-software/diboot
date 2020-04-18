@@ -16,6 +16,9 @@
 package diboot.core.test.binder.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.annotation.BindEntity;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -37,5 +40,16 @@ public class DepartmentVO {
 
     @TableField(exist = false)
     private String name;
+
+    @TableField
+    private Long orgId;
+
+    // 通过中间表关联Entity
+    @BindEntity(entity = Department.class, condition = "this.parent_id=id") // AND ...
+    private Department department;
+
+    // 通过中间表关联Entity
+    @BindEntity(entity = Organization.class, condition = "this.org_id=id") // AND ...
+    private OrganizationVO organizationVO;
 
 }

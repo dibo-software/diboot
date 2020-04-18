@@ -32,7 +32,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -52,7 +51,6 @@ import java.util.*;
 public class BaseServiceTest {
 
     @Autowired
-    @Qualifier("dictionaryService")
     DictionaryServiceImpl dictionaryService;
 
     @Test
@@ -87,6 +85,11 @@ public class BaseServiceTest {
         List<Long> ids = BeanUtils.collectIdToList(dictionaryList);
         dictionaryList = dictionaryService.getEntityListByIds(ids);
         Assert.assertTrue(V.notEmpty(dictionaryList));
+
+        // 获取map
+        List<Map<String, Object>> mapList = dictionaryService.getMapList(null, new Pagination());
+        Assert.assertTrue(mapList.size() > 0 && mapList.size() <= BaseConfig.getPageSize());
+
     }
 
     @Test
@@ -144,6 +147,7 @@ public class BaseServiceTest {
         dictionaryList.get(2).setItemValue("HZ2");
         dictionaryService.updateEntity(dictionaryList.get(2));
         Assert.assertTrue(success);
+
     }
 
     @Test

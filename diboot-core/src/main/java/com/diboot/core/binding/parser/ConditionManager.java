@@ -50,7 +50,7 @@ public class ConditionManager {
      * @param condition
      * @return
      */
-    private static List<Expression> getExpressionList(String condition){
+    public static List<Expression> getExpressionList(String condition){
         if(V.isEmpty(condition)){
             return null;
         }
@@ -72,6 +72,7 @@ public class ConditionManager {
 
     /**
      * 附加条件到binder
+     * @param condition
      * @param binder
      * @throws Exception
      */

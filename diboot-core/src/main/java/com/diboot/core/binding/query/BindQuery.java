@@ -15,6 +15,7 @@
  */
 package com.diboot.core.binding.query;
 
+import javax.lang.model.type.NullType;
 import java.lang.annotation.*;
 
 /**
@@ -39,6 +40,18 @@ public @interface BindQuery {
      * @return
      */
     String field() default "";
+
+    /***
+     * 绑定的Entity类
+     * @return
+     */
+    Class entity() default NullType.class;
+
+    /***
+     * JOIN连接条件
+     * @return
+     */
+    String condition() default "";
 
     /**
      * 忽略该字段

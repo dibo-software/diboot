@@ -13,15 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.entity;
+package diboot.core.test.binder.dto;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
-import com.diboot.core.entity.BaseEntity;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * 定时任务
@@ -32,16 +34,25 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Department extends BaseEntity {
-    private static final long serialVersionUID = -4849732665419794547L;
+public class DepartmentDTO implements Serializable {
+    private static final long serialVersionUID = 8670003133709715087L;
 
-    @TableField
     private Long parentId;
 
-    @TableField
     private Long orgId;
 
     @BindQuery(comparison = Comparison.CONTAINS)
-    @TableField
     private String name;
+
+    // 绑定查询
+    @BindQuery(comparison = Comparison.STARTSWITH, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    private String orgName;
+
+    // 绑定查询
+    @BindQuery(comparison = Comparison.STARTSWITH, entity = Organization.class, field = "name2", condition = "this.org_id=id")
+    private String orgName2;
+
+    // 绑定查询
+    @BindQuery(entity = Department.class, field = "name", condition = "this.parent_id=id")
+    private String parentName;
 }

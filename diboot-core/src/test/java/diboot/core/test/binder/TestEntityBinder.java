@@ -16,7 +16,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
@@ -56,7 +56,7 @@ public class TestEntityBinder {
         queryWrapper.in(User::getId, 1001L, 1002L);
         List<User> userList = userService.list(queryWrapper);
         // 自动绑定
-        List<EntityBinderVO> voList = RelationsBinder.convertAndBind(userList, EntityBinderVO.class);
+        List<EntityBinderVO> voList = Binder.convertAndBindRelations(userList, EntityBinderVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
         for(EntityBinderVO vo : voList){
@@ -70,7 +70,7 @@ public class TestEntityBinder {
         }
         // 单个entity接口测试
         EntityBinderVO singleVO = BeanUtils.convert(userList.get(0), EntityBinderVO.class);
-        RelationsBinder.bind(singleVO);
+        Binder.bindRelations(singleVO);
         // 验证直接关联和通过中间表间接关联的绑定
         Assert.assertEquals(singleVO.getDepartmentId(), singleVO.getDepartment().getId());
         Assert.assertNotNull(singleVO.getDepartment().getOrgId());

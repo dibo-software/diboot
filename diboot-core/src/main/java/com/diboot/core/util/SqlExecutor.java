@@ -53,7 +53,7 @@ public class SqlExecutor {
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sqlStatement)){
             ResultSet rs = stmt.executeQuery();
             rs.close();
-            log.trace("执行验证SQL:{} 成功", sqlStatement);
+            log.debug("==> {}", sqlStatement);
             return true;
         }
         catch(Exception e){

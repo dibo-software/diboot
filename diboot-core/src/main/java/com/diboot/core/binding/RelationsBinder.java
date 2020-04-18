@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 绑定管理器
+ * 关联关系绑定管理器
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/7/18

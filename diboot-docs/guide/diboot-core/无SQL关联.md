@@ -27,19 +27,19 @@ public class DemoVO extends Demo  {
 
 ## 处理方式
 1. 通过在VO类中添加相关字段，以及对应的关联绑定注解，来定义我们的绑定类型和需要得到的结果以及额外的条件等信息；
-2. 绑定完成后，我们需要调用**RelationsBinder**类中的相关方法类执行这个绑定关系，我们目前提供了两种方式可供处理：
+2. 绑定完成后，我们需要调用**Binder**类中的相关方法(*bindRelations)执行这个绑定关系，我们目前提供了两种方式可供处理：
 ### 自动绑定关联
 > 该关联会自动将相关信息查询并设置到voList中，适用于对已有的voList做处理，如：
 ```java
 //List<MyUserVO> voList = ...; 
-RelationsBinder.bind(voList);
+Binder.bindRelations(voList);
 ```
 ### 自动转型并绑定关联
 > 该关联会自动将vo所继承的父类的实体列表进行绑定并自动转型为voList，适用于对于非voList的实体列表等做处理，如：
 ```java
 // 查询单表获取Entity集合
 // List<User> entityList = userService.list(queryWrapper);
-List<MyUserVO> voList = RelationsBinder.convertAndBind(userList, MyUserVO.class);
+List<MyUserVO> voList = Binder.convertAndBindRelations(userList, MyUserVO.class);
 ```
 
 ## 数据字典关联绑定

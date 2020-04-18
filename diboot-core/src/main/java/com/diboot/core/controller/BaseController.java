@@ -17,8 +17,8 @@ package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.QueryBuilder;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -40,24 +40,21 @@ public class BaseController {
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
-	 * @param <T>
 	 * @return
 	 */
-	public <T,DTO> QueryWrapper<T> buildQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
+	public <DTO> QueryWrapper<DTO> buildQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractParams(request));
 	}
 
 	/***
 	 * 构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
-	 * @param <T>
 	 * @return
 	 */
-	public <T,DTO> LambdaQueryWrapper<T> buildLambdaQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
+	public <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
@@ -174,7 +171,7 @@ public class BaseController {
 	 */
 	protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass) {
 		// 转换为VO
-		List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
+		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
 		return voList;
 	}
 

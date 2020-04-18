@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -343,7 +343,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<Map<String, Object>> getMapList(Wrapper queryWrapper, Pagination pagination) {
 		if(pagination != null){
-			IPage<T> page = convertToIPage(queryWrapper, pagination);
+			IPage page = convertToIPage(queryWrapper, pagination);
 			IPage<Map<String, Object>> resultPage = super.pageMaps(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.isSearchCount()){
@@ -438,7 +438,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<T> enityList = new ArrayList<>();
 		enityList.add(entity);
 		// 绑定
-		List<VO> voList = RelationsBinder.convertAndBind(enityList, voClass);
+		List<VO> voList = Binder.convertAndBindRelations(enityList, voClass);
 		return voList.get(0);
 	}
 
@@ -446,7 +446,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
-		List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
+		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
 		return voList;
 	}
 
@@ -473,7 +473,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				}
 			}
 		}
-		return (Page<T>)pagination.toIPage();
+		return (Page<T>)pagination.toPage();
 	}
 
 	/**

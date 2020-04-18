@@ -16,7 +16,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -59,7 +59,7 @@ public class TestFieldBinder {
         queryWrapper.in(User::getId, 1001L, 1002L);
         List<User> userList = userService.list(queryWrapper);
         // 自动绑定
-        List<FieldBinderVO> voList = RelationsBinder.convertAndBind(userList, FieldBinderVO.class);
+        List<FieldBinderVO> voList = Binder.convertAndBindRelations(userList, FieldBinderVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
         for(FieldBinderVO vo : voList){
@@ -81,7 +81,7 @@ public class TestFieldBinder {
         queryWrapper.in(User::getId, 1001L, 1002L);
         List<User> userList = userService.list(queryWrapper);
         // 自动绑定
-        List<UserVO> voList = RelationsBinder.convertAndBind(userList, UserVO.class);
+        List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);
         if(V.notEmpty(voList)){
             for(UserVO vo : voList){
                 Assert.assertNotNull(vo.getDeptName());

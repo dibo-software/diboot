@@ -16,7 +16,7 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -94,7 +94,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         if (V.isEmpty(roleList)){
             return null;
         }
-        return RelationsBinder.convertAndBind(roleList, IamRoleVO.class);
+        return Binder.convertAndBindRelations(roleList, IamRoleVO.class);
     }
 
     @Override
