@@ -24,6 +24,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -37,16 +38,19 @@ import java.util.*;
 public class BaseController {
 	private static final Logger log = LoggerFactory.getLogger(BaseController.class);
 
+	@Autowired
+	protected HttpServletRequest request;
+
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
 	 */
-	public <DTO> QueryWrapper<DTO> buildQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
+	public <DTO> QueryWrapper<DTO> buildQueryWrapper(DTO entityOrDto) throws Exception{
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-		return QueryBuilder.toQueryWrapper(entityOrDto, extractParams(request));
+		return QueryBuilder.toQueryWrapper(entityOrDto, extractParams());
 	}
 
 	/***
@@ -54,28 +58,26 @@ public class BaseController {
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
 	 */
-	public <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapper(DTO entityOrDto, HttpServletRequest request) throws Exception{
+	public <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapper(DTO entityOrDto) throws Exception{
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractParams(request));
+		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractParams());
 	}
 
 	/***
 	 * 获取请求参数Map
-	 * @param request
 	 * @return
 	 */
-	public Map<String, Object> getParamsMap(HttpServletRequest request) throws Exception{
-		return getParamsMap(request, null);
+	public Map<String, Object> getParamsMap() throws Exception{
+		return getParamsMap(null);
 	}
 
 	/***
 	 * 获取请求参数Map
-	 * @param request
 	 * @return
 	 */
-	private Map<String, Object> getParamsMap(HttpServletRequest request, List<String> paramList) throws Exception{
+	private Map<String, Object> getParamsMap(List<String> paramList) throws Exception{
 		Map<String, Object> result = new HashMap<>(8);
 		Enumeration paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()){
@@ -108,10 +110,9 @@ public class BaseController {
 
 	/***
 	 * 获取请求URI (去除contextPath)
-	 * @param request
 	 * @return
 	 */
-	protected static String getRequestMappingURI(HttpServletRequest request){
+	protected String getRequestMappingURI(){
 		String contextPath = request.getContextPath();
 		if(V.notEmpty(contextPath)){
 			return S.replace(request.getRequestURI(), contextPath, "");
@@ -121,11 +122,10 @@ public class BaseController {
 
 	/**
 	 * 提取请求参数名集合
-	 * @param request
 	 * @return
 	 */
-	private static Set<String> extractParams(HttpServletRequest request){
-		Map<String, Object> paramValueMap = convertParams2Map(request);
+	private Set<String> extractParams(){
+		Map<String, Object> paramValueMap = convertParams2Map();
 		if(V.notEmpty(paramValueMap)){
 			return paramValueMap.keySet();
 		}
@@ -134,10 +134,9 @@ public class BaseController {
 
 	/***
 	 * 将请求参数值转换为Map
-	 * @param request
 	 * @return
 	 */
-	public static Map<String, Object> convertParams2Map(HttpServletRequest request){
+	public Map<String, Object> convertParams2Map(){
 		Map<String, Object> result = new HashMap<>(8);
 		if(request == null){
 			return result;
@@ -177,9 +176,8 @@ public class BaseController {
 
 	/***
 	 * 打印所有参数信息
-	 * @param request
 	 */
-	protected static void dumpParams(HttpServletRequest request){
+	protected void dumpParams(){
 		Map<String, String[]> params = request.getParameterMap();
 		if(params != null && !params.isEmpty()){
 			StringBuilder sb = new StringBuilder();
@@ -195,74 +193,67 @@ public class BaseController {
 	
 	/**
 	 * 从request获取Long参数
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public Long getLong(HttpServletRequest request, String param){
+	public Long getLong(String param){
 		return S.toLong(request.getParameter(param));
 	}
 
 	/**
 	 * 从request获取Long参数
-	 * @param request
 	 * @param param
 	 * @param defaultValue
 	 * @return
 	 */
-	public long getLong(HttpServletRequest request, String param, Long defaultValue){
+	public long getLong(String param, Long defaultValue){
 		return S.toLong(request.getParameter(param), defaultValue);
 	}
 	
 	/**
 	 * 从request获取Int参数
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public Integer getInteger(HttpServletRequest request, String param){
+	public Integer getInteger(String param){
 		return S.toInt(request.getParameter(param));
 	}
 
 	/**
 	 * 从request获取Int参数
-	 * @param request
 	 * @param param
 	 * @param defaultValue
 	 * @return
 	 */
-	public int getInt(HttpServletRequest request, String param, Integer defaultValue){
+	public int getInt(String param, Integer defaultValue){
 		return S.toInt(request.getParameter(param), defaultValue);
 	}
 
 	/***
 	 * 从request中获取boolean值
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public boolean getBoolean(HttpServletRequest request, String param){
+	public boolean getBoolean(String param){
 		return S.toBoolean(request.getParameter(param));
 	}
 
 	/***
 	 * 从request中获取boolean值
-	 * @param request
 	 * @param param
 	 * @param defaultBoolean
 	 * @return
 	 */
-	public boolean getBoolean(HttpServletRequest request, String param, boolean defaultBoolean){
+	public boolean getBoolean(String param, boolean defaultBoolean){
 		return S.toBoolean(request.getParameter(param), defaultBoolean);
 	}
 
 	/**
 	 * 从request获取Double参数
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public Double getDouble(HttpServletRequest request, String param){
+	public Double getDouble(String param){
 		if(V.notEmpty(request.getParameter(param))){
 			return Double.parseDouble(request.getParameter(param));
 		}
@@ -271,12 +262,11 @@ public class BaseController {
 
 	/**
 	 * 从request获取Double参数
-	 * @param request
 	 * @param param
 	 * @param defaultValue
 	 * @return
 	 */
-	public Double getDouble(HttpServletRequest request, String param, Double defaultValue){
+	public Double getDouble(String param, Double defaultValue){
 		if(V.notEmpty(request.getParameter(param))){
 			return Double.parseDouble(request.getParameter(param));
 		}
@@ -285,11 +275,10 @@ public class BaseController {
 
 	/**
 	 * 从request获取String参数
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public String getString(HttpServletRequest request, String param){
+	public String getString(String param){
 		if(V.notEmpty(request.getParameter(param))){
 			return request.getParameter(param);
 		}
@@ -298,12 +287,11 @@ public class BaseController {
 
 	/**
 	 * 从request获取String参数
-	 * @param request
 	 * @param param
 	 * @param defaultValue
 	 * @return
 	 */
-	public String getString(HttpServletRequest request, String param, String defaultValue){
+	public String getString(String param, String defaultValue){
 		if(V.notEmpty(request.getParameter(param))){
 			return request.getParameter(param);
 		}
@@ -312,11 +300,10 @@ public class BaseController {
 
 	/**
 	 * 从request获取String[]参数
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public String[] getStringArray(HttpServletRequest request, String param){
+	public String[] getStringArray(String param){
 		if(request.getParameterValues(param) != null){
 			return request.getParameterValues(param);
 		}
@@ -325,12 +312,11 @@ public class BaseController {
 
 	/***
 	 * 从request里获取String列表
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public List<String> getStringList(HttpServletRequest request, String param){
-		String[] strArray = getStringArray(request, param);
+	public List<String> getStringList(String param){
+		String[] strArray = getStringArray(param);
 		if(V.isEmpty(strArray)){
 			return null;
 		}
@@ -339,12 +325,11 @@ public class BaseController {
 
 	/***
 	 * 从request里获取Long列表
-	 * @param request
 	 * @param param
 	 * @return
 	 */
-	public List<Long> getLongList(HttpServletRequest request, String param){
-		String[] strArray = getStringArray(request, param);
+	public List<Long> getLongList(String param){
+		String[] strArray = getStringArray(param);
 		if(V.isEmpty(strArray)){
 			return null;
 		}

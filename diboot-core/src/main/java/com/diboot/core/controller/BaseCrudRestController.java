@@ -59,11 +59,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     /**
      * 查询ViewObject，用于子类重写的方法
      * @param id
-     * @param request
      * @return
      * @throws Exception
      */
-    protected JsonResult getViewObject(Serializable id, HttpServletRequest request) throws Exception{
+    protected JsonResult getViewObject(Serializable id) throws Exception{
         // 检查String类型id
         if(id instanceof String && !S.isNumeric((String)id)){
             String pk = ContextHelper.getPrimaryKey(getEntityClass());
@@ -83,8 +82,8 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult getViewObjectList(E entity, Pagination pagination, HttpServletRequest request) throws Exception {
-        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity, request);
+    protected JsonResult getViewObjectList(E entity, Pagination pagination) throws Exception {
+        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity);
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, getVOClass());
         // 返回结果
@@ -125,7 +124,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(E entity, HttpServletRequest request) throws Exception {
+    protected JsonResult createEntity(E entity) throws Exception {
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
@@ -152,7 +151,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(Serializable id, E entity, HttpServletRequest request) throws Exception {
+    protected JsonResult updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
         if(entity.getId() == null){
             String pk = ContextHelper.getPrimaryKey(getEntityClass());
@@ -188,7 +187,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      * @throws Exception
      */
-    protected JsonResult deleteEntity(Serializable id, HttpServletRequest request) throws Exception {
+    protected JsonResult deleteEntity(Serializable id) throws Exception {
         if (id == null) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
@@ -218,7 +217,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      * @throws Exception
      */
-    protected JsonResult batchDeleteEntities(Collection<? extends Serializable> ids, HttpServletRequest request) throws Exception {
+    protected JsonResult batchDeleteEntities(Collection<? extends Serializable> ids) throws Exception {
         if (V.isEmpty(ids)) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
