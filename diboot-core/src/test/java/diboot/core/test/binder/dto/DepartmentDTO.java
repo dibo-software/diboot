@@ -34,12 +34,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DepartmentDTO implements Serializable {
+public class DepartmentDTO extends Department {
     private static final long serialVersionUID = 8670003133709715087L;
 
-    private Long parentId;
+    //private Long parentId;
 
-    private Long orgId;
+    //private Long orgId;
 
     @BindQuery(comparison = Comparison.CONTAINS)
     private String name;

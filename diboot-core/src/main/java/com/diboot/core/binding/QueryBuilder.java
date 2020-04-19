@@ -24,6 +24,7 @@ import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -120,7 +121,7 @@ public class QueryBuilder {
         // 转换
         LinkedHashMap<String, Object> fieldValuesMap = extractNotNullValues(dto, fields);
         if(V.isEmpty(fieldValuesMap)){
-            return new QueryWrapper<DTO>();
+            return new QueryWrapper<>();
         }
         QueryWrapper wrapper;
         // 是否有join联表查询
@@ -288,6 +289,13 @@ public class QueryBuilder {
                 value = field.get(dto);
             } catch (IllegalAccessException e) {
                 log.error("通过反射获取属性值出错：" + e);
+            }
+            // 忽略逻辑删除字段
+            if(Cons.FieldName.deleted.name().equals(field.getName())
+                    && "boolean".equals(field.getType().getName())
+                    && (Boolean)value == false
+            ){
+                continue;
             }
             if (value != null) {
                 resultMap.put(field.getName(), value);

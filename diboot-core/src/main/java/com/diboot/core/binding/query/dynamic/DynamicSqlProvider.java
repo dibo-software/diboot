@@ -99,17 +99,20 @@ public class DynamicSqlProvider {
             MergeSegments segments = ew.getExpression();
             if(segments != null){
                 String normalSql = segments.getNormal().getSqlSegment();
-                WHERE(normalSql);
-                // 动态为主表添加is_deleted=0
-                if(ParserCache.hasDeletedColumn(wrapper.getEntityTable())){
-                    WHERE("self."+ Cons.COLUMN_IS_DELETED+" = "+ BaseConfig.getActiveFlagValue());
-                }
-                if(segments.getOrderBy() != null){
-                    String orderBySql = segments.getOrderBy().getSqlSegment();
-                    int beginIndex = S.indexOfIgnoreCase(orderBySql,"ORDER BY ");
-                    if(beginIndex >= 0){
-                        orderBySql = S.substring(orderBySql, beginIndex+"ORDER BY ".length());
-                        ORDER_BY(orderBySql);
+                if(V.notEmpty(normalSql)){
+                    WHERE(formatNormalSql(normalSql));
+                    // 动态为主表添加is_deleted=0
+                    String isDeletedSection = "self."+ Cons.COLUMN_IS_DELETED;
+                    if(S.containsIgnoreCase(normalSql, isDeletedSection) == false && ParserCache.hasDeletedColumn(wrapper.getEntityTable())){
+                        WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
+                    }
+                    if(segments.getOrderBy() != null){
+                        String orderBySql = segments.getOrderBy().getSqlSegment();
+                        int beginIndex = S.indexOfIgnoreCase(orderBySql,"ORDER BY ");
+                        if(beginIndex >= 0){
+                            orderBySql = S.substring(orderBySql, beginIndex+"ORDER BY ".length());
+                            ORDER_BY(orderBySql);
+                        }
                     }
                 }
             }
@@ -132,6 +135,18 @@ public class DynamicSqlProvider {
             selects.add("self."+S.toSnakeCase(column));
         }
         return S.join(selects);
+    }
+
+    /**
+     * 格式化where条件的sql
+     * @param normalSql
+     * @return
+     */
+    private String formatNormalSql(String normalSql){
+        if(normalSql.startsWith("(") && normalSql.endsWith(")")){
+            return S.substring(normalSql,1,normalSql.length()-1);
+        }
+        return normalSql;
     }
 
 }
