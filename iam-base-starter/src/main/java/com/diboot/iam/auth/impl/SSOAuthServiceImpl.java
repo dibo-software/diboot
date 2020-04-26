@@ -60,14 +60,17 @@ public class SSOAuthServiceImpl implements AuthService {
     // cas server url
     private String casUrlPrefix;
 
-    public SSOAuthServiceImpl(){
-        this.casUrlPrefix = BaseConfig.getProperty("cas.server-url-prefix");
+    private String getCasUrlPrefix(){
+        if(this.casUrlPrefix == null){
+            this.casUrlPrefix = BaseConfig.getProperty("cas.server-url-prefix");
+        }
         if(V.isEmpty(this.casUrlPrefix)){
             throw new BusinessException("未配置cas参数: cas.server-url-prefix");
         }
         if(!this.casUrlPrefix.endsWith("/")){
             this.casUrlPrefix += "/";
         }
+        return this.casUrlPrefix;
     }
 
     @Override
@@ -168,7 +171,7 @@ public class SSOAuthServiceImpl implements AuthService {
      * @param ssoCredential
      */
     protected String parseCasTicket(SSOCredential ssoCredential) {
-        String casServiceValidateUrl =  this.casUrlPrefix + "p3/serviceValidate?service="+ssoCredential.getServiceUrl()+"&ticket="+ssoCredential.getTicket();
+        String casServiceValidateUrl =  this.getCasUrlPrefix() + "p3/serviceValidate?service="+ssoCredential.getServiceUrl()+"&ticket="+ssoCredential.getTicket();
         String responseBody = HttpHelper.callGet(casServiceValidateUrl, null);
         // 检查结果
         String errorMsg = S.substringBetween(responseBody, "<cas:authenticationFailure", "</cas:authenticationFailure>");
