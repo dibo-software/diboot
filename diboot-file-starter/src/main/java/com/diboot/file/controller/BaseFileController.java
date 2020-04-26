@@ -110,7 +110,7 @@ public abstract class BaseFileController extends BaseController {
         uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(ext);
         uploadFile.setRelObjType(entityClass.getSimpleName()).setStoragePath(storageFullPath);
 
-        String description = getString(request, "description");
+        String description = getString("description");
         uploadFile.setDescription(description);
         // 返回uploadFile对象
         return uploadFile;
