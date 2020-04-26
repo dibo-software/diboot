@@ -174,7 +174,7 @@ public class ParserCache {
         }
         // 初始化
         List<AnnoJoiner> annos = null;
-        List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
+        List<Field> declaredFields = BeanUtils.extractFields(dtoClass, BindQuery.class);
         int index = 1;
         Map<String, String> joinOn2Alias = new HashMap<>();
         for (Field field : declaredFields) {
@@ -201,6 +201,9 @@ public class ParserCache {
                 }
             }
             annos.add(annoJoiner);
+        }
+        if(annos == null){
+            annos = Collections.emptyList();
         }
         dtoClassBindQueryCacheMap.put(dtoClassName, annos);
         return annos;

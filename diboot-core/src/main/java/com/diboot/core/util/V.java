@@ -445,4 +445,23 @@ public class V {
 		return S.join(allErrors);
 	}
 
+	/**
+	 * 检查当前sql中是否包含某列的条件
+	 * @param normalSql
+	 * @param column
+	 * @return
+	 */
+	public static boolean checkHasColumn(String normalSql, String column){
+		normalSql = S.removeDuplicateBlank(normalSql);
+		int index = S.indexOfIgnoreCase(normalSql, column);
+		while(index >= 0){
+			normalSql = S.substring(normalSql, index);
+		}
+		if(S.containsIgnoreCase(normalSql, column)){
+			log.warn("注意：附加数据访问条件失效，因查询条件已包含列: " + column);
+			return true;
+		}
+		return false;
+	}
+
 }

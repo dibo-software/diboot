@@ -4,6 +4,7 @@ create table iam_user
   id           bigint auto_increment comment 'ID'  primary key,
   org_id       bigint      default 0                 not null comment '组织ID',
   user_num     varchar(20)                           not null comment '用户编号',
+  report_manager_id       bigint      default 0     not null comment '汇报上级ID',
   realname     varchar(50)                           not null comment '真实姓名',
   gender       varchar(10)                           not null comment '性别',
   birthdate    date                                  null comment '出生日期',
@@ -16,8 +17,9 @@ create table iam_user
   create_time  timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '系统用户';
 -- 索引
-create index idx_iam_user on iam_user (mobile_phone);
-create index idx_iam_user_2 on iam_user (email);
+create index idx_iam_user_1 on iam_user (org_id);
+create index idx_iam_user_2 on iam_user (mobile_phone);
+create index idx_iam_user_3 on iam_user (report_manager_id);
 create unique index uidx_iam_user on iam_user (user_num);
 
 -- 账号表

@@ -105,7 +105,13 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static <T> T getBean(Class<T> clazz){
-        return getApplicationContext().getBean(clazz);
+        try{
+            return getApplicationContext().getBean(clazz);
+        }
+        catch (Exception e){
+            log.debug("无法找到 bean: {}", clazz.getSimpleName());
+            return null;
+        }
     }
 
     /***

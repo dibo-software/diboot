@@ -30,6 +30,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -488,7 +489,7 @@ public class BeanUtils {
         try{
             for(E object : objectList){
                 Object fieldValue = getProperty(object, getterPropName);
-                if(!fieldValueList.contains(fieldValue)){
+                if(fieldValue != null && !fieldValueList.contains(fieldValue)){
                     fieldValueList.add(fieldValue);
                 }
             }
@@ -617,6 +618,30 @@ public class BeanUtils {
             if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
                 Arrays.stream(fields).forEach((field)->{
                     if(!fieldNameSet.contains(field.getName())){
+                        fieldList.add(field);
+                        fieldNameSet.add(field.getName());
+                    }
+                });
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return fieldList;
+    }
+
+
+    /**
+     * 获取类所有属性（包含父类中属性）
+     * @param clazz
+     * @return
+     */
+    public static List<Field> extractFields(Class<?> clazz, Class<? extends Annotation> annotation){
+        List<Field> fieldList = new ArrayList<>();
+        Set<String> fieldNameSet = new HashSet<>();
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
+                Arrays.stream(fields).forEach((field)->{
+                    if(!fieldNameSet.contains(field.getName()) && field.getAnnotation(annotation) != null){
                         fieldList.add(field);
                         fieldNameSet.add(field.getName());
                     }

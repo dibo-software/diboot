@@ -54,24 +54,22 @@ public abstract class BaseExcelFileController extends BaseFileController {
 
     /***
      * excel数据预览
-     * @param request
      * @return
      * @throws Exception
      */
-    public JsonResult excelPreview(MultipartFile file, HttpServletRequest request) throws Exception {
+    public JsonResult excelPreview(MultipartFile file) throws Exception {
         Map<String, Object> dataMap = new HashMap();
-        savePreviewExcelFile(file, request, dataMap);
+        savePreviewExcelFile(file, dataMap);
         return JsonResult.OK(dataMap);
     }
 
     /***
      * 预览后提交保存
-     * @param request
      * @param
      * @return
      * @throws Exception
      */
-    public <T> JsonResult excelPreviewSave(Class<T> entityClass, String previewFileName, String originFileName, HttpServletRequest request) throws Exception {
+    public <T> JsonResult excelPreviewSave(Class<T> entityClass, String previewFileName, String originFileName) throws Exception {
         if(V.isEmpty(previewFileName) || V.isEmpty(originFileName)){
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "预览保存失败，参数 tempFileName 或 originFileName 未指定！");
         }
@@ -79,40 +77,38 @@ public abstract class BaseExcelFileController extends BaseFileController {
         String fullPath = FileHelper.getFullPath(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 描述
-        String description = getString(request, "description");
+        String description = getString("description");
         // 保存文件上传记录
         UploadFile uploadFile = new UploadFile().setUuid(fileUid)
                 .setFileName(originFileName).setStoragePath(fullPath).setFileType(ext)
                 .setRelObjType(entityClass.getSimpleName()).setDescription(description);
-        super.createUploadFile(uploadFile, request);
+        super.createUploadFile(uploadFile);
         return JsonResult.OK();
     }
 
     /***
      * 直接上传excel
-     * @param request
      * @param
      * @return
      * @throws Exception
      */
-    public <T> JsonResult uploadExcelFile(MultipartFile file, Class<T> entityClass, HttpServletRequest request) throws Exception {
+    public <T> JsonResult uploadExcelFile(MultipartFile file, Class<T> entityClass) throws Exception {
         checkIsExcel(file);
-        return super.uploadFile(file, entityClass, request);
+        return super.uploadFile(file, entityClass);
     }
 
     /**
      *  保存上传文件
-     * @param request
      * @return
      * @throws Exception
      */
-    private void savePreviewExcelFile(MultipartFile file, HttpServletRequest request, Map<String, Object> dataMap) throws Exception{
+    private void savePreviewExcelFile(MultipartFile file, Map<String, Object> dataMap) throws Exception{
         checkIsExcel(file);
         // 保存文件到本地
-        UploadFile uploadFile = super.saveFile(file, getExcelDataListener().getExcelModelClass(), request);
+        UploadFile uploadFile = super.saveFile(file, getExcelDataListener().getExcelModelClass());
         // 预览
         FixedHeadExcelListener listener = getExcelDataListener();
-        listener.setRequestParams(super.getParamsMap(request));
+        listener.setRequestParams(super.getParamsMap());
         try {
             ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
         }
@@ -139,11 +135,11 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * 保存文件之后的处理逻辑，如解析excel
      */
     @Override
-    protected int extractDataCount(String fileUuid, String fullPath, HttpServletRequest request) throws Exception{
+    protected int extractDataCount(String fileUuid, String fullPath) throws Exception{
         FixedHeadExcelListener listener = getExcelDataListener();
         listener.setUploadFileUuid(fileUuid);
         listener.setPreview(false);
-        listener.setRequestParams(super.getParamsMap(request));
+        listener.setRequestParams(super.getParamsMap());
         try{
             ExcelHelper.readAndSaveExcel(fullPath, listener);
         }

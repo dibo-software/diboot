@@ -18,6 +18,7 @@ package com.diboot.core.binding.query.dynamic;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -103,7 +104,7 @@ public class DynamicSqlProvider {
                     WHERE(formatNormalSql(normalSql));
                     // 动态为主表添加is_deleted=0
                     String isDeletedSection = "self."+ Cons.COLUMN_IS_DELETED;
-                    if(S.containsIgnoreCase(normalSql, isDeletedSection) == false && ParserCache.hasDeletedColumn(wrapper.getEntityTable())){
+                    if(QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false && ParserCache.hasDeletedColumn(wrapper.getEntityTable())){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
                     if(segments.getOrderBy() != null){

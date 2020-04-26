@@ -15,6 +15,8 @@
  */
 package diboot.core.test.binder.dto;
 
+import com.diboot.core.binding.data.CheckpointType;
+import com.diboot.core.binding.data.DataAccessCheckpoint;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import diboot.core.test.binder.entity.Department;
@@ -22,8 +24,6 @@ import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * 定时任务
@@ -49,10 +49,10 @@ public class DepartmentDTO extends Department {
     private String orgName;
 
     // 绑定查询
-    @BindQuery(comparison = Comparison.STARTSWITH, entity = Organization.class, field = "name2", condition = "this.org_id=id")
-    private String orgName2;
-
-    // 绑定查询
     @BindQuery(entity = Department.class, field = "name", condition = "this.parent_id=id")
     private String parentName;
+
+    @DataAccessCheckpoint(type = CheckpointType.ORG)
+    private Long orgId;
+
 }

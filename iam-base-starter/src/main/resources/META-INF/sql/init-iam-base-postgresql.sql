@@ -3,6 +3,7 @@ create table iam_user
 (
   id bigserial not null,
   org_id bigint not null default 0,
+  report_manager_id bigint not null default 0,
   user_num varchar(20) not null,
   realname varchar(50) not null,
   gender varchar(10) not null,
@@ -19,6 +20,7 @@ create table iam_user
 comment on column iam_user.id is 'ID';
 comment on column iam_user.org_id is '组织ID';
 comment on column iam_user.user_num is '用户编号';
+comment on column iam_user.report_manager_id is '汇报上级ID';
 comment on column iam_user.realname is '真实姓名';
 comment on column iam_user.gender is '性别';
 comment on column iam_user.birthdate is '出生日期';
@@ -31,8 +33,9 @@ comment on column iam_user.is_deleted is '删除标记';
 comment on column iam_user.create_time is '创建时间';
 comment on table iam_user is '系统用户';
 -- 索引
-create index idx_iam_user on iam_user (mobile_phone);
-create index idx_iam_user_2 on iam_user (email);
+create index idx_iam_user_1 on iam_user (org_id);
+create index idx_iam_user_2 on iam_user (mobile_phone);
+create index idx_iam_user_3 on iam_user (report_manager_id);
 create unique index uidx_iam_user on iam_user (user_num);
 
 -- 账号表

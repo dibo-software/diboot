@@ -24,6 +24,7 @@ import com.diboot.core.vo.KeyValue;
 import com.diboot.file.excel.BaseExcelModel;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -125,12 +126,15 @@ public class DictTempCache {
         }
         // 检测model是否包含dict注解
         List<String> dictTypes = new ArrayList<>();
-        BeanUtils.extractAllFields(modelClass).forEach(fld -> {
-            if(fld.getAnnotation(BindDict.class) != null){
-                BindDict bindDict = fld.getAnnotation(BindDict.class);
-                dictTypes.add(bindDict.type());
-            }
-        });
+        List<Field> fields = BeanUtils.extractFields(modelClass, BindDict.class);
+        if(V.notEmpty(fields)){
+            fields.forEach(fld -> {
+                if(fld.getAnnotation(BindDict.class) != null){
+                    BindDict bindDict = fld.getAnnotation(BindDict.class);
+                    dictTypes.add(bindDict.type());
+                }
+            });
+        }
         if(dictTypes.isEmpty()){
             NO_DICT_MODELS.add(modelClass.getName());
         }
