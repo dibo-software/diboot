@@ -63,12 +63,11 @@ public abstract class BaseFileController extends BaseController {
 
     /***
      * 直接上传文件
-     * @param request
      * @param
      * @return
      * @throws Exception
      */
-    public <T> JsonResult uploadFile(MultipartFile file, Class<T> entityClass, HttpServletRequest request) throws Exception {
+    public <T> JsonResult uploadFile(MultipartFile file, Class<T> entityClass) throws Exception {
         if(file == null) {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的文件！");
         }
@@ -78,9 +77,9 @@ public abstract class BaseFileController extends BaseController {
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的文件格式！");
         }
         // 保存文件
-        UploadFile uploadFile = saveFile(file, entityClass, request);
+        UploadFile uploadFile = saveFile(file, entityClass);
         // 保存上传记录
-        createUploadFile(uploadFile, request);
+        createUploadFile(uploadFile);
         // 返回结果
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("uuid", uploadFile.getUuid());
@@ -92,12 +91,11 @@ public abstract class BaseFileController extends BaseController {
      * 保存文件
      * @param file
      * @param entityClass
-     * @param request
      * @param <T>
      * @return
      * @throws Exception
      */
-    protected <T> UploadFile saveFile(MultipartFile file, Class<T> entityClass, HttpServletRequest request) throws Exception{
+    protected <T> UploadFile saveFile(MultipartFile file, Class<T> entityClass) throws Exception{
         // 文件后缀
         String originFileName = file.getOriginalFilename();
         String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
@@ -119,12 +117,11 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 保存上传文件信息
      * @param uploadFile
-     * @param request
      * @throws Exception
      */
-    protected void createUploadFile(UploadFile uploadFile, HttpServletRequest request) throws Exception{
+    protected void createUploadFile(UploadFile uploadFile) throws Exception{
         // 保存文件之后的处理逻辑
-        int dataCount = extractDataCount(uploadFile.getUuid(), uploadFile.getStoragePath(), request);
+        int dataCount = extractDataCount(uploadFile.getUuid(), uploadFile.getStoragePath());
         uploadFile.setDataCount(dataCount);
         // 保存文件上传记录
         uploadFileService.createEntity(uploadFile);
@@ -133,7 +130,7 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 保存文件之后的处理逻辑，如解析excel
      */
-    protected int extractDataCount(String fileUuid, String fullPath, HttpServletRequest request) throws Exception{
+    protected int extractDataCount(String fileUuid, String fullPath) throws Exception{
         return 0;
     }
 
