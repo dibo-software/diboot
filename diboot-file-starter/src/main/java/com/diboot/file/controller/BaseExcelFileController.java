@@ -79,7 +79,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         String fullPath = FileHelper.getFullPath(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 描述
-        String description = getString(request, "description");
+        String description = getString("description");
         // 保存文件上传记录
         UploadFile uploadFile = new UploadFile().setUuid(fileUid)
                 .setFileName(originFileName).setStoragePath(fullPath).setFileType(ext)
@@ -112,7 +112,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         UploadFile uploadFile = super.saveFile(file, getExcelDataListener().getExcelModelClass(), request);
         // 预览
         FixedHeadExcelListener listener = getExcelDataListener();
-        listener.setRequestParams(super.getParamsMap(request));
+        listener.setRequestParams(super.getParamsMap());
         try {
             ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
         }
@@ -143,7 +143,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         FixedHeadExcelListener listener = getExcelDataListener();
         listener.setUploadFileUuid(fileUuid);
         listener.setPreview(false);
-        listener.setRequestParams(super.getParamsMap(request));
+        listener.setRequestParams(super.getParamsMap());
         try{
             ExcelHelper.readAndSaveExcel(fullPath, listener);
         }
