@@ -17,8 +17,12 @@ package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.binding.Binder;
@@ -32,6 +36,7 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -297,6 +302,55 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
+	/**
+	 * 获取指定条件的Entity ID集合
+	 * @param queryWrapper
+	 * @param getterFn
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, ?> getterFn){
+		SerializedLambda lambda = LambdaUtils.resolve(getterFn);
+		String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+		String columnName = S.toSnakeCase(fieldName);
+		// 优化SQL，只查询当前字段
+		if(queryWrapper instanceof QueryWrapper){
+			if(V.isEmpty(queryWrapper.getSqlSelect())){
+				((QueryWrapper)queryWrapper).select(columnName);
+			}
+		}
+		else if(queryWrapper instanceof LambdaQueryWrapper){
+			if(V.isEmpty(queryWrapper.getSqlSelect())){
+				((LambdaQueryWrapper) queryWrapper).select(getterFn);
+			}
+		}
+		List<Map<String, Object>> mapList = getMapList(queryWrapper);
+		if(V.isEmpty(mapList)){
+			return Collections.emptyList();
+		}
+		String columnNameUC = V.notEmpty(columnName)? columnName.toUpperCase() : null;
+		List<FT> fldValues = new ArrayList<>(mapList.size());
+		for(Map<String, Object> map : mapList){
+			if(V.isEmpty(map)){
+				continue;
+			}
+			if(map.containsKey(columnName)){
+				FT value = (FT) map.get(columnName);
+				if(!fldValues.contains(value)){
+					fldValues.add(value);
+				}
+			}
+			else if(columnNameUC != null && map.containsKey(columnNameUC)){
+				FT value = (FT) map.get(columnNameUC);
+				if(!fldValues.contains(value)){
+					fldValues.add(value);
+				}
+			}
+		}
+		return fldValues;
+	}
+
 	@Override
 	public List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount) {
 		IPage<T> page = new Page<>(1, limitCount);
@@ -463,17 +517,26 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 如果是默认id排序
 		if(pagination.isDefaultOrderBy()){
 			// 优化排序
-			Class entityClass = BeanUtils.getGenericityClass(this, 1);
-			if(entityClass != null){
-				String pk = ContextHelper.getPrimaryKey(entityClass);
-				// 主键非有序id字段，需要清空默认排序以免报错
-				if(!Cons.FieldName.id.name().equals(pk)){
-					log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
-					pagination.clearDefaultOrder();
-				}
+			String pk = getPrimaryKeyField();
+			// 主键非有序id字段，需要清空默认排序以免报错
+			if(!Cons.FieldName.id.name().equals(pk)){
+				log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
+				pagination.clearDefaultOrder();
 			}
 		}
 		return (Page<T>)pagination.toPage();
+	}
+
+	/**
+	 * 获取当前主键字段名
+	 * @return
+	 */
+	private String getPrimaryKeyField(){
+		Class entityClass = BeanUtils.getGenericityClass(this, 1);
+		if(entityClass != null){
+			return ContextHelper.getPrimaryKey(entityClass);
+		}
+		return null;
 	}
 
 	/**

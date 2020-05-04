@@ -16,6 +16,7 @@
 package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +25,7 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
@@ -231,7 +233,6 @@ public class BaseServiceTest {
         Assert.assertTrue(success);
         dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
         Assert.assertTrue(V.isEmpty(dictionaryList2));
-
     }
 
     @Test
@@ -261,4 +262,19 @@ public class BaseServiceTest {
         System.out.println(database);
         Assert.assertTrue(database.equals("mysql") || database.equals("oracle"));
     }
+
+    @Test
+    public void testGetValuesOfField(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        List<Long> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
+        Assert.assertTrue(ids.size() > 0);
+
+        LambdaQueryWrapper<Dictionary> wrapper = new QueryWrapper<Dictionary>().lambda()
+                .eq(Dictionary::getType, "GENDER");
+        List<String> itemValues = dictionaryService.getValuesOfField(wrapper, Dictionary::getItemValue);
+        Assert.assertTrue(itemValues.size() > 0);
+        System.out.println(JSON.stringify(ids) + " : " + JSON.stringify(itemValues));
+    }
+
 }

@@ -17,6 +17,7 @@ package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -181,6 +182,15 @@ public interface BaseService<T> {
      * @throws Exception
      */
     List<T> getEntityList(Wrapper queryWrapper, Pagination pagination);
+
+    /**
+     * 获取指定条件的Entity ID集合
+     * @param queryWrapper
+     * @param getterFn
+     * @return
+     * @throws Exception
+     */
+    <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, ?> getterFn);
 
     /**
      * 获取指定条件的Entity集合

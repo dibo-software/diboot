@@ -16,11 +16,16 @@
 package com.diboot.core.util;
 
 
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Status;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -577,18 +582,7 @@ public class BeanUtils {
      */
     public static <T> String convertToFieldName(IGetter<T> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
-        String methodName = lambda.getImplMethodName();
-        String prefix = null;
-        if(methodName.startsWith("get")){
-            prefix = "get";
-        }
-        else if(methodName.startsWith("is")){
-            prefix = "is";
-        }
-        if(prefix == null){
-            log.warn("无效的getter方法: "+methodName);
-        }
-        return S.uncapFirst(S.substringAfter(methodName, prefix));
+        return PropertyNamer.methodToProperty(lambda.getImplMethodName());
     }
 
     /***
@@ -598,11 +592,7 @@ public class BeanUtils {
      */
     public static <T,R> String convertToFieldName(ISetter<T,R> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
-        String methodName = lambda.getImplMethodName();
-        if(!methodName.startsWith("set")){
-            log.warn("无效的setter方法: "+methodName);
-        }
-        return S.uncapFirst(S.substringAfter(methodName, "set"));
+        return PropertyNamer.methodToProperty(lambda.getImplMethodName());
     }
 
      /**

@@ -44,14 +44,15 @@ public class DepartmentDTO extends Department {
     @BindQuery(comparison = Comparison.CONTAINS)
     private String name;
 
-    // 绑定查询
+    // 绑定join查询
     @BindQuery(comparison = Comparison.STARTSWITH, entity = Organization.class, field = "name", condition = "this.org_id=id")
     private String orgName;
 
-    // 绑定查询
+    // 绑定join查询
     @BindQuery(entity = Department.class, field = "name", condition = "this.parent_id=id")
     private String parentName;
 
+    // 数据权限检查点
     @DataAccessCheckpoint(type = CheckpointType.ORG)
     private Long orgId;
 

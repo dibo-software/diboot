@@ -26,11 +26,17 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,34 +107,32 @@ public class HttpHelper {
      * @param url
      * @return
      */
-    public static String callHttpGet(String url){
-        return callHttpGet(url, null);
-    }
-
-    /**
-     * 调用Http Get请求
-     * @param url
-     * @return
-     */
-    public static String callHttpGet(String url, Map<String, String> headerMap){
-        OkHttpClient okHttpClient = new OkHttpClient();
+    public static String callGet(String url, Map<String, String> headerMap) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        if(S.startsWithIgnoreCase(url, "https://")){
+            withHttps(clientBuilder);
+        }
         Request.Builder builder = new Request.Builder().url(url);
         if(V.notEmpty(headerMap)){
             for(Map.Entry<String, String> entry : headerMap.entrySet()){
                 builder.addHeader(entry.getKey(), entry.getValue());
             }
         }
-        Call call = okHttpClient.newCall(builder.build());
+        Call call = clientBuilder.build().newCall(builder.build());
         return executeCall(call, url);
     }
 
+
     /**
-     * 发送HTTP Post请求
+     * 调用Http Post请求
      * @param url
      * @return
      */
-    public static String callHttpPost(String url, Map<String, String> formBody){
-        OkHttpClient okHttpClient = new OkHttpClient();
+    public static Response callPostResponse(String url, Map<String, String> formBody) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        if(S.startsWithIgnoreCase(url, "https://")){
+            withHttps(clientBuilder);
+        }
         FormBody.Builder bodyBuilder = new FormBody.Builder();
         if(V.notEmpty(formBody)){
             for(Map.Entry<String, String> entry : formBody.entrySet()){
@@ -138,8 +142,81 @@ public class HttpHelper {
         Request request = new Request.Builder().url(url)
                 .post(bodyBuilder.build())
                 .build();
-        Call call = okHttpClient.newCall(request);
+        Call call = clientBuilder.build().newCall(request);
+        try {
+            Response response = call.execute();
+            // 判断状态码
+            if(response.code() >= 400){
+                log.warn("请求调用异常 : " + url);
+                return null;
+            }
+            return response;
+        } catch (IOException e) {
+            log.warn("请求调用解析异常 : " + url, e);
+            return null;
+        }
+    }
+
+    /**
+     * 调用Http Post请求
+     * @param url
+     * @return
+     */
+    public static String callPost(String url, Map<String, String> formBody) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        if(S.startsWithIgnoreCase(url, "https://")){
+            withHttps(clientBuilder);
+        }
+        FormBody.Builder bodyBuilder = new FormBody.Builder();
+        if(V.notEmpty(formBody)){
+            for(Map.Entry<String, String> entry : formBody.entrySet()){
+                bodyBuilder.add(entry.getKey(), entry.getValue());
+            }
+        }
+        Request request = new Request.Builder().url(url)
+                .post(bodyBuilder.build())
+                .build();
+        Call call = clientBuilder.build().newCall(request);
         return executeCall(call, url);
+    }
+
+    /**
+     * 嵌入Https
+     * @param builder
+     */
+    public static void withHttps(OkHttpClient.Builder builder) {
+        try {
+            TrustManager[] trustManagers = buildTrustManagers();
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustManagers, new java.security.SecureRandom());
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
+            builder.hostnameVerifier((hostname, session) -> true);
+        }
+        catch (NoSuchAlgorithmException | KeyManagementException e) {
+            log.warn("构建https请求异常", e);
+        }
+    }
+
+    /**
+     * 构建TrustManager
+     * @return
+     */
+    private static TrustManager[] buildTrustManagers() {
+        return new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                    }
+                    @Override
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                    }
+                    @Override
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return new java.security.cert.X509Certificate[]{};
+                    }
+                }
+        };
     }
 
     /**
