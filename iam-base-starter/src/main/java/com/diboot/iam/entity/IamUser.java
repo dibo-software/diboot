@@ -39,10 +39,6 @@ public class IamUser extends BaseExtEntity {
     @TableField()
     private Long orgId;
 
-    @NotNull(message = "汇报上级ID不能为空")
-    @TableField()
-    private Long reportManagerId;
-
     @NotNull(message = "用户编号不能为空")
     @Length(max=20, message="用户编号长度应小于50")
     @TableField()

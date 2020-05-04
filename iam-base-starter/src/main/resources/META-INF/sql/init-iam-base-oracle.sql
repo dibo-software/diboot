@@ -3,7 +3,6 @@ create table ${SCHEMA}.iam_user
 (
     id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
     org_id NUMBER(20)   default 0 not null,
-    report_manager_id   NUMBER(20)      default 0     not null,
     user_num VARCHAR2(20)   not null,
     realname VARCHAR2(50)   not null,
     gender VARCHAR2(10)   not null,
@@ -21,7 +20,6 @@ create table ${SCHEMA}.iam_user
 comment on column ${SCHEMA}.iam_user.id is 'ID';
 comment on column ${SCHEMA}.iam_user.org_id is '组织ID';
 comment on column ${SCHEMA}.iam_user.user_num is '用户编号';
-comment on column ${SCHEMA}.iam_user.report_manager_id is '汇报上级ID';
 comment on column ${SCHEMA}.iam_user.realname is '真实姓名';
 comment on column ${SCHEMA}.iam_user.gender is '性别';
 comment on column ${SCHEMA}.iam_user.birthdate is '出生日期';
@@ -36,7 +34,6 @@ comment on table ${SCHEMA}.iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on ${SCHEMA}.iam_user (org_id);
 create index idx_iam_user_2 on ${SCHEMA}.iam_user (mobile_phone);
-create index idx_iam_user_3 on ${SCHEMA}.iam_user (report_manager_id);
 create unique index uidx_iam_user on ${SCHEMA}.iam_user (user_num);
 
 -- 账号表

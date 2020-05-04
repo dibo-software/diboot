@@ -4,7 +4,6 @@ create table ${SCHEMA}.iam_user
    id bigint identity,
    org_id bigint not null default 0,
    user_num varchar(20) not null,
-   report_manager_id bigint not null default 0,
    realname varchar(50) not null,
    gender varchar(10) not null,
    birthdate date null,
@@ -21,7 +20,6 @@ create table ${SCHEMA}.iam_user
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'组织ID', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'org_id';
 execute sp_addextendedproperty 'MS_Description', N'用户编号', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'user_num';
-execute sp_addextendedproperty 'MS_Description', N'汇报上级ID', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'report_manager_id';
 execute sp_addextendedproperty 'MS_Description', N'真实姓名', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'realname';
 execute sp_addextendedproperty 'MS_Description', N'性别', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'gender';
 execute sp_addextendedproperty 'MS_Description', N'出生日期', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'birthdate';
@@ -36,7 +34,6 @@ execute sp_addextendedproperty 'MS_Description', N'系统用户', 'SCHEMA', '${S
 -- 索引
 create index idx_iam_user_1 on iam_user (org_id);
 create index idx_iam_user_2 on iam_user (mobile_phone);
-create index idx_iam_user_3 on iam_user (report_manager_id);
 create unique index uidx_iam_user on iam_user (user_num);
 
 -- 账号表
