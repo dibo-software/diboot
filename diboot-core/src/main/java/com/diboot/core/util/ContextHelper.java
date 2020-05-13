@@ -59,11 +59,11 @@ public class ContextHelper implements ApplicationContextAware {
     /**
      * Entity-对应的Service缓存
      */
-    private static Map<String, IService> ENTITY_SERVICE_CACHE = null;
+    private static Map<String, IService> ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
     /**
      * Entity-对应的BaseService缓存
      */
-    private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = null;
+    private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = new ConcurrentHashMap<>();
     /**
      * 存储主键字段非id的Entity
      */
@@ -75,9 +75,10 @@ public class ContextHelper implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        if(APPLICATION_CONTEXT == null){
-            APPLICATION_CONTEXT = applicationContext;
-        }
+        APPLICATION_CONTEXT = applicationContext;
+        ENTITY_SERVICE_CACHE.clear();
+        ENTITY_BASE_SERVICE_CACHE.clear();
+        PK_NID_ENTITY_CACHE.clear();
     }
 
     /***
@@ -85,7 +86,7 @@ public class ContextHelper implements ApplicationContextAware {
      */
     public static ApplicationContext getApplicationContext() {
         if (APPLICATION_CONTEXT == null){
-            return ContextLoader.getCurrentWebApplicationContext();
+            APPLICATION_CONTEXT = ContextLoader.getCurrentWebApplicationContext();
         }
         return APPLICATION_CONTEXT;
     }
@@ -147,7 +148,7 @@ public class ContextHelper implements ApplicationContextAware {
     }
 
     /**
-     * 根据Entity获取对应的Service (已废弃，请调用getIServiceByEntity)
+     * 根据Entity获取对应的Service (已废弃，请调用getBaseServiceByEntity)
      * @param entity
      * @return
      */
@@ -163,8 +164,7 @@ public class ContextHelper implements ApplicationContextAware {
      */
     @Deprecated
     public static IService getIServiceByEntity(Class entity){
-        if(ENTITY_SERVICE_CACHE == null){
-            ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
+        if(ENTITY_SERVICE_CACHE.isEmpty()){
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
@@ -188,8 +188,7 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static BaseService getBaseServiceByEntity(Class entity){
-        if(ENTITY_BASE_SERVICE_CACHE == null){
-            ENTITY_BASE_SERVICE_CACHE = new ConcurrentHashMap<>();
+        if(ENTITY_BASE_SERVICE_CACHE.isEmpty()){
             Map<String, BaseService> serviceMap = getApplicationContext().getBeansOfType(BaseService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){

@@ -29,6 +29,7 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.mapper.BaseCrudMapper;
@@ -281,6 +282,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public List<T> getEntityList(Wrapper queryWrapper, Pagination pagination) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+		}
+		// 否则，调用MP默认实现
 		if(pagination != null){
 			IPage<T> page = convertToIPage(queryWrapper, pagination);
 			page = super.page(page, queryWrapper);
@@ -353,7 +359,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount) {
-		IPage<T> page = new Page<>(1, limitCount);
+		Page<T> page = new Page<>(1, limitCount);
+		page.setSearchCount(false);
 		page = super.page(page, queryWrapper);
 		return page.getRecords();
 	}
@@ -489,11 +496,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(entity == null){
 			return null;
 		}
-		List<T> enityList = new ArrayList<>();
-		enityList.add(entity);
 		// 绑定
-		List<VO> voList = Binder.convertAndBindRelations(enityList, voClass);
-		return voList.get(0);
+		return Binder.convertAndBindRelations(entity, voClass);
 	}
 
 	@Override
@@ -532,11 +536,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	private String getPrimaryKeyField(){
-		Class entityClass = BeanUtils.getGenericityClass(this, 1);
-		if(entityClass != null){
-			return ContextHelper.getPrimaryKey(entityClass);
-		}
-		return null;
+		return ContextHelper.getPrimaryKey(entityClass);
 	}
 
 	/**

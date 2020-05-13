@@ -8,10 +8,6 @@
 
 > BaseEntity是diboot-core提供的基础实体类，提供了我们默认数据表结构的默认字段，比如id、is_deleted、create_time等，默认的方法如toMap等。
 
-## BaseExtEntity
-
-> BaseExtEntity是基于BaseEntity的扩展实体类，对数据表结构的扩展字段extdata添加了相关处理方法，extdata将以json字符串形式存储在数据库中。
-
 * getFromExt方法
 
 ```java

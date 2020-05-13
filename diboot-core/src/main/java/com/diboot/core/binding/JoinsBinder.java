@@ -21,6 +21,7 @@ import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DynamicQueryMapper;
 import com.diboot.core.service.BaseService;
@@ -120,7 +121,7 @@ public class JoinsBinder {
         }
         else{
             // 格式化orderBy
-            formatOrderBy(dynamicJoinWrapper, pagination);
+            formatOrderBy(dynamicJoinWrapper, entityClazz, pagination);
             IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(pagination.toPage(), dynamicJoinWrapper);
             pagination.setTotalCount(pageResult.getTotal());
             mapList = pageResult.getRecords();
@@ -175,7 +176,17 @@ public class JoinsBinder {
      * @param queryWrapper
      * @param pagination
      */
-    private static void formatOrderBy(DynamicJoinQueryWrapper queryWrapper, Pagination pagination){
+    private static <E> void formatOrderBy(DynamicJoinQueryWrapper queryWrapper, Class<E> entityClazz, Pagination pagination){
+        // 如果是默认id排序，检查是否有id字段
+        if(pagination.isDefaultOrderBy()){
+            // 优化排序
+            String pk = ContextHelper.getPrimaryKey(entityClazz);
+            // 主键非有序id字段，需要清空默认排序
+            if (!Cons.FieldName.id.name().equals(pk)) {
+                pagination.clearDefaultOrder();
+            }
+        }
+        // 格式化排序
         if(V.notEmpty(pagination.getOrderBy())){
             List<String> orderByList = new ArrayList<>();
             String[] orderByFields = S.split(pagination.getOrderBy());

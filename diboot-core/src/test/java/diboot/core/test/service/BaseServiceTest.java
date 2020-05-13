@@ -277,4 +277,16 @@ public class BaseServiceTest {
         System.out.println(JSON.stringify(ids) + " : " + JSON.stringify(itemValues));
     }
 
+    @Test
+    public void testGetLimit(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        queryWrapper.gt("parent_id", 0);
+
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        Assert.assertTrue(dictionary != null);
+
+        List<Dictionary> ids = dictionaryService.getEntityListLimit(queryWrapper, 5);
+        Assert.assertTrue(ids.size() == 2);
+    }
 }
