@@ -20,8 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * 登录凭证
  * @author mazc@dibo.ltd

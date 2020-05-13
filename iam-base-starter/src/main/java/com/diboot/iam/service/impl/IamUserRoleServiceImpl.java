@@ -58,7 +58,6 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     // 扩展接口
     private IamExtensible iamExtensible;
-    private boolean iamExtensibleImplChecked = false;
 
     /**
      * 超级管理员的角色ID
@@ -67,6 +66,11 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRole> getUserRoleList(String userType, Long userId) {
+        return getUserRoleList(userType, userId, null);
+    }
+
+    @Override
+    public List<IamRole> getUserRoleList(String userType, Long userId, Long extentionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
@@ -81,15 +85,8 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
                 .select(IamRole::getId, IamRole::getName, IamRole::getCode)
                 .in(IamRole::getId, roleIds));
         // 加载扩展角色
-        if(!iamExtensibleImplChecked){
-            try{
-                iamExtensible = ContextHelper.getBean(IamExtensible.class);
-            }
-            catch (Exception e){}
-            iamExtensibleImplChecked = true;
-        }
-        if(iamExtensible != null){
-            List<IamRole> extRoles = iamExtensible.getExtentionRoles(userType, userId);
+        if(getIamExtensible() != null){
+            List<IamRole> extRoles = getIamExtensible().getExtentionRoles(userType, userId, extentionObjId);
             if(V.notEmpty(extRoles)){
                 roles.addAll(extRoles);
                 roles = BeanUtils.distinctByKey(roles, IamRole::getId);
@@ -208,6 +205,27 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
             clearUserAuthCache(userType, userId);
         }
         return success;
+    }
+
+
+    // 扩展接口检查标记
+    private boolean iamExtensibleImplChecked = false;
+
+    /**
+     * 获取Iam扩展实现
+     * @return
+     */
+    @Override
+    public IamExtensible getIamExtensible(){
+        // 加载扩展角色
+        if(!iamExtensibleImplChecked){
+            try{
+                iamExtensible = ContextHelper.getBean(IamExtensible.class);
+            }
+            catch (Exception e){}
+            iamExtensibleImplChecked = true;
+        }
+        return iamExtensible;
     }
 
     /**

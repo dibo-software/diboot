@@ -11,7 +11,6 @@ create table ${SCHEMA}.iam_user
     email VARCHAR2(50)   null,
     avatar_url VARCHAR2(200)   null,
     status VARCHAR2(10)   default 'A' not null,
-    extdata VARCHAR2(100)   null,
     is_deleted NUMBER(1)   DEFAULT 0 not null,
     create_time timestamp   default CURRENT_TIMESTAMP not null,
     constraint PK_iam_user primary key (id)
@@ -27,7 +26,6 @@ comment on column ${SCHEMA}.iam_user.mobile_phone is '手机号';
 comment on column ${SCHEMA}.iam_user.email is 'Email';
 comment on column ${SCHEMA}.iam_user.avatar_url is '头像';
 comment on column ${SCHEMA}.iam_user.status is '状态';
-comment on column ${SCHEMA}.iam_user.extdata is '扩展属性';
 comment on column ${SCHEMA}.iam_user.is_deleted is '删除标记';
 comment on column ${SCHEMA}.iam_user.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_user is '系统用户';
@@ -47,7 +45,6 @@ create table ${SCHEMA}.iam_account
     auth_secret VARCHAR2(32)   null,
     secret_salt VARCHAR2(32)   null,
     status VARCHAR2(10) default 'A'   not null,
-    extdata VARCHAR2(100)   null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     constraint PK_iam_account primary key (id)
@@ -60,7 +57,6 @@ comment on column ${SCHEMA}.iam_account.auth_account is '用户名';
 comment on column ${SCHEMA}.iam_account.auth_secret is '密码';
 comment on column ${SCHEMA}.iam_account.secret_salt is '加密盐';
 comment on column ${SCHEMA}.iam_account.status is '用户状态';
-comment on column ${SCHEMA}.iam_account.extdata is '扩展属性';
 comment on column ${SCHEMA}.iam_account.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_account.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_account is '登录账号';
@@ -166,7 +162,6 @@ create table ${SCHEMA}.iam_login_trace
     auth_account VARCHAR2(100)    not null,
     ip_address VARCHAR2(50)    null,
     user_agent VARCHAR2(200)    null,
-    extdata VARCHAR2(100)    null,
     is_success NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     constraint PK_iam_login_trace primary key (id)
@@ -178,7 +173,6 @@ comment on column ${SCHEMA}.iam_login_trace.auth_type is '认证方式';
 comment on column ${SCHEMA}.iam_login_trace.auth_account is '用户名';
 comment on column ${SCHEMA}.iam_login_trace.ip_address is 'IP';
 comment on column ${SCHEMA}.iam_login_trace.user_agent is '客户端信息';
-comment on column ${SCHEMA}.iam_login_trace.extdata is '扩展字段';
 comment on column ${SCHEMA}.iam_login_trace.is_success is '是否成功';
 comment on column ${SCHEMA}.iam_login_trace.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_login_trace is '登录日志';

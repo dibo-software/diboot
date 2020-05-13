@@ -26,12 +26,22 @@ import java.util.List;
  * @date 2020/01/04
  */
 public interface IamExtensible {
+
     /**
-     * 获取可扩展的角色
+     * 获取用户扩展对象 (如当前岗位)
      * @param userType
      * @param userId
      * @return
      */
-    List<IamRole> getExtentionRoles(String userType, Long userId);
+    Object getUserExtentionObj(String userType, Long userId);
+
+    /**
+     * 获取可扩展的角色
+     * @param userType
+     * @param userId
+     * @param extentionObjId 岗位等当前扩展对象id
+     * @return
+     */
+    List<IamRole> getExtentionRoles(String userType, Long userId, Long extentionObjId);
 
 }

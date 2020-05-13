@@ -11,7 +11,6 @@ create table ${SCHEMA}.iam_user
    email varchar(50) null,
    avatar_url varchar(200) null,
    status varchar(10) not null default 'A',
-   extdata varchar(100) null,
    is_deleted tinyint not null DEFAULT 0,
    create_time datetime not null default CURRENT_TIMESTAMP,
    constraint PK_iam_user primary key (id)
@@ -27,7 +26,6 @@ execute sp_addextendedproperty 'MS_Description', N'手机号', 'SCHEMA', '${SCHE
 execute sp_addextendedproperty 'MS_Description', N'Email', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'email';
 execute sp_addextendedproperty 'MS_Description', N'头像', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'avatar_url';
 execute sp_addextendedproperty 'MS_Description', N'状态', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'status';
-execute sp_addextendedproperty 'MS_Description', N'扩展属性', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'extdata';
 execute sp_addextendedproperty 'MS_Description', N'删除标记', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'系统用户', 'SCHEMA', '${SCHEMA}', 'table', iam_user, null, null;
@@ -47,7 +45,6 @@ create table ${SCHEMA}.iam_account
    auth_secret varchar(32) null,
    secret_salt varchar(32) null,
    status varchar(10) default 'A' not null,
-   extdata varchar(100) null,
    is_deleted tinyint default 0 not null,
    create_time datetime default CURRENT_TIMESTAMP not null,
    constraint PK_iam_account primary key (id)
@@ -60,7 +57,6 @@ execute sp_addextendedproperty 'MS_Description', N'用户名', 'SCHEMA', '${SCHE
 execute sp_addextendedproperty 'MS_Description', N'密码', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'auth_secret';
 execute sp_addextendedproperty 'MS_Description', N'加密盐', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'secret_salt';
 execute sp_addextendedproperty 'MS_Description', N'用户状态', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'status';
-execute sp_addextendedproperty 'MS_Description', N'扩展属性', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'extdata';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'登录账号', 'SCHEMA', '${SCHEMA}', 'table', iam_account, null, null;
@@ -167,7 +163,6 @@ create table ${SCHEMA}.iam_login_trace
    auth_account varchar(100) not null ,
    ip_address varchar(50) null ,
    user_agent varchar(200) null ,
-   extdata varchar(100) null ,
    is_success tinyint default 0 not null,
    create_time datetime default CURRENT_TIMESTAMP not null,
    constraint PK_iam_login_trace primary key (id)
@@ -179,7 +174,6 @@ execute sp_addextendedproperty 'MS_Description', N'认证方式', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'用户名', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'auth_account';
 execute sp_addextendedproperty 'MS_Description', N'IP', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'ip_address';
 execute sp_addextendedproperty 'MS_Description', N'客户端信息', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'user_agent';
-execute sp_addextendedproperty 'MS_Description', N'扩展字段', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'extdata';
 execute sp_addextendedproperty 'MS_Description', N'是否成功', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'is_success';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'登录日志', 'SCHEMA', '${SCHEMA}', 'table', iam_login_trace, null, null;

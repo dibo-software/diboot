@@ -105,6 +105,17 @@ public class BaseJwtRealm extends AuthorizingRealm {
             if(userObject == null){
                 throw new AuthenticationException("用户不存在");
             }
+            if(iamUserRoleService.getIamExtensible() != null){
+                Object extentionObj = iamUserRoleService.getIamExtensible().getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId());
+                if(extentionObj != null){
+                    try{
+                        BeanUtils.setProperty(userObject, "extentionObj", extentionObj);
+                    }
+                    catch (Exception e){
+                        log.warn("设置{}.extentionObj异常，属性不存在? {}", jwtToken.getUserTypeClass().getSimpleName(), e.getMessage());
+                    }
+                }
+            }
             // 清空当前用户缓存
             this.clearCachedAuthorizationInfo(IamSecurityUtils.getSubject().getPrincipals());
             return new SimpleAuthenticationInfo(userObject, jwtToken.getCredentials(), this.getName());
@@ -122,7 +133,18 @@ public class BaseJwtRealm extends AuthorizingRealm {
         Object currentUser = principals.getPrimaryPrincipal();
         // 根据用户类型与用户id获取roleList
         Long userId = (Long) BeanUtils.getProperty(currentUser, Cons.FieldName.id.name());
-        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), userId);
+        Long extentionObjId = null;
+        try{
+            Object extentionObj = BeanUtils.getProperty(currentUser, "extentionObj");
+            if(extentionObj != null){
+                extentionObjId = (Long)BeanUtils.getProperty(extentionObj, Cons.FieldName.id.name());
+            }
+        }
+        catch (Exception e){
+            log.warn("解析user.extentionObj异常: {}", e.getMessage());
+        }
+        // 获取角色列表
+        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), userId, extentionObjId);
         // 如果没有任何角色，返回
         if (V.isEmpty(roleList)){
             return authorizationInfo;
