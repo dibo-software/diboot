@@ -3,6 +3,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
     uuid varchar(32) NOT NULL,
     rel_obj_type varchar(50),
     rel_obj_id bigint,
+    rel_obj_field varchar(50),
     file_name varchar(100) NOT NULL,
     storage_path varchar(200) NOT NULL,
     access_url varchar(200) NULL,
@@ -17,6 +18,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
 execute sp_addextendedproperty 'MS_Description', N'UUID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'uuid';
 execute sp_addextendedproperty 'MS_Description', N'关联对象类', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_type';
 execute sp_addextendedproperty 'MS_Description', N'关联对象ID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_id';
+execute sp_addextendedproperty 'MS_Description', N'关联对象属性名称', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_field';
 execute sp_addextendedproperty 'MS_Description', N'文件名', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'file_name';
 execute sp_addextendedproperty 'MS_Description', N'存储路径', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'storage_path';
 execute sp_addextendedproperty 'MS_Description', N'访问地址', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'access_url';
@@ -27,4 +29,4 @@ execute sp_addextendedproperty 'MS_Description', N'删除标记', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'上传文件', 'SCHEMA', '${SCHEMA}', 'table', upload_file, null, null;
 -- 索引
-create nonclustered index idx_upload_file on upload_file(rel_obj_type, rel_obj_id);
+create nonclustered index idx_upload_file on upload_file(rel_obj_type, rel_obj_id, rel_obj_field);
