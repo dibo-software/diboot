@@ -69,6 +69,9 @@ public class JoinConditionParser {
                 if(expression.getRightExpression() instanceof Column){
                     right = alias + "." + right;
                 }
+                else if(expression.getLeftExpression() instanceof Column){
+                    left = alias + "." + left;
+                }
                 if(operator instanceof EqualsTo){
                     segments.add(left + " = " + right);
                 }
