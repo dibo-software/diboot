@@ -70,6 +70,7 @@ public class CoreAutoConfiguration{
     }
 
     @Bean
+    @ConditionalOnMissingBean(HttpMessageConverters.class)
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
         converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
