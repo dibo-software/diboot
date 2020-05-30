@@ -82,6 +82,7 @@ public class IamBaseAutoConfig{
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean(CacheManager.class)
     public CacheManager cacheManager() {
         String className = iamBaseProperties.getCacheManagerClass();
         if(V.isEmpty(className)){
@@ -118,6 +119,7 @@ public class IamBaseAutoConfig{
     }
 
     @Bean
+    @ConditionalOnMissingBean(ShiroFilterFactoryBean.class)
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(SessionsSecurityManager securityManager){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 设置过滤器
@@ -138,16 +140,24 @@ public class IamBaseAutoConfig{
         filterChainDefinitionMap.put("/error/**", "anon");
         filterChainDefinitionMap.put("/auth/**", "anon");
 
+        boolean allAnon = false;
         String anonUrls = iamBaseProperties.getAnonUrls();
         if(V.notEmpty(anonUrls)){
             for(String url : anonUrls.split(Cons.SEPARATOR_COMMA)){
                 filterChainDefinitionMap.put(url, "anon");
+                if(url.equals("/**")){
+                    allAnon = true;
+                }
             }
         }
         filterChainDefinitionMap.put("/login", "authc");
         filterChainDefinitionMap.put("/logout", "logout");
-        filterChainDefinitionMap.put("/**", "jwt");
-
+        if(allAnon && iamBaseProperties.isEnablePermissionCheck() == false){
+            filterChainDefinitionMap.put("/**", "anon");
+        }
+        else{
+            filterChainDefinitionMap.put("/**", "jwt");
+        }
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }

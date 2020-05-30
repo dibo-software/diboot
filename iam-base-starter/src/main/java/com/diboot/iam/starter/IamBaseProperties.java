@@ -58,9 +58,9 @@ public class IamBaseProperties {
      */
     private boolean initSql = true;
     /**
-     * 是否开启权限自动更新
+     * 是否开启权限检查（开发环境可关闭方便调试）
      */
-    //private boolean enablePermissionUpdate = true;
+    private boolean enablePermissionCheck = true;
 
     /**
      * 缓存Manager类
