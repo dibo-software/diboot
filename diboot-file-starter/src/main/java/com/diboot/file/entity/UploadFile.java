@@ -52,6 +52,10 @@ public class UploadFile extends BaseEntity {
     private Long relObjId;
 
     @TableField
+    @NotNull(message = "关联对象属性不能为空！")
+    private String relObjField;
+
+    @TableField
     @NotNull(message = "文件名不能为空！")
     @Length(max = 100, message = "文件名长度超出了最大限制！")
     private String fileName;

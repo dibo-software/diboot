@@ -3,6 +3,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
      uuid VARCHAR2(32) NOT NULL,
      rel_obj_type VARCHAR2(50),
      rel_obj_id NUMBER(20),
+     rel_obj_field VARCHAR2(50),
      file_name VARCHAR2(100) NOT NULL,
      storage_path VARCHAR2(200) NOT NULL,
      access_url VARCHAR2(200),
@@ -17,6 +18,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
 comment on column ${SCHEMA}.upload_file.uuid is 'UUID';
 comment on column ${SCHEMA}.upload_file.rel_obj_type is '关联对象类';
 comment on column ${SCHEMA}.upload_file.rel_obj_id is '关联对象ID';
+comment on column ${SCHEMA}.upload_file.rel_obj_field is '关联对象属性名称';
 comment on column ${SCHEMA}.upload_file.file_name is '文件名';
 comment on column ${SCHEMA}.upload_file.storage_path is '存储路径';
 comment on column ${SCHEMA}.upload_file.access_url is '访问地址';
@@ -27,4 +29,4 @@ comment on column ${SCHEMA}.upload_file.is_deleted is '删除标记';
 comment on column ${SCHEMA}.upload_file.create_time is '创建时间';
 comment on table ${SCHEMA}.upload_file is '上传文件';
 -- 索引
-create index idx_upload_file on ${SCHEMA}.upload_file (rel_obj_type, rel_obj_id);
+create index idx_upload_file on ${SCHEMA}.upload_file (rel_obj_type, rel_obj_id, rel_obj_field);
