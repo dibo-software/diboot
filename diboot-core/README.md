@@ -44,6 +44,16 @@ private List<Department> children;
 @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
 private List<Role> roleList;
 ~~~
+#### 5. 注解自动绑定其他表某字段集合List<>
+~~~java
+// 支持关联条件+附加条件绑定多个Entity的某字段
+@BindFieldList(entity = Department.class, field="id", condition = "id=parent_id")
+private List<Long> childrenIds;
+
+// 通过中间表的 多对多关联 绑定Entity某字段（支持附加条件）
+@BindEntityList(entity = Role.class, field="code", condition="this.id=user_role.user_id AND user_role.role_id=id")
+private List<String> roleCodes;
+~~~
 
 ### ** 三. 注解绑定关联的使用方式
 
@@ -69,7 +79,7 @@ List<MyUserVO> voList = Binder.convertAndBindRelations(userList, MyUserVO.class)
 #### 1. Entity/DTO中声明映射查询条件
 示例代码：
 ~~~java 
-public class UserDTO{
+public class UserDTO {
     // 无@BindQuery注解默认会映射为=条件
     private Long gender;
     
@@ -89,10 +99,10 @@ public class UserDTO{
  * 将映射为 queryWrapper.eq("gender", "M").like("realname", "张")
  */
 @GetMapping("/list")
-public JsonResult getVOList(UserDto userDto, HttpServletRequest request) throws Exception{
-    //调用super.buildQueryWrapper(entityOrDto, request) 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行转换
-    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto, request);
-    // 或者
+public JsonResult getVOList(UserDto userDto) throws Exception{
+    //调用super.buildQueryWrapper(entityOrDto) 进行转换
+    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto);
+    // 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 转换
     //QueryWrapper<User> queryWrapper = QueryBuilder.buildQueryWrapper(userDto);
     
     //... 查询list
@@ -100,7 +110,7 @@ public JsonResult getVOList(UserDto userDto, HttpServletRequest request) throws 
 }
 ~~~
 
-#### 3. 动态Join的关联查询与结果绑定
+#### 3. 支持动态Join的关联查询与结果绑定
 > 动态查询的调用方式有以下两种：
 ##### 方式1. 通过QueryBuilder链式调用
 ~~~java
@@ -114,7 +124,7 @@ QueryWrapper<DTO> queryWrapper = QueryBuilder.toQueryWrapper(dto);
 List<Entity> list = Binder.joinQueryList(queryWrapper, Department.class);
 ~~~
 
-自动按需构建类似如下动态SQL并绑定结果: 
+绑定调用将自动按需（有表的查询字段时才Join）构建类似如下动态SQL并绑定结果: 
 > SELECT self.* FROM user self 
 LEFT OUTER JOIN organization r1 ON self.org_id=r1.id 
 WHERE (r1.name LIKE ?) AND self.is_deleted=0
@@ -123,14 +133,14 @@ WHERE (r1.name LIKE ?) AND self.is_deleted=0
 #### 1. 引入依赖
 Gradle:
 ~~~gradle
-compile("com.diboot:diboot-core-spring-boot-starter:2.0.5")
+compile("com.diboot:diboot-core-spring-boot-starter:{latestVersion}")
 ~~~
 或Maven
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>2.0.5</version>
+    <version>{latestVersion}</version>
 </dependency>
 ~~~
 > * @BindDict注解需要依赖dictionary表，启用diboot-devtools，初次启动时starter会自动创建该表。

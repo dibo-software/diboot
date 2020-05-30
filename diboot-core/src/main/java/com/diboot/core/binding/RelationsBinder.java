@@ -16,14 +16,8 @@
 package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.binding.annotation.BindEntity;
-import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.binder.BaseBinder;
-import com.diboot.core.binding.binder.EntityBinder;
-import com.diboot.core.binding.binder.EntityListBinder;
-import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.annotation.*;
+import com.diboot.core.binding.binder.*;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
@@ -135,6 +129,11 @@ public class RelationsBinder {
                     doBindingEntityList(voList, anno);
                 }
             }
+            // 绑定Entity field List
+            List<FieldAnnotation> fieldListAnnoList = bindAnnotationGroup.getBindFieldListAnnotations();
+            if(fieldListAnnoList != null){
+                doBindingFieldList(voList, fieldListAnnoList);
+            }
         }
     }
 
@@ -203,7 +202,7 @@ public class RelationsBinder {
     }
 
     /***
-     * 绑定Entity
+     * 绑定EntityList
      * @param voList
      * @param fieldAnnotation
      * @param <VO>
@@ -215,6 +214,34 @@ public class RelationsBinder {
         if(binder != null){
             binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
             // 解析条件并且执行绑定
+            parseConditionsAndBinding(binder, bindAnnotation.condition());
+        }
+    }
+
+    /***
+     * 绑定FieldList
+     * @param voList
+     * @param fieldListAnnoList
+     * @param <VO>
+     */
+    private static <VO> void doBindingFieldList(List<VO> voList, List<FieldAnnotation> fieldListAnnoList) {
+        //多个字段，合并查询，以减少SQL数
+        Map<String, List<FieldAnnotation>> clazzToListMap = new HashMap<>();
+        for(FieldAnnotation anno : fieldListAnnoList){
+            BindFieldList bindField = (BindFieldList) anno.getAnnotation();
+            String key = bindField.entity().getName() + ":" + bindField.condition();
+            List<FieldAnnotation> list = clazzToListMap.computeIfAbsent(key, k -> new ArrayList<>());
+            list.add(anno);
+        }
+        // 解析条件并且执行绑定
+        for(Map.Entry<String, List<FieldAnnotation>> entry : clazzToListMap.entrySet()){
+            List<FieldAnnotation> list = entry.getValue();
+            BindFieldList bindAnnotation = (BindFieldList) list.get(0).getAnnotation();
+            FieldListBinder binder = buildFieldListBinder(bindAnnotation, voList);
+            for(FieldAnnotation anno : list){
+                BindFieldList bindField = (BindFieldList) anno.getAnnotation();
+                binder.link(bindField.field(), anno.getFieldName());
+            }
             parseConditionsAndBinding(binder, bindAnnotation.condition());
         }
     }
@@ -277,6 +304,20 @@ public class RelationsBinder {
     }
 
     /**
+     * 构建FieldListBinder
+     * @param annotation
+     * @param voList
+     * @return
+     */
+    private static FieldListBinder buildFieldListBinder(Annotation annotation, List voList){
+        IService service = getService(annotation);
+        if(service != null){
+            return new FieldListBinder<>(service, voList);
+        }
+        return null;
+    }
+
+    /**
      * 通过Entity获取对应的Service实现类
      * @param annotation
      * @return
@@ -296,6 +337,10 @@ public class RelationsBinder {
         }
         else if(annotation instanceof BindEntityList){
             BindEntityList bindAnnotation = (BindEntityList)annotation;
+            entityClass = bindAnnotation.entity();
+        }
+        else if(annotation instanceof BindFieldList){
+            BindFieldList bindAnnotation = (BindFieldList)annotation;
             entityClass = bindAnnotation.entity();
         }
         else{

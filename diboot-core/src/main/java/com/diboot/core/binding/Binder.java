@@ -29,7 +29,7 @@ import java.util.List;
 public class Binder {
 
     /**
-     * 关联查询一条数据
+     * 关联查询一条主表数据
      * @param queryWrapper
      * @param entityClazz 返回结果entity/vo类
      * @return
@@ -40,7 +40,7 @@ public class Binder {
     }
 
     /**
-     * 关联查询符合条件的全部数据集合（不分页）
+     * 关联查询符合条件的全部主表数据集合（不分页）
      * @param queryWrapper 调用QueryBuilder.to*QueryWrapper得到的实例
      * @param entityClazz 返回结果entity/vo类
      * @return

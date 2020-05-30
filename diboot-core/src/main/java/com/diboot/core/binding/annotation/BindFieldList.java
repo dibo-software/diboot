@@ -18,7 +18,7 @@ package com.diboot.core.binding.annotation;
 import java.lang.annotation.*;
 
 /**
- * 绑定Entity集合注解（1-n）
+ * 绑定字段集合（1-n）
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/21
@@ -27,12 +27,18 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface BindEntityList {
+public @interface BindFieldList {
     /***
-     * 对应的entity类
+     * 绑定的Entity类
      * @return
      */
     Class entity();
+
+    /***
+     * 绑定字段
+     * @return
+     */
+    String field();
 
     /***
      * JOIN连接条件

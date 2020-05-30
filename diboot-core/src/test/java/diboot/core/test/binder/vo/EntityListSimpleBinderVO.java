@@ -16,6 +16,7 @@
 package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.annotation.BindFieldList;
 import diboot.core.test.binder.entity.Department;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,5 +38,13 @@ public class EntityListSimpleBinderVO extends Department {
     // 直接关联多个Entity
     @BindEntityList(entity = Department.class, condition = "this.id=parent_id")
     private List<DepartmentVO> children;
+
+    // 1-n 关联，取单个属性
+    @BindFieldList(entity = Department.class, field = "id", condition = "this.id=parent_id")
+    private List<Long> childrenIds;
+
+    // 1-n 关联，取单个属性
+    @BindFieldList(entity = Department.class, field = "name", condition = "this.id=parent_id")
+    private List<String> childrenNames;
 
 }

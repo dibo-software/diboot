@@ -35,11 +35,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
     /**
      * VO对象绑定赋值的属性名列表
      */
-    private List<String> annoObjectSetterPropNameList;
+    protected List<String> annoObjectSetterPropNameList;
     /**
      * DO/Entity对象对应的getter取值属性名列表
      */
-    private List<String> referencedGetterColumnNameList;
+    protected List<String> referencedGetterColumnNameList;
 
     /***
      * 构造方法
@@ -47,10 +47,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
      * @param voList
      */
     public FieldBinder(IService<T> serviceInstance, List voList){
-        this.referencedService = serviceInstance;
-        this.annoObjectList = voList;
-        this.queryWrapper = new QueryWrapper<T>();
-        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+        super(serviceInstance, voList);
     }
 
     /***

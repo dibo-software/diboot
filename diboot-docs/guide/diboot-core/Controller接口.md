@@ -181,7 +181,7 @@ private String name;
 
 ```java
 @PostMapping("/")
-public JsonResult createEntity(@Valid Demo entity, BindingResult result, HttpServletRequest request)
+public JsonResult createEntity(@Valid Demo entity, BindingResult result)
         throws Exception{
     return super.createEntity(entity, result);
 }
@@ -189,7 +189,7 @@ public JsonResult createEntity(@Valid Demo entity, BindingResult result, HttpSer
 
 * 如果您使用**json格式**进行数据提交，那么可以在@RequestBody注解前添加@Valid注解，如下：
 ```java
-public JsonResult createEntity(@Valid @RequestBody Demo entity, BindingResult result, HttpServletRequest request)
+public JsonResult createEntity(@Valid @RequestBody Demo entity, BindingResult result)
         throws Exception{
     return super.createEntity(entity, result);
 }

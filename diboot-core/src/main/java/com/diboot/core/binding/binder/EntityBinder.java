@@ -15,7 +15,6 @@
  */
 package com.diboot.core.binding.binder;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
@@ -47,17 +46,13 @@ public class EntityBinder<T> extends BaseBinder<T> {
      */
     protected Class<?> annoObjectFieldClass;
 
-    public EntityBinder(){}
     /***
      * 构造方法
      * @param referencedService
      * @param voList
      */
     public EntityBinder(IService<T> referencedService, List voList){
-        this.referencedService = referencedService;
-        this.annoObjectList = voList;
-        this.queryWrapper = new QueryWrapper<T>();
-        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+        super(referencedService, voList);
     }
 
     /***
