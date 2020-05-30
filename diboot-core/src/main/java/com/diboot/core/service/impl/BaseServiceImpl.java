@@ -144,6 +144,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean updateEntities(Collection<T> entityList) {
+		if(V.isEmpty(entityList)){
+			return false;
+		}
 		boolean success = super.updateBatchById(entityList);
 		return success;
 	}
@@ -267,6 +270,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean deleteEntities(Collection<? extends Serializable> entityIds) {
+		if(V.isEmpty(entityIds)){
+			return false;
+		}
 		return super.removeByIds(entityIds);
 	}
 
@@ -555,7 +561,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @param message
 	 */
 	private void warning(String method, String message){
-		log.warn(this.getClass().getName() + "."+ method +" 调用错误: "+message+", 请检查！");
+		log.warn(this.getClass().getName() + ".{} 调用错误: {}, 请检查！", method, message);
 	}
 
 }
