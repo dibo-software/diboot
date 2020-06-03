@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 
 /**
  * table的相关线索信息
- * @author mazc
+ * @author mazc@dibo.ltd
  * @version v1.0
  * @date 2020/06/02
  */

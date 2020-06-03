@@ -1,4 +1,4 @@
-## diboot-core: 全新优化内核
+## diboot-core: 高效精简内核
 主要实现：
 1. 单表CRUD和多表关联查询的无SQL化
 2. Entity/DTO自动转换为QueryWrapper（@BindQuery注解绑定字段参数的查询条件，可自动构建关联查询）
