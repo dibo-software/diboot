@@ -89,6 +89,18 @@ public class DynamicSqlProvider {
                 StringBuilder sb = new StringBuilder();
                 for(AnnoJoiner joiner : annoJoinerList){
                     if(V.notEmpty(joiner.getJoin()) && V.notEmpty(joiner.getOnSegment())){
+                        if(joiner.getMiddleTable() != null){
+                            sb.setLength(0);
+                            sb.append(joiner.getMiddleTable()).append(" ").append(joiner.getMiddleTableAlias()).append(" ON ").append(joiner.getMiddleTableOnSegment());
+                            if(S.containsIgnoreCase(joiner.getMiddleTable(), " "+Cons.COLUMN_IS_DELETED) == false && ParserCache.hasDeletedColumn(joiner.getMiddleTable())){
+                                sb.append(" AND ").append(joiner.getMiddleTableAlias()).append(".").append(Cons.COLUMN_IS_DELETED).append(" = ").append(BaseConfig.getActiveFlagValue());
+                            }
+                            String joinSegment = sb.toString();
+                            if(!tempSet.contains(joinSegment)){
+                                LEFT_OUTER_JOIN(joinSegment);
+                                tempSet.add(joinSegment);
+                            }
+                        }
                         sb.setLength(0);
                         sb.append(joiner.getJoin()).append(" ").append(joiner.getAlias()).append(" ON ").append(joiner.getOnSegment());
                         if(S.containsIgnoreCase(joiner.getOnSegment(), " "+Cons.COLUMN_IS_DELETED) == false && ParserCache.hasDeletedColumn(joiner.getJoin())){

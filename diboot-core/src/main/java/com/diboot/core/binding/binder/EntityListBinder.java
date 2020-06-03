@@ -15,7 +15,6 @@
  */
 package com.diboot.core.binding.binder;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;

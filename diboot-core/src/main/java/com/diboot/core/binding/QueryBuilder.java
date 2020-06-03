@@ -127,8 +127,10 @@ public class QueryBuilder {
             return new QueryWrapper<>();
         }
         QueryWrapper wrapper;
+        // 只解析有值的
+        fields = fieldValuesMap.keySet();
         // 是否有join联表查询
-        boolean hasJoinTable = ParserCache.hasJoinTable(dto, fieldValuesMap.keySet());
+        boolean hasJoinTable = ParserCache.hasJoinTable(dto, fields);
         if(hasJoinTable){
             wrapper = new DynamicJoinQueryWrapper<>(dto.getClass(), fields);
         }
@@ -337,7 +339,7 @@ public class QueryBuilder {
             try {
                 value = field.get(dto);
             } catch (IllegalAccessException e) {
-                log.error("通过反射获取属性值出错：" + e);
+                log.error("通过反射获取属性值出错：{}", e.getMessage());
             }
             // 忽略逻辑删除字段
             if(Cons.FieldName.deleted.name().equals(field.getName())

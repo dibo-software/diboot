@@ -16,10 +16,6 @@
 package com.diboot.core.util;
 
 
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;

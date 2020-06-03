@@ -18,12 +18,12 @@ package com.diboot.core.binding.parser;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
-import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
-import org.apache.ibatis.jdbc.SQL;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -39,15 +39,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 2.0<br>
  * @date 2019/04/03 <br>
  */
+@Slf4j
 public class ParserCache {
     /**
      * VO类-绑定注解缓存
      */
     private static Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
     /**
-     * 中间表是否包含is_deleted列 缓存
+     * 表及相关信息的缓存
      */
-    private static Map<String, Boolean> middleTableHasDeletedCacheMap = new ConcurrentHashMap<>();
+    private static Map<String, TableLinkage> tableToLinkageCacheMap = new ConcurrentHashMap<>();
     /**
      * entity类-表名的缓存
      */
@@ -97,29 +98,54 @@ public class ParserCache {
     }
 
     /**
-     * 是否有is_deleted列
-     * @return
+     * 初始化Table的相关对象信息
      */
-    public static boolean hasDeletedColumn(String middleTable){
-        if(middleTableHasDeletedCacheMap.containsKey(middleTable)){
-            return middleTableHasDeletedCacheMap.get(middleTable);
+    private static void initTableToLinkageCacheMap(){
+        if(tableToLinkageCacheMap.isEmpty()){
+            SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
+            Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
+            if(V.notEmpty(mappers)){
+                mappers.forEach(m->{
+                    Type[] types = m.getGenericInterfaces();
+                    try{
+                        if(types != null && types.length > 0 && types[0] != null){
+                            ParameterizedType genericType = (ParameterizedType) types[0];
+                            Type[] superTypes = genericType.getActualTypeArguments();
+                            if(superTypes != null && superTypes.length > 0 && superTypes[0] != null){
+                                String entityClassName = superTypes[0].getTypeName();
+                                if(entityClassName.length() > 1){
+                                    Class<?> entityClass = Class.forName(entityClassName);
+                                    TableLinkage linkage = new TableLinkage(entityClass, m);
+                                    tableToLinkageCacheMap.put(linkage.getTable(), linkage);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e){
+                        log.warn("解析mapper异常", e);
+                    }
+                });
+            }
         }
-        boolean hasColumn = SqlExecutor.validateQuery(buildCheckDeletedColSql(middleTable));
-        middleTableHasDeletedCacheMap.put(middleTable, hasColumn);
-        return hasColumn;
     }
 
     /**
-     * 构建检测是否有删除字段的sql
-     * @param table
+     * 是否有is_deleted列
      * @return
      */
-    private static String buildCheckDeletedColSql(String table){
-        return new SQL(){{
-            SELECT(Cons.COLUMN_IS_DELETED);
-            FROM(table);
-            LIMIT(1);
-        }}.toString();
+    public static boolean hasDeletedColumn(String table){
+        TableLinkage linkage = getTableLinkage(table);
+        return linkage != null && linkage.isHasDeleted();
+    }
+
+    /**
+     * 获取table相关信息
+     * @return
+     */
+    public static TableLinkage getTableLinkage(String table){
+        initTableToLinkageCacheMap();
+        TableLinkage linkage = tableToLinkageCacheMap.get(table);
+        return linkage;
     }
 
     /**
@@ -150,7 +176,7 @@ public class ParserCache {
      * @param <DTO>
      * @return
      */
-    public static <DTO> boolean hasJoinTable(DTO dto, Set<String> fieldNameSet){
+    public static <DTO> boolean hasJoinTable(DTO dto, Collection<String> fieldNameSet){
         List<AnnoJoiner> annoList = getBindQueryAnnos(dto.getClass());
         if(V.notEmpty(annoList)){
             for(AnnoJoiner anno : annoList){
@@ -199,6 +225,7 @@ public class ParserCache {
                 else{
                     annoJoiner.setAlias(alias);
                 }
+                annoJoiner.parse();
             }
             annos.add(annoJoiner);
         }

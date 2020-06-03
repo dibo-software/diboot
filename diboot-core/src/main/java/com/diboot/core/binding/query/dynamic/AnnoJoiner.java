@@ -67,23 +67,42 @@ public class AnnoJoiner implements Serializable {
 
     private String columnName;
 
-    private String join;
+    private String condition;
 
+    private String join;
     /**
      * 别名
      */
     private String alias;
-
-    private String condition;
+    /**
+     * on条件
+     */
+    private String onSegment;
 
     /**
-     * 获取On条件
-     * @return
+     * 中间表
      */
-    public String getOnSegment(){
-        if(V.notEmpty(condition)){
-            return JoinConditionParser.parseJoinCondition(this.condition, this.alias);
+    private String middleTable;
+
+    /**
+     * 中间表别名
+     */
+    public String getMiddleTableAlias(){
+        if(middleTable != null && alias != null){
+            return alias+"m";
         }
         return null;
+    }
+    /**
+     * 中间表on
+     */
+    private String middleTableOnSegment;
+
+    /**
+     * 解析
+     */
+    public void parse(){
+        // 解析查询
+        JoinConditionManager.parseJoinCondition(this);
     }
 }

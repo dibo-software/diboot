@@ -23,7 +23,9 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
+import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -144,6 +146,29 @@ public class TestJoinQuery {
         // 第二页 1条结果
         list = Binder.joinQueryList(queryWrapper, Department.class, pagination);
         Assert.assertTrue(list.size() == 1);
+    }
+
+    /**
+     * 测试有中间表的动态sql join
+     */
+    @Test
+    public void testDynamicSqlQueryWithMiddleTable() {
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
+        dto.setDeptName("研发组");
+        dto.setDeptId(10002L);
+
+        // builder直接查询，不分页 3条结果
+        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 2);
+
+        dto.setOrgName("苏州帝博");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 2);
+
+        dto.setRoleCode("ADMIN");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 1);
     }
 
     @Test

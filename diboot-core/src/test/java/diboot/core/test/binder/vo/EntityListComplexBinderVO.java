@@ -40,7 +40,7 @@ public class EntityListComplexBinderVO extends User {
     private String userType = "OrgUser";
 
     // 支持通过中间表的多-多Entity实体关联
-    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
+    @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id AND user_role.user_id>1")
     private List<Role> roleList;
 
     // 支持通过中间表的多-多Entity的单个属性集

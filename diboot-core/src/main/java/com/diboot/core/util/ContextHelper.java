@@ -116,13 +116,12 @@ public class ContextHelper implements ApplicationContextAware {
     }
 
     /***
-     * 获取指定类型的全部实例
+     * 获取指定类型的全部实现类
      * @param type
      * @param <T>
      * @return
      */
     public static <T> List<T> getBeans(Class<T> type){
-        // 获取所有的定时任务实现类
         Map<String, T> map = getApplicationContext().getBeansOfType(type);
         if(V.isEmpty(map)){
             return null;
