@@ -16,6 +16,7 @@
 package com.diboot.core.util;
 
 
+import com.diboot.core.binding.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
@@ -71,6 +72,8 @@ public class BeanUtils {
     public static Object copyProperties(Object source, Object target){
         // 链式调用无法使用BeanCopier拷贝，换用BeanUtils
         org.springframework.beans.BeanUtils.copyProperties(source, target);
+        // 处理Accept注解标识的不同字段名拷贝
+        AcceptAnnoCopier.copyAcceptProperties(source, target);
         return target;
     }
 

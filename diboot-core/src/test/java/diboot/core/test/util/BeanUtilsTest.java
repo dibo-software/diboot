@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.vo.DictionaryVO;
+import diboot.core.test.binder.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -57,6 +58,14 @@ public class BeanUtilsTest {
         Assert.assertTrue(dictionary3.getItemName().equals(itemName));
         Assert.assertTrue(dictionary3.isEditable() == true);
         Assert.assertTrue(dictionary3.getCreateTime() != null);
+
+        // Accept注解拷贝
+        User user = new User();
+        BeanUtils.copyProperties(dictionary3, user);
+        Assert.assertTrue(user.getGender().equals(dictionary3.getItemName()));
+        user.setGender("123");
+        BeanUtils.copyProperties(dictionary3, user);
+        Assert.assertTrue(user.getGender().equals("123"));
     }
 
     @Test

@@ -13,34 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.entity;
+package com.diboot.core.binding.copy;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.copy.Accept;
-import com.diboot.core.entity.BaseEntity;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import java.lang.annotation.*;
 
 /**
+ * 拷贝字段时的非同名字段处理
  * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/1/30
+ * @version v2.1
+ * @date 2020/06/04
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class User extends BaseEntity {
-    private static final long serialVersionUID = 3050761344045195972L;
-
-    @TableField
-    private Long departmentId;
-
-    @TableField
-    private String username;
-
-    @Accept(name = "itemName")
-    @TableField
-    private String gender;
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+@Documented
+public @interface Accept {
+    /**
+     * 接收来源对象的属性名
+     * @return
+     */
+    String name();
+    /**
+     * source该字段有值时是否覆盖
+     * @return
+     */
+    boolean override() default false;
 }

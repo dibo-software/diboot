@@ -44,11 +44,11 @@ public class DepartmentVO {
     @TableField
     private Long orgId;
 
-    // 通过中间表关联Entity
+    // 关联Entity
     @BindEntity(entity = Department.class, condition = "this.parent_id=id") // AND ...
     private Department department;
 
-    // 通过中间表关联Entity
+    // 关联Entity，赋值给VO
     @BindEntity(entity = Organization.class, condition = "this.org_id=id") // AND ...
     private OrganizationVO organizationVO;
 
