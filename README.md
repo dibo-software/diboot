@@ -16,17 +16,19 @@
 diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发助理 + IAM身份认证、file文件处理等基础组件 + diboot-*-admin基础后台。
 
 ## 一、 diboot-core: 精简优化内核
-高效精简内核，《高性能MySQL》重构查询方式的最佳实践，主要实现：
+高效精简内核，《高性能MySQL》重构查询方式(拆解关联查询,程序中Join)的最佳实践，主要实现：
 #### 1. 单表CRUD无SQL
    > 基于Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
-#### 2. 关联查询绑定无SQL（注解自动绑定）
+#### 2. 关联绑定无SQL（注解自动绑定）
    > 扩展实现了多表关联查询的无SQL方案，只需要一个简单注解@Bind*，就可以实现关联对象（含字段、字段集合、实体、实体集合等）的数据绑定，且实现方案是将关联查询拆解为单表查询，保障最佳性能。
 #### 3. 数据字典无SQL（注解自动绑定）
    > 通过@BindDict注解实现数据字典(枚举)的存储值value与显示值name的转换。
-#### 4. 跨表查询无SQL（QueryWrapper自动构建与查询）
-   > @BindQuery注解绑定字段参数对应的查询条件及关联表，自动将请求参数绑定转换为QueryWrapper，并动态执行单表或Join联表查询。
-#### 5. 其他常用Service接口、工具类的最佳实践封装
-   > 字符串处理、常用校验、BeanUtils、DateUtils等
+#### 4. 跨表查询无SQL（自动构建QueryWrapper与查询）
+   > @BindQuery注解绑定字段查询方式及关联表，自动构建QueryWrapper，并动态执行单表或Join联表查询。
+#### 5. BaseService扩展增强，支持常规的单表及关联开发场景接口
+   > createEntityAndRelatedEntities、getValuesOfField、exists、getKeyValueList、getViewObject*等接口
+#### 6. 其他常用工具类、状态码、异常处理的最佳实践封装
+   > JsonResult、字符串处理、常用校验、BeanUtils、DateUtils等
    
 基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比传统Mybatis项目减少80%+），且实现更高效更易维护。   
 更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
@@ -47,6 +49,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 * RBAC角色权限模型 + JWT的认证授权 实现，支持刷新token
 * 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
 * 自动提取需要验证的后端接口, 借助前端功能方便绑定前后端菜单按钮权限
+* 支持基于注解的数据权限实现
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
 * Starter启动自动安装依赖的数据表
 * 启用devtools，自动生成初始controller代码到本地

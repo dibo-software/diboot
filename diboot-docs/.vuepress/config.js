@@ -16,13 +16,14 @@ module.exports = {
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/diboot-core/安装', '安装'],
+                        ['/guide/diboot-core/设计理念', '设计理念'],
+                        ['/guide/diboot-core/简介', '简介'],
                         ['/guide/diboot-core/实体Entity', 'Entity相关'],
-                        ['/guide/diboot-core/Service与实现', 'Service相关'],
+                        ['/guide/diboot-core/Service接口', 'Service相关'],
                         ['/guide/diboot-core/Mapper及自定义', 'Mapper相关'],
                         ['/guide/diboot-core/Controller接口', 'Controller相关'],
-                        ['/guide/diboot-core/无SQL关联', '无SQL关联绑定'],
-                        ['/guide/diboot-core/查询条件DTO', '查询条件DTO'],
+                        ['/guide/diboot-core/无SQL关联绑定', '无SQL关联绑定'],
+                        ['/guide/diboot-core/无SQL跨表查询', '无SQL跨表查询'],
                         ['/guide/diboot-core/常用工具类', '常用工具类']
                     ]
                 }
