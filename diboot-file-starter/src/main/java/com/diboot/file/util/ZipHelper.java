@@ -29,7 +29,8 @@ import java.util.zip.ZipOutputStream;
 
 /***
  * 文件压缩操作辅助类
- * @author Mazc
+ * @author mazc@dibo.ltd
+ * @version v2.0
  */
 @Slf4j
 public class ZipHelper {
