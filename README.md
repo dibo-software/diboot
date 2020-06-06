@@ -16,7 +16,7 @@
 diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发助理 + IAM身份认证、file文件处理等基础组件 + diboot-*-admin基础后台。
 
 ## 一、 diboot-core: 精简优化内核
-高效精简内核，《高性能MySQL》重构查询方式(拆解关联查询,程序中Join)的最佳实践，主要实现：
+高效精简内核，重构查询方式(拆解关联查询,程序中Join)，简化开发，主要实现：
 #### 1. 单表CRUD无SQL
    > 基于Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
 #### 2. 关联绑定无SQL（注解自动绑定）

@@ -95,14 +95,15 @@ module.exports = {
                     ]
                 }
             ],
-            '/guide/faq/': [
+            '/guide/notes/': [
                 {
-                    title: 'F&Q',
+                    title: '版本&FAQ',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/faq/devtools', 'devtools开发助理'],
-                        ['/guide/faq/iam', 'IAM 组件']
+                        ['/guide/notes/release', 'Release notes']
+                        ['/guide/notes/faq', 'FAQ'],
+                        ['/guide/notes/upgrade', '版本升级指南'],
                     ]
                 }
             ]
@@ -112,10 +113,10 @@ module.exports = {
         }, {
             text: '基础组件 指南',
             items: [
-                { text: 'F&Q', link: '/guide/faq/devtools' },
                 { text: 'core基础内核', link: '/guide/diboot-core/安装' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
-                { text: 'File文件组件', link: '/guide/diboot-file/介绍' }
+                { text: 'File文件组件', link: '/guide/diboot-file/介绍' },
+                { text: 'F&Q', link: '/guide/faq/devtools' }
             ]
         }, {
             text: '前端项目 指南',
@@ -150,11 +151,9 @@ module.exports = {
                     link: 'https://github.com/dibo-software/diboot-v2'
                 }
             ]
-        }, {
+        }/*, {
             text: '优秀案例',
             link: '/other/excellentExample'
-        },{
-            text: '1.x旧版', link: 'https://www.diboot.com/diboot-v1/'
-        }]
+        }*/]
     }
 }
