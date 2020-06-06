@@ -23,12 +23,11 @@ package com.diboot.core.binding.data;
  */
 public enum CheckpointType {
 
-    USER(0), // 相关用户
-    ORG(1), // 组织
+    USER(0), // 用户范围
+    ORG(1), // 组织范围
+    POSITION(2), // 岗位范围
 
-    OBJ_1(2), // 其他1
-    OBJ_2(3), // 其他2
-    OBJ_3(4); // 其他3
+    EXT_OBJ(3); // 扩展对象范围
 
     private int index;
     CheckpointType(int index){

@@ -39,7 +39,26 @@ public class DataAccessAnnoCache {
     /**
      * 注解缓存
      */
-    private static Map<String, String> DATA_PERMISSION_ANNO_CACHE = new ConcurrentHashMap<>();
+    private static Map<String, String[]> DATA_PERMISSION_ANNO_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * 是否有检查点注解
+     * @param entityDto
+     * @return
+     */
+    public static boolean hasDataAccessCheckpoint(Class<?> entityDto){
+        initClassCheckpoint(entityDto);
+        String[] columns = DATA_PERMISSION_ANNO_CACHE.get(entityDto.getName());
+        if(V.isEmpty(columns)){
+            return false;
+        }
+        for(String type : columns){
+            if(V.notEmpty(type)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * 获取数据权限的用户类型列名
@@ -47,7 +66,21 @@ public class DataAccessAnnoCache {
      * @return
      */
     public static String getDataPermissionColumn(Class<?> entityDto, CheckpointType type){
+        initClassCheckpoint(entityDto);
         int typeIndex = type.index();
+        String key = entityDto.getName();
+        String[] columns = DATA_PERMISSION_ANNO_CACHE.get(key);
+        if(columns != null && (columns.length-1) >= typeIndex){
+            return columns[typeIndex];
+        }
+        return null;
+    }
+
+    /**
+     * 初始化entityDto的检查点缓存
+     * @param entityDto
+     */
+    private static void initClassCheckpoint(Class<?> entityDto){
         String key = entityDto.getName();
         if(!DATA_PERMISSION_ANNO_CACHE.containsKey(key)){
             String[] results = {"", "", "", "", ""};
@@ -61,13 +94,8 @@ public class DataAccessAnnoCache {
                     results[checkpoint.type().index()] = QueryBuilder.getColumnName(fld);
                 }
             }
-            DATA_PERMISSION_ANNO_CACHE.put(key, S.join(results));
+            DATA_PERMISSION_ANNO_CACHE.put(key, results);
         }
-        String[] columns = S.split(DATA_PERMISSION_ANNO_CACHE.get(key));
-        if(columns != null && (columns.length-1) >= typeIndex){
-            return columns[typeIndex];
-        }
-        return null;
     }
 
 }

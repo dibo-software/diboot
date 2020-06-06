@@ -39,7 +39,7 @@ import java.util.*;
 /**
  * join连接查询绑定器
  * @author Mazc@dibo.ltd
- * @version v2.0.5
+ * @version v2.1
  * @date 2020/04/15
  */
 @Slf4j
