@@ -41,4 +41,25 @@ devtools从2.1版本开始不再支持extdata的特殊处理。
 
 * v2.1.x版本依赖组件升级为: Spring Boot 2.3.0，Mybatis-Plus 3.3.2，fastjson 1.2.70。根据您的依赖情况，可能会有依赖冲突需要解决。
 
-#### 2. diboot-iam
+#### 2. diboot-devtools
+* v2.1版本开始，配置参数：
+新增 **diboot.devtools.output-path** 代码的生成根路径配置项，
+如entity, dto, controller, mapper, service, vo等路径无自定义需求，仅配置该根路径即可。
+示例：
+~~~properties
+diboot.devtools.output-path=example/src/main/java/com/diboot/example/
+~~~
+同时开放更多的自定义配置项，如：
+~~~properties
+diboot.devtools.output-path-mapper-xml=
+diboot.devtools.output-path-service-impl=
+diboot.devtools.output-path-dto=
+diboot.devtools.output-path-exception-handler=
+~~~
+
+v2.1.x版本开始支持前端代码生成，如果需要该功能，则需配置。如
+~~~properties
+diboot.devtools.output-path-frontend=/Workspace/diboot-antd-admin-ent/
+~~~
+
+#### 3. diboot-iam
