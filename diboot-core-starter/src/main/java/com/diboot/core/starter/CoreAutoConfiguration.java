@@ -19,7 +19,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.diboot.core.config.Cons;
-import com.diboot.core.util.D;
+import com.diboot.core.util.DateConverter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,8 +30,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ import java.util.List;
 @ComponentScan(basePackages={"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 @Order(1)
-public class CoreAutoConfiguration{
+public class CoreAutoConfiguration implements WebMvcConfigurer {
 
     @Autowired
     Environment environment;
@@ -88,4 +90,12 @@ public class CoreAutoConfiguration{
         return new HttpMessageConverters(httpMsgConverter);
     }
 
+    /**
+     * 默认支持String-Date类型转换
+     * @param registry
+     */
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new DateConverter());
+    }
 }
