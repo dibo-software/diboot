@@ -141,7 +141,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         this.headMap = headMap;
         // 刷新字典缓存
         Class<T> modelClass = BeanUtils.getGenericityClass(this, 0);
-        DictTempCache.refreshDictCache(modelClass);
+        DictTempCache.refreshGenericDictCache(modelClass);
 
         ExcelReadHeadProperty excelReadHeadProperty = context.currentReadHolder().excelReadHeadProperty();
         fieldHeadMap = new LinkedHashMap<>();

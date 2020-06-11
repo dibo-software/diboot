@@ -47,12 +47,12 @@ public class DictConverter implements Converter<String> {
     public String convertToJavaData(CellData cellData, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         // 注解
         BindDict bindDict = contentProperty.getField().getAnnotation(BindDict.class);
-        if(bindDict == null){
+        if (bindDict == null) {
             throw new BusinessException("DictConverter依赖BindDict注解，请指定");
         }
         String dictValue = DictTempCache.getDictValue(bindDict.type(), cellData.getStringValue());
-        if(dictValue == null){
-            throw new BusinessException("'"+cellData.getStringValue()+"' 无匹配字典定义");
+        if (dictValue == null) {
+            throw new BusinessException("'" + cellData.getStringValue() + "' 无匹配字典定义");
         }
         return dictValue;
     }
@@ -61,9 +61,9 @@ public class DictConverter implements Converter<String> {
     public CellData convertToExcelData(String value, ExcelContentProperty contentProperty, GlobalConfiguration globalConfiguration) throws Exception {
         // 注解
         BindDict bindDict = contentProperty.getField().getAnnotation(BindDict.class);
-        if(bindDict == null){
+        if (bindDict == null) {
             throw new BusinessException("DictConverter依赖BindDict注解，请指定.");
         }
-        return new CellData(DictTempCache.getDictLabel(bindDict.type(), value));
+        return new CellData(DictTempCache.getDictLabel(bindDict.type(), value, contentProperty.getField().getDeclaringClass()));
     }
 }
