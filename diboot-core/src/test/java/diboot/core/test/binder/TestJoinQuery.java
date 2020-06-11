@@ -56,6 +56,16 @@ public class TestJoinQuery {
     DepartmentService departmentService;
 
     @Test
+    public void testDateCompaire(){
+        Department example = departmentService.getSingleEntity(null);
+        DepartmentDTO departmentDTO = new DepartmentDTO();
+        departmentDTO.setBegin(example.getCreateTime());
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        List<Department> list = departmentService.getEntityList(queryWrapper);
+        Assert.assertTrue(list.size() >= 1);
+    }
+
+    @Test
     public void testSingleTableQuery(){
         Department entity = new Department();
         entity.setParentId(10001L);

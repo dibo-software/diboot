@@ -19,11 +19,14 @@ import com.diboot.core.binding.data.CheckpointType;
 import com.diboot.core.binding.data.DataAccessCheckpoint;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.util.D;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * Department DTO
@@ -55,5 +58,16 @@ public class DepartmentDTO extends Department {
     // 数据权限检查点
     @DataAccessCheckpoint(type = CheckpointType.ORG)
     private Long orgId;
+
+    @BindQuery(comparison = Comparison.GE, field = "createTime")
+    private Date begin;
+
+    @BindQuery(comparison = Comparison.LT, field = "createTime")
+    private Date end;
+
+    public void setBegin(Date date){
+        this.begin = date;
+        this.end = D.addDays(date, 1);
+    }
 
 }
