@@ -121,14 +121,19 @@ public class QueryBuilder {
      * @return
      */
     private static <DTO> QueryWrapper<DTO> dtoToWrapper(DTO dto, Collection<String> fields){
+        QueryWrapper wrapper;
         // 转换
         LinkedHashMap<String, Object> fieldValuesMap = extractNotNullValues(dto, fields);
         if(V.isEmpty(fieldValuesMap)){
-            return new QueryWrapper<>();
+            wrapper = new QueryWrapper<>();
+            // 附加数据访问条件
+            attachDataAccessCondition(wrapper, dto.getClass());
+            return wrapper;
         }
-        QueryWrapper wrapper;
+        // 只解析有值的
+        fields = fieldValuesMap.keySet();
         // 是否有join联表查询
-        boolean hasJoinTable = ParserCache.hasJoinTable(dto, fieldValuesMap.keySet());
+        boolean hasJoinTable = ParserCache.hasJoinTable(dto, fields);
         if(hasJoinTable){
             wrapper = new DynamicJoinQueryWrapper<>(dto.getClass(), fields);
         }
@@ -256,7 +261,7 @@ public class QueryBuilder {
             dataAccessCheckInstance = ContextHelper.getBean(DataAccessCheckInterface.class);
             dataAccessCheckInstanceChecked = true;
         }
-        if(dataAccessCheckInstance != null){
+        if(dataAccessCheckInstance != null && DataAccessAnnoCache.hasDataAccessCheckpoint(dtoClass)){
             NormalSegmentList segments = queryWrapper.getExpression().getNormal();
             for(CheckpointType type : CheckpointType.values()){
                 String idCol = DataAccessAnnoCache.getDataPermissionColumn(dtoClass, type);
@@ -337,7 +342,7 @@ public class QueryBuilder {
             try {
                 value = field.get(dto);
             } catch (IllegalAccessException e) {
-                log.error("通过反射获取属性值出错：" + e);
+                log.error("通过反射获取属性值出错：{}", e.getMessage());
             }
             // 忽略逻辑删除字段
             if(Cons.FieldName.deleted.name().equals(field.getName())

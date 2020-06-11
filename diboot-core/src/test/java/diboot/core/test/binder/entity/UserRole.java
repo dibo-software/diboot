@@ -13,43 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.vo;
+package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.annotation.BindEntity;
-import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Organization;
+import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * Department VO
+ * 用户角色
  * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2018/12/27
+ * @date 2019/1/30
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DepartmentVO {
-    private static final long serialVersionUID = -4849732665419794547L;
+public class UserRole extends BaseEntity {
+    private static final long serialVersionUID = 3030761344045195972L;
 
     @TableField
-    private Long parentId;
+    private Long userId;
+
+    @TableField
+    private Long roleId;
 
     @TableField(exist = false)
-    private String name;
-
-    @TableField
-    private Long orgId;
-
-    // 关联Entity
-    @BindEntity(entity = Department.class, condition = "this.parent_id=id") // AND ...
-    private Department department;
-
-    // 关联Entity，赋值给VO
-    @BindEntity(entity = Organization.class, condition = "this.org_id=id") // AND ...
-    private OrganizationVO organizationVO;
+    private boolean deleted;
 
 }

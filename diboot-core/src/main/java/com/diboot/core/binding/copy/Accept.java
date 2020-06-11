@@ -13,28 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.data;
+package com.diboot.core.binding.copy;
+
+import java.lang.annotation.*;
 
 /**
- * checkpoint类型
- * @author Mazc@dibo.ltd
+ * 拷贝字段时的非同名字段处理
+ * @author mazc@dibo.ltd
  * @version v2.1
- * @date 2020/04/24
+ * @date 2020/06/04
  */
-public enum CheckpointType {
-
-    USER(0), // 用户范围
-    ORG(1), // 组织范围
-    POSITION(2), // 岗位范围
-
-    EXT_OBJ(3); // 扩展对象范围
-
-    private int index;
-    CheckpointType(int index){
-        this.index = index;
-    }
-
-    public int index(){
-        return index;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+@Documented
+public @interface Accept {
+    /**
+     * 接收来源对象的属性名
+     * @return
+     */
+    String name();
+    /**
+     * source该字段有值时是否覆盖
+     * @return
+     */
+    boolean override() default false;
 }

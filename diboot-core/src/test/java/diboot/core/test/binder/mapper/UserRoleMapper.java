@@ -13,28 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.data;
+package diboot.core.test.binder.mapper;
+
+import com.diboot.core.mapper.BaseCrudMapper;
+import diboot.core.test.binder.entity.UserRole;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * checkpoint类型
- * @author Mazc@dibo.ltd
- * @version v2.1
- * @date 2020/04/24
+ * 用户角色Mapper
+ * @author mazc@dibo.ltd
+ * @version 2018/12/22
  */
-public enum CheckpointType {
+@Mapper
+public interface UserRoleMapper extends BaseCrudMapper<UserRole> {
 
-    USER(0), // 用户范围
-    ORG(1), // 组织范围
-    POSITION(2), // 岗位范围
-
-    EXT_OBJ(3); // 扩展对象范围
-
-    private int index;
-    CheckpointType(int index){
-        this.index = index;
-    }
-
-    public int index(){
-        return index;
-    }
 }
+

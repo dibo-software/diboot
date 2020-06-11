@@ -210,7 +210,7 @@ public interface BaseService<T> {
 
     /**
      * 获取符合条件的一个Entity实体
-     * @param queryWrapper 主键
+     * @param queryWrapper
      * @return entity
      */
     T getSingleEntity(Wrapper queryWrapper);

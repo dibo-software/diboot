@@ -15,8 +15,11 @@
  */
 package com.diboot.core.binding.parser;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
@@ -101,15 +104,21 @@ public class MiddleTable {
      * @return
      */
     public Map<String, Object> executeOneToOneQuery(List annoObjectForeignKeyList){
-        // 提取中间表查询SQL: SELECT id, org_id FROM department WHERE id IN(?)
-        String sql = toSQL(annoObjectForeignKeyList);
-        // 执行查询并合并结果
-        //id
-        String keyName = getEqualsToAnnoObjectFKColumn(),
-        //org_id
-        valueName = getEqualsToRefEntityPkColumn();
-        Map<String, Object> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, annoObjectForeignKeyList, keyName, valueName);
-        return middleTableResultMap;
+        //id //org_id
+        String keyName = getEqualsToAnnoObjectFKColumn(), valueName = getEqualsToRefEntityPkColumn();
+        TableLinkage linkage = ParserCache.getTableLinkage(table);
+        // 有定义mapper，首选mapper
+        if(linkage != null){
+            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, annoObjectForeignKeyList);
+            return SqlExecutor.convertToOneToOneResult(resultSetMapList, keyName, valueName);
+        }
+        else{
+            // 提取中间表查询SQL: SELECT id, org_id FROM department WHERE id IN(?)
+            String sql = toSQL(annoObjectForeignKeyList);
+            // 执行查询并合并结果
+            Map<String, Object> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, annoObjectForeignKeyList, keyName, valueName);
+            return middleTableResultMap;
+        }
     }
 
     /**
@@ -118,15 +127,42 @@ public class MiddleTable {
      * @return
      */
     public Map<String, List> executeOneToManyQuery(List annoObjectForeignKeyList){
-        // 提取中间表查询SQL: SELECT user_id, role_id FROM user_role WHERE user_id IN(?)
-        String sql = toSQL(annoObjectForeignKeyList);
-        // 执行查询并合并结果
-        //user_id
-        String keyName = getEqualsToAnnoObjectFKColumn(),
-                //role_id
-                valueName = getEqualsToRefEntityPkColumn();
-        Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, annoObjectForeignKeyList, keyName, valueName);
-        return middleTableResultMap;
+        //user_id //role_id
+        String keyName = getEqualsToAnnoObjectFKColumn(), valueName = getEqualsToRefEntityPkColumn();
+        TableLinkage linkage = ParserCache.getTableLinkage(table);
+        // 有定义mapper，首选mapper
+        if(linkage != null){
+            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, annoObjectForeignKeyList);
+            return SqlExecutor.convertToOneToManyResult(resultSetMapList, keyName, valueName);
+        }
+        else{
+            // 提取中间表查询SQL: SELECT user_id, role_id FROM user_role WHERE user_id IN(?)
+            String sql = toSQL(annoObjectForeignKeyList);
+            // 执行查询并合并结果
+            Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, annoObjectForeignKeyList, keyName, valueName);
+            return middleTableResultMap;
+        }
+    }
+
+    /**
+     * 通过定义的Mapper查询结果
+     * @param linkage
+     * @param annoObjectForeignKeyList
+     * @return
+     */
+    private List<Map<String, Object>> queryByMapper(TableLinkage linkage, List annoObjectForeignKeyList){
+        BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
+        QueryWrapper queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntityClass(linkage.getEntityClass());
+        queryWrapper.select(equalsToAnnoObjectFKColumn, equalsToRefEntityPkColumn);
+        queryWrapper.in(equalsToAnnoObjectFKColumn, annoObjectForeignKeyList);
+        if(additionalConditions != null){
+            for(String condition : additionalConditions){
+                queryWrapper.apply(condition);
+            }
+        }
+        List<Map<String, Object>> resultSetMapList = mapper.selectMaps(queryWrapper);
+        return resultSetMapList;
     }
 
     /**
@@ -134,7 +170,7 @@ public class MiddleTable {
      * @param annoObjectForeignKeyList 注解外键值的列表，用于拼接SQL查询
      * @return
      */
-    public String toSQL(List annoObjectForeignKeyList){
+    private String toSQL(List annoObjectForeignKeyList){
         if(V.isEmpty(annoObjectForeignKeyList)){
             return null;
         }
