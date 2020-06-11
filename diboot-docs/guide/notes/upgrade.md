@@ -35,6 +35,20 @@ public class DepartmentController extends BaseCustomCrudRestController<Departmen
     super.getViewObjectList(entity, pagination, DepartmentVO.class);
 “}
 ~~~
+* v2.1.x版本开始，core-starter中不再默认指定Date类型转json的默认格式，而是通过Date字段注解@JSONField(format=)去指定。
+如果Date日期格式非预期，您可以通过以下两种方式调整：
+1. 需要在Date字段上添加@JSONField(format=)注解。
+或
+2. 重新定义HttpMessageConverters，统一指定Date类型默认格式。
+
+* v2.1.x版本core-starter自动初始化增加了String-Date转换的convertor至Spring FormatterRegistry。
+如果您不需要request查询参数的String转Date，可重写addFormatters，移除String-Date转换。
+~~~java
+@Override
+public void addFormatters(FormatterRegistry registry) {
+   registry.removeConvertible(String.class, Date.class);
+}
+~~~
 
 * v2.1.x版本开始，extdata扩展字段将不再推荐使用，该字段设计目的用于字段冗余的json存储，可以通过数据库的json数据类型实现。
 devtools从2.1版本开始不再支持extdata的特殊处理。
