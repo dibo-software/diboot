@@ -72,8 +72,8 @@ public class AttachMoreController {
                 );
                 result.put(S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "KvList", keyValueList);
             } else if (type.equals(AttachMoreDTO.REF_TYPE.T)) {
-                String lowerCaseCamelEntityName = attachMoreDTO.getTarget();
-                String entityClassName = S.capFirst(lowerCaseCamelEntityName);
+                String entityName = attachMoreDTO.getTarget();
+                String entityClassName = S.capFirst(entityName);
                 Class<?> entityClass = ParserCache.getEntityClassByEntityLowerCaseCamel(entityClassName);
                 if (V.isEmpty(entityClass)) {
                     log.warn("传递错误的实体类型：{}", attachMoreDTO.getTarget());
@@ -95,7 +95,7 @@ public class AttachMoreController {
                                 .select(key, value)
                                 .last("limit " + kvLimitCount)
                 );
-                result.put(lowerCaseCamelEntityName + "KvList", keyValueList);
+                result.put(S.uncapFirst(entityName) + "KvList", keyValueList);
             } else {
                 log.error("错误的加载绑定类型：{}", attachMoreDTO.getType());
             }
