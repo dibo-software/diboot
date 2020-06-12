@@ -18,11 +18,15 @@ package com.diboot.iam.starter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * Shiro代理相关配置类（单独定义以避免Properties无法注入的问题）
- * @author : wee
+ *
+ * @author : uu
  * @version : v2.0
  * @Date 2019-10-11  10:54
  */

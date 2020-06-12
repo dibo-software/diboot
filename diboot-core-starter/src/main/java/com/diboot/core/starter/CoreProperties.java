@@ -31,11 +31,24 @@ public class CoreProperties {
      */
     private boolean initSql = true;
 
+    /**
+     * kv查询的长度
+     */
+    private Integer kvLimitCount = 100;
+
     public boolean isInitSql() {
         return initSql;
     }
 
     public void setInitSql(boolean initSql) {
         this.initSql = initSql;
+    }
+
+    public Integer getKvLimitCount() {
+        return kvLimitCount;
+    }
+
+    public void setKvLimitCount(Integer kvLimitCount) {
+        this.kvLimitCount = kvLimitCount;
     }
 }

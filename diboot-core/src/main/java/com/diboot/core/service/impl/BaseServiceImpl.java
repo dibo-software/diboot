@@ -447,6 +447,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
 		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
+			// 如果key和value的的值都为null的时候map也为空，则不处理此项
+			if (V.isEmpty(map)) {
+				continue;
+			}
 			String key = keyValueArray[0], value = keyValueArray[1], ext = null;
 			// 兼容oracle大写
 			if(map.containsKey(key) == false && map.containsKey(key.toUpperCase())){
