@@ -201,7 +201,7 @@ public abstract class BaseFileController extends BaseController {
      * @return {@link List <UploadFile>} 返回文件对象的集合
      * @throws Exception
      */
-    public List<UploadFile> getUploadFileList(Long relObjId, String relObjType, String relObjField) throws Exception {
+    public List<UploadFile> getUploadFileList(Object relObjId, String relObjType, String relObjField) throws Exception {
         LambdaQueryWrapper<UploadFile> wrapper = Wrappers.<UploadFile>lambdaQuery()
                 .eq(UploadFile::getRelObjId, relObjId)
                 .eq(UploadFile::getRelObjType, relObjType);

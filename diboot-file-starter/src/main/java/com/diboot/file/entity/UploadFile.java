@@ -49,7 +49,7 @@ public class UploadFile extends BaseEntity {
     private String relObjType = null;
     @TableField
     @NotNull(message = "关联对象ID不能为空！")
-    private Long relObjId;
+    private String relObjId;
 
     @TableField
     @NotNull(message = "关联对象属性不能为空！")

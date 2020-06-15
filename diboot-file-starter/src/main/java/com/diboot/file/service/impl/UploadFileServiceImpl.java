@@ -38,7 +38,7 @@ import java.util.List;
 public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, UploadFile> implements UploadFileService {
 
     @Override
-    public List<UploadFile> getUploadedFiles(String relObjClass, Long relObjId) {
+    public List<UploadFile> getUploadedFiles(String relObjClass, Object relObjId) {
         LambdaQueryWrapper<UploadFile> queryWrapper = new QueryWrapper<UploadFile>().lambda()
                 .eq(UploadFile::getRelObjType, relObjClass)
                 .eq(UploadFile::getRelObjId, relObjId)
@@ -48,7 +48,7 @@ public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, Upl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void bindRelObjId(Long relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) throws Exception {
+    public void bindRelObjId(Object relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) throws Exception {
 
         //如果不存在需要绑定的么清除所有当前关联的所有文件
         if (V.isEmpty(fileUuidList)) {

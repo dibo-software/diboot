@@ -42,7 +42,7 @@ public class UploadFileServiceTest extends ApplicationTest {
     public void testCreateAndQuery(){
         UploadFile uploadFile = new UploadFile();
         uploadFile.setFileName("测试").setFileType("xlsx").setRelObjType(Department.class.getSimpleName())
-                .setRelObjId(1001L).setDataCount(10).setStoragePath("/123.xlsx");
+                .setRelObjId("1001").setDataCount(10).setStoragePath("/123.xlsx");
         boolean success = uploadFileService.createEntity(uploadFile);
         Assert.assertTrue(success);
 

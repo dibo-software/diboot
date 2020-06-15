@@ -36,7 +36,7 @@ public interface UploadFileService extends BaseService<UploadFile> {
      * @param relObjId
      * @return
      */
-    List<UploadFile> getUploadedFiles(String relObjClass, Long relObjId);
+    List<UploadFile> getUploadedFiles(String relObjClass, Object relObjId);
 
     /**
      * 绑定业务id
@@ -46,6 +46,6 @@ public interface UploadFileService extends BaseService<UploadFile> {
      * @param fileUuidList
      * @throws Exception
      */
-    void bindRelObjId(Long relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) throws Exception;
+    void bindRelObjId(Object relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) throws Exception;
 
 }
