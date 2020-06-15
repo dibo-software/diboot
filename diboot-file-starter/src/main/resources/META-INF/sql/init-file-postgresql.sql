@@ -2,7 +2,7 @@
 CREATE TABLE upload_file (
    uuid varchar(32) NOT NULL,
    rel_obj_type varchar(50),
-   rel_obj_id bigint,
+   rel_obj_id varchar(32),
    rel_obj_field varchar(50),
    file_name varchar(100) NOT NULL,
    storage_path varchar(200) NOT NULL,

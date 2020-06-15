@@ -2,7 +2,7 @@
 CREATE TABLE ${SCHEMA}.upload_file (
      uuid VARCHAR2(32) NOT NULL,
      rel_obj_type VARCHAR2(50),
-     rel_obj_id NUMBER(20),
+     rel_obj_id VARCHAR2(32),
      rel_obj_field VARCHAR2(50),
      file_name VARCHAR2(100) NOT NULL,
      storage_path VARCHAR2(200) NOT NULL,

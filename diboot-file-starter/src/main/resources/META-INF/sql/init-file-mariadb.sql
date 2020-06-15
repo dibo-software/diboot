@@ -2,7 +2,7 @@
 CREATE TABLE upload_file (
   uuid varchar(32) NOT NULL COMMENT '编号' primary key,
   rel_obj_type varchar(50) DEFAULT NULL COMMENT '关联对象类',
-  rel_obj_id bigint DEFAULT NULL COMMENT '关联对象ID',
+  rel_obj_id varchar(32) DEFAULT NULL COMMENT '关联对象ID',
   rel_obj_field varchar(50) DEFAULT NULL COMMENT '关联对象属性名称',
   file_name varchar(100) NOT NULL COMMENT '文件名',
   storage_path varchar(200) NOT NULL COMMENT '存储路径',
