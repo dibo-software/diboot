@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
@@ -288,5 +289,27 @@ public class BaseServiceTest {
 
         List<Dictionary> ids = dictionaryService.getEntityListLimit(queryWrapper, 5);
         Assert.assertTrue(ids.size() == 2);
+    }
+
+    @Test
+    public void testPagination(){
+        Dictionary dict = new Dictionary();
+        dict.setParentId(1L);
+        dict.setType("GENDER");
+        dict.setEditable(true);
+
+        QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
+
+        // 查询当前页的数据
+        Pagination pagination = new Pagination();
+        pagination.setPageSize(1);
+
+        List<DictionaryVO> voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
+        Assert.assertTrue(voList.size() == 1);
+        Assert.assertTrue(pagination.getTotalPage() >= 2);
+
+        pagination.setPageIndex(2);
+        voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
+        Assert.assertTrue(voList.size() == 1);
     }
 }

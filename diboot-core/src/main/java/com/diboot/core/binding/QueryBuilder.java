@@ -230,6 +230,15 @@ public class QueryBuilder {
                             wrapper.between(columnName, valueArray[0], valueArray[1]);
                         }
                     }
+                    else if(value instanceof List){
+                        List valueList = (List)value;
+                        if(valueList.size() == 1){
+                            wrapper.ge(columnName, valueList.get(0));
+                        }
+                        else if(valueList.size() >= 2){
+                            wrapper.between(columnName, valueList.get(0), valueList.get(1));
+                        }
+                    }
                     // 支持逗号分隔的字符串
                     else if(value instanceof String && ((String) value).contains(",")){
                         Object[] valueArray = ((String) value).split(",");
