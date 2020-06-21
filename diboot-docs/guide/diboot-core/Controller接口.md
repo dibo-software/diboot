@@ -112,6 +112,17 @@ String str = this.beforeDelete(entity);
 ```
 该方法主要用来处理删除数据之前的逻辑，如检验是否具有删除权限等，供子类重写实现。
 
+## 关于 /common/attachMore 接口
+attachMore是用于为前端select下拉框提供初始数据的通用接口，默认会初始化生成在DictionaryController中。
+当前端展现形式为Select下拉等数据量不大的场景下可调用该接口进行初始化。
+当数据量较大，不适合用Select展现等场景，请通过自定义接口实现。
+~~~java
+@PostMapping("/common/attachMore")
+public JsonResult attachMore(@Valid @RequestBody ValidList<AttachMoreDTO> attachMoreDTOList) {
+    ...
+}
+~~~
+
 ## 数据校验
 
 > 默认使用**hibernate-validator**进行后端数据校验。进行数据校验至少需要两步操作，在entity中设置每个字段的校验规则，以及在controller中对实体添加@Valid注解。

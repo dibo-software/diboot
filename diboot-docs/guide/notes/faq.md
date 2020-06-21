@@ -97,6 +97,13 @@ menus = BeanUtils.buildTree(menus);
 ~~~
 返回第一级子节点集合。
 
+## 查询Date类型日期范围，如何自动绑定？
+使用Comparison.BETWEEN进行绑定，BETWEEN支持数组、List、及逗号拼接的字符串。
+~~~java
+@BindQuery(comparison = Comparison.BETWEEN, field = "createTime")
+private List<Date> createDate;
+~~~
+
 ## 查询Date类型日期时间字段 = 某天，如何自动绑定？
 建议逻辑: datetime_field >= beginDate AND datetime_field < (beginDate+1) 。
 无函数处理，不涉及数据库类型转换。示例：
@@ -113,9 +120,5 @@ public void setBeginDate(Date beginDate){
 }
 ~~~
 
-
-
-## 为何引入iam后启动报错？
-确保您配置了**@EnableTransactionManagement**注解，可参考 [IAM参数配置-注解配置](/guide/diboot-iam/开始使用.html#_2、参数配置：)
 
 

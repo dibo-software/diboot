@@ -20,7 +20,7 @@ public JsonResult getDepartmentVOList(DepartmentDto departmentDto) throws Except
 }
 ~~~
 
-* v2.1.x 版本开始，BaseCrudRestController移除了VO泛型参数，便于子类区分不同VO，同时父类方法getViewObject*增加VO class参数用于指定VO。
+* v2.1.x 版本开始，BaseCrudRestController移除了VO泛型参数，便于子类灵活指定不同VO，同时父类方法getViewObject*增加VO class参数用于指定VO。
 修改示例：
 ~~~java
 public class DepartmentController extends BaseCustomCrudRestController<Department, DepartmentVO> {
@@ -35,6 +35,13 @@ public class DepartmentController extends BaseCustomCrudRestController<Departmen
     super.getViewObjectList(entity, pagination, DepartmentVO.class);
 “}
 ~~~
+
+* v2.1.x版本开始，新增了通用的/common/attachMore接口，用于统一提供key-value形式数据，用于select下拉框等组件。
+建议升级步骤：
+    * 备份DictionaryController及各Base基础代码
+    * 启动diboot-devtools，在组件初始化页面找到diboot-core，点击生成代码
+    * 将你改动过的Base基础代码合并至新生成的类
+
 * v2.1.x版本开始，core-starter中不再默认指定Date类型转json的默认格式，而是通过Date字段注解@JSONField(format=)去指定。
 如果Date日期格式非预期，您可以通过以下两种方式调整：
 1. 需要在Date字段上添加@JSONField(format=)注解。
