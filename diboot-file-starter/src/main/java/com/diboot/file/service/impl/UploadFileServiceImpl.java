@@ -41,7 +41,7 @@ public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, Upl
     public List<UploadFile> getUploadedFiles(String relObjClass, Object relObjId) {
         LambdaQueryWrapper<UploadFile> queryWrapper = new QueryWrapper<UploadFile>().lambda()
                 .eq(UploadFile::getRelObjType, relObjClass)
-                .eq(UploadFile::getRelObjId, relObjId)
+                .eq(UploadFile::getRelObjId, relObjId.toString())
                 .orderByAsc(UploadFile::getCreateTime);
         return getEntityList(queryWrapper);
     }
@@ -55,7 +55,7 @@ public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, Upl
             this.update(
                     Wrappers.<UploadFile>lambdaUpdate()
                     .set(true, UploadFile::isDeleted, true)
-                    .eq(UploadFile::getRelObjId, relObjId)
+                    .eq(UploadFile::getRelObjId, relObjId.toString())
                     .eq(UploadFile::getRelObjType, relObjTypeClass.getSimpleName())
             );
             return;
@@ -64,14 +64,14 @@ public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, Upl
         this.update(
                 Wrappers.<UploadFile>lambdaUpdate()
                         .set(true, UploadFile::isDeleted, true)
-                        .eq(UploadFile::getRelObjId, relObjId)
+                        .eq(UploadFile::getRelObjId, relObjId.toString())
                         .eq(UploadFile::getRelObjType, relObjTypeClass.getSimpleName())
                         .notIn(UploadFile::getUuid, fileUuidList)
         );
         // 绑定绑定数据
         this.update(
                 Wrappers.<UploadFile>lambdaUpdate()
-                        .set(true, UploadFile::getRelObjId, relObjId)
+                        .set(true, UploadFile::getRelObjId, relObjId.toString())
                         .in(UploadFile::getUuid, fileUuidList)
         );
     }
