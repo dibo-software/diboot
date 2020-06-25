@@ -18,8 +18,10 @@ package com.diboot.core.util;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -87,6 +89,9 @@ public class ContextHelper implements ApplicationContextAware {
     public static ApplicationContext getApplicationContext() {
         if (APPLICATION_CONTEXT == null){
             APPLICATION_CONTEXT = ContextLoader.getCurrentWebApplicationContext();
+        }
+        if(APPLICATION_CONTEXT == null){
+            log.warn("无法获取ApplicationContext，请在Spring初始化之后调用!");
         }
         return APPLICATION_CONTEXT;
     }
@@ -200,9 +205,18 @@ public class ContextHelper implements ApplicationContextAware {
         }
         BaseService baseService =  ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
         if(baseService == null){
-            log.error("未能识别到Entity: "+entity.getName()+" 的Service实现！");
+            log.info("未能识别到Entity: "+entity.getName()+" 的Service实现！");
         }
         return baseService;
+    }
+
+    /**
+     * 根据Entity获取对应的BaseMapper实现
+     * @param entityClass
+     * @return
+     */
+    public static BaseMapper getBaseMapperByEntity(Class entityClass){
+        return ParserCache.getMapperInstance(entityClass);
     }
 
     /**

@@ -16,12 +16,15 @@
 package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -174,14 +177,18 @@ public class ParserCache {
         return tableName;
     }
 
-
     /**
-     * 根据类的entity小驼峰获取EntityClass
+     * 根据entity类获取mapper实例
      * @return
      */
-    public static Class<?> getEntityClassByEntityLowerCaseCamel(String table){
-        initTableToLinkageCacheMap();
-        return entityLowerCaseCamelEntityClassCacheMap.get(table);
+    public static BaseMapper getMapperInstance(Class<?> entityClass){
+        String tableName = getEntityTableName(entityClass);
+        TableLinkage linkage = getTableLinkage(tableName);
+        if(linkage == null){
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "未找到 "+entityClass.getName()+" 的Mapper定义！");
+        }
+        BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
+        return mapper;
     }
 
     /**

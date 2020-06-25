@@ -95,7 +95,7 @@ public class TestEntityListBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.list(queryWrapper);
+        List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
         // 验证绑定结果

@@ -57,7 +57,7 @@ public class TestFieldBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.list(queryWrapper);
+        List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<FieldBinderVO> voList = Binder.convertAndBindRelations(userList, FieldBinderVO.class);
         // 验证绑定结果
@@ -79,7 +79,7 @@ public class TestFieldBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.list(queryWrapper);
+        List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);
         if(V.notEmpty(voList)){

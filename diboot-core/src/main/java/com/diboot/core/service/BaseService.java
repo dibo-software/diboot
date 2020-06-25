@@ -77,6 +77,17 @@ public interface BaseService<T> {
     <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
 
     /**
+     * 创建或更新n-n关联
+     * （在主对象的service中调用，不依赖中间表service实现中间表操作）
+     * @param driverIdGetter 驱动对象getter
+     * @param driverId 驱动对象ID
+     * @param followerIdGetter 从动对象getter
+     * @param followerIdList 从动对象id集合
+     * @return
+     */
+    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId, SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+
+    /**
      * 更新Entity实体
      * @param entity
      * @return

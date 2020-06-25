@@ -21,6 +21,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
  * 用户角色
  * @author mazc@dibo.ltd
@@ -33,6 +35,9 @@ import lombok.experimental.Accessors;
 public class UserRole extends BaseEntity {
     private static final long serialVersionUID = 3030761344045195972L;
 
+    @TableField(exist = false)
+    private Long id;
+
     @TableField
     private Long userId;
 
@@ -41,5 +46,8 @@ public class UserRole extends BaseEntity {
 
     @TableField(exist = false)
     private boolean deleted;
+
+    @TableField(exist = false)
+    private Date createTime;
 
 }
