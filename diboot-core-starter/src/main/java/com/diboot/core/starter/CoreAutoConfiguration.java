@@ -18,6 +18,7 @@ package com.diboot.core.starter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.DateConverter;
 import org.mybatis.spring.annotation.MapperScan;
@@ -72,7 +73,7 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    @ConditionalOnMissingBean(HttpMessageConverters.class)
+    @ConditionalOnMissingBean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
         converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
@@ -91,6 +92,16 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
     }
 
     /**
+     * Mybatis-plus分页插件
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public PaginationInterceptor paginationInterceptor() {
+        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        return paginationInterceptor;
+    }
+
+    /**
      * 默认支持String-Date类型转换
      * @param registry
      */
@@ -98,4 +109,5 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new DateConverter());
     }
+
 }
