@@ -187,6 +187,26 @@ boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISett
 boolean deleteEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
 ~~~
 
+### createOrUpdateN2NRelations 创建或更新n-n关联
+* since v2.1.0
+```java
+/**
+ * 创建或更新n-n关联
+ * （在主动对象的service中调用，不要求中间表有service）
+ * @param driverIdGetter 驱动对象getter
+ * @param driverId 驱动对象ID
+ * @param followerIdGetter 从动对象getter
+ * @param followerIdList 从动对象id集合
+ */
+<R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId, SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+```
+使用示例：
+~~~java
+List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
+// 新增/修改/删除（集合为空） 中间表关联关系
+userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+~~~
+
 ### deleteEntity
 ```java
 boolean deleteEntity(Serializable id);
