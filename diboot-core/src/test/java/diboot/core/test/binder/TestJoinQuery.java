@@ -59,7 +59,7 @@ public class TestJoinQuery {
     public void testDateCompaire(){
         Department example = departmentService.getSingleEntity(null);
         DepartmentDTO departmentDTO = new DepartmentDTO();
-        departmentDTO.setBegin(example.getCreateTime());
+        departmentDTO.setCreateTime(example.getCreateTime());
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
         List<Department> list = departmentService.getEntityList(queryWrapper);
         Assert.assertTrue(list.size() >= 1);

@@ -59,15 +59,15 @@ public class DepartmentDTO extends Department {
     @DataAccessCheckpoint(type = CheckpointType.ORG)
     private Long orgId;
 
+    // 查询单个日期
     @BindQuery(comparison = Comparison.GE, field = "createTime")
-    private Date begin;
+    private Date createTime;
 
     @BindQuery(comparison = Comparison.LT, field = "createTime")
-    private Date end;
+    private Date createTimeEnd;
 
-    public void setBegin(Date date){
-        this.begin = date;
-        this.end = D.addDays(date, 1);
+    private Date getCreateTimeEnd(){
+        return D.nextDay(createTime);
     }
 
 }
