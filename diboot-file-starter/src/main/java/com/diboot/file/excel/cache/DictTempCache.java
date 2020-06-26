@@ -16,6 +16,7 @@
 package com.diboot.file.excel.cache;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
@@ -215,7 +216,12 @@ public class DictTempCache {
         if (cacheTime == null) {
             return true;
         }
-        return (System.currentTimeMillis() - cacheTime) > 600000;
+        // 过期分钟数
+        int expiredMinutes = BaseConfig.getInteger("system.dict.expire", 0);
+        if(expiredMinutes == 0){
+            return true;
+        }
+        return (System.currentTimeMillis() - cacheTime) > (expiredMinutes * 60000);
     }
 
 }

@@ -16,7 +16,9 @@
 package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.config.Cons;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
 import lombok.Getter;
 import lombok.Setter;

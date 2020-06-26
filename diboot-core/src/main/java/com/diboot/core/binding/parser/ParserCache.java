@@ -16,12 +16,15 @@
 package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -54,9 +57,9 @@ public class ParserCache {
      */
     private static Map<String, String> entityClassTableCacheMap = new ConcurrentHashMap<>();
     /**
-     * entity类小驼峰-entity类
+     * entity类小驼峰实例名-entity类
      */
-    private static Map<String, Class<?>> entityLowerCaseCamelEntityClassCacheMap = new ConcurrentHashMap<>();
+    private static Map<String, Class<?>> entityName2EntityClassCacheMap = new ConcurrentHashMap<>();
     /**
      * dto类-BindQuery注解的缓存
      */
@@ -121,7 +124,7 @@ public class ParserCache {
                                     Class<?> entityClass = Class.forName(entityClassName);
                                     TableLinkage linkage = new TableLinkage(entityClass, m);
                                     tableToLinkageCacheMap.put(linkage.getTable(), linkage);
-                                    entityLowerCaseCamelEntityClassCacheMap.put(entityClass.getSimpleName(), entityClass);
+                                    entityName2EntityClassCacheMap.put(entityClass.getSimpleName(), entityClass);
                                 }
                             }
                         }
@@ -174,14 +177,27 @@ public class ParserCache {
         return tableName;
     }
 
-
     /**
-     * 根据类的entity小驼峰获取EntityClass
+     * 根据entity类获取mapper实例
      * @return
      */
-    public static Class<?> getEntityClassByEntityLowerCaseCamel(String table){
+    public static BaseMapper getMapperInstance(Class<?> entityClass){
+        String tableName = getEntityTableName(entityClass);
+        TableLinkage linkage = getTableLinkage(tableName);
+        if(linkage == null){
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "未找到 "+entityClass.getName()+" 的Mapper定义！");
+        }
+        BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
+        return mapper;
+    }
+
+    /**
+     * 根据类的entity类名获取EntityClass
+     * @return
+     */
+    public static Class<?> getEntityClassByClassName(String className){
         initTableToLinkageCacheMap();
-        return entityLowerCaseCamelEntityClassCacheMap.get(table);
+        return entityName2EntityClassCacheMap.get(className);
     }
 
     /**

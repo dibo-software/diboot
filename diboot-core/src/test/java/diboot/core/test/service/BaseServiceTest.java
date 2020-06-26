@@ -30,6 +30,8 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.UserRole;
+import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,6 +57,9 @@ public class BaseServiceTest {
 
     @Autowired
     DictionaryServiceImpl dictionaryService;
+
+    @Autowired
+    UserService userService;
 
     @Test
     public void testGet(){
@@ -312,4 +317,33 @@ public class BaseServiceTest {
         voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
         Assert.assertTrue(voList.size() == 1);
     }
+
+    /**
+     * 测试n-n的批量新建/更新
+     */
+    @Test
+    @Transactional
+    public void testCreateUpdateN2NRelations(){
+        Long userId = 10001L;
+        LambdaQueryWrapper<UserRole> queryWrapper = new QueryWrapper<UserRole>().lambda().eq(UserRole::getUserId, userId);
+
+        // 新增
+        List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        List<UserRole> list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        Assert.assertTrue(list.size() == roleIdList.size());
+
+        // 更新
+        roleIdList = Arrays.asList(13L);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        Assert.assertTrue(list.size() == 1);
+
+        // 删除
+        roleIdList = null;
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        Assert.assertTrue(list.size() == 0);
+    }
+
 }
