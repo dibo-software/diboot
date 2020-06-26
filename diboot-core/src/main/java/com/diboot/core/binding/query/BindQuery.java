@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 
 /**
  * 绑定管理器
- * @author Xieshuang
+ * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/7/18
  */

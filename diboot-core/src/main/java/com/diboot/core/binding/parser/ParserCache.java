@@ -57,9 +57,9 @@ public class ParserCache {
      */
     private static Map<String, String> entityClassTableCacheMap = new ConcurrentHashMap<>();
     /**
-     * entity类小驼峰-entity类
+     * entity类小驼峰实例名-entity类
      */
-    private static Map<String, Class<?>> entityLowerCaseCamelEntityClassCacheMap = new ConcurrentHashMap<>();
+    private static Map<String, Class<?>> entityName2EntityClassCacheMap = new ConcurrentHashMap<>();
     /**
      * dto类-BindQuery注解的缓存
      */
@@ -124,7 +124,7 @@ public class ParserCache {
                                     Class<?> entityClass = Class.forName(entityClassName);
                                     TableLinkage linkage = new TableLinkage(entityClass, m);
                                     tableToLinkageCacheMap.put(linkage.getTable(), linkage);
-                                    entityLowerCaseCamelEntityClassCacheMap.put(entityClass.getSimpleName(), entityClass);
+                                    entityName2EntityClassCacheMap.put(entityClass.getSimpleName(), entityClass);
                                 }
                             }
                         }
@@ -189,6 +189,15 @@ public class ParserCache {
         }
         BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
         return mapper;
+    }
+
+    /**
+     * 根据类的entity类名获取EntityClass
+     * @return
+     */
+    public static Class<?> getEntityClassByClassName(String className){
+        initTableToLinkageCacheMap();
+        return entityName2EntityClassCacheMap.get(className);
     }
 
     /**
