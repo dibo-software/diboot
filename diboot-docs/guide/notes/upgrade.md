@@ -60,7 +60,7 @@ public void addFormatters(FormatterRegistry registry) {
 * v2.1.x版本开始，extdata扩展字段将不再推荐使用，该字段设计目的用于字段冗余的json存储，可以通过数据库的json数据类型实现。
 devtools从2.1版本开始不再支持extdata的特殊处理。
 
-* v2.1.x版本依赖组件升级为: Spring Boot 2.3.0，Mybatis-Plus 3.3.2，fastjson 1.2.70。根据您的依赖情况，可能会有依赖冲突需要解决。
+* v2.1.x版本依赖组件升级为: Spring Boot 2.3.x，Mybatis-Plus 3.3.x，fastjson 1.2.7x。根据您的依赖情况，可能会有依赖冲突需要解决。
 
 #### 2. diboot-devtools
 * v2.1版本开始，配置参数：
