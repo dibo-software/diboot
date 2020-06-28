@@ -78,7 +78,19 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			warning("createEntity", "参数entity为null");
 			return false;
 		}
+		return save(entity);
+	}
+
+	@Override
+	public boolean save(T entity) {
+		beforeCreateEntity(entity);
 		return super.save(entity);
+	}
+
+	/**
+	 * 用于创建之前的自动填充等场景调用
+	 */
+	protected void beforeCreateEntity(T entity){
 	}
 
 	@Override
@@ -130,7 +142,26 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		else{
 			// 批量插入
-			return super.saveBatch(entityList, BaseConfig.getBatchSize());
+			return saveBatch(entityList, BaseConfig.getBatchSize());
+		}
+	}
+
+	@Override
+	public boolean saveBatch(Collection<T> entityList, int batchSize){
+		// 批量插入
+		beforeCreateEntities(entityList);
+		return super.saveBatch(entityList, batchSize);
+	}
+
+	/**
+	 * 用于创建之前的自动填充等场景调用
+	 */
+	protected void beforeCreateEntities(Collection<T> entityList){
+		if(V.isEmpty(entityList)){
+			return;
+		}
+		for(T entity : entityList){
+			beforeCreateEntity(entity);
 		}
 	}
 
@@ -649,7 +680,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @param message
 	 */
 	private void warning(String method, String message){
-		log.warn(this.getClass().getName() + ".{} 调用错误: {}, 请检查！", method, message);
+		log.warn(this.getClass().getSimpleName() + ".{} 调用错误: {}, 请检查！", method, message);
 	}
 
 }

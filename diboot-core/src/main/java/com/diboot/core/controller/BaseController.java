@@ -50,7 +50,7 @@ public class BaseController {
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-		return QueryBuilder.toQueryWrapper(entityOrDto, extractParams());
+		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams());
 	}
 
 	/***
@@ -62,7 +62,7 @@ public class BaseController {
 		if(entityOrDto instanceof HttpServletRequest){
 			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
 		}
-		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractParams());
+		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractQueryParams());
 	}
 
 	/***
@@ -124,7 +124,7 @@ public class BaseController {
 	 * 提取请求参数名集合
 	 * @return
 	 */
-	private Set<String> extractParams(){
+	protected Set<String> extractQueryParams(){
 		Map<String, Object> paramValueMap = convertParams2Map();
 		if(V.notEmpty(paramValueMap)){
 			return paramValueMap.keySet();
@@ -136,7 +136,7 @@ public class BaseController {
 	 * 将请求参数值转换为Map
 	 * @return
 	 */
-	public Map<String, Object> convertParams2Map(){
+	protected Map<String, Object> convertParams2Map(){
 		Map<String, Object> result = new HashMap<>(8);
 		if(request == null){
 			return result;
@@ -196,7 +196,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public Long getLong(String param){
+	protected Long getLong(String param){
 		return S.toLong(request.getParameter(param));
 	}
 
@@ -206,7 +206,7 @@ public class BaseController {
 	 * @param defaultValue
 	 * @return
 	 */
-	public long getLong(String param, Long defaultValue){
+	protected long getLong(String param, Long defaultValue){
 		return S.toLong(request.getParameter(param), defaultValue);
 	}
 	
@@ -215,7 +215,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public Integer getInteger(String param){
+	protected Integer getInteger(String param){
 		return S.toInt(request.getParameter(param));
 	}
 
@@ -225,7 +225,7 @@ public class BaseController {
 	 * @param defaultValue
 	 * @return
 	 */
-	public int getInt(String param, Integer defaultValue){
+	protected int getInt(String param, Integer defaultValue){
 		return S.toInt(request.getParameter(param), defaultValue);
 	}
 
@@ -234,7 +234,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public boolean getBoolean(String param){
+	protected boolean getBoolean(String param){
 		return S.toBoolean(request.getParameter(param));
 	}
 
@@ -244,7 +244,7 @@ public class BaseController {
 	 * @param defaultBoolean
 	 * @return
 	 */
-	public boolean getBoolean(String param, boolean defaultBoolean){
+	protected boolean getBoolean(String param, boolean defaultBoolean){
 		return S.toBoolean(request.getParameter(param), defaultBoolean);
 	}
 
@@ -253,7 +253,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public Double getDouble(String param){
+	protected Double getDouble(String param){
 		if(V.notEmpty(request.getParameter(param))){
 			return Double.parseDouble(request.getParameter(param));
 		}
@@ -266,7 +266,7 @@ public class BaseController {
 	 * @param defaultValue
 	 * @return
 	 */
-	public Double getDouble(String param, Double defaultValue){
+	protected Double getDouble(String param, Double defaultValue){
 		if(V.notEmpty(request.getParameter(param))){
 			return Double.parseDouble(request.getParameter(param));
 		}
@@ -278,7 +278,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public String getString(String param){
+	protected String getString(String param){
 		if(V.notEmpty(request.getParameter(param))){
 			return request.getParameter(param);
 		}
@@ -291,7 +291,7 @@ public class BaseController {
 	 * @param defaultValue
 	 * @return
 	 */
-	public String getString(String param, String defaultValue){
+	protected String getString(String param, String defaultValue){
 		if(V.notEmpty(request.getParameter(param))){
 			return request.getParameter(param);
 		}
@@ -303,7 +303,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public String[] getStringArray(String param){
+	protected String[] getStringArray(String param){
 		if(request.getParameterValues(param) != null){
 			return request.getParameterValues(param);
 		}
@@ -315,7 +315,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public List<String> getStringList(String param){
+	protected List<String> getStringList(String param){
 		String[] strArray = getStringArray(param);
 		if(V.isEmpty(strArray)){
 			return null;
@@ -328,7 +328,7 @@ public class BaseController {
 	 * @param param
 	 * @return
 	 */
-	public List<Long> getLongList(String param){
+	protected List<Long> getLongList(String param){
 		String[] strArray = getStringArray(param);
 		if(V.isEmpty(strArray)){
 			return null;

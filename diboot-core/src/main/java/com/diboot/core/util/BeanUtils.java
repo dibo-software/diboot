@@ -161,8 +161,14 @@ public class BeanUtils {
      * @return
      */
     public static Object getProperty(Object obj, String field){
-        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
-        return wrapper.getPropertyValue(field);
+        try {
+            BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+            return wrapper.getPropertyValue(field);
+        }
+        catch (Exception e) {
+            log.warn("获取对象属性值出错，返回null", e);
+        }
+        return null;
     }
 
     /***
