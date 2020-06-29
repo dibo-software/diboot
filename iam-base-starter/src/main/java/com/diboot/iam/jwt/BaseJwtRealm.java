@@ -18,15 +18,16 @@ package com.diboot.iam.jwt;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.KeyValue;
 import com.diboot.iam.annotation.process.ApiPermissionCache;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -94,31 +95,26 @@ public class BaseJwtRealm extends AuthorizingRealm {
                 throw new AuthenticationException("用户账号或密码错误！");
             }
             // 获取当前user对象并缓存
-            Object userObject = null;
+            BaseLoginUser loginUser = null;
             BaseService userService = ContextHelper.getBaseServiceByEntity(jwtToken.getUserTypeClass());
             if(userService != null){
-                userObject = userService.getEntity(account.getUserId());
+                loginUser = (BaseLoginUser)userService.getEntity(account.getUserId());
             }
             else{
                 throw new AuthenticationException("用户 "+jwtToken.getUserTypeClass().getName()+" 相关的Service未定义！");
             }
-            if(userObject == null){
+            if(loginUser == null){
                 throw new AuthenticationException("用户不存在");
             }
             if(iamUserRoleService.getIamExtensible() != null){
-                Object extentionObj = iamUserRoleService.getIamExtensible().getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId());
+                KeyValue extentionObj = iamUserRoleService.getIamExtensible().getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId());
                 if(extentionObj != null){
-                    try{
-                        BeanUtils.setProperty(userObject, "extentionObj", extentionObj);
-                    }
-                    catch (Exception e){
-                        log.warn("设置{}.extentionObj异常，属性不存在? {}", jwtToken.getUserTypeClass().getSimpleName(), e.getMessage());
-                    }
+                    loginUser.setExtentionObj(extentionObj);
                 }
             }
             // 清空当前用户缓存
             this.clearCachedAuthorizationInfo(IamSecurityUtils.getSubject().getPrincipals());
-            return new SimpleAuthenticationInfo(userObject, jwtToken.getCredentials(), this.getName());
+            return new SimpleAuthenticationInfo(loginUser, jwtToken.getCredentials(), this.getName());
         }
     }
 
@@ -130,21 +126,15 @@ public class BaseJwtRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        Object currentUser = principals.getPrimaryPrincipal();
+        BaseLoginUser currentUser = (BaseLoginUser) principals.getPrimaryPrincipal();
         // 根据用户类型与用户id获取roleList
-        Long userId = (Long) BeanUtils.getProperty(currentUser, Cons.FieldName.id.name());
         Long extentionObjId = null;
-        try{
-            Object extentionObj = BeanUtils.getProperty(currentUser, "extentionObj");
-            if(extentionObj != null){
-                extentionObjId = (Long)BeanUtils.getProperty(extentionObj, Cons.FieldName.id.name());
-            }
-        }
-        catch (Exception e){
-            log.warn("解析user.extentionObj异常: {}", e.getMessage());
+        KeyValue extentionObj = currentUser.getExtentionObj();
+        if(extentionObj != null){
+            extentionObjId = (Long)extentionObj.getV();
         }
         // 获取角色列表
-        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), userId, extentionObjId);
+        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extentionObjId);
         // 如果没有任何角色，返回
         if (V.isEmpty(roleList)){
             return authorizationInfo;

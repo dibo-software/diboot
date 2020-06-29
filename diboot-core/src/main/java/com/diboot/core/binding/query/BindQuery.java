@@ -48,7 +48,7 @@ public @interface BindQuery {
     Class entity() default NullType.class;
 
     /***
-     * JOIN连接条件
+     * JOIN连接条件，支持动态的跨表JOIN查询
      * @return
      */
     String condition() default "";

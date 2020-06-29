@@ -25,12 +25,12 @@ import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.AuthCredential;
 import com.diboot.iam.dto.SSOCredential;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.jwt.BaseJwtAuthToken;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamLoginTraceService;
-import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -149,9 +149,9 @@ public class SSOAuthServiceImpl implements AuthService {
     protected void saveLoginTrace(BaseJwtAuthToken authToken, boolean isSuccess){
         IamLoginTrace loginTrace = new IamLoginTrace();
         loginTrace.setAuthType(getAuthType()).setAuthAccount(authToken.getAuthAccount()).setUserType(authToken.getUserType()).setSuccess(isSuccess);
-        Object currentUser = IamSecurityUtils.getCurrentUser();
+        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
         if(currentUser != null){
-            Long userId = (Long) BeanUtils.getProperty(currentUser, Cons.FieldName.id.name());
+            Long userId = currentUser.getId();
             loginTrace.setUserId(userId);
         }
         // 记录客户端信息

@@ -17,6 +17,9 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.Binder;
+import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamExtensible;
@@ -28,8 +31,8 @@ import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
+import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -207,6 +210,14 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         return success;
     }
 
+    @Override
+    public List<IamRoleVO> getAllRoleVOList(BaseEntity userObject) {
+        List<IamRole> roleList = getUserRoleList(userObject.getClass().getSimpleName(), userObject.getId());
+        if (V.isEmpty(roleList)){
+            return null;
+        }
+        return Binder.convertAndBindRelations(roleList, IamRoleVO.class);
+    }
 
     // 扩展接口检查标记
     private boolean iamExtensibleImplChecked = false;

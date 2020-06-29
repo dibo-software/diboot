@@ -38,13 +38,13 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>2.2.3</version>
+            <version>2.2.6</version>
         </dependency>
         <!-- http -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.5.0</version>
+            <version>4.7.2</version>
         </dependency>
         <!-- 图片压缩 -->
         <dependency>
@@ -57,7 +57,6 @@
             <groupId>com.github.whvcse</groupId>
             <artifactId>easy-captcha</artifactId>
             <version>1.6.2</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>

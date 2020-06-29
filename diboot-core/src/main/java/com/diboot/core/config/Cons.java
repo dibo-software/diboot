@@ -65,7 +65,15 @@ public class Cons {
         /**
          * 创建时间字段
          */
-        createTime
+        createTime,
+        /**
+         * 更新时间
+         */
+        updateTime,
+        /**
+         * 创建人
+         */
+        createBy
     }
 
 }
