@@ -111,11 +111,11 @@ public abstract class BaseFileController extends BaseController {
         String fileUid = S.newUuid();
         String newFileName = fileUid + "." + ext;
         String storageFullPath = FileHelper.saveFile(file, newFileName);
-
         UploadFile uploadFile = new UploadFile();
         uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(ext);
         uploadFile.setRelObjType(entityClass.getSimpleName()).setStoragePath(storageFullPath);
-
+        String accessUrl = buildAccessUrl(newFileName);
+        uploadFile.setAccessUrl(accessUrl);
         String description = getString("description");
         uploadFile.setDescription(description);
         // 返回uploadFile对象
@@ -152,19 +152,18 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 保存文件
      * @param uploadFileFormDTO
-     * @param <T>
      * @return
      * @throws Exception
      */
-    protected <T> UploadFile saveFile(UploadFileFormDTO uploadFileFormDTO) throws Exception{
+    protected UploadFile saveFile(UploadFileFormDTO uploadFileFormDTO) throws Exception{
         // 文件后缀
         String originFileName = uploadFileFormDTO.getFile().getOriginalFilename();
         String ext = FileHelper.getFileExtByName( uploadFileFormDTO.getFile().getOriginalFilename());
         // 先保存文件
         String fileUid = S.newUuid();
         String newFileName = fileUid + "." + ext;
-        String storageFullPath = FileHelper.saveFile( uploadFileFormDTO.getFile(), newFileName);
-        String accessUrl = FileHelper.getRelativePath(newFileName);
+        String storageFullPath = FileHelper.saveFile(uploadFileFormDTO.getFile(), newFileName);
+        String accessUrl = buildAccessUrl(newFileName);
         UploadFile uploadFile = new UploadFile();
         uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(ext);
         uploadFile.setRelObjType(uploadFileFormDTO.getRelObjType())
@@ -173,6 +172,15 @@ public abstract class BaseFileController extends BaseController {
                 .setDescription(uploadFileFormDTO.getDescription());
         // 返回uploadFile对象
         return uploadFile;
+    }
+
+    /**
+     * 构建文件访问/下载的url
+     * @param newFileName
+     * @return
+     */
+    protected String buildAccessUrl(String newFileName){
+        return "/uploadFile/download/" + newFileName;
     }
 
     /**
