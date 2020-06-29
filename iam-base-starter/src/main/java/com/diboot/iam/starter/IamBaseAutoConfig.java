@@ -126,6 +126,7 @@ public class IamBaseAutoConfig {
         filterChainDefinitionMap.put("/diboot/**", "anon");
         filterChainDefinitionMap.put("/error/**", "anon");
         filterChainDefinitionMap.put("/auth/**", "anon");
+        filterChainDefinitionMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
         String anonUrls = iamBaseProperties.getAnonUrls();
