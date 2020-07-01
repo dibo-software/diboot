@@ -59,8 +59,11 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @throws Exception
      */
     public JsonResult excelPreview(MultipartFile file) throws Exception {
-        Map<String, Object> dataMap = new HashMap(16);
-        savePreviewExcelFile(file, dataMap);
+        checkIsExcel(file);
+        // 保存文件到本地
+        UploadFile uploadFile = super.saveFile(file, getExcelDataListener().getExcelModelClass());
+        // 构建预览数据Map
+        Map<String, Object> dataMap = buildPreviewDataMap(uploadFile, file.getOriginalFilename());
         return JsonResult.OK(dataMap);
     }
 
@@ -71,8 +74,11 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @throws Exception
      */
     public JsonResult excelPreview(UploadFileFormDTO uploadFileFormDTO) throws Exception {
-        Map<String, Object> dataMap = new HashMap(16);
-        savePreviewExcelFile(uploadFileFormDTO, dataMap);
+        checkIsExcel(uploadFileFormDTO.getFile());
+        // 保存文件到本地
+        UploadFile uploadFile = super.saveFile(uploadFileFormDTO);
+        // 构建预览数据Map
+        Map<String, Object> dataMap = buildPreviewDataMap(uploadFile, uploadFileFormDTO.getFile().getOriginalFilename());
         return JsonResult.OK(dataMap);
     }
 
@@ -151,21 +157,21 @@ public abstract class BaseExcelFileController extends BaseFileController {
     }
 
     /**
-     * 保存上传文件
-     *
+     * 构建预览数据Map
+     * @param uploadFile
+     * @param originFileName
      * @return
      * @throws Exception
      */
-    private void savePreviewExcelFile(MultipartFile file, Map<String, Object> dataMap) throws Exception {
-        checkIsExcel(file);
-        // 保存文件到本地
-        UploadFile uploadFile = super.saveFile(file, getExcelDataListener().getExcelModelClass());
+    private Map<String, Object> buildPreviewDataMap(UploadFile uploadFile, String originFileName) throws Exception{
+        Map<String, Object> dataMap = new HashMap<>(8);
         // 预览
         FixedHeadExcelListener listener = getExcelDataListener();
         listener.setRequestParams(super.getParamsMap());
         try {
             ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.warn("解析并校验excel文件失败", e);
             if (V.notEmpty(e.getMessage())) {
                 throw new Exception(e.getMessage());
@@ -174,7 +180,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         // 绑定属性到model
         dataMap.put("header", listener.getFieldHeaders());
-        dataMap.put(ORIGIN_FILE_NAME, file.getOriginalFilename());
+        dataMap.put(ORIGIN_FILE_NAME, originFileName);
         dataMap.put(PREVIEW_FILE_NAME, FileHelper.getFileName(uploadFile.getStoragePath()));
         List dataList = listener.getDataList();
         if (V.notEmpty(dataList) && dataList.size() > BaseConfig.getPageSize()) {
@@ -182,40 +188,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         //最多返回前端十条数据
         dataMap.put("dataList", dataList);
-    }
-
-    /**
-     * 保存上传文件
-     *
-     * @return
-     * @throws Exception
-     */
-    private void savePreviewExcelFile(UploadFileFormDTO uploadFileFormDTO, Map<String, Object> dataMap) throws Exception {
-        checkIsExcel(uploadFileFormDTO.getFile());
-        // 保存文件到本地
-        UploadFile uploadFile = super.saveFile(uploadFileFormDTO);
-        // 预览
-        FixedHeadExcelListener listener = getExcelDataListener();
-        listener.setRequestParams(super.getParamsMap());
-        try {
-            ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
-        } catch (Exception e) {
-            log.warn("解析并校验excel文件失败", e);
-            if (V.notEmpty(e.getMessage())) {
-                throw new Exception(e.getMessage());
-            }
-            throw e;
-        }
-        // 绑定属性到model
-        dataMap.put("header", listener.getFieldHeaders());
-        dataMap.put(ORIGIN_FILE_NAME, uploadFileFormDTO.getFile().getOriginalFilename());
-        dataMap.put(PREVIEW_FILE_NAME, FileHelper.getFileName(uploadFile.getStoragePath()));
-        List dataList = listener.getDataList();
-        if (V.notEmpty(dataList) && dataList.size() > BaseConfig.getPageSize()) {
-            dataList = dataList.subList(0, BaseConfig.getPageSize());
-        }
-        //最多返回前端十条数据
-        dataMap.put("dataList", dataList);
+        return dataMap;
     }
 
     /**

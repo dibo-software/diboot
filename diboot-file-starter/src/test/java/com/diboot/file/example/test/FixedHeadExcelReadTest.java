@@ -52,6 +52,7 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
             Assert.assertTrue(success);
             System.out.println(JSON.stringify(listener.getFieldHeadMap()));
             System.out.println(JSON.stringify(listener.getDataList()));
+            Assert.assertTrue(listener.getDataList().get(0).getUserStatus().equals("在职"));
         }
         catch (Exception e){
             e.printStackTrace();
@@ -75,6 +76,28 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
         catch (Exception e){
             e.printStackTrace();
             Assert.assertTrue(e.getMessage().contains(Status.FAIL_VALIDATION.label()));
+        }
+        finally {
+            deleteTempFile();
+        }
+    }
+
+    @Test
+    public void testNormalDataReadSave(){
+        try{
+            prepareNormalDataExcel();
+            // 读且保存
+            DepartmentImportListener listener = new DepartmentImportListener();
+            boolean success = ExcelHelper.readAndSaveExcel(getTempFilePath(), listener);
+            Assert.assertTrue(success);
+            System.out.println(JSON.stringify(listener.getFieldHeadMap()));
+            System.out.println(JSON.stringify(listener.getDataList()));
+            Assert.assertTrue(listener.getDataList().get(0).getUserStatus().equals("A"));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            Assert.fail();
         }
         finally {
             deleteTempFile();

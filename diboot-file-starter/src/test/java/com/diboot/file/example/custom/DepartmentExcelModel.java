@@ -18,7 +18,6 @@ package com.diboot.file.example.custom;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.file.excel.BaseExcelModel;
-import com.diboot.file.excel.converter.DictConverter;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -52,7 +51,7 @@ public class DepartmentExcelModel extends BaseExcelModel {
 
     @NotNull(message = "必须指定status")
     @BindDict(type = "USER_STATUS")
-    @ExcelProperty(value = "状态", index = 4, converter = DictConverter.class)
+    @ExcelProperty(value = "状态", index = 4)
     private String userStatus;
 
 }

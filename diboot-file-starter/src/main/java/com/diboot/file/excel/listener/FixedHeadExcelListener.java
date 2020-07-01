@@ -19,7 +19,9 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.alibaba.excel.metadata.Head;
+import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -29,6 +31,7 @@ import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.cache.DictTempCache;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 /***
@@ -82,25 +85,28 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     **/
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        //表头和数据校验
-        validateHeaderAndDataList();
-        // 收集校验异常信息
-        if(V.notEmpty(dataList)){
-            //自定义数据校验
-            additionalValidate(dataList, requestParams);
-            // 提取校验结果
-            dataList.stream().forEach(data->{
-                if(V.notEmpty(data.getValidateError())){
-                    validateErrorMsgs.add(data.getRowIndex() + "行: " + data.getValidateError());
-                }
-            });
+        if(V.isEmpty(dataList)){
+            return;
         }
+        // 收集校验异常信息
+        //表头和数据校验
+        validateHeaderAndDataList(context);
+        // 检查或转换字典
+        validateOrConvertDict(context);
+        //自定义数据校验
+        additionalValidate(dataList, requestParams);
+        // 提取校验结果
+        dataList.stream().forEach(data->{
+            if(V.notEmpty(data.getValidateError())){
+                validateErrorMsgs.add(data.getRowIndex() + "行: " + data.getValidateError());
+            }
+        });
         // 有错误 抛出异常
         if(V.notEmpty(this.validateErrorMsgs)){
             throw new BusinessException(Status.FAIL_VALIDATION, S.join(this.validateErrorMsgs, "; "));
         }
         // 保存
-        if(preview == false && V.notEmpty(dataList)){
+        if(preview == false){
             // 保存数据
             saveData(dataList, requestParams);
         }
@@ -155,15 +161,65 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     /**
      * 校验表头, 校验数据实体list
      * */
-    private void validateHeaderAndDataList() {
+    private void validateHeaderAndDataList(AnalysisContext context) {
         // 校验数据是否合法
-        if(V.notEmpty(dataList)){
-            dataList.stream().forEach(data->{
-                String errMsg = V.validateBean(data);
-                if(V.notEmpty(errMsg)){
-                    data.addValidateError(errMsg);
+        dataList.stream().forEach(data->{
+            String errMsg = V.validateBean(data);
+            if(V.notEmpty(errMsg)){
+                data.addValidateError(errMsg);
+            }
+        });
+    }
+
+    /**
+     * 校验或转换字典name-value
+     * @param context
+     */
+    private void validateOrConvertDict(AnalysisContext context){
+        Map<String, String> fieldName2DictTypeMap = null;
+        Map<Integer, ExcelContentProperty> map = context.currentReadHolder().excelReadHeadProperty().getContentPropertyMap();
+        for(Map.Entry<Integer, ExcelContentProperty> entry : map.entrySet()){
+            // 注解
+            Field field = entry.getValue().getField();
+            BindDict bindDict = field.getAnnotation(BindDict.class);
+            if (bindDict != null) {
+                if(fieldName2DictTypeMap == null){
+                    fieldName2DictTypeMap = new HashMap<>(8);
                 }
-            });
+                fieldName2DictTypeMap.put(field.getName(), bindDict.type());
+            }
+        }
+        if(fieldName2DictTypeMap == null){
+            return;
+        }
+        // 预览时只检查
+        if(this.preview){
+            for(T data : dataList){
+                for(Map.Entry<String, String> entry: fieldName2DictTypeMap.entrySet()){
+                    String dictLabel = BeanUtils.getStringProperty(data, entry.getKey());
+                    if(V.notEmpty(dictLabel)){
+                        String dictValue = DictTempCache.getDictValue(entry.getValue(), dictLabel);
+                        if(dictValue == null){
+                            data.addValidateError(dictLabel + " 无匹配字典值");
+                        }
+                    }
+                    else{
+                        data.addValidateError(" 无匹配字典值");
+                    }
+                }
+            }
+        }
+        // 转换
+        else{
+            for(T data : dataList){
+                for(Map.Entry<String, String> entry: fieldName2DictTypeMap.entrySet()){
+                    String dictLabel = BeanUtils.getStringProperty(data, entry.getKey());
+                    if(V.notEmpty(dictLabel)){
+                        String dictValue = DictTempCache.getDictValue(entry.getValue(), dictLabel);
+                        BeanUtils.setProperty(data,  entry.getKey(), dictValue);
+                    }
+                }
+            }
         }
     }
 
