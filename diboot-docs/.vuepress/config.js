@@ -77,7 +77,7 @@ module.exports = {
                         ['/guide/diboot-element-admin/开始使用', '开始使用'],
                         ['/guide/diboot-element-admin/添加页面', '添加页面'],
                         ['/guide/diboot-element-admin/权限控制', '权限控制'],
-                        ['/guide/diboot-antd-admin/接口请求', '接口请求'],
+                        ['/guide/diboot-element-admin/接口请求', '接口请求'],
                         ['/guide/diboot-element-admin/CRUD快速集成', 'CRUD快速集成'],
                     ]
                 }
