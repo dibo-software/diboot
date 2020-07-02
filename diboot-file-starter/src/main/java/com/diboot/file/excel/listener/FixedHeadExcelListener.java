@@ -19,7 +19,6 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.alibaba.excel.metadata.Head;
-import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.exception.BusinessException;
@@ -28,10 +27,14 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.file.excel.BaseExcelModel;
-import com.diboot.file.excel.cache.DictTempCache;
+import com.diboot.file.excel.annotation.DuplicateStrategy;
+import com.diboot.file.excel.annotation.EmptyStrategy;
+import com.diboot.file.excel.annotation.ExcelBindDict;
+import com.diboot.file.excel.annotation.ExcelBindField;
+import com.diboot.file.excel.cache.ExcelBindAnnoHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
 import java.util.*;
 
 /***
@@ -90,9 +93,9 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         }
         // 收集校验异常信息
         //表头和数据校验
-        validateHeaderAndDataList(context);
-        // 检查或转换字典
-        validateOrConvertDict(context);
+        validateHeaderAndDataList();
+        // 检查或转换字典和关联字段
+        validateOrConvertDictAndRefField(context);
         //自定义数据校验
         additionalValidate(dataList, requestParams);
         // 提取校验结果
@@ -145,10 +148,6 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
         this.headMap = headMap;
-        // 刷新字典缓存
-        Class<T> modelClass = BeanUtils.getGenericityClass(this, 0);
-        DictTempCache.refreshGenericDictCache(modelClass);
-
         ExcelReadHeadProperty excelReadHeadProperty = context.currentReadHolder().excelReadHeadProperty();
         fieldHeadMap = new LinkedHashMap<>();
         for(Map.Entry<Integer, Head> entry : excelReadHeadProperty.getHeadMap().entrySet()){
@@ -161,7 +160,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     /**
      * 校验表头, 校验数据实体list
      * */
-    private void validateHeaderAndDataList(AnalysisContext context) {
+    private void validateHeaderAndDataList() {
         // 校验数据是否合法
         dataList.stream().forEach(data->{
             String errMsg = V.validateBean(data);
@@ -175,48 +174,57 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
      * 校验或转换字典name-value
      * @param context
      */
-    private void validateOrConvertDict(AnalysisContext context){
-        Map<String, String> fieldName2DictTypeMap = null;
-        Map<Integer, ExcelContentProperty> map = context.currentReadHolder().excelReadHeadProperty().getContentPropertyMap();
-        for(Map.Entry<Integer, ExcelContentProperty> entry : map.entrySet()){
-            // 注解
-            Field field = entry.getValue().getField();
-            BindDict bindDict = field.getAnnotation(BindDict.class);
-            if (bindDict != null) {
-                if(fieldName2DictTypeMap == null){
-                    fieldName2DictTypeMap = new HashMap<>(8);
-                }
-                fieldName2DictTypeMap.put(field.getName(), bindDict.type());
-            }
-        }
-        if(fieldName2DictTypeMap == null){
+    protected void validateOrConvertDictAndRefField(AnalysisContext context){
+        Map<String, Annotation> fieldName2BindAnnoMap = ExcelBindAnnoHandler.getField2BindAnnoMap(this.getExcelModelClass());
+        if(fieldName2BindAnnoMap.isEmpty()){
             return;
         }
-        // 预览时只检查
-        if(this.preview){
+        for(Map.Entry<String, Annotation> entry: fieldName2BindAnnoMap.entrySet()){
+            List nameList = (entry.getValue() instanceof ExcelBindField)? BeanUtils.collectToList(dataList, entry.getKey()) : null;
+            Map<String, List> map = ExcelBindAnnoHandler.convertToNameValueMap(entry.getValue(), nameList);
             for(T data : dataList){
-                for(Map.Entry<String, String> entry: fieldName2DictTypeMap.entrySet()){
-                    String dictLabel = BeanUtils.getStringProperty(data, entry.getKey());
-                    if(V.notEmpty(dictLabel)){
-                        String dictValue = DictTempCache.getDictValue(entry.getValue(), dictLabel);
-                        if(dictValue == null){
-                            data.addValidateError(dictLabel + " 无匹配字典值");
+                String name = BeanUtils.getStringProperty(data, entry.getKey());
+                List valList = map.get(name);
+                if(entry.getValue() instanceof ExcelBindField){
+                    ExcelBindField excelBindField = (ExcelBindField)entry.getValue();
+                    if(V.isEmpty(valList)){
+                        if(excelBindField.empty().equals(EmptyStrategy.SET_0)){
+                            // 非预览时 赋值
+                            if(!preview){
+                                BeanUtils.setProperty(data, excelBindField.setIdField(), 0);
+                            }
+                        }
+                        else if(excelBindField.empty().equals(EmptyStrategy.WARN)){
+                            data.addValidateError(name + " 为空");
+                        }
+                    }
+                    else if(valList.size() == 1){
+                        // 非预览时 赋值
+                        if(!preview){
+                            BeanUtils.setProperty(data, excelBindField.setIdField(), valList.get(0));
                         }
                     }
                     else{
-                        data.addValidateError(" 无匹配字典值");
+                        if(excelBindField.duplicate().equals(DuplicateStrategy.WARN)){
+                            data.addValidateError(name + " 匹配到多个ID");
+                        }
+                        else if(excelBindField.duplicate().equals(DuplicateStrategy.FIRST)){
+                            // 非预览时 赋值
+                            if(!preview){
+                                BeanUtils.setProperty(data, excelBindField.setIdField(), valList.get(0));
+                            }
+                        }
                     }
                 }
-            }
-        }
-        // 转换
-        else{
-            for(T data : dataList){
-                for(Map.Entry<String, String> entry: fieldName2DictTypeMap.entrySet()){
-                    String dictLabel = BeanUtils.getStringProperty(data, entry.getKey());
-                    if(V.notEmpty(dictLabel)){
-                        String dictValue = DictTempCache.getDictValue(entry.getValue(), dictLabel);
-                        BeanUtils.setProperty(data,  entry.getKey(), dictValue);
+                else if(entry.getValue() instanceof ExcelBindDict || entry.getValue() instanceof BindDict){
+                    if(V.isEmpty(valList)){
+                        data.addValidateError(name + " 无匹配字典");
+                    }
+                    else{
+                        // 非预览时 赋值
+                        if(!preview){
+                            BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
+                        }
                     }
                 }
             }
@@ -282,7 +290,6 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     public List<T> getDataList(){
         return dataList;
     }
-
 
     /***
      * 获取Excel映射的Model类

@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version v2.0
  * @date 2020/02/22
  */
+@Deprecated
 @Slf4j
 public class DictTempCache {
     /**

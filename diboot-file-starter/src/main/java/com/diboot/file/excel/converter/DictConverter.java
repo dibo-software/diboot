@@ -20,9 +20,6 @@ import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.exception.BusinessException;
-import com.diboot.file.excel.cache.DictTempCache;
 
 /**
  * 枚举转化器 (已废弃，不再需要指定)

@@ -58,11 +58,6 @@ public class DepartmentImportListener extends FixedHeadExcelListener<DepartmentE
         List<Department> departmentList = BeanUtils.convertList(getDataList(), Department.class);
         // 保存数据
         //departmentService.createEntities(departmentList);
-
-        // 获取导入的UploadFileUuid
-        //this.uploadFileUuid
-
-        System.out.println(JSON.stringify(departmentList));
     }
 
 }
