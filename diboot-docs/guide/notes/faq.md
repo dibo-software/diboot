@@ -98,25 +98,77 @@ menus = BeanUtils.buildTree(menus);
 返回第一级子节点集合。
 
 ## 查询Date类型日期范围，如何自动绑定？
-使用Comparison.BETWEEN进行绑定，BETWEEN支持数组、List、及逗号拼接的字符串。
+使用Comparison.GE，Comparison.LT进行绑定，避免数据库转型。
 ~~~java
-@BindQuery(comparison = Comparison.BETWEEN, field = "createTime")
-private List<Date> createDate;
+/**
+ * 创建时间-起始
+ */
+@BindQuery(comparison = Comparison.GE, field = "createTime")
+private Date createTimeBegin;
+
+/**
+ * 创建时间-截止（截止时间<=当天23：59：59是不精确的，应该是<第二天）
+ */
+@BindQuery(comparison = Comparison.LT, field = "createTime")
+private Date createTimeEnd;
+
+public TodoRemider setCreateTimeEnd(Date createTimeEnd) {
+    this.createTimeEnd = D.nextDay(createTimeEnd);
+    return this;
+}
 ~~~
 
 ## 查询Date类型日期时间字段 = 某天，如何自动绑定？
 建议逻辑: datetime_field >= beginDate AND datetime_field < (beginDate+1) 。
 无函数处理，不涉及数据库类型转换。示例：
 ~~~java
+/**
+ * 创建时间-起始
+ */
 @BindQuery(comparison = Comparison.GE, field = "createTime")
-private Date beginDate;
-
+private Date createTime;
+/**
+ * 创建时间-截止
+ */
 @BindQuery(comparison = Comparison.LT, field = "createTime")
-private Date endDate;
+private Date createTimeEnd;
 
-public void setBeginDate(Date beginDate){
-    this.beginDate = beginDate;
-    this.endDate = D.addDays(beginDate, 1);
+public Date getCreateTimeEnd() {
+    return D.nextDay(createTime);
+}
+~~~
+
+## 如何在新建时填充createBy创建人等字段
+* 可以通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
+~~~java 
+@Component
+public class CustomMetaObjectHandler implements MetaObjectHandler {
+    
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
+        if(currentUser != null){
+            this.strictInsertFill(metaObject, Cons.FieldName.createBy.name(), Long.class, currentUser.getId());
+        }
+    }
+    ...
+}
+~~~
+
+* 也可以在BaseCustomServiceImpl中重写beforeCreateEntity，统一填充所需字段。如从登录用户取值填充 创建人ID，姓名等字段。
+~~~java
+public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseServiceImpl<M, T> implements BaseCustomService<T> {
+    @Override
+    protected void beforeCreateEntity(T entity){
+        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
+        if(currentUser != null){
+            // 填充创建人示例
+            Field field = BeanUtils.extractField(entityClass, Cons.FieldName.createBy.name());
+            if(field != null){
+                BeanUtils.setProperty(entity, Cons.FieldName.createBy.name(), currentUser.getId());
+            }
+        }
+    }
 }
 ~~~
 
