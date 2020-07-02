@@ -110,6 +110,9 @@ public class ExcelBindAnnoHandler {
      * @return
      */
     private static Map<String, List> executeBindField(ExcelBindField bindField, List<String> nameList){
+        if(V.isEmpty(nameList)){
+            return Collections.emptyMap();
+        }
         BaseService service = ContextHelper.getBaseServiceByEntity(bindField.entity());
         String nameColumn = S.toSnakeCase(bindField.field());
         String idColumn = S.toSnakeCase(ContextHelper.getPrimaryKey(bindField.entity()));

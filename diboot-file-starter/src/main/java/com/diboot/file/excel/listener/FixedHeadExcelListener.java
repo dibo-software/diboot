@@ -15,10 +15,12 @@
  */
 package com.diboot.file.excel.listener;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.alibaba.excel.metadata.Head;
+import com.alibaba.excel.metadata.property.ExcelContentProperty;
 import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.exception.BusinessException;
@@ -150,10 +152,12 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         this.headMap = headMap;
         ExcelReadHeadProperty excelReadHeadProperty = context.currentReadHolder().excelReadHeadProperty();
         fieldHeadMap = new LinkedHashMap<>();
-        for(Map.Entry<Integer, Head> entry : excelReadHeadProperty.getHeadMap().entrySet()){
-            Head head = entry.getValue();
-            String columnName = S.join(head.getHeadNameList());
-            fieldHeadMap.put(head.getFieldName(), columnName);
+        for(Map.Entry<Integer, ExcelContentProperty> entry : excelReadHeadProperty.getContentPropertyMap().entrySet()){
+            if(entry.getValue().getField().getAnnotation(ExcelProperty.class) != null){
+                Head head = entry.getValue().getHead();
+                String columnName = S.join(head.getHeadNameList());
+                fieldHeadMap.put(head.getFieldName(), columnName);
+            }
         }
     }
 
@@ -195,7 +199,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
                             }
                         }
                         else if(excelBindField.empty().equals(EmptyStrategy.WARN)){
-                            data.addValidateError(name + " 为空");
+                            data.addValidateError(name + " 值不存在");
                         }
                     }
                     else if(valList.size() == 1){
@@ -206,7 +210,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
                     }
                     else{
                         if(excelBindField.duplicate().equals(DuplicateStrategy.WARN)){
-                            data.addValidateError(name + " 匹配到多个ID");
+                            data.addValidateError(name + " 匹配到多个值");
                         }
                         else if(excelBindField.duplicate().equals(DuplicateStrategy.FIRST)){
                             // 非预览时 赋值

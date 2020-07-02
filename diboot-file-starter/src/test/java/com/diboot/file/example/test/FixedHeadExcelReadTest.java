@@ -70,8 +70,6 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
     public void testErrorDataRead(){
         try{
             prepareErrorDataExcel();
-            // 预览读
-            //ExcelHelper.previewRead(getTempFilePath(), new DepartmentImportListener());
             // 读且保存
             ExcelHelper.previewReadExcel(getTempFilePath(), new DepartmentImportListener());
         }

@@ -40,11 +40,11 @@ public class ExcelWriteTest extends ApplicationTest {
      */
     public List<List<String>> buildNormalData(){
         List<List<String>> dataList = new ArrayList<>();
-        dataList.add(Arrays.asList("上级部门", "单位", "名称", "数量", "状态"));
+        dataList.add(Arrays.asList("上级部门", "单位", "名称", "数量", "状态", "文件"));
 
-        dataList.add(Arrays.asList("产品部", "dibo", "研发中心", "10", "在职"));
-        dataList.add(Arrays.asList("", "dibo", "营销中心", "10", "在职"));
-        dataList.add(Arrays.asList("产品部", "dibo", "财务部", "10", "离职"));
+        dataList.add(Arrays.asList("产品部", "dibo", "研发中心", "10", "在职", "department.xlsx"));
+        dataList.add(Arrays.asList("", "dibo", "营销中心", "10", "在职", ""));
+        dataList.add(Arrays.asList("产品部", "dibo", "财务部", "10", "离职", null));
         return dataList;
     }
 
