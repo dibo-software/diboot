@@ -338,9 +338,12 @@ public class QueryBuilder {
         // 转换
         List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
         for (Field field : declaredFields) {
-            // 非指定属性，非逻辑删除字段，跳过
+            // 非指定属性，非逻辑删除字段，跳过；
             if (fields != null && !fields.contains(field.getName())) {
-                continue;
+                //Date 属性放过
+                if (!V.equals(field.getType().getName(), "java.util.Date")) {
+                    continue;
+                }
             }
             //忽略static，以及final，transient
             boolean isStatic = Modifier.isStatic(field.getModifiers());

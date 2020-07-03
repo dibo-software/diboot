@@ -637,8 +637,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			String pk = getPrimaryKeyField();
 			// 主键非有序id字段，需要清空默认排序以免报错
 			if(!Cons.FieldName.id.name().equals(pk)){
-				log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
+//				log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
 				pagination.clearDefaultOrder();
+				//设置时间排序
+				pagination.setDefaultCreateTimeOrderBy();
 			}
 		}
 		return (Page<T>)pagination.toPage();

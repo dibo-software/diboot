@@ -60,6 +60,7 @@ public class Pagination implements Serializable {
      * 默认排序
      */
     private static final String DEFAULT_ORDER_BY = Cons.FieldName.id.name()+":"+Cons.ORDER_DESC;
+
     /**
      * 排序
      */
@@ -150,5 +151,14 @@ public class Pagination implements Serializable {
             page.addOrder(orderItemList);
         }
         return page;
+    }
+
+    /**
+     * 当id不是主键的时候，默认使用创建时间排序
+     *
+     * @return
+     */
+    public String setDefaultCreateTimeOrderBy() {
+        return this.orderBy = Cons.FieldName.createTime.name()+":"+Cons.ORDER_DESC;
     }
 }
