@@ -200,7 +200,7 @@ public JsonResult deleteEntityMapping(@PathVariable("id")Long id) throws Excepti
           "v-viewer": "^1.5.1",
       }   
     ```
-* 复制新版本 **src/components/diboot/** 路径下所有文件到旧版本项目中，添加及覆盖相关文件；
+* 复制新版本 **src/components/diboot/** 路径下所有文件到旧版本项目中，添加及覆盖相关文件（注意不要将自定义的相关文件删掉了）；
 * 复制新版本 **src/components/global.less**文件内容到旧版本项目中，覆盖之前的样式文件（如果您已经在此自定义了相关样式，记得将自定义的这部分提前提取出来）
 * 更新 **src/utils/request.js** 文件：
     * 引入qs：
