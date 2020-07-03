@@ -363,6 +363,7 @@ public JsonResult deleteEntityMapping(@PathVariable("id")Long id) throws Excepti
     // 改为
     <a-form layout="inline" @submit.native="onSearch">
 ``` 
+* 更改所有表单页的 **reloadMore** 参数为 **more** 参数；
 * 更改 **src/views/system/dictionary/list.vue** 文件
     * 更改当前文件的columns属性下的createTime，如下：
     ```javascript
