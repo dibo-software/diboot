@@ -38,6 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -331,8 +333,10 @@ public class QueryBuilder {
      */
     private static <DTO> LinkedHashMap<String, Object> extractNotNullValues(DTO dto, Collection<String> fields){
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<>();
+        Class<?> dtoClass = dto.getClass();
+
         // 转换
-        List<Field> declaredFields = BeanUtils.extractAllFields(dto.getClass());
+        List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
         for (Field field : declaredFields) {
             // 非指定属性，非逻辑删除字段，跳过
             if (fields != null && !fields.contains(field.getName())) {
@@ -350,8 +354,17 @@ public class QueryBuilder {
             Object value = null;
             try {
                 value = field.get(dto);
+                if (V.isEmpty(value)) {
+                    String prefix = V.equals("boolean", field.getType().getName()) ?  "is" : "get";
+                    Method method = dtoClass.getMethod(prefix + S.capFirst(field.getName()));
+                    value = method.invoke(dto);
+                }
             } catch (IllegalAccessException e) {
                 log.error("通过反射获取属性值出错：{}", e.getMessage());
+            } catch (NoSuchMethodException e) {
+                log.warn("通过反射获取属性方法不存在：{}", e.getMessage());
+            } catch (InvocationTargetException e) {
+                log.warn("通过反射执行属性方法出错：{}", e.getMessage());
             }
             // 忽略逻辑删除字段
             if(Cons.FieldName.deleted.name().equals(field.getName())
