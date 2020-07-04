@@ -248,16 +248,27 @@ public class HttpHelper {
      * @throws Exception
      */
     public static void downloadLocalFile(String localFilePath, String exportFileName, HttpServletResponse response) throws Exception{
+        downloadLocalFile(new File(localFilePath), exportFileName, response);
+    }
+
+    /**
+     * 根据文件对象下载服务器文件
+     * @param localFile 本地文件对象
+     * @param exportFileName 导出文件的文件名
+     * @param response
+     * @throws Exception
+     */
+    public static void downloadLocalFile(File localFile, String exportFileName, HttpServletResponse response) throws Exception{
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try{
             String fileName = new String(exportFileName.getBytes("utf-8"), "ISO8859-1");
-            long fileLength = new File(localFilePath).length();
+            long fileLength = localFile.length();
             response.setContentType(getContextType(fileName));
             response.setHeader("Content-disposition", "attachment; filename="+ fileName);
             response.setHeader("Content-Length", String.valueOf(fileLength));
             response.setHeader("filename", URLEncoder.encode(exportFileName, StandardCharsets.UTF_8.name()));
-            bis = new BufferedInputStream(new FileInputStream(localFilePath));
+            bis = new BufferedInputStream(new FileInputStream(localFile));
             bos = new BufferedOutputStream(response.getOutputStream());
             byte[] buff = new byte[2048];
             int bytesRead;
@@ -266,7 +277,7 @@ public class HttpHelper {
             }
         }
         catch (Exception e) {
-            log.error("下载导出文件失败:"+localFilePath, e);
+            log.error("下载导出文件失败:"+localFile.getAbsolutePath(), e);
         }
         finally {
             if (bis != null) {
