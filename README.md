@@ -1,4 +1,4 @@
-> 助力抗击疫情，diboot 团队紧急上线公益“轻统计工具”，无需注册，Excel一键生成在线填报表单、快速收集统计数据。[<点我使用>](http://s.dibo.ltd/#/g "注解自动绑定多表关联")
+> 提示：diboot v2.0.5版本暂不支持spring boot 2.3，请切换至2.2.x版本。
 
 # diboot
 <p align="center">
