@@ -283,7 +283,7 @@ public class ContextHelper implements ApplicationContextAware {
             }
         }
         if(DATABASE_TYPE == null){
-            log.warn("无法识别数据库类型，请检查配置！");
+            log.warn("无法识别数据库类型，请检查数据源配置:spring.datasource.url等");
         }
         return DATABASE_TYPE;
     }

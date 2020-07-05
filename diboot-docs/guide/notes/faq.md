@@ -44,6 +44,11 @@ diboot-core-starter是在diboot-core的基础上增加了自动配置，配置�
     <version>{latestVersion}</version>
 </dependency>
 ~~~
+根据使用场景，你还可能需要将com.diboot.core加入包扫描：
+~~~java
+@ComponentScan(basePackages={"com.diboot.core"})
+@MapperScan(basePackages = {"com.diboot.core.mapper"})
+~~~
 
 ## 启动报错：找不到mapper中的自定义接口
 diboot-devtools默认不指定mapper.xml路径时，mapper.xml文件会生成到mapper同路径下便于维护。
