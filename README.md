@@ -1,5 +1,3 @@
-#### 助力抗击疫情，diboot 团队紧急上线公益“轻统计工具”，无需注册，Excel一键生成在线填报表单、快速收集统计数据。[<点我使用>](http://s.dibo.ltd/#/g "数据统计工具")
-
 # diboot
 <p align="center">
     <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">
@@ -10,10 +8,11 @@
     </a>
 </p>
 
+> 提示：diboot v2.0.5版本暂不支持spring boot 2.3，请切换至2.2.x版本。
+
 >  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
 diboot v2版本，实现: diboot-core全新内核 + diboot-devtools代码生成平台 + IAM身份认证等基础功能组件。
-
 
 ## 一、 diboot-core: 精简优化内核
 全新精简内核，(基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比1.x版本减少70%+），主要实现：
