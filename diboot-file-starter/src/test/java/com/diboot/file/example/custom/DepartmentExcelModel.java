@@ -61,12 +61,4 @@ public class DepartmentExcelModel extends BaseExcelModel {
     @ExcelBindDict(type = "USER_STATUS")
     @ExcelProperty(value = "状态", index = 4)
     private String userStatus;
-
-    @ExcelBindField(entity = UploadFile.class, field = "fileName", setIdField = "fileUid",
-            duplicate = DuplicateStrategy.WARN, empty = EmptyStrategy.SET_0)
-    @ExcelProperty(value = "文件", index = 5)
-    private String fileName;
-
-    private String fileUid;
-
 }

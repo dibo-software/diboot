@@ -161,7 +161,7 @@ public class QueryBuilder {
             // 对比类型
             Comparison comparison = Comparison.EQ;
             // 转换条件
-            String columnName = getColumnName(field);;
+            String columnName = getColumnName(field);
             if(query != null){
                 comparison = query.comparison();
                 AnnoJoiner annoJoiner = ParserCache.getAnnoJoiner(dto.getClass(), entry.getKey());
