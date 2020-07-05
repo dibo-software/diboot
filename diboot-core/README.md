@@ -143,7 +143,20 @@ compile("com.diboot:diboot-core-spring-boot-starter:{latestVersion}")
     <version>{latestVersion}</version>
 </dependency>
 ~~~
-> * @BindDict注解需要依赖dictionary表，启用diboot-devtools，初次启动时starter会自动创建该表。
 
-#### 2. 详细文档 - [diboot-core 官方文档](https://www.diboot.com/guide/diboot-core/%E5%AE%89%E8%A3%85.html)
-#### 3. 参考样例 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
+#### 2. 配置数据源
+以Mysql为例：
+~~~properties
+#datasource config
+spring.datasource.url=jdbc:mysql://localhost:3306/diboot_example?characterEncoding=utf8&serverTimezone=GMT%2B8
+spring.datasource.username=diboot
+spring.datasource.password=123456
+spring.datasource.hikari.maximum-pool-size=5
+spring.datasource.hikari.driver-class-name=com.mysql.cj.jdbc.Driver
+~~~
+
+> * @BindDict注解需要依赖dictionary表，依赖diboot-core-spring-boot-starter，初次启动时starter会自动创建该表。
+
+#### 3. 详细文档 - [diboot-core 官方文档](https://www.diboot.com/guide/diboot-core/%E5%AE%89%E8%A3%85.html)
+
+#### 4. 参考样例 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)

@@ -82,11 +82,13 @@ diboot.iam.jwt-token-expires-minutes=60
 #Shiro的匿名urls，用逗号分隔
 diboot.iam.anon-urls=/test/**,/abc/**
 
-#是否开启权限自动更新，默认true，非开发环境需关闭
-diboot.iam.enable-permission-update=true
+#是否开启权限检查，默认true。改为false后结合anno-urls=/**配置，可忽略权限检查，便于开发环境调试
+diboot.iam.enable-permission-check=true
 
 #缓存实现类，默认为: org.apache.shiro.cache.MemoryConstrainedCacheManager
 diboot.iam.cache-manager-class=org.apache.shiro.cache.MemoryConstrainedCacheManager
 ```
 
 ## 7、样例参考 - [diboot-iam-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-iam-example)
+
+> 使用过程中遇到问题，可加群交流。
