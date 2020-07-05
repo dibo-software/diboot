@@ -1,5 +1,21 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.binding.parser;
 
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
@@ -14,7 +30,7 @@ import java.util.Map;
 /**
  * 中间表
  * @author mazc@dibo.ltd<br>
- * @version 1.0<br>
+ * @version 2.0<br>
  * @date 2019/04/01 <br>
  */
 public class MiddleTable {
@@ -128,9 +144,20 @@ public class MiddleTable {
                 .append(" WHERE ").append(this.equalsToAnnoObjectFKColumn).append(" IN (");
         String params = S.repeat("?", ",", annoObjectForeignKeyList.size());
         sb.append(params).append(")");
+        // 添加删除标记
+        boolean appendDeleteFlag = true;
         if(this.additionalConditions != null){
             for(String condition : this.additionalConditions){
                 sb.append(" AND (").append(condition).append(")");
+                if(S.containsIgnoreCase(condition, "is_" + Cons.FieldName.deleted.name())){
+                    appendDeleteFlag = false;
+                }
+            }
+        }
+        // 如果需要删除
+        if(appendDeleteFlag){
+            if(ParserCache.hasDeletedColumn(this.table)){
+                sb.append(" AND is_deleted = ").append(BaseConfig.getActiveFlagValue());
             }
         }
         return sb.toString();

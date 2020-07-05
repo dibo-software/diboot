@@ -1,16 +1,35 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.util;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
@@ -49,6 +68,10 @@ public class ContextHelper implements ApplicationContextAware {
      * 存储主键字段非id的Entity
      */
     private static Map<String, String> PK_NID_ENTITY_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 数据库类型
+     */
+    private static String DATABASE_TYPE = null;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -132,6 +155,7 @@ public class ContextHelper implements ApplicationContextAware {
      * @param entity
      * @return
      */
+    @Deprecated
     public static IService getIServiceByEntity(Class entity){
         if(ENTITY_SERVICE_CACHE == null){
             ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
@@ -203,4 +227,47 @@ public class ContextHelper implements ApplicationContextAware {
         }
         return PK_NID_ENTITY_CACHE.get(entity.getName());
     }
+
+    /***
+     * 获取JdbcUrl
+     * @return
+     */
+    public static String getJdbcUrl() {
+        Environment environment = getApplicationContext().getEnvironment();
+        String jdbcUrl = environment.getProperty("spring.datasource.url");
+        if(jdbcUrl == null){
+            String master = environment.getProperty("spring.datasource.dynamic.primary");
+            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+        }
+        return jdbcUrl;
+    }
+
+    /**
+     * 获取数据库类型
+     * @return
+     */
+    public static String getDatabaseType(){
+        if(DATABASE_TYPE != null){
+            return DATABASE_TYPE;
+        }
+        String jdbcUrl = getJdbcUrl();
+        if(jdbcUrl != null){
+            DbType dbType = JdbcUtils.getDbType(jdbcUrl);
+            DATABASE_TYPE = dbType.getDb();
+            if(DATABASE_TYPE.startsWith(DbType.SQL_SERVER.getDb())){
+                DATABASE_TYPE = DbType.SQL_SERVER.getDb();
+            }
+        }
+        else{
+            SqlSessionFactory sqlSessionFactory = getBean(SqlSessionFactory.class);
+            if(sqlSessionFactory != null){
+                DATABASE_TYPE = sqlSessionFactory.getConfiguration().getDatabaseId();
+            }
+        }
+        if(DATABASE_TYPE == null){
+            log.warn("无法识别数据库类型，请检查配置！");
+        }
+        return DATABASE_TYPE;
+    }
+
 }

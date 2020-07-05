@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -73,7 +88,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, getVOClass());
         // 返回结果
-        return new JsonResult(Status.OK, voList).bindPagination(pagination);
+        return JsonResult.OK(voList).bindPagination(pagination);
     }
 
     /**
@@ -86,7 +101,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper);
         // 返回结果
-        return new JsonResult(Status.OK, entityList);
+        return JsonResult.OK(entityList);
     }
 
     /***
@@ -101,7 +116,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 查询当前页的数据
         List entityList = getService().getEntityList(queryWrapper, pagination);
         // 返回结果
-        return new JsonResult(Status.OK, entityList).bindPagination(pagination);
+        return JsonResult.OK(entityList).bindPagination(pagination);
     }
 
     /***
@@ -114,7 +129,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, validateResult);
+            return JsonResult.FAIL_VALIDATION(validateResult);
         }
         // 执行保存操作
         boolean success = getService().createEntity(entity);
@@ -123,7 +138,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             this.afterCreated(entity);
             // 组装返回结果
             Map<String, Object> data = buildPKDataMap(entity);
-            return new JsonResult(Status.OK, data);
+            return JsonResult.OK(data);
         } else {
             log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
             // 组装返回结果
@@ -152,14 +167,14 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         // 执行更新资源前的操作
         String validateResult = this.beforeUpdate(entity);
         if (validateResult != null) {
-            return new JsonResult(Status.FAIL_VALIDATION, validateResult);
+            return JsonResult.FAIL_VALIDATION(validateResult);
         }
         // 执行保存操作
         boolean success = getService().updateEntity(entity);
         if (success) {
             // 执行更新成功后的操作
             this.afterUpdated(entity);
-            return new JsonResult(Status.OK);
+            return JsonResult.OK();
         } else {
             log.warn("更新操作失败，{}:{}", entity.getClass().getSimpleName(), entity.getId());
             // 返回操作结果
@@ -190,7 +205,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
             // 执行更新成功后的操作
             this.afterDeleted(entity);
             log.info("删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
-            return new JsonResult(Status.OK);
+            return JsonResult.OK();
         } else {
             log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
             return new JsonResult(Status.FAIL_OPERATION);
@@ -243,53 +258,53 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     //============= 供子类继承重写的方法 =================
     /***
      * 创建前的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected String beforeCreate(E entity) throws Exception {
+    protected String beforeCreate(Object entityOrDto) throws Exception {
         return null;
     }
 
     /***
      * 创建成功后的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected void afterCreated(E entity) throws Exception {
+    protected void afterCreated(Object entityOrDto) throws Exception {
     }
 
     /***
      * 更新前的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected String beforeUpdate(E entity) throws Exception {
+    protected String beforeUpdate(Object entityOrDto) throws Exception {
         return null;
     }
 
     /***
      * 更新成功后的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected void afterUpdated(E entity) throws Exception {
+    protected void afterUpdated(Object entityOrDto) throws Exception {
     }
 
     /***
      * 是否有删除权限，如不可删除返回错误提示信息，如 Status.FAIL_NO_PERMISSION.label()
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected String beforeDelete(E entity) throws Exception{
+    protected String beforeDelete(Object entityOrDto) throws Exception{
         return null;
     }
 
     /***
      * 删除成功后的相关处理
-     * @param entity
+     * @param entityOrDto
      * @return
      */
-    protected void afterDeleted(E entity) throws Exception {
+    protected void afterDeleted(Object entityOrDto) throws Exception {
     }
 
     /***
@@ -333,6 +348,9 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     protected Class<E> getEntityClass(){
         if(this.entityClass == null){
              this.entityClass = BeanUtils.getGenericityClass(this, 0);
+             if(this.entityClass == null) {
+                log.warn("无法从 {} 类定义中获取泛型类entityClass", this.getClass().getName());
+             }
         }
         return this.entityClass;
     }
@@ -344,6 +362,9 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
     protected Class<VO> getVOClass(){
         if(this.voClasss == null){
             this.voClasss = BeanUtils.getGenericityClass(this, 1);
+            if(this.voClasss == null) {
+                log.warn("无法从 {} 类定义中获取泛型类voClasss", this.getClass().getName());
+            }
         }
         return this.voClasss;
     }

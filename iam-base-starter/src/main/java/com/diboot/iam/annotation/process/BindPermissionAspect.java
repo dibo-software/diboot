@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.iam.annotation.process;
 
 import com.diboot.core.util.S;
@@ -51,17 +66,17 @@ public class BindPermissionAspect {
         // 获取当前uri
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
-        // 需要验证
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
         // 根据uri获取对应权限标识
-        String permissionCode = BindPermissionCache.getPermissionCode(request.getMethod(), formatUrl(request));
+        String uriMapping = formatUriMapping(request);
+        String permissionCode = ApiPermissionCache.getPermissionCode(request.getMethod(), uriMapping);
         if (permissionCode == null){
             return;
         }
+        // 需要验证
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
         BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
-        String annoPermissionCode = ":"+bindPermission.code();
-        if(permissionCode.endsWith(annoPermissionCode)){
+        if(permissionCode.endsWith(":"+bindPermission.code())){
             try{
                 IamSecurityUtils.getSubject().checkPermission(permissionCode);
             }
@@ -76,7 +91,7 @@ public class BindPermissionAspect {
      * @param request
      * @return
      */
-    private String formatUrl(HttpServletRequest request){
+    private String formatUriMapping(HttpServletRequest request){
         boolean hasContextPath = (V.notEmpty(request.getContextPath()) && !request.getContextPath().equals("/"));
         String url = hasContextPath? S.substringAfter(request.getRequestURI(), request.getContextPath()) : request.getRequestURI();
         Map<String, Object> map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);

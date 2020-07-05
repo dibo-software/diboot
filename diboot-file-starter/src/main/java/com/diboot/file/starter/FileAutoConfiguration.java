@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.diboot.file.starter;
+
+import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
+@Slf4j
+@Configuration
+@EnableConfigurationProperties(FileProperties.class)
+@ComponentScan(basePackages = {"com.diboot.file"})
+@MapperScan(basePackages = {"com.diboot.file.mapper"})
+public class FileAutoConfiguration {
+
+    @Autowired
+    FileProperties fileProperties;
+
+    @Autowired
+    Environment environment;
+
+    @Bean
+    @ConditionalOnMissingBean(FilePluginManager.class)
+    public FilePluginManager filePluginManager(){
+        // 初始化SCHEMA
+        SqlHandler.init(environment);
+        FilePluginManager pluginManager = new FilePluginManager() {};
+        // 检查数据库字典是否已存在
+        if(fileProperties.isInitSql() && SqlHandler.checkIsFileTableExists() == false){
+            SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
+        }
+        return pluginManager;
+    }
+}

@@ -1,13 +1,22 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.iam.starter;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
-import com.diboot.core.util.D;
-import com.diboot.core.util.DateConverter;
 import com.diboot.core.util.V;
-import com.diboot.iam.annotation.process.AnnotationExtractor;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
@@ -22,7 +31,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,17 +38,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.format.FormatterRegistry;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,15 +51,14 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
-@EnableAsync
 @EnableConfigurationProperties({IamBaseProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages={"com.diboot.iam.mapper"})
 @AutoConfigureAfter(value = {DictionaryServiceImpl.class,
-        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamUserRoleServiceImpl.class, IamAccountServiceImpl.class, IamPermissionServiceImpl.class,
-        IamBaseInitializer.class, AnnotationExtractor.class, ShiroProxyConfig.class})
+        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamAccountServiceImpl.class, IamFrontendPermissionServiceImpl.class,
+        IamBaseInitializer.class, ShiroProxyConfig.class})
 @Order(2)
-public class IamBaseAutoConfig implements WebMvcConfigurer {
+public class IamBaseAutoConfig{
 
     @Autowired
     Environment environment;
@@ -150,27 +149,4 @@ public class IamBaseAutoConfig implements WebMvcConfigurer {
         return shiroFilterFactoryBean;
     }
 
-    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverters() {
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
-        List<MediaType> fastMediaTypes = new ArrayList<>();
-        fastMediaTypes.add(MediaType.APPLICATION_JSON);
-        converter.setSupportedMediaTypes(fastMediaTypes);
-        // 配置转换格式
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        // 设置fastjson的序列化参数：禁用循环依赖检测，数据兼容浏览器端（避免JS端Long精度丢失问题）
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect,
-                SerializerFeature.BrowserCompatible);
-        fastJsonConfig.setDateFormat(D.FORMAT_DATETIME_Y4MDHM);
-        converter.setFastJsonConfig(fastJsonConfig);
-
-        HttpMessageConverter<?> httpMsgConverter = converter;
-        return new HttpMessageConverters(httpMsgConverter);
-    }
-
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new DateConverter());
-    }
 }

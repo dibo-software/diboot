@@ -1,8 +1,24 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package diboot.core.test.util;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.vo.DictionaryVO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,9 +50,13 @@ public class BeanUtilsTest {
         Map<String, Object> map = new HashMap<>();
         map.put("type", "STATUS");
         map.put("itemName",itemName);
+        map.put("editable", true);
+        map.put("createTime", "2018-09-12 23:09");
         Dictionary dictionary3 = new Dictionary();
         BeanUtils.bindProperties(dictionary3, map);
-        Assert.assertTrue(dictionary2.getItemName().equals(itemName));
+        Assert.assertTrue(dictionary3.getItemName().equals(itemName));
+        Assert.assertTrue(dictionary3.isEditable() == true);
+        Assert.assertTrue(dictionary3.getCreateTime() != null);
     }
 
     @Test
@@ -125,6 +145,38 @@ public class BeanUtilsTest {
     }
 
 
+    @Test
+    public void testBuildTree(){
+        List<Dictionary> dictionaryList = new ArrayList<>();
+        for(long id=1001; id<=1005; id++){
+            Dictionary dictionary1 = new Dictionary();
+            dictionary1.setId(id);
+            dictionary1.setParentId(1L);
+            dictionaryList.add(dictionary1);
+        }
+        Dictionary parent = new Dictionary();
+        parent.setId(1L);
+        parent.setParentId(0L);
+        dictionaryList.add(parent);
 
+        // 正常数据
+        List<DictionaryVO> list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
+        list = BeanUtils.buildTree(list);
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertEquals(list.get(0).getChildren().size(), 5);
+
+        // 异常数据告警
+        Dictionary dict2 = new Dictionary();
+        dict2.setId(1L);
+        dict2.setParentId(1L);
+        dictionaryList.add(dict2);
+        list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
+        try{
+            list = BeanUtils.buildTree(list);
+        }
+        catch (Exception e){
+            Assert.assertTrue(e.getMessage().contains("请检查"));
+        }
+    }
 
 }

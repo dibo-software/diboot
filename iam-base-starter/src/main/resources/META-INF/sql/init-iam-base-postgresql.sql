@@ -68,7 +68,7 @@ create unique index idx_iam_account on iam_account(auth_account, auth_type, user
 -- 角色表
 create table iam_role
 (
-  id serial not null,
+  id bigserial not null,
   name varchar(20) not null,
   code varchar(20) not null,
   description varchar(100) null,
@@ -86,10 +86,10 @@ comment on table iam_role is '角色';
 -- 用户角色表
 create table iam_user_role
 (
-  id serial not null,
+  id bigserial not null,
   user_type varchar(100) default 'IamUser' not null,
   user_id bigint not null,
-  role_id int not null,
+  role_id bigint not null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
@@ -103,46 +103,42 @@ comment on table iam_user_role is '用户角色关联';
 -- 索引
 create index idx_iam_user_role on iam_user_role (user_type, user_id);
 
--- 权限表
-create table iam_permission
+-- 前端权限表
+create table iam_frontend_permission
 (
-  id serial not null,
-  parent_id int default 0 not null,
-  application varchar(50) default 'MS' not null,
-  type varchar(10) default 'MENU' not null,
-  name varchar(20) not null,
-  code varchar(50) null,
-  operation_name varchar(50) null,
-  operation_code varchar(50) null,
-  sort_id smallint default 999 not null,
-  extdata varchar(100) null,
+  id bigserial not null,
+  parent_id bigint default 0   not null,
+  display_type varchar(20) not null,
+  display_name varchar(100) not null,
+  frontend_code varchar(100)   null,
+  api_set varchar(3000)   null,
+  sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
-  update_time timestamp null
+  update_time timestamp null,
+  constraint PK_iam_frontend_permission primary key (id)
 );
-comment on column iam_permission.id is 'ID';
-comment on column iam_permission.parent_id is '上级ID';
-comment on column iam_permission.application is '所属应用';
-comment on column iam_permission.type is '权限类别';
-comment on column iam_permission.name is '名称';
-comment on column iam_permission.code is '编码';
-comment on column iam_permission.operation_name is '操作名称';
-comment on column iam_permission.operation_code is '操作编码';
-comment on column iam_permission.sort_id is '排序号';
-comment on column iam_permission.extdata is '扩展属性';
-comment on column iam_permission.is_deleted is '是否删除';
-comment on column iam_permission.create_time is '创建时间';
-comment on column iam_permission.update_time is '更新时间';
-comment on table iam_permission is '权限';
+comment on column iam_frontend_permission.id is 'ID';
+comment on column iam_frontend_permission.parent_id is '菜单ID';
+comment on column iam_frontend_permission.display_type is '展现类型';
+comment on column iam_frontend_permission.display_name is '显示名称';
+comment on column iam_frontend_permission.frontend_code is '前端编码';
+comment on column iam_frontend_permission.api_set is '接口列表';
+comment on column iam_frontend_permission.sort_id is '排序号';
+comment on column iam_frontend_permission.is_deleted is '是否删除';
+comment on column iam_frontend_permission.create_time is '创建时间';
+comment on column iam_frontend_permission.update_time is '更新时间';
+comment on table iam_frontend_permission is '前端权限表';
+
 -- 索引
-create index idx_iam_permission on iam_permission (code);
+create index idx_iam_frontend_permission on iam_frontend_permission (parent_id);
 
 -- 角色-权限
 create table iam_role_permission
 (
-  id serial not null ,
-  role_id int not null ,
-  permission_id int not null ,
+  id bigserial not null ,
+  role_id bigint not null ,
+  permission_id bigint not null ,
   is_deleted BOOLEAN default FALSE not null ,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );

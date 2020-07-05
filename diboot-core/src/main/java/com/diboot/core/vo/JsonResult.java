@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.vo;
 
 import com.diboot.core.util.S;
@@ -176,4 +191,77 @@ public class JsonResult implements Serializable {
         }
     }
 
+    /***
+     * 请求处理成功
+     */
+    public static JsonResult OK(){
+        return new JsonResult(Status.OK);
+    }
+    /***
+     * 请求处理成功
+     */
+    public static JsonResult OK(Object data){
+        return new JsonResult(Status.OK, data);
+    }
+
+    /***
+     * 部分成功（一般用于批量处理场景，只处理筛选后的合法数据）
+     */
+    public static JsonResult WARN_PARTIAL_SUCCESS(String msg){
+        return new JsonResult(Status.WARN_PARTIAL_SUCCESS).msg(msg);
+    }
+    /***
+     * 有潜在的性能问题
+     */
+    public static JsonResult WARN_PERFORMANCE_ISSUE(String msg){
+        return new JsonResult(Status.WARN_PERFORMANCE_ISSUE).msg(msg);
+    }
+    /***
+     * 传入参数不对
+     */
+    public static JsonResult FAIL_INVALID_PARAM(String msg){
+        return new JsonResult(Status.FAIL_INVALID_PARAM).msg(msg);
+    }
+    /***
+     * Token无效或已过期
+     */
+    public static JsonResult FAIL_INVALID_TOKEN(String msg){
+        return new JsonResult(Status.FAIL_INVALID_TOKEN).msg(msg);
+    }
+    /***
+     * 没有权限执行该操作
+     */
+    public static JsonResult FAIL_NO_PERMISSION(String msg){
+        return new JsonResult(Status.FAIL_NO_PERMISSION).msg(msg);
+    }
+    /***
+     * 请求资源不存在
+     */
+    public static JsonResult FAIL_NOT_FOUND(String msg){
+        return new JsonResult(Status.FAIL_NOT_FOUND).msg(msg);
+    }
+    /***
+     * 数据校验不通过
+     */
+    public static JsonResult FAIL_VALIDATION(String msg){
+        return new JsonResult(Status.FAIL_VALIDATION).msg(msg);
+    }
+    /***
+     * 操作执行失败
+     */
+    public static JsonResult FAIL_OPERATION(String msg){
+        return new JsonResult(Status.FAIL_OPERATION).msg(msg);
+    }
+    /***
+     * 系统异常
+     */
+    public static JsonResult FAIL_EXCEPTION(String msg){
+        return new JsonResult(Status.FAIL_EXCEPTION).msg(msg);
+    }
+    /***
+     * 缓存清空
+     */
+    public static JsonResult MEMORY_EMPTY_LOST(String msg){
+        return new JsonResult(Status.MEMORY_EMPTY_LOST).msg(msg);
+    }
 }

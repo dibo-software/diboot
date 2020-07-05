@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.handler;
 
 import com.diboot.core.exception.BusinessException;
@@ -67,6 +82,10 @@ public class DefaultExceptionHandler {
             BusinessException be = (BusinessException)e;
             map = be.toMap();
         }
+        else if(e.getCause() instanceof BusinessException){
+            BusinessException be = (BusinessException)e.getCause();
+            map = be.toMap();
+        }
         else{
             map = new HashMap<>();
             map.put("code", status.value());
@@ -108,9 +127,13 @@ public class DefaultExceptionHandler {
      * @param request
      * @return
      */
-    private boolean isJsonRequest(HttpServletRequest request){
-        return S.contains(request.getHeader("Accept"),"json")
-                || S.contains(request.getHeader("content-type"), "json");
+    protected boolean isJsonRequest(HttpServletRequest request){
+        if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+            return true;
+        }
+        return S.containsIgnoreCase(request.getHeader("Accept"),"json")
+                || S.containsIgnoreCase(request.getHeader("content-type"), "json")
+                || S.containsIgnoreCase(request.getContentType(), "json");
     }
 
     /**

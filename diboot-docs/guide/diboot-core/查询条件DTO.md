@@ -28,6 +28,6 @@ public JsonResult getVOList(UserDto userDto, HttpServletRequest request) throws 
     //调用super.buildQueryWrapper(entityOrDto, request) 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行转换
     QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto, request);
     //... 查询list
-    return new JsonResult(Status.OK, list);
+    return JsonResult.OK(list);
 }
 ```

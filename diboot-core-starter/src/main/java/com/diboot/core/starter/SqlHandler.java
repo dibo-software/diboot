@@ -1,24 +1,32 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
 import org.apache.commons.io.IOUtils;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +38,11 @@ import java.util.Map;
  * @date 2019/08/01
  */
 public class SqlHandler {
-    private static final Logger logger = LoggerFactory.getLogger(SqlHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(SqlHandler.class);
 
     // 数据字典SQL
     private static final String DICTIONARY_SQL = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
     private static final String MYBATIS_PLUS_SCHEMA_CONFIG = "mybatis-plus.global-config.db-config.schema";
-    private static String dbType;
     private static String CURRENT_SCHEMA = null;
     private static Environment environment;
 
@@ -45,8 +52,6 @@ public class SqlHandler {
      */
     public static void init(Environment env) {
         environment = env;
-        String jdbcUrl = environment.getProperty("spring.datasource.url");
-        dbType = SqlHandler.extractDatabaseType(jdbcUrl);
     }
 
     /***
@@ -54,9 +59,8 @@ public class SqlHandler {
      * @return
      */
     public static void initBootstrapSql(Class inst, Environment environment, String module){
-        if(dbType == null){
-            init(environment);
-        }
+        init(environment);
+        String dbType = getDbType();
         String sqlPath = "META-INF/sql/init-"+module+"-"+dbType+".sql";
         extractAndExecuteSqls(inst, sqlPath);
     }
@@ -75,24 +79,8 @@ public class SqlHandler {
      * @return
      */
     public static boolean checkIsTableExists(String sqlStatement){
-        // 获取SqlSessionFactory实例
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) ContextHelper.getBean(SqlSessionFactory.class);
-        if(sqlSessionFactory == null){
-            logger.warn("无法获取SqlSessionFactory实例，安装SQL将无法执行，请手动安装！");
-            return false;
-        }
         sqlStatement = buildPureSqlStatement(sqlStatement);
-        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sqlStatement)){
-            ResultSet rs = stmt.executeQuery();
-            ResultSetMetaData meta = rs.getMetaData();
-            if(meta.getColumnCount() > 0){
-                rs.close();
-            }
-            return true;
-        }
-        catch(Exception e){
-            return false;
-        }
+        return SqlExecutor.validateQuery(sqlStatement);
     }
 
     /***
@@ -148,10 +136,10 @@ public class SqlHandler {
         sqlStatement = clearComments(sqlStatement);
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
-            if(dbType.equals(DbType.SQL_SERVER.getDb())){
+            if(getDbType().equals(DbType.SQL_SERVER.getDb())){
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getSqlServerCurrentSchema());
             }
-            else if(dbType.equals(DbType.ORACLE.getDb())){
+            else if(getDbType().equals(DbType.ORACLE.getDb())){
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getOracleCurrentSchema());
             }
             else{
@@ -174,11 +162,11 @@ public class SqlHandler {
             try{
                 boolean success = SqlExecutor.executeUpdate(sqlStatement, null);
                 if(success){
-                    logger.info("初始化SQL执行完成: "+ S.substring(sqlStatement, 0, 60) + "...");
+                    log.info("初始化SQL执行完成: "+ S.substring(sqlStatement, 0, 60) + "...");
                 }
             }
             catch (Exception e){
-                logger.error("初始化SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
+                log.error("初始化SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
             }
         }
         return true;
@@ -196,10 +184,10 @@ public class SqlHandler {
             lines = IOUtils.readLines(is, "UTF-8");
         }
         catch (FileNotFoundException fe){
-            logger.warn("暂未发现数据库SQL: "+sqlPath + "， 请参考其他数据库定义DDL手动初始化。");
+            log.warn("暂未发现数据库SQL: "+sqlPath + "， 请参考其他数据库定义DDL手动初始化。");
         }
         catch (Exception e){
-            logger.warn("读取SQL文件异常: "+sqlPath, e);
+            log.warn("读取SQL文件异常: "+sqlPath, e);
         }
         return lines;
     }
@@ -246,20 +234,6 @@ public class SqlHandler {
             return removeMultipleLineComments(inputSql);
         }
         return inputSql;
-    }
-
-    /**
-     * 提取数据库类型
-     * @param jdbcUrl
-     * @return
-     */
-    public static String extractDatabaseType(String jdbcUrl){
-        DbType dbType = JdbcUtils.getDbType(jdbcUrl);
-        String dbName = dbType.getDb();
-        if(dbName.startsWith(DbType.SQL_SERVER.getDb()) && !dbName.equals(DbType.SQL_SERVER.getDb())){
-            dbName = DbType.SQL_SERVER.getDb();
-        }
-        return dbName;
     }
 
     //SQL Server查询当前schema
@@ -326,7 +300,7 @@ public class SqlHandler {
             }
         }
         catch(Exception e){
-            logger.error("获取SqlServer默认Schema异常: {}", e.getMessage());
+            log.error("获取SqlServer默认Schema异常: {}", e.getMessage());
         }
         return null;
     }
@@ -336,6 +310,6 @@ public class SqlHandler {
      * @return
      */
     public static String getDbType(){
-        return dbType;
+        return ContextHelper.getDatabaseType();
     }
 }

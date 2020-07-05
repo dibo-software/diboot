@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -12,6 +27,7 @@ import com.diboot.core.util.S;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +68,8 @@ public abstract class BaseBinder<T> {
      */
     protected MiddleTable middleTable;
 
+    protected Class<T> referencedEntityClass;
+
     /**
      * join连接条件，指定当前VO的取值方法和关联entity的取值方法
      * @param annoObjectFkGetter 当前VO的取值方法
@@ -77,27 +95,27 @@ public abstract class BaseBinder<T> {
     }
 
     public BaseBinder<T> andEQ(String fieldName, Object value){
-        queryWrapper.eq(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.eq(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andNE(String fieldName, Object value){
-        queryWrapper.ne(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.ne(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andGT(String fieldName, Object value){
-        queryWrapper.gt(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.gt(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andGE(String fieldName, Object value){
-        queryWrapper.ge(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.ge(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andLT(String fieldName, Object value){
-        queryWrapper.lt(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.lt(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andLE(String fieldName, Object value){
-        queryWrapper.le(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.le(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andIsNotNull(String fieldName){
@@ -109,11 +127,11 @@ public abstract class BaseBinder<T> {
         return this;
     }
     public BaseBinder<T> andBetween(String fieldName, Object begin, Object end){
-        queryWrapper.between(S.toSnakeCase(fieldName), formatValue(begin), formatValue(end));
+        queryWrapper.between(S.toSnakeCase(fieldName), formatValue(fieldName, begin), formatValue(fieldName, end));
         return this;
     }
     public BaseBinder<T> andLike(String fieldName, String value){
-        queryWrapper.like(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.like(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andIn(String fieldName, Collection valueList){
@@ -125,11 +143,11 @@ public abstract class BaseBinder<T> {
         return this;
     }
     public BaseBinder<T> andNotBetween(String fieldName, Object begin, Object end){
-        queryWrapper.notBetween(S.toSnakeCase(fieldName), formatValue(begin), formatValue(end));
+        queryWrapper.notBetween(S.toSnakeCase(fieldName), formatValue(fieldName, begin), formatValue(fieldName, end));
         return this;
     }
     public BaseBinder<T> andNotLike(String fieldName, String value){
-        queryWrapper.notLike(S.toSnakeCase(fieldName), formatValue(value));
+        queryWrapper.notLike(S.toSnakeCase(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andApply(String applySql){
@@ -209,13 +227,23 @@ public abstract class BaseBinder<T> {
 
     /**
      * 格式化条件值
-     * @param value
+     * @param fieldName 属性名
+     * @param value 值
      * @return
      */
-    private Object formatValue(Object value){
+    private Object formatValue(String fieldName, Object value){
         if(value instanceof String && S.contains((String)value, "'")){
-            value = S.replace((String)value, "'", "");
+            return S.replace((String)value, "'", "");
+        }
+        // 转型
+        if(this.referencedEntityClass != null){
+            Field field = BeanUtils.extractField(this.referencedEntityClass, S.toLowerCaseCamel(fieldName));
+            if(field != null){
+                return BeanUtils.convertValueToFieldType(value, field);
+            }
         }
         return value;
     }
+
+
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -5,6 +20,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.util.IGetter;
+import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
 
@@ -50,6 +67,15 @@ public interface BaseService<T> {
     boolean createEntities(Collection<T> entityList);
 
     /**
+     * 添加entity 及 其关联子项entities
+     * @param entity 主表entity
+     * @param relatedEntities 关联表entities
+     * @param relatedEntitySetter 关联Entity类的setter
+     * @return
+     */
+    <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+
+    /**
      * 更新Entity实体
      * @param entity
      * @return
@@ -71,6 +97,13 @@ public interface BaseService<T> {
      */
     boolean updateEntity(Wrapper updateWrapper);
 
+    /**
+     * 批量更新entity
+     * @param entityList
+     * @return
+     */
+    boolean updateEntities(Collection<T> entityList);
+
     /***
      * 创建或更新entity（entity.id存在则新建，否则更新）
      * @param entity
@@ -84,6 +117,24 @@ public interface BaseService<T> {
      * @return
      */
     boolean createOrUpdateEntities(Collection entityList);
+
+    /**
+     * 添加entity 及 其关联子项entities
+     * @param entity 主表entity
+     * @param relatedEntities 关联表entities
+     * @param relatedEntitySetter 关联Entity类的setter
+     * @return
+     */
+    <RE,R> boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+
+    /**
+     * 删除entity 及 其关联子项entities
+     * @param id 待删除entity的主键
+     * @param relatedEntityClass 待删除关联Entity类
+     * @param  relatedEntitySetter 待删除类的setter方法
+     * @return
+     */
+    <RE,R> boolean deleteEntityAndRelatedEntities(Serializable id, Class<RE> relatedEntityClass, ISetter<RE, R> relatedEntitySetter);
 
     /**
      * 根据主键删除实体
@@ -153,6 +204,14 @@ public interface BaseService<T> {
      * @return entity
      */
     T getSingleEntity(Wrapper queryWrapper);
+
+    /**
+     * 是否存在符合条件的记录
+     * @param getterFn entity的getter方法
+     * @param value 需要检查的值
+     * @return
+     */
+    boolean exists(IGetter<T> getterFn, Object value);
 
     /**
      * 是否存在符合条件的记录

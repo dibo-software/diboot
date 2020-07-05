@@ -1,8 +1,24 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.starter;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.D;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +33,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +72,9 @@ public class CoreAutoConfiguration{
     @Bean
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        //处理中文乱码问题
+        converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
         List<MediaType> fastMediaTypes = new ArrayList<>();
-        fastMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+        fastMediaTypes.add(MediaType.APPLICATION_JSON);
         converter.setSupportedMediaTypes(fastMediaTypes);
         // 配置转换格式
         FastJsonConfig fastJsonConfig = new FastJsonConfig();

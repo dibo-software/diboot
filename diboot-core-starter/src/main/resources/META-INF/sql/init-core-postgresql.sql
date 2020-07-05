@@ -11,7 +11,7 @@ create table dictionary (
      is_deletable         BOOLEAN       not null default FALSE,
      is_editable          BOOLEAN       not null default TRUE,
      is_deleted           BOOLEAN       not null default FALSE,
-     create_time          DATE          not null default CURRENT_TIMESTAMP,
+     create_time          timestamp     not null default CURRENT_TIMESTAMP,
      constraint PK_dictionary primary key (id)
 );
 -- 添加备注
