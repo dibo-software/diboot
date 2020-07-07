@@ -66,7 +66,7 @@ public class TestFieldBinder {
             // 验证直接关联和通过中间表间接关联的绑定
             Assert.assertNotNull(vo.getDeptName());
             Assert.assertNotNull(vo.getOrgName());
-            Assert.assertNotNull(vo.getOrgTelphone());
+            Assert.assertNotNull(vo.getOrgParentId());
             // 验证枚举值已绑定
             Assert.assertNotNull(vo.getGenderLabel());
 

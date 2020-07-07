@@ -128,7 +128,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             List entityList = valueEntityListMap.get(annoObjectId);
             if(entityList != null){
                 for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                    List valObjList = BeanUtils.collectToList(entityList, referencedGetterColumnNameList.get(i));
+                    List valObjList = BeanUtils.collectToList(entityList, S.toLowerCaseCamel(referencedGetterColumnNameList.get(i)));
                     BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), valObjList);
                 }
             }

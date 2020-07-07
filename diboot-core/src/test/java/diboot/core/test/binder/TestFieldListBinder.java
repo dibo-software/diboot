@@ -92,6 +92,8 @@ public class TestFieldListBinder {
         for(EntityListComplexBinderVO vo : voList){
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getRoleCodes()));
+            Assert.assertTrue(V.notEmpty(vo.getRoleCreateDates()));
+
             System.out.println(JSON.stringify(vo.getRoleCodes()));
         }
     }

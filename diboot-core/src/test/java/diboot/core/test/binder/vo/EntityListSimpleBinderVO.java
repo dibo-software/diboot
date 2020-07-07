@@ -40,7 +40,7 @@ public class EntityListSimpleBinderVO extends Department {
     private List<DepartmentVO> children;
 
     // 1-n 关联，取单个属性
-    @BindFieldList(entity = Department.class, field = "id", condition = "this.id=parent_id")
+    @BindFieldList(entity = Department.class, field = "parentId", condition = "this.id=parent_id")
     private List<Long> childrenIds;
 
     // 1-n 关联，取单个属性

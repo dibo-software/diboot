@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,5 +47,10 @@ public class EntityListComplexBinderVO extends User {
     // 支持通过中间表的多-多Entity的单个属性集
     @BindFieldList(entity = Role.class, field = "code", condition="this.id=user_role.user_id AND user_role.role_id=id")
     private List<String> roleCodes;
+
+    // 支持通过中间表的多-多Entity的单个属性集
+    @BindFieldList(entity = Role.class, field = "createTime", condition="this.id=user_role.user_id AND user_role.role_id=id")
+    private List<Date> roleCreateDates;
+
 
 }
