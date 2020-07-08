@@ -95,14 +95,23 @@ module.exports = {
                     ]
                 }
             ],
-            '/guide/notes/': [
+            '/guide/notes/faq': [
                 {
-                    title: '版本升级&FAQ',
+                    title: 'FAQ',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/notes/upgrade', '版本升级指南'],
-                        ['/guide/notes/faq', 'FAQ'],
+                        ['/guide/notes/faq/main', 'FAQ'],
+                    ]
+                }
+            ],
+            '/guide/notes/upgrade': [
+                {
+                    title: '版本升级指南',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/notes/upgrade/2_0_x升级至2_1_x', '2.0.x升级至2.1.x'],
                     ]
                 }
             ]
@@ -115,8 +124,8 @@ module.exports = {
                 { text: 'core基础内核', link: '/guide/diboot-core/设计理念' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
                 { text: 'File文件组件', link: '/guide/diboot-file/介绍' },
-                { text: '版本升级指南', link: '/guide/notes/upgrade' },
-                { text: 'F&Q', link: '/guide/notes/faq' },
+                { text: '版本升级指南', link: '/guide/notes/upgrade/2_0_x升级至2_1_x' },
+                { text: 'F&Q', link: '/guide/notes/faq/main' },
             ]
         }, {
             text: '前端项目 指南',
