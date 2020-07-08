@@ -10,9 +10,10 @@
     </a>
 </p>
 
->  [设计目标](https://segmentfault.com/a/1190000020906742)：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
+>  设计目标：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
 
 ![diboot平台组成结构图](diboot-docs/.vuepress/public/structure.png)
+
 diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发助理 + IAM身份认证、file文件处理等基础组件 + diboot-*-admin基础后台。
 
 ## 一、 diboot-core: 精简优化内核
@@ -38,9 +39,9 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 
 * 使用简单（UI界面操作，引入依赖配置参数后，即可随SpringBoot本地项目启动运行）
 * 功能很强大：
-    * 数据结构变更与代码联动同步，自动记录变更SQL、维护索引
-    * 直接一键生成&非覆盖式更新本地后端代码
     * 单表与关联场景CRUD导入导出的完整功能全自动生成，无需手写代码
+    * 数据结构变更与代码联动同步，自动记录变更SQL、维护索引
+    * 一键生成代码&非覆盖式更新本地后端代码
 * 配置很灵活（可按需配置生成代码路径，是否启用`Lombok`、`Swagger`等）
 * SQL与代码很标准（devtools标准化了数据结构定义与代码实现）
 * 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
