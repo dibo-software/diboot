@@ -97,12 +97,12 @@ module.exports = {
             ],
             '/guide/notes/': [
                 {
-                    title: '版本&FAQ',
+                    title: '版本升级&FAQ',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/notes/faq', 'FAQ'],
                         ['/guide/notes/upgrade', '版本升级指南'],
+                        ['/guide/notes/faq', 'FAQ'],
                     ]
                 }
             ]
@@ -115,7 +115,8 @@ module.exports = {
                 { text: 'core基础内核', link: '/guide/diboot-core/设计理念' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
                 { text: 'File文件组件', link: '/guide/diboot-file/介绍' },
-                { text: 'F&Q', link: '/guide/notes/faq' }
+                { text: '版本升级指南', link: '/guide/notes/upgrade' },
+                { text: 'F&Q', link: '/guide/notes/faq' },
             ]
         }, {
             text: '前端项目 指南',

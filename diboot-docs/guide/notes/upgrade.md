@@ -86,9 +86,13 @@ diboot.devtools.output-path-frontend=/Workspace/diboot-antd-admin-ent/
 
 #### 3. diboot-iam
 
-### 开始升级
+### 升级实操指南
 
 > 将diboot所有的组件版本号替换至2.1.x的最新版本，然后按照下述内容进行相关更改即可。
+
+:::warning
+注：后端项目升级完成后，需要重新生成基础代码（在此过程中，如果对旧版本基础代码有更改，则需要对旧版本基础代码做一个备份），2.1.x版本已经不再从启动时候自动生成初始代码了，需要您手动到diboot devtools中的初始化页面进行手动生成。
+:::
 
 #### 1. SpringBoot版本：
 
@@ -181,6 +185,11 @@ public JsonResult deleteEntityMapping(@PathVariable("id")Long id) throws Excepti
 ```
 * 使用到buildQueryWrapper方法的地方，去掉传入的request参数
 * 其他相关报错地方可查看的新版本方法入参，进行相应调整即可
+* 重新生成后端项目基础代码
+
+:::warning
+注：后端项目升级完成后，需要重新生成基础代码（在此过程中，如果对旧版本基础代码有更改，则需要对旧版本基础代码做一个备份），2.1.x版本已经不再从启动时候自动生成初始代码了，需要您手动到diboot devtools中的初始化页面进行手动生成。
+:::
 
 #### diboot-antd-admin前端项目升级
 > 前端项目需要先从github的release notes中下载一个2.1.0版本的源码包，以下升级流程将依赖于此源码包。
