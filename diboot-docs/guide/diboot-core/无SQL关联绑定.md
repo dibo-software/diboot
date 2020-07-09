@@ -44,7 +44,7 @@ service.getViewObject()
 service.getViewObjectList()
 ```
 ## 数据字典关联绑定
-:::tip
+::: tip
 当表中的字段为数据字典类型的值时，可使用数据字典关联来绑定表字段与数据字典的关联关系。
 <br>
 通过@BindDict注解，数据字典关联时无需写大量java代码和SQL关联查询，即可快速转换值字典value值为label。
