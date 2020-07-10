@@ -63,6 +63,7 @@ module.exports = {
                         ['/guide/diboot-antd-admin/添加页面', '添加页面'],
                         ['/guide/diboot-antd-admin/权限控制', '权限控制'],
                         ['/guide/diboot-antd-admin/接口请求', '接口请求'],
+                        ['/guide/diboot-antd-admin/组件', '组件'],
                         ['/guide/diboot-antd-admin/CRUD快速集成', 'CRUD快速集成'],
                     ]
                 }
@@ -78,6 +79,7 @@ module.exports = {
                         ['/guide/diboot-element-admin/添加页面', '添加页面'],
                         ['/guide/diboot-element-admin/权限控制', '权限控制'],
                         ['/guide/diboot-element-admin/接口请求', '接口请求'],
+                        ['/guide/diboot-element-admin/组件', '组件'],
                         ['/guide/diboot-element-admin/CRUD快速集成', 'CRUD快速集成'],
                     ]
                 }
