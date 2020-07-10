@@ -93,7 +93,8 @@ module.exports = {
                         ['/guide/diboot-devtools/介绍', '介绍'],
                         ['/guide/diboot-devtools/开始使用', '开始使用'],
                         ['/guide/diboot-devtools/数据表管理', '数据表管理'],
-                        ['/guide/diboot-devtools/代码生成与更新', '代码生成与更新']
+                        ['/guide/diboot-devtools/后端代码生成与更新', '后端代码生成与更新'],
+                        ['/guide/diboot-devtools/前端功能生成', '前端功能生成']
                     ]
                 }
             ],
