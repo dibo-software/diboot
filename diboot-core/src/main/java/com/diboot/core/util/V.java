@@ -39,7 +39,7 @@ public class V {
 	/**
 	 * hibernate注解验证
 	 */
-	private static Validator VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
+	private static Validator VALIDATOR = null;
 
 	/***
 	 * 对象是否为空
@@ -450,6 +450,9 @@ public class V {
 	 * @param obj
 	 */
 	public static <T> String validateBean(T obj) {
+		if(VALIDATOR == null){
+			VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
+		}
 		// 校验
 		Set<ConstraintViolation<T>> errors = VALIDATOR.validate(obj);
 		if(errors == null || errors.size() == 0){
