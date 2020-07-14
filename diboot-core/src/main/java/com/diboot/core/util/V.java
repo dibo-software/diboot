@@ -376,6 +376,23 @@ public class V {
 			}
 			return true;
 		}
+		else if(source instanceof Map){
+			Map sourceMap = (Map)source, targetMap = (Map)target;
+			if(V.isEmpty(sourceMap) && V.isEmpty(targetMap)){
+				return true;
+			}
+			if(sourceMap.size() != targetMap.size()){
+				return false;
+			}
+			for(Object key : sourceMap.keySet()){
+				Object value = sourceMap.get(key);
+				Object targetValue = targetMap.get(key);
+				if(notEquals(value, targetValue)){
+					return false;
+				}
+			}
+			return true;
+		}
 		else{
 			log.warn("暂未实现类型 "+ source.getClass().getSimpleName() + "-"+ target.getClass().getSimpleName() + " 的比对！");
 			return false;
