@@ -176,6 +176,16 @@ public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseS
     }
 }
 ~~~
-
+## 如何解决数据库无法自动设置更新时间？
+* 通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
+~~~java 
+@Component
+public class FillMetaObjectHandler implements MetaObjectHandler {
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName(Cons.FieldName.updateTime.name(), new Date(), metaObject);
+    }
+}
+~~~
 
 

@@ -124,7 +124,8 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("对象转换异常, class: {}, error: {}", clazz.getName(), e.getMessage());
+            log.error("对象转换异常, class: {}, error: {}", clazz.getName(), e);
+            return Collections.emptyList();
         }
         return resultList;
     }
