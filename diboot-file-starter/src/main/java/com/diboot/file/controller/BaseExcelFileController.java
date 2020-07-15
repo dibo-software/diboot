@@ -178,6 +178,10 @@ public abstract class BaseExcelFileController extends BaseFileController {
             }
             throw e;
         }
+        //最后拦截，如果数据异常在listener中未被拦截抛出异常，此处进行处理
+        if (V.notEmpty(listener.getErrorMsgs())) {
+            throw new BusinessException(Status.FAIL_VALIDATION, S.join(listener.getErrorMsgs(), "; "));
+        }
         // 绑定属性到model
         dataMap.put("header", listener.getFieldHeaders());
         dataMap.put(ORIGIN_FILE_NAME, originFileName);
@@ -208,6 +212,10 @@ public abstract class BaseExcelFileController extends BaseFileController {
                 throw new Exception(e.getMessage());
             }
             throw e;
+        }
+        //最后拦截，如果数据异常在listener中未被拦截抛出异常，此处进行处理
+        if (V.notEmpty(listener.getErrorMsgs())) {
+            throw new BusinessException(Status.FAIL_VALIDATION, S.join(listener.getErrorMsgs(), "; "));
         }
         return listener.getDataList().size();
     }
