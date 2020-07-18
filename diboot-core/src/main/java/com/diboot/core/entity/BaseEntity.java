@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,23 +42,24 @@ import java.util.Map;
 public abstract class BaseEntity implements Serializable {
     private static final long serialVersionUID = 10203L;
 
-    /***
+    /**
      * 默认主键字段id，类型为Long型自增，转json时转换为String
      */
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    /***
+    /**
      * 默认逻辑删除标记，is_deleted=0有效
      */
     @TableLogic
     @JSONField(serialize = false)
-    @TableField("is_deleted")
+    @TableField(Cons.COLUMN_IS_DELETED)
     private boolean deleted = false;
 
-    /***
+    /**
      * 默认记录创建时间字段，新建时由数据库赋值
      */
+    @JSONField(format = D.FORMAT_DATETIME_Y4MDHMS)
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
     private Date createTime;
 

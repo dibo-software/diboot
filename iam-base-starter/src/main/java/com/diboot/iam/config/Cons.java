@@ -55,8 +55,10 @@ public class Cons extends com.diboot.core.config.Cons {
      */
     public static enum DICTCODE_AUTH_TYPE{
         PWD,
+        SSO,
         WX_MP,
-        WX_CP
+        WX_CP,
+        OTHER
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package com.diboot.file.starter;
 
+import com.diboot.core.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 @Slf4j
 @Configuration
@@ -40,14 +43,29 @@ public class FileAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(FilePluginManager.class)
-    public FilePluginManager filePluginManager(){
+    public FilePluginManager filePluginManager() {
         // 初始化SCHEMA
         SqlHandler.init(environment);
-        FilePluginManager pluginManager = new FilePluginManager() {};
+        FilePluginManager pluginManager = new FilePluginManager() {
+        };
         // 检查数据库字典是否已存在
-        if(fileProperties.isInitSql() && SqlHandler.checkIsFileTableExists() == false){
+        if (fileProperties.isInitSql() && SqlHandler.checkIsFileTableExists() == false) {
             SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
         }
         return pluginManager;
+    }
+
+    /**
+     * 需要文件上传，开启此配置
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(MultipartResolver.class)
+    public MultipartResolver multipartResolver() {
+        CommonsMultipartResolver bean = new CommonsMultipartResolver();
+        bean.setDefaultEncoding(Cons.CHARSET_UTF8);
+        bean.setMaxUploadSize(fileProperties.getMaxUploadSize());
+        return bean;
     }
 }

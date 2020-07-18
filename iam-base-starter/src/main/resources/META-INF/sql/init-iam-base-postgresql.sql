@@ -11,7 +11,6 @@ create table iam_user
   email varchar(50) null,
   avatar_url varchar(200) null,
   status varchar(10) not null default 'A',
-  extdata varchar(100) null,
   is_deleted BOOLEAN not null DEFAULT FALSE,
   create_time  timestamp   not null default CURRENT_TIMESTAMP
 );
@@ -26,13 +25,12 @@ comment on column iam_user.mobile_phone is '手机号';
 comment on column iam_user.email is 'Email';
 comment on column iam_user.avatar_url is '头像';
 comment on column iam_user.status is '状态';
-comment on column iam_user.extdata is '扩展属性';
 comment on column iam_user.is_deleted is '删除标记';
 comment on column iam_user.create_time is '创建时间';
 comment on table iam_user is '系统用户';
 -- 索引
-create index idx_iam_user on iam_user (mobile_phone);
-create index idx_iam_user_2 on iam_user (email);
+create index idx_iam_user_1 on iam_user (org_id);
+create index idx_iam_user_2 on iam_user (mobile_phone);
 create unique index uidx_iam_user on iam_user (user_num);
 
 -- 账号表
@@ -46,7 +44,6 @@ create table iam_account
   auth_secret varchar(32) null,
   secret_salt varchar(32) null,
   status varchar(10) default 'A' not null,
-  extdata varchar(100) null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
@@ -58,7 +55,6 @@ comment on column iam_account.auth_account is '用户名';
 comment on column iam_account.auth_secret is '密码';
 comment on column iam_account.secret_salt is '加密盐';
 comment on column iam_account.status is '用户状态';
-comment on column iam_account.extdata is '扩展属性';
 comment on column iam_account.is_deleted is '是否删除';
 comment on column iam_account.create_time is '创建时间';
 comment on table iam_account is '登录账号';
@@ -161,7 +157,6 @@ create table iam_login_trace
   auth_account varchar(100) not null ,
   ip_address varchar(50) null ,
   user_agent varchar(200) null ,
-  extdata varchar(100) null ,
   is_success BOOLEAN default FALSE not null ,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
@@ -172,7 +167,6 @@ comment on column iam_login_trace.auth_type is '认证方式';
 comment on column iam_login_trace.auth_account is '用户名';
 comment on column iam_login_trace.ip_address is 'IP';
 comment on column iam_login_trace.user_agent is '客户端信息';
-comment on column iam_login_trace.extdata is '扩展字段';
 comment on column iam_login_trace.is_success is '是否成功';
 comment on column iam_login_trace.create_time is '创建时间';
 comment on table iam_login_trace is '登录日志';

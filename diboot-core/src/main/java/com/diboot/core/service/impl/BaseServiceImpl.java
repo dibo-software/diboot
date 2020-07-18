@@ -17,21 +17,29 @@ package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Pagination;
+import com.diboot.core.vo.Status;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,10 +78,23 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			warning("createEntity", "参数entity为null");
 			return false;
 		}
-		return super.save(entity);
+		return save(entity);
 	}
 
 	@Override
+	public boolean save(T entity) {
+		beforeCreateEntity(entity);
+		return super.save(entity);
+	}
+
+	/**
+	 * 用于创建之前的自动填充等场景调用
+	 */
+	protected void beforeCreateEntity(T entity){
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter) {
 		boolean success = createEntity(entity);
 		if(!success){
@@ -83,13 +104,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(relatedEntities)){
 			return success;
 		}
-		Class relatedEntityClass = BeanUtils.getTargetClass(relatedEntities.get(0));
-		// 获取关联对象对应的Service
-		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
-		if(relatedEntityService == null){
-			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
-			return false;
-		}
+		Class relatedEntityClass = relatedEntities.get(0).getClass();
 		// 获取主键
 		Object pkValue = getPrimaryKeyValue(entity);
 		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
@@ -97,7 +112,20 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		relatedEntities.stream().forEach(relatedEntity->{
 			BeanUtils.setProperty(relatedEntity, attributeName, pkValue);
 		});
-		return relatedEntityService.createEntities(relatedEntities);
+		// 获取关联对象对应的Service
+		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		if(relatedEntityService != null){
+			return relatedEntityService.createEntities(relatedEntities);
+		}
+		else{
+			// 查找mapper
+			BaseMapper mapper = ContextHelper.getBaseMapperByEntity(entity.getClass());
+			// 新增关联，无service只能循环插入
+			for(RE relation : relatedEntities){
+				mapper.insert(relation);
+			}
+			return true;
+		}
 	}
 
 	@Override
@@ -114,7 +142,26 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		else{
 			// 批量插入
-			return super.saveBatch(entityList, BaseConfig.getBatchSize());
+			return saveBatch(entityList, BaseConfig.getBatchSize());
+		}
+	}
+
+	@Override
+	public boolean saveBatch(Collection<T> entityList, int batchSize){
+		// 批量插入
+		beforeCreateEntities(entityList);
+		return super.saveBatch(entityList, batchSize);
+	}
+
+	/**
+	 * 用于创建之前的自动填充等场景调用
+	 */
+	protected void beforeCreateEntities(Collection<T> entityList){
+		if(V.isEmpty(entityList)){
+			return;
+		}
+		for(T entity : entityList){
+			beforeCreateEntity(entity);
 		}
 	}
 
@@ -137,7 +184,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public boolean updateEntities(Collection<T> entityList) {
+		if(V.isEmpty(entityList)){
+			return false;
+		}
 		boolean success = super.updateBatchById(entityList);
 		return success;
 	}
@@ -157,6 +208,67 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		// 批量插入
 		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
+	}
+
+	/**
+	 * 更新n-n关联
+	 * @return
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public     <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+													  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList)
+	{
+		if(driverId == null){
+			throw new BusinessException(Status.FAIL_INVALID_PARAM, "主动ID值不能为空！");
+		}
+		// 从getter中获取class和fieldName
+		com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda lambda = LambdaUtils.resolve(driverIdGetter);
+		Class<R> middleTableClass = (Class<R>) lambda.getImplClass();
+		// 获取主动从动字段名
+		String driverFieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+		String followerFieldName = convertGetterToFieldName(followerIdGetter);
+		List<R> n2nRelations = null;
+		if(V.notEmpty(followerIdList)){
+			n2nRelations = new ArrayList<>(followerIdList.size());
+			try{
+				for(Serializable followerId : followerIdList){
+					R relation = middleTableClass.newInstance();
+					BeanUtils.setProperty(relation, driverFieldName, driverId);
+					BeanUtils.setProperty(relation, followerFieldName, followerId);
+					n2nRelations.add(relation);
+				}
+			}
+			catch (Exception e){
+				throw new BusinessException(Status.FAIL_EXCEPTION, e);
+			}
+		}
+		// 删除已有关联
+		LambdaQueryWrapper<R> queryWrapper = new QueryWrapper<R>().lambda()
+				.eq(driverIdGetter, driverId);
+		// 查找service
+		BaseService baseService = ContextHelper.getBaseServiceByEntity(middleTableClass);
+		if(baseService != null){
+			// 条件为空，不删除
+			baseService.deleteEntities(queryWrapper);
+			// 添加
+			if(V.notEmpty(n2nRelations)){
+				baseService.createEntities(n2nRelations);
+			}
+		}
+		else{
+			// 查找mapper
+			BaseMapper mapper = ContextHelper.getBaseMapperByEntity(middleTableClass);
+			// 条件为空，不删除
+			mapper.delete(queryWrapper);
+			// 新增关联，无service只能循环插入
+			if(V.notEmpty(n2nRelations)){
+				for(R relation : n2nRelations){
+					mapper.insert(relation);
+				}
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -260,7 +372,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteEntities(Collection<? extends Serializable> entityIds) {
+		if(V.isEmpty(entityIds)){
+			return false;
+		}
 		return super.removeByIds(entityIds);
 	}
 
@@ -276,6 +392,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public List<T> getEntityList(Wrapper queryWrapper, Pagination pagination) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+		}
+		// 否则，调用MP默认实现
 		if(pagination != null){
 			IPage<T> page = convertToIPage(queryWrapper, pagination);
 			page = super.page(page, queryWrapper);
@@ -297,9 +418,58 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
+	/**
+	 * 获取指定条件的Entity ID集合
+	 * @param queryWrapper
+	 * @param getterFn
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, ?> getterFn){
+		String fieldName = convertGetterToFieldName(getterFn);
+		String columnName = S.toSnakeCase(fieldName);
+		// 优化SQL，只查询当前字段
+		if(queryWrapper instanceof QueryWrapper){
+			if(V.isEmpty(queryWrapper.getSqlSelect())){
+				((QueryWrapper)queryWrapper).select(columnName);
+			}
+		}
+		else if(queryWrapper instanceof LambdaQueryWrapper){
+			if(V.isEmpty(queryWrapper.getSqlSelect())){
+				((LambdaQueryWrapper) queryWrapper).select(getterFn);
+			}
+		}
+		List<Map<String, Object>> mapList = getMapList(queryWrapper);
+		if(V.isEmpty(mapList)){
+			return Collections.emptyList();
+		}
+		String columnNameUC = V.notEmpty(columnName)? columnName.toUpperCase() : null;
+		List<FT> fldValues = new ArrayList<>(mapList.size());
+		for(Map<String, Object> map : mapList){
+			if(V.isEmpty(map)){
+				continue;
+			}
+			if(map.containsKey(columnName)){
+				FT value = (FT) map.get(columnName);
+				if(!fldValues.contains(value)){
+					fldValues.add(value);
+				}
+			}
+			else if(columnNameUC != null && map.containsKey(columnNameUC)){
+				FT value = (FT) map.get(columnNameUC);
+				if(!fldValues.contains(value)){
+					fldValues.add(value);
+				}
+			}
+		}
+		return fldValues;
+	}
+
 	@Override
 	public List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount) {
-		IPage<T> page = new Page<>(1, limitCount);
+		Page<T> page = new Page<>(1, limitCount);
+		page.setSearchCount(false);
 		page = super.page(page, queryWrapper);
 		return page.getRecords();
 	}
@@ -343,7 +513,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<Map<String, Object>> getMapList(Wrapper queryWrapper, Pagination pagination) {
 		if(pagination != null){
-			IPage<T> page = convertToIPage(queryWrapper, pagination);
+			IPage page = convertToIPage(queryWrapper, pagination);
 			IPage<Map<String, Object>> resultPage = super.pageMaps(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
 			if(page.isSearchCount()){
@@ -380,6 +550,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
 		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
+			// 如果key和value的的值都为null的时候map也为空，则不处理此项
+			if (V.isEmpty(map)) {
+				continue;
+			}
 			String key = keyValueArray[0], value = keyValueArray[1], ext = null;
 			// 兼容oracle大写
 			if(map.containsKey(key) == false && map.containsKey(key.toUpperCase())){
@@ -435,18 +609,15 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(entity == null){
 			return null;
 		}
-		List<T> enityList = new ArrayList<>();
-		enityList.add(entity);
 		// 绑定
-		List<VO> voList = RelationsBinder.convertAndBind(enityList, voClass);
-		return voList.get(0);
+		return Binder.convertAndBindRelations(entity, voClass);
 	}
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
-		List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
+		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
 		return voList;
 	}
 
@@ -463,17 +634,24 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 如果是默认id排序
 		if(pagination.isDefaultOrderBy()){
 			// 优化排序
-			Class entityClass = BeanUtils.getGenericityClass(this, 1);
-			if(entityClass != null){
-				String pk = ContextHelper.getPrimaryKey(entityClass);
-				// 主键非有序id字段，需要清空默认排序以免报错
-				if(!Cons.FieldName.id.name().equals(pk)){
-					log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
-					pagination.clearDefaultOrder();
-				}
+			String pk = getPrimaryKeyField();
+			// 主键非有序id字段，需要清空默认排序以免报错
+			if(!Cons.FieldName.id.name().equals(pk)){
+//				log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
+				pagination.clearDefaultOrder();
+				//设置时间排序
+				pagination.setDefaultCreateTimeOrderBy();
 			}
 		}
-		return (Page<T>)pagination.toIPage();
+		return (Page<T>)pagination.toPage();
+	}
+
+	/**
+	 * 获取当前主键字段名
+	 * @return
+	 */
+	private String getPrimaryKeyField(){
+		return ContextHelper.getPrimaryKey(entityClass);
 	}
 
 	/**
@@ -486,13 +664,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.getProperty(entity, pk);
 	}
 
+	/**
+	 * 转换SFunction为属性名
+	 * @param getterFn
+	 * @param <T>
+	 * @return
+	 */
+	private <T> String convertGetterToFieldName(SFunction<T, ?> getterFn) {
+		com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda lambda = LambdaUtils.resolve(getterFn);
+		String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+		return fieldName;
+	}
+
 	/***
 	 * 打印警告信息
 	 * @param method
 	 * @param message
 	 */
 	private void warning(String method, String message){
-		log.warn(this.getClass().getName() + "."+ method +" 调用错误: "+message+", 请检查！");
+		log.warn(this.getClass().getSimpleName() + ".{} 调用错误: {}, 请检查！", method, message);
 	}
 
 }

@@ -18,8 +18,10 @@ package com.diboot.core.util;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -59,11 +61,11 @@ public class ContextHelper implements ApplicationContextAware {
     /**
      * Entity-对应的Service缓存
      */
-    private static Map<String, IService> ENTITY_SERVICE_CACHE = null;
+    private static Map<String, IService> ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
     /**
      * Entity-对应的BaseService缓存
      */
-    private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = null;
+    private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = new ConcurrentHashMap<>();
     /**
      * 存储主键字段非id的Entity
      */
@@ -75,9 +77,10 @@ public class ContextHelper implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        if(APPLICATION_CONTEXT == null){
-            APPLICATION_CONTEXT = applicationContext;
-        }
+        APPLICATION_CONTEXT = applicationContext;
+        ENTITY_SERVICE_CACHE.clear();
+        ENTITY_BASE_SERVICE_CACHE.clear();
+        PK_NID_ENTITY_CACHE.clear();
     }
 
     /***
@@ -85,7 +88,10 @@ public class ContextHelper implements ApplicationContextAware {
      */
     public static ApplicationContext getApplicationContext() {
         if (APPLICATION_CONTEXT == null){
-            return ContextLoader.getCurrentWebApplicationContext();
+            APPLICATION_CONTEXT = ContextLoader.getCurrentWebApplicationContext();
+        }
+        if(APPLICATION_CONTEXT == null){
+            log.warn("无法获取ApplicationContext，请在Spring初始化之后调用!");
         }
         return APPLICATION_CONTEXT;
     }
@@ -105,17 +111,22 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static <T> T getBean(Class<T> clazz){
-        return getApplicationContext().getBean(clazz);
+        try{
+            return getApplicationContext().getBean(clazz);
+        }
+        catch (Exception e){
+            log.debug("无法找到 bean: {}", clazz.getSimpleName());
+            return null;
+        }
     }
 
     /***
-     * 获取指定类型的全部实例
+     * 获取指定类型的全部实现类
      * @param type
      * @param <T>
      * @return
      */
     public static <T> List<T> getBeans(Class<T> type){
-        // 获取所有的定时任务实现类
         Map<String, T> map = getApplicationContext().getBeansOfType(type);
         if(V.isEmpty(map)){
             return null;
@@ -141,7 +152,7 @@ public class ContextHelper implements ApplicationContextAware {
     }
 
     /**
-     * 根据Entity获取对应的Service (已废弃，请调用getIServiceByEntity)
+     * 根据Entity获取对应的Service (已废弃，请调用getBaseServiceByEntity)
      * @param entity
      * @return
      */
@@ -157,8 +168,7 @@ public class ContextHelper implements ApplicationContextAware {
      */
     @Deprecated
     public static IService getIServiceByEntity(Class entity){
-        if(ENTITY_SERVICE_CACHE == null){
-            ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
+        if(ENTITY_SERVICE_CACHE.isEmpty()){
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
@@ -182,8 +192,7 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static BaseService getBaseServiceByEntity(Class entity){
-        if(ENTITY_BASE_SERVICE_CACHE == null){
-            ENTITY_BASE_SERVICE_CACHE = new ConcurrentHashMap<>();
+        if(ENTITY_BASE_SERVICE_CACHE.isEmpty()){
             Map<String, BaseService> serviceMap = getApplicationContext().getBeansOfType(BaseService.class);
             if(V.notEmpty(serviceMap)){
                 for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){
@@ -196,9 +205,18 @@ public class ContextHelper implements ApplicationContextAware {
         }
         BaseService baseService =  ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
         if(baseService == null){
-            log.error("未能识别到Entity: "+entity.getName()+" 的Service实现！");
+            log.info("未能识别到Entity: "+entity.getName()+" 的Service实现！");
         }
         return baseService;
+    }
+
+    /**
+     * 根据Entity获取对应的BaseMapper实现
+     * @param entityClass
+     * @return
+     */
+    public static BaseMapper getBaseMapperByEntity(Class entityClass){
+        return ParserCache.getMapperInstance(entityClass);
     }
 
     /**
@@ -236,6 +254,9 @@ public class ContextHelper implements ApplicationContextAware {
         Environment environment = getApplicationContext().getEnvironment();
         String jdbcUrl = environment.getProperty("spring.datasource.url");
         if(jdbcUrl == null){
+            jdbcUrl = environment.getProperty("spring.datasource.druid.url");
+        }
+        if(jdbcUrl == null){
             String master = environment.getProperty("spring.datasource.dynamic.primary");
             jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
         }
@@ -265,7 +286,7 @@ public class ContextHelper implements ApplicationContextAware {
             }
         }
         if(DATABASE_TYPE == null){
-            log.warn("无法识别数据库类型，请检查配置！");
+            log.warn("无法识别数据库类型，请检查数据源配置:spring.datasource.url等");
         }
         return DATABASE_TYPE;
     }

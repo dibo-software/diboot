@@ -51,11 +51,13 @@ public class DTest {
         JsonResult j2 = new JsonResult(token, "申请token成功");
         JsonResult j3 = new JsonResult(Status.OK, token);
         JsonResult j4 = new JsonResult(Status.OK, token, "申请token成功");
-        JsonResult j5 = new JsonResult(Status.OK);
+        JsonResult j5 = JsonResult.OK();
+        JsonResult j6 = JsonResult.FAIL_VALIDATION("xxx验证错误");
         System.out.println(j1.getData());
         System.out.println(j2.getData());
         System.out.println(j3.getData());
         System.out.println(j4.getData());
         System.out.println(j5.getData());
+        Assert.assertTrue(j6.getMsg().contains("xxx验证错误"));
     }
 }

@@ -18,6 +18,7 @@ package com.diboot.file.example.custom;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ import javax.validation.constraints.NotNull;
  * @version v2.0
  * @date 2020/02/19
  */
-@Getter @Setter
+@Getter @Setter @Accessors(chain = true)
 public class Department extends BaseEntity {
 
     @NotNull(message = "父ID不能为空")

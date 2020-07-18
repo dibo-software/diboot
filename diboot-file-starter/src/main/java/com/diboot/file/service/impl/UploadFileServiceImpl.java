@@ -17,11 +17,15 @@ package com.diboot.file.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.V;
 import com.diboot.file.entity.UploadFile;
 import com.diboot.file.mapper.UploadFileMapper;
 import com.diboot.file.service.UploadFileService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,12 +38,42 @@ import java.util.List;
 public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, UploadFile> implements UploadFileService {
 
     @Override
-    public List<UploadFile> getUploadedFiles(String relObjClass, Long relObjId) {
+    public List<UploadFile> getUploadedFiles(String relObjClass, Object relObjId) {
         LambdaQueryWrapper<UploadFile> queryWrapper = new QueryWrapper<UploadFile>().lambda()
                 .eq(UploadFile::getRelObjType, relObjClass)
-                .eq(UploadFile::getRelObjId, relObjId)
+                .eq(UploadFile::getRelObjId, relObjId.toString())
                 .orderByAsc(UploadFile::getCreateTime);
         return getEntityList(queryWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void bindRelObjId(Object relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) throws Exception {
+
+        //如果不存在需要绑定的么清除所有当前关联的所有文件
+        if (V.isEmpty(fileUuidList)) {
+            this.update(
+                    Wrappers.<UploadFile>lambdaUpdate()
+                    .set(true, UploadFile::isDeleted, true)
+                    .eq(UploadFile::getRelObjId, relObjId.toString())
+                    .eq(UploadFile::getRelObjType, relObjTypeClass.getSimpleName())
+            );
+            return;
+        }
+        // 删除 relObjId + relObjType下的 并且不包含fileIdList的file。
+        this.update(
+                Wrappers.<UploadFile>lambdaUpdate()
+                        .set(true, UploadFile::isDeleted, true)
+                        .eq(UploadFile::getRelObjId, relObjId.toString())
+                        .eq(UploadFile::getRelObjType, relObjTypeClass.getSimpleName())
+                        .notIn(UploadFile::getUuid, fileUuidList)
+        );
+        // 绑定绑定数据
+        this.update(
+                Wrappers.<UploadFile>lambdaUpdate()
+                        .set(true, UploadFile::getRelObjId, relObjId.toString())
+                        .in(UploadFile::getUuid, fileUuidList)
+        );
     }
 
 }

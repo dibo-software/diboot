@@ -35,7 +35,7 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
     public void testValidate(){
         DepartmentExcelModel department = new DepartmentExcelModel();
         department.setOrgName("dd");
-        department.setParentId(0L);
+        department.setParentName("产品部");
         department.setMemCount(1);
         department.setUserStatus("S");
         //String msg = V.validateBean(department);
@@ -52,6 +52,9 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
             Assert.assertTrue(success);
             System.out.println(JSON.stringify(listener.getFieldHeadMap()));
             System.out.println(JSON.stringify(listener.getDataList()));
+            Assert.assertTrue(listener.getDataList().get(0).getUserStatus().equals("在职"));
+            Assert.assertTrue("产品部".equals(listener.getDataList().get(0).getParentName()));
+            Assert.assertNull(listener.getDataList().get(1).getParentId());
         }
         catch (Exception e){
             e.printStackTrace();
@@ -67,14 +70,37 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
     public void testErrorDataRead(){
         try{
             prepareErrorDataExcel();
-            // 预览读
-            //ExcelHelper.previewRead(getTempFilePath(), new DepartmentImportListener());
             // 读且保存
             ExcelHelper.previewReadExcel(getTempFilePath(), new DepartmentImportListener());
         }
         catch (Exception e){
             e.printStackTrace();
             Assert.assertTrue(e.getMessage().contains(Status.FAIL_VALIDATION.label()));
+        }
+        finally {
+            deleteTempFile();
+        }
+    }
+
+    @Test
+    public void testNormalDataReadSave(){
+        try{
+            prepareNormalDataExcel();
+            // 读且保存
+            DepartmentImportListener listener = new DepartmentImportListener();
+            boolean success = ExcelHelper.readAndSaveExcel(getTempFilePath(), listener);
+            Assert.assertTrue(success);
+            System.out.println(JSON.stringify(listener.getFieldHeadMap()));
+            System.out.println(JSON.stringify(listener.getDataList()));
+            Assert.assertTrue(listener.getDataList().get(0).getUserStatus().equals("A"));
+            Assert.assertTrue(listener.getDataList().get(0).getParentName().equals("产品部"));
+            Assert.assertTrue(listener.getDataList().get(0).getParentId().equals(10001L));
+            Assert.assertTrue(listener.getDataList().get(1).getParentId().equals(0L));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            Assert.fail();
         }
         finally {
             deleteTempFile();

@@ -27,11 +27,6 @@ import org.springframework.core.env.Environment;
 @Slf4j
 public class PropertiesUtils {
 
-    /**
-     * Spring配置环境变量
-     */
-    private static Environment environment;
-
     /***
      *  读取配置项的值
      * @param key
@@ -39,11 +34,9 @@ public class PropertiesUtils {
      */
     public static String get(String key){
         // 获取配置值
+        Environment environment = ContextHelper.getApplicationContext().getEnvironment();
         if(environment == null){
-            environment = ContextHelper.getApplicationContext().getEnvironment();
-        }
-        if(environment == null){
-            log.warn("无法获取上下文Environment !");
+            log.warn("无法获取上下文Environment，请在Spring初始化之后调用!");
             return null;
         }
         String value = environment.getProperty(key);

@@ -2,17 +2,36 @@
 ## 组件特性
 * EasyExcel轻量封装，支持自动校验与字典转换，优化校验错误的提示内容
 * 封装常用的文件本地存储、上传下载、图片压缩水印等常用处理
-* Starter启动自动安装依赖的数据表
 
 ### 1. EasyExcel增强优化
-* 支持基于Java validator注解的自动数据校验，支持@BindDict注解自动转换字典显示值-存储值
 
-使用示例：
+* 支持基于Java validator注解的自动数据校验：
+~~~java 
+@NotNull(message = "用户名不能为空") // 支持validation注解自动校验
+@ExcelProperty(value = "状态", index = 1)
+private String username;
+~~~
+
+* 支持@ExcelBindDict注解自动转换字典显示值-存储值
+
+@ExcelBindDict注解使用示例：
 ~~~java
-@NotNull(message = "用户状态不能为空") // 自动校验
-@BindDict(type = "USER_STATUS")    // 自动转换数据字典 label-value
-@ExcelProperty(value = "状态", index = 4, converter = DictConverter.class)
+@ExcelBindDict(type = "USER_STATUS")   // 自动转换数据字典 label-value
+@ExcelProperty(value = "状态", index = 2)
 private String userStatus;
+~~~
+
+* 支持@ExcelBindField注解自动转换关联字段name-id
+
+@ExcelBindField注解使用示例：
+~~~java
+@ExcelBindField(entity = Department.class, field = "name", setIdField = "parentId")
+@ExcelProperty(value = "上级部门", index = 0)
+private String parentName;
+
+// setIdField="parentId"，将转换后的id值设置到parentId
+@ExcelIgnore
+private Long parentId;
 ~~~
 
 * 轻量封装增强的Excel Data Listener
@@ -120,3 +139,5 @@ files.storage.directory=/myfile
 ~~~
 
 ## 样例参考 - [diboot-file-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-file-example)
+
+> 使用过程中遇到问题，可加群交流。

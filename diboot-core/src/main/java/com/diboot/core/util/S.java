@@ -177,19 +177,20 @@ public class S extends StringUtils{
 			}
 		}
 		// 包含_
-		String result = null;
+		StringBuilder sb = null;
 		String[] words = snakeCaseStr.split(Cons.SEPARATOR_UNDERSCORE);
 		for(String word : words){
-			if(V.notEmpty(word)){
-				if(result == null){
-					result = word.toLowerCase();
-				}
-				else{
-					result += word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
-				}
+			if(V.isEmpty(word)){
+				continue;
+			}
+			if(sb == null){
+				sb = new StringBuilder(word.toLowerCase());
+			}
+			else{
+				sb.append(word.substring(0, 1).toUpperCase()).append(word.substring(1).toLowerCase());
 			}
 		}
-		return result;
+		return sb != null? sb.toString() : null;
 	}
 
 	/***

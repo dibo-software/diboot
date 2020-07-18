@@ -93,7 +93,7 @@ public class BaseConfig {
 	 * @return
 	 */
     public static int getPageSize() {
-		Integer length = PropertiesUtils.getInteger("pagination.default.pageSize");
+		Integer length = PropertiesUtils.getInteger("system.pagination.pageSize");
 		if(length != null){
 			return length;
 		}
@@ -105,6 +105,10 @@ public class BaseConfig {
  	 * @return
 	 */
 	public static int getBatchSize() {
+		Integer length = PropertiesUtils.getInteger("system.batch.size");
+		if(length != null){
+			return length;
+		}
 		return 1000;
 	}
 

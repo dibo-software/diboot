@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>2.0.5</version>
+        <version>2.1.1</version>
     </parent>
 
     <artifactId>diboot-iam-base-spring-boot-starter</artifactId>
-    <version>2.0.5.1</version>
+    <version>2.1.1</version>
     <packaging>jar</packaging>
     <description>diboot IAM base project</description>
 
@@ -25,14 +25,20 @@
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core-spring-boot-starter</artifactId>
-            <version>2.0.5</version>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.7.2</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- 依赖shiro、JWT -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-web-starter</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.3</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

@@ -16,11 +16,13 @@
 package com.diboot.core.util;
 
 
+import com.diboot.core.binding.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.KeyValue;
 import com.diboot.core.vo.Status;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -30,6 +32,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -69,6 +72,8 @@ public class BeanUtils {
     public static Object copyProperties(Object source, Object target){
         // 链式调用无法使用BeanCopier拷贝，换用BeanUtils
         org.springframework.beans.BeanUtils.copyProperties(source, target);
+        // 处理Accept注解标识的不同字段名拷贝
+        AcceptAnnoCopier.copyAcceptProperties(source, target);
         return target;
     }
 
@@ -119,7 +124,8 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("对象转换异常, class: {}, error: {}", clazz.getName(), e.getMessage());
+            log.error("对象转换异常, class: {}, error: {}", clazz.getName(), e);
+            return Collections.emptyList();
         }
         return resultList;
     }
@@ -156,8 +162,14 @@ public class BeanUtils {
      * @return
      */
     public static Object getProperty(Object obj, String field){
-        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
-        return wrapper.getPropertyValue(field);
+        try {
+            BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+            return wrapper.getPropertyValue(field);
+        }
+        catch (Exception e) {
+            log.warn("获取对象属性值出错，返回null", e);
+        }
+        return null;
     }
 
     /***
@@ -488,7 +500,7 @@ public class BeanUtils {
         try{
             for(E object : objectList){
                 Object fieldValue = getProperty(object, getterPropName);
-                if(!fieldValueList.contains(fieldValue)){
+                if(fieldValue != null && !fieldValueList.contains(fieldValue)){
                     fieldValueList.add(fieldValue);
                 }
             }
@@ -576,18 +588,7 @@ public class BeanUtils {
      */
     public static <T> String convertToFieldName(IGetter<T> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
-        String methodName = lambda.getImplMethodName();
-        String prefix = null;
-        if(methodName.startsWith("get")){
-            prefix = "get";
-        }
-        else if(methodName.startsWith("is")){
-            prefix = "is";
-        }
-        if(prefix == null){
-            log.warn("无效的getter方法: "+methodName);
-        }
-        return S.uncapFirst(S.substringAfter(methodName, prefix));
+        return PropertyNamer.methodToProperty(lambda.getImplMethodName());
     }
 
     /***
@@ -597,11 +598,7 @@ public class BeanUtils {
      */
     public static <T,R> String convertToFieldName(ISetter<T,R> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
-        String methodName = lambda.getImplMethodName();
-        if(!methodName.startsWith("set")){
-            log.warn("无效的setter方法: "+methodName);
-        }
-        return S.uncapFirst(S.substringAfter(methodName, "set"));
+        return PropertyNamer.methodToProperty(lambda.getImplMethodName());
     }
 
      /**
@@ -617,6 +614,30 @@ public class BeanUtils {
             if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
                 Arrays.stream(fields).forEach((field)->{
                     if(!fieldNameSet.contains(field.getName())){
+                        fieldList.add(field);
+                        fieldNameSet.add(field.getName());
+                    }
+                });
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return fieldList;
+    }
+
+
+    /**
+     * 获取类所有属性（包含父类中属性）
+     * @param clazz
+     * @return
+     */
+    public static List<Field> extractFields(Class<?> clazz, Class<? extends Annotation> annotation){
+        List<Field> fieldList = new ArrayList<>();
+        Set<String> fieldNameSet = new HashSet<>();
+        while (clazz != null) {
+            Field[] fields = clazz.getDeclaredFields();
+            if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
+                Arrays.stream(fields).forEach((field)->{
+                    if(!fieldNameSet.contains(field.getName()) && field.getAnnotation(annotation) != null){
                         fieldList.add(field);
                         fieldNameSet.add(field.getName());
                     }

@@ -39,7 +39,7 @@ public class V {
 	/**
 	 * hibernate注解验证
 	 */
-	private static Validator VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
+	private static Validator VALIDATOR = null;
 
 	/***
 	 * 对象是否为空
@@ -319,7 +319,7 @@ public class V {
 				}
 			}
 			else{
-				//TODO 无法识别的格式
+				// 无法识别的格式
 			}
 		}
 		// 返回校验不通过的结果
@@ -371,6 +371,23 @@ public class V {
 			}
 			for(Object obj : targetList){
 				if(!sourceList.contains(obj)){
+					return false;
+				}
+			}
+			return true;
+		}
+		else if(source instanceof Map){
+			Map sourceMap = (Map)source, targetMap = (Map)target;
+			if(V.isEmpty(sourceMap) && V.isEmpty(targetMap)){
+				return true;
+			}
+			if(sourceMap.size() != targetMap.size()){
+				return false;
+			}
+			for(Object key : sourceMap.keySet()){
+				Object value = sourceMap.get(key);
+				Object targetValue = targetMap.get(key);
+				if(notEquals(value, targetValue)){
 					return false;
 				}
 			}
@@ -433,6 +450,9 @@ public class V {
 	 * @param obj
 	 */
 	public static <T> String validateBean(T obj) {
+		if(VALIDATOR == null){
+			VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
+		}
 		// 校验
 		Set<ConstraintViolation<T>> errors = VALIDATOR.validate(obj);
 		if(errors == null || errors.size() == 0){
@@ -443,6 +463,25 @@ public class V {
 			allErrors.add(err.getMessage());
 		}
 		return S.join(allErrors);
+	}
+
+	/**
+	 * 检查当前sql中是否包含某列的条件
+	 * @param normalSql
+	 * @param column
+	 * @return
+	 */
+	public static boolean checkHasColumn(String normalSql, String column){
+		normalSql = S.removeDuplicateBlank(normalSql);
+		int index = S.indexOfIgnoreCase(normalSql, column);
+		while(index >= 0){
+			normalSql = S.substring(normalSql, index);
+		}
+		if(S.containsIgnoreCase(normalSql, column)){
+			log.warn("注意：附加数据访问条件失效，因查询条件已包含列: " + column);
+			return true;
+		}
+		return false;
 	}
 
 }

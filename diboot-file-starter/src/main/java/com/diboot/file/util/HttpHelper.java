@@ -26,11 +26,17 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,22 +99,7 @@ public class HttpHelper {
         put("xsd", "text/xml");
         put("xsl", "text/xml");
         put("xslt", "text/xml");
-        put("apk", "application/vnd.android./*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-package-archive");
+        put("apk", "application/vnd.android.package-archive");
     }};
 
     /**
@@ -116,34 +107,32 @@ package-archive");
      * @param url
      * @return
      */
-    public static String callHttpGet(String url){
-        return callHttpGet(url, null);
-    }
-
-    /**
-     * 调用Http Get请求
-     * @param url
-     * @return
-     */
-    public static String callHttpGet(String url, Map<String, String> headerMap){
-        OkHttpClient okHttpClient = new OkHttpClient();
+    public static String callGet(String url, Map<String, String> headerMap) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        if(S.startsWithIgnoreCase(url, "https://")){
+            withHttps(clientBuilder);
+        }
         Request.Builder builder = new Request.Builder().url(url);
         if(V.notEmpty(headerMap)){
             for(Map.Entry<String, String> entry : headerMap.entrySet()){
                 builder.addHeader(entry.getKey(), entry.getValue());
             }
         }
-        Call call = okHttpClient.newCall(builder.build());
+        Call call = clientBuilder.build().newCall(builder.build());
         return executeCall(call, url);
     }
 
+
     /**
-     * 发送HTTP Post请求
+     * 调用Http Post请求
      * @param url
      * @return
      */
-    public static String callHttpPost(String url, Map<String, String> formBody){
-        OkHttpClient okHttpClient = new OkHttpClient();
+    public static Response callPostResponse(String url, Map<String, String> formBody) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        if(S.startsWithIgnoreCase(url, "https://")){
+            withHttps(clientBuilder);
+        }
         FormBody.Builder bodyBuilder = new FormBody.Builder();
         if(V.notEmpty(formBody)){
             for(Map.Entry<String, String> entry : formBody.entrySet()){
@@ -153,8 +142,81 @@ package-archive");
         Request request = new Request.Builder().url(url)
                 .post(bodyBuilder.build())
                 .build();
-        Call call = okHttpClient.newCall(request);
+        Call call = clientBuilder.build().newCall(request);
+        try {
+            Response response = call.execute();
+            // 判断状态码
+            if(response.code() >= 400){
+                log.warn("请求调用异常 : " + url);
+                return null;
+            }
+            return response;
+        } catch (IOException e) {
+            log.warn("请求调用解析异常 : " + url, e);
+            return null;
+        }
+    }
+
+    /**
+     * 调用Http Post请求
+     * @param url
+     * @return
+     */
+    public static String callPost(String url, Map<String, String> formBody) {
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        if(S.startsWithIgnoreCase(url, "https://")){
+            withHttps(clientBuilder);
+        }
+        FormBody.Builder bodyBuilder = new FormBody.Builder();
+        if(V.notEmpty(formBody)){
+            for(Map.Entry<String, String> entry : formBody.entrySet()){
+                bodyBuilder.add(entry.getKey(), entry.getValue());
+            }
+        }
+        Request request = new Request.Builder().url(url)
+                .post(bodyBuilder.build())
+                .build();
+        Call call = clientBuilder.build().newCall(request);
         return executeCall(call, url);
+    }
+
+    /**
+     * 嵌入Https
+     * @param builder
+     */
+    public static void withHttps(OkHttpClient.Builder builder) {
+        try {
+            TrustManager[] trustManagers = buildTrustManagers();
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustManagers, new java.security.SecureRandom());
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
+            builder.hostnameVerifier((hostname, session) -> true);
+        }
+        catch (NoSuchAlgorithmException | KeyManagementException e) {
+            log.warn("构建https请求异常", e);
+        }
+    }
+
+    /**
+     * 构建TrustManager
+     * @return
+     */
+    private static TrustManager[] buildTrustManagers() {
+        return new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                    }
+                    @Override
+                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                    }
+                    @Override
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return new java.security.cert.X509Certificate[]{};
+                    }
+                }
+        };
     }
 
     /**
@@ -186,16 +248,27 @@ package-archive");
      * @throws Exception
      */
     public static void downloadLocalFile(String localFilePath, String exportFileName, HttpServletResponse response) throws Exception{
+        downloadLocalFile(new File(localFilePath), exportFileName, response);
+    }
+
+    /**
+     * 根据文件对象下载服务器文件
+     * @param localFile 本地文件对象
+     * @param exportFileName 导出文件的文件名
+     * @param response
+     * @throws Exception
+     */
+    public static void downloadLocalFile(File localFile, String exportFileName, HttpServletResponse response) throws Exception{
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try{
             String fileName = new String(exportFileName.getBytes("utf-8"), "ISO8859-1");
-            long fileLength = new File(localFilePath).length();
+            long fileLength = localFile.length();
             response.setContentType(getContextType(fileName));
             response.setHeader("Content-disposition", "attachment; filename="+ fileName);
             response.setHeader("Content-Length", String.valueOf(fileLength));
             response.setHeader("filename", URLEncoder.encode(exportFileName, StandardCharsets.UTF_8.name()));
-            bis = new BufferedInputStream(new FileInputStream(localFilePath));
+            bis = new BufferedInputStream(new FileInputStream(localFile));
             bos = new BufferedOutputStream(response.getOutputStream());
             byte[] buff = new byte[2048];
             int bytesRead;
@@ -204,7 +277,7 @@ package-archive");
             }
         }
         catch (Exception e) {
-            log.error("下载导出文件失败:"+localFilePath, e);
+            log.error("下载导出文件失败:"+localFile.getAbsolutePath(), e);
         }
         finally {
             if (bis != null) {

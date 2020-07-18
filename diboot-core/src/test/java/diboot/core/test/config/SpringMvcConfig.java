@@ -44,7 +44,7 @@ import java.util.List;
  */
 @TestConfiguration
 @ComponentScan(basePackages={"com.diboot", "diboot.core"})
-@MapperScan({"com.diboot.**.mapper", "diboot.**.mapper"})
+@MapperScan({"com.diboot.core.mapper", "diboot.core.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer{
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
 
@@ -63,7 +63,6 @@ public class SpringMvcConfig implements WebMvcConfigurer{
         // 设置fastjson的序列化参数：禁用循环依赖检测，数据兼容浏览器端（避免JS端Long精度丢失问题）
         fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect,
                                             SerializerFeature.BrowserCompatible);
-        fastJsonConfig.setDateFormat(D.FORMAT_DATETIME_Y4MDHM);
         converter.setFastJsonConfig(fastJsonConfig);
 
         HttpMessageConverter<?> httpMsgConverter = converter;

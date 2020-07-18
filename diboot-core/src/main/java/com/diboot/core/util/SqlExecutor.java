@@ -53,7 +53,7 @@ public class SqlExecutor {
         try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sqlStatement)){
             ResultSet rs = stmt.executeQuery();
             rs.close();
-            log.trace("执行验证SQL:{} 成功", sqlStatement);
+            log.debug("==> {}", sqlStatement);
             return true;
         }
         catch(Exception e){
@@ -115,7 +115,6 @@ public class SqlExecutor {
         }
     }
 
-
     /**
      * 执行1-1关联查询和合并结果并将结果Map的key类型转成String
      *
@@ -130,6 +129,18 @@ public class SqlExecutor {
         } catch (Exception e) {
             log.warn("执行查询异常", e);
         }
+        return convertToOneToOneResult(resultSetMapList, keyName, valueName);
+    }
+
+    /**
+     * 合并为1-1的map结果
+     * @param resultSetMapList
+     * @param keyName
+     * @param valueName
+     * @param <E>
+     * @return
+     */
+    public static <E> Map<String, Object> convertToOneToOneResult(List<Map<String, E>> resultSetMapList, String keyName, String valueName) {
         // 合并list为map
         Map<String, Object> resultMap = new HashMap<>();
         if(V.notEmpty(resultSetMapList)){
@@ -162,6 +173,18 @@ public class SqlExecutor {
         catch (Exception e) {
             log.warn("执行查询异常", e);
         }
+        return convertToOneToManyResult(resultSetMapList, keyName, valueName);
+    }
+
+    /**
+     * 合并为1-n的map结果
+     * @param resultSetMapList
+     * @param keyName
+     * @param valueName
+     * @param <E>
+     * @return
+     */
+    public static <E> Map<String, List> convertToOneToManyResult(List<Map<String, E>> resultSetMapList, String keyName, String valueName){
         // 合并list为map
         Map<String, List> resultMap = new HashMap<>();
         if(V.notEmpty(resultSetMapList)){

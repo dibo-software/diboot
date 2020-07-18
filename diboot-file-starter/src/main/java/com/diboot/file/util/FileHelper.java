@@ -32,7 +32,8 @@ import java.util.List;
 
 /***
  * 文件操作辅助类
- * @author Mazc
+ * @author mazc@dibo.ltd
+ * @version v2.0
  */
 @Slf4j
 public class FileHelper{

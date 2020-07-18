@@ -16,7 +16,7 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.entity.BaseExtEntity;
+import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
 * @date 2019-12-17
 */
 @Getter @Setter @Accessors(chain = true)
-public class IamLoginTrace extends BaseExtEntity {
+public class IamLoginTrace extends BaseEntity {
     private static final long serialVersionUID = -6166037224391478085L;
 
     // 用户类型

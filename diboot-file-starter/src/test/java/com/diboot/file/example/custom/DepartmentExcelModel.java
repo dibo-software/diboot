@@ -16,9 +16,12 @@
 package com.diboot.file.example.custom;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.file.entity.UploadFile;
 import com.diboot.file.excel.BaseExcelModel;
-import com.diboot.file.excel.converter.DictConverter;
+import com.diboot.file.excel.annotation.DuplicateStrategy;
+import com.diboot.file.excel.annotation.EmptyStrategy;
+import com.diboot.file.excel.annotation.ExcelBindDict;
+import com.diboot.file.excel.annotation.ExcelBindField;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -34,8 +37,12 @@ import javax.validation.constraints.NotNull;
 @Getter @Setter
 public class DepartmentExcelModel extends BaseExcelModel {
 
-    @NotNull(message = "父ID不能为空")
-    @ExcelProperty(value = "父ID", index = 0)
+    @ExcelBindField(entity = Department.class, field = "name", setIdField = "parentId",
+            duplicate = DuplicateStrategy.WARN, empty = EmptyStrategy.SET_0)
+    //@NotNull(message = "上级部门不能为空")
+    @ExcelProperty(value = "上级部门", index = 0)
+    private String parentName;
+
     private Long parentId;
 
     @NotNull(message = "必须指定单位")
@@ -51,8 +58,7 @@ public class DepartmentExcelModel extends BaseExcelModel {
     private Integer memCount;
 
     @NotNull(message = "必须指定status")
-    @BindDict(type = "USER_STATUS")
-    @ExcelProperty(value = "状态", index = 4, converter = DictConverter.class)
+    @ExcelBindDict(type = "USER_STATUS")
+    @ExcelProperty(value = "状态", index = 4)
     private String userStatus;
-
 }

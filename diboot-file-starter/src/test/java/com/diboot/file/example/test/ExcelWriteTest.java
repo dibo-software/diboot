@@ -40,11 +40,11 @@ public class ExcelWriteTest extends ApplicationTest {
      */
     public List<List<String>> buildNormalData(){
         List<List<String>> dataList = new ArrayList<>();
-        dataList.add(Arrays.asList("父ID", "单位", "名称", "数量", "状态"));
+        dataList.add(Arrays.asList("上级部门", "单位", "名称", "数量", "状态"));
 
-        dataList.add(Arrays.asList("0", "dibo", "研发中心", "10", "在职"));
-        dataList.add(Arrays.asList("0", "dibo", "营销中心", "10", "在职"));
-        dataList.add(Arrays.asList("0", "dibo", "财务部", "10", "离职"));
+        dataList.add(Arrays.asList("产品部", "dibo", "研发中心", "10", "在职"));
+        dataList.add(Arrays.asList("", "dibo", "营销中心", "10", "在职"));
+        dataList.add(Arrays.asList("产品部", "dibo", "财务部", "10", "离职"));
         return dataList;
     }
 
@@ -54,10 +54,10 @@ public class ExcelWriteTest extends ApplicationTest {
      */
     public List<List<String>> buildErrorData(){
         List<List<String>> dataList = new ArrayList<>();
-        dataList.add(Arrays.asList("父ID", "单位", "名称", "数量", "状态"));
-        dataList.add(Arrays.asList("0", "dibo", "这个值超长了这个值超长了", "10", "正常"));
-        dataList.add(Arrays.asList("0", "dibo", "营销中心", "10", "正常"));
-        dataList.add(Arrays.asList("0", "other", "财务部", "10", "正常"));
+        dataList.add(Arrays.asList("上级部门", "单位", "名称", "数量", "状态"));
+        dataList.add(Arrays.asList("产品部", "dibo", "这个值超长了这个值超长了", "10", "正常"));
+        dataList.add(Arrays.asList("产品部", "dibo", "营销中心", "10", "正常"));
+        dataList.add(Arrays.asList("产品部", "other", "财务部", "10", "正常"));
         return dataList;
     }
 
@@ -67,11 +67,11 @@ public class ExcelWriteTest extends ApplicationTest {
      */
     public List<List<String>> buildWriteData(){
         List<List<String>> dataList = new ArrayList<>();
-        dataList.add(Arrays.asList("父ID", "单位", "名称", "数量", "状态"));
+        dataList.add(Arrays.asList("上级部门", "单位", "名称", "数量", "状态"));
 
-        dataList.add(Arrays.asList("0", "dibo", "研发中心", "10", "A"));
-        dataList.add(Arrays.asList("0", "dibo", "营销中心", "10", "A"));
-        dataList.add(Arrays.asList("0", "dibo", "财务部", "10", "I"));
+        dataList.add(Arrays.asList("产品部", "dibo", "研发中心", "10", "A"));
+        dataList.add(Arrays.asList("产品部", "dibo", "营销中心", "10", "A"));
+        dataList.add(Arrays.asList("产品部", "dibo", "财务部", "10", "I"));
         return dataList;
     }
 

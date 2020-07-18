@@ -15,10 +15,7 @@
  */
 package com.diboot.core.binding.parser;
 
-import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.binding.annotation.BindEntity;
-import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.binding.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -47,6 +44,10 @@ public class BindAnnotationGroup {
      * 实体集合关联注解
      */
     private List<FieldAnnotation> bindEntityListAnnotations;
+    /**
+     * 实体集合关联注解
+     */
+    private List<FieldAnnotation> bindFieldListAnnotations;
 
     /**
      * 添加注解
@@ -78,6 +79,12 @@ public class BindAnnotationGroup {
             }
             bindEntityListAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
+        else if(annotation instanceof BindFieldList){
+            if(bindFieldListAnnotations == null){
+                bindFieldListAnnotations = new ArrayList<>();
+            }
+            bindFieldListAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+        }
     }
 
     public List<FieldAnnotation> getBindDictAnnotations() {
@@ -96,7 +103,12 @@ public class BindAnnotationGroup {
         return bindEntityListAnnotations;
     }
 
-    public boolean isNotEmpty() {
-        return bindDictAnnotations != null || bindFieldAnnotations != null || bindEntityAnnotations != null || bindEntityListAnnotations != null;
+    public List<FieldAnnotation> getBindFieldListAnnotations() {
+        return bindFieldListAnnotations;
     }
+
+    public boolean isNotEmpty() {
+        return bindDictAnnotations != null || bindFieldAnnotations != null || bindEntityAnnotations != null || bindEntityListAnnotations != null || bindFieldListAnnotations != null;
+    }
+
 }

@@ -16,6 +16,7 @@
 package com.diboot.file.excel.cache;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
@@ -24,15 +25,18 @@ import com.diboot.core.vo.KeyValue;
 import com.diboot.file.excel.BaseExcelModel;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 数据字典临时缓存
+ *
  * @author Mazc@dibo.ltd
  * @version v2.0
  * @date 2020/02/22
  */
+@Deprecated
 @Slf4j
 public class DictTempCache {
     /**
@@ -53,19 +57,43 @@ public class DictTempCache {
     private static Map<String, List<String>> MODEL_DICTS = new HashMap<>();
 
     /**
-     * 刷新model字典缓存
+     * 刷新指定泛型model字典缓存
+     *
      * @param modelClass
      * @param <T>
      */
-    public static <T extends BaseExcelModel> void refreshDictCache(Class<T> modelClass){
+    public static <T extends BaseExcelModel> void refreshGenericDictCache(Class<T> modelClass) {
         // 无字典model
-        if(NO_DICT_MODELS.contains(modelClass.getName())){
+        if (NO_DICT_MODELS.contains(modelClass.getName())) {
+            return;
+        }
+        List<String> dictTypes = extractGenericDictTypes(modelClass);
+        if (V.notEmpty(dictTypes)) {
+            for (String dictType : dictTypes) {
+                if (DICT_TYPE_ITEMS_MAP.containsKey(dictType) == false || isExpired(DICT_TYPE_TIMESTAMP_MAP.get(dictType)) == true) {
+                    List<KeyValue> list = ContextHelper.getBean(DictionaryService.class).getKeyValueList(dictType);
+                    Map<String, Object> name2ValueMap = BeanUtils.convertKeyValueList2Map(list);
+                    DICT_TYPE_ITEMS_MAP.put(dictType, name2ValueMap);
+                    DICT_TYPE_TIMESTAMP_MAP.put(dictType, System.currentTimeMillis());
+                }
+            }
+        }
+    }
+
+    /**
+     * 刷新model字典缓存
+     *
+     * @param modelClass
+     */
+    public static void refreshDictCache(Class<?> modelClass) {
+        // 无字典model
+        if (NO_DICT_MODELS.contains(modelClass.getName())) {
             return;
         }
         List<String> dictTypes = extractDictTypes(modelClass);
-        if(V.notEmpty(dictTypes)){
-            for(String dictType : dictTypes){
-                if(DICT_TYPE_ITEMS_MAP.containsKey(dictType) == false || isExpired(DICT_TYPE_TIMESTAMP_MAP.get(dictType)) == true){
+        if (V.notEmpty(dictTypes)) {
+            for (String dictType : dictTypes) {
+                if (DICT_TYPE_ITEMS_MAP.containsKey(dictType) == false || isExpired(DICT_TYPE_TIMESTAMP_MAP.get(dictType)) == true) {
                     List<KeyValue> list = ContextHelper.getBean(DictionaryService.class).getKeyValueList(dictType);
                     Map<String, Object> name2ValueMap = BeanUtils.convertKeyValueList2Map(list);
                     DICT_TYPE_ITEMS_MAP.put(dictType, name2ValueMap);
@@ -77,36 +105,44 @@ public class DictTempCache {
 
     /**
      * 获取字典值
+     *
      * @param dictType
      * @param dictName
      * @return
      */
-    public static String getDictValue(String dictType, String dictName){
+    public static String getDictValue(String dictType, String dictName) {
         Map<String, Object> map = DICT_TYPE_ITEMS_MAP.get(dictType);
-        if(map == null){
-            log.warn("无法找到数据字典定义: "+dictType);
+        if (map == null) {
+            log.warn("无法找到数据字典定义: " + dictType);
             return dictName;
         }
-        if(map.get(dictName) == null){
+        if (map.get(dictName) == null) {
             return null;
         }
-        return (String)map.get(dictName);
+        return (String) map.get(dictName);
     }
 
     /**
      * 获取字典名label
+     *
      * @param dictType
      * @param dictValue
+     * @param modelClass
      * @return
      */
-    public static String getDictLabel(String dictType, String dictValue) throws Exception{
+    public static <T extends BaseExcelModel> String getDictLabel(String dictType, String dictValue, Class<?> modelClass) throws Exception {
         Map<String, Object> map = DICT_TYPE_ITEMS_MAP.get(dictType);
-        if(map == null){
-            log.warn("无法找到数据字典定义: "+dictType);
-            return dictValue;
+        if (map == null) {
+            //加载当前类
+            refreshDictCache(modelClass);
+            map = DICT_TYPE_ITEMS_MAP.get(dictType);
+            if (map == null) {
+                log.warn("无法找到数据字典定义: " + dictType);
+                return dictValue;
+            }
         }
-        for( Map.Entry<String, Object> entry : map.entrySet()){
-            if(dictValue.equals(entry.getValue())){
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (dictValue.equals(entry.getValue())) {
                 return entry.getKey();
             }
         }
@@ -115,26 +151,58 @@ public class DictTempCache {
 
     /**
      * 提取注解绑定
+     *
      * @param modelClass
      * @param <T>
      * @return
      */
-    private static <T extends BaseExcelModel> List<String> extractDictTypes(Class<T> modelClass){
-        if(MODEL_DICTS.containsKey(modelClass.getName())){
+    private static <T extends BaseExcelModel> List<String> extractGenericDictTypes(Class<T> modelClass) {
+        if (MODEL_DICTS.containsKey(modelClass.getName())) {
             return MODEL_DICTS.get(modelClass.getName());
         }
         // 检测model是否包含dict注解
         List<String> dictTypes = new ArrayList<>();
-        BeanUtils.extractAllFields(modelClass).forEach(fld -> {
-            if(fld.getAnnotation(BindDict.class) != null){
-                BindDict bindDict = fld.getAnnotation(BindDict.class);
-                dictTypes.add(bindDict.type());
-            }
-        });
-        if(dictTypes.isEmpty()){
-            NO_DICT_MODELS.add(modelClass.getName());
+        List<Field> fields = BeanUtils.extractFields(modelClass, BindDict.class);
+        if (V.notEmpty(fields)) {
+            fields.forEach(fld -> {
+                if (fld.getAnnotation(BindDict.class) != null) {
+                    BindDict bindDict = fld.getAnnotation(BindDict.class);
+                    dictTypes.add(bindDict.type());
+                }
+            });
         }
-        else{
+        if (dictTypes.isEmpty()) {
+            NO_DICT_MODELS.add(modelClass.getName());
+        } else {
+            MODEL_DICTS.put(modelClass.getName(), dictTypes);
+        }
+        return dictTypes;
+    }
+
+    /**
+     * 提取注解绑定
+     *
+     * @param modelClass
+     * @return
+     */
+    private static List<String> extractDictTypes(Class<?> modelClass) {
+        if (MODEL_DICTS.containsKey(modelClass.getName())) {
+            return MODEL_DICTS.get(modelClass.getName());
+        }
+        // 检测model是否包含dict注解
+        List<String> dictTypes = new ArrayList<>();
+        List<Field> fields = BeanUtils.extractFields(modelClass, BindDict.class);
+        if (V.notEmpty(fields)) {
+            fields.forEach(fld -> {
+                if (fld.getAnnotation(BindDict.class) != null) {
+                    BindDict bindDict = fld.getAnnotation(BindDict.class);
+                    dictTypes.add(bindDict.type());
+                }
+            });
+        }
+        if (dictTypes.isEmpty()) {
+            NO_DICT_MODELS.add(modelClass.getName());
+        } else {
             MODEL_DICTS.put(modelClass.getName(), dictTypes);
         }
         return dictTypes;
@@ -142,13 +210,19 @@ public class DictTempCache {
 
     /**
      * 是否超期
+     *
      * @return
      */
-    private static boolean isExpired(Long cacheTime){
-        if(cacheTime == null){
+    private static boolean isExpired(Long cacheTime) {
+        if (cacheTime == null) {
             return true;
         }
-        return (System.currentTimeMillis() - cacheTime) > 600000;
+        // 过期分钟数
+        int expiredMinutes = BaseConfig.getInteger("system.dict.expire", 0);
+        if(expiredMinutes == 0){
+            return true;
+        }
+        return (System.currentTimeMillis() - cacheTime) > (expiredMinutes * 60000);
     }
 
 }

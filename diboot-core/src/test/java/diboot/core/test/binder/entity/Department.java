@@ -16,13 +16,15 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * 定时任务
+ * Department
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/12/27
@@ -39,6 +41,7 @@ public class Department extends BaseEntity {
     @TableField
     private Long orgId;
 
+    @BindQuery(comparison = Comparison.CONTAINS)
     @TableField
     private String name;
 }

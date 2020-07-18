@@ -15,11 +15,17 @@
  */
 package diboot.core.test.binder.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.vo.Pagination;
+import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.mapper.DepartmentMapper;
 import diboot.core.test.binder.service.DepartmentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 部门相关Service实现
@@ -27,7 +33,21 @@ import org.springframework.stereotype.Service;
  * @version v2.0
  * @date 2019/1/30
  */
+@Slf4j
 @Service
 public class DepartmentServiceImpl extends BaseServiceImpl<DepartmentMapper, Department> implements DepartmentService {
+
+    @Override
+    public List<Department> getDepartmentSqlList(QueryWrapper<DepartmentDTO> queryWrapper, Pagination pagination) {
+        // 如果是单表，return super.
+        boolean isSingleTableQuery = false;
+        if(isSingleTableQuery){
+            return super.getEntityList(queryWrapper, pagination);
+        }
+        else{
+
+            return null;
+        }
+    }
 
 }
