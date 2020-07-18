@@ -188,7 +188,7 @@ boolean deleteEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISett
 ~~~
 
 ### createOrUpdateN2NRelations 创建或更新n-n关联
-* since v2.1.0
+* since v2.1.x
 ```java
 /**
  * 创建或更新n-n关联

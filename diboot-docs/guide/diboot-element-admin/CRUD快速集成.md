@@ -32,23 +32,23 @@ export default {
 
 | 属性             | 说明          | 类型	|默认值 | 版本|
 | -------------   |:-------------| -----| -----| -----|
-| primaryKey      | 主键字段名      |    string | id | **2.1.0** |
+| primaryKey      | 主键字段名      |    string | id | **2.1.x** |
 | baseApi         | 请求接口基础路径（必须配置）|String | / | - |
 | listApi         | 列表数据接口|    String |  /list  |- |
 | deleteApiPrefix | 删除接口前缀 |    String | / | - |
-| exportApi       | 导出接口|    String |~~/export~~ /excel/export|~~2.0.5~~ **2.1.0**|
+| exportApi       | 导出接口|    String |~~/export~~ /excel/export|~~2.0.5~~ **2.1.x**|
 | customQueryParam| 自定义参数（不被查询表单重置和改变的参数） | object | {} | - |
 | queryParam      | 与查询条件绑定的参数（会被查询表单重置和改变的参数）      |   object | {} | - |
-| dateRangeQuery  | 日期区间选择配置 <br/>**时间区间字段请放在这个对象中，会自动构建参与查询**      |   object | {} | **2.1.0** |
-| advanced        | 高级搜索 展开/关闭      |   boolean | false | **2.1.0** |
+| dateRangeQuery  | 日期区间选择配置 <br/>**时间区间字段请放在这个对象中，会自动构建参与查询**      |   object | {} | **2.1.x** |
+| advanced        | 高级搜索 展开/关闭      |   boolean | false | **2.1.x** |
 | list            | 存储列表数据      |   array | [] |-|
 | getMore         | 是否使mixin在当前业务的attachMore接口中自动获取关联数据<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**|    boolean | false | - |
-| attachMoreList  | 获取关联数据列表的配置列表<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**      | array    |   []  |   **2.1.0**    |
+| attachMoreList  | 获取关联数据列表的配置列表<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**      | array    |   []  |   **2.1.x**    |
 | more            | 存储当前对象的关联数据对象<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**| object    |   {}  |  -   |
 | listFormatter| 是否将children转化为_children    |    boolean | true | - |
 | getListFromMixin| 是否在页面初始化时自动加载列表数据    |    boolean | true | - |
 | loadingData     | 标记页面加载数据状态      |    boolean | false | - |
-| exportLoadingData| 标记导出文件时加载状态      |    boolean | false | **2.1.0** |
+| exportLoadingData| 标记导出文件时加载状态      |    boolean | false | **2.1.x** |
 | pagination      | 分页配置      |    object | {pageSize: 10,current: 1,total: 0,showSizeChanger: true,pageSizeOptions: ['10', '20', '30', '50', '100']} | - |
 
 5. 功能函数
@@ -56,9 +56,9 @@ export default {
 | 名称             | 说明          | 参数	| 版本|
 | -------------   |:-------------| -----| -----|
 | handlePaginationChanged | 分页触发 |- | - |
-| appendSorterParam       | 构建排序（绑定table的@sort-change）<br/>**<a href="#列表排序详解">:point_right:列表排序详解</a>**|    - | **2.1.0**  |
+| appendSorterParam       | 构建排序（绑定table的@sort-change）<br/>**<a href="#列表排序详解">:point_right:列表排序详解</a>**|    - | **2.1.x**  |
 | onSearch  | 搜索，查询第一页（默认查询按钮触发）|   -  | - |
-| toggleAdvanced  | 切换展示更多搜索框（绑定**advanced**属性）|  -   | **2.1.0** |
+| toggleAdvanced  | 切换展示更多搜索框（绑定**advanced**属性）|  -   | **2.1.x** |
 | postList  | post请求的获取列表（可以传递更长、更复杂参数） |  -   | - |
 | getList  | get请求获取列表 |  -   | - |
 | menuCommand  | 更新或者删除 |  function（command, row)   | - |
@@ -66,10 +66,10 @@ export default {
 | attachMore  | 加载当前页面关联的对象或者字典，参考属性：getMore、attachMoreList、more |  -  | - |
 | reset  | 重置查询 |  -  | - |
 | remove  | 根据id删除 |  function(id)  | - |
-| exportData  | 导出数据至excel |  -  | **2.1.0** |
-| downloadFile  | 下载文件 |  function(res)  | **2.1.0** |
-| contentTransform  | 处理查询参数中的moment数据 默认转化为YYYY-MM-DD |  function(content, transform = {})  | **2.1.0** |
-| dateRange2queryParam  | 构建区间查询参数，（转化dateRangeQuery属性内容） |  -  | **2.1.0** |
+| exportData  | 导出数据至excel |  -  | **2.1.x** |
+| downloadFile  | 下载文件 |  function(res)  | **2.1.x** |
+| contentTransform  | 处理查询参数中的moment数据 默认转化为YYYY-MM-DD |  function(content, transform = {})  | **2.1.x** |
+| dateRange2queryParam  | 构建区间查询参数，（转化dateRangeQuery属性内容） |  -  | **2.1.x** |
 
 6. 钩子函数
 
@@ -93,7 +93,7 @@ export default {
 
 | 属性             | 说明          | 类型	|默认值 | 版本|
 | -------------   |:-------------| -----| -----| -----|
-| primaryKey      | 主键字段名      |    string | id | **2.1.0** |
+| primaryKey      | 主键字段名      |    string | id | **2.1.x** |
 | baseApi         | 请求接口基础路径(必须配置)|String | / | - |
 | createApi       | 新建接口，自动拼接在*baseApi*之后|    String |  /  |- |
 | updateApiPrefix | 更新接口前缀，自动拼接在*baseApi*之后 |    String | / | - |
@@ -101,13 +101,13 @@ export default {
 | initFormData| 表单初始数据（表示表单数据结构） | object | {} | - |
 | form| 更新时装载加载的原数据，新建时为上述initFormData数据的克隆 | object | {} | - |
 | getMore         | 是否使mixin在当前业务的attachMore接口中自动获取关联数据<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**|    boolean | false | - |
-| attachMoreList  | 获取关联数据列表的配置列表<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**      | array    |   []  |   **2.1.0**    |
+| attachMoreList  | 获取关联数据列表的配置列表<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**      | array    |   []  |   **2.1.x**    |
 | more            | 存储当前对象的关联数据对象<br/>**<a href="#业务对象关联详解">:point_right:业务对象关联详解</a>**   | object    |   {}  |  -   |
-| fullscreen      | 当前组件全屏控制      |    boolean | false | **2.1.0** |
+| fullscreen      | 当前组件全屏控制      |    boolean | false | **2.1.x** |
 | state      | 当前组件状态对象      |    object | {visible: false, confirmSubmit: false} | - |
-| isUpload      | 当前form是否包含上传<br/>**<a href="#文件上传详解">:point_right:文件上传详解</a>**      |    boolean | false | **2.1.0** |
-| fileWrapper      | 文件包装容器 <br/>**<a href="#文件上传详解">:point_right:文件上传详解</a>**      |    object | {} | **2.1.0** |
-| fileUuidList      | 文件存储服务器后返回的唯一标识集合<br/>**<a href="#文件上传详解">:point_right:文件上传详解</a>**       |    array | [] | **2.1.0** |
+| isUpload      | 当前form是否包含上传<br/>**<a href="#文件上传详解">:point_right:文件上传详解</a>**      |    boolean | false | **2.1.x** |
+| fileWrapper      | 文件包装容器 <br/>**<a href="#文件上传详解">:point_right:文件上传详解</a>**      |    object | {} | **2.1.x** |
+| fileUuidList      | 文件存储服务器后返回的唯一标识集合<br/>**<a href="#文件上传详解">:point_right:文件上传详解</a>**       |    array | [] | **2.1.x** |
 
 3. 功能函数
 
@@ -152,7 +152,7 @@ export default {
 | visible         | 当前组件显示状态 |    String | / | - |
 | model           | 当前详情框详情数据           |    object |{}|-|
 | title           | 标题           |    String |详情|-|
-| fullscreen      | 当前组件全屏控制      |    boolean | false | **2.1.0** |
+| fullscreen      | 当前组件全屏控制      |    boolean | false | **2.1.x** |
 
 3.功能函数
 
@@ -160,7 +160,7 @@ export default {
 | -------------   |:-------------| -----| -----|
 | open         | 打开详情（加载服务端数据）|function(id) | - |
 | close         | 关闭详情 |    - | - |
-| downloadFile  | 下载文件(传入接口地址)|    function(path) | **2.1.0** |
+| downloadFile  | 下载文件(传入接口地址)|    function(path) | **2.1.x** |
 
 4. 钩子函数
 
@@ -196,7 +196,7 @@ export default {
 - <a id="业务对象关联详解">业务对象关联详解</a>
     - more: 值来源于*getMore*或*attachMoreList* 配置请求接口后返回的结果；
     - getMore: 开启关联数据会从当前业务的/attachMore接口中读取，开启后优于attachMoreList使用；
-    - attachMoreList: **2.1.0 新增** 实现关联数据从/common/attachMore接口统一读取，配置如下：
+    - attachMoreList: **2.1.x 新增** 实现关联数据从/common/attachMore接口统一读取，配置如下：
         ```javascript
         // type：D(字典数据)/T（关联业务对象）
         attattachMoreList: [
@@ -248,7 +248,7 @@ export default {
         }
         ```
     - 如非特殊，建议使用attachMoreList配置用以简化代码 
-- <a id="文件上传详解">文件上传详解 (2.1.0新增)</a>
+- <a id="文件上传详解">文件上传详解 (2.1.x新增)</a>
 
    **以下属性讲解，基于Upload组件** :point_right: [Upload.vue组件概述](/guide/diboot-element-admin/组件.html#upload组件)
    - isUpload: 标记当前form表单中是否包含上传属性，使用如：图片、文件，默认不包含，如果引入组件，请手动开启：
