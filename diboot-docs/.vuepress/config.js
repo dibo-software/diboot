@@ -144,7 +144,7 @@ module.exports = {
             items: [
                 {
                     text: '项目合作',
-                    link:'http://www.dibo.ltd/contect.html'
+                    link:'http://www.dibo.ltd'
                 },
                 {
                     text: '捐助我们',
