@@ -12,7 +12,7 @@
           <a :href="$withBase('https://devtools-v2.diboot.com/element/')" class="button white" target="_blank">Element项目案例</a>
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
-          <a href="javascript:;" class="button has-icon" @click="showVideo">
+          <a href="https://www.bilibili.com/video/BV17V411r7Cc" target="_blank" class="button has-icon">
             <img class="icon" src="../public/play-circle.png" alt="">
             了解 diboot 2.0
           </a>
