@@ -1,4 +1,4 @@
-> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground弹药包](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
+> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground新手体验包](https://gitee.com/dibo_software/diboot-example/raw/master/playground.zip)
 
 # diboot - 化繁为简，以简驭繁
 <p align="center">
@@ -32,7 +32,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
    > JsonResult、字符串处理、常用校验、BeanUtils、DateUtils等
    
 基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比传统Mybatis项目减少80%+），且实现更高效更易维护。   
-更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
+更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot/tree/master/diboot-core "注解自动绑定多表关联"). 
 
 
 ## 二、 diboot-devtools 自动化开发助理
@@ -55,14 +55,14 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 * 支持基于注解的数据权限实现
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
 
-更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot-v2/tree/master/iam-base-starter "身份认证管理组件"). 
+更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot/tree/master/iam-base-starter "身份认证管理组件"). 
 
 ## 四、diboot-file 文件相关处理组件
 
 * EasyExcel轻量封装，支持Java注解校验与@ExcelBind*注解实现字典及关联字段的name-value转换，并提供完善的校验错误提示
 * 封装常用的文件本地存储、上传下载、图片压缩水印等常用处理
 
-更多介绍请查看: [diboot-file-starter README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-file-starter "文件组件"). 
+更多介绍请查看: [diboot-file-starter README](https://github.com/dibo-software/diboot/tree/master/diboot-file-starter "文件组件"). 
 
 > 其他组件逐步开发中 ...
 

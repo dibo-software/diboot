@@ -10,7 +10,7 @@ IAM的后端基础代码由devtools自动生成
 * 启动项目，进入devtools的组件初始化页面，选择core及IAM等组件，执行初始化
 * devtools将生成IAM基础的代码到你配置的路径下
 
-注：[diboot-v2-example](https://github.com/dibo-software/diboot-v2-example) 中包含可供参考的后端示例：diboot-iam-example（IAM示例代码）
+注：[diboot-example](https://github.com/dibo-software/diboot-example) 中包含可供参考的后端示例：diboot-iam-example（IAM示例代码）
 及diboot-online-demo（线上演示项目）。
 
 ## 如何自定义fastjson配置
