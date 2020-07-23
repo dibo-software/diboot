@@ -19,6 +19,7 @@ import com.diboot.core.vo.KeyValue;
 import com.diboot.iam.entity.IamRole;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * IAM扩展接口
@@ -32,9 +33,10 @@ public interface IamExtensible {
      * 获取用户扩展对象 (如当前岗位)
      * @param userType
      * @param userId
+     * @param extObj 登录扩展信息
      * @return
      */
-    KeyValue getUserExtentionObj(String userType, Long userId);
+    KeyValue getUserExtentionObj(String userType, Long userId, Map<String, Object> extObj);
 
     /**
      * 获取可扩展的角色

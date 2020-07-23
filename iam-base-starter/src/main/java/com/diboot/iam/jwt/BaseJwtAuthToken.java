@@ -25,6 +25,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
+import java.util.Map;
+
 /**
  * @author Yangzhao
  * @version v2.0
@@ -59,7 +61,7 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     /**
      * 扩展属性
      */
-    private KeyValue extObj;
+    private Map<String, Object> extObj;
 
     /**authz token*/
     private String authtoken;

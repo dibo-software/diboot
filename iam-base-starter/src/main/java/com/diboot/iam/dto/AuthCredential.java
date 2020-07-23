@@ -22,6 +22,7 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 登录凭证
@@ -50,6 +51,12 @@ public abstract class AuthCredential implements Serializable {
      * 记住我
      */
     private boolean rememberMe;
+
+    /**
+     * 扩展属性
+     */
+    private Map<String, Object> extObj;
+
     /**
      * 账号
      * @return

@@ -130,8 +130,10 @@ public class PwdAuthServiceImpl implements AuthService {
     private BaseJwtAuthToken initBaseJwtAuthToken(AuthCredential credential){
         BaseJwtAuthToken token = new BaseJwtAuthToken(getAuthType(), credential.getUserTypeClass());
         // 设置账号密码
-        token.setAuthAccount(credential.getAuthAccount()).setAuthSecret(credential.getAuthSecret());
-        token.setRememberMe(credential.isRememberMe());
+        token.setAuthAccount(credential.getAuthAccount())
+                .setAuthSecret(credential.getAuthSecret())
+                .setRememberMe(credential.isRememberMe())
+                .setExtObj(credential.getExtObj());
         // 生成token
         return token.generateAuthtoken(getExpiresInMinutes());
     }
