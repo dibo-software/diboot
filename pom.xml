@@ -13,7 +13,7 @@
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2</version>
     <packaging>pom</packaging>
 
     <modules>

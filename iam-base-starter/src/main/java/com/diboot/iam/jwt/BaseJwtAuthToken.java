@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.jwt;
 
+import com.diboot.core.vo.KeyValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.JwtUtils;
@@ -54,6 +55,11 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
      * 记住我
      */
     private boolean rememberMe;
+
+    /**
+     * 扩展属性
+     */
+    private KeyValue extObj;
 
     /**authz token*/
     private String authtoken;
@@ -95,6 +101,8 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     public String getUserType(){
         return userTypeClass.getSimpleName();
     }
+
+
 
     /**
      * 生成token
