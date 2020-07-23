@@ -138,6 +138,6 @@ diboot-file组件有以下一个配置项，用于设置本地文件的存储起
 files.storage.directory=/myfile
 ~~~
 
-## 样例参考 - [diboot-file-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-file-example)
+## 样例参考 - [diboot-file-example](https://github.com/dibo-software/diboot-example/tree/master/diboot-file-example)
 
 > 使用过程中遇到问题，可加群交流。

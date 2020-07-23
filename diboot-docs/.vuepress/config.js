@@ -156,11 +156,11 @@ module.exports = {
             items: [
                 {
                     text: 'Gitee',
-                    link: 'https://gitee.com/dibo_software/diboot-v2'
+                    link: 'https://gitee.com/dibo_software/diboot'
                 },
                 {
                     text: 'GitHub',
-                    link: 'https://github.com/dibo-software/diboot-v2'
+                    link: 'https://github.com/dibo-software/diboot'
                 }
             ]
         }/*, {

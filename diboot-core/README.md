@@ -159,4 +159,4 @@ spring.datasource.hikari.driver-class-name=com.mysql.cj.jdbc.Driver
 
 #### 3. 详细文档 - [diboot-core 官方文档](https://www.diboot.com/guide/diboot-core/%E5%AE%89%E8%A3%85.html)
 
-#### 4. 参考样例 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
+#### 4. 参考样例 - [diboot-core-example](https://github.com/dibo-software/diboot-example/tree/master/diboot-core-example)
