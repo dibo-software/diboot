@@ -141,7 +141,25 @@ public abstract class BaseBinder<T> {
         return this;
     }
     public BaseBinder<T> andLike(String fieldName, String value){
-        queryWrapper.like(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        fieldName = S.toSnakeCase(fieldName);
+        value = (String)formatValue(fieldName, value);
+        if(S.startsWith(value, "%")){
+            value = S.substringAfter(value, "%");
+            if(S.endsWith(value, "%")){
+                value = S.substringBeforeLast(value, "%");
+                queryWrapper.like(fieldName, value);
+            }
+            else{
+                queryWrapper.likeLeft(fieldName, value);
+            }
+        }
+        else if(S.endsWith(value, "%")){
+            value = S.substringBeforeLast(value, "%");
+            queryWrapper.likeRight(fieldName, value);
+        }
+        else{
+            queryWrapper.like(fieldName, value);
+        }
         return this;
     }
     public BaseBinder<T> andIn(String fieldName, Collection valueList){

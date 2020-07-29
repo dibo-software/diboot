@@ -163,11 +163,12 @@ public class ConditionManager extends BaseConditionManager{
             else if(operator instanceof LikeExpression){
                 LikeExpression express = (LikeExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
+                String value = express.getRightExpression().toString();
                 if(express.isNot() == false){
-                    binder.andLike(annoColumn, express.getStringExpression());
+                    binder.andLike(annoColumn, value);
                 }
                 else{
-                    binder.andNotLike(annoColumn, express.getStringExpression());
+                    binder.andNotLike(annoColumn, value);
                 }
             }
             else{
