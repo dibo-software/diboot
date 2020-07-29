@@ -89,7 +89,7 @@ private Organization organization;
 @BindEntityList(entity = Department.class, condition="department_id=id")
 private List<Department> departmentList;
 
-// 关联自身，实现无限极分类等
+// 关联自身，实现加载子级
 @BindEntityList(entity = Department.class, condition = "id=parent_id")
 private List<Department> children;
 ```
