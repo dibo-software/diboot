@@ -176,7 +176,7 @@ public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseS
     }
 }
 ~~~
-## 如何解决数据库无法自动设置更新时间？
+## 如何解决数据库无法自动设置更新时间
 * 通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
 ~~~java 
 @Component
@@ -186,6 +186,11 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
         this.setFieldValByName(Cons.FieldName.updateTime.name(), new Date(), metaObject);
     }
 }
+~~~
+## 如何解决无法访问的swagger的问题
+* 需要设置swagger相关的匿名配置，如下：
+~~~java 
+diboot.iam.anon-urls=/swagger-ui.html,/swagger-resources/**,/webjars/springfox-swagger-ui/**,/v2/api-docs/**
 ~~~
 
 
