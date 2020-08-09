@@ -1,4 +1,4 @@
-> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground弹药包](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
+> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground新手体验包](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
 
 # diboot - 化繁为简，以简驭繁
 <p align="center">
