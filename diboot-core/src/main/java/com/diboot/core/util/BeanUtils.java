@@ -343,13 +343,26 @@ public class BeanUtils {
      * @return
      */
     public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId){
+        return buildTree(allNodes, rootNodeId, Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
+    }
+
+    /***
+     * 构建指定根节点的上下级关联的树形结构（上级parentId、子节点children）
+     * @param allNodes 所有节点对象
+     * @param rootNodeId 跟节点ID
+     * @param parentIdFieldName 父节点属性名
+     * @param childrenFieldName 子节点集合属性名
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String parentIdFieldName, String childrenFieldName){
         if(V.isEmpty(allNodes)){
             return null;
         }
         // 提取所有的top level对象
         List<T> topLevelModels = new ArrayList();
         for(T node : allNodes){
-            Object parentId = getProperty(node, Cons.FieldName.parentId.name());
+            Object parentId = getProperty(node, parentIdFieldName);
             if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
                 topLevelModels.add(node);
             }
@@ -364,8 +377,8 @@ public class BeanUtils {
         // 遍历第一级节点，并挂载 children 子节点
         for(T node : allNodes) {
             Object nodeId = getProperty(node, Cons.FieldName.id.name());
-            List<T> children = buildTreeChildren(nodeId, allNodes);
-            setProperty(node, Cons.FieldName.children.name(), children);
+            List<T> children = buildTreeChildren(nodeId, allNodes, parentIdFieldName, childrenFieldName);
+            setProperty(node, childrenFieldName, children);
         }
         return topLevelModels;
     }
@@ -374,12 +387,14 @@ public class BeanUtils {
      * 递归构建树节点的子节点
      * @param parentId
      * @param nodeList
+     * @param parentIdFieldName 父节点属性名
+     * @param childrenFieldName 子节点集合属性名
      * @return
      */
-    private static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList) {
+    private static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String parentIdFieldName, String childrenFieldName) {
         List<T> children = null;
         for(T node : nodeList) {
-            Object nodeParentId = getProperty(node, Cons.FieldName.parentId.name());
+            Object nodeParentId = getProperty(node, parentIdFieldName);
             if(nodeParentId != null && V.equals(nodeParentId, parentId)) {
                 if(children == null){
                     children = new ArrayList<>();
@@ -390,11 +405,11 @@ public class BeanUtils {
         if(children != null){
             for(T child : children) {
                 Object nodeId = getProperty(child, Cons.FieldName.id.name());
-                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList);
+                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList, parentIdFieldName, childrenFieldName);
                 if(childNodeChildren == null) {
                     childNodeChildren = new ArrayList<>();
                 }
-                setProperty(child, Cons.FieldName.children.name(), childNodeChildren);
+                setProperty(child, childrenFieldName, childNodeChildren);
             }
         }
         return children;

@@ -174,6 +174,11 @@ public class BeanUtilsTest {
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getChildren().size(), 5);
 
+        list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
+        list = BeanUtils.buildTree(list, 0, "parentId", "children");
+        Assert.assertEquals(list.size(), 1);
+        Assert.assertEquals(list.get(0).getChildren().size(), 5);
+
         // 异常数据告警
         Dictionary dict2 = new Dictionary();
         dict2.setId(1L);
@@ -182,6 +187,7 @@ public class BeanUtilsTest {
         list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
         try{
             list = BeanUtils.buildTree(list);
+            Assert.assertTrue(false);
         }
         catch (Exception e){
             Assert.assertTrue(e.getMessage().contains("请检查"));
