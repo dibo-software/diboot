@@ -312,10 +312,28 @@ public class BaseServiceTest {
         List<DictionaryVO> voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
         Assert.assertTrue(voList.size() == 1);
         Assert.assertTrue(pagination.getTotalPage() >= 2);
+        Assert.assertTrue(V.isEmpty(voList.get(0).getChildren()));
 
         pagination.setPageIndex(2);
         voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
         Assert.assertTrue(voList.size() == 1);
+    }
+
+    @Test
+    public void testDictVo(){
+        Dictionary dict = new Dictionary();
+        dict.setParentId(0L);
+        dict.setType("GENDER");
+        dict.setEditable(true);
+
+        QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
+
+        List<DictionaryVO> voList = dictionaryService.getViewObjectList(queryWrapper, null, DictionaryVO.class);
+        Assert.assertTrue(voList.size() == 1);
+        Assert.assertTrue(voList.get(0).getChildren().size() == 2);
+
+        List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
+        Assert.assertTrue(keyValues.size() == 2);
     }
 
     /**

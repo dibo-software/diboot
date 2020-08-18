@@ -112,6 +112,7 @@ public class TestEntityListBinder {
         // 查询是否创建成功
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dictionary::getType, "GENDER");
+        queryWrapper.eq(Dictionary::getParentId, 0L);
 
         Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
         DictionaryVO vo = Binder.convertAndBindRelations(dictionary, DictionaryVO.class);
