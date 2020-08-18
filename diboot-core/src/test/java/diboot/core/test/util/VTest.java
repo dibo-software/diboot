@@ -15,6 +15,7 @@
  */
 package diboot.core.test.util;
 
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.junit.Assert;
@@ -85,6 +86,11 @@ public class VTest {
         Assert.assertTrue(V.equals(list1, list2));
     }
 
-
+    @Test
+    public void testValidateBean(){
+        String msg = V.validateBean(new Dictionary());
+        System.out.println(msg);
+        Assert.assertTrue(msg != null);
+    }
 
 }
