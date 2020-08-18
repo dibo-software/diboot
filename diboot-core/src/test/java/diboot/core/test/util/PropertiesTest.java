@@ -21,7 +21,9 @@ import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,6 +38,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = {StartupApplication.class})
 public class PropertiesTest {
 
+    @Autowired
+    private Environment environment;
+
     @Test
     public void testGetString(){
         String str1 = PropertiesUtils.get("spring.datasource.url");
@@ -48,5 +53,24 @@ public class PropertiesTest {
     public void testGetNumber(){
         Integer num = PropertiesUtils.getInteger("spring.datasource.hikari.maximum-pool-size");
         Assert.assertTrue(num > 0 );
+    }
+
+    @Test
+    public void testDatasourceUrl(){
+        String jdbcUrl = null;
+        if(jdbcUrl == null){
+            String names = environment.getProperty("spring.shardingsphere.datasource.names");
+            if(names != null){
+                jdbcUrl = environment.getProperty("spring.shardingsphere.datasource."+ names.split(",")[0] +".url");
+            }
+        }
+        if(jdbcUrl == null){
+            String urlConfigItem = environment.getProperty("diboot.datasource.url.config");
+            if(urlConfigItem != null){
+                jdbcUrl = environment.getProperty(urlConfigItem);
+            }
+        }
+        System.out.println(jdbcUrl);
+        Assert.assertTrue(jdbcUrl != null);
     }
 }
