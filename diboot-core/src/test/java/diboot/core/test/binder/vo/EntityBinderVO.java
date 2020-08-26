@@ -35,7 +35,7 @@ public class EntityBinderVO extends User {
     private static final long serialVersionUID = 3526115343377985725L;
 
     // 字段关联，相同条件的entity+condition将合并为一条SQL查询
-    @BindEntity(entity= Department.class, condition="this.department_id=id AND name like '发'")
+    @BindEntity(entity= Department.class, condition="this.department_id=id AND name like '发'") // AND is_deleted=1
     private Department department;
 
     // 通过中间表关联Entity

@@ -16,7 +16,10 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -24,6 +27,7 @@ import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.FieldBinderVO;
+import diboot.core.test.binder.vo.TestDictVo;
 import diboot.core.test.binder.vo.UserVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -51,6 +55,8 @@ public class TestFieldBinder {
     UserService userService;
     @Autowired
     DepartmentService departmentService;
+    @Autowired
+    DictionaryService dictionaryService;
 
     @Test
     public void testBinder(){
@@ -86,6 +92,23 @@ public class TestFieldBinder {
             for(UserVO vo : voList){
                 Assert.assertNotNull(vo.getDeptName());
             }
+        }
+    }
+
+
+    @Test
+    public void testDictVoBind(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        queryWrapper.gt("parent_id", 0);
+
+        List<Dictionary> list = dictionaryService.getEntityList(queryWrapper);
+
+        List<TestDictVo> voList = Binder.convertAndBindRelations(list, TestDictVo.class);
+
+        for(TestDictVo vo : voList){
+            Assert.assertTrue(vo.getParentDict() != null);
+            Assert.assertTrue(vo.getParentDictName() != null);
         }
     }
 

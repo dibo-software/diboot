@@ -526,6 +526,33 @@ public class BeanUtils {
         return fieldValueList;
     }
 
+    /***
+     * 从list对象列表中提取指定属性值到新的List
+     * @param objectList
+     * @param getterPropName
+     * @param hasNullFlags 是否有null值标记参数
+     * @param <E>
+     * @return
+     */
+    public static <E> List collectToList(List<E> objectList, String getterPropName, boolean[] hasNullFlags){
+        List fieldValueList = new ArrayList();
+        try{
+            for(E object : objectList){
+                Object fieldValue = getProperty(object, getterPropName);
+                if(fieldValue == null){
+                    hasNullFlags[0] = true;
+                }
+                else if(!fieldValueList.contains(fieldValue)){
+                    fieldValueList.add(fieldValue);
+                }
+            }
+        }
+        catch (Exception e){
+            log.warn("提取属性值异常, getterPropName="+getterPropName, e);
+        }
+        return fieldValueList;
+    }
+
     /**
      * 绑定map中的属性值到list
      * @param setFieldFn

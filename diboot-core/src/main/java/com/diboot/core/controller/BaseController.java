@@ -168,6 +168,7 @@ public class BaseController {
 	 * @param <VO>
 	 * @return
 	 */
+	@Deprecated
 	protected <VO> List<VO> convertToVoAndBindRelations(List entityList, Class<VO> voClass) {
 		// 转换为VO
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);

@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -50,44 +51,56 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         if(V.isEmpty(annoObjectList)){
             return;
         }
-        if(referencedGetterColumnNameList == null){
-            log.error("调用错误：字段绑定必须调用link()指定字段赋值和取值的setter/getter方法！");
+        if(V.isEmpty(refObjJoinFlds)){
+            log.warn("调用错误：无法从condition中解析出字段关联.");
             return;
         }
-        // 解析默认主键字段名
-        String referencedEntityPkName = S.toSnakeCase(referencedEntityPrimaryKey);
-        String annoObjectFkFieldName = S.toLowerCaseCamel(annoObjectForeignKey);
-        // 提取主键pk列表
-        List annoObjectForeignKeyList = BeanUtils.collectToList(annoObjectList, annoObjectFkFieldName);
-        if(V.isEmpty(annoObjectForeignKeyList)){
+        if(referencedGetterColumnNameList == null){
+            log.error("调用错误：字段绑定必须指定字段field");
             return;
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
-        //@BindFieldList(entity = Role.class, field="name", condition="this.id=user_role.user_id AND user_role.role_id=id")
-        //List<String> roleNameList;
-        // 构建查询条件
         List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
-        selectColumns.add(referencedEntityPkName);
+        for(String refObjJoinOn : refObjJoinFlds){
+            selectColumns.add(S.toSnakeCase(refObjJoinOn));
+        }
         selectColumns.addAll(referencedGetterColumnNameList);
         queryWrapper.select(S.toStringArray(selectColumns));
-        // 处理中间表
-        if(middleTable != null){
-            // 将结果转换成map
-            Map<String, List> middleTableResultMap = middleTable.executeOneToManyQuery(annoObjectForeignKeyList);
+        // 直接关联
+        if(middleTable == null){
+            super.buildQueryWrapperJoinOn();
+            // 查询entity列表: List<Role>
+            List<T> list = getEntityList(queryWrapper);
+            if(V.notEmpty(list)){
+                valueEntityListMap = this.buildMatchKey2FieldListMap(list);
+            }
+            // 遍历list并赋值
+            bindPropValue(annoObjectList, annoObjJoinFlds, valueEntityListMap);
+        }
+        // 通过中间表关联
+        else{
+            if(refObjJoinFlds.size() > 1){
+                throw new BusinessException(NOT_SUPPORT_MSG);
+            }
+            // 提取注解条件中指定的对应的列表
+            Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();
+            // 处理中间表, 将结果转换成map
+            Map<String, List> middleTableResultMap = middleTable.executeOneToManyQuery(trunkObjCol2ValuesMap);
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
+            String refObjJoinOnField = refObjJoinFlds.get(0);
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件
-            queryWrapper.in(referencedEntityPkName, entityIdList);
+            queryWrapper.in(S.toSnakeCase(refObjJoinOnField), entityIdList);
             // 查询entity列表: List<Role>
             List<T> list = getEntityList(queryWrapper);
             if(V.isEmpty(list)){
                 return;
             }
             // 转换entity列表为Map<ID, Entity>
-            Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
+            Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, refObjJoinOnField);
             for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
                 // List<roleId>
                 List annoObjFKList = entry.getValue();
@@ -103,36 +116,108 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 }
                 valueEntityListMap.put(entry.getKey(), valueList);
             }
+            // 遍历list并赋值
+            bindPropValue(annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap);
         }
-        else{
-            queryWrapper.in(referencedEntityPkName, annoObjectForeignKeyList);
-            // 查询entity列表: List<Role>
-            List<T> list = getEntityList(queryWrapper);
-            if(V.isEmpty(list)){
-                return;
-            }
-            for(T entity : list){
-                String keyValue = BeanUtils.getStringProperty(entity, S.toLowerCaseCamel(referencedEntityPrimaryKey));
-                List entityList = valueEntityListMap.get(keyValue);
-                if(entityList == null){
-                    entityList = new ArrayList<>();
-                    valueEntityListMap.put(keyValue, entityList);
+    }
+
+    /***
+     * 从对象集合提取某个属性值到list中
+     * @param fromList
+     * @param getterFields
+     * @param valueMatchMap
+     * @param <E>
+     */
+    public <E> void bindPropValue(List<E> fromList, List<String> getterFields, Map<String, List> valueMatchMap){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
+            return;
+        }
+        List<String> fieldValues = new ArrayList<>(getterFields.size());
+        try{
+            for(E object : fromList){
+                fieldValues.clear();
+                for(String getterField : getterFields){
+                    String fieldValue = BeanUtils.getStringProperty(object, getterField);
+                    fieldValues.add(fieldValue);
                 }
-                entityList.add(entity);
-            }
-        }
-        // 遍历list并赋值
-        for(Object annoObject : annoObjectList){
-            // 将数子类型转换成字符串，以解决类型不一致的问题
-            String annoObjectId = BeanUtils.getStringProperty(annoObject, annoObjectFkFieldName);
-            List entityList = valueEntityListMap.get(annoObjectId);
-            if(entityList != null){
-                for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                    List valObjList = BeanUtils.collectToList(entityList, S.toLowerCaseCamel(referencedGetterColumnNameList.get(i)));
-                    BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), valObjList);
+                // 查找匹配Key
+                String matchKey = S.join(fieldValues);
+                List entityList = valueMatchMap.get(matchKey);
+                if(entityList != null){
+                    // 赋值
+                    for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
+                        List valObjList = BeanUtils.collectToList(entityList, S.toLowerCaseCamel(referencedGetterColumnNameList.get(i)));
+                        BeanUtils.setProperty(object, annoObjectSetterPropNameList.get(i), valObjList);
+                    }
                 }
             }
         }
+        catch (Exception e){
+            log.warn("设置属性值异常", e);
+        }
+    }
+
+    /***
+     * 从对象集合提取某个属性值到list中
+     * @param fromList
+     * @param trunkObjColMapping
+     * @param valueMatchMap
+     * @param <E>
+     */
+    public <E> void bindPropValue(List<E> fromList, Map<String, String> trunkObjColMapping, Map<String, List> valueMatchMap){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
+            return;
+        }
+        List<String> fieldValues = new ArrayList<>(trunkObjColMapping.size());
+        try{
+            for(E object : fromList){
+                fieldValues.clear();
+                for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
+                    String getterField = S.toLowerCaseCamel(entry.getKey());
+                    String fieldValue = BeanUtils.getStringProperty(object, getterField);
+                    fieldValues.add(fieldValue);
+                }
+                // 查找匹配Key
+                String matchKey = S.join(fieldValues);
+                List entityList = valueMatchMap.get(matchKey);
+                if(entityList != null){
+                    // 赋值
+                    for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
+                        List valObjList = BeanUtils.collectToList(entityList, S.toLowerCaseCamel(referencedGetterColumnNameList.get(i)));
+                        BeanUtils.setProperty(object, annoObjectSetterPropNameList.get(i), valObjList);
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            log.warn("设置属性值异常", e);
+        }
+    }
+
+    /**
+     * 构建匹配key-entity目标的map
+     * @param list
+     * @return
+     */
+    private Map<String, List> buildMatchKey2FieldListMap(List<T> list){
+        Map<String, List> key2TargetListMap = new HashMap<>(list.size());
+        List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
+        for(T entity : list){
+            joinOnValues.clear();
+            for(String refObjJoinOnCol : refObjJoinFlds){
+                String fldValue = BeanUtils.getStringProperty(entity, refObjJoinOnCol);
+                joinOnValues.add(fldValue);
+            }
+            String matchKey = S.join(joinOnValues);
+            // 获取list
+            List entityList = key2TargetListMap.get(matchKey);
+            if(entityList == null){
+                entityList = new ArrayList<>();
+                key2TargetListMap.put(matchKey, entityList);
+            }
+            entityList.add(entity);
+        }
+        return key2TargetListMap;
     }
 
 }

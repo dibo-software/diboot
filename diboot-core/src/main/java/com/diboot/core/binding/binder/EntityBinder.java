@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.util.S;
@@ -23,10 +24,8 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Entity实体绑定Binder，用于绑定当前一个entity到目标对象的属性
@@ -82,33 +81,45 @@ public class EntityBinder<T> extends BaseBinder<T> {
         if(V.isEmpty(annoObjectList)){
             return;
         }
-        if(referencedEntityPrimaryKey == null){
+        if(V.isEmpty(refObjJoinFlds)){
             log.warn("调用错误：无法从condition中解析出字段关联.");
-        }
-        // 提取注解条件中指定的对应的列表
-        String annoObjectForeignKeyField = S.toLowerCaseCamel(annoObjectForeignKey);
-        List annoObjectForeignKeyList = BeanUtils.collectToList(annoObjectList, annoObjectForeignKeyField);
-        if(V.isEmpty(annoObjectForeignKeyList)){
             return;
         }
-        // 结果转换Map
-        Map<String, Object> valueEntityMap = new HashMap<>();
+        // 直接关联Entity
+        if(middleTable == null){
+            // @BindEntity(entity = Department.class, condition="this.department_id=id AND this.type=type")
+            // Department department;
+            super.buildQueryWrapperJoinOn();
+            // 查询entity列表
+            List<T> list = getEntityList(queryWrapper);
+            if(V.notEmpty(list)){
+                Map<String, Object> valueEntityMap = this.buildMatchKey2EntityMap(list);
+                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, annoObjJoinFlds, valueEntityMap);
+            }
+        }
         // 通过中间表关联Entity
-        // @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND department.level=1")
-        // Organization organization;
-        if(middleTable != null){
-            Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(annoObjectForeignKeyList);
+        else{
+            if(refObjJoinFlds.size() > 1){
+                throw new BusinessException(NOT_SUPPORT_MSG);
+            }
+            // 提取注解条件中指定的对应的列表
+            Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();
+            // 结果转换Map
+            Map<String, Object> valueEntityMap = new HashMap<>();
+            Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(trunkObjCol2ValuesMap);
             if(V.notEmpty(middleTableResultMap)){
+                String refObjJoinOnField = refObjJoinFlds.get(0);
                 // 提取entity主键值集合
-                Collection middleTableColumnValueList = middleTableResultMap.values();
+                Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
                 // 构建查询条件
-                queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), middleTableColumnValueList);
+                queryWrapper.in(S.toSnakeCase(refObjJoinOnField), refObjValues);
                 // 查询entity列表
                 List<T> list = getEntityList(queryWrapper);
                 if(V.notEmpty(list)){
                     // 转换entity列表为Map<ID, Entity>
-                    Map<String, T> listMap = BeanUtils.convertToStringKeyObjectMap(list, S.toLowerCaseCamel(referencedEntityPrimaryKey));
+                    Map<String, T> listMap = BeanUtils.convertToStringKeyObjectMap(list, refObjJoinOnField);
                     if(V.notEmpty(listMap)){
+                        //List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
                         for(Map.Entry<String, Object> entry : middleTableResultMap.entrySet()){
                             Object fetchValueId = entry.getValue();
                             if(fetchValueId == null){
@@ -121,25 +132,34 @@ public class EntityBinder<T> extends BaseBinder<T> {
                     }
                 }
             }
+            // 绑定结果
+            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap);
         }
-        // 直接关联Entity
-        // @BindEntity(entity = Department.class, condition="department_id=id")
-        // Department department;
-        else{
-            // 构建查询条件
-            queryWrapper.in(S.toSnakeCase(referencedEntityPrimaryKey), annoObjectForeignKeyList);
-            // 查询entity列表
-            List<T> list = getEntityList(queryWrapper);
-            if(V.notEmpty(list)){
-                String refEntityPKFieldName = S.toLowerCaseCamel(referencedEntityPrimaryKey);
-                for(T entity : list){
-                    String pkValue = BeanUtils.getStringProperty(entity, refEntityPKFieldName);
-                    valueEntityMap.put(pkValue, cloneOrConvertBean(entity));
-                }
+    }
+
+    /**
+     * 构建匹配key-entity目标的map
+     * @param list
+     * @return
+     */
+    private Map<String, Object> buildMatchKey2EntityMap(List<T> list){
+        Map<String, Object> key2TargetMap = new HashMap<>(list.size());
+        List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
+        for(T entity : list){
+            joinOnValues.clear();
+            for(String refObjJoinOnCol : refObjJoinFlds){
+                String pkValue = BeanUtils.getStringProperty(entity, refObjJoinOnCol);
+                joinOnValues.add(pkValue);
             }
+            String matchKey = S.join(joinOnValues);
+
+            Object target = entity;
+            if(target instanceof Map == false){
+                target = cloneOrConvertBean(entity);
+            }
+            key2TargetMap.put(matchKey, target);
         }
-        // 绑定结果
-        BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityMap);
+        return key2TargetMap;
     }
 
     /**

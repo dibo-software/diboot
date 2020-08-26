@@ -144,7 +144,7 @@ public class RelationsBinder {
      * @param <VO>
      */
     private static <VO> void doBindingDict(List<VO> voList, FieldAnnotation fieldAnno) {
-        DictionaryService dictionaryService = (DictionaryService) ContextHelper.getBean(DictionaryService.class);
+        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
         if(dictionaryService != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
             String dictValueField = annotation.field();

@@ -15,6 +15,7 @@
  */
 package diboot.core.test.util;
 
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.PropertiesUtils;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.config.SpringMvcConfig;
@@ -71,6 +72,6 @@ public class PropertiesTest {
             }
         }
         System.out.println(jdbcUrl);
-        Assert.assertTrue(jdbcUrl != null);
+        Assert.assertTrue(jdbcUrl != null || ContextHelper.getJdbcUrl() != null);
     }
 }

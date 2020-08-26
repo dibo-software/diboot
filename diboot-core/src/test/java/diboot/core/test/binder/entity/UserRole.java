@@ -39,6 +39,9 @@ public class UserRole extends BaseEntity {
     private Long id;
 
     @TableField
+    private String userType;
+
+    @TableField
     private Long userId;
 
     @TableField

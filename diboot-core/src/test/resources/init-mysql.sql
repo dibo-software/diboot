@@ -64,6 +64,7 @@ create table user
 
 create table user_role
 (
+  user_type varchar(20) not null comment '用户类型',
   user_id int not null comment '用户ID',
   role_id int not null comment '角色ID',
   primary key (user_id, role_id)
@@ -76,11 +77,11 @@ VALUES (10001, 0, 100001, '产品部'), (10002, 10001, 100001, '研发组'), (10
 INSERT INTO dictionary (id, parent_id, type, item_name, item_value, description, extdata, sort_id, `is_deletable`, is_editable)
 VALUES (1, 0, 'GENDER', '性别', null, '', null, 99, 0, 1), (2, 1, 'GENDER', '男', 'M', null, null, 99, 0, 1), (3, 1, 'GENDER', '女', 'F', null, null, 99, 0, 1);
 
-INSERT INTO organization (id, parent_id, name, telphone) VALUES (100001, 0, '苏州帝博', '0512-62988949');
+INSERT INTO organization (id, parent_id, name, telphone) VALUES (100001, 0, '苏州帝博', '0512-62988949'), (100002, 0, '成都帝博', null);
 
 INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');
 
 INSERT INTO user (id, department_id, username, gender)
 VALUES (1001, 10002, '张三', 'M'), (1002, 10002, '李四', 'F');
 
-INSERT INTO user_role (user_id, role_id) VALUES (1001, 101),(1001, 102),(1002, 102);
+INSERT INTO user_role (user_type, user_id, role_id) VALUES ('SysUser', 1001, 101),('SysUser', 1001, 102),('OrgUser', 1002, 102);
