@@ -18,7 +18,6 @@ package com.diboot.core.binding.data;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;

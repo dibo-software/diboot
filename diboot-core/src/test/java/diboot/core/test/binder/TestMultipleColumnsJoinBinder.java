@@ -2,7 +2,6 @@ package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
-import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;

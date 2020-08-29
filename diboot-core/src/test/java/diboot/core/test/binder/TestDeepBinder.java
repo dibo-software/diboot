@@ -17,7 +17,6 @@ package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.binding.Binder;
-import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;

@@ -19,7 +19,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;

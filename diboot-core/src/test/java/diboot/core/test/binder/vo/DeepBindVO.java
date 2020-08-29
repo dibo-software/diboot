@@ -15,7 +15,6 @@
  */
 package diboot.core.test.binder.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindEntityList;
 import diboot.core.test.binder.entity.Department;
