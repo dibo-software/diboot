@@ -21,14 +21,6 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc7</artifactId>
-            <version>12.1.0.2.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/ojdbc7.jar</systemPath>
-        </dependency>-->
     </dependencies>
 
     <build>
