@@ -440,27 +440,15 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				((LambdaQueryWrapper) queryWrapper).select(getterFn);
 			}
 		}
-		List<Map<String, Object>> mapList = getMapList(queryWrapper);
-		if(V.isEmpty(mapList)){
+		List<T> entityList = getEntityList(queryWrapper);
+		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
-		String columnNameUC = V.notEmpty(columnName)? columnName.toUpperCase() : null;
-		List<FT> fldValues = new ArrayList<>(mapList.size());
-		for(Map<String, Object> map : mapList){
-			if(V.isEmpty(map)){
-				continue;
-			}
-			if(map.containsKey(columnName)){
-				FT value = (FT) map.get(columnName);
-				if(!fldValues.contains(value)){
-					fldValues.add(value);
-				}
-			}
-			else if(columnNameUC != null && map.containsKey(columnNameUC)){
-				FT value = (FT) map.get(columnNameUC);
-				if(!fldValues.contains(value)){
-					fldValues.add(value);
-				}
+		List<FT> fldValues = new ArrayList<>(entityList.size());
+		for(T entity : entityList){
+			FT value = (FT)BeanUtils.getProperty(entity, fieldName);
+			if(value != null && !fldValues.contains(value)){
+				fldValues.add(value);
 			}
 		}
 		return fldValues;
