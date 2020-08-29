@@ -13,34 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.entity;
+package diboot.core.test.binder.service;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.copy.Accept;
-import com.diboot.core.entity.BaseEntity;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import com.diboot.core.service.BaseService;
+import diboot.core.test.binder.entity.Sysuser;
 
 /**
+ * 员工相关Service
  * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2019/1/30
+ * @date 2019/1/5
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class User extends BaseEntity {
-    private static final long serialVersionUID = 3050761344045195972L;
-
-    @TableField
-    private Long departmentId;
-
-    @TableField
-    private String username;
-
-    @Accept(name = "itemName")
-    @TableField
-    private String gender;
+public interface SysuserService extends BaseService<Sysuser> {
 
 }

@@ -13,19 +13,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.mapper;
+package diboot.core.test.binder.entity;
 
-import com.diboot.core.mapper.BaseCrudMapper;
-import diboot.core.test.binder.entity.User;
-import org.apache.ibatis.annotations.Mapper;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.copy.Accept;
+import com.diboot.core.entity.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
- * 员工Mapper
  * @author mazc@dibo.ltd
- * @version 2018/12/22
+ * @version v2.0
+ * @date 2019/1/30
  */
-@Mapper
-public interface UserMapper extends BaseCrudMapper<User> {
+@Getter
+@Setter
+@Accessors(chain = true)
+public class Sysuser extends BaseEntity {
+    private static final long serialVersionUID = 3050761344045195972L;
+
+    @TableField
+    private Long departmentId;
+
+    @TableField
+    private String username;
+
+    @Accept(name = "itemName")
+    @TableField
+    private String gender;
 
 }
-

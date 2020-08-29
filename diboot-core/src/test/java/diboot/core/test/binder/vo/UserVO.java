@@ -17,7 +17,7 @@ package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.entity.Sysuser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class UserVO extends User{
+public class UserVO extends Sysuser {
     private static final long serialVersionUID = 3526115343377985709L;
 
     // 字段关联，附加更多条件

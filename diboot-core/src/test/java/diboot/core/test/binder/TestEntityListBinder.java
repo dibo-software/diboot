@@ -24,9 +24,9 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.entity.Sysuser;
 import diboot.core.test.binder.service.DepartmentService;
-import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.service.SysuserService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.binder.vo.EntityListComplexBinderVO;
 import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
@@ -53,7 +53,7 @@ import java.util.List;
 public class TestEntityListBinder {
 
     @Autowired
-    UserService userService;
+    SysuserService sysuserService;
 
     @Autowired
     DepartmentService departmentService;
@@ -93,9 +93,9 @@ public class TestEntityListBinder {
     @Test
     public void testComplexBinder(){
         // 加载测试数据
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
+        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
         // 验证绑定结果

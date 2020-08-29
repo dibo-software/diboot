@@ -23,9 +23,9 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.entity.Sysuser;
 import diboot.core.test.binder.service.DepartmentService;
-import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.service.SysuserService;
 import diboot.core.test.binder.vo.FieldBinderVO;
 import diboot.core.test.binder.vo.TestDictVo;
 import diboot.core.test.binder.vo.UserVO;
@@ -52,7 +52,7 @@ import java.util.List;
 public class TestFieldBinder {
 
     @Autowired
-    UserService userService;
+    SysuserService sysuserService;
     @Autowired
     DepartmentService departmentService;
     @Autowired
@@ -61,9 +61,9 @@ public class TestFieldBinder {
     @Test
     public void testBinder(){
         // 加载测试数据
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
+        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<FieldBinderVO> voList = Binder.convertAndBindRelations(userList, FieldBinderVO.class);
         // 验证绑定结果
@@ -83,9 +83,9 @@ public class TestFieldBinder {
     @Test
     public void testBinderWithMoreCondition(){
         // 加载测试数据
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
+        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);
         if(V.notEmpty(voList)){

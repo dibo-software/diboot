@@ -15,11 +15,10 @@
  */
 package diboot.core.test.binder.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.service.impl.BaseServiceImpl;
-import diboot.core.test.binder.entity.User;
-import diboot.core.test.binder.mapper.UserMapper;
-import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.mapper.SysuserMapper;
+import diboot.core.test.binder.service.SysuserService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,6 +27,6 @@ import org.springframework.stereotype.Service;
  * @version 2018/12/23
  */
 @Service
-public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements UserService {
+public class SysuserServiceImpl extends BaseServiceImpl<SysuserMapper, Sysuser> implements SysuserService {
 
 }

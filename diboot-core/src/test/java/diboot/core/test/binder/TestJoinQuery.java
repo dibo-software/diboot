@@ -25,7 +25,7 @@ import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.entity.Sysuser;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -38,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -169,15 +170,19 @@ public class TestJoinQuery {
         dto.setDeptId(10002L);
 
         // builder直接查询，不分页 3条结果
-        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        List<Sysuser> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Sysuser.class);
         Assert.assertTrue(builderResultList.size() == 2);
 
         dto.setOrgName("苏州帝博");
-        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Sysuser.class);
         Assert.assertTrue(builderResultList.size() == 2);
 
-        dto.setRoleCode("ADMIN");
-        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        List<String> roleCodes = new ArrayList<>();
+        roleCodes.add("ADMIN");
+        roleCodes.add("OTHER");
+
+        dto.setRoleCodes(roleCodes);
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Sysuser.class);
         Assert.assertTrue(builderResultList.size() == 1);
     }
 

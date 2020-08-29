@@ -17,15 +17,13 @@ package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Sysuser;
 import diboot.core.test.binder.service.DepartmentService;
-import diboot.core.test.binder.service.SysuserService;
-import diboot.core.test.binder.vo.EntityListComplexBinderVO;
-import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
+import diboot.core.test.binder.vo.DeepBindVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,55 +44,56 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {SpringMvcConfig.class})
 @SpringBootTest(classes = {StartupApplication.class})
-public class TestFieldListBinder {
+public class TestDeepBinder {
 
-    @Autowired
-    SysuserService sysuserService;
     @Autowired
     DepartmentService departmentService;
 
-    /**
-     * 验证直接关联的绑定
-     */
     @Test
-    public void testSimpleBinder(){
+    public void testEntityListDeepBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Department::getId, 10001L);
         List<Department> entityList = departmentService.getEntityList(queryWrapper);
         // 自动绑定
-        List<EntityListSimpleBinderVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleBinderVO.class);
+        List<DeepBindVO> voList = Binder.convertAndBindRelations(entityList, DeepBindVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListSimpleBinderVO vo : voList){
-            // 验证直接关联的绑定
-            Assert.assertTrue(V.notEmpty(vo.getChildrenIds()));
-            System.out.println(JSON.stringify(vo.getChildrenIds()));
-            // 验证直接关联的绑定
-            Assert.assertTrue(V.notEmpty(vo.getChildrenNames()));
-            System.out.println(JSON.stringify(vo.getChildrenNames()));
-        }
-    }
-
-    /**
-     * 验证通过中间表间接关联的绑定
-     */
-    @Test
-    public void testComplexBinder(){
-        // 加载测试数据
-        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
-        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
-        // 自动绑定
-        List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
-        // 验证绑定结果
-        Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListComplexBinderVO vo : voList){
-            // 验证通过中间表间接关联的绑定
-            Assert.assertTrue(V.notEmpty(vo.getRoleCodes()));
-            Assert.assertTrue(V.notEmpty(vo.getRoleCreateDates()));
-
-            System.out.println(JSON.stringify(vo.getRoleCodes()));
+        for(DeepBindVO vo : voList) {
+            if(vo.getParentId().equals(0L)){
+                Assert.assertTrue(vo.getParentDept() == null);
+            }
+            else{
+                Assert.assertTrue(vo.getParentDept() != null);
+                Assert.assertTrue(vo.getParentDept().getOrganizationVO() != null);
+                if(vo.getParentId().equals(10001L)){
+                    Assert.assertTrue(vo.getParentDept().getChildren().size() == 3);
+                }
+                else if(vo.getParentId().equals(10003L)){
+                    Assert.assertTrue(vo.getParentDept().getChildren().size() == 2);
+                }
+            }
+            if(vo.getOrgId().equals(100001L)){
+                Assert.assertTrue(vo.getOrganizationVO().getParentOrg() == null);
+            }
+            else{
+                Assert.assertTrue(vo.getOrganizationVO().getParentOrg() != null);
+                Assert.assertTrue(vo.getOrganizationVO().getParentOrgName() != null);
+            }
+            if(vo.getId().equals(10001L)){
+                Assert.assertTrue(vo.getChildren().size() == 3);
+                // 验证深度绑定
+                Assert.assertTrue(vo.getChildren().get(0).getOrganizationVO() != null);
+                Assert.assertTrue(vo.getChildren().get(1).getOrganizationVO() != null);
+            }
+            else if(vo.getId().equals(10003L)){
+                Assert.assertTrue(vo.getChildren().size() == 2);
+                // 验证深度绑定
+                Assert.assertTrue(vo.getChildren().get(0).getOrganizationVO() != null);
+            }
+            else if(vo.getId().equals(10005L)){
+                Assert.assertTrue(vo.getChildren() == null);
+            }
+            System.out.println(JSON.stringify(vo));
         }
     }
 

@@ -1,18 +1,19 @@
 package diboot.core.test.binder;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
-import com.diboot.core.util.JSON;
+import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.entity.User;
-import diboot.core.test.binder.vo.FieldBinderVO;
 import diboot.core.test.binder.vo.MulColJoinVO;
 import diboot.core.test.binder.vo.MulColMiddleJoinVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -31,13 +32,20 @@ import java.util.List;
 @SpringBootTest(classes = {StartupApplication.class})
 public class TestMultipleColumnsJoinBinder {
 
+    @Autowired
+    DictionaryService dictionaryService;
+
     @Test
     public void testBinder(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        queryWrapper.gt("parent_id", 0);
+        List<Long> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
         // 加载测试数据
         List<MulColJoinVO> voList = new ArrayList<>();
         MulColJoinVO vo1 = new MulColJoinVO();
         vo1.setDictType("GENDER");
-        vo1.setDictId(1L);
+        vo1.setDictId(ids.get(0));
 
         vo1.setOrgPid(0L);
         vo1.setTelphone("0512-62988949");
@@ -45,7 +53,7 @@ public class TestMultipleColumnsJoinBinder {
 
         MulColJoinVO vo2 = new MulColJoinVO();
         vo2.setDictType("GENDER");
-        vo2.setDictId(2L);
+        vo2.setDictId(ids.get(1));
 
         vo2.setOrgPid(0L);
         vo2.setTelphone(null);

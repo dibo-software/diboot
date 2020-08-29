@@ -21,8 +21,8 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.entity.User;
-import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.service.SysuserService;
 import diboot.core.test.binder.vo.EntityBinderVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -47,14 +47,14 @@ import java.util.List;
 public class TestEntityBinder {
 
     @Autowired
-    UserService userService;
+    SysuserService sysuserService;
 
     @Test
     public void testBinder(){
         // 加载测试数据
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
+        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityBinderVO> voList = Binder.convertAndBindRelations(userList, EntityBinderVO.class);
         // 验证绑定结果

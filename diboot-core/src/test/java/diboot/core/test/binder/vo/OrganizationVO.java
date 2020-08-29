@@ -15,6 +15,10 @@
  */
 package diboot.core.test.binder.vo;
 
+import com.diboot.core.binding.annotation.BindEntity;
+import com.diboot.core.binding.annotation.BindField;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,8 +35,18 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrganizationVO {
 
+    private Long id;
+
     private Long parentId;
 
     private String name;
+
+    // 关联Entity
+    @BindEntity(entity = Organization.class, condition = "this.parent_id=id") // AND ...
+    private Organization parentOrg;
+
+    // 关联Entity
+    @BindField(entity = Organization.class, field = "name", condition = "this.parent_id=id") // AND ...
+    private String parentOrgName;
 
 }

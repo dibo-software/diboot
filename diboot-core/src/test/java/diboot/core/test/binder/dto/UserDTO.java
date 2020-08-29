@@ -20,8 +20,10 @@ import com.diboot.core.binding.query.Comparison;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
-import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.entity.Sysuser;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * User DTO
@@ -30,7 +32,7 @@ import lombok.Data;
  * @date 2018/12/27
  */
 @Data
-public class UserDTO extends User {
+public class UserDTO extends Sysuser {
 
     // 字段关联
     @BindQuery(entity= Department.class, field = "name", condition="this.department_id=id") // AND parent_id >= 0
@@ -47,8 +49,9 @@ public class UserDTO extends User {
     // LEFT JOIN department r2m ON self.department_id = r2m.id
     // LEFT JOIN organization r1 ON r2m.org_id=r2.id
 
-    @BindQuery(entity = Role.class, field = "code", condition = "this.id=user_role.user_id AND user_role.role_id=id")
-    private String roleCode;
+    @BindQuery(comparison = Comparison.IN, entity = Role.class, field = "code", condition = "this.id=user_role.user_id AND user_role.role_id=id")
+    private List<String> roleCodes;
+    //private String[] roleCodes;
     // LEFT JOIN user_role r3m ON self.id = r3m.user_id
     // LEFT JOIN role r3 ON r3m.role_id = r3.id
 

@@ -17,11 +17,14 @@ package diboot.core.test.binder.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindEntity;
+import com.diboot.core.binding.annotation.BindEntityList;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * Department VO
@@ -34,6 +37,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class DepartmentVO {
     private static final long serialVersionUID = -4849732665419794547L;
+    @TableField
+    private Long id;
 
     @TableField
     private Long parentId;
@@ -51,5 +56,8 @@ public class DepartmentVO {
     // 关联Entity，赋值给VO
     @BindEntity(entity = Organization.class, condition = "this.org_id=id") // AND ...
     private OrganizationVO organizationVO;
+
+    @BindEntityList(entity = Department.class, condition = "this.id=parent_id AND this.name IS NOT NULL") // AND ...
+    private List<Department> children;
 
 }

@@ -13,18 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.service;
+package diboot.core.test.binder.mapper;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.service.BaseService;
-import diboot.core.test.binder.entity.User;
+import com.diboot.core.mapper.BaseCrudMapper;
+import diboot.core.test.binder.entity.Sysuser;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 员工相关Service
+ * 员工Mapper
  * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/1/5
+ * @version 2018/12/22
  */
-public interface UserService extends BaseService<User> {
+@Mapper
+public interface SysuserMapper extends BaseCrudMapper<Sysuser> {
 
 }
+

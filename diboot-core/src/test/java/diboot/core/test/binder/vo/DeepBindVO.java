@@ -15,31 +15,38 @@
  */
 package diboot.core.test.binder.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindEntity;
+import com.diboot.core.binding.annotation.BindEntityList;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
-import diboot.core.test.binder.entity.Sysuser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
+ * Department VO
  * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2019/1/30
+ * @date 2018/12/27
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class EntityBinderVO extends Sysuser {
-    private static final long serialVersionUID = 3526115343377985725L;
+public class DeepBindVO extends Department{
+    private static final long serialVersionUID = -4849732665419794547L;
 
-    // 字段关联，相同条件的entity+condition将合并为一条SQL查询
-    @BindEntity(entity= Department.class, condition="this.department_id=id AND name like '发'") // AND is_deleted=1
-    private Department department;
+    // 关联Entity
+    @BindEntity(entity = Department.class, condition = "this.parent_id=id", deepBind = true) // AND ...
+    private DepartmentVO parentDept;
 
-    // 通过中间表关联Entity
-    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0") // AND ...
+    // 关联Entity，赋值给VO
+    @BindEntity(entity = Organization.class, condition = "this.org_id=id", deepBind = true) // AND ...
     private OrganizationVO organizationVO;
+
+    @BindEntityList(entity = Department.class, condition = "this.id=parent_id AND this.name IS NOT NULL", deepBind = true) // AND ...
+    private List<DepartmentVO> children;
 
 }
