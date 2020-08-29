@@ -191,8 +191,11 @@ public class QueryBuilder {
                             wrapper.in(columnName, valueArray);
                         }
                     }
+                    else if(value instanceof Collection){
+                        wrapper.in(columnName, (Collection)value);
+                    }
                     else{
-                        wrapper.in(columnName, value);
+                        log.warn("字段类型错误：IN支持List及数组.");
                     }
                     break;
                 case CONTAINS:
