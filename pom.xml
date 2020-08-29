@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.1.RELEASE</version>
+        <version>2.3.3.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -25,7 +25,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <springboot.version>2.3.1.RELEASE</springboot.version>
+        <springboot.version>2.3.3.RELEASE</springboot.version>
     </properties>
 
     <dependencies>
@@ -36,14 +36,12 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.16</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -66,12 +64,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.3.2</version>
+            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -81,7 +80,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.72</version>
+            <version>1.2.73</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

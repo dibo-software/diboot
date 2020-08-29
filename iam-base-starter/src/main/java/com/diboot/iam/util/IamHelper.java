@@ -13,7 +13,7 @@ import java.util.List;
  * IAM相关辅助类
  *
  * @author mazc@dibo.ltd
- * @version v1.0
+ * @version v2.0
  * @date 2020/06/28
  */
 public class IamHelper {

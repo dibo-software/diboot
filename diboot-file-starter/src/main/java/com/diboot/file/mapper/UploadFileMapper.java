@@ -21,7 +21,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 文件相关Mapper
- * @author Mazc
+ * @author Jerry@dibo.ltd
  * @version 2017/4/18
  */
 @Mapper

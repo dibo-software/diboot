@@ -18,6 +18,7 @@ package com.diboot.core.binding;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.annotation.*;
 import com.diboot.core.binding.binder.*;
+import com.diboot.core.binding.helper.DeepRelationsBinder;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
@@ -96,6 +97,17 @@ public class RelationsBinder {
      * @throws Exception
      */
     public static <VO> void bind(List<VO> voList){
+        bind(voList, true);
+    }
+
+    /**
+     * 自动绑定多个VO集合的关联对象
+     * @param voList 需要注解绑定的对象集合
+     * @param enableDeepBind
+     * @return
+     * @throws Exception
+     */
+    public static <VO> void bind(List<VO> voList, boolean enableDeepBind){
         if(V.isEmpty(voList)){
             return;
         }
@@ -117,22 +129,40 @@ public class RelationsBinder {
             }
             // 绑定Entity实体
             List<FieldAnnotation> entityAnnoList = bindAnnotationGroup.getBindEntityAnnotations();
+            List<FieldAnnotation> deepBindEntityAnnoList = null;
             if(entityAnnoList != null){
                 for(FieldAnnotation anno : entityAnnoList){
                     doBindingEntity(voList, anno);
+                    if(enableDeepBind && ((BindEntity)anno.getAnnotation()).deepBind()){
+                        if(deepBindEntityAnnoList == null){
+                            deepBindEntityAnnoList = new ArrayList<>();
+                        }
+                        deepBindEntityAnnoList.add(anno);
+                    }
                 }
             }
             // 绑定Entity实体List
             List<FieldAnnotation> entitiesAnnoList = bindAnnotationGroup.getBindEntityListAnnotations();
+            List<FieldAnnotation> deepBindEntitiesAnnoList = null;
             if(entitiesAnnoList != null){
                 for(FieldAnnotation anno : entitiesAnnoList){
                     doBindingEntityList(voList, anno);
+                    if(enableDeepBind && ((BindEntityList)anno.getAnnotation()).deepBind()){
+                        if(deepBindEntitiesAnnoList == null){
+                            deepBindEntitiesAnnoList = new ArrayList<>();
+                        }
+                        deepBindEntitiesAnnoList.add(anno);
+                    }
                 }
             }
             // 绑定Entity field List
             List<FieldAnnotation> fieldListAnnoList = bindAnnotationGroup.getBindFieldListAnnotations();
             if(fieldListAnnoList != null){
                 doBindingFieldList(voList, fieldListAnnoList);
+            }
+            // 深度绑定
+            if(enableDeepBind && (deepBindEntityAnnoList != null || deepBindEntitiesAnnoList != null)){
+                DeepRelationsBinder.deepBind(voList, deepBindEntityAnnoList, deepBindEntitiesAnnoList);
             }
         }
     }

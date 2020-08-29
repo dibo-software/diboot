@@ -1,4 +1,4 @@
-package com.diboot.core.binding.binder;
+package com.diboot.core.binding.helper;
 
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;

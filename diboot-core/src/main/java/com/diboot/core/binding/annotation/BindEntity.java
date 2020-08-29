@@ -39,4 +39,10 @@ public @interface BindEntity {
      * @return
      */
     String condition();
+
+    /**
+     * 深度绑定
+     * @return
+     */
+    boolean deepBind() default false;
 }
