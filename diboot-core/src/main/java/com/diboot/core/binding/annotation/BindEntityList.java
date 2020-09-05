@@ -45,4 +45,10 @@ public @interface BindEntityList {
      * @return
      */
     boolean deepBind() default false;
+
+    /**
+     * EntityList排序
+     * @return
+     */
+    String orderBy() default "";
 }

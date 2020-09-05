@@ -17,6 +17,7 @@ package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.helper.ResultAssembler;
+import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -37,6 +38,14 @@ import java.util.Map;
  */
 public class EntityListBinder<T> extends EntityBinder<T> {
     private static final Logger log = LoggerFactory.getLogger(EntityListBinder.class);
+
+    /**
+     * EntityList 排序
+     */
+    private String orderBy;
+    public void setOrderBy(String orderBy){
+        this.orderBy = orderBy;
+    }
 
     /***
      * 构造方法
@@ -59,6 +68,8 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){
             super.buildQueryWrapperJoinOn();
+            //处理orderBy，附加排序
+            this.appendOrderBy();
             // 查询entity列表
             List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
@@ -81,6 +92,8 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件
             queryWrapper.in(S.toSnakeCase(refObjJoinOnField), entityIdList);
+            //处理orderBy，附加排序
+            this.appendOrderBy();
             // 查询entity列表: List<Role>
             List list = getEntityList(queryWrapper);
             if(V.isEmpty(list)){
@@ -138,4 +151,29 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         return key2TargetListMap;
     }
 
+    /**
+     * 附加排序字段，支持格式：orderBy=shortName:DESC,age:ASC,birthdate
+     */
+    private void appendOrderBy(){
+        if(V.isEmpty(this.orderBy)){
+            return;
+        }
+        // 解析排序
+        String[] orderByFields = S.split(this.orderBy);
+        for(String field : orderByFields){
+            if(field.contains(":")){
+                String[] fieldAndOrder = S.split(field, ":");
+                String columnName = S.toSnakeCase(fieldAndOrder[0]);
+                if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
+                    queryWrapper.orderByDesc(columnName);
+                }
+                else{
+                    queryWrapper.orderByAsc(columnName);
+                }
+            }
+            else{
+                queryWrapper.orderByAsc(S.toSnakeCase(field));
+            }
+        }
+    }
 }

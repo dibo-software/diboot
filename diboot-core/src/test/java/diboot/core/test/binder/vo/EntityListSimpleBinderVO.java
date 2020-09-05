@@ -36,7 +36,7 @@ public class EntityListSimpleBinderVO extends Department {
     private static final long serialVersionUID = -362116388664907913L;
 
     // 直接关联多个Entity
-    @BindEntityList(entity = Department.class, condition = "this.id=parent_id")
+    @BindEntityList(entity = Department.class, condition = "this.id=parent_id", orderBy = "org_id:DESC,name")
     private List<DepartmentVO> children;
 
     // 1-n 关联，取单个属性
