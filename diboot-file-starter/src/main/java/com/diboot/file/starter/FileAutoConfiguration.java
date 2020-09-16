@@ -15,6 +15,7 @@
  */
 package com.diboot.file.starter;
 
+import com.diboot.core.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 @Slf4j
@@ -62,8 +64,9 @@ public class FileAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(MultipartResolver.class)
     public MultipartResolver multipartResolver() {
-        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
-        resolver.setResolveLazily(true);
-        return resolver;
+        CommonsMultipartResolver bean = new CommonsMultipartResolver();
+        bean.setDefaultEncoding(Cons.CHARSET_UTF8);
+        bean.setMaxUploadSize(fileProperties.getMaxUploadSize());
+        return bean;
     }
 }
