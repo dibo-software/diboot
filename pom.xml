@@ -25,7 +25,9 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <springboot.version>2.3.3.RELEASE</springboot.version>
+        <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+        <lombok.version>1.18.12</lombok.version>
+        <mybatis-plus.version>3.4.0</mybatis-plus.version>
     </properties>
 
     <dependencies>
@@ -48,47 +50,6 @@
             <version>4.0.1</version>
         </dependency>
 
-        <!-- 打包依赖的jar -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${springboot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- SpringBoot 2.3.x 新增依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-            <version>${springboot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.73</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.11</version>
-        </dependency>
-
-        <!-- 单元测试依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
