@@ -22,25 +22,73 @@ package com.diboot.iam.annotation;
  * @date 2019/12/23
  */
 public class Operation {
+    @Deprecated
+    public static final String LIST = "list";
+    @Deprecated
+    public static final String DETAIL = "detail";
+    @Deprecated
+    public static final String CREATE = "create";
+    @Deprecated
+    public static final String UPDATE = "update";
+    @Deprecated
+    public static final String DELETE = "delete";
+
     /**
      * 操作权限类型 - 查看列表
      */
-    public static final String LIST = "list";
+    public static final String CODE_LIST = "list";
     /**
      * 操作权限类型 - 查看详情
      */
-    public static final String DETAIL = "detail";
+    public static final String CODE_DETAIL = "detail";
     /**
      * 操作权限类型 - 添加
      */
-    public static final String CREATE = "create";
+    public static final String CODE_CREATE = "create";
     /**
      * 操作权限类型 - 更新
      */
-    public static final String UPDATE = "update";
+    public static final String CODE_UPDATE = "update";
     /**
      * 操作权限类型 - 更新
      */
-    public static final String DELETE = "delete";
+    public static final String CODE_DELETE = "delete";
+    /**
+     * 操作权限类型 - 导入
+     */
+    public static final String CODE_IMPORT = "import";
+    /**
+     * 操作权限类型 - 导出
+     */
+    public static final String CODE_EXPORT = "export";
 
+
+    /**
+     * 操作权限描述 - 查看列表
+     */
+    public static final String LABEL_LIST = "查看列表";
+    /**
+     * 操作权限描述 - 查看详情
+     */
+    public static final String LABEL_DETAIL = "查看详情";
+    /**
+     * 操作权限描述 - 添加
+     */
+    public static final String LABEL_CREATE = "创建";
+    /**
+     * 操作权限描述 - 更新
+     */
+    public static final String LABEL_UPDATE = "更新";
+    /**
+     * 操作权限描述 - 更新
+     */
+    public static final String LABEL_DELETE = "删除";
+    /**
+     * 操作权限描述 - 导入
+     */
+    public static final String LABEL_IMPORT = "导入";
+    /**
+     * 操作权限描述 - 导出
+     */
+    public static final String LABEL_EXPORT = "导出";
 }
