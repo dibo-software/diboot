@@ -104,6 +104,7 @@ public class DefaultExceptionHandler {
      * @param ex
      * @return
      */
+    @Deprecated
     protected String getViewName(HttpServletRequest request, Exception ex){
         return "error";
     }
@@ -113,6 +114,7 @@ public class DefaultExceptionHandler {
      * @param request
      * @return
      */
+    @Deprecated
     protected boolean isJsonRequest(HttpServletRequest request){
         if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
             return true;
