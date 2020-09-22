@@ -15,10 +15,12 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * 操作日志
@@ -37,56 +39,76 @@ public class IamOperationLog extends BaseEntity {
     /**
      * 业务对象
      */
+    @Length(max = 100, message = "用户类型长度应小于100")
+    @TableField()
     private String businessObj;
 
     /**
      * 操作
      */
+    @Length(max = 100, message = "用户类型长度应小于100")
+    @TableField()
     private String operation;
 
     /**
      * 用户类型
      */
+    @Length(max = 100, message = "用户类型长度应小于100")
+    @TableField()
     private String userType;
 
     /**
      * 用户ID
      */
+    @TableField()
     private Long userId;
 
     /**
      * 用户显示名
      */
+    @Length(max = 100, message = "用户类型长度应小于100")
+    @TableField()
     private String userRealname;
 
     /**
      * 请求uri
      */
+    @Length(max = 500, message = "用户类型长度应小于500")
+    @TableField()
     private String requestUri;
 
     /**
      * 请求method
      */
+    @Length(max = 20, message = "用户类型长度应小于20")
+    @TableField()
     private String requestMethod;
 
     /**
      * 请求参数
      */
+    @Length(max = 1000, message = "用户类型长度应小于1000")
+    @TableField()
     private String requestParams;
 
     /**
      * 请求IP
      */
+    @Length(max = 50, message = "用户类型长度应小于50")
+    @TableField()
     private String requestIp;
 
     /**
      * 状态码
      */
+    @TableField()
     private int statusCode;
 
     /**
      * 异常信息
      */
+    @Length(max = 1000, message = "用户类型长度应小于1000")
+    @TableField()
     private String errorMsg;
 
 }

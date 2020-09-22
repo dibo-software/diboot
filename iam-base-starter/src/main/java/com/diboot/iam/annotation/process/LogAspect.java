@@ -55,6 +55,8 @@ public class LogAspect {
     @Autowired
     private AsyncWorker asyncWorker;
 
+    private static int maxLength = 1000;
+
     /**
      * 注解切面
      */
@@ -94,7 +96,12 @@ public class LogAspect {
         int statusCode = Status.FAIL_EXCEPTION.code();
         String errorMsg = null;
         if(throwable != null){
-            errorMsg = throwable.getMessage();
+            errorMsg = throwable.toString();
+            StackTraceElement[] stackTraceElements = throwable.getStackTrace();
+            if(V.notEmpty(stackTraceElements)){
+                errorMsg += " : " + stackTraceElements[0].toString();
+            }
+            errorMsg = S.cut(errorMsg, maxLength);
         }
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
@@ -117,7 +124,7 @@ public class LogAspect {
         // 请求参数
         Map<String, Object> params = IamHelper.buildParamsMap(request);
         String paramsJson = JSON.stringify(params);
-        paramsJson = S.cut(paramsJson, 1000);
+        paramsJson = S.cut(paramsJson, maxLength);
         operationLog.setRequestParams(paramsJson);
         // 操作用户信息
         BaseLoginUser loginUser = IamSecurityUtils.getCurrentUser();
