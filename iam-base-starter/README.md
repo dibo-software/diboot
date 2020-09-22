@@ -33,7 +33,7 @@ String authtoken = AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.PWD
 @RequestMapping("/user")
 @BindPermission(name = "用户") // code可选,默认自动识别; sortId可选
 //继承类支持自动识别code为当前entity类名："IamUser"
-public class IamUserController extends BaseCrudMappingRestController<IamUser> {
+public class IamUserController extends BaseCrudRestController<IamUser> {
     @GetMapping("/test")
     @BindPermission(name = "自定义", code = "test") // 拼接后的code=IamUser:test
     // 以上注解支持自动鉴权，与 @RequiresPermissions(values={"IamUser:test"}) 等效，省掉前缀以简化及继承。

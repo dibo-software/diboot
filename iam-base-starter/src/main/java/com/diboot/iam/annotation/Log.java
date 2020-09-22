@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  * @date 2020/09/21
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.METHOD})
 @Documented
 public @interface Log {
     /**
@@ -37,5 +37,5 @@ public @interface Log {
      * 操作
      * @return
      */
-    String operation() default "";
+    String operation();
 }
