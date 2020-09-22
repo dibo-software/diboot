@@ -4,6 +4,7 @@
 * 开箱即用的RBAC角色权限模型
 * 基于JWT的认证授权，支持申请token、刷新token
 * 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
+* 简化的Log注解记录操作日志
 * 自动提取需要验证的后端接口, 借助前端功能方便绑定前后端菜单按钮权限
 * 预置用户名密码登录(密码带盐加密), 并支持多种登录方式扩展
 * 预置默认用户实体，并支持灵活替换用户类型
@@ -32,7 +33,7 @@ String authtoken = AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.PWD
 @RequestMapping("/user")
 @BindPermission(name = "用户") // code可选,默认自动识别; sortId可选
 //继承类支持自动识别code为当前entity类名："IamUser"
-public class IamUserController extends BaseCrudMappingRestController<IamUser, IamUserVO> {
+public class IamUserController extends BaseCrudMappingRestController<IamUser> {
     @GetMapping("/test")
     @BindPermission(name = "自定义", code = "test") // 拼接后的code=IamUser:test
     // 以上注解支持自动鉴权，与 @RequiresPermissions(values={"IamUser:test"}) 等效，省掉前缀以简化及继承。
