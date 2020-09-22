@@ -21,7 +21,7 @@
       <div class="custom content">
         <div class="features">
           <div class="feature col-1">
-            <h2>diboot-core 精简高效内核</h2>
+            <h2>diboot-core 精简内核-化繁为简</h2>
             <p>
               <ul>
                   <li>单表CRUD无SQL</li>
@@ -33,14 +33,14 @@
             </p>
           </div>
           <div class="feature col-2">
-            <h2>diboot-devtools 强大开发助理</h2>
+            <h2>diboot-devtools 强大工具-以简驭繁</h2>
             <p>
                 <ul>
-                    <li>支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）</li>
                     <li>使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）</li>
-                    <li>功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）</li>
+                    <li>功能很强大（数据结构变更与后端代码联动同步，前后端代码一键生成，自动记录变更SQL）</li>
                     <li>配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）</li>
                     <li>代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）</li>
+                    <li>支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）</li>
                 </ul>
             </p>
           </div>
