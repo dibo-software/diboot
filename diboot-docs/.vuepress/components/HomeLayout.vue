@@ -3,7 +3,7 @@
     <div class="home">
       <div class="hero">
         <p class="action">
-          <a :href="$withBase('/guide/diboot-core/安装.html')" class="button white">快速上手</a>
+          <a :href="https://github.com/dibo-software/diboot/wiki/%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%97" class="button white">新手指南</a>
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
           <a href="https://devtools-v2.diboot.com/antd/" class="button white" target="_blank">Antd项目案例</a>
@@ -59,7 +59,7 @@
             <img src="../public/add_qqqun.png" alt="" width="120">
           </div>
           <div class="footer-item">
-            <h4>微信群: wx20201024</h4>
+            <h4>微信群: wx20201024 (备注diboot)</h4>
             <img src="../public/add_wechat.png" alt="" width="120">
           </div>
           <div class="footer-item">
