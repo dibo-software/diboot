@@ -1,6 +1,6 @@
 module.exports = {
     title: 'Diboot 轻代码开发平台',
-    description: '基础组件化繁为简，强大工具以简驭繁，diboot: 为开发人员打造的低代码开发平台',
+    description: '基础组件化繁为简，强大工具以简驭繁，diboot: 为开发人员打造的低代码开发平台，高质高效的开发体系',
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],

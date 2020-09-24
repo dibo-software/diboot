@@ -77,5 +77,5 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 
 > QQ群: [731690096]() 
 
-> 微信群（备注diboot）加: [wx20201024]()  
+> 微信群 加: [wx20201024](加微信备注diboot)  
 
