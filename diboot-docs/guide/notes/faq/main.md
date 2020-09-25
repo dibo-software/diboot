@@ -34,9 +34,17 @@ public HttpMessageConverters fastJsonHttpMessageConverters() {
 }
 ~~~
 
-## 无数据库连接配置文件的module下，如何使用diboot-core？
-diboot-core-starter是在diboot-core的基础上增加了自动配置，配置需要依赖数据库信息。
-如果是无数据库信息的模块下使用，可以依赖core，替换core-starter。
+## mybatis-plus老项目中想要使用diboot的绑定能力？或在无数据库连接配置文件的module下，使用diboot-core？
+对于没有历史包袱的新项目，我们建议您全使用diboot体系starter组件。
+core内核组件有以下两个包：
+* diboot-core: 内核代码
+* diboot-core-starter: 依赖diboot-core，增加了自动配置及初始化字典表等功能（需要依赖数据库信息）。
+
+对于mybatis-plus老项目中想要使用diboot的绑定能力
+或
+在无数据库连接配置文件的module下，使用内核组件，可以只依赖diboot-core，而不是diboot-core-starter。
+步骤如下：
+1. 添加core依赖（非core-starter）
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
@@ -44,11 +52,14 @@ diboot-core-starter是在diboot-core的基础上增加了自动配置，配置�
     <version>{latestVersion}</version>
 </dependency>
 ~~~
-根据使用场景，你还可能需要将com.diboot.core加入包扫描：
+2. 
+根据使用场景，你可能还需要将com.diboot.core加入包扫描：
 ~~~java
 @ComponentScan(basePackages={"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 ~~~
+3. 如果需要使用@BindDict字典绑定，需确保dictionary表存在。
+（使用diboot-core-starter可以自动创建dictionary表，或者可以[下载SQL](https://github.com/dibo-software/diboot/tree/master/diboot-core-starter/src/main/resources/META-INF/sql)手动建表。
 
 ## 启动报错：找不到mapper中的自定义接口
 diboot-devtools默认不指定mapper.xml路径时，mapper.xml文件会生成到mapper同路径下便于维护。
@@ -176,6 +187,7 @@ public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseS
     }
 }
 ~~~
+
 ## 如何解决数据库无法自动设置更新时间
 * 通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
 ~~~java 
@@ -187,6 +199,7 @@ public class FillMetaObjectHandler implements MetaObjectHandler {
     }
 }
 ~~~
+
 ## 如何解决无法访问的swagger的问题
 * 需要设置swagger相关的匿名配置，如下：
 ~~~java 
