@@ -145,6 +145,9 @@ public class LogAspect {
             if(entityClazz != null){
                 businessObj = entityClazz.getSimpleName();
             }
+            else{
+                log.warn("@Log(operation='{}') 注解未识别到class泛型参数，请指定 businessObj", logAnno.operation());
+            }
         }
         operationLog.setBusinessObj(businessObj).setOperation(logAnno.operation());
 
