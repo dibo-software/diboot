@@ -62,7 +62,6 @@ public class IamBaseAutoConfig {
     public IamBasePluginManager iamBasePluginManager() {
         IamBasePluginManager pluginManager = new IamBasePluginManager();
         pluginManager.initPlugin(iamBaseProperties);
-        System.out.println(iamBaseProperties);
         return pluginManager;
     }
 
