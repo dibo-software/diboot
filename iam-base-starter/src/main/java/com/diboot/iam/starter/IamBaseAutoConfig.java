@@ -93,7 +93,6 @@ public class IamBaseAutoConfig {
         if (cacheManager != null) {
             realm.setCachingEnabled(true);
             realm.setCacheManager(cacheManager);
-            realm.setAuthenticationCachingEnabled(true);
         }
         return realm;
     }
