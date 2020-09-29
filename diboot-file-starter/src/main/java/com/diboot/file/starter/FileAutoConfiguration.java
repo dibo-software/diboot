@@ -16,6 +16,8 @@
 package com.diboot.file.starter;
 
 import com.diboot.core.config.Cons;
+import com.diboot.core.starter.SqlHandler;
+import com.diboot.core.util.SqlExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 @Slf4j
 @Configuration
@@ -50,8 +51,19 @@ public class FileAutoConfiguration {
         FilePluginManager pluginManager = new FilePluginManager() {
         };
         // 检查数据库字典是否已存在
-        if (fileProperties.isInitSql() && SqlHandler.checkIsFileTableExists() == false) {
-            SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
+        if (fileProperties.isInitSql()) {
+            String initDetectSql = "SELECT uuid FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
+            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
+                SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
+                log.info("diboot-file 初始化SQL完成.");
+            }
+            else{
+                String upgradeDetectSql = "SELECT tenant_id FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
+                if(SqlHandler.checkSqlExecutable(upgradeDetectSql) == false){
+                    SqlHandler.initUpgradeSql(pluginManager.getClass(), environment, "file");
+                    log.info("diboot-file 更新SQL完成.");
+                }
+            }
         }
         return pluginManager;
     }
