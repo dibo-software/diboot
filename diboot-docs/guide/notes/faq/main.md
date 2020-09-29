@@ -154,8 +154,19 @@ public Date getCreateTimeEnd() {
 }
 ~~~
 
-## 如何在新建时填充createBy创建人等字段
-* 可以通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
+## 如何在新建时自动填充创建人、创建时间、更新时间等字段
+* 创建时间、更新时间首选采用数据库填充方式实现
+* 如需代码自动填充的字段，可通过Mybatis-plus的MetaObjectHandler自动填充, 具体请[参考mybatis-plus文档](https://baomidou.com/guide/auto-fill-metainfo.html)。
+示例：
+注解标记填充字段：
+~~~java
+class MyEntity {
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+    ...
+}
+~~~
+实现填充Handler：
 ~~~java 
 @Component
 public class CustomMetaObjectHandler implements MetaObjectHandler {
@@ -168,10 +179,15 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
         }
     }
     ...
+    
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        this.setFieldValByName(Cons.FieldName.updateTime.name(), new Date(), metaObject);
+    }
 }
 ~~~
 
-* 也可以在BaseCustomServiceImpl中重写beforeCreateEntity，统一填充所需字段。如从登录用户取值填充 创建人ID，姓名等字段。
+* 也可以在BaseCustomServiceImpl中重写beforeCreateEntity，统一填充新建所需字段。如从登录用户取值填充 创建人ID，姓名等字段。
 ~~~java
 public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseServiceImpl<M, T> implements BaseCustomService<T> {
     @Override
@@ -188,19 +204,7 @@ public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseS
 }
 ~~~
 
-## 如何解决数据库无法自动设置更新时间
-* 通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
-~~~java 
-@Component
-public class FillMetaObjectHandler implements MetaObjectHandler {
-    @Override
-    public void updateFill(MetaObject metaObject) {
-        this.setFieldValByName(Cons.FieldName.updateTime.name(), new Date(), metaObject);
-    }
-}
-~~~
-
-## 如何解决无法访问的swagger的问题
+## 如何配置匿名url，支持swagger不被拦截，正常访问
 * 需要设置swagger相关的匿名配置，如下：
 ~~~java 
 diboot.iam.anon-urls=/swagger-ui.html,/swagger-resources/**,/webjars/springfox-swagger-ui/**,/v2/api-docs/**
