@@ -1,6 +1,7 @@
 -- 上传文件表
 CREATE TABLE upload_file (
   uuid varchar(32) NOT NULL COMMENT '编号' primary key,
+  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   rel_obj_type varchar(50) DEFAULT NULL COMMENT '关联对象类',
   rel_obj_id varchar(32) DEFAULT NULL COMMENT '关联对象ID',
   rel_obj_field varchar(50) DEFAULT NULL COMMENT '关联对象属性名称',
@@ -15,3 +16,4 @@ CREATE TABLE upload_file (
 ) DEFAULT CHARSET=utf8 COMMENT='上传文件';
 -- 索引
 create index idx_upload_file on upload_file (rel_obj_type, rel_obj_id, rel_obj_field);
+create index idx_upload_file_tenant on upload_file (tenant_id);

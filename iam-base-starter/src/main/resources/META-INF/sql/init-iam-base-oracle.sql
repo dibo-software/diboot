@@ -2,6 +2,7 @@
 create table ${SCHEMA}.iam_user
 (
     id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     org_id NUMBER(20)   default 0 not null,
     user_num VARCHAR2(20)   not null,
     realname VARCHAR2(50)   not null,
@@ -17,6 +18,7 @@ create table ${SCHEMA}.iam_user
 );
 -- 添加备注,
 comment on column ${SCHEMA}.iam_user.id is 'ID';
+comment on column ${SCHEMA}.iam_user.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_user.org_id is '组织ID';
 comment on column ${SCHEMA}.iam_user.user_num is '用户编号';
 comment on column ${SCHEMA}.iam_user.realname is '真实姓名';
@@ -32,12 +34,14 @@ comment on table ${SCHEMA}.iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on ${SCHEMA}.iam_user (org_id);
 create index idx_iam_user_2 on ${SCHEMA}.iam_user (mobile_phone);
-create unique index uidx_iam_user on ${SCHEMA}.iam_user (user_num);
+create unique index uidx_iam_user on ${SCHEMA}.iam_user (tenant_id, user_num);
+create index idx_iam_user_tenant on ${SCHEMA}.iam_user (tenant_id);
 
 -- 账号表
 create table ${SCHEMA}.iam_account
 (
     id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     user_type VARCHAR2(100) default 'IamUser'   not null,
     user_id NUMBER(20)   not null,
     auth_type VARCHAR2(20) default 'PWD'   not null,
@@ -50,6 +54,7 @@ create table ${SCHEMA}.iam_account
     constraint PK_iam_account primary key (id)
 );
 comment on column ${SCHEMA}.iam_account.id is 'ID';
+comment on column ${SCHEMA}.iam_account.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_account.user_type is '用户类型';
 comment on column ${SCHEMA}.iam_account.user_id is '用户ID';
 comment on column ${SCHEMA}.iam_account.auth_type is '认证方式';
@@ -61,12 +66,14 @@ comment on column ${SCHEMA}.iam_account.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_account.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_account is '登录账号';
 -- 创建索引
-create unique index idx_iam_account on ${SCHEMA}.iam_account(auth_account, auth_type, user_type);
+create unique index idx_iam_account on ${SCHEMA}.iam_account(tenant_id, auth_account, auth_type, user_type);
+create index idx_iam_account_tenant on ${SCHEMA}.iam_account (tenant_id);
 
 -- 角色表
 create table ${SCHEMA}.iam_role
 (
     id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     name VARCHAR2(20)   not null,
     code VARCHAR2(20)   not null,
     description VARCHAR2(100)   null,
@@ -75,17 +82,21 @@ create table ${SCHEMA}.iam_role
     constraint PK_iam_role primary key (id)
 );
 comment on column ${SCHEMA}.iam_role.id is 'ID';
+comment on column ${SCHEMA}.iam_role.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_role.name is '名称';
 comment on column ${SCHEMA}.iam_role.code is '编码';
 comment on column ${SCHEMA}.iam_role.description is '备注';
 comment on column ${SCHEMA}.iam_role.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_role.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_role is '角色';
+-- 创建索引
+create index idx_iam_role_tenant on ${SCHEMA}.iam_role (tenant_id);
 
 -- 用户角色表
 create table ${SCHEMA}.iam_user_role
 (
     id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     user_type VARCHAR2(100) default 'IamUser' not null,
     user_id NUMBER(20) not null,
     role_id int not null,
@@ -94,6 +105,7 @@ create table ${SCHEMA}.iam_user_role
     constraint PK_iam_user_role primary key (id)
 );
 comment on column ${SCHEMA}.iam_user_role.id is 'ID';
+comment on column ${SCHEMA}.iam_user_role.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_user_role.user_type is '用户类型';
 comment on column ${SCHEMA}.iam_user_role.user_id is '用户ID';
 comment on column ${SCHEMA}.iam_user_role.role_id is '角色ID';
@@ -102,11 +114,13 @@ comment on column ${SCHEMA}.iam_user_role.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_user_role is '用户角色关联';
 -- 索引
 create index idx_iam_user_role on ${SCHEMA}.iam_user_role (user_type, user_id);
+create index idx_iam_user_role_tenant on ${SCHEMA}.iam_user_role (tenant_id);
 
 -- 前端权限表
 create table ${SCHEMA}.iam_frontend_permission
 (
     id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     parent_id NUMBER(20) default 0   not null,
     display_type VARCHAR2(20) not null,
     display_name VARCHAR2(100) not null,
@@ -119,6 +133,7 @@ create table ${SCHEMA}.iam_frontend_permission
     constraint PK_iam_permission primary key (id)
 );
 comment on column ${SCHEMA}.iam_frontend_permission.id is 'ID';
+comment on column ${SCHEMA}.iam_frontend_permission.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_frontend_permission.parent_id is '菜单ID';
 comment on column ${SCHEMA}.iam_frontend_permission.display_type is '展现类型';
 comment on column ${SCHEMA}.iam_frontend_permission.display_name is '显示名称';
@@ -132,11 +147,13 @@ comment on table ${SCHEMA}.iam_frontend_permission is '前端权限表';
 
 -- 索引
 create index idx_iam_frontend_permission on ${SCHEMA}.iam_frontend_permission (parent_id);
+create index idx_frontend_permission_tenant on ${SCHEMA}.iam_frontend_permission (tenant_id);
 
 -- 角色-权限
 create table ${SCHEMA}.iam_role_permission
 (
-    id NUMBER(20) generated as identity ( start with 10000 nocycle noorder) ,
+    id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     role_id int    not null,
     permission_id int    not null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
@@ -144,6 +161,7 @@ create table ${SCHEMA}.iam_role_permission
     constraint PK_iam_role_permission primary key (id)
 );
 comment on column ${SCHEMA}.iam_role_permission.id is 'ID';
+comment on column ${SCHEMA}.iam_role_permission.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_role_permission.role_id is '角色ID';
 comment on column ${SCHEMA}.iam_role_permission.permission_id is '权限ID';
 comment on column ${SCHEMA}.iam_role_permission.is_deleted is '是否删除';
@@ -151,11 +169,13 @@ comment on column ${SCHEMA}.iam_role_permission.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_role_permission is '角色权限';
 -- 索引
 create index idx_iam_role_permission on ${SCHEMA}.iam_role_permission (role_id, permission_id);
+create index idx_iam_role_permission_tenant on ${SCHEMA}.iam_role_permission (tenant_id);
 
 -- 登录日志表
 create table ${SCHEMA}.iam_login_trace
 (
     id NUMBER(20) generated as identity ( start with 100000 nocycle noorder) ,
+    tenant_id          NUMBER(20)           default 0  not null,
     user_type VARCHAR2(100) default 'IamUser'    not null,
     user_id NUMBER(20)    not null,
     auth_type VARCHAR2(20) default 'PWD'    not null,
@@ -167,6 +187,7 @@ create table ${SCHEMA}.iam_login_trace
     constraint PK_iam_login_trace primary key (id)
 );
 comment on column ${SCHEMA}.iam_login_trace.id is 'ID';
+comment on column ${SCHEMA}.iam_login_trace.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_login_trace.user_type is '用户类型';
 comment on column ${SCHEMA}.iam_login_trace.user_id is '用户ID';
 comment on column ${SCHEMA}.iam_login_trace.auth_type is '认证方式';
@@ -179,11 +200,13 @@ comment on table ${SCHEMA}.iam_login_trace is '登录日志';
 -- 创建索引
 create index idx_iam_login_trace on ${SCHEMA}.iam_login_trace (user_type, user_id);
 create index idx_iam_login_trace_2 on ${SCHEMA}.iam_login_trace (auth_account);
+create index idx_iam_login_trace_tenant on ${SCHEMA}.iam_login_trace (tenant_id);
 
 -- 操作日志表
 create table ${SCHEMA}.iam_operation_log
 (
     id NUMBER(20) generated as identity ( start with 100000 nocycle noorder) ,
+    tenant_id          NUMBER(20)           default 0  not null,
     business_obj VARCHAR2(100)  not null,
     operation   VARCHAR2(100)  not null,
     user_type VARCHAR2(100) DEFAULT 'IamUser'    not null,
@@ -200,6 +223,7 @@ create table ${SCHEMA}.iam_operation_log
     constraint PK_iam_operation_log primary key (id)
 );
 comment on column ${SCHEMA}.iam_operation_log.id is 'ID';
+comment on column ${SCHEMA}.iam_operation_log.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_operation_log.business_obj is '业务对象';
 comment on column ${SCHEMA}.iam_operation_log.operation is '操作描述';
 comment on column ${SCHEMA}.iam_operation_log.user_type is '用户类型';
@@ -216,3 +240,4 @@ comment on column ${SCHEMA}.iam_operation_log.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_operation_log is '操作日志';
 -- 创建索引
 create index idx_iam_operation_log on ${SCHEMA}.iam_operation_log (user_type, user_id);
+create index idx_iam_operation_log_tenant on ${SCHEMA}.iam_operation_log (tenant_id);

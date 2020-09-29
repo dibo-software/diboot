@@ -2,6 +2,7 @@
 create table iam_user
 (
   id bigserial not null,
+  tenant_id            bigint        not null default 0,
   org_id bigint not null default 0,
   user_num varchar(20) not null,
   realname varchar(50) not null,
@@ -16,6 +17,7 @@ create table iam_user
 );
 -- 添加备注
 comment on column iam_user.id is 'ID';
+comment on column iam_user.tenant_id is '租户ID';
 comment on column iam_user.org_id is '组织ID';
 comment on column iam_user.user_num is '用户编号';
 comment on column iam_user.realname is '真实姓名';
@@ -31,12 +33,14 @@ comment on table iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on iam_user (org_id);
 create index idx_iam_user_2 on iam_user (mobile_phone);
-create unique index uidx_iam_user on iam_user (user_num);
+create unique index uidx_iam_user on iam_user (tenant_id, user_num);
+create index idx_iam_user_tenant on iam_user(tenant_id);
 
 -- 账号表
 create table iam_account
 (
   id bigserial not null,
+  tenant_id            bigint        not null default 0,
   user_type varchar(100) default 'IamUser' not null,
   user_id bigint not null,
   auth_type varchar(20) default 'PWD' not null,
@@ -48,6 +52,7 @@ create table iam_account
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column iam_account.id is 'ID';
+comment on column iam_account.tenant_id is '租户ID';
 comment on column iam_account.user_type is '用户类型';
 comment on column iam_account.user_id is '用户ID';
 comment on column iam_account.auth_type is '认证方式';
@@ -59,12 +64,14 @@ comment on column iam_account.is_deleted is '是否删除';
 comment on column iam_account.create_time is '创建时间';
 comment on table iam_account is '登录账号';
 -- 创建索引
-create unique index idx_iam_account on iam_account(auth_account, auth_type, user_type);
+create unique index idx_iam_account on iam_account(tenant_id, auth_account, auth_type, user_type);
+create index idx_iam_account_tenant on iam_account(tenant_id);
 
 -- 角色表
 create table iam_role
 (
   id bigserial not null,
+  tenant_id            bigint        not null default 0,
   name varchar(20) not null,
   code varchar(20) not null,
   description varchar(100) null,
@@ -72,17 +79,21 @@ create table iam_role
   create_time timestamp default CURRENT_TIMESTAMP null
 );
 comment on column iam_role.id is 'ID';
+comment on column iam_role.tenant_id is '租户ID';
 comment on column iam_role.name is '名称';
 comment on column iam_role.code is '编码';
 comment on column iam_role.description is '备注';
 comment on column iam_role.is_deleted is '是否删除';
 comment on column iam_role.create_time is '创建时间';
 comment on table iam_role is '角色';
+-- 创建索引
+create index idx_iam_role_tenant on iam_role(tenant_id);
 
 -- 用户角色表
 create table iam_user_role
 (
   id bigserial not null,
+  tenant_id            bigint        not null default 0,
   user_type varchar(100) default 'IamUser' not null,
   user_id bigint not null,
   role_id bigint not null,
@@ -90,6 +101,7 @@ create table iam_user_role
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column iam_user_role.id is 'ID';
+comment on column iam_user_role.tenant_id is '租户ID';
 comment on column iam_user_role.user_type is '用户类型';
 comment on column iam_user_role.user_id is '用户ID';
 comment on column iam_user_role.role_id is '角色ID';
@@ -98,11 +110,13 @@ comment on column iam_user_role.create_time is '创建时间';
 comment on table iam_user_role is '用户角色关联';
 -- 索引
 create index idx_iam_user_role on iam_user_role (user_type, user_id);
+create index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 
 -- 前端权限表
 create table iam_frontend_permission
 (
   id bigserial not null,
+  tenant_id            bigint        not null default 0,
   parent_id bigint default 0   not null,
   display_type varchar(20) not null,
   display_name varchar(100) not null,
@@ -115,6 +129,7 @@ create table iam_frontend_permission
   constraint PK_iam_frontend_permission primary key (id)
 );
 comment on column iam_frontend_permission.id is 'ID';
+comment on column iam_frontend_permission.tenant_id is '租户ID';
 comment on column iam_frontend_permission.parent_id is '菜单ID';
 comment on column iam_frontend_permission.display_type is '展现类型';
 comment on column iam_frontend_permission.display_name is '显示名称';
@@ -125,20 +140,22 @@ comment on column iam_frontend_permission.is_deleted is '是否删除';
 comment on column iam_frontend_permission.create_time is '创建时间';
 comment on column iam_frontend_permission.update_time is '更新时间';
 comment on table iam_frontend_permission is '前端权限表';
-
 -- 索引
 create index idx_iam_frontend_permission on iam_frontend_permission (parent_id);
+create index idx_frontend_permission_tenant on iam_frontend_permission(tenant_id);
 
 -- 角色-权限
 create table iam_role_permission
 (
   id bigserial not null ,
+  tenant_id            bigint        not null default 0,
   role_id bigint not null ,
   permission_id bigint not null ,
   is_deleted BOOLEAN default FALSE not null ,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column iam_role_permission.id is 'ID';
+comment on column iam_role_permission.tenant_id is '租户ID';
 comment on column iam_role_permission.role_id is '角色ID';
 comment on column iam_role_permission.permission_id is '权限ID';
 comment on column iam_role_permission.is_deleted is '是否删除';
@@ -146,11 +163,13 @@ comment on column iam_role_permission.create_time is '创建时间';
 comment on table iam_role_permission is '角色权限';
 -- 索引
 create index idx_iam_role_permission on iam_role_permission (role_id, permission_id);
+create index idx_iam_role_permission_tenant on iam_role_permission(tenant_id);
 
 -- 登录日志表
 create table iam_login_trace
 (
   id bigserial not null ,
+  tenant_id            bigint        not null default 0,
   user_type varchar(100) default 'IamUser' not null ,
   user_id bigint not null ,
   auth_type varchar(20) default 'PWD' not null ,
@@ -161,6 +180,7 @@ create table iam_login_trace
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column iam_login_trace.id is 'ID';
+comment on column iam_login_trace.tenant_id is '租户ID';
 comment on column iam_login_trace.user_type is '用户类型';
 comment on column iam_login_trace.user_id is '用户ID';
 comment on column iam_login_trace.auth_type is '认证方式';
@@ -173,11 +193,13 @@ comment on table iam_login_trace is '登录日志';
 -- 创建索引
 create index idx_iam_login_trace on iam_login_trace (user_type, user_id);
 create index idx_iam_login_trace_2 on iam_login_trace (auth_account);
+create index idx_iam_login_trace_tenant on iam_login_trace(tenant_id);
 
 -- 操作日志表
 create table iam_operation_log
 (
   id bigserial not null ,
+  tenant_id            bigint        not null default 0,
   business_obj varchar(100)  not null,
   operation   varchar(100)  not null,
   user_type varchar(100) default 'IamUser' not null ,
@@ -193,6 +215,7 @@ create table iam_operation_log
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column iam_operation_log.id is 'ID';
+comment on column iam_operation_log.tenant_id is '租户ID';
 comment on column iam_operation_log.business_obj is '业务对象';
 comment on column iam_operation_log.operation is '操作描述';
 comment on column iam_operation_log.user_type is '用户类型';
@@ -209,3 +232,4 @@ comment on column iam_operation_log.create_time is '创建时间';
 comment on table iam_operation_log is '操作日志';
 -- 创建索引
 create index idx_iam_operation_log on iam_operation_log (user_type, user_id);
+create index idx_iam_operation_log_tenant on iam_operation_log(tenant_id);
