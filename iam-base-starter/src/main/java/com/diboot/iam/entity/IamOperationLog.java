@@ -34,6 +34,12 @@ import org.hibernate.validator.constraints.Length;
 public class IamOperationLog extends BaseEntity {
     private static final long serialVersionUID = 8928160564300882271L;
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     //private String appModule;
 
     /**

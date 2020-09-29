@@ -40,6 +40,12 @@ public class IamUserRole extends BaseEntity {
         this.roleId = roleId;
     }
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     // 用户类型
     @NotNull(message = "用户类型不能为空")
     @TableField()
