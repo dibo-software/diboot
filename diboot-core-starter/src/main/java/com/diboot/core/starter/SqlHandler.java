@@ -28,8 +28,10 @@ import org.springframework.core.env.Environment;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * SQL处理类
@@ -106,7 +108,18 @@ public class SqlHandler {
      * @param sqlPath
      * @return
      */
-    public static boolean extractAndExecuteSqls(Class inst, String sqlPath){
+    public static boolean extractAndExecuteSqls(Class inst, String sqlPath) {
+        return extractAndExecuteSqls(inst, sqlPath, Collections.emptyList(), Collections.emptyList());
+    }
+
+    /***
+     * 从SQL文件读出的行内容中 提取SQL语句并执行
+     * @param sqlPath
+     * @param includes
+     * @param excludes
+     * @return
+     */
+    public static boolean extractAndExecuteSqls(Class inst, String sqlPath, List<String> includes, List<String> excludes){
         List<String> sqlFileReadLines = readLinesFromResource(inst, sqlPath);
         if(V.isEmpty(sqlFileReadLines)){
             return false;
@@ -141,6 +154,37 @@ public class SqlHandler {
             sqlStatementList.add(cleanSql);
             sb.setLength(0);
         }
+        // 过滤sql语句
+        sqlStatementList = sqlStatementList.stream()
+                .filter(sql -> {
+                    if (V.isEmpty(includes)) {
+                        return true;
+                    } else {
+                        boolean exist = false;
+                        for (String includeStr : includes) {
+                            if (V.notEmpty(sql) && sql.contains(includeStr)) {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        return exist;
+                    }
+                })
+                .filter(sql -> {
+                    if (V.isEmpty(excludes)) {
+                        return true;
+                    } else {
+                        boolean exist = true;
+                        for (String excludeStr : excludes) {
+                            if (V.notEmpty(sql) && sql.contains(excludeStr)) {
+                                exist = false;
+                                break;
+                            }
+                        }
+                        return exist;
+                    }
+                })
+                .collect(Collectors.toList());
         // 返回解析后的SQL语句
         return executeMultipleUpdateSqls(sqlStatementList);
     }
