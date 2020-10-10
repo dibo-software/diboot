@@ -23,7 +23,7 @@ import java.util.List;
  * @version v2.1
  * @date 2020/04/24
  */
-public interface DataAccessCheckInterface {
+public interface DataAccessInterface {
 
     /**
      * 可访问的对象ID

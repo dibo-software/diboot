@@ -20,9 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
-import com.diboot.core.binding.data.CheckpointType;
-import com.diboot.core.binding.data.DataAccessAnnoCache;
-import com.diboot.core.binding.data.DataAccessCheckInterface;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -31,7 +28,6 @@ import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
@@ -128,8 +124,6 @@ public class QueryBuilder {
         LinkedHashMap<String, Object> fieldValuesMap = extractNotNullValues(dto, fields);
         if(V.isEmpty(fieldValuesMap)){
             wrapper = new QueryWrapper<>();
-            // 附加数据访问条件
-            attachDataAccessCondition(wrapper, dto.getClass());
             return wrapper;
         }
         // 只解析有值的
@@ -256,53 +250,7 @@ public class QueryBuilder {
                 default:
             }
         }
-        // 附加数据访问条件
-        attachDataAccessCondition(wrapper, dto.getClass());
         return wrapper;
-    }
-
-    // 扩展接口
-    private static DataAccessCheckInterface dataAccessCheckInstance;
-    private static boolean dataAccessCheckInstanceChecked = false;
-    /**
-     * 附加数据访问权限条件
-     * @param queryWrapper
-     * @param dtoClass
-     * @param <DTO>
-     */
-    public static <DTO> void attachDataAccessCondition(QueryWrapper<DTO> queryWrapper, Class<DTO> dtoClass){
-        if(dataAccessCheckInstanceChecked == false){
-            dataAccessCheckInstance = ContextHelper.getBean(DataAccessCheckInterface.class);
-            dataAccessCheckInstanceChecked = true;
-        }
-        if(dataAccessCheckInstance != null && DataAccessAnnoCache.hasDataAccessCheckpoint(dtoClass)){
-            NormalSegmentList segments = queryWrapper.getExpression().getNormal();
-            for(CheckpointType type : CheckpointType.values()){
-                String idCol = DataAccessAnnoCache.getDataPermissionColumn(dtoClass, type);
-                if(V.isEmpty(idCol)){
-                    continue;
-                }
-                List<Long> idValues = dataAccessCheckInstance.getAccessibleIds(type);
-                if(V.isEmpty(idValues)){
-                    continue;
-                }
-                // 联表查询，附加别名
-                if(queryWrapper instanceof DynamicJoinQueryWrapper){
-                    idCol = "self."+idCol;
-                }
-                // 检查是否已包含该条件，如是则warn并退出
-                if(checkHasColumn(segments, idCol)){
-                    log.warn("附加数据访问条件未生效，因查询条件已包含列: " + idCol);
-                    continue;
-                }
-                if(idValues.size() == 1){
-                    queryWrapper.eq(idCol, idValues.get(0));
-                }
-                else{
-                    queryWrapper.in(idCol, idValues);
-                }
-            }
-        }
     }
 
     /**
