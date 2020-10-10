@@ -16,10 +16,11 @@
 package diboot.core.test.service;
 
 import com.diboot.core.binding.data.CheckpointType;
-import com.diboot.core.binding.data.DataAccessCheckInterface;
+import com.diboot.core.binding.data.DataAccessInterface;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,10 +30,13 @@ import java.util.List;
  * @date 2020/04/24
  */
 @Component
-public class  DataAccessCheckImpl implements DataAccessCheckInterface {
+public class  DataAccessPermissionImpl implements DataAccessInterface {
 
     @Override
     public List<Long> getAccessibleIds(CheckpointType type) {
-        return Arrays.asList(100001L);
+        if(type.equals(CheckpointType.ORG)){
+            return Arrays.asList(100001L);
+        }
+        return Collections.emptyList();
     }
 }
