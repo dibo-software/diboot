@@ -204,10 +204,62 @@ public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseS
 }
 ~~~
 
-## 如何配置匿名url，支持swagger不被拦截，正常访问
-* 需要设置swagger相关的匿名配置，如下：
-~~~java 
-diboot.iam.anon-urls=/swagger-ui.html,/swagger-resources/**,/webjars/springfox-swagger-ui/**,/v2/api-docs/**
+## 如何配置swagger
+以swagger3的maven配置为例：
+**步骤1. pom中引入swagger3依赖**
+~~~xml
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-boot-starter</artifactId>
+    <version>3.0.0</version>
+</dependency>
 ~~~
+**步骤2. 添加swagger配置类**
+~~~java 
+// 示例配置类
+@Configuration
+@EnableOpenApi
+public class SwaggerConfig {
+
+    @Bean
+    public Docket docket(){
+        return new Docket(DocumentationType.OAS_30)
+                //apiInfo： 添加api描述信息
+                .apiInfo(apiInfo()).enable(true)
+                .select()
+                // 添加swagger接口范围
+                .apis(RequestHandlerSelectors.basePackage("com.example"))
+                //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .build();
+    }
+
+    private ApiInfo apiInfo(){
+        return new ApiInfoBuilder()
+                .title("XX项目接口文档")
+                .description("XX描述")
+                .contact(new Contact("作者", "作者地址", "作者邮箱"))
+                .version("1.0")
+                .build();
+    }
+}
+~~~
+步骤1&2为swagger的正常配置，如果引入了diboot IAM组件，需要添加以下配置使swagger相关url可以匿名访问。
+
+**步骤3. 设置swagger相关的匿名url配置，使swagger不被拦截，** 如下：
+~~~java 
+#swagger 3.x版本参考配置
+diboot.iam.anon-urls=/swagger**/**,/webjars/**,/v3/**,/doc.html
+# swagger 2.x版本参考配置
+#diboot.iam.anon-urls=/swagger-ui.html,/swagger-resources/**,/webjars/**,/v2/api-docs/**
+~~~                         
+另外，如果启用了diboot devtools，可以配置devtools生成代码启用swagger注解。
+~~~java
+diboot.devtools.enable-swagger=true
+~~~
+
+> 附: swagger访问入口地址: 
+* swagger 3.x入口地址: /{contextPath}/swagger-ui/index.html
+* swagger 2.x入口地址: /{contextPath}/swagger-ui.html
+
 
 
