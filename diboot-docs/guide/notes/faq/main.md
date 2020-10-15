@@ -228,8 +228,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo()).enable(true)
                 .select()
                 // 添加swagger接口范围
-                .apis(RequestHandlerSelectors.basePackage("com.example"))
-                //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .build();
     }
 
