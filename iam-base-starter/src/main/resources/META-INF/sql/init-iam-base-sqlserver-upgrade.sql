@@ -1,10 +1,10 @@
-ALTER TABLE ${SCHEMA}.iam_user ADD COLUMN tenant_id bigint not null default 0;
-ALTER TABLE ${SCHEMA}.iam_account ADD COLUMN tenant_id bigint not null default 0;
-ALTER TABLE ${SCHEMA}.iam_role ADD COLUMN tenant_id bigint not null default 0;
-ALTER TABLE ${SCHEMA}.iam_user_role ADD COLUMN tenant_id bigint not null default 0;
-ALTER TABLE ${SCHEMA}.iam_frontend_permission ADD COLUMN tenant_id bigint not null default 0;
-ALTER TABLE ${SCHEMA}.iam_role_permission ADD COLUMN tenant_id bigint not null default 0;
-ALTER TABLE ${SCHEMA}.iam_login_trace ADD COLUMN tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_user ADD tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_account ADD tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_role ADD tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_user_role ADD tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_frontend_permission ADD tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_role_permission ADD tenant_id bigint not null default 0;
+ALTER TABLE ${SCHEMA}.iam_login_trace ADD tenant_id bigint not null default 0;
 
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_user, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'tenant_id';
@@ -14,8 +14,8 @@ execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_login_trace, 'column', 'tenant_id';
 
-create nonclustered index idx_iam_user_tenant on iam_user(tenant_id);
-create nonclustered index idx_iam_account_tenant on iam_account(tenant_id);
+CREATE nonclustered INDEX idx_iam_user_tenant on iam_user(tenant_id);
+CREATE nonclustered INDEX idx_iam_account_tenant on iam_account(tenant_id);
 CREATE nonclustered INDEX idx_iam_role_tenant on iam_role(tenant_id);
 CREATE nonclustered INDEX idx_iam_user_role_tenant on iam_user_role(tenant_id);
 CREATE nonclustered INDEX idx_frontend_permission_tenant on iam_frontend_permission(tenant_id);

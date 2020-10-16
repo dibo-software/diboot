@@ -1,10 +1,10 @@
-ALTER TABLE ${SCHEMA}.iam_user ADD COLUMN tenant_id NUMBER(20) default 0 not null;
-ALTER TABLE ${SCHEMA}.iam_account ADD COLUMN tenant_id NUMBER(20) default 0 not null;
-ALTER TABLE ${SCHEMA}.iam_role ADD COLUMN tenant_id NUMBER(20) default 0 not null;
-ALTER TABLE ${SCHEMA}.iam_user_role ADD COLUMN tenant_id NUMBER(20) default 0 not null;
-ALTER TABLE ${SCHEMA}.iam_frontend_permission ADD COLUMN tenant_id NUMBER(20) default 0 not null;
-ALTER TABLE ${SCHEMA}.iam_role_permission ADD COLUMN tenant_id NUMBER(20) default 0 not null;
-ALTER TABLE ${SCHEMA}.iam_login_trace ADD COLUMN tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_user ADD tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_account ADD tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_role ADD tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_user_role ADD tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_frontend_permission ADD tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_role_permission ADD tenant_id NUMBER(20) default 0 not null;
+ALTER TABLE ${SCHEMA}.iam_login_trace ADD tenant_id NUMBER(20) default 0 not null;
 
 comment on column ${SCHEMA}.iam_user.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_account.tenant_id is '租户ID';
