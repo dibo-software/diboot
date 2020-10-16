@@ -187,23 +187,6 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
 }
 ~~~
 
-* 也可以在BaseCustomServiceImpl中重写beforeCreateEntity，统一填充新建所需字段。如从登录用户取值填充 创建人ID，姓名等字段。
-~~~java
-public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseServiceImpl<M, T> implements BaseCustomService<T> {
-    @Override
-    protected void beforeCreateEntity(T entity){
-        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
-        if(currentUser != null){
-            // 填充创建人示例
-            Field field = BeanUtils.extractField(entityClass, Cons.FieldName.createBy.name());
-            if(field != null){
-                BeanUtils.setProperty(entity, Cons.FieldName.createBy.name(), currentUser.getId());
-            }
-        }
-    }
-}
-~~~
-
 ## 如何配置swagger
 以swagger3的maven配置为例：
 **步骤1. pom中引入swagger3依赖**
@@ -227,7 +210,6 @@ public class SwaggerConfig {
                 //apiInfo： 添加api描述信息
                 .apiInfo(apiInfo()).enable(true)
                 .select()
-                // 添加swagger接口范围
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .build();
     }
