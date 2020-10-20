@@ -94,7 +94,8 @@ module.exports = {
                         ['/guide/diboot-devtools/开始使用', '开始使用'],
                         ['/guide/diboot-devtools/数据表管理', '数据表管理'],
                         ['/guide/diboot-devtools/后端代码生成与更新', '后端代码生成与更新'],
-                        ['/guide/diboot-devtools/前端功能生成', '前端功能生成']
+                        ['/guide/diboot-devtools/前端功能生成', '前端功能生成'],
+                        ['/guide/diboot-devtools/面板-前端组件灵活之道', '面板-前端组件灵活之道']
                     ]
                 }
             ],
