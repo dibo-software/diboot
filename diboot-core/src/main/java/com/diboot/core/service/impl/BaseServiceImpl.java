@@ -23,8 +23,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
@@ -65,6 +70,26 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public M getMapper(){
 		return baseMapper;
+	}
+
+	@Override
+	public QueryChainWrapper<T> query() {
+		return ChainWrappers.queryChain(this.getBaseMapper());
+	}
+
+	@Override
+	public LambdaQueryChainWrapper<T> lambdaQuery() {
+		return ChainWrappers.lambdaQueryChain(this.getBaseMapper());
+	}
+
+	@Override
+	public UpdateChainWrapper<T> update() {
+		return ChainWrappers.updateChain(this.getBaseMapper());
+	}
+
+	@Override
+	public LambdaUpdateChainWrapper<T> lambdaUpdate() {
+		return ChainWrappers.lambdaUpdateChain(this.getBaseMapper());
 	}
 
 	@Override
