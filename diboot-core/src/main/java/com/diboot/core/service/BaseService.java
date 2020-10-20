@@ -18,6 +18,10 @@ package com.diboot.core.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -45,6 +49,27 @@ public interface BaseService<T> {
      * @return BaseMapper
      */
     BaseMapper<T> getMapper();
+
+    /**
+     * 构建mybatis-plus的query
+     * @return
+     */
+    QueryChainWrapper<T> query();
+    /**
+     * 构建mybatis-plus的lambdaQuery
+     * @return
+     */
+    LambdaQueryChainWrapper<T> lambdaQuery();
+    /**
+     * 构建mybatis-plus的update
+     * @return
+     */
+    UpdateChainWrapper<T> update();
+    /**
+     * 构建mybatis-plus的lambdaUpdate
+     * @return
+     */
+    LambdaUpdateChainWrapper<T> lambdaUpdate();
 
     /**
      * 获取Entity实体
