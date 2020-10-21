@@ -23,13 +23,16 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.entity.Sysuser;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.SysuserService;
+import diboot.core.test.binder.vo.CcCityInfoVO;
 import diboot.core.test.binder.vo.FieldBinderVO;
 import diboot.core.test.binder.vo.TestDictVo;
 import diboot.core.test.binder.vo.UserVO;
 import diboot.core.test.config.SpringMvcConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +52,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {SpringMvcConfig.class})
 @SpringBootTest(classes = {StartupApplication.class})
+@Slf4j
 public class TestFieldBinder {
 
     @Autowired
@@ -110,6 +114,16 @@ public class TestFieldBinder {
             Assert.assertTrue(vo.getParentDict() != null);
             Assert.assertTrue(vo.getParentDictName() != null);
         }
+    }
+
+    @Test
+    public void testCity(){
+        CcCityInfo ccCityInfo = new CcCityInfo();
+        ccCityInfo.setRegionId(10020L).setParentId(10010L);
+
+        CcCityInfoVO ccCityInfoVO = Binder.convertAndBindRelations(ccCityInfo, CcCityInfoVO.class);
+        System.out.println(ccCityInfoVO.getProvenceName());
+        Assert.assertTrue(ccCityInfoVO.getProvenceName() != null);
     }
 
 }
