@@ -1,9 +1,10 @@
 <template>
   <div>
     <div class="home">
+      <h3 style="font-size: 1.6rem; line-height: 1.3; color: #6a8bad; font-weight: normal; text-align: center;">为开发人员打造的低代码开发平台，高质高效的开发体系</h3>
       <div class="hero">
         <p class="action">
-          <a :href="https://github.com/dibo-software/diboot/wiki/%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%97" class="button white">新手指南</a>
+          <a href="https://github.com/dibo-software/diboot/wiki/%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%97" class="button white">新手指南</a>
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
           <a href="https://devtools-v2.diboot.com/antd/" class="button white" target="_blank">Antd项目案例</a>
