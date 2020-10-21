@@ -98,7 +98,7 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
         else if(V.notEmpty(paths) && paths[0] != null){
             return S.join(paths);
         }
-        return null;
+        return "";
     }
 
     /**
