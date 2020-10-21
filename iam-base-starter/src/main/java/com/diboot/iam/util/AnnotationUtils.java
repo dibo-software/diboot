@@ -92,10 +92,10 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
      * @return
      */
     public static String getNotEmptyStr(String[] values, String[] paths){
-        if(V.notEmpty(values) && V.notEmpty(values[0])){
+        if(V.notEmpty(values) && values[0] != null){
             return S.join(values);
         }
-        else if(V.notEmpty(paths) && V.notEmpty(paths[0])){
+        else if(V.notEmpty(paths) && paths[0] != null){
             return S.join(paths);
         }
         return null;
