@@ -1,6 +1,6 @@
-> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground新手体验包](https://gitee.com/dibo_software/diboot-example/raw/master/playground.zip)
+> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground新手体验包](https://github.com/dibo-software/diboot-example/blob/master/playground.zip)
 
-# diboot - 化繁为简，以简驭繁
+# diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
     <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">
         <img src="https://img.shields.io/hexpm/l/plug.svg">
@@ -10,7 +10,7 @@
     </a>
 </p>
 
->  设计目标：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
+>  设计目标：面向开发人员的低代码开发平台，将复杂的工作简单化、重复的工作自动化，提高质量、效率、可维护性。
 
 ![diboot平台组成结构图](diboot-docs/.vuepress/public/structure.png)
 
@@ -70,12 +70,14 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 ## 五、捐助支持
 ![捐助二维码](https://www.diboot.com/assets/img/donate.a25badf5.jpg)
 
-感谢JetBrains提供Open Source license，[JetBrains IDEA](https://www.jetbrains.com/?from=diboot) 是最好的Java IDE。
+感谢JetBrains提供Open Source license，[JetBrains IDEA](https://www.jetbrains.com/?from=diboot) 是更好的Java IDE。
 
 ## 六、技术交流群
-如果您有技术问题，欢迎加群交流：
+如遇diboot相关技术问题，欢迎加群交流：
 
-> QQ群: [731690096]() 
+* **捐助/付费用户尊享**QQ群: [931266830]()
 
-> 微信群 加: [wx20201024](加微信备注diboot)  
+* 技术交流QQ群: [731690096]() 
+
+* 技术交流微信群 加: [wx20201024]() (备注diboot)
 
