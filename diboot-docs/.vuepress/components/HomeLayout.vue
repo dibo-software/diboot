@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="home">
-      <h3 style="font-size: 1.6rem; line-height: 1.3; color: #6a8bad; font-weight: normal; text-align: center;">为开发人员打造的低代码开发平台，高质高效的开发体系</h3>
+      <h3 style="position: relative; top: -12px; font-size: 1.6rem; line-height: 1.3; color: #6a8bad; font-weight: normal; text-align: center;">为开发人员打造的低代码开发平台，高质高效的开发体系</h3>
       <div class="hero">
         <p class="action">
           <a href="https://github.com/dibo-software/diboot/wiki/%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%97" class="button white">新手指南</a>
@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <a class="promotions" href="/guide/promotions/1024.html">1024活动，了解一下？</a>
+    <a class="promotions" href="/guide/promotions/1024.html">1024视频教程众筹活动，了解一下？</a>
   </div>
 </template>
 
@@ -120,7 +120,7 @@
   display block
   top: 120px
   left: -15px
-  width: 240px;
+  width: 360px;
   line-height: 44px
   text-align center
   text-decoration none
