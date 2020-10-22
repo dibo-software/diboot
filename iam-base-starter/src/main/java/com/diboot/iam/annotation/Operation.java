@@ -50,9 +50,13 @@ public class Operation {
      */
     public static final String CODE_UPDATE = "update";
     /**
-     * 操作权限类型 - 更新
+     * 操作权限类型 - 删除
      */
     public static final String CODE_DELETE = "delete";
+    /**
+     * 操作权限类型 - 批量删除
+     */
+    public static final String CODE_BATCH_DELETE = "batchDelete";
     /**
      * 操作权限类型 - 导入
      */
@@ -80,9 +84,13 @@ public class Operation {
      */
     public static final String LABEL_UPDATE = "更新";
     /**
-     * 操作权限描述 - 更新
+     * 操作权限描述 - 删除
      */
     public static final String LABEL_DELETE = "删除";
+    /**
+     * 操作权限描述 - 批量删除
+     */
+    public static final String LABEL_BATCH_DELETE = "批量删除";
     /**
      * 操作权限描述 - 导入
      */
