@@ -99,6 +99,16 @@ module.exports = {
                     ]
                 }
             ],
+            '/guide/enterprice/': [
+                {
+                    title: '企业版',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/enterprice/devtools', 'devtools']
+                    ]
+                }
+            ],
             '/guide/notes/faq': [
                 {
                     title: 'FAQ',
@@ -141,6 +151,9 @@ module.exports = {
         }, {
             text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'
+        },{
+            text: '企业版',
+            link: '/guide/enterprice/devtools'
         }, {
             text: '开发团队',
             items: [
