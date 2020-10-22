@@ -84,6 +84,8 @@
         </video>
       </div>
     </div>
+
+    <a class="promotions" href="/guide/promotions/1024.html">1024活动，了解一下？</a>
   </div>
 </template>
 
@@ -113,6 +115,24 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet">
+.promotions {
+  position fixed
+  display block
+  top: 120px
+  left: -15px
+  width: 240px;
+  line-height: 44px
+  text-align center
+  text-decoration none
+  border: 2px solid #8bd647
+  border-radius: 15px
+  box-shadow 0 0 10px 3px #8bd647
+  font-size: 18px
+  font-weight: 500
+  background #fff
+  color: #6a8bad
+}
+
 .home {
   padding: 0 2rem 0;
   max-width: 1160px;

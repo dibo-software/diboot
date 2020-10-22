@@ -101,7 +101,7 @@ module.exports = {
             ],
             '/guide/enterprice/': [
                 {
-                    title: '企业版',
+                    title: '商业服务',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
@@ -152,7 +152,7 @@ module.exports = {
             text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'
         },{
-            text: '企业版',
+            text: '商业服务',
             link: '/guide/enterprice/devtools'
         }, {
             text: '开发团队',
