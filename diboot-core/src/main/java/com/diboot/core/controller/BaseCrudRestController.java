@@ -77,6 +77,22 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
         return new JsonResult(vo);
     }
 
+    /**
+     * 查询Entity，用于子类直接调用
+    * @return
+     * @throws Exception
+     */
+    protected <E> E getEntity(Serializable id) throws Exception{
+        // 检查String类型id
+        if(id instanceof String && !S.isNumeric((String)id)){
+            String pk = ContextHelper.getPrimaryKey(getEntityClass());
+            if(Cons.FieldName.id.name().equals(pk)){
+                throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
+            }
+        }
+        return (E)getService().getEntity(id);
+    }
+
     /***
      * 获取某VO资源的集合，用于子类重写的方法
      * <p>

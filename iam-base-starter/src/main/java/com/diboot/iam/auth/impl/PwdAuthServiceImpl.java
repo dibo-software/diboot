@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.Encryptor;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.annotation.process.AsyncWorker;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.AuthCredential;
@@ -52,7 +53,7 @@ public class PwdAuthServiceImpl implements AuthService {
     @Autowired
     private IamAccountService accountService;
     @Autowired
-    private IamLoginTraceService iamLoginTraceService;
+    private AsyncWorker asyncWorker;
 
     @Override
     public String getAuthType() {
@@ -130,8 +131,10 @@ public class PwdAuthServiceImpl implements AuthService {
     private BaseJwtAuthToken initBaseJwtAuthToken(AuthCredential credential){
         BaseJwtAuthToken token = new BaseJwtAuthToken(getAuthType(), credential.getUserTypeClass());
         // 设置账号密码
-        token.setAuthAccount(credential.getAuthAccount()).setAuthSecret(credential.getAuthSecret());
-        token.setRememberMe(credential.isRememberMe());
+        token.setAuthAccount(credential.getAuthAccount())
+                .setAuthSecret(credential.getAuthSecret())
+                .setRememberMe(credential.isRememberMe())
+                .setExtObj(credential.getExtObj());
         // 生成token
         return token.generateAuthtoken(getExpiresInMinutes());
     }
@@ -152,12 +155,7 @@ public class PwdAuthServiceImpl implements AuthService {
         String userAgent = request.getHeader("user-agent");
         String ipAddress = IamSecurityUtils.getRequestIp(request);
         loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
-        try{
-            iamLoginTraceService.createEntity(loginTrace);
-        }
-        catch (Exception e){
-            log.warn("保存登录日志异常", e);
-        }
+        asyncWorker.saveLoginTraceLog(loginTrace);
     }
 
 }

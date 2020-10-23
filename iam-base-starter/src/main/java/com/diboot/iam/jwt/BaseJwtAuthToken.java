@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.jwt;
 
+import com.diboot.core.vo.KeyValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.JwtUtils;
@@ -23,6 +24,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
+
+import java.util.Map;
 
 /**
  * @author Yangzhao
@@ -54,6 +57,11 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
      * 记住我
      */
     private boolean rememberMe;
+
+    /**
+     * 扩展属性
+     */
+    private Map<String, Object> extObj;
 
     /**authz token*/
     private String authtoken;
@@ -95,6 +103,8 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     public String getUserType(){
         return userTypeClass.getSimpleName();
     }
+
+
 
     /**
      * 生成token

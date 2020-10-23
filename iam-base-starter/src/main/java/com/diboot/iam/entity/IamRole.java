@@ -39,6 +39,12 @@ public class IamRole extends BaseEntity {
         this.code = code;
     }
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     // 名称
     @NotNull(message = "名称不能为空")
     @TableField()

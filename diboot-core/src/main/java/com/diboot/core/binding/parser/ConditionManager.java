@@ -163,11 +163,12 @@ public class ConditionManager extends BaseConditionManager{
             else if(operator instanceof LikeExpression){
                 LikeExpression express = (LikeExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
+                String value = express.getRightExpression().toString();
                 if(express.isNot() == false){
-                    binder.andLike(annoColumn, express.getStringExpression());
+                    binder.andLike(annoColumn, value);
                 }
                 else{
-                    binder.andNotLike(annoColumn, express.getStringExpression());
+                    binder.andNotLike(annoColumn, value);
                 }
             }
             else{
@@ -190,8 +191,6 @@ public class ConditionManager extends BaseConditionManager{
         List<Expression> additionalExpressions = new ArrayList<>();
         // 提取到表
         MiddleTable middleTable = new MiddleTable(tableName);
-        // 中间表两边边连接字段
-        String middleTableEqualsToAnnoObjectFKColumn = null, middleTableEqualsToRefEntityPkColumn = null;
         // VO与Entity的关联字段
         String annoObjectForeignKey = null, referencedEntityPrimaryKey = null;
         for(Expression operator : expressionList){
@@ -201,41 +200,45 @@ public class ConditionManager extends BaseConditionManager{
                 if(express.getLeftExpression() instanceof Column && express.getRightExpression() instanceof Column){
                     String leftColumn = express.getLeftExpression().toString();
                     String rightColumn = express.getRightExpression().toString();
-                    // 如果右侧为中间表字段，如: this.departmentId=Department.id
+                    // 如果右侧为中间表字段，如: this.departmentId=department.id
                     if(rightColumn.startsWith(tableName+".")){
                         // 绑定左手边连接列
                         String leftHandColumn = removeLeftAlias(leftColumn);
+                        // 对应中间表的关联字段
+                        String middleTableCol = removeLeftAlias(rightColumn);
                         // this. 开头的vo对象字段
                         if(isCurrentObjColumn(leftColumn)){
                             // 识别到vo对象的属性 departmentId
                             annoObjectForeignKey = leftHandColumn;
-                            // 对应中间表的关联字段
-                            middleTableEqualsToAnnoObjectFKColumn = removeLeftAlias(rightColumn);
+                            middleTable.connectTrunkObj(middleTableCol, leftHandColumn);
                         }
                         else{
                             // 注解关联的entity主键
                             referencedEntityPrimaryKey = leftHandColumn;
-                            middleTableEqualsToRefEntityPkColumn = removeLeftAlias(rightColumn);
+                            middleTable.connectBranchObj(middleTableCol, leftHandColumn);
                         }
                         binder.joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
-                        middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
                     }
                     // 如果左侧为中间表字段，如: Department.orgId=id  (entity=Organization)
-                    if(leftColumn.startsWith(tableName+".")){
+                    else if(leftColumn.startsWith(tableName+".")){
                         // 绑定右手边连接列
                         String rightHandColumn = removeLeftAlias(rightColumn);
+                        // 对应中间表的关联字段
+                        String middleTableCol = removeLeftAlias(leftColumn);
                         if(isCurrentObjColumn(rightColumn)){
                             // 识别到vo对象的属性 departmentId
                             annoObjectForeignKey = rightHandColumn;
-                            // 对应中间表的关联字段
-                            middleTableEqualsToAnnoObjectFKColumn = S.substringAfter(leftColumn, ".");
+                            middleTable.connectTrunkObj(middleTableCol, rightHandColumn);
                         }
                         else{
                             referencedEntityPrimaryKey = rightHandColumn;
-                            middleTableEqualsToRefEntityPkColumn = removeLeftAlias(leftColumn);
+                            middleTable.connectBranchObj(middleTableCol, rightHandColumn);
                         }
                         binder.joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
-                        middleTable.connect(middleTableEqualsToAnnoObjectFKColumn, middleTableEqualsToRefEntityPkColumn);
+                    }
+                    // this.xxx=yy
+                    else{
+                        additionalExpressions.add(express);
                     }
                 }
                 else{ // equals附加条件，暂只支持列在左侧，如 department.level=1

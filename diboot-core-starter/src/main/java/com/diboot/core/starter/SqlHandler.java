@@ -28,8 +28,10 @@ import org.springframework.core.env.Environment;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * SQL处理类
@@ -41,7 +43,6 @@ public class SqlHandler {
     private static final Logger log = LoggerFactory.getLogger(SqlHandler.class);
 
     // 数据字典SQL
-    private static final String DICTIONARY_SQL = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
     private static final String MYBATIS_PLUS_SCHEMA_CONFIG = "mybatis-plus.global-config.db-config.schema";
     private static String CURRENT_SCHEMA = null;
     private static Environment environment;
@@ -61,16 +62,25 @@ public class SqlHandler {
     public static void initBootstrapSql(Class inst, Environment environment, String module){
         init(environment);
         String dbType = getDbType();
+        if(DbType.MARIADB.getDb().equalsIgnoreCase(dbType)){
+            dbType = "mysql";
+        }
         String sqlPath = "META-INF/sql/init-"+module+"-"+dbType+".sql";
         extractAndExecuteSqls(inst, sqlPath);
     }
 
-    /**
-     * 检查是否dictionary表已存在
+    /***
+     * 初始化升级SQL
      * @return
      */
-    public static boolean checkIsDictionaryTableExists(){
-        return checkIsTableExists(DICTIONARY_SQL);
+    public static void initUpgradeSql(Class inst, Environment environment, String module){
+        init(environment);
+        String dbType = getDbType();
+        if(DbType.MARIADB.getDb().equalsIgnoreCase(dbType)){
+            dbType = "mysql";
+        }
+        String sqlPath = "META-INF/sql/init-"+module+"-"+dbType+"-upgrade.sql";
+        extractAndExecuteSqls(inst, sqlPath);
     }
 
     /**
@@ -78,9 +88,19 @@ public class SqlHandler {
      * @param sqlStatement
      * @return
      */
-    public static boolean checkIsTableExists(String sqlStatement){
+    public static boolean checkSqlExecutable(String sqlStatement){
         sqlStatement = buildPureSqlStatement(sqlStatement);
         return SqlExecutor.validateQuery(sqlStatement);
+    }
+
+    /**
+     * 检查SQL文件是否已经执行过
+     * @param sqlStatement
+     * @return
+     */
+    @Deprecated
+    public static boolean checkIsTableExists(String sqlStatement){
+        return checkSqlExecutable(sqlStatement);
     }
 
     /***
@@ -88,7 +108,18 @@ public class SqlHandler {
      * @param sqlPath
      * @return
      */
-    public static boolean extractAndExecuteSqls(Class inst, String sqlPath){
+    public static boolean extractAndExecuteSqls(Class inst, String sqlPath) {
+        return extractAndExecuteSqls(inst, sqlPath, Collections.emptyList(), Collections.emptyList());
+    }
+
+    /***
+     * 从SQL文件读出的行内容中 提取SQL语句并执行
+     * @param sqlPath
+     * @param includes
+     * @param excludes
+     * @return
+     */
+    public static boolean extractAndExecuteSqls(Class inst, String sqlPath, List<String> includes, List<String> excludes){
         List<String> sqlFileReadLines = readLinesFromResource(inst, sqlPath);
         if(V.isEmpty(sqlFileReadLines)){
             return false;
@@ -123,6 +154,37 @@ public class SqlHandler {
             sqlStatementList.add(cleanSql);
             sb.setLength(0);
         }
+        // 过滤sql语句
+        sqlStatementList = sqlStatementList.stream()
+                .filter(sql -> {
+                    if (V.isEmpty(includes)) {
+                        return true;
+                    } else {
+                        boolean exist = false;
+                        for (String includeStr : includes) {
+                            if (V.notEmpty(sql) && sql.contains(includeStr)) {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        return exist;
+                    }
+                })
+                .filter(sql -> {
+                    if (V.isEmpty(excludes)) {
+                        return true;
+                    } else {
+                        boolean exist = true;
+                        for (String excludeStr : excludes) {
+                            if (V.notEmpty(sql) && sql.contains(excludeStr)) {
+                                exist = false;
+                                break;
+                            }
+                        }
+                        return exist;
+                    }
+                })
+                .collect(Collectors.toList());
         // 返回解析后的SQL语句
         return executeMultipleUpdateSqls(sqlStatementList);
     }
@@ -162,11 +224,11 @@ public class SqlHandler {
             try{
                 boolean success = SqlExecutor.executeUpdate(sqlStatement, null);
                 if(success){
-                    log.info("初始化SQL执行完成: "+ S.substring(sqlStatement, 0, 60) + "...");
+                    log.info("SQL执行完成: "+ S.substring(sqlStatement, 0, 60) + "...");
                 }
             }
             catch (Exception e){
-                log.error("初始化SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
+                log.error("SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
             }
         }
         return true;

@@ -59,14 +59,14 @@ public class JwtUtils {
     public static Claims getClaimsFromRequest(HttpServletRequest request){
         String authtoken = getRequestToken(request);
         if (V.isEmpty(authtoken)) {
-            log.warn("Token为空！url={}", request.getRequestURL());
+            log.debug("Token为空！url={}", request.getRequestURL());
             return null;
         }
         try {
             return Jwts.parser().setSigningKey(SIGN_KEY).parseClaimsJws(authtoken).getBody();
         }
         catch (ExpiredJwtException e) {
-            log.info("token已过期:{}", authtoken);
+            log.warn("token已过期:{}", authtoken);
         }
         catch (Exception e){
             log.warn("token解析异常", e);

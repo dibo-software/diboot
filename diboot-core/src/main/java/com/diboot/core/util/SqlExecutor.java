@@ -122,6 +122,7 @@ public class SqlExecutor {
      * @param params
      * @return
      */
+    @Deprecated
     public static <E> Map<String, Object> executeQueryAndMergeOneToOneResult(String sql, List<E> params, String keyName, String valueName) {
         List<Map<String, E>> resultSetMapList = null;
         try {
@@ -140,6 +141,7 @@ public class SqlExecutor {
      * @param <E>
      * @return
      */
+    @Deprecated
     public static <E> Map<String, Object> convertToOneToOneResult(List<Map<String, E>> resultSetMapList, String keyName, String valueName) {
         // 合并list为map
         Map<String, Object> resultMap = new HashMap<>();
@@ -165,6 +167,7 @@ public class SqlExecutor {
      * @param params
      * @return
      */
+    @Deprecated
     public static <E> Map<String, List> executeQueryAndMergeOneToManyResult(String sql, List<E> params, String keyName, String valueName){
         List<Map<String, E>> resultSetMapList = null;
         try {
@@ -184,6 +187,7 @@ public class SqlExecutor {
      * @param <E>
      * @return
      */
+    @Deprecated
     public static <E> Map<String, List> convertToOneToManyResult(List<Map<String, E>> resultSetMapList, String keyName, String valueName){
         // 合并list为map
         Map<String, List> resultMap = new HashMap<>();

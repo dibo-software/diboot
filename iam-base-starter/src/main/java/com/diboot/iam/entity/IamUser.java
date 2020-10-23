@@ -33,6 +33,12 @@ import javax.validation.constraints.NotNull;
 public class IamUser extends BaseLoginUser {
     private static final long serialVersionUID = -8462352695775599715L;
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     // 组织ID
     @NotNull(message = "组织ID不能为空")
     @TableField()

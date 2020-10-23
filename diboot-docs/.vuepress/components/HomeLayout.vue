@@ -1,9 +1,10 @@
 <template>
   <div>
     <div class="home">
+      <h3 style="position: relative; top: -12px; font-size: 1.6rem; line-height: 1.3; color: #6a8bad; font-weight: normal; text-align: center;">为开发人员打造的低代码开发平台，高质高效的开发体系</h3>
       <div class="hero">
         <p class="action">
-          <a :href="$withBase('/guide/diboot-core/安装.html')" class="button white">快速上手</a>
+          <a href="https://github.com/dibo-software/diboot/wiki/%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%97" class="button white">新手指南</a>
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
           <a href="https://devtools-v2.diboot.com/antd/" class="button white" target="_blank">Antd项目案例</a>
@@ -21,7 +22,7 @@
       <div class="custom content">
         <div class="features">
           <div class="feature col-1">
-            <h2>diboot-core 精简高效内核</h2>
+            <h2>diboot-core 精简内核-化繁为简</h2>
             <p>
               <ul>
                   <li>单表CRUD无SQL</li>
@@ -33,14 +34,14 @@
             </p>
           </div>
           <div class="feature col-2">
-            <h2>diboot-devtools 强大开发助理</h2>
+            <h2>diboot-devtools 强大工具-以简驭繁</h2>
             <p>
                 <ul>
-                    <li>支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）</li>
                     <li>使用很简单（引入依赖jar，配置参数后，即可随SpringBoot启动运行）</li>
-                    <li>功能很强大（数据结构变更与代码联动同步，一键生成/更新代码，自动记录变更SQL）</li>
+                    <li>功能很强大（数据结构变更与后端代码联动同步，前后端代码一键生成，自动记录变更SQL）</li>
                     <li>配置很灵活（可按需配置生成代码是否启用`Lombok`、`Swagger`、`Shiro`等）</li>
                     <li>代码很标准（devtools标准化了数据结构定义与代码实现，降低维护成本）</li>
+                    <li>支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）</li>
                 </ul>
             </p>
           </div>
@@ -59,7 +60,7 @@
             <img src="../public/add_qqqun.png" alt="" width="120">
           </div>
           <div class="footer-item">
-            <h4>微信群: wx20201024</h4>
+            <h4>微信群: wx20201024 (备注diboot)</h4>
             <img src="../public/add_wechat.png" alt="" width="120">
           </div>
           <div class="footer-item">
@@ -83,6 +84,8 @@
         </video>
       </div>
     </div>
+
+    <a class="promotions" href="/guide/promotions/1024.html">1024视频教程众筹活动，了解一下？</a>
   </div>
 </template>
 
@@ -112,6 +115,24 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet">
+.promotions {
+  position fixed
+  display block
+  top: 120px
+  left: -15px
+  width: 360px;
+  line-height: 44px
+  text-align center
+  text-decoration none
+  border: 2px solid #8bd647
+  border-radius: 15px
+  box-shadow 0 0 10px 3px #8bd647
+  font-size: 18px
+  font-weight: 500
+  background #fff
+  color: #6a8bad
+}
+
 .home {
   padding: 0 2rem 0;
   max-width: 1160px;

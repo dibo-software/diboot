@@ -38,14 +38,6 @@ import java.util.Set;
  * @date 2020/04/15
  */
 public class DynamicSqlProvider {
-    /**
-     * 构建动态SQL
-     * @param ew
-     * @return
-     */
-    public String buildSql(QueryWrapper ew){
-        return buildDynamicSql(null, ew, true);
-    }
 
     /**
      * 构建动态SQL
@@ -53,7 +45,7 @@ public class DynamicSqlProvider {
      * @return
      */
     public String buildSqlForList(QueryWrapper ew){
-        return buildDynamicSql(null, ew, false);
+        return buildDynamicSql(null, ew);
     }
 
     /**
@@ -63,7 +55,7 @@ public class DynamicSqlProvider {
      * @return
      */
     public <DTO> String buildSqlForListWithPage(Page<?> page, QueryWrapper<DTO> ew){
-        return buildDynamicSql(page, ew, false);
+        return buildDynamicSql(page, ew);
     }
 
     /**
@@ -72,7 +64,7 @@ public class DynamicSqlProvider {
      * @param ew
      * @return
      */
-    private <DTO> String buildDynamicSql(Page<?> page, QueryWrapper<DTO> ew, boolean limit1){
+    private <DTO> String buildDynamicSql(Page<?> page, QueryWrapper<DTO> ew){
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
             if(V.isEmpty(ew.getSqlSelect())){
@@ -134,9 +126,6 @@ public class DynamicSqlProvider {
                         }
                     }
                 }
-            }
-            if(limit1){
-                LIMIT(1);
             }
         }}.toString();
     }

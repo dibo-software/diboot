@@ -1,6 +1,7 @@
 -- 建表
 create table ${SCHEMA}.dictionary (
     id                 NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
     parent_id          NUMBER(20)           default 0  not null,
     type               VARCHAR2(50)          not null,
     item_name          VARCHAR2(100)         not null,
@@ -16,6 +17,7 @@ create table ${SCHEMA}.dictionary (
 );
 -- 添加备注
 comment on column ${SCHEMA}.dictionary.id is 'ID';
+comment on column ${SCHEMA}.dictionary.tenant_id is '租户ID';
 comment on column ${SCHEMA}.dictionary.parent_id is '父ID';
 comment on column ${SCHEMA}.dictionary.type is '字典类型';
 comment on column ${SCHEMA}.dictionary.item_name is '显示名';
@@ -32,5 +34,6 @@ comment on table ${SCHEMA}.dictionary is '数据字典';
 
 -- 创建索引
 create index idx_directory on ${SCHEMA}.dictionary (type, item_value);
+create index idx_directory_tenant on ${SCHEMA}.dictionary(tenant_id);
 
 

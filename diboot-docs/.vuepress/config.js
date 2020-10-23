@@ -1,6 +1,6 @@
 module.exports = {
     title: 'Diboot 轻代码开发平台',
-    description: '2.0 - 您的自动化开发助理',
+    description: '基础组件化繁为简，强大工具以简驭繁',
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],
@@ -94,7 +94,18 @@ module.exports = {
                         ['/guide/diboot-devtools/开始使用', '开始使用'],
                         ['/guide/diboot-devtools/数据表管理', '数据表管理'],
                         ['/guide/diboot-devtools/后端代码生成与更新', '后端代码生成与更新'],
-                        ['/guide/diboot-devtools/前端功能生成', '前端功能生成']
+                        ['/guide/diboot-devtools/前端功能生成', '前端功能生成'],
+                        ['/guide/diboot-devtools/面板-前端组件灵活之道', '面板-前端组件灵活之道']
+                    ]
+                }
+            ],
+            '/guide/enterprice/': [
+                {
+                    title: '商业服务',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/enterprice/devtools', 'devtools']
                     ]
                 }
             ],
@@ -114,6 +125,7 @@ module.exports = {
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
+                        ['/guide/notes/upgrade/2_1_1升级至2_1_2', '2.1.1升级至2.1.2'],
                         ['/guide/notes/upgrade/2_0_x升级至2_1_x', '2.0.x升级至2.1.x'],
                     ]
                 }
@@ -139,6 +151,9 @@ module.exports = {
         }, {
             text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'
+        },{
+            text: '商业服务',
+            link: '/guide/enterprice/devtools'
         }, {
             text: '开发团队',
             items: [
@@ -156,11 +171,11 @@ module.exports = {
             items: [
                 {
                     text: 'Gitee',
-                    link: 'https://gitee.com/dibo_software/diboot-v2'
+                    link: 'https://gitee.com/dibo_software/diboot'
                 },
                 {
                     text: 'GitHub',
-                    link: 'https://github.com/dibo-software/diboot-v2'
+                    link: 'https://github.com/dibo-software/diboot'
                 }
             ]
         }/*, {

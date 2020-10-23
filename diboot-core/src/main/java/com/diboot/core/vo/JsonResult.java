@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @version v2.0
  * @date 2019/01/01
  */
-public class JsonResult implements Serializable {
+public class JsonResult<T> implements Serializable {
     private static final long serialVersionUID = 1001L;
 
     /***
@@ -40,7 +40,7 @@ public class JsonResult implements Serializable {
     /***
      * 返回结果数据
      */
-    private Object data;
+    private T data;
 
     /**
      * 默认成功，无返回数据
@@ -51,7 +51,7 @@ public class JsonResult implements Serializable {
     /**
      * 默认成功，有返回数据
      */
-    public JsonResult(Object data){
+    public JsonResult(T data){
         this.code = Status.OK.code();
         this.msg = Status.OK.label();
         initMsg(null);
@@ -61,7 +61,7 @@ public class JsonResult implements Serializable {
     /**
      * 默认成功，有返回数据、及附加提示信息
      */
-    public JsonResult(Object data, String additionalMsg){
+    public JsonResult(T data, String additionalMsg){
         this.code = Status.OK.code();
         this.msg = Status.OK.label();
         initMsg(additionalMsg);
@@ -96,7 +96,7 @@ public class JsonResult implements Serializable {
      * @param status
      * @param data
      */
-    public JsonResult(Status status, Object data){
+    public JsonResult(Status status, T data){
         this.code = status.code();
         this.msg = status.label();
         initMsg(null);
@@ -106,7 +106,7 @@ public class JsonResult implements Serializable {
     /**
      * 非成功，指定状态、返回数据、及附加提示信息
       */
-    public JsonResult(Status status, Object data, String additionalMsg){
+    public JsonResult(Status status, T data, String additionalMsg){
         this.code = status.code();
         this.msg = status.label();
         initMsg(additionalMsg);
@@ -119,7 +119,7 @@ public class JsonResult implements Serializable {
      * @param label
      * @param data
      */
-    public JsonResult(int code, String label, Object data){
+    public JsonResult(int code, String label, T data){
         this.code = code;
         this.msg = label;
         this.data = data;
@@ -130,7 +130,7 @@ public class JsonResult implements Serializable {
      * @param status
      * @return
      */
-    public JsonResult status(Status status){
+    public JsonResult<T> status(Status status){
         this.code = status.code();
         if(this.msg == null){
             this.msg = status.label();
@@ -143,7 +143,7 @@ public class JsonResult implements Serializable {
      * @param data
      * @return
      */
-    public JsonResult data(Object data){
+    public JsonResult<T> data(T data){
         this.data = data;
         return this;
     }
@@ -153,17 +153,9 @@ public class JsonResult implements Serializable {
      * @param additionalMsg
      * @return
      */
-    public JsonResult msg(String additionalMsg){
+    public JsonResult<T> msg(String additionalMsg){
         initMsg(additionalMsg);
         return this;
-    }
-
-    /***
-     * 绑定分页信息
-     * @param pagination
-     */
-    public JsonResult bindPagination(Pagination pagination){
-        return new PagingJsonResult(this, pagination);
     }
 
     public int getCode() {
@@ -172,8 +164,16 @@ public class JsonResult implements Serializable {
     public String getMsg() {
         return msg;
     }
-    public Object getData() {
+    public T getData() {
         return data;
+    }
+
+    /***
+     * 绑定分页信息
+     * @param pagination
+     */
+    public JsonResult<T> bindPagination(Pagination pagination){
+        return new PagingJsonResult(this, pagination);
     }
 
     /**
@@ -194,13 +194,13 @@ public class JsonResult implements Serializable {
     /***
      * 请求处理成功
      */
-    public static JsonResult OK(){
+    public static <T> JsonResult<T> OK(){
         return new JsonResult(Status.OK);
     }
     /***
      * 请求处理成功
      */
-    public static JsonResult OK(Object data){
+    public static <T> JsonResult<T> OK(T data){
         return new JsonResult(Status.OK, data);
     }
 
@@ -257,6 +257,18 @@ public class JsonResult implements Serializable {
      */
     public static JsonResult FAIL_EXCEPTION(String msg){
         return new JsonResult(Status.FAIL_EXCEPTION).msg(msg);
+    }
+    /***
+     * 服务不可用
+     */
+    public static JsonResult FAIL_FAIL_REQUEST_TIMEOUT(String msg){
+        return new JsonResult(Status.FAIL_REQUEST_TIMEOUT).msg(msg);
+    }
+    /***
+     * 服务不可用
+     */
+    public static JsonResult FAIL_SERVICE_UNAVAILABLE(String msg){
+        return new JsonResult(Status.FAIL_SERVICE_UNAVAILABLE).msg(msg);
     }
     /***
      * 缓存清空

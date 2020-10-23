@@ -62,7 +62,6 @@ public class IamBaseAutoConfig {
     public IamBasePluginManager iamBasePluginManager() {
         IamBasePluginManager pluginManager = new IamBasePluginManager();
         pluginManager.initPlugin(iamBaseProperties);
-        System.out.println(iamBaseProperties);
         return pluginManager;
     }
 
@@ -71,9 +70,9 @@ public class IamBaseAutoConfig {
      *
      * @return
      */
-    @Bean
+    @Bean(name = "shiroCacheManager")
     @ConditionalOnMissingBean(CacheManager.class)
-    public CacheManager cacheManager() {
+    public CacheManager shiroCacheManager() {
         String className = iamBaseProperties.getCacheManagerClass();
         if (V.isEmpty(className)) {
             return null;
@@ -87,10 +86,10 @@ public class IamBaseAutoConfig {
     }
 
     @Bean
-    @DependsOn({"cacheManager"})
+    @DependsOn({"shiroCacheManager"})
     public Realm realm() {
         BaseJwtRealm realm = new BaseJwtRealm();
-        CacheManager cacheManager = cacheManager();
+        CacheManager cacheManager = shiroCacheManager();
         if (cacheManager != null) {
             realm.setCachingEnabled(true);
             realm.setCacheManager(cacheManager);

@@ -60,6 +60,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private IamAccountService iamAccountService;
 
     // 扩展接口
+    @Autowired(required = false)
     private IamExtensible iamExtensible;
 
     /**
@@ -219,23 +220,12 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         return Binder.convertAndBindRelations(roleList, IamRoleVO.class);
     }
 
-    // 扩展接口检查标记
-    private boolean iamExtensibleImplChecked = false;
-
     /**
      * 获取Iam扩展实现
      * @return
      */
     @Override
     public IamExtensible getIamExtensible(){
-        // 加载扩展角色
-        if(!iamExtensibleImplChecked){
-            try{
-                iamExtensible = ContextHelper.getBean(IamExtensible.class);
-            }
-            catch (Exception e){}
-            iamExtensibleImplChecked = true;
-        }
         return iamExtensible;
     }
 

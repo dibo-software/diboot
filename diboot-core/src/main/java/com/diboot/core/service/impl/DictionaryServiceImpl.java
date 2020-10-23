@@ -61,7 +61,7 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 .select(Dictionary::getItemName, Dictionary::getItemValue)
                 .eq(Dictionary::getType, type)
                 .gt(Dictionary::getParentId, 0)
-                .orderByAsc(Dictionary::getSortId);
+                .orderByAsc(Dictionary::getSortId, Dictionary::getId);
         // 返回构建条件
         return getKeyValueList(queryDictionary);
     }

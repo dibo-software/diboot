@@ -1,6 +1,7 @@
 -- 上传文件表
 CREATE TABLE ${SCHEMA}.upload_file (
     uuid varchar(32) NOT NULL,
+    tenant_id            bigint        not null default 0,
     rel_obj_type varchar(50),
     rel_obj_id varchar(32),
     rel_obj_field varchar(50),
@@ -16,6 +17,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
 );
 -- 添加备注,
 execute sp_addextendedproperty 'MS_Description', N'UUID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'uuid';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'关联对象类', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_type';
 execute sp_addextendedproperty 'MS_Description', N'关联对象ID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_id';
 execute sp_addextendedproperty 'MS_Description', N'关联对象属性名称', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_field';
@@ -30,3 +32,4 @@ execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'上传文件', 'SCHEMA', '${SCHEMA}', 'table', upload_file, null, null;
 -- 索引
 create nonclustered index idx_upload_file on upload_file(rel_obj_type, rel_obj_id, rel_obj_field);
+create nonclustered index idx_upload_file_tenant on ${SCHEMA}.upload_file(tenant_id);

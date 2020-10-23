@@ -10,7 +10,7 @@ IAM的后端基础代码由devtools自动生成
 * 启动项目，进入devtools的组件初始化页面，选择core及IAM等组件，执行初始化
 * devtools将生成IAM基础的代码到你配置的路径下
 
-注：[diboot-v2-example](https://github.com/dibo-software/diboot-v2-example) 中包含可供参考的后端示例：diboot-iam-example（IAM示例代码）
+注：[diboot-example](https://github.com/dibo-software/diboot-example) 中包含可供参考的后端示例：diboot-iam-example（IAM示例代码）
 及diboot-online-demo（线上演示项目）。
 
 ## 如何自定义fastjson配置
@@ -34,9 +34,17 @@ public HttpMessageConverters fastJsonHttpMessageConverters() {
 }
 ~~~
 
-## 无数据库连接配置文件的module下，如何使用diboot-core？
-diboot-core-starter是在diboot-core的基础上增加了自动配置，配置需要依赖数据库信息。
-如果是无数据库信息的模块下使用，可以依赖core，替换core-starter。
+## mybatis-plus老项目中想要使用diboot的绑定能力？或在无数据库连接配置文件的module下，使用diboot-core？
+对于没有历史包袱的新项目，我们建议您全使用diboot体系starter组件。
+core内核组件有以下两个包：
+* diboot-core: 内核代码
+* diboot-core-starter: 依赖diboot-core，增加了自动配置及初始化字典表等功能（需要依赖数据库信息）。
+
+对于mybatis-plus老项目中想要使用diboot的绑定能力
+或
+在无数据库连接配置文件的module下，使用内核组件，可以只依赖diboot-core，而不是diboot-core-starter。
+步骤如下：
+1. 添加core依赖（非core-starter）
 ~~~xml
 <dependency>
     <groupId>com.diboot</groupId>
@@ -44,11 +52,14 @@ diboot-core-starter是在diboot-core的基础上增加了自动配置，配置�
     <version>{latestVersion}</version>
 </dependency>
 ~~~
-根据使用场景，你还可能需要将com.diboot.core加入包扫描：
+2. 
+根据使用场景，你可能还需要将com.diboot.core加入包扫描：
 ~~~java
 @ComponentScan(basePackages={"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 ~~~
+3. 如果需要使用@BindDict字典绑定，需确保dictionary表存在。
+（使用diboot-core-starter可以自动创建dictionary表，或者可以[下载SQL](https://github.com/dibo-software/diboot/tree/master/diboot-core-starter/src/main/resources/META-INF/sql)手动建表。
 
 ## 启动报错：找不到mapper中的自定义接口
 diboot-devtools默认不指定mapper.xml路径时，mapper.xml文件会生成到mapper同路径下便于维护。
@@ -143,8 +154,19 @@ public Date getCreateTimeEnd() {
 }
 ~~~
 
-## 如何在新建时填充createBy创建人等字段
-* 可以通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
+## 如何在新建时自动填充创建人、创建时间、更新时间等字段
+* 创建时间、更新时间首选采用数据库填充方式实现
+* 如需代码自动填充的字段，可通过Mybatis-plus的MetaObjectHandler自动填充, 具体请[参考mybatis-plus文档](https://baomidou.com/guide/auto-fill-metainfo.html)。
+示例：
+注解标记填充字段：
+~~~java
+class MyEntity {
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
+    ...
+}
+~~~
+实现填充Handler：
 ~~~java 
 @Component
 public class CustomMetaObjectHandler implements MetaObjectHandler {
@@ -157,35 +179,68 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
         }
     }
     ...
-}
-~~~
-
-* 也可以在BaseCustomServiceImpl中重写beforeCreateEntity，统一填充所需字段。如从登录用户取值填充 创建人ID，姓名等字段。
-~~~java
-public class BaseCustomServiceImpl<M extends BaseCrudMapper<T>, T> extends BaseServiceImpl<M, T> implements BaseCustomService<T> {
-    @Override
-    protected void beforeCreateEntity(T entity){
-        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
-        if(currentUser != null){
-            // 填充创建人示例
-            Field field = BeanUtils.extractField(entityClass, Cons.FieldName.createBy.name());
-            if(field != null){
-                BeanUtils.setProperty(entity, Cons.FieldName.createBy.name(), currentUser.getId());
-            }
-        }
-    }
-}
-~~~
-## 如何解决数据库无法自动设置更新时间？
-* 通过Mybatis-plus的MetaObjectHandler接口自动填充，示例：
-~~~java 
-@Component
-public class FillMetaObjectHandler implements MetaObjectHandler {
+    
     @Override
     public void updateFill(MetaObject metaObject) {
         this.setFieldValByName(Cons.FieldName.updateTime.name(), new Date(), metaObject);
     }
 }
 ~~~
+
+## 如何配置swagger
+以swagger3的maven配置为例：
+**步骤1. pom中引入swagger3依赖**
+~~~xml
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-boot-starter</artifactId>
+    <version>3.0.0</version>
+</dependency>
+~~~
+**步骤2. 添加swagger配置类**
+~~~java 
+// 示例配置类
+@Configuration
+@EnableOpenApi
+public class SwaggerConfig {
+
+    @Bean
+    public Docket docket(){
+        return new Docket(DocumentationType.OAS_30)
+                //apiInfo： 添加api描述信息
+                .apiInfo(apiInfo()).enable(true)
+                .select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .build();
+    }
+
+    private ApiInfo apiInfo(){
+        return new ApiInfoBuilder()
+                .title("XX项目接口文档")
+                .description("XX描述")
+                .contact(new Contact("作者", "作者地址", "作者邮箱"))
+                .version("1.0")
+                .build();
+    }
+}
+~~~
+步骤1&2为swagger的正常配置，如果引入了diboot IAM组件，需要添加以下配置使swagger相关url可以匿名访问。
+
+**步骤3. 设置swagger相关的匿名url配置，使swagger不被拦截，** 如下：
+~~~java 
+#swagger 3.x版本参考配置
+diboot.iam.anon-urls=/swagger**/**,/webjars/**,/v3/**,/doc.html
+# swagger 2.x版本参考配置
+#diboot.iam.anon-urls=/swagger-ui.html,/swagger-resources/**,/webjars/**,/v2/api-docs/**
+~~~                         
+另外，如果启用了diboot devtools，可以配置devtools生成代码启用swagger注解。
+~~~java
+diboot.devtools.enable-swagger=true
+~~~
+
+> 附: swagger访问入口地址: 
+* swagger 3.x入口地址: /{contextPath}/swagger-ui/index.html
+* swagger 2.x入口地址: /{contextPath}/swagger-ui.html
+
 
 

@@ -22,6 +22,8 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.DateConverter;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -52,6 +54,7 @@ import java.util.List;
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 @Order(1)
 public class CoreAutoConfiguration implements WebMvcConfigurer {
+    private static final Logger log = LoggerFactory.getLogger(CoreAutoConfiguration.class);
 
     @Autowired
     Environment environment;
@@ -66,8 +69,19 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
         SqlHandler.init(environment);
         CorePluginManager pluginManager = new CorePluginManager() {};
         // 检查数据库字典是否已存在
-        if(coreProperties.isInitSql() && SqlHandler.checkIsDictionaryTableExists() == false){
-            SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "core");
+        if(coreProperties.isInitSql()){
+            String initDetectSql = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
+            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
+                SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "core");
+                log.info("diboot-core 初始化SQL完成.");
+            }
+            else{
+                String upgradeDetectSql = "SELECT tenant_id FROM ${SCHEMA}.dictionary WHERE id=0";
+                if(SqlHandler.checkSqlExecutable(upgradeDetectSql) == false){
+                    SqlHandler.initUpgradeSql(pluginManager.getClass(), environment, "core");
+                    log.info("diboot-core 更新SQL完成.");
+                }
+            }
         }
         return pluginManager;
     }

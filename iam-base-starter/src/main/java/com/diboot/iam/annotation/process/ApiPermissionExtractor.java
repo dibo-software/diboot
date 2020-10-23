@@ -140,7 +140,7 @@ public class ApiPermissionExtractor {
                 }
                 // 提取方法上的注解url
                 String[] methodAndUrl = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
-                if(methodAndUrl[0] == null){
+                if(methodAndUrl[0] == null || methodAndUrl[1] == null){
                     continue;
                 }
                 if(bindPermission != null){

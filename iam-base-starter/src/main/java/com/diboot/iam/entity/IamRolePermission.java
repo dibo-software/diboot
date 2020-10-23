@@ -40,6 +40,12 @@ public class IamRolePermission extends BaseEntity {
         this.permissionId = permissionId;
     }
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     // 角色ID
     @NotNull(message = "角色ID不能为空")
     @TableField()
