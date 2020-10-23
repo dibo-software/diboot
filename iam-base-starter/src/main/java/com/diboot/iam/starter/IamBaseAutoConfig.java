@@ -15,12 +15,10 @@
  */
 package com.diboot.iam.starter;
 
-import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
-import com.diboot.iam.service.impl.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
@@ -29,7 +27,6 @@ import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSource
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +34,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -45,7 +41,8 @@ import java.util.Map;
 
 /**
  * IAM自动配置类
- * @author : wee
+ *
+ * @author : uu
  * @version : v2.0
  * @Date 2019-10-11  10:54
  */
@@ -53,41 +50,37 @@ import java.util.Map;
 @Configuration
 @EnableConfigurationProperties({IamBaseProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
-@MapperScan(basePackages={"com.diboot.iam.mapper"})
-@AutoConfigureAfter(value = {DictionaryServiceImpl.class,
-        IamRoleServiceImpl.class, IamUserServiceImpl.class, IamAccountServiceImpl.class, IamFrontendPermissionServiceImpl.class,
-        IamBaseInitializer.class, ShiroProxyConfig.class})
-@Order(2)
-public class IamBaseAutoConfig{
+@MapperScan(basePackages = {"com.diboot.iam.mapper"})
+@Order(10)
+public class IamBaseAutoConfig {
 
     @Autowired
-    Environment environment;
-
-    @Autowired
-    IamBaseProperties iamBaseProperties;
+    private IamBaseProperties iamBaseProperties;
 
     @Bean
     @ConditionalOnMissingBean(IamBasePluginManager.class)
-    public IamBasePluginManager iamBasePluginManager(){
+    public IamBasePluginManager iamBasePluginManager() {
         IamBasePluginManager pluginManager = new IamBasePluginManager();
         pluginManager.initPlugin(iamBaseProperties);
+        System.out.println(iamBaseProperties);
         return pluginManager;
     }
 
     /**
      * 根据用户配置的缓存类初始化CacheManager，默认为Shiro内存缓存MemoryConstrainedCacheManager
+     *
      * @return
      */
     @Bean
+    @ConditionalOnMissingBean(CacheManager.class)
     public CacheManager cacheManager() {
         String className = iamBaseProperties.getCacheManagerClass();
-        if(V.isEmpty(className)){
+        if (V.isEmpty(className)) {
             return null;
         }
-        try{
+        try {
             return (CacheManager) Class.forName(className).newInstance();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.warn("无法初始化CacheManager，请检查配置: diboot.iam.cacheManagerClass");
             return null;
         }
@@ -95,17 +88,15 @@ public class IamBaseAutoConfig{
 
     @Bean
     @DependsOn({"cacheManager"})
-    public Realm realm(){
+    public Realm realm() {
         BaseJwtRealm realm = new BaseJwtRealm();
         CacheManager cacheManager = cacheManager();
-        if(cacheManager != null){
+        if (cacheManager != null) {
             realm.setCachingEnabled(true);
             realm.setCacheManager(cacheManager);
         }
         return realm;
     }
-
-    //TODO 支持无状态
 
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SessionsSecurityManager securityManager) {
@@ -115,7 +106,8 @@ public class IamBaseAutoConfig{
     }
 
     @Bean
-    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SessionsSecurityManager securityManager){
+    @ConditionalOnMissingBean
+    protected ShiroFilterFactoryBean shiroFilterFactoryBean(SessionsSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 设置过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
@@ -134,17 +126,25 @@ public class IamBaseAutoConfig{
         filterChainDefinitionMap.put("/diboot/**", "anon");
         filterChainDefinitionMap.put("/error/**", "anon");
         filterChainDefinitionMap.put("/auth/**", "anon");
+        filterChainDefinitionMap.put("/uploadFile/download/*/image", "anon");
 
+        boolean allAnon = false;
         String anonUrls = iamBaseProperties.getAnonUrls();
-        if(V.notEmpty(anonUrls)){
-            for(String url : anonUrls.split(Cons.SEPARATOR_COMMA)){
+        if (V.notEmpty(anonUrls)) {
+            for (String url : anonUrls.split(Cons.SEPARATOR_COMMA)) {
                 filterChainDefinitionMap.put(url, "anon");
+                if (url.equals("/**")) {
+                    allAnon = true;
+                }
             }
         }
         filterChainDefinitionMap.put("/login", "authc");
         filterChainDefinitionMap.put("/logout", "logout");
-        filterChainDefinitionMap.put("/**", "jwt");
-
+        if (allAnon && iamBaseProperties.isEnablePermissionCheck() == false) {
+            filterChainDefinitionMap.put("/**", "anon");
+        } else {
+            filterChainDefinitionMap.put("/**", "jwt");
+        }
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }

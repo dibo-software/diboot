@@ -16,6 +16,7 @@
 package diboot.core.test.binder.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.service.BaseService;
 import diboot.core.test.binder.entity.User;
 
 /**
@@ -24,6 +25,6 @@ import diboot.core.test.binder.entity.User;
  * @version v2.0
  * @date 2019/1/5
  */
-public interface UserService extends IService<User> {
+public interface UserService extends BaseService<User> {
 
 }

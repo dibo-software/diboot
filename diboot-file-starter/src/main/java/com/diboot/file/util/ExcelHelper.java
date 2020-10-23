@@ -26,7 +26,10 @@ import com.diboot.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.file.excel.listener.FixedHeadExcelListener;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -111,6 +114,39 @@ public class ExcelHelper {
         catch (Exception e) {
             log.error("数据写入excel文件失败",e);
             return false;
+        }
+    }
+
+    /**
+     * web 导出excel
+     *
+     * @param response
+     * @param clazz     导出的类
+     * @param data      导出的数据
+     * @param <T>
+     * @throws Exception
+     */
+    public static <T extends BaseExcelModel> void exportExcel(HttpServletResponse response, String fileName,Class<T> clazz, List<T> data) throws Exception{
+        try {
+            response.setContentType("application/x-msdownload");
+            response.setCharacterEncoding("utf-8");
+            fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
+            response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+            response.setHeader("filename", fileName);
+            response.setHeader("err-code", String.valueOf(Status.OK.code()));
+            response.setHeader("err-msg", URLEncoder.encode("操作成功",  StandardCharsets.UTF_8.name()));
+            // 这里需要设置不关闭流
+            EasyExcel.write(response.getOutputStream(), clazz)
+                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    .autoCloseStream(Boolean.FALSE)
+                    .sheet("sheet1")
+                    .doWrite(data);
+        } catch (Exception e) {
+            log.error("下载文件失败：", e);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.setHeader("err-code", String.valueOf(Status.FAIL_OPERATION.code()));
+            response.setHeader("err-msg", URLEncoder.encode("下载文件失败",  StandardCharsets.UTF_8.name()));
         }
     }
 

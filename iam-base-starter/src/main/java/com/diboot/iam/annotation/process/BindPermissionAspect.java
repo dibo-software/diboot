@@ -20,13 +20,16 @@ import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.exception.PermissionException;
+import com.diboot.iam.starter.IamBaseProperties;
 import com.diboot.iam.util.AnnotationUtils;
 import com.diboot.iam.util.IamSecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -45,7 +48,10 @@ import java.util.Map;
  */
 @Aspect
 @Component
+@Slf4j
 public class BindPermissionAspect {
+    @Autowired
+    private IamBaseProperties iamBaseProperties;
 
     /**
      * 注解切面
@@ -59,6 +65,10 @@ public class BindPermissionAspect {
      */
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
+        if(iamBaseProperties.isEnablePermissionCheck() == false){
+            log.debug("BindPermission权限检查已停用，如需启用请删除配置项: diboot.iam.enable-permission-check");
+            return;
+        }
         // 超级管理员 权限放过
         if (IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN)) {
             return;

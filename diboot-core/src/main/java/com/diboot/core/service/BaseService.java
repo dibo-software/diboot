@@ -17,6 +17,7 @@ package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -74,6 +75,17 @@ public interface BaseService<T> {
      * @return
      */
     <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+
+    /**
+     * 创建或更新n-n关联
+     * （在主对象的service中调用，不依赖中间表service实现中间表操作）
+     * @param driverIdGetter 驱动对象getter
+     * @param driverId 驱动对象ID
+     * @param followerIdGetter 从动对象getter
+     * @param followerIdList 从动对象id集合
+     * @return
+     */
+    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId, SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
 
     /**
      * 更新Entity实体
@@ -183,6 +195,15 @@ public interface BaseService<T> {
     List<T> getEntityList(Wrapper queryWrapper, Pagination pagination);
 
     /**
+     * 获取指定条件的Entity ID集合
+     * @param queryWrapper
+     * @param getterFn
+     * @return
+     * @throws Exception
+     */
+    <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, ?> getterFn);
+
+    /**
      * 获取指定条件的Entity集合
      * @param ids
      * @return
@@ -200,7 +221,7 @@ public interface BaseService<T> {
 
     /**
      * 获取符合条件的一个Entity实体
-     * @param queryWrapper 主键
+     * @param queryWrapper
      * @return entity
      */
     T getSingleEntity(Wrapper queryWrapper);

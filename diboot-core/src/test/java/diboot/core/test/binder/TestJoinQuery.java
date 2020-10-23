@@ -1,0 +1,206 @@
+/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package diboot.core.test.binder;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.Binder;
+import com.diboot.core.binding.JoinsBinder;
+import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.config.Cons;
+import com.diboot.core.vo.Pagination;
+import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.dto.DepartmentDTO;
+import diboot.core.test.binder.dto.UserDTO;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.vo.DepartmentVO;
+import diboot.core.test.config.SpringMvcConfig;
+import org.apache.ibatis.jdbc.SQL;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * BindQuery测试
+ * @author Mazc@dibo.ltd
+ * @version v2.0.6
+ * @date 2020/04/14
+ */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
+@SpringBootTest(classes = {StartupApplication.class})
+public class TestJoinQuery {
+
+    @Autowired
+    DepartmentService departmentService;
+
+    @Test
+    public void testDateCompaire(){
+        Department example = departmentService.getSingleEntity(null);
+        DepartmentDTO departmentDTO = new DepartmentDTO();
+        departmentDTO.setCreateTime(example.getCreateTime());
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        List<Department> list = departmentService.getEntityList(queryWrapper);
+        Assert.assertTrue(list.size() >= 1);
+    }
+
+    @Test
+    public void testSingleTableQuery(){
+        Department entity = new Department();
+        entity.setParentId(10001L);
+        entity.setName("测试组");
+        entity.setOrgId(100001L);
+
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(entity);
+        System.out.println(queryWrapper.getExpression());
+        List<Department> list = Binder.joinQueryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() == 1);
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id"));
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("name"));
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("org_id"));
+
+        List<String> fields = Arrays.asList("name", "orgId", "parentId");
+        queryWrapper.clear();
+        queryWrapper = QueryBuilder.toQueryWrapper(entity, fields);
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id"));
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("name"));
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("org_id"));
+        Assert.assertTrue(queryWrapper.getParamNameValuePairs().size() == fields.size());
+
+        list = Binder.joinQueryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() == 1);
+    }
+
+    @Test
+    public void testDynamicSqlQuery(){
+        // 初始化DTO，测试不涉及关联的情况
+        DepartmentDTO dto = new DepartmentDTO();
+        dto.setParentId(10001L);
+
+        // 验证 转换后的wrapper可以直接查询
+        QueryWrapper<DepartmentDTO> queryWrapper = QueryBuilder.toQueryWrapper(dto);
+        List<Department> departments = departmentService.getEntityList(queryWrapper);
+        Assert.assertTrue(departments.size() == 3);
+
+        // builder直接查询，不分页 3条结果
+        List<Department> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
+        Assert.assertTrue(builderResultList.size() == 3);
+
+        // 初始化DTO
+        dto = new DepartmentDTO();
+        dto.setParentId(10001L);
+        dto.setParentName("产品部");
+        //boolean类型
+        dto.setOrgName("苏州帝博");
+
+        // 转换为queryWrapper
+        queryWrapper.clear();
+        queryWrapper = QueryBuilder.toQueryWrapper(dto);
+        queryWrapper.select("id,name,parentId,org_id");
+
+        // 验证直接查询指定字段
+        List<String> fields = Arrays.asList("parentId", "parentName", "orgName");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto, fields).queryList(Department.class);
+        Assert.assertTrue(builderResultList.size() == 3);
+
+        // 查询单条记录
+        Department department = Binder.joinQueryOne(queryWrapper, Department.class);
+        Assert.assertTrue(department.getName() != null);
+
+        // 不分页 3条结果
+        List<Department> list = JoinsBinder.queryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() == 3);
+        // 不分页，直接用wrapper查
+        list = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
+        Assert.assertTrue(list.size() == 3);
+
+        // 测试继续绑定VO  是否有影响
+        List<DepartmentVO> voList = Binder.convertAndBindRelations(list, DepartmentVO.class);
+        Assert.assertTrue(voList.size() == 3);
+        Assert.assertTrue(voList.get(0).getDepartment() != null);
+        Assert.assertTrue(voList.get(0).getOrganizationVO() != null);
+
+        // 分页
+        Pagination pagination = new Pagination();
+        pagination.setPageSize(2);
+        pagination.setPageIndex(1);
+
+        // 第一页  2条结果
+        list = Binder.joinQueryList(queryWrapper, Department.class, pagination);
+        Assert.assertTrue(list.size() == pagination.getPageSize());
+
+        // 测试排序
+        pagination.setOrderBy("orgName:DESC,parentName");
+        pagination.setPageIndex(2);
+        // 第二页 1条结果
+        list = Binder.joinQueryList(queryWrapper, Department.class, pagination);
+        Assert.assertTrue(list.size() == 1);
+    }
+
+    /**
+     * 测试有中间表的动态sql join
+     */
+    @Test
+    public void testDynamicSqlQueryWithMiddleTable() {
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
+        dto.setDeptName("研发组");
+        dto.setDeptId(10002L);
+
+        // builder直接查询，不分页 3条结果
+        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 2);
+
+        dto.setOrgName("苏州帝博");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 2);
+
+        dto.setRoleCode("ADMIN");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 1);
+    }
+
+    @Test
+    public void test(){
+        String sql = buildCheckDeletedColSql("test");
+        Assert.assertTrue(sql.contains("SELECT is_deleted"));
+        Assert.assertTrue(sql.contains("FROM test"));
+        Assert.assertTrue(sql.contains("LIMIT 1"));
+    }
+
+    /**
+     * 构建检测是否有删除字段的sql
+     * @param middleTable
+     * @return
+     */
+    private static String buildCheckDeletedColSql(String middleTable){
+        return new SQL(){
+            {
+                SELECT(Cons.COLUMN_IS_DELETED);
+                FROM(middleTable);
+                LIMIT(1);
+            }
+        }.toString();
+    }
+}

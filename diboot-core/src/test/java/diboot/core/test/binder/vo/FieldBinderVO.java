@@ -44,8 +44,8 @@ public class FieldBinderVO extends User{
     // 支持级联字段关联，相同条件的entity+condition将合并为一条SQL查询
     @BindField(entity = Organization.class, field="name", condition="this.department_id=department.id AND department.org_id=id")
     private String orgName;
-    @BindField(entity = Organization.class, field="telphone", condition="this.department_id=department.id AND department.org_id=id")
-    private String orgTelphone;
+    @BindField(entity = Organization.class, field="parentId", condition="this.department_id=department.id AND department.org_id=id")
+    private Long orgParentId;
 
     // 绑定数据字典枚举
     @BindDict(type="GENDER", field = "gender")

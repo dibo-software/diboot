@@ -15,8 +15,11 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.entity.BaseEntity;
+import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUserRole;
+import com.diboot.iam.vo.IamRoleVO;
 
 import java.util.List;
 
@@ -37,6 +40,15 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
     List<IamRole> getUserRoleList(String userType, Long userId);
 
     /**
+     * 获取用户所有的全部角色
+     * @param userType
+     * @param userId
+     * @param extentionObjId 岗位等扩展对象id
+     * @return
+     */
+    List<IamRole> getUserRoleList(String userType, Long userId, Long extentionObjId);
+
+    /**
      * 批量创建用户-角色的关系
      * @param userType
      * @param userId
@@ -54,4 +66,16 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      */
     boolean updateUserRoleRelations(String userType, Long userId, List<Long> roleIds);
 
+    /***
+     * 获取用户的所有角色列表（包括扩展的关联角色）
+     * @param userObject
+     * @return
+     */
+    List<IamRoleVO> getAllRoleVOList(BaseEntity userObject);
+
+    /**
+     * 获取Iam扩展实现
+     * @return
+     */
+    IamExtensible getIamExtensible();
 }

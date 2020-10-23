@@ -18,6 +18,7 @@ package com.diboot.core.binding.annotation;
 import java.lang.annotation.*;
 
 /**
+ * 绑定字典注解
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/1/21

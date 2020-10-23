@@ -17,6 +17,9 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.Binder;
+import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamExtensible;
@@ -28,8 +31,8 @@ import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
+import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +61,6 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     // 扩展接口
     private IamExtensible iamExtensible;
-    private boolean iamExtensibleImplChecked = false;
 
     /**
      * 超级管理员的角色ID
@@ -67,6 +69,11 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRole> getUserRoleList(String userType, Long userId) {
+        return getUserRoleList(userType, userId, null);
+    }
+
+    @Override
+    public List<IamRole> getUserRoleList(String userType, Long userId, Long extentionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
@@ -81,15 +88,8 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
                 .select(IamRole::getId, IamRole::getName, IamRole::getCode)
                 .in(IamRole::getId, roleIds));
         // 加载扩展角色
-        if(!iamExtensibleImplChecked){
-            try{
-                iamExtensible = ContextHelper.getBean(IamExtensible.class);
-            }
-            catch (Exception e){}
-            iamExtensibleImplChecked = true;
-        }
-        if(iamExtensible != null){
-            List<IamRole> extRoles = iamExtensible.getExtentionRoles(userType, userId);
+        if(getIamExtensible() != null){
+            List<IamRole> extRoles = getIamExtensible().getExtentionRoles(userType, userId, extentionObjId);
             if(V.notEmpty(extRoles)){
                 roles.addAll(extRoles);
                 roles = BeanUtils.distinctByKey(roles, IamRole::getId);
@@ -208,6 +208,35 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
             clearUserAuthCache(userType, userId);
         }
         return success;
+    }
+
+    @Override
+    public List<IamRoleVO> getAllRoleVOList(BaseEntity userObject) {
+        List<IamRole> roleList = getUserRoleList(userObject.getClass().getSimpleName(), userObject.getId());
+        if (V.isEmpty(roleList)){
+            return null;
+        }
+        return Binder.convertAndBindRelations(roleList, IamRoleVO.class);
+    }
+
+    // 扩展接口检查标记
+    private boolean iamExtensibleImplChecked = false;
+
+    /**
+     * 获取Iam扩展实现
+     * @return
+     */
+    @Override
+    public IamExtensible getIamExtensible(){
+        // 加载扩展角色
+        if(!iamExtensibleImplChecked){
+            try{
+                iamExtensible = ContextHelper.getBean(IamExtensible.class);
+            }
+            catch (Exception e){}
+            iamExtensibleImplChecked = true;
+        }
+        return iamExtensible;
     }
 
     /**

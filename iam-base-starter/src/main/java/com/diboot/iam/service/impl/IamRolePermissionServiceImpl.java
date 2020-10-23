@@ -16,7 +16,7 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.util.IGetter;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.entity.IamRolePermission;
@@ -24,7 +24,6 @@ import com.diboot.iam.mapper.IamRolePermissionMapper;
 import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.service.IamRolePermissionService;
 import com.diboot.iam.service.IamRoleService;
-import com.diboot.iam.util.BeanUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamFrontendPermissionVO;
 import lombok.extern.slf4j.Slf4j;

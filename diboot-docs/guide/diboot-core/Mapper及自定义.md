@@ -1,7 +1,7 @@
 # Mapper及自定义
+> 如果您的mapper.xml文件放置于src下的mapper接口同目录下，需要配置编译包含该路径下的xml文件。具体参考如下：
 
-## Gradle设置
-> 如果您使用了gradle，并且您的Mapper.xml文件实在java代码目录下，那么除了MapperScan的注解之外，还需要对gradle进行相关设置，使其能够找到相对应的Mapper.xml文件，如：
+* Gradle设置
 ```groovy
 sourceSets {
     main {
@@ -18,9 +18,7 @@ sourceSets {
     }
 }
 ```
-
-## Maven设置
-> 如果您使用Maven作为您的构建工具，并且您的Mapper.xml文件是在java代码目录下，那么除了MapperScan的注解之外，还需要再项目中的pom.xml文件中的添加如下配置，使其能够找到您的Mapper.xml文件，如：
+* Maven设置
 ```xml
 <build>
     <resources>
@@ -39,15 +37,11 @@ sourceSets {
 ## Mapper类
 > Mapper类需要继承diboot-core中的BaseCrudMapper基础类，并传入相对应的实体类，如：
 ```java
-package com.example.demo.mapper;
-
 import com.diboot.core.mapper.BaseCrudMapper;
-import com.example.demo.entity.Demo;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface DemoMapper extends BaseCrudMapper<Demo> {
-
 }
 ```
  * BaseCrudMapper类继承了mybatis-plus提供的BaseMapper类，对于BaseCrudMapper中已有的相关接口可以参考[mybatis-plus关于Mapper类的文档](https://mybatis.plus/guide/crud-interface.html#mapper-crud-%E6%8E%A5%E5%8F%A3)
@@ -64,20 +58,15 @@ public interface DemoMapper extends BaseCrudMapper<Demo> {
 
 ## 自定义Mapper接口
 
-> 自定义Mapper接口可以使用mybatis增加mapper接口的处理方案，如：
+> 自定义Mapper接口使用Mybatis处理方式，增加mapper接口的处理方案，如：
 ```java
-package com.example.demo.mapper;
-
 import com.diboot.core.mapper.BaseCrudMapper;
-import com.example.demo.entity.Demo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface DemoMapper extends BaseCrudMapper<Demo> {
-
     int forceDeleteEntities(@Param("name") String name);
-
 }
 ```
 
@@ -85,10 +74,10 @@ public interface DemoMapper extends BaseCrudMapper<Demo> {
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "./mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.DemoMapper">
-
+    
     <update id="forceDeleteEntities" parameterType="String">
         DELETE FROM demo WHERE name=#{name}
     </update>
-
+    
 </mapper>
 ```

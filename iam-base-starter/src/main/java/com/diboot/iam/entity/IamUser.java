@@ -16,7 +16,6 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.entity.BaseExtEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,7 +30,7 @@ import javax.validation.constraints.NotNull;
 * @date 2019-12-17
 */
 @Getter @Setter @Accessors(chain = true)
-public class IamUser extends BaseExtEntity {
+public class IamUser extends BaseLoginUser {
     private static final long serialVersionUID = -8462352695775599715L;
 
     // 组织ID
@@ -75,4 +74,10 @@ public class IamUser extends BaseExtEntity {
     // 头像
     @TableField()
     private String avatarUrl;
+
+    @Override
+    public String getDisplayName() {
+        return this.realname;
+    }
+
 }

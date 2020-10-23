@@ -15,7 +15,6 @@
  */
 package com.diboot.core.binding.binder;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -43,10 +42,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
      * @param voList
      */
     public EntityListBinder(IService<T> serviceInstance, List voList){
-        this.referencedService = serviceInstance;
-        this.annoObjectList = voList;
-        this.queryWrapper = new QueryWrapper<T>();
-        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+        super(serviceInstance, voList);
     }
 
     @Override
@@ -117,24 +113,6 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         BeanUtils.bindPropValueOfList(annoObjectField, annoObjectList, annoObjectForeignKey, valueEntityListMap);
     }
 
-    /**
-     * 从Map中提取ID的值
-     * @param middleTableResultMap
-     * @return
-     */
-    private List extractIdValueFromMap(Map<String, List> middleTableResultMap) {
-        List entityIdList = new ArrayList();
-        for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
-            if(V.isEmpty(entry.getValue())){
-                continue;
-            }
-            for(Object id : entry.getValue()){
-                if(!entityIdList.contains(id)){
-                    entityIdList.add(id);
-                }
-            }
-        }
-        return entityIdList;
-    }
+
 
 }

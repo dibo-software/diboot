@@ -39,6 +39,10 @@ public abstract class AuthCredential implements Serializable {
      * 用户类型的Class
      */
     private Class userTypeClass = IamUser.class;
+    /**
+     * 用户类型
+     */
+    private String userType;
 
     @NotNull(message = "认证方式不能为空")
     private String authType;
@@ -62,6 +66,21 @@ public abstract class AuthCredential implements Serializable {
      * @return
      */
     public String getUserType(){
+        if(userType != null){
+            return userType;
+        }
         return userTypeClass.getSimpleName();
     }
+
+    /**
+     * 指定用户类型class
+     * @param userTypeClass
+     */
+    public void setUserTypeClass(Class userTypeClass){
+       this.userTypeClass = userTypeClass;
+       if(this.userType == null){
+           this.userType = userTypeClass.getSimpleName();
+       }
+    }
+
 }

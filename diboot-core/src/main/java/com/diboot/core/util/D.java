@@ -141,6 +141,18 @@ public class D extends DateUtils{
 		return sdf.format(date);
 	}
 
+	/**
+	 * 获取日期的下一天
+	 * @param date 基准日期
+	 * @return yyyy-MM-dd
+	 */
+	public static Date nextDay(Date date){
+		if(date == null){
+			return null;
+		}
+		return addDays(date, 1);
+	}
+
 	/***
 	 * 获取格式化的日期时间
 	 * @param date

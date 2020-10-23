@@ -29,4 +29,9 @@ public class FileProperties {
      * 是否初始化，默认true自动安装SQL
      */
     private boolean initSql = true;
+
+    /**
+     * 最大上传大小（默认10M）
+     */
+    private Long maxUploadSize = 10 * 1024 * 1024L;
 }

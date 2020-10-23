@@ -23,11 +23,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 附带extdata扩展字段的Entity父类
+ * 附带extdata扩展字段的Entity父类 （已废弃）
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2018/12/27
  */
+@Deprecated
 public abstract class BaseExtEntity extends BaseEntity {
     private static final long serialVersionUID = 10204L;
 

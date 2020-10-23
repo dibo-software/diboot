@@ -21,6 +21,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -30,8 +31,8 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,26 +45,27 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
-public class BaseCrudRestController<E extends BaseEntity, VO extends Serializable> extends BaseController {
+public class BaseCrudRestController<E extends BaseEntity> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
     /**
      * Entity，VO对应的class
      */
     private Class<E> entityClass;
-    private Class<VO> voClasss;
     /**
      * Service实现类
      */
     private BaseService baseService;
 
+    @Autowired
+    protected DictionaryService dictionaryService;
+
     /**
      * 查询ViewObject，用于子类重写的方法
      * @param id
-     * @param request
      * @return
      * @throws Exception
      */
-    protected JsonResult getViewObject(Serializable id, HttpServletRequest request) throws Exception{
+    protected <VO> JsonResult getViewObject(Serializable id, Class<VO> voClass) throws Exception{
         // 检查String类型id
         if(id instanceof String && !S.isNumeric((String)id)){
             String pk = ContextHelper.getPrimaryKey(getEntityClass());
@@ -71,7 +73,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
                 throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
             }
         }
-        VO vo = (VO)getService().getViewObject(id, getVOClass());
+        VO vo = (VO)getService().getViewObject(id, voClass);
         return new JsonResult(vo);
     }
 
@@ -83,10 +85,10 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult getViewObjectList(E entity, Pagination pagination, HttpServletRequest request) throws Exception {
-        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity, request);
+    protected <VO> JsonResult getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
+        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity);
         // 查询当前页的数据
-        List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, getVOClass());
+        List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
         // 返回结果
         return JsonResult.OK(voList).bindPagination(pagination);
     }
@@ -125,7 +127,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(E entity, HttpServletRequest request) throws Exception {
+    protected JsonResult createEntity(E entity) throws Exception {
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
@@ -152,7 +154,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(Serializable id, E entity, HttpServletRequest request) throws Exception {
+    protected JsonResult updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
         if(entity.getId() == null){
             String pk = ContextHelper.getPrimaryKey(getEntityClass());
@@ -188,7 +190,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      * @throws Exception
      */
-    protected JsonResult deleteEntity(Serializable id, HttpServletRequest request) throws Exception {
+    protected JsonResult deleteEntity(Serializable id) throws Exception {
         if (id == null) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
@@ -218,7 +220,7 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
      * @return
      * @throws Exception
      */
-    protected JsonResult batchDeleteEntities(Collection<? extends Serializable> ids, HttpServletRequest request) throws Exception {
+    protected JsonResult batchDeleteEntities(Collection<? extends Serializable> ids) throws Exception {
         if (V.isEmpty(ids)) {
             return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
         }
@@ -355,17 +357,4 @@ public class BaseCrudRestController<E extends BaseEntity, VO extends Serializabl
         return this.entityClass;
     }
 
-    /**
-     * 获取VO的class
-     * @return
-     */
-    protected Class<VO> getVOClass(){
-        if(this.voClasss == null){
-            this.voClasss = BeanUtils.getGenericityClass(this, 1);
-            if(this.voClasss == null) {
-                log.warn("无法从 {} 类定义中获取泛型类voClasss", this.getClass().getName());
-            }
-        }
-        return this.voClasss;
-    }
 }

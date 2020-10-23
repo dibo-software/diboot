@@ -123,6 +123,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
         }
         expressList.add(isNullExpression);
     }
+
+    @Override
+    public void visit(IsBooleanExpression isBooleanExpression) {
+
+    }
+
     @Override
     public void visit(InExpression inExpression) {
         if(!(inExpression.getLeftExpression() instanceof Column)){
@@ -130,6 +136,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
         }
         expressList.add(inExpression);
     }
+
+    @Override
+    public void visit(FullTextSearch fullTextSearch) {
+
+    }
+
     @Override
     public void visit(Between between) {
         if(!(between.getLeftExpression() instanceof Column)){
@@ -274,6 +286,10 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
 
     @Override
+    public void visit(ArrayExpression arrayExpression) {
+    }
+
+    @Override
     public void visit(BitwiseRightShift aThis) {
     }
     @Override
@@ -323,6 +339,10 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
     @Override
     public void visit(Division division) {
+    }
+
+    @Override
+    public void visit(IntegerDivision integerDivision) {
     }
     @Override
     public void visit(Multiplication multiplication) {

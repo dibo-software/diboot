@@ -16,7 +16,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
@@ -71,7 +71,7 @@ public class TestEntityListBinder {
         queryWrapper.eq(Department::getId, 10001L);
         List<Department> entityList = departmentService.getEntityList(queryWrapper);
         // 自动绑定
-        List<EntityListSimpleBinderVO> voList = RelationsBinder.convertAndBind(entityList, EntityListSimpleBinderVO.class);
+        List<EntityListSimpleBinderVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleBinderVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
         for(EntityListSimpleBinderVO vo : voList){
@@ -95,9 +95,9 @@ public class TestEntityListBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.list(queryWrapper);
+        List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
-        List<EntityListComplexBinderVO> voList = RelationsBinder.convertAndBind(userList, EntityListComplexBinderVO.class);
+        List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
         for(EntityListComplexBinderVO vo : voList){
@@ -114,7 +114,7 @@ public class TestEntityListBinder {
         queryWrapper.eq(Dictionary::getType, "GENDER");
 
         Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
-        DictionaryVO vo = RelationsBinder.convertAndBind(dictionary, DictionaryVO.class);
+        DictionaryVO vo = Binder.convertAndBindRelations(dictionary, DictionaryVO.class);
         Assert.assertTrue(vo.getChildren().size() > 0);
     }
 }

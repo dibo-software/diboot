@@ -18,18 +18,13 @@ package com.diboot.core.binding.parser;
 import com.diboot.core.binding.binder.BaseBinder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.*;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 条件表达式的管理器
@@ -37,41 +32,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version v2.0
  * @date 2019/4/1
  */
-public class ConditionManager {
-    private static final Logger log = LoggerFactory.getLogger(ConditionManager.class);
-
-    /**
-     * 表达式缓存Map
-     */
-    private static Map<String, List<Expression>> expressionParseResultMap = new ConcurrentHashMap<>();
-
-    /**
-     * 获取解析后的Expression列表
-     * @param condition
-     * @return
-     */
-    private static List<Expression> getExpressionList(String condition){
-        if(V.isEmpty(condition)){
-            return null;
-        }
-        List<Expression> expressionList = expressionParseResultMap.get(condition);
-        if(expressionList == null){
-            ConditionParser visitor = new ConditionParser();
-            try{
-                Expression expression = CCJSqlParserUtil.parseCondExpression(condition);
-                expression.accept(visitor);
-                expressionList = visitor.getExpressList();
-                expressionParseResultMap.put(condition, expressionList);
-            }
-            catch (Exception e){
-                log.error("关联条件解析异常", e);
-            }
-        }
-        return expressionList;
-    }
+@Slf4j
+public class ConditionManager extends BaseConditionManager{
 
     /**
      * 附加条件到binder
+     * @param condition
      * @param binder
      * @throws Exception
      */
@@ -240,7 +206,7 @@ public class ConditionManager {
                         // 绑定左手边连接列
                         String leftHandColumn = removeLeftAlias(leftColumn);
                         // this. 开头的vo对象字段
-                        if(isVoColumn(leftColumn)){
+                        if(isCurrentObjColumn(leftColumn)){
                             // 识别到vo对象的属性 departmentId
                             annoObjectForeignKey = leftHandColumn;
                             // 对应中间表的关联字段
@@ -258,7 +224,7 @@ public class ConditionManager {
                     if(leftColumn.startsWith(tableName+".")){
                         // 绑定右手边连接列
                         String rightHandColumn = removeLeftAlias(rightColumn);
-                        if(isVoColumn(rightColumn)){
+                        if(isCurrentObjColumn(rightColumn)){
                             // 识别到vo对象的属性 departmentId
                             annoObjectForeignKey = rightHandColumn;
                             // 对应中间表的关联字段
@@ -337,61 +303,6 @@ public class ConditionManager {
     }
 
     /**
-     * 提取中间表表对象名
-     * @param expressionList
-     * @return
-     */
-    private static String extractMiddleTableName(List<Expression> expressionList){
-        Map<String, Integer> tableNameCountMap = new HashMap<>();
-        for(Expression operator : expressionList){
-            if(operator instanceof EqualsTo){
-                EqualsTo express = (EqualsTo)operator;
-                // 均为列
-                if(express.getLeftExpression() instanceof Column && express.getRightExpression() instanceof Column){
-                    // 统计左侧列中出现的表名
-                    String leftColumn = express.getLeftExpression().toString();
-                    countTableName(tableNameCountMap, leftColumn);
-                    // 统计右侧列中出现的表名
-                    String rightColumn = express.getRightExpression().toString();
-                    countTableName(tableNameCountMap, rightColumn);
-                }
-            }
-        }
-        if(tableNameCountMap.isEmpty()){
-            return null;
-        }
-        String tableName = null;
-        int count = 1;
-        for(Map.Entry<String, Integer> entry : tableNameCountMap.entrySet()){
-            if(entry.getValue() > count){
-                count = entry.getValue();
-                tableName = entry.getKey();
-            }
-        }
-        return tableName;
-    }
-
-    /**
-     * 统计表名出现的次数
-     * @param tableNameCountMap
-     * @param columnStr
-     */
-    private static void countTableName(Map<String, Integer> tableNameCountMap, String columnStr) {
-        if(columnStr.contains(".")){
-            // 如果是中间表(非this,self标识的当前表)
-            if(!isVoColumn(columnStr)){
-                String tempTableName = S.substringBefore(columnStr, ".");
-                Integer count = tableNameCountMap.get(tempTableName);
-                if(count == null){
-                    count = 0;
-                }
-                count++;
-                tableNameCountMap.put(tempTableName, count);
-            }
-        }
-    }
-
-    /**
      * 注解列
      * @return
      */
@@ -400,17 +311,6 @@ public class ConditionManager {
             annoColumn = S.substringAfter(annoColumn, ".");
         }
         return annoColumn;
-    }
-
-    /**
-     * 是否为VO自身属性（以this开头的）
-     * @param expression
-     * @return
-     */
-    private static boolean isVoColumn(String expression){
-        String tempTableName = S.substringBefore(expression, ".");
-        // 如果是中间表(非this,self标识的当前表)
-        return "this".equals(tempTableName) || "self".equals(tempTableName);
     }
 
 }

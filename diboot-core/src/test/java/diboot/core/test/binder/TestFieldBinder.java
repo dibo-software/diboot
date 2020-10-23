@@ -16,7 +16,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -57,16 +57,16 @@ public class TestFieldBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.list(queryWrapper);
+        List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
-        List<FieldBinderVO> voList = RelationsBinder.convertAndBind(userList, FieldBinderVO.class);
+        List<FieldBinderVO> voList = Binder.convertAndBindRelations(userList, FieldBinderVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
         for(FieldBinderVO vo : voList){
             // 验证直接关联和通过中间表间接关联的绑定
             Assert.assertNotNull(vo.getDeptName());
             Assert.assertNotNull(vo.getOrgName());
-            Assert.assertNotNull(vo.getOrgTelphone());
+            Assert.assertNotNull(vo.getOrgParentId());
             // 验证枚举值已绑定
             Assert.assertNotNull(vo.getGenderLabel());
 
@@ -79,9 +79,9 @@ public class TestFieldBinder {
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(User::getId, 1001L, 1002L);
-        List<User> userList = userService.list(queryWrapper);
+        List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
-        List<UserVO> voList = RelationsBinder.convertAndBind(userList, UserVO.class);
+        List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);
         if(V.notEmpty(voList)){
             for(UserVO vo : voList){
                 Assert.assertNotNull(vo.getDeptName());

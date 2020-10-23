@@ -16,6 +16,7 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.copy.Accept;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,7 @@ public class User extends BaseEntity {
     @TableField
     private String username;
 
+    @Accept(name = "itemName")
     @TableField
     private String gender;
 

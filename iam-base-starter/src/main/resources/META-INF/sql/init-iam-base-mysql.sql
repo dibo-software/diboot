@@ -11,13 +11,12 @@ create table iam_user
   email        varchar(50)                           null comment 'Email',
   avatar_url   varchar(200)                          null comment '头像地址',
   status       varchar(10) default 'A'               not null comment '状态',
-  extdata      varchar(100)                          null comment '扩展属性',
   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
   create_time  timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '系统用户';
 -- 索引
-create index idx_iam_user on iam_user (mobile_phone);
-create index idx_iam_user_2 on iam_user (email);
+create index idx_iam_user_1 on iam_user (org_id);
+create index idx_iam_user_2 on iam_user (mobile_phone);
 create unique index uidx_iam_user on iam_user (user_num);
 
 -- 账号表
@@ -31,7 +30,6 @@ create table iam_account
   auth_secret  varchar(32)                            null comment '密码',
   secret_salt  varchar(32)                            null comment '加密盐',
   status       varchar(10)  default 'A'               not null comment '用户状态',
-  extdata      varchar(100)                           null comment '扩展属性',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
   create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '登录账号';
@@ -102,7 +100,6 @@ create table iam_login_trace
   auth_account varchar(100)                           not null comment '用户名',
   ip_address   varchar(50)                            null comment 'IP',
   user_agent   varchar(200)                           null comment '客户端信息',
-  extdata      varchar(100)                           null comment '扩展字段',
   is_success   tinyint(1)   default 0                 not null comment '是否成功',
   create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '登录日志';

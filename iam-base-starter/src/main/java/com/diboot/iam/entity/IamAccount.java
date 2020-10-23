@@ -17,7 +17,7 @@ package com.diboot.iam.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.entity.BaseExtEntity;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.iam.config.Cons;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * @date 2019-12-03
  */
 @Getter @Setter @Accessors(chain = true)
-public class IamAccount extends BaseExtEntity {
+public class IamAccount extends BaseEntity {
     private static final long serialVersionUID = -6825516429612507644L;
 
     // 用户类型

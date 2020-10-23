@@ -16,23 +16,27 @@
 package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.UserRole;
+import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -52,8 +56,10 @@ import java.util.*;
 public class BaseServiceTest {
 
     @Autowired
-    @Qualifier("dictionaryService")
     DictionaryServiceImpl dictionaryService;
+
+    @Autowired
+    UserService userService;
 
     @Test
     public void testGet(){
@@ -87,6 +93,11 @@ public class BaseServiceTest {
         List<Long> ids = BeanUtils.collectIdToList(dictionaryList);
         dictionaryList = dictionaryService.getEntityListByIds(ids);
         Assert.assertTrue(V.notEmpty(dictionaryList));
+
+        // 获取map
+        List<Map<String, Object>> mapList = dictionaryService.getMapList(null, new Pagination());
+        Assert.assertTrue(mapList.size() > 0 && mapList.size() <= BaseConfig.getPageSize());
+
     }
 
     @Test
@@ -144,6 +155,7 @@ public class BaseServiceTest {
         dictionaryList.get(2).setItemValue("HZ2");
         dictionaryService.updateEntity(dictionaryList.get(2));
         Assert.assertTrue(success);
+
     }
 
     @Test
@@ -227,7 +239,6 @@ public class BaseServiceTest {
         Assert.assertTrue(success);
         dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
         Assert.assertTrue(V.isEmpty(dictionaryList2));
-
     }
 
     @Test
@@ -257,4 +268,82 @@ public class BaseServiceTest {
         System.out.println(database);
         Assert.assertTrue(database.equals("mysql") || database.equals("oracle"));
     }
+
+    @Test
+    public void testGetValuesOfField(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        List<Long> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
+        Assert.assertTrue(ids.size() > 0);
+
+        LambdaQueryWrapper<Dictionary> wrapper = new QueryWrapper<Dictionary>().lambda()
+                .eq(Dictionary::getType, "GENDER");
+        List<String> itemValues = dictionaryService.getValuesOfField(wrapper, Dictionary::getItemValue);
+        Assert.assertTrue(itemValues.size() > 0);
+        System.out.println(JSON.stringify(ids) + " : " + JSON.stringify(itemValues));
+    }
+
+    @Test
+    public void testGetLimit(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        queryWrapper.gt("parent_id", 0);
+
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        Assert.assertTrue(dictionary != null);
+
+        List<Dictionary> ids = dictionaryService.getEntityListLimit(queryWrapper, 5);
+        Assert.assertTrue(ids.size() == 2);
+    }
+
+    @Test
+    public void testPagination(){
+        Dictionary dict = new Dictionary();
+        dict.setParentId(1L);
+        dict.setType("GENDER");
+        dict.setEditable(true);
+
+        QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
+
+        // 查询当前页的数据
+        Pagination pagination = new Pagination();
+        pagination.setPageSize(1);
+
+        List<DictionaryVO> voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
+        Assert.assertTrue(voList.size() == 1);
+        Assert.assertTrue(pagination.getTotalPage() >= 2);
+
+        pagination.setPageIndex(2);
+        voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
+        Assert.assertTrue(voList.size() == 1);
+    }
+
+    /**
+     * 测试n-n的批量新建/更新
+     */
+    @Test
+    @Transactional
+    public void testCreateUpdateN2NRelations(){
+        Long userId = 10001L;
+        LambdaQueryWrapper<UserRole> queryWrapper = new QueryWrapper<UserRole>().lambda().eq(UserRole::getUserId, userId);
+
+        // 新增
+        List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        List<UserRole> list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        Assert.assertTrue(list.size() == roleIdList.size());
+
+        // 更新
+        roleIdList = Arrays.asList(13L);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        Assert.assertTrue(list.size() == 1);
+
+        // 删除
+        roleIdList = null;
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        Assert.assertTrue(list.size() == 0);
+    }
+
 }

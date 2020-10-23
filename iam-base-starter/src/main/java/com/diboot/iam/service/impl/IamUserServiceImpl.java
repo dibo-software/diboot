@@ -16,20 +16,21 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserAccountDTO;
-import com.diboot.iam.entity.*;
+import com.diboot.iam.entity.IamAccount;
+import com.diboot.iam.entity.IamFrontendPermission;
+import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
-import com.diboot.iam.util.BeanUtils;
+import com.diboot.iam.util.IamHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,34 +67,13 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         }
         // 附加额外的一些权限给与特性的角色
         attachExtraPermissions(roleVOList);
-        // 对RoleList做聚合处理，以适配前端
-        List<String> nameList = new ArrayList<>();
-        List<String> codeList = new ArrayList<>();
-        List<IamFrontendPermission> allPermissionList = new ArrayList<>();
-        roleVOList.forEach(vo -> {
-            nameList.add(vo.getName());
-            codeList.add(vo.getCode());
-            if (V.notEmpty(vo.getPermissionList())){
-                allPermissionList.addAll(vo.getPermissionList());
-            }
-        });
-        // 对permissionList进行去重
-        List permissionList = BeanUtils.distinctByKey(allPermissionList, IamFrontendPermission::getId);
-        IamRoleVO roleVO = new IamRoleVO();
-        roleVO.setName(S.join(nameList));
-        roleVO.setCode(S.join(codeList));
-        roleVO.setPermissionList(permissionList);
-
-        return roleVO;
+        // 组合为前端格式
+        return IamHelper.buildRoleVo4FrontEnd(roleVOList);
     }
 
     @Override
     public List<IamRoleVO> getAllRoleVOList(IamUser iamUser) {
-        List<IamRole> roleList = iamUserRoleService.getUserRoleList(IamUser.class.getSimpleName(), iamUser.getId());
-        if (V.isEmpty(roleList)){
-            return null;
-        }
-        return RelationsBinder.convertAndBind(roleList, IamRoleVO.class);
+        return iamUserRoleService.getAllRoleVOList(iamUser);
     }
 
     @Override

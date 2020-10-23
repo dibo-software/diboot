@@ -38,6 +38,10 @@ public class Cons {
      * 排序 - 降序标记
      */
     public static final String ORDER_DESC = "DESC";
+    /**
+     * 逻辑删除列名
+     */
+    public static final String COLUMN_IS_DELETED = "is_deleted";
     /***
      * 默认字段名定义
      */
@@ -61,7 +65,15 @@ public class Cons {
         /**
          * 创建时间字段
          */
-        createTime
+        createTime,
+        /**
+         * 更新时间
+         */
+        updateTime,
+        /**
+         * 创建人
+         */
+        createBy
     }
 
 }

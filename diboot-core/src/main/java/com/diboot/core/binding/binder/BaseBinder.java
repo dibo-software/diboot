@@ -24,14 +24,12 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 关系绑定Binder父类
@@ -69,6 +67,18 @@ public abstract class BaseBinder<T> {
     protected MiddleTable middleTable;
 
     protected Class<T> referencedEntityClass;
+
+    /***
+     * 构造方法
+     * @param serviceInstance
+     * @param voList
+     */
+    public BaseBinder(IService<T> serviceInstance, List voList){
+        this.referencedService = serviceInstance;
+        this.annoObjectList = voList;
+        this.queryWrapper = new QueryWrapper<T>();
+        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+    }
 
     /**
      * join连接条件，指定当前VO的取值方法和关联entity的取值方法
@@ -211,6 +221,26 @@ public abstract class BaseBinder<T> {
     }
 
     /**
+     * 从Map中提取ID的值
+     * @param middleTableResultMap
+     * @return
+     */
+    protected List extractIdValueFromMap(Map<String, List> middleTableResultMap) {
+        List entityIdList = new ArrayList();
+        for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
+            if(V.isEmpty(entry.getValue())){
+                continue;
+            }
+            for(Object id : entry.getValue()){
+                if(!entityIdList.contains(id)){
+                    entityIdList.add(id);
+                }
+            }
+        }
+        return entityIdList;
+    }
+
+    /**
      * 检查list，结果过多打印warn
      * @param list
      * @return
@@ -244,6 +274,5 @@ public abstract class BaseBinder<T> {
         }
         return value;
     }
-
 
 }
