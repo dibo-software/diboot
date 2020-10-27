@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <a class="promotions" href="/guide/promotions/1024.html">1024视频教程众筹活动，了解一下？</a>
+    <a class="promotions" href="https://www.oschina.net/p/diboot" target="_blank">欢迎帮我们投票，让我们出道！</a>
   </div>
 </template>
 
