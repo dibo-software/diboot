@@ -32,7 +32,7 @@ public class UserDTO {
 
 ##### 方式2. 直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行构建
 ~~~java
-    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto);
+    QueryWrapper<User> queryWrapper = QueryBuilder.toQueryWrapper(userDto);
 ~~~
 > 该方式基于dto对象非空值字段构建
 
@@ -82,7 +82,7 @@ WHERE self.gender=? AND (r1.name LIKE ?) AND self.is_deleted=0
 @DataAccessCheckpoint(type = CheckpointType.ORG)
 private Long orgId;
 ~~~
-##### 2. 实现DataAccessCheckInterface接口，返回对应CheckpointType的合法ID集合
+##### 2. 实现DataAccessInterface接口，返回对应CheckpointType的合法ID集合
 ~~~java
 public class DataAccessCheckImpl implements DataAccessCheckInterface {
     @Override
