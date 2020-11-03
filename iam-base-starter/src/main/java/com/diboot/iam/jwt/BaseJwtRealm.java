@@ -22,6 +22,7 @@ import com.diboot.core.vo.KeyValue;
 import com.diboot.iam.annotation.process.ApiPermissionCache;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
+import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
@@ -38,7 +39,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,9 +53,7 @@ import java.util.Set;
 @Slf4j
 public class BaseJwtRealm extends AuthorizingRealm {
 
-    @Autowired
     private IamUserRoleService iamUserRoleService;
-    @Autowired
     private IamRolePermissionService iamRolePermissionService;
 
     @Override
@@ -106,8 +104,9 @@ public class BaseJwtRealm extends AuthorizingRealm {
             if(loginUser == null){
                 throw new AuthenticationException("用户不存在");
             }
-            if(iamUserRoleService.getIamExtensible() != null){
-                KeyValue extentionObj = iamUserRoleService.getIamExtensible().getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId(), jwtToken.getExtObj());
+            IamExtensible iamExtensible = getIamUserRoleService().getIamExtensible();
+            if(iamExtensible != null){
+                KeyValue extentionObj = iamExtensible.getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId(), jwtToken.getExtObj());
                 if(extentionObj != null){
                     loginUser.setExtentionObj(extentionObj);
                 }
@@ -134,7 +133,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
             extentionObjId = (Long)extentionObj.getV();
         }
         // 获取角色列表
-        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extentionObjId);
+        List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extentionObjId);
         // 如果没有任何角色，返回
         if (V.isEmpty(roleList)){
             return authorizationInfo;
@@ -149,7 +148,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
         });
         // 整理所有权限许可列表，从缓存匹配
         Set<String> allPermissionCodes = new HashSet<>();
-        List<String> apiUrlList = iamRolePermissionService.getApiUrlList(Cons.APPLICATION, roleIds);
+        List<String> apiUrlList = getIamRolePermissionService().getApiUrlList(Cons.APPLICATION, roleIds);
         if(V.notEmpty(apiUrlList)){
             apiUrlList.stream().forEach(set->{
                 for(String uri : set.split(Cons.SEPARATOR_COMMA)){
@@ -164,6 +163,20 @@ public class BaseJwtRealm extends AuthorizingRealm {
         authorizationInfo.setRoles(allRoleCodes);
         authorizationInfo.setStringPermissions(allPermissionCodes);
         return authorizationInfo;
+    }
+
+    private IamUserRoleService getIamUserRoleService(){
+        if(iamUserRoleService == null){
+            iamUserRoleService = ContextHelper.getBean(IamUserRoleService.class);
+        }
+        return iamUserRoleService;
+    }
+
+    private IamRolePermissionService getIamRolePermissionService(){
+        if(iamRolePermissionService == null){
+            iamRolePermissionService = ContextHelper.getBean(IamRolePermissionService.class);
+        }
+        return iamRolePermissionService;
     }
 
 }
