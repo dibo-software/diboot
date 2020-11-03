@@ -75,19 +75,33 @@ WHERE self.gender=? AND (r1.name LIKE ?) AND self.is_deleted=0
 
 ### 4. 数据权限控制
 > 某些场景下搜索查询需要绑定一些强制条件，用于数据权限控制，如只能查询本部门的数据。
-##### 1. 在需要控制的字段上添加@DataAccessCheckpoint注解，指定CheckpointType。
+#### 1. 在需要数据权限控制对象的Entity中的字段上添加@DataAccessCheckpoint注解，指定CheckpointType。
 示例代码：
 ~~~java
 // 数据权限检查点
 @DataAccessCheckpoint(type = CheckpointType.ORG)
 private Long orgId;
 ~~~
-##### 2. 实现DataAccessInterface接口，返回对应CheckpointType的合法ID集合
+#### 2. 实现DataAccessInterface接口，返回当前用户可访问的对应CheckpointType的合法ID集合
 ~~~java
-public class DataAccessCheckImpl implements DataAccessCheckInterface {
+public class DataAccessPermissionImpl implements DataAccessInterface {
     @Override
     public List<Long> getAccessibleIds(CheckpointType type) {
-        // 返回对应检查点的合法ID
+        // 返回对应检查点的当前用户可访问的合法ID
+        if(type.equals(CheckpointType.ORG)){
+            return Arrays.asList(100001L, 100002L);
+        }
+        ...
     }
+}
 ~~~
-通过QueryBuilder构建时，将自动追加IN(合法ID)条件。具体可参考: diboot-IAM组件。
+#### 3. Spring config类中配置Mybatis-plus数据权限拦截器，启用数据权限拦截
+~~~java
+@Bean
+public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+    // 启用diboot数据权限拦截器，将拦截并修改需要控制数据权限的SQL
+    interceptor.addInnerInterceptor(new DataAccessControlInteceptor());
+    return interceptor;
+}
+~~~

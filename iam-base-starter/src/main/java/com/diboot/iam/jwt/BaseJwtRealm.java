@@ -69,7 +69,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
     }
 
     /***
-     * 认证
+     * 获取认证信息
      * @param token
      * @return
      * @throws AuthenticationException
@@ -119,7 +119,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
     }
 
     /***
-     * 授权
+     * 获取授权信息
      * @param principals
      * @return
      */
