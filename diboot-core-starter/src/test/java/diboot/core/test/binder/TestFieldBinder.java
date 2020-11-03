@@ -24,7 +24,7 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
-import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.SysuserService;
 import diboot.core.test.binder.vo.CcCityInfoVO;
@@ -65,9 +65,9 @@ public class TestFieldBinder {
     @Test
     public void testBinder(){
         // 加载测试数据
-        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
-        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, 1001L, 1002L);
+        List<User> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<FieldBinderVO> voList = Binder.convertAndBindRelations(userList, FieldBinderVO.class);
         // 验证绑定结果
@@ -87,9 +87,9 @@ public class TestFieldBinder {
     @Test
     public void testBinderWithMoreCondition(){
         // 加载测试数据
-        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
-        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, 1001L, 1002L);
+        List<User> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);
         if(V.notEmpty(voList)){

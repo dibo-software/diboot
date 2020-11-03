@@ -13,20 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.service.impl;
+package diboot.core.test.binder.service;
 
-import com.diboot.core.service.impl.BaseServiceImpl;
-import diboot.core.test.binder.entity.Sysuser;
-import diboot.core.test.binder.mapper.SysuserMapper;
-import diboot.core.test.binder.service.SysuserService;
-import org.springframework.stereotype.Service;
+import com.diboot.core.service.BaseService;
+import diboot.core.test.binder.entity.User;
 
 /**
  * 员工相关Service
  * @author mazc@dibo.ltd
- * @version 2018/12/23
+ * @version v2.0
+ * @date 2019/1/5
  */
-@Service
-public class SysuserServiceImpl extends BaseServiceImpl<SysuserMapper, Sysuser> implements SysuserService {
+public interface UserService extends BaseService<User> {
 
 }

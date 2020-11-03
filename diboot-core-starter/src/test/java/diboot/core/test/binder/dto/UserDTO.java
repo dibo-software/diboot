@@ -20,7 +20,7 @@ import com.diboot.core.binding.query.Comparison;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
-import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.entity.User;
 import lombok.Data;
 
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.List;
  * @date 2018/12/27
  */
 @Data
-public class UserDTO extends Sysuser {
+public class UserDTO extends User {
 
     // 字段关联
     @BindQuery(entity= Department.class, field = "name", condition="this.department_id=id") // AND parent_id >= 0

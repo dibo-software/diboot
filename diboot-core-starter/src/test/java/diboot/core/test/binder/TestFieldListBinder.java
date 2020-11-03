@@ -21,7 +21,7 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.SysuserService;
 import diboot.core.test.binder.vo.EntityListComplexBinderVO;
@@ -82,9 +82,9 @@ public class TestFieldListBinder {
     @Test
     public void testComplexBinder(){
         // 加载测试数据
-        LambdaQueryWrapper<Sysuser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Sysuser::getId, 1001L, 1002L);
-        List<Sysuser> userList = sysuserService.getEntityList(queryWrapper);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, 1001L, 1002L);
+        List<User> userList = sysuserService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
         // 验证绑定结果

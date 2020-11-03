@@ -16,6 +16,7 @@
 package com.diboot.file.example.test;
 
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.file.example.custom.DepartmentExcelModel;
 import com.diboot.file.example.custom.listener.DepartmentImportListener;
@@ -38,8 +39,8 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
         department.setParentName("产品部");
         department.setMemCount(1);
         department.setUserStatus("S");
-        //String msg = V.validateBean(department);
-        //Assert.assertTrue(msg != null);
+        String msg = V.validateBean(department);
+        Assert.assertTrue(msg != null);
     }
 
     @Test

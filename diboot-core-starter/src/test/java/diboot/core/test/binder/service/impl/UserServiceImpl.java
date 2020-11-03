@@ -13,19 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder.mapper;
+package diboot.core.test.binder.service.impl;
 
-import com.diboot.core.mapper.BaseCrudMapper;
-import diboot.core.test.binder.entity.Sysuser;
-import org.apache.ibatis.annotations.Mapper;
+import com.diboot.core.service.impl.BaseServiceImpl;
+import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.mapper.UserMapper;
+import diboot.core.test.binder.service.UserService;
+import org.springframework.stereotype.Service;
 
 /**
- * 员工Mapper
+ * 员工相关Service
  * @author mazc@dibo.ltd
- * @version 2018/12/22
+ * @version 2018/12/23
  */
-@Mapper
-public interface SysuserMapper extends BaseCrudMapper<Sysuser> {
+@Service
+public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements UserService {
 
 }
-
