@@ -149,7 +149,7 @@ boolean success = demoService.updateEntity(demo);
 ```java
 boolean createOrUpdateEntity(T entity);
 ```
-> 该接口新建或更新一个实体记录到数据库，如果该实体主键有值，则更新，无值，则新建。如主键有值，但数据库中未找到，则报错，如：
+> 该接口新建或更新一个实体记录到数据库，如果该实体主键有值，则更新，无值，则新建。如：
 ```java
 boolean success = demoService.createOrUpdateEntity(demo);
 log.debug(success);
