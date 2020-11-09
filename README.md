@@ -65,7 +65,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 
 更多介绍请查看: [diboot-file-starter README](https://github.com/dibo-software/diboot/tree/master/diboot-file-starter "文件组件"). 
 
-> 其他组件逐步开发中 ...
+> cloud版本开发中 ...
 
 ## 五、捐助支持
 ![捐助二维码](https://www.diboot.com/assets/img/donate.a25badf5.jpg)

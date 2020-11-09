@@ -7,4 +7,4 @@
     
 <br>
 
-![捐助二维码](./donate.jpg)
+![捐助二维码](./donate.png)

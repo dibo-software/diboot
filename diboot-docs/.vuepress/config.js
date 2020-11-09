@@ -100,11 +100,12 @@ module.exports = {
             ],
             '/guide/enterprice/': [
                 {
-                    title: '商业服务',
+                    title: '企业版',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
-                        ['/guide/enterprice/devtools', 'devtools']
+                        ['/guide/enterprice/devtools', 'IAM & devtools 企业版'],
+                        ['/guide/enterprice/video', '视频教程']
                     ]
                 }
             ],
@@ -147,11 +148,16 @@ module.exports = {
                 { text: 'diboot-antd-admin', link: '/guide/diboot-antd-admin/介绍' },
                 { text: 'diboot-element-admin', link: '/guide/diboot-element-admin/介绍' }
             ]
-        }, {
+        },
+        {
             text: 'devtools助理 指南',
             link: '/guide/diboot-devtools/介绍'
+        },
+        {
+            text: '视频教程',
+            link: '/guide/enterprice/video'
         },{
-            text: '商业服务',
+            text: '企业版',
             link: '/guide/enterprice/devtools'
         }, {
             text: '开发团队',
@@ -177,9 +183,6 @@ module.exports = {
                     link: 'https://github.com/dibo-software/diboot'
                 }
             ]
-        }/*, {
-            text: '优秀案例',
-            link: '/other/excellentExample'
-        }*/]
+        }]
     }
 }
