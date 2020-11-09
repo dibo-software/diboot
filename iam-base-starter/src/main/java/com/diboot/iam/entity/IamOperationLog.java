@@ -45,14 +45,14 @@ public class IamOperationLog extends BaseEntity {
     /**
      * 业务对象
      */
-    @Length(max = 100, message = "用户类型长度应小于100")
+    @Length(max = 100, message = "业务对象长度应小于100")
     @TableField()
     private String businessObj;
 
     /**
      * 操作
      */
-    @Length(max = 100, message = "用户类型长度应小于100")
+    @Length(max = 100, message = "操作长度应小于100")
     @TableField()
     private String operation;
 
