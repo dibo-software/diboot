@@ -8,7 +8,7 @@
 * 未来更多高级特性（人员异动记录等）
 * VIP群技术支持、bug紧急修复
 
-体验环境: -
+体验环境: [IAM企业版+生成功能 演示](http://demo.diboot.com/)
 
 # devtools 企业版
 

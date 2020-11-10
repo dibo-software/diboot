@@ -37,7 +37,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 
 ## 二、 diboot-devtools 自动化开发助理
 
-* 使用简单（UI界面操作，引入依赖配置参数后，即可随SpringBoot本地项目启动运行）
+* 使用很简单（UI界面操作，引入依赖配置参数后，即可随SpringBoot本地项目启动运行）
 * 功能很强大：
     * 单表与关联场景CRUD导入导出的完整功能全自动生成，无需手写代码
     * 数据结构变更与代码联动同步，自动记录变更SQL、维护索引
