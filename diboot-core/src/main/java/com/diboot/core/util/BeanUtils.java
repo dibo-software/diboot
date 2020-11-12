@@ -235,6 +235,18 @@ public class BeanUtils {
     /***
      * Key-Object对象Map
      * @param allLists
+     * @param getterFns
+     * @return
+     */
+    public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, IGetter<T>... getterFns){
+        String[] fields = convertGettersToFields(getterFns);
+        return convertToStringKeyObjectMap(allLists, fields);
+    }
+
+    /***
+     * Key-Object对象Map
+     * @param allLists
+     * @param fields
      * @return
      */
     public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, String... fields){
@@ -273,6 +285,18 @@ public class BeanUtils {
             log.warn("转换key-model异常", e);
         }
         return allListMap;
+    }
+
+
+    /***
+     * Key-Object对象Map
+     * @param allLists
+     * @param getterFns
+     * @return
+     */
+    public static <T> Map<String, List<T>> convertToStringKeyObjectListMap(List<T> allLists, IGetter<T>... getterFns){
+        String[] fields = convertGettersToFields(getterFns);
+        return convertToStringKeyObjectListMap(allLists, fields);
     }
 
     /***
@@ -782,4 +806,21 @@ public class BeanUtils {
         return lambda;
     }
 
+    /**
+     * 转换Getter数组为字段名数组
+     * @param getterFns
+     * @param <T>
+     * @return
+     */
+    private static <T> String[] convertGettersToFields(IGetter<T>... getterFns){
+        String[] fields = null;
+        if(getterFns != null){
+            fields = new String[getterFns.length];
+            for(int i=0; i<getterFns.length; i++){
+                IGetter<T> getter = getterFns[i];
+                fields[i] = convertToFieldName(getter);
+            }
+        }
+        return fields;
+    }
 }
