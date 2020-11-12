@@ -31,7 +31,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.UserRole;
-import diboot.core.test.binder.service.SysuserService;
+import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class BaseServiceTest {
     DictionaryServiceImpl dictionaryService;
 
     @Autowired
-    SysuserService sysuserService;
+    UserService userService;
 
     @Test
     public void testGet(){
@@ -344,19 +344,19 @@ public class BaseServiceTest {
 
         // 新增
         List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
-        sysuserService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         List<UserRole> list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == roleIdList.size());
 
         // 更新
         roleIdList = Arrays.asList(13L);
-        sysuserService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 1);
 
         // 删除
         roleIdList = null;
-        sysuserService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 0);
     }
