@@ -19,6 +19,7 @@
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-file</artifactId>
+            <version>2.2.0</version>
         </dependency>
 
         <!-- 单元测试依赖 -->
