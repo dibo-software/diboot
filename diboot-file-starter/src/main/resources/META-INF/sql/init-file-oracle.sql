@@ -2,6 +2,7 @@
 CREATE TABLE ${SCHEMA}.upload_file (
      uuid VARCHAR2(32) NOT NULL,
      tenant_id          NUMBER(20)           default 0  not null,
+     app_module          VARCHAR2(50),
      rel_obj_type VARCHAR2(50),
      rel_obj_id VARCHAR2(32),
      rel_obj_field VARCHAR2(50),
@@ -18,6 +19,7 @@ CREATE TABLE ${SCHEMA}.upload_file (
 -- 添加备注,
 comment on column ${SCHEMA}.upload_file.uuid is 'UUID';
 comment on column ${SCHEMA}.upload_file.tenant_id is '租户ID';
+comment on column ${SCHEMA}.upload_file.app_module is '应用模块';
 comment on column ${SCHEMA}.upload_file.rel_obj_type is '关联对象类';
 comment on column ${SCHEMA}.upload_file.rel_obj_id is '关联对象ID';
 comment on column ${SCHEMA}.upload_file.rel_obj_field is '关联对象属性名称';

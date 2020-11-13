@@ -50,6 +50,12 @@ public class UploadFile extends BaseEntity {
     @TableField
     private Long tenantId;
 
+    /**
+     * 应用模块
+     */
+    @TableField
+    private String appModule;
+
     @NotNull(message = "关联对象类不能为空！")
     @TableField
     private String relObjType = null;
