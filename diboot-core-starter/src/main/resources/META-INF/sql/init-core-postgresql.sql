@@ -2,6 +2,7 @@
 create table dictionary (
      id                   bigserial not null,
      tenant_id            bigint        not null default 0,
+     app_module          VARCHAR(50),
      parent_id            bigint        not null,
      type                 VARCHAR(50)   not null,
      item_name            VARCHAR(100)  not null,
@@ -18,6 +19,7 @@ create table dictionary (
 -- 添加备注
 comment on column dictionary.id is 'ID';
 comment on column dictionary.tenant_id is '租户ID';
+comment on column dictionary.app_module is '应用模块';
 comment on column dictionary.parent_id is '父ID';
 comment on column dictionary.type is '字典类型';
 comment on column dictionary.item_name is '显示名';
