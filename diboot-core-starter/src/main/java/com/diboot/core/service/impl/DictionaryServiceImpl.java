@@ -49,10 +49,10 @@ import java.util.Set;
 public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
 
-    private static final String FIELD_NAME_ITEM_NAME = BeanUtils.convertToFieldName(Dictionary::getItemName);
-    private static final String FIELD_NAME_ITEM_VALUE = BeanUtils.convertToFieldName(Dictionary::getItemValue);
-    private static final String FIELD_NAME_TYPE = BeanUtils.convertToFieldName(Dictionary::getType);
-    private static final String FIELD_NAME_PARENT_ID = BeanUtils.convertToFieldName(Dictionary::getParentId);
+    private static final String FIELD_NAME_ITEM_NAME = "itemName";
+    private static final String FIELD_NAME_ITEM_VALUE = "itemValue";
+    private static final String FIELD_NAME_TYPE = "type";
+    private static final String FIELD_NAME_PARENT_ID = "parentId";
 
     @Override
     public List<KeyValue> getKeyValueList(String type) {
@@ -91,12 +91,6 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 .andEQ(FIELD_NAME_TYPE, type)
                 .andGT(FIELD_NAME_PARENT_ID, 0)
                 .bind();
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean addDictTree(DictionaryVO dictVO) {
-        return createDictAndChildren(dictVO);
     }
 
     @Override
