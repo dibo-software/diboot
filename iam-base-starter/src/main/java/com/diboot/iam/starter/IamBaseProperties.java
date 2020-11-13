@@ -17,7 +17,6 @@ package com.diboot.iam.starter;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -61,10 +60,5 @@ public class IamBaseProperties {
      * 是否开启权限检查（开发环境可关闭方便调试）
      */
     private boolean enablePermissionCheck = true;
-
-    /**
-     * 缓存Manager类
-     */
-    private String cacheManagerClass = MemoryConstrainedCacheManager.class.getName();
 
 }

@@ -21,6 +21,7 @@ import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -73,16 +74,7 @@ public class IamBaseAutoConfig {
     @Bean(name = "shiroCacheManager")
     @ConditionalOnMissingBean(CacheManager.class)
     public CacheManager shiroCacheManager() {
-        String className = iamBaseProperties.getCacheManagerClass();
-        if (V.isEmpty(className)) {
-            return null;
-        }
-        try {
-            return (CacheManager) Class.forName(className).newInstance();
-        } catch (Exception e) {
-            log.warn("无法初始化CacheManager，请检查配置: diboot.iam.cacheManagerClass");
-            return null;
-        }
+        return new MemoryConstrainedCacheManager();
     }
 
     @Bean
