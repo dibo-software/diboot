@@ -23,6 +23,7 @@ import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
@@ -183,7 +184,12 @@ public class RelationsBinder {
             if(V.isEmpty(dictValueField)){
                 dictValueField = S.replace(fieldAnno.getFieldName(), "Label", "");
             }
-            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
+            dictionaryService.bindingFieldTo(voList)
+                    .link(Cons.FIELD_ITEM_NAME, fieldAnno.getFieldName())
+                    .joinOn(dictValueField, Cons.FIELD_ITEM_VALUE)
+                    .andEQ(Cons.FIELD_TYPE, annotation.type())
+                    .andGT(Cons.FieldName.parentId.name(), 0)
+                    .bind();
         }
         else{
             throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "DictionaryService未实现，无法使用BindDict注解！");

@@ -49,11 +49,6 @@ import java.util.Set;
 public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
 
-    private static final String FIELD_NAME_ITEM_NAME = "itemName";
-    private static final String FIELD_NAME_ITEM_VALUE = "itemValue";
-    private static final String FIELD_NAME_TYPE = "type";
-    private static final String FIELD_NAME_PARENT_ID = "parentId";
-
     @Override
     public List<KeyValue> getKeyValueList(String type) {
         // 构建查询条件
@@ -64,33 +59,6 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 .orderByAsc(Dictionary::getSortId, Dictionary::getId);
         // 返回构建条件
         return getKeyValueList(queryDictionary);
-    }
-
-    @Override
-    public <T1,T2,S> void bindItemLabel(List voList, ISetter<T1,S> setFieldLabelFn,
-                               IGetter<T2> getFieldIdFn, String type){
-        if(V.isEmpty(voList)){
-            return;
-        }
-        bindingFieldTo(voList)
-            .link(Dictionary::getItemName, setFieldLabelFn)
-            .joinOn(getFieldIdFn, Dictionary::getItemValue)
-            .andEQ(FIELD_NAME_TYPE, type)
-            .andGT(FIELD_NAME_PARENT_ID, 0)
-            .bind();
-    }
-
-    @Override
-    public void bindItemLabel(List voList, String setFieldName, String getFieldName, String type){
-        if(V.isEmpty(voList)){
-            return;
-        }
-        bindingFieldTo(voList)
-                .link(FIELD_NAME_ITEM_NAME, setFieldName)
-                .joinOn(getFieldName, FIELD_NAME_ITEM_VALUE)
-                .andEQ(FIELD_NAME_TYPE, type)
-                .andGT(FIELD_NAME_PARENT_ID, 0)
-                .bind();
     }
 
     @Override

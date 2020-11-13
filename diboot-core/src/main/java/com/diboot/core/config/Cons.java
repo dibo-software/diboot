@@ -77,6 +77,13 @@ public class Cons {
     }
 
     /**
+     * 字典Entity相关属性名定义
+     */
+    public static final String FIELD_ITEM_NAME = "itemName";
+    public static final String FIELD_ITEM_VALUE = "itemValue";
+    public static final String FIELD_TYPE = "type";
+
+    /**
      * JWT token前缀
      */
     public static final String JWT_TOKEN_HEAD = "Bearer ";

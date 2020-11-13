@@ -18,6 +18,7 @@ package com.diboot.file.excel.cache;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
@@ -25,6 +26,7 @@ import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.Status;
 import com.diboot.file.excel.annotation.ExcelBindDict;
 import com.diboot.file.excel.annotation.ExcelBindField;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +106,11 @@ public class ExcelBindAnnoHandler {
             else{
                 dictType = ((BindDict)annotation).type();
             }
-            List<KeyValue> list = ContextHelper.getBean(DictionaryService.class).getKeyValueList(dictType);
+            DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+            if(dictionaryService == null){
+                throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "DictionaryService未实现，无法使用ExcelBindDict注解！");
+            }
+            List<KeyValue> list = dictionaryService.getKeyValueList(dictType);
             return convertKvListToMap(list);
         }
         else if(annotation instanceof ExcelBindField){
