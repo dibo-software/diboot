@@ -152,7 +152,9 @@ public class LogAspect {
                 log.warn("@Log(operation='{}') 注解未识别到class泛型参数，请指定 businessObj", logAnno.operation());
             }
         }
-        operationLog.setBusinessObj(businessObj).setOperation(logAnno.operation());
+        String appModule = logAnno.appModule();
+        // TODO 自动识别appModule
+        operationLog.setAppModule(appModule).setBusinessObj(businessObj).setOperation(logAnno.operation());
 
         return operationLog;
     }

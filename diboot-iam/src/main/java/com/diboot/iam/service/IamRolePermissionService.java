@@ -18,6 +18,7 @@ package com.diboot.iam.service;
 import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.entity.IamRolePermission;
 import com.diboot.iam.vo.IamFrontendPermissionVO;
+import com.diboot.iam.vo.ResourceRoleVO;
 
 import java.util.List;
 
@@ -31,35 +32,41 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
 
     /**
      * 获取指定角色对应的权限集（转换为树形结构VO）
-     * @param application
+     * @param appModule
      * @param roleId
      * @return
      */
-    List<IamFrontendPermissionVO> getPermissionVOList(String application, Long roleId);
+    List<IamFrontendPermissionVO> getPermissionVOList(String appModule, Long roleId);
 
     /**
      * 获取指定角色集合对应的权限VO集合（转换为树形结构VO）
-     * @param application
+     * @param appModule
      * @param roleIds
      * @return
      */
-    List<IamFrontendPermissionVO> getPermissionVOList(String application, List<Long> roleIds);
+    List<IamFrontendPermissionVO> getPermissionVOList(String appModule, List<Long> roleIds);
 
     /**
      * 获取指定角色集合对应的权限集
-     * @param application
+     * @param appModule
      * @param roleIds
      * @return
      */
-    List<IamFrontendPermission> getPermissionList(String application, List<Long> roleIds);
+    List<IamFrontendPermission> getPermissionList(String appModule, List<Long> roleIds);
 
     /**
      * 获取指定角色集合对应的Api接口url
-     * @param application
+     * @param appModule
      * @param roleIds
      * @return
      */
-    List<String> getApiUrlList(String application, List<Long> roleIds);
+    List<String> getApiUrlList(String appModule, List<Long> roleIds);
+
+    /**
+     * 获取资源角色VO集合
+     * @return
+     */
+    List<ResourceRoleVO> getAllResourceRoleVOList();
 
     /**
      * 批量创建角色与权限集的关系
