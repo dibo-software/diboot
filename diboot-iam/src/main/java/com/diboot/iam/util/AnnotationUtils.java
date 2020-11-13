@@ -18,6 +18,7 @@ package com.diboot.iam.util;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

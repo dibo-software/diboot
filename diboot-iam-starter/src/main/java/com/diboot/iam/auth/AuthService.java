@@ -18,6 +18,7 @@ package com.diboot.iam.auth;
 import com.diboot.iam.dto.AuthCredential;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.jwt.BaseJwtAuthToken;
+import com.diboot.iam.util.JwtUtils;
 import org.apache.shiro.authc.AuthenticationException;
 
 /**

@@ -26,6 +26,7 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamFrontendPermissionDTO;
 import com.diboot.iam.entity.IamFrontendPermission;
 import com.diboot.iam.mapper.IamFrontendPermissionMapper;
+import com.diboot.iam.service.IamFrontendPermissionService;
 import com.diboot.iam.vo.IamFrontendPermissionListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

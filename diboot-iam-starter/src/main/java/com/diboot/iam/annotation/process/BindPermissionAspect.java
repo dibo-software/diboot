@@ -22,6 +22,7 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.starter.IamBaseProperties;
 import com.diboot.iam.util.AnnotationUtils;
+import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;

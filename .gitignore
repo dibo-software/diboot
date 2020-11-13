@@ -13,3 +13,5 @@ gradle/
 dist/
 libs/
 target/
+
+init-oracle.sql

@@ -19,10 +19,10 @@
     <modules>
         <module>diboot-core</module>
         <module>diboot-core-starter</module>
-        <module>iam-base-starter</module>
-        <module>diboot-file-starter</module>
         <module>diboot-file</module>
+        <module>diboot-file-starter</module>
         <module>diboot-iam</module>
+        <module>diboot-iam-starter</module>
     </modules>
 
     <properties>

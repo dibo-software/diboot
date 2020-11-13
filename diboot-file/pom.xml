@@ -24,7 +24,7 @@
         <!-- 依赖core-starter -->
         <dependency>
             <groupId>com.diboot</groupId>
-            <artifactId>diboot-core-spring-boot-starter</artifactId>
+            <artifactId>diboot-core</artifactId>
             <version>2.2.0</version>
         </dependency>
 
