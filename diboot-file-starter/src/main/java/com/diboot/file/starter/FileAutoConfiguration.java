@@ -17,7 +17,6 @@ package com.diboot.file.starter;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.starter.SqlHandler;
-import com.diboot.core.util.SqlExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;

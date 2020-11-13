@@ -16,7 +16,7 @@
 package com.diboot.file.excel;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 
@@ -32,11 +32,11 @@ public class BaseExcelModel implements Serializable {
      * 验证错误
      */
     @ExcelIgnore
-    @JSONField(serialize = false)
+    @JsonIgnore
     private String validateError;
 
     @ExcelIgnore
-    @JSONField(serialize = false)
+    @JsonIgnore
     private int rowIndex;
 
     public int getRowIndex(){

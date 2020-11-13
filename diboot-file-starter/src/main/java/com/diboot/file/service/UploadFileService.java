@@ -15,7 +15,6 @@
  */
 package com.diboot.file.service;
 
-import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.file.entity.UploadFile;
 
