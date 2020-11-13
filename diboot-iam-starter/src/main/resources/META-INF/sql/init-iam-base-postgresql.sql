@@ -117,6 +117,7 @@ create table iam_frontend_permission
 (
   id bigserial not null,
   tenant_id            bigint        not null default 0,
+  app_module          varchar(50),
   parent_id bigint default 0   not null,
   display_type varchar(20) not null,
   display_name varchar(100) not null,
@@ -130,6 +131,7 @@ create table iam_frontend_permission
 );
 comment on column iam_frontend_permission.id is 'ID';
 comment on column iam_frontend_permission.tenant_id is '租户ID';
+comment on column iam_frontend_permission.app_module is '应用模块';
 comment on column iam_frontend_permission.parent_id is '菜单ID';
 comment on column iam_frontend_permission.display_type is '展现类型';
 comment on column iam_frontend_permission.display_name is '显示名称';
@@ -200,6 +202,7 @@ create table iam_operation_log
 (
   id bigserial not null ,
   tenant_id            bigint        not null default 0,
+  app_module          varchar(50),
   business_obj varchar(100)  not null,
   operation   varchar(100)  not null,
   user_type varchar(100) default 'IamUser' not null ,
@@ -216,6 +219,7 @@ create table iam_operation_log
 );
 comment on column iam_operation_log.id is 'ID';
 comment on column iam_operation_log.tenant_id is '租户ID';
+comment on column iam_operation_log.app_module is '应用模块';
 comment on column iam_operation_log.business_obj is '业务对象';
 comment on column iam_operation_log.operation is '操作描述';
 comment on column iam_operation_log.user_type is '用户类型';

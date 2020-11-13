@@ -46,6 +46,12 @@ public class IamFrontendPermission extends BaseEntity {
     @TableField
     private Long tenantId;
 
+    /**
+     * 应用模块
+     */
+    @TableField
+    private String appModule;
+
     // 父级菜单
     @NotNull(message = "父级菜单不能为空")
     @TableField()

@@ -40,7 +40,11 @@ public class IamOperationLog extends BaseEntity {
     @TableField
     private Long tenantId;
 
-    //private String appModule;
+    /**
+     * 应用模块
+      */
+    @TableField
+    private String appModule;
 
     /**
      * 业务对象

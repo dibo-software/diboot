@@ -74,6 +74,7 @@ create table iam_frontend_permission
 (
   id            bigint  auto_increment comment 'ID' primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  app_module  varchar(50)   null comment '应用模块',
   parent_id     bigint     default 0                 not null comment '父级菜单',
   display_type  varchar(20)                          not null comment '展现类型',
   display_name  varchar(100)                         not null comment '显示名称',
@@ -126,6 +127,7 @@ create table iam_operation_log
 (
   id           bigint auto_increment comment 'ID'   primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  app_module  varchar(50)   null comment '应用模块',
   business_obj    varchar(100)  not null comment '业务对象',
   operation   varchar(100)  not null comment '操作描述',
   user_type    varchar(100) default 'IamUser'       null comment '用户类型',

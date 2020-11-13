@@ -120,6 +120,7 @@ create index idx_iam_user_role_tenant on ${SCHEMA}.iam_user_role (tenant_id);
 create table ${SCHEMA}.iam_frontend_permission
 (
     id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    app_module          VARCHAR2(50),
     tenant_id          NUMBER(20)           default 0  not null,
     parent_id NUMBER(20) default 0   not null,
     display_type VARCHAR2(20) not null,
@@ -134,6 +135,7 @@ create table ${SCHEMA}.iam_frontend_permission
 );
 comment on column ${SCHEMA}.iam_frontend_permission.id is 'ID';
 comment on column ${SCHEMA}.iam_frontend_permission.tenant_id is '租户ID';
+comment on column ${SCHEMA}.iam_frontend_permission.app_module is '应用模块';
 comment on column ${SCHEMA}.iam_frontend_permission.parent_id is '菜单ID';
 comment on column ${SCHEMA}.iam_frontend_permission.display_type is '展现类型';
 comment on column ${SCHEMA}.iam_frontend_permission.display_name is '显示名称';
@@ -205,8 +207,9 @@ create index idx_iam_login_trace_tenant on ${SCHEMA}.iam_login_trace (tenant_id)
 -- 操作日志表
 create table ${SCHEMA}.iam_operation_log
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder) ,
+    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
     tenant_id          NUMBER(20)           default 0  not null,
+    app_module          VARCHAR2(50),
     business_obj VARCHAR2(100)  not null,
     operation   VARCHAR2(100)  not null,
     user_type VARCHAR2(100) DEFAULT 'IamUser'    not null,
@@ -224,6 +227,7 @@ create table ${SCHEMA}.iam_operation_log
 );
 comment on column ${SCHEMA}.iam_operation_log.id is 'ID';
 comment on column ${SCHEMA}.iam_operation_log.tenant_id is '租户ID';
+comment on column ${SCHEMA}.iam_operation_log.app_module is '应用模块';
 comment on column ${SCHEMA}.iam_operation_log.business_obj is '业务对象';
 comment on column ${SCHEMA}.iam_operation_log.operation is '操作描述';
 comment on column ${SCHEMA}.iam_operation_log.user_type is '用户类型';

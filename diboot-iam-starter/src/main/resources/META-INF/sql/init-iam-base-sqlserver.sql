@@ -121,6 +121,7 @@ create table ${SCHEMA}.iam_frontend_permission
 (
    id bigint identity,
    tenant_id            bigint        not null default 0,
+   app_module          varchar(50),
    parent_id bigint default 0   not null,
    display_type varchar(20) not null,
    display_name varchar(100) not null,
@@ -134,6 +135,7 @@ create table ${SCHEMA}.iam_frontend_permission
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'app_module';
 execute sp_addextendedproperty 'MS_Description', N'菜单ID', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'display_type';
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'display_name';
@@ -207,6 +209,7 @@ create table ${SCHEMA}.iam_operation_log
 (
    id bigint identity ,
    tenant_id            bigint        not null default 0,
+   app_module          varchar(50),
    business_obj varchar(100)  not null,
    operation   varchar(100)  not null,
    user_type varchar(100) default 'IamUser' not null ,
@@ -224,6 +227,7 @@ create table ${SCHEMA}.iam_operation_log
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_operation_log, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_operation_log, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', iam_operation_log, 'column', 'app_module';
 execute sp_addextendedproperty 'MS_Description', N'业务对象', 'SCHEMA', '${SCHEMA}', 'table', iam_operation_log, 'column', 'business_obj';
 execute sp_addextendedproperty 'MS_Description', N'操作描述', 'SCHEMA', '${SCHEMA}', 'table', iam_operation_log, 'column', 'operation';
 execute sp_addextendedproperty 'MS_Description', N'用户类型', 'SCHEMA', '${SCHEMA}', 'table', iam_operation_log, 'column', 'user_type';
