@@ -22,6 +22,7 @@
         <module>iam-base-starter</module>
         <module>diboot-file-starter</module>
         <module>diboot-file</module>
+        <module>diboot-iam</module>
     </modules>
 
     <properties>
