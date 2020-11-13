@@ -15,10 +15,10 @@
  */
 package com.diboot.iam.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.iam.config.Cons;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -66,13 +66,13 @@ public class IamAccount extends BaseEntity {
     private String authAccount;
 
     // 密码
-    @JSONField(serialize = false)
+    @JsonIgnore
     @Length(max = 32, message = "密码长度应小于32")
     @TableField()
     private String authSecret;
 
     // 加密盐
-    @JSONField(serialize = false)
+    @JsonIgnore
     @Length(max = 32, message = "加密盐长度应小于32")
     @TableField()
     private String secretSalt;

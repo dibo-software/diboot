@@ -15,13 +15,10 @@
  */
 package com.diboot.core.util;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,16 +28,10 @@ import java.util.Map;
  * @version v2.0
  * @date 2019/01/01
  */
-public class JSON extends JSONObject{
+public class JSON {
 	private static final Logger log = LoggerFactory.getLogger(JSON.class);
 
-	/**
-	 * 序列化配置
-	 */
-	private static SerializeConfig serializeConfig = new SerializeConfig();
-	static {
-		serializeConfig.put(Date.class, new SimpleDateFormatSerializer(D.FORMAT_DATETIME_Y4MDHM));
-	}
+	private static ObjectMapper mapper = new ObjectMapper();
 
 	/**
 	 * 将Java对象转换为Json String
@@ -48,7 +39,40 @@ public class JSON extends JSONObject{
 	 * @return
 	 */
 	public static String stringify(Object object){
-		return toJSONString(object, serializeConfig);
+		return toJSONString(object);
+	}
+
+	/**
+	 * 转换对象为JSON字符串
+	 * @param model
+	 * @return
+	 */
+	public static String toJSONString(Object model){
+		try{
+			String json = mapper.writeValueAsString(model);
+			return json;
+		}
+		catch (Exception e){
+			log.error("Java转Json异常", e);
+			return null;
+		}
+	}
+
+	/***
+	 * 将JSON字符串转换为java对象
+	 * @param jsonStr
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T toJavaObject(String jsonStr, Class<T> clazz){
+		try{
+			T model = mapper.readValue(jsonStr, clazz);
+			return model;
+		}
+		catch (Exception e){
+			log.error("Json转Java异常", e);
+			return null;
+		}
 	}
 
 	/***
@@ -57,7 +81,7 @@ public class JSON extends JSONObject{
 	 * @return
 	 */
 	public static Map toMap(String jsonStr){
-		return parseObject(jsonStr);
+		return toJavaObject(jsonStr, Map.class);
 	}
 
 	/***
@@ -70,16 +94,6 @@ public class JSON extends JSONObject{
 			return null;
 		}
 		return toJavaObject(jsonStr, LinkedHashMap.class);
-	}
-
-	/***
-	 * 将JSON字符串转换为java对象
-	 * @param jsonStr
-	 * @param clazz
-	 * @return
-	 */
-	public static <T> T toJavaObject(String jsonStr, Class<T> clazz){
-		return JSONObject.parseObject(jsonStr, clazz);
 	}
 
 }

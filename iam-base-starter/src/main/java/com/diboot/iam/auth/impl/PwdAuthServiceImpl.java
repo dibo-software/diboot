@@ -28,7 +28,6 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.jwt.BaseJwtAuthToken;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;

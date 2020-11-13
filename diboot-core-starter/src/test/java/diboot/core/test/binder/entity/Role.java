@@ -15,8 +15,8 @@
  */
 package diboot.core.test.binder.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.diboot.core.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -38,7 +38,7 @@ public class Role extends BaseEntity {
 
     private String code;
 
-    @JSONField(serialize = false)
+    @JsonIgnore
     public Date createTime;
 
 }

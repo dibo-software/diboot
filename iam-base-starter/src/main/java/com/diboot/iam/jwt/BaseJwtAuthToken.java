@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.jwt;
 
-import com.diboot.core.vo.KeyValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.JwtUtils;

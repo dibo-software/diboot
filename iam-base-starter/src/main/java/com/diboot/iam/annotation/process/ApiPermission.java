@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.annotation.process;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -33,11 +33,11 @@ public class ApiPermission implements Serializable {
     private static final long serialVersionUID = -1234249053749049729L;
 
     // 类别
-    @JSONField(serialize = false)
+    @JsonIgnore
     private String className;
 
     // 类别标题
-    @JSONField(serialize = false)
+    @JsonIgnore
     private String classTitle;
 
     // 接口名称
@@ -55,7 +55,7 @@ public class ApiPermission implements Serializable {
     private String value;
 
     // 权限许可编码
-    @JSONField(serialize = false)
+    @JsonIgnore
     private String permissionCode;
 
     public String buildUniqueKey(){

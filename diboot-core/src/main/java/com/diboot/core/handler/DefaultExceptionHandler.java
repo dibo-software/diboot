@@ -16,7 +16,6 @@
 package com.diboot.core.handler;
 
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
@@ -96,32 +95,6 @@ public class DefaultExceptionHandler {
         }
         log.warn("请求处理异常", e);
         return new ResponseEntity<>(map, HttpStatus.OK);
-    }
-
-    /**
-     * 获取默认的错误页面
-     * @param request
-     * @param ex
-     * @return
-     */
-    @Deprecated
-    protected String getViewName(HttpServletRequest request, Exception ex){
-        return "error";
-    }
-
-    /**
-     * 是否为JSON数据请求
-     * @param request
-     * @return
-     */
-    @Deprecated
-    protected boolean isJsonRequest(HttpServletRequest request){
-        if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
-            return true;
-        }
-        return S.containsIgnoreCase(request.getHeader("Accept"),"json")
-                || S.containsIgnoreCase(request.getHeader("content-type"), "json")
-                || S.containsIgnoreCase(request.getContentType(), "json");
     }
 
     /**

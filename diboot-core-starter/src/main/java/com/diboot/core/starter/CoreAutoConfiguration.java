@@ -15,12 +15,14 @@
  */
 package com.diboot.core.starter;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.diboot.core.config.Cons;
+import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +36,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 
 /**
- * DibootCore自动配置类
+ * Diboot Core自动配置类
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/08/01
@@ -88,18 +89,24 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public HttpMessageConverters fastJsonHttpMessageConverters() {
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        converter.setDefaultCharset(Charset.forName(Cons.CHARSET_UTF8));
-        List<MediaType> fastMediaTypes = new ArrayList<>();
-        fastMediaTypes.add(MediaType.APPLICATION_JSON);
-        converter.setSupportedMediaTypes(fastMediaTypes);
-        // 配置转换格式
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        // 设置fastjson的序列化参数：禁用循环依赖检测，数据兼容浏览器端（避免JS端Long精度丢失问题）
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect,
-                SerializerFeature.BrowserCompatible);
-        converter.setFastJsonConfig(fastJsonConfig);
+    public HttpMessageConverters jacksonHttpMessageConverters() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        ObjectMapper objectMapper = converter.getObjectMapper();
+        // Long转换成String避免JS超长问题
+        SimpleModule simpleModule = new SimpleModule();
+
+        // 不显示为null的字段
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+
+        objectMapper.registerModule(simpleModule);
+        // 时间格式化
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
+        // 设置格式化内容
+        converter.setObjectMapper(objectMapper);
 
         HttpMessageConverter<?> httpMsgConverter = converter;
         return new HttpMessageConverters(httpMsgConverter);

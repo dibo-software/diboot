@@ -34,7 +34,13 @@ public class PropertiesUtils {
      */
     public static String get(String key){
         // 获取配置值
-        Environment environment = ContextHelper.getApplicationContext().getEnvironment();
+        Environment environment = null;
+        try{
+            environment = ContextHelper.getApplicationContext().getEnvironment();
+        }
+        catch (Exception e){
+            log.warn("无法获取Environment，参数配置可能不生效");
+        }
         if(environment == null){
             log.warn("无法获取上下文Environment，请在Spring初始化之后调用!");
             return null;

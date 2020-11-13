@@ -15,13 +15,13 @@
  */
 package com.diboot.iam.vo;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamFrontendPermission;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -56,7 +56,7 @@ public class IamFrontendPermissionVO extends IamFrontendPermission {
     private String displayTypeLabel;
 
     // 绑定iamFrontendPermissionList
-    @JSONField(serialize = false)
+    @JsonIgnore
     @BindEntityList(entity = IamFrontendPermission.class, condition = "this.id=parent_id")
     private List<IamFrontendPermission> childrenList;
 

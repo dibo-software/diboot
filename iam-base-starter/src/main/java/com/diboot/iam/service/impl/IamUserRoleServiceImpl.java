@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
