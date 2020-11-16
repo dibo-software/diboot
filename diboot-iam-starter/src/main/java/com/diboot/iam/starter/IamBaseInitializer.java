@@ -15,8 +15,10 @@
  */
 package com.diboot.iam.starter;
 
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.iam.config.Cons;
@@ -36,27 +38,13 @@ import org.springframework.stereotype.Component;
  * @version v2.0
  * @date 2019/12/23
  */
-@Component
 @Slf4j
 public class IamBaseInitializer{
-
-    @Autowired
-    private DictionaryService dictionaryService;
-    @Autowired
-    private IamRoleService iamRoleService;
-    @Autowired
-    private IamUserService iamUserService;
-    @Autowired
-    private IamUserRoleService iamUserRoleService;
-    @Autowired
-    private IamAccountService iamAccountService;
-    @Autowired
-    private IamResourcePermissionService iamResourcePermissionService;
 
     /**
      * 插入初始化数据
      */
-    public void insertInitData(){
+    public static void insertInitData(){
         // 插入iam-base所需的数据字典
         String[] DICT_INIT_DATA = {
             "{\"type\":\"AUTH_TYPE\", \"itemName\":\"登录认证方式\", \"description\":\"IAM用户登录认证方式\", \"children\":[{\"itemName\":\"用户名密码\", \"itemValue\":\"PWD\", \"sortId\":1},{\"itemName\":\"单点登录\", \"itemValue\":\"SSO\", \"sortId\":2},{\"itemName\":\"公众号\", \"itemValue\":\"WX_MP\", \"sortId\":3},{\"itemName\":\"企业微信\", \"itemValue\":\"WX_CP\", \"sortId\":4},{\"itemName\":\"其他\", \"itemValue\":\"OTHER\", \"sortId\":5}]}",
@@ -68,12 +56,12 @@ public class IamBaseInitializer{
         };
         // 插入iam-base所需的初始权限数据
         String[] RESOURCE_PERMISSION_DATA = {
-            "{\"displayType\":\"MENU\",\"displayName\":\"系统管理\",\"frontendCode\":\"system\",\"children\":[{\"displayType\":\"MENU\",\"displayName\":\"数据字典管理\",\"frontendCode\":\"Dictionary\",\"apiSet\":\"GET:/dictionary/list\",\"sortId\":\"22\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"frontendCode\":\"detail\",\"apiSet\":\"GET:/dictionary/{id}\",\"sortId\":\"6\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"frontendCode\":\"create\",\"apiSet\":\"POST:/dictionary/\",\"sortId\":\"5\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"frontendCode\":\"update\",\"apiSet\":\"PUT:/dictionary/{id}\",\"sortId\":\"4\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"frontendCode\":\"delete\",\"apiSet\":\"DELETE:/dictionary/{id}\",\"sortId\":\"3\"}]},{\"displayType\":\"MENU\",\"displayName\":\"系统用户管理\",\"frontendCode\":\"IamUser\",\"apiSet\":\"GET:/iam/user/list\",\"sortId\":\"17\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"frontendCode\":\"detail\",\"apiSet\":\"GET:/iam/user/{id}\",\"sortId\":\"11\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"frontendCode\":\"create\",\"apiSet\":\"POST:/iam/user/\",\"sortId\":\"10\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"frontendCode\":\"update\",\"apiSet\":\"PUT:/iam/user/{id}\",\"sortId\":\"9\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"frontendCode\":\"delete\",\"apiSet\":\"DELETE:/iam/user/{id}\",\"sortId\":\"8\"}]},{\"displayType\":\"MENU\",\"displayName\":\"角色权限管理\",\"frontendCode\":\"IamRole\",\"apiSet\":\"GET:/iam/role/list\",\"sortId\":\"12\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"frontendCode\":\"detail\",\"apiSet\":\"GET:/iam/role/{id}\",\"sortId\":\"16\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"frontendCode\":\"create\",\"apiSet\":\"POST:/iam/role/\",\"sortId\":\"15\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"frontendCode\":\"update\",\"apiSet\":\"PUT:/iam/role/{id}\",\"sortId\":\"14\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"frontendCode\":\"delete\",\"apiSet\":\"DELETE:/iam/role/{id}\",\"sortId\":\"13\"}]},{\"displayType\":\"MENU\",\"displayName\":\"菜单权限管理\",\"resourceCode\":\"IamResourcePermission\",\"apiSet\":\"GET:/iam/resourcePermission/list\",\"sortId\":\"7\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"frontendCode\":\"detail\",\"apiSet\":\"GET:/iam/resourcePermission/{id}\",\"sortId\":\"23\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"frontendCode\":\"create\",\"apiSet\":\"POST:/resourcePermission/user/\",\"sortId\":\"21\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"frontendCode\":\"update\",\"apiSet\":\"PUT:/iam/resourcePermission/{id}\",\"sortId\":\"20\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"frontendCode\":\"delete\",\"apiSet\":\"DELETE:/iam/resourcePermission/{id}\",\"sortId\":\"19\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"排序\",\"frontendCode\":\"sort\",\"apiSet\":\"POST:/iam/resourcePermission/sortList\",\"sortId\":\"18\"}]},{\"displayType\":\"MENU\",\"displayName\":\"操作日志查看\",\"frontendCode\":\"IamOperationLog\",\"apiSet\":\"GET:/iam/operationLog/list\",\"sortId\":\"2\"},{\"displayType\":\"MENU\",\"displayName\":\"登录日志查看\",\"frontendCode\":\"IamLoginTrace\",\"apiSet\":\"GET:/iam/loginTrace/list\",\"sortId\":\"2\"}]}"
+            "{\"displayType\":\"MENU\",\"displayName\":\"系统管理\",\"resourceCode\":\"system\",\"children\":[{\"displayType\":\"MENU\",\"displayName\":\"数据字典管理\",\"resourceCode\":\"Dictionary\",\"apiSet\":\"GET:/dictionary/list\",\"sortId\":\"22\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"apiSet\":\"GET:/dictionary/{id}\",\"sortId\":\"6\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"apiSet\":\"POST:/dictionary/\",\"sortId\":\"5\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"apiSet\":\"PUT:/dictionary/{id}\",\"sortId\":\"4\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"apiSet\":\"DELETE:/dictionary/{id}\",\"sortId\":\"3\"}]},{\"displayType\":\"MENU\",\"displayName\":\"系统用户管理\",\"resourceCode\":\"IamUser\",\"apiSet\":\"GET:/iam/user/list\",\"sortId\":\"17\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"apiSet\":\"GET:/iam/user/{id}\",\"sortId\":\"11\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"apiSet\":\"POST:/iam/user/\",\"sortId\":\"10\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"apiSet\":\"PUT:/iam/user/{id}\",\"sortId\":\"9\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"apiSet\":\"DELETE:/iam/user/{id}\",\"sortId\":\"8\"}]},{\"displayType\":\"MENU\",\"displayName\":\"角色权限管理\",\"resourceCode\":\"IamRole\",\"apiSet\":\"GET:/iam/role/list\",\"sortId\":\"12\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"apiSet\":\"GET:/iam/role/{id}\",\"sortId\":\"16\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"apiSet\":\"POST:/iam/role/\",\"sortId\":\"15\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"apiSet\":\"PUT:/iam/role/{id}\",\"sortId\":\"14\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"apiSet\":\"DELETE:/iam/role/{id}\",\"sortId\":\"13\"}]},{\"displayType\":\"MENU\",\"displayName\":\"菜单权限管理\",\"resourceCode\":\"IamResourcePermission\",\"apiSet\":\"GET:/iam/resourcePermission/list\",\"sortId\":\"7\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"apiSet\":\"GET:/iam/resourcePermission/{id}\",\"sortId\":\"23\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"apiSet\":\"POST:/resourcePermission/user/\",\"sortId\":\"21\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"apiSet\":\"PUT:/iam/resourcePermission/{id}\",\"sortId\":\"20\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"apiSet\":\"DELETE:/iam/resourcePermission/{id}\",\"sortId\":\"19\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"排序\",\"resourceCode\":\"sort\",\"apiSet\":\"POST:/iam/resourcePermission/sortList\",\"sortId\":\"18\"}]},{\"displayType\":\"MENU\",\"displayName\":\"操作日志查看\",\"resourceCode\":\"IamOperationLog\",\"apiSet\":\"GET:/iam/operationLog/list\",\"sortId\":\"2\"},{\"displayType\":\"MENU\",\"displayName\":\"登录日志查看\",\"resourceCode\":\"IamLoginTrace\",\"apiSet\":\"GET:/iam/loginTrace/list\",\"sortId\":\"2\"}]}"
         };
         // 插入数据字典
         for(String dictJson : DICT_INIT_DATA){
             DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
-            dictionaryService.createDictAndChildren(dictVo);
+            ContextHelper.getBean(DictionaryService.class).createDictAndChildren(dictVo);
         }
         DICT_INIT_DATA = null;
 
@@ -81,7 +69,7 @@ public class IamBaseInitializer{
         try {
             for (String resourcePermissionJson : RESOURCE_PERMISSION_DATA) {
                 IamResourcePermissionListVO permissionListVO = JSON.toJavaObject(resourcePermissionJson, IamResourcePermissionListVO.class);
-                iamResourcePermissionService.deepCreatePermissionAndChildren(permissionListVO);
+                ContextHelper.getBean(IamResourcePermissionService.class).deepCreatePermissionAndChildren(permissionListVO);
             }
             RESOURCE_PERMISSION_DATA = null;
         } catch (BusinessException e){
@@ -91,21 +79,21 @@ public class IamBaseInitializer{
         // 插入超级管理员用户及角色
         IamRole iamRole = new IamRole();
         iamRole.setName("超级管理员").setCode("SUPER_ADMIN");
-        iamRoleService.createEntity(iamRole);
+        ContextHelper.getBean(IamRoleService.class).createEntity(iamRole);
 
         IamUser iamUser = new IamUser();
         iamUser.setOrgId(0L).setRealname("DIBOOT").setUserNum("0000").setGender("M").setMobilePhone("10000000000");
-        iamUserService.createEntity(iamUser);
+        ContextHelper.getBean(IamUserService.class).createEntity(iamUser);
 
         // 插入对象
         IamUserRole iamUserRole = new IamUserRole(IamUser.class.getSimpleName(), iamUser.getId(), iamRole.getId());
-        iamUserRoleService.getMapper().insert(iamUserRole);
+        ContextHelper.getBean(IamUserRoleService.class).createEntity(iamUserRole);
 
         // 创建账号
         IamAccount iamAccount = new IamAccount();
         iamAccount.setUserType(IamUser.class.getSimpleName()).setUserId(iamUser.getId())
                 .setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name())
                 .setAuthAccount("admin").setAuthSecret("123456");
-        iamAccountService.createEntity(iamAccount);
+        ContextHelper.getBean(IamAccountService.class).createEntity(iamAccount);
     }
 }

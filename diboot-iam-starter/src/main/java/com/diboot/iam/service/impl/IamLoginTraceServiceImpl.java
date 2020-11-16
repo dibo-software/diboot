@@ -17,7 +17,7 @@ package com.diboot.iam.service.impl;
 
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.mapper.IamLoginTraceMapper;
-import com.diboot.iam.service.BaseIamService;
+import com.diboot.iam.service.IamLoginTraceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,6 @@ import org.springframework.stereotype.Service;
 */
 @Service
 @Slf4j
-public class IamLoginTraceServiceImpl extends BaseIamServiceImpl<IamLoginTraceMapper, IamLoginTrace> implements com.diboot.core.service.BaseService<IamLoginTrace>, BaseIamService<IamLoginTrace> {
+public class IamLoginTraceServiceImpl extends BaseIamServiceImpl<IamLoginTraceMapper, IamLoginTrace> implements IamLoginTraceService {
 
 }

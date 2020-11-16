@@ -42,7 +42,7 @@ public class IamBasePluginManager implements PluginManager {
                 // 执行初始化SQL
                 SqlHandler.initBootstrapSql(this.getClass(), environment, "iam-base");
                 // 插入相关数据：Dict，Role等
-                ContextHelper.getBean(IamBaseInitializer.class).insertInitData();
+                IamBaseInitializer.insertInitData();
                 log.info("diboot-IAM-base 初始化SQL完成.");
             }
         }

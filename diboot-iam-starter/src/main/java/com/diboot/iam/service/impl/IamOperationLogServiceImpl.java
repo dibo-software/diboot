@@ -17,7 +17,7 @@ package com.diboot.iam.service.impl;
 
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.iam.mapper.IamOperationLogMapper;
-import com.diboot.iam.service.BaseIamService;
+import com.diboot.iam.service.IamOperationLogService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,6 +27,6 @@ import org.springframework.stereotype.Service;
  * @date 2020/09/21
  */
 @Service
-public class IamOperationLogServiceImpl extends BaseIamServiceImpl<IamOperationLogMapper, IamOperationLog> implements com.diboot.core.service.BaseService<IamOperationLog>, BaseIamService<IamOperationLog> {
+public class IamOperationLogServiceImpl extends BaseIamServiceImpl<IamOperationLogMapper, IamOperationLog> implements IamOperationLogService {
 
 }

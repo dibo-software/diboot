@@ -11,14 +11,10 @@
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-iam</artifactId>
+    <packaging>jar</packaging>
     <version>2.2.0</version>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- 依赖core-starter -->
         <dependency>
             <groupId>com.diboot</groupId>
