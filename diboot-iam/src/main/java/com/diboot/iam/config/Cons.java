@@ -101,6 +101,7 @@ public class Cons extends com.diboot.core.config.Cons {
      */
     @Deprecated
     public static enum FRONTEND_PERMISSION_DISPLAY_TYPE{
+        MODULE,
         MENU,
         PERMISSION
     }
@@ -109,6 +110,7 @@ public class Cons extends com.diboot.core.config.Cons {
      * 前端权限类型
      */
     public static enum RESOURCE_PERMISSION_DISPLAY_TYPE{
+        MODULE,
         MENU,
         PERMISSION
     }
