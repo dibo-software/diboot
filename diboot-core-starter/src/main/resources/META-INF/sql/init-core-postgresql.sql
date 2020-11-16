@@ -10,7 +10,7 @@ create table dictionary (
      description          VARCHAR(100)  null,
      extdata              VARCHAR(200)  null,
      sort_id              SMALLINT      not null default 99,
-     is_deletable         BOOLEAN       not null default FALSE,
+     is_deletable         BOOLEAN       not null default TRUE,
      is_editable          BOOLEAN       not null default TRUE,
      is_deleted           BOOLEAN       not null default FALSE,
      create_time          timestamp     not null default CURRENT_TIMESTAMP,

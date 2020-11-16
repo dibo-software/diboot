@@ -10,7 +10,7 @@ create table ${SCHEMA}.dictionary (
     description        VARCHAR2(100),
     extdata            VARCHAR2(200),
     sort_id            SMALLINT           default 99  not null,
-    is_deletable       NUMBER(1)          default 0  not null,
+    is_deletable       NUMBER(1)          default 1  not null,
     is_editable        NUMBER(1)          default 1  not null,
     is_deleted         NUMBER(1)          default 0  not null,
     create_time        TIMESTAMP          default CURRENT_TIMESTAMP  not null,

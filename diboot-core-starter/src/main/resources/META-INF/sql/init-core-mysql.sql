@@ -11,7 +11,7 @@ CREATE TABLE `dictionary` (
   `extdata` varchar(200) DEFAULT NULL COMMENT '扩展JSON',
   `sort_id` smallint NOT NULL DEFAULT '99' COMMENT '排序号',
   `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
-  `is_deletable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否可删',
+  `is_deletable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可删',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
