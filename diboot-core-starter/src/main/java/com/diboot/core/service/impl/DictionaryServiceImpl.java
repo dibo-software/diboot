@@ -21,9 +21,6 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.IGetter;
-import com.diboot.core.util.ISetter;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
@@ -34,9 +31,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据字典相关service实现
@@ -141,5 +137,35 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 .eq(Dictionary::getParentId, id);
         deleteEntities(queryWrapper);
         return true;
+    }
+
+
+    @Override
+    public void sortList(List<Dictionary> dictionaryList) {
+        if (V.isEmpty(dictionaryList)) {
+            throw new BusinessException(Status.FAIL_OPERATION, "排序列表不能为空");
+        }
+        List<Long> sortIdList = new ArrayList();
+        // 先将所有序号重新设置为自身当前id
+        for (Dictionary item : dictionaryList) {
+            item.setSortId(item.getId());
+            sortIdList.add(item.getSortId());
+        }
+        // 将序号列表倒序排序
+        sortIdList = sortIdList.stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+        // 整理需要更新的列表
+        List<Dictionary> updateList = new ArrayList<>();
+        for (int i=0; i<dictionaryList.size(); i++) {
+            Dictionary item = dictionaryList.get(i);
+            Dictionary updateItem = new Dictionary();
+            updateItem.setId(item.getId());
+            updateItem.setSortId(sortIdList.get(i));
+            updateList.add(updateItem);
+        }
+        if (updateList.size() > 0) {
+            super.updateBatchById(updateList);
+        }
     }
 }

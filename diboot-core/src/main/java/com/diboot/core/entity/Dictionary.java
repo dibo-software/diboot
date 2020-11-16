@@ -86,7 +86,7 @@ public class Dictionary extends BaseExtEntity {
      * 排序号
      */
     @TableField
-    private Integer sortId;
+    private Long sortId;
 
     /***
      * 是否为系统预置（预置不可删除）
