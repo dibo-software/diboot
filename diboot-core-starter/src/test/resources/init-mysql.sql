@@ -1,16 +1,17 @@
 -- create schema diboot_example collate utf8_general_ci;
--- 初始化表
+-- 建表
 CREATE TABLE `dictionary` (
-    `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
-    `parent_id` int unsigned NOT NULL COMMENT '父ID',
+    `app_module`  varchar(50)   null comment '应用模块',
     `type` varchar(50) NOT NULL COMMENT '字典类型',
     `item_name` varchar(100) NOT NULL COMMENT '显示名',
     `item_value` varchar(100) DEFAULT NULL COMMENT '存储值',
     `description` varchar(100) DEFAULT NULL COMMENT '描述说明',
     `extdata` varchar(200) DEFAULT NULL COMMENT '扩展JSON',
     `sort_id` smallint NOT NULL DEFAULT '99' COMMENT '排序号',
-    `is_editable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否可改',
+    `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
     `is_deletable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否可删',
     `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -79,7 +80,7 @@ create table cc_city_info
 -- 初始化样例数据
 INSERT INTO department (id, parent_id, org_id, name) VALUES (10001, 0, 100001, '产品部'), (10002, 10001, 100001, '研发组'), (10003, 10001, 100001, '测试组'),
        (10004, 10001, 100001, 'UI组'), (10005, 10003, 100001, '自动化测试'), (10006, 10003, 100001, '功能测试');
-INSERT INTO dictionary (id, parent_id, type, item_name, item_value) VALUES (1, 0, 'GENDER', '性别', null), (2, 1, 'GENDER', '男', 'M'), (3, 1, 'GENDER', '女', 'F');
+INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
 INSERT INTO organization (id, parent_id, name, telphone) VALUES (100001, 0, '苏州帝博', '0512-62988949'), (100002, 0, '成都帝博', null);
 INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');
 INSERT INTO sysuser (id, department_id, username, gender) VALUES (1001, 10002, '张三', 'M'), (1002, 10002, '李四', 'F');
