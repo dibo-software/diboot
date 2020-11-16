@@ -37,7 +37,7 @@ import java.util.List;
 * Copyright © diboot.com
 */
 @Getter @Setter @Accessors(chain = true)
-public class IamFrontendPermission extends BaseEntity {
+public class IamResourcePermission extends BaseEntity {
     private static final long serialVersionUID = -6133621123987747250L;
 
     /**
@@ -70,10 +70,10 @@ public class IamFrontendPermission extends BaseEntity {
     private String displayName;
 
     // 前端编码
-    @NotNull(message = "前端编码不能为空")
-    @Length(max=100, message="前端编码长度应小于100")
+    @NotNull(message = "前端资源编码不能为空")
+    @Length(max=100, message="前端资源编码长度应小于100")
     @TableField()
-    private String frontendCode;
+    private String resourceCode;
 
     // 接口列表
     @Length(max=5000, message="接口列表长度应小于5000")

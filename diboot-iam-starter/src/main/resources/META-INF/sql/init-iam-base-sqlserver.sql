@@ -117,7 +117,7 @@ create nonclustered index idx_iam_user_role on iam_user_role (user_type, user_id
 create nonclustered index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 
 -- 前端权限表
-create table ${SCHEMA}.iam_frontend_permission
+create table ${SCHEMA}.iam_resource_permission
 (
    id bigint identity,
    tenant_id            bigint        not null default 0,
@@ -131,28 +131,28 @@ create table ${SCHEMA}.iam_frontend_permission
    is_deleted tinyint default 0 not null,
    create_time datetime default CURRENT_TIMESTAMP not null,
    update_time datetime null,
-   constraint PK_iam_frontend_permission primary key (id)
+   constraint PK_iam_resource_permission primary key (id)
 );
-execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'id';
-execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'tenant_id';
-execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'app_module';
-execute sp_addextendedproperty 'MS_Description', N'菜单ID', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'parent_id';
-execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'display_type';
-execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'display_name';
-execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'frontend_code';
-execute sp_addextendedproperty 'MS_Description', N'接口列表', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'api_set';
-execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'sort_id';
-execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'is_deleted';
-execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'create_time';
-execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, 'column', 'update_time';
-execute sp_addextendedproperty 'MS_Description', N'前端权限表', 'SCHEMA', '${SCHEMA}', 'table', iam_frontend_permission, null, null;
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'app_module';
+execute sp_addextendedproperty 'MS_Description', N'菜单ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'parent_id';
+execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_type';
+execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
+execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'frontend_code';
+execute sp_addextendedproperty 'MS_Description', N'接口列表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'api_set';
+execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'sort_id';
+execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'update_time';
+execute sp_addextendedproperty 'MS_Description', N'前端权限表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, null, null;
 
 -- 索引
-create nonclustered index idx_iam_frontend_permission on iam_frontend_permission (parent_id);
-create nonclustered index idx_frontend_permission_tenant on iam_frontend_permission(tenant_id);
+create nonclustered index idx_iam_resource_permission on iam_resource_permission (parent_id);
+create nonclustered index idx_resource_permission_tenant on iam_resource_permission(tenant_id);
 
 -- 角色-权限
-create table ${SCHEMA}.iam_role_permission
+create table ${SCHEMA}.iam_role_resource
 (
    id bigint identity ,
    tenant_id            bigint        not null default 0,
@@ -160,18 +160,18 @@ create table ${SCHEMA}.iam_role_permission
    permission_id bigint not null ,
    is_deleted tinyint default 0 not null ,
    create_time datetime default CURRENT_TIMESTAMP not null,
-   constraint PK_iam_role_permission primary key (id)
+   constraint PK_iam_role_resource primary key (id)
 );
-execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'id';
-execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'tenant_id';
-execute sp_addextendedproperty 'MS_Description', N'角色ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'role_id';
-execute sp_addextendedproperty 'MS_Description', N'权限ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'permission_id';
-execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'is_deleted';
-execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, 'column', 'create_time';
-execute sp_addextendedproperty 'MS_Description', N'角色权限', 'SCHEMA', '${SCHEMA}', 'table', iam_role_permission, null, null;
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'角色ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'role_id';
+execute sp_addextendedproperty 'MS_Description', N'权限ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'permission_id';
+execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'角色权限', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, null, null;
 -- 索引
-create nonclustered index idx_iam_role_permission on iam_role_permission (role_id, permission_id);
-create nonclustered index idx_iam_role_permission_tenant on iam_role_permission(tenant_id);
+create nonclustered index idx_iam_role_resource on iam_role_resource (role_id, permission_id);
+create nonclustered index idx_iam_role_resource_tenant on iam_role_resource(tenant_id);
 
 -- 登录日志表
 create table ${SCHEMA}.iam_login_trace

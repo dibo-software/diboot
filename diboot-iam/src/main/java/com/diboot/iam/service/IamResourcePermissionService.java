@@ -16,9 +16,9 @@
 package com.diboot.iam.service;
 
 
-import com.diboot.iam.dto.IamFrontendPermissionDTO;
-import com.diboot.iam.entity.IamFrontendPermission;
-import com.diboot.iam.vo.IamFrontendPermissionListVO;
+import com.diboot.iam.dto.IamResourcePermissionDTO;
+import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.vo.IamResourcePermissionListVO;
 
 import java.util.List;
 
@@ -29,25 +29,25 @@ import java.util.List;
 * @date 2020-02-27
  * Copyright © diboot.com
 */
-public interface IamFrontendPermissionService extends BaseIamService<IamFrontendPermission> {
+public interface IamResourcePermissionService extends BaseIamService<IamResourcePermission> {
 
     /***
      * 深度创建菜单权限及其所有子列表
-     * @param iamFrontendPermissionListVO
+     * @param iamResourcePermissionListVO
      */
-    void deepCreatePermissionAndChildren(IamFrontendPermissionListVO iamFrontendPermissionListVO);
+    void deepCreatePermissionAndChildren(IamResourcePermissionListVO iamResourcePermissionListVO);
 
     /***
      * 创建菜单和按钮/权限列表
-     * @param iamFrontendPermissionDTO
+     * @param iamResourcePermissionDTO
      */
-    void createMenuAndPermissions(IamFrontendPermissionDTO iamFrontendPermissionDTO);
+    void createMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO);
 
     /***
      * 更新菜单和按钮/权限列表
-     * @param iamFrontendPermissionDTO
+     * @param iamResourcePermissionDTO
      */
-    void updateMenuAndPermissions(IamFrontendPermissionDTO iamFrontendPermissionDTO);
+    void updateMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO);
 
     /***
      * 删除菜单及其包含的所有子菜单以及按钮/权限列表
@@ -60,11 +60,11 @@ public interface IamFrontendPermissionService extends BaseIamService<IamFrontend
      * @param application
      * @return
      */
-    List<IamFrontendPermission> getAllFrontendPermissions(String application);
+    List<IamResourcePermission> getAllResourcePermissions(String application);
 
     /***
      * 对列表进行排序
      * @param permissionList
      */
-    void sortList(List<IamFrontendPermission> permissionList);
+    void sortList(List<IamResourcePermission> permissionList);
 }

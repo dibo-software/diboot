@@ -16,17 +16,18 @@
 package com.diboot.iam.mapper;
 
 import com.diboot.core.mapper.BaseCrudMapper;
-import com.diboot.iam.entity.IamRolePermission;
+import com.diboot.iam.entity.IamResourcePermission;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
-* 角色权限关联Mapper
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
+* 前端资源权限Mapper
+* @author yangzhao
+* @version 2.0.0
+* @date 2020-02-27
+ * Copyright © diboot.com
 */
 @Mapper
-public interface IamRolePermissionMapper extends BaseCrudMapper<IamRolePermission> {
+public interface IamResourcePermissionMapper extends BaseCrudMapper<IamResourcePermission> {
 
 }
 

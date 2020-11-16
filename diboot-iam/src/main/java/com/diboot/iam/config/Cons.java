@@ -37,7 +37,7 @@ public class Cons extends com.diboot.core.config.Cons {
         PERMISSION_TYPE,
         POSITION_GRADE,
         GENDER,
-        FRONTEND_PERMISSION_CODE
+        RESOURCE_PERMISSION_CODE
     }
 
     /**
@@ -99,7 +99,16 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 前端权限类型
      */
+    @Deprecated
     public static enum FRONTEND_PERMISSION_DISPLAY_TYPE{
+        MENU,
+        PERMISSION
+    }
+
+    /**
+     * 前端权限类型
+     */
+    public static enum RESOURCE_PERMISSION_DISPLAY_TYPE{
         MENU,
         PERMISSION
     }

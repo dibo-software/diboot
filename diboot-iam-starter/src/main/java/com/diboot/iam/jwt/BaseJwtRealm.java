@@ -27,7 +27,7 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
-import com.diboot.iam.service.IamRolePermissionService;
+import com.diboot.iam.service.IamRoleResourceService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,7 @@ import java.util.Set;
 public class BaseJwtRealm extends AuthorizingRealm {
 
     private IamUserRoleService iamUserRoleService;
-    private IamRolePermissionService iamRolePermissionService;
+    private IamRoleResourceService iamRoleResourceService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -148,7 +148,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
         });
         // 整理所有权限许可列表，从缓存匹配
         Set<String> allPermissionCodes = new HashSet<>();
-        List<String> apiUrlList = getIamRolePermissionService().getApiUrlList(Cons.APPLICATION, roleIds);
+        List<String> apiUrlList = getIamRoleResourceService().getApiUrlList(Cons.APPLICATION, roleIds);
         if(V.notEmpty(apiUrlList)){
             apiUrlList.stream().forEach(set->{
                 for(String uri : set.split(Cons.SEPARATOR_COMMA)){
@@ -172,11 +172,11 @@ public class BaseJwtRealm extends AuthorizingRealm {
         return iamUserRoleService;
     }
 
-    private IamRolePermissionService getIamRolePermissionService(){
-        if(iamRolePermissionService == null){
-            iamRolePermissionService = ContextHelper.getBean(IamRolePermissionService.class);
+    private IamRoleResourceService getIamRoleResourceService(){
+        if(iamRoleResourceService == null){
+            iamRoleResourceService = ContextHelper.getBean(IamRoleResourceService.class);
         }
-        return iamRolePermissionService;
+        return iamRoleResourceService;
     }
 
 }

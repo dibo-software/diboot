@@ -13,21 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.mapper;
+package com.diboot.iam.vo;
 
-import com.diboot.core.mapper.BaseCrudMapper;
-import com.diboot.iam.entity.IamFrontendPermission;
-import org.apache.ibatis.annotations.Mapper;
+import com.diboot.iam.entity.IamRoleResource;
+import lombok.Data;
 
 /**
-* 前端菜单Mapper
-* @author yangzhao
-* @version 2.0.0
-* @date 2020-02-27
- * Copyright © diboot.com
+* 角色权限关联 VO定义
+* @author mazc@dibo.ltd
+* @version 2.0
+* @date 2019-12-03
 */
-@Mapper
-public interface IamFrontendPermissionMapper extends BaseCrudMapper<IamFrontendPermission> {
+@Data
+public class IamRoleResourceVO extends IamRoleResource {
+    private static final long serialVersionUID = -1573146915499020461L;
 
 }
-

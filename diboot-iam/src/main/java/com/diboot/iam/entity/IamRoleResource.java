@@ -30,14 +30,14 @@ import javax.validation.constraints.NotNull;
 * @date 2019-12-03
 */
 @Getter @Setter @Accessors(chain = true)
-public class IamRolePermission extends BaseEntity {
+public class IamRoleResource extends BaseEntity {
     private static final long serialVersionUID = -8228772361638435896L;
 
-    public IamRolePermission(){
+    public IamRoleResource(){
     }
-    public IamRolePermission(Long roleId, Long permissionId){
+    public IamRoleResource(Long roleId, Long resourceId){
         this.roleId = roleId;
-        this.permissionId = permissionId;
+        this.resourceId = resourceId;
     }
 
     /**
@@ -52,8 +52,8 @@ public class IamRolePermission extends BaseEntity {
     private Long roleId;
 
     // 权限ID
-    @NotNull(message = "权限ID不能为空")
+    @NotNull(message = "资源ID不能为空")
     @TableField()
-    private Long permissionId;
+    private Long resourceId;
 
 }

@@ -13,19 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.vo;
+package com.diboot.iam.dto;
 
-import com.diboot.iam.entity.IamRolePermission;
-import lombok.Data;
+import com.diboot.iam.entity.IamResourcePermission;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
-* 角色权限关联 VO定义
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
-*/
-@Data
-public class IamRolePermissionVO extends IamRolePermission {
-    private static final long serialVersionUID = -1573146915499020461L;
+ * 前端菜单 DTO定义
+ * @author yangzhao
+ * @version 2.0.0
+ * @date 2020-02-27
+ * Copyright © diboot.com
+ */
+@Getter
+@Setter
+@Accessors(chain = true)
+public class IamResourcePermissionDTO extends IamResourcePermission {
+    private static final long serialVersionUID = -7218371066111984841L;
 
+    // 按钮/权限列表
+    private List<IamResourcePermissionDTO> permissionList;
 }

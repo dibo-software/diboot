@@ -15,9 +15,9 @@
  */
 package com.diboot.iam.service;
 
-import com.diboot.iam.entity.IamFrontendPermission;
-import com.diboot.iam.entity.IamRolePermission;
-import com.diboot.iam.vo.IamFrontendPermissionVO;
+import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamRoleResource;
+import com.diboot.iam.vo.IamResourcePermissionVO;
 import com.diboot.iam.vo.ResourceRoleVO;
 
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 * @version 2.0
 * @date 2019-12-03
 */
-public interface IamRolePermissionService extends BaseIamService<IamRolePermission> {
+public interface IamRoleResourceService extends BaseIamService<IamRoleResource> {
 
     /**
      * 获取指定角色对应的权限集（转换为树形结构VO）
@@ -36,7 +36,7 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
      * @param roleId
      * @return
      */
-    List<IamFrontendPermissionVO> getPermissionVOList(String appModule, Long roleId);
+    List<IamResourcePermissionVO> getPermissionVOList(String appModule, Long roleId);
 
     /**
      * 获取指定角色集合对应的权限VO集合（转换为树形结构VO）
@@ -44,7 +44,7 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
      * @param roleIds
      * @return
      */
-    List<IamFrontendPermissionVO> getPermissionVOList(String appModule, List<Long> roleIds);
+    List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<Long> roleIds);
 
     /**
      * 获取指定角色集合对应的权限集
@@ -52,7 +52,7 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
      * @param roleIds
      * @return
      */
-    List<IamFrontendPermission> getPermissionList(String appModule, List<Long> roleIds);
+    List<IamResourcePermission> getPermissionList(String appModule, List<Long> roleIds);
 
     /**
      * 获取指定角色集合对应的Api接口url
@@ -94,6 +94,6 @@ public interface IamRolePermissionService extends BaseIamService<IamRolePermissi
      * 获取PermissionService实例
      * @return
      */
-    IamFrontendPermissionService getPermissionService();
+    IamResourcePermissionService getPermissionService();
 
 }

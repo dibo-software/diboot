@@ -113,7 +113,7 @@ create index idx_iam_user_role on iam_user_role (user_type, user_id);
 create index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 
 -- 前端权限表
-create table iam_frontend_permission
+create table iam_resource_permission
 (
   id bigserial not null,
   tenant_id            bigint        not null default 0,
@@ -127,27 +127,27 @@ create table iam_frontend_permission
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
   update_time timestamp null,
-  constraint PK_iam_frontend_permission primary key (id)
+  constraint PK_iam_resource_permission primary key (id)
 );
-comment on column iam_frontend_permission.id is 'ID';
-comment on column iam_frontend_permission.tenant_id is '租户ID';
-comment on column iam_frontend_permission.app_module is '应用模块';
-comment on column iam_frontend_permission.parent_id is '菜单ID';
-comment on column iam_frontend_permission.display_type is '展现类型';
-comment on column iam_frontend_permission.display_name is '显示名称';
-comment on column iam_frontend_permission.frontend_code is '前端编码';
-comment on column iam_frontend_permission.api_set is '接口列表';
-comment on column iam_frontend_permission.sort_id is '排序号';
-comment on column iam_frontend_permission.is_deleted is '是否删除';
-comment on column iam_frontend_permission.create_time is '创建时间';
-comment on column iam_frontend_permission.update_time is '更新时间';
-comment on table iam_frontend_permission is '前端权限表';
+comment on column iam_resource_permission.id is 'ID';
+comment on column iam_resource_permission.tenant_id is '租户ID';
+comment on column iam_resource_permission.app_module is '应用模块';
+comment on column iam_resource_permission.parent_id is '菜单ID';
+comment on column iam_resource_permission.display_type is '展现类型';
+comment on column iam_resource_permission.display_name is '显示名称';
+comment on column iam_resource_permission.frontend_code is '前端编码';
+comment on column iam_resource_permission.api_set is '接口列表';
+comment on column iam_resource_permission.sort_id is '排序号';
+comment on column iam_resource_permission.is_deleted is '是否删除';
+comment on column iam_resource_permission.create_time is '创建时间';
+comment on column iam_resource_permission.update_time is '更新时间';
+comment on table iam_resource_permission is '前端权限表';
 -- 索引
-create index idx_iam_frontend_permission on iam_frontend_permission (parent_id);
-create index idx_frontend_permission_tenant on iam_frontend_permission(tenant_id);
+create index idx_iam_resource_permission on iam_resource_permission (parent_id);
+create index idx_resource_permission_tenant on iam_resource_permission(tenant_id);
 
 -- 角色-权限
-create table iam_role_permission
+create table iam_role_resource
 (
   id bigserial not null ,
   tenant_id            bigint        not null default 0,
@@ -156,16 +156,16 @@ create table iam_role_permission
   is_deleted BOOLEAN default FALSE not null ,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
-comment on column iam_role_permission.id is 'ID';
-comment on column iam_role_permission.tenant_id is '租户ID';
-comment on column iam_role_permission.role_id is '角色ID';
-comment on column iam_role_permission.permission_id is '权限ID';
-comment on column iam_role_permission.is_deleted is '是否删除';
-comment on column iam_role_permission.create_time is '创建时间';
-comment on table iam_role_permission is '角色权限';
+comment on column iam_role_resource.id is 'ID';
+comment on column iam_role_resource.tenant_id is '租户ID';
+comment on column iam_role_resource.role_id is '角色ID';
+comment on column iam_role_resource.permission_id is '权限ID';
+comment on column iam_role_resource.is_deleted is '是否删除';
+comment on column iam_role_resource.create_time is '创建时间';
+comment on table iam_role_resource is '角色权限';
 -- 索引
-create index idx_iam_role_permission on iam_role_permission (role_id, permission_id);
-create index idx_iam_role_permission_tenant on iam_role_permission(tenant_id);
+create index idx_iam_role_resource on iam_role_resource (role_id, permission_id);
+create index idx_iam_role_resource_tenant on iam_role_resource(tenant_id);
 
 -- 登录日志表
 create table iam_login_trace

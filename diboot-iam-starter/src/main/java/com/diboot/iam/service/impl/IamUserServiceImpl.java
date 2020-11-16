@@ -22,12 +22,12 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.entity.IamFrontendPermission;
+import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.service.IamFrontendPermissionService;
+import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamHelper;
@@ -54,7 +54,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     private IamUserRoleService iamUserRoleService;
 
     @Autowired
-    private IamFrontendPermissionService iamFrontendPermissionService;
+    private IamResourcePermissionService iamResourcePermissionService;
 
     @Autowired
     private IamAccountService iamAccountService;
@@ -83,7 +83,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         }
         for (IamRoleVO roleVO : roleVOList){
             if (Cons.ROLE_SUPER_ADMIN.equalsIgnoreCase(roleVO.getCode())){
-                List<IamFrontendPermission> iamPermissions = iamFrontendPermissionService.getAllFrontendPermissions(Cons.APPLICATION);
+                List<IamResourcePermission> iamPermissions = iamResourcePermissionService.getAllResourcePermissions(Cons.APPLICATION);
                 roleVO.setPermissionList(iamPermissions);
                 return;
             }

@@ -20,14 +20,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
-import com.diboot.iam.entity.IamFrontendPermission;
-import com.diboot.iam.entity.IamRolePermission;
-import com.diboot.iam.mapper.IamRolePermissionMapper;
-import com.diboot.iam.service.IamFrontendPermissionService;
-import com.diboot.iam.service.IamRolePermissionService;
+import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamRoleResource;
+import com.diboot.iam.mapper.IamRoleResourceMapper;
+import com.diboot.iam.service.IamResourcePermissionService;
+import com.diboot.iam.service.IamRoleResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.util.IamSecurityUtils;
-import com.diboot.iam.vo.IamFrontendPermissionVO;
+import com.diboot.iam.vo.IamResourcePermissionVO;
 import com.diboot.iam.vo.ResourceRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,30 +46,30 @@ import java.util.List;
 */
 @Service
 @Slf4j
-public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePermissionMapper, IamRolePermission> implements IamRolePermissionService {
+public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResourceMapper, IamRoleResource> implements IamRoleResourceService {
 
     @Autowired
     private IamRoleService iamRoleService;
 
     @Autowired
-    private IamFrontendPermissionService iamFrontendPermissionService;
+    private IamResourcePermissionService iamResourcePermissionService;
 
     @Override
-    public List<IamFrontendPermissionVO> getPermissionVOList(String appModule, Long roleId) {
+    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, Long roleId) {
         List<Long> roleIdList = new ArrayList<>();
         roleIdList.add(roleId);
         return getPermissionVOList(appModule, roleIdList);
     }
 
     @Override
-    public List<IamFrontendPermissionVO> getPermissionVOList(String appModule, List<Long> roleIds) {
-        List<IamFrontendPermission> list = getPermissionList(appModule, roleIds);
-        List<IamFrontendPermissionVO> voList = BeanUtils.convertList(list, IamFrontendPermissionVO.class);
+    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<Long> roleIds) {
+        List<IamResourcePermission> list = getPermissionList(appModule, roleIds);
+        List<IamResourcePermissionVO> voList = BeanUtils.convertList(list, IamResourcePermissionVO.class);
         return BeanUtils.buildTree(voList);
     }
 
     @Override
-    public List<IamFrontendPermission> getPermissionList(String appModule, List<Long> roleIds) {
+    public List<IamResourcePermission> getPermissionList(String appModule, List<Long> roleIds) {
         if (V.isEmpty(roleIds)) {
             return Collections.emptyList();
         }
@@ -77,8 +77,8 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
         if(V.isEmpty(permissionIds)){
             return Collections.emptyList();
         }
-        List<IamFrontendPermission> list = iamFrontendPermissionService.getEntityList(Wrappers.<IamFrontendPermission>lambdaQuery()
-                .in(IamFrontendPermission::getId, permissionIds));
+        List<IamResourcePermission> list = iamResourcePermissionService.getEntityList(Wrappers.<IamResourcePermission>lambdaQuery()
+                .in(IamResourcePermission::getId, permissionIds));
         if(list == null){
             list = Collections.emptyList();
         }
@@ -95,24 +95,24 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
             return Collections.emptyList();
         }
         // 查询权限
-        List<IamFrontendPermission> frontendPermissions = iamFrontendPermissionService.getEntityList(
-            Wrappers.<IamFrontendPermission>lambdaQuery()
-            .select(IamFrontendPermission::getApiSet)
-            .in(IamFrontendPermission::getId, permissionIds)
+        List<IamResourcePermission> resourcePermissions = iamResourcePermissionService.getEntityList(
+            Wrappers.<IamResourcePermission>lambdaQuery()
+            .select(IamResourcePermission::getApiSet)
+            .in(IamResourcePermission::getId, permissionIds)
         );
-        if(frontendPermissions == null){
+        if(resourcePermissions == null){
             return Collections.emptyList();
         }
         // 转换为string list
-        List<String> list = BeanUtils.collectToList(frontendPermissions, IamFrontendPermission::getApiSet);
+        List<String> list = BeanUtils.collectToList(resourcePermissions, IamResourcePermission::getApiSet);
         return list;
     }
 
     @Override
     public List<ResourceRoleVO> getAllResourceRoleVOList() {
-        LambdaQueryWrapper<IamFrontendPermission> wrapper = Wrappers.<IamFrontendPermission>lambdaQuery()
-                .isNotNull(IamFrontendPermission::getApiSet);
-        List<IamFrontendPermission> list = iamFrontendPermissionService.getEntityList(wrapper);
+        LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
+                .isNotNull(IamResourcePermission::getApiSet);
+        List<IamResourcePermission> list = iamResourcePermissionService.getEntityList(wrapper);
         if(list == null){
             list = Collections.emptyList();
         }
@@ -124,9 +124,9 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     @Transactional(rollbackFor = Exception.class)
     public boolean createRolePermissionRelations(Long roleId, List<Long> permissionIdList) {
         // 批量创建
-        List<IamRolePermission> rolePermissionList = new ArrayList<>();
+        List<IamRoleResource> rolePermissionList = new ArrayList<>();
         for(Long permissionId : permissionIdList){
-            IamRolePermission rolePermission = new IamRolePermission(roleId, permissionId);
+            IamRoleResource rolePermission = new IamRoleResource(roleId, permissionId);
             rolePermissionList.add(rolePermission);
         }
         boolean success = createEntities(rolePermissionList);
@@ -139,13 +139,13 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     public boolean updateRolePermissionRelations(Long roleId, List<Long> permissionIdList) {
         // 删除新列表中不存在的关联记录
         this.deleteEntities(
-                Wrappers.<IamRolePermission>lambdaQuery()
-                        .eq(IamRolePermission::getRoleId, roleId)
+                Wrappers.<IamRoleResource>lambdaQuery()
+                        .eq(IamRoleResource::getRoleId, roleId)
         );
         // 批量新增
-        List<IamRolePermission> rolePermissionList = new ArrayList<>();
+        List<IamRoleResource> rolePermissionList = new ArrayList<>();
         for(Long permissionId : permissionIdList){
-            IamRolePermission rolePermission = new IamRolePermission(roleId, permissionId);
+            IamRoleResource rolePermission = new IamRoleResource(roleId, permissionId);
             rolePermissionList.add(rolePermission);
         }
         boolean success = createEntities(rolePermissionList);
@@ -159,8 +159,8 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
     }
 
     @Override
-    public IamFrontendPermissionService getPermissionService() {
-        return iamFrontendPermissionService;
+    public IamResourcePermissionService getPermissionService() {
+        return iamResourcePermissionService;
     }
 
     /**
@@ -172,13 +172,13 @@ public class IamRolePermissionServiceImpl extends BaseIamServiceImpl<IamRolePerm
         if (V.isEmpty(roleIds)) {
             return Collections.emptyList();
         }
-        List<IamRolePermission> permissions = getEntityList(Wrappers.<IamRolePermission>lambdaQuery()
-                .select(IamRolePermission::getPermissionId)
-                .in(IamRolePermission::getRoleId, roleIds));
+        List<IamRoleResource> permissions = getEntityList(Wrappers.<IamRoleResource>lambdaQuery()
+                .select(IamRoleResource::getResourceId)
+                .in(IamRoleResource::getRoleId, roleIds));
         if(V.isEmpty(permissions)){
             return Collections.emptyList();
         }
-        List<Long> permissionIds = BeanUtils.collectToList(permissions, IamRolePermission::getPermissionId);
+        List<Long> permissionIds = BeanUtils.collectToList(permissions, IamRoleResource::getResourceId);
         return permissionIds;
     }
 }
