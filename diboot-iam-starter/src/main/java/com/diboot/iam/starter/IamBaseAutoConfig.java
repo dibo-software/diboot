@@ -100,19 +100,11 @@ public class IamBaseAutoConfig {
      */
     @Bean(name="shiroSecurityManager")
     @ConditionalOnMissingBean
-    public SessionsSecurityManager securityManager() {
+    public SessionsSecurityManager shiroSecurityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(realm());
         securityManager.setCacheManager(shiroCacheManager());
         return securityManager;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    protected Authenticator authenticator() {
-        ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
-        authenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
-        return authenticator;
     }
 
     @Bean
