@@ -17,7 +17,7 @@ package com.diboot.iam.service.impl;
 
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.mapper.IamRoleMapper;
-import com.diboot.iam.service.BaseIamService;
+import com.diboot.iam.service.IamRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,6 @@ import org.springframework.stereotype.Service;
 */
 @Service
 @Slf4j
-public class IamRoleServiceImpl extends BaseIamServiceImpl<IamRoleMapper, IamRole> implements BaseIamService<IamRole> {
+public class IamRoleServiceImpl extends BaseIamServiceImpl<IamRoleMapper, IamRole> implements IamRoleService {
 
 }

@@ -69,20 +69,20 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
     List<ResourceRoleVO> getAllResourceRoleVOList();
 
     /**
-     * 批量创建角色与权限集的关系
+     * 批量创建角色与资源集的关系
      * @param roleId
-     * @param permissionIdList
+     * @param resourceIdList
      * @return
      */
-    boolean createRolePermissionRelations(Long roleId, List<Long> permissionIdList);
+    boolean createRoleResourceRelations(Long roleId, List<Long> resourceIdList);
 
     /***
-     * 批量更新角色与权限集的关系
+     * 批量更新角色与资源集的关系
      * @param roleId
-     * @param permissionIdList
+     * @param resourceIdList
      * @return
      */
-    boolean updateRolePermissionRelations(Long roleId, List<Long> permissionIdList);
+    boolean updateRoleResourceRelations(Long roleId, List<Long> resourceIdList);
 
     /**
      * 获取RoleService实例

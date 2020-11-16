@@ -20,12 +20,17 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.Authenticator;
+import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
+import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -72,7 +77,7 @@ public class IamBaseAutoConfig {
      * @return
      */
     @Bean(name = "shiroCacheManager")
-    @ConditionalOnMissingBean(CacheManager.class)
+    @ConditionalOnMissingBean
     public CacheManager shiroCacheManager() {
         return new MemoryConstrainedCacheManager();
     }
@@ -89,11 +94,25 @@ public class IamBaseAutoConfig {
         return realm;
     }
 
+    /**
+     * 配置securityManager
+     * @return
+     */
+    @Bean(name="shiroSecurityManager")
+    @ConditionalOnMissingBean
+    public SessionsSecurityManager securityManager() {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setRealm(realm());
+        securityManager.setCacheManager(shiroCacheManager());
+        return securityManager;
+    }
+
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SessionsSecurityManager securityManager) {
-        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
-        advisor.setSecurityManager(securityManager);
-        return advisor;
+    @ConditionalOnMissingBean
+    protected Authenticator authenticator() {
+        ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
+        authenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
+        return authenticator;
     }
 
     @Bean
@@ -104,40 +123,44 @@ public class IamBaseAutoConfig {
         Map<String, Filter> filters = new LinkedHashMap<>();
         filters.put("jwt", new DefaultJwtAuthFilter());
         shiroFilterFactoryBean.setFilters(filters);
-
         //Shiro securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-
         //用户访问未对其授权的资源时的错误提示页面
         shiroFilterFactoryBean.setUnauthorizedUrl("/error");
+        return shiroFilterFactoryBean;
+    }
 
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+    @Bean
+    @ConditionalOnMissingBean
+    protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        Map<String, String> filterChainMap = new LinkedHashMap<>();
         // 设置url
-        filterChainDefinitionMap.put("/static/**", "anon");
-        filterChainDefinitionMap.put("/diboot/**", "anon");
-        filterChainDefinitionMap.put("/error/**", "anon");
-        filterChainDefinitionMap.put("/auth/**", "anon");
-        filterChainDefinitionMap.put("/uploadFile/download/*/image", "anon");
+        filterChainMap.put("/static/**", "anon");
+        filterChainMap.put("/diboot/**", "anon");
+        filterChainMap.put("/error/**", "anon");
+        filterChainMap.put("/auth/**", "anon");
+        filterChainMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
         String anonUrls = iamBaseProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
             for (String url : anonUrls.split(Cons.SEPARATOR_COMMA)) {
-                filterChainDefinitionMap.put(url, "anon");
+                filterChainMap.put(url, "anon");
                 if (url.equals("/**")) {
                     allAnon = true;
                 }
             }
         }
-        filterChainDefinitionMap.put("/login", "authc");
-        filterChainDefinitionMap.put("/logout", "logout");
+        filterChainMap.put("/login", "authc");
+        filterChainMap.put("/logout", "logout");
         if (allAnon && iamBaseProperties.isEnablePermissionCheck() == false) {
-            filterChainDefinitionMap.put("/**", "anon");
+            filterChainMap.put("/**", "anon");
         } else {
-            filterChainDefinitionMap.put("/**", "jwt");
+            filterChainMap.put("/**", "jwt");
         }
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
-        return shiroFilterFactoryBean;
+        DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
+        chainDefinition.addPathDefinitions(filterChainMap);
+        return chainDefinition;
     }
 
 }

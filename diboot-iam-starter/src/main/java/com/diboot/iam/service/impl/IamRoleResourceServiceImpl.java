@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamRoleResource;
@@ -122,33 +123,31 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createRolePermissionRelations(Long roleId, List<Long> permissionIdList) {
+    public boolean createRoleResourceRelations(Long roleId, List<Long> resourceIdList) {
         // 批量创建
-        List<IamRoleResource> rolePermissionList = new ArrayList<>();
-        for(Long permissionId : permissionIdList){
-            IamRoleResource rolePermission = new IamRoleResource(roleId, permissionId);
-            rolePermissionList.add(rolePermission);
+        List<IamRoleResource> roleResourceList = new ArrayList<>();
+        for(Long resourceId : resourceIdList){
+            roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
-        boolean success = createEntities(rolePermissionList);
+        boolean success = createEntities(roleResourceList);
         IamSecurityUtils.clearAllAuthorizationCache();
         return success;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateRolePermissionRelations(Long roleId, List<Long> permissionIdList) {
+    public boolean updateRoleResourceRelations(Long roleId, List<Long> resourceIdList) {
         // 删除新列表中不存在的关联记录
         this.deleteEntities(
                 Wrappers.<IamRoleResource>lambdaQuery()
                         .eq(IamRoleResource::getRoleId, roleId)
         );
         // 批量新增
-        List<IamRoleResource> rolePermissionList = new ArrayList<>();
-        for(Long permissionId : permissionIdList){
-            IamRoleResource rolePermission = new IamRoleResource(roleId, permissionId);
-            rolePermissionList.add(rolePermission);
+        List<IamRoleResource> roleResourceList = new ArrayList<>();
+        for(Long resourceId : resourceIdList){
+            roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
-        boolean success = createEntities(rolePermissionList);
+        boolean success = createEntities(roleResourceList);
         IamSecurityUtils.clearAllAuthorizationCache();
         return success;
     }
