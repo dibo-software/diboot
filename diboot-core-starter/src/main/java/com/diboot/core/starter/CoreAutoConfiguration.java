@@ -76,13 +76,6 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
                 SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "core");
                 log.info("diboot-core 初始化SQL完成.");
             }
-            else{
-                String upgradeDetectSql = "SELECT tenant_id FROM ${SCHEMA}.dictionary WHERE id=0";
-                if(SqlHandler.checkSqlExecutable(upgradeDetectSql) == false){
-                    SqlHandler.initUpgradeSql(pluginManager.getClass(), environment, "core");
-                    log.info("diboot-core 更新SQL完成.");
-                }
-            }
         }
         return pluginManager;
     }

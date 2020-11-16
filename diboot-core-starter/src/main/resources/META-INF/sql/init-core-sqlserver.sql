@@ -1,9 +1,9 @@
 -- 建表
 create table ${SCHEMA}.dictionary (
    id                   bigint                  identity,
+   parent_id            bigint               not null,
    tenant_id            bigint        not null default 0,
    app_module          varchar(50),
-   parent_id            bigint               not null,
    type                 varchar(50)          not null,
    item_name            varchar(100)         not null,
    item_value           varchar(100)         null,
@@ -18,9 +18,9 @@ create table ${SCHEMA}.dictionary (
 );
 -- 添加备注
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'父ID','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'app_module';
-execute sp_addextendedproperty 'MS_Description', N'父ID','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'字典类型','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'type';
 execute sp_addextendedproperty 'MS_Description', N'显示名','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_name';
 execute sp_addextendedproperty 'MS_Description', N'存储值','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_value';

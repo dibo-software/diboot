@@ -45,13 +45,6 @@ public class IamBasePluginManager implements PluginManager {
                 ContextHelper.getBean(IamBaseInitializer.class).insertInitData();
                 log.info("diboot-IAM-base 初始化SQL完成.");
             }
-            else{
-                String upgradeDetectSql = "SELECT tenant_id FROM ${SCHEMA}.iam_role WHERE id=0";
-                if(SqlHandler.checkSqlExecutable(upgradeDetectSql) == false){
-                    SqlHandler.initUpgradeSql(this.getClass(), environment, "iam-base");
-                    log.info("diboot-IAM-base SQL更新完成.");
-                }
-            }
         }
     }
 }

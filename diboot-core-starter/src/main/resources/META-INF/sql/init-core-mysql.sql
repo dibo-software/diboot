@@ -1,9 +1,9 @@
 -- 建表
 CREATE TABLE `dictionary` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   `app_module`  varchar(50)   null comment '应用模块',
-  `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
   `type` varchar(50) NOT NULL COMMENT '字典类型',
   `item_name` varchar(100) NOT NULL COMMENT '显示名',
   `item_value` varchar(100) DEFAULT NULL COMMENT '存储值',

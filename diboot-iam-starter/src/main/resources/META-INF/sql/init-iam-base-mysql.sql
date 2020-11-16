@@ -70,15 +70,15 @@ create index idx_iam_user_role on iam_user_role (user_type, user_id);
 create index idx_iam_user_role_tenant on iam_user_role (tenant_id);
 
 -- 前端资源权限表
-create table iam_frontend_permission
+create table iam_resource_permission
 (
   id            bigint  auto_increment comment 'ID' primary key,
+  parent_id     bigint     default 0                 not null comment '父级菜单',
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   app_module  varchar(50)   null comment '应用模块',
-  parent_id     bigint     default 0                 not null comment '父级菜单',
   display_type  varchar(20)                          not null comment '展现类型',
   display_name  varchar(100)                         not null comment '显示名称',
-  frontend_code varchar(100)                         not null comment '前端编码',
+  resource_code varchar(100)                         not null comment '前端编码',
   api_set       varchar(3000)                        null comment '接口列表',
   sort_id       bigint                               null comment '排序号',
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
@@ -86,22 +86,22 @@ create table iam_frontend_permission
   update_time    timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '前端菜单';
 -- 索引
-create index idx_iam_frontend_permission on iam_frontend_permission (parent_id);
-create index idx_frontend_permission_tenant on iam_frontend_permission (tenant_id);
+create index idx_iam_resource_permission on iam_resource_permission (parent_id);
+create index idx_iam_resource_permission_tenant on iam_resource_permission (tenant_id);
 
 -- 角色-权限
-create table iam_role_permission
+create table iam_role_resource
 (
   id            bigint auto_increment comment 'ID'    primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   role_id       bigint                               not null comment '角色ID',
-  permission_id bigint                               not null comment '权限ID',
+  resource_id bigint                               not null comment '资源ID',
   is_deleted    tinyint(1) default 0                 not null comment '是否删除',
   create_time   timestamp  default CURRENT_TIMESTAMP not null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色权限';
 -- 索引
-create index idx_iam_role_permission on iam_role_permission (role_id, permission_id);
-create index idx_iam_role_permission_tenant on iam_role_permission (tenant_id);
+create index idx_iam_role_resource on iam_role_resource (role_id, resource_id);
+create index idx_iam_role_resource_tenant on iam_role_resource (tenant_id);
 
 -- 登录日志表
 create table iam_login_trace

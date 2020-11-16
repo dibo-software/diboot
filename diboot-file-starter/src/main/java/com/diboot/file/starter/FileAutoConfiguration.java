@@ -56,13 +56,6 @@ public class FileAutoConfiguration {
                 SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
                 log.info("diboot-file 初始化SQL完成.");
             }
-            else{
-                String upgradeDetectSql = "SELECT tenant_id FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
-                if(SqlHandler.checkSqlExecutable(upgradeDetectSql) == false){
-                    SqlHandler.initUpgradeSql(pluginManager.getClass(), environment, "file");
-                    log.info("diboot-file 更新SQL完成.");
-                }
-            }
         }
         return pluginManager;
     }
