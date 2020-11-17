@@ -21,6 +21,7 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
+import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamRole;
@@ -30,7 +31,6 @@ import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +61,9 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     // 扩展接口
     @Autowired(required = false)
     private IamExtensible iamExtensible;
+
+    @Autowired(required = false)
+    private IamCustomize iamCustomize;
 
     /**
      * 超级管理员的角色ID
@@ -249,7 +252,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
      * 检查超级管理员身份
      */
     private void checkSuperAdminIdentity(){
-        if(!IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN)){
+        if(!iamCustomize.checkCurrentUserHasRole(Cons.ROLE_SUPER_ADMIN)){
             throw new PermissionException("非超级管理员用户不可授予其他用户超级管理员权限！");
         }
     }
@@ -262,7 +265,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private void clearUserAuthCache(String userType, Long userId){
         String username = iamAccountService.getAuthAccount(userType, userId);
         if(V.notEmpty(username)){
-            IamSecurityUtils.clearAuthorizationCache(username);
+            iamCustomize.clearAuthorizationCache(username);
         }
     }
 

@@ -15,11 +15,18 @@
  */
 package com.diboot.core.util;
 
+import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.Dictionary;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -68,6 +75,33 @@ public class JSON {
 		try{
 			T model = mapper.readValue(jsonStr, clazz);
 			return model;
+		}
+		catch (Exception e){
+			log.error("Json转Java异常", e);
+			return null;
+		}
+	}
+
+	/***
+	 * 将JSON字符串转换为java对象
+	 * @param jsonStr
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T parseObject(String jsonStr, Class<T> clazz){
+		return toJavaObject(jsonStr, clazz);
+	}
+
+
+	/***
+	 * 将JSON字符串转换为list对象
+	 * @param jsonStr
+	 * @return
+	 */
+	public static <T> List<T> parseArray(String jsonStr, Class<T> clazz){
+		try{
+			JavaType javaType = mapper.getTypeFactory().constructParametricType(List.class, clazz);
+			return mapper.readValue(jsonStr, javaType);
 		}
 		catch (Exception e){
 			log.error("Json转Java异常", e);

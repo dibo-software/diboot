@@ -17,9 +17,11 @@ package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
+import com.diboot.core.service.BindDictService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
@@ -42,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service("dictionaryService")
-public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
+public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService, BindDictService {
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
 
     @Override
@@ -168,4 +170,18 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
             super.updateBatchById(updateList);
         }
     }
+
+    @Override
+    public void bindItemLabel(List voList, String setFieldName, String getFieldName, String type){
+        if(V.isEmpty(voList)){
+            return;
+        }
+        bindingFieldTo(voList)
+                .link(Cons.FIELD_ITEM_NAME, setFieldName)
+                .joinOn(getFieldName, Cons.FIELD_ITEM_VALUE)
+                .andEQ(Cons.FIELD_TYPE, type)
+                .andGT(Cons.FieldName.parentId.name(), 0)
+                .bind();
+    }
+
 }

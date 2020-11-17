@@ -20,10 +20,10 @@ import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
+import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.util.AnnotationUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -134,8 +134,8 @@ public class ApiPermissionExtractor {
                 }
                 // 处理BindPermission注解
                 BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
-                RequiresPermissions requiresPermissions = AnnotationUtils.getAnnotation(method, RequiresPermissions.class);
-                if(bindPermission == null && requiresPermissions == null){
+                String[] permissionCodes = getExtPermissionCodes(method);
+                if(bindPermission == null && permissionCodes == null){
                     continue;
                 }
                 // 提取方法上的注解url
@@ -149,8 +149,7 @@ public class ApiPermissionExtractor {
                     buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name());
                 }
                 // 处理RequirePermissions注解
-                else if(requiresPermissions != null){
-                    String[] permissionCodes = requiresPermissions.value();
+                else if(V.notEmpty(permissionCodes)){
                     for(String permissionCode : permissionCodes){
                         // 提取请求url-permission code的关系
                         buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, null);
@@ -199,6 +198,19 @@ public class ApiPermissionExtractor {
                 }
             }
         }
+    }
+
+    /**
+     * 获取扩展的待检查的权限码
+     * @param method
+     * @return
+     */
+    private static String[] getExtPermissionCodes(Method method){
+        IamCustomize iamCustomize = ContextHelper.getBean(IamCustomize.class);
+        if(iamCustomize != null){
+            return iamCustomize.getOrignPermissionCodes(method);
+        }
+        return null;
     }
 
 }

@@ -22,11 +22,10 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.Log;
-import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.iam.util.AnnotationUtils;
+import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamHelper;
-import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -123,19 +122,12 @@ public class LogAspect {
         HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
         operationLog.setRequestMethod(request.getMethod())
                 .setRequestUri(request.getRequestURI())
-                .setRequestIp(IamSecurityUtils.getRequestIp(request));
+                .setRequestIp(HttpHelper.getRequestIp(request));
         // 请求参数
         Map<String, Object> params = IamHelper.buildParamsMap(request);
         String paramsJson = JSON.stringify(params);
         paramsJson = S.cut(paramsJson, maxLength);
         operationLog.setRequestParams(paramsJson);
-        // 操作用户信息
-        BaseLoginUser loginUser = IamSecurityUtils.getCurrentUser();
-        if(loginUser != null){
-            operationLog.setUserType(loginUser.getClass().getSimpleName())
-                    .setUserId(loginUser.getId())
-                    .setUserRealname(loginUser.getDisplayName());
-        }
         // 补充注解信息
         // 需要验证
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

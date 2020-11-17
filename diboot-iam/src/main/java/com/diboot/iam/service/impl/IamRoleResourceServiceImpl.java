@@ -19,15 +19,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
+import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamRoleResource;
 import com.diboot.iam.mapper.IamRoleResourceMapper;
 import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamRoleResourceService;
 import com.diboot.iam.service.IamRoleService;
-import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamResourcePermissionVO;
 import com.diboot.iam.vo.ResourceRoleVO;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +53,9 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
 
     @Autowired
     private IamResourcePermissionService iamResourcePermissionService;
+
+    @Autowired(required = false)
+    private IamCustomize iamCustomize;
 
     @Override
     public List<IamResourcePermissionVO> getPermissionVOList(String appModule, Long roleId) {
@@ -130,7 +132,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
         boolean success = createEntities(roleResourceList);
-        IamSecurityUtils.clearAllAuthorizationCache();
+        iamCustomize.clearAllAuthorizationCache();
         return success;
     }
 
@@ -151,7 +153,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
         boolean success = createEntities(roleResourceList);
-        IamSecurityUtils.clearAllAuthorizationCache();
+        iamCustomize.clearAllAuthorizationCache();
         return success;
     }
 

@@ -20,13 +20,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.ChangePwdDTO;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.mapper.IamAccountMapper;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +43,14 @@ import java.util.List;
 @Slf4j
 public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, IamAccount> implements IamAccountService {
 
+    @Autowired(required = false)
+    private IamCustomize iamCustomize;
+
     @Override
     public boolean createEntity(IamAccount iamAccount) {
         // 生成加密盐并加密
         if (V.notEmpty(iamAccount.getAuthSecret())){
-            IamSecurityUtils.encryptPwd(iamAccount);
+            iamCustomize.encryptPwd(iamAccount);
         }
         // 保存
         try{
@@ -64,7 +68,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
         if(V.notEmpty(accountList)){
             accountList.stream().forEach(account->{
                 // 生成加密盐并加密
-                IamSecurityUtils.encryptPwd(account);
+                iamCustomize.encryptPwd(account);
             });
         }
         // 保存
@@ -92,14 +96,14 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
             throw new BusinessException(Status.FAIL_OPERATION, "密码与确认密码不一致，请重新输入");
         }
         // 验证旧密码是否正确
-        String oldAuthSecret = IamSecurityUtils.encryptPwd(changePwdDTO.getOldPassword(), iamAccount.getSecretSalt());
+        String oldAuthSecret = iamCustomize.encryptPwd(changePwdDTO.getOldPassword(), iamAccount.getSecretSalt());
         if (V.notEquals(oldAuthSecret, iamAccount.getAuthSecret())){
             throw new BusinessException(Status.FAIL_OPERATION, "旧密码错误，请重新输入");
         }
 
         // 更改密码
         iamAccount.setAuthSecret(changePwdDTO.getPassword());
-        IamSecurityUtils.encryptPwd(iamAccount);
+        iamCustomize.encryptPwd(iamAccount);
         boolean success = this.updateEntity(iamAccount);
 
         return success;

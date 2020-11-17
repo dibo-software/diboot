@@ -18,11 +18,9 @@ package com.diboot.iam.annotation.process;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
+import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.exception.PermissionException;
-import com.diboot.iam.starter.IamBaseProperties;
 import com.diboot.iam.util.AnnotationUtils;
-import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -50,8 +48,8 @@ import java.util.Map;
 @Component
 @Slf4j
 public class BindPermissionAspect {
-    @Autowired
-    private IamBaseProperties iamBaseProperties;
+    @Autowired(required = false)
+    private IamCustomize iamCustomize;
 
     /**
      * 注解切面
@@ -65,12 +63,12 @@ public class BindPermissionAspect {
      */
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-        if(iamBaseProperties.isEnablePermissionCheck() == false){
+        if(iamCustomize.isEnablePermissionCheck() == false){
             log.debug("BindPermission权限检查已停用，如需启用请删除配置项: diboot.iam.enable-permission-check");
             return;
         }
         // 超级管理员 权限放过
-        if (IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN)) {
+        if (iamCustomize.checkCurrentUserHasRole(Cons.ROLE_SUPER_ADMIN)) {
             return;
         }
         // 获取当前uri
@@ -87,12 +85,7 @@ public class BindPermissionAspect {
         Method method = signature.getMethod();
         BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
         if(permissionCode.endsWith(":"+bindPermission.code())){
-            try{
-                IamSecurityUtils.getSubject().checkPermission(permissionCode);
-            }
-            catch (Exception e){
-                throw new PermissionException(e);
-            }
+            iamCustomize.checkPermission(permissionCode);
         }
     }
 

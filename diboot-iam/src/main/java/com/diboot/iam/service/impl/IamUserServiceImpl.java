@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamAccount;
@@ -31,7 +32,6 @@ import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamHelper;
-import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +58,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired
     private IamAccountService iamAccountService;
+
+    @Autowired(required = false)
+    private IamCustomize iamCustomize;
 
     @Override
     public IamRoleVO buildRoleVo4FrontEnd(IamUser iamUser) {
@@ -133,7 +136,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 // 设置密码
                 if (V.notEmpty(userAccountDTO.getPassword())){
                     iamAccount.setAuthSecret(userAccountDTO.getPassword());
-                    IamSecurityUtils.encryptPwd(iamAccount);
+                    iamCustomize.encryptPwd(iamAccount);
                 }
                 iamAccountService.updateEntity(iamAccount);
 
