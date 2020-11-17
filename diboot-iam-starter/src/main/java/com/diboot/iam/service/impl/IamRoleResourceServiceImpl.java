@@ -143,6 +143,9 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
                         .eq(IamRoleResource::getRoleId, roleId)
         );
         // 批量新增
+        if (V.isEmpty(resourceIdList)) {
+            return true;
+        }
         List<IamRoleResource> roleResourceList = new ArrayList<>();
         for(Long resourceId : resourceIdList){
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
