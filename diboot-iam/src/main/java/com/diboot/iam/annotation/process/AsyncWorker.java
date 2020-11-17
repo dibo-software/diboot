@@ -15,6 +15,8 @@
  */
 package com.diboot.iam.annotation.process;
 
+import com.diboot.iam.auth.IamCustomize;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.iam.service.IamLoginTraceService;
@@ -38,6 +40,8 @@ public class AsyncWorker {
     private IamLoginTraceService iamLoginTraceService;
     @Autowired
     private IamOperationLogService iamOperationLogService;
+    @Autowired(required = false)
+    private IamCustomize iamCustomize;
 
     /**
      * 保存登录日志
@@ -58,6 +62,13 @@ public class AsyncWorker {
      */
     public void saveOperationLog(IamOperationLog operationLog) {
         try{
+            // 操作用户信息
+            BaseLoginUser loginUser = iamCustomize.getCurrentUser();
+            if(loginUser != null){
+                operationLog.setUserType(loginUser.getClass().getSimpleName())
+                        .setUserId(loginUser.getId())
+                        .setUserRealname(loginUser.getDisplayName());
+            }
             iamOperationLogService.createEntity(operationLog);
         }
         catch (Exception e){
