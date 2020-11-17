@@ -29,6 +29,13 @@ import java.util.List;
  */
 public interface DictionaryService extends BaseService<Dictionary>{
 
+    /***
+     * 获取对应类型的键值对
+     * @param type
+     * @return
+     */
+    List<KeyValue> getKeyValueList(String type);
+
     /**
      * 添加字典定义及其子项
      * @param dictVO

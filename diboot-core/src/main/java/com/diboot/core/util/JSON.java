@@ -83,6 +83,22 @@ public class JSON {
 	}
 
 	/***
+	 * 将JSON字符串转换为Map<String, Object></>对象
+	 * @param jsonStr
+	 * @return
+	 */
+	public static Map<String, Object> parseObject(String jsonStr){
+		try{
+			JavaType javaType = mapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
+			return mapper.readValue(jsonStr, javaType);
+		}
+		catch (Exception e){
+			log.error("Json转Java异常", e);
+			return null;
+		}
+	}
+
+	/***
 	 * 将JSON字符串转换为java对象
 	 * @param jsonStr
 	 * @param clazz
@@ -119,7 +135,7 @@ public class JSON {
 	}
 
 	/***
-	 * 将JSON字符串转换为java对象
+	 * 将JSON字符串转换为Map对象
 	 * @param jsonStr
 	 * @return
 	 */
@@ -129,5 +145,4 @@ public class JSON {
 		}
 		return toJavaObject(jsonStr, LinkedHashMap.class);
 	}
-
 }
