@@ -15,6 +15,8 @@
  */
 package com.diboot.core.service;
 
+import com.diboot.core.vo.KeyValue;
+
 import java.util.List;
 
 /**
@@ -34,4 +36,10 @@ public interface BindDictService {
      */
     void bindItemLabel(List voList, String setFieldName, String getFieldName, String type);
 
+    /**
+     * 获取字典类型对应的子项键值对
+     * @param dictType
+     * @return
+     */
+    List<KeyValue> getKeyValueList(String dictType);
 }
