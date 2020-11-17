@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.starter;
 
-import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
@@ -29,8 +28,6 @@ import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.service.*;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * IAM组件相关的初始化

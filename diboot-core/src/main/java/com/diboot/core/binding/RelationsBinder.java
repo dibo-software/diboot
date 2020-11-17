@@ -23,10 +23,9 @@ import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.service.DictionaryService;
+import com.diboot.core.service.BindDictService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -177,22 +176,18 @@ public class RelationsBinder {
      * @param <VO>
      */
     private static <VO> void doBindingDict(List<VO> voList, FieldAnnotation fieldAnno) {
-        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
-        if(dictionaryService != null){
+        BindDictService bindDictService = ContextHelper.getBean(BindDictService.class);
+        if(bindDictService != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
             String dictValueField = annotation.field();
             if(V.isEmpty(dictValueField)){
                 dictValueField = S.replace(fieldAnno.getFieldName(), "Label", "");
             }
-            dictionaryService.bindingFieldTo(voList)
-                    .link(Cons.FIELD_ITEM_NAME, fieldAnno.getFieldName())
-                    .joinOn(dictValueField, Cons.FIELD_ITEM_VALUE)
-                    .andEQ(Cons.FIELD_TYPE, annotation.type())
-                    .andGT(Cons.FieldName.parentId.name(), 0)
-                    .bind();
+            // 字典绑定接口化
+            bindDictService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
         }
         else{
-            throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "DictionaryService未实现，无法使用BindDict注解！");
+            throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "BindDictService未实现，无法使用BindDict注解！");
         }
     }
 
