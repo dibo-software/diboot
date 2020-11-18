@@ -21,6 +21,21 @@ create index idx_iam_user_2 on iam_user (mobile_phone);
 create unique index uidx_iam_user on iam_user (tenant_id, user_num);
 create index idx_iam_user_tenant on iam_user (tenant_id);
 
+-- 部门表
+CREATE TABLE `iam_org` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `parent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '上级ID',
+  `name` varchar(100) NOT NULL COMMENT '名称',
+  `short_name` varchar(50) NOT NULL COMMENT '简称',
+  `level` smallint(6) NOT NULL DEFAULT '1' COMMENT '层级',
+  `sort_id` bigint(20) DEFAULT NULL COMMENT '排序号',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_iam_org` (`parent_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COMMENT='部门';
+
+
 -- 账号表
 create table iam_account
 (
