@@ -82,7 +82,7 @@
       </div>
     </div>
 
-    <a class="promotions" href="https://www.oschina.net/p/diboot" target="_blank">欢迎帮我们投票，让我们出道！</a>
+<!--    <a class="promotions" href="https://www.oschina.net/p/diboot" target="_blank">欢迎帮我们投票，让我们出道！</a>-->
   </div>
 </template>
 
