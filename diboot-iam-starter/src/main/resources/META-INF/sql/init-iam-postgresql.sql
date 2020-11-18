@@ -244,6 +244,7 @@ CREATE TABLE iam_org (
    parent_id            bigint        not null default 0,
    name varchar(100) NOT NULL,
    short_name varchar(50) NOT NULL,
+   org_comment varchar(255) NOT NULL,
    level smallint DEFAULT 1 NOT NULL,
    sort_id bigint DEFAULT 1 NOT NULL,
    is_deleted BOOLEAN default FALSE not null,
@@ -253,6 +254,7 @@ comment on column iam_org.id is 'ID';
 comment on column iam_org.parent_id is '上级ID';
 comment on column iam_org.name is '名称';
 comment on column iam_org.short_name is '简称';
+comment on column iam_org.org_comment is '备注';
 comment on column iam_org.level is '层级';
 comment on column iam_org.sort_id is '排序号';
 comment on column iam_org.is_deleted is '是否删除';

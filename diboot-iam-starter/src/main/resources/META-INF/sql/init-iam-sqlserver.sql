@@ -252,6 +252,7 @@ CREATE TABLE ${SCHEMA}.iam_org (
    parent_id            bigint        not null default 0,
    name varchar(100) NOT NULL,
    short_name varchar(50) NOT NULL,
+   org_comment varchar(255) NOT NULL,
    level smallint DEFAULT 1 NOT NULL,
    sort_id bigint DEFAULT 1 NOT NULL,
    is_deleted tinyint default 0 not null ,
@@ -262,6 +263,7 @@ execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', '
 execute sp_addextendedproperty 'MS_Description', N'上级ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'名称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'name';
 execute sp_addextendedproperty 'MS_Description', N'简称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'short_name';
+execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'org_comment';
 execute sp_addextendedproperty 'MS_Description', N'层级','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'level';
 execute sp_addextendedproperty 'MS_Description', N'排序号','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'is_deleted';

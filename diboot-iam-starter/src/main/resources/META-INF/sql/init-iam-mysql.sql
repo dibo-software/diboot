@@ -27,6 +27,7 @@ CREATE TABLE `iam_org` (
   `parent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '上级ID',
   `name` varchar(100) NOT NULL COMMENT '名称',
   `short_name` varchar(50) NOT NULL COMMENT '简称',
+  `org_comment` varchar(255) NOT NULL COMMENT '备注',
   `level` smallint(6) NOT NULL DEFAULT '1' COMMENT '层级',
   `sort_id` bigint(20) DEFAULT NULL COMMENT '排序号',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',

@@ -252,6 +252,7 @@ CREATE TABLE ${SCHEMA}.iam_org (
    parent_id NUMBER(20) DEFAULT 0 NOT NULL,
    name VARCHAR2(100) NOT NULL,
    short_name VARCHAR2(50) NOT NULL,
+   org_comment VARCHAR2(255)   null,
    level NUMBER(6) DEFAULT 1 NOT NULL,
    sort_id NUMBER(20) DEFAULT 1 NOT NULL,
    is_deleted NUMBER(1) DEFAULT 0    not null,
@@ -262,6 +263,7 @@ comment on column ${SCHEMA}.iam_org.id is 'ID';
 comment on column ${SCHEMA}.iam_org.parent_id is '上级ID';
 comment on column ${SCHEMA}.iam_org.name is '名称';
 comment on column ${SCHEMA}.iam_org.short_name is '简称';
+comment on column ${SCHEMA}.iam_org.org_comment is '备注';
 comment on column ${SCHEMA}.iam_org.level is '层级';
 comment on column ${SCHEMA}.iam_org.sort_id is '排序号';
 comment on column ${SCHEMA}.iam_org.is_deleted is '是否删除';
