@@ -51,10 +51,7 @@ public class IamCustomizeImpl implements IamCustomize {
      */
     @Override
     public void encryptPwd(IamAccount iamAccount) {
-        if(Cons.DICTCODE_AUTH_TYPE.PWD.name().equals(iamAccount.getAuthType())){
-            String encryptedPwd = IamSecurityUtils.encryptPwd(iamAccount.getAuthSecret(), null);
-            iamAccount.setAuthSecret(encryptedPwd);
-        }
+        IamSecurityUtils.encryptPwd(iamAccount);
     }
 
     @Override

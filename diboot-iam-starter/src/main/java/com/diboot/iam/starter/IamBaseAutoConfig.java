@@ -20,9 +20,6 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.Authenticator;
-import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
-import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
@@ -63,6 +60,10 @@ public class IamBaseAutoConfig {
     @Autowired
     private IamBaseProperties iamBaseProperties;
 
+    /**
+     * 初始化starter
+     * @return
+     */
     @Bean
     @ConditionalOnMissingBean(IamBasePluginManager.class)
     public IamBasePluginManager iamBasePluginManager() {
