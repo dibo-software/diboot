@@ -38,12 +38,12 @@ public class IamBasePluginManager implements PluginManager {
             // 验证SQL
             String initDetectSql = "SELECT id FROM ${SCHEMA}.iam_role WHERE id=0";
             if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
-                log.info("diboot-IAM-base 初始化SQL ...");
+                log.info("diboot-IAM 初始化SQL ...");
                 // 执行初始化SQL
-                SqlHandler.initBootstrapSql(this.getClass(), environment, "iam-base");
+                SqlHandler.initBootstrapSql(this.getClass(), environment, "iam");
                 // 插入相关数据：Dict，Role等
                 IamBaseInitializer.insertInitData();
-                log.info("diboot-IAM-base 初始化SQL完成.");
+                log.info("diboot-IAM 初始化SQL完成.");
             }
         }
     }

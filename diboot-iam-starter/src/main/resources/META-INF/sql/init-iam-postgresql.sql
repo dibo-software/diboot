@@ -237,3 +237,25 @@ comment on table iam_operation_log is '操作日志';
 -- 创建索引
 create index idx_iam_operation_log on iam_operation_log (user_type, user_id);
 create index idx_iam_operation_log_tenant on iam_operation_log(tenant_id);
+
+-- 部门表
+CREATE TABLE iam_org (
+   id bigserial not null ,
+   parent_id            bigint        not null default 0,
+   name varchar(100) NOT NULL,
+   short_name varchar(50) NOT NULL,
+   level smallint DEFAULT 1 NOT NULL,
+   sort_id bigint DEFAULT 1 NOT NULL,
+   is_deleted BOOLEAN default FALSE not null,
+   create_time timestamp default CURRENT_TIMESTAMP not null
+);
+comment on column iam_org.id is 'ID';
+comment on column iam_org.parent_id is '上级ID';
+comment on column iam_org.name is '名称';
+comment on column iam_org.short_name is '简称';
+comment on column iam_org.level is '层级';
+comment on column iam_org.sort_id is '排序号';
+comment on column iam_org.is_deleted is '是否删除';
+comment on column iam_org.create_time is '创建时间';
+comment on table iam_org is '部门';
+create index idx_iam_org on iam_org (parent_id);
