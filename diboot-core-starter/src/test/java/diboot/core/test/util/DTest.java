@@ -21,6 +21,7 @@ import com.diboot.core.vo.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -41,7 +42,19 @@ public class DTest {
         for(String dateStr : dateStrArray){
             Date date = D.fuzzyConvert(dateStr);
             Assert.assertTrue(date != null);
+
         }
+        Date date = D.convert2Date("2020/11/15");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        String week = D.getCnWeek(date);
+        Assert.assertTrue(week.equals("星期日"));
+        week = D.getEnWeek(date);
+        Assert.assertTrue(week.equals("Sun"));
+        String month = D.getCnMonth(date);
+        Assert.assertTrue(month.equals("十一月"));
+        month = D.getEnMonth(date);
+        Assert.assertTrue(month.equals("Nov"));
     }
 
     @Test
