@@ -21,10 +21,13 @@ import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.service.IamOperationLogService;
+import com.diboot.iam.util.HttpHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 异步相关处理
@@ -42,13 +45,18 @@ public class AsyncWorker {
     private IamOperationLogService iamOperationLogService;
     @Autowired(required = false)
     private IamCustomize iamCustomize;
-
+    @Autowired
+    private HttpServletRequest request;
     /**
      * 保存登录日志
      * @param loginTrace
      */
     public void saveLoginTraceLog(IamLoginTrace loginTrace){
         try{
+            // 记录客户端信息
+        String userAgent = HttpHelper.getUserAgent(request);
+        String ipAddress = HttpHelper.getRequestIp(request);
+        loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
             iamLoginTraceService.createEntity(loginTrace);
         }
         catch (Exception e){

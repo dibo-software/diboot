@@ -158,6 +158,16 @@ public class HttpHelper {
         }
     }
 
+    private static final String USER_AGENT_FLAG = "user-agent";
+    /***
+     * 获取user-agent
+     * @param request
+     * @return
+     */
+    public static String getUserAgent(HttpServletRequest request) {
+        return request.getHeader(USER_AGENT_FLAG);
+    }
+
     private static final String[] HEADER_IP_KEYWORDS = {"X-Forwarded-For", "Proxy-Client-IP",
             "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "X-Real-IP"};
     /***

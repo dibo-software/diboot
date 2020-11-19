@@ -36,8 +36,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 用户名密码认证的service实现
  * @author mazc@dibo.ltd
@@ -47,8 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 @Slf4j
 public class PwdAuthServiceImpl implements AuthService {
-    @Autowired
-    private HttpServletRequest request;
     @Autowired
     private IamAccountService accountService;
     @Autowired
@@ -150,10 +146,6 @@ public class PwdAuthServiceImpl implements AuthService {
         if(currentUser != null){
             loginTrace.setUserId(currentUser.getId());
         }
-        // 记录客户端信息
-        String userAgent = request.getHeader("user-agent");
-        String ipAddress = IamSecurityUtils.getRequestIp(request);
-        loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
         asyncWorker.saveLoginTraceLog(loginTrace);
     }
 
