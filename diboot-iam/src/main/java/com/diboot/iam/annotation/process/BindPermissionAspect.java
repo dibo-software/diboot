@@ -20,7 +20,7 @@ import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.util.AnnotationUtils;
+import com.diboot.core.util.AnnotationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;

@@ -86,16 +86,10 @@ public class Cons {
     /**
      * JWT token前缀
      */
-    public static final String JWT_TOKEN_HEAD = "Bearer ";
+    public static final String JWT_TOKEN_PREFIX = "Bearer ";
     /**
      * JWT token header头名称
      */
     public static final String JWT_TOKEN_HEADER_NAME = "Authorization";
-
-    public static final String AUTHORITY_PREFIX = "ROLE_";
-
-    public static final String AUTHORITY_CLAIM_NAME = "authorities";
-
-    public static final String RESOURCE_ROLES_MAP = "AUTH:RESOURCE_ROLES_MAP";
 
 }

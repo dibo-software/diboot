@@ -23,7 +23,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.Log;
 import com.diboot.iam.entity.IamOperationLog;
-import com.diboot.iam.util.AnnotationUtils;
+import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamHelper;
 import lombok.extern.slf4j.Slf4j;
