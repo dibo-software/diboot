@@ -39,34 +39,9 @@ public class IamHelper {
      * 构建请求参数Map
      * @return
      */
+    @Deprecated
     public static Map<String, Object> buildParamsMap(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>();
-        Enumeration paramNames = request.getParameterNames();
-        try{
-            while (paramNames.hasMoreElements()){
-                String paramName = (String) paramNames.nextElement();
-                String[] values = request.getParameterValues(paramName);
-                if(V.notEmpty(values)){
-                    if(values.length == 1){
-                        if(V.notEmpty(values[0])){
-                            String paramValue = java.net.URLDecoder.decode(values[0], com.diboot.core.config.Cons.CHARSET_UTF8);
-                            result.put(paramName, paramValue);
-                        }
-                    }
-                    else{
-                        String[] valueArray = new String[values.length];
-                        for(int i=0; i<values.length; i++){
-                            valueArray[i] = java.net.URLDecoder.decode(values[i], com.diboot.core.config.Cons.CHARSET_UTF8);
-                        }
-                        result.put(paramName, valueArray);
-                    }
-                }
-            }
-        }
-        catch (Exception e){
-            log.warn("构建请求参数异常", e);
-        }
-        return result;
+        return HttpHelper.buildParamsMap(request);
     }
 
     /**

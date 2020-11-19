@@ -16,10 +16,11 @@
 package com.diboot.iam.util;
 
 /**
- * 注解相关工具类 （请调用core utils下的AnnotationUtils）
+ * 注解相关工具类
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/23
+ * @see com.diboot.core.util.AnnotationUtils
  */
 @Deprecated
 public class AnnotationUtils extends com.diboot.core.util.AnnotationUtils {

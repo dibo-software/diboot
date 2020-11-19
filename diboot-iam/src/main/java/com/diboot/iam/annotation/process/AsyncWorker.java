@@ -54,9 +54,9 @@ public class AsyncWorker {
     public void saveLoginTraceLog(IamLoginTrace loginTrace){
         try{
             // 记录客户端信息
-        String userAgent = HttpHelper.getUserAgent(request);
-        String ipAddress = HttpHelper.getRequestIp(request);
-        loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
+            String userAgent = HttpHelper.getUserAgent(request);
+            String ipAddress = HttpHelper.getRequestIp(request);
+            loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
             iamLoginTraceService.createEntity(loginTrace);
         }
         catch (Exception e){

@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,7 +40,7 @@ import java.util.Map;
  * @date 2020/02/18
  */
 @Slf4j
-public class HttpHelper {
+public class HttpHelper extends com.diboot.core.util.HttpHelper {
 
     /**
      * 调用Http Get请求
@@ -156,36 +158,6 @@ public class HttpHelper {
         catch (NoSuchAlgorithmException | KeyManagementException e) {
             log.warn("构建https请求异常", e);
         }
-    }
-
-    private static final String USER_AGENT_FLAG = "user-agent";
-    /***
-     * 获取user-agent
-     * @param request
-     * @return
-     */
-    public static String getUserAgent(HttpServletRequest request) {
-        return request.getHeader(USER_AGENT_FLAG);
-    }
-
-    private static final String[] HEADER_IP_KEYWORDS = {"X-Forwarded-For", "Proxy-Client-IP",
-            "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "X-Real-IP"};
-    /***
-     * 获取客户ip地址
-     * @param request
-     * @return
-     */
-    public static String getRequestIp(HttpServletRequest request) {
-        for(String header : HEADER_IP_KEYWORDS){
-            String ipAddresses = request.getHeader(header);
-            if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
-                continue;
-            }
-            if (V.notEmpty(ipAddresses)) {
-                return ipAddresses.split(Cons.SEPARATOR_COMMA)[0];
-            }
-        }
-        return request.getRemoteAddr();
     }
 
     /**

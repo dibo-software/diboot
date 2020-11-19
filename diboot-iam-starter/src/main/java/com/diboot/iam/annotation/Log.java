@@ -28,12 +28,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Log {
     /**
-     * 应用模块
-     * @return
-     */
-    String appModule() default "";
-
-    /**
      * 设置当前操作业务对象，默认为Entity类名
      * @return
      */
