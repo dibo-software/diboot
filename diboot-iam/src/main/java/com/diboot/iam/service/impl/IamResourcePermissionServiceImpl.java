@@ -52,6 +52,9 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deepCreatePermissionAndChildren(IamResourcePermissionListVO iamResourcePermissionListVO) {
+        if (iamResourcePermissionListVO == null) {
+            return ;
+        }
         IamResourcePermission iamResourcePermission = (IamResourcePermission) iamResourcePermissionListVO;
         if(!super.createEntity(iamResourcePermission)){
             log.warn("新建菜单权限失败，displayType="+iamResourcePermission.getDisplayType());
