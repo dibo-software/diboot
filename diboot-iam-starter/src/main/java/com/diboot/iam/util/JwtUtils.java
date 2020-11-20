@@ -131,7 +131,7 @@ public class JwtUtils {
             // 小于1/4 则更新
             if((elapsed / remaining) >= 3){
                 // 更新token
-                int expiresInMinutes = Integer.parseInt(S.substringAfter(claims.getSubject(), Cons.SEPARATOR_COMMA));
+                int expiresInMinutes = Integer.parseInt(S.substringAfterLast(claims.getSubject(), Cons.SEPARATOR_COMMA));
                 return JwtUtils.generateToken(claims.getSubject(), expiresInMinutes);
             }
         }

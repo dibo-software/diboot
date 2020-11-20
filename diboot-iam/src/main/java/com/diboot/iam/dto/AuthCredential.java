@@ -53,6 +53,11 @@ public abstract class AuthCredential implements Serializable {
     private boolean rememberMe;
 
     /**
+     * 租户id
+     */
+    private Long tenantId = 0L;
+
+    /**
      * 扩展属性
      */
     private Map<String, Object> extObj;

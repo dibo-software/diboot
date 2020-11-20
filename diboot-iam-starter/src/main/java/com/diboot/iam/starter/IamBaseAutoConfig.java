@@ -19,15 +19,23 @@ import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
+import com.diboot.iam.jwt.StatelessJwtAuthFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
+import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,6 +47,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.Filter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -90,6 +99,7 @@ public class IamBaseAutoConfig {
         CacheManager cacheManager = shiroCacheManager();
         if (cacheManager != null) {
             realm.setCachingEnabled(true);
+            realm.setAuthenticationCachingEnabled(true);
             realm.setCacheManager(cacheManager);
         }
         return realm;
@@ -108,18 +118,43 @@ public class IamBaseAutoConfig {
         return securityManager;
     }
 
+    /**
+     * 配置ShiroFilter
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public BasicHttpAuthenticationFilter shiroFilter() {
+        return new DefaultJwtAuthFilter();
+    }
+
     @Bean
     @ConditionalOnMissingBean
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(SessionsSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 设置过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
-        filters.put("jwt", new DefaultJwtAuthFilter());
+        filters.put("jwt", shiroFilter());
+
+        // 设置无状态session
+        if (securityManager instanceof DefaultWebSecurityManager &&
+                V.equals(shiroFilter().getClass().getTypeName(), StatelessJwtAuthFilter.class.getTypeName())) {
+            DefaultWebSecurityManager defaultWebSecurityManager = ((DefaultWebSecurityManager) securityManager);
+            // 设置不创建session
+            defaultWebSecurityManager.setSubjectFactory(new StatelessDefaultSubjectFactory());
+            // subject禁止存储到session
+            //详情见org.apache.shiro.mgt.DefaultSubjectDAO#save
+            DefaultWebSessionStorageEvaluator webEvalutator = new DefaultWebSessionStorageEvaluator();
+            webEvalutator.setSessionStorageEnabled(false);
+            ((DefaultSubjectDAO)defaultWebSecurityManager.getSubjectDAO())
+                    .setSessionStorageEvaluator(webEvalutator);
+        }
         shiroFilterFactoryBean.setFilters(filters);
         //Shiro securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //用户访问未对其授权的资源时的错误提示页面
         shiroFilterFactoryBean.setUnauthorizedUrl("/error");
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition().getFilterChainMap());
         return shiroFilterFactoryBean;
     }
 
@@ -131,7 +166,9 @@ public class IamBaseAutoConfig {
         filterChainMap.put("/static/**", "anon");
         filterChainMap.put("/diboot/**", "anon");
         filterChainMap.put("/error/**", "anon");
-        filterChainMap.put("/auth/**", "anon");
+        filterChainMap.put("/auth/captcha", "anon");
+        filterChainMap.put("/auth/login", "anon");
+        filterChainMap.put("/auth/2step-code", "anon");
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
@@ -156,4 +193,20 @@ public class IamBaseAutoConfig {
         return chainDefinition;
     }
 
+    /**
+     * 禁用session
+     *
+     * @author : uu
+     * @version : v1.0
+     * @Date 2020/11/19  11:06
+     */
+    class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
+
+        @Override
+        public Subject createSubject(SubjectContext context) {
+            //不创建session
+            context.setSessionCreationEnabled(false);
+            return super.createSubject(context);
+        }
+    }
 }

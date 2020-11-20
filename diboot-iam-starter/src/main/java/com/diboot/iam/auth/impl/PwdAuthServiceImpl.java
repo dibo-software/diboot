@@ -63,6 +63,7 @@ public class PwdAuthServiceImpl implements AuthService {
                 .eq(IamAccount::getUserType, jwtToken.getUserType())
                 .eq(IamAccount::getAuthType, jwtToken.getAuthType())
                 .eq(IamAccount::getAuthAccount, jwtToken.getAuthAccount())
+                .eq(IamAccount::getTenantId, jwtToken.getTenantId())
                 .orderByDesc(IamAccount::getId);
         IamAccount latestAccount = accountService.getSingleEntity(queryWrapper);
         if(latestAccount == null){
@@ -74,7 +75,8 @@ public class PwdAuthServiceImpl implements AuthService {
         if (Cons.DICTCODE_ACCOUNT_STATUS.L.name().equals(latestAccount.getStatus())) {
             throw new AuthenticationException("用户账号已锁定! account="+jwtToken.getAuthAccount());
         }
-        if (isPasswordMatched(latestAccount, jwtToken) == false){
+        // 如果需要密码校验，那么无状态的时候不需要验证
+        if (jwtToken.isValidPassword() && isPasswordMatched(latestAccount, jwtToken) == false){
             throw new AuthenticationException("用户名或密码错误! account="+jwtToken.getAuthAccount());
         }
         return latestAccount;
@@ -129,6 +131,7 @@ public class PwdAuthServiceImpl implements AuthService {
         token.setAuthAccount(credential.getAuthAccount())
                 .setAuthSecret(credential.getAuthSecret())
                 .setRememberMe(credential.isRememberMe())
+                .setTenantId(credential.getTenantId())
                 .setExtObj(credential.getExtObj());
         // 生成token
         return token.generateAuthtoken(getExpiresInMinutes());

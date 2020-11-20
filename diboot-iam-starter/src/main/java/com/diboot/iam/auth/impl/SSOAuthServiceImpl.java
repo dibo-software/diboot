@@ -84,6 +84,7 @@ public class SSOAuthServiceImpl implements AuthService {
         LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
                 .select(IamAccount::getAuthAccount, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, jwtToken.getUserType())
+                .eq(IamAccount::getTenantId, jwtToken.getTenantId())
                 //.eq(IamAccount::getAuthType, jwtToken.getAuthType()) SSO只检查用户名，支持任意类型账号
                 .eq(IamAccount::getAuthAccount, jwtToken.getAuthAccount())
                 .orderByDesc(IamAccount::getId);
@@ -136,7 +137,9 @@ public class SSOAuthServiceImpl implements AuthService {
         String username = parseCasTicket(ssoCredential);
         ssoCredential.setAuthAccount(username);
         // 设置账号密码
-        token.setAuthAccount(ssoCredential.getAuthAccount()).setRememberMe(ssoCredential.isRememberMe());
+        token.setAuthAccount(ssoCredential.getAuthAccount())
+                .setTenantId(credential.getTenantId())
+                .setRememberMe(ssoCredential.isRememberMe());
         // 生成token
         return token.generateAuthtoken(getExpiresInMinutes());
     }

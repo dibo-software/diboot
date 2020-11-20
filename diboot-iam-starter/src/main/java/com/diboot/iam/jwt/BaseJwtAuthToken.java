@@ -24,6 +24,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -65,6 +66,16 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     /**authz token*/
     private String authtoken;
 
+    /**
+     * 租户id
+     */
+    private Long tenantId = 0L;
+
+    /**
+     * 是否校验密码
+     */
+    private boolean validPassword = true;
+
     public BaseJwtAuthToken(){
     }
 
@@ -85,9 +96,13 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
         this.authtoken = null;
     }
 
+    /**
+     * 设置
+     * @return
+     */
     @Override
     public Object getPrincipal() {
-        return this.authAccount;
+        return this.authtoken;
     }
 
     @Override
@@ -106,12 +121,16 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
 
 
     /**
-     * 生成token
+     * 生成token  tenantId,account,userTypeClass,authType,60
      * @param expiresInMinutes
      * @return
      */
     public BaseJwtAuthToken generateAuthtoken(int expiresInMinutes){
-        String tokenInput = this.authAccount + Cons.SEPARATOR_COMMA + expiresInMinutes;
+        String tokenInput = this.tenantId + Cons.SEPARATOR_COMMA
+                            + this.authAccount + Cons.SEPARATOR_COMMA
+                            + this.userTypeClass.getTypeName() + Cons.SEPARATOR_COMMA
+                            + this.authType + Cons.SEPARATOR_COMMA
+                            + expiresInMinutes;
         this.authtoken = JwtUtils.generateToken(tokenInput, expiresInMinutes);
         return this;
     }
