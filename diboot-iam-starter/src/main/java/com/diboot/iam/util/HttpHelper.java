@@ -17,7 +17,6 @@ package com.diboot.iam.util;
 
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.iam.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
@@ -25,12 +24,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
