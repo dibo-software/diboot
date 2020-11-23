@@ -42,16 +42,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * Diboot Core自动配置类
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/08/01
  */
 @Configuration
 @EnableConfigurationProperties(CoreProperties.class)
-@ComponentScan(basePackages={"com.diboot.core"})
+@ComponentScan(basePackages = {"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 @Order(1)
 public class CoreAutoConfiguration implements WebMvcConfigurer {
@@ -65,14 +67,15 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean(CorePluginManager.class)
-    public CorePluginManager corePluginManager(){
+    public CorePluginManager corePluginManager() {
         // 初始化SCHEMA
         SqlHandler.init(environment);
-        CorePluginManager pluginManager = new CorePluginManager() {};
+        CorePluginManager pluginManager = new CorePluginManager() {
+        };
         // 检查数据库字典是否已存在
-        if(coreProperties.isInitSql()){
+        if (coreProperties.isInitSql()) {
             String initDetectSql = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
-            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
+            if (SqlHandler.checkSqlExecutable(initDetectSql) == false) {
                 SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "core");
                 log.info("diboot-core 初始化SQL完成.");
             }
@@ -98,6 +101,7 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
         // 时间格式化
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
+        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         // 设置格式化内容
         converter.setObjectMapper(objectMapper);
 
@@ -117,6 +121,7 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 默认支持String-Date类型转换
+     *
      * @param registry
      */
     @Override
