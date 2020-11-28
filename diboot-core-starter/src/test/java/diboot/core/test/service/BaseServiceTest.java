@@ -284,6 +284,13 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void testGetValueOfField(){
+        String val = dictionaryService.getValueOfField(Dictionary::getId, 2L, Dictionary::getItemValue);
+        Assert.assertTrue("M".equals(val));
+        System.out.println(val);
+    }
+
+    @Test
     public void testGetLimit(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
