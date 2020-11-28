@@ -510,7 +510,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean exists(IGetter<T> getterFn, Object value) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		queryWrapper.eq(BeanUtils.convertToFieldName(getterFn), value);
+		String field = BeanUtils.convertToFieldName(getterFn);
+		String column = S.toSnakeCase(field);
+		queryWrapper.select(column).eq(column, value);
 		return exists(queryWrapper);
 	}
 

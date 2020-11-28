@@ -17,7 +17,7 @@
 
     <dependencies>
 
-        <!-- 依赖iam -->
+        <!-- 依赖core -->
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core-spring-boot-starter</artifactId>

@@ -21,6 +21,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -30,6 +31,7 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -53,6 +55,11 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
      * Service实现类
      */
     private BaseService baseService;
+    /**
+     * 字典service
+     */
+    @Autowired(required = false)
+    protected DictionaryService dictionaryService;
 
     /**
      * 查询ViewObject，用于子类重写的方法

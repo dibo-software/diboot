@@ -15,7 +15,7 @@
  */
 package com.diboot.core.starter;
 
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -114,8 +114,8 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
      */
     @Bean
     @ConditionalOnMissingBean
-    public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+    public PaginationInnerInterceptor paginationInterceptor() {
+        PaginationInnerInterceptor paginationInterceptor = new PaginationInnerInterceptor();
         return paginationInterceptor;
     }
 

@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @EnableConfigurationProperties(FileProperties.class)
 @ComponentScan(basePackages = {"com.diboot.file"})
 @MapperScan(basePackages = {"com.diboot.file.mapper"})
+@Order(11)
 public class FileAutoConfiguration {
 
     @Autowired
