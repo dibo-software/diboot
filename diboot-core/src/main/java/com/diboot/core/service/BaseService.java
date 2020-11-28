@@ -85,7 +85,7 @@ public interface BaseService<T> {
      * @param getterFn 返回属性getter
      * @return
      */
-    Object getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, ?> getterFn);
+    <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn);
 
     /**
      * 创建Entity实体

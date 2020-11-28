@@ -99,13 +99,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public Object getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, ?> getterFn) {
+	public <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn) {
 		String fieldName = convertGetterToFieldName(getterFn);
 		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
 				.select(idGetterFn, getterFn)
 				.eq(idGetterFn, idVal);
 		T entity = getSingleEntity(queryWrapper);
-		return entity != null? BeanUtils.getProperty(entity, fieldName) : null;
+		return entity != null? (FT)BeanUtils.getProperty(entity, fieldName) : null;
 	}
 
 	@Override
