@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -95,6 +96,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public T getEntity(Serializable id){
 		return super.getById(id);
+	}
+
+	@Override
+	public Object getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, ?> getterFn) {
+		String fieldName = convertGetterToFieldName(getterFn);
+		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
+				.select(idGetterFn, getterFn)
+				.eq(idGetterFn, idVal);
+		T entity = getSingleEntity(queryWrapper);
+		return entity != null? BeanUtils.getProperty(entity, fieldName) : null;
 	}
 
 	@Override

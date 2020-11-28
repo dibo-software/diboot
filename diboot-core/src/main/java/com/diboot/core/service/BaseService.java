@@ -79,6 +79,15 @@ public interface BaseService<T> {
     T getEntity(Serializable id);
 
     /**
+     * 获取entity某个属性值
+     * @param idGetterFn id getter
+     * @param idVal id值
+     * @param getterFn 返回属性getter
+     * @return
+     */
+    Object getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, ?> getterFn);
+
+    /**
      * 创建Entity实体
      * @param entity
      * @return true:成功, false:失败
