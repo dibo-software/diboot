@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.Encryptor;
 import com.diboot.core.vo.Status;
-import com.diboot.iam.annotation.process.AsyncWorker;
+import com.diboot.iam.annotation.process.IamAsyncWorker;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.AuthCredential;
@@ -48,7 +48,7 @@ public class PwdAuthServiceImpl implements AuthService {
     @Autowired
     private IamAccountService accountService;
     @Autowired
-    private AsyncWorker asyncWorker;
+    private IamAsyncWorker iamAsyncWorker;
 
     @Override
     public String getAuthType() {
@@ -149,7 +149,7 @@ public class PwdAuthServiceImpl implements AuthService {
         if(currentUser != null){
             loginTrace.setUserId(currentUser.getId());
         }
-        asyncWorker.saveLoginTraceLog(loginTrace);
+        iamAsyncWorker.saveLoginTraceLog(loginTrace);
     }
 
 }

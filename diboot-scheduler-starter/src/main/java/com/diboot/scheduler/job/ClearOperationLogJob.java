@@ -18,6 +18,7 @@ package com.diboot.scheduler.job;
 import com.diboot.core.util.D;
 import com.diboot.core.util.SqlExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -35,6 +36,7 @@ import java.util.List;
  * Copyright © dibo.ltd
  */
 @Slf4j
+@DisallowConcurrentExecution
 public class ClearOperationLogJob extends QuartzJobBean {
     /**
      * 清理过期日志的SQL示例

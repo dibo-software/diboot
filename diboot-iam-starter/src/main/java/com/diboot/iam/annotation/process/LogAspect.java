@@ -25,7 +25,6 @@ import com.diboot.iam.annotation.Log;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.util.HttpHelper;
-import com.diboot.iam.util.IamHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -55,7 +54,7 @@ import java.util.Map;
 public class LogAspect {
 
     @Autowired
-    private AsyncWorker asyncWorker;
+    private IamAsyncWorker iamAsyncWorker;
 
     private static int maxLength = 1000;
 
@@ -84,7 +83,7 @@ public class LogAspect {
         }
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
-        asyncWorker.saveOperationLog(operationLog);
+        iamAsyncWorker.saveOperationLog(operationLog);
     }
 
     /**
@@ -107,7 +106,7 @@ public class LogAspect {
         }
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
-        asyncWorker.saveOperationLog(operationLog);
+        iamAsyncWorker.saveOperationLog(operationLog);
     }
 
     /**
@@ -124,7 +123,7 @@ public class LogAspect {
                 .setRequestUri(request.getRequestURI())
                 .setRequestIp(HttpHelper.getRequestIp(request));
         // 请求参数
-        Map<String, Object> params = IamHelper.buildParamsMap(request);
+        Map<String, Object> params = HttpHelper.buildParamsMap(request);
         String paramsJson = JSON.stringify(params);
         paramsJson = S.cut(paramsJson, maxLength);
         operationLog.setRequestParams(paramsJson);

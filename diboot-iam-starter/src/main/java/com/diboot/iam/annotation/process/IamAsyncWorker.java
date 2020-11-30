@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Async
 @Component
-public class AsyncWorker {
+public class IamAsyncWorker {
     @Autowired
     private IamLoginTraceService iamLoginTraceService;
     @Autowired
