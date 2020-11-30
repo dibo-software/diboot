@@ -33,7 +33,7 @@ create table schedule_job_log
   start_time timestamp         null comment '开始时间',
   end_time timestamp          null comment '结束时间',
   elapsed_seconds int        comment '耗时(s)',
-  job_status       varchar(10)   default 'A'  not null comment '状态',
+  run_status       varchar(10)   default 'A'  not null comment '运行状态',
   data_count int        comment '数据计数',
   execute_msg  varchar(500)  not null comment '执行结果信息',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
