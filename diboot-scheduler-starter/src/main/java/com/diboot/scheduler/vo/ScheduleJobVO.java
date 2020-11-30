@@ -1,7 +1,7 @@
 package com.diboot.scheduler.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.scheduler.entity.ScheduleJob;
 import lombok.Getter;
@@ -24,8 +24,9 @@ public class ScheduleJobVO extends ScheduleJob {
      /**
       * 状态
        */
-     @BindDict(type = DICT_ACTIVE_STATUS)
-     private String jobStatusLabel;
+     public String getJobStatusLabel(){
+        return Cons.ENABLE_STATUS.getLabel(this.getJobStatus());
+     }
 
     /**
      * 创建人姓名

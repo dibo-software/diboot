@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
+import org.quartz.Job;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import javax.validation.constraints.NotNull;
@@ -51,7 +52,7 @@ public class ScheduleJob extends BaseEntity {
     private String cron;
 
     @TableField(exist = false)
-    private Class<? extends QuartzJobBean> jobClass;
+    private Class<? extends Job> jobClass;
 
     /**
      * 参数json字符串

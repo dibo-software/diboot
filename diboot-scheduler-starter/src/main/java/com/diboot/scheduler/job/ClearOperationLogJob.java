@@ -45,9 +45,9 @@ public class ClearOperationLogJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         // 获取参数
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
-        Integer days = jobDataMap.getIntFromString("daysBefore");
-        if(days == null){
-            days = 30;
+        int days = 30;
+        if(jobDataMap.containsKey("daysBefore")){
+            days = jobDataMap.getInt("daysBefore");
         }
         List params = new ArrayList(1);
         params.add(D.getDate(new Date(), 0-days));

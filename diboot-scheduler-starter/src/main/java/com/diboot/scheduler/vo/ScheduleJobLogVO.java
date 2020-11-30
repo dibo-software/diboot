@@ -2,6 +2,7 @@ package com.diboot.scheduler.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import lombok.Getter;
@@ -23,8 +24,9 @@ public class ScheduleJobLogVO extends ScheduleJobLog {
     /**
      * 状态
      */
-    @BindDict(type = DICT_RUN_STATUS)
-    private String runStatusLabel;
+    public String getRunStatusLabel(){
+        return Cons.RESULT_STATUS.getLabel(this.getRunStatus());
+    }
 
     /**
      * 创建人姓名

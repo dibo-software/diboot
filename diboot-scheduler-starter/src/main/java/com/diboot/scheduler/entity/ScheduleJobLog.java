@@ -71,7 +71,7 @@ public class ScheduleJobLog extends BaseEntity {
     // 状态
     @Length(max = 100, message = "状态长度应小于100")
     @TableField()
-    private String jobStatus;
+    private String runStatus;
 
     // 数据执行条数
     @TableField()
