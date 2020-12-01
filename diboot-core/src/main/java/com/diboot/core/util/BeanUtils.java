@@ -727,16 +727,11 @@ public class BeanUtils {
 
     /**
      * 获取目标类
-     * @param bean
+     * @param instance
      * @return
      */
-    public static Class getTargetClass(Object bean){
-        if(bean instanceof Class){
-            return ClassUtils.getUserClass(bean);
-        }
-        else {
-            return AopProxyUtils.ultimateTargetClass(bean);
-        }
+    public static Class getTargetClass(Object instance){
+        return (instance instanceof Class)? (Class)instance : AopProxyUtils.ultimateTargetClass(instance);
     }
 
     /**
@@ -747,6 +742,7 @@ public class BeanUtils {
      */
     public static Class getGenericityClass(Object instance, int index){
         Class hostClass = getTargetClass(instance);
+
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
         if(V.isEmpty(types) || index >= types.length){
