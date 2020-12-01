@@ -25,10 +25,11 @@ import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -726,12 +727,16 @@ public class BeanUtils {
 
     /**
      * 获取目标类
-     * @param instance
+     * @param bean
      * @return
      */
-    public static Class getTargetClass(Object instance){
-        Class targetClass = (instance instanceof Class)? (Class)instance : AopUtils.getTargetClass(instance);
-        return targetClass;
+    public static Class getTargetClass(Object bean){
+        if(bean instanceof Class){
+            return ClassUtils.getUserClass(bean);
+        }
+        else {
+            return AopProxyUtils.ultimateTargetClass(bean);
+        }
     }
 
     /**
