@@ -17,22 +17,17 @@ package com.diboot.scheduler.handler;
 
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Status;
-import com.diboot.iam.annotation.process.IamAsyncWorker;
 import com.diboot.iam.config.Cons;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.util.Date;
 
 /**
  * job执行日志的切面处理
@@ -55,35 +50,32 @@ public class JobAspect {
     public void pointCut() {}
 
     /**
-     * 操作日志处理
+     * 定时任务日志处理
      * @param joinPoint
      */
-    @AfterReturning(value = "pointCut()", returning = "returnObj")
-    public void afterReturningHandler(JoinPoint joinPoint, Object returnObj) {
+    @Around(value = "pointCut()")
+    public void afterHandler(ProceedingJoinPoint joinPoint) {
         ScheduleJobLog jobLog = buildScheduleJobLog(joinPoint);
-        // 异步保存日志
-        schedulerAsyncWorker.saveScheduleJobLog(jobLog);
-    }
-
-    /**
-     * 操作日志处理
-     * @param joinPoint
-     */
-    @AfterThrowing(value = "pointCut()", throwing = "throwable")
-    public void afterThrowingHandler(JoinPoint joinPoint, Throwable throwable) {
-        ScheduleJobLog jobLog = buildScheduleJobLog(joinPoint);
-        // 处理返回结果
-        int statusCode = Status.FAIL_EXCEPTION.code();
-        String errorMsg = null;
-        if(throwable != null){
-            errorMsg = throwable.toString();
-            StackTraceElement[] stackTraceElements = throwable.getStackTrace();
-            if(V.notEmpty(stackTraceElements)){
-                errorMsg += " : " + stackTraceElements[0].toString();
-            }
-            errorMsg = S.cut(errorMsg, maxLength);
+        try{
+            joinPoint.proceed(joinPoint.getArgs());
+            jobLog.setEndTime(new Date());
+            long seconds = (jobLog.getEndTime().getTime() - jobLog.getStartTime().getTime())/ 1000;
+            jobLog.setElapsedSeconds(seconds);
+            jobLog.setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
         }
-        jobLog.setRunStatus(Cons.RESULT_STATUS.F.name()).setExecuteMsg(errorMsg);
+        catch (Throwable throwable){
+            // 处理异常返回结果
+            String errorMsg = null;
+            if(throwable != null){
+                errorMsg = throwable.toString();
+                StackTraceElement[] stackTraceElements = throwable.getStackTrace();
+                if(V.notEmpty(stackTraceElements)){
+                    errorMsg += " : " + stackTraceElements[0].toString();
+                }
+                errorMsg = S.cut(errorMsg, maxLength);
+            }
+            jobLog.setRunStatus(Cons.RESULT_STATUS.F.name()).setExecuteMsg(Status.FAIL_EXCEPTION.code()+":"+errorMsg);
+        }
         // 异步保存日志
         schedulerAsyncWorker.saveScheduleJobLog(jobLog);
     }
@@ -95,10 +87,12 @@ public class JobAspect {
      */
     private ScheduleJobLog buildScheduleJobLog(JoinPoint joinPoint){
         ScheduleJobLog jobLog = new ScheduleJobLog();
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
-        Parameter parameter = method.getParameters()[0];
-        //JobExecutionContext context = (JobExecutionContext)
+        jobLog.setStartTime(new Date());
+
+        JobExecutionContext context = (JobExecutionContext)joinPoint.getArgs()[0];
+        // 获取参数
+        String jobKey = context.getJobDetail().getKey().getName();
+        jobLog.setJobKey(jobKey);
 
         return jobLog;
     }

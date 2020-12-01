@@ -38,6 +38,9 @@ public class ScheduleJobLog extends BaseEntity {
     @TableField()
     private Long jobId;
 
+    @TableField(exist = false)
+    private String jobKey;
+
     // 任务名称
     @NotNull(message = "任务名称不能为空")
     @Length(max = 50, message = "任务名称长度应小于50")
@@ -68,8 +71,8 @@ public class ScheduleJobLog extends BaseEntity {
     @TableField()
     private Long elapsedSeconds;
 
-    // 状态
-    @Length(max = 100, message = "状态长度应小于100")
+    // 执行状态
+    @Length(max = 20, message = "状态长度应小于20")
     @TableField()
     private String runStatus;
 

@@ -15,8 +15,12 @@
  */
 package com.diboot.scheduler.handler;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import com.diboot.scheduler.service.ScheduleJobLogService;
+import com.diboot.scheduler.service.ScheduleJobService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -32,6 +36,8 @@ import org.springframework.stereotype.Component;
 @Async
 @Component
 public class SchedulerAsyncWorker {
+    @Autowired
+    private ScheduleJobService scheduleJobService;
 
     @Autowired
     private ScheduleJobLogService scheduleJobLogService;
@@ -42,6 +48,17 @@ public class SchedulerAsyncWorker {
      */
     public void saveScheduleJobLog(ScheduleJobLog scheduleJobLog) {
         try{
+            LambdaQueryWrapper<ScheduleJob> queryWrapper = new QueryWrapper<ScheduleJob>()
+                    .lambda().eq(ScheduleJob::getJobKey, scheduleJobLog.getJobKey());
+            ScheduleJob scheduleJob = scheduleJobService.getSingleEntity(queryWrapper);
+            if(scheduleJob != null){
+                scheduleJobLog.setCron(scheduleJob.getCron())
+                        .setJobId(scheduleJob.getId())
+                        .setJobName(scheduleJob.getJobName())
+                        .setParamJson(scheduleJob.getParamJson())
+                        .setTenantId(scheduleJob.getTenantId())
+                        .setCreateBy(scheduleJob.getCreateBy());
+            }
             scheduleJobLogService.createEntity(scheduleJobLog);
         }
         catch (Exception e){
