@@ -59,7 +59,7 @@ public class JobAspect {
         try{
             joinPoint.proceed(joinPoint.getArgs());
             jobLog.setEndTime(new Date());
-            long seconds = (jobLog.getEndTime().getTime() - jobLog.getStartTime().getTime())/ 1000;
+            long seconds = (jobLog.getEndTime().getTime() - jobLog.getStartTime().getTime()) / 1000;
             jobLog.setElapsedSeconds(seconds);
             jobLog.setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
         }
@@ -74,7 +74,7 @@ public class JobAspect {
                 }
                 errorMsg = S.cut(errorMsg, maxLength);
             }
-            jobLog.setRunStatus(Cons.RESULT_STATUS.F.name()).setExecuteMsg(Status.FAIL_EXCEPTION.code()+":"+errorMsg);
+            jobLog.setRunStatus(Cons.RESULT_STATUS.F.name()).setExecuteMsg(Status.FAIL_EXCEPTION.code() + ":" + errorMsg);
         }
         // 异步保存日志
         schedulerAsyncWorker.saveScheduleJobLog(jobLog);

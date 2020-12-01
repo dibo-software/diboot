@@ -17,9 +17,14 @@ package com.diboot.scheduler.service;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.scheduler.entity.ScheduleJob;
+import com.diboot.scheduler.job.anno.BindJob;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 定时任务Job定义Service
+ *
  * @author mazc@dibo.ltd
  * @version 2.2
  * @date 2020-11-27
@@ -27,10 +32,19 @@ import com.diboot.scheduler.entity.ScheduleJob;
 public interface ScheduleJobService extends BaseService<ScheduleJob> {
     /**
      * 改变任务状态
+     *
      * @param jobId
      * @param action
      * @return
      */
     boolean changeJobState(Long jobId, String action);
+
+    /**
+     * 获取所有被{@link BindJob}注解的job
+     *
+     * @return
+     * @throws Exception
+     */
+    List<Map<String, Object>> getAllJobs() throws Exception;
 
 }

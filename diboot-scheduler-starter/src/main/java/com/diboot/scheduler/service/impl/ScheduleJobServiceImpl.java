@@ -15,16 +15,20 @@
  */
 package com.diboot.scheduler.service.impl;
 
+import com.diboot.core.config.Cons;
 import com.diboot.core.service.impl.BaseServiceImpl;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.scheduler.entity.ScheduleJob;
+import com.diboot.scheduler.job.anno.BindJob;
 import com.diboot.scheduler.mapper.ScheduleJobMapper;
 import com.diboot.scheduler.service.ScheduleJobService;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.*;
 
 /**
 * 定时任务Job定义Service实现
@@ -65,19 +69,55 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
     @Override
     public boolean changeJobState(Long jobId, String action) {
         String jobKeyObj = getValueOfField(ScheduleJob::getId, jobId, ScheduleJob::getJobKey);
-        if("run".equals(action)){
+        if(Cons.ENABLE_STATUS.A.name().equals(action)){
             quartzSchedulerService.runJob((String)jobKeyObj);
         }
-        else if("resume".equals(action)){
-            quartzSchedulerService.resumeJob((String)jobKeyObj);
-        }
-        else if("pause".equals(action)){
+//        else if("resume".equals(action)){
+//            quartzSchedulerService.resumeJob((String)jobKeyObj);
+//        }
+        else if(Cons.ENABLE_STATUS.I.name().equals(action)){
             quartzSchedulerService.pauseJob((String)jobKeyObj);
         }
         else{
             log.warn("无效的action参数: {}", action);
         }
         return true;
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllJobs() throws Exception {
+        // 获取所有被com.diboot.scheduler.job.anno.BindJob注解的job
+        List<Object> jobByScheduledAnnotationList = ContextHelper.getBeansByAnnotation(BindJob.class);
+        if (V.isEmpty(jobByScheduledAnnotationList)) {
+            return Collections.emptyList();
+        }
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object job : jobByScheduledAnnotationList) {
+            if (!(job instanceof Job)) {
+                log.warn("无效的job任务: {}", job.getClass());
+                continue;
+            }
+            Map<String, Object> temp = new HashMap<>(8);
+
+            BindJob annotation = (BindJob) BeanUtils.getTargetClass(job).getAnnotation(BindJob.class);
+            temp.put("jobCron", annotation.cron());
+            temp.put("jobName", annotation.name());
+            temp.put("jobClass", job.getClass());
+            String paramJsonExample = "";
+            if (V.notEmpty(annotation.paramJson())) {
+                paramJsonExample = annotation.paramJson();
+            }
+            else if (!Object.class.getTypeName().equals(annotation.paramClass().getTypeName())) {
+                try {
+                    paramJsonExample = JSON.stringify(annotation.paramClass().newInstance());
+                } catch (Exception e) {
+                    log.error("job任务：{}, Scheduled#paramClass参数任务无效，建议使用Scheduled#paramJson参数替换！", job.getClass());
+                }
+            }
+            temp.put("paramJsonExample", paramJsonExample);
+            result.add(temp);
+        }
+        return result;
     }
 
 }
