@@ -1,4 +1,4 @@
-package com.diboot.iam.dto;
+package com.diboot.core.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,15 +8,14 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
-* attachMore 传递的DTO格式
+* attachMore 用于加载关联数据传递的DTO格式
 * <p>
 * [{type: 'T', target: 'category', value: 'id', key: 'name’}, {type: 'D', target: 'GENDER'}]
 * </p>
-* @author MyName
-* @version 1.0
-* @date 2020-11-20
-* Copyright © MyCompany
-*/
+ * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2018/12/27
+ */
 @Getter
 @Setter
 @Accessors(chain = true)

@@ -16,7 +16,9 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
@@ -38,7 +40,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * 系统用户相关Service实现
@@ -159,6 +164,46 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         this.deleteAccount(id);
 
         return true;
+    }
+
+    @Override
+    public List<String> filterDuplicateUserNums(List<String> userNumList) {
+        List<String> batchUserNumList = new ArrayList<>();
+        List<String> allDuplicateUserNumList = new ArrayList<>();
+            for (int i = 0; i < userNumList.size(); i++) {
+            if (i > 0 && i % BaseConfig.getBatchSize() == 0) {
+                List<String> duplicateUserNumList = this.checkUserNumDuplicate(batchUserNumList);
+                if (V.notEmpty(duplicateUserNumList)) {
+                    allDuplicateUserNumList.addAll(duplicateUserNumList);
+                }
+                batchUserNumList.clear();
+            }
+            batchUserNumList.add(userNumList.get(i));
+        }
+        if (V.notEmpty(batchUserNumList)) {
+            List<String> duplicateUserNumList = this.checkUserNumDuplicate(batchUserNumList);
+            if (V.notEmpty(duplicateUserNumList)) {
+                allDuplicateUserNumList.addAll(duplicateUserNumList);
+            }
+            batchUserNumList.clear();
+        }
+        return allDuplicateUserNumList;
+    }
+
+    /***
+     * 检查重复用户编号
+     * @param userNumList
+     * @return
+     */
+    private List<String> checkUserNumDuplicate(List<String> userNumList) {
+        if (V.isEmpty(userNumList)) {
+            return Collections.emptyList();
+        }
+        List<String> iamUserNums = getValuesOfField(
+                Wrappers.<IamUser>lambdaQuery().in(IamUser::getUserNum, userNumList),
+                IamUser::getUserNum
+        );
+        return iamUserNums;
     }
 
     private void createAccount(IamUserAccountDTO userAccountDTO) throws Exception{

@@ -71,4 +71,11 @@ public interface IamUserService extends BaseIamService<IamUser> {
      */
     boolean deleteUserAndAccount(Long id) throws Exception;
 
+    /**
+     * 过滤重复的员工号
+     * @param userNumList
+     * @return
+     */
+    List<String> filterDuplicateUserNums(List<String> userNumList);
+
 }
