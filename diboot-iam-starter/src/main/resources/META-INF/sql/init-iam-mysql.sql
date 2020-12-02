@@ -21,21 +21,6 @@ create index idx_iam_user_2 on iam_user (mobile_phone);
 create unique index uidx_iam_user on iam_user (tenant_id, user_num);
 create index idx_iam_user_tenant on iam_user (tenant_id);
 
--- 部门表
-CREATE TABLE `iam_org` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `parent_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '上级ID',
-  `name` varchar(100) NOT NULL COMMENT '名称',
-  `short_name` varchar(50) NOT NULL COMMENT '简称',
-  `org_comment` varchar(255) NOT NULL COMMENT '备注',
-  `level` smallint(6) NOT NULL DEFAULT '1' COMMENT '层级',
-  `sort_id` bigint(20) DEFAULT NULL COMMENT '排序号',
-  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_iam_org` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT='部门';
-
 -- 账号表
 create table iam_account
 (
@@ -161,3 +146,60 @@ create table iam_operation_log
 -- 创建索引
 create index idx_iam_operation_log on iam_operation_log (user_type, user_id);
 create index idx_iam_operation_log_tenant on iam_operation_log (tenant_id);
+
+-- 组织表
+create table iam_org
+(
+  id          bigint auto_increment comment 'ID' primary key,
+  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  parent_id   bigint       default 0                 not null comment '上级ID',
+  top_org_id  bigint       default 0                 not null comment '企业ID',
+  name        varchar(100)                           not null comment '名称',
+  short_name  varchar(50)                            not null comment '短名称',
+  type        varchar(100) default 'COM'             not null comment '权限类别',
+  code        varchar(50)                            not null comment '编码',
+  manager_id  bigint       default 0                 not null comment '负责人ID',
+  level       smallint(6)  default 1                 not null comment '层级',
+  sort_id     bigint                                 null comment '排序号',
+  status      varchar(10)  default 'A'               not null comment '状态',
+  org_comment varchar(200) COMMENT '备注',
+  is_deleted  tinyint(1)   default 0                 not null comment '是否删除',
+  create_time timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
+)
+  comment '组织';
+create index idx_iam_org on iam_org (parent_id);
+
+-- 岗位
+create table iam_position
+(
+  id                   bigint auto_increment comment 'ID' primary key,
+  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  name                 varchar(100)                          not null comment '名称',
+  code                 varchar(50)                           not null comment '编码',
+  is_virtual           tinyint(1)  default 0                 not null comment '是否虚拟岗',
+  grade_name           varchar(50)                           null comment '职级头衔',
+  grade_value          varchar(30) default '0'               null comment '职级',
+  data_permission_type varchar(20) default 'SELF'            null comment '数据权限类型',
+  extdata              varchar(100)                          null comment '扩展属性',
+  is_deleted           tinyint(1)  default 0                 not null comment '是否删除',
+  create_time          timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
+)
+comment '岗位';
+
+-- 用户岗位
+create table iam_user_position
+(
+  id                  int auto_increment comment 'ID' primary key,
+  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  user_type           varchar(100) default 'IamUser'         not null comment '用户类型',
+  user_id             bigint                                 not null comment '用户ID',
+  org_id              bigint       default 0                 not null comment '组织ID',
+  position_id         bigint                                 not null comment '岗位ID',
+  is_primary_position tinyint(1)   default 1                 not null comment '是否主岗',
+  is_deleted          tinyint(1)   default 0                 not null comment '是否删除',
+  create_time         timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time         timestamp    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
+)
+comment '用户岗位关联';
+create index idx_iam_user_position on iam_user_position (user_type, user_id);
+create index idx_iam_user_position_2 on iam_user_position (org_id, position_id);
