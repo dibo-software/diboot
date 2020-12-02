@@ -25,6 +25,7 @@ import com.diboot.iam.annotation.Log;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.util.HttpHelper;
+import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -83,7 +84,7 @@ public class LogAspect {
         }
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
-        iamAsyncWorker.saveOperationLog(operationLog);
+        iamAsyncWorker.saveOperationLog(operationLog, IamSecurityUtils.getCurrentUser());
     }
 
     /**
@@ -106,7 +107,7 @@ public class LogAspect {
         }
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
-        iamAsyncWorker.saveOperationLog(operationLog);
+        iamAsyncWorker.saveOperationLog(operationLog, IamSecurityUtils.getCurrentUser());
     }
 
     /**

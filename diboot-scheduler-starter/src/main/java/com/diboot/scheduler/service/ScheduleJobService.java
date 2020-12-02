@@ -30,14 +30,25 @@ import java.util.Map;
  * @date 2020-11-27
  */
 public interface ScheduleJobService extends BaseService<ScheduleJob> {
+
     /**
-     * 改变任务状态
+     * 执行一次job
+     *
+     * @param jobId
+     * @return
+     */
+    boolean executeOnceJob(Long jobId);
+
+    /**
+     * 对${@link ScheduleJob}进行操作 【启用/停用】
+     * <p>
+     * 操作数据库的任务记录
      *
      * @param jobId
      * @param action
      * @return
      */
-    boolean changeJobState(Long jobId, String action);
+    boolean changeScheduleJobStatus(Long jobId, String action);
 
     /**
      * 获取所有被{@link BindJob}注解的job

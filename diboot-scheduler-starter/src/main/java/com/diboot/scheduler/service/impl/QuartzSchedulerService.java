@@ -30,6 +30,7 @@ import java.util.*;
 
 /**
  * 调度任务quartz实现
+ *
  * @author mazc@dibo.ltd
  * @version v2.2
  * @date 2020/11/27
@@ -37,6 +38,19 @@ import java.util.*;
 @Slf4j
 @Service
 public class QuartzSchedulerService {
+
+    /**
+     * 任务初始化策略
+     */
+    enum INIT_STRATEGY {
+        // 周期执行
+        DO_NOTHING,
+        //立即执行一次，并周期执行
+        FIRE_AND_PROCEED,
+        //超期立即执行，并周期执行
+        IGNORE_MISFIRES
+    }
+
     @Autowired
     private Scheduler scheduler;
 
@@ -44,10 +58,25 @@ public class QuartzSchedulerService {
     public void startScheduler() {
         try {
             scheduler.start();
-        }
-        catch (SchedulerException e) {
+        } catch (SchedulerException e) {
             log.error("定时任务scheduler初始化异常，请检查！", e);
         }
+    }
+
+    /**
+     * 判断是否存在job
+     *
+     * @return
+     */
+    public boolean existJob(String jobKey) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
+        try {
+            Trigger trigger = scheduler.getTrigger(triggerKey);
+            return V.notEmpty(trigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -84,7 +113,8 @@ public class QuartzSchedulerService {
     }
 
     /**
-     * 添加job
+     * 添加 cron表达式job
+     *
      * @param job
      * @return
      */
@@ -96,83 +126,96 @@ public class QuartzSchedulerService {
             TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobKey());
             // 构建参数
             JobDetail jobDetail = JobBuilder.newJob(job.getJobClass()).withIdentity(job.getJobKey()).build();
-            if (V.notEmpty(job.getParamJson())){
+            if (V.notEmpty(job.getParamJson())) {
                 Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
                 jobDetail.getJobDataMap().putAll(jsonData);
             }
+            // 表达式调度构建器
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCron());
+            // 设置定时任务初始化策略
+            if (INIT_STRATEGY.FIRE_AND_PROCEED.name().equals(job.getInitStrategy())) {
+                cronScheduleBuilder.withMisfireHandlingInstructionFireAndProceed();
+            } else if (INIT_STRATEGY.IGNORE_MISFIRES.name().equals(job.getInitStrategy())) {
+                cronScheduleBuilder.withMisfireHandlingInstructionIgnoreMisfires();
+            }
             // 定时任务
-            if(V.notEmpty(job.getCron())){
-                Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(CronScheduleBuilder.cronSchedule(job.getCron())).build();
-                scheduler.scheduleJob(jobDetail, trigger);
-            }
-            /*
-            else if(job.getLoopTimes() >= 1){
-                Trigger trigger = null;
-                if(job.getLoopTimes() == 1){
-                    trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(SimpleScheduleBuilder.simpleSchedule()).startAt(job.getStartTime()).build();
-                }
-                else{
-                    int intervalSecond = job.getIntervalSecond();
-                    if(intervalSecond < 1){
-                        intervalSecond = 1;
-                    }
-                    trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                            .withRepeatCount(job.getLoopTimes()-1).withIntervalInMilliseconds(intervalSecond*1000))
-                            .startAt(job.getStartTime()).build();
-                }
-                scheduler.scheduleJob(jobDetail, trigger);
-            }*/
-            else{
-                log.warn("无效的定时任务: {}", job.getJobKey());
-            }
-        }
-        catch (Exception e) {
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (Exception e) {
             log.error("添加定时任务异常", e);
         }
         return job.getJobKey();
     }
 
     /**
+     * 添加一个立即执行一次的job
+     *
+     * @return
+     */
+    public String addJobExecuteOnce(ScheduleJob job) {
+        try {
+            if (V.isEmpty(job.getJobKey())) {
+                job.setJobKey(S.newUuid());
+            }
+            TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobKey());
+            // 构建参数
+            JobDetail jobDetail = JobBuilder.newJob(job.getJobClass()).withIdentity(job.getJobKey()).build();
+            if (V.notEmpty(job.getParamJson())) {
+                Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
+                jobDetail.getJobDataMap().putAll(jsonData);
+            }
+            // 立即执行,且只执行一次
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0)).build();
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (Exception e) {
+            log.error("添加定时任务异常", e);
+        }
+        return job.getJobKey();
+    }
+
+
+    /**
      * 立即执行job
+     *
      * @param jobKey
      */
     public void runJob(String jobKey) {
         try {
             scheduler.triggerJob(JobKey.jobKey(jobKey));
-        }
-        catch (SchedulerException e) {
+        } catch (SchedulerException e) {
             log.error("运行job异常", e);
         }
     }
 
     /**
      * 暂停job
+     *
      * @param jobKey
      */
     public void pauseJob(String jobKey) {
         try {
             scheduler.pauseJob(JobKey.jobKey(jobKey));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("暂停job异常", e);
         }
     }
 
     /**
      * 恢复job
+     *
      * @param jobKey
      */
-    public void resumeJob(String jobKey){
+    public void resumeJob(String jobKey) {
         try {
             scheduler.resumeJob(JobKey.jobKey(jobKey));
-        }
-        catch (SchedulerException e) {
+        } catch (SchedulerException e) {
             log.error("恢复job异常", e);
         }
     }
 
     /**
      * 删除job
+     *
      * @param jobKey
      */
     public void deleteJob(String jobKey) {
@@ -181,16 +224,16 @@ public class QuartzSchedulerService {
             scheduler.pauseTrigger(triggerKey);
             scheduler.unscheduleJob(triggerKey);
             scheduler.deleteJob(JobKey.jobKey(jobKey));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("删除job异常", e);
         }
     }
 
     /**
      * 更新一个job的cron表达式
+     *
      * @param jobKey
-     * @param cron 定时表达式
+     * @param cron   定时表达式
      */
     public void updateJobCron(String jobKey, String cron) {
         try {
@@ -201,8 +244,7 @@ public class QuartzSchedulerService {
                 cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(CronScheduleBuilder.cronSchedule(cron)).startNow().build();
                 scheduler.rescheduleJob(triggerKey, cronTrigger);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("更新job的cron定时表达式异常", e);
         }
     }

@@ -23,6 +23,7 @@ import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.service.IamOperationLogService;
 import com.diboot.iam.util.HttpHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.util.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -68,10 +69,9 @@ public class IamAsyncWorker {
      * 保存操作日志
      * @param operationLog
      */
-    public void saveOperationLog(IamOperationLog operationLog) {
+    public void saveOperationLog(IamOperationLog operationLog, BaseLoginUser loginUser) {
         try{
             // 操作用户信息
-            BaseLoginUser loginUser = iamCustomize.getCurrentUser();
             if(loginUser != null){
                 operationLog.setUserType(loginUser.getClass().getSimpleName())
                         .setUserId(loginUser.getId())

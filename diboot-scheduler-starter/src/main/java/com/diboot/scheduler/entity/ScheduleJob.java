@@ -64,19 +64,7 @@ public class ScheduleJob extends BaseEntity {
      * 失败策略
      */
     @TableField()
-    private String failStrategy;
-
-    /**
-     * 重试次数
-     */
-    @TableField()
-    private int retryTimes = 0;
-
-    /**
-     * 执行多次的间隔秒数
-     */
-    @TableField()
-    private int intervalSecond = 0;
+    private String initStrategy;
 
     // 状态
     @NotNull(message = "状态不能为空")
