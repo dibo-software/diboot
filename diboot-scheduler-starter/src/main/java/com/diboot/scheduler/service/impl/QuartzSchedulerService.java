@@ -15,10 +15,14 @@
  */
 package com.diboot.scheduler.service.impl;
 
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.Cons;
+import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.*;
+import com.diboot.core.vo.Status;
 import com.diboot.scheduler.entity.ScheduleJob;
+import com.diboot.scheduler.job.anno.BindJob;
+import com.diboot.scheduler.service.ScheduleJobService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -51,6 +55,9 @@ public class QuartzSchedulerService {
         IGNORE_MISFIRES
     }
 
+    // 任务的缓存
+    public static final List<Map<String, Object>> CACHE_JOB = new ArrayList<>();
+
     @Autowired
     private Scheduler scheduler;
 
@@ -64,27 +71,55 @@ public class QuartzSchedulerService {
     }
 
     /**
-     * 判断是否存在job
-     *
-     * @return
-     */
-    public boolean existJob(String jobKey) {
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
-        try {
-            Trigger trigger = scheduler.getTrigger(triggerKey);
-            return V.notEmpty(trigger);
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * 获取所有计划中的任务列表
+     * 获取当前系统中的所有定时任务
      *
      * @return
      */
     public List<Map<String, Object>> loadAllJobs() {
+        if (V.notEmpty(CACHE_JOB)) {
+            return CACHE_JOB;
+        }
+        // 获取所有被com.diboot.scheduler.job.anno.BindJob注解的job
+        List<Object> jobByScheduledAnnotationList = ContextHelper.getBeansByAnnotation(BindJob.class);
+        if (V.isEmpty(jobByScheduledAnnotationList)) {
+            return Collections.emptyList();
+        }
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object job : jobByScheduledAnnotationList) {
+            if (!(job instanceof Job)) {
+                log.warn("无效的job任务: {}", job.getClass());
+                continue;
+            }
+            Map<String, Object> temp = new HashMap<>(8);
+            Class targetClass = BeanUtils.getTargetClass(job);
+
+            BindJob annotation = (BindJob) targetClass.getAnnotation(BindJob.class);
+            temp.put("jobCron", annotation.cron());
+            temp.put("jobName", annotation.name());
+            temp.put("jobClass", targetClass);
+            String paramJsonExample = "";
+            if (V.notEmpty(annotation.paramJson())) {
+                paramJsonExample = annotation.paramJson();
+            } else if (!Object.class.getTypeName().equals(annotation.paramClass().getTypeName())) {
+                try {
+                    paramJsonExample = JSON.stringify(annotation.paramClass().newInstance());
+                } catch (Exception e) {
+                    log.error("job任务：{}, Scheduled#paramClass参数任务无效，建议使用Scheduled#paramJson参数替换！", job.getClass());
+                }
+            }
+            temp.put("paramJsonExample", paramJsonExample);
+            result.add(temp);
+        }
+        CACHE_JOB.addAll(result);
+        return result;
+    }
+
+    /**
+     * 获取调度器重的所有任务列表
+     *
+     * @return
+     */
+    public List<Map<String, Object>> loadJobsInScheduler() {
         List<Map<String, Object>> jobList = null;
         try {
             Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.anyJobGroup());
@@ -123,6 +158,10 @@ public class QuartzSchedulerService {
             if (V.isEmpty(job.getJobKey())) {
                 job.setJobKey(S.newUuid());
             }
+            // 设置job
+            if (V.isEmpty(job.getJobClass())) {
+                setJobClass(job);
+            }
             TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobKey());
             // 构建参数
             JobDetail jobDetail = JobBuilder.newJob(job.getJobClass()).withIdentity(job.getJobKey()).build();
@@ -150,12 +189,17 @@ public class QuartzSchedulerService {
     /**
      * 添加一个立即执行一次的job
      *
+     * @param job
      * @return
      */
     public String addJobExecuteOnce(ScheduleJob job) {
         try {
             if (V.isEmpty(job.getJobKey())) {
                 job.setJobKey(S.newUuid());
+            }
+            // 设置job
+            if (V.isEmpty(job.getJobClass())) {
+                setJobClass(job);
             }
             TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobKey());
             // 构建参数
@@ -247,6 +291,48 @@ public class QuartzSchedulerService {
         } catch (Exception e) {
             log.error("更新job的cron定时表达式异常", e);
         }
+    }
+
+
+    /**
+     * 判断是否存在job
+     *
+     * @return
+     */
+    public boolean existJob(String jobKey) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
+        try {
+            Trigger trigger = scheduler.getTrigger(triggerKey);
+            return V.notEmpty(trigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 设置ScheduleJob#JobClass
+     *
+     * @param entity
+     */
+    public void setJobClass(ScheduleJob entity) {
+        String jobName = V.isEmpty(entity.getJobName()) ? "" : entity.getJobName();
+        if (V.isEmpty(CACHE_JOB)) {
+            try {
+                loadAllJobs();
+            } catch (Exception e) {
+                throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！");
+            }
+
+        }
+        Map<String, Object> jobMap = CACHE_JOB.stream()
+                .filter(s -> jobName.equals(String.valueOf(s.get("jobName"))))
+                .findFirst()
+                .get();
+        if (jobMap == null) {
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法的定时任务名称!");
+        }
+        entity.setJobClass((Class<? extends Job>) jobMap.get("jobClass"));
     }
 
 }

@@ -15,11 +15,19 @@
  */
 package com.diboot.scheduler.starter;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.Cons;
 import com.diboot.core.plugin.PluginManager;
 import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.V;
+import com.diboot.scheduler.entity.ScheduleJob;
+import com.diboot.scheduler.service.ScheduleJobService;
+import com.diboot.scheduler.service.impl.QuartzSchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+
+import java.util.List;
 
 /**
  * 定时任务插件
@@ -43,6 +51,22 @@ public class SchedulerPluginManager implements PluginManager {
                 SqlHandler.initBootstrapSql(this.getClass(), environment, "scheduler");
                 log.info("diboot-scheduler 初始化SQL完成.");
             }
+        }
+    }
+
+    /**
+     * 初始化job
+     * @param scheduleJobService
+     * @param quartzSchedulerService
+     */
+    public void initJob(ScheduleJobService scheduleJobService, QuartzSchedulerService quartzSchedulerService) {
+        // 初始化数据库里面状态为启用的定时任务
+        List<ScheduleJob> scheduleJobList = scheduleJobService.getEntityList(
+                Wrappers.<ScheduleJob>lambdaQuery()
+                        .eq(ScheduleJob::getJobStatus, Cons.ENABLE_STATUS.A.name())
+        );
+        if (V.notEmpty(scheduleJobList)) {
+            scheduleJobList.stream().forEach(scheduleJob -> quartzSchedulerService.addJob(scheduleJob));
         }
     }
 

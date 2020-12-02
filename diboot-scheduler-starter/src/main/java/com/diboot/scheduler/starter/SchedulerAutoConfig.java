@@ -15,6 +15,8 @@
  */
 package com.diboot.scheduler.starter;
 
+import com.diboot.scheduler.service.ScheduleJobService;
+import com.diboot.scheduler.service.impl.QuartzSchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,12 @@ public class SchedulerAutoConfig {
     @Autowired
     private SchedulerProperties schedulerProperties;
 
+    @Autowired
+    private QuartzSchedulerService quartzSchedulerService;
+
+    @Autowired
+    private ScheduleJobService scheduleJobService;
+
     /**
      * 初始化starter
      * @return
@@ -51,6 +59,7 @@ public class SchedulerAutoConfig {
     public SchedulerPluginManager schedulerPluginManager() {
         SchedulerPluginManager pluginManager = new SchedulerPluginManager();
         pluginManager.initPlugin(schedulerProperties);
+        pluginManager.initJob(scheduleJobService, quartzSchedulerService);
         return pluginManager;
     }
 
