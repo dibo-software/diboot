@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,25 +15,24 @@
  */
 package com.diboot.iam.dto;
 
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
+import com.diboot.iam.entity.IamOrg;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
+/**
+ * 组织DTO
+ * @author mazc@dibo.ltd
+ * @version v2.2
+ * @date 2020/12/1
+ */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ChangePwdDTO implements Serializable {
-    private static final long serialVersionUID = 8027129084861679777L;
+public class IamOrgDTO extends IamOrg {
 
-    @NotNull(message = "旧密码不能为空")
-    private String oldPassword;
-
-    @NotNull(message = "新密码不能为空")
-    private String password;
-
-    @NotNull(message = "确认密码不能为空")
-    private String confirmPassword;
+    @BindQuery(comparison = Comparison.LIKE, field = "name")
+    private String name;
 }

@@ -80,7 +80,7 @@ public class ApiPermissionExtractor {
     private static void extractApiPermissions(List<Object> controllerList){
         if(V.notEmpty(controllerList)) {
             for (Object obj : controllerList) {
-                Class controllerClass = AopUtils.getTargetClass(obj);
+                Class controllerClass = BeanUtils.getTargetClass(obj);
                 String title = null;
                 // 提取类信息
                 String codePrefix = null;

@@ -25,10 +25,11 @@ import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -730,8 +731,7 @@ public class BeanUtils {
      * @return
      */
     public static Class getTargetClass(Object instance){
-        Class targetClass = (instance instanceof Class)? (Class)instance : AopUtils.getTargetClass(instance);
-        return targetClass;
+        return (instance instanceof Class)? (Class)instance : AopProxyUtils.ultimateTargetClass(instance);
     }
 
     /**
@@ -742,6 +742,7 @@ public class BeanUtils {
      */
     public static Class getGenericityClass(Object instance, int index){
         Class hostClass = getTargetClass(instance);
+
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
         if(V.isEmpty(types) || index >= types.length){

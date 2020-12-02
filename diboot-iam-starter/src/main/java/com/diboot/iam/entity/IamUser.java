@@ -16,6 +16,8 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.util.D;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -70,6 +72,13 @@ public class IamUser extends BaseLoginUser {
     @Length(max=50, message="Email长度应小于50")
     @TableField()
     private String email;
+
+    /**
+     * 生日
+     */
+    @JsonFormat(pattern=D.FORMAT_DATE_Y4MD)
+    @TableField()
+    private String birthdate;
 
     // 状态
     @NotNull(message = "状态不能为空")
