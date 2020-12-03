@@ -26,15 +26,12 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -55,33 +52,8 @@ import java.util.TimeZone;
 @EnableConfigurationProperties(CoreProperties.class)
 @ComponentScan(basePackages = {"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
-@Order(1)
 public class CoreAutoConfiguration implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(CoreAutoConfiguration.class);
-
-    @Autowired
-    Environment environment;
-
-    @Autowired
-    CoreProperties coreProperties;
-
-    @Bean
-    @ConditionalOnMissingBean(CorePluginManager.class)
-    public CorePluginManager corePluginManager() {
-        // 初始化SCHEMA
-        SqlHandler.init(environment);
-        CorePluginManager pluginManager = new CorePluginManager() {
-        };
-        // 检查数据库字典是否已存在
-        if (coreProperties.isInitSql()) {
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
-            if (SqlHandler.checkSqlExecutable(initDetectSql) == false) {
-                SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "core");
-                log.info("diboot-core 初始化SQL完成.");
-            }
-        }
-        return pluginManager;
-    }
 
     @Bean
     @ConditionalOnMissingBean

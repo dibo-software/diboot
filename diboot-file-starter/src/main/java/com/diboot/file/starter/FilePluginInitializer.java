@@ -13,37 +13,44 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.starter;
+package com.diboot.file.starter;
 
-import com.diboot.core.plugin.PluginManager;
 import com.diboot.core.starter.SqlHandler;
-import com.diboot.core.util.ContextHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 /**
- * IAM组件相关的初始化
+ * 组件初始化
  * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2019/12/23
+ * @date 2020/11/28
  */
 @Slf4j
-public class IamBasePluginManager implements PluginManager {
+@Component
+@Order(930)
+public class FilePluginInitializer implements ApplicationRunner {
 
-    public void initPlugin(IamBaseProperties iamBaseProperties){
+    @Autowired
+    private FileProperties fileProperties;
+
+    @Autowired
+    private Environment environment;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         // 检查数据库字典是否已存在
-        if(iamBaseProperties.isInitSql()){
-            Environment environment = ContextHelper.getApplicationContext().getEnvironment();
+        if (fileProperties.isInitSql()) {
+            // 初始化SCHEMA
             SqlHandler.init(environment);
-            // 验证SQL
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.iam_role WHERE id=0";
+            String initDetectSql = "SELECT uuid FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
             if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
-                log.info("diboot-IAM 初始化SQL ...");
-                // 执行初始化SQL
-                SqlHandler.initBootstrapSql(this.getClass(), environment, "iam");
-                // 插入相关数据：Dict，Role等
-                IamBaseInitializer.insertInitData();
-                log.info("diboot-IAM 初始化SQL完成.");
+                SqlHandler.initBootstrapSql(this.getClass(), environment, "file");
+                log.info("diboot-file 初始化SQL完成.");
             }
         }
     }

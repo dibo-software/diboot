@@ -61,23 +61,10 @@ import java.util.Map;
 @EnableConfigurationProperties({IamBaseProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
-@Order(10)
 public class IamBaseAutoConfig {
 
     @Autowired
     private IamBaseProperties iamBaseProperties;
-
-    /**
-     * 初始化starter
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean(IamBasePluginManager.class)
-    public IamBasePluginManager iamBasePluginManager() {
-        IamBasePluginManager pluginManager = new IamBasePluginManager();
-        pluginManager.initPlugin(iamBaseProperties);
-        return pluginManager;
-    }
 
     /**
      * 根据用户配置的缓存类初始化CacheManager，默认为Shiro内存缓存MemoryConstrainedCacheManager

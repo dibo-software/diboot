@@ -30,37 +30,20 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-@Slf4j
+/**
+ * 组件初始化
+ * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2020/11/28
+ */
 @Configuration
 @EnableConfigurationProperties(FileProperties.class)
 @ComponentScan(basePackages = {"com.diboot.file"})
 @MapperScan(basePackages = {"com.diboot.file.mapper"})
-@Order(11)
 public class FileAutoConfiguration {
 
     @Autowired
-    FileProperties fileProperties;
-
-    @Autowired
-    Environment environment;
-
-    @Bean
-    @ConditionalOnMissingBean(FilePluginManager.class)
-    public FilePluginManager filePluginManager() {
-        // 初始化SCHEMA
-        SqlHandler.init(environment);
-        FilePluginManager pluginManager = new FilePluginManager() {
-        };
-        // 检查数据库字典是否已存在
-        if (fileProperties.isInitSql()) {
-            String initDetectSql = "SELECT uuid FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
-            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
-                SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
-                log.info("diboot-file 初始化SQL完成.");
-            }
-        }
-        return pluginManager;
-    }
+    private FileProperties fileProperties;
 
     /**
      * 需要文件上传，开启此配置

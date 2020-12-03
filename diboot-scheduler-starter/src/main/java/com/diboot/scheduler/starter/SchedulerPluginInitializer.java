@@ -17,7 +17,6 @@ package com.diboot.scheduler.starter;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
-import com.diboot.core.plugin.PluginManager;
 import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
@@ -25,7 +24,12 @@ import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.service.ScheduleJobService;
 import com.diboot.scheduler.service.impl.QuartzSchedulerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -36,9 +40,21 @@ import java.util.List;
  * @date 2020-11-27
  */
 @Slf4j
-public class SchedulerPluginManager implements PluginManager {
+@Component
+@Order(940)
+public class SchedulerPluginInitializer implements ApplicationRunner {
 
-    public void initPlugin(SchedulerProperties schedulerProperties){
+    @Autowired
+    private SchedulerProperties schedulerProperties;
+
+    @Autowired
+    private QuartzSchedulerService quartzSchedulerService;
+
+    @Autowired
+    private ScheduleJobService scheduleJobService;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         // 检查数据库是否已存在
         if(schedulerProperties.isInitSql()){
             Environment environment = ContextHelper.getApplicationContext().getEnvironment();
@@ -52,14 +68,14 @@ public class SchedulerPluginManager implements PluginManager {
                 log.info("diboot-scheduler 初始化SQL完成.");
             }
         }
+        // 初始化job
+        initJob();
     }
 
     /**
      * 初始化job
-     * @param scheduleJobService
-     * @param quartzSchedulerService
      */
-    public void initJob(ScheduleJobService scheduleJobService, QuartzSchedulerService quartzSchedulerService) {
+    private void initJob() {
         // 初始化数据库里面状态为启用的定时任务
         List<ScheduleJob> scheduleJobList = scheduleJobService.getEntityList(
                 Wrappers.<ScheduleJob>lambdaQuery()

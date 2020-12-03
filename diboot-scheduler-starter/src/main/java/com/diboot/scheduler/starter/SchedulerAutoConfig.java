@@ -15,17 +15,11 @@
  */
 package com.diboot.scheduler.starter;
 
-import com.diboot.scheduler.service.ScheduleJobService;
-import com.diboot.scheduler.service.impl.QuartzSchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 /**
  * scheduler组件自动初始化
@@ -38,29 +32,6 @@ import org.springframework.core.annotation.Order;
 @EnableConfigurationProperties({SchedulerProperties.class})
 @ComponentScan(basePackages = {"com.diboot.scheduler"})
 @MapperScan(basePackages = {"com.diboot.scheduler.mapper"})
-@Order(12)
 public class SchedulerAutoConfig {
-
-    @Autowired
-    private SchedulerProperties schedulerProperties;
-
-    @Autowired
-    private QuartzSchedulerService quartzSchedulerService;
-
-    @Autowired
-    private ScheduleJobService scheduleJobService;
-
-    /**
-     * 初始化starter
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean(SchedulerPluginManager.class)
-    public SchedulerPluginManager schedulerPluginManager() {
-        SchedulerPluginManager pluginManager = new SchedulerPluginManager();
-        pluginManager.initPlugin(schedulerProperties);
-        pluginManager.initJob(scheduleJobService, quartzSchedulerService);
-        return pluginManager;
-    }
 
 }
