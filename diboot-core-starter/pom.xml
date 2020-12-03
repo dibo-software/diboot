@@ -21,12 +21,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- SpringBoot 2.3.x 新增依赖 -->
         <dependency>
@@ -50,7 +44,7 @@
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core</artifactId>
-            <version>2.2.0</version>
+            <version>${diboot.version}</version>
         </dependency>
 
         <dependency>

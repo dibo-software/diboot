@@ -29,6 +29,7 @@
         <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
         <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
         <mybatis-plus.version>3.4.1</mybatis-plus.version>
+        <diboot.version>2.2.0</diboot.version>
     </properties>
 
     <dependencies>

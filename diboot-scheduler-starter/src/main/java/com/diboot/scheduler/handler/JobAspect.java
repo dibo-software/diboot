@@ -17,7 +17,7 @@ package com.diboot.scheduler.handler;
 
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Status;
-import com.diboot.iam.config.Cons;
+import com.diboot.core.config.Cons;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
