@@ -49,18 +49,37 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
 
     @Override
     public boolean createEntity(ScheduleJob entity) {
-        quartzSchedulerService.addJob(entity);
-        return super.createEntity(entity);
+        boolean success = super.createEntity(entity);
+        if (!success) {
+            throw new BusinessException(Status.FAIL_OPERATION, "创建定时任务失败!");
+        }
+        // 只有启用情况才加入任务队列
+        if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
+            quartzSchedulerService.addJob(entity);
+        }
+        return true;
     }
 
     @Override
     public boolean updateEntity(ScheduleJob entity) {
+        // 更新后对系统的定时任务进行操作
         ScheduleJob oldJob = getEntity(entity.getId());
-        // 定时不同
-        if (V.notEquals(oldJob.getCron(), entity.getCron())) {
-            quartzSchedulerService.updateJobCron(oldJob.getJobKey(), entity.getCron());
+        boolean success = super.updateEntity(entity);
+        if (!success) {
+            throw new BusinessException(Status.FAIL_OPERATION, "更新定时任务失败!");
         }
-        return super.updateEntity(entity);
+        // 如果参数发生变化 或状态为I,或策略改变，那么先触发删除原来的job
+        if (V.notEquals(oldJob.getParamJson(), entity.getParamJson())
+                || V.equals(oldJob.getJobStatus(), Cons.ENABLE_STATUS.I.name())
+                || V.notEquals(oldJob.getInitStrategy(), entity.getInitStrategy())
+                || V.notEquals(oldJob.getCron(), entity.getCron())
+        ) {
+            quartzSchedulerService.deleteJob(entity.getJobKey());
+        }
+        if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
+            quartzSchedulerService.addJob(entity);
+        }
+        return true;
     }
 
     @Override
