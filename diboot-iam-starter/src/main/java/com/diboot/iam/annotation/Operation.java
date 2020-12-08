@@ -98,7 +98,7 @@ public class Operation {
     /**
      * 操作权限描述 - 批量更新
      */
-    public static final String CODE_BATCH_UPDATE = "批量更新";
+    public static final String LABEL_BATCH_UPDATE = "批量更新";
     /**
      * 操作权限描述 - 导入
      */
