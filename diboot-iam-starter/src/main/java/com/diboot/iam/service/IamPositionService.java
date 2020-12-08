@@ -38,12 +38,12 @@ public interface IamPositionService extends BaseIamService<IamPosition> {
     List<IamUserPosition> getUserPositionListByUser(String userType, Long userId);
 
     /***
-     * 通过用户ID获取用户的所有任职岗位集合（包含了部门的岗位）
+     * 通过用户ID获取用户的所有任职岗位集合
      * @param userType
      * @param userId
      * @return
      */
-    List<IamPosition> getPositionListByUser(String userType, Long userId, Long orgId);
+    List<IamPosition> getPositionListByUser(String userType, Long userId);
 
     /***
      * 批量更新用户-岗位的关联关系

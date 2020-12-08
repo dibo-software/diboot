@@ -59,7 +59,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
     }
 
     @Override
-    public List<IamPosition> getPositionListByUser(String userType, Long userId, Long orgId) {
+    public List<IamPosition> getPositionListByUser(String userType, Long userId) {
         // 根据user与position的关联获取positionId列表
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .select(IamUserPosition::getPositionId)
