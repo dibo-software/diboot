@@ -15,6 +15,7 @@
  */
 package com.diboot.core.starter;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
@@ -86,9 +87,10 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
      */
     @Bean
     @ConditionalOnMissingBean
-    public PaginationInnerInterceptor paginationInterceptor() {
-        PaginationInnerInterceptor paginationInterceptor = new PaginationInnerInterceptor();
-        return paginationInterceptor;
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        return interceptor;
     }
 
     /**

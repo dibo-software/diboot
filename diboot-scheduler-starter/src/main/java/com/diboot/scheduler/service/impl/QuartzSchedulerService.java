@@ -265,9 +265,11 @@ public class QuartzSchedulerService {
     public void deleteJob(String jobKey) {
         try {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
-            scheduler.pauseTrigger(triggerKey);
-            scheduler.unscheduleJob(triggerKey);
-            scheduler.deleteJob(JobKey.jobKey(jobKey));
+            if (V.notEmpty(triggerKey)) {
+                scheduler.pauseTrigger(triggerKey);
+                scheduler.unscheduleJob(triggerKey);
+                scheduler.deleteJob(JobKey.jobKey(jobKey));
+            }
         } catch (Exception e) {
             log.error("删除job异常", e);
         }
