@@ -58,6 +58,10 @@ public class Operation {
      */
     public static final String CODE_BATCH_DELETE = "batchDelete";
     /**
+     * 操作权限类型 - 批量更新
+     */
+    public static final String CODE_BATCH_UPDATE = "batchUpdate";
+    /**
      * 操作权限类型 - 导入
      */
     public static final String CODE_IMPORT = "import";
