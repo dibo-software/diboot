@@ -17,7 +17,7 @@ package com.diboot.scheduler.job;
 
 import com.diboot.core.util.D;
 import com.diboot.core.util.SqlExecutor;
-import com.diboot.scheduler.job.anno.BindJob;
+import com.diboot.scheduler.annotation.BindJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;

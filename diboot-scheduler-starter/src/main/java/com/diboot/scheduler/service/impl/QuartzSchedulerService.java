@@ -15,14 +15,11 @@
  */
 package com.diboot.scheduler.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.entity.ScheduleJob;
-import com.diboot.scheduler.job.anno.BindJob;
-import com.diboot.scheduler.service.ScheduleJobService;
+import com.diboot.scheduler.annotation.BindJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -155,9 +152,6 @@ public class QuartzSchedulerService {
      */
     public String addJob(ScheduleJob job) {
         try {
-            if (V.isEmpty(job.getJobKey())) {
-                job.setJobKey(S.newUuid());
-            }
             // 设置job
             if (V.isEmpty(job.getJobClass())) {
                 setJobClass(job);

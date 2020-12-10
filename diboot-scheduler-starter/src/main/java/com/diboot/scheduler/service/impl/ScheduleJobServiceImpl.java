@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.entity.ScheduleJob;
@@ -26,7 +27,6 @@ import com.diboot.scheduler.mapper.ScheduleJobMapper;
 import com.diboot.scheduler.service.ScheduleJobService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -49,6 +49,9 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
 
     @Override
     public boolean createEntity(ScheduleJob entity) {
+        if (V.isEmpty(entity.getJobKey())) {
+            entity.setJobKey(S.newUuid());
+        }
         boolean success = super.createEntity(entity);
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "创建定时任务失败!");
