@@ -75,7 +75,7 @@ public abstract class BaseEntity implements Serializable {
      * @return
      */
     @JsonIgnore
-    public Object getPrimaryKey(){
+    public Object getPrimaryKeyVal(){
         String pk = ContextHelper.getPrimaryKey(this.getClass());
         if(Cons.FieldName.id.name().equals(pk)){
             return getId();
