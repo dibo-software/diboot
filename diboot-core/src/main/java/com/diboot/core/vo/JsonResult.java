@@ -193,6 +193,14 @@ public class JsonResult<T> implements Serializable {
         }
     }
 
+    /**
+     * 判断结果是否OK
+     * @return
+     */
+    public boolean isOK(){
+        return this.code == Status.OK.code();
+    }
+
     /***
      * 请求处理成功
      */
