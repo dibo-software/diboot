@@ -25,7 +25,7 @@ import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.service.BindDictService;
+import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -176,7 +176,7 @@ public class RelationsBinder {
      * @param <VO>
      */
     private static <VO> void doBindingDict(List<VO> voList, FieldAnnotation fieldAnno) {
-        BindDictService bindDictService = ContextHelper.getBean(BindDictService.class);
+        DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
         if(bindDictService != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
             String dictValueField = annotation.field();

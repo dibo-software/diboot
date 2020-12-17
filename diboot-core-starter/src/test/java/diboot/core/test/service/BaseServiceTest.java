@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.service.impl.DictionaryServiceImpl;
+import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
@@ -56,7 +56,7 @@ import java.util.*;
 public class BaseServiceTest {
 
     @Autowired
-    DictionaryServiceImpl dictionaryService;
+    DictionaryServiceExtImpl dictionaryService;
 
     @Autowired
     UserService userService;
@@ -110,7 +110,7 @@ public class BaseServiceTest {
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
         dictionaryService.createEntity(dictionary);
-        Assert.assertTrue(dictionary.getPrimaryKey() != null);
+        Assert.assertTrue(dictionary.getPrimaryKeyVal() != null);
         // 查询是否创建成功
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dictionary::getType, TYPE);

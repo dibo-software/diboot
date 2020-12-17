@@ -16,12 +16,13 @@
 package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
-import com.diboot.core.service.BindDictService;
+import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
@@ -44,8 +45,8 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service("dictionaryService")
-public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService, BindDictService {
-    private static final Logger log = LoggerFactory.getLogger(DictionaryServiceImpl.class);
+public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService, DictionaryServiceExtProvider {
+    private static final Logger log = LoggerFactory.getLogger(DictionaryServiceExtImpl.class);
 
     @Override
     public List<KeyValue> getKeyValueList(String type) {
@@ -57,6 +58,11 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
                 .orderByAsc(Dictionary::getSortId, Dictionary::getId);
         // 返回构建条件
         return getKeyValueList(queryDictionary);
+    }
+
+    @Override
+    public boolean existsDictType(String dictType) {
+        return exists(Dictionary::getType, dictType);
     }
 
     @Override
@@ -82,6 +88,18 @@ public class DictionaryServiceImpl extends BaseServiceImpl<DictionaryMapper, Dic
             }
         }
         return true;
+    }
+
+    @Override
+    public List<Dictionary> getDictDefinitionList() {
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<Dictionary>().eq(Dictionary::getParentId, 0L);
+        return getEntityList(queryWrapper);
+    }
+
+    @Override
+    public List<DictionaryVO> getDictDefinitionVOList() {
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<Dictionary>().eq(Dictionary::getParentId, 0L);
+        return getViewObjectList(queryWrapper, null, DictionaryVO.class);
     }
 
     @Override
