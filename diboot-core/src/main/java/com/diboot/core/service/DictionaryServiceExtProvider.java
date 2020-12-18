@@ -15,8 +15,6 @@
  */
 package com.diboot.core.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
@@ -25,6 +23,7 @@ import java.util.List;
 
 /**
  * BindDict等字典服务绑定Service提供接口
+ *
  * @author mazc@dibo.ltd
  * @version 2.2.0
  * @date 2020/11/17
@@ -33,6 +32,7 @@ public interface DictionaryServiceExtProvider {
 
     /**
      * 绑定字典的label
+     *
      * @param voList
      * @param setFieldName
      * @param getFieldName
@@ -42,6 +42,7 @@ public interface DictionaryServiceExtProvider {
 
     /**
      * 获取字典类型对应的子项键值对
+     *
      * @param dictType
      * @return
      */
@@ -49,6 +50,7 @@ public interface DictionaryServiceExtProvider {
 
     /**
      * 是否存在某字典类型定义
+     *
      * @param dictType
      * @return
      */
@@ -56,6 +58,7 @@ public interface DictionaryServiceExtProvider {
 
     /**
      * 创建字典及子项
+     *
      * @param dictionaryVO
      * @return
      */
@@ -63,12 +66,14 @@ public interface DictionaryServiceExtProvider {
 
     /**
      * 查询字典定义的List（不含子项）
+     *
      * @return
      */
     List<Dictionary> getDictDefinitionList();
 
     /**
      * 查询字典VOList（含子项）
+     *
      * @return
      */
     List<DictionaryVO> getDictDefinitionVOList();
