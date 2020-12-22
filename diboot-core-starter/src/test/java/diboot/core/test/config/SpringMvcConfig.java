@@ -80,13 +80,4 @@ public class SpringMvcConfig implements WebMvcConfigurer {
        registry.addConverter(new DateConverter());
     }
 
-    /**
-     * Mybatis-plus分页插件
-     */
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-        return paginationInterceptor;
-    }
-
 }

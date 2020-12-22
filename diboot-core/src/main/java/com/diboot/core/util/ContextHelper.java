@@ -166,7 +166,6 @@ public class ContextHelper implements ApplicationContextAware {
      * @param entity
      * @return
      */
-    @Deprecated
     public static IService getIServiceByEntity(Class entity){
         if(ENTITY_SERVICE_CACHE.isEmpty()){
             Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);

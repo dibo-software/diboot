@@ -52,7 +52,7 @@ public class TestDeepBinder {
     public void testEntityListDeepBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
-        List<Department> entityList = departmentService.getEntityList(queryWrapper);
+        List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
         List<DeepBindVO> voList = Binder.convertAndBindRelations(entityList, DeepBindVO.class);
         // 验证绑定结果

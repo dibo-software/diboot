@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -35,6 +34,7 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -654,30 +654,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	protected Page<T> convertToIPage(Wrapper queryWrapper, Pagination pagination){
-		if(pagination == null){
-			return null;
-		}
-		// 如果是默认id排序
-		if(pagination.isDefaultOrderBy()){
-			// 优化排序
-			String pk = getPrimaryKeyField();
-			// 主键非有序id字段，需要清空默认排序以免报错
-			if(!Cons.FieldName.id.name().equals(pk)){
-//				log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
-				pagination.clearDefaultOrder();
-				//设置时间排序
-				pagination.setDefaultCreateTimeOrderBy();
-			}
-		}
-		return (Page<T>)pagination.toPage();
-	}
-
-	/**
-	 * 获取当前主键字段名
-	 * @return
-	 */
-	private String getPrimaryKeyField(){
-		return ContextHelper.getPrimaryKey(entityClass);
+		return ServiceAdaptor.convertToIPage(pagination, entityClass);
 	}
 
 	/**

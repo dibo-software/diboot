@@ -58,11 +58,11 @@ public class TestJoinQuery {
 
     @Test
     public void testDateCompaire(){
-        Department example = departmentService.getSingleEntity(null);
+        Department example = departmentService.list(null).get(0);
         DepartmentDTO departmentDTO = new DepartmentDTO();
         departmentDTO.setCreateTime(example.getCreateTime());
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
-        List<Department> list = departmentService.getEntityList(queryWrapper);
+        List<Department> list = departmentService.list(queryWrapper);
         Assert.assertTrue(list.size() >= 1);
     }
 
@@ -101,7 +101,10 @@ public class TestJoinQuery {
 
         // 验证 转换后的wrapper可以直接查询
         QueryWrapper<DepartmentDTO> queryWrapper = QueryBuilder.toQueryWrapper(dto);
-        List<Department> departments = departmentService.getEntityList(queryWrapper);
+
+        QueryWrapper<Department> deptQueryWrapper = new QueryWrapper<>();
+        deptQueryWrapper.eq("parent_id", 10001L);
+        List<Department> departments = departmentService.list(deptQueryWrapper);
         Assert.assertTrue(departments.size() == 3);
 
         // builder直接查询，不分页 3条结果

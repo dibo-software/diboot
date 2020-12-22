@@ -61,7 +61,7 @@ public class TestFieldListBinder {
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Department::getId, 10001L);
-        List<Department> entityList = departmentService.getEntityList(queryWrapper);
+        List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
         List<EntityListSimpleBinderVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleBinderVO.class);
         // 验证绑定结果
