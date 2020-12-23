@@ -15,9 +15,10 @@
  */
 package com.diboot.file.starter;
 
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.starter.SqlHandler;
-import lombok.extern.slf4j.Slf4j;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,8 +26,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
@@ -55,7 +54,23 @@ public class FileAutoConfiguration {
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver bean = new CommonsMultipartResolver();
         bean.setDefaultEncoding(Cons.CHARSET_UTF8);
-        bean.setMaxUploadSize(fileProperties.getMaxUploadSize());
+        long maxUploadSize = fileProperties.getMaxUploadSize();
+        // 兼容 servlet 配置参数
+        String servletMaxUploadSize = BaseConfig.getProperty("spring.servlet.multipart.max-request-size");
+        if(V.notEmpty(servletMaxUploadSize)){
+            if(S.endsWithIgnoreCase(servletMaxUploadSize, "MB")){
+                maxUploadSize = Long.parseLong(S.removeIgnoreCase(servletMaxUploadSize, "MB"));
+                maxUploadSize = maxUploadSize * 1024 * 1024;
+            }
+            else if(S.endsWithIgnoreCase(servletMaxUploadSize, "KB")){
+                maxUploadSize = Long.parseLong(S.removeIgnoreCase(servletMaxUploadSize, "KB"));
+                maxUploadSize = maxUploadSize * 1024;
+            }
+            else{
+                maxUploadSize = Long.parseLong(servletMaxUploadSize);
+            }
+        }
+        bean.setMaxUploadSize(maxUploadSize);
         return bean;
     }
 }

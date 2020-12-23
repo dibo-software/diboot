@@ -31,7 +31,8 @@ public class FileProperties {
     private boolean initSql = true;
 
     /**
-     * 最大上传大小（默认10M）
+     * 最大上传大小（默认10M），推荐用spring.servlet.multipart.max-request-size
      */
+    @Deprecated
     private Long maxUploadSize = 10 * 1024 * 1024L;
 }
