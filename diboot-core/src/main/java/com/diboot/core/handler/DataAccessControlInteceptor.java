@@ -93,7 +93,7 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
         Expression dataAccessExpression = buildDataAccessExpression(mainTable, entityClass);
         // 主表需要数据权限检查
         if(dataAccessExpression != null){
-            String whereStmt = selectBody.getWhere().toString();
+            String whereStmt = selectBody.getWhere() == null? null : selectBody.getWhere().toString();
             if (selectBody.getWhere() == null) {
                 selectBody.setWhere(dataAccessExpression);
             }
@@ -114,7 +114,7 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
                 Expression joinDataAccessExpression = buildDataAccessExpression(joinTable, linkage.getEntityClass());
                 // 主表需要数据权限检查
                 if(joinDataAccessExpression != null){
-                    String whereStmt = selectBody.getWhere().toString();
+                    String joinOnStmt = join.getOnExpression() == null? null : join.getOnExpression().toString();
                     if (join.getOnExpression() == null) {
                         join.setOnExpression(joinDataAccessExpression);
                     }
@@ -122,7 +122,7 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
                         AndExpression andExpression = new AndExpression(join.getOnExpression(), joinDataAccessExpression);
                         join.setOnExpression(andExpression);
                     }
-                    log.debug("DataAccess Inteceptor Join: {} => {}", whereStmt, selectBody.getWhere().toString());
+                    log.debug("DataAccess Inteceptor Join: {} => {}", joinOnStmt, join.getOnExpression().toString());
                 }
             }
         }
