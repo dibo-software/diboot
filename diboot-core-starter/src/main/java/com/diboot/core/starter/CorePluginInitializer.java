@@ -15,6 +15,7 @@
  */
 package com.diboot.core.starter;
 
+import com.diboot.core.util.SqlFileInitializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -42,12 +43,12 @@ public class CorePluginInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 初始化SCHEMA
-        SqlHandler.init(environment);
+        SqlFileInitializer.init(environment);
         // 检查数据库字典是否已存在
         if (coreProperties.isInitSql()) {
             String initDetectSql = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
-            if (SqlHandler.checkSqlExecutable(initDetectSql) == false) {
-                SqlHandler.initBootstrapSql(this.getClass(), environment, "core");
+            if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
+                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "core");
                 log.info("diboot-core 初始化SQL完成.");
             }
         }

@@ -17,9 +17,9 @@ package com.diboot.iam.starter;
 
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.SqlFileInitializer;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.*;
@@ -51,13 +51,13 @@ public class IamPluginInitializer implements ApplicationRunner {
         // 检查数据库字典是否已存在
         if(iamBaseProperties.isInitSql()){
             Environment environment = ContextHelper.getApplicationContext().getEnvironment();
-            SqlHandler.init(environment);
+            SqlFileInitializer.init(environment);
             // 验证SQL
             String initDetectSql = "SELECT id FROM ${SCHEMA}.iam_role WHERE id=0";
-            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
+            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
                 log.info("diboot-IAM 初始化SQL ...");
                 // 执行初始化SQL
-                SqlHandler.initBootstrapSql(this.getClass(), environment, "iam");
+                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "iam");
                 // 插入相关数据：Dict，Role等
                 insertInitData();
                 log.info("diboot-IAM 初始化SQL完成.");

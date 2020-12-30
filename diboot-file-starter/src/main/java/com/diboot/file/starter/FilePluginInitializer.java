@@ -15,7 +15,7 @@
  */
 package com.diboot.file.starter;
 
-import com.diboot.core.starter.SqlHandler;
+import com.diboot.core.util.SqlFileInitializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -46,10 +46,10 @@ public class FilePluginInitializer implements ApplicationRunner {
         // 检查数据库字典是否已存在
         if (fileProperties.isInitSql()) {
             // 初始化SCHEMA
-            SqlHandler.init(environment);
+            SqlFileInitializer.init(environment);
             String initDetectSql = "SELECT uuid FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
-            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
-                SqlHandler.initBootstrapSql(this.getClass(), environment, "file");
+            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "file");
                 log.info("diboot-file 初始化SQL完成.");
             }
         }

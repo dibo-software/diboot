@@ -17,8 +17,8 @@ package com.diboot.scheduler.starter;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
-import com.diboot.core.starter.SqlHandler;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.SqlFileInitializer;
 import com.diboot.core.util.V;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.service.ScheduleJobService;
@@ -58,13 +58,13 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
         // 检查数据库是否已存在
         if(schedulerProperties.isInitSql()){
             Environment environment = ContextHelper.getApplicationContext().getEnvironment();
-            SqlHandler.init(environment);
+            SqlFileInitializer.init(environment);
             // 验证SQL
             String initDetectSql = "SELECT id FROM ${SCHEMA}.schedule_job WHERE id=0";
-            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
+            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
                 log.info("diboot-scheduler 初始化SQL ...");
                 // 执行初始化SQL
-                SqlHandler.initBootstrapSql(this.getClass(), environment, "scheduler");
+                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "scheduler");
                 log.info("diboot-scheduler 初始化SQL完成.");
             }
         }

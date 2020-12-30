@@ -13,20 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.starter;
+package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.SqlExecutor;
-import com.diboot.core.util.V;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,13 +28,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * SQL处理类
+ * SQL文件初始化处理类
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/08/01
  */
-public class SqlHandler {
-    private static final Logger log = LoggerFactory.getLogger(SqlHandler.class);
+public class SqlFileInitializer {
+    private static final Logger log = LoggerFactory.getLogger(SqlFileInitializer.class);
 
     // 数据字典SQL
     private static final String MYBATIS_PLUS_SCHEMA_CONFIG = "mybatis-plus.global-config.db-config.schema";
@@ -243,7 +237,7 @@ public class SqlHandler {
         List<String> lines = null;
         try{
             InputStream is = inst.getClassLoader().getResourceAsStream(sqlPath);
-            lines = IOUtils.readLines(is, "UTF-8");
+            lines = S.readLines(is, "UTF-8");
         }
         catch (FileNotFoundException fe){
             log.warn("暂未发现数据库SQL: "+sqlPath + "， 请参考其他数据库定义DDL手动初始化。");
@@ -374,4 +368,5 @@ public class SqlHandler {
     public static String getDbType(){
         return ContextHelper.getDatabaseType();
     }
+
 }
