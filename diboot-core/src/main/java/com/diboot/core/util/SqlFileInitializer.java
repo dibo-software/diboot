@@ -188,7 +188,7 @@ public class SqlFileInitializer {
      * @param sqlStatement
      * @return
      */
-    protected static String buildPureSqlStatement(String sqlStatement){
+    public static String buildPureSqlStatement(String sqlStatement){
         sqlStatement = clearComments(sqlStatement);
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
