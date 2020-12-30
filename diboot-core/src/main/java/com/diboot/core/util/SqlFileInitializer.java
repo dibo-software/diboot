@@ -49,6 +49,20 @@ public class SqlFileInitializer {
         environment = env;
     }
 
+    /**
+     * 获取初始化SQL路径
+     * @param dbType
+     * @param module
+     * @return
+     */
+    public static String getBootstrapSqlPath(String dbType, String module) {
+        if (DbType.MARIADB.getDb().equalsIgnoreCase(dbType)) {
+            dbType = "mysql";
+        }
+        String sqlPath = "META-INF/sql/init-" + module + "-" + dbType + ".sql";
+        return sqlPath;
+    }
+
     /***
      * 初始化安装SQL
      * @return
@@ -56,24 +70,7 @@ public class SqlFileInitializer {
     public static void initBootstrapSql(Class inst, Environment environment, String module){
         init(environment);
         String dbType = getDbType();
-        if(DbType.MARIADB.getDb().equalsIgnoreCase(dbType)){
-            dbType = "mysql";
-        }
-        String sqlPath = "META-INF/sql/init-"+module+"-"+dbType+".sql";
-        extractAndExecuteSqls(inst, sqlPath);
-    }
-
-    /***
-     * 初始化升级SQL
-     * @return
-     */
-    public static void initUpgradeSql(Class inst, Environment environment, String module){
-        init(environment);
-        String dbType = getDbType();
-        if(DbType.MARIADB.getDb().equalsIgnoreCase(dbType)){
-            dbType = "mysql";
-        }
-        String sqlPath = "META-INF/sql/init-"+module+"-"+dbType+"-upgrade.sql";
+        String sqlPath = getBootstrapSqlPath(dbType, module);
         extractAndExecuteSqls(inst, sqlPath);
     }
 
