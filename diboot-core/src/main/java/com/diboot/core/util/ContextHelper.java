@@ -31,6 +31,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
@@ -173,7 +174,17 @@ public class ContextHelper implements ApplicationContextAware {
                 for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
                     Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
                     if(entityClass != null){
-                        ENTITY_SERVICE_CACHE.put(entityClass.getName(), entry.getValue());
+                        IService entityIService = entry.getValue();
+                        if(ENTITY_SERVICE_CACHE.containsKey(entityClass.getName())){
+                           IService iService = ENTITY_SERVICE_CACHE.get(entityClass.getName());
+                           if(iService.getClass().getAnnotation(Primary.class) != null){
+                               continue;
+                           }
+                           else if(entityIService.getClass().getAnnotation(Primary.class) == null){
+                               log.warn("Entity: {} 存在多个service实现类，可能导致调用实例与预期不一致!", entityClass.getName());
+                           }
+                        }
+                        ENTITY_SERVICE_CACHE.put(entityClass.getName(), entityIService);
                     }
                 }
             }
