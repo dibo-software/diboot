@@ -50,25 +50,30 @@ public class FileAutoConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean(MultipartResolver.class)
+    @ConditionalOnMissingBean
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver bean = new CommonsMultipartResolver();
         bean.setDefaultEncoding(Cons.CHARSET_UTF8);
-        long maxUploadSize = fileProperties.getMaxUploadSize();
+        Long maxUploadSize = null;
         // 兼容 servlet 配置参数
         String servletMaxUploadSize = BaseConfig.getProperty("spring.servlet.multipart.max-request-size");
         if(V.notEmpty(servletMaxUploadSize)){
-            if(S.endsWithIgnoreCase(servletMaxUploadSize, "MB")){
-                maxUploadSize = Long.parseLong(S.removeIgnoreCase(servletMaxUploadSize, "MB"));
+            if(S.containsIgnoreCase(servletMaxUploadSize, "M")){
+                int index = S.indexOfIgnoreCase(servletMaxUploadSize,"M");
+                maxUploadSize = Long.parseLong(S.substring(servletMaxUploadSize, 0, index));
                 maxUploadSize = maxUploadSize * 1024 * 1024;
             }
-            else if(S.endsWithIgnoreCase(servletMaxUploadSize, "KB")){
-                maxUploadSize = Long.parseLong(S.removeIgnoreCase(servletMaxUploadSize, "KB"));
+            else if(S.containsIgnoreCase(servletMaxUploadSize, "K")){
+                int index = S.indexOfIgnoreCase(servletMaxUploadSize,"K");
+                maxUploadSize = Long.parseLong(S.substring(servletMaxUploadSize, 0, index));
                 maxUploadSize = maxUploadSize * 1024;
             }
             else{
                 maxUploadSize = Long.parseLong(servletMaxUploadSize);
             }
+        }
+        else{
+            maxUploadSize = fileProperties.getMaxUploadSize();
         }
         bean.setMaxUploadSize(maxUploadSize);
         return bean;
