@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2020/11/28
  */
 @Getter @Setter
-@ConfigurationProperties(prefix = "diboot.scheduler")
+@ConfigurationProperties(prefix = "diboot.component.scheduler")
 public class SchedulerProperties {
 
     /**

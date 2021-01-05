@@ -52,6 +52,17 @@ module.exports = {
                     ]
                 }
             ],
+            '/guide/diboot-scheduler/': [
+                {
+                    title: '定时任务组件 使用指南',
+                    collapsable: true,
+                    sidebarDepth: 2,
+                    children: [
+                        ['/guide/diboot-scheduler/介绍', '介绍'],
+                        ['/guide/diboot-scheduler/开始使用', '开始使用']
+                    ]
+                }
+            ],
             '/guide/diboot-antd-admin/': [
                 {
                     title: 'diboot-antd-admin 项目指南',
@@ -138,7 +149,8 @@ module.exports = {
             items: [
                 { text: 'core基础内核', link: '/guide/diboot-core/设计理念' },
                 { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
-                { text: 'File文件组件', link: '/guide/diboot-file/介绍' },
+                { text: 'file文件组件', link: '/guide/diboot-file/介绍' },
+                { text: 'scheduler组件', link: '/guide/diboot-scheduler/介绍' },
                 { text: '版本升级指南', link: '/guide/notes/upgrade/2_0_x升级至2_1_x' },
                 { text: 'F&Q', link: '/guide/notes/faq/main' },
             ]
