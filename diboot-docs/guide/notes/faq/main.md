@@ -1,4 +1,4 @@
-# diboot-iam-base-spring-boot-starter相关
+# diboot-iam-spring-boot-starter相关
 
 ## diboot支持Spring Boot哪些版本？
 * diboot 2.0.x 支持 Spring boot 2.2.x

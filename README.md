@@ -47,7 +47,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 * 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
 > [我要试试](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html)
 
-## 三、iam-base 身份认证基础组件 及 配套VUE前端框架（diboot-antd-admin、diboot-element-admin）
+## 三、IAM 身份认证基础组件 及 配套VUE前端框架（diboot-antd-admin、diboot-element-admin）
 
 * RBAC角色权限模型 + JWT的认证授权 实现，支持刷新token
 * 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
@@ -56,7 +56,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 * 支持基于注解的数据权限实现
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
 
-更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot/tree/master/iam-base-starter "身份认证管理组件"). 
+更多介绍请查看: [diboot-iam-starter README](https://github.com/dibo-software/diboot/tree/master/diboot-iam-starter "身份认证管理组件"). 
 
 ## 四、diboot-file 文件相关处理组件
 
