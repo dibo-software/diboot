@@ -85,6 +85,7 @@ public enum Status {
     /***
      * 缓存清空
      */
+    @Deprecated
     MEMORY_EMPTY_LOST(9999, "缓存清空");
 
     private int code;

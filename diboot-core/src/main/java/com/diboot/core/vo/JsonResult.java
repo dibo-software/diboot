@@ -283,6 +283,7 @@ public class JsonResult<T> implements Serializable {
     /***
      * 缓存清空
      */
+    @Deprecated
     public static JsonResult MEMORY_EMPTY_LOST(String msg){
         return new JsonResult(Status.MEMORY_EMPTY_LOST).msg(msg);
     }
