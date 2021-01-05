@@ -136,6 +136,7 @@ module.exports = {
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
+                        ['/guide/notes/upgrade/2_1_2升级至2_2_x', '2.1.2升级至2.2.x'],
                         ['/guide/notes/upgrade/2_1_1升级至2_1_2', '2.1.1升级至2.1.2'],
                         ['/guide/notes/upgrade/2_0_x升级至2_1_x', '2.0.x升级至2.1.x'],
                     ]

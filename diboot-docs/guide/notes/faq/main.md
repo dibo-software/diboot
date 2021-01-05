@@ -52,6 +52,23 @@ public HttpMessageConverters jacksonHttpMessageConverters() {
 }
 ~~~
 
+## 引入diboot-core-starter后，SQL分页查询出现重复的LIMIT
+~~~SQL
+LIMIT ? LIMIT ? 
+~~~
+重复定义了分页导致的，diboot-core-starter默认预置了mybatis-plus的分页配置（使用mybatis-plus 3.4.x的MybatisPlusInterceptor最新配置方式）。
+如果您依赖的是core-starter，则无需再次配置mybatis-plus的分页，将您自定义的mybatis-plus分页配置删掉即可。
+如果需要添加其他Interceptor，则需要重新定义MybatisPlusInterceptor。
+示例如下:
+~~~java
+@Bean
+public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+    interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+    return interceptor;
+}
+~~~
+
 ## mybatis-plus老项目中想要使用diboot的绑定能力？或在无数据库连接配置文件的module下，使用diboot-core？
 对于没有历史包袱的新项目，我们建议您全使用diboot体系starter组件。
 core内核组件有以下两个包：
