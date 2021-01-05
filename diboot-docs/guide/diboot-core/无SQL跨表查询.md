@@ -22,13 +22,17 @@ public class UserDTO {
 ~~~
 ### 2. 调用QueryBuilder自动构建QueryWrapper
 > 构建方式有：
-##### 方式1. controller中调用super.buildQueryWrapper(entityOrDto) 进行构建
+##### 方式1. controller中调用super.buildQueryWrapperBy*(entityOrDto) 进行构建
 ~~~java
-    QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto);
+    QueryWrapper<User> queryWrapper = super.buildQueryWrapperByParams(userDto);
 ~~~
 > 该方式基于url非空参数取值构建：
 > url参数示例: /list?gender=M&realname=张
 > 将构建为 queryWrapper.eq("gender", "M").like("realname", "张")
+~~~java
+    QueryWrapper<User> queryWrapper = super.buildQueryWrapperByDTO(userDto);
+~~~
+> 该方式基于dto对象中的非空值字段构建
 
 ##### 方式2. 直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 进行构建
 ~~~java
@@ -41,7 +45,6 @@ public class UserDTO {
     QueryBuilder.toDynamicJoinQueryWrapper(dto).xxx
 ~~~
 > 该方式支持链式追加查询调用
-
 
 ### 3. 支持动态Join的跨表查询与结果绑定
 > 动态查询的调用方式有以下两种：
@@ -59,7 +62,6 @@ List<Entity> list = Binder.joinQueryList(queryWrapper, Department.class);
 ~~~java
 QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
 ~~~
-
 
 **绑定调用将自动按需（有从表的查询字段时才Join）构建类似如下动态SQL并绑定结果:**
 

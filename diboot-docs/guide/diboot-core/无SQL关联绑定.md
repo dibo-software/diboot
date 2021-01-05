@@ -72,7 +72,7 @@ private String statusLabel;
 * 使用@BindEntity注解时需指定两个参数：entity和condition。
     * entity 表示关联实体类；
     * condition 表示关联条件（当前对象表中的字段加“'this.'前缀或写在比较条件的左侧，被绑定Entity表的字段在右侧）。
-    * deepBind 是否深度绑定，默认false。当绑定Entity类为VO类(还有Bind注解)，开启deepBind=true，可以实现对被绑定VO的注解的再次绑定。
+    * deepBind 是否深度绑定，默认false。当绑定Entity对象为VO(类定义中还有Bind注解)，开启deepBind=true，可以实现对被绑定VO的注解的再次绑定。
 * 主表1-1直接关联从表，获取从表Entity，注解示例如下：
 ```java
 @BindEntity(entity = Department.class, condition="this.department_id=id")
@@ -82,6 +82,12 @@ private Department department;
 ```java
 @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id")
 private Organization organization;
+```
+
+* deepBind 深度绑定注解示例如下：
+```java
+@BindEntity(entity = Department.class, condition="this.department_id=id", deepBind=true)
+private DepartmentVO departmentVO;
 ```
 
 ### * 绑定从表Entity实体列表

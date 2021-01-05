@@ -74,6 +74,13 @@ QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>().eq("type", "GENDER"
 List<Long> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
 ```
 
+### getValueOfField
+* since v2.2
+> 根据entity的id获取某个字段的值:
+```java
+String itemValue = dictionaryService.getValueOfField(Dictionary::getId, 2L, Dictionary::getItemValue);
+```
+
 ### getMapList
 > 该方法通过查询条件查询和分页参数出符合条件的Map列表，其中分页参数是可选参数，返回查询出的Map列表。
 ```java
@@ -223,3 +230,26 @@ boolean deleteEntities(Wrapper queryWrapper);
 ```
 > 该接口通过查询条件对符合该查询条件的所有记录进行删除操作
 
+### mybatis-plus的query、update接口公开
+```java
+/**
+ * 构建mybatis-plus的query
+ * @return
+ */
+QueryChainWrapper<T> query();
+/**
+ * 构建mybatis-plus的lambdaQuery
+ * @return
+ */
+LambdaQueryChainWrapper<T> lambdaQuery();
+/**
+ * 构建mybatis-plus的update
+ * @return
+ */
+UpdateChainWrapper<T> update();
+/**
+ * 构建mybatis-plus的lambdaUpdate
+ * @return
+ */
+LambdaUpdateChainWrapper<T> lambdaUpdate();
+```

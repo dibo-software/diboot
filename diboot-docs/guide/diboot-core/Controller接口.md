@@ -33,6 +33,10 @@ orderBy排序: 格式为“”“”"字段:排序方式"，如"id:DESC"，多�
 * getEntityList(queryWrapper)，getEntityListWithPaging(queryWrapper, pagination)
 返回entity对象的集合，供子类需要时调用
 
+* buildQueryWrapperBy* 自动构建QueryWrapper查询条件 (since v2.2)：
+buildQueryWrapperByDTO：根据DTO对象中的非空属性构建QueryWrapper查询对象。
+buildQueryWrapperByParams：根据url参数中的非空参数与值构建QueryWrapper查询对象。
+
 * createEntity 新建保存Entity
 ```java
 //方法定义
@@ -166,52 +170,69 @@ public class GeneralExceptionHandler extends DefaultExceptionHandler{
 }
 ~~~
 
-## JsonResult 格式
+## JsonResult 的json格式
 ```json
 {
     code: 0,
     msg: "OK",
-    data: {     
+    data: {
     }
 }
 ```
-调用方式
+* 调用方式
 ```java
 JsonResult okResult = JsonResult.OK();
+JsonResult<User> okResult = JsonResult.OK(userList);
 JsonResult failResult = JsonResult.FAIL_VALIDATION("xxx验证错误");
 ```
-Status状态码定义:
+* Status状态码定义:
 ```java
-//请求处理成功
-OK(0, "操作成功"),
+    //请求处理成功
+    OK(0, "操作成功"),
 
-// 部分成功（一般用于批量处理场景，只处理筛选后的合法数据）
-WARN_PARTIAL_SUCCESS(1001, "部分成功"),
+    // 部分成功（一般用于批量处理场景，只处理筛选后的合法数据）
+    WARN_PARTIAL_SUCCESS(1001, "部分成功"),
 
-//有潜在的性能问题
-WARN_PERFORMANCE_ISSUE(1002, "潜在的性能问题"),
+    //有潜在的性能问题
+    WARN_PERFORMANCE_ISSUE(1002, "潜在的性能问题"),
 
-// 传入参数不对
-FAIL_INVALID_PARAM(4000, "请求参数不匹配"),
+    // 传入参数不对
+    FAIL_INVALID_PARAM(4000, "请求参数不匹配"),
 
-// Token无效或已过期
-FAIL_INVALID_TOKEN(4001, "Token无效或已过期"),
+    // Token无效或已过期
+    FAIL_INVALID_TOKEN(4001, "Token无效或已过期"),
 
-// 没有权限执行该操作
-FAIL_NO_PERMISSION(4003, "无权执行该操作"),
+    // 没有权限执行该操作
+    FAIL_NO_PERMISSION(4003, "无权执行该操作"),
 
-// 请求资源不存在
-FAIL_NOT_FOUND(4004, "请求资源不存在"),
+    // 请求资源不存在
+    FAIL_NOT_FOUND(4004, "请求资源不存在"),
 
-// 数据校验不通过
-FAIL_VALIDATION(4005, "数据校验不通过"),
+    // 数据校验不通过
+    FAIL_VALIDATION(4005, "数据校验不通过"),
 
-// 操作执行失败
-FAIL_OPERATION(4006, "操作执行失败"),
+    // 操作执行失败
+    FAIL_OPERATION(4006, "操作执行失败"),
 
-// 后台异常
-FAIL_EXCEPTION(5000, "系统异常"),
+    // 请求连接超时
+    FAIL_REQUEST_TIMEOUT(4008, "请求连接超时"),
 
-// 缓存清空
-MEMORY_EMPTY_LOST(9999, "缓存清空");
+    // 系统异常
+    FAIL_EXCEPTION(5000, "系统异常"),
+
+    // 服务不可用
+    FAIL_SERVICE_UNAVAILABLE(5003, "服务不可用"),
 ```
+* 过滤JsonResult的返回data：
+    
+v2.2.0版本开始，JsonResult支持返回值过滤，针对不需要返回给前端的字段可以实现JsonResultFilter接口并添加Spring注解@Component，自定义filterData过滤返回数据，统一过滤处理。
+示例：
+~~~java
+@Component
+public class JsonResultFilterImpl implements JsonResultFilter{
+    @Override
+    public <T> void filterData(T data) {
+        //TODO
+    }
+}
+~~~

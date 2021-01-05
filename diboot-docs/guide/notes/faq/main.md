@@ -2,7 +2,8 @@
 
 ## diboot支持Spring Boot哪些版本？
 * diboot 2.0.x 支持 Spring boot 2.2.x
-* diboot 2.1.x 支持 Spring boot 2.3+
+* diboot 2.1.x 支持 Spring boot 2.3.x
+* diboot 2.2.x 支持 Spring boot 2.4+
 
 ## IAM的后端代码在哪里？
 IAM的后端基础代码由devtools自动生成
@@ -13,23 +14,40 @@ IAM的后端基础代码由devtools自动生成
 注：[diboot-example](https://github.com/dibo-software/diboot-example) 中包含可供参考的后端示例：diboot-iam-example（IAM示例代码）
 及diboot-online-demo（线上演示项目）。
 
-## 如何自定义fastjson配置
-diboot-core-starter中包含默认的HttpMessageConverters配置，启用fastjson并做了初始化配置。
+## 如何自定义jackson配置
+diboot-core-starter中包含默认的HttpMessageConverters配置，启用jackson并做了初始化配置。
 其中关键配置参数为：
 ~~~java
 @Bean
-public HttpMessageConverters fastJsonHttpMessageConverters() {
-    ...
-    // 设置fastjson的序列化参数：禁用循环依赖检测，数据兼容浏览器端（避免JS端Long精度丢失问题）
-    fastJsonConfig.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect,
-            SerializerFeature.BrowserCompatible);
-    ...
+@ConditionalOnMissingBean
+public HttpMessageConverters jacksonHttpMessageConverters() {
+    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+    ObjectMapper objectMapper = converter.getObjectMapper();
+    // Long转换成String避免JS超长问题
+    SimpleModule simpleModule = new SimpleModule();
+
+    // 不显示为null的字段
+    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+    simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+    simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+
+    objectMapper.registerModule(simpleModule);
+    // 时间格式化
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
+    objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+    // 设置格式化内容
+    converter.setObjectMapper(objectMapper);
+
+    HttpMessageConverter<?> httpMsgConverter = converter;
+    return new HttpMessageConverters(httpMsgConverter);
 }
 ~~~
 如果该配置无法满足您的开发场景，可以在Configuration文件中重新定义HttpMessageConverters：
 ~~~java
 @Bean
-public HttpMessageConverters fastJsonHttpMessageConverters() {
+public HttpMessageConverters jacksonHttpMessageConverters() {
     ...
 }
 ~~~
@@ -53,12 +71,12 @@ core内核组件有以下两个包：
 </dependency>
 ~~~
 2. 
-根据使用场景，你可能还需要将com.diboot.core加入包扫描：
+如果只依赖core，你还需要将com.diboot.core加入包扫描并实现HttpMessageConverters和Mybatis-plus的分页配置：
 ~~~java
 @ComponentScan(basePackages={"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 ~~~
-3. 如果需要使用@BindDict字典绑定，需确保dictionary表存在。
+3. 如果只依赖core，且需要使用@BindDict字典绑定，需实现DictionaryServiceExtProvider接口。
 （使用diboot-core-starter可以自动创建dictionary表，或者可以[下载SQL](https://github.com/dibo-software/diboot/tree/master/diboot-core-starter/src/main/resources/META-INF/sql)手动建表。
 
 ## 启动报错：找不到mapper中的自定义接口

@@ -8,6 +8,8 @@
 
 > BaseEntity是diboot-core提供的基础实体类，提供了我们默认数据表结构的默认字段，比如id、is_deleted、create_time等。
 
+注：diboot推荐Long型主键id，索引效率更高、数据易维护，实现可以用数据库自增(默认)或Snowflake ID。如String类型uuid，建议主键命名为uuid，以区分Long型主键id。
+
 ## 数据校验
 
 > 数据提交过程中一般需要后端进行数据格式校验，默认是用validation来做后端数据校验，字段上校验注解示例如下：
