@@ -1,6 +1,6 @@
 module.exports = {
-    title: 'Diboot 轻代码开发平台',
-    description: '基础组件化繁为简，强大工具以简驭繁',
+    title: 'Diboot 低代码开发平台',
+    description: '造福开发者的高质高效开发体系',
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],
@@ -30,7 +30,7 @@ module.exports = {
             ],
             '/guide/diboot-iam/': [
                 {
-                    title: 'IMA-base组件 使用指南',
+                    title: 'IMA组件 使用指南',
                     collapsable: true,
                     sidebarDepth: 2,
                     children: [
@@ -146,54 +146,58 @@ module.exports = {
         nav: [{
             text: '首页', link: '/index.html'
         }, {
-            text: '基础组件 指南',
+            text: 'diboot 基础',
             items: [
-                { text: 'core基础内核', link: '/guide/diboot-core/设计理念' },
-                { text: 'IAM身份认证', link: '/guide/diboot-iam/介绍' },
-                { text: 'file文件组件', link: '/guide/diboot-file/介绍' },
-                { text: 'scheduler组件', link: '/guide/diboot-scheduler/介绍' },
-                { text: '版本升级指南', link: '/guide/notes/upgrade/2_0_x升级至2_1_x' },
-                { text: 'F&Q', link: '/guide/notes/faq/main' },
-            ]
-        }, {
-            text: '前端项目 指南',
-            items: [
-                { text: 'diboot-antd-admin', link: '/guide/diboot-antd-admin/介绍' },
-                { text: 'diboot-element-admin', link: '/guide/diboot-element-admin/介绍' }
+                { text: '后端组件:', items: [
+                        { text: ' core基础内核', link: '/guide/diboot-core/设计理念' },
+                        { text: ' IAM权限体系', link: '/guide/diboot-iam/介绍' },
+                        { text: ' file文件组件', link: '/guide/diboot-file/介绍' },
+                        { text: ' scheduler定时任务', link: '/guide/diboot-scheduler/介绍' }
+                    ]
+                },
+                { text: '前端项目:' , items: [
+                        { text: 'diboot-antd-admin', link: '/guide/diboot-antd-admin/介绍' },
+                        { text: 'diboot-element-admin', link: '/guide/diboot-element-admin/介绍' }
+                    ]
+                },
+                { text: '更多:' , items: [
+                        { text: 'F&Q', link: '/guide/notes/faq/main' },
+                        { text: '新手指南', link: '/guide/notes/newguide' },
+                        { text: '版本升级指南', link: '/guide/notes/upgrade/2_1_2升级至2_2_x' }
+                    ]
+                }
             ]
         },
         {
-            text: 'devtools助理 指南',
+            text: 'devtools 工具',
             link: '/guide/diboot-devtools/介绍'
+        },
+        {
+            text: 'cloud 微服务版',
+            link: '/guide/diboot-cloud/介绍'
+        },
+        {
+            text: '商业服务',
+            link: '/guide/enterprice/service'
         },
         {
             text: '视频教程',
             link: '/guide/enterprice/video'
-        },{
-            text: '企业版',
-            link: '/guide/enterprice/devtools'
-        }, {
-            text: '开发团队',
+        },
+        {
+            text: '源码与团队',
             items: [
                 {
-                    text: '项目合作',
-                    link:'http://www.dibo.ltd'
+                    text: 'GitHub',
+                    link: 'https://github.com/dibo-software/diboot'
                 },
-                {
-                    text: '捐助我们',
-                    link: '/guide/donate/'
-                }
-            ]
-        }, {
-            text: '代码仓库',
-            items: [
                 {
                     text: 'Gitee',
                     link: 'https://gitee.com/dibo_software/diboot'
                 },
                 {
-                    text: 'GitHub',
-                    link: 'https://github.com/dibo-software/diboot'
+                    text: '团队&合作',
+                    link:'http://www.dibo.ltd'
                 }
             ]
         }]
