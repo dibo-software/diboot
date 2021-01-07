@@ -1,6 +1,6 @@
 module.exports = {
     title: 'Diboot 低代码开发平台',
-    description: '造福开发者的高质高效开发体系',
+    description: '为开发者打造的高质高效开发体系',
     head: [
         ['link', {rel: 'icon', href: '/logo.png'}]
     ],
@@ -162,7 +162,7 @@ module.exports = {
                 },
                 { text: '更多:' , items: [
                         { text: 'F&Q', link: '/guide/notes/faq/main' },
-                        { text: '新手指南', link: '/guide/notes/newguide' },
+                        { text: '新手指南', link: '/guide/notes/beginner' },
                         { text: '版本升级指南', link: '/guide/notes/upgrade/2_1_2升级至2_2_x' }
                     ]
                 }
@@ -187,6 +187,10 @@ module.exports = {
         {
             text: '源码与团队',
             items: [
+                {
+                    text: '更新日志',
+                    link: 'https://github.com/dibo-software/diboot/releases'
+                },
                 {
                     text: 'GitHub',
                     link: 'https://github.com/dibo-software/diboot'

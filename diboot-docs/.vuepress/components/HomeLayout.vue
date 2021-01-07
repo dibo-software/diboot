@@ -3,7 +3,7 @@
     <div class="home">
       <div class="hero">
         <p class="action">
-          <a href="https://github.com/dibo-software/diboot/wiki/%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%97" class="button white">新手指南</a>
+          <a href="/guide/notes/beginner" class="button white">新手指南</a>
           <i class="fa fa-2x fa-play-circle" aria-hidden="true"></i>
 
           <a href="http://demo.diboot.com/" class="button white" target="_blank">基础+生成功能 案例</a>
@@ -11,7 +11,7 @@
 
           <a href="https://www.bilibili.com/video/BV17V411r7Cc" target="_blank" class="button has-icon">
             <img class="icon" src="../public/play-circle.png" alt="">
-            了解 diboot
+            观看演示
           </a>
         </p>
       </div>
