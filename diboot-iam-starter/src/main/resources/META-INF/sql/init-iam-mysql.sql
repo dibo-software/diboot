@@ -156,7 +156,7 @@ create table iam_org
   top_org_id  bigint       default 0                 not null comment '企业ID',
   name        varchar(100)                           not null comment '名称',
   short_name  varchar(50)                            not null comment '短名称',
-  type        varchar(100) default 'COM'             not null comment '权限类别',
+  type        varchar(100) default 'DEPT'             not null comment '组织类别',
   code        varchar(50)                            not null comment '编码',
   manager_id  bigint       default 0                 not null comment '负责人ID',
   level       smallint(6)  default 1                 not null comment '层级',
@@ -168,6 +168,7 @@ create table iam_org
 )
   comment '组织';
 create index idx_iam_org on iam_org (parent_id);
+create index idx_iam_org_tenant on iam_org (tenant_id);
 
 -- 岗位
 create table iam_position
@@ -180,11 +181,12 @@ create table iam_position
   grade_name           varchar(50)                           null comment '职级头衔',
   grade_value          varchar(30) default '0'               null comment '职级',
   data_permission_type varchar(20) default 'SELF'            null comment '数据权限类型',
-  extdata              varchar(100)                          null comment '扩展属性',
   is_deleted           tinyint(1)  default 0                 not null comment '是否删除',
   create_time          timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
 )
 comment '岗位';
+create index idx_iam_position on iam_position (code);
+create index idx_iam_position_tenant on iam_position (tenant_id);
 
 -- 用户岗位
 create table iam_user_position

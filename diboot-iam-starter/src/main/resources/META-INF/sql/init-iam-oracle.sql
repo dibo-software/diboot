@@ -249,24 +249,94 @@ create index idx_iam_operation_log_tenant on ${SCHEMA}.iam_operation_log (tenant
 -- 部门表
 CREATE TABLE ${SCHEMA}.iam_org (
    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+   tenant_id          NUMBER(20)           default 0  not null,
    parent_id NUMBER(20) DEFAULT 0 NOT NULL,
+   top_org_id NUMBER(20) DEFAULT 0 NOT NULL,
    name VARCHAR2(100) NOT NULL,
    short_name VARCHAR2(50) NOT NULL,
-   org_comment VARCHAR2(255)   null,
+   type        VARCHAR2(100) DEFAULT 'DEPT' NOT NULL,
+   code        VARCHAR2(50)  NOT NULL,
+   manager_id  NUMBER(20)   DEFAULT 0 NOT NULL,
    level NUMBER(6) DEFAULT 1 NOT NULL,
    sort_id NUMBER(20) DEFAULT 1 NOT NULL,
+   status      VARCHAR2(10)  DEFAULT 'A' NOT NULL,
+   org_comment VARCHAR2(255)   null,
    is_deleted NUMBER(1) DEFAULT 0    not null,
    create_time timestamp default CURRENT_TIMESTAMP   not null,
    constraint PK_iam_org primary key (id)
 );
 comment on column ${SCHEMA}.iam_org.id is 'ID';
+comment on column ${SCHEMA}.iam_org.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_org.parent_id is '上级ID';
+comment on column ${SCHEMA}.iam_org.top_org_id is '企业ID';
 comment on column ${SCHEMA}.iam_org.name is '名称';
 comment on column ${SCHEMA}.iam_org.short_name is '简称';
-comment on column ${SCHEMA}.iam_org.org_comment is '备注';
+comment on column ${SCHEMA}.iam_org.type is '类型';
+comment on column ${SCHEMA}.iam_org.code is '编码';
+comment on column ${SCHEMA}.iam_org.manager_id is '负责人';
 comment on column ${SCHEMA}.iam_org.level is '层级';
 comment on column ${SCHEMA}.iam_org.sort_id is '排序号';
+comment on column ${SCHEMA}.iam_org.status is '状态';
+comment on column ${SCHEMA}.iam_org.org_comment is '备注';
 comment on column ${SCHEMA}.iam_org.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_org.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_org is '部门';
 create index idx_iam_org on ${SCHEMA}.iam_org (parent_id);
+create index idx_iam_org_tenant on ${SCHEMA}.iam_org (tenant_id);
+
+-- 岗位
+create table ${SCHEMA}.iam_position
+(
+    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
+    name                 VARCHAR2(100)                          not null,
+    code                 VARCHAR2(50)                           not null,
+    is_virtual           NUMBER(1)  default 0                 not null,
+    grade_name           VARCHAR2(50)                           null,
+    grade_value          VARCHAR2(30) default '0'               null,
+    data_permission_type VARCHAR2(20) default 'SELF'            null,
+    is_deleted NUMBER(1) DEFAULT 0    not null,
+    create_time timestamp default CURRENT_TIMESTAMP   not null,
+    constraint PK_iam_position primary key (id)
+);
+comment on column ${SCHEMA}.iam_position.id is 'ID';
+comment on column ${SCHEMA}.iam_position.tenant_id is '租户ID';
+comment on column ${SCHEMA}.iam_position.name is '名称';
+comment on column ${SCHEMA}.iam_position.code is '编码';
+comment on column ${SCHEMA}.iam_position.is_virtual is '是否虚拟岗';
+comment on column ${SCHEMA}.iam_position.grade_name is '职级头衔';
+comment on column ${SCHEMA}.iam_position.grade_value is '职级';
+comment on column ${SCHEMA}.iam_position.data_permission_type is '数据权限类型';
+comment on column ${SCHEMA}.iam_position.is_deleted is '是否删除';
+comment on column ${SCHEMA}.iam_position.create_time is '创建时间';
+comment on table ${SCHEMA}.iam_position is '岗位';
+create index idx_iam_position on ${SCHEMA}.iam_position (code);
+create index idx_iam_position_tenant on ${SCHEMA}.iam_position (tenant_id);
+
+-- 用户岗位
+create table ${SCHEMA}.iam_user_position
+(
+    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    tenant_id          NUMBER(20)           default 0  not null,
+    user_type           VARCHAR2(100) default 'IamUser'         not null,
+    user_id             NUMBER(20)                                  not null,
+    org_id              NUMBER(20)        default 0                 not null,
+    position_id         NUMBER(20)                             not null,
+    is_primary_position NUMBER(1)   default 1                 not null,
+    is_deleted NUMBER(1) DEFAULT 0    not null,
+    create_time timestamp default CURRENT_TIMESTAMP   not null,
+    update_time         timestamp    default CURRENT_TIMESTAMP null,
+    constraint PK_iam_user_position primary key (id)
+);
+comment on column ${SCHEMA}.iam_user_position.id is 'ID';
+comment on column ${SCHEMA}.iam_user_position.tenant_id is '租户ID';
+comment on column ${SCHEMA}.iam_user_position.user_type is '用户类型';
+comment on column ${SCHEMA}.iam_user_position.user_id is '用户ID';
+comment on column ${SCHEMA}.iam_user_position.org_id is '组织ID';
+comment on column ${SCHEMA}.iam_user_position.position_id is '岗位ID';
+comment on column ${SCHEMA}.iam_user_position.is_primary_position is '是否主岗';
+comment on column ${SCHEMA}.iam_user_position.is_deleted is '是否删除';
+comment on column ${SCHEMA}.iam_user_position.create_time is '创建时间';
+comment on table ${SCHEMA}.iam_user_position is '用户岗位关联';
+create index idx_iam_user_position on ${SCHEMA}.iam_user_position (user_type, user_id);
+create index idx_iam_user_position_pos on ${SCHEMA}.iam_user_position (position_id);

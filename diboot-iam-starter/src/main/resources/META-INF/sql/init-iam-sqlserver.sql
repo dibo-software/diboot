@@ -249,25 +249,97 @@ create nonclustered index idx_iam_operation_log_tenant on iam_operation_log(tena
 -- 部门表
 CREATE TABLE ${SCHEMA}.iam_org (
    id bigint identity,
-   parent_id            bigint        not null default 0,
+   tenant_id          bigint           default 0  not null,
+   parent_id bigint DEFAULT 0 NOT NULL,
+   top_org_id bigint DEFAULT 0 NOT NULL,
    name varchar(100) NOT NULL,
    short_name varchar(50) NOT NULL,
-   org_comment varchar(255) NOT NULL,
+   type        varchar(100) DEFAULT 'DEPT' NOT NULL,
+   code        varchar(50)  NOT NULL,
+   manager_id  bigint   DEFAULT 0 NOT NULL,
    level smallint DEFAULT 1 NOT NULL,
    sort_id bigint DEFAULT 1 NOT NULL,
-   is_deleted tinyint default 0 not null ,
-   create_time datetime default CURRENT_TIMESTAMP not null,
-   constraint PK_iam_operation_log primary key (id)
+   status      varchar(10)  DEFAULT 'A' NOT NULL,
+   org_comment varchar(255)   null,
+   is_deleted tinyint DEFAULT 0    not null,
+   create_time datetime default CURRENT_TIMESTAMP   not null,
+   constraint PK_iam_org primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'上级ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'parent_id';
+execute sp_addextendedproperty 'MS_Description', N'企业ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'top_org_id';
 execute sp_addextendedproperty 'MS_Description', N'名称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'name';
 execute sp_addextendedproperty 'MS_Description', N'简称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'short_name';
-execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'org_comment';
+execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'type';
+execute sp_addextendedproperty 'MS_Description', N'编码','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'code';
+execute sp_addextendedproperty 'MS_Description', N'负责人','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'manager_id';
 execute sp_addextendedproperty 'MS_Description', N'层级','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'level';
 execute sp_addextendedproperty 'MS_Description', N'排序号','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'sort_id';
+execute sp_addextendedproperty 'MS_Description', N'状态','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'status';
+execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'org_comment';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'部门', 'SCHEMA', '${SCHEMA}', 'table', iam_org, null, null;
 -- 创建索引
 create nonclustered index idx_iam_org on iam_org (parent_id);
+create nonclustered index idx_iam_org_tenant on iam_org (tenant_id);
+
+-- 岗位
+create table ${SCHEMA}.iam_position
+(
+   id bigint identity,
+   tenant_id          bigint           default 0  not null,
+   name                 varchar(100)                          not null,
+   code                 varchar(50)                           not null,
+   is_virtual           BOOLEAN  default 0                 not null,
+   grade_name           varchar(50)                           null,
+   grade_value          varchar(30) default '0'               null,
+   data_permission_type varchar(20) default 'SELF'            null,
+   is_deleted tinyint DEFAULT 0    not null,
+   create_time datetime default CURRENT_TIMESTAMP   not null,
+   constraint PK_iam_position primary key (id)
+);
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'名称','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'name';
+execute sp_addextendedproperty 'MS_Description', N'编码','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'code';
+execute sp_addextendedproperty 'MS_Description', N'是否虚拟岗','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'is_virtual';
+execute sp_addextendedproperty 'MS_Description', N'职级头衔','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'grade_name';
+execute sp_addextendedproperty 'MS_Description', N'职级','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'grade_value';
+execute sp_addextendedproperty 'MS_Description', N'数据权限类型','SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'data_permission_type';
+execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_position, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'岗位', 'SCHEMA', '${SCHEMA}', 'table', iam_position, null, null;
+-- 创建索引
+create nonclustered index idx_iam_position on iam_position (code);
+create nonclustered index idx_iam_position_tenant on iam_position (tenant_id);
+
+-- 用户岗位
+create table iam_user_position
+(
+   id bigint identity,
+   tenant_id          bigint           default 0  not null,
+   user_type           varchar(100) default 'IamUser'         not null,
+   user_id             bigint                                  not null,
+   org_id              bigint        default 0                 not null,
+   position_id         bigint                             not null,
+   is_primary_position tinyint   default 1                 not null,
+   is_deleted tinyint DEFAULT 0    not null,
+   create_time datetime default CURRENT_TIMESTAMP   not null,
+   update_time         datetime    default CURRENT_TIMESTAMP null,
+   constraint PK_iam_user_position primary key (id)
+);
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'用户类型','SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'user_type';
+execute sp_addextendedproperty 'MS_Description', N'用户ID','SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'user_id';
+execute sp_addextendedproperty 'MS_Description', N'组织ID','SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'org_id';
+execute sp_addextendedproperty 'MS_Description', N'岗位ID','SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'position_id';
+execute sp_addextendedproperty 'MS_Description', N'是否主岗','SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'is_primary_position';
+execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'用户岗位关联', 'SCHEMA', '${SCHEMA}', 'table', iam_user_position, null, null;
+-- 创建索引
+create nonclustered index idx_iam_user_position on iam_user_position (user_type, user_id);
+create nonclustered index idx_iam_user_position_pos on iam_user_position (position_id);

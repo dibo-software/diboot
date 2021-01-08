@@ -240,24 +240,92 @@ create index idx_iam_operation_log_tenant on iam_operation_log(tenant_id);
 
 -- 部门表
 CREATE TABLE iam_org (
-   id bigserial not null ,
-   parent_id            bigint        not null default 0,
-   name varchar(100) NOT NULL,
-   short_name varchar(50) NOT NULL,
-   org_comment varchar(255) NOT NULL,
-   level smallint DEFAULT 1 NOT NULL,
-   sort_id bigint DEFAULT 1 NOT NULL,
-   is_deleted BOOLEAN default FALSE not null,
-   create_time timestamp default CURRENT_TIMESTAMP not null
+  id bigserial not null,
+  tenant_id          bigint           default 0  not null,
+  parent_id bigint DEFAULT 0 NOT NULL,
+  top_org_id bigint DEFAULT 0 NOT NULL,
+  name varchar(100) NOT NULL,
+  short_name varchar(50) NOT NULL,
+  type        varchar(100) DEFAULT 'DEPT' NOT NULL,
+  code        varchar(50)  NOT NULL,
+  manager_id  bigint   DEFAULT 0 NOT NULL,
+  level smallint DEFAULT 1 NOT NULL,
+  sort_id bigint DEFAULT 1 NOT NULL,
+  status      varchar(10)  DEFAULT 'A' NOT NULL,
+  org_comment varchar(255)   null,
+  is_deleted BOOLEAN DEFAULT 0    not null,
+  create_time timestamp default CURRENT_TIMESTAMP   not null
 );
 comment on column iam_org.id is 'ID';
+comment on column iam_org.tenant_id is '租户ID';
 comment on column iam_org.parent_id is '上级ID';
+comment on column iam_org.top_org_id is '企业ID';
 comment on column iam_org.name is '名称';
 comment on column iam_org.short_name is '简称';
-comment on column iam_org.org_comment is '备注';
+comment on column iam_org.type is '类型';
+comment on column iam_org.code is '编码';
+comment on column iam_org.manager_id is '负责人';
 comment on column iam_org.level is '层级';
 comment on column iam_org.sort_id is '排序号';
+comment on column iam_org.status is '状态';
+comment on column iam_org.org_comment is '备注';
 comment on column iam_org.is_deleted is '是否删除';
 comment on column iam_org.create_time is '创建时间';
 comment on table iam_org is '部门';
 create index idx_iam_org on iam_org (parent_id);
+create index idx_iam_org_tenant on iam_org (tenant_id);
+
+-- 岗位
+create table iam_position
+(
+  id bigserial not null,
+  tenant_id          bigint           default 0  not null,
+  name                 varchar(100)                          not null,
+  code                 varchar(50)                           not null,
+  is_virtual           BOOLEAN  default 0                 not null,
+  grade_name           varchar(50)                           null,
+  grade_value          varchar(30) default '0'               null,
+  data_permission_type varchar(20) default 'SELF'            null,
+  is_deleted BOOLEAN DEFAULT 0    not null,
+  create_time timestamp default CURRENT_TIMESTAMP   not null
+);
+comment on column iam_position.id is 'ID';
+comment on column iam_position.tenant_id is '租户ID';
+comment on column iam_position.name is '名称';
+comment on column iam_position.code is '编码';
+comment on column iam_position.is_virtual is '是否虚拟岗';
+comment on column iam_position.grade_name is '职级头衔';
+comment on column iam_position.grade_value is '职级';
+comment on column iam_position.data_permission_type is '数据权限类型';
+comment on column iam_position.is_deleted is '是否删除';
+comment on column iam_position.create_time is '创建时间';
+comment on table iam_position is '岗位';
+create index idx_iam_position on iam_position (code);
+create index idx_iam_position_tenant on iam_position (tenant_id);
+
+-- 用户岗位
+create table iam_user_position
+(
+  id bigserial not null,
+  tenant_id          bigint           default 0  not null,
+  user_type           varchar(100) default 'IamUser'         not null,
+  user_id             bigint                                  not null,
+  org_id              bigint        default 0                 not null,
+  position_id         bigint                             not null,
+  is_primary_position BOOLEAN   default 1                 not null,
+  is_deleted BOOLEAN DEFAULT 0    not null,
+  create_time timestamp default CURRENT_TIMESTAMP   not null,
+  update_time         timestamp    default CURRENT_TIMESTAMP null
+);
+comment on column iam_user_position.id is 'ID';
+comment on column iam_user_position.tenant_id is '租户ID';
+comment on column iam_user_position.user_type is '用户类型';
+comment on column iam_user_position.user_id is '用户ID';
+comment on column iam_user_position.org_id is '组织ID';
+comment on column iam_user_position.position_id is '岗位ID';
+comment on column iam_user_position.is_primary_position is '是否主岗';
+comment on column iam_user_position.is_deleted is '是否删除';
+comment on column iam_user_position.create_time is '创建时间';
+comment on table iam_user_position is '用户岗位关联';
+create index idx_iam_user_position on iam_user_position (user_type, user_id);
+create index idx_iam_user_position_pos on iam_user_position (position_id);
