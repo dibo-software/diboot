@@ -174,7 +174,7 @@ module.exports = {
         },
         {
             text: 'cloud 微服务版',
-            link: '/guide/diboot-cloud/介绍'
+            link: '/guide/diboot-cloud/introduce'
         },
         {
             text: '商业服务',
