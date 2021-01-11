@@ -116,7 +116,7 @@ public class ContextHelper implements ApplicationContextAware {
             return getApplicationContext().getBean(clazz);
         }
         catch (Exception e){
-            log.debug("无法找到 bean: {}", clazz.getSimpleName());
+            log.debug("instance not found: {}", clazz.getSimpleName());
             return null;
         }
     }
