@@ -74,8 +74,8 @@ create table ${SCHEMA}.iam_role
 (
    id bigint identity,
    tenant_id            bigint        not null default 0,
-   name varchar(20) not null,
-   code varchar(20) not null,
+   name varchar(50) not null,
+   code varchar(50) not null,
    description varchar(100) null,
    is_deleted tinyint default 0 not null,
    create_time datetime default CURRENT_TIMESTAMP null,

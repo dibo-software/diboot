@@ -24,6 +24,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
 * 系统用户 Entity定义
@@ -78,7 +79,7 @@ public class IamUser extends BaseLoginUser {
      */
     @JsonFormat(pattern=D.FORMAT_DATE_Y4MD)
     @TableField()
-    private String birthdate;
+    private Date birthdate;
 
     // 状态
     @NotNull(message = "状态不能为空")
