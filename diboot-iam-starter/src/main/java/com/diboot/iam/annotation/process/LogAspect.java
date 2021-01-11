@@ -22,16 +22,14 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.Log;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamOperationLog;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,13 +63,29 @@ public class LogAspect {
     @Pointcut("@annotation(com.diboot.iam.annotation.Log)")
     public void pointCut() {}
 
+    private ThreadLocal<BaseLoginUser> threadLocal = new ThreadLocal<>();
+
     /**
      * 操作日志处理
      * @param joinPoint
      */
+    @Before(value = "pointCut()")
+    public void beforeHandler(JoinPoint joinPoint){
+        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
+        threadLocal.set(currentUser);
+    }
+
+    /**
+     * 操作日志处理
+     * @param proceedingJoinPoint
+     */
     @AfterReturning(value = "pointCut()", returning = "returnObj")
-    public void afterReturningHandler(JoinPoint joinPoint, Object returnObj) {
-        IamOperationLog operationLog = buildOperationLog(joinPoint);
+    public void afterReturningHandler(JoinPoint proceedingJoinPoint, Object returnObj){
+        IamOperationLog operationLog = buildOperationLog(proceedingJoinPoint);
+        BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
+        if(currentUser == null){
+            currentUser = threadLocal.get();
+        }
         // 处理返回结果
         int statusCode = 0;
         String errorMsg = null;
@@ -82,9 +96,10 @@ public class LogAspect {
                 errorMsg = jsonResult.getMsg();
             }
         }
+
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
-        iamAsyncWorker.saveOperationLog(operationLog, IamSecurityUtils.getCurrentUser());
+        iamAsyncWorker.saveOperationLog(operationLog, currentUser);
     }
 
     /**
