@@ -45,8 +45,8 @@ create table iam_role
 (
   id          bigint auto_increment comment 'ID'    primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
-  name        varchar(20)                          not null comment '名称',
-  code        varchar(20)                          not null comment '编码',
+  name        varchar(50)                          not null comment '名称',
+  code        varchar(50)                          not null comment '编码',
   description varchar(100)                         null comment '备注',
   is_deleted  tinyint(1) default 0                not null comment '是否删除',
   create_time timestamp  default CURRENT_TIMESTAMP null comment '创建时间'

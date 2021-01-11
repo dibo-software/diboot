@@ -56,7 +56,7 @@ public class BeanUtilsTest {
         Dictionary dictionary3 = new Dictionary();
         BeanUtils.bindProperties(dictionary3, map);
         Assert.assertTrue(dictionary3.getItemName().equals(itemName));
-        Assert.assertTrue(dictionary3.isEditable() == true);
+        Assert.assertTrue(dictionary3.getIsEditable() == true);
         Assert.assertTrue(dictionary3.getCreateTime() != null);
 
         // Accept注解拷贝

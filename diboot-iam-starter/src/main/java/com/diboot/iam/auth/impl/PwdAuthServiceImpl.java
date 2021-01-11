@@ -28,6 +28,7 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.jwt.BaseJwtAuthToken;
 import com.diboot.iam.service.IamAccountService;
+import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -35,6 +36,8 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 用户名密码认证的service实现
@@ -49,6 +52,8 @@ public class PwdAuthServiceImpl implements AuthService {
     private IamAccountService accountService;
     @Autowired
     private IamAsyncWorker iamAsyncWorker;
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public String getAuthType() {
@@ -149,6 +154,10 @@ public class PwdAuthServiceImpl implements AuthService {
         if(currentUser != null){
             loginTrace.setUserId(currentUser.getId());
         }
+        // 记录客户端信息
+        String userAgent = HttpHelper.getUserAgent(request);
+        String ipAddress = HttpHelper.getRequestIp(request);
+        loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
         iamAsyncWorker.saveLoginTraceLog(loginTrace);
     }
 

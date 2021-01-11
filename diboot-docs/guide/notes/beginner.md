@@ -5,9 +5,9 @@ diboot 是一套全新的基于"基础框架+高效工具"的低代码开发平�
 > 基础框架的技术栈基于: Spring体系(spring boot/spring cloud) + Mybatis(Mybatis-plus) + Vue(ElementUI+Antdv)。
 > 工具：UI操作，极简使用，高效赋能。
 
-* [5分钟 - 了解diboot README](https://github.com/dibo-software/diboot)
-* [15分钟 - 观看diboot演示视频](https://www.bilibili.com/video/BV17V411r7Cc/)
-* [30分钟 - 下载playground包，体验diboot](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
+* [ 5分钟了解diboot -  读README](https://github.com/dibo-software/diboot)
+* [15分钟了解diboot - 观看diboot演示视频](https://www.bilibili.com/video/BV17V411r7Cc/)
+* [30分钟了解diboot - 下载playground包，体验diboot](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
 
 ## 进阶 - 深入学习
 * [官方文档](/guide/diboot-core/设计理念)

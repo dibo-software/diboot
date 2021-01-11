@@ -196,7 +196,7 @@ export default {
 - <a id="业务对象关联详解">业务对象关联详解</a>
     - more: 值来源于*getMore*或*attachMoreList* 配置请求接口后返回的结果；
     - getMore: 开启关联数据会从当前业务的/attachMore接口中读取，开启后优于attachMoreList使用；
-    - attachMoreList: **2.1.x 新增** 实现关联数据从/common/attachMore接口统一读取，配置如下：
+    - attachMoreList: 实现关联数据从/common/attachMore接口统一读取，配置如下：
         ```javascript
         // type：D(字典数据)/T（关联业务对象）
         attattachMoreList: [

@@ -43,7 +43,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.core.annotation.Order;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -58,13 +57,13 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties({IamBaseProperties.class})
+@EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
-public class IamBaseAutoConfig {
+public class IamAutoConfig {
 
     @Autowired
-    private IamBaseProperties iamBaseProperties;
+    private IamProperties iamProperties;
 
     /**
      * 根据用户配置的缓存类初始化CacheManager，默认为Shiro内存缓存MemoryConstrainedCacheManager
@@ -157,7 +156,7 @@ public class IamBaseAutoConfig {
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
-        String anonUrls = iamBaseProperties.getAnonUrls();
+        String anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
             for (String url : anonUrls.split(Cons.SEPARATOR_COMMA)) {
                 filterChainMap.put(url, "anon");
@@ -168,7 +167,7 @@ public class IamBaseAutoConfig {
         }
         filterChainMap.put("/login", "authc");
         filterChainMap.put("/logout", "logout");
-        if (allAnon && iamBaseProperties.isEnablePermissionCheck() == false) {
+        if (allAnon && iamProperties.isEnablePermissionCheck() == false) {
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "jwt");

@@ -72,8 +72,8 @@ create table iam_role
 (
   id bigserial not null,
   tenant_id            bigint        not null default 0,
-  name varchar(20) not null,
-  code varchar(20) not null,
+  name varchar(50) not null,
+  code varchar(50) not null,
   description varchar(100) null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP null

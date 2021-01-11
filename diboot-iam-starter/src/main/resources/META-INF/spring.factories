@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.diboot.iam.starter.IamBaseAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.diboot.iam.starter.IamAutoConfig

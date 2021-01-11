@@ -92,12 +92,12 @@ public class Dictionary extends BaseExtEntity {
      * 是否为系统预置（预置不可删除）
      */
     @TableField("is_deletable")
-    private boolean deletable = false;
+    private Boolean isDeletable;
 
     /***
      * 是否可编辑
      */
     @TableField("is_editable")
-    private boolean editable = false;
+    private Boolean isEditable;
 
 }

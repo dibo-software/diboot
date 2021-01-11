@@ -74,8 +74,8 @@ create table ${SCHEMA}.iam_role
 (
     id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
     tenant_id          NUMBER(20)           default 0  not null,
-    name VARCHAR2(20)   not null,
-    code VARCHAR2(20)   not null,
+    name VARCHAR2(50)   not null,
+    code VARCHAR2(50)   not null,
     description VARCHAR2(100)   null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   null,
