@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Getter @Setter
 @ConfigurationProperties(prefix = "diboot.iam")
-public class IamBaseProperties {
+public class IamProperties {
     /**
      * 应用程序
      */

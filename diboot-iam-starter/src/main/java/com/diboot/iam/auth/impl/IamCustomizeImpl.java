@@ -19,7 +19,7 @@ import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.exception.PermissionException;
-import com.diboot.iam.starter.IamBaseProperties;
+import com.diboot.iam.starter.IamProperties;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
 @Service
 public class IamCustomizeImpl implements IamCustomize {
     @Autowired
-    private IamBaseProperties iamBaseProperties;
+    private IamProperties iamProperties;
 
     @Override
     public BaseLoginUser getCurrentUser() {
@@ -85,7 +85,7 @@ public class IamCustomizeImpl implements IamCustomize {
 
     @Override
     public boolean isEnablePermissionCheck() {
-        return iamBaseProperties.isEnablePermissionCheck();
+        return iamProperties.isEnablePermissionCheck();
     }
 
     @Override
