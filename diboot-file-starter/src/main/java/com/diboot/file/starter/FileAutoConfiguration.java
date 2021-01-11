@@ -19,6 +19,8 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.file.service.FileStorageService;
+import com.diboot.file.service.impl.LocalFileStorageServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -78,4 +80,15 @@ public class FileAutoConfiguration {
         bean.setMaxUploadSize(maxUploadSize);
         return bean;
     }
+    /**
+     * 默认使用本地存储
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FileStorageService fileStorageService() {
+        return new LocalFileStorageServiceImpl();
+    }
+
 }

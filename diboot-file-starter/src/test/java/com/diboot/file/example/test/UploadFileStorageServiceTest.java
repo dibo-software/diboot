@@ -32,7 +32,7 @@ import java.util.List;
  * @version v2.0
  * @date 2020/02/19
  */
-public class UploadFileServiceTest extends ApplicationTest {
+public class UploadFileStorageServiceTest extends ApplicationTest {
 
     @Autowired
     private UploadFileService uploadFileService;
