@@ -3,6 +3,7 @@ package com.diboot.scheduler.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,6 +31,7 @@ public class ScheduleJobLog extends BaseEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
 

@@ -18,6 +18,7 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -39,6 +40,7 @@ public class IamUser extends BaseLoginUser {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
 
