@@ -57,7 +57,7 @@ public class IamResourcePermissionVO extends IamResourcePermission {
 
     // 绑定iamResourcePermissionList
     @JsonIgnore
-    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id", orderBy = "sort_id:ASC")
+    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id")
     private List<IamResourcePermission> childrenList;
 
     // 获取子菜单列表
