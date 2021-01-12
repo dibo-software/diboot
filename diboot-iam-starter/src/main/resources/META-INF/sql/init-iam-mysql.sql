@@ -84,7 +84,7 @@ create table iam_resource_permission
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
   create_time    timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
   update_time    timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
-)AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '前端菜单';
+)AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '资源权限';
 -- 索引
 create index idx_iam_resource_permission on iam_resource_permission (parent_id);
 create index idx_iam_resource_permission_tenant on iam_resource_permission (tenant_id);
@@ -98,7 +98,7 @@ create table iam_role_resource
   resource_id bigint                               not null comment '资源ID',
   is_deleted    tinyint(1) default 0                 not null comment '是否删除',
   create_time   timestamp  default CURRENT_TIMESTAMP not null comment '创建时间'
-)AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色权限';
+)AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色资源';
 -- 索引
 create index idx_iam_role_resource on iam_role_resource (role_id, resource_id);
 create index idx_iam_role_resource_tenant on iam_role_resource (tenant_id);

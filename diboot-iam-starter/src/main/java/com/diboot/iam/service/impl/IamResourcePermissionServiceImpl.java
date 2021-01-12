@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
-* 前端菜单相关Service实现
+* 前端资源权限相关Service实现
 * @author yangzhao
 * @version 2.0.0
 * @date 2020-02-27

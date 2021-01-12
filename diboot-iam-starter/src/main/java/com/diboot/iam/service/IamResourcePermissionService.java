@@ -23,7 +23,7 @@ import com.diboot.iam.vo.IamResourcePermissionListVO;
 import java.util.List;
 
 /**
-* 前端菜单相关Service
+* 前端资源权限相关Service
 * @author yangzhao
 * @version 2.0.0
 * @date 2020-02-27

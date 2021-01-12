@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 前端菜单 VO定义
+ * 前端资源权限 VO定义
  * @author yangzhao
  * @version 2.0.0
  * @date 2020-02-27
@@ -57,7 +57,7 @@ public class IamResourcePermissionVO extends IamResourcePermission {
 
     // 绑定iamResourcePermissionList
     @JsonIgnore
-    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id")
+    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id", orderBy = "sort_id:ASC")
     private List<IamResourcePermission> childrenList;
 
     // 获取子菜单列表
