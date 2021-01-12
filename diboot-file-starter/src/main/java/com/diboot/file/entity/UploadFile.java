@@ -47,6 +47,7 @@ public class UploadFile extends BaseEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
 

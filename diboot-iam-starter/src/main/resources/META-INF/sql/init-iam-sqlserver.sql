@@ -116,7 +116,7 @@ execute sp_addextendedproperty 'MS_Description', N'用户角色关联', 'SCHEMA'
 create nonclustered index idx_iam_user_role on iam_user_role (user_type, user_id);
 create nonclustered index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 
--- 前端权限表
+-- 资源权限表
 create table ${SCHEMA}.iam_resource_permission
 (
    id bigint identity,
@@ -145,7 +145,7 @@ execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHE
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'update_time';
-execute sp_addextendedproperty 'MS_Description', N'前端权限表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, null, null;
+execute sp_addextendedproperty 'MS_Description', N'资源权限表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, null, null;
 
 -- 索引
 create nonclustered index idx_iam_resource_permission on iam_resource_permission (parent_id);
@@ -168,7 +168,7 @@ execute sp_addextendedproperty 'MS_Description', N'角色ID', 'SCHEMA', '${SCHEM
 execute sp_addextendedproperty 'MS_Description', N'权限ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'permission_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'create_time';
-execute sp_addextendedproperty 'MS_Description', N'角色权限', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, null, null;
+execute sp_addextendedproperty 'MS_Description', N'角色资源', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, null, null;
 -- 索引
 create nonclustered index idx_iam_role_resource on iam_role_resource (role_id, permission_id);
 create nonclustered index idx_iam_role_resource_tenant on iam_role_resource(tenant_id);

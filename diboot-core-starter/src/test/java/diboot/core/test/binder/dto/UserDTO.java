@@ -43,7 +43,7 @@ public class UserDTO extends User {
     private Long deptId;
 
     // 通过中间表关联Entity
-    @BindQuery(comparison = Comparison.CONTAINS, entity = Organization.class, field = "name",
+    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name",
             condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0")
     private String orgName;
     // LEFT JOIN department r2m ON self.department_id = r2m.id

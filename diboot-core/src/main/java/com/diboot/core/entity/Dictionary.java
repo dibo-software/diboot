@@ -16,6 +16,7 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -36,6 +37,7 @@ public class Dictionary extends BaseExtEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
 

@@ -26,7 +26,7 @@ public enum Comparison {
     IN, // IN
 
     STARTSWITH, //以xx起始
-
+    ENDSWITH, //以xx结尾
     LIKE, // LIKE
     CONTAINS, //包含，等同LIKE
 

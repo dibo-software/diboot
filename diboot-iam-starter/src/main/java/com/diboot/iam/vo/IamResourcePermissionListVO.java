@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
- * 前端菜单 VO定义
+ * 前端资源权限 VO定义
  * @author yangzhao
  * @version 2.0.0
  * @date 2020-02-27
@@ -51,7 +51,7 @@ public class IamResourcePermissionListVO extends IamResourcePermission {
     private String displayTypeLabel;
 
     // 绑定iamResourcePermissionList
-    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND this.displayType ='PERMISSION'")
+    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND this.displayType ='PERMISSION'", orderBy = "sort_id:ASC")
     private List<IamResourcePermission> permissionList;
 
     private List<IamResourcePermissionListVO> children;

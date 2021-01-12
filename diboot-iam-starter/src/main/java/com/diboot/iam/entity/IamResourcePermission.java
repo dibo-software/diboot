@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
-* 前端菜单 Entity定义
+* 前端资源权限 Entity定义
 * @author yangzhao
 * @version 2.0.0
 * @date 2020-02-27
@@ -43,6 +44,7 @@ public class IamResourcePermission extends BaseEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
 

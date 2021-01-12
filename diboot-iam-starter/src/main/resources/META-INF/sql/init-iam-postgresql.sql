@@ -112,7 +112,7 @@ comment on table iam_user_role is '用户角色关联';
 create index idx_iam_user_role on iam_user_role (user_type, user_id);
 create index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 
--- 前端权限表
+-- 资源权限表
 create table iam_resource_permission
 (
   id bigserial not null,
@@ -141,7 +141,7 @@ comment on column iam_resource_permission.sort_id is '排序号';
 comment on column iam_resource_permission.is_deleted is '是否删除';
 comment on column iam_resource_permission.create_time is '创建时间';
 comment on column iam_resource_permission.update_time is '更新时间';
-comment on table iam_resource_permission is '前端权限表';
+comment on table iam_resource_permission is '资源权限表';
 -- 索引
 create index idx_iam_resource_permission on iam_resource_permission (parent_id);
 create index idx_resource_permission_tenant on iam_resource_permission(tenant_id);
@@ -162,7 +162,7 @@ comment on column iam_role_resource.role_id is '角色ID';
 comment on column iam_role_resource.permission_id is '权限ID';
 comment on column iam_role_resource.is_deleted is '是否删除';
 comment on column iam_role_resource.create_time is '创建时间';
-comment on table iam_role_resource is '角色权限';
+comment on table iam_role_resource is '角色资源';
 -- 索引
 create index idx_iam_role_resource on iam_role_resource (role_id, permission_id);
 create index idx_iam_role_resource_tenant on iam_role_resource(tenant_id);

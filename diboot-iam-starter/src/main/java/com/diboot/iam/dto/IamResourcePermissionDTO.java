@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
- * 前端菜单 DTO定义
+ * 前端资源权限 DTO定义
  * @author yangzhao
  * @version 2.0.0
  * @date 2020-02-27
