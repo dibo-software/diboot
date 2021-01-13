@@ -17,8 +17,11 @@ package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.diboot.core.binding.binder.BaseBinder;
+import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
@@ -27,9 +30,8 @@ import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 中间表
@@ -44,13 +46,13 @@ public class MiddleTable {
      */
     private String table;
     /**
-     * 与注解VO的外键关联的连接字段
+     * 主干对象列映射
      */
-    private String equalsToAnnoObjectFKColumn;
+    private Map<String, String> trunkObjColMapping;
     /**
-     * 与被引用Entity属性主键的连接字段
+     * 枝干对象列映射
      */
-    private String equalsToRefEntityPkColumn;
+    private Map<String, String> branchObjColMapping;
     /**
      * 附加条件
      */
@@ -61,20 +63,33 @@ public class MiddleTable {
     }
 
     /**
-     * 连接（左手连接VO的外键，右手连接Entity属性的主键）
-     * @param equalsToAnnoObjectFKColumn
-     * @param equalsToRefEntityPkColumn
+     * 与主对象的关联
+     * @param middleTableCol
+     * @param trunkObjCol
      * @return
      */
-    public MiddleTable connect(String equalsToAnnoObjectFKColumn, String equalsToRefEntityPkColumn) {
-        if(V.notEmpty(this.equalsToAnnoObjectFKColumn) && V.notEquals(this.equalsToAnnoObjectFKColumn, equalsToAnnoObjectFKColumn)){
-            log.warn("中间表关联字段被覆盖: {}->{}，暂仅支持单字段关联，请检查注解条件！", this.equalsToAnnoObjectFKColumn, equalsToAnnoObjectFKColumn);
+    public MiddleTable connectTrunkObj(String middleTableCol, String trunkObjCol){
+        if(trunkObjColMapping == null){
+            trunkObjColMapping = new LinkedHashMap<>(8);
         }
-        if(V.notEmpty(this.equalsToRefEntityPkColumn) && V.notEquals(this.equalsToRefEntityPkColumn, equalsToRefEntityPkColumn)){
-            log.warn("中间表关联字段被覆盖: {}->{}，暂仅支持单字段关联，请检查注解条件！", this.equalsToRefEntityPkColumn, equalsToRefEntityPkColumn);
+        trunkObjColMapping.put(trunkObjCol, middleTableCol);
+        return this;
+    }
+
+    /**
+     * 与枝对象的关联
+     * @param middleTableCol
+     * @param branchObjCol
+     * @return
+     */
+    public MiddleTable connectBranchObj(String middleTableCol, String branchObjCol){
+        if(branchObjColMapping == null){
+            branchObjColMapping = new LinkedHashMap<>(8);
         }
-        this.equalsToAnnoObjectFKColumn = equalsToAnnoObjectFKColumn;
-        this.equalsToRefEntityPkColumn = equalsToRefEntityPkColumn;
+        else if(branchObjColMapping.size() >= 1){
+            throw new BusinessException(BaseBinder.NOT_SUPPORT_MSG);
+        }
+        branchObjColMapping.put(middleTableCol, branchObjCol);
         return this;
     }
 
@@ -90,72 +105,94 @@ public class MiddleTable {
         return this;
     }
 
-    public String getEqualsToAnnoObjectFKColumn() {
-        return equalsToAnnoObjectFKColumn;
-    }
-
-    public String getEqualsToRefEntityPkColumn() {
-        return equalsToRefEntityPkColumn;
+    public Map<String, String> getTrunkObjColMapping(){
+        return this.trunkObjColMapping;
     }
 
     /**
      * 执行1-1关联查询，得到关联映射Map
-     * @param annoObjectForeignKeyList
+     * @param trunkObjCol2ValuesMap
      * @return
      */
-    public Map<String, Object> executeOneToOneQuery(List annoObjectForeignKeyList){
+    public Map<String, Object> executeOneToOneQuery(Map<String, List> trunkObjCol2ValuesMap){
+        if(V.isEmpty(trunkObjCol2ValuesMap)){
+            log.warn("不合理的中间表查询：无过滤条件！");
+            return Collections.emptyMap();
+        }
         //id //org_id
-        String keyName = getEqualsToAnnoObjectFKColumn(), valueName = getEqualsToRefEntityPkColumn();
         TableLinkage linkage = ParserCache.getTableLinkage(table);
         // 有定义mapper，首选mapper
         if(linkage != null){
-            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, annoObjectForeignKeyList);
-            return SqlExecutor.convertToOneToOneResult(resultSetMapList, keyName, valueName);
+            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap);
+            return ResultAssembler.convertToOneToOneResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
         }
         else{
             // 提取中间表查询SQL: SELECT id, org_id FROM department WHERE id IN(?)
-            String sql = toSQL(annoObjectForeignKeyList);
+            List paramValueList = new ArrayList();
+            String sql = toSQL(trunkObjCol2ValuesMap, paramValueList);
             // 执行查询并合并结果
-            Map<String, Object> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToOneResult(sql, annoObjectForeignKeyList, keyName, valueName);
-            return middleTableResultMap;
+            try {
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList);
+                return ResultAssembler.convertToOneToOneResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
+            }
+            catch (Exception e) {
+                log.error("中间表查询异常", e);
+                return Collections.emptyMap();
+            }
         }
     }
 
     /**
      * 执行1-N关联查询，得到关联映射Map
-     * @param annoObjectForeignKeyList
+     * @param trunkObjCol2ValuesMap
      * @return
      */
-    public Map<String, List> executeOneToManyQuery(List annoObjectForeignKeyList){
+    public Map<String, List> executeOneToManyQuery(Map<String, List> trunkObjCol2ValuesMap){
+        if(V.isEmpty(trunkObjCol2ValuesMap)){
+            log.warn("不合理的中间表查询：无过滤条件！");
+            return Collections.emptyMap();
+        }
         //user_id //role_id
-        String keyName = getEqualsToAnnoObjectFKColumn(), valueName = getEqualsToRefEntityPkColumn();
         TableLinkage linkage = ParserCache.getTableLinkage(table);
         // 有定义mapper，首选mapper
         if(linkage != null){
-            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, annoObjectForeignKeyList);
-            return SqlExecutor.convertToOneToManyResult(resultSetMapList, keyName, valueName);
+            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap);
+            return ResultAssembler.convertToOneToManyResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
         }
         else{
             // 提取中间表查询SQL: SELECT user_id, role_id FROM user_role WHERE user_id IN(?)
-            String sql = toSQL(annoObjectForeignKeyList);
+            List paramValueList = new ArrayList();
+            String sql = toSQL(trunkObjCol2ValuesMap, paramValueList);
             // 执行查询并合并结果
-            Map<String, List> middleTableResultMap = SqlExecutor.executeQueryAndMergeOneToManyResult(sql, annoObjectForeignKeyList, keyName, valueName);
-            return middleTableResultMap;
+            try {
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList);
+                return ResultAssembler.convertToOneToManyResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
+            }
+            catch (Exception e) {
+                log.error("中间表查询异常", e);
+                return Collections.emptyMap();
+            }
         }
     }
 
     /**
      * 通过定义的Mapper查询结果
      * @param linkage
-     * @param annoObjectForeignKeyList
+     * @param trunkObjCol2ValuesMap
      * @return
      */
-    private List<Map<String, Object>> queryByMapper(TableLinkage linkage, List annoObjectForeignKeyList){
+    private List<Map<String, Object>> queryByMapper(TableLinkage linkage, Map<String, List> trunkObjCol2ValuesMap){
         BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(linkage.getEntityClass());
-        queryWrapper.select(equalsToAnnoObjectFKColumn, equalsToRefEntityPkColumn);
-        queryWrapper.in(equalsToAnnoObjectFKColumn, annoObjectForeignKeyList);
+        // select所需字段
+        queryWrapper.select(getSelectColumns());
+        for(Map.Entry<String, List> entry : trunkObjCol2ValuesMap.entrySet()){
+            String column = entry.getKey();
+            if(column != null && V.notEmpty(entry.getValue())){
+                queryWrapper.in(column, entry.getValue());
+            }
+        }
         if(additionalConditions != null){
             for(String condition : additionalConditions){
                 queryWrapper.apply(condition);
@@ -167,19 +204,28 @@ public class MiddleTable {
 
     /**
      * 转换查询SQL
-     * @param annoObjectForeignKeyList 注解外键值的列表，用于拼接SQL查询
+     * @param trunkObjCol2ValuesMap 注解外键值的列表，用于拼接SQL查询
      * @return
      */
-    private String toSQL(List annoObjectForeignKeyList){
-        if(V.isEmpty(annoObjectForeignKeyList)){
+    private String toSQL(Map<String, List> trunkObjCol2ValuesMap, List paramValueList){
+        if(V.isEmpty(trunkObjCol2ValuesMap)){
             return null;
         }
-        String params = S.repeat("?", ",", annoObjectForeignKeyList.size());
+        // select所需字段
+        String selectColumns = S.join(getSelectColumns());
         // 构建SQL
         return new SQL(){{
-            SELECT(equalsToAnnoObjectFKColumn + Cons.SEPARATOR_COMMA + equalsToRefEntityPkColumn);
+            SELECT(selectColumns);
             FROM(table);
-            WHERE(equalsToAnnoObjectFKColumn + " IN (" + params + ")");
+            for(Map.Entry<String, List> entry : trunkObjCol2ValuesMap.entrySet()){
+                String column = entry.getKey();
+                if(column != null && V.notEmpty(entry.getValue())){
+                    List values = (List)entry.getValue().stream().distinct().collect(Collectors.toList());
+                    String params = S.repeat("?", ",", values.size());
+                    WHERE(column + " IN (" + params + ")");
+                    paramValueList.addAll(values);
+                }
+            }
             // 添加删除标记
             boolean appendDeleteFlag = true;
             if(additionalConditions != null){
@@ -196,4 +242,21 @@ public class MiddleTable {
             }
         }}.toString();
     }
+
+    private String[] getSelectColumns(){
+        List<String> columns = new ArrayList<>(8);
+        // select所需字段
+        if(V.notEmpty(trunkObjColMapping)){
+            for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
+                columns.add(entry.getValue());
+            }
+        }
+        if(V.notEmpty(branchObjColMapping)){
+            for(Map.Entry<String, String> entry : branchObjColMapping.entrySet()){
+                columns.add(entry.getKey());
+            }
+        }
+        return columns.toArray(new String[columns.size()]);
+    }
+
 }

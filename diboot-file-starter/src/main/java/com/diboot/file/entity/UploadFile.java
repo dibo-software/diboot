@@ -41,8 +41,14 @@ public class UploadFile extends BaseEntity {
     @TableField(exist = false)
     private Long id;
     // 声明新主键uuid
-    @TableId(type = IdType.UUID)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String uuid;
+
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
 
     @NotNull(message = "关联对象类不能为空！")
     @TableField

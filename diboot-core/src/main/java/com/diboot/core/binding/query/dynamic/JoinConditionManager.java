@@ -154,10 +154,10 @@ public class JoinConditionManager extends BaseConditionManager {
                     currentSegments = middleTableOnSegments;
                 }
                 if(expression.isNot() == false){
-                    currentSegments.add(left + " LIKE " + expression.getStringExpression());
+                    currentSegments.add(left + " LIKE " + expression.getRightExpression().toString());
                 }
                 else{
-                    currentSegments.add(left + " NOT LIKE " + expression.getStringExpression());
+                    currentSegments.add(left + " NOT LIKE " + expression.getRightExpression().toString());
                 }
             }
             else{

@@ -34,6 +34,12 @@ import javax.validation.constraints.NotNull;
 public class IamLoginTrace extends BaseEntity {
     private static final long serialVersionUID = -6166037224391478085L;
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     // 用户类型
     @NotNull(message = "用户类型不能为空")
     @Length(max=100, message="用户类型长度应小于100")

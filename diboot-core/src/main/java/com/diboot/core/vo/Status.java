@@ -67,10 +67,20 @@ public enum Status {
      */
     FAIL_OPERATION(4006, "操作执行失败"),
 
+    /**
+     * 请求连接超时
+     */
+    FAIL_REQUEST_TIMEOUT(4008, "请求连接超时"),
+
     /***
      * 系统异常
      */
     FAIL_EXCEPTION(5000, "系统异常"),
+
+    /**
+     * 服务不可用
+     */
+    FAIL_SERVICE_UNAVAILABLE(5003, "服务不可用"),
 
     /***
      * 缓存清空

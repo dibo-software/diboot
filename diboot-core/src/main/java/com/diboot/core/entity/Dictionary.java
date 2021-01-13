@@ -33,6 +33,12 @@ import javax.validation.constraints.NotNull;
 public class Dictionary extends BaseExtEntity {
     private static final long serialVersionUID = 11301L;
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     /***
      * 上级ID
      */

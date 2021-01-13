@@ -16,9 +16,7 @@
 package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.config.Cons;
-import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +27,7 @@ import java.lang.reflect.Field;
 /**
  * table的相关线索信息
  * @author mazc@dibo.ltd
- * @version v1.0
+ * @version v2.1
  * @date 2020/06/02
  */
 @Getter @Setter

@@ -39,4 +39,16 @@ public @interface BindEntityList {
      * @return
      */
     String condition();
+
+    /**
+     * 深度绑定
+     * @return
+     */
+    boolean deepBind() default false;
+
+    /**
+     * EntityList排序
+     * @return
+     */
+    String orderBy() default "";
 }

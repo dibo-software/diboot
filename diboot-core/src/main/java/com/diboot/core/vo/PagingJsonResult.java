@@ -30,7 +30,7 @@ import java.util.List;
  * @date 2019/01/01
  */
 public class PagingJsonResult extends JsonResult{
-    private static final long serialVersionUID = 1001L;
+    private static final long serialVersionUID = 1002L;
 
     /***
      * 分页相关信息

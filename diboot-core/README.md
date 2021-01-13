@@ -90,6 +90,11 @@ public class UserDTO {
     // join其他表
     @BindQuery(comparison = Comparison.STARTSWITH, entity=Organization.class, field="name", condition="this.org_id=id")
     private String orgName;
+    
+    // 非null值属性需要从QueryWrapper中剔除
+    @BindQuery(ignore = true)
+    private int xxx = 1;
+    
 }
 ~~~
 #### 2. 调用QueryBuilder.toQueryWrapper(entityOrDto)进行转换
@@ -100,9 +105,10 @@ public class UserDTO {
  */
 @GetMapping("/list")
 public JsonResult getVOList(UserDto userDto) throws Exception{
-    //调用super.buildQueryWrapper(entityOrDto) 进行转换
+    // 调用super.buildQueryWrapper(entityOrDto) 进行转换，仅转换request中有的参数值
     QueryWrapper<User> queryWrapper = super.buildQueryWrapper(userDto);
-    // 或者直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 转换
+    // 或者
+    // 直接调用 QueryBuilder.toQueryWrapper(entityOrDto) 转换，转换DTO中全部非空值字段
     //QueryWrapper<User> queryWrapper = QueryBuilder.buildQueryWrapper(userDto);
     
     //... 查询list
@@ -159,4 +165,4 @@ spring.datasource.hikari.driver-class-name=com.mysql.cj.jdbc.Driver
 
 #### 3. 详细文档 - [diboot-core 官方文档](https://www.diboot.com/guide/diboot-core/%E5%AE%89%E8%A3%85.html)
 
-#### 4. 参考样例 - [diboot-core-example](https://github.com/dibo-software/diboot-v2-example/tree/master/diboot-core-example)
+#### 4. 参考样例 - [diboot-core-example](https://github.com/dibo-software/diboot-example/tree/master/diboot-core-example)

@@ -27,10 +27,8 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,19 +95,7 @@ public class DefaultExceptionHandler {
             map.put("msg", msg);
         }
         log.warn("请求处理异常", e);
-        if(isJsonRequest(request)) {
-            return new ResponseEntity<>(map, HttpStatus.OK);
-        }
-        else {
-            //获取错误页面
-            String viewName = getViewName(request, e);
-            map.put("exception", e);
-            map.put("status", status.value());
-            map.put("message", map.get("msg"));
-            map.put("timestamp", new Date());
-            map.remove("msg");
-            return new ModelAndView(viewName, map);
-        }
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     /**
@@ -118,6 +104,7 @@ public class DefaultExceptionHandler {
      * @param ex
      * @return
      */
+    @Deprecated
     protected String getViewName(HttpServletRequest request, Exception ex){
         return "error";
     }
@@ -127,6 +114,7 @@ public class DefaultExceptionHandler {
      * @param request
      * @return
      */
+    @Deprecated
     protected boolean isJsonRequest(HttpServletRequest request){
         if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
             return true;

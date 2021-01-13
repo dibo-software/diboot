@@ -1,6 +1,7 @@
 -- 上传文件表
 CREATE TABLE upload_file (
    uuid varchar(32) NOT NULL,
+   tenant_id            bigint        not null default 0,
    rel_obj_type varchar(50),
    rel_obj_id varchar(32),
    rel_obj_field varchar(50),
@@ -16,6 +17,7 @@ CREATE TABLE upload_file (
 );
 -- 添加备注,
 comment on column upload_file.uuid is 'UUID';
+comment on column upload_file.tenant_id is '租户ID';
 comment on column upload_file.rel_obj_type is '关联对象类';
 comment on column upload_file.rel_obj_id is '关联对象ID';
 comment on column upload_file.rel_obj_field is '关联对象属性名称';
@@ -30,3 +32,4 @@ comment on column upload_file.create_time is '创建时间';
 comment on table upload_file is '上传文件';
 -- 索引
 create index idx_upload_file on upload_file (rel_obj_type, rel_obj_id, rel_obj_field);
+create index idx_upload_file_tenant on upload_file(tenant_id);

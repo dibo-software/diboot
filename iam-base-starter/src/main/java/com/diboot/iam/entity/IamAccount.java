@@ -36,6 +36,12 @@ import javax.validation.constraints.NotNull;
 public class IamAccount extends BaseEntity {
     private static final long serialVersionUID = -6825516429612507644L;
 
+    /**
+     * 租户ID
+     */
+    @TableField
+    private Long tenantId;
+
     // 用户类型
     @NotNull(message = "用户类型不能为空")
     @Length(max = 100, message = "用户类型长度应小于100")

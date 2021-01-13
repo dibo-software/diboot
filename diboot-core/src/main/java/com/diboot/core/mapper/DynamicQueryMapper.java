@@ -39,13 +39,6 @@ public interface DynamicQueryMapper {
      * 动态SQL查询
      * @return
      */
-    @SelectProvider(type= DynamicSqlProvider.class, method="buildSql")
-    Map<String, Object> query(@Param(Constants.WRAPPER) QueryWrapper ew);
-
-    /**
-     * 动态SQL查询
-     * @return
-     */
     @SelectProvider(type= DynamicSqlProvider.class, method="buildSqlForList")
     List<Map<String, Object>> queryForList(@Param(Constants.WRAPPER) QueryWrapper ew);
 

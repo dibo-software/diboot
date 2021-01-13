@@ -17,6 +17,7 @@ package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
@@ -109,11 +110,10 @@ public class JoinsBinder {
         List<Map<String, Object>> mapList = null;
         if(pagination == null){
             if(limit1){
-                Map<String, Object> oneResult = getDynamicQueryMapper().query(dynamicJoinWrapper);
-                if(oneResult != null){
-                    mapList = new ArrayList<>();
-                    mapList.add(oneResult);
-                }
+                Page page = new Page<>(1, 1);
+                page.setSearchCount(false);
+                IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(page, dynamicJoinWrapper);
+                mapList = pageResult.getRecords();
             }
             else{
                 mapList = getDynamicQueryMapper().queryForList(dynamicJoinWrapper);

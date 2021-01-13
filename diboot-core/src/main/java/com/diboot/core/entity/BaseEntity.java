@@ -53,7 +53,7 @@ public abstract class BaseEntity implements Serializable {
      */
     @TableLogic
     @JSONField(serialize = false)
-    @TableField(Cons.COLUMN_IS_DELETED)
+    @TableField(value = Cons.COLUMN_IS_DELETED, select = false)
     private boolean deleted = false;
 
     /**

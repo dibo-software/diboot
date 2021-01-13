@@ -65,7 +65,7 @@ public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
             }
             return true;
         }
-        log.debug("Token验证失败！");
+        log.debug("Token验证失败！url=" + httpRequest.getRequestURL());
         return false;
     }
 

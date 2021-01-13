@@ -1,6 +1,6 @@
-> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground弹药包](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
+> v2.1版本发布，可以告别常规SQL和CRUD了！ [B站上手视频](https://www.bilibili.com/video/BV17V411r7Cc) 、 [playground新手体验包](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
 
-# diboot - 化繁为简，以简驭繁
+# diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
     <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">
         <img src="https://img.shields.io/hexpm/l/plug.svg">
@@ -10,7 +10,7 @@
     </a>
 </p>
 
->  设计目标：面向开发人员的低代码开发平台，将重复性的工作自动化，提高质量、效率、可维护性。
+>  设计目标：面向开发人员的低代码开发平台，将复杂的工作简单化、重复的工作自动化，提高质量、效率、可维护性。
 
 ![diboot平台组成结构图](diboot-docs/.vuepress/public/structure.png)
 
@@ -32,7 +32,7 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
    > JsonResult、字符串处理、常用校验、BeanUtils、DateUtils等
    
 基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比传统Mybatis项目减少80%+），且实现更高效更易维护。   
-更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-core "注解自动绑定多表关联"). 
+更多介绍请查看: [diboot-core README](https://github.com/dibo-software/diboot/tree/master/diboot-core "注解自动绑定多表关联"). 
 
 
 ## 二、 diboot-devtools 自动化开发助理
@@ -51,30 +51,33 @@ diboot v2版本，目前实现: diboot-core高效内核 + diboot-devtools开发�
 
 * RBAC角色权限模型 + JWT的认证授权 实现，支持刷新token
 * 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
+* 简化的Log注解记录操作日志
 * 自动提取需要验证的后端接口, 借助前端功能方便绑定前后端菜单按钮权限
 * 支持基于注解的数据权限实现
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
 
-更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot-v2/tree/master/iam-base-starter "身份认证管理组件"). 
+更多介绍请查看: [iam-base-starter README](https://github.com/dibo-software/diboot/tree/master/iam-base-starter "身份认证管理组件"). 
 
 ## 四、diboot-file 文件相关处理组件
 
 * EasyExcel轻量封装，支持Java注解校验与@ExcelBind*注解实现字典及关联字段的name-value转换，并提供完善的校验错误提示
 * 封装常用的文件本地存储、上传下载、图片压缩水印等常用处理
 
-更多介绍请查看: [diboot-file-starter README](https://github.com/dibo-software/diboot-v2/tree/master/diboot-file-starter "文件组件"). 
+更多介绍请查看: [diboot-file-starter README](https://github.com/dibo-software/diboot/tree/master/diboot-file-starter "文件组件"). 
 
 > 其他组件逐步开发中 ...
 
 ## 五、捐助支持
 ![捐助二维码](https://www.diboot.com/assets/img/donate.a25badf5.jpg)
 
-感谢JetBrains提供Open Source license，[JetBrains IDEA](https://www.jetbrains.com/?from=diboot) 是最好的Java IDE。
+感谢JetBrains提供Open Source license，[JetBrains IDEA](https://www.jetbrains.com/?from=diboot) 是更好的Java IDE。
 
 ## 六、技术交流群
-如果您有技术问题，欢迎加群交流：
+如遇diboot相关技术问题，欢迎加群交流：
 
-> QQ群: [731690096]() 
+* **捐助/付费用户尊享**QQ群: [931266830]()
 
-> 微信群（备注diboot）加: [wx20201024]()  
+* 技术交流QQ群: [731690096]() 
+
+* 技术交流微信群 加: [wx20201024]() (备注diboot)
 

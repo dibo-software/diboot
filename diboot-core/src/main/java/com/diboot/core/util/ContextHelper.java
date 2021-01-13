@@ -258,7 +258,21 @@ public class ContextHelper implements ApplicationContextAware {
         }
         if(jdbcUrl == null){
             String master = environment.getProperty("spring.datasource.dynamic.primary");
-            jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+            if(master != null){
+                jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource."+master+".url");
+            }
+        }
+        if(jdbcUrl == null){
+            String names = environment.getProperty("spring.shardingsphere.datasource.names");
+            if(names != null){
+                jdbcUrl = environment.getProperty("spring.shardingsphere.datasource."+ names.split(",")[0] +".url");
+            }
+        }
+        if(jdbcUrl == null){
+            String urlConfigItem = environment.getProperty("diboot.datasource.url.config");
+            if(urlConfigItem != null){
+                jdbcUrl = environment.getProperty(urlConfigItem);
+            }
         }
         return jdbcUrl;
     }
