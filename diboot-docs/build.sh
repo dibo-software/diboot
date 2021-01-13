@@ -1,3 +1,0 @@
-yarn
-yarn build
-gulp
