@@ -29,6 +29,14 @@ public class PropertiesUtils {
 
     private static Environment environment;
 
+    /**
+     * 绑定Environment
+     * @param env
+     */
+    public static void bindEnvironment(Environment env){
+        environment = env;
+    }
+
     /***
      *  读取配置项的值
      * @param key
