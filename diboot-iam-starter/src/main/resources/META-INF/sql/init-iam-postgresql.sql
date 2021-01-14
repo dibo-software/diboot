@@ -121,7 +121,7 @@ create table iam_resource_permission
   parent_id bigint default 0   not null,
   display_type varchar(20) not null,
   display_name varchar(100) not null,
-  frontend_code varchar(100)   null,
+  resource_code varchar(100)   null,
   api_set varchar(3000)   null,
   sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
@@ -135,7 +135,7 @@ comment on column iam_resource_permission.app_module is '应用模块';
 comment on column iam_resource_permission.parent_id is '菜单ID';
 comment on column iam_resource_permission.display_type is '展现类型';
 comment on column iam_resource_permission.display_name is '显示名称';
-comment on column iam_resource_permission.frontend_code is '前端编码';
+comment on column iam_resource_permission.resource_code is '前端编码';
 comment on column iam_resource_permission.api_set is '接口列表';
 comment on column iam_resource_permission.sort_id is '排序号';
 comment on column iam_resource_permission.is_deleted is '是否删除';
@@ -249,11 +249,11 @@ CREATE TABLE iam_org (
   type        varchar(100) DEFAULT 'DEPT' NOT NULL,
   code        varchar(50)  NOT NULL,
   manager_id  bigint   DEFAULT 0 NOT NULL,
-  level smallint DEFAULT 1 NOT NULL,
+  depth smallint DEFAULT 1 NOT NULL,
   sort_id bigint DEFAULT 1 NOT NULL,
   status      varchar(10)  DEFAULT 'A' NOT NULL,
   org_comment varchar(255)   null,
-  is_deleted BOOLEAN DEFAULT 0    not null,
+  is_deleted BOOLEAN DEFAULT FALSE  not null,
   create_time timestamp default CURRENT_TIMESTAMP   not null
 );
 comment on column iam_org.id is 'ID';
@@ -265,7 +265,7 @@ comment on column iam_org.short_name is '简称';
 comment on column iam_org.type is '类型';
 comment on column iam_org.code is '编码';
 comment on column iam_org.manager_id is '负责人';
-comment on column iam_org.level is '层级';
+comment on column iam_org.depth is '层级';
 comment on column iam_org.sort_id is '排序号';
 comment on column iam_org.status is '状态';
 comment on column iam_org.org_comment is '备注';
@@ -282,11 +282,11 @@ create table iam_position
   tenant_id          bigint           default 0  not null,
   name                 varchar(100)                          not null,
   code                 varchar(50)                           not null,
-  is_virtual           BOOLEAN  default 0                 not null,
+  is_virtual           BOOLEAN  default FALSE          not null,
   grade_name           varchar(50)                           null,
   grade_value          varchar(30) default '0'               null,
   data_permission_type varchar(20) default 'SELF'            null,
-  is_deleted BOOLEAN DEFAULT 0    not null,
+  is_deleted BOOLEAN DEFAULT FALSE  not null,
   create_time timestamp default CURRENT_TIMESTAMP   not null
 );
 comment on column iam_position.id is 'ID';
@@ -312,8 +312,8 @@ create table iam_user_position
   user_id             bigint                                  not null,
   org_id              bigint        default 0                 not null,
   position_id         bigint                             not null,
-  is_primary_position BOOLEAN   default 1                 not null,
-  is_deleted BOOLEAN DEFAULT 0    not null,
+  is_primary_position BOOLEAN   default FALSE             not null,
+  is_deleted BOOLEAN DEFAULT FALSE  not null,
   create_time timestamp default CURRENT_TIMESTAMP   not null,
   update_time         timestamp    default CURRENT_TIMESTAMP null
 );

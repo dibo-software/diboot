@@ -125,7 +125,7 @@ create table ${SCHEMA}.iam_resource_permission
     parent_id NUMBER(20) default 0   not null,
     display_type VARCHAR2(20) not null,
     display_name VARCHAR2(100) not null,
-    frontend_code VARCHAR2(100)   null,
+    resource_code VARCHAR2(100)   null,
     api_set VARCHAR2(3000)   null,
     sort_id NUMBER(20)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
@@ -139,7 +139,7 @@ comment on column ${SCHEMA}.iam_resource_permission.app_module is '应用模块'
 comment on column ${SCHEMA}.iam_resource_permission.parent_id is '菜单ID';
 comment on column ${SCHEMA}.iam_resource_permission.display_type is '展现类型';
 comment on column ${SCHEMA}.iam_resource_permission.display_name is '显示名称';
-comment on column ${SCHEMA}.iam_resource_permission.frontend_code is '前端编码';
+comment on column ${SCHEMA}.iam_resource_permission.resource_code is '前端编码';
 comment on column ${SCHEMA}.iam_resource_permission.api_set is '接口列表';
 comment on column ${SCHEMA}.iam_resource_permission.sort_id is '排序号';
 comment on column ${SCHEMA}.iam_resource_permission.is_deleted is '是否删除';
@@ -257,7 +257,7 @@ CREATE TABLE ${SCHEMA}.iam_org (
    type        VARCHAR2(100) DEFAULT 'DEPT' NOT NULL,
    code        VARCHAR2(50)  NOT NULL,
    manager_id  NUMBER(20)   DEFAULT 0 NOT NULL,
-   level NUMBER(6) DEFAULT 1 NOT NULL,
+   depth NUMBER(6) DEFAULT 1 NOT NULL,
    sort_id NUMBER(20) DEFAULT 1 NOT NULL,
    status      VARCHAR2(10)  DEFAULT 'A' NOT NULL,
    org_comment VARCHAR2(255)   null,
@@ -274,7 +274,7 @@ comment on column ${SCHEMA}.iam_org.short_name is '简称';
 comment on column ${SCHEMA}.iam_org.type is '类型';
 comment on column ${SCHEMA}.iam_org.code is '编码';
 comment on column ${SCHEMA}.iam_org.manager_id is '负责人';
-comment on column ${SCHEMA}.iam_org.level is '层级';
+comment on column ${SCHEMA}.iam_org.depth is '层级';
 comment on column ${SCHEMA}.iam_org.sort_id is '排序号';
 comment on column ${SCHEMA}.iam_org.status is '状态';
 comment on column ${SCHEMA}.iam_org.org_comment is '备注';

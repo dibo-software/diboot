@@ -65,8 +65,8 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
             IamOrg parentOrg = getEntity(iamOrg.getParentId());
             if (parentOrg != null) {
                 // 设置层级
-                int parentLevel = parentOrg.getLevel().intValue();
-                iamOrg.setLevel(parentLevel + 1);
+                int parentLevel = parentOrg.getDepth().intValue();
+                iamOrg.setDepth(parentLevel + 1);
                 // 设置公司ID
                 if (V.equals(parentOrg.getParentId(), 0) || V.isEmpty(parentOrg.getParentId())) {
                     iamOrg.setTopOrgId(parentOrg.getId());

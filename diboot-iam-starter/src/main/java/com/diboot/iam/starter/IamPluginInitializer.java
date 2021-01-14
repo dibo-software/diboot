@@ -105,7 +105,7 @@ public class IamPluginInitializer implements ApplicationRunner {
         }
 
         IamOrg iamOrg = new IamOrg();
-        iamOrg.setCode("ROOT").setLevel(1).setTopOrgId(1L).setName("我的公司").setShortName("我的公司").setType(Cons.DICTCODE_ORG_TYPE.COMP.name()).setOrgComment("初始根节点，请按需修改")
+        iamOrg.setCode("ROOT").setDepth(1).setTopOrgId(1L).setName("我的公司").setShortName("我的公司").setType(Cons.DICTCODE_ORG_TYPE.COMP.name()).setOrgComment("初始根节点，请按需修改")
                 .setId(1L);
         ContextHelper.getBean(IamOrgService.class).createEntity(iamOrg);
 

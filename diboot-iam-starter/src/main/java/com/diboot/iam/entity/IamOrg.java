@@ -88,9 +88,9 @@ public class IamOrg extends BaseEntity {
     @TableField()
     private Long managerId;
 
-    // 层级
+    // 深度层级
     @TableField()
-    private Integer level;
+    private Integer depth;
 
     // 排序号
     @TableField()

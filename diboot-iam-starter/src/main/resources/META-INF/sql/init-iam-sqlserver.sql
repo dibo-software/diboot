@@ -125,7 +125,7 @@ create table ${SCHEMA}.iam_resource_permission
    parent_id bigint default 0   not null,
    display_type varchar(20) not null,
    display_name varchar(100) not null,
-   frontend_code varchar(100)   null,
+   resource_code varchar(100)   null,
    api_set varchar(3000)   null,
    sort_id bigint   null,
    is_deleted tinyint default 0 not null,
@@ -139,7 +139,7 @@ execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SC
 execute sp_addextendedproperty 'MS_Description', N'菜单ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_type';
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
-execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'frontend_code';
+execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'resource_code';
 execute sp_addextendedproperty 'MS_Description', N'接口列表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'api_set';
 execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'is_deleted';
@@ -257,7 +257,7 @@ CREATE TABLE ${SCHEMA}.iam_org (
    type        varchar(100) DEFAULT 'DEPT' NOT NULL,
    code        varchar(50)  NOT NULL,
    manager_id  bigint   DEFAULT 0 NOT NULL,
-   level smallint DEFAULT 1 NOT NULL,
+   depth smallint DEFAULT 1 NOT NULL,
    sort_id bigint DEFAULT 1 NOT NULL,
    status      varchar(10)  DEFAULT 'A' NOT NULL,
    org_comment varchar(255)   null,
@@ -274,7 +274,7 @@ execute sp_addextendedproperty 'MS_Description', N'简称','SCHEMA', '${SCHEMA}'
 execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'type';
 execute sp_addextendedproperty 'MS_Description', N'编码','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'code';
 execute sp_addextendedproperty 'MS_Description', N'负责人','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'manager_id';
-execute sp_addextendedproperty 'MS_Description', N'层级','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'level';
+execute sp_addextendedproperty 'MS_Description', N'层级','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'depth';
 execute sp_addextendedproperty 'MS_Description', N'排序号','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'状态','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'status';
 execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'org_comment';
@@ -292,7 +292,7 @@ create table ${SCHEMA}.iam_position
    tenant_id          bigint           default 0  not null,
    name                 varchar(100)                          not null,
    code                 varchar(50)                           not null,
-   is_virtual           BOOLEAN  default 0                 not null,
+   is_virtual           tinyint  default 0                 not null,
    grade_name           varchar(50)                           null,
    grade_value          varchar(30) default '0'               null,
    data_permission_type varchar(20) default 'SELF'            null,
