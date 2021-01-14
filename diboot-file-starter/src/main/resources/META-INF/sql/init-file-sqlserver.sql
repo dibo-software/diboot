@@ -34,4 +34,4 @@ execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'上传文件', 'SCHEMA', '${SCHEMA}', 'table', upload_file, null, null;
 -- 索引
 create nonclustered index idx_upload_file on upload_file(rel_obj_type, rel_obj_id, rel_obj_field);
-create nonclustered index idx_upload_file_tenant on ${SCHEMA}.upload_file(tenant_id);
+create nonclustered index idx_upload_file_tenant on upload_file(tenant_id);
