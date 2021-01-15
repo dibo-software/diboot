@@ -190,7 +190,7 @@ public class ApiPermissionExtractor {
                 }
                 else{
                     ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
-                    apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(u).setPermissionCode(permissionCode);
+                    apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(u).setPermissionCode(permissionCode).setValue(m + ":" + u);
                     if(!UNIQUE_KEY_SET.contains(apiPermission.buildUniqueKey())){
                         apiPermissions.add(apiPermission);
                         UNIQUE_KEY_SET.add(apiPermission.buildUniqueKey());
