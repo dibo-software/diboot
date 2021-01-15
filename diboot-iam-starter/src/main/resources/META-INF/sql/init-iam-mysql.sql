@@ -159,7 +159,7 @@ create table iam_org
   type        varchar(100) default 'DEPT'             not null comment '组织类别',
   code        varchar(50)                            not null comment '编码',
   manager_id  bigint       default 0                 not null comment '负责人ID',
-  level       smallint(6)  default 1                 not null comment '层级',
+  depth       smallint(6)  default 1                 not null comment '层级',
   sort_id     bigint                                 null comment '排序号',
   status      varchar(10)  default 'A'               not null comment '状态',
   org_comment varchar(200) COMMENT '备注',
