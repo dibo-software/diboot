@@ -57,10 +57,4 @@ public interface DictionaryService extends BaseService<Dictionary>{
      */
     boolean deleteDictAndChildren(Long id);
 
-    /***
-     * 对列表进行排序
-     * @param dictionaryList
-     */
-    void sortList(List<Dictionary> dictionaryList);
-
 }
