@@ -52,12 +52,13 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
 
     @Autowired
     private ScheduleJobService scheduleJobService;
+    @Autowired
+    private Environment environment;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库是否已存在
         if(schedulerProperties.isInitSql()){
-            Environment environment = ContextHelper.getApplicationContext().getEnvironment();
             SqlFileInitializer.init(environment);
             // 验证SQL
             String initDetectSql = "SELECT id FROM ${SCHEMA}.schedule_job WHERE id=0";

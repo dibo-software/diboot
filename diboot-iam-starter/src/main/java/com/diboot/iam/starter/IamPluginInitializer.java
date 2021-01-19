@@ -45,12 +45,13 @@ import org.springframework.stereotype.Component;
 public class IamPluginInitializer implements ApplicationRunner {
     @Autowired
     private IamProperties iamProperties;
+    @Autowired
+    private Environment environment;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库字典是否已存在
         if(iamProperties.isInitSql()){
-            Environment environment = ContextHelper.getApplicationContext().getEnvironment();
             SqlFileInitializer.init(environment);
             // 验证SQL
             String initDetectSql = "SELECT id FROM ${SCHEMA}.iam_role WHERE id=0";
