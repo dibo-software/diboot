@@ -35,6 +35,12 @@ import java.util.List;
 @Mapper
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
 
+    /***
+     * 通过org层级的排序来获取用户分页数据
+     * @param page
+     * @param queryWrapper
+     * @return
+     */
     @Select("select u.* from iam_user u left join iam_org o on u.org_id=o.id ${ew.customSqlSegment} order by o.depth asc, o.sort_id desc, o.id desc, u.id desc")
     IPage<IamUser> selectPageSortByOrg(IPage page, @Param("ew") Wrapper<IamUser> queryWrapper);
 }
