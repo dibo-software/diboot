@@ -15,10 +15,14 @@
  */
 package com.diboot.iam.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.vo.Pagination;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.vo.IamRoleVO;
+import com.diboot.iam.vo.IamUserVO;
 
+import java.sql.Wrapper;
 import java.util.List;
 
 /**
@@ -28,6 +32,22 @@ import java.util.List;
 * @date 2019-12-17
 */
 public interface IamUserService extends BaseIamService<IamUser> {
+
+    /***
+     * 通过org进行排序
+     * @param queryWrapper
+     * @param pagination
+     * @return
+     */
+    List<IamUser> getEntityListSortByOrg(QueryWrapper queryWrapper, Pagination pagination);
+
+    /***
+     * 通过org进行排序
+     * @param queryWrapper
+     * @param pagination
+     * @return
+     */
+    <VO> List<VO> getViewObjectListSortByOrg(QueryWrapper queryWrapper, Pagination pagination, Class<VO> voClass);
 
     /**
      * 构建role-permission角色权限数据格式(合并role等)，用于前端适配
