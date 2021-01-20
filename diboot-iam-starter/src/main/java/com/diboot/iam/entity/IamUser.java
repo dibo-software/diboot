@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonFormat;

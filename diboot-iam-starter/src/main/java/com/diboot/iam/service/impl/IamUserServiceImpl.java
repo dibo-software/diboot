@@ -15,11 +15,18 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.Binder;
+import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
@@ -35,6 +42,7 @@ import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamHelper;
 import com.diboot.iam.vo.IamRoleVO;
+import com.diboot.iam.vo.IamUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +74,41 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired(required = false)
     private IamCustomize iamCustomize;
+
+    @Override
+    public List<IamUser> getEntityListSortByOrg(QueryWrapper queryWrapper, Pagination pagination) {
+        // 如果是动态join，则调用JoinsBinder
+        if(queryWrapper instanceof DynamicJoinQueryWrapper){
+            return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+        }
+        // 否则，调用MP默认实现
+        if(pagination != null){
+            IPage<IamUser> page = convertToIPage(queryWrapper, pagination);
+            page = super.getBaseMapper().selectPageSortByOrg(page, queryWrapper);
+            // 如果重新执行了count进行查询，则更新pagination中的总数
+            if(page.isSearchCount()){
+                pagination.setTotalCount(page.getTotal());
+            }
+            return page.getRecords();
+        }
+        else{
+            List<IamUser> list = super.list(queryWrapper);
+            if(list == null){
+                list = Collections.emptyList();
+            }
+            else if(list.size() > BaseConfig.getBatchSize()){
+                log.warn("单次查询记录数量过大，返回结果数={}", list.size());
+            }
+            return list;
+        }
+    }
+
+    @Override
+    public <VO> List<VO> getViewObjectListSortByOrg(QueryWrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
+        List<IamUser> entityList = this.getEntityListSortByOrg(queryWrapper, pagination);
+        List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
+        return voList;
+    }
 
     @Override
     public IamRoleVO buildRoleVo4FrontEnd(IamUser iamUser) {
@@ -237,5 +280,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                         .eq(IamUserRole::getUserId, userId)
         );
     }
+
+
 
 }
