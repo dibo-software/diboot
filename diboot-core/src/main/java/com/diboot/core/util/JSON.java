@@ -43,7 +43,7 @@ public class JSON {
     static {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         // 时间转化配置：解决InvalidFormatException: Can not deserialize value of type java.util.Date
-        mapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
+//        mapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
         // 如果不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));

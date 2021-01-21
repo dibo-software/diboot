@@ -17,10 +17,14 @@ package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.config.Cons;
+import com.diboot.core.handler.CustomDateDeserializer;
+import com.diboot.core.handler.CustomDateSerializer;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -59,6 +63,8 @@ public abstract class BaseEntity implements Serializable {
      * 默认记录创建时间字段，新建时由数据库赋值
      */
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @JsonSerialize(using = CustomDateSerializer.class)
     private Date createTime;
 
     /***
