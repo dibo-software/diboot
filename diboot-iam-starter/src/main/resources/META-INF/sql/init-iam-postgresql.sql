@@ -132,7 +132,7 @@ create table iam_resource_permission
 comment on column iam_resource_permission.id is 'ID';
 comment on column iam_resource_permission.tenant_id is '租户ID';
 comment on column iam_resource_permission.app_module is '应用模块';
-comment on column iam_resource_permission.parent_id is '菜单ID';
+comment on column iam_resource_permission.parent_id is '父资源ID';
 comment on column iam_resource_permission.display_type is '展现类型';
 comment on column iam_resource_permission.display_name is '显示名称';
 comment on column iam_resource_permission.resource_code is '前端编码';

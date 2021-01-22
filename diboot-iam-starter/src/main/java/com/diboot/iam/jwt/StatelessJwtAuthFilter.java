@@ -21,7 +21,6 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.JwtUtils;
 import io.jsonwebtoken.Claims;

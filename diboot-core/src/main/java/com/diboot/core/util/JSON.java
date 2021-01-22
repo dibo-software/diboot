@@ -15,6 +15,7 @@
  */
 package com.diboot.core.util;
 
+import com.diboot.core.config.BaseConfig;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -24,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 /***
  * JSON操作辅助类
@@ -38,15 +36,32 @@ import java.util.TimeZone;
 public class JSON {
     private static final Logger log = LoggerFactory.getLogger(JSON.class);
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper objectMapper;
 
-    static {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        // 时间转化配置：解决InvalidFormatException: Can not deserialize value of type java.util.Date
-        mapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
-        // 如果不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+    /**
+     * 初始化ObjectMapper
+     * @return
+     */
+    private static ObjectMapper getObjectMapper(){
+        if(objectMapper != null){
+            return objectMapper;
+        }
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        // 设置时区和日期转换
+        String defaultDatePattern = BaseConfig.getProperty("spring.jackson.date-format", D.FORMAT_DATETIME_Y4MDHMS);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
+            @Override
+            public Date parse(String dateStr) {
+                return D.fuzzyConvert(dateStr);
+            }
+        };
+        objectMapper.setDateFormat(dateFormat);
+        String timeZone = BaseConfig.getProperty("spring.jackson.time-zone", "GMT+8");
+        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
+        // 不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper;
     }
 
     /**
@@ -67,7 +82,7 @@ public class JSON {
      */
     public static String toJSONString(Object model) {
         try {
-            String json = mapper.writeValueAsString(model);
+            String json = getObjectMapper().writeValueAsString(model);
             return json;
         } catch (Exception e) {
             log.error("Java转Json异常", e);
@@ -83,7 +98,7 @@ public class JSON {
      */
     public static <T> T toJavaObject(String jsonStr, Class<T> clazz) {
         try {
-            T model = mapper.readValue(jsonStr, clazz);
+            T model = getObjectMapper().readValue(jsonStr, clazz);
             return model;
         } catch (Exception e) {
             log.error("Json转Java异常", e);
@@ -98,8 +113,8 @@ public class JSON {
      */
     public static Map<String, Object> parseObject(String jsonStr) {
         try {
-            JavaType javaType = mapper.getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
-            return mapper.readValue(jsonStr, javaType);
+            JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
+            return getObjectMapper().readValue(jsonStr, javaType);
         } catch (Exception e) {
             log.error("Json转Java异常", e);
             return null;
@@ -124,7 +139,7 @@ public class JSON {
      */
     public static <T> T parseObject(String jsonStr, TypeReference<T> typeReference) {
         try {
-            T model = mapper.readValue(jsonStr, typeReference);
+            T model = getObjectMapper().readValue(jsonStr, typeReference);
             return model;
         } catch (Exception e) {
             log.error("Json转Java异常", e);
@@ -140,8 +155,8 @@ public class JSON {
      */
     public static <T> List<T> parseArray(String jsonStr, Class<T> clazz) {
         try {
-            JavaType javaType = mapper.getTypeFactory().constructParametricType(List.class, clazz);
-            return mapper.readValue(jsonStr, javaType);
+            JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(List.class, clazz);
+            return getObjectMapper().readValue(jsonStr, javaType);
         } catch (Exception e) {
             log.error("Json转Java异常", e);
             return null;

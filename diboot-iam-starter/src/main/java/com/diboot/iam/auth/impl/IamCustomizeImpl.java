@@ -15,12 +15,12 @@
  */
 package com.diboot.iam.auth.impl;
 
+import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.starter.IamProperties;
-import com.diboot.core.util.AnnotationUtils;
 import com.diboot.iam.util.IamSecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

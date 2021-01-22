@@ -36,13 +36,14 @@ public class DTest {
     public void testFuzzyConvert(){
         String[] dateStrArray = {
                 "2019-06-02 13:35",
+                "2019-06-02 13:35:09",
+                "2019-06-02 13:35:02:000",
                 "2019年6月2日 13:35:00",
                 "2019/6/2 13:35:34:000"
         };
         for(String dateStr : dateStrArray){
             Date date = D.fuzzyConvert(dateStr);
             Assert.assertTrue(date != null);
-
         }
         Date date = D.convert2Date("2020/11/15");
         Calendar cal = Calendar.getInstance();

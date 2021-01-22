@@ -24,7 +24,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 import org.quartz.Job;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;

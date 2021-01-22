@@ -126,6 +126,33 @@ public class D extends DateUtils{
 	}
 
 	/***
+	 * 转换date为日期Y4MD格式化字符串
+	 * @param date
+	 * @return
+	 */
+	public static String convert2DateString(Date date) {
+		if (date == null) {
+			return null;
+		}
+		SimpleDateFormat format = new SimpleDateFormat(FORMAT_DATE_Y4MD);
+		return format.format(date);
+	}
+
+	/***
+	 * 转换date为日期时间Y4MDHMS格式化字符串
+	 * @param date
+	 * @return
+	 */
+	public static String convert2DateTimeString(Date date) {
+		if (date == null) {
+			return null;
+		} else {
+			SimpleDateFormat format = new SimpleDateFormat(FORMAT_DATETIME_SLASH_Y4MDHMS);
+			return format.format(date);
+		}
+	}
+
+	/***
 	 * 转换date为格式化字符串
 	 * @param date
 	 * @param fmt

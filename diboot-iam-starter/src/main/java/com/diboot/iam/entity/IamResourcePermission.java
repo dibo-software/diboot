@@ -55,7 +55,7 @@ public class IamResourcePermission extends BaseEntity {
     private String appModule;
 
     // 父级菜单
-    @NotNull(message = "父级菜单不能为空")
+    @NotNull(message = "父级资源不能为空")
     @TableField()
     private Long parentId;
 

@@ -18,9 +18,13 @@ package diboot.core.test.binder.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.copy.Accept;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.D;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.Date;
 
 /**
  * @author mazc@dibo.ltd
@@ -42,5 +46,8 @@ public class User extends BaseEntity {
     @Accept(name = "itemName")
     @TableField
     private String gender;
+
+    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
+    private Date birthdate;
 
 }

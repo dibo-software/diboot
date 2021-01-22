@@ -32,7 +32,7 @@ import java.util.List;
 public interface IamResourcePermissionService extends BaseIamService<IamResourcePermission> {
 
     /***
-     * 深度创建菜单权限及其所有子列表
+     * 深度创建资源权限及其所有子列表
      * @param iamResourcePermissionListVO
      */
     void deepCreatePermissionAndChildren(IamResourcePermissionListVO iamResourcePermissionListVO);
