@@ -57,8 +57,8 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         }
         IamResourcePermission iamResourcePermission = (IamResourcePermission) iamResourcePermissionListVO;
         if(!super.createEntity(iamResourcePermission)){
-            log.warn("新建菜单权限失败，displayType="+iamResourcePermission.getDisplayType());
-            throw new BusinessException(Status.FAIL_OPERATION, "新建菜单权限失败");
+            log.warn("新建资源权限失败，displayType="+iamResourcePermission.getDisplayType());
+            throw new BusinessException(Status.FAIL_OPERATION, "新建资源权限失败");
         }
         List<IamResourcePermissionListVO> children = iamResourcePermissionListVO.getChildren();
         if (V.notEmpty(children)) {
@@ -76,7 +76,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         iamResourcePermissionDTO.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name());
         boolean success = this.createEntity(iamResourcePermissionDTO);
         if (!success){
-            throw new BusinessException(Status.FAIL_OPERATION, "创建菜单失败");
+            throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
         }
 
         // 批量创建按钮/权限列表
@@ -98,7 +98,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     public void updateMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO) {
         // 检查是否设置了自身id为parentId，如果设置parentId与自身id相同，将会导致非常严重的潜在隐患
         if (V.equals(iamResourcePermissionDTO.getId(), iamResourcePermissionDTO.getParentId())){
-            throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单为自身");
+            throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单资源为自身");
         }
         // 设置menu的接口列表
         if (V.notEmpty(iamResourcePermissionDTO.getApiSetList())){
@@ -178,7 +178,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
                 .collect(Collectors.toList());
         if (V.notEmpty(subMenuIdList)){
             subMenuIdList.forEach(menuId -> {
-                log.info("开始递归删除子菜单：{}", menuId);
+                log.info("开始递归删除子资源：{}", menuId);
                 this.deleteMenuAndPermissions(menuId);
             });
         }

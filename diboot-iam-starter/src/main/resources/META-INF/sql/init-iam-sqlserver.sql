@@ -136,7 +136,7 @@ create table ${SCHEMA}.iam_resource_permission
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'app_module';
-execute sp_addextendedproperty 'MS_Description', N'菜单ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'parent_id';
+execute sp_addextendedproperty 'MS_Description', N'父资源ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_type';
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
 execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'resource_code';

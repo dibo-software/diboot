@@ -82,7 +82,7 @@ public class ApiPermissionExtractor {
                 // 注解
                 BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
                 if(bindPermission != null){
-                    // 当前菜单权限
+                    // 当前资源权限
                     codePrefix = bindPermission.code();
                     if(V.isEmpty(codePrefix)){
                         Class<?> entityClazz = BeanUtils.getGenericityClass(controllerClass, 0);
