@@ -29,7 +29,6 @@ import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;

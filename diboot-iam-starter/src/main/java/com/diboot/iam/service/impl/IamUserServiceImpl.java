@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -24,7 +23,6 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
@@ -42,7 +40,6 @@ import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamHelper;
 import com.diboot.iam.vo.IamRoleVO;
-import com.diboot.iam.vo.IamUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * 系统用户相关Service实现

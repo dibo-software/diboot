@@ -22,8 +22,8 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
-import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.service.DictionaryService;
+import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.KeyValue;
@@ -34,8 +34,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 数据字典相关service实现

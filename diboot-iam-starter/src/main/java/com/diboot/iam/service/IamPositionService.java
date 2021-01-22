@@ -17,7 +17,6 @@ package com.diboot.iam.service;
 
 import com.diboot.iam.entity.IamPosition;
 import com.diboot.iam.entity.IamUserPosition;
-import com.diboot.iam.vo.IamPositionVO;
 
 import java.util.List;
 
