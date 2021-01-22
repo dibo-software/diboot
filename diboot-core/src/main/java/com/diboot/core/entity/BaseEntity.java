@@ -63,8 +63,6 @@ public abstract class BaseEntity implements Serializable {
      * 默认记录创建时间字段，新建时由数据库赋值
      */
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
-    @JsonDeserialize(using = CustomDateDeserializer.class)
-    @JsonSerialize(using = CustomDateSerializer.class)
     private Date createTime;
 
     /***

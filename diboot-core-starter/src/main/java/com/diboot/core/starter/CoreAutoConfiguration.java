@@ -40,6 +40,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -73,8 +74,14 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
         objectMapper.registerModule(simpleModule);
         // 时间格式化
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
         objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS) {
+            @Override
+            public Date parse(String dateStr) {
+                return D.fuzzyConvert(dateStr);
+            }
+        };
+        objectMapper.setDateFormat(dateFormat);
         // 设置格式化内容
         converter.setObjectMapper(objectMapper);
 

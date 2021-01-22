@@ -24,10 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 /***
  * JSON操作辅助类
@@ -42,8 +39,13 @@ public class JSON {
 
     static {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        // 时间转化配置：解决InvalidFormatException: Can not deserialize value of type java.util.Date
-//        mapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS) {
+            @Override
+            public Date parse(String dateStr) {
+                return D.fuzzyConvert(dateStr);
+            }
+        };
+        mapper.setDateFormat(dateFormat);
         // 如果不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
