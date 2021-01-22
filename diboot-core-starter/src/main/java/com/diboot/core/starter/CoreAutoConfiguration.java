@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,6 +58,12 @@ import java.util.TimeZone;
 public class CoreAutoConfiguration implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(CoreAutoConfiguration.class);
 
+    @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
+    private String defaultDatePattern;
+
+    @Value("${spring.jackson.time-zone:GMT+8}")
+    private String defaultTimeZone;
+
     @Bean
     @ConditionalOnMissingBean
     public HttpMessageConverters jacksonHttpMessageConverters() {
@@ -74,8 +81,8 @@ public class CoreAutoConfiguration implements WebMvcConfigurer {
         objectMapper.registerModule(simpleModule);
         // 时间格式化
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        SimpleDateFormat dateFormat = new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS) {
+        objectMapper.setTimeZone(TimeZone.getTimeZone(defaultTimeZone));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
             @Override
             public Date parse(String dateStr) {
                 return D.fuzzyConvert(dateStr);
