@@ -448,7 +448,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				list = Collections.emptyList();
 			}
 			else if(list.size() > BaseConfig.getBatchSize()){
-				log.warn("单次查询记录数量过大，返回结果数={}", list.size());
+				log.warn("单次查询记录数量过大，请及时检查优化。返回结果数={}", list.size());
 			}
 			return list;
 		}
@@ -553,7 +553,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				list = Collections.emptyList();
 			}
 			else if(list.size() > BaseConfig.getBatchSize()){
-				log.warn("单次查询记录数量过大，返回结果数={}", list.size());
+				log.warn("单次查询记录数量过大，请及时检查优化。返回结果数={}", list.size());
 			}
 			return list;
 		}
@@ -571,6 +571,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<Map<String, Object>> mapList = super.listMaps(queryWrapper);
 		if(mapList == null){
 			return Collections.emptyList();
+		}
+		else if(mapList.size() > BaseConfig.getBatchSize()){
+			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", mapList.size());
 		}
 		// 转换为Key-Value键值对
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
