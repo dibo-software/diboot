@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.FormatterRegistry;
@@ -34,7 +35,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /***
  * Spring配置文件
@@ -47,6 +50,12 @@ import java.util.List;
 @MapperScan({"com.diboot.core.mapper", "diboot.core.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
+
+    @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
+    private String defaultDatePattern;
+
+    @Value("${spring.jackson.time-zone:GMT+8}")
+    private String defaultTimeZone;
 
     /**
      * 覆盖Jackson转换
@@ -67,9 +76,17 @@ public class SpringMvcConfig implements WebMvcConfigurer {
         objectMapper.registerModule(simpleModule);
         // 时间格式化
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setDateFormat(new SimpleDateFormat(D.FORMAT_DATETIME_Y4MDHMS));
+        objectMapper.setTimeZone(TimeZone.getTimeZone(defaultTimeZone));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
+            @Override
+            public Date parse(String dateStr) {
+                return D.fuzzyConvert(dateStr);
+            }
+        };
+        objectMapper.setDateFormat(dateFormat);
         // 设置格式化内容
         converter.setObjectMapper(objectMapper);
+
         converters.add(0, converter);
     }
 
