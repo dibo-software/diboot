@@ -34,6 +34,7 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -95,6 +96,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public T getEntity(Serializable id){
 		return super.getById(id);
+	}
+
+	@Override
+	public <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn) {
+		String fieldName = convertGetterToFieldName(getterFn);
+		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
+				.select(idGetterFn, getterFn)
+				.eq(idGetterFn, idVal);
+		T entity = getSingleEntity(queryWrapper);
+		return entity != null? (FT)BeanUtils.getProperty(entity, fieldName) : null;
 	}
 
 	@Override
@@ -437,7 +448,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				list = Collections.emptyList();
 			}
 			else if(list.size() > BaseConfig.getBatchSize()){
-				log.warn("单次查询记录数量过大，返回结果数={}", list.size());
+				log.warn("单次查询记录数量过大，请及时检查优化。返回结果数={}", list.size());
 			}
 			return list;
 		}
@@ -499,7 +510,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean exists(IGetter<T> getterFn, Object value) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		queryWrapper.eq(BeanUtils.convertToFieldName(getterFn), value);
+		String field = BeanUtils.convertToFieldName(getterFn);
+		String column = S.toSnakeCase(field);
+		queryWrapper.select(column).eq(column, value);
 		return exists(queryWrapper);
 	}
 
@@ -540,7 +553,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				list = Collections.emptyList();
 			}
 			else if(list.size() > BaseConfig.getBatchSize()){
-				log.warn("单次查询记录数量过大，返回结果数={}", list.size());
+				log.warn("单次查询记录数量过大，请及时检查优化。返回结果数={}", list.size());
 			}
 			return list;
 		}
@@ -558,6 +571,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<Map<String, Object>> mapList = super.listMaps(queryWrapper);
 		if(mapList == null){
 			return Collections.emptyList();
+		}
+		else if(mapList.size() > BaseConfig.getBatchSize()){
+			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", mapList.size());
 		}
 		// 转换为Key-Value键值对
 		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
@@ -641,30 +657,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	protected Page<T> convertToIPage(Wrapper queryWrapper, Pagination pagination){
-		if(pagination == null){
-			return null;
-		}
-		// 如果是默认id排序
-		if(pagination.isDefaultOrderBy()){
-			// 优化排序
-			String pk = getPrimaryKeyField();
-			// 主键非有序id字段，需要清空默认排序以免报错
-			if(!Cons.FieldName.id.name().equals(pk)){
-//				log.warn("{} 的主键非有序id，无法自动设置排序字段，请自行指定！", entityClass.getName());
-				pagination.clearDefaultOrder();
-				//设置时间排序
-				pagination.setDefaultCreateTimeOrderBy();
-			}
-		}
-		return (Page<T>)pagination.toPage();
-	}
-
-	/**
-	 * 获取当前主键字段名
-	 * @return
-	 */
-	private String getPrimaryKeyField(){
-		return ContextHelper.getPrimaryKey(entityClass);
+		return ServiceAdaptor.convertToIPage(pagination, entityClass);
 	}
 
 	/**

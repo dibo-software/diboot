@@ -15,6 +15,7 @@
  */
 package diboot.core.test.util;
 
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.PropertiesUtils;
 import diboot.core.test.StartupApplication;
@@ -48,6 +49,9 @@ public class PropertiesTest {
         String str2 = PropertiesUtils.get("spring.datasource.username");
         Assert.assertNotNull(str1);
         Assert.assertNotNull(str2);
+        System.out.println(BaseConfig.getPageSize());
+        Assert.assertTrue(BaseConfig.getPageSize() == 20);
+        Assert.assertTrue(BaseConfig.getBatchSize() == 1000);
     }
 
     @Test

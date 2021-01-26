@@ -24,11 +24,13 @@ import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.service.DictionaryService;
+import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,14 +176,18 @@ public class RelationsBinder {
      * @param <VO>
      */
     private static <VO> void doBindingDict(List<VO> voList, FieldAnnotation fieldAnno) {
-        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
-        if(dictionaryService != null){
+        DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
+        if(bindDictService != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
             String dictValueField = annotation.field();
             if(V.isEmpty(dictValueField)){
                 dictValueField = S.replace(fieldAnno.getFieldName(), "Label", "");
             }
-            dictionaryService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
+            // 字典绑定接口化
+            bindDictService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
+        }
+        else{
+            throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "BindDictService未实现，无法使用BindDict注解！");
         }
     }
 

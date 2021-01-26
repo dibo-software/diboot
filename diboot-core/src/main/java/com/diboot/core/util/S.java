@@ -19,6 +19,11 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -325,6 +330,24 @@ public class S extends StringUtils{
 			return Character.toUpperCase(input.charAt(0)) + input.substring(1);
 		}
 		return null;
+	}
+
+	/**
+	 * 按行读取文件
+	 * @param input
+	 * @param charset
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<String> readLines(final InputStream input, String charset) throws IOException {
+		final InputStreamReader inputReader = new InputStreamReader(input, Charset.forName(charset));
+		final BufferedReader reader = new BufferedReader(inputReader);
+		final List<String> list = new ArrayList<>();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			list.add(line);
+		}
+		return list;
 	}
 
 }

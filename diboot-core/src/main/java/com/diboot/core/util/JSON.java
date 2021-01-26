@@ -15,15 +15,17 @@
  */
 package com.diboot.core.util;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
+import com.diboot.core.config.BaseConfig;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /***
  * JSON操作辅助类
@@ -31,55 +33,154 @@ import java.util.Map;
  * @version v2.0
  * @date 2019/01/01
  */
-public class JSON extends JSONObject{
-	private static final Logger log = LoggerFactory.getLogger(JSON.class);
+public class JSON {
+    private static final Logger log = LoggerFactory.getLogger(JSON.class);
 
-	/**
-	 * 序列化配置
-	 */
-	private static SerializeConfig serializeConfig = new SerializeConfig();
-	static {
-		serializeConfig.put(Date.class, new SimpleDateFormatSerializer(D.FORMAT_DATETIME_Y4MDHM));
-	}
+    private static ObjectMapper objectMapper;
 
-	/**
-	 * 将Java对象转换为Json String
-	 * @param object
-	 * @return
-	 */
-	public static String stringify(Object object){
-		return toJSONString(object, serializeConfig);
-	}
+    /**
+     * 初始化ObjectMapper
+     * @return
+     */
+    private static ObjectMapper getObjectMapper(){
+        if(objectMapper != null){
+            return objectMapper;
+        }
+        objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        // 设置时区和日期转换
+        String defaultDatePattern = BaseConfig.getProperty("spring.jackson.date-format", D.FORMAT_DATETIME_Y4MDHMS);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
+            @Override
+            public Date parse(String dateStr) {
+                return D.fuzzyConvert(dateStr);
+            }
+        };
+        objectMapper.setDateFormat(dateFormat);
+        String timeZone = BaseConfig.getProperty("spring.jackson.time-zone", "GMT+8");
+        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
+        // 不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper;
+    }
 
-	/***
-	 * 将JSON字符串转换为java对象
-	 * @param jsonStr
-	 * @return
-	 */
-	public static Map toMap(String jsonStr){
-		return parseObject(jsonStr);
-	}
+    /**
+     * 将Java对象转换为Json String
+     *
+     * @param object
+     * @return
+     */
+    public static String stringify(Object object) {
+        return toJSONString(object);
+    }
 
-	/***
-	 * 将JSON字符串转换为java对象
-	 * @param jsonStr
-	 * @return
-	 */
-	public static LinkedHashMap toLinkedHashMap(String jsonStr){
-		if(V.isEmpty(jsonStr)){
-			return null;
-		}
-		return toJavaObject(jsonStr, LinkedHashMap.class);
-	}
+    /**
+     * 转换对象为JSON字符串
+     *
+     * @param model
+     * @return
+     */
+    public static String toJSONString(Object model) {
+        try {
+            String json = getObjectMapper().writeValueAsString(model);
+            return json;
+        } catch (Exception e) {
+            log.error("Java转Json异常", e);
+            return null;
+        }
+    }
 
-	/***
-	 * 将JSON字符串转换为java对象
-	 * @param jsonStr
-	 * @param clazz
-	 * @return
-	 */
-	public static <T> T toJavaObject(String jsonStr, Class<T> clazz){
-		return JSONObject.parseObject(jsonStr, clazz);
-	}
+    /***
+     * 将JSON字符串转换为java对象
+     * @param jsonStr
+     * @param clazz
+     * @return
+     */
+    public static <T> T toJavaObject(String jsonStr, Class<T> clazz) {
+        try {
+            T model = getObjectMapper().readValue(jsonStr, clazz);
+            return model;
+        } catch (Exception e) {
+            log.error("Json转Java异常", e);
+            return null;
+        }
+    }
 
+    /***
+     * 将JSON字符串转换为Map<String, Object></>对象
+     * @param jsonStr
+     * @return
+     */
+    public static Map<String, Object> parseObject(String jsonStr) {
+        try {
+            JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
+            return getObjectMapper().readValue(jsonStr, javaType);
+        } catch (Exception e) {
+            log.error("Json转Java异常", e);
+            return null;
+        }
+    }
+
+    /***
+     * 将JSON字符串转换为java对象
+     * @param jsonStr
+     * @param clazz
+     * @return
+     */
+    public static <T> T parseObject(String jsonStr, Class<T> clazz) {
+        return toJavaObject(jsonStr, clazz);
+    }
+
+    /***
+     * 将JSON字符串转换为复杂类型的Java对象
+     * @param jsonStr
+     * @param typeReference
+     * @return
+     */
+    public static <T> T parseObject(String jsonStr, TypeReference<T> typeReference) {
+        try {
+            T model = getObjectMapper().readValue(jsonStr, typeReference);
+            return model;
+        } catch (Exception e) {
+            log.error("Json转Java异常", e);
+            return null;
+        }
+    }
+
+
+    /***
+     * 将JSON字符串转换为list对象
+     * @param jsonStr
+     * @return
+     */
+    public static <T> List<T> parseArray(String jsonStr, Class<T> clazz) {
+        try {
+            JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(List.class, clazz);
+            return getObjectMapper().readValue(jsonStr, javaType);
+        } catch (Exception e) {
+            log.error("Json转Java异常", e);
+            return null;
+        }
+    }
+
+    /***
+     * 将JSON字符串转换为java对象
+     * @param jsonStr
+     * @return
+     */
+    public static Map toMap(String jsonStr) {
+        return toJavaObject(jsonStr, Map.class);
+    }
+
+    /***
+     * 将JSON字符串转换为Map对象
+     * @param jsonStr
+     * @return
+     */
+    public static LinkedHashMap toLinkedHashMap(String jsonStr) {
+        if (V.isEmpty(jsonStr)) {
+            return null;
+        }
+        return toJavaObject(jsonStr, LinkedHashMap.class);
+    }
 }

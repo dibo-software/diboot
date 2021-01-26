@@ -66,7 +66,7 @@ public class DepartmentDTO extends Department {
     @BindQuery(comparison = Comparison.LT, field = "createTime")
     private Date createTimeEnd;
 
-    private Date getCreateTimeEnd(){
+    public Date getCreateTimeEnd(){
         return D.nextDay(createTime);
     }
 

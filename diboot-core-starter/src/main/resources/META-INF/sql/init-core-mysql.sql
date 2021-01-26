@@ -1,8 +1,9 @@
 -- 建表
 CREATE TABLE `dictionary` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `app_module`  varchar(50)   null comment '应用模块',
   `type` varchar(50) NOT NULL COMMENT '字典类型',
   `item_name` varchar(100) NOT NULL COMMENT '显示名',
   `item_value` varchar(100) DEFAULT NULL COMMENT '存储值',
@@ -10,7 +11,7 @@ CREATE TABLE `dictionary` (
   `extdata` varchar(200) DEFAULT NULL COMMENT '扩展JSON',
   `sort_id` smallint NOT NULL DEFAULT '99' COMMENT '排序号',
   `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
-  `is_deletable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否可删',
+  `is_deletable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可删',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)

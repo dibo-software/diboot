@@ -16,9 +16,10 @@
 package com.diboot.core.binding.query.dynamic;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
@@ -55,12 +56,12 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
      */
     public E queryOne(Class<E> entityClazz){
         this.mainEntityClass = entityClazz;
-        BaseService baseService = ContextHelper.getBaseServiceByEntity(this.mainEntityClass);
-        if(baseService != null){
-            return (E)baseService.getEntity(this);
+        IService<E> iService = ContextHelper.getIServiceByEntity(this.mainEntityClass);
+        if(iService != null){
+            return ServiceAdaptor.getSingleEntity(iService, this);
         }
         else{
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService实现: "+this.mainEntityClass.getSimpleName());
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "查询对象无BaseService/IService实现: "+this.mainEntityClass.getSimpleName());
         }
     }
 
@@ -70,12 +71,13 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
      * @return
      */
     public List<E> queryList(Class<E> entityClazz){
-        BaseService baseService = ContextHelper.getBaseServiceByEntity(entityClazz);
-        if(baseService != null){
-            return (List<E>)baseService.getEntityList(this);
+        this.mainEntityClass = entityClazz;
+        IService iService = ContextHelper.getIServiceByEntity(entityClazz);
+        if(iService != null){
+            return ServiceAdaptor.queryList(iService, this);
         }
         else{
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService实现: "+entityClazz.getSimpleName());
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
         }
     }
 
@@ -84,13 +86,14 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
      * @param entityClazz
      * @return
      */
-    public List<E> queryList(Class<E> entityClazz, Pagination pagination){
-        BaseService baseService = ContextHelper.getBaseServiceByEntity(entityClazz);
-        if(baseService != null){
-            return (List<E>)baseService.getEntityList(this, pagination);
+    public List queryList(Class<E> entityClazz, Pagination pagination){
+        this.mainEntityClass = entityClazz;
+        IService iService = ContextHelper.getIServiceByEntity(entityClazz);
+        if(iService != null){
+            return ServiceAdaptor.queryList(iService, (QueryWrapper)this, pagination, entityClazz);
         }
         else{
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService实现: "+entityClazz.getSimpleName());
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
         }
     }
 

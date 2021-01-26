@@ -21,6 +21,7 @@ import com.diboot.core.vo.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -35,6 +36,8 @@ public class DTest {
     public void testFuzzyConvert(){
         String[] dateStrArray = {
                 "2019-06-02 13:35",
+                "2019-06-02 13:35:09",
+                "2019-06-02 13:35:02:000",
                 "2019年6月2日 13:35:00",
                 "2019/6/2 13:35:34:000"
         };
@@ -42,6 +45,17 @@ public class DTest {
             Date date = D.fuzzyConvert(dateStr);
             Assert.assertTrue(date != null);
         }
+        Date date = D.convert2Date("2020/11/15");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        String week = D.getCnWeek(date);
+        Assert.assertTrue(week.equals("星期日"));
+        week = D.getEnWeek(date);
+        Assert.assertTrue(week.equals("Sun"));
+        String month = D.getCnMonth(date);
+        Assert.assertTrue(month.equals("十一月"));
+        month = D.getEnMonth(date);
+        Assert.assertTrue(month.equals("Nov"));
     }
 
     @Test

@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.service.impl.DictionaryServiceImpl;
+import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
@@ -31,7 +31,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.UserRole;
-import diboot.core.test.binder.service.SysuserService;
+import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,10 +56,10 @@ import java.util.*;
 public class BaseServiceTest {
 
     @Autowired
-    DictionaryServiceImpl dictionaryService;
+    DictionaryServiceExtImpl dictionaryService;
 
     @Autowired
-    SysuserService sysuserService;
+    UserService userService;
 
     @Test
     public void testGet(){
@@ -110,7 +110,7 @@ public class BaseServiceTest {
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
         dictionaryService.createEntity(dictionary);
-        Assert.assertTrue(dictionary.getPrimaryKey() != null);
+        Assert.assertTrue(dictionary.getPrimaryKeyVal() != null);
         // 查询是否创建成功
         LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Dictionary::getType, TYPE);
@@ -284,6 +284,13 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void testGetValueOfField(){
+        String val = dictionaryService.getValueOfField(Dictionary::getId, 2L, Dictionary::getItemValue);
+        Assert.assertTrue("M".equals(val));
+        System.out.println(val);
+    }
+
+    @Test
     public void testGetLimit(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
@@ -344,19 +351,19 @@ public class BaseServiceTest {
 
         // 新增
         List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
-        sysuserService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         List<UserRole> list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == roleIdList.size());
 
         // 更新
         roleIdList = Arrays.asList(13L);
-        sysuserService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 1);
 
         // 删除
         roleIdList = null;
-        sysuserService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
+        userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 0);
     }

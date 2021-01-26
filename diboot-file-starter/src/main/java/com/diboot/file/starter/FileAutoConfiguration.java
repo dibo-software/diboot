@@ -15,10 +15,12 @@
  */
 package com.diboot.file.starter;
 
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.starter.SqlHandler;
-import com.diboot.core.util.SqlExecutor;
-import lombok.extern.slf4j.Slf4j;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
+import com.diboot.file.service.FileStorageService;
+import com.diboot.file.service.impl.LocalFileStorageServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,11 +28,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-@Slf4j
+/**
+ * 组件初始化
+ * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2020/11/28
+ */
 @Configuration
 @EnableConfigurationProperties(FileProperties.class)
 @ComponentScan(basePackages = {"com.diboot.file"})
@@ -38,35 +44,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 public class FileAutoConfiguration {
 
     @Autowired
-    FileProperties fileProperties;
-
-    @Autowired
-    Environment environment;
-
-    @Bean
-    @ConditionalOnMissingBean(FilePluginManager.class)
-    public FilePluginManager filePluginManager() {
-        // 初始化SCHEMA
-        SqlHandler.init(environment);
-        FilePluginManager pluginManager = new FilePluginManager() {
-        };
-        // 检查数据库字典是否已存在
-        if (fileProperties.isInitSql()) {
-            String initDetectSql = "SELECT uuid FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
-            if(SqlHandler.checkSqlExecutable(initDetectSql) == false){
-                SqlHandler.initBootstrapSql(pluginManager.getClass(), environment, "file");
-                log.info("diboot-file 初始化SQL完成.");
-            }
-            else{
-                String upgradeDetectSql = "SELECT tenant_id FROM ${SCHEMA}.upload_file WHERE uuid='xyz'";
-                if(SqlHandler.checkSqlExecutable(upgradeDetectSql) == false){
-                    SqlHandler.initUpgradeSql(pluginManager.getClass(), environment, "file");
-                    log.info("diboot-file 更新SQL完成.");
-                }
-            }
-        }
-        return pluginManager;
-    }
+    private FileProperties fileProperties;
 
     /**
      * 需要文件上传，开启此配置
@@ -74,11 +52,43 @@ public class FileAutoConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean(MultipartResolver.class)
+    @ConditionalOnMissingBean
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver bean = new CommonsMultipartResolver();
         bean.setDefaultEncoding(Cons.CHARSET_UTF8);
-        bean.setMaxUploadSize(fileProperties.getMaxUploadSize());
+        Long maxUploadSize = null;
+        // 兼容 servlet 配置参数
+        String servletMaxUploadSize = BaseConfig.getProperty("spring.servlet.multipart.max-request-size");
+        if(V.notEmpty(servletMaxUploadSize)){
+            if(S.containsIgnoreCase(servletMaxUploadSize, "M")){
+                int index = S.indexOfIgnoreCase(servletMaxUploadSize,"M");
+                maxUploadSize = Long.parseLong(S.substring(servletMaxUploadSize, 0, index));
+                maxUploadSize = maxUploadSize * 1024 * 1024;
+            }
+            else if(S.containsIgnoreCase(servletMaxUploadSize, "K")){
+                int index = S.indexOfIgnoreCase(servletMaxUploadSize,"K");
+                maxUploadSize = Long.parseLong(S.substring(servletMaxUploadSize, 0, index));
+                maxUploadSize = maxUploadSize * 1024;
+            }
+            else{
+                maxUploadSize = Long.parseLong(servletMaxUploadSize);
+            }
+        }
+        else{
+            maxUploadSize = fileProperties.getMaxUploadSize();
+        }
+        bean.setMaxUploadSize(maxUploadSize);
         return bean;
     }
+    /**
+     * 默认使用本地存储
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public FileStorageService fileStorageService() {
+        return new LocalFileStorageServiceImpl();
+    }
+
 }

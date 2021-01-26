@@ -2,6 +2,7 @@
 CREATE TABLE upload_file (
    uuid varchar(32) NOT NULL,
    tenant_id            bigint        not null default 0,
+   app_module          varchar(50),
    rel_obj_type varchar(50),
    rel_obj_id varchar(32),
    rel_obj_field varchar(50),
@@ -18,6 +19,7 @@ CREATE TABLE upload_file (
 -- 添加备注,
 comment on column upload_file.uuid is 'UUID';
 comment on column upload_file.tenant_id is '租户ID';
+comment on column upload_file.app_module is '应用模块';
 comment on column upload_file.rel_obj_type is '关联对象类';
 comment on column upload_file.rel_obj_id is '关联对象ID';
 comment on column upload_file.rel_obj_field is '关联对象属性名称';

@@ -19,7 +19,7 @@ import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
-import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -34,7 +34,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class FieldBinderVO extends Sysuser{
+public class FieldBinderVO extends User {
     private static final long serialVersionUID = 3526115343377985725L;
 
     // 字段关联，相同条件的entity+condition将合并为一条SQL查询

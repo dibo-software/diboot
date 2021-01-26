@@ -16,6 +16,7 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -36,6 +37,7 @@ public class Dictionary extends BaseExtEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
 
@@ -45,6 +47,12 @@ public class Dictionary extends BaseExtEntity {
     @NotNull(message = "上级ID不能为空，如无请设为0")
     @TableField
     private Long parentId = 0L;
+
+    /**
+     * 应用模块
+     */
+    @TableField
+    private String appModule;
 
     /***
      * 数据字典类型
@@ -86,12 +94,12 @@ public class Dictionary extends BaseExtEntity {
      * 是否为系统预置（预置不可删除）
      */
     @TableField("is_deletable")
-    private boolean deletable = false;
+    private Boolean isDeletable;
 
     /***
      * 是否可编辑
      */
     @TableField("is_editable")
-    private boolean editable = false;
+    private Boolean isEditable;
 
 }

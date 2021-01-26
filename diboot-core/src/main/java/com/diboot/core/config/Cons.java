@@ -76,4 +76,78 @@ public class Cons {
         createBy
     }
 
+    /**
+     * 字典Entity相关属性名定义
+     */
+    public static final String FIELD_ITEM_NAME = "itemName";
+    public static final String FIELD_ITEM_VALUE = "itemValue";
+    public static final String FIELD_TYPE = "type";
+
+    /**
+     * JWT token前缀
+     */
+    public static final String JWT_TOKEN_PREFIX = "Bearer ";
+    /**
+     * JWT token header头名称
+     */
+    public static final String JWT_TOKEN_HEADER_NAME = "Authorization";
+
+    /**
+     * 启用/停用 状态字典定义
+     */
+    public enum ENABLE_STATUS{
+        /**
+         * 正常
+         */
+        A("正常"),
+        /**
+         * 停用
+         */
+        I("停用");
+
+        private String label;
+        ENABLE_STATUS(String label){
+            this.label = label;
+        }
+
+        public String label(){
+            return label;
+        }
+        public static String getLabel(String val){
+            if(val.equalsIgnoreCase(A.name())){
+                return A.label;
+            }
+            return I.label;
+        }
+    }
+
+    /**
+     * 成功/失败 结果状态字典定义
+     */
+    public static enum RESULT_STATUS{
+        /**
+         * 正常
+         */
+        S("成功"),
+        /**
+         * 停用
+         */
+        F("失败");
+
+        private String label;
+        RESULT_STATUS(String label){
+            this.label = label;
+        }
+
+        public String label(){
+            return label;
+        }
+        public static String getLabel(String val){
+            if(val.equalsIgnoreCase(S.name())){
+                return S.label;
+            }
+            return F.label;
+        }
+    }
+
 }

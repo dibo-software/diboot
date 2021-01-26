@@ -106,7 +106,6 @@ public class SqlExecutor {
                 }
                 rs.close();
             }
-            log.debug("<==  {}", JSON.stringify(mapList));
             return mapList;
         }
         catch(Exception e){

@@ -15,11 +15,11 @@
  */
 package com.diboot.file.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -47,8 +47,15 @@ public class UploadFile extends BaseEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     @TableField
     private Long tenantId;
+
+    /**
+     * 应用模块
+     */
+    @TableField
+    private String appModule;
 
     @NotNull(message = "关联对象类不能为空！")
     @TableField
@@ -67,7 +74,7 @@ public class UploadFile extends BaseEntity {
     private String fileName;
 
     @TableField
-    @JSONField(serialize = false)
+    @JsonIgnore
     private String storagePath;
 
     /**

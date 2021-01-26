@@ -55,8 +55,10 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
      * Service实现类
      */
     private BaseService baseService;
-
-    @Autowired
+    /**
+     * 字典service
+     */
+    @Autowired(required = false)
     protected DictionaryService dictionaryService;
 
     /**
@@ -102,7 +104,24 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
      * @throws Exception
      */
     protected <VO> JsonResult getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
-        QueryWrapper<E> queryWrapper = super.buildQueryWrapper(entity);
+        QueryWrapper<E> queryWrapper = super.buildQueryWrapperByQueryParams(entity);
+        // 查询当前页的数据
+        List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
+        // 返回结果
+        return JsonResult.OK(voList).bindPagination(pagination);
+    }
+
+    /***
+     * 获取某VO资源的集合，用于子类重写的方法
+     * <p>
+     * url参数示例: /${bindURL}?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
+     * </p>
+     * @return JsonResult
+     * @throws Exception
+     */
+    protected <VO> JsonResult getViewObjectList(E entity, Pagination pagination, Class<VO> voClass, boolean buildQueryWrapperByDTO) throws Exception {
+        //DTO全部属性参与构建时调用
+        QueryWrapper<E> queryWrapper = buildQueryWrapperByDTO? super.buildQueryWrapperByDTO(entity) : super.buildQueryWrapperByQueryParams(entity);
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
         // 返回结果

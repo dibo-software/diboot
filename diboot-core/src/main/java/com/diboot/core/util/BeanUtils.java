@@ -25,7 +25,7 @@ import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.support.AopUtils;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
@@ -235,6 +235,18 @@ public class BeanUtils {
     /***
      * Key-Object对象Map
      * @param allLists
+     * @param getterFns
+     * @return
+     */
+    public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, IGetter<T>... getterFns){
+        String[] fields = convertGettersToFields(getterFns);
+        return convertToStringKeyObjectMap(allLists, fields);
+    }
+
+    /***
+     * Key-Object对象Map
+     * @param allLists
+     * @param fields
      * @return
      */
     public static <T> Map<String, T> convertToStringKeyObjectMap(List<T> allLists, String... fields){
@@ -273,6 +285,18 @@ public class BeanUtils {
             log.warn("转换key-model异常", e);
         }
         return allListMap;
+    }
+
+
+    /***
+     * Key-Object对象Map
+     * @param allLists
+     * @param getterFns
+     * @return
+     */
+    public static <T> Map<String, List<T>> convertToStringKeyObjectListMap(List<T> allLists, IGetter<T>... getterFns){
+        String[] fields = convertGettersToFields(getterFns);
+        return convertToStringKeyObjectListMap(allLists, fields);
     }
 
     /***
@@ -706,8 +730,7 @@ public class BeanUtils {
      * @return
      */
     public static Class getTargetClass(Object instance){
-        Class targetClass = (instance instanceof Class)? (Class)instance : AopUtils.getTargetClass(instance);
-        return targetClass;
+        return (instance instanceof Class)? (Class)instance : AopProxyUtils.ultimateTargetClass(instance);
     }
 
     /**
@@ -718,6 +741,7 @@ public class BeanUtils {
      */
     public static Class getGenericityClass(Object instance, int index){
         Class hostClass = getTargetClass(instance);
+
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
         if(V.isEmpty(types) || index >= types.length){
@@ -782,4 +806,21 @@ public class BeanUtils {
         return lambda;
     }
 
+    /**
+     * 转换Getter数组为字段名数组
+     * @param getterFns
+     * @param <T>
+     * @return
+     */
+    private static <T> String[] convertGettersToFields(IGetter<T>... getterFns){
+        String[] fields = null;
+        if(getterFns != null){
+            fields = new String[getterFns.length];
+            for(int i=0; i<getterFns.length; i++){
+                IGetter<T> getter = getterFns[i];
+                fields[i] = convertToFieldName(getter);
+            }
+        }
+        return fields;
+    }
 }

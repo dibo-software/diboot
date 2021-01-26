@@ -16,7 +16,7 @@
 package diboot.core.test.binder.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.service.BaseService;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.entity.Department;
@@ -29,7 +29,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/1/30
  */
-public interface DepartmentService extends BaseService<Department> {
+public interface DepartmentService extends IService<Department> {
 
     List<Department> getDepartmentSqlList(QueryWrapper<DepartmentDTO> queryWrapper, Pagination pagination);
 }

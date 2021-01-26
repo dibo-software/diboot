@@ -76,40 +76,49 @@ public class BaseConfig {
 		return value != null? value : defaultValue;
 	}
 
+	private static Integer cutLength = null;
 	/***
 	 * 获取截取长度
 	 * @return
 	 */
 	public static int getCutLength(){
-		Integer length = PropertiesUtils.getInteger("system.default.cutLength");
-		if(length != null){
-			return length;
+		if(cutLength == null){
+			cutLength = PropertiesUtils.getInteger("system.default.cutLength");
+			if(cutLength == null){
+				cutLength = 20;
+			}
 		}
-		return 20;
+		return cutLength;
 	}
 
+	private static Integer pageSize = null;
 	/***
 	 * 默认页数
 	 * @return
 	 */
     public static int getPageSize() {
-		Integer length = PropertiesUtils.getInteger("system.pagination.pageSize");
-		if(length != null){
-			return length;
+		if(pageSize == null){
+			pageSize = PropertiesUtils.getInteger("system.pagination.pageSize");
+			if(pageSize == null){
+				pageSize = 20;
+			}
 		}
-		return 20;
+		return pageSize;
     }
 
+	private static Integer batchSize = null;
 	/***
 	 * 获取批量插入的每批次数量
  	 * @return
 	 */
 	public static int getBatchSize() {
-		Integer length = PropertiesUtils.getInteger("system.batch.size");
-		if(length != null){
-			return length;
+		if(batchSize == null){
+			batchSize = PropertiesUtils.getInteger("system.batch.size");
+			if(batchSize == null){
+				batchSize = 1000;
+			}
 		}
-		return 1000;
+		return batchSize;
 	}
 
 	private static String ACTIVE_FLAG_VALUE = null;

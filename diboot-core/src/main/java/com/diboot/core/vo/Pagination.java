@@ -15,13 +15,13 @@
  */
 package com.diboot.core.vo;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -109,7 +109,7 @@ public class Pagination implements Serializable {
      * 是否为默认排序
      * @return
      */
-    @JSONField(serialize = false)
+    @JsonIgnore
     public boolean isDefaultOrderBy(){
         return V.equals(orderBy, DEFAULT_ORDER_BY);
     }

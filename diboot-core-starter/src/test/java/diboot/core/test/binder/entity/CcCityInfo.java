@@ -15,7 +15,6 @@
  */
 package diboot.core.test.binder.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;

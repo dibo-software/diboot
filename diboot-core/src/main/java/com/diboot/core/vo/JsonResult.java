@@ -15,6 +15,8 @@
  */
 package com.diboot.core.vo;
 
+import com.diboot.core.plugin.JsonResultFilter;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 
@@ -165,7 +167,7 @@ public class JsonResult<T> implements Serializable {
         return msg;
     }
     public T getData() {
-        return data;
+        return filterJsonResultData(data);
     }
 
     /***
@@ -189,6 +191,14 @@ public class JsonResult<T> implements Serializable {
                 this.msg += ": " + additionalMsg;
             }
         }
+    }
+
+    /**
+     * 判断结果是否OK
+     * @return
+     */
+    public boolean isOK(){
+        return this.code == Status.OK.code();
     }
 
     /***
@@ -273,7 +283,31 @@ public class JsonResult<T> implements Serializable {
     /***
      * 缓存清空
      */
+    @Deprecated
     public static JsonResult MEMORY_EMPTY_LOST(String msg){
         return new JsonResult(Status.MEMORY_EMPTY_LOST).msg(msg);
+    }
+
+    /**
+     * 过滤jsonResult结果，用于全局忽略某些字段等场景
+     * @param data
+     * @param <T>
+     * @return
+     */
+    private static boolean jsonResultFilterChecked = false;
+    private static JsonResultFilter jsonResultFilter;
+    private static <T> T filterJsonResultData(T data){
+        // 不启用过滤
+        if(jsonResultFilterChecked && jsonResultFilter == null){
+            return data;
+        }
+        if(jsonResultFilterChecked == false){
+            jsonResultFilter = ContextHelper.getBean(JsonResultFilter.class);
+            jsonResultFilterChecked = true;
+        }
+        if(jsonResultFilter != null){
+            jsonResultFilter.filterData(data);
+        }
+        return data;
     }
 }

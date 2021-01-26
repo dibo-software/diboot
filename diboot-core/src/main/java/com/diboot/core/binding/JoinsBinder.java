@@ -18,6 +18,8 @@ package com.diboot.core.binding;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
@@ -25,7 +27,6 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DynamicQueryMapper;
-import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -95,12 +96,12 @@ public class JoinsBinder {
     private static <DTO,E> List<E> executeJoinQuery(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz, Pagination pagination, boolean limit1){
         // 非动态查询，走BaseService
         if(queryWrapper instanceof DynamicJoinQueryWrapper == false){
-            BaseService baseService = ContextHelper.getBaseServiceByEntity(entityClazz);
-            if(baseService != null){
-                return baseService.getEntityList(queryWrapper, pagination);
+            IService iService = ContextHelper.getIServiceByEntity(entityClazz);
+            if(iService != null){
+                return ServiceAdaptor.queryList(iService, (QueryWrapper)queryWrapper, pagination, entityClazz);
             }
             else{
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService实现: "+entityClazz.getSimpleName());
+                throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
             }
         }
         long begin = System.currentTimeMillis();

@@ -18,7 +18,7 @@ package diboot.core.test.binder.vo;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindFieldList;
 import diboot.core.test.binder.entity.Role;
-import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -36,7 +36,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class EntityListComplexBinderVO extends Sysuser {
+public class EntityListComplexBinderVO extends User {
 
     private String userType = "OrgUser";
 

@@ -20,26 +20,22 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.file.dto.UploadFileFormDTO;
+import com.diboot.file.dto.UploadFileResult;
 import com.diboot.file.entity.UploadFile;
+import com.diboot.file.service.FileStorageService;
 import com.diboot.file.service.UploadFileService;
 import com.diboot.file.util.FileHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Excel导入基类Controller
@@ -49,8 +45,12 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class BaseFileController extends BaseController {
+
     @Autowired
     protected UploadFileService uploadFileService;
+
+    @Autowired
+    protected FileStorageService fileStorageService;
 
     /***
      * 获取文件上传记录
@@ -104,17 +104,14 @@ public abstract class BaseFileController extends BaseController {
      * @throws Exception
      */
     protected <T> UploadFile saveFile(MultipartFile file, Class<T> entityClass) throws Exception{
-        // 文件后缀
-        String originFileName = file.getOriginalFilename();
-        String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
-        // 先保存文件
-        String fileUid = S.newUuid();
-        String newFileName = fileUid + "." + ext;
-        String storageFullPath = FileHelper.saveFile(file, newFileName);
+        UploadFileResult uploadFileResult = fileStorageService.upload(file);
         UploadFile uploadFile = new UploadFile();
-        uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(ext);
-        uploadFile.setRelObjType(entityClass.getSimpleName()).setStoragePath(storageFullPath);
-        String accessUrl = buildAccessUrl(newFileName);
+        uploadFile.setUuid(uploadFileResult.getUuid())
+                .setFileName(uploadFileResult.getOriginalFilename())
+                .setFileType(uploadFileResult.getExt())
+                .setRelObjType(entityClass.getSimpleName())
+                .setStoragePath(uploadFileResult.getStorageFullPath());
+        String accessUrl = buildAccessUrl(uploadFileResult.getFilename());
         uploadFile.setAccessUrl(accessUrl);
         String description = getString("description");
         uploadFile.setDescription(description);
@@ -156,19 +153,16 @@ public abstract class BaseFileController extends BaseController {
      * @throws Exception
      */
     protected UploadFile saveFile(UploadFileFormDTO uploadFileFormDTO) throws Exception{
-        // 文件后缀
-        String originFileName = uploadFileFormDTO.getFile().getOriginalFilename();
-        String ext = FileHelper.getFileExtByName( uploadFileFormDTO.getFile().getOriginalFilename());
-        // 先保存文件
-        String fileUid = S.newUuid();
-        String newFileName = fileUid + "." + ext;
-        String storageFullPath = FileHelper.saveFile(uploadFileFormDTO.getFile(), newFileName);
-        String accessUrl = buildAccessUrl(newFileName);
+        UploadFileResult uploadFileResult= fileStorageService.upload(uploadFileFormDTO.getFile());
+        String accessUrl = buildAccessUrl(uploadFileResult.getFilename());
         UploadFile uploadFile = new UploadFile();
-        uploadFile.setUuid(fileUid).setFileName(originFileName).setFileType(ext);
-        uploadFile.setRelObjType(uploadFileFormDTO.getRelObjType())
+        uploadFile.setUuid(uploadFileResult.getUuid())
+                .setFileName(uploadFileResult.getOriginalFilename())
+                .setFileType(uploadFileResult.getExt())
+                .setRelObjType(uploadFileFormDTO.getRelObjType())
                 .setRelObjField(uploadFileFormDTO.getRelObjField())
-                .setStoragePath(storageFullPath).setAccessUrl(accessUrl)
+                .setStoragePath(uploadFileResult.getStorageFullPath())
+                .setAccessUrl(accessUrl)
                 .setDescription(uploadFileFormDTO.getDescription());
         // 返回uploadFile对象
         return uploadFile;

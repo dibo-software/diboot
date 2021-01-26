@@ -15,13 +15,12 @@
  */
 package com.diboot.core.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -52,14 +51,13 @@ public abstract class BaseEntity implements Serializable {
      * 默认逻辑删除标记，is_deleted=0有效
      */
     @TableLogic
-    @JSONField(serialize = false)
+    @JsonIgnore
     @TableField(value = Cons.COLUMN_IS_DELETED, select = false)
     private boolean deleted = false;
 
     /**
      * 默认记录创建时间字段，新建时由数据库赋值
      */
-    @JSONField(format = D.FORMAT_DATETIME_Y4MDHMS)
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
     private Date createTime;
 
@@ -76,8 +74,8 @@ public abstract class BaseEntity implements Serializable {
      * 获取主键值
      * @return
      */
-    @JSONField(serialize = false)
-    public Object getPrimaryKey(){
+    @JsonIgnore
+    public Object getPrimaryKeyVal(){
         String pk = ContextHelper.getPrimaryKey(this.getClass());
         if(Cons.FieldName.id.name().equals(pk)){
             return getId();

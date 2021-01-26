@@ -201,6 +201,9 @@ public class QueryBuilder {
                 case STARTSWITH:
                     wrapper.likeRight(columnName, value);
                     break;
+                case ENDSWITH:
+                    wrapper.likeLeft(columnName, value);
+                    break;
                 case GT:
                     wrapper.gt(columnName, value);
                     break;

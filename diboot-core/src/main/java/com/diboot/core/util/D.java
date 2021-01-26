@@ -42,16 +42,31 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_y2Md = "yyMMdd";
 	public static final String FORMAT_DATE_y4 = "yyyy";
 	public static final String FORMAT_DATE_y4Md = "yyyyMMdd";
-	public static final String FORMAT_DATE_Y4MD = "yyyy-MM-dd";
 	public static final String FORMAT_TIMESTAMP = "yyMMddhhmmss";
 	public static final String FORMAT_TIME_HHmm = "HH:mm";
 	public static final String FORMAT_TIME_HHmmss = "HH:mm:ss";
+	public static final String FORMAT_DATE_Y4MD = "yyyy-MM-dd";
 	public static final String FORMAT_DATETIME_Y4MDHM = "yyyy-MM-dd HH:mm";
 	public static final String FORMAT_DATETIME_Y4MDHMS = "yyyy-MM-dd HH:mm:ss";
+	public static final String FORMAT_DATE_SLASH_Y4MD = "yyyy/MM/dd";
+	public static final String FORMAT_DATETIME_SLASH_Y4MDHM = "yyyy/MM/dd HH:mm";
+	public static final String FORMAT_DATETIME_SLASH_Y4MDHMS = "yyyy/MM/dd HH:mm:ss";
 	/***
-	 * 星期
+	 * 星期（中文）
 	 */
 	public static final String[] WEEK = new String[]{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+	/***
+	 * 星期（英文）
+	 */
+	public static final String[] WEEK_EN = new String[]{"Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"};
+	/**
+	 * 月份-中文
+	 */
+	public static final String[] MONTH_CN = new String[]{"一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"};
+	/**
+	 * 月份-英文
+	 */
+	public static final String[] MONTH_EN = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 	/***
 	 * 当前的日期时间
@@ -76,6 +91,7 @@ public class D extends DateUtils{
 	 * 获取月份
 	 * @return
 	 */
+	@Deprecated
 	public static String getMonth(){
 		return now(FORMAT_DATE_y2M);
 	}
@@ -107,6 +123,33 @@ public class D extends DateUtils{
 			log.warn("日期格式转换异常");
 		}
 		return null;
+	}
+
+	/***
+	 * 转换date为日期Y4MD格式化字符串
+	 * @param date
+	 * @return
+	 */
+	public static String convert2DateString(Date date) {
+		if (date == null) {
+			return null;
+		}
+		SimpleDateFormat format = new SimpleDateFormat(FORMAT_DATE_Y4MD);
+		return format.format(date);
+	}
+
+	/***
+	 * 转换date为日期时间Y4MDHMS格式化字符串
+	 * @param date
+	 * @return
+	 */
+	public static String convert2DateTimeString(Date date) {
+		if (date == null) {
+			return null;
+		} else {
+			SimpleDateFormat format = new SimpleDateFormat(FORMAT_DATETIME_SLASH_Y4MDHMS);
+			return format.format(date);
+		}
 	}
 
 	/***
@@ -231,14 +274,93 @@ public class D extends DateUtils{
 		Calendar cal = Calendar.getInstance();
 		return cal.get(Calendar.DAY_OF_MONTH);
 	}
-	
+
 	/***
 	 * 获取日期对应的星期
 	 * @param date
 	 * @return
 	 */
+	@Deprecated
 	public static String getWeek(Date date){
-		return WEEK[Calendar.getInstance().get(Calendar.DAY_OF_WEEK)];
+		return getCnWeek(date);
+	}
+
+	/***
+	 * 获取当前日期对应的星期
+	 * @return
+	 */
+	public static String getCnWeek(){
+		int index = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+		return WEEK[index];
+	}
+
+	/***
+	 * 获取日期对应的星期
+	 * @param date
+	 * @return
+	 */
+	public static String getCnWeek(Date date){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return WEEK[cal.get(Calendar.DAY_OF_WEEK) - 1];
+	}
+
+	/***
+	 * 获取当前日期对应的星期
+	 * @return
+	 */
+	public static String getEnWeek(){
+		int index = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+		return WEEK_EN[index];
+	}
+
+	/***
+	 * 获取日期对应的星期
+	 * @param date
+	 * @return
+	 */
+	public static String getEnWeek(Date date){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return WEEK_EN[cal.get(Calendar.DAY_OF_WEEK) - 1];
+	}
+
+	/***
+	 * 获取当前日期对应的月份（中文）
+	 * @return
+	 */
+	public static String getCnMonth(){
+		return MONTH_CN[Calendar.getInstance().get(Calendar.MONTH)];
+	}
+
+	/***
+	 * 获取指定日期对应的月份（中文）
+	 * @param date 日期
+	 * @return
+	 */
+	public static String getCnMonth(Date date){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return MONTH_CN[cal.get(Calendar.MONTH)];
+	}
+
+	/***
+	 * 获取当前日期对应的月份（英文）
+	 * @return
+	 */
+	public static String getEnMonth(){
+		return MONTH_EN[Calendar.getInstance().get(Calendar.MONTH)];
+	}
+
+	/***
+	 * 获取指定日期对应的月份（中文）
+	 * @param date 日期
+	 * @return
+	 */
+	public static String getEnMonth(Date date){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return MONTH_EN[cal.get(Calendar.MONTH)];
 	}
 	
 	/**
@@ -266,7 +388,12 @@ public class D extends DateUtils{
 	 * @throws ParseException
 	 */
 	public static Date convert2Date(String date){
-		return convert2FormatDate(date, FORMAT_DATE_Y4MD);
+		if(date.contains("/")){
+			return convert2FormatDate(date, FORMAT_DATE_SLASH_Y4MD);
+		}
+		else{
+			return convert2FormatDate(date, FORMAT_DATE_Y4MD);
+		}
 	}
 
 	/**

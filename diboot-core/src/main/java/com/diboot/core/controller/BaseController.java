@@ -44,24 +44,58 @@ public class BaseController {
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @see #buildQueryWrapperByDTO #buildQueryWrapperByQueryParams
 	 * @return
 	 */
-	public <DTO> QueryWrapper<DTO> buildQueryWrapper(DTO entityOrDto) throws Exception{
-		if(entityOrDto instanceof HttpServletRequest){
-			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
-		}
+	@Deprecated
+    protected <DTO> QueryWrapper<DTO> buildQueryWrapper(DTO entityOrDto) throws Exception{
+		return buildQueryWrapperByQueryParams(entityOrDto);
+	}
+
+	/***
+	 * 根据DTO构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @return
+	 */
+    protected <DTO> QueryWrapper<DTO> buildQueryWrapperByDTO(DTO entityOrDto) throws Exception{
+		return QueryBuilder.toQueryWrapper(entityOrDto);
+	}
+
+	/***
+	 * 根据请求参数构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @return
+	 */
+    protected <DTO> QueryWrapper<DTO> buildQueryWrapperByQueryParams(DTO entityOrDto) throws Exception{
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams());
 	}
 
 	/***
 	 * 构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @see #buildLambdaQueryWrapperByDTO #buildLambdaQueryWrapperByQueryParams
 	 * @return
 	 */
-	public <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapper(DTO entityOrDto) throws Exception{
-		if(entityOrDto instanceof HttpServletRequest){
-			throw new Exception("参数错误：buildQueryWrapper()参数为Entity/DTO对象！");
-		}
+	@Deprecated
+    protected <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapper(DTO entityOrDto) throws Exception{
+		return buildLambdaQueryWrapperByQueryParams(entityOrDto);
+	}
+
+	/***
+	 * 根据DTO构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @return
+	 */
+    protected <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapperByDTO(DTO entityOrDto) throws Exception{
+		return QueryBuilder.toLambdaQueryWrapper(entityOrDto);
+	}
+
+	/***
+	 * 根据请求参数构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @return
+	 */
+    protected <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapperByQueryParams(DTO entityOrDto) throws Exception{
 		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractQueryParams());
 	}
 
@@ -69,7 +103,7 @@ public class BaseController {
 	 * 获取请求参数Map
 	 * @return
 	 */
-	public Map<String, Object> getParamsMap() throws Exception{
+    protected Map<String, Object> getParamsMap() throws Exception{
 		return getParamsMap(null);
 	}
 

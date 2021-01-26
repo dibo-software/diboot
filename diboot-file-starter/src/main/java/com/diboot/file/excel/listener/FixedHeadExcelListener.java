@@ -36,7 +36,9 @@ import com.diboot.file.excel.annotation.ExcelBindField;
 import com.diboot.file.excel.cache.ExcelBindAnnoHandler;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /***
@@ -186,6 +188,9 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         for(Map.Entry<String, Annotation> entry: fieldName2BindAnnoMap.entrySet()){
             List nameList = (entry.getValue() instanceof ExcelBindField)? BeanUtils.collectToList(dataList, entry.getKey()) : null;
             Map<String, List> map = ExcelBindAnnoHandler.convertToNameValueMap(entry.getValue(), nameList);
+            Class<T> tClass = BeanUtils.getTargetClass(dataList.get(0));
+            Field field = BeanUtils.extractField(tClass, entry.getKey());
+            boolean valueNotNull = (field.getAnnotation(NotNull.class) != null);
             for(T data : dataList){
                 String name = BeanUtils.getStringProperty(data, entry.getKey());
                 List valList = map.get(name);
@@ -200,6 +205,9 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
                         }
                         else if(excelBindField.empty().equals(EmptyStrategy.WARN)){
                             data.addValidateError(name + " 值不存在");
+                        }
+                        else if(excelBindField.empty().equals(EmptyStrategy.IGNORE) && valueNotNull){
+                            log.warn("非空字段 {} 不应设置 EmptyStrategy.IGNORE.", entry.getKey());
                         }
                     }
                     else if(valList.size() == 1){
@@ -222,7 +230,10 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
                 }
                 else if(entry.getValue() instanceof ExcelBindDict || entry.getValue() instanceof BindDict){
                     if(V.isEmpty(valList)){
-                        data.addValidateError(name + " 无匹配字典");
+                        // 非空才报错
+                        if(valueNotNull){
+                            data.addValidateError(name + " 无匹配字典");
+                        }
                     }
                     else{
                         // 非预览时 赋值

@@ -25,7 +25,7 @@ import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Sysuser;
+import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -58,11 +58,11 @@ public class TestJoinQuery {
 
     @Test
     public void testDateCompaire(){
-        Department example = departmentService.getSingleEntity(null);
+        Department example = departmentService.list(null).get(0);
         DepartmentDTO departmentDTO = new DepartmentDTO();
         departmentDTO.setCreateTime(example.getCreateTime());
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
-        List<Department> list = departmentService.getEntityList(queryWrapper);
+        List<Department> list = departmentService.list(queryWrapper);
         Assert.assertTrue(list.size() >= 1);
     }
 
@@ -101,7 +101,10 @@ public class TestJoinQuery {
 
         // 验证 转换后的wrapper可以直接查询
         QueryWrapper<DepartmentDTO> queryWrapper = QueryBuilder.toQueryWrapper(dto);
-        List<Department> departments = departmentService.getEntityList(queryWrapper);
+
+        QueryWrapper<Department> deptQueryWrapper = new QueryWrapper<>();
+        deptQueryWrapper.eq("parent_id", 10001L);
+        List<Department> departments = departmentService.list(deptQueryWrapper);
         Assert.assertTrue(departments.size() == 3);
 
         // builder直接查询，不分页 3条结果
@@ -170,11 +173,11 @@ public class TestJoinQuery {
         dto.setDeptId(10002L);
 
         // builder直接查询，不分页 3条结果
-        List<Sysuser> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Sysuser.class);
+        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 2);
 
         dto.setOrgName("苏州帝博");
-        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Sysuser.class);
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 2);
 
         List<String> roleCodes = new ArrayList<>();
@@ -182,7 +185,7 @@ public class TestJoinQuery {
         roleCodes.add("OTHER");
 
         dto.setRoleCodes(roleCodes);
-        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Sysuser.class);
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 1);
     }
 
