@@ -1,4 +1,4 @@
-> 可以告别常规SQL和CRUD了！diboot新用户: [B站演示视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [下载playground新手体验包开始体验diboot](https://gitee.com/dibo_software/diboot-v2-example/raw/master/playground.zip)
+> 可以告别常规SQL和CRUD了！diboot新用户: [B站演示视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [下载playground新手体验包开始体验diboot](https://www.diboot.com/guide/newer/bootstrap.html)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
