@@ -176,7 +176,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
 
     @Override
     public void visit(NamedExpressionList namedExpressionList) {
-
     }
 
     @Override
@@ -287,6 +286,14 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
 
     @Override
     public void visit(ArrayExpression arrayExpression) {
+    }
+
+    @Override
+    public void visit(VariableAssignment variableAssignment) {
+    }
+
+    @Override
+    public void visit(XMLSerializeExpr xmlSerializeExpr) {
     }
 
     @Override
