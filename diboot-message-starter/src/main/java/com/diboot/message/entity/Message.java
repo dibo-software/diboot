@@ -189,12 +189,6 @@ public class Message extends BaseEntity {
     private Date updateTime;
 
     /**
-     * 是否解析成功
-     */
-    @TableField(exist = false)
-    private boolean parserSuccess;
-
-    /**
      * 扩展字段Map
      */
     @TableField(exist = false)

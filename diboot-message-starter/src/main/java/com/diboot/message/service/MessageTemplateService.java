@@ -18,6 +18,8 @@ package com.diboot.message.service;
 import com.diboot.core.service.BaseService;
 import com.diboot.message.entity.MessageTemplate;
 
+import java.util.List;
+
 /**
  * 消息模版相关Service
  *
@@ -27,4 +29,21 @@ import com.diboot.message.entity.MessageTemplate;
  */
 public interface MessageTemplateService extends BaseService<MessageTemplate> {
 
+    /**
+     * 获取系统提供的变量
+     *
+     * @return
+     * @throws Exception
+     */
+    List<String> getTemplateTemplateVariableList() throws Exception;
+
+    /**
+     * 检查是否有重复的code
+     *
+     * @param id
+     * @param code
+     * @return
+     * @throws Exception
+     */
+    boolean existCode(Long id, String code) throws Exception;
 }

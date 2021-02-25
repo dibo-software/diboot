@@ -15,8 +15,13 @@
  */
 package com.diboot.message.starter;
 
+import com.diboot.message.handle.channel.SimpleEmailChannel;
+import com.diboot.message.service.impl.SystemTemplateVariableServiceImpl;
+import com.diboot.message.service.TemplateVariableService;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,4 +38,23 @@ import org.springframework.context.annotation.Configuration;
 @MapperScan(basePackages = {"com.diboot.message.mapper"})
 public class MessageAutoConfiguration {
 
+    /**
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public TemplateVariableService templateStrategy() {
+        return new SystemTemplateVariableServiceImpl();
+    }
+
+    /**
+     * 简单邮箱发送通道
+     * @return
+     */
+    @Bean("EMAIL")
+    @ConditionalOnMissingBean
+    public SimpleEmailChannel simpleEmailChannel() {
+        return new SimpleEmailChannel();
+    }
 }

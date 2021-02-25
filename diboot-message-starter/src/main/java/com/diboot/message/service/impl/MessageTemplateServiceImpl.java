@@ -3,13 +3,13 @@ package com.diboot.message.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.example.demo.entity.MessageTemplate;
-import com.example.demo.mapper.MessageTemplateMapper;
-import com.example.demo.service.MessageTemplateService;
-import com.example.demo.strategy.template.TemplateUtils;
-import com.example.demo.vo.TemplateStrategyVO;
+import com.diboot.message.entity.MessageTemplate;
+import com.diboot.message.mapper.MessageTemplateMapper;
+import com.diboot.message.service.MessageTemplateService;
+import com.diboot.message.utils.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +24,11 @@ import java.util.List;
 */
 @Service
 @Slf4j
-public class MessageTemplateServiceImpl extends BaseCustomServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateService {
+public class MessageTemplateServiceImpl extends BaseServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateService {
 
     @Override
-    public List<TemplateStrategyVO> getTemplateStrategy() throws Exception{
-        return TemplateUtils.loadAllTemplateStrategyConfig();
+    public List<String> getTemplateTemplateVariableList() throws Exception{
+        return TemplateUtils.loadTemplateTemplateVariableList();
     }
 
     @Override
