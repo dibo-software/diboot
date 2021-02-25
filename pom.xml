@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
         <relativePath/>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,10 +27,10 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.4.1</spring-boot.version>
+        <spring-boot.version>2.4.2</spring-boot.version>
         <hibernate-validator.version>6.1.7.Final</hibernate-validator.version>
-        <mybatis-plus.version>3.4.1</mybatis-plus.version>
-        <diboot.version>2.2.0</diboot.version>
+        <mybatis-plus.version>3.4.2</mybatis-plus.version>
+        <diboot.version>2.2.1</diboot.version>
     </properties>
 
     <dependencies>
