@@ -15,7 +15,7 @@
  */
 package com.diboot.message.starter;
 
-import com.diboot.message.handle.channel.SimpleEmailChannel;
+import com.diboot.message.channel.SimpleEmailChannel;
 import com.diboot.message.service.impl.SystemTemplateVariableServiceImpl;
 import com.diboot.message.service.TemplateVariableService;
 import org.mybatis.spring.annotation.MapperScan;
