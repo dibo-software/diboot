@@ -22,6 +22,7 @@
         <module>diboot-file-starter</module>
         <module>diboot-iam-starter</module>
         <module>diboot-scheduler-starter</module>
+        <module>diboot-message-starter</module>
     </modules>
 
     <properties>
