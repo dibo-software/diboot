@@ -49,12 +49,12 @@ public class Message extends BaseEntity {
     /**
      * channel字段的关联字典
      */
-    public static final String DICT_MESSAGE_CHANNEL = "DICT_MESSAGE_CHANNEL";
+    public static final String DICT_MESSAGE_CHANNEL = "MESSAGE_CHANNEL";
 
     /**
      * status字段的关联字典
      */
-    public static final String DICT_MESSAGE_STATUS = "DICT_MESSAGE_STATUS";
+    public static final String DICT_MESSAGE_STATUS = "MESSAGE_STATUS";
 
 
     /**
