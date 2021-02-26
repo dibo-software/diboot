@@ -15,6 +15,7 @@ import com.diboot.message.service.MessageTemplateService;
 import com.diboot.message.service.TemplateVariableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -40,6 +41,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
      * 发送通道
      */
     @Autowired
+    @Lazy
     private Map<String, ChannelStrategy> channelStrategyMap;
 
     @Autowired
@@ -80,25 +82,8 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             log.error("[消息创建失败]，消息体为：{}", message);
             throw new BusinessException(Status.FAIL_OPERATION, "消息发送失败！");
         }
-        String result = "success";
-        try {
-            // 获取当前模版的发送通道，并发送消息
-            result = channelStrategy.send(message);
-            message.setResult(result);
-        } catch (Exception e) {
-            log.error("[消息发送失败]，消息体为：{}，异常：", message, e);
-            result = e.getMessage();
-        }
-        message.setResult(result);
-        success = updateEntity(
-                Wrappers.<Message>lambdaUpdate()
-                        .set(Message::getResult, message.getResult())
-                        .eq(Message::getId, message.getId())
-        );
-        if (!success) {
-            log.error("[消息更新失败]，消息体为：{}", message);
-            throw new BusinessException(Status.FAIL_OPERATION, "消息更新失败！");
-        }
+        // 异步发送消息
+        channelStrategy.send(message);
         return true;
     }
 }

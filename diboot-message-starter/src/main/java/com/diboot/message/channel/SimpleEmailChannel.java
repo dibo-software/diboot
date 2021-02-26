@@ -1,6 +1,9 @@
 package com.diboot.message.channel;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.util.JSON;
 import com.diboot.message.entity.Message;
+import com.diboot.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,7 +15,7 @@ import java.util.Date;
 /**
  * 简单邮件发送通道
  * <p>
- * 只支持发送单人，其他自行扩展
+ * 只支持发送文本，其他自行扩展
  *
  * @author : uu
  * @version : v1.0
@@ -25,10 +28,14 @@ public class SimpleEmailChannel implements ChannelStrategy {
     @Autowired
     private JavaMailSender javaMailSender;
 
+    @Autowired
+    private MessageService messageService;
+
     @Override
     @Async
-    public String send(Message message) throws Exception {
-        log.debug("[开始发送邮件]：邮件内容：{}", message);
+    public void send(Message message) {
+        log.debug("[开始发送邮件]：邮件内容：{}", JSON.stringify(message));
+        String result = "success";
         try {
             // 构建一个邮件对象
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -50,8 +57,13 @@ public class SimpleEmailChannel implements ChannelStrategy {
             javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {
             log.error("[发送邮件失败]：信息为： {} , 异常", message, e);
-            return e.getMessage();
+            result = e.getMessage();
         }
-        return "success";
+        // 更新结果
+        messageService.updateEntity(
+                Wrappers.<Message>lambdaUpdate()
+                        .set(Message::getResult, result)
+                        .eq(Message::getId, message.getId())
+        );
     }
 }
