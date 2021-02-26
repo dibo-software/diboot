@@ -39,13 +39,13 @@ public class MessageDetailVO extends Message {
     private static final long serialVersionUID = 6146540427682582401L;
 
     /**
-     * 关联字典：SEND_CHANNEL
+     * 关联字典：MESSAGE_CHANNEL
      */
     @BindDict(type = DICT_MESSAGE_CHANNEL, field = "channel")
     private String channelLabel;
 
     /**
-     * 关联字典：MSG_RECORD_STATUS
+     * 关联字典：MESSAGE_STATUS
      */
     @BindDict(type = DICT_MESSAGE_STATUS, field = "status")
     private String statusLabel;

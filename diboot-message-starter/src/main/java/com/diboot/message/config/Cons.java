@@ -29,7 +29,7 @@ public class Cons extends com.diboot.core.config.Cons {
      * 数据字典类型定义
      */
     public enum MESSAGE_STATUS {
-        // 发送中 和 异常 是所有短信都具有的状态
+        // 发送中 和 异常 是所有信息都具有的状态；
         /**
          * 发送中
          */
@@ -76,7 +76,7 @@ public class Cons extends com.diboot.core.config.Cons {
      */
     public enum MESSAGE_CHANNEL {
         WEBSOCKET("站内信", "WEBSOCKET"),
-        NOTE("短信", "NOTE"),
+        TEXT_MESSAGE("短信", "TEXT_MESSAGE"),
         EMAIL("邮件", "EMAIL");
 
         private String itemName;
