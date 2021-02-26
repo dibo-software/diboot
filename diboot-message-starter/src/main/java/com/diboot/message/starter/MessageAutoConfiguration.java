@@ -15,6 +15,7 @@
  */
 package com.diboot.message.starter;
 
+import com.diboot.message.channel.ChannelStrategy;
 import com.diboot.message.channel.SimpleEmailChannel;
 import com.diboot.message.service.impl.SystemTemplateVariableServiceImpl;
 import com.diboot.message.service.TemplateVariableService;
@@ -39,12 +40,12 @@ import org.springframework.context.annotation.Configuration;
 public class MessageAutoConfiguration {
 
     /**
-     *
+     * 模版变量服务
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public TemplateVariableService templateStrategy() {
+    public TemplateVariableService templateVariableService() {
         return new SystemTemplateVariableServiceImpl();
     }
 
@@ -54,7 +55,7 @@ public class MessageAutoConfiguration {
      */
     @Bean("EMAIL")
     @ConditionalOnMissingBean
-    public SimpleEmailChannel simpleEmailChannel() {
+    public ChannelStrategy simpleEmailChannel() {
         return new SimpleEmailChannel();
     }
 }

@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 public interface TemplateVariableService {
 
     /**
-     * 解析正则 ${}
+     * 非贪婪 解析正则 ${}
      */
-    Pattern TEMPLATE_VARIABLE = Pattern.compile("\\$\\{.+\\}");
+    Pattern TEMPLATE_VARIABLE = Pattern.compile("\\$\\{.+?\\}");
 
     /**
      * 变量方法缓存<{@link BindVariable#name()}, Method>
