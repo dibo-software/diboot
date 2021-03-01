@@ -26,7 +26,7 @@ import java.util.Date;
 public class SimpleEmailChannel implements ChannelStrategy {
 
 
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender javaMailSender;
 
     @Autowired
