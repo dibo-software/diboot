@@ -69,13 +69,6 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @throws Exception
      */
     protected <VO> JsonResult getViewObject(Serializable id, Class<VO> voClass) throws Exception{
-        // 检查String类型id
-        if(id instanceof String && !S.isNumeric((String)id)){
-            String pk = ContextHelper.getPrimaryKey(getEntityClass());
-            if(Cons.FieldName.id.name().equals(pk)){
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
-            }
-        }
         VO vo = (VO)getService().getViewObject(id, voClass);
         return new JsonResult(vo);
     }
@@ -86,13 +79,6 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @throws Exception
      */
     protected <E> E getEntity(Serializable id) throws Exception{
-        // 检查String类型id
-        if(id instanceof String && !S.isNumeric((String)id)){
-            String pk = ContextHelper.getPrimaryKey(getEntityClass());
-            if(Cons.FieldName.id.name().equals(pk)){
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
-            }
-        }
         return (E)getService().getEntity(id);
     }
 
