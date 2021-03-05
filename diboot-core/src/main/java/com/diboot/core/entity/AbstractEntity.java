@@ -35,10 +35,7 @@ import java.util.Map;
  * @version v2.0
  * Copyright © diboot.com
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public abstract class AbstractEntity<T> implements Serializable {
+public abstract class AbstractEntity<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = 10202L;
 
     /**
@@ -46,6 +43,15 @@ public abstract class AbstractEntity<T> implements Serializable {
      */
     @TableId(type = IdType.AUTO)
     private T id;
+
+    public AbstractEntity setId(T id){
+        this.id = id;
+        return this;
+    }
+
+    public T getId(){
+        return this.id;
+    }
 
     /**
      * Entity对象转为String

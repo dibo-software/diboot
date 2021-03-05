@@ -40,6 +40,17 @@ import java.util.Map;
 public abstract class BaseEntity extends AbstractEntity<Long> {
     private static final long serialVersionUID = 10203L;
 
+    @Override
+    public BaseEntity setId(Long id){
+        super.setId(id);
+        return this;
+    }
+
+    @Override
+    public Long getId(){
+        return super.getId();
+    }
+
     /**
      * 默认逻辑删除标记，is_deleted=0有效
      */
