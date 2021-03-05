@@ -193,6 +193,14 @@ public abstract class BaseBinder<T> {
         return this;
     }
 
+    /**
+     * 返回MiddleTable
+     * @return
+     */
+    public MiddleTable getMiddleTable(){
+        return middleTable;
+    }
+
     /***
      * 执行绑定, 交由子类实现
      */
