@@ -86,7 +86,6 @@ public class FileAutoConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean
     public FileStorageService fileStorageService() {
         return new LocalFileStorageServiceImpl();
     }

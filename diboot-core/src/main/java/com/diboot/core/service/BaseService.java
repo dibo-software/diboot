@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
@@ -329,6 +330,13 @@ public interface BaseService<T> {
      * @return
      */
     FieldBinder<T> bindingFieldTo(List voList);
+
+    /***
+     * 绑定字段值集合到VO列表的元素中
+     * @param voList
+     * @return
+     */
+    FieldListBinder<T> bindingFieldListTo(List voList);
 
     /***
      * 绑定entity对象到VO列表元素中

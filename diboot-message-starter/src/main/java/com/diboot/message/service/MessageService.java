@@ -25,6 +25,7 @@ import com.diboot.message.entity.Message;
  * @author : uu
  * @version : v2.0
  * @Date 2021/2/25  09:39
+ * @Copyright © diboot.com
  */
 public interface MessageService extends BaseService<Message> {
 

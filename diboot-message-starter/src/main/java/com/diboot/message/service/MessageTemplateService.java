@@ -26,6 +26,7 @@ import java.util.List;
  * @author : uu
  * @version : v2.0
  * @Date 2021/2/25  09:39
+ * @Copyright © diboot.com
  */
 public interface MessageTemplateService extends BaseService<MessageTemplate> {
 

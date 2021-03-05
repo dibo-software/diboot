@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,13 +15,12 @@
  */
 package com.diboot.message.config;
 
-import com.diboot.core.config.BaseConfig;
-
 /**
  * 消息数据字典等常量定义
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/19
+ * @Copyright © diboot.com
  */
 public class Cons extends com.diboot.core.config.Cons {
 
