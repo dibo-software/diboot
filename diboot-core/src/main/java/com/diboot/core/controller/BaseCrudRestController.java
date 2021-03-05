@@ -18,6 +18,7 @@ package com.diboot.core.controller;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.config.Cons;
+import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
@@ -45,7 +46,7 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
-public class BaseCrudRestController<E extends BaseEntity> extends BaseController {
+public class BaseCrudRestController<E extends AbstractEntity> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
     /**
      * Entity，VO对应的class
