@@ -105,8 +105,16 @@ public class MiddleTable {
         return this;
     }
 
+    public String getTable(){
+        return this.table;
+    }
+
     public Map<String, String> getTrunkObjColMapping(){
         return this.trunkObjColMapping;
+    }
+
+    public Map<String, String> getBranchObjColMapping(){
+        return this.branchObjColMapping;
     }
 
     /**
