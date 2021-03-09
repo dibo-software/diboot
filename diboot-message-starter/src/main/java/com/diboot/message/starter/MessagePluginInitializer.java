@@ -34,6 +34,7 @@ import org.springframework.stereotype.Component;
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2020/11/28
+ * @Copyright © diboot.com
  */
 @Slf4j
 @Component

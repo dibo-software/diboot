@@ -38,7 +38,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.9.0</version>
+            <version>${okhttp.version}</version>
         </dependency>
         <!-- 图片压缩 -->
         <dependency>

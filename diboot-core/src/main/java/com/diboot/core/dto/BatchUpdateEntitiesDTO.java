@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BatchUpdateEntitiesDTO<T extends AbstractEntity<ID_TYPE>, ID_TYPE> implements Serializable {
+public class BatchUpdateEntitiesDTO<T extends AbstractEntity<ID_TYPE>, ID_TYPE extends Serializable> implements Serializable {
     private static final long serialVersionUID = -3141680773920758263L;
 
     private List<ID_TYPE> idList;

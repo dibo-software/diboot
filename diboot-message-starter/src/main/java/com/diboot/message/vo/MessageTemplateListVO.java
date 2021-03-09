@@ -27,6 +27,7 @@ import lombok.experimental.Accessors;
  * @author : uu
  * @version : v2.0
  * @Date 2021/2/25  09:39
+ * @Copyright © diboot.com
  */
 @Getter @Setter @Accessors(chain = true)
 public class MessageTemplateListVO extends MessageTemplate {

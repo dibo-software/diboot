@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2020/11/28
+ * @Copyright © diboot.com
  */
 @Getter @Setter
 @ConfigurationProperties(prefix = "diboot.component.message")
