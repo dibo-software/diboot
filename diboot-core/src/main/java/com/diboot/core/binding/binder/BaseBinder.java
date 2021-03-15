@@ -200,6 +200,12 @@ public abstract class BaseBinder<T> {
     public MiddleTable getMiddleTable(){
         return middleTable;
     }
+    public List<String> getAnnoObjJoinFlds(){
+        return this.annoObjJoinFlds;
+    }
+    public List<String> getRefObjJoinFlds(){
+        return this.refObjJoinFlds;
+    }
 
     /***
      * 执行绑定, 交由子类实现

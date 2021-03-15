@@ -143,13 +143,6 @@ public class FieldBinder<T> extends BaseBinder<T> {
 
     }
 
-    public List<String> getAnnoObjectSetterPropNameList(){
-        return this.annoObjectSetterPropNameList;
-    }
-    public List<String> getReferencedGetterColumnNameList(){
-        return this.referencedGetterColumnNameList;
-    }
-
     /**
      * 设置字段值
      * @param key2DataMap
