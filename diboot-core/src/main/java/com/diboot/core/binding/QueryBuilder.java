@@ -272,7 +272,7 @@ public class QueryBuilder {
                 columnName = S.toSnakeCase(columnName);
             }
         }
-        else if (field.isAnnotationPresent(TableField.class)) {
+        if (V.isEmpty(columnName) && field.isAnnotationPresent(TableField.class)) {
             columnName = field.getAnnotation(TableField.class).value();
         }
         return V.notEmpty(columnName) ? columnName : S.toSnakeCase(field.getName());
