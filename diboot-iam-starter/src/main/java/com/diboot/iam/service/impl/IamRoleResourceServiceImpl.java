@@ -123,6 +123,9 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean createRoleResourceRelations(Long roleId, List<Long> resourceIdList) {
+        if(V.isEmpty(resourceIdList)){
+            return true;
+        }
         // 批量创建
         List<IamRoleResource> roleResourceList = new ArrayList<>();
         for(Long resourceId : resourceIdList){
