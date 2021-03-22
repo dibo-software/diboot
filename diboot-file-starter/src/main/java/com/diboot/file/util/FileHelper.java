@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -105,6 +106,30 @@ public class FileHelper{
 			// 创建文件夹
 			makeDirectory(fullPath);
 			FileUtils.writeByteArrayToFile(new File(fullPath), file.getBytes());
+			if(log.isDebugEnabled()){
+				log.debug("保存文件成功！路径为: " + fullPath);
+			}
+			return fullPath;
+		}
+		catch (IOException e1) {
+			log.error("保存文件失败(file=" + fullPath + "): ", e1);
+			return null;
+		}
+	}
+
+	/***
+	 * 上传文件
+	 * @param inputStream 文件流
+	 * @param fileName 文件名
+	 * @return
+	 */
+	public static String saveFile(InputStream inputStream, String fileName) {
+		// 生成文件路径
+		String fullPath = getFullPath(fileName);
+		try {
+			// 创建文件夹
+			makeDirectory(fullPath);
+			FileUtils.copyInputStreamToFile(inputStream, new File(fullPath));
 			if(log.isDebugEnabled()){
 				log.debug("保存文件成功！路径为: " + fullPath);
 			}
