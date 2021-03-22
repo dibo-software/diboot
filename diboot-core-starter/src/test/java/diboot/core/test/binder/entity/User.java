@@ -24,6 +24,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -50,4 +52,6 @@ public class User extends BaseEntity {
     @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     private Date birthdate;
 
+    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
+    private LocalDateTime localDatetime;
 }
