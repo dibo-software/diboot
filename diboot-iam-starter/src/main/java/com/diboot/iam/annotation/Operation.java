@@ -34,6 +34,10 @@ public class Operation {
     public static final String DELETE = "delete";
 
     /**
+     * 操作权限类型 - 首页
+     */
+    public static final String CODE_INDEX = "index";
+    /**
      * 操作权限类型 - 查看列表
      */
     public static final String CODE_LIST = "list";
@@ -70,7 +74,10 @@ public class Operation {
      */
     public static final String CODE_EXPORT = "export";
 
-
+    /**
+     * 操作权限类型描述 - 查看首页
+     */
+    public static final String LABEL_INDEX = "查看首页";
     /**
      * 操作权限描述 - 查看列表
      */
