@@ -31,6 +31,7 @@ execute sp_addextendedproperty 'MS_Description', N'消息模版', 'SCHEMA', '${S
 
 -- 创建索引
 create nonclustered index idx_message_template_tenant on message_template (tenant_id);
+create nonclustered index idx_message_template_code ON message_template(code);
 
 -- 消息表
 CREATE TABLE message (

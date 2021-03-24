@@ -29,6 +29,7 @@ comment on column message_template.create_time is '创建时间';
 comment on table dictionary is '消息模版';
 -- 创建索引
 create index idx_message_template_tenant on message_template (tenant_id);
+create index idx_message_template_code ON message_template(code);
 
 -- 消息表
 CREATE TABLE message (

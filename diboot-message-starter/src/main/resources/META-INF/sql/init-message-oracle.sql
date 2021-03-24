@@ -30,6 +30,7 @@ comment on column ${SCHEMA}.message_template.create_time is '创建时间';
 comment on table ${SCHEMA}.message_template is '消息模版';
 -- 创建索引
 create index idx_message_template_tenant on ${SCHEMA}.message_template (tenant_id);
+create index idx_message_template_code ON ${SCHEMA}.message_template(code);
 
 -- 消息表
 CREATE TABLE ${SCHEMA}.message (

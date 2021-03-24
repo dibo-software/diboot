@@ -15,6 +15,7 @@ CREATE TABLE `message_template` (
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '消息模版';
 -- 索引
 create index idx_message_template_tenant on message_template (tenant_id);
+create index idx_message_template_code ON message_template(code);
 -- 消息表
 CREATE TABLE `message` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' PRIMARY KEY,
