@@ -15,10 +15,13 @@
  */
 package com.diboot.core.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,18 +30,23 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 分页 (属性以下划线开头以避免与提交参数字段冲突)
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */
-@Getter @Setter @Accessors(chain = true)
+@Getter
+@Setter
+@Accessors(chain = true)
 public class Pagination implements Serializable {
     private static final Logger log = LoggerFactory.getLogger(Pagination.class);
 
@@ -59,26 +67,28 @@ public class Pagination implements Serializable {
     /**
      * 默认排序
      */
-    private static final String DEFAULT_ORDER_BY = Cons.FieldName.id.name()+":"+Cons.ORDER_DESC;
+    private static final String DEFAULT_ORDER_BY = Cons.FieldName.id.name() + ":" + Cons.ORDER_DESC;
 
     /**
      * 排序
      */
     private String orderBy = DEFAULT_ORDER_BY;
 
-    public Pagination(){
+    private Class<? extends AbstractEntity> baseEntityCls;
+
+    public Pagination() {
     }
 
     /***
      * 指定当前页数
      */
-    public Pagination(int pageIndex){
+    public Pagination(int pageIndex) {
         setPageIndex(pageIndex);
     }
 
     public void setPageSize(int pageSize) {
-        if(pageSize > 1000){
-            log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize="+ pageSize);
+        if (pageSize > 1000) {
+            log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize=" + pageSize);
             pageSize = 1000;
         }
         this.pageSize = pageSize;
@@ -89,55 +99,65 @@ public class Pagination implements Serializable {
      * @return
      */
     public int getTotalPage() {
-        if(totalCount <= 0){
+        if (totalCount <= 0) {
             return 0;
         }
-        return  (int)Math.ceil((float) totalCount / pageSize);
+        return (int) Math.ceil((float) totalCount / pageSize);
     }
 
     /**
      * 清空默认排序
      */
-    public void clearDefaultOrder(){
+    public void clearDefaultOrder() {
         // 是否为默认排序
-        if(isDefaultOrderBy()){
+        if (isDefaultOrderBy()) {
             orderBy = null;
         }
     }
 
     /**
      * 是否为默认排序
+     *
      * @return
      */
     @JsonIgnore
-    public boolean isDefaultOrderBy(){
+    public boolean isDefaultOrderBy() {
         return V.equals(orderBy, DEFAULT_ORDER_BY);
     }
 
     /**
      * 转换为IPage
+     *
      * @param <T>
      * @return
      */
-    public <T> Page<T> toPage(){
+    public <T> Page<T> toPage() {
         List<OrderItem> orderItemList = null;
         // 解析排序
-        if(V.notEmpty(this.orderBy)){
+        if (V.notEmpty(this.orderBy)) {
             orderItemList = new ArrayList<>();
             // orderBy=shortName:DESC,age:ASC,birthdate
             String[] orderByFields = S.split(this.orderBy);
-            for(String field : orderByFields){
-                if(field.contains(":")){
+            for (String field : orderByFields) {
+                if (field.contains(":")) {
                     String[] fieldAndOrder = S.split(field, ":");
                     String columnName = S.toSnakeCase(fieldAndOrder[0]);
-                    if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
-                        orderItemList.add(OrderItem.desc(columnName));
+                    if (V.notEmpty(baseEntityCls)) {
+                        Field orderField = ReflectionUtils.findField(baseEntityCls, fieldAndOrder[0]);
+                        TableField tableField = orderField.getAnnotation(TableField.class);
+                        TableId tableId = orderField.getAnnotation(TableId.class);
+                        if (V.notEmpty(tableField)  && V.notEmpty(tableField.value())) {
+                            columnName = tableField.value();
+                        } else if (V.notEmpty(tableId)  && V.notEmpty(tableId.value())) {
+                            columnName = tableId.value();
+                        }
                     }
-                    else{
+                    if (Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
+                        orderItemList.add(OrderItem.desc(columnName));
+                    } else {
                         orderItemList.add(OrderItem.asc(columnName));
                     }
-                }
-                else{
+                } else {
                     orderItemList.add(OrderItem.asc(S.toSnakeCase(field)));
                 }
             }
@@ -146,8 +166,8 @@ public class Pagination implements Serializable {
                 .setCurrent(getPageIndex())
                 .setSize(getPageSize())
                 // 如果前端传递过来了缓存的总数，则本次不再count统计
-                .setTotal(getTotalCount() > 0? -1 : getTotalCount());
-        if(orderItemList != null){
+                .setTotal(getTotalCount() > 0 ? -1 : getTotalCount());
+        if (orderItemList != null) {
             page.addOrder(orderItemList);
         }
         return page;
@@ -159,6 +179,6 @@ public class Pagination implements Serializable {
      * @return
      */
     public String setDefaultCreateTimeOrderBy() {
-        return this.orderBy = Cons.FieldName.createTime.name()+":"+Cons.ORDER_DESC;
+        return this.orderBy = Cons.FieldName.createTime.name() + ":" + Cons.ORDER_DESC;
     }
 }
