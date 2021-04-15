@@ -24,10 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /***
  * String 操作类
@@ -96,6 +93,18 @@ public class S extends StringUtils{
 	 */
 	public static String[] toStringArray(List<String> stringList){
 		return stringList.toArray(new String[stringList.size()]);
+	}
+
+	/***
+	 * 按,拆分字符串并转换为 List<String>
+	 * @param joinedStr
+	 * @return
+	 */
+	public static List<String> splitToList(String joinedStr){
+		if(joinedStr == null){
+			return null;
+		}
+		return Arrays.asList(joinedStr.split(SEPARATOR));
 	}
 
 	/***
