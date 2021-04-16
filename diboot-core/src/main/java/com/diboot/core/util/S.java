@@ -204,6 +204,9 @@ public class S extends StringUtils{
 				sb.append(word.substring(0, 1).toUpperCase()).append(word.substring(1).toLowerCase());
 			}
 		}
+		if(snakeCaseStr.endsWith(Cons.SEPARATOR_UNDERSCORE)){
+			sb.append(Cons.SEPARATOR_UNDERSCORE);
+		}
 		return sb != null? sb.toString() : null;
 	}
 
