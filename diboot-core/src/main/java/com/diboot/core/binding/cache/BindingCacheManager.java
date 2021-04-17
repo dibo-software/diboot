@@ -55,17 +55,12 @@ public class BindingCacheManager {
      * cache key
      */
     private static final String CACHE_NAME_TABLE_ENTITY = "TABLE_ENTITY";
-    /**
-     * cache key
-     */
-    private static final String CACHE_NAME_TABLE_MAPPER = "TABLE_MAPPER";
 
     private static StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
             cacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_ENTITY,
-                    CACHE_NAME_TABLE_ENTITY,
-                    CACHE_NAME_TABLE_MAPPER);
+                    CACHE_NAME_TABLE_ENTITY);
         }
         return cacheManager;
     }
@@ -91,6 +86,16 @@ public class BindingCacheManager {
     }
 
     /**
+     * 根据table名称获取entity类
+     * @param tableName
+     * @return
+     */
+    public static Class<?> getEntityClassByTable(String tableName){
+        EntityInfoCache entityInfoCache = getEntityInfoByTable(tableName);
+        return entityInfoCache != null? entityInfoCache.getEntityClass() : null;
+    }
+
+    /**
      * 通过table获取mapper
      * @param table
      * @return
@@ -100,11 +105,18 @@ public class BindingCacheManager {
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
         }
-        initTable2MapperCache();
-        Class<?> mapperClass = getCacheManager().getCacheObj(CACHE_NAME_TABLE_MAPPER, table, Class.class);
-        if(mapperClass != null){
-            BaseMapper mapper = (BaseMapper) ContextHelper.getBean(mapperClass);
-            return mapper;
+        return null;
+    }
+
+    /**
+     * 通过entity获取mapper
+     * @param entityClazz
+     * @return
+     */
+    public static BaseMapper getMapperByClass(Class<?> entityClazz){
+        EntityInfoCache entityInfoCache = getEntityInfoByClass(entityClazz);
+        if(entityInfoCache != null){
+            return entityInfoCache.getBaseMapper();
         }
         return null;
     }
@@ -117,59 +129,56 @@ public class BindingCacheManager {
         if(cacheManager.isUninitializedCache(CACHE_NAME_CLASS_ENTITY) == false){
             return;
         }
+        // 初始化有service的entity缓存
         Map<String, IService> serviceMap = ContextHelper.getApplicationContext().getBeansOfType(IService.class);
-        if(V.isEmpty(serviceMap)){
-            log.debug("未获取到任何有效@Service.");
-        }
         Set<String> uniqueEntitySet = new HashSet<>();
-        for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
-            Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
-            if(entityClass != null){
-                IService entityIService = entry.getValue();
-                if(uniqueEntitySet.contains(entityClass.getName())){
-                    if(entityIService.getClass().getAnnotation(Primary.class) != null){
-                        EntityInfoCache entityInfoCache = cacheManager.getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), EntityInfoCache.class);
-                        if(entityInfoCache != null){
-                            entityInfoCache.setService(entityIService);
+        if(V.notEmpty(serviceMap)){
+            for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
+                Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
+                if(entityClass != null){
+                    IService entityIService = entry.getValue();
+                    if(uniqueEntitySet.contains(entityClass.getName())){
+                        if(entityIService.getClass().getAnnotation(Primary.class) != null){
+                            EntityInfoCache entityInfoCache = cacheManager.getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), EntityInfoCache.class);
+                            if(entityInfoCache != null){
+                                entityInfoCache.setService(entityIService);
+                            }
+                        }
+                        else{
+                            log.warn("Entity: {} 存在多个service实现类，可能导致调用实例与预期不一致!", entityClass.getName());
                         }
                     }
                     else{
-                        log.warn("Entity: {} 存在多个service实现类，可能导致调用实例与预期不一致!", entityClass.getName());
+                        EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, entityIService);
+                        cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
+                        cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
+                        uniqueEntitySet.add(entityClass.getName());
                     }
-                }
-                else{
-                    EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, entityIService);
-                    cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
-                    cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
-                    uniqueEntitySet.add(entityClass.getName());
                 }
             }
         }
-    }
-
-    /**
-     * 初始化Table-mapper缓存
-     */
-    private static void initTable2MapperCache(){
-        StaticMemoryCacheManager cacheManager = getCacheManager();
-        if(cacheManager.isUninitializedCache(CACHE_NAME_TABLE_MAPPER) == false){
-            return;
+        else{
+            log.debug("未获取到任何有效@Service.");
         }
+        // 初始化没有service的table-mapper缓存
         SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
         Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
         if(V.notEmpty(mappers)){
-            mappers.forEach(m->{
-                Type[] types = m.getGenericInterfaces();
+            for(Class<?> mapperClass : mappers){
+                Type[] types = mapperClass.getGenericInterfaces();
                 try{
                     if(types != null && types.length > 0 && types[0] != null){
                         ParameterizedType genericType = (ParameterizedType) types[0];
                         Type[] superTypes = genericType.getActualTypeArguments();
                         if(superTypes != null && superTypes.length > 0 && superTypes[0] != null){
                             String entityClassName = superTypes[0].getTypeName();
-                            if(entityClassName.length() > 1){
+                            if(!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1){
                                 Class<?> entityClass = Class.forName(entityClassName);
-                                String table = ParserCache.getEntityTableName(entityClass);
-                                cacheManager.putCacheObj(CACHE_NAME_TABLE_MAPPER, table, m);
+                                BaseMapper mapper = (BaseMapper) ContextHelper.getBean(mapperClass);
+                                EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null).setBaseMapper(mapper);
+                                cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
+                                cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
+                                uniqueEntitySet.add(entityClass.getName());
                             }
                         }
                     }
@@ -177,8 +186,9 @@ public class BindingCacheManager {
                 catch (Exception e){
                     log.warn("解析mapper异常", e);
                 }
-            });
+            }
         }
+        uniqueEntitySet = null;
     }
 
 }

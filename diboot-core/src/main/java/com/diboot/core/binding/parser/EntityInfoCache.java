@@ -122,7 +122,9 @@ public class EntityInfoCache implements Serializable {
         }
         // 设置当前service实例
         this.service = iService;
-        this.baseMapper = iService.getBaseMapper();
+        if(iService != null){
+            this.baseMapper = iService.getBaseMapper();
+        }
     }
 
     /**
@@ -132,7 +134,9 @@ public class EntityInfoCache implements Serializable {
     public void setService(IService iService){
         // 设置当前service实例
         this.service = iService;
-        this.baseMapper = iService.getBaseMapper();
+        if(iService != null){
+            this.baseMapper = iService.getBaseMapper();
+        }
     }
 
 }

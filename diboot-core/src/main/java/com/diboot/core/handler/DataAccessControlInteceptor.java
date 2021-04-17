@@ -17,11 +17,10 @@ package com.diboot.core.handler;
 
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.data.CheckpointType;
 import com.diboot.core.binding.data.DataAccessAnnoCache;
 import com.diboot.core.binding.data.DataAccessInterface;
-import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.binding.parser.TableLinkage;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -69,12 +68,12 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
         if (selectBody.getFromItem() instanceof Table) {
             Table mainTable = (Table) selectBody.getFromItem();
             String tableName = mainTable.getName().replace("`", "");
-            TableLinkage linkage = ParserCache.getTableLinkage(tableName);
+            Class<?> entityClass = BindingCacheManager.getEntityClassByTable(tableName);
             // 无权限检查点注解，不处理
-            if (linkage == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(linkage.getEntityClass())) {
+            if (entityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(entityClass)) {
                 return;
             }
-            appendDataAccessCondition(selectBody, mainTable, linkage.getEntityClass());
+            appendDataAccessCondition(selectBody, mainTable, entityClass);
             String newSql = selectBody.toString();
             mpBoundSql.sql(newSql);
             // 打印修改后的SQL
@@ -106,12 +105,12 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
         if(V.notEmpty(selectBody.getJoins())){
             for (Join join : selectBody.getJoins()) {
                 Table joinTable = (Table) join.getRightItem();
-                TableLinkage linkage = ParserCache.getTableLinkage(joinTable.getName());
+                Class<?> joinEntityClass = BindingCacheManager.getEntityClassByTable(joinTable.getName());
                 // 无权限检查点注解，不处理
-                if (linkage == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(linkage.getEntityClass())) {
+                if (joinEntityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(joinEntityClass)) {
                     continue;
                 }
-                Expression joinDataAccessExpression = buildDataAccessExpression(joinTable, linkage.getEntityClass());
+                Expression joinDataAccessExpression = buildDataAccessExpression(joinTable, joinEntityClass);
                 // 主表需要数据权限检查
                 if(joinDataAccessExpression != null){
                     String joinOnStmt = join.getOnExpression() == null? null : join.getOnExpression().toString();

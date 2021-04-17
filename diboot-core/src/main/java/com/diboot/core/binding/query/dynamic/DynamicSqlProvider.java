@@ -84,7 +84,8 @@ public class DynamicSqlProvider {
                         if(joiner.getMiddleTable() != null){
                             sb.setLength(0);
                             sb.append(joiner.getMiddleTable()).append(" ").append(joiner.getMiddleTableAlias()).append(" ON ").append(joiner.getMiddleTableOnSegment());
-                            if(S.containsIgnoreCase(joiner.getMiddleTable(), " "+Cons.COLUMN_IS_DELETED) == false && ParserCache.hasDeletedColumn(joiner.getMiddleTable())){
+                            String deletedCol = ParserCache.getDeletedColumn(joiner.getMiddleTable());
+                            if(deletedCol != null && S.containsIgnoreCase(joiner.getMiddleTable(), " "+deletedCol) == false){
                                 sb.append(" AND ").append(joiner.getMiddleTableAlias()).append(".").append(Cons.COLUMN_IS_DELETED).append(" = ").append(BaseConfig.getActiveFlagValue());
                             }
                             String joinSegment = sb.toString();
@@ -95,7 +96,8 @@ public class DynamicSqlProvider {
                         }
                         sb.setLength(0);
                         sb.append(joiner.getJoin()).append(" ").append(joiner.getAlias()).append(" ON ").append(joiner.getOnSegment());
-                        if(S.containsIgnoreCase(joiner.getOnSegment(), " "+Cons.COLUMN_IS_DELETED) == false && ParserCache.hasDeletedColumn(joiner.getJoin())){
+                        String deletedCol = ParserCache.getDeletedColumn(joiner.getJoin());
+                        if(deletedCol != null && S.containsIgnoreCase(joiner.getOnSegment(), " "+Cons.COLUMN_IS_DELETED) == false){
                             sb.append(" AND ").append(joiner.getAlias()).append(".").append(Cons.COLUMN_IS_DELETED).append(" = ").append(BaseConfig.getActiveFlagValue());
                         }
                         String joinSegment = sb.toString();
@@ -113,8 +115,9 @@ public class DynamicSqlProvider {
                 if(V.notEmpty(normalSql)){
                     WHERE(formatNormalSql(normalSql));
                     // 动态为主表添加is_deleted=0
-                    String isDeletedSection = "self."+ Cons.COLUMN_IS_DELETED;
-                    if(QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false && ParserCache.hasDeletedColumn(wrapper.getEntityTable())){
+                    String isDeletedCol = ParserCache.getDeletedColumn(wrapper.getEntityTable());
+                    String isDeletedSection = "self."+ isDeletedCol;
+                    if(isDeletedCol != null && QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
                     if(segments.getOrderBy() != null){
