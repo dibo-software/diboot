@@ -1,7 +1,10 @@
 package com.diboot.core.cache;
 
 import org.springframework.cache.Cache;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -13,6 +16,15 @@ import java.util.concurrent.ConcurrentMap;
  * Copyright © diboot.com
  */
 public class DynamicMemoryCacheManager extends BaseCacheManager{
+
+    public DynamicMemoryCacheManager(String... cacheNames){
+        List<Cache> caches = new ArrayList<>();
+        for(String cacheName : cacheNames){
+            caches.add(new ConcurrentMapCache(cacheName));
+        }
+        setCaches(caches);
+    }
+
     /**
      * 默认的过期时间（分钟）
      */

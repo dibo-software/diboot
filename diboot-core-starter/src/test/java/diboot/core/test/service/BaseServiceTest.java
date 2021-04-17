@@ -17,10 +17,13 @@ package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
@@ -30,6 +33,7 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.entity.UserRole;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
@@ -366,6 +370,21 @@ public class BaseServiceTest {
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 0);
+    }
+
+    @Test
+    public void testCache(){
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(Dictionary.class);
+        Assert.assertTrue(entityInfoCache != null);
+        Assert.assertTrue(entityInfoCache.getDeletedColumn().equals("is_deleted"));
+
+        entityInfoCache = BindingCacheManager.getEntityInfoByClass(CcCityInfo.class);
+        Assert.assertTrue(entityInfoCache != null);
+        Assert.assertTrue(entityInfoCache.getIdColumn().equals("id"));
+        Assert.assertTrue(entityInfoCache.getDeletedColumn() == null);
+
+        BaseMapper baseMapper = BindingCacheManager.getMapperByTable("user_role");
+        Assert.assertTrue(baseMapper != null);
     }
 
 }

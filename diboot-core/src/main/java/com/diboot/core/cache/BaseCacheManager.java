@@ -1,9 +1,13 @@
 package com.diboot.core.cache;
 
 import org.springframework.cache.Cache;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.AbstractCacheManager;
+import org.springframework.cache.support.SimpleCacheManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 缓存manager父类
@@ -12,7 +16,7 @@ import java.util.Collection;
  * @date 2021/4/17
  * Copyright © diboot.com
  */
-public abstract class BaseCacheManager extends AbstractCacheManager {
+public abstract class BaseCacheManager extends SimpleCacheManager {
 
     /**
      * 获取缓存对象
@@ -36,8 +40,14 @@ public abstract class BaseCacheManager extends AbstractCacheManager {
         cache.put(objKey, obj);
     }
 
-    @Override
-    protected Collection<? extends Cache> loadCaches() {
-        return null;
+    /**
+     * 尚未初始化的
+     * @param cacheName
+     * @return
+     */
+    public boolean isUninitializedCache(String cacheName){
+        ConcurrentMapCache cache = (ConcurrentMapCache)getCache(cacheName);
+        return cache.getNativeCache().isEmpty();
     }
+
 }
