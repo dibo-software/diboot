@@ -17,8 +17,6 @@ package com.diboot.message.channel;
 
 
 import com.diboot.message.entity.Message;
-import com.diboot.message.service.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 通道策略接口

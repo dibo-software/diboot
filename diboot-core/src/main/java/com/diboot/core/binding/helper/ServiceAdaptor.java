@@ -110,7 +110,7 @@ public class ServiceAdaptor {
         // 如果是默认id排序
         if(pagination.isDefaultOrderBy()){
             // 优化排序
-            String pk = ContextHelper.getPrimaryKey(entityClass);
+            String pk = ContextHelper.getIdFieldName(entityClass);
             // 主键非有序id字段，需要清空默认排序以免报错
             if(!Cons.FieldName.id.name().equals(pk)){
                 pagination.clearDefaultOrder();

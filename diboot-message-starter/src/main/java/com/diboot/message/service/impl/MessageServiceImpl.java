@@ -15,7 +15,6 @@
  */
 package com.diboot.message.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;

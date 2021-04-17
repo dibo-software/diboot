@@ -15,7 +15,9 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
@@ -80,7 +82,7 @@ public abstract class BaseEntity extends AbstractEntity<Long> {
      */
     @JsonIgnore
     public Object getPrimaryKeyVal(){
-        String pk = ContextHelper.getPrimaryKey(this.getClass());
+        String pk = ContextHelper.getIdFieldName(this.getClass());
         if(Cons.FieldName.id.name().equals(pk)){
             return getId();
         }

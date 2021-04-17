@@ -672,7 +672,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	private Object getPrimaryKeyValue(Object entity){
-		String pk = ContextHelper.getPrimaryKey(entity.getClass());
+		String pk = ContextHelper.getIdFieldName(entity.getClass());
 		return BeanUtils.getProperty(entity, pk);
 	}
 

@@ -15,19 +15,10 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.diboot.core.config.Cons;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.JSON;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Entity抽象父类

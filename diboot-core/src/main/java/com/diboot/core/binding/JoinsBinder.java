@@ -181,7 +181,7 @@ public class JoinsBinder {
         // 如果是默认id排序，检查是否有id字段
         if(pagination.isDefaultOrderBy()){
             // 优化排序
-            String pk = ContextHelper.getPrimaryKey(entityClazz);
+            String pk = ContextHelper.getIdFieldName(entityClazz);
             // 主键非有序id字段，需要清空默认排序
             if (!Cons.FieldName.id.name().equals(pk)) {
                 pagination.clearDefaultOrder();

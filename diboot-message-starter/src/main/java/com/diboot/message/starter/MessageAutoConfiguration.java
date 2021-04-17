@@ -17,8 +17,8 @@ package com.diboot.message.starter;
 
 import com.diboot.message.channel.ChannelStrategy;
 import com.diboot.message.channel.SimpleEmailChannel;
-import com.diboot.message.service.impl.SystemTemplateVariableServiceImpl;
 import com.diboot.message.service.TemplateVariableService;
+import com.diboot.message.service.impl.SystemTemplateVariableServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -19,8 +19,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.AbstractEntity;
-import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
@@ -179,7 +177,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected JsonResult updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
         if(entity.getId() == null){
-            String pk = ContextHelper.getPrimaryKey(getEntityClass());
+            String pk = ContextHelper.getIdFieldName(getEntityClass());
             if(Cons.FieldName.id.name().equals(pk)){
                 Long longId = (id instanceof Long)? (Long)id : Long.parseLong((String)id);
                 entity.setId(longId);
@@ -273,7 +271,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     private Map<String, Object> buildPKDataMap(E entity){
         // 组装返回结果
         Map<String, Object> data = new HashMap<>(2);
-        String pk = ContextHelper.getPrimaryKey(getEntityClass());
+        String pk = ContextHelper.getIdFieldName(getEntityClass());
         Object pkValue = (Cons.FieldName.id.name().equals(pk))? entity.getId() : BeanUtils.getProperty(entity, pk);
         data.put(pk, pkValue);
         return data;
