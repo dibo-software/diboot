@@ -2,12 +2,7 @@ package com.diboot.core.cache;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
-import org.springframework.cache.support.AbstractCacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 缓存manager父类
