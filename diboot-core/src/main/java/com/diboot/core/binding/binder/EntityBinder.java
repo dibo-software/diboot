@@ -72,7 +72,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @return
      */
     public BaseBinder<T> set(String annoObjectField, Class annoObjectFieldClass){
-        this.annoObjectField = annoObjectField;
+        this.annoObjectField = toAnnoObjField(annoObjectField);
         this.annoObjectFieldClass = annoObjectFieldClass;
         return this;
     }
@@ -82,7 +82,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         if(V.isEmpty(annoObjectList)){
             return;
         }
-        if(V.isEmpty(refObjJoinFlds)){
+        if(V.isEmpty(refObjJoinCols)){
             log.warn("调用错误：无法从condition中解析出字段关联.");
             return;
         }
@@ -95,12 +95,12 @@ public class EntityBinder<T> extends BaseBinder<T> {
             List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
                 Map<String, Object> valueEntityMap = this.buildMatchKey2EntityMap(list);
-                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, annoObjJoinFlds, valueEntityMap);
+                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityMap);
             }
         }
         // 通过中间表关联Entity
         else{
-            if(refObjJoinFlds.size() > 1){
+            if(refObjJoinCols.size() > 1){
                 throw new BusinessException(NOT_SUPPORT_MSG);
             }
             // 提取注解条件中指定的对应的列表
@@ -109,14 +109,14 @@ public class EntityBinder<T> extends BaseBinder<T> {
             Map<String, Object> valueEntityMap = new HashMap<>();
             Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(trunkObjCol2ValuesMap);
             if(V.notEmpty(middleTableResultMap)){
-                String refObjJoinOnField = refObjJoinFlds.get(0);
                 // 提取entity主键值集合
                 Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
                 // 构建查询条件
-                queryWrapper.in(S.toSnakeCase(refObjJoinOnField), refObjValues);
+                queryWrapper.in(refObjJoinCols.get(0), refObjValues);
                 // 查询entity列表
                 List<T> list = getEntityList(queryWrapper);
                 if(V.notEmpty(list)){
+                    String refObjJoinOnField = toRefObjField(refObjJoinCols.get(0));
                     // 转换entity列表为Map<ID, Entity>
                     Map<String, T> listMap = BeanUtils.convertToStringKeyObjectMap(list, refObjJoinOnField);
                     if(V.notEmpty(listMap)){
@@ -134,7 +134,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 }
             }
             // 绑定结果
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap);
+            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
         }
     }
 
@@ -145,11 +145,11 @@ public class EntityBinder<T> extends BaseBinder<T> {
      */
     private Map<String, Object> buildMatchKey2EntityMap(List<T> list){
         Map<String, Object> key2TargetMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
+        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
         for(T entity : list){
             joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinFlds){
-                String pkValue = BeanUtils.getStringProperty(entity, refObjJoinOnCol);
+            for(String refObjJoinOnCol : refObjJoinCols){
+                String pkValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
                 joinOnValues.add(pkValue);
             }
             String matchKey = S.join(joinOnValues);

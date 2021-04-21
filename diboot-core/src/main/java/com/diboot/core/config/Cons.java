@@ -81,6 +81,7 @@ public class Cons {
      */
     public static final String FIELD_ITEM_NAME = "itemName";
     public static final String FIELD_ITEM_VALUE = "itemValue";
+    public static final String COLUMN_ITEM_VALUE = "item_value";
     public static final String FIELD_TYPE = "type";
 
     /**

@@ -199,7 +199,7 @@ public class ContextHelper implements ApplicationContextAware {
     public static String getIdFieldName(Class entity){
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
         if(entityInfoCache != null && entityInfoCache.getIdColumn() != null){
-            return entityInfoCache.getColumnToFieldMap().get(entityInfoCache.getIdColumn());
+            return entityInfoCache.getFieldByColumn(entityInfoCache.getIdColumn());
         }
         return null;
     }

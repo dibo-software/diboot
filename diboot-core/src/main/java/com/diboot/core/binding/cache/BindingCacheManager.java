@@ -19,7 +19,7 @@ package com.diboot.core.binding.cache;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.parser.EntityInfoCache;
-import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.cache.StaticMemoryCacheManager;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
@@ -48,19 +48,24 @@ public class BindingCacheManager {
      */
     private static StaticMemoryCacheManager cacheManager;
     /**
-     * cache key
+     * 类-EntityInfo缓存key
      */
     private static final String CACHE_NAME_CLASS_ENTITY = "CLASS_ENTITY";
     /**
-     * cache key
+     * 表-EntityInfo缓存key
      */
     private static final String CACHE_NAME_TABLE_ENTITY = "TABLE_ENTITY";
+    /**
+     * 类-PropInfo缓存key
+     */
+    private static final String CACHE_NAME_CLASS_PROP = "CLASS_PROP";
 
     private static StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
             cacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_ENTITY,
-                    CACHE_NAME_TABLE_ENTITY);
+                    CACHE_NAME_TABLE_ENTITY,
+                    CACHE_NAME_CLASS_PROP);
         }
         return cacheManager;
     }
@@ -83,6 +88,32 @@ public class BindingCacheManager {
     public static EntityInfoCache getEntityInfoByClass(Class<?> entityClazz){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClazz.getName(), EntityInfoCache.class);
+    }
+
+    /**
+     * 根据bean类获取bean信息cache
+     * @param beanClazz
+     * @return
+     */
+    public static PropInfo getPropInfoByClass(Class<?> beanClazz){
+        PropInfo propInfo = getCacheManager().getCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), PropInfo.class);
+        if(propInfo == null){
+            propInfo = initPropInfoCache(beanClazz);
+        }
+        return propInfo;
+    }
+
+    /**
+     * 根据tableName获取bean信息cache
+     * @param tableName
+     * @return
+     */
+    public static PropInfo getPropInfoByTable(String tableName){
+        Class<?> entityClass = getEntityClassByTable(tableName);
+        if(entityClass != null){
+            return getPropInfoByClass(entityClass);
+        }
+        return null;
     }
 
     /**
@@ -175,7 +206,8 @@ public class BindingCacheManager {
                             if(!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1){
                                 Class<?> entityClass = Class.forName(entityClassName);
                                 BaseMapper mapper = (BaseMapper) ContextHelper.getBean(mapperClass);
-                                EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null).setBaseMapper(mapper);
+                                EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null);
+                                entityInfoCache.setBaseMapper(mapper);
                                 cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
                                 cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
                                 uniqueEntitySet.add(entityClass.getName());
@@ -189,6 +221,17 @@ public class BindingCacheManager {
             }
         }
         uniqueEntitySet = null;
+    }
+
+    /**
+     * 初始化bean的属性缓存
+     * @param beanClazz
+     * @return
+     */
+    private static PropInfo initPropInfoCache(Class<?> beanClazz) {
+        PropInfo propInfoCache = new PropInfo(beanClazz);
+        cacheManager.putCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), propInfoCache);
+        return propInfoCache;
     }
 
 }

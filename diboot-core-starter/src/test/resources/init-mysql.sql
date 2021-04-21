@@ -59,7 +59,8 @@ create table user
   gender varchar(20) null,
   birthdate date null,
   is_deleted tinyint(1) default 0 null,
-  create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间'
+  create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间',
+  local_datetime datetime null comment '本地时间'
 ) comment '用户' charset=utf8mb4;
 
 create table user_role

@@ -49,7 +49,7 @@ public class BeanUtilsTest {
         Map<String, Object> map = new HashMap<>();
         map.put("type", "STATUS");
         map.put("itemName",itemName);
-        map.put("editable", true);
+        map.put("isEditable", true);
         map.put("createTime", "2018-09-12 23:09");
         Dictionary dictionary3 = new Dictionary();
         BeanUtils.bindProperties(dictionary3, map);
