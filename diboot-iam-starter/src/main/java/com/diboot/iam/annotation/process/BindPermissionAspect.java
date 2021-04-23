@@ -20,6 +20,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.auth.IamCustomize;
+import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -76,7 +77,7 @@ public class BindPermissionAspect {
         HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
         // 根据uri获取对应权限标识
         String uriMapping = formatUriMapping(request);
-        String permissionCode = ApiPermissionCache.getPermissionCode(request.getMethod(), uriMapping);
+        String permissionCode = IamCacheManager.getPermissionCode(request.getMethod(), uriMapping);
         if (permissionCode == null){
             return;
         }

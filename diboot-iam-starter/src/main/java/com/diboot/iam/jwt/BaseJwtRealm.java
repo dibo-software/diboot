@@ -19,10 +19,10 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
-import com.diboot.iam.annotation.process.ApiPermissionCache;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.auth.IamExtensible;
+import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
@@ -152,7 +152,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
         if(V.notEmpty(apiUrlList)){
             apiUrlList.stream().forEach(set->{
                 for(String uri : set.split(Cons.SEPARATOR_COMMA)){
-                    String permissionCode = ApiPermissionCache.getPermissionCode(uri);
+                    String permissionCode = IamCacheManager.getPermissionCode(uri);
                     if(permissionCode != null){
                         allPermissionCodes.add(permissionCode);
                     }
