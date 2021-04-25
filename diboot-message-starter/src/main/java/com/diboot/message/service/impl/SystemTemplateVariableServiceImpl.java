@@ -60,7 +60,7 @@ public class SystemTemplateVariableServiceImpl implements TemplateVariableServic
                 variableValueList.add("");
             }
         }
-        return S.replaceEach(templateContent, messageTemplateVariables, variableValueList.toArray(new String[variableValueList.size()]));
+        return S.replaceEach(templateContent, messageTemplateVariables, S.toStringArray(variableValueList));
     }
 
     /**

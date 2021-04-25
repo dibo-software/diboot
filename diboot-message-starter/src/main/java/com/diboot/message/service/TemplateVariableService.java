@@ -15,6 +15,7 @@
  */
 package com.diboot.message.service;
 
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.message.annotation.BindVariable;
 import com.diboot.message.entity.BaseVariableData;
@@ -88,7 +89,7 @@ public interface TemplateVariableService {
         while (matcher.find()) {
             templateVariableList.add(matcher.group());
         }
-        return templateVariableList.toArray(new String[templateVariableList.size()]);
+        return S.toStringArray(templateVariableList);
     }
 
 }

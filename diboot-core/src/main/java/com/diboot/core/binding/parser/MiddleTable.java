@@ -268,7 +268,7 @@ public class MiddleTable {
                 columns.add(entry.getKey());
             }
         }
-        return columns.toArray(new String[columns.size()]);
+        return S.toStringArray(columns);
     }
 
 }
