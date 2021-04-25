@@ -24,13 +24,12 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
+import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.OrganizationService;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.CcCityInfoVO;
-import diboot.core.test.binder.vo.FieldBinderVO;
-import diboot.core.test.binder.vo.TestDictVo;
-import diboot.core.test.binder.vo.UserVO;
+import diboot.core.test.binder.vo.*;
 import diboot.core.test.config.SpringMvcConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -61,6 +60,8 @@ public class TestFieldBinder {
     DepartmentService departmentService;
     @Autowired
     DictionaryService dictionaryService;
+    @Autowired
+    OrganizationService organizationService;
 
     @Test
     public void testBinder(){
@@ -124,6 +125,21 @@ public class TestFieldBinder {
         CcCityInfoVO ccCityInfoVO = Binder.convertAndBindRelations(ccCityInfo, CcCityInfoVO.class);
         System.out.println(ccCityInfoVO.getProvenceName());
         Assert.assertTrue(ccCityInfoVO.getProvenceName() != null);
+    }
+
+    /**
+     * 测试BindField&BindDict组合
+     */
+    @Test
+    public void testAnnoCombo(){
+        QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
+        queryWrapper.isNotNull("manager_id");
+
+        List<OrganizationVO> voList = organizationService.getViewObjectList(queryWrapper, null, OrganizationVO.class);
+        for(OrganizationVO vo : voList){
+            System.out.println(vo.getManagerGenderLabel());
+            Assert.assertTrue("男".equals(vo.getManagerGenderLabel()) || "女".equals(vo.getManagerGenderLabel()) );
+        }
     }
 
 }

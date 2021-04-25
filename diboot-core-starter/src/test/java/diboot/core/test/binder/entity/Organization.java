@@ -42,4 +42,7 @@ public class Organization extends BaseEntity {
     @TableField
     private String telphone;
 
+    @TableField
+    private Long managerId;
+
 }

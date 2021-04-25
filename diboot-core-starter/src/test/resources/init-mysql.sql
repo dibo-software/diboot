@@ -37,6 +37,7 @@ create table organization
   parent_id int default 0 not null comment '上级单位ID',
   name varchar(100) not null comment '名称',
   telphone varchar(20) null comment '电话',
+  manager_id bigint not null comment '负责人id',
   is_deleted tinyint(1) default 0 not null comment '是否有效',
   create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间'
 )
@@ -83,7 +84,7 @@ create table cc_city_info
 INSERT INTO department (id, parent_id, org_id, name) VALUES (10001, 0, 100001, '产品部'), (10002, 10001, 100001, '研发组'), (10003, 10001, 100001, '测试组'),
        (10004, 10001, 100001, 'UI组'), (10005, 10003, 100001, '自动化测试'), (10006, 10003, 100001, '功能测试');
 INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
-INSERT INTO organization (id, parent_id, name, telphone) VALUES (100001, 0, '苏州帝博', '0512-62988949'), (100002, 0, '成都帝博', null);
+INSERT INTO organization (id, parent_id, name, telphone, manager_id) VALUES (100001, 0, '苏州帝博', '0512-62988949', 1001), (100002, 0, '成都帝博', null, null);
 INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');
 INSERT INTO user (id, department_id, username, gender) VALUES (1001, 10002, '张三', 'M'), (1002, 10002, '李四', 'F');
 INSERT INTO user_role (user_type, user_id, role_id) VALUES ('SysUser', 1001, 101),('SysUser', 1001, 102),('OrgUser', 1002, 102);

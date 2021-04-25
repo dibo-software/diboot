@@ -15,9 +15,12 @@
  */
 package diboot.core.test.binder.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Organization;
+import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -40,6 +43,8 @@ public class OrganizationVO {
 
     private String name;
 
+    private Long managerId;
+
     // 关联Entity
     @BindEntity(entity = Organization.class, condition = "this.parent_id=id") // AND ...
     private Organization parentOrg;
@@ -47,5 +52,9 @@ public class OrganizationVO {
     // 关联Entity
     @BindField(entity = Organization.class, field = "name", condition = "this.parent_id=id") // AND ...
     private String parentOrgName;
+
+    @BindDict(type = "GENDER", field = "managerGenderLabel")
+    @BindField(entity = User.class, field = "gender", condition = "this.manager_id=id")
+    private String managerGenderLabel;
 
 }
