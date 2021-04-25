@@ -3,7 +3,7 @@ package com.diboot.message.utils;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
-import com.diboot.message.annotation.BindVariable;
+import com.diboot.message.annotation.TemplateVariable;
 import com.diboot.message.service.TemplateVariableService;
 
 import java.lang.reflect.Method;
@@ -36,12 +36,12 @@ public class TemplateUtils {
         Class targetClass = BeanUtils.getTargetClass(templateVariableService);
         Method[] methods = targetClass.getDeclaredMethods();
         for (Method method : methods) {
-            BindVariable bindVariable = method.getAnnotation(BindVariable.class);
-            if (bindVariable == null) {
+            TemplateVariable templateVariable = method.getAnnotation(TemplateVariable.class);
+            if (templateVariable == null) {
                 continue;
             }
-            TEMPLATE_STRATEGY_LIST.add(bindVariable.name());
-            TemplateVariableService.TEMPLATE_STRATEGY_CACHE.put(bindVariable.name(), method);
+            TEMPLATE_STRATEGY_LIST.add(templateVariable.name());
+            TemplateVariableService.TEMPLATE_STRATEGY_CACHE.put(templateVariable.name(), method);
         }
         return TEMPLATE_STRATEGY_LIST;
     }

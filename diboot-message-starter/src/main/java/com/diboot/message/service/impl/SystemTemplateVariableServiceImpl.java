@@ -17,7 +17,7 @@ package com.diboot.message.service.impl;
 
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.message.annotation.BindVariable;
+import com.diboot.message.annotation.TemplateVariable;
 import com.diboot.message.entity.BaseVariableData;
 import com.diboot.message.service.TemplateVariableService;
 import lombok.extern.slf4j.Slf4j;
@@ -69,7 +69,7 @@ public class SystemTemplateVariableServiceImpl implements TemplateVariableServic
      * @param baseVariableData
      * @return
      */
-    @BindVariable(name = "${用户姓名}")
+    @TemplateVariable(name = "${用户姓名}")
     private String getRealName(BaseVariableData baseVariableData) {
         return V.notEmpty(baseVariableData.getRealName()) ? baseVariableData.getRealName() : "";
     }
@@ -80,7 +80,7 @@ public class SystemTemplateVariableServiceImpl implements TemplateVariableServic
      * @param baseVariableData
      * @return
      */
-    @BindVariable(name = "${手机号}")
+    @TemplateVariable(name = "${手机号}")
     private String getMobilePhone(BaseVariableData baseVariableData) {
         return V.notEmpty(baseVariableData.getPhone()) ? baseVariableData.getPhone() : "";
     }

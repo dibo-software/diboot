@@ -17,7 +17,7 @@ package com.diboot.message.service;
 
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.message.annotation.BindVariable;
+import com.diboot.message.annotation.TemplateVariable;
 import com.diboot.message.entity.BaseVariableData;
 import com.diboot.message.utils.TemplateUtils;
 
@@ -45,7 +45,7 @@ public interface TemplateVariableService {
     Pattern TEMPLATE_VARIABLE = Pattern.compile("\\$\\{.+?\\}");
 
     /**
-     * 变量方法缓存<{@link BindVariable#name()}, Method>
+     * 变量方法缓存<{@link TemplateVariable#name()}, Method>
      */
     Map<String, Method> TEMPLATE_STRATEGY_CACHE = new HashMap<>(128);
 
