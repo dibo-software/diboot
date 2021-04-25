@@ -15,10 +15,12 @@
  */
 package com.diboot.scheduler.service.impl;
 
+import ch.qos.logback.core.db.BindDataSourceToJNDIAction;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.annotation.BindJob;
+import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
@@ -76,30 +79,63 @@ public class QuartzSchedulerService {
         if (V.notEmpty(CACHE_JOB)) {
             return CACHE_JOB;
         }
-        // 获取所有被com.diboot.scheduler.job.anno.BindJob注解的job
-        List<Object> jobByScheduledAnnotationList = ContextHelper.getBeansByAnnotation(BindJob.class);
-        if (V.isEmpty(jobByScheduledAnnotationList)) {
-            return Collections.emptyList();
+        // 获取所有被com.diboot.scheduler.job.anno.CollectThisJob注解的job
+        List<Object> annoJobList = ContextHelper.getBeansByAnnotation(CollectThisJob.class);
+        if (V.notEmpty(annoJobList)) {
+            List<Map<String, Object>> result = loadJobs(annoJobList);
+            CACHE_JOB.addAll(result);
         }
+        // 兼容旧版本BindJob注解
+        annoJobList = ContextHelper.getBeansByAnnotation(BindJob.class);
+        if (V.notEmpty(annoJobList)) {
+            List<Map<String, Object>> result = loadJobs(annoJobList);
+            CACHE_JOB.addAll(result);
+        }
+        return CACHE_JOB;
+    }
+
+    /**
+     * 加载job定义
+     * @param annoJobList
+     * @return
+     */
+    private List<Map<String, Object>> loadJobs(List<Object> annoJobList){
         List<Map<String, Object>> result = new ArrayList<>();
-        for (Object job : jobByScheduledAnnotationList) {
+        for (Object job : annoJobList) {
             if (!(job instanceof Job)) {
                 log.warn("无效的job任务: {}", job.getClass());
                 continue;
             }
             Map<String, Object> temp = new HashMap<>(8);
             Class targetClass = BeanUtils.getTargetClass(job);
-
-            BindJob annotation = (BindJob) targetClass.getAnnotation(BindJob.class);
-            temp.put("jobCron", annotation.cron());
-            temp.put("jobName", annotation.name());
+            String jobCron = null, jobName = null, paramJson = null;
+            Class<?> paramClass = null;
+            CollectThisJob annotation = (CollectThisJob) targetClass.getAnnotation(CollectThisJob.class);
+            if(annotation != null){
+                jobCron = annotation.cron();
+                jobName = annotation.name();
+                paramJson = annotation.paramJson();
+                paramClass = annotation.paramClass();
+            }
+            else{ // 兼容旧版本BindJob注解
+                BindJob bindJobAnno = (BindJob) targetClass.getAnnotation(BindJob.class);
+                if(bindJobAnno != null){
+                    jobCron = bindJobAnno.cron();
+                    jobName = bindJobAnno.name();
+                    paramJson = bindJobAnno.paramJson();
+                    paramClass = bindJobAnno.paramClass();
+                }
+            }
+            temp.put("jobCron", jobCron);
+            temp.put("jobName", jobName);
             temp.put("jobClass", targetClass);
             String paramJsonExample = "";
-            if (V.notEmpty(annotation.paramJson())) {
-                paramJsonExample = annotation.paramJson();
-            } else if (!Object.class.getTypeName().equals(annotation.paramClass().getTypeName())) {
+            if (V.notEmpty(paramJson)) {
+                paramJsonExample = paramJson;
+            }
+            else if (!Object.class.getTypeName().equals(paramClass.getTypeName())) {
                 try {
-                    paramJsonExample = JSON.stringify(annotation.paramClass().newInstance());
+                    paramJsonExample = JSON.stringify(paramClass.newInstance());
                 } catch (Exception e) {
                     log.error("job任务：{}, Scheduled#paramClass参数任务无效，建议使用Scheduled#paramJson参数替换！", job.getClass());
                 }
@@ -107,7 +143,6 @@ public class QuartzSchedulerService {
             temp.put("paramJsonExample", paramJsonExample);
             result.add(temp);
         }
-        CACHE_JOB.addAll(result);
         return result;
     }
 

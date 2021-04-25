@@ -57,7 +57,7 @@ spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身�
 ### 4、diboot-scheduler 定时任务组件
 
 * Quartz定时任务统一管理及日志的最佳实践封装
-* @BindJob注解提供定时任务定义，自动收集供前端选择
+* @CollectThisJob注解提供定时任务定义，自动收集供前端选择
 > 详细文档: [diboot-scheduler文档](https://www.diboot.com/guide/diboot-scheduler/%E4%BB%8B%E7%BB%8D.html). 
 
 ## devtools开发助理

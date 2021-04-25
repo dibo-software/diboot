@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * 定时任务注解，已替换为CollectThisJob
+ * 定时任务注解
  *
  * @author : uu
  * @version : v1.0
@@ -33,8 +33,7 @@ import java.lang.annotation.*;
 @Documented
 @Component
 @Lazy
-@Deprecated
-public @interface BindJob {
+public @interface CollectThisJob {
 
     /**
      * bean Name
