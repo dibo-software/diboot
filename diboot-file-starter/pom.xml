@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>2.2.7</version>
+            <version>2.2.8</version>
         </dependency>
         <!-- http -->
         <dependency>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
-            <version>0.4.13</version>
+            <version>0.4.14</version>
             <optional>true</optional>
         </dependency>
 
