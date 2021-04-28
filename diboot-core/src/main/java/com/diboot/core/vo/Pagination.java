@@ -15,10 +15,10 @@
  */
 package com.diboot.core.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.AbstractEntity;
@@ -30,10 +30,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,9 +72,13 @@ public class Pagination implements Serializable {
      */
     private String orderBy = DEFAULT_ORDER_BY;
 
-    private Class<? extends AbstractEntity> baseEntityCls;
+    private Class<? extends AbstractEntity> entityClass;
 
     public Pagination() {
+    }
+
+    public Pagination(Class<? extends AbstractEntity> entityClass) {
+        this.entityClass = entityClass;
     }
 
     /***
@@ -141,15 +143,17 @@ public class Pagination implements Serializable {
             for (String field : orderByFields) {
                 if (field.contains(":")) {
                     String[] fieldAndOrder = S.split(field, ":");
-                    String columnName = S.toSnakeCase(fieldAndOrder[0]);
-                    if (V.notEmpty(baseEntityCls)) {
-                        Field orderField = ReflectionUtils.findField(baseEntityCls, fieldAndOrder[0]);
-                        TableField tableField = orderField.getAnnotation(TableField.class);
-                        TableId tableId = orderField.getAnnotation(TableId.class);
-                        if (V.notEmpty(tableField)  && V.notEmpty(tableField.value())) {
-                            columnName = tableField.value();
-                        } else if (V.notEmpty(tableId)  && V.notEmpty(tableId.value())) {
-                            columnName = tableId.value();
+                    String fieldName = fieldAndOrder[0];
+                    String columnName = S.toSnakeCase(fieldName);
+                    PropInfo propInfo = getEntityPropInfo();
+                    if(propInfo != null){
+                        // 前参数为字段名
+                        if(propInfo.getFieldToColumnMap().containsKey(fieldName)){
+                            columnName = propInfo.getFieldToColumnMap().get(fieldName);
+                        }
+                        // 前参数为列名
+                        else if(propInfo.getColumnToFieldMap().containsKey(fieldName)){
+                            columnName = fieldName;
                         }
                     }
                     if (Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
@@ -180,5 +184,12 @@ public class Pagination implements Serializable {
      */
     public String setDefaultCreateTimeOrderBy() {
         return this.orderBy = Cons.FieldName.createTime.name() + ":" + Cons.ORDER_DESC;
+    }
+
+    private PropInfo getEntityPropInfo(){
+        if (this.entityClass != null) {
+            return BindingCacheManager.getPropInfoByClass(this.entityClass);
+        }
+        return null;
     }
 }
