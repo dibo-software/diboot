@@ -15,8 +15,11 @@
  */
 package com.diboot.iam.util;
 
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
+import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +68,18 @@ public class IamSecurityUtils extends SecurityUtils {
         if(subject.isAuthenticated() || subject.getPrincipals() != null){
             subject.logout();
         }
+    }
+
+    /**
+     * 获取用户 "类型:ID" 的值
+     * @return
+     */
+    public static String getUserTypeAndId(){
+        BaseLoginUser user = getCurrentUser();
+        if(user == null){
+            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "用户token已失效！");
+        }
+        return S.join(user.getClass().getSimpleName(), Cons.SEPARATOR_COLON, user.getId());
     }
 
     /**
