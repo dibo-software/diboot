@@ -21,9 +21,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ import java.util.Set;
  * @version v2.0
  * @date 2020/04/15
  */
+@Slf4j
 public class DynamicSqlProvider {
 
     /**
@@ -86,7 +87,7 @@ public class DynamicSqlProvider {
                             sb.append(joiner.getMiddleTable()).append(" ").append(joiner.getMiddleTableAlias()).append(" ON ").append(joiner.getMiddleTableOnSegment());
                             String deletedCol = ParserCache.getDeletedColumn(joiner.getMiddleTable());
                             if(deletedCol != null && S.containsIgnoreCase(joiner.getMiddleTable(), " "+deletedCol) == false){
-                                sb.append(" AND ").append(joiner.getMiddleTableAlias()).append(".").append(Cons.COLUMN_IS_DELETED).append(" = ").append(BaseConfig.getActiveFlagValue());
+                                sb.append(" AND ").append(joiner.getMiddleTableAlias()).append(".").append(deletedCol).append(" = ").append(BaseConfig.getActiveFlagValue());
                             }
                             String joinSegment = sb.toString();
                             if(!tempSet.contains(joinSegment)){
@@ -97,8 +98,8 @@ public class DynamicSqlProvider {
                         sb.setLength(0);
                         sb.append(joiner.getJoin()).append(" ").append(joiner.getAlias()).append(" ON ").append(joiner.getOnSegment());
                         String deletedCol = ParserCache.getDeletedColumn(joiner.getJoin());
-                        if(deletedCol != null && S.containsIgnoreCase(joiner.getOnSegment(), " "+Cons.COLUMN_IS_DELETED) == false){
-                            sb.append(" AND ").append(joiner.getAlias()).append(".").append(Cons.COLUMN_IS_DELETED).append(" = ").append(BaseConfig.getActiveFlagValue());
+                        if(deletedCol != null && S.containsIgnoreCase(joiner.getOnSegment(), " "+deletedCol) == false){
+                            sb.append(" AND ").append(joiner.getAlias()).append(".").append(deletedCol).append(" = ").append(BaseConfig.getActiveFlagValue());
                         }
                         String joinSegment = sb.toString();
                         if(!tempSet.contains(joinSegment)){

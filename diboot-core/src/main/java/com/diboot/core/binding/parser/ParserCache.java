@@ -135,10 +135,11 @@ public class ParserCache {
      * @return
      */
     public static String getDeletedColumn(String table){
-        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByTable(table);
-        if(entityInfoCache != null){
-            return entityInfoCache.getDeletedColumn();
+        PropInfo propInfo = BindingCacheManager.getPropInfoByTable(table);
+        if(propInfo != null){
+            return propInfo.getDeletedColumn();
         }
+        log.debug("未能识别到逻辑删除字段, table={}", table);
         return null;
     }
 
