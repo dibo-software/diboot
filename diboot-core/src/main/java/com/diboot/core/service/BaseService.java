@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -306,6 +307,13 @@ public interface BaseService<T> {
      * @return
      */
     Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
+
+    /**
+     * 获取Map
+     * @param queryWrapper
+     * @return
+     */
+    Map<String, Object> getMap(Wrapper<T> queryWrapper);
 
     /**
      * 获取View Object对象

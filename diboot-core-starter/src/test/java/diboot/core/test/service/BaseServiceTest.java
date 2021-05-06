@@ -387,4 +387,14 @@ public class BaseServiceTest {
         Assert.assertTrue(baseMapper != null);
     }
 
+    @Test
+    public void testMap(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper
+                .select("sum(id) as count");
+        Map<String, Object> map = dictionaryService.getMap(queryWrapper);
+        Assert.assertTrue(map!=null);
+        Assert.assertTrue(map.get("count") != null);
+    }
+
 }

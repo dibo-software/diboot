@@ -113,7 +113,7 @@ public class ContextHelper implements ApplicationContextAware {
         if(V.isEmpty(map)){
             return null;
         }
-        List<T> beanList = new ArrayList<>();
+        List<T> beanList = new ArrayList<>(map.size());
         beanList.addAll(map.values());
         return beanList;
     }

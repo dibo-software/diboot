@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
@@ -611,6 +612,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public Map<String, Object> getKeyValueMap(Wrapper queryWrapper) {
 		List<KeyValue> keyValueList = getKeyValueList(queryWrapper);
 		return BeanUtils.convertKeyValueList2Map(keyValueList);
+	}
+
+	public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
+		return super.getMap(queryWrapper);
 	}
 
 	@Override
