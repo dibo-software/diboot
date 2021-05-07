@@ -59,13 +59,18 @@ public class BindingCacheManager {
      * 类-PropInfo缓存key
      */
     private static final String CACHE_NAME_CLASS_PROP = "CLASS_PROP";
+    /**
+     * Entity类的SimpleName-Entity Class的缓存key
+     */
+    private static final String CACHE_NAME_ENTITYNAME_CLASS = "NAME_CLASS";
 
     private static StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
             cacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_ENTITY,
                     CACHE_NAME_TABLE_ENTITY,
-                    CACHE_NAME_CLASS_PROP);
+                    CACHE_NAME_CLASS_PROP,
+                    CACHE_NAME_ENTITYNAME_CLASS);
         }
         return cacheManager;
     }
@@ -126,6 +131,17 @@ public class BindingCacheManager {
         return entityInfoCache != null? entityInfoCache.getEntityClass() : null;
     }
 
+
+    /**
+     * 根据class simple名称获取entity类
+     * @param classSimpleName
+     * @return
+     */
+    public static Class<?> getEntityClassBySimpleName(String classSimpleName){
+        initEntityInfoCache();
+        return getCacheManager().getCacheObj(CACHE_NAME_ENTITYNAME_CLASS, classSimpleName, Class.class);
+    }
+
     /**
      * 通过table获取mapper
      * @param table
@@ -183,6 +199,7 @@ public class BindingCacheManager {
                         EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, entityIService);
                         cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
                         cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
+                        cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
                         uniqueEntitySet.add(entityClass.getName());
                     }
                 }
@@ -210,6 +227,7 @@ public class BindingCacheManager {
                                 entityInfoCache.setBaseMapper(mapper);
                                 cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
                                 cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
+                                cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
                                 uniqueEntitySet.add(entityClass.getName());
                             }
                         }

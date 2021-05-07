@@ -176,6 +176,16 @@ public class ParserCache {
     }
 
     /**
+     * 根据类的entity类名获取EntityClass（已废弃）
+     * 请调用{@link BindingCacheManager#getEntityClassBySimpleName(String)}}
+     * @return
+     */
+    @Deprecated
+    public static Class<?> getEntityClassByClassName(String className){
+        return BindingCacheManager.getEntityClassBySimpleName(className);
+    }
+
+    /**
      * 根据entity类获取mapper实例
      * @return
      */

@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
@@ -385,6 +386,9 @@ public class BaseServiceTest {
 
         BaseMapper baseMapper = BindingCacheManager.getMapperByTable("user_role");
         Assert.assertTrue(baseMapper != null);
+
+        Class<?> entityClass = ParserCache.getEntityClassByClassName("Dictionary");
+        Assert.assertTrue(entityClass != null && entityClass.getName().equals(Dictionary.class.getName()));
     }
 
     @Test
