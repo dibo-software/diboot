@@ -7,15 +7,15 @@ CREATE TABLE `message_template` (
   `title` varchar(100) NOT NULL COMMENT '模版标题',
   `content` varchar(500) NOT NULL COMMENT '模版内容',
   `variables` varchar(200) DEFAULT NULL COMMENT '模版变量',
-  `ext_data` varchar(200) DEFAULT NULL COMMENT '扩展数据',
+  `ext_data` varchar(500) DEFAULT NULL COMMENT '扩展数据',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_by` bigint DEFAULT '0' COMMENT '创建人',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '消息模版';
 -- 索引
-create index idx_message_template_tenant on message_template (tenant_id);
-create index idx_message_template_code ON message_template(code);
+create index idx_msg_tmpl_tenant on message_template (tenant_id);
+create index idx_msg_tmpl_code ON message_template(code);
 -- 消息表
 CREATE TABLE `message` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' PRIMARY KEY,
@@ -38,5 +38,6 @@ CREATE TABLE `message` (
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '消息';
 -- 索引
-create index idx_message_tenant on message (tenant_id);
-create index idx_message_template on message (template_id);
+create index idx_msg_tenant on message (tenant_id);
+create index idx_msg_template on message (template_id);
+create index idx_msg_receiver on message (receiver);

@@ -7,7 +7,7 @@ CREATE TABLE ${SCHEMA}.message_template (
      title VARCHAR2(100) NOT NULL,
      content VARCHAR2(500) NOT NULL,
      variables varchar(200),
-     ext_data VARCHAR2(200),
+     ext_data VARCHAR2(500),
      is_deleted   NUMBER(1) DEFAULT 0    not null,
      create_time  timestamp default CURRENT_TIMESTAMP   not null,
      create_by NUMBER(20) DEFAULT 0 NOT NULL,
@@ -29,8 +29,8 @@ comment on column ${SCHEMA}.message_template.is_deleted is '是否删除';
 comment on column ${SCHEMA}.message_template.create_time is '创建时间';
 comment on table ${SCHEMA}.message_template is '消息模版';
 -- 创建索引
-create index idx_message_template_tenant on ${SCHEMA}.message_template (tenant_id);
-create index idx_message_template_code ON ${SCHEMA}.message_template(code);
+create index idx_msg_tmpl_tenant on ${SCHEMA}.message_template (tenant_id);
+create index idx_msg_tmpl_code ON ${SCHEMA}.message_template(code);
 
 -- 消息表
 CREATE TABLE ${SCHEMA}.message (
@@ -72,5 +72,6 @@ comment on column ${SCHEMA}.message.is_deleted is '是否删除';
 comment on column ${SCHEMA}.message.update_time is '更新时间';
 comment on column ${SCHEMA}.message.create_time is '创建时间';
 comment on table ${SCHEMA}.message is '消息';
-create index idx_message_tenant on ${SCHEMA}.message (tenant_id);
-create index idx_message_template on ${SCHEMA}.message (template_id);
+create index idx_msg_tenant on ${SCHEMA}.message (tenant_id);
+create index idx_msg_template on ${SCHEMA}.message (template_id);
+create index idx_msg_receiver on ${SCHEMA}.message (receiver);
