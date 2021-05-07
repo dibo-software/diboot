@@ -16,13 +16,16 @@
 package com.diboot.core.binding;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
@@ -152,6 +155,12 @@ public class QueryBuilder {
                 continue;
             }
             Object value = entry.getValue();
+            // 处理空字符串""
+            if(value instanceof String && S.isEmpty((String)value)){
+                if(query != null && query.strategy().equals(Strategy.IGNORE_EMPTY_STRING)){
+                    continue;
+                }
+            }
             // 对比类型
             Comparison comparison = Comparison.EQ;
             // 转换条件
@@ -324,8 +333,9 @@ public class QueryBuilder {
                 log.warn("通过反射执行属性方法出错：{}", e.getMessage());
             }
             // 忽略逻辑删除字段
-            if(Cons.FieldName.deleted.name().equals(field.getName())
-                    && "boolean".equals(field.getType().getName())
+            TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+            if(tableLogic != null
+                    && "boolean".equalsIgnoreCase(field.getType().getName())
                     && (Boolean)value == false
             ){
                 continue;
