@@ -73,7 +73,7 @@ public class ContextHelper implements ApplicationContextAware {
             APPLICATION_CONTEXT = ContextLoader.getCurrentWebApplicationContext();
         }
         if(APPLICATION_CONTEXT == null){
-            log.warn("无法获取ApplicationContext，请在Spring初始化之后调用!");
+            log.warn("无法获取ApplicationContext，请确保ComponentScan扫描路径包含com.diboot包路径，并在Spring初始化之后调用接口!");
         }
         return APPLICATION_CONTEXT;
     }
