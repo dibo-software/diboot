@@ -440,7 +440,7 @@ public class BeanUtils {
      * @param childrenFieldName 子节点集合属性名
      * @return
      */
-    private static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String parentIdFieldName, String childrenFieldName) {
+    public static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String parentIdFieldName, String childrenFieldName) {
         List<T> children = null;
         for(T node : nodeList) {
             Object nodeParentId = getProperty(node, parentIdFieldName);

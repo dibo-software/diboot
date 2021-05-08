@@ -19,16 +19,19 @@ package com.diboot.iam.service;
 import com.diboot.iam.dto.IamResourcePermissionDTO;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
+import com.diboot.iam.vo.InvalidResourcePermissionVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
-* 前端资源权限相关Service
-* @author yangzhao
-* @version 2.0.0
-* @date 2020-02-27
+ * 前端资源权限相关Service
+ *
+ * @author yangzhao
+ * @version 2.0.0
+ * @date 2020-02-27
  * Copyright © diboot.com
-*/
+ */
 public interface IamResourcePermissionService extends BaseIamService<IamResourcePermission> {
 
     /***
@@ -55,8 +58,15 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      */
     void deleteMenuAndPermissions(Long id);
 
+    /***
+     * 删除指定id的权限及其包含的所有子菜单以及按钮/权限列表
+     * @param idList
+     */
+    void deleteMenuAndPermissions(List<Long> idList);
+
     /**
      * 获取所有前端权限定义
+     *
      * @param application
      * @return
      */
@@ -67,4 +77,17 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      * @param permissionList
      */
     void sortList(List<IamResourcePermission> permissionList);
+
+    /***
+     * 提取代码中的权限和已经存在数据库的权限不同的数据
+     *
+     * 1、获取DB存储的API<br/>
+     * 2、获取代码中的API<br/>
+     * 3、对比，提出返回结果<br/>
+     * 结果返回：数据库中无效的API、数据库无效的记录id
+     *
+     * @param application
+     * @return
+     */
+    Map<String, Object> extractCodeDiffDbPermissions(String application);
 }
