@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * 注解相关缓存
+ * {@link IamCacheManager}
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/30
@@ -30,6 +31,7 @@ public class ApiPermissionCache {
 
     /**
      * 读取缓存permission
+     * {@link IamCacheManager#getPermissionCode(String)}
      * @param requestMethodAndUrl
      * @return
      */
@@ -40,6 +42,7 @@ public class ApiPermissionCache {
 
     /**
      * 读取缓存permission
+     * {@link IamCacheManager#getPermissionCode(String, String)}
      * @param requestMethod
      * @param url
      * @return
@@ -51,6 +54,7 @@ public class ApiPermissionCache {
 
     /**
      * 返回全部ApiPermissionVO
+     * {@link IamCacheManager#getApiPermissionVoList()}
      * @return
      */
     @Deprecated

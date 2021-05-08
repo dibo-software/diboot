@@ -180,6 +180,10 @@ public class TestJoinQuery {
         builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 2);
 
+        dto.setOrgName("");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 2);
+
         List<String> roleCodes = new ArrayList<>();
         roleCodes.add("ADMIN");
         roleCodes.add("OTHER");

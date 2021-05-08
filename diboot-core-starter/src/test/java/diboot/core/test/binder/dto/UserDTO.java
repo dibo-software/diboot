@@ -17,6 +17,7 @@ package diboot.core.test.binder.dto;
 
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.binding.query.Strategy;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
@@ -44,7 +45,7 @@ public class UserDTO extends User {
 
     // 通过中间表关联Entity
     @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name",
-            condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0")
+            condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0", strategy = Strategy.INCLUDE_EMPTY_STRING)
     private String orgName;
     // LEFT JOIN department r2m ON self.department_id = r2m.id
     // LEFT JOIN organization r1 ON r2m.org_id=r2.id

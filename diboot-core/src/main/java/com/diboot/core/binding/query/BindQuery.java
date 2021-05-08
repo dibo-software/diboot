@@ -58,4 +58,10 @@ public @interface BindQuery {
      * @return
      */
     boolean ignore() default false;
+
+    /**
+     * 查询处理策略：默认忽略空字符串
+     * @return
+     */
+    Strategy strategy() default Strategy.IGNORE_EMPTY_STRING;
 }

@@ -7,7 +7,7 @@ CREATE TABLE message_template (
      title VARCHAR(100) NOT NULL,
      content VARCHAR(500) NOT NULL,
      variables varchar(200),
-     ext_data VARCHAR(200),
+     ext_data VARCHAR(500),
      is_deleted   BOOLEAN default FALSE   not null,
      create_time  timestamp default CURRENT_TIMESTAMP   not null,
      create_by bigint DEFAULT 0 NOT NULL,
@@ -28,8 +28,8 @@ comment on column message_template.is_deleted is '是否删除';
 comment on column message_template.create_time is '创建时间';
 comment on table dictionary is '消息模版';
 -- 创建索引
-create index idx_message_template_tenant on message_template (tenant_id);
-create index idx_message_template_code ON message_template(code);
+create index idx_msg_tmpl_tenant on message_template (tenant_id);
+create index idx_msg_tmpl_code ON message_template(code);
 
 -- 消息表
 CREATE TABLE message (
@@ -70,5 +70,6 @@ comment on column message.is_deleted is '是否删除';
 comment on column message.update_time is '更新时间';
 comment on column message.create_time is '创建时间';
 comment on table message is '消息';
-create index idx_message_tenant on message (tenant_id);
-create index idx_message_template on message (template_id);
+create index idx_msg_tenant on message (tenant_id);
+create index idx_msg_template on message (template_id);
+create index idx_msg_receiver on message (receiver);
