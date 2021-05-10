@@ -29,12 +29,14 @@ import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -135,9 +137,23 @@ public class LogAspect {
                 .setRequestUri(request.getRequestURI())
                 .setRequestIp(HttpHelper.getRequestIp(request));
         // 请求参数
-        Map<String, Object> params = HttpHelper.buildParamsMap(request);
-        String paramsJson = JSON.stringify(params);
-        paramsJson = S.cut(paramsJson, maxLength);
+        Map<String, Object> paramsMap = new HashMap<>();
+        if(V.notEmpty(request.getQueryString())){
+            paramsMap.put("query", request.getQueryString());
+        }
+        Object[] bodyParams = joinPoint.getArgs();
+        if(V.notEmpty(bodyParams)){
+            for(Object arg : bodyParams){
+                paramsMap.put(arg.getClass().getSimpleName(), arg);
+            }
+        }
+        String paramsJson = null;
+        if(V.notEmpty(paramsMap)){
+            paramsJson = JSON.stringify(paramsMap);
+            if(paramsJson.length() > maxLength){
+                paramsJson = S.cut(paramsJson, maxLength);
+            }
+        }
         operationLog.setRequestParams(paramsJson);
         // 补充注解信息
         // 需要验证
