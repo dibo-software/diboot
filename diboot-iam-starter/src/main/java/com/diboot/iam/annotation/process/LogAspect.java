@@ -148,7 +148,9 @@ public class LogAspect {
         if(V.notEmpty(bodyParams)){
             for(Object arg : bodyParams){
                 // 忽略文件上传等流参数
-                if(arg instanceof InputStreamSource || S.containsIgnoreCase(arg.getClass().getName(), "multipart")){
+                if(arg == null
+                        || arg instanceof InputStreamSource
+                        || S.containsIgnoreCase(arg.getClass().getName(), "multipart")){
                     continue;
                 }
                 paramsMap.put(arg.getClass().getSimpleName(), arg);
