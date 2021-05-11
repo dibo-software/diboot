@@ -15,9 +15,12 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.entity.IamOrg;
@@ -27,10 +30,7 @@ import com.diboot.iam.vo.IamOrgVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -130,6 +130,43 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
         if (updateList.size() > 0) {
             super.updateBatchById(updateList);
         }
+    }
+
+    @Override
+    public List<Long> getParentOrgIds(Long orgId) {
+        return getParentOrgIds(orgId, true);
+    }
+
+    @Override
+    public List<Long> getParentOrgIds(Long orgId, boolean includeThis) {
+        List<Long> scopeIds = new ArrayList<>();
+        if(includeThis){
+            scopeIds.add(orgId);
+        }
+        // 查询所有上级
+        IamOrg org = getEntity(orgId);
+        if(org.getDepth() != null){
+            if(org.getDepth() >= 2){
+                scopeIds.add(org.getParentId());
+                if(org.getDepth() > 2) {
+                    LambdaQueryWrapper<IamOrg> queryWrapper =
+                            Wrappers.<IamOrg>lambdaQuery().select(IamOrg::getId, IamOrg::getParentId)
+                                    .lt(IamOrg::getDepth, org.getDepth());
+                    List<IamOrg> parentOrgs = getEntityList(queryWrapper);
+                    if (V.isEmpty(parentOrgs)) {
+                        Map<String, IamOrg> orgId2ParentIdMap = BeanUtils.convertToStringKeyObjectMap(parentOrgs,
+                                IamOrg::getId);
+                        String parentOrgIdStr = S.valueOf(org.getParentId());
+                        while (orgId2ParentIdMap.containsKey(parentOrgIdStr)) {
+                            Long parentOrgId = orgId2ParentIdMap.get(parentOrgIdStr).getParentId();
+                            scopeIds.add(parentOrgId);
+                            parentOrgIdStr = S.valueOf(parentOrgId);
+                        }
+                    }
+                }
+            }
+        }
+        return scopeIds;
     }
 
     /**
