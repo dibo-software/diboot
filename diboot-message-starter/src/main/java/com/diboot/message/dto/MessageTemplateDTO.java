@@ -64,6 +64,9 @@ public class MessageTemplateDTO extends MessageTemplate {
     }
 
     public Date getCreateTimeEnd() {
+        if(createTimeEnd != null){
+            return createTimeEnd;
+        }
         return D.nextDay(createTime);
     }
 

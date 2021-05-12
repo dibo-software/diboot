@@ -28,7 +28,7 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
     /**
      * 默认的过期时间（分钟）
      */
-    private int expiredMinutes = 60;
+    private long expiredMinutes = 60;
     /**
      * cache的时间戳缓存
      */

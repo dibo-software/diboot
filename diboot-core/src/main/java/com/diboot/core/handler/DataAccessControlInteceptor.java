@@ -188,6 +188,6 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
         catch (JSQLParserException e){
             log.warn("解析SQL异常: "+sql, e);
         }
-        return (PlainSelect) select.getSelectBody();
+        return select != null? (PlainSelect) select.getSelectBody() : null;
     }
 }

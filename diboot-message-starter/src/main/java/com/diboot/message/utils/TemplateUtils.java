@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class TemplateUtils {
 
-    public static List<String> TEMPLATE_STRATEGY_LIST = new ArrayList<>();
+    public static final List<String> TEMPLATE_STRATEGY_LIST = new ArrayList<>();
 
     /**
      * 加载所有TemplateVariableService实现类
