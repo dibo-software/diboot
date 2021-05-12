@@ -252,4 +252,37 @@ public class SqlExecutor {
         }
     }
 
+    /**
+     * 执行更新操作
+     * @param conn
+     * @param sql
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    public static boolean executeUpdate(Connection conn, String sql, List params) throws Exception{
+        log.debug("==>  SQL: "+sql);
+        // 替换单个?参数为多个，用于拼接IN参数
+        if(V.notEmpty(params)){
+            log.debug("==>  Params: {}", JSON.stringify(params));
+            if(params.size() > 2000){
+                log.warn("更新参数集合数量过多, size={}，请检查调用是否合理！", params.size());
+            }
+        }
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            if (V.notEmpty(params)){
+                for (int i=0; i<params.size(); i++){
+                    stmt.setObject(i + 1, params.get(i));
+                }
+            }
+            return stmt.execute();
+            //return rs >= 0;
+        }
+        catch(Exception e){
+            String sqlInfo = S.substring(sql, 0, 50) + "...";
+            log.error("执行sql查询异常: "+sqlInfo, e);
+            throw e;
+        }
+    }
+
 }

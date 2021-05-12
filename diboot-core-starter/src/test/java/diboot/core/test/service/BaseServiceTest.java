@@ -28,10 +28,7 @@ import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
@@ -399,6 +396,31 @@ public class BaseServiceTest {
         Map<String, Object> map = dictionaryService.getMap(queryWrapper);
         Assert.assertTrue(map!=null);
         Assert.assertTrue(map.get("count") != null);
+    }
+
+    @Test
+    public void tesExecuteMultipleUpdateSqls(){
+        List<String> sqls = new ArrayList<>();
+        Long dictId = 20000l;
+        sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
+        sqls.add("DELETE FROM dictionary WHERE id=20000 AND is_deleted=1");
+        boolean success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+        Assert.assertTrue(success);
+        Dictionary dict = dictionaryService.getEntity(dictId);
+        Assert.assertTrue(dict != null);
+
+        sqls.clear();
+        sqls.add("DELETE FROM dictionary WHERE id=20000");
+        success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+        Assert.assertTrue(success);
+
+        sqls.clear();
+        sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
+        sqls.add("UPDATE dictionary SET is_deleted=1 WHERE id=20000 AND deleted=1");
+        success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+        Assert.assertTrue(success == false);
+        dict = dictionaryService.getEntity(dictId);
+        Assert.assertTrue(dict == null);
     }
 
 }
