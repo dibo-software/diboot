@@ -9,8 +9,8 @@ CREATE TABLE message_template (
      variables varchar(200),
      ext_data VARCHAR(500),
      is_deleted   tinyint not null DEFAULT 0,
-     create_time  datetime default CURRENT_TIMESTAMP   not null,
      create_by bigint DEFAULT 0 NOT NULL,
+     create_time  datetime default CURRENT_TIMESTAMP   not null,
      update_time  datetime   null,
      constraint PK_message_template primary key (id)
 );
@@ -23,10 +23,10 @@ execute sp_addextendedproperty 'MS_Description', N'模版标题', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'模版内容', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'content';
 execute sp_addextendedproperty 'MS_Description', N'模版变量', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'variables';
 execute sp_addextendedproperty 'MS_Description', N'扩展数据', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'ext_data';
-execute sp_addextendedproperty 'MS_Description', N'创建人', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'create_by';
-execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'update_time';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建人', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'create_by';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'update_time';
 execute sp_addextendedproperty 'MS_Description', N'消息模版', 'SCHEMA', '${SCHEMA}', 'table', message_template, null, null;
 
 -- 创建索引
@@ -41,10 +41,11 @@ CREATE TABLE message (
   template_id    bigint          not null,
   business_type       VARCHAR(100)          not null,
   business_code       VARCHAR(50) default 0  not null,
-  sender VARCHAR(200)  not null,
-  receiver VARCHAR(50) not null,
+  sender VARCHAR(100)  not null,
+  receiver VARCHAR(100) not null,
   title VARCHAR(100) NOT NULL,
   content VARCHAR(500) NOT NULL,
+  channel VARCHAR(30) NOT NULL,
   status VARCHAR(30) NOT NULL,
   result      VARCHAR(200),
   schedule_time  datetime   null,
@@ -65,13 +66,14 @@ execute sp_addextendedproperty 'MS_Description', N'发送方', 'SCHEMA', '${SCHE
 execute sp_addextendedproperty 'MS_Description', N'接收方', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'receiver';
 execute sp_addextendedproperty 'MS_Description', N'标题', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'title';
 execute sp_addextendedproperty 'MS_Description', N'内容', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'content';
-execute sp_addextendedproperty 'MS_Description', N'发送通道', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'status';
+execute sp_addextendedproperty 'MS_Description', N'发送通道', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'channel';
+execute sp_addextendedproperty 'MS_Description', N'发送状态', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'status';
 execute sp_addextendedproperty 'MS_Description', N'发送结果', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'result';
 execute sp_addextendedproperty 'MS_Description', N'定时发送时间', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'schedule_time';
 execute sp_addextendedproperty 'MS_Description', N'扩展数据', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'ext_data';
-execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'update_time';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', message, 'column', 'update_time';
 execute sp_addextendedproperty 'MS_Description', N'消息', 'SCHEMA', '${SCHEMA}', 'table', message, null, null;
 -- 添加索引
 create nonclustered index idx_msg_tenant on message (tenant_id);

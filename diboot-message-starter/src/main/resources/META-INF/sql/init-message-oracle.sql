@@ -39,11 +39,12 @@ CREATE TABLE ${SCHEMA}.message (
   app_module         VARCHAR2(50),
   template_id    NUMBER(20)          not null,
   business_type       VARCHAR2(100)          not null,
-  business_code       VARCHAR2(50) default 0  not null,
-  sender VARCHAR2(200)  not null,
-  receiver VARCHAR2(50) not null,
+  business_code       VARCHAR2(100) default 0  not null,
+  sender VARCHAR2(100)  not null,
+  receiver VARCHAR2(100) not null,
   title VARCHAR2(100) NOT NULL,
   content VARCHAR2(500) NOT NULL,
+  channel VARCHAR2(30) NOT NULL,
   status VARCHAR2(30) NOT NULL,
   result      VARCHAR2(200),
   schedule_time  timestamp   null,
@@ -63,9 +64,9 @@ comment on column ${SCHEMA}.message.sender is '发送方';
 comment on column ${SCHEMA}.message.receiver is '接收方';
 comment on column ${SCHEMA}.message.title is '标题';
 comment on column ${SCHEMA}.message.content is '内容';
-comment on column ${SCHEMA}.message.status is '发送通道';
-comment on column ${SCHEMA}.message.result is '消息状态';
-comment on column ${SCHEMA}.message.create_by is '发送结果';
+comment on column ${SCHEMA}.message.channel is '发送通道';
+comment on column ${SCHEMA}.message.status is '消息状态';
+comment on column ${SCHEMA}.message.result is '发送结果';
 comment on column ${SCHEMA}.message.schedule_time is '定时发送时间';
 comment on column ${SCHEMA}.message.ext_data is '扩展数据';
 comment on column ${SCHEMA}.message.is_deleted is '是否删除';

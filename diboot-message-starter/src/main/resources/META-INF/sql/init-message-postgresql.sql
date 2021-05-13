@@ -9,8 +9,8 @@ CREATE TABLE message_template (
      variables varchar(200),
      ext_data VARCHAR(500),
      is_deleted   BOOLEAN default FALSE   not null,
-     create_time  timestamp default CURRENT_TIMESTAMP   not null,
      create_by bigint DEFAULT 0 NOT NULL,
+     create_time  timestamp default CURRENT_TIMESTAMP   not null,
      update_time  timestamp   null
 );
 -- 添加备注
@@ -22,10 +22,10 @@ comment on column message_template.title is '模版标题';
 comment on column message_template.content is '模版内容';
 comment on column message_template.variables is '模版变量';
 comment on column message_template.ext_data is '扩展数据';
-comment on column message_template.create_by is '创建人';
-comment on column message_template.update_time is '更新时间';
 comment on column message_template.is_deleted is '是否删除';
+comment on column message_template.create_by is '创建人';
 comment on column message_template.create_time is '创建时间';
+comment on column message_template.update_time is '更新时间';
 comment on table dictionary is '消息模版';
 -- 创建索引
 create index idx_msg_tmpl_tenant on message_template (tenant_id);
@@ -39,10 +39,11 @@ CREATE TABLE message (
   template_id    bigint          not null,
   business_type       VARCHAR(100)          not null,
   business_code       VARCHAR(50) default 0  not null,
-  sender VARCHAR(200)  not null,
-  receiver VARCHAR(50) not null,
+  sender VARCHAR(100)  not null,
+  receiver VARCHAR(100) not null,
   title VARCHAR(100) NOT NULL,
   content VARCHAR(500) NOT NULL,
+  channel VARCHAR(30) NOT NULL,
   status VARCHAR(30) NOT NULL,
   result      VARCHAR(200),
   schedule_time  timestamp   null,
@@ -61,9 +62,9 @@ comment on column message.sender is '发送方';
 comment on column message.receiver is '接收方';
 comment on column message.title is '标题';
 comment on column message.content is '内容';
-comment on column message.status is '发送通道';
-comment on column message.result is '消息状态';
-comment on column message.create_by is '发送结果';
+comment on column message.channel is '发送通道';
+comment on column message.status is '消息状态';
+comment on column message.result is '发送结果';
 comment on column message.schedule_time is '定时发送时间';
 comment on column message.ext_data is '扩展数据';
 comment on column message.is_deleted is '是否删除';
