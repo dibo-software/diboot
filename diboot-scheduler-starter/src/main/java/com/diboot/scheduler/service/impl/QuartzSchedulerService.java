@@ -22,6 +22,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.scheduler.annotation.BindJob;
 import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
+import com.diboot.scheduler.starter.SchedulerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -42,6 +43,8 @@ import java.util.*;
 @Slf4j
 @Service
 public class QuartzSchedulerService {
+    @Autowired
+    private SchedulerProperties schedulerProperties;
 
     /**
      * 任务初始化策略
@@ -63,9 +66,14 @@ public class QuartzSchedulerService {
 
     @PostConstruct
     public void startScheduler() {
+        if(schedulerProperties.isEnable() == false){
+            log.info("定时任务组件已暂停，如需启用设置:diboot.component.scheduler.enable=true");
+            return;
+        }
         try {
             scheduler.start();
-        } catch (SchedulerException e) {
+        }
+        catch (SchedulerException e) {
             log.error("定时任务scheduler初始化异常，请检查！", e);
         }
     }
@@ -354,7 +362,6 @@ public class QuartzSchedulerService {
             } catch (Exception e) {
                 throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！");
             }
-
         }
         Map<String, Object> jobMap = CACHE_JOB.stream()
                 .filter(s -> jobName.equals(String.valueOf(s.get("jobName"))))
