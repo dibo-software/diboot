@@ -16,7 +16,9 @@
 
 spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身份认证、file文件处理、scheduler定时任务等基础组件 + diboot-*-admin基础后台。
 
-[spring cloud版本，移步这里->](https://github.com/dibo-software/diboot-cloud)
+> [spring cloud版本，移步这里->](https://github.com/dibo-software/diboot-cloud)
+
+> [diboot-workflow 工作流授权](https://www.diboot.com/ent/service.html)
 
 ## diboot基础组件
 ### 1、 diboot-core: 精简优化内核
@@ -59,6 +61,10 @@ spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身�
 * Quartz定时任务统一管理及日志的最佳实践封装
 * @CollectThisJob注解提供定时任务定义，自动收集供前端选择
 > 详细文档: [diboot-scheduler文档](https://www.diboot.com/guide/diboot-scheduler/%E4%BB%8B%E7%BB%8D.html). 
+
+### 5. diboot-message 消息通知组件
+* 通用的消息模板&模板变量的设计方案
+* 支持多通道的消息通知发送
 
 ## devtools开发助理
 
