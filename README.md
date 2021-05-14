@@ -12,7 +12,7 @@
 
 > 设计目标: 为开发人员打造的低代码开发平台，将复杂的工作简单化、重复的工作自动化，提高质量、效率、可维护性。
 
-![diboot平台组成结构图](docs/img/structure.png)
+![diboot平台组成结构图](https://www.diboot.com/structure.png)
 
 spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身份认证、file文件处理、scheduler定时任务等基础组件 + diboot-*-admin基础后台。
 
@@ -80,16 +80,14 @@ spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身�
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html). 
 
 ## 捐助支持
-![捐助二维码](docs/img/donate.png)
+<img src="https://www.diboot.com/wechat_donate.png" width = "200" height = "200" alt="捐助二维码" align=center />
 
-感谢所有捐助diboot的朋友，感谢你们为diboot和开源事业的发展做出的努力。
-
-感谢JetBrains提供Open Source license，[JetBrains IDEA](https://www.jetbrains.com/?from=diboot) 与diboot更搭哦。
+感谢所有捐助的朋友为开源事业的发展做出的努力。
 
 ## 技术交流
 如遇diboot相关技术问题，欢迎加群交流：
 
-* **捐助/付费用户尊享**QQ群: [931266830]()
+* **VIP技术支持QQ群**（捐助/付费用户尊享）: [931266830]()
 
 * 技术交流QQ群: [731690096]() 
 
