@@ -17,6 +17,7 @@ package com.diboot.message.channel;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.message.config.Cons;
 import com.diboot.message.entity.Message;
 import com.diboot.message.service.MessageService;
@@ -61,8 +62,12 @@ public class SimpleEmailChannel implements ChannelStrategy {
             simpleMailMessage.setSubject(message.getTitle());
             // 设置发送人
             simpleMailMessage.setFrom(message.getSender());
-            // 设置接受人
-            simpleMailMessage.setTo(message.getReceivers());
+            // 优先使用Receivers
+            if (V.notEmpty(message.getReceivers())) {
+                simpleMailMessage.setTo(message.getReceivers());
+            } else {
+                simpleMailMessage.setTo(message.getReceiver());
+            }
             // 设置抄送人
             simpleMailMessage.setCc(message.getCcEmails());
             // 设置隐秘抄送人

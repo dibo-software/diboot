@@ -222,7 +222,7 @@ public class Message extends BaseEntity {
      * @return
      */
     public String[] getReceivers() {
-        if (V.isEmpty(extDataMap.get(RECEIVERS))) {
+        if (V.isEmpty(extDataMap) || V.isEmpty(extDataMap.get(RECEIVERS))) {
             return new String[]{};
         }
         String receivers = (String) extDataMap.get(RECEIVERS);
@@ -235,7 +235,7 @@ public class Message extends BaseEntity {
      * @return
      */
     public String[] getCcEmails() {
-        if (V.isEmpty(extDataMap.get(CC_EMAILS))) {
+        if (V.isEmpty(extDataMap) || V.isEmpty(extDataMap.get(CC_EMAILS))) {
             return new String[]{};
         }
         String ccEmails = (String) extDataMap.get(CC_EMAILS);
@@ -248,7 +248,7 @@ public class Message extends BaseEntity {
      * @return
      */
     public String[] getBccEmails() {
-        if (V.isEmpty(extDataMap.get(BCC_EMAILS))) {
+        if (V.isEmpty(extDataMap) || V.isEmpty(extDataMap.get(BCC_EMAILS))) {
             return new String[]{};
         }
         String bccEmails = (String) extDataMap.get(BCC_EMAILS);
@@ -261,7 +261,7 @@ public class Message extends BaseEntity {
      * @return
      */
     public String[] getAttachments() {
-        if (V.isEmpty(extDataMap.get(ATTACHMENTS))) {
+        if (V.isEmpty(extDataMap) || V.isEmpty(extDataMap.get(ATTACHMENTS))) {
             return new String[]{};
         }
         String attachments = (String) extDataMap.get(ATTACHMENTS);
