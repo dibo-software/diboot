@@ -168,16 +168,9 @@ public abstract class BaseExcelFileController extends BaseFileController {
         // 预览
         FixedHeadExcelListener listener = getExcelDataListener();
         listener.setRequestParams(super.getParamsMap());
-        try {
-            ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
-        }
-        catch (Exception e) {
-            log.warn("解析并校验excel文件失败", e);
-            if (V.notEmpty(e.getMessage())) {
-                throw new Exception(e.getMessage());
-            }
-            throw e;
-        }
+        // 读取excel
+        readExcel(uploadFile, listener);
+
         //最后拦截，如果数据异常在listener中未被拦截抛出异常，此处进行处理
         if (V.notEmpty(listener.getErrorMsgs())) {
             throw new BusinessException(Status.FAIL_VALIDATION, S.join(listener.getErrorMsgs(), "; "));
@@ -196,16 +189,47 @@ public abstract class BaseExcelFileController extends BaseFileController {
     }
 
     /**
+     * 读取excel方法，如果需要替换成远程，直接子类重写该方法即可
+     * @param uploadFile
+     * @param listener
+     */
+    protected void readExcel(UploadFile uploadFile, FixedHeadExcelListener listener) throws Exception {
+        try {
+            ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
+        } catch (Exception e) {
+            log.warn("解析并校验excel文件失败", e);
+            if (V.notEmpty(e.getMessage())) {
+                throw new Exception(e.getMessage());
+            }
+            throw e;
+        }
+    }
+
+    /**
      * 保存文件之后的处理逻辑，如解析excel
      */
     @Override
-    protected int extractDataCount(String fileUuid, String fullPath) throws Exception {
+    protected int extractDataCount(UploadFile uploadFile) throws Exception {
         FixedHeadExcelListener listener = getExcelDataListener();
-        listener.setUploadFileUuid(fileUuid);
+        listener.setUploadFileUuid(uploadFile.getUuid());
         listener.setPreview(false);
         listener.setRequestParams(super.getParamsMap());
+        readAndSaveExcel(uploadFile, listener);
+        //最后拦截，如果数据异常在listener中未被拦截抛出异常，此处进行处理
+        if (V.notEmpty(listener.getErrorMsgs())) {
+            throw new BusinessException(Status.FAIL_VALIDATION, S.join(listener.getErrorMsgs(), "; "));
+        }
+        return listener.getDataList().size();
+    }
+
+    /**
+     * 读取并保存excel, 如果需要替换成远程，直接子类重写该方法即可
+     * @param uploadFile
+     * @throws Exception
+     */
+    protected void readAndSaveExcel(UploadFile uploadFile, FixedHeadExcelListener listener ) throws Exception {
         try {
-            ExcelHelper.readAndSaveExcel(fullPath, listener);
+            ExcelHelper.readAndSaveExcel(uploadFile.getStoragePath(), listener);
         } catch (Exception e) {
             log.warn("上传数据错误: " + e.getMessage(), e);
             if (V.notEmpty(e.getMessage())) {
@@ -213,11 +237,6 @@ public abstract class BaseExcelFileController extends BaseFileController {
             }
             throw e;
         }
-        //最后拦截，如果数据异常在listener中未被拦截抛出异常，此处进行处理
-        if (V.notEmpty(listener.getErrorMsgs())) {
-            throw new BusinessException(Status.FAIL_VALIDATION, S.join(listener.getErrorMsgs(), "; "));
-        }
-        return listener.getDataList().size();
     }
 
     /**
