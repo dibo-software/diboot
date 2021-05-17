@@ -17,19 +17,21 @@ package diboot.core.test.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.entity.UserRole;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
@@ -366,6 +368,59 @@ public class BaseServiceTest {
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 0);
+    }
+
+    @Test
+    public void testCache(){
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(Dictionary.class);
+        Assert.assertTrue(entityInfoCache != null);
+        Assert.assertTrue(entityInfoCache.getDeletedColumn().equals("is_deleted"));
+
+        entityInfoCache = BindingCacheManager.getEntityInfoByClass(CcCityInfo.class);
+        Assert.assertTrue(entityInfoCache != null);
+        Assert.assertTrue(entityInfoCache.getIdColumn().equals("id"));
+        Assert.assertTrue(entityInfoCache.getDeletedColumn() == null);
+
+        BaseMapper baseMapper = BindingCacheManager.getMapperByTable("user_role");
+        Assert.assertTrue(baseMapper != null);
+
+        Class<?> entityClass = ParserCache.getEntityClassByClassName("Dictionary");
+        Assert.assertTrue(entityClass != null && entityClass.getName().equals(Dictionary.class.getName()));
+    }
+
+    @Test
+    public void testMap(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper
+                .select("sum(id) as count");
+        Map<String, Object> map = dictionaryService.getMap(queryWrapper);
+        Assert.assertTrue(map!=null);
+        Assert.assertTrue(map.get("count") != null);
+    }
+
+    @Test
+    public void tesExecuteMultipleUpdateSqls(){
+        List<String> sqls = new ArrayList<>();
+        Long dictId = 20000l;
+        sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
+        sqls.add("DELETE FROM dictionary WHERE id=20000 AND is_deleted=1");
+        boolean success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+        Assert.assertTrue(success);
+        Dictionary dict = dictionaryService.getEntity(dictId);
+        Assert.assertTrue(dict != null);
+
+        sqls.clear();
+        sqls.add("DELETE FROM dictionary WHERE id=20000");
+        success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+        Assert.assertTrue(success);
+
+        sqls.clear();
+        sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
+        sqls.add("UPDATE dictionary SET is_deleted=1 WHERE id=20000 AND deleted=1");
+        success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+        Assert.assertTrue(success == false);
+        dict = dictionaryService.getEntity(dictId);
+        Assert.assertTrue(dict == null);
     }
 
 }

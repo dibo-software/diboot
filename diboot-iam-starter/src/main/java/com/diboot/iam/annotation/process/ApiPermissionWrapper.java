@@ -22,8 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * <Description>
- *
+ * 接口权限wrapper
  * @author Mazhicheng
  * @version v2.0
  * @date 2020/02/28
@@ -34,11 +33,19 @@ public class ApiPermissionWrapper implements Serializable {
 
     public ApiPermissionWrapper(){}
 
-    public ApiPermissionWrapper(String classTitle){
+    public ApiPermissionWrapper(String className, String classTitle){
+        this.className = className;
         this.classTitle = classTitle;
     }
 
-    // 类别标题
+    /**
+     * 类名
+     */
+    private String className;
+
+    /**
+     * 类别标题
+      */
     private String classTitle;
 
     /**

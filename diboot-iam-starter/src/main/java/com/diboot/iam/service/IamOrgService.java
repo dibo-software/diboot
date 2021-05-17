@@ -48,4 +48,19 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      */
     void sortList(List<IamOrg> orgList);
 
+    /**
+     * 获取当前部门节点所有上级部门id集合
+     * @param orgId
+     * @return
+     */
+    List<Long> getParentOrgIds(Long orgId);
+
+    /**
+     * 获取当前部门节点所有上级部门id集合
+     * @param orgId
+     * @param includeThis 是否包含orgId
+     * @return
+     */
+    List<Long> getParentOrgIds(Long orgId, boolean includeThis);
+
 }

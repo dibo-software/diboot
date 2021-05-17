@@ -84,7 +84,7 @@ public class ConditionManager extends BaseConditionManager{
                 NotEqualsTo express = (NotEqualsTo)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
-                    binder.andApply(S.toSnakeCase(annoColumn) + " != " + S.toSnakeCase(express.getRightExpression().toString()));
+                    binder.andApply(annoColumn + " != " + express.getRightExpression().toString());
                 }
                 else{
                     binder.andNE(annoColumn, express.getRightExpression().toString());
@@ -94,7 +94,7 @@ public class ConditionManager extends BaseConditionManager{
                 GreaterThan express = (GreaterThan)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
-                    binder.andApply(S.toSnakeCase(annoColumn) + " > "+ S.toSnakeCase(express.getRightExpression().toString()));
+                    binder.andApply(annoColumn + " > "+ express.getRightExpression().toString());
                 }
                 else{
                     binder.andGT(annoColumn, express.getRightExpression().toString());
@@ -104,7 +104,7 @@ public class ConditionManager extends BaseConditionManager{
                 GreaterThanEquals express = (GreaterThanEquals)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
-                    binder.andApply(S.toSnakeCase(annoColumn) + " >= "+ express.getRightExpression().toString());
+                    binder.andApply(annoColumn + " >= "+ express.getRightExpression().toString());
                 }
                 else{
                     binder.andGE(annoColumn, express.getRightExpression().toString());
@@ -114,7 +114,7 @@ public class ConditionManager extends BaseConditionManager{
                 MinorThan express = (MinorThan)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
-                    binder.andApply(S.toSnakeCase(annoColumn) + " < "+ express.getRightExpression().toString());
+                    binder.andApply(annoColumn + " < "+ express.getRightExpression().toString());
                 }
                 else{
                     binder.andLT(annoColumn, express.getRightExpression().toString());
@@ -124,7 +124,7 @@ public class ConditionManager extends BaseConditionManager{
                 MinorThanEquals express = (MinorThanEquals)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
-                    binder.andApply(S.toSnakeCase(annoColumn) + " <= "+ express.getRightExpression().toString());
+                    binder.andApply(annoColumn + " <= "+ express.getRightExpression().toString());
                 }
                 else{
                     binder.andLE(annoColumn, express.getRightExpression().toString());
@@ -144,10 +144,10 @@ public class ConditionManager extends BaseConditionManager{
                 InExpression express = (InExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.isNot() == false){
-                    binder.andApply(S.toSnakeCase(annoColumn) + " IN " + express.getRightItemsList().toString());
+                    binder.andApply(annoColumn + " IN " + express.getRightItemsList().toString());
                 }
                 else{
-                    binder.andApply(S.toSnakeCase(annoColumn) + " NOT IN " + express.getRightItemsList().toString());
+                    binder.andApply(annoColumn + " NOT IN " + express.getRightItemsList().toString());
                 }
             }
             else if(operator instanceof Between){

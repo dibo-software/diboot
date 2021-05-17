@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,7 +65,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
                 .eq(IamUserPosition::getUserId, userId).orderByDesc(IamUserPosition::getIsPrimaryPosition);
         List<IamUserPosition> userPositionList = iamUserPositionMapper.selectList(queryWrapper);
         List<Long> positionIds = BeanUtils.collectToList(userPositionList, IamUserPosition::getPositionId);
-        return getEntityListByIds(positionIds);
+        return V.isEmpty(positionIds) ? Collections.emptyList() : this.getEntityListByIds(positionIds);
     }
 
     @Transactional(rollbackFor = Exception.class)

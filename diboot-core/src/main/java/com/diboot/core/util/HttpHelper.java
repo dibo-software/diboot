@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +40,11 @@ public class HttpHelper {
      * @return
      */
     public static Map<String, Object> buildParamsMap(HttpServletRequest request) {
-        Map<String, Object> result = new HashMap<>();
         Enumeration paramNames = request.getParameterNames();
+        if(paramNames.hasMoreElements() == false){
+            return Collections.emptyMap();
+        }
+        Map<String, Object> result = new HashMap<>();
         try{
             while (paramNames.hasMoreElements()){
                 String paramName = (String) paramNames.nextElement();

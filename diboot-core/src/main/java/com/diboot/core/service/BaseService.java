@@ -22,9 +22,11 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
@@ -307,6 +309,13 @@ public interface BaseService<T> {
     Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
 
     /**
+     * 获取Map
+     * @param queryWrapper
+     * @return
+     */
+    Map<String, Object> getMap(Wrapper<T> queryWrapper);
+
+    /**
      * 获取View Object对象
      * @param id 主键
      * @param voClass vo类
@@ -329,6 +338,13 @@ public interface BaseService<T> {
      * @return
      */
     FieldBinder<T> bindingFieldTo(List voList);
+
+    /***
+     * 绑定字段值集合到VO列表的元素中
+     * @param voList
+     * @return
+     */
+    FieldListBinder<T> bindingFieldListTo(List voList);
 
     /***
      * 绑定entity对象到VO列表元素中

@@ -30,10 +30,12 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
+import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
@@ -612,9 +614,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.convertKeyValueList2Map(keyValueList);
 	}
 
+	public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
+		return super.getMap(queryWrapper);
+	}
+
 	@Override
 	public FieldBinder<T> bindingFieldTo(List voList){
 		return new FieldBinder<>(this, voList);
+	}
+
+	@Override
+	public FieldListBinder<T> bindingFieldListTo(List voList) {
+		return new FieldListBinder<>(this, voList);
 	}
 
 	@Override
@@ -666,7 +677,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	private Object getPrimaryKeyValue(Object entity){
-		String pk = ContextHelper.getPrimaryKey(entity.getClass());
+		String pk = ContextHelper.getIdFieldName(entity.getClass());
 		return BeanUtils.getProperty(entity, pk);
 	}
 

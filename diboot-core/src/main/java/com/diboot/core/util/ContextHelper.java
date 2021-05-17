@@ -16,13 +16,12 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
@@ -31,17 +30,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Spring上下文帮助类
@@ -60,18 +56,6 @@ public class ContextHelper implements ApplicationContextAware {
     private static ApplicationContext APPLICATION_CONTEXT = null;
 
     /**
-     * Entity-对应的Service缓存
-     */
-    private static Map<String, IService> ENTITY_SERVICE_CACHE = new ConcurrentHashMap<>();
-    /**
-     * Entity-对应的BaseService缓存
-     */
-    private static Map<String, BaseService> ENTITY_BASE_SERVICE_CACHE = new ConcurrentHashMap<>();
-    /**
-     * 存储主键字段非id的Entity
-     */
-    private static Map<String, String> PK_NID_ENTITY_CACHE = new ConcurrentHashMap<>();
-    /**
      * 数据库类型
      */
     private static String DATABASE_TYPE = null;
@@ -79,9 +63,6 @@ public class ContextHelper implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         APPLICATION_CONTEXT = applicationContext;
-        ENTITY_SERVICE_CACHE.clear();
-        ENTITY_BASE_SERVICE_CACHE.clear();
-        PK_NID_ENTITY_CACHE.clear();
     }
 
     /***
@@ -92,7 +73,7 @@ public class ContextHelper implements ApplicationContextAware {
             APPLICATION_CONTEXT = ContextLoader.getCurrentWebApplicationContext();
         }
         if(APPLICATION_CONTEXT == null){
-            log.warn("无法获取ApplicationContext，请在Spring初始化之后调用!");
+            log.warn("无法获取ApplicationContext，请确保ComponentScan扫描路径包含com.diboot包路径，并在Spring初始化之后调用接口!");
         }
         return APPLICATION_CONTEXT;
     }
@@ -132,7 +113,7 @@ public class ContextHelper implements ApplicationContextAware {
         if(V.isEmpty(map)){
             return null;
         }
-        List<T> beanList = new ArrayList<>();
+        List<T> beanList = new ArrayList<>(map.size());
         beanList.addAll(map.values());
         return beanList;
     }
@@ -168,28 +149,8 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static IService getIServiceByEntity(Class entity){
-        if(ENTITY_SERVICE_CACHE.isEmpty()){
-            Map<String, IService> serviceMap = getApplicationContext().getBeansOfType(IService.class);
-            if(V.notEmpty(serviceMap)){
-                for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
-                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
-                    if(entityClass != null){
-                        IService entityIService = entry.getValue();
-                        if(ENTITY_SERVICE_CACHE.containsKey(entityClass.getName())){
-                           IService iService = ENTITY_SERVICE_CACHE.get(entityClass.getName());
-                           if(iService.getClass().getAnnotation(Primary.class) != null){
-                               continue;
-                           }
-                           else if(entityIService.getClass().getAnnotation(Primary.class) == null){
-                               log.warn("Entity: {} 存在多个service实现类，可能导致调用实例与预期不一致!", entityClass.getName());
-                           }
-                        }
-                        ENTITY_SERVICE_CACHE.put(entityClass.getName(), entityIService);
-                    }
-                }
-            }
-        }
-        IService iService = ENTITY_SERVICE_CACHE.get(entity.getName());
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
+        IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
         if(iService == null){
             log.error("未能识别到Entity: "+entity.getName()+" 的IService实现！");
         }
@@ -202,22 +163,15 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static BaseService getBaseServiceByEntity(Class entity){
-        if(ENTITY_BASE_SERVICE_CACHE.isEmpty()){
-            Map<String, BaseService> serviceMap = getApplicationContext().getBeansOfType(BaseService.class);
-            if(V.notEmpty(serviceMap)){
-                for(Map.Entry<String, BaseService> entry : serviceMap.entrySet()){
-                    Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
-                    if(entityClass != null){
-                        ENTITY_BASE_SERVICE_CACHE.put(entityClass.getName(), entry.getValue());
-                    }
-                }
-            }
-        }
-        BaseService baseService =  ENTITY_BASE_SERVICE_CACHE.get(entity.getName());
-        if(baseService == null){
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
+        IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
+        if(iService == null){
             log.info("未能识别到Entity: "+entity.getName()+" 的Service实现！");
         }
-        return baseService;
+        if(iService instanceof BaseService){
+            return (BaseService)iService;
+        }
+        return null;
     }
 
     /**
@@ -230,30 +184,33 @@ public class ContextHelper implements ApplicationContextAware {
     }
 
     /**
+     * 获取Entity主键列名
+     * @return
+     */
+    public static String getIdColumnName(Class entity){
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
+        return entityInfoCache != null? entityInfoCache.getIdColumn() : null;
+    }
+
+    /**
+     * 获取Entity主键字段名
+     * @return
+     */
+    public static String getIdFieldName(Class entity){
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
+        if(entityInfoCache != null && entityInfoCache.getIdColumn() != null){
+            return entityInfoCache.getFieldByColumn(entityInfoCache.getIdColumn());
+        }
+        return null;
+    }
+
+    /**
      * 获取Entity主键
      * @return
      */
+    @Deprecated
     public static String getPrimaryKey(Class entity){
-        if(!PK_NID_ENTITY_CACHE.containsKey(entity.getName())){
-            String pk = Cons.FieldName.id.name();
-            List<Field> fields = BeanUtils.extractAllFields(entity);
-            if(V.notEmpty(fields)){
-                for(Field fld : fields){
-                    TableId tableId = fld.getAnnotation(TableId.class);
-                    if(tableId == null){
-                        continue;
-                    }
-                    TableField tableField = fld.getAnnotation(TableField.class);
-                    if(tableField != null && tableField.exist() == false){
-                        continue;
-                    }
-                    pk = fld.getName();
-                    break;
-                }
-            }
-            PK_NID_ENTITY_CACHE.put(entity.getName(), pk);
-        }
-        return PK_NID_ENTITY_CACHE.get(entity.getName());
+        return getIdFieldName(entity);
     }
 
     /***

@@ -1,6 +1,6 @@
 package com.diboot.core.dto;
 
-import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.AbstractEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,10 +19,10 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BatchUpdateEntitiesDTO<T extends BaseEntity> implements Serializable {
+public class BatchUpdateEntitiesDTO<T extends AbstractEntity<ID_TYPE>, ID_TYPE extends Serializable> implements Serializable {
     private static final long serialVersionUID = -3141680773920758263L;
 
-    private List<String> idList;
+    private List<ID_TYPE> idList;
 
     private T data;
 }

@@ -72,7 +72,7 @@ public class ResultAssembler {
      * @param valueMatchMap
      * @param <E>
      */
-    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, Map<String, String> trunkObjColMapping, Map valueMatchMap){
+    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, Map<String, String> trunkObjColMapping, Map valueMatchMap, Map<String, String> col2FieldMapping){
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
@@ -81,7 +81,11 @@ public class ResultAssembler {
             for(E object : fromList){
                 fieldValues.clear();
                 for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
-                    String getterField = S.toLowerCaseCamel(entry.getKey());
+                    //转换为字段名
+                    String getterField = col2FieldMapping.get(entry.getKey());
+                    if(getterField == null){
+                        getterField = S.toLowerCaseCamel(entry.getKey());
+                    }
                     String fieldValue = BeanUtils.getStringProperty(object, getterField);
                     fieldValues.add(fieldValue);
                 }
@@ -92,6 +96,7 @@ public class ResultAssembler {
                     BeanUtils.setProperty(object, setterFieldName, valueMatchMap.get(matchKey));
                 }
             }
+            fieldValues.clear();
         }
         catch (Exception e){
             log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);

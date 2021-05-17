@@ -17,7 +17,7 @@ package com.diboot.scheduler.job;
 
 import com.diboot.core.util.D;
 import com.diboot.core.util.SqlExecutor;
-import com.diboot.scheduler.annotation.BindJob;
+import com.diboot.scheduler.annotation.CollectThisJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -38,7 +38,7 @@ import java.util.List;
  */
 @Slf4j
 @DisallowConcurrentExecution
-@BindJob(name = "清除过期操作日志", paramJson = "{\"daysBefore\":30}", cron = "* * 1 * * ?")
+@CollectThisJob(name = "清除过期操作日志", paramJson = "{\"daysBefore\":30}", cron = "* * 1 * * ?")
 public class ClearOperationLogJob extends QuartzJobBean {
     /**
      * 清理过期日志的SQL示例

@@ -51,21 +51,16 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         if(V.isEmpty(annoObjectList)){
             return;
         }
-        if(V.isEmpty(refObjJoinFlds)){
+        if(V.isEmpty(refObjJoinCols)){
             log.warn("调用错误：无法从condition中解析出字段关联.");
             return;
         }
-        if(referencedGetterColumnNameList == null){
+        if(referencedGetterFieldNameList == null){
             log.error("调用错误：字段绑定必须指定字段field");
             return;
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
-        List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
-        for(String refObjJoinOn : refObjJoinFlds){
-            selectColumns.add(S.toSnakeCase(refObjJoinOn));
-        }
-        selectColumns.addAll(referencedGetterColumnNameList);
-        queryWrapper.select(S.toStringArray(selectColumns));
+        super.buildSelectColumns();
         // 直接关联
         if(middleTable == null){
             super.buildQueryWrapperJoinOn();
@@ -75,11 +70,11 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 valueEntityListMap = this.buildMatchKey2FieldListMap(list);
             }
             // 遍历list并赋值
-            bindPropValue(annoObjectList, annoObjJoinFlds, valueEntityListMap);
+            bindPropValue(annoObjectList, annoObjJoinCols, valueEntityListMap);
         }
         // 通过中间表关联
         else{
-            if(refObjJoinFlds.size() > 1){
+            if(refObjJoinCols.size() > 1){
                 throw new BusinessException(NOT_SUPPORT_MSG);
             }
             // 提取注解条件中指定的对应的列表
@@ -89,16 +84,16 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
-            String refObjJoinOnField = refObjJoinFlds.get(0);
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件
-            queryWrapper.in(S.toSnakeCase(refObjJoinOnField), entityIdList);
+            queryWrapper.in(refObjJoinCols.get(0), entityIdList);
             // 查询entity列表: List<Role>
             List<T> list = getEntityList(queryWrapper);
             if(V.isEmpty(list)){
                 return;
             }
+            String refObjJoinOnField = toRefObjField(refObjJoinCols.get(0));
             // 转换entity列表为Map<ID, Entity>
             Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, refObjJoinOnField);
             for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
@@ -124,20 +119,20 @@ public class FieldListBinder<T> extends FieldBinder<T> {
     /***
      * 从对象集合提取某个属性值到list中
      * @param fromList
-     * @param getterFields
+     * @param annoObjJoinCols
      * @param valueMatchMap
      * @param <E>
      */
-    public <E> void bindPropValue(List<E> fromList, List<String> getterFields, Map<String, List> valueMatchMap){
+    public <E> void bindPropValue(List<E> fromList, List<String> annoObjJoinCols, Map<String, List> valueMatchMap){
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        List<String> fieldValues = new ArrayList<>(getterFields.size());
+        List<String> fieldValues = new ArrayList<>(annoObjJoinCols.size());
         try{
             for(E object : fromList){
                 fieldValues.clear();
-                for(String getterField : getterFields){
-                    String fieldValue = BeanUtils.getStringProperty(object, getterField);
+                for(String annoObjJoinCol : annoObjJoinCols){
+                    String fieldValue = BeanUtils.getStringProperty(object, toAnnoObjField(annoObjJoinCol));
                     fieldValues.add(fieldValue);
                 }
                 // 查找匹配Key
@@ -146,7 +141,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 if(entityList != null){
                     // 赋值
                     for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                        List valObjList = BeanUtils.collectToList(entityList, S.toLowerCaseCamel(referencedGetterColumnNameList.get(i)));
+                        List valObjList = BeanUtils.collectToList(entityList, referencedGetterFieldNameList.get(i));
                         BeanUtils.setProperty(object, annoObjectSetterPropNameList.get(i), valObjList);
                     }
                 }
@@ -173,7 +168,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             for(E object : fromList){
                 fieldValues.clear();
                 for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
-                    String getterField = S.toLowerCaseCamel(entry.getKey());
+                    String getterField = toAnnoObjField(entry.getKey());
                     String fieldValue = BeanUtils.getStringProperty(object, getterField);
                     fieldValues.add(fieldValue);
                 }
@@ -183,7 +178,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 if(entityList != null){
                     // 赋值
                     for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
-                        List valObjList = BeanUtils.collectToList(entityList, S.toLowerCaseCamel(referencedGetterColumnNameList.get(i)));
+                        List valObjList = BeanUtils.collectToList(entityList, referencedGetterFieldNameList.get(i));
                         BeanUtils.setProperty(object, annoObjectSetterPropNameList.get(i), valObjList);
                     }
                 }
@@ -201,11 +196,11 @@ public class FieldListBinder<T> extends FieldBinder<T> {
      */
     private Map<String, List> buildMatchKey2FieldListMap(List<T> list){
         Map<String, List> key2TargetListMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
+        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
         for(T entity : list){
             joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinFlds){
-                String fldValue = BeanUtils.getStringProperty(entity, refObjJoinOnCol);
+            for(String refObjJoinOnCol : refObjJoinCols){
+                String fldValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
                 joinOnValues.add(fldValue);
             }
             String matchKey = S.join(joinOnValues);

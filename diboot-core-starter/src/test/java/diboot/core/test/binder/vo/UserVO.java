@@ -15,6 +15,7 @@
  */
 package diboot.core.test.binder.vo;
 
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
@@ -38,5 +39,8 @@ public class UserVO extends User {
     // 字段关联，附加更多条件
     @BindField(entity= Department.class, field="name", condition="this.department_id=id AND parent_id IS NOT NULL AND name = '研发组'")
     private String deptName;
+
+    @BindDict(type = "GENDER", field = "gender")
+    private String genderLabel;
 
 }

@@ -184,7 +184,7 @@ public abstract class BaseFileController extends BaseController {
      */
     protected void createUploadFile(UploadFile uploadFile) throws Exception{
         // 保存文件之后的处理逻辑
-        int dataCount = extractDataCount(uploadFile.getUuid(), uploadFile.getStoragePath());
+        int dataCount = extractDataCount(uploadFile);
         uploadFile.setDataCount(dataCount);
         // 保存文件上传记录
         uploadFileService.createEntity(uploadFile);
@@ -216,7 +216,7 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 保存文件之后的处理逻辑，如解析excel
      */
-    protected int extractDataCount(String fileUuid, String fullPath) throws Exception{
+    protected int extractDataCount(UploadFile uploadFile) throws Exception{
         return 0;
     }
 

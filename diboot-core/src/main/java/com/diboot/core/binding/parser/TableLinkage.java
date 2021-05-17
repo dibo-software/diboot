@@ -25,12 +25,13 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 /**
- * table的相关线索信息
+ * table的相关线索信息（已废弃，请换用 EntityInfoCache）
  * @author mazc@dibo.ltd
  * @version v2.1
  * @date 2020/06/02
  */
 @Getter @Setter
+@Deprecated
 public class TableLinkage implements Serializable {
     private static final long serialVersionUID = 4416187849283913895L;
 

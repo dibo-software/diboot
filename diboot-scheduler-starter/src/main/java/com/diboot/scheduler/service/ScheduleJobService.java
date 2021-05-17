@@ -16,7 +16,7 @@
 package com.diboot.scheduler.service;
 
 import com.diboot.core.service.BaseService;
-import com.diboot.scheduler.annotation.BindJob;
+import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public interface ScheduleJobService extends BaseService<ScheduleJob> {
     boolean changeScheduleJobStatus(Long jobId, String action);
 
     /**
-     * 获取所有被{@link BindJob}注解的job
+     * 获取所有被{@link CollectThisJob}注解的job
      *
      * @return
      * @throws Exception

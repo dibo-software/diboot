@@ -17,6 +17,7 @@ package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.exception.BusinessException;
@@ -52,14 +53,6 @@ public class ParserCache {
      * 表及相关信息的缓存
      */
     private static Map<String, TableLinkage> tableToLinkageCacheMap = new ConcurrentHashMap<>();
-    /**
-     * entity类-表名的缓存
-     */
-    private static Map<String, String> entityClassTableCacheMap = new ConcurrentHashMap<>();
-    /**
-     * entity类小驼峰实例名-entity类
-     */
-    private static Map<String, Class<?>> entityName2EntityClassCacheMap = new ConcurrentHashMap<>();
     /**
      * dto类-BindQuery注解的缓存
      */
@@ -107,6 +100,7 @@ public class ParserCache {
     /**
      * 初始化Table的相关对象信息
      */
+    @Deprecated
     private static void initTableToLinkageCacheMap(){
         if(tableToLinkageCacheMap.isEmpty()){
             SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
@@ -124,7 +118,6 @@ public class ParserCache {
                                     Class<?> entityClass = Class.forName(entityClassName);
                                     TableLinkage linkage = new TableLinkage(entityClass, m);
                                     tableToLinkageCacheMap.put(linkage.getTable(), linkage);
-                                    entityName2EntityClassCacheMap.put(entityClass.getSimpleName(), entityClass);
                                 }
                             }
                         }
@@ -141,15 +134,20 @@ public class ParserCache {
      * 是否有is_deleted列
      * @return
      */
-    public static boolean hasDeletedColumn(String table){
-        TableLinkage linkage = getTableLinkage(table);
-        return linkage != null && linkage.isHasDeleted();
+    public static String getDeletedColumn(String table){
+        PropInfo propInfo = BindingCacheManager.getPropInfoByTable(table);
+        if(propInfo != null){
+            return propInfo.getDeletedColumn();
+        }
+        log.debug("未能识别到逻辑删除字段, table={}", table);
+        return null;
     }
 
     /**
      * 获取table相关信息
      * @return
      */
+    @Deprecated
     public static TableLinkage getTableLinkage(String table){
         initTableToLinkageCacheMap();
         TableLinkage linkage = tableToLinkageCacheMap.get(table);
@@ -162,19 +160,29 @@ public class ParserCache {
      * @return
      */
     public static String getEntityTableName(Class<?> entityClass){
-        String entityClassName = entityClass.getName();
-        String tableName = entityClassTableCacheMap.get(entityClassName);
-        if(tableName == null){
+        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
+        if(entityInfoCache != null){
+            return entityInfoCache.getTableName();
+        }
+        else{
             TableName tableNameAnno = AnnotationUtils.findAnnotation(entityClass, TableName.class);
             if(tableNameAnno != null){
-                tableName = tableNameAnno.value();
+                return tableNameAnno.value();
             }
             else{
-                tableName = S.toSnakeCase(entityClass.getSimpleName());
+                return S.toSnakeCase(entityClass.getSimpleName());
             }
-            entityClassTableCacheMap.put(entityClassName, tableName);
         }
-        return tableName;
+    }
+
+    /**
+     * 根据类的entity类名获取EntityClass（已废弃）
+     * 请调用{@link BindingCacheManager#getEntityClassBySimpleName(String)}}
+     * @return
+     */
+    @Deprecated
+    public static Class<?> getEntityClassByClassName(String className){
+        return BindingCacheManager.getEntityClassBySimpleName(className);
     }
 
     /**
@@ -182,22 +190,11 @@ public class ParserCache {
      * @return
      */
     public static BaseMapper getMapperInstance(Class<?> entityClass){
-        String tableName = getEntityTableName(entityClass);
-        TableLinkage linkage = getTableLinkage(tableName);
-        if(linkage == null){
+        BaseMapper mapper = BindingCacheManager.getMapperByClass(entityClass);
+        if(mapper == null){
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未找到 "+entityClass.getName()+" 的Mapper定义！");
         }
-        BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
         return mapper;
-    }
-
-    /**
-     * 根据类的entity类名获取EntityClass
-     * @return
-     */
-    public static Class<?> getEntityClassByClassName(String className){
-        initTableToLinkageCacheMap();
-        return entityName2EntityClassCacheMap.get(className);
     }
 
     /**

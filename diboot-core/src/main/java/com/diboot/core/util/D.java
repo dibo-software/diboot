@@ -68,6 +68,14 @@ public class D extends DateUtils{
 	 */
 	public static final String[] MONTH_EN = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
+	/**
+	 * 时间类型-毫秒数定义
+	 */
+	public static long MS_1SECOND = 1000;
+	public static long MS_1MINUTE = 60 * MS_1SECOND;
+	public static long MS_1HOUR = 60 * MS_1MINUTE;
+	public static long MS_1DAY = 24 * MS_1HOUR;
+
 	/***
 	 * 当前的日期时间
 	 * @return format指定格式的日期时间
@@ -380,6 +388,34 @@ public class D extends DateUtils{
 	 */
 	public static Date datetimeString2Date(String value){
 		return convert2DateTime(value, FORMAT_DATETIME_Y4MDHMS);
+	}
+
+	/**
+	 * 转换耗时毫秒数为 d,h,m,s显示文本
+	 * @param duration
+	 * @return
+	 */
+	public static String formatDurationLabel(Long duration){
+		if(duration == null){
+			return "-";
+		}
+		long days = duration / MS_1DAY;
+		if(days > 0){
+			return days + "d";
+		}
+		long hours = (duration % MS_1DAY) / MS_1HOUR;
+		if(hours > 0){
+			return hours + "h";
+		}
+		long minutes = (duration % MS_1HOUR) / MS_1MINUTE;
+		if(minutes > 0){
+			return minutes + "m";
+		}
+		long seconds = (duration % MS_1MINUTE) / MS_1SECOND;
+		if(seconds > 0){
+			return seconds + "s";
+		}
+		return "<1s";
 	}
 
 	/**

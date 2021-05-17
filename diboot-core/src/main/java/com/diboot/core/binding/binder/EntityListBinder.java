@@ -61,7 +61,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         if(V.isEmpty(annoObjectList)){
             return;
         }
-        if(V.isEmpty(refObjJoinFlds)){
+        if(V.isEmpty(refObjJoinCols)){
             log.warn("调用错误：无法从condition中解析出字段关联.");
             return;
         }
@@ -75,10 +75,10 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.notEmpty(list)){
                 valueEntityListMap = this.buildMatchKey2EntityListMap(list);
             }
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, annoObjJoinFlds, valueEntityListMap);
+            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityListMap);
         }
         else{
-            if(refObjJoinFlds.size() > 1){
+            if(refObjJoinCols.size() > 1){
                 throw new BusinessException(NOT_SUPPORT_MSG);
             }
             // 提取注解条件中指定的对应的列表
@@ -87,11 +87,10 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
-            String refObjJoinOnField = refObjJoinFlds.get(0);
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件
-            queryWrapper.in(S.toSnakeCase(refObjJoinOnField), entityIdList);
+            queryWrapper.in(refObjJoinCols.get(0), entityIdList);
             //处理orderBy，附加排序
             this.appendOrderBy();
             // 查询entity列表: List<Role>
@@ -99,6 +98,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.isEmpty(list)){
                 return;
             }
+            String refObjJoinOnField = toRefObjField(refObjJoinCols.get(0));
             // 转换entity列表为Map<ID, Entity>
             Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, refObjJoinOnField);
             for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
@@ -117,7 +117,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 valueEntityListMap.put(entry.getKey(), valueList);
             }
             // 绑定结果
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap);
+            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap, getAnnoObjColumnToFieldMap());
         }
     }
 
@@ -128,11 +128,11 @@ public class EntityListBinder<T> extends EntityBinder<T> {
      */
     private Map<String, List> buildMatchKey2EntityListMap(List<T> list){
         Map<String, List> key2TargetListMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
+        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
         for(T entity : list){
             joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinFlds){
-                String pkValue = BeanUtils.getStringProperty(entity, refObjJoinOnCol);
+            for(String refObjJoinOnCol : refObjJoinCols){
+                String pkValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
                 joinOnValues.add(pkValue);
             }
             String matchKey = S.join(joinOnValues);
@@ -152,7 +152,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
     }
 
     /**
-     * 附加排序字段，支持格式：orderBy=shortName:DESC,age:ASC,birthdate
+     * 附加排序字段，支持格式：orderBy=short_name:DESC,age:ASC,birthdate
      */
     private void appendOrderBy(){
         if(V.isEmpty(this.orderBy)){
@@ -163,7 +163,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         for(String field : orderByFields){
             if(field.contains(":")){
                 String[] fieldAndOrder = S.split(field, ":");
-                String columnName = S.toSnakeCase(fieldAndOrder[0]);
+                String columnName = toRefObjColumn(fieldAndOrder[0]);
                 if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
                     queryWrapper.orderByDesc(columnName);
                 }
@@ -172,7 +172,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 }
             }
             else{
-                queryWrapper.orderByAsc(S.toSnakeCase(field));
+                queryWrapper.orderByAsc(toRefObjColumn(field.toLowerCase()));
             }
         }
     }

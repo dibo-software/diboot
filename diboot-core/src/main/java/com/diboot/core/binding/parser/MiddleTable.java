@@ -18,6 +18,7 @@ package com.diboot.core.binding.parser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.binder.BaseBinder;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -105,8 +106,16 @@ public class MiddleTable {
         return this;
     }
 
+    public String getTable(){
+        return this.table;
+    }
+
     public Map<String, String> getTrunkObjColMapping(){
         return this.trunkObjColMapping;
+    }
+
+    public Map<String, String> getBranchObjColMapping(){
+        return this.branchObjColMapping;
     }
 
     /**
@@ -120,7 +129,7 @@ public class MiddleTable {
             return Collections.emptyMap();
         }
         //id //org_id
-        TableLinkage linkage = ParserCache.getTableLinkage(table);
+        EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
         // 有定义mapper，首选mapper
         if(linkage != null){
             List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap);
@@ -153,7 +162,7 @@ public class MiddleTable {
             return Collections.emptyMap();
         }
         //user_id //role_id
-        TableLinkage linkage = ParserCache.getTableLinkage(table);
+        EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
         // 有定义mapper，首选mapper
         if(linkage != null){
             List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap);
@@ -181,8 +190,7 @@ public class MiddleTable {
      * @param trunkObjCol2ValuesMap
      * @return
      */
-    private List<Map<String, Object>> queryByMapper(TableLinkage linkage, Map<String, List> trunkObjCol2ValuesMap){
-        BaseMapper mapper = (BaseMapper) ContextHelper.getBean(linkage.getMapperClass());
+    private List<Map<String, Object>> queryByMapper(EntityInfoCache linkage, Map<String, List> trunkObjCol2ValuesMap){
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(linkage.getEntityClass());
         // select所需字段
@@ -198,6 +206,7 @@ public class MiddleTable {
                 queryWrapper.apply(condition);
             }
         }
+        BaseMapper mapper = linkage.getBaseMapper();
         List<Map<String, Object>> resultSetMapList = mapper.selectMaps(queryWrapper);
         return resultSetMapList;
     }
@@ -237,8 +246,11 @@ public class MiddleTable {
                 }
             }
             // 如果需要删除
-            if(appendDeleteFlag && ParserCache.hasDeletedColumn(table)){
-                WHERE(Cons.COLUMN_IS_DELETED + " = " + BaseConfig.getActiveFlagValue());
+            if(appendDeleteFlag){
+                String deletedCol = ParserCache.getDeletedColumn(table);
+                if(deletedCol != null){
+                    WHERE(deletedCol + " = " + BaseConfig.getActiveFlagValue());
+                }
             }
         }}.toString();
     }
@@ -256,7 +268,7 @@ public class MiddleTable {
                 columns.add(entry.getKey());
             }
         }
-        return columns.toArray(new String[columns.size()]);
+        return S.toStringArray(columns);
     }
 
 }

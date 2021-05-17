@@ -18,16 +18,14 @@ package diboot.core.test.util;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.JSON;
 import com.diboot.core.vo.DictionaryVO;
 import diboot.core.test.binder.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * BeanUtils测试
@@ -51,7 +49,7 @@ public class BeanUtilsTest {
         Map<String, Object> map = new HashMap<>();
         map.put("type", "STATUS");
         map.put("itemName",itemName);
-        map.put("editable", true);
+        map.put("isEditable", true);
         map.put("createTime", "2018-09-12 23:09");
         Dictionary dictionary3 = new Dictionary();
         BeanUtils.bindProperties(dictionary3, map);
@@ -66,6 +64,20 @@ public class BeanUtilsTest {
         user.setGender("123");
         BeanUtils.copyProperties(dictionary3, user);
         Assert.assertTrue(user.getGender().equals("123"));
+    }
+
+    @Test
+    public void testDateCopy(){
+        //User user1 = new User().setUsername("test").setGender("").setBirthdate(new Date()).setLocalDatetime(LocalDate.now());
+        User user2 = new User();
+        Map<String, Object> map = new HashMap<>();
+        map.put("username", "test");
+        map.put("birthdate", "1980-10-12");
+        map.put("localDatetime", new Date());
+
+        BeanUtils.bindProperties(user2, map);
+        Assert.assertTrue(user2.getLocalDatetime() != null);
+        System.out.println(JSON.stringify(user2));
     }
 
     @Test

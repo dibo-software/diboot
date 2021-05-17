@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.binder;
+package diboot.core.test.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
@@ -177,6 +177,10 @@ public class TestJoinQuery {
         Assert.assertTrue(builderResultList.size() == 2);
 
         dto.setOrgName("苏州帝博");
+        builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 2);
+
+        dto.setOrgName("");
         builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 2);
 

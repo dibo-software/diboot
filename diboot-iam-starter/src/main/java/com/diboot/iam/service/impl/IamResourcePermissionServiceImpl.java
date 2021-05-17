@@ -17,25 +17,27 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourcePermissionDTO;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.mapper.IamResourcePermissionMapper;
 import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
+import com.diboot.iam.vo.InvalidResourcePermissionVO;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotNull;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -217,6 +219,88 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         }
         if (updateList.size() > 0) {
             super.updateBatchById(updateList);
+        }
+    }
+
+    @Override
+    public Map<String, Object> extractCodeDiffDbPermissions(String application) {
+        List<IamResourcePermission> allResourcePermissions = getEntityList(Wrappers.<IamResourcePermission>lambdaQuery()
+                .orderByDesc(IamResourcePermission::getSortId, IamResourcePermission::getId));
+        if(V.isEmpty(allResourcePermissions)){
+           return Collections.emptyMap();
+        }
+        List<InvalidResourcePermissionVO> voList = RelationsBinder.convertAndBind(allResourcePermissions, InvalidResourcePermissionVO.class);
+        Map<Long, InvalidResourcePermissionVO> resultMap = new HashMap<>(32);
+        for (InvalidResourcePermissionVO invalidIamResourcePermission : voList) {
+            if (V.isEmpty(invalidIamResourcePermission.getApiSet())) {
+               continue;
+            }
+            for(String uri : invalidIamResourcePermission.getApiSetList()){
+                // 根据uri获取code
+                String permissionCode = IamCacheManager.getPermissionCode(uri);
+                // code存在，表示该URI有效，否则无效
+                if(V.isEmpty(permissionCode)){
+                    invalidIamResourcePermission.addInvalidApiSet(uri);
+                    resultMap.put(invalidIamResourcePermission.getId(), invalidIamResourcePermission);
+                }
+
+            }
+        }
+        if (V.isEmpty(resultMap)) {
+            return Collections.emptyMap();
+        }
+        List<InvalidResourcePermissionVO> outerPermissionList = new ArrayList<>();
+        for (Map.Entry<Long, InvalidResourcePermissionVO> invalidResourcePermissionVOEntry : resultMap.entrySet()) {
+            InvalidResourcePermissionVO invalidResourcePermissionVO = invalidResourcePermissionVOEntry.getValue();
+            // 获取当前权限的上级元素
+            Long parentId = invalidResourcePermissionVO.getParentId();
+            InvalidResourcePermissionVO parentInvalidResourcePermissionVO = resultMap.get(parentId);
+            // 如果上级元素不存在，表示，当前对象为最外层元素
+            if (V.isEmpty(parentInvalidResourcePermissionVO)) {
+                outerPermissionList.add(invalidResourcePermissionVO);
+            }
+        }
+        List<InvalidResourcePermissionVO> result = new ArrayList<>(resultMap.values());
+        List<Long> diffDataIdList = new ArrayList<>();
+        for (InvalidResourcePermissionVO value : result) {
+            List<InvalidResourcePermissionVO> childNodeChildren =  BeanUtils.buildTreeChildren(value.getId(), result, Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
+
+            if(childNodeChildren == null) {
+                childNodeChildren = new ArrayList<>();
+            }
+            BeanUtils.setProperty(value,  Cons.FieldName.children.name(), childNodeChildren);
+            diffDataIdList.add(value.getId());
+        }
+        return new HashMap<String, Object>() {{
+            put("diffDataList", outerPermissionList);
+            put("diffDataIdList", diffDataIdList);
+        }};
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMenuAndPermissions(List<Long> idList) {
+        if (V.isEmpty(idList)){
+            throw new BusinessException(Status.FAIL_OPERATION, "id列表不能为空");
+        }
+        // 删除所有idList权限
+        this.deleteEntities(
+                Wrappers.<IamResourcePermission>lambdaQuery().in(IamResourcePermission::getId, idList)
+        );
+        // 删除idList下的子菜单列表和相关按钮/权限列表
+        LambdaQueryWrapper<IamResourcePermission> subWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
+                .in(IamResourcePermission::getParentId, idList);
+        List<IamResourcePermission> subList = this.getEntityList(subWrapper);
+        if (subList.size() > 0){
+            this.deleteEntities(subWrapper);
+        }
+        // 筛选出是菜单的选项，递归删除
+        List<Long> subMenuIdList = subList.stream()
+                .filter(item -> Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name().equals(item.getDisplayType()))
+                .map(IamResourcePermission::getId)
+                .collect(Collectors.toList());
+        if (V.notEmpty(subMenuIdList)){
+            deleteMenuAndPermissions(subMenuIdList);
         }
     }
 

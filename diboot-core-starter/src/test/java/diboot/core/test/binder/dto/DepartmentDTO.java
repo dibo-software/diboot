@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -37,12 +38,10 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DepartmentDTO extends Department {
+public class DepartmentDTO implements Serializable {
     private static final long serialVersionUID = 8670003133709715087L;
 
-    //private Long parentId;
-
-    //private Long orgId;
+    private Long parentId;
 
     @BindQuery(comparison = Comparison.CONTAINS)
     private String name;

@@ -27,6 +27,7 @@ import com.diboot.file.util.HttpHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 
 /**
  * 本地存储
@@ -44,11 +45,28 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
         String fileUid = S.newUuid();
         String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
         String newFileName = fileUid + "." + ext;
+        String fileFullPath = FileHelper.saveFile(file, newFileName);
         uploadFileResult.setOriginalFilename(file.getOriginalFilename())
                 .setExt(ext)
                 .setUuid(fileUid)
                 .setFilename(newFileName)
-                .setStorageFullPath(FileHelper.saveFile(file, newFileName));
+                .setStorageFullPath(fileFullPath);
+        return uploadFileResult;
+    }
+
+    @Override
+    public UploadFileResult upload(InputStream inputStream, String fileName) throws Exception {
+        UploadFileResult uploadFileResult = new UploadFileResult();
+        // 文件后缀
+        String fileUid = S.newUuid();
+        String ext = FileHelper.getFileExtByName(fileName);
+        String newFileName = fileUid + "." + ext;
+        String fileFullPath = FileHelper.saveFile(inputStream, newFileName);
+        uploadFileResult.setOriginalFilename(fileName)
+                .setExt(ext)
+                .setUuid(fileUid)
+                .setFilename(newFileName)
+                .setStorageFullPath(fileFullPath);
         return uploadFileResult;
     }
 

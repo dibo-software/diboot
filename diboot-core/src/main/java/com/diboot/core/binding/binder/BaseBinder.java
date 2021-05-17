@@ -18,7 +18,9 @@ package com.diboot.core.binding.binder;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.MiddleTable;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
@@ -44,13 +46,13 @@ public abstract class BaseBinder<T> {
      */
     protected List annoObjectList;
     /***
-     * VO注解对象中的join on对象属性集合
+     * VO注解对象中的join on对象列名集合
      */
-    protected List<String> annoObjJoinFlds;
+    protected List<String> annoObjJoinCols;
     /***
-     * DO对象中的关联join on对象属性集合
+     * DO对象中的关联join on对象列名集合
      */
-    protected List<String> refObjJoinFlds;
+    protected List<String> refObjJoinCols;
     /**
      * 被关联对象的Service实例
      */
@@ -67,6 +69,14 @@ public abstract class BaseBinder<T> {
     protected MiddleTable middleTable;
 
     protected Class<T> referencedEntityClass;
+    /**
+     * 注解宿主对象列名-字段名的映射map
+     */
+    private PropInfo annoObjPropInfo;
+    /**
+     * 被关联对象列名-字段名的映射map
+     */
+    private PropInfo refObjPropInfo;
 
     public static final String NOT_SUPPORT_MSG = "中间表关联暂不支持涉及目标表多列的情况!";
 
@@ -78,10 +88,15 @@ public abstract class BaseBinder<T> {
     public BaseBinder(IService<T> serviceInstance, List voList){
         this.referencedService = serviceInstance;
         this.annoObjectList = voList;
+        if(V.notEmpty(voList)){
+            this.annoObjPropInfo = BindingCacheManager.getPropInfoByClass(voList.get(0).getClass());
+        }
         this.queryWrapper = new QueryWrapper<>();
         this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
-        this.annoObjJoinFlds = new ArrayList<>(8);
-        this.refObjJoinFlds = new ArrayList<>(8);
+        this.refObjPropInfo = BindingCacheManager.getPropInfoByClass(this.referencedEntityClass);
+        // 列集合
+        this.annoObjJoinCols = new ArrayList<>(8);
+        this.refObjJoinCols = new ArrayList<>(8);
     }
 
     /**
@@ -92,8 +107,11 @@ public abstract class BaseBinder<T> {
      * @param <T2> 关联对象entity类型
      * @return
      */
+    @Deprecated
     public <T1,T2> BaseBinder<T> joinOn(IGetter<T1> annoObjectFkGetter, IGetter<T2> referencedEntityPkGetter){
-        return joinOn(BeanUtils.convertToFieldName(annoObjectFkGetter), BeanUtils.convertToFieldName(referencedEntityPkGetter));
+        String annoObjectForeignKey = toAnnoObjColumn(BeanUtils.convertToFieldName(annoObjectFkGetter));
+        String referencedEntityPrimaryKey = toRefObjColumn(BeanUtils.convertToFieldName(referencedEntityPkGetter));
+        return joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
     }
 
     /**
@@ -104,51 +122,51 @@ public abstract class BaseBinder<T> {
      */
     public BaseBinder<T> joinOn(String annoObjectForeignKey, String referencedEntityPrimaryKey){
         if(annoObjectForeignKey != null && referencedEntityPrimaryKey != null){
-            annoObjJoinFlds.add(S.toLowerCaseCamel(annoObjectForeignKey));
-            refObjJoinFlds.add(S.toLowerCaseCamel(referencedEntityPrimaryKey));
+            annoObjJoinCols.add(annoObjectForeignKey);
+            refObjJoinCols.add(referencedEntityPrimaryKey);
         }
         return this;
     }
 
     public BaseBinder<T> andEQ(String fieldName, Object value){
-        queryWrapper.eq(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.eq(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andNE(String fieldName, Object value){
-        queryWrapper.ne(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.ne(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andGT(String fieldName, Object value){
-        queryWrapper.gt(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.gt(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andGE(String fieldName, Object value){
-        queryWrapper.ge(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.ge(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andLT(String fieldName, Object value){
-        queryWrapper.lt(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.lt(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andLE(String fieldName, Object value){
-        queryWrapper.le(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.le(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andIsNotNull(String fieldName){
-        queryWrapper.isNotNull(S.toSnakeCase(fieldName));
+        queryWrapper.isNotNull(toRefObjColumn(fieldName));
         return this;
     }
     public BaseBinder<T> andIsNull(String fieldName){
-        queryWrapper.isNull(S.toSnakeCase(fieldName));
+        queryWrapper.isNull(toRefObjColumn(fieldName));
         return this;
     }
     public BaseBinder<T> andBetween(String fieldName, Object begin, Object end){
-        queryWrapper.between(S.toSnakeCase(fieldName), formatValue(fieldName, begin), formatValue(fieldName, end));
+        queryWrapper.between(toRefObjColumn(fieldName), formatValue(fieldName, begin), formatValue(fieldName, end));
         return this;
     }
     public BaseBinder<T> andLike(String fieldName, String value){
-        fieldName = S.toSnakeCase(fieldName);
         value = (String)formatValue(fieldName, value);
+        fieldName = toRefObjColumn(fieldName);
         if(S.startsWith(value, "%")){
             value = S.substringAfter(value, "%");
             if(S.endsWith(value, "%")){
@@ -169,19 +187,19 @@ public abstract class BaseBinder<T> {
         return this;
     }
     public BaseBinder<T> andIn(String fieldName, Collection valueList){
-        queryWrapper.in(S.toSnakeCase(fieldName), valueList);
+        queryWrapper.in(toRefObjColumn(fieldName), valueList);
         return this;
     }
     public BaseBinder<T> andNotIn(String fieldName, Collection valueList){
-        queryWrapper.notIn(S.toSnakeCase(fieldName), valueList);
+        queryWrapper.notIn(toRefObjColumn(fieldName), valueList);
         return this;
     }
     public BaseBinder<T> andNotBetween(String fieldName, Object begin, Object end){
-        queryWrapper.notBetween(S.toSnakeCase(fieldName), formatValue(fieldName, begin), formatValue(fieldName, end));
+        queryWrapper.notBetween(toRefObjColumn(fieldName), formatValue(fieldName, begin), formatValue(fieldName, end));
         return this;
     }
     public BaseBinder<T> andNotLike(String fieldName, String value){
-        queryWrapper.notLike(S.toSnakeCase(fieldName), formatValue(fieldName, value));
+        queryWrapper.notLike(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
     }
     public BaseBinder<T> andApply(String applySql){
@@ -193,6 +211,21 @@ public abstract class BaseBinder<T> {
         return this;
     }
 
+    /**
+     * 返回MiddleTable
+     * @return
+     */
+    public MiddleTable getMiddleTable(){
+        return middleTable;
+    }
+
+    public List<String> getAnnoObjJoinCols(){
+        return this.annoObjJoinCols;
+    }
+    public List<String> getRefObjJoinCols(){
+        return this.refObjJoinCols;
+    }
+
     /***
      * 执行绑定, 交由子类实现
      */
@@ -202,12 +235,12 @@ public abstract class BaseBinder<T> {
      * 构建join on
      */
     protected void buildQueryWrapperJoinOn(){
-        for(int i = 0; i< annoObjJoinFlds.size(); i++){
-            String annoObjJoinOnCol = annoObjJoinFlds.get(i);
+        for(int i = 0; i< annoObjJoinCols.size(); i++){
+            String annoObjJoinOnCol = annoObjJoinCols.get(i);
             boolean[] hasNullFlags = new boolean[1];
-            List annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, annoObjJoinOnCol, hasNullFlags);
+            List annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol), hasNullFlags);
             // 构建查询条件
-            String refObjJoinOnCol = S.toSnakeCase(refObjJoinFlds.get(i));
+            String refObjJoinOnCol = refObjJoinCols.get(i);
             if(V.isEmpty(annoObjectJoinOnList)){
                 queryWrapper.isNull(refObjJoinOnCol);
             }
@@ -261,7 +294,7 @@ public abstract class BaseBinder<T> {
         // 提取注解条件中指定的对应的列表
         Map<String, List> trunkObjCol2ValuesMap = new HashMap<>();
         for(Map.Entry<String, String> entry : middleTable.getTrunkObjColMapping().entrySet()){
-            String annoObjFld = S.toLowerCaseCamel(entry.getKey());
+            String annoObjFld = toAnnoObjField(entry.getKey());
             List valueList = BeanUtils.collectToList(annoObjectList, annoObjFld);
             trunkObjCol2ValuesMap.put(entry.getValue(), valueList);
         }
@@ -308,6 +341,74 @@ public abstract class BaseBinder<T> {
     }
 
     /**
+     * 注解宿主对象的列名转换为字段名
+     * @return
+     */
+    public List<String> getAnnoObjJoinFlds(){
+        List<String> fields = new ArrayList<>(annoObjJoinCols.size());
+        for(String col : annoObjJoinCols){
+            fields.add(toAnnoObjField(col));
+        }
+        return fields;
+    }
+
+    /**
+     * 获取宿主对象的列名-字段名映射map
+     * @return
+     */
+    public Map<String, String> getAnnoObjColumnToFieldMap(){
+        return this.annoObjPropInfo.getColumnToFieldMap();
+    }
+
+    /**
+     * 注解宿主对象的列名转换为字段名
+     * @return
+     */
+    public String toAnnoObjField(String annoObjColumn){
+        String field = this.annoObjPropInfo.getColumnToFieldMap().get(annoObjColumn);
+        if(field == null){
+            field = S.toLowerCaseCamel(annoObjColumn);
+        }
+        return field;
+    }
+
+    /**
+     * 注解对宿主对象的字段名转换为列名
+     * @return
+     */
+    public String toAnnoObjColumn(String annoObjField){
+        String column = this.annoObjPropInfo.getFieldToColumnMap().get(annoObjField);
+        if(column == null){
+            column = S.toSnakeCase(annoObjField);
+        }
+        return column;
+    }
+
+    /**
+     * 被关联对象的列名转换为字段名
+     * @return
+     */
+    public String toRefObjField(String refObjColumn){
+        String field = this.refObjPropInfo.getColumnToFieldMap().get(refObjColumn);
+        if(field == null){
+            field = S.toLowerCaseCamel(refObjColumn);
+        }
+        return field;
+    }
+
+    /**
+     * 被关联对象的字段名转换为列名
+     * @return
+     */
+    public String toRefObjColumn(String refObjField){
+        String column = this.refObjPropInfo.getFieldToColumnMap().get(refObjField);
+        if(column == null){
+            column = S.toSnakeCase(refObjField);
+        }
+        return column;
+    }
+
+    /**
      * 检查list，结果过多打印warn
      * @param list
      * @return
@@ -334,7 +435,7 @@ public abstract class BaseBinder<T> {
         }
         // 转型
         if(this.referencedEntityClass != null){
-            Field field = BeanUtils.extractField(this.referencedEntityClass, S.toLowerCaseCamel(fieldName));
+            Field field = BeanUtils.extractField(this.referencedEntityClass, toRefObjField(fieldName));
             if(field != null){
                 return BeanUtils.convertValueToFieldType(value, field);
             }

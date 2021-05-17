@@ -134,7 +134,7 @@ public class ExcelBindAnnoHandler {
         }
         BaseService service = ContextHelper.getBaseServiceByEntity(bindField.entity());
         String nameColumn = S.toSnakeCase(bindField.field());
-        String idColumn = S.toSnakeCase(ContextHelper.getPrimaryKey(bindField.entity()));
+        String idColumn = ContextHelper.getIdColumnName(bindField.entity());
         QueryWrapper queryWrapper = Wrappers.query().select(nameColumn, idColumn).in(nameColumn, nameList);
         List<KeyValue> list = service.getKeyValueList(queryWrapper);
         return convertKvListToMap(list);

@@ -184,7 +184,7 @@ public class IamAutoConfig {
      * @version : v1.0
      * @Date 2020/11/19  11:06
      */
-    class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
+    static class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
 
         @Override
         public Subject createSubject(SubjectContext context) {

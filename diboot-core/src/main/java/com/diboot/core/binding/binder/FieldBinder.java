@@ -16,6 +16,8 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
@@ -40,8 +42,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
     /**
      * DO/Entity对象对应的getter取值属性名列表
      */
-    protected List<String> referencedGetterColumnNameList;
-
+    protected List<String> referencedGetterFieldNameList;
     /***
      * 构造方法
      * @param serviceInstance
@@ -73,10 +74,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
             annoObjectSetterPropNameList = new ArrayList<>();
         }
         annoObjectSetterPropNameList.add(toVoField);
-        if(referencedGetterColumnNameList == null){
-            referencedGetterColumnNameList = new ArrayList<>();
+        if(referencedGetterFieldNameList == null){
+            referencedGetterFieldNameList = new ArrayList<>();
         }
-        referencedGetterColumnNameList.add(S.toSnakeCase(fromDoField));
+        referencedGetterFieldNameList.add(fromDoField);
         return this;
     }
 
@@ -85,11 +86,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
         if(V.isEmpty(annoObjectList)){
             return;
         }
-        if(V.isEmpty(refObjJoinFlds)){
+        if(V.isEmpty(refObjJoinCols)){
             log.warn("调用错误：无法从condition中解析出字段关联.");
             return;
         }
-        if(referencedGetterColumnNameList == null){
+        if(referencedGetterFieldNameList == null){
             log.error("调用错误：字段绑定必须指定字段field");
             return;
         }
@@ -111,7 +112,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             }
         }
         else{
-            if(refObjJoinFlds.size() > 1){
+            if(refObjJoinCols.size() > 1){
                 throw new BusinessException(NOT_SUPPORT_MSG);
             }
             // 提取注解条件中指定的对应的列表
@@ -121,11 +122,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
-            String refObjJoinOnCol = S.toSnakeCase(refObjJoinFlds.get(0));
             // 收集查询结果values集合
             Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
             this.buildSelectColumns();
             // 构建查询条件
+            String refObjJoinOnCol = refObjJoinCols.get(0);
             queryWrapper.in(refObjJoinOnCol, refObjValues);
             // 获取匹配结果的mapList
             List<Map<String, Object>> mapList = getMapList(queryWrapper);
@@ -153,7 +154,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
         Map<String, Object> relationMap = key2DataMap.get(matchKey);
         if (relationMap != null) {
             for (int i = 0; i < annoObjectSetterPropNameList.size(); i++) {
-                Object valObj = getValueIgnoreKeyCase(relationMap, referencedGetterColumnNameList.get(i));
+                Object valObj = getValueIgnoreKeyCase(relationMap, toRefObjColumn(referencedGetterFieldNameList.get(i)));
                 BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), valObj);
             }
         }
@@ -167,9 +168,9 @@ public class FieldBinder<T> extends BaseBinder<T> {
     protected Map<String, Map<String, Object>> buildMatchKey2ResultMap(List<Map<String, Object>> mapList){
         Map<String, Map<String, Object>> key2TargetMap = new HashMap<>(mapList.size());
         for(Map<String, Object> map : mapList){
-            List<String> joinOnValues = new ArrayList<>(refObjJoinFlds.size());
-            for(String refObjJoinOnCol : refObjJoinFlds){
-                Object valObj = getValueIgnoreKeyCase(map, S.toSnakeCase(refObjJoinOnCol));
+            List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
+            for(String refObjJoinOnCol : refObjJoinCols){
+                Object valObj = getValueIgnoreKeyCase(map, refObjJoinOnCol);
                 joinOnValues.add(S.valueOf(valObj));
             }
             String matchKey = S.join(joinOnValues);
@@ -186,10 +187,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
      * @return
      */
     private String buildMatchKey(Object annoObject){
-        List<String> joinOnValues = new ArrayList<>(annoObjJoinFlds.size());
-        for(String annoJoinOn : annoObjJoinFlds){
+        List<String> joinOnValues = new ArrayList<>(annoObjJoinCols.size());
+        for(String annoJoinOn : annoObjJoinCols){
             // 将数子类型转换成字符串，以便解决类型不一致的问题
-            String annoObjVal = BeanUtils.getStringProperty(annoObject, annoJoinOn);
+            String annoObjVal = BeanUtils.getStringProperty(annoObject, toAnnoObjField(annoJoinOn));
             joinOnValues.add(annoObjVal);
         }
         return S.join(joinOnValues);
@@ -204,7 +205,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
     private String buildMatchKey(Object annoObject, Map<String, Object> middleTableResultMap){
         List<String> joinOnValues = new ArrayList<>(middleTable.getTrunkObjColMapping().size());
         for(Map.Entry<String, String> entry : middleTable.getTrunkObjColMapping().entrySet()){
-            String getterField = S.toLowerCaseCamel(entry.getKey());
+            String getterField = toAnnoObjField(entry.getKey());
             String fieldValue = BeanUtils.getStringProperty(annoObject, getterField);
             // 通过中间结果Map转换得到OrgId
             if(V.notEmpty(middleTableResultMap)){
@@ -217,12 +218,12 @@ public class FieldBinder<T> extends BaseBinder<T> {
         return S.join(joinOnValues);
     }
 
-    private void buildSelectColumns(){
-        List<String> selectColumns = new ArrayList<>(referencedGetterColumnNameList.size()+1);
-        for(String refObjJoinOn : refObjJoinFlds){
-            selectColumns.add(S.toSnakeCase(refObjJoinOn));
+    protected void buildSelectColumns(){
+        List<String> selectColumns = new ArrayList<>();
+        selectColumns.addAll(refObjJoinCols);
+        for(String referencedGetterField : referencedGetterFieldNameList){
+            selectColumns.add(toRefObjColumn(referencedGetterField));
         }
-        selectColumns.addAll(referencedGetterColumnNameList);
         queryWrapper.select(S.toStringArray(selectColumns));
     }
 

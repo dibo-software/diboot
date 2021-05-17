@@ -15,7 +15,9 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
@@ -25,7 +27,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -38,14 +39,19 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public abstract class BaseEntity implements Serializable {
+public abstract class BaseEntity extends AbstractEntity<Long> {
     private static final long serialVersionUID = 10203L;
 
-    /**
-     * 默认主键字段id，类型为Long型自增，转json时转换为String
-     */
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    @Override
+    public BaseEntity setId(Long id){
+        super.setId(id);
+        return this;
+    }
+
+    @Override
+    public Long getId(){
+        return super.getId();
+    }
 
     /**
      * 默认逻辑删除标记，is_deleted=0有效
@@ -76,19 +82,10 @@ public abstract class BaseEntity implements Serializable {
      */
     @JsonIgnore
     public Object getPrimaryKeyVal(){
-        String pk = ContextHelper.getPrimaryKey(this.getClass());
+        String pk = ContextHelper.getIdFieldName(this.getClass());
         if(Cons.FieldName.id.name().equals(pk)){
             return getId();
         }
         return BeanUtils.getProperty(this, pk);
-    }
-
-    /**
-     * Entity对象转为String
-     * @return
-     */
-    @Override
-    public String toString(){
-        return this.getClass().getName()+ ":"+this.getId();
     }
 }

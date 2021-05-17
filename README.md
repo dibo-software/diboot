@@ -1,4 +1,4 @@
-> 可以告别常规SQL和CRUD了！diboot新用户: [B站演示视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [下载playground新手体验包开始体验diboot](https://www.diboot.com/guide/newer/bootstrap.html)
+> 可以告别常规SQL和CRUD了！diboot新用户: [看视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [手把手跟我来体验](https://www.diboot.com/guide/newer/bootstrap.html)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
@@ -12,11 +12,13 @@
 
 > 设计目标: 为开发人员打造的低代码开发平台，将复杂的工作简单化、重复的工作自动化，提高质量、效率、可维护性。
 
-![diboot平台组成结构图](docs/img/structure.png)
+![diboot平台组成结构图](https://www.diboot.com/structure.png)
 
 spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身份认证、file文件处理、scheduler定时任务等基础组件 + diboot-*-admin基础后台。
 
-[spring cloud版本，移步这里->](https://github.com/dibo-software/diboot-cloud)
+> [spring cloud版本，移步这里->](https://github.com/dibo-software/diboot-cloud)
+
+> [diboot-workflow 工作流授权](https://www.diboot.com/ent/service.html)
 
 ## diboot基础组件
 ### 1、 diboot-core: 精简优化内核
@@ -57,8 +59,12 @@ spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身�
 ### 4、diboot-scheduler 定时任务组件
 
 * Quartz定时任务统一管理及日志的最佳实践封装
-* @BindJob注解提供定时任务定义，自动收集供前端选择
+* @CollectThisJob注解提供定时任务定义，自动收集供前端选择
 > 详细文档: [diboot-scheduler文档](https://www.diboot.com/guide/diboot-scheduler/%E4%BB%8B%E7%BB%8D.html). 
+
+### 5. diboot-message 消息通知组件
+* 通用的消息模板&模板变量的设计方案
+* 支持多通道的消息通知发送
 
 ## devtools开发助理
 
@@ -74,16 +80,14 @@ spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身�
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html). 
 
 ## 捐助支持
-![捐助二维码](docs/img/donate.png)
+<img src="https://www.diboot.com/wechat_donate.png" width = "200" height = "200" alt="捐助二维码" align=center />
 
-感谢所有捐助diboot的朋友，感谢你们为diboot和开源事业的发展做出的努力。
-
-感谢JetBrains提供Open Source license，[JetBrains IDEA](https://www.jetbrains.com/?from=diboot) 与diboot更搭哦。
+感谢所有捐助的朋友为开源事业的发展做出的努力。
 
 ## 技术交流
 如遇diboot相关技术问题，欢迎加群交流：
 
-* **捐助/付费用户尊享**QQ群: [931266830]()
+* **VIP技术支持QQ群**（捐助/付费用户尊享）: [931266830]()
 
 * 技术交流QQ群: [731690096]() 
 

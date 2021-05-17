@@ -16,12 +16,16 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -204,7 +208,7 @@ public class SqlFileInitializer {
     }
 
     /***
-     * 执行多条批量更新SQL
+     * 执行多条批量更新SQL（无事务，某条报错不影响后续执行）
      * @param sqlStatementList
      * @return
      */
@@ -224,6 +228,42 @@ public class SqlFileInitializer {
             }
         }
         return true;
+    }
+
+    /***
+     * 执行多条批量更新SQL（支持事务，有报错即回滚）
+     * @param sqlStatementList
+     * @return
+     */
+    public static boolean executeMultipleUpdateSqlsWithTransaction(List<String> sqlStatementList){
+        if(V.isEmpty(sqlStatementList)){
+            return false;
+        }
+        // 获取SqlSessionFactory实例
+        SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
+        if (sqlSessionFactory == null){
+            log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
+            return false;
+        }
+        SqlSession session = sqlSessionFactory.openSession(false);
+        try(Connection conn = session.getConnection()){
+            conn.setAutoCommit(false);
+            for(String sqlStatement : sqlStatementList){
+                SqlExecutor.executeUpdate(conn, sqlStatement, null);
+            }
+            conn.commit();
+            return true;
+        }
+        catch (Exception e){
+            log.error("SQL执行异常，请检查：", e);
+            session.rollback();
+            return false;
+        }
+        finally {
+            if(session != null){
+                session.close();
+            }
+        }
     }
 
     /***

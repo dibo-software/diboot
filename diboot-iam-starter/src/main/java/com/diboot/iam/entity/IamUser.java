@@ -98,4 +98,9 @@ public class IamUser extends BaseLoginUser {
         return this.realname;
     }
 
+    @Override
+    public String getUserType() {
+        return IamUser.class.getSimpleName();
+    }
+
 }

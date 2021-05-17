@@ -20,6 +20,7 @@ import com.diboot.file.entity.UploadFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 
 /**
  * 文件操作接口
@@ -38,6 +39,16 @@ public interface FileStorageService {
      * @throws Exception
      */
     UploadFileResult upload(MultipartFile file) throws Exception;
+
+    /**
+     * 上传文件
+     *
+     * @param inputStream
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    UploadFileResult upload(InputStream inputStream, String fileName) throws Exception;
 
     /**
      * 获取文件

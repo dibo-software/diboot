@@ -117,17 +117,17 @@ public class RelationsBinder {
         Class voClass = voList.get(0).getClass();
         BindAnnotationGroup bindAnnotationGroup = ParserCache.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isNotEmpty()){
+            // 绑定Field字段名
+            List<FieldAnnotation> fieldAnnoList = bindAnnotationGroup.getBindFieldAnnotations();
+            if(fieldAnnoList != null){
+                doBindingField(voList, fieldAnnoList);
+            }
             // 绑定数据字典
             List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();
             if(dictAnnoList != null){
                 for(FieldAnnotation annotation : dictAnnoList){
                     doBindingDict(voList, annotation);
                 }
-            }
-            // 绑定Field字段名
-            List<FieldAnnotation> fieldAnnoList = bindAnnotationGroup.getBindFieldAnnotations();
-            if(fieldAnnoList != null){
-                doBindingField(voList, fieldAnnoList);
             }
             // 绑定Entity实体
             List<FieldAnnotation> entityAnnoList = bindAnnotationGroup.getBindEntityAnnotations();
@@ -182,6 +182,7 @@ public class RelationsBinder {
             String dictValueField = annotation.field();
             if(V.isEmpty(dictValueField)){
                 dictValueField = S.replace(fieldAnno.getFieldName(), "Label", "");
+                log.debug("BindDict未指定field，将默认取值为: {}", dictValueField);
             }
             // 字典绑定接口化
             bindDictService.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());

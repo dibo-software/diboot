@@ -78,9 +78,12 @@ public class AcceptAnnoCopier {
                     continue;
                 }
             }
-            Object sourceValue = BeanUtils.getProperty(source, annoDef[IDX_SOURCE_FIELD]);
-            if(sourceValue != null){
-                BeanUtils.setProperty(target, annoDef[IDX_TARGET_FIELD], sourceValue);
+            Field sourceField = BeanUtils.extractField(source.getClass(), annoDef[IDX_SOURCE_FIELD]);
+            if(sourceField != null){
+                Object sourceValue = BeanUtils.getProperty(source, annoDef[IDX_SOURCE_FIELD]);
+                if(sourceValue != null){
+                    BeanUtils.setProperty(target, annoDef[IDX_TARGET_FIELD], sourceValue);
+                }
             }
         }
     }

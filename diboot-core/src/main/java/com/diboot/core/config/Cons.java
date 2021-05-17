@@ -35,6 +35,10 @@ public class Cons {
      */
     public static final String SEPARATOR_UNDERSCORE = "_";
     /**
+     * 冒号分隔符
+     */
+    public final static  String SEPARATOR_COLON = ":";
+    /**
      * 排序 - 降序标记
      */
     public static final String ORDER_DESC = "DESC";
@@ -81,6 +85,7 @@ public class Cons {
      */
     public static final String FIELD_ITEM_NAME = "itemName";
     public static final String FIELD_ITEM_VALUE = "itemValue";
+    public static final String COLUMN_ITEM_VALUE = "item_value";
     public static final String FIELD_TYPE = "type";
 
     /**

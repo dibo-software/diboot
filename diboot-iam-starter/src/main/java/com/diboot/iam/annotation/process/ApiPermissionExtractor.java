@@ -73,36 +73,37 @@ public class ApiPermissionExtractor {
      * @param controllerList
      */
     private static void extractApiPermissions(List<Object> controllerList){
-        if(V.notEmpty(controllerList)) {
-            for (Object obj : controllerList) {
-                Class controllerClass = BeanUtils.getTargetClass(obj);
-                String title = null;
-                // 提取类信息
-                String codePrefix = null;
-                // 注解
-                BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
-                if(bindPermission != null){
-                    // 当前资源权限
-                    codePrefix = bindPermission.code();
-                    if(V.isEmpty(codePrefix)){
-                        Class<?> entityClazz = BeanUtils.getGenericityClass(controllerClass, 0);
-                        if(entityClazz != null){
-                            codePrefix = entityClazz.getSimpleName();
-                        }
-                        else{
-                            log.warn("无法获取{}相关的Entity，请指定注解BindPermission.code参数！", controllerClass.getName());
-                        }
+        if(V.isEmpty(controllerList)) {
+            return;
+        }
+        for (Object obj : controllerList) {
+            Class controllerClass = BeanUtils.getTargetClass(obj);
+            String title = null;
+            // 提取类信息
+            String codePrefix = null;
+            // 注解
+            BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
+            if(bindPermission != null){
+                // 当前资源权限
+                codePrefix = bindPermission.code();
+                if(V.isEmpty(codePrefix)){
+                    Class<?> entityClazz = BeanUtils.getGenericityClass(controllerClass, 0);
+                    if(entityClazz != null){
+                        codePrefix = entityClazz.getSimpleName();
                     }
-                    title = bindPermission.name();
+                    else{
+                        log.warn("无法获取{}相关的Entity，请指定注解BindPermission.code参数！", controllerClass.getName());
+                    }
                 }
-                else{
-                    title = S.substringBeforeLast(controllerClass.getSimpleName(), "Controller");
-                }
-                ApiPermissionWrapper wrapper = new ApiPermissionWrapper(title);
-                buildApiPermissionsInClass(wrapper, controllerClass, codePrefix);
-                if(V.notEmpty(wrapper.getChildren())){
-                    API_PERMISSION_CACHE.add(wrapper);
-                }
+                title = bindPermission.name();
+            }
+            else{
+                title = S.substringBeforeLast(controllerClass.getSimpleName(), "Controller");
+            }
+            ApiPermissionWrapper wrapper = new ApiPermissionWrapper(controllerClass.getSimpleName(), title);
+            buildApiPermissionsInClass(wrapper, controllerClass, codePrefix);
+            if(V.notEmpty(wrapper.getChildren())){
+                API_PERMISSION_CACHE.add(wrapper);
             }
         }
     }

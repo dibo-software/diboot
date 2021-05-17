@@ -76,6 +76,10 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
      * 初始化job
      */
     private void initJob() {
+        // 开发环境可禁用
+        if(schedulerProperties.isEnable() == false){
+            return;
+        }
         // 初始化数据库里面状态为启用的定时任务
         List<ScheduleJob> scheduleJobList = scheduleJobService.getEntityList(
                 Wrappers.<ScheduleJob>lambdaQuery()

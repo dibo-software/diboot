@@ -18,8 +18,7 @@ package com.diboot.core.controller;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.config.Cons;
-import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
@@ -45,7 +44,7 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
-public class BaseCrudRestController<E extends BaseEntity> extends BaseController {
+public class BaseCrudRestController<E extends AbstractEntity> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
     /**
      * Entity，VO对应的class
@@ -68,13 +67,6 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
      * @throws Exception
      */
     protected <VO> JsonResult getViewObject(Serializable id, Class<VO> voClass) throws Exception{
-        // 检查String类型id
-        if(id instanceof String && !S.isNumeric((String)id)){
-            String pk = ContextHelper.getPrimaryKey(getEntityClass());
-            if(Cons.FieldName.id.name().equals(pk)){
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
-            }
-        }
         VO vo = (VO)getService().getViewObject(id, voClass);
         return new JsonResult(vo);
     }
@@ -85,13 +77,6 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
      * @throws Exception
      */
     protected <E> E getEntity(Serializable id) throws Exception{
-        // 检查String类型id
-        if(id instanceof String && !S.isNumeric((String)id)){
-            String pk = ContextHelper.getPrimaryKey(getEntityClass());
-            if(Cons.FieldName.id.name().equals(pk)){
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "参数id类型不匹配！");
-            }
-        }
         return (E)getService().getEntity(id);
     }
 
@@ -192,7 +177,7 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
     protected JsonResult updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
         if(entity.getId() == null){
-            String pk = ContextHelper.getPrimaryKey(getEntityClass());
+            String pk = ContextHelper.getIdFieldName(getEntityClass());
             if(Cons.FieldName.id.name().equals(pk)){
                 Long longId = (id instanceof Long)? (Long)id : Long.parseLong((String)id);
                 entity.setId(longId);
@@ -286,7 +271,7 @@ public class BaseCrudRestController<E extends BaseEntity> extends BaseController
     private Map<String, Object> buildPKDataMap(E entity){
         // 组装返回结果
         Map<String, Object> data = new HashMap<>(2);
-        String pk = ContextHelper.getPrimaryKey(getEntityClass());
+        String pk = ContextHelper.getIdFieldName(getEntityClass());
         Object pkValue = (Cons.FieldName.id.name().equals(pk))? entity.getId() : BeanUtils.getProperty(entity, pk);
         data.put(pk, pkValue);
         return data;

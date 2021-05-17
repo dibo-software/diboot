@@ -33,6 +33,12 @@ public abstract class BaseLoginUser extends BaseEntity {
      */
     public abstract String getDisplayName();
 
+    /***
+     * 获取当前用户类型
+     * @return
+     */
+    public abstract String getUserType();
+
     /**
      * 附加对象，用于岗位等扩展
       */

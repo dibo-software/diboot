@@ -37,6 +37,9 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -204,6 +207,9 @@ public class BeanUtils {
      * @return
      */
     public static Object convertValueToFieldType(Object value, Field field){
+        if(value == null){
+            return null;
+        }
         String type = field.getGenericType().getTypeName();
         if(value.getClass().getName().equals(type)){
             return value;
@@ -226,8 +232,27 @@ public class BeanUtils {
         else if(Boolean.class.getName().equals(type)){
             return V.isTrue(S.valueOf(value));
         }
-        else if(type.contains(Date.class.getSimpleName())){
+        else if(Date.class.getName().equals(type)){
             return D.fuzzyConvert(S.valueOf(value));
+        }
+        else if(LocalDate.class.getName().equals(type) || LocalDateTime.class.getName().equals(type)){
+            if(LocalDate.class.getName().equals(type)){
+                String dateValStr = (value instanceof Date)? D.convert2DateString((Date)value) : S.valueOf(value);
+                Date dateVal = D.fuzzyConvert(dateValStr);
+                if(dateVal == null){
+                    return null;
+                }
+                return dateVal.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            }
+            //LocalDateTime
+            else{
+                String dateValStr = (value instanceof Date)? D.convert2DateTimeString((Date)value) : S.valueOf(value);
+                Date dateVal = D.fuzzyConvert(dateValStr);
+                if(dateVal == null){
+                    return null;
+                }
+                return dateVal.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            }
         }
         return value;
     }
@@ -415,7 +440,7 @@ public class BeanUtils {
      * @param childrenFieldName 子节点集合属性名
      * @return
      */
-    private static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String parentIdFieldName, String childrenFieldName) {
+    public static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String parentIdFieldName, String childrenFieldName) {
         List<T> children = null;
         for(T node : nodeList) {
             Object nodeParentId = getProperty(node, parentIdFieldName);
