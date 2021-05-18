@@ -55,7 +55,7 @@ public class MessageTemplateServiceImpl extends BaseServiceImpl<MessageTemplateM
                 .eq(MessageTemplate::getCode, code);
         // 如果id存在，那么需要排除当前id进行查询
         if (V.notEmpty(id)) {
-            wrapper.ne(MessageTemplate::getCode, id);
+            wrapper.ne(MessageTemplate::getId, id);
         }
         if (V.notEmpty(getEntityList(wrapper))) {
             throw new BusinessException(Status.FAIL_OPERATION, "模版编码[" + code + "]已存在");
