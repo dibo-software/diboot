@@ -80,7 +80,7 @@ public class PropInfo {
                     else if(columnName == null){
                         columnName = S.toSnakeCase(fldName);
                     }
-                    this.idColumn = columnName;
+                    this.idColumn = S.removeEsc(columnName);
                 }
                 else{
                     TableLogic tableLogic = fld.getAnnotation(TableLogic.class);
@@ -91,9 +91,10 @@ public class PropInfo {
                         else if(columnName == null){
                             columnName = S.toSnakeCase(fldName);
                         }
-                        this.deletedColumn = columnName;
+                        this.deletedColumn = S.removeEsc(columnName);
                     }
                 }
+                columnName = S.removeEsc(columnName);
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){
                     this.columnToFieldMap.put(columnName, fldName);

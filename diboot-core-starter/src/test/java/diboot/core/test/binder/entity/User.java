@@ -38,7 +38,7 @@ import java.util.Date;
 public class User extends BaseEntity {
     private static final long serialVersionUID = 3050761344045195972L;
 
-    @TableField
+    @TableField("`department_id`")
     private Long departmentId;
 
     @TableField

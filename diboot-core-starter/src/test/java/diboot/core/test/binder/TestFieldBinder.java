@@ -96,6 +96,7 @@ public class TestFieldBinder {
         if(V.notEmpty(voList)){
             for(UserVO vo : voList){
                 Assert.assertNotNull(vo.getDeptName());
+                Assert.assertNotNull(vo.getDeptName2());
             }
         }
     }

@@ -42,6 +42,6 @@ public class Department extends BaseEntity {
     private Long orgId;
 
     @BindQuery(comparison = Comparison.CONTAINS)
-    @TableField
+    @TableField(value = "`name`")
     private String name;
 }

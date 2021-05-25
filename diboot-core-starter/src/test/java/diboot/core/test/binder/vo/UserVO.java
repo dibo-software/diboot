@@ -43,4 +43,7 @@ public class UserVO extends User {
     @BindDict(type = "GENDER", field = "gender")
     private String genderLabel;
 
+    @BindField(entity= Department.class, field="name", condition="this.department_id=id")
+    private String deptName2;
+
 }

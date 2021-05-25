@@ -362,4 +362,19 @@ public class S extends StringUtils{
 		return list;
 	}
 
+	/**
+	 * 移除转义符
+	 * @param columnName
+	 * @return
+	 */
+	public static String removeEsc(String columnName){
+		if(V.isEmpty(columnName)){
+			return columnName;
+		}
+		if(startsWithAny(columnName, "`", "\"", "[")){
+			return substring(columnName, 1, columnName.length()-1);
+		}
+		return columnName;
+	}
+
 }
