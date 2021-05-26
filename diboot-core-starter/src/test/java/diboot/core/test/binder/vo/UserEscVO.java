@@ -18,6 +18,7 @@ package diboot.core.test.binder.vo;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,14 +34,15 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class UserVO extends User {
-    private static final long serialVersionUID = 3526115343377985709L;
+public class UserEscVO extends User {
+    private static final long serialVersionUID = -5566013299475080343L;
 
-    // 字段关联，附加更多条件
-    @BindField(entity= Department.class, field="name", condition="this.department_id=id AND parent_id IS NOT NULL AND name = '研发组'")
+    @BindField(entity= Department.class, field="character", condition="this.department_id=id")
+    private String deptCharacter;
+
+    @BindField(entity = Department.class, field="name", condition="this.`character`=`character`")
     private String deptName;
 
-    @BindDict(type = "GENDER", field = "gender")
-    private String genderLabel;
-
+    @BindField(entity = Organization.class, field="name", condition="this.`character`=department.`character` AND department.org_id=id")
+    private String orgName;
 }

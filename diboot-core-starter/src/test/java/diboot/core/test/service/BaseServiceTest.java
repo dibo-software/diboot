@@ -32,7 +32,10 @@ import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.entity.UserRole;
+import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -62,6 +65,9 @@ public class BaseServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DepartmentService departmentService;
 
     @Test
     public void testGet(){
@@ -241,6 +247,23 @@ public class BaseServiceTest {
         Assert.assertTrue(success);
         dictionaryList2 = dictionaryService.getEntityList(queryWrapper);
         Assert.assertTrue(V.isEmpty(dictionaryList2));
+    }
+
+    @Test
+    public void testEscInService(){
+        LambdaQueryWrapper<Department> queryWrapper = new QueryWrapper<Department>()
+                .lambda().isNotNull(Department::getCharacter);
+        List departments = departmentService.list(queryWrapper);
+        Assert.assertTrue(departments != null);
+        Department dept = (Department) departments.get(0);
+        Assert.assertTrue(dept.getCharacter() != null);
+
+        LambdaQueryWrapper<User> queryWrapperUser = new QueryWrapper<User>()
+                .lambda().isNotNull(User::getCharacter);
+        List users = userService.getEntityList(queryWrapperUser);
+        Assert.assertTrue(users != null);
+        User user = (User) users.get(0);
+        Assert.assertTrue(user.getCharacter() != null);
     }
 
     @Test

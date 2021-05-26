@@ -25,6 +25,7 @@ create table department
   org_id bigint not null comment '单位ID',
   name varchar(50) not null comment '名称',
   extdata varchar(100) null comment '扩展字段',
+  `character` varchar(100) null comment '关键字',
   is_deleted tinyint(1) default 0 not null comment '已删除',
   create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间'
 )
@@ -59,6 +60,7 @@ create table user
   username varchar(20) null,
   gender varchar(20) null,
   birthdate date null,
+  `character` varchar(100) null comment '关键字',
   is_deleted tinyint(1) default 0 null,
   create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间',
   local_datetime datetime null comment '本地时间'
@@ -100,12 +102,12 @@ CREATE TABLE `db_purchase_form_plan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 初始化样例数据
-INSERT INTO department (id, parent_id, org_id, name) VALUES (10001, 0, 100001, '产品部'), (10002, 10001, 100001, '研发组'), (10003, 10001, 100001, '测试组'),
+INSERT INTO department (id, parent_id, org_id, name, `character`) VALUES (10001, 0, 100001, '产品部', 'CP'), (10002, 10001, 100001, '研发组', 'YF'), (10003, 10001, 100001, '测试组', 'CS'),
        (10004, 10001, 100001, 'UI组'), (10005, 10003, 100001, '自动化测试'), (10006, 10003, 100001, '功能测试');
 INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
 INSERT INTO organization (id, parent_id, name, telphone, manager_id) VALUES (100001, 0, '苏州帝博', '0512-62988949', 1001), (100002, 0, '成都帝博', null, null);
 INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');
-INSERT INTO user (id, department_id, username, gender) VALUES (1001, 10002, '张三', 'M'), (1002, 10002, '李四', 'F');
+INSERT INTO user (id, department_id, username, gender, `character`) VALUES (1001, 10002, '张三', 'M', 'ZS'), (1002, 10002, '李四', 'F', 'LS');
 INSERT INTO user_role (user_type, user_id, role_id) VALUES ('SysUser', 1001, 101),('SysUser', 1001, 102),('OrgUser', 1002, 102);
 INSERT INTO cc_city_info (id, parent_id, region_id, region_name) VALUES (10000, 0, 10000, '江苏省'), (10010, 10000, 10010, '苏州市'), (10020, 10010, 10020, '园区');
 INSERT INTO db_goods_goods_info (goods_id, goods_nm, is_del) VALUES(1001, 'abcde', 0), (1002, 'abcd', 0);

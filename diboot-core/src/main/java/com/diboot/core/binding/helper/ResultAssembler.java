@@ -123,7 +123,7 @@ public class ResultAssembler {
         for(Map<String, E> row : resultSetMapList){
             fieldValues.clear();
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
-                Object keyObj = row.containsKey(entry.getValue())? row.get(entry.getValue()) : row.get(entry.getValue().toUpperCase());
+                Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
                 fieldValues.add(S.valueOf(keyObj));
             }
             String matchKeys = S.join(fieldValues);
@@ -153,7 +153,7 @@ public class ResultAssembler {
         for(Map<String, E> row : resultSetMapList){
             fieldValues.clear();
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
-                Object keyObj = row.containsKey(entry.getValue())? row.get(entry.getValue()) : row.get(entry.getValue().toUpperCase());
+                Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
                 fieldValues.add(S.valueOf(keyObj));
             }
             String matchKeys = S.join(fieldValues);
@@ -168,6 +168,27 @@ public class ResultAssembler {
             }
         }
         return resultMap;
+    }
+
+
+    /**
+     * 从map中取值，如直接取为null尝试转换大写后再取，以支持ORACLE等大写命名数据库
+     * @param map
+     * @param key
+     * @return
+     */
+    public static Object getValueIgnoreKeyCase(Map<String, ?> map, String key){
+        if(key == null){
+            return null;
+        }
+        key = S.removeEsc(key);
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        if(map.containsKey(key.toUpperCase())){
+            return map.get(key.toUpperCase());
+        }
+        return null;
     }
 
 }

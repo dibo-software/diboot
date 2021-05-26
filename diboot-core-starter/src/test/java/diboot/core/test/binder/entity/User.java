@@ -38,7 +38,7 @@ import java.util.Date;
 public class User extends BaseEntity {
     private static final long serialVersionUID = 3050761344045195972L;
 
-    @TableField("`department_id`")
+    @TableField
     private Long departmentId;
 
     @TableField
@@ -53,4 +53,7 @@ public class User extends BaseEntity {
 
     @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     private LocalDateTime localDatetime;
+
+    @TableField("`character`")
+    private String character;
 }

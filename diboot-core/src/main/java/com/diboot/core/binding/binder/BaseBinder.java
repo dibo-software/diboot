@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
@@ -308,16 +309,7 @@ public abstract class BaseBinder<T> {
      * @return
      */
     protected Object getValueIgnoreKeyCase(Map<String, Object> map, String key){
-        if(key == null){
-            return null;
-        }
-        if(map.containsKey(key)){
-            return map.get(key);
-        }
-        if(map.containsKey(key.toUpperCase())){
-            return map.get(key.toUpperCase());
-        }
-        return null;
+        return ResultAssembler.getValueIgnoreKeyCase(map, key);
     }
 
     /**
