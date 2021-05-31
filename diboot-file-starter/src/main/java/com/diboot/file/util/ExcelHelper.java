@@ -24,6 +24,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.file.excel.listener.FixedHeadExcelListener;
+import com.diboot.file.excel.write.OptionWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -172,6 +173,7 @@ public class ExcelHelper {
             // 这里需要设置不关闭流
             EasyExcel.write(response.getOutputStream(), clazz)
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                    .registerWriteHandler(new OptionWriteHandler(clazz))
                     .autoCloseStream(Boolean.FALSE)
                     .sheet("sheet1")
                     .doWrite(data);
