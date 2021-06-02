@@ -94,7 +94,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
-        String accessUrl = FileHelper.getRelativePath(previewFileName);
+        String accessUrl = buildAccessUrl(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 描述
         String description = getString("description");
@@ -121,7 +121,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
-        String accessUrl = FileHelper.getRelativePath(previewFileName);
+        String accessUrl = buildAccessUrl(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 保存文件上传记录
         UploadFile uploadFile = new UploadFile().setUuid(fileUid)
