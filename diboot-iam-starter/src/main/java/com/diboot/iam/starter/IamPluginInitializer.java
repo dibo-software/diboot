@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.starter;
 
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
@@ -85,7 +86,10 @@ public class IamPluginInitializer implements ApplicationRunner {
         // 插入数据字典
         for(String dictJson : DICT_INIT_DATA){
             DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
-            ContextHelper.getBean(DictionaryService.class).createDictAndChildren(dictVo);
+            DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+            if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, dictVo.getType())){
+                dictionaryService.createDictAndChildren(dictVo);
+            }
         }
         DICT_INIT_DATA = null;
 
