@@ -15,15 +15,17 @@
  */
 package com.diboot.file.excel.annotation;
 
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
- * Excel下拉选项
- * <p>可自定选项与关联字典</p>
+ * Excel 单元格验证 （单元下拉选项）
+ * <p>
+ * 可自定义选项或关联字典
  *
  * @author wind
  * @version v2.3.0
- * @date 2021-05-29 21:30
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,23 +34,47 @@ import java.lang.annotation.*;
 public @interface ExcelOption {
 
     /**
-     * 选项列表
+     * 此属性为{@link #options}的别名
+     * <p>
+     * 当不指定其他属性值时使用而不是指定{@link #options} &mdash; 例如：{@code @ExcelOption({"选项1","选项2"})}
      *
-     * @return options
+     * @see #options
      */
+    @AliasFor("options")
     String[] value() default {};
 
     /**
+     * 下拉选项列表
+     * <p>
+     * {@link #value}是此属性的别名（并与之互斥）。
+     * <p>
+     * 优先级: options &gt; dict
+     */
+    @AliasFor("value")
+    String[] options() default {};
+
+    /**
      * 关联字典类型
-     *
-     * @return 字典类型
+     * <p>
+     * 优先级: options &gt; dict
      */
     String dict() default "";
 
     /**
-     * 行数（默认10000）
-     *
-     * @return 行数
+     * 起始行索引
+     * <p>
+     * 当该值为-1时为整个列，且不可小于-1
+     * <p>
+     * 默认起始索引为 1
+     */
+    int firstRow() default 1;
+
+    /**
+     * 行数
+     * <p>
+     * 行数应大于0，不大于0时不添加 单元格验证（单元下拉选项）
+     * <p>
+     * 默认值 10,000
      */
     int rows() default 10_000;
 }
