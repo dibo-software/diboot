@@ -37,5 +37,7 @@ public enum Comparison {
 
     BETWEEN, //介于-之间
     BETWEEN_BEGIN, //介于之后
-    BETWEEN_END //介于之前
+    BETWEEN_END, //介于之前
+
+    NOT_EQ,  //不等于
 }

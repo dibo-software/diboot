@@ -15,13 +15,13 @@
  */
 package com.diboot.core.binding;
 
+import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
-import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -29,7 +29,6 @@ import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -259,7 +258,12 @@ public class QueryBuilder {
                         wrapper.ge(columnName, value);
                     }
                     break;
+                // 不等于
+                case NOT_EQ:
+                    wrapper.ne(columnName, value);
+                    break;
                 default:
+                    break;
             }
         }
         return wrapper;
