@@ -31,6 +31,7 @@ import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -235,6 +236,26 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     }
 
     /***
+     * 根据id撤销删除
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public JsonResult cancelDeleteEntityMapping(Serializable id) throws Exception {
+        boolean success = getService().cancelDeleteEntity(id);
+        E entity = null;
+        if (success){
+            entity = (E) getService().getEntity(id);
+            this.afterDeletedCanceled(entity);
+            log.info("撤回删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
+            return JsonResult.OK("撤回成功");
+        } else {
+            log.warn("撤回删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
+            return JsonResult.FAIL_OPERATION("撤回失败");
+        }
+    }
+
+    /***
      * 根据id批量删除资源对象，用于子类重写的方法
      * @param ids
      * @return
@@ -327,6 +348,14 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      */
     protected void afterDeleted(Object entityOrDto) throws Exception {
+    }
+
+    /***
+     * 撤销删除成功后的相关处理
+     * @param entityOrDto
+     * @throws Exception
+     */
+    protected void afterDeletedCanceled(Object entityOrDto) throws Exception {
     }
 
     /***

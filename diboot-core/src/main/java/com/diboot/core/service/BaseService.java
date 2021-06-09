@@ -192,6 +192,13 @@ public interface BaseService<T> {
     boolean deleteEntity(Serializable id);
 
     /**
+     * 根据主键撤销删除
+     * @param id
+     * @return
+     */
+    boolean cancelDeleteEntity(Serializable id);
+
+    /**
      * 按条件删除实体
      * @param queryWrapper
      * @return

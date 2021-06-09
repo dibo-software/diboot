@@ -403,7 +403,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return super.removeById(id);
 	}
 
-	@Override
+    @Override
+    public boolean cancelDeleteEntity(Serializable id) {
+        return this.getMapper().cancelDeleteById(id) > 0;
+    }
+
+    @Override
 	public boolean deleteEntities(Wrapper queryWrapper){
 		// 执行
 		return super.remove(queryWrapper);

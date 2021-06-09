@@ -17,6 +17,8 @@ package com.diboot.core.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.io.Serializable;
+
 /**
  * 基础CRUD的父类Mapper
  * @author mazc@dibo.ltd
@@ -25,4 +27,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface BaseCrudMapper<T> extends BaseMapper<T> {
 
+    int cancelDeleteById(Serializable id);
 }
