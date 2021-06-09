@@ -31,7 +31,6 @@ import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -236,13 +235,13 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     }
 
     /***
-     * 根据id撤销删除
+     * 根据id撤回删除
      * @param id
      * @return
      * @throws Exception
      */
-    public JsonResult cancelDeleteEntityMapping(Serializable id) throws Exception {
-        boolean success = getService().cancelDeleteEntity(id);
+    public JsonResult canceledDeleteEntityMapping(Serializable id) throws Exception {
+        boolean success = getService().canceledDeleteEntity(id);
         E entity = null;
         if (success){
             entity = (E) getService().getEntity(id);

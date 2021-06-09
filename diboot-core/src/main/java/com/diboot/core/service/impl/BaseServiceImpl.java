@@ -30,7 +30,6 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
@@ -404,8 +403,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
     @Override
-    public boolean cancelDeleteEntity(Serializable id) {
-        return this.getMapper().cancelDeleteById(id) > 0;
+    public boolean canceledDeleteEntity(Serializable id) {
+        return this.getMapper().canceledDeleteById(id) > 0;
     }
 
     @Override

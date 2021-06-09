@@ -19,6 +19,9 @@ package com.diboot.message.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.message.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
  * 消息Mapper
@@ -31,5 +34,12 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MessageMapper extends BaseCrudMapper<Message> {
 
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `message` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 }
 

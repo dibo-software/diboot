@@ -27,5 +27,5 @@ import java.io.Serializable;
  */
 public interface BaseCrudMapper<T> extends BaseMapper<T> {
 
-    int cancelDeleteById(Serializable id);
+    int canceledDeleteById(Serializable id);
 }

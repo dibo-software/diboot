@@ -17,6 +17,9 @@ package com.diboot.core.mapper;
 
 import com.diboot.core.entity.Dictionary;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
  * 数据字典Mapper
@@ -27,5 +30,12 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface DictionaryMapper extends BaseCrudMapper<Dictionary> {
 
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `dictionary` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 }
 

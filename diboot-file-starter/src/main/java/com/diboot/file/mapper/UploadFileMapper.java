@@ -18,6 +18,9 @@ package com.diboot.file.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.file.entity.UploadFile;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
  * 文件相关Mapper
@@ -27,4 +30,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UploadFileMapper extends BaseCrudMapper<UploadFile> {
 
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `upload_file` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 }

@@ -22,6 +22,9 @@ import com.diboot.iam.entity.IamUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
 * 系统用户Mapper
@@ -31,6 +34,14 @@ import org.apache.ibatis.annotations.Select;
 */
 @Mapper
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
+
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `iam_user` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 
     /***
      * 通过org层级的排序来获取用户分页数据

@@ -18,6 +18,9 @@ package com.diboot.iam.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamOperationLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
 * 操作日志Mapper
@@ -28,5 +31,12 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface IamOperationLogMapper extends BaseCrudMapper<IamOperationLog> {
 
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `iam_operation_log` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 }
 

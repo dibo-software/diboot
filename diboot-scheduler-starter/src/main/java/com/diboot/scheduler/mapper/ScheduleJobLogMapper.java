@@ -18,6 +18,9 @@ package com.diboot.scheduler.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
 * 定时任务Job定义Mapper
@@ -28,5 +31,12 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ScheduleJobLogMapper extends BaseCrudMapper<ScheduleJobLog> {
 
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `schedule_job_log` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 }
 

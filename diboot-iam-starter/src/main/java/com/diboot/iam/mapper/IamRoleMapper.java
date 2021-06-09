@@ -18,6 +18,9 @@ package com.diboot.iam.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
 * 角色Mapper
@@ -28,5 +31,12 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface IamRoleMapper extends BaseCrudMapper<IamRole> {
 
+    /***
+     * 通过ID撤回逻辑删除
+     * @param id
+     * @return
+     */
+    @Update("UPDATE `iam_role` SET is_deleted=0 WHERE id=#{id}")
+    int canceledDeleteById(Serializable id);
 }
 
