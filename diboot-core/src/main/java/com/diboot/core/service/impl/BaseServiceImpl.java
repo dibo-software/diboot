@@ -35,7 +35,9 @@ import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
 import com.diboot.core.binding.binder.FieldListBinder;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -403,8 +405,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
     @Override
-    public boolean canceledDeleteEntity(Serializable id) {
-        return this.getMapper().canceledDeleteById(id) > 0;
+    public boolean cancelDeletedById(Serializable id) {
+		EntityInfoCache info = BindingCacheManager.getEntityInfoByClass(super.getEntityClass());
+		String tableName = info.getTableName();
+        return this.getMapper().cancelDeletedById(tableName, id) > 0;
     }
 
     @Override

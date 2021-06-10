@@ -31,12 +31,5 @@ import java.io.Serializable;
 @Mapper
 public interface IamOperationLogMapper extends BaseCrudMapper<IamOperationLog> {
 
-    /***
-     * 通过ID撤回逻辑删除
-     * @param id
-     * @return
-     */
-    @Update("UPDATE `iam_operation_log` SET is_deleted=0 WHERE id=#{id}")
-    int canceledDeleteById(Serializable id);
 }
 

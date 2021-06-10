@@ -240,8 +240,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    public JsonResult canceledDeleteEntityMapping(Serializable id) throws Exception {
-        boolean success = getService().canceledDeleteEntity(id);
+    public JsonResult cancelDeletedEntityMapping(Serializable id) throws Exception {
+        boolean success = getService().cancelDeletedById(id);
         E entity = null;
         if (success){
             entity = (E) getService().getEntity(id);

@@ -36,14 +36,6 @@ import java.io.Serializable;
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
 
     /***
-     * 通过ID撤回逻辑删除
-     * @param id
-     * @return
-     */
-    @Update("UPDATE `iam_user` SET is_deleted=0 WHERE id=#{id}")
-    int canceledDeleteById(Serializable id);
-
-    /***
      * 通过org层级的排序来获取用户分页数据
      * @param page
      * @param queryWrapper

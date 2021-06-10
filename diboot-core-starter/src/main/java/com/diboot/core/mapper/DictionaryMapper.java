@@ -30,12 +30,5 @@ import java.io.Serializable;
 @Mapper
 public interface DictionaryMapper extends BaseCrudMapper<Dictionary> {
 
-    /***
-     * 通过ID撤回逻辑删除
-     * @param id
-     * @return
-     */
-    @Update("UPDATE `dictionary` SET is_deleted=0 WHERE id=#{id}")
-    int canceledDeleteById(Serializable id);
 }
 

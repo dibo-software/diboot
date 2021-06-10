@@ -196,7 +196,7 @@ public interface BaseService<T> {
      * @param id
      * @return
      */
-    boolean canceledDeleteEntity(Serializable id);
+    boolean cancelDeletedById(Serializable id);
 
     /**
      * 按条件删除实体

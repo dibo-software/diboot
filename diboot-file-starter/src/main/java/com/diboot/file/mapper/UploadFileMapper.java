@@ -30,11 +30,4 @@ import java.io.Serializable;
 @Mapper
 public interface UploadFileMapper extends BaseCrudMapper<UploadFile> {
 
-    /***
-     * 通过ID撤回逻辑删除
-     * @param id
-     * @return
-     */
-    @Update("UPDATE `upload_file` SET is_deleted=0 WHERE id=#{id}")
-    int canceledDeleteById(Serializable id);
 }

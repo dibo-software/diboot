@@ -34,12 +34,5 @@ import java.io.Serializable;
 @Mapper
 public interface MessageTemplateMapper extends BaseCrudMapper<MessageTemplate> {
 
-    /***
-     * 通过ID撤回逻辑删除
-     * @param id
-     * @return
-     */
-    @Update("UPDATE `message_template` SET is_deleted=0 WHERE id=#{id}")
-    int canceledDeleteById(Serializable id);
 }
 
