@@ -24,11 +24,11 @@ package com.diboot.core.binding.query;
  */
 public enum Strategy {
     /**
-     * 忽略空字符串""
+     * 忽略空字符串"",空集合等
      */
-    IGNORE_EMPTY_STRING,
+    IGNORE_EMPTY,
     /**
-     * 包含空字符串""参与查询
+     * 包含空字符串""空集合等参与查询
      */
-    INCLUDE_EMPTY_STRING
+    INCLUDE_EMPTY,
 }

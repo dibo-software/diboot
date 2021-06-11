@@ -28,6 +28,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Department DTO
@@ -64,6 +65,9 @@ public class DepartmentDTO implements Serializable {
 
     @BindQuery(comparison = Comparison.LT, field = "createTime")
     private Date createTimeEnd;
+
+    @BindQuery(field = "parent_id", comparison = Comparison.IN)
+    private List<Long> parentIds;
 
     public Date getCreateTimeEnd(){
         return D.nextDay(createTime);

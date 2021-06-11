@@ -67,6 +67,22 @@ public class TestJoinQuery {
     }
 
     @Test
+    public void testInQuery(){
+        List<Long> parentIds = new ArrayList<>();
+        DepartmentDTO departmentDTO = new DepartmentDTO();
+        departmentDTO.setParentIds(parentIds);
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        System.out.println(queryWrapper.getExpression());
+        List<Department> list = Binder.joinQueryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() > 1);
+
+        parentIds.add(10001L);
+        queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        list = Binder.joinQueryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() == 1);
+    }
+
+    @Test
     public void testSingleTableQuery(){
         Department entity = new Department();
         entity.setParentId(10001L);

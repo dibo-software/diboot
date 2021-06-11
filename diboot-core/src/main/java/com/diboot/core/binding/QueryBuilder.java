@@ -154,10 +154,16 @@ public class QueryBuilder {
                 continue;
             }
             Object value = entry.getValue();
-            // 处理空字符串""
-            if(value instanceof String && S.isEmpty((String)value)){
-                if(query != null && query.strategy().equals(Strategy.IGNORE_EMPTY_STRING)){
+            if(query != null && query.strategy().equals(Strategy.IGNORE_EMPTY)){
+                // 处理空字符串""
+                if(value instanceof String && S.isEmpty((String)value)){
                     continue;
+                }
+                if(value instanceof Collection){
+                    Collection valueList = (Collection)value;
+                    if(valueList.size() == 0){
+                        continue;
+                    }
                 }
             }
             // 对比类型
