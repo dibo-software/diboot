@@ -82,7 +82,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             IPage<IamUser> page = convertToIPage(queryWrapper, pagination);
             page = super.getBaseMapper().selectPageSortByOrg(page, queryWrapper);
             // 如果重新执行了count进行查询，则更新pagination中的总数
-            if(page.isSearchCount()){
+            if(page.searchCount()){
                 pagination.setTotalCount(page.getTotal());
             }
             return page.getRecords();

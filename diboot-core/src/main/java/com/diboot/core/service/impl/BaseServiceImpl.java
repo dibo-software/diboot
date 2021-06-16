@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -54,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
 import java.util.*;
 
 /***
@@ -262,10 +264,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			throw new BusinessException(Status.FAIL_INVALID_PARAM, "主动ID值不能为空！");
 		}
 		// 从getter中获取class和fieldName
-		com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda lambda = LambdaUtils.resolve(driverIdGetter);
-		Class<R> middleTableClass = (Class<R>) lambda.getImplClass();
+		LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
+		Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
 		// 获取主动从动字段名
-		String driverFieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+		String driverFieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
 		String followerFieldName = convertGetterToFieldName(followerIdGetter);
 		List<R> n2nRelations = null;
 		if(V.notEmpty(followerIdList)){
@@ -447,7 +449,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			IPage<T> page = convertToIPage(queryWrapper, pagination);
 			page = super.page(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
-			if(page.isSearchCount()){
+			if(page.searchCount()){
 				pagination.setTotalCount(page.getTotal());
 			}
 			return page.getRecords();
@@ -552,7 +554,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			IPage page = convertToIPage(queryWrapper, pagination);
 			IPage<Map<String, Object>> resultPage = super.pageMaps(page, queryWrapper);
 			// 如果重新执行了count进行查询，则更新pagination中的总数
-			if(page.isSearchCount()){
+			if(page.searchCount()){
 				pagination.setTotalCount(page.getTotal());
 			}
 			return resultPage.getRecords();
@@ -622,6 +624,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.convertKeyValueList2Map(keyValueList);
 	}
 
+	@Override
 	public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
 		return super.getMap(queryWrapper);
 	}
@@ -696,8 +699,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	private <T> String convertGetterToFieldName(SFunction<T, ?> getterFn) {
-		com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda lambda = LambdaUtils.resolve(getterFn);
-		String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+		LambdaMeta lambdaMeta = LambdaUtils.extract(getterFn);
+		String fieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
 		return fieldName;
 	}
 
