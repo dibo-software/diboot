@@ -178,7 +178,7 @@ public class ResultAssembler {
      * @return
      */
     public static Object getValueIgnoreKeyCase(Map<String, ?> map, String key){
-        if(key == null){
+        if(map == null || key == null){
             return null;
         }
         key = S.removeEsc(key);
