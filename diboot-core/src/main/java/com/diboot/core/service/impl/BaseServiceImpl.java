@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -622,6 +623,32 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public Map<String, Object> getKeyValueMap(Wrapper queryWrapper) {
 		List<KeyValue> keyValueList = getKeyValueList(queryWrapper);
 		return BeanUtils.convertKeyValueList2Map(keyValueList);
+	}
+
+	@Override
+	public <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn) {
+		if(V.isEmpty(entityIds)){
+			return Collections.emptyMap();
+		}
+		String fieldName = BeanUtils.convertToFieldName(getterFn);
+		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
+		String columnName = entityInfo.getColumnByField(fieldName);
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(
+				entityInfo.getIdColumn(),
+				columnName
+		).in(entityInfo.getIdColumn(), entityIds);
+		// map列表
+		List<Map<String, Object>> mapList = getMapList(queryWrapper);
+		if(V.isEmpty(mapList)){
+			return Collections.emptyMap();
+		}
+		Map<ID, String> idNameMap = new HashMap<>();
+		for(Map<String, Object> map : mapList){
+			ID key = (ID)map.get(entityInfo.getIdColumn());
+			String value = S.valueOf(map.get(columnName));
+			idNameMap.put(key, value);
+		}
+		return idNameMap;
 	}
 
 	@Override

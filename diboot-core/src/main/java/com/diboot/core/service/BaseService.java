@@ -316,6 +316,15 @@ public interface BaseService<T> {
     Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
 
     /**
+     * 获取id-指定name的映射map
+     * @param entityIds
+     * @param getterFn
+     * @param <ID>
+     * @return
+     */
+    <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn);
+
+    /**
      * 获取Map
      * @param queryWrapper
      * @return

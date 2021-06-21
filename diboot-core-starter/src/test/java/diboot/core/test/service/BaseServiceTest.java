@@ -106,6 +106,11 @@ public class BaseServiceTest {
         List<Map<String, Object>> mapList = dictionaryService.getMapList(null, new Pagination());
         Assert.assertTrue(mapList.size() > 0 && mapList.size() <= BaseConfig.getPageSize());
 
+
+        List<Long> userIds = Arrays.asList(1001L, 1002L);
+        Map<Long, String> id2NameMap = userService.getId2NameMap(userIds, User::getUsername);
+        Assert.assertTrue(id2NameMap != null);
+        Assert.assertTrue(id2NameMap.get(10001L) != null);
     }
 
     @Test
