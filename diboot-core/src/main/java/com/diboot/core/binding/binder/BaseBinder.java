@@ -93,7 +93,7 @@ public abstract class BaseBinder<T> {
             this.annoObjPropInfo = BindingCacheManager.getPropInfoByClass(voList.get(0).getClass());
         }
         this.queryWrapper = new QueryWrapper<>();
-        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+        this.referencedEntityClass = referencedService.getEntityClass();
         this.refObjPropInfo = BindingCacheManager.getPropInfoByClass(this.referencedEntityClass);
         // 列集合
         this.annoObjJoinCols = new ArrayList<>(8);

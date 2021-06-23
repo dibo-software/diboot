@@ -71,11 +71,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
      */
     public FieldBinder<T> link(String fromDoField, String toVoField){
         if(annoObjectSetterPropNameList == null){
-            annoObjectSetterPropNameList = new ArrayList<>();
+            annoObjectSetterPropNameList = new ArrayList<>(8);
         }
         annoObjectSetterPropNameList.add(toVoField);
         if(referencedGetterFieldNameList == null){
-            referencedGetterFieldNameList = new ArrayList<>();
+            referencedGetterFieldNameList = new ArrayList<>(8);
         }
         referencedGetterFieldNameList.add(fromDoField);
         return this;
