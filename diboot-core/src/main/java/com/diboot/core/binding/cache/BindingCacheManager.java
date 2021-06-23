@@ -23,17 +23,18 @@ import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.cache.StaticMemoryCacheManager;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * CacheManager
@@ -63,6 +64,14 @@ public class BindingCacheManager {
      * Entity类的SimpleName-Entity Class的缓存key
      */
     private static final String CACHE_NAME_ENTITYNAME_CLASS = "NAME_CLASS";
+    /**
+     * 类-fields缓存
+     */
+    private static final String CACHE_NAME_CLASS_FIELDS = "CLASS_FIELDS";
+    /**
+     * 类- name-field Map缓存
+     */
+    private static final String CACHE_NAME_CLASS_NAME2FLDMAP = "CLASS_NAME2FLDMAP";
 
     private static StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
@@ -70,7 +79,9 @@ public class BindingCacheManager {
                     CACHE_NAME_CLASS_ENTITY,
                     CACHE_NAME_TABLE_ENTITY,
                     CACHE_NAME_CLASS_PROP,
-                    CACHE_NAME_ENTITYNAME_CLASS);
+                    CACHE_NAME_ENTITYNAME_CLASS,
+                    CACHE_NAME_CLASS_FIELDS,
+                    CACHE_NAME_CLASS_NAME2FLDMAP);
         }
         return cacheManager;
     }
@@ -169,6 +180,48 @@ public class BindingCacheManager {
     }
 
     /**
+     * 获取class的fields
+     * @param beanClazz
+     * @return
+     */
+    public static List<Field> getFields(Class<?> beanClazz){
+        List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), List.class);
+        if(fields == null){
+            fields = initClassFields(beanClazz, null);
+        }
+        return fields;
+    }
+
+    /**
+     * 获取class中包含指定注解的的fields
+     * @param beanClazz
+     * @return
+     */
+    public static List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+        String key = S.join(beanClazz.getName(), annotation.getClass().getName());
+        List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
+        if(fields == null){
+            fields = initClassFields(beanClazz, annotation);
+        }
+        return fields;
+    }
+
+    /**
+     * 获取class的fields
+     * @param beanClazz
+     * @return
+     */
+    public static Map<String, Field> getFieldsMap(Class<?> beanClazz){
+        Map<String, Field> fieldsMap = getCacheManager().getCacheObj(CACHE_NAME_CLASS_NAME2FLDMAP, beanClazz.getName(), Map.class);
+        if(fieldsMap == null){
+            List<Field> fields = getFields(beanClazz);
+            fieldsMap = BeanUtils.convertToStringKeyObjectMap(fields, "name");
+            getCacheManager().putCacheObj(CACHE_NAME_CLASS_NAME2FLDMAP, beanClazz.getName(), fieldsMap);
+        }
+        return fieldsMap;
+    }
+
+    /**
      * 初始化
      */
     private static void initEntityInfoCache(){
@@ -248,8 +301,45 @@ public class BindingCacheManager {
      */
     private static PropInfo initPropInfoCache(Class<?> beanClazz) {
         PropInfo propInfoCache = new PropInfo(beanClazz);
-        cacheManager.putCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), propInfoCache);
+        getCacheManager().putCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), propInfoCache);
         return propInfoCache;
+    }
+
+    /**
+     * 初始化fields
+     * @param beanClazz
+     * @return
+     */
+    private static List<Field> initClassFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+        List<Field> fieldList = new ArrayList<>();
+        Set<String> fieldNameSet = new HashSet<>();
+        loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
+        getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), fieldList);
+        return fieldList;
+    }
+
+    /**
+     * 循环向上查找fields
+     * @param beanClazz
+     * @param annotation
+     * @param fieldList
+     * @param fieldNameSet
+     */
+    private static void loopFindFields(Class<?> beanClazz, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
+        if(beanClazz == null) {
+            return;
+        }
+        Field[] fields = beanClazz.getDeclaredFields();
+        if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
+            Arrays.stream(fields).forEach((field)->{
+                if(!fieldNameSet.contains(field.getName()) &&
+                        (annotation == null || field.getAnnotation(annotation) != null)){
+                    fieldList.add(field);
+                    fieldNameSet.add(field.getName());
+                }
+            });
+        }
+        loopFindFields(beanClazz.getSuperclass(), annotation, fieldList, fieldNameSet);
     }
 
 }

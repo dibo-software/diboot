@@ -15,8 +15,7 @@
  */
 package com.diboot.core.util;
 
-
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
@@ -114,12 +113,12 @@ public class BeanUtils {
         if(V.isEmpty(sourceList)){
             return Collections.emptyList();
         }
-        List<T> resultList = new ArrayList<>();
         // 类型相同，直接跳过
         if(clazz.getName().equals(sourceList.get(0).getClass().getName())){
             return sourceList;
         }
         // 不同，则转换
+        List<T> resultList = new ArrayList<>(sourceList.size());
         try{
             for(Object source : sourceList){
                 T target = clazz.getConstructor().newInstance();
@@ -143,8 +142,7 @@ public class BeanUtils {
         if(V.isEmpty(propMap)){
             return;
         }
-        List<Field> fields = extractAllFields(model.getClass());
-        Map<String, Field> fieldNameMaps = convertToStringKeyObjectMap(fields, "name");
+        Map<String, Field> fieldNameMaps = BindingCacheManager.getFieldsMap(model.getClass());
         for(Map.Entry<String, Object> entry : propMap.entrySet()){
             Field field = fieldNameMaps.get(entry.getKey());
             if(field != null){
@@ -561,6 +559,9 @@ public class BeanUtils {
      * @return
      */
     public static <E> List collectToList(List<E> objectList, String getterPropName){
+        if(V.isEmpty(objectList)){
+            return Collections.emptyList();
+        }
         List fieldValueList = new ArrayList();
         try{
             for(E object : objectList){
@@ -585,6 +586,9 @@ public class BeanUtils {
      * @return
      */
     public static <E> List collectToList(List<E> objectList, String getterPropName, boolean[] hasNullFlags){
+        if(V.isEmpty(objectList)){
+            return Collections.emptyList();
+        }
         List fieldValueList = new ArrayList();
         try{
             for(E object : objectList){
@@ -699,23 +703,8 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractAllFields(Class clazz){
-        List<Field> fieldList = new ArrayList<>();
-        Set<String> fieldNameSet = new HashSet<>();
-        while (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
-            if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
-                Arrays.stream(fields).forEach((field)->{
-                    if(!fieldNameSet.contains(field.getName())){
-                        fieldList.add(field);
-                        fieldNameSet.add(field.getName());
-                    }
-                });
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return fieldList;
+        return BindingCacheManager.getFields(clazz);
     }
-
 
     /**
      * 获取类所有属性（包含父类中属性）
@@ -723,21 +712,7 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractFields(Class<?> clazz, Class<? extends Annotation> annotation){
-        List<Field> fieldList = new ArrayList<>();
-        Set<String> fieldNameSet = new HashSet<>();
-        while (clazz != null) {
-            Field[] fields = clazz.getDeclaredFields();
-            if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
-                Arrays.stream(fields).forEach((field)->{
-                    if(!fieldNameSet.contains(field.getName()) && field.getAnnotation(annotation) != null){
-                        fieldList.add(field);
-                        fieldNameSet.add(field.getName());
-                    }
-                });
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return fieldList;
+        return BindingCacheManager.getFields(clazz, annotation);
     }
 
     /**
@@ -766,8 +741,8 @@ public class BeanUtils {
      * @return
      */
     public static Class getGenericityClass(Object instance, int index){
+        //TODO 可缓存
         Class hostClass = getTargetClass(instance);
-
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
         if(V.isEmpty(types) || index >= types.length){

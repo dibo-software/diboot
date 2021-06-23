@@ -307,7 +307,6 @@ public class QueryBuilder {
     private static <DTO> LinkedHashMap<String, Object> extractNotNullValues(DTO dto, Collection<String> fields){
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<>();
         Class<?> dtoClass = dto.getClass();
-
         // 转换
         List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
         for (Field field : declaredFields) {

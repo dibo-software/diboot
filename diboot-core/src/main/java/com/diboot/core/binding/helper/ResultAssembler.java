@@ -118,7 +118,7 @@ public class ResultAssembler {
         // 获取valueName
         String valueName = branchObjColMapping.entrySet().iterator().next().getKey();
         // 合并list为map
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(resultSetMapList.size());
         List<String> fieldValues = new ArrayList<>(trunkObjColMapping.size());
         for(Map<String, E> row : resultSetMapList){
             fieldValues.clear();
