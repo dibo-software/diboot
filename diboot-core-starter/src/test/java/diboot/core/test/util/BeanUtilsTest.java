@@ -50,34 +50,8 @@ public class BeanUtilsTest {
 
     @Test
     public void testFields(){
-        long start = System.currentTimeMillis();
-        for(int i=0; i<10000; i++) {
-            List<Field> fields = BeanUtils.extractAllFields(Dictionary.class);
-        }
-        long end = System.currentTimeMillis() - start;
-        System.out.println("takes " + end);
-        start = System.currentTimeMillis();
-        for(int i=0; i<10000; i++) {
-            List<Field> fields = BindingCacheManager.getFields(Dictionary.class);
-        }
-        end = System.currentTimeMillis() - start;
-        System.out.println("takes " + end);
-
-        for(int i=0; i<10000; i++){
-            List<Field> fields = BeanUtils.extractAllFields(Dictionary.class);
-            //获取CPU
-            double cpuLoad = osmxb.getSystemCpuLoad();
-            int percentCpuLoad = (int) (cpuLoad * 100);
-            //获取内存
-            double totalvirtualMemory = osmxb.getTotalPhysicalMemorySize();
-            double freePhysicalMemorySize = osmxb.getFreePhysicalMemorySize();
-            double value = freePhysicalMemorySize/totalvirtualMemory;
-            int percentMemoryLoad = (int) ((1-value)*100);
-
-            //System.out.println(System.currentTimeMillis() + ", CPU = "+percentCpuLoad+",Mem = "+percentMemoryLoad);
-        }
-        end = System.currentTimeMillis() - start;
-        System.out.println("takes " + end);
+        List<Field> fields = BindingCacheManager.getFields(Dictionary.class);
+        Assert.assertTrue(fields.size() > 0);
     }
 
     @Test
