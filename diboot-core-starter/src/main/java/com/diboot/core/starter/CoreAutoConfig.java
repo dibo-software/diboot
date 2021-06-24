@@ -55,8 +55,8 @@ import java.util.TimeZone;
 @EnableConfigurationProperties(CoreProperties.class)
 @ComponentScan(basePackages = {"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
-public class CoreAutoConfiguration implements WebMvcConfigurer {
-    private static final Logger log = LoggerFactory.getLogger(CoreAutoConfiguration.class);
+public class CoreAutoConfig implements WebMvcConfigurer {
+    private static final Logger log = LoggerFactory.getLogger(CoreAutoConfig.class);
 
     @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
     private String defaultDatePattern;

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.autoconfigure;
+package com.diboot.core.starter;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -47,7 +47,6 @@ public class RedisAutoConfig {
     public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory connectionFactory) {
         //... 初始化RedisTemplate
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(connectionFactory);
 
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         // 用StringRedisSerializer 序列化和反序列化key值
@@ -64,6 +63,7 @@ public class RedisAutoConfig {
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
 
+        redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
