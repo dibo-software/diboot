@@ -41,7 +41,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @EnableConfigurationProperties(FileProperties.class)
 @ComponentScan(basePackages = {"com.diboot.file"})
 @MapperScan(basePackages = {"com.diboot.file.mapper"})
-public class FileAutoConfiguration {
+public class FileAutoConfig {
 
     @Autowired
     private FileProperties fileProperties;
