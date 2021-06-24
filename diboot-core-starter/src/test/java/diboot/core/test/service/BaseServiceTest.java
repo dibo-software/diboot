@@ -37,6 +37,7 @@ import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.entity.UserRole;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.vo.SimpleDictionaryVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -106,11 +107,10 @@ public class BaseServiceTest {
         List<Map<String, Object>> mapList = dictionaryService.getMapList(null, new Pagination());
         Assert.assertTrue(mapList.size() > 0 && mapList.size() <= BaseConfig.getPageSize());
 
-
         List<Long> userIds = Arrays.asList(1001L, 1002L);
         Map<Long, String> id2NameMap = userService.getId2NameMap(userIds, User::getUsername);
         Assert.assertTrue(id2NameMap != null);
-        Assert.assertTrue(id2NameMap.get(10001L) != null);
+        Assert.assertTrue(id2NameMap.get(1001) != null);
     }
 
     @Test
@@ -368,6 +368,17 @@ public class BaseServiceTest {
 
         List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
         Assert.assertTrue(keyValues.size() >= 2);
+
+    }
+
+    @Test
+    public void testSimpleDictVo(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
+
+        List<SimpleDictionaryVO> simpleVOList = dictionaryService.getViewObjectList(queryWrapper, null, SimpleDictionaryVO.class);
+        Assert.assertTrue(simpleVOList.size() == 1);
+        Assert.assertTrue(simpleVOList.get(0).getChildren().size() >= 2);
     }
 
     /**
