@@ -45,7 +45,7 @@ public class IamCacheManager {
     /**
      * url-permission 缓存
      */
-    private static Map<String, String> URL_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>();
+    private static Map<String, String> URL_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>(8);
 
     private static StaticMemoryCacheManager getCacheManager(){
         if(iamMemoryCacheManager == null){

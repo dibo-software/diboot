@@ -129,7 +129,7 @@ public class Cons {
     /**
      * 成功/失败 结果状态字典定义
      */
-    public static enum RESULT_STATUS{
+    public enum RESULT_STATUS{
         /**
          * 正常
          */

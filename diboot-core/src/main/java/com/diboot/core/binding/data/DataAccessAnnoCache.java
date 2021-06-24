@@ -38,7 +38,7 @@ public class DataAccessAnnoCache {
     /**
      * 注解缓存
      */
-    private static Map<String, String[]> DATA_PERMISSION_ANNO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, String[]> DATA_PERMISSION_ANNO_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 是否有检查点注解

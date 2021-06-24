@@ -22,17 +22,6 @@ package com.diboot.iam.annotation;
  * @date 2019/12/23
  */
 public class Operation {
-    @Deprecated
-    public static final String LIST = "list";
-    @Deprecated
-    public static final String DETAIL = "detail";
-    @Deprecated
-    public static final String CREATE = "create";
-    @Deprecated
-    public static final String UPDATE = "update";
-    @Deprecated
-    public static final String DELETE = "delete";
-
     /**
      * 操作权限类型 - 首页
      */

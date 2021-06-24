@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 public class AuthServiceFactory {
-    private static Map<String, AuthService> AUTHTYPE_SERVICE_CACHE = new HashMap<>();
+    private static final Map<String, AuthService> AUTHTYPE_SERVICE_CACHE = new HashMap<>();
 
     /**
      * 获取对应认证类型的Service实现

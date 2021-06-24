@@ -71,10 +71,10 @@ public class D extends DateUtils{
 	/**
 	 * 时间类型-毫秒数定义
 	 */
-	public static long MS_1SECOND = 1000;
-	public static long MS_1MINUTE = 60 * MS_1SECOND;
-	public static long MS_1HOUR = 60 * MS_1MINUTE;
-	public static long MS_1DAY = 24 * MS_1HOUR;
+	public static final long MS_1SECOND = 1000;
+	public static final long MS_1MINUTE = 60 * MS_1SECOND;
+	public static final long MS_1HOUR = 60 * MS_1MINUTE;
+	public static final long MS_1DAY = 24 * MS_1HOUR;
 
 	/***
 	 * 当前的日期时间

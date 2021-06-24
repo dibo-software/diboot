@@ -9,6 +9,7 @@ import com.diboot.core.util.V;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,8 @@ import java.util.Map;
  */
 @Getter
 @Setter
-public class PropInfo {
+public class PropInfo implements Serializable {
+    private static final long serialVersionUID = 5921667308129991326L;
 
     private String idColumn;
 

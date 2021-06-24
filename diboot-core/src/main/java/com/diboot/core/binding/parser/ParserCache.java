@@ -48,15 +48,11 @@ public class ParserCache {
     /**
      * VO类-绑定注解缓存
      */
-    private static Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
-    /**
-     * 表及相关信息的缓存
-     */
-    private static Map<String, TableLinkage> tableToLinkageCacheMap = new ConcurrentHashMap<>();
+    private static final Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
     /**
      * dto类-BindQuery注解的缓存
      */
-    private static Map<String, List<AnnoJoiner>> dtoClassBindQueryCacheMap = new ConcurrentHashMap<>();
+    private static final Map<String, List<AnnoJoiner>> dtoClassBindQueryCacheMap = new ConcurrentHashMap<>();
 
     /**
      * 获取指定class对应的Bind相关注解
@@ -98,39 +94,6 @@ public class ParserCache {
     }
 
     /**
-     * 初始化Table的相关对象信息
-     */
-    @Deprecated
-    private static void initTableToLinkageCacheMap(){
-        if(tableToLinkageCacheMap.isEmpty()){
-            SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
-            Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
-            if(V.notEmpty(mappers)){
-                mappers.forEach(m->{
-                    Type[] types = m.getGenericInterfaces();
-                    try{
-                        if(types != null && types.length > 0 && types[0] != null){
-                            ParameterizedType genericType = (ParameterizedType) types[0];
-                            Type[] superTypes = genericType.getActualTypeArguments();
-                            if(superTypes != null && superTypes.length > 0 && superTypes[0] != null){
-                                String entityClassName = superTypes[0].getTypeName();
-                                if(entityClassName.length() > 1){
-                                    Class<?> entityClass = Class.forName(entityClassName);
-                                    TableLinkage linkage = new TableLinkage(entityClass, m);
-                                    tableToLinkageCacheMap.put(linkage.getTable(), linkage);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e){
-                        log.warn("解析mapper异常", e);
-                    }
-                });
-            }
-        }
-    }
-
-    /**
      * 是否有is_deleted列
      * @return
      */
@@ -141,17 +104,6 @@ public class ParserCache {
         }
         log.debug("未能识别到逻辑删除字段, table={}", table);
         return null;
-    }
-
-    /**
-     * 获取table相关信息
-     * @return
-     */
-    @Deprecated
-    public static TableLinkage getTableLinkage(String table){
-        initTableToLinkageCacheMap();
-        TableLinkage linkage = tableToLinkageCacheMap.get(table);
-        return linkage;
     }
 
     /**
