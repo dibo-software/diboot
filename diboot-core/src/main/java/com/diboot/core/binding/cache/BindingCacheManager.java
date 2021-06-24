@@ -188,6 +188,7 @@ public class BindingCacheManager {
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), List.class);
         if(fields == null){
             fields = initClassFields(beanClazz, null);
+            getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), fields);
         }
         return fields;
     }
@@ -202,6 +203,7 @@ public class BindingCacheManager {
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
         if(fields == null){
             fields = initClassFields(beanClazz, annotation);
+            getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, key, fields);
         }
         return fields;
     }
@@ -314,7 +316,6 @@ public class BindingCacheManager {
         List<Field> fieldList = new ArrayList<>();
         Set<String> fieldNameSet = new HashSet<>();
         loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
-        getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), fieldList);
         return fieldList;
     }
 
