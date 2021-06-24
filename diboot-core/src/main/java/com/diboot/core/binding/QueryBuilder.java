@@ -337,7 +337,7 @@ public class QueryBuilder {
             } catch (IllegalAccessException e) {
                 log.error("通过反射获取属性值出错：{}", e.getMessage());
             } catch (NoSuchMethodException e) {
-                log.warn("通过反射获取属性方法不存在：{}", e.getMessage());
+                log.debug("通过反射获取属性方法不存在：{}", e.getMessage());
             } catch (InvocationTargetException e) {
                 log.warn("通过反射执行属性方法出错：{}", e.getMessage());
             }
