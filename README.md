@@ -1,4 +1,5 @@
-> 可以告别常规SQL和CRUD了！diboot新用户: [看视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [手把手跟我来体验](https://www.diboot.com/guide/newer/bootstrap.html)
+> 可以告别常规SQL和CRUD了！diboot新用户: [看视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [手把手跟我来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、 
+> [看diboot如何把关联查询性能提升10倍](https://www.bilibili.com/video/BV1tL411p7CD)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
@@ -22,7 +23,7 @@ spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身�
 
 ## diboot基础组件
 ### 1、 diboot-core: 精简优化内核
-高效精简内核，重构查询方式(拆解关联查询,程序中Join)，简化开发，主要实现：
+高效精简内核，重构查询方式，提高10倍查询性能，简化开发。主要实现：
 #### 1). 单表CRUD无SQL
    > 基于Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
 #### 2). 关联绑定无SQL（注解自动绑定）
