@@ -28,6 +28,7 @@ import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -255,8 +256,8 @@ public class QueryBuilder {
                         }
                     }
                     // 支持逗号分隔的字符串
-                    else if(value instanceof String && ((String) value).contains(",")){
-                        Object[] valueArray = ((String) value).split(",");
+                    else if(value instanceof String && ((String) value).contains(Cons.SEPARATOR_COMMA)){
+                        Object[] valueArray = ((String) value).split(Cons.SEPARATOR_COMMA);
                         wrapper.between(columnName, valueArray[0], valueArray[1]);
                     }
                     else{

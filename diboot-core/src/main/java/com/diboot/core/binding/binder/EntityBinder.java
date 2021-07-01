@@ -19,10 +19,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.helper.ServiceAdaptor;
+import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,21 +149,26 @@ public class EntityBinder<T> extends BaseBinder<T> {
      */
     private Map<String, Object> buildMatchKey2EntityMap(List<T> list){
         Map<String, Object> key2TargetMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
+        StringBuilder sb = new StringBuilder();
         for(T entity : list){
-            joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinCols){
+            sb.setLength(0);
+            for(int i=0; i<refObjJoinCols.size(); i++){
+                String refObjJoinOnCol = refObjJoinCols.get(i);
                 String pkValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
-                joinOnValues.add(pkValue);
+                if(i > 0){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(pkValue);
             }
-            String matchKey = S.join(joinOnValues);
-
+            // 查找匹配Key
+            String matchKey = sb.toString();
             Object target = entity;
             if(target instanceof Map == false){
                 target = cloneOrConvertBean(entity);
             }
             key2TargetMap.put(matchKey, target);
         }
+        sb.setLength(0);
         return key2TargetMap;
     }
 

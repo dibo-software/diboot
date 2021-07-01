@@ -16,9 +16,9 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,16 +128,20 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        List<String> fieldValues = new ArrayList<>(annoObjJoinCols.size());
+        StringBuilder sb = new StringBuilder();
         try{
             for(E object : fromList){
-                fieldValues.clear();
-                for(String annoObjJoinCol : annoObjJoinCols){
-                    String fieldValue = BeanUtils.getStringProperty(object, toAnnoObjField(annoObjJoinCol));
-                    fieldValues.add(fieldValue);
+                sb.setLength(0);
+                for(int i=0; i<annoObjJoinCols.size(); i++){
+                    String col = annoObjJoinCols.get(i);
+                    String val = BeanUtils.getStringProperty(object, toAnnoObjField(col));
+                    if(i>0){
+                        sb.append(Cons.SEPARATOR_COMMA);
+                    }
+                    sb.append(val);
                 }
                 // 查找匹配Key
-                String matchKey = S.join(fieldValues);
+                String matchKey = sb.toString();
                 List entityList = valueMatchMap.get(matchKey);
                 if(entityList != null){
                     // 赋值
@@ -147,6 +151,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                     }
                 }
             }
+            sb.setLength(0);
         }
         catch (Exception e){
             log.warn("设置属性值异常", e);
@@ -164,18 +169,24 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        List<String> fieldValues = new ArrayList<>(trunkObjColMapping.size());
+        StringBuilder sb = new StringBuilder();
+        boolean appendComma = false;
         try{
             for(E object : fromList){
-                fieldValues.clear();
+                sb.setLength(0);
                 for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
                     String getterField = toAnnoObjField(entry.getKey());
                     String fieldValue = BeanUtils.getStringProperty(object, getterField);
-                    fieldValues.add(fieldValue);
+                    if(appendComma){
+                        sb.append(Cons.SEPARATOR_COMMA);
+                    }
+                    if(appendComma == false){
+                        appendComma = true;
+                    }
+                    sb.append(fieldValue);
                 }
                 // 查找匹配Key
-                String matchKey = S.join(fieldValues);
-                List entityList = valueMatchMap.get(matchKey);
+                List entityList = valueMatchMap.get(sb.toString());
                 if(entityList != null){
                     // 赋值
                     for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
@@ -197,14 +208,18 @@ public class FieldListBinder<T> extends FieldBinder<T> {
      */
     private Map<String, List> buildMatchKey2FieldListMap(List<T> list){
         Map<String, List> key2TargetListMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
+        StringBuilder sb = new StringBuilder();
         for(T entity : list){
-            joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinCols){
+            sb.setLength(0);
+            for(int i=0; i<refObjJoinCols.size(); i++){
+                String refObjJoinOnCol = refObjJoinCols.get(i);
                 String fldValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
-                joinOnValues.add(fldValue);
+                if(i > 0){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(fldValue);
             }
-            String matchKey = S.join(joinOnValues);
+            String matchKey = sb.toString();
             // 获取list
             List entityList = key2TargetListMap.get(matchKey);
             if(entityList == null){
@@ -213,6 +228,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             }
             entityList.add(entity);
         }
+        sb.setLength(0);
         return key2TargetListMap;
     }
 

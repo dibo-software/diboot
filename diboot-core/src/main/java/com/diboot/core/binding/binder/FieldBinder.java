@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
@@ -185,13 +186,17 @@ public class FieldBinder<T> extends BaseBinder<T> {
      * @return
      */
     private String buildMatchKey(Object annoObject){
-        List<String> joinOnValues = new ArrayList<>(annoObjJoinCols.size());
-        for(String annoJoinOn : annoObjJoinCols){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<annoObjJoinCols.size(); i++){
+            String col = annoObjJoinCols.get(i);
             // 将数子类型转换成字符串，以便解决类型不一致的问题
-            String annoObjVal = BeanUtils.getStringProperty(annoObject, toAnnoObjField(annoJoinOn));
-            joinOnValues.add(annoObjVal);
+            String val = BeanUtils.getStringProperty(annoObject, toAnnoObjField(col));
+            if(i > 0){
+                sb.append(Cons.SEPARATOR_COMMA);
+            }
+            sb.append(val);
         }
-        return S.join(joinOnValues);
+        return sb.toString();
     }
 
     /**
@@ -201,7 +206,8 @@ public class FieldBinder<T> extends BaseBinder<T> {
      * @return
      */
     private String buildMatchKey(Object annoObject, Map<String, Object> middleTableResultMap){
-        List<String> joinOnValues = new ArrayList<>(middleTable.getTrunkObjColMapping().size());
+        StringBuilder sb = new StringBuilder();
+        boolean appendComma = false;
         for(Map.Entry<String, String> entry : middleTable.getTrunkObjColMapping().entrySet()){
             String getterField = toAnnoObjField(entry.getKey());
             String fieldValue = BeanUtils.getStringProperty(annoObject, getterField);
@@ -210,12 +216,17 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 Object value = middleTableResultMap.get(fieldValue);
                 fieldValue = String.valueOf(value);
             }
-            joinOnValues.add(fieldValue);
+            if(appendComma){
+                sb.append(Cons.SEPARATOR_COMMA);
+            }
+            if(appendComma == false){
+                appendComma = true;
+            }
+            sb.append(fieldValue);
         }
         // 查找匹配Key
-        return S.join(joinOnValues);
+        return sb.toString();
     }
-
 
     @Override
     protected void simplifySelectColumns() {

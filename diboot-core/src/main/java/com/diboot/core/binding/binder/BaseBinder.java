@@ -341,10 +341,10 @@ public abstract class BaseBinder<T> {
      * 注解宿主对象的列名转换为字段名
      * @return
      */
-    public List<String> getAnnoObjJoinFlds(){
-        List<String> fields = new ArrayList<>(annoObjJoinCols.size());
-        for(String col : annoObjJoinCols){
-            fields.add(toAnnoObjField(col));
+    public String[] getAnnoObjJoinFlds(){
+        String[] fields = new String[annoObjJoinCols.size()];
+        for(int i=0; i<annoObjJoinCols.size(); i++){
+            fields[i] = toAnnoObjField(annoObjJoinCols.get(i));
         }
         return fields;
     }
