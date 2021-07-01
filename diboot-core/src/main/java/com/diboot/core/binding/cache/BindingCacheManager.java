@@ -27,7 +27,6 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
 
 import java.lang.annotation.Annotation;

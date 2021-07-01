@@ -15,7 +15,6 @@
  */
 package diboot.core.test.binder.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;

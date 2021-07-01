@@ -18,9 +18,6 @@ package com.diboot.iam.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamRole;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
-
-import java.io.Serializable;
 
 /**
 * 角色Mapper

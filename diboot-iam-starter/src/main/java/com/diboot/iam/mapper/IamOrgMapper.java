@@ -18,9 +18,6 @@ package com.diboot.iam.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamOrg;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
-
-import java.io.Serializable;
 
 /**
 * 组织机构Mapper

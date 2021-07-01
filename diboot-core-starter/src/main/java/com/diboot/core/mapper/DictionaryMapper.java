@@ -17,9 +17,6 @@ package com.diboot.core.mapper;
 
 import com.diboot.core.entity.Dictionary;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
-
-import java.io.Serializable;
 
 /**
  * 数据字典Mapper

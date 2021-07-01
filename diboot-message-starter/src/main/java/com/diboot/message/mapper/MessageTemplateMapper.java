@@ -18,9 +18,6 @@ package com.diboot.message.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.message.entity.MessageTemplate;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
-
-import java.io.Serializable;
 
 
 /**

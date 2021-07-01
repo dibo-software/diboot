@@ -18,9 +18,6 @@ package com.diboot.file.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.file.entity.UploadFile;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
-
-import java.io.Serializable;
 
 /**
  * 文件相关Mapper

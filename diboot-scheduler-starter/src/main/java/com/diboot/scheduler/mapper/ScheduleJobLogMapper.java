@@ -18,9 +18,6 @@ package com.diboot.scheduler.mapper;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
-
-import java.io.Serializable;
 
 /**
 * 定时任务Job定义Mapper
