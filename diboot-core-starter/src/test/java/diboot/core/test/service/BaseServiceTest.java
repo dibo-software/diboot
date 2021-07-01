@@ -290,6 +290,12 @@ public class BaseServiceTest {
     public void testExist(){
         boolean exists = dictionaryService.exists(Dictionary::getType, "GENDER");
         Assert.assertTrue(exists);
+
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        queryWrapper.eq("item_value", "F");
+        exists = dictionaryService.exists(queryWrapper);
+        Assert.assertTrue(exists);
     }
 
     @Test
