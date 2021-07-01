@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.helper.ServiceAdaptor;
@@ -87,6 +88,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         }
         // 直接关联Entity
         if(middleTable == null){
+            simplifySelectColumns();
             // @BindEntity(entity = Department.class, condition="this.department_id=id AND this.type=type")
             // Department department;
             super.buildQueryWrapperJoinOn();
@@ -108,6 +110,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             Map<String, Object> valueEntityMap = new HashMap<>();
             Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(trunkObjCol2ValuesMap);
             if(V.notEmpty(middleTableResultMap)){
+                simplifySelectColumns();
                 // 提取entity主键值集合
                 Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
                 // 构建查询条件
@@ -179,15 +182,13 @@ public class EntityBinder<T> extends BaseBinder<T> {
     }
 
     /**
-     * 获取EntityList
-     * @param queryWrapper
-     * @return
+     * 简化select列，仅select必需列
      */
     @Override
-    protected List<T> getEntityList(Wrapper queryWrapper) {
+    protected void simplifySelectColumns(){
         if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
-            queryWrapper = ServiceAdaptor.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
+            queryWrapper = (QueryWrapper<T>) ServiceAdaptor.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
         }
-        return super.getEntityList(queryWrapper);
     }
+
 }

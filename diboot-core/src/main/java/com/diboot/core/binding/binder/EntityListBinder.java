@@ -67,6 +67,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){
+            super.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
             //处理orderBy，附加排序
             this.appendOrderBy();
@@ -87,6 +88,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
+            super.simplifySelectColumns();
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件

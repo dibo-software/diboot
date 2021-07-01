@@ -135,7 +135,7 @@ public class ServiceAdaptor {
      * @param queryWrapper
      * @param voClass
      */
-    public static <T> Wrapper optimizeSelect(Wrapper queryWrapper, Class<T> entityClass, Class<?> voClass){
+    public static <T> Wrapper<T> optimizeSelect(Wrapper<T> queryWrapper, Class<T> entityClass, Class<?> voClass){
         if(!(queryWrapper instanceof QueryWrapper) || queryWrapper.getSqlSelect() != null){
             return queryWrapper;
         }

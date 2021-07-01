@@ -258,6 +258,11 @@ public abstract class BaseBinder<T> {
     }
 
     /**
+     * 简化select列，仅select必需列
+     */
+    protected abstract void simplifySelectColumns();
+
+    /**
      * 获取EntityList
      * @param queryWrapper
      * @return

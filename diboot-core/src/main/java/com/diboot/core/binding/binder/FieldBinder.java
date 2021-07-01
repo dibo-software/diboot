@@ -94,7 +94,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
         }
         // 直接关联
         if(middleTable == null){
-            this.buildSelectColumns();
+            this.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
             // 获取匹配结果的mapList
             List<Map<String, Object>> mapList = getMapList(queryWrapper);
@@ -122,7 +122,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             }
             // 收集查询结果values集合
             Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
-            this.buildSelectColumns();
+            this.simplifySelectColumns();
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
             queryWrapper.in(refObjJoinOnCol, refObjValues);
@@ -216,7 +216,9 @@ public class FieldBinder<T> extends BaseBinder<T> {
         return S.join(joinOnValues);
     }
 
-    protected void buildSelectColumns(){
+
+    @Override
+    protected void simplifySelectColumns() {
         List<String> selectColumns = new ArrayList<>(8);
         selectColumns.addAll(refObjJoinCols);
         if(V.notEmpty(referencedGetterFieldNameList)){

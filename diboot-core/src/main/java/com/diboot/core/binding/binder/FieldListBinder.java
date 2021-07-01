@@ -60,9 +60,9 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             return;
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
-        super.buildSelectColumns();
         // 直接关联
         if(middleTable == null){
+            super.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
             // 查询entity列表: List<Role>
             List<T> list = getEntityList(queryWrapper);
@@ -84,6 +84,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
+            super.simplifySelectColumns();
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件
