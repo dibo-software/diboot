@@ -15,13 +15,12 @@
  */
 package com.diboot.core.binding.binder;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.helper.ResultAssembler;
+import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ISetter;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,5 +176,18 @@ public class EntityBinder<T> extends BaseBinder<T> {
         else{
             return BeanUtils.convert(value, annoObjectFieldClass);
         }
+    }
+
+    /**
+     * 获取EntityList
+     * @param queryWrapper
+     * @return
+     */
+    @Override
+    protected List<T> getEntityList(Wrapper queryWrapper) {
+        if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
+            queryWrapper = ServiceAdaptor.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
+        }
+        return super.getEntityList(queryWrapper);
     }
 }

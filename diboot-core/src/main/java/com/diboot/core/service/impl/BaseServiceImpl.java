@@ -21,11 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -43,7 +39,6 @@ import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.EntityInfoCache;
-import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -60,8 +55,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Field;
 import java.util.*;
 
 /***
@@ -701,7 +694,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		queryWrapper = optimizeSelect(queryWrapper, voClass);
+		queryWrapper = ServiceAdaptor.optimizeSelect(queryWrapper, getEntityClass(), voClass);
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
@@ -716,33 +709,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	protected Page<T> convertToIPage(Wrapper queryWrapper, Pagination pagination){
 		return ServiceAdaptor.convertToIPage(pagination, entityClass);
-	}
-
-	/**
-	 * 基于VO提取最小集select字段
-	 * @param queryWrapper
-	 * @param voClass
-	 */
-	protected Wrapper optimizeSelect(Wrapper queryWrapper, Class<?> voClass){
-		if(!(queryWrapper instanceof QueryWrapper) || queryWrapper.getSqlSelect() != null){
-			return queryWrapper;
-		}
-		Class<T> entityClass = getEntityClass();
-		List<TableFieldInfo> allColumns = TableInfoHelper.getTableInfo(entityClass).getFieldList();
-		if(V.isEmpty(allColumns)){
-			return queryWrapper;
-		}
-		List<String> columns = new ArrayList<>();
-		String pk = ContextHelper.getIdFieldName(entityClass);
-		columns.add(pk);
-		Map<String, Field> fieldsMap = BindingCacheManager.getFieldsMap(voClass);
-		for(TableFieldInfo col : allColumns){
-			if(fieldsMap.containsKey(col.getField().getName())
-					&& V.notEmpty(col.getColumn())){
-				columns.add(col.getColumn());
-			}
-		}
-		return ((QueryWrapper)queryWrapper).select(S.toStringArray(columns));
 	}
 
 	/**

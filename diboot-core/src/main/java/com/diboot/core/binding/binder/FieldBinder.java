@@ -16,8 +16,6 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
@@ -219,10 +217,15 @@ public class FieldBinder<T> extends BaseBinder<T> {
     }
 
     protected void buildSelectColumns(){
-        List<String> selectColumns = new ArrayList<>();
+        List<String> selectColumns = new ArrayList<>(8);
         selectColumns.addAll(refObjJoinCols);
-        for(String referencedGetterField : referencedGetterFieldNameList){
-            selectColumns.add(toRefObjColumn(referencedGetterField));
+        if(V.notEmpty(referencedGetterFieldNameList)){
+            for(String referencedGetterField : referencedGetterFieldNameList){
+                String refObjCol = toRefObjColumn(referencedGetterField);
+                if(!selectColumns.contains(refObjCol)){
+                    selectColumns.add(refObjCol);
+                }
+            }
         }
         queryWrapper.select(S.toStringArray(selectColumns));
     }
