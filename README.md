@@ -1,4 +1,5 @@
-> 可以告别常规SQL和CRUD了！diboot新用户: [看视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [手把手跟我来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、 
+> 从此告别常规SQL和CRUD了！ diboot新用户: [看视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [手把手跟我来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、 
+
 > [看diboot如何把关联查询性能提升10倍](https://www.bilibili.com/video/BV1tL411p7CD)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
@@ -15,29 +16,21 @@
 
 ![diboot平台组成结构图](https://www.diboot.com/structure.png)
 
-spring boot版本目前实现: core高效内核 + devtools开发助理 + IAM身份认证、file文件处理、scheduler定时任务等基础组件 + diboot-*-admin基础后台。
-
 > [spring cloud版本，移步这里->](https://github.com/dibo-software/diboot-cloud)
 
 > [diboot-workflow 工作流授权](https://www.diboot.com/ent/service.html)
 
 ## diboot基础组件
-### 1、 diboot-core: 精简优化内核
-高效精简内核，重构查询方式，提高10倍查询性能，简化开发。主要实现：
-#### 1). 单表CRUD无SQL
-   > 基于Mybatis-Plus实现（Mybatis-Plus具备通用Mapper方案和灵活的查询构造器）
-#### 2). 关联绑定无SQL（注解自动绑定）
-   > 扩展实现了多表关联查询的无SQL方案，只需要一个简单注解@Bind*，就可以实现关联对象（含字段、字段集合、实体、实体集合等）的数据绑定，且实现方案是将关联查询拆解为单表查询，保障最佳性能。
-#### 3). 数据字典无SQL（注解自动绑定）
-   > 通过@BindDict注解实现数据字典(枚举)的存储值value与显示值name的转换。
-#### 4). 跨表查询无SQL（自动构建QueryWrapper与查询）
-   > @BindQuery注解绑定字段查询方式及关联表，自动构建QueryWrapper，并动态执行单表或Join联表查询。
-#### 5). BaseService扩展增强，支持常规的单表及关联开发场景接口
-   > createEntityAndRelatedEntities、getValuesOfField、exists、getKeyValueList、getViewObject*等接口
-#### 6). 其他常用工具类、状态码、异常处理的最佳实践封装
-   > JsonResult、字符串处理、常用校验、BeanUtils、DateUtils等
+### 1、 diboot-core: 精简优化内核：写的更少，性能更好
+主要特性：
+* 单表CRUD无SQL
+* 关联绑定无SQL（注解自动绑定）
+* 数据字典无SQL（注解自动绑定）
+* 跨表查询无SQL（自动构建QueryWrapper与查询）
+* BaseService扩展增强，支持常规的单表及关联开发场景接口
+* 其他常用工具类、状态码、异常处理的最佳实践封装
 
-基于diboot-core 2.x版本的CRUD和简单关联的常规功能实现，代码量比传统Mybatis项目减少80%+），且实现更高效更易维护。
+基于diboot-core的CRUD和常规关联的功能实现，代码量比传统Mybatis项目减少80%+，且性能更好更易维护。
 > 详细文档: [diboot-core文档](https://www.diboot.com/guide/diboot-core/%E7%AE%80%E4%BB%8B.html). 
 
 ### 2、IAM 身份认证基础组件 及 配套VUE前端框架（diboot-antd-admin、diboot-element-admin）
