@@ -75,7 +75,7 @@ public class PropInfo implements Serializable {
                 }
                 // 主键
                 TableId tableId = fld.getAnnotation(TableId.class);
-                if(tableId != null){
+                if(tableId != null && this.idColumn == null){
                     if (V.notEmpty(tableId.value())){
                         columnName = tableId.value();
                     }

@@ -144,8 +144,10 @@ public class ServiceAdaptor {
             return queryWrapper;
         }
         List<String> columns = new ArrayList<>();
-        String pk = ContextHelper.getIdFieldName(entityClass);
-        columns.add(pk);
+        String pk = ContextHelper.getIdColumnName(entityClass);
+        if(V.notEmpty(pk)){
+            columns.add(pk);
+        }
         Map<String, Field> fieldsMap = BindingCacheManager.getFieldsMap(voClass);
         for(TableFieldInfo col : allColumns){
             if(fieldsMap.containsKey(col.getField().getName())
