@@ -38,7 +38,7 @@ public interface IamUserMapper extends BaseCrudMapper<IamUser> {
      * @param queryWrapper
      * @return
      */
-    @Select("select u.* from iam_user u left join iam_org o on u.org_id=o.id ${ew.customSqlSegment} order by o.depth asc, o.sort_id desc, o.id desc, u.id desc")
+    @Select("SELECT u.* FROM iam_user u LEFT JOIN iam_org o ON u.org_id=o.id ${ew.customSqlSegment} ORDER BY o.depth ASC, o.sort_id DESC, o.id DESC, u.id DESC")
     IPage<IamUser> selectPageSortByOrg(IPage page, @Param("ew") Wrapper<IamUser> queryWrapper);
 }
 

@@ -75,10 +75,12 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     public List<IamUser> getEntityListSortByOrg(QueryWrapper queryWrapper, Pagination pagination) {
         // 如果是动态join，则调用JoinsBinder
         if(queryWrapper instanceof DynamicJoinQueryWrapper){
-            return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+            return Binder.joinQueryList(queryWrapper, entityClass, pagination);
         }
         // 否则，调用MP默认实现
         if(pagination != null){
+            queryWrapper.eq("u.is_deleted", false);
+            queryWrapper.eq("o.is_deleted", false);
             IPage<IamUser> page = convertToIPage(queryWrapper, pagination);
             page = super.getBaseMapper().selectPageSortByOrg(page, queryWrapper);
             // 如果重新执行了count进行查询，则更新pagination中的总数
