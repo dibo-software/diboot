@@ -235,6 +235,19 @@ public class SqlFileInitializer {
      * @return
      */
     public static boolean executeMultipleUpdateSqlsWithTransaction(List<String> sqlStatementList){
+        try {
+            return executeMultipleUpdateSqlsWithTransactionWithException(sqlStatementList);
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    /***
+     * 执行多条批量更新SQL，并在执行异常时跑出异常（支持事务，有报错即回滚）
+     * @param sqlStatementList
+     * @return
+     */
+    public static boolean executeMultipleUpdateSqlsWithTransactionWithException(List<String> sqlStatementList) throws Exception{
         if(V.isEmpty(sqlStatementList)){
             return false;
         }
@@ -256,7 +269,8 @@ public class SqlFileInitializer {
         catch (Exception e){
             log.error("SQL执行异常，请检查：", e);
             session.rollback();
-            return false;
+            session.close();
+            throw e;
         }
         finally {
             if(session != null){
