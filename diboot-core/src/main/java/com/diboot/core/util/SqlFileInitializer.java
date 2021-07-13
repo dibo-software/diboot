@@ -236,7 +236,7 @@ public class SqlFileInitializer {
      */
     public static boolean executeMultipleUpdateSqlsWithTransaction(List<String> sqlStatementList){
         try {
-            return executeMultipleUpdateSqlsWithTransactionWithException(sqlStatementList);
+            return executeMultipleUpdateSqlsWithTransactionThrowException(sqlStatementList);
         } catch(Exception e) {
             return false;
         }
@@ -247,7 +247,7 @@ public class SqlFileInitializer {
      * @param sqlStatementList
      * @return
      */
-    public static boolean executeMultipleUpdateSqlsWithTransactionWithException(List<String> sqlStatementList) throws Exception{
+    public static boolean executeMultipleUpdateSqlsWithTransactionThrowException(List<String> sqlStatementList) throws Exception{
         if(V.isEmpty(sqlStatementList)){
             return false;
         }
