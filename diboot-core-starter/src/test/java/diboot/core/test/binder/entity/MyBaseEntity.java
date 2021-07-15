@@ -35,8 +35,4 @@ public abstract class MyBaseEntity implements Serializable {
             updateStrategy = FieldStrategy.NOT_NULL)
     private LocalDateTime updateTs;
 
-
-    @Version
-    private Integer version;
-
 }

@@ -79,7 +79,7 @@ public class TestJoinQuery {
         parentIds.add(10001L);
         queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
         list = Binder.joinQueryList(queryWrapper, Department.class);
-        Assert.assertTrue(list.size() == 1);
+        Assert.assertTrue(list.size() > 0);
     }
 
     @Test

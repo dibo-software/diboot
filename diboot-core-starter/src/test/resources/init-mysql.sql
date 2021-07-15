@@ -85,6 +85,8 @@ create table cc_city_info
 CREATE TABLE `db_goods_goods_info` (
   `goods_id` bigint DEFAULT NULL,
   `goods_nm` varchar(10) DEFAULT NULL,
+  `create_ts` timestamp default CURRENT_TIMESTAMP null,
+  `update_ts`  timestamp null,
   `is_del` tinyint DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -92,13 +94,17 @@ CREATE TABLE `db_purchase_rel_plan_goods` (
   `rel_id` bigint DEFAULT NULL,
   `purchase_form_plan_id` bigint DEFAULT NULL,
   `goods_id` bigint DEFAULT NULL,
+  `create_ts` timestamp default CURRENT_TIMESTAMP null,
+  `update_ts`  timestamp null,
   `is_del` tinyint DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `db_purchase_form_plan` (
   `purchase_form_plan_id` bigint DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `is_del` tinyint DEFAULT '0'
+  `is_del` tinyint DEFAULT '0',
+  `create_ts` timestamp default CURRENT_TIMESTAMP null,
+  `update_ts`  timestamp null
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 初始化样例数据
@@ -112,4 +118,4 @@ INSERT INTO user_role (user_type, user_id, role_id) VALUES ('SysUser', 1001, 101
 INSERT INTO cc_city_info (id, parent_id, region_id, region_name) VALUES (10000, 0, 10000, '江苏省'), (10010, 10000, 10010, '苏州市'), (10020, 10010, 10020, '园区');
 INSERT INTO db_goods_goods_info (goods_id, goods_nm, is_del) VALUES(1001, 'abcde', 0), (1002, 'abcd', 0);
 INSERT INTO db_purchase_rel_plan_goods(rel_id, purchase_form_plan_id, goods_id, is_del)VALUES(1, 1, 1001, 0), (2, 1, 1002, 0);
-INSERT INTO db_purchase_form_plan(plan_id, name, is_del)VALUES(1, '5月份采购计划', 0);
+INSERT INTO db_purchase_form_plan(purchase_form_plan_id, name, is_del)VALUES(1, '5月份采购计划', 0);
