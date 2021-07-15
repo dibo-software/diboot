@@ -170,9 +170,9 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        boolean appendComma = false;
         try{
             for(E object : fromList){
+                boolean appendComma = false;
                 sb.setLength(0);
                 for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
                     String getterField = toAnnoObjField(entry.getKey());
@@ -180,10 +180,10 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                     if(appendComma){
                         sb.append(Cons.SEPARATOR_COMMA);
                     }
+                    sb.append(fieldValue);
                     if(appendComma == false){
                         appendComma = true;
                     }
-                    sb.append(fieldValue);
                 }
                 // 查找匹配Key
                 List entityList = valueMatchMap.get(sb.toString());

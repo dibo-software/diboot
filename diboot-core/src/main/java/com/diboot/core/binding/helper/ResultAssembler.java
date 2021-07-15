@@ -82,9 +82,9 @@ public class ResultAssembler {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        boolean appendComma = false;
         try{
             for(E object : fromList){
+                boolean appendComma = false;
                 sb.setLength(0);
                 for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
                     //转换为字段名
@@ -96,10 +96,10 @@ public class ResultAssembler {
                     if(appendComma){
                         sb.append(Cons.SEPARATOR_COMMA);
                     }
+                    sb.append(fieldValue);
                     if(appendComma == false){
                         appendComma = true;
                     }
-                    sb.append(fieldValue);
                 }
                 // 查找匹配Key
                 String matchKey = sb.toString();
@@ -132,18 +132,18 @@ public class ResultAssembler {
         // 合并list为map
         Map<String, Object> resultMap = new HashMap<>(resultSetMapList.size());
         StringBuilder sb = new StringBuilder();
-        boolean appendComma = false;
         for(Map<String, E> row : resultSetMapList){
+            boolean appendComma = false;
             sb.setLength(0);
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
                 Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
                 if(appendComma){
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
+                sb.append(S.valueOf(keyObj));
                 if(appendComma == false){
                     appendComma = true;
                 }
-                sb.append(S.valueOf(keyObj));
             }
             String matchKeys = sb.toString();
             Object valueObj = row.containsKey(valueName)? row.get(valueName) : row.get(valueName.toUpperCase());
@@ -169,18 +169,18 @@ public class ResultAssembler {
         // 合并list为map
         Map<String, List> resultMap = new HashMap<>();
         StringBuilder sb = new StringBuilder();
-        boolean appendComma = false;
         for(Map<String, E> row : resultSetMapList){
+            boolean appendComma = false;
             sb.setLength(0);
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
                 Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
                 if(appendComma){
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
+                sb.append(S.valueOf(keyObj));
                 if(appendComma == false){
                     appendComma = true;
                 }
-                sb.append(S.valueOf(keyObj));
             }
             String matchKeys = sb.toString();
             Object valueObj = row.containsKey(valueName)? row.get(valueName) : row.get(valueName.toUpperCase());

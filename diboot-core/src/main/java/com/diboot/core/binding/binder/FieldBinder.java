@@ -219,10 +219,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
             if(appendComma){
                 sb.append(Cons.SEPARATOR_COMMA);
             }
+            sb.append(fieldValue);
             if(appendComma == false){
                 appendComma = true;
             }
-            sb.append(fieldValue);
         }
         // 查找匹配Key
         return sb.toString();
