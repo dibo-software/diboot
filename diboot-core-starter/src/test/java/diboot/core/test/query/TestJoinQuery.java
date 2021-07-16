@@ -61,6 +61,7 @@ public class TestJoinQuery {
         Department example = departmentService.list(null).get(0);
         DepartmentDTO departmentDTO = new DepartmentDTO();
         departmentDTO.setCreateTime(example.getCreateTime());
+        departmentDTO.setCharacter(example.getCharacter());
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
         List<Department> list = departmentService.list(queryWrapper);
         Assert.assertTrue(list.size() >= 1);

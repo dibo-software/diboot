@@ -17,6 +17,9 @@ package com.diboot.iam.dto;
 
 import com.diboot.iam.entity.IamUserPosition;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -26,7 +29,9 @@ import java.util.List;
  * @version v2.2
  * @date 2020/12/1
  */
-@Data
+@Getter
+@Setter
+@Accessors(chain = true)
 public class IamUserPositionBatchDTO extends IamUserPosition {
     private static final long serialVersionUID = 5531280576807490425L;
 

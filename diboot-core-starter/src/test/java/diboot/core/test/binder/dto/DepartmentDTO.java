@@ -15,6 +15,7 @@
  */
 package diboot.core.test.binder.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.data.CheckpointType;
 import com.diboot.core.binding.data.DataAccessCheckpoint;
 import com.diboot.core.binding.query.BindQuery;
@@ -68,6 +69,10 @@ public class DepartmentDTO implements Serializable {
 
     @BindQuery(field = "parent_id", comparison = Comparison.IN)
     private List<Long> parentIds;
+
+    @BindQuery(comparison = Comparison.LIKE)
+    @TableField("`character`")
+    private String character;
 
     public Date getCreateTimeEnd(){
         return D.nextDay(createTime);

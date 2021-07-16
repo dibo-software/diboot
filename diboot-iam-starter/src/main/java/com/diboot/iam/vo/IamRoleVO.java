@@ -21,6 +21,9 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamRole;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -30,7 +33,9 @@ import java.util.List;
 * @version 2.0
 * @date 2019-12-03
 */
-@Data
+@Getter
+@Setter
+@Accessors(chain = true)
 public class IamRoleVO extends IamRole {
     private static final long serialVersionUID = -6778550575399070076L;
 

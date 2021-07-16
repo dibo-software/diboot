@@ -23,6 +23,9 @@ import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.entity.User;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -32,7 +35,8 @@ import java.util.List;
  * @version v2.0
  * @date 2018/12/27
  */
-@Data
+@Getter
+@Setter
 public class UserDTO extends User {
 
     // 字段关联

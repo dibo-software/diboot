@@ -16,12 +16,16 @@
 package com.diboot.file.starter;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author diboot
  */
-@Data
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "diboot.component.file")
 public class FileProperties {
 
