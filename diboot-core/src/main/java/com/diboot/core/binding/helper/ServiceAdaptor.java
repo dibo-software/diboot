@@ -152,8 +152,18 @@ public class ServiceAdaptor {
         for(TableFieldInfo col : allColumns){
             if(fieldsMap.containsKey(col.getField().getName())
                     && V.notEmpty(col.getColumn())){
-                columns.add(col.getColumn());
+                String fieldName = col.getField().getName();
+                if(V.equals(fieldName, col.getColumn()) || V.equals(fieldName, S.toLowerCaseCamel(col.getColumn()))){
+                    columns.add(col.getColumn());
+                }
+                else{
+                    columns.add(col.getColumn() + " AS "+fieldName);
+                }
             }
+        }
+        // select全部列，不特殊处理
+        if(allColumns.size() == columns.size()){
+            return queryWrapper;
         }
         return ((QueryWrapper)queryWrapper).select(S.toStringArray(columns));
     }
