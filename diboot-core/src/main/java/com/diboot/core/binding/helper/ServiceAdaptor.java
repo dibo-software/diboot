@@ -153,7 +153,10 @@ public class ServiceAdaptor {
             if(fieldsMap.containsKey(col.getField().getName())
                     && V.notEmpty(col.getColumn())){
                 String fieldName = col.getField().getName();
-                if(V.equals(fieldName, col.getColumn()) || V.equals(fieldName, S.toLowerCaseCamel(col.getColumn()))){
+                String colCamelName = S.toLowerCaseCamel(col.getColumn());
+                if(V.equals(fieldName, col.getColumn())
+                        || fieldName.equals(colCamelName)
+                        || (colCamelName.endsWith(Cons.SEPARATOR_UNDERSCORE) && S.substringBeforeLast(colCamelName, Cons.SEPARATOR_UNDERSCORE).equals(fieldName))){
                     columns.add(col.getColumn());
                 }
                 else{
