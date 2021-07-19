@@ -150,18 +150,8 @@ public class ServiceAdaptor {
         }
         Map<String, Field> fieldsMap = BindingCacheManager.getFieldsMap(voClass);
         for(TableFieldInfo col : allColumns){
-            if(fieldsMap.containsKey(col.getField().getName())
-                    && V.notEmpty(col.getColumn())){
-                String fieldName = col.getField().getName();
-                String colCamelName = S.toLowerCaseCamel(col.getColumn());
-                if(V.equals(fieldName, col.getColumn())
-                        || fieldName.equals(colCamelName)
-                        || (colCamelName.endsWith(Cons.SEPARATOR_UNDERSCORE) && S.substringBeforeLast(colCamelName, Cons.SEPARATOR_UNDERSCORE).equals(fieldName))){
-                    columns.add(col.getColumn());
-                }
-                else{
-                    columns.add(col.getColumn() + " AS "+fieldName);
-                }
+            if(fieldsMap.containsKey(col.getField().getName()) && V.notEmpty(col.getColumn())){
+                columns.add(col.getSqlSelect());
             }
         }
         // select全部列，不特殊处理
