@@ -31,8 +31,6 @@ public class BusinessException extends RuntimeException {
 
     private Integer code;
 
-    private String msg;
-
     /**
      * 错误的状态
      */

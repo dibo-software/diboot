@@ -30,8 +30,12 @@ public class PermissionException extends BusinessException {
         super(Status.FAIL_NO_PERMISSION);
     }
 
+    public PermissionException(Status status,Throwable ex) {
+        super(status,ex);
+    }
+
     public PermissionException(Throwable ex) {
-        super(Status.FAIL_NO_PERMISSION, ex);
+        this(Status.FAIL_NO_PERMISSION, ex);
     }
 
     public PermissionException(String msg) {
