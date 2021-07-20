@@ -34,7 +34,7 @@ execute sp_addextendedproperty 'MS_Description', N'系统用户', 'SCHEMA', '${S
 -- 索引
 create nonclustered index idx_iam_user_1 on iam_user (org_id);
 create nonclustered index idx_iam_user_2 on iam_user (mobile_phone);
-create unique index uidx_iam_user on iam_user (tenant_id, user_num);
+create unique index uidx_iam_user on iam_user (tenant_id, user_num, is_deleted);
 create nonclustered index idx_iam_user_tenant on iam_user(tenant_id);
 
 -- 账号表
@@ -66,7 +66,7 @@ execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_account, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'登录账号', 'SCHEMA', '${SCHEMA}', 'table', iam_account, null, null;
 -- 创建索引
-create unique index idx_iam_account on iam_account(tenant_id, auth_account, auth_type, user_type);
+create unique index idx_iam_account on iam_account(tenant_id, auth_account, auth_type, user_type, is_deleted);
 create nonclustered index idx_iam_account_tenant on iam_account(tenant_id);
 
 -- 角色表

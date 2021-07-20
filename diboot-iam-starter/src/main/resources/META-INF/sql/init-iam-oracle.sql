@@ -34,7 +34,7 @@ comment on table ${SCHEMA}.iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on ${SCHEMA}.iam_user (org_id);
 create index idx_iam_user_2 on ${SCHEMA}.iam_user (mobile_phone);
-create unique index uidx_iam_user on ${SCHEMA}.iam_user (tenant_id, user_num);
+create unique index uidx_iam_user on ${SCHEMA}.iam_user (tenant_id, user_num, is_deleted);
 create index idx_iam_user_tenant on ${SCHEMA}.iam_user (tenant_id);
 
 -- 账号表
@@ -66,7 +66,7 @@ comment on column ${SCHEMA}.iam_account.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_account.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_account is '登录账号';
 -- 创建索引
-create unique index idx_iam_account on ${SCHEMA}.iam_account(tenant_id, auth_account, auth_type, user_type);
+create unique index idx_iam_account on ${SCHEMA}.iam_account(tenant_id, auth_account, auth_type, user_type, is_deleted);
 create index idx_iam_account_tenant on ${SCHEMA}.iam_account (tenant_id);
 
 -- 角色表
