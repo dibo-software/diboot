@@ -56,7 +56,7 @@ public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
         }
         //解密是否成功
         if(V.notEmpty(claims.getSubject())){
-            log.debug("Token验证成功！account={}", claims.getSubject());
+            log.debug("Token验证成功！account={}, url={}", claims.getSubject(), httpRequest.getRequestURI());
             // 如果临近过期，则生成新的token返回
             String refreshToken = JwtUtils.generateNewTokenIfRequired(claims);
             if(refreshToken != null){
@@ -65,7 +65,7 @@ public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
             }
             return true;
         }
-        log.debug("Token验证失败！url=" + httpRequest.getRequestURL());
+        log.debug("Token验证失败！url=" + httpRequest.getRequestURI());
         return false;
     }
 
@@ -75,7 +75,8 @@ public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        log.debug("Token认证失败： onAccessDenied");
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        log.debug("Token认证失败： onAccessDenied。url={}", httpRequest.getRequestURI());
         JsonResult jsonResult = new JsonResult(Status.FAIL_INVALID_TOKEN);
         this.responseJson((HttpServletResponse) response, jsonResult);
         return false;

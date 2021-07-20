@@ -104,6 +104,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
             if(loginUser == null){
                 throw new AuthenticationException("用户不存在");
             }
+            loginUser.setAuthToken(jwtToken.getAuthtoken());
             IamExtensible iamExtensible = getIamUserRoleService().getIamExtensible();
             if(iamExtensible != null){
                 KeyValue extentionObj = iamExtensible.getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId(), jwtToken.getExtObj());

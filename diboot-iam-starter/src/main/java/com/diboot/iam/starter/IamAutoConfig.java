@@ -75,6 +75,13 @@ public class IamAutoConfig {
     public CacheManager shiroCacheManager() {
         return new MemoryConstrainedCacheManager();
     }
+    /**
+     * 启用RedisCacheManager 定义示例
+     * @return
+    @Bean(name = "shiroCacheManager")
+    public CacheManager shiroCacheManager(RedisTemplate<String, Object> redisTemplate) {
+        return new ShiroRedisCacheManager(redisTemplate);
+    }*/
 
     @Bean
     @DependsOn({"shiroCacheManager"})
@@ -166,7 +173,6 @@ public class IamAutoConfig {
             }
         }
         filterChainMap.put("/login", "authc");
-        filterChainMap.put("/logout", "logout");
         if (allAnon && iamProperties.isEnablePermissionCheck() == false) {
             filterChainMap.put("/**", "anon");
         } else {

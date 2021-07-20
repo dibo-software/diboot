@@ -46,7 +46,7 @@ import java.io.PrintWriter;
  * @Date 2020/11/19  10:46
  */
 @Slf4j
-@Getter@Setter
+@Getter @Setter
 public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
 
     /**
