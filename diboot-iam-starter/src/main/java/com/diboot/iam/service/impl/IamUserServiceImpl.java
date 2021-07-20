@@ -80,7 +80,6 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         // 否则，调用MP默认实现
         if(pagination != null){
             queryWrapper.eq("u.is_deleted", false);
-            queryWrapper.eq("o.is_deleted", false);
             IPage<IamUser> page = convertToIPage(queryWrapper, pagination);
             page = super.getBaseMapper().selectPageSortByOrg(page, queryWrapper);
             // 如果重新执行了count进行查询，则更新pagination中的总数
