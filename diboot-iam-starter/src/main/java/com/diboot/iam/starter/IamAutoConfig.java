@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.Order;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -56,6 +57,7 @@ import java.util.Map;
  * @Date 2019-10-11  10:54
  */
 @Slf4j
+@Order(922)
 @Configuration
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
@@ -75,13 +77,6 @@ public class IamAutoConfig {
     public CacheManager shiroCacheManager() {
         return new MemoryConstrainedCacheManager();
     }
-    /**
-     * 启用RedisCacheManager 定义示例
-     * @return
-    @Bean(name = "shiroCacheManager")
-    public CacheManager shiroCacheManager(RedisTemplate<String, Object> redisTemplate) {
-        return new ShiroRedisCacheManager(redisTemplate);
-    }*/
 
     @Bean
     @DependsOn({"shiroCacheManager"})
