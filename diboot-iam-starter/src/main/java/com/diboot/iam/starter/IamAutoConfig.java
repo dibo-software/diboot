@@ -48,6 +48,7 @@ import org.springframework.core.annotation.Order;
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * IAM自动配置类
@@ -158,9 +159,9 @@ public class IamAutoConfig {
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
-        String anonUrls = iamProperties.getAnonUrls();
+        Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
-            for (String url : anonUrls.split(Cons.SEPARATOR_COMMA)) {
+            for (String url : anonUrls) {
                 filterChainMap.put(url, "anon");
                 if (url.equals("/**")) {
                     allAnon = true;
@@ -168,7 +169,7 @@ public class IamAutoConfig {
             }
         }
         filterChainMap.put("/login", "authc");
-        if (allAnon && iamProperties.isEnablePermissionCheck() == false) {
+        if (allAnon && !iamProperties.isEnablePermissionCheck()) {
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "jwt");

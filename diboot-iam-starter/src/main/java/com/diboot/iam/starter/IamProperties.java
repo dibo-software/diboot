@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Set;
+
 /**
  * 认证相关的配置参数
  * @author mazc@dibo.ltd
@@ -51,7 +53,7 @@ public class IamProperties {
     /**
      * 匿名的url，以,逗号分隔
      */
-    private String anonUrls;
+    private Set<String> anonUrls;
     /**
      * 是否初始化SQL
      */
