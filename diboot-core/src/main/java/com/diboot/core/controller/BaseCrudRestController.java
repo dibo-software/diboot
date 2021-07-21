@@ -303,7 +303,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeCreate(Object entityOrDto) throws Exception {
+    protected String beforeCreate(E entityOrDto) throws Exception {
         return null;
     }
 
@@ -312,7 +312,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected void afterCreated(Object entityOrDto) throws Exception {
+    protected void afterCreated(E entityOrDto) throws Exception {
     }
 
     /***
@@ -320,7 +320,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeUpdate(Object entityOrDto) throws Exception {
+    protected String beforeUpdate(E entityOrDto) throws Exception {
         return null;
     }
 
@@ -329,7 +329,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected void afterUpdated(Object entityOrDto) throws Exception {
+    protected void afterUpdated(E entityOrDto) throws Exception {
     }
 
     /***
@@ -337,7 +337,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeDelete(Object entityOrDto) throws Exception{
+    protected String beforeDelete(E entityOrDto) throws Exception{
         return null;
     }
 
@@ -346,7 +346,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected void afterDeleted(Object entityOrDto) throws Exception {
+    protected void afterDeleted(E entityOrDto) throws Exception {
     }
 
     /***
@@ -354,7 +354,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @throws Exception
      */
-    protected void afterDeletedCanceled(Object entityOrDto) throws Exception {
+    protected void afterDeletedCanceled(E entityOrDto) throws Exception {
     }
 
     /***
