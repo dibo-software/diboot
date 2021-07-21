@@ -31,7 +31,7 @@ import java.util.Map;
  * @version v2.0
  * @date 2019/6/6
  */
-@Getter @Setter @Accessors(chain = true)
+@Getter @Setter
 @Slf4j
 public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     private static final long serialVersionUID = -5518501153334708409L;

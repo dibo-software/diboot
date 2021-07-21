@@ -33,15 +33,17 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class ShiroRedisCacheManager extends AbstractCacheManager {
 
     private RedisTemplate redisTemplate;
+    private int tokenExpireMinutes;
 
-    public ShiroRedisCacheManager(RedisTemplate redisTemplate){
+    public ShiroRedisCacheManager(RedisTemplate redisTemplate, int tokenExpireMinutes){
         this.redisTemplate = redisTemplate;
+        this.tokenExpireMinutes = tokenExpireMinutes;
     }
 
     @Override
     protected Cache createCache(String cacheName) throws CacheException {
-        log.debug("init cache: {}", cacheName);
-        return new ShiroRedisCache(cacheName, redisTemplate);
+        log.debug("create redis cache: {}", cacheName);
+        return new ShiroRedisCache(cacheName, redisTemplate, tokenExpireMinutes);
     }
 
 }

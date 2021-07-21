@@ -62,6 +62,7 @@ public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
             if(refreshToken != null){
                 // 写入response header中
                 JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
+                log.debug("返回新的token: {}", refreshToken);
             }
             return true;
         }

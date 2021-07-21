@@ -114,4 +114,8 @@ public class Cons extends com.diboot.core.config.Cons {
      * 超级管理员
      */
     public static final String ROLE_SUPER_ADMIN = "SUPER_ADMIN";
+
+    public static final String AUTHENTICATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authenticationCache";
+    public static final String AUTHORIZATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authorizationCache";
+
 }

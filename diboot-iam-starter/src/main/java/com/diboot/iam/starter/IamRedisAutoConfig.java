@@ -17,6 +17,8 @@ package com.diboot.iam.starter;
 
 import com.diboot.iam.redis.ShiroRedisCacheManager;
 import org.apache.shiro.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,16 +42,19 @@ import org.springframework.data.redis.core.RedisTemplate;
 @ConditionalOnBean(RedisTemplate.class)
 @ConditionalOnClass(RedisOperations.class)
 @ConditionalOnResource(resources = "org/springframework/data/redis")
+@AutoConfigureBefore({IamAutoConfig.class})
 public class IamRedisAutoConfig {
+    @Autowired
+    private IamProperties iamProperties;
 
     /**
      * 启用RedisCacheManager定义
      * @return
      */
      @Bean(name = "shiroCacheManager")
-     @ConditionalOnMissingBean
+     @ConditionalOnMissingBean(CacheManager.class)
      public CacheManager shiroCacheManager(RedisTemplate<String, Object> redisTemplate) {
-        return new ShiroRedisCacheManager(redisTemplate);
+        return new ShiroRedisCacheManager(redisTemplate, iamProperties.getJwtTokenExpiresMinutes());
      }
 
 }

@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * RedisCache缓存定义
@@ -37,45 +37,73 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     private RedisTemplate redisTemplate;
     private String cacheName;
+    private int tokenExpireMinutes;
 
-    public ShiroRedisCache(String cacheName, RedisTemplate redisTemplate) {
+    public ShiroRedisCache(String cacheName, RedisTemplate redisTemplate, int tokenExpireMinutes) {
         this.cacheName = cacheName;
         this.redisTemplate = redisTemplate;
+        this.tokenExpireMinutes = tokenExpireMinutes;
+    }
+
+    private String getKey(String key){
+        return this.cacheName + ":" + key;
     }
 
     @Override
     public V get(K k) throws CacheException {
-        return (V)redisTemplate.opsForHash().get(cacheName, k.toString());
+        String key = this.getKey(k.toString());
+        log.debug("get key : {}", key);
+        return (V)redisTemplate.opsForValue().get(key);
     }
 
     @Override
     public V put(K k , V v) throws CacheException {
-        redisTemplate.opsForHash().put(cacheName, k.toString(), v);
+        if (k == null || v == null) {
+            return null;
+        }
+        String key = this.getKey(k.toString());
+        log.debug("put key : {}, value: {}", key, v);
+        redisTemplate.opsForValue().set(key, v, tokenExpireMinutes, TimeUnit.MINUTES);
         return v;
     }
 
     @Override
     public V remove(K k) throws CacheException {
-        return (V)redisTemplate.opsForHash().delete(cacheName, k.toString());
+        if (k == null) {
+            return null;
+        }
+        String key = this.getKey(k.toString());
+        V value = get(k);
+        log.debug("remove key : {}", key);
+        redisTemplate.delete(key);
+        return value;
     }
 
     @Override
     public void clear() throws CacheException {
-        redisTemplate.delete(cacheName);
+        redisTemplate.delete(this.keys());
     }
 
     @Override
     public int size() {
-        return redisTemplate.opsForHash().size(cacheName).intValue();
+        return keys().size();
     }
 
     @Override
     public Set<K> keys() {
-        return redisTemplate.opsForHash().keys(cacheName);
+        return redisTemplate.keys(getKey("*"));
     }
 
     @Override
     public Collection<V> values() {
-        return redisTemplate.opsForHash().values(cacheName);
+        Set<K> keys = keys();
+        Set<V> values = new HashSet<>(keys.size());
+        for (K key: keys) {
+            V value = (V)redisTemplate.opsForValue().get(key);
+            if(value != null){
+                values.add(value);
+            }
+        }
+        return values;
     }
 }
