@@ -75,6 +75,10 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
      */
     private boolean validPassword = true;
 
+    private Object principal;
+
+    private Object credentials;
+
     public BaseJwtAuthToken(){
     }
 
@@ -116,8 +120,6 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     public String getUserType(){
         return userTypeClass.getSimpleName();
     }
-
-
 
     /**
      * 生成token  tenantId,account,userTypeClass,authType,60

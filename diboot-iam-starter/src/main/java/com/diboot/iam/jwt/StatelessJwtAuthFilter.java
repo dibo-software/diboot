@@ -80,7 +80,6 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
                 JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
             }
             // 构建登陆的token
-            log.debug("isAuthenticated = {}", IamSecurityUtils.getSubject().isAuthenticated());
             if(IamSecurityUtils.getSubject().isAuthenticated() == false){
                 // tenantId,account,userTypeClass,authType,60
                 String[] subjectDetail = subject.split(Cons.SEPARATOR_COMMA);
@@ -99,6 +98,7 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
                 baseJwtAuthToken.setAuthtoken(currentToken);
                 baseJwtAuthToken.setValidPassword(false);
                 IamSecurityUtils.getSubject().login(baseJwtAuthToken);
+                log.debug("无状态token自动登录完成");
             }
             return true;
         }

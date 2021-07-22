@@ -15,7 +15,9 @@
  */
 package com.diboot.core.starter;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -55,26 +57,28 @@ public class RedisAutoConfig {
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
 
-        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES , false);
-        om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS , false);
-        om.activateDefaultTyping(om.getPolymorphicTypeValidator() , ObjectMapper.DefaultTyping.NON_FINAL);
-        om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        //
-        FilterProvider filterProvider = new SimpleFilterProvider()
-                .addFilter("rewrite-bean" , SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
-        om.setFilterProvider(filterProvider);
-
-        jackson2JsonRedisSerializer.setObjectMapper(om);
-
         // 用Jackson2JsonRedisSerializer 序列化和反序列化value值
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
-        redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer());
 
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
+
+    private Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer() {
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL , JsonAutoDetect.Visibility.ANY);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES , false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS , false);
+        objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator() , ObjectMapper.DefaultTyping.NON_FINAL);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean" , SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
+        objectMapper.setFilterProvider(filterProvider);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+        return jackson2JsonRedisSerializer;
+    }
+
 }
