@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -230,6 +231,20 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return allDuplicateUserNumList;
     }
 
+    @Override
+    public boolean isUserNumExists(Long id, String userNum) {
+        if(V.isEmpty(userNum)){
+            return true;
+        }
+        LambdaQueryWrapper<IamUser> wrapper = Wrappers.<IamUser>lambdaQuery()
+                .select(IamUser::getUserNum)
+                .eq(IamUser::getUserNum, userNum);
+        if (V.notEmpty(id)){
+            wrapper.ne(IamUser::getId, id);
+        }
+        return exists(wrapper);
+    }
+
     /***
      * 检查重复用户编号
      * @param userNumList
@@ -278,6 +293,32 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         );
     }
 
+    /**
+     * 判断员工编号是否存在
+     * @param iamUser
+     * @return
+     */
+    @Override
+    protected void beforeCreateEntity(IamUser iamUser){
+        if(isUserNumExists(null, iamUser.getUserNum())){
+            String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
+            log.warn("保存用户异常:{}", errorMsg);
+            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+        }
+    }
 
+    /**
+     * 判断员工编号是否存在
+     * @param iamUser
+     * @return
+     */
+    @Override
+    protected void beforeUpdateEntity(IamUser iamUser){
+        if(isUserNumExists(iamUser.getId(), iamUser.getUserNum())){
+            String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
+            log.warn("保存用户异常:{}", errorMsg);
+            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+        }
+    }
 
 }
