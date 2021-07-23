@@ -31,22 +31,6 @@ import java.util.List;
 */
 public interface IamUserService extends BaseIamService<IamUser> {
 
-    /***
-     * 通过org进行排序
-     * @param queryWrapper
-     * @param pagination
-     * @return
-     */
-    List<IamUser> getEntityListSortByOrg(QueryWrapper queryWrapper, Pagination pagination);
-
-    /***
-     * 通过org进行排序
-     * @param queryWrapper
-     * @param pagination
-     * @return
-     */
-    <VO> List<VO> getViewObjectListSortByOrg(QueryWrapper queryWrapper, Pagination pagination, Class<VO> voClass);
-
     /**
      * 构建role-permission角色权限数据格式(合并role等)，用于前端适配
      * @param iamUser

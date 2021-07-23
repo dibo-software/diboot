@@ -32,13 +32,5 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
 
-    /***
-     * 通过org层级的排序来获取用户分页数据
-     * @param page
-     * @param queryWrapper
-     * @return
-     */
-    @Select("SELECT u.* FROM iam_user u LEFT JOIN iam_org o ON u.org_id=o.id AND o.is_deleted = 0 ${ew.customSqlSegment} ORDER BY o.depth ASC, o.sort_id DESC, o.id DESC, u.id DESC")
-    IPage<IamUser> selectPageSortByOrg(IPage page, @Param("ew") Wrapper<IamUser> queryWrapper);
 }
 

@@ -72,42 +72,6 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     private IamCustomize iamCustomize;
 
     @Override
-    public List<IamUser> getEntityListSortByOrg(QueryWrapper queryWrapper, Pagination pagination) {
-        // 如果是动态join，则调用JoinsBinder
-        if(queryWrapper instanceof DynamicJoinQueryWrapper){
-            return Binder.joinQueryList(queryWrapper, entityClass, pagination);
-        }
-        // 否则，调用MP默认实现
-        if(pagination != null){
-            queryWrapper.eq("u.is_deleted", false);
-            IPage<IamUser> page = convertToIPage(queryWrapper, pagination);
-            page = super.getBaseMapper().selectPageSortByOrg(page, queryWrapper);
-            // 如果重新执行了count进行查询，则更新pagination中的总数
-            if(page.searchCount()){
-                pagination.setTotalCount(page.getTotal());
-            }
-            return page.getRecords();
-        }
-        else{
-            List<IamUser> list = super.list(queryWrapper);
-            if(list == null){
-                list = Collections.emptyList();
-            }
-            else if(list.size() > BaseConfig.getBatchSize()){
-                log.warn("单次查询记录数量过大，返回结果数={}", list.size());
-            }
-            return list;
-        }
-    }
-
-    @Override
-    public <VO> List<VO> getViewObjectListSortByOrg(QueryWrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-        List<IamUser> entityList = this.getEntityListSortByOrg(queryWrapper, pagination);
-        List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
-        return voList;
-    }
-
-    @Override
     public IamRoleVO buildRoleVo4FrontEnd(IamUser iamUser) {
         List<IamRoleVO> roleVOList = getAllRoleVOList(iamUser);
         if (V.isEmpty(roleVOList)){
@@ -277,7 +241,4 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                         .eq(IamUserRole::getUserId, userId)
         );
     }
-
-
-
 }
