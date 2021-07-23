@@ -33,7 +33,7 @@ comment on table iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on iam_user (org_id);
 create index idx_iam_user_2 on iam_user (mobile_phone);
-create unique index uidx_iam_user on iam_user (tenant_id, user_num, is_deleted);
+create index idx_iam_user_num on iam_user (user_num);
 create index idx_iam_user_tenant on iam_user(tenant_id);
 
 -- 账号表
@@ -64,7 +64,7 @@ comment on column iam_account.is_deleted is '是否删除';
 comment on column iam_account.create_time is '创建时间';
 comment on table iam_account is '登录账号';
 -- 创建索引
-create unique index idx_iam_account on iam_account(tenant_id, auth_account, auth_type, user_type, is_deleted);
+create index idx_iam_account on iam_account(auth_account, auth_type, user_type);
 create index idx_iam_account_tenant on iam_account(tenant_id);
 
 -- 角色表

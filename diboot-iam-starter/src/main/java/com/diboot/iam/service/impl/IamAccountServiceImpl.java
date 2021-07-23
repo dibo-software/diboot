@@ -53,32 +53,22 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
             iamCustomize.encryptPwd(iamAccount);
         }
         // 保存
-        try{
-            return super.createEntity(iamAccount);
-        }
-        catch (Exception e){ // 重复账号创建会异常
-            log.warn("保存账号异常: "+e.getMessage(), e);
-            throw new BusinessException(Status.FAIL_VALIDATION, "该账号可能已存在，请重新设置！");
-        }
+        return super.createEntity(iamAccount);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean createEntities(List<IamAccount> accountList){
-        if(V.notEmpty(accountList)){
-            accountList.stream().forEach(account->{
-                // 生成加密盐并加密
+        if(V.isEmpty(accountList)){
+            return true;
+        }
+        for(IamAccount account : accountList){
+            // 生成加密盐并加密
+            if (V.notEmpty(account.getAuthSecret())){
                 iamCustomize.encryptPwd(account);
-            });
+            }
         }
-        // 保存
-        try{
-            return super.createEntities(accountList);
-        }
-        catch (Exception e){ // 重复账号创建会异常
-            log.warn("保存账号异常: "+e.getMessage(), e);
-            throw new BusinessException(Status.FAIL_VALIDATION, "账号中可能包含已存在账号，请检查！");
-        }
+        return super.createEntities(accountList);
     }
 
     @Override
@@ -117,6 +107,42 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
                 .eq(IamAccount::getUserId, userId);
         IamAccount account = getSingleEntity(queryWrapper);
         return account!=null? account.getAuthAccount() : null;
+    }
+
+    @Override
+    public boolean isAccountExists(IamAccount iamAccount) {
+        LambdaQueryWrapper<IamAccount> queryWrapper = new QueryWrapper<IamAccount>().lambda()
+                .eq(IamAccount::getAuthAccount, iamAccount.getAuthAccount())
+                .eq(IamAccount::getAuthType, iamAccount.getAuthType())
+                .eq(IamAccount::getUserType, iamAccount.getUserType());
+        if(iamAccount.getId() != null){
+            queryWrapper.ne(IamAccount::getId, iamAccount.getId());
+        }
+        return exists(queryWrapper);
+    }
+
+    /**
+     * 判断账号是否存在
+     * @param iamAccount
+     * @return
+     */
+    @Override
+    protected void beforeCreateEntity(IamAccount iamAccount){
+        if(isAccountExists(iamAccount)){
+            String errorMsg = "账号 "+ iamAccount.getAuthAccount() +" 已存在，请重新设置！";
+            log.warn("保存账号异常: {}", errorMsg);
+            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+        }
+    }
+
+    /**
+     * 判断账号是否存在
+     * @param iamAccount
+     * @return
+     */
+    @Override
+    protected void beforeUpdateEntity(IamAccount iamAccount){
+        beforeCreateEntity(iamAccount);
     }
 
 }

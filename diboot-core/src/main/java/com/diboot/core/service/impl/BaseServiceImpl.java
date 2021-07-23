@@ -208,14 +208,27 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
+	/**
+	 * 用于更新之前的自动填充等场景调用
+	 */
+	protected void beforeUpdateEntity(T entity){
+	}
+
+	@Override
+	public boolean updateById(T entity) {
+		return updateEntity(entity);
+	}
+
 	@Override
 	public boolean updateEntity(T entity) {
+		beforeUpdateEntity(entity);
 		boolean success = super.updateById(entity);
 		return success;
 	}
 
 	@Override
 	public boolean updateEntity(T entity, Wrapper updateWrapper) {
+		beforeUpdateEntity(entity);
 		boolean success = super.update(entity, updateWrapper);
 		return success;
 	}
@@ -231,6 +244,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public boolean updateEntities(Collection<T> entityList) {
 		if(V.isEmpty(entityList)){
 			return false;
+		}
+		for(T entity : entityList){
+			beforeUpdateEntity(entity);
 		}
 		boolean success = super.updateBatchById(entityList);
 		return success;

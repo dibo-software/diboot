@@ -80,4 +80,12 @@ public interface IamUserService extends BaseIamService<IamUser> {
      */
     List<String> filterDuplicateUserNums(List<String> userNumList);
 
+    /**
+     * 用户编号是否存在
+     * @param id
+     * @param userNum
+     * @return
+     */
+    boolean isUserNumExists(Long id, String userNum);
+
 }
