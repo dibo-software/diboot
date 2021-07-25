@@ -62,5 +62,8 @@ public class IamProperties {
      * 是否开启权限检查（开发环境可关闭方便调试）
      */
     private boolean enablePermissionCheck = true;
-
+    /**
+     * 是否开启无状态 Jwt 身份验证过滤器
+     */
+    private boolean enabledStatelessSession = false;
 }

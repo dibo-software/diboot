@@ -16,7 +16,6 @@
 package com.diboot.iam.starter;
 
 import com.diboot.core.util.V;
-import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
 import com.diboot.iam.jwt.StatelessJwtAuthFilter;
@@ -112,6 +111,9 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BasicHttpAuthenticationFilter shiroFilter() {
+        if (iamProperties.isEnabledStatelessSession()) {
+            return new StatelessJwtAuthFilter();
+        }
         return new DefaultJwtAuthFilter();
     }
 
