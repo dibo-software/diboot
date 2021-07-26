@@ -16,7 +16,11 @@
     <description>diboot IAM project</description>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- 依赖core -->
         <dependency>
             <groupId>com.diboot</groupId>

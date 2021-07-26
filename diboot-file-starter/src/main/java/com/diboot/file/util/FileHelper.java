@@ -51,7 +51,7 @@ public class FileHelper{
 	/**
 	 * 文件存储路径参数名
 	 */
-	public static final String FILE_STORAGE_DIRECTORY = "files.storage.directory";
+	public static final String FILE_STORAGE_DIRECTORY = "diboot.component.file.storageDirectory";
 	/**
 	 * 文件存储路径
 	 */

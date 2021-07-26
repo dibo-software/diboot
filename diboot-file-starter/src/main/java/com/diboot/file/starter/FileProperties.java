@@ -30,6 +30,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class FileProperties {
 
     /**
+     * 文件存储路径
+     */
+    private String storageDirectory;
+
+    /**
      * 是否初始化，默认true自动安装SQL
      */
     private boolean initSql = true;

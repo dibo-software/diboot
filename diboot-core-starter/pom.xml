@@ -22,6 +22,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- SpringBoot 2.3.x+ 新增依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
