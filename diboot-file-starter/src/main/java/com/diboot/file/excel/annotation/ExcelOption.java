@@ -20,7 +20,7 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * Excel 单元格验证 （单元下拉选项）
+ * Excel 单元格验证 （单元格下拉选项）
  * <p>
  * 可自定义选项或关联字典
  *
@@ -48,7 +48,7 @@ public @interface ExcelOption {
      * <p>
      * {@link #value}是此属性的别名（并与之互斥）。
      * <p>
-     * 优先级: options &gt; dict
+     * 优先级: dict &gt; options
      */
     @AliasFor("value")
     String[] options() default {};
@@ -56,7 +56,7 @@ public @interface ExcelOption {
     /**
      * 关联字典类型
      * <p>
-     * 优先级: options &gt; dict
+     * 优先级: dict &gt; options
      */
     String dict() default "";
 

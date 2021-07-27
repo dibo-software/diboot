@@ -100,10 +100,13 @@ public class OptionWriteHandler extends AbstractSheetWriteHandler {
             ExcelOption option = AnnotationUtils.getAnnotation(entry.getValue(), ExcelOption.class);
             // 行数不大于0时不添加 单元格验证（单元下拉选项）
             if (option != null && option.rows() > 0) {
-                String[] options = option.options();
+                String[] options = null;
                 String dictType = option.dict();
-                if (options.length == 0 || V.notEmpty(dictType)) {
+                if (V.notEmpty(dictType)) {
                     options = getDictOptions(dictType);
+                }
+                if (V.isEmpty(options)) {
+                    options = option.options();
                 }
                 // 下拉框选为空时不添加 单元格验证（单元下拉选项）
                 if (V.notEmpty(options)) {
