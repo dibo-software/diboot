@@ -18,6 +18,7 @@ package com.diboot.iam.auth;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,14 @@ public class AuthServiceFactory {
             List<AuthService> authServiceList = ContextHelper.getBeans(AuthService.class);
             if(V.notEmpty(authServiceList)){
                 authServiceList.stream().forEach((service)->{
-                    AUTHTYPE_SERVICE_CACHE.put(service.getAuthType(), service);
+                    if(AUTHTYPE_SERVICE_CACHE.containsKey(service.getAuthType())){
+                        if(service.getClass().getAnnotation(Primary.class) != null){
+                            AUTHTYPE_SERVICE_CACHE.put(service.getAuthType(), service);
+                        }
+                    }
+                    else{
+                        AUTHTYPE_SERVICE_CACHE.put(service.getAuthType(), service);
+                    }
                 });
             }
         }
