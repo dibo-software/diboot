@@ -65,5 +65,5 @@ public class IamProperties {
     /**
      * 是否开启无状态 Jwt 身份验证过滤器
      */
-    private boolean enabledStatelessSession = false;
+    private boolean enableStatelessSession = false;
 }

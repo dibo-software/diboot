@@ -111,7 +111,7 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BasicHttpAuthenticationFilter shiroFilter() {
-        if (iamProperties.isEnabledStatelessSession()) {
+        if (iamProperties.isEnableStatelessSession()) {
             return new StatelessJwtAuthFilter();
         }
         return new DefaultJwtAuthFilter();
