@@ -22,11 +22,6 @@
             <artifactId>diboot-core-spring-boot-starter</artifactId>
             <version>${diboot.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- 文件上传 -->
         <dependency>
             <groupId>commons-fileupload</groupId>
