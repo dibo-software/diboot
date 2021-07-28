@@ -137,9 +137,9 @@ public class SSOAuthServiceImpl implements AuthService {
         String username = parseCasTicket(ssoCredential);
         ssoCredential.setAuthAccount(username);
         // 设置账号密码
-        token.setAuthAccount(ssoCredential.getAuthAccount())
-                .setTenantId(credential.getTenantId())
-                .setRememberMe(ssoCredential.isRememberMe());
+        token.setAuthAccount(ssoCredential.getAuthAccount());
+        token.setTenantId(credential.getTenantId());
+        token.setRememberMe(ssoCredential.isRememberMe());
         // 生成token
         return token.generateAuthtoken(getExpiresInMinutes());
     }

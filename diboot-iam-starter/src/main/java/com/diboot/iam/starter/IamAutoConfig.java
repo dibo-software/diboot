@@ -16,7 +16,6 @@
 package com.diboot.iam.starter;
 
 import com.diboot.core.util.V;
-import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
 import com.diboot.iam.jwt.StatelessJwtAuthFilter;
@@ -43,10 +42,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.core.annotation.Order;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * IAM自动配置类
@@ -56,6 +57,7 @@ import java.util.Map;
  * @Date 2019-10-11  10:54
  */
 @Slf4j
+@Order(922)
 @Configuration
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
@@ -109,6 +111,9 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BasicHttpAuthenticationFilter shiroFilter() {
+        if (iamProperties.isEnableStatelessSession()) {
+            return new StatelessJwtAuthFilter();
+        }
         return new DefaultJwtAuthFilter();
     }
 
@@ -156,9 +161,9 @@ public class IamAutoConfig {
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
-        String anonUrls = iamProperties.getAnonUrls();
+        Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
-            for (String url : anonUrls.split(Cons.SEPARATOR_COMMA)) {
+            for (String url : anonUrls) {
                 filterChainMap.put(url, "anon");
                 if (url.equals("/**")) {
                     allAnon = true;
@@ -166,8 +171,7 @@ public class IamAutoConfig {
             }
         }
         filterChainMap.put("/login", "authc");
-        filterChainMap.put("/logout", "logout");
-        if (allAnon && iamProperties.isEnablePermissionCheck() == false) {
+        if (allAnon && !iamProperties.isEnablePermissionCheck()) {
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "jwt");

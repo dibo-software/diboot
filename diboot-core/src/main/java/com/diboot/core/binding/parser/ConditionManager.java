@@ -74,7 +74,13 @@ public class ConditionManager extends BaseConditionManager{
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     String entityColumn = removeLeftAlias(express.getRightExpression().toString());
-                    binder.joinOn(annoColumn, entityColumn);
+                    // xx=this.yy，翻转
+                    if(isCurrentObjColumn(express.getRightExpression().toString()) && !isCurrentObjColumn(express.getLeftExpression().toString())){
+                        binder.joinOn(entityColumn, annoColumn);
+                    }
+                    else{
+                        binder.joinOn(annoColumn, entityColumn);
+                    }
                 }
                 else{
                     binder.andEQ(annoColumn, express.getRightExpression().toString());

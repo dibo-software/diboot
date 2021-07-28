@@ -55,7 +55,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     //解析后的数据实体list
     private List<T> dataList = new ArrayList<>();
     //错误信息
-    private List<String> validateErrorMsgs = new ArrayList<>();
+    private List<String> validateErrorMsgs = null;
     // 注入request
     private Map<String, Object> requestParams;
     // 是否为预览模式
@@ -105,7 +105,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         // 提取校验结果
         dataList.stream().forEach(data->{
             if(V.notEmpty(data.getValidateError())){
-                validateErrorMsgs.add(data.getRowIndex() + "行: " + data.getValidateError());
+                addErrorMsg(data.getRowIndex() + "行: " + data.getValidateError());
             }
         });
         // 有错误 抛出异常
@@ -138,11 +138,11 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
                 String data = ex.getCellData().getStringValue();
                 errorMsg = currentRowNum+"行" + ex.getColumnIndex()+ "列: 数据格式转换异常，'"+data+"' 非期望的数据类型["+type+"]";
             }
-            validateErrorMsgs.add(errorMsg);
+            addErrorMsg(errorMsg);
         }
         else{//其他异常
             log.error("出现未预知的异常：",exception);
-            validateErrorMsgs.add("解析异常: "+exception.getMessage());
+            addErrorMsg("解析异常: "+exception.getMessage());
         }
     }
 
@@ -257,14 +257,6 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     protected abstract void saveData(List<T> dataList, Map<String, Object> requestParams);
 
     /**
-     * 校验错误信息
-     * @return
-     */
-    public List<String> getErrorMsgs(){
-        return this.validateErrorMsgs;
-    }
-
-    /**
      * 返回表头
      * @return
      */
@@ -314,4 +306,22 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
         return BeanUtils.getGenericityClass(this, 0);
     }
 
+    /**
+     * 校验错误信息
+     * @return
+     */
+    public List<String> getErrorMsgs(){
+        return this.validateErrorMsgs;
+    }
+
+    /**
+     * 添加错误信息
+     * @param errorMsg
+     */
+    private void addErrorMsg(String errorMsg){
+        if(this.validateErrorMsgs == null){
+            this.validateErrorMsgs = new ArrayList<>();
+        }
+        this.validateErrorMsgs.add(errorMsg);
+    }
 }

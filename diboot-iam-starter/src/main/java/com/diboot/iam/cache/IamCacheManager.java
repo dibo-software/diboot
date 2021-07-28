@@ -45,12 +45,13 @@ public class IamCacheManager {
     /**
      * url-permission 缓存
      */
-    private static Map<String, String> URL_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>();
+    private static Map<String, String> URL_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>(8);
 
     private static StaticMemoryCacheManager getCacheManager(){
         if(iamMemoryCacheManager == null){
             iamMemoryCacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CONTROLLER_API);
+            URL_PERMISSIONCODE_CACHE.clear();
         }
         return iamMemoryCacheManager;
     }
@@ -106,7 +107,7 @@ public class IamCacheManager {
     /**
      * 初始化
      */
-    private static void initApiPermissionCache() {
+    private static synchronized void initApiPermissionCache() {
         StaticMemoryCacheManager cacheManager = getCacheManager();
         if (cacheManager.isUninitializedCache(CACHE_NAME_CONTROLLER_API) == false) {
             return;

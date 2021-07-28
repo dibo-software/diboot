@@ -28,7 +28,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 数据字典类型定义
      */
-    public static enum DICTTYPE{
+    public enum DICTTYPE{
         DATA_PERMISSION_TYPE,
         AUTH_TYPE,
         ACCOUNT_STATUS,
@@ -43,7 +43,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 字典编码 - 数据权限类型
      */
-    public static enum DICTCODE_DATA_PERMISSION_TYPE{
+    public enum DICTCODE_DATA_PERMISSION_TYPE{
         INDIVIDUAL,
         DEPT,
         DEPT_MEMS,
@@ -53,7 +53,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 字典编码 - 认证方式
      */
-    public static enum DICTCODE_AUTH_TYPE{
+    public enum DICTCODE_AUTH_TYPE{
         PWD,
         SSO,
         WX_MP,
@@ -64,7 +64,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 字典编码 - 账号状态
      */
-    public static enum DICTCODE_ACCOUNT_STATUS{
+    public enum DICTCODE_ACCOUNT_STATUS{
         A,
         L,
         I
@@ -73,7 +73,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 字典编码 - 用户状态
      */
-    public static enum DICTCODE_USER_STATUS{
+    public enum DICTCODE_USER_STATUS{
         A,
         L,
         I
@@ -82,7 +82,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 字典编码 - 组织类型
      */
-    public static enum DICTCODE_ORG_TYPE{
+    public enum DICTCODE_ORG_TYPE{
         COMP,
         DEPT
     }
@@ -90,7 +90,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 字典编码 - 权限类型
      */
-    public static enum DICTCODE_PERMISSION_TYPE{
+    public enum DICTCODE_PERMISSION_TYPE{
         MENU,
         OPERATION,
         OTHER
@@ -99,17 +99,7 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 前端权限类型
      */
-    @Deprecated
-    public static enum FRONTEND_PERMISSION_DISPLAY_TYPE{
-        MODULE,
-        MENU,
-        PERMISSION
-    }
-
-    /**
-     * 前端权限类型
-     */
-    public static enum RESOURCE_PERMISSION_DISPLAY_TYPE{
+    public enum RESOURCE_PERMISSION_DISPLAY_TYPE{
         MODULE,
         MENU,
         PERMISSION
@@ -124,4 +114,8 @@ public class Cons extends com.diboot.core.config.Cons {
      * 超级管理员
      */
     public static final String ROLE_SUPER_ADMIN = "SUPER_ADMIN";
+
+    public static final String AUTHENTICATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authenticationCache";
+    public static final String AUTHORIZATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authorizationCache";
+
 }

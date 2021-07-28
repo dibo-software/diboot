@@ -235,6 +235,26 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     }
 
     /***
+     * 根据id撤回删除
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public JsonResult cancelDeletedEntity(Serializable id) throws Exception {
+        boolean success = getService().cancelDeletedById(id);
+        E entity = null;
+        if (success){
+            entity = (E) getService().getEntity(id);
+            this.afterDeletedCanceled(entity);
+            log.info("撤回删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
+            return JsonResult.OK("撤回成功");
+        } else {
+            log.warn("撤回删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
+            return JsonResult.FAIL_OPERATION("撤回失败");
+        }
+    }
+
+    /***
      * 根据id批量删除资源对象，用于子类重写的方法
      * @param ids
      * @return
@@ -283,7 +303,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeCreate(Object entityOrDto) throws Exception {
+    protected String beforeCreate(E entityOrDto) throws Exception {
         return null;
     }
 
@@ -292,7 +312,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected void afterCreated(Object entityOrDto) throws Exception {
+    protected void afterCreated(E entityOrDto) throws Exception {
     }
 
     /***
@@ -300,7 +320,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeUpdate(Object entityOrDto) throws Exception {
+    protected String beforeUpdate(E entityOrDto) throws Exception {
         return null;
     }
 
@@ -309,7 +329,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected void afterUpdated(Object entityOrDto) throws Exception {
+    protected void afterUpdated(E entityOrDto) throws Exception {
     }
 
     /***
@@ -317,7 +337,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeDelete(Object entityOrDto) throws Exception{
+    protected String beforeDelete(E entityOrDto) throws Exception{
         return null;
     }
 
@@ -326,7 +346,15 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected void afterDeleted(Object entityOrDto) throws Exception {
+    protected void afterDeleted(E entityOrDto) throws Exception {
+    }
+
+    /***
+     * 撤销删除成功后的相关处理
+     * @param entityOrDto
+     * @throws Exception
+     */
+    protected void afterDeletedCanceled(E entityOrDto) throws Exception {
     }
 
     /***

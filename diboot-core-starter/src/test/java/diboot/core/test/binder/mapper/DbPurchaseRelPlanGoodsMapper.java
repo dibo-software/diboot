@@ -1,7 +1,6 @@
 package diboot.core.test.binder.mapper;
 
 import com.diboot.core.mapper.BaseCrudMapper;
-import diboot.core.test.binder.entity.DbPurchaseFormPlan;
 import diboot.core.test.binder.entity.DbPurchaseRelPlanGoods;
 import org.apache.ibatis.annotations.Mapper;
 

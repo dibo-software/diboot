@@ -91,6 +91,17 @@ public class EntityInfoCache implements Serializable {
     }
 
     /**
+     * 根据列名获取字段
+     * @return
+     */
+    public String getColumnByField(String fieldName){
+        if(this.propInfo == null || V.isEmpty(this.propInfo.getFieldToColumnMap())){
+            return null;
+        }
+        return this.propInfo.getFieldToColumnMap().get(fieldName);
+    }
+
+    /**
      * 获取ID列
      * @return
      */

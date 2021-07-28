@@ -16,14 +16,23 @@
 package com.diboot.file.starter;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author diboot
  */
-@Data
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "diboot.component.file")
 public class FileProperties {
+
+    /**
+     * 文件存储路径
+     */
+    private String storageDirectory;
 
     /**
      * 是否初始化，默认true自动安装SQL

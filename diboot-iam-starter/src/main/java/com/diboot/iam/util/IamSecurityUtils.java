@@ -106,9 +106,7 @@ public class IamSecurityUtils extends SecurityUtils {
         if(baseJwtRealm != null){
             Cache<Object, AuthorizationInfo> cache = baseJwtRealm.getAuthorizationCache();
             if(cache != null) {
-                for(Object key : cache.keys()) {
-                    cache.remove(key);
-                }
+                cache.clear();
                 log.debug("已清空全部登录用户的权限缓存，以便新权限生效.");
             }
         }

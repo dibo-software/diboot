@@ -19,7 +19,6 @@ package com.diboot.iam.service;
 import com.diboot.iam.dto.IamResourcePermissionDTO;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
-import com.diboot.iam.vo.InvalidResourcePermissionVO;
 
 import java.util.List;
 import java.util.Map;

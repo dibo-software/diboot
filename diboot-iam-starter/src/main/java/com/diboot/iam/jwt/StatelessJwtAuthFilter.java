@@ -21,6 +21,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -46,7 +47,7 @@ import java.io.PrintWriter;
  * @Date 2020/11/19  10:46
  */
 @Slf4j
-@Getter@Setter
+@Getter @Setter
 public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
 
     /**
@@ -79,21 +80,26 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
                 JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
             }
             // 构建登陆的token
-            // tenantId,account,userTypeClass,authType,60
-            String[] subjectDetail = subject.split(Cons.SEPARATOR_COMMA);
-            BaseJwtAuthToken baseJwtAuthToken = new BaseJwtAuthToken();
-            baseJwtAuthToken.setTenantId(Long.valueOf(subjectDetail[0]));
-            baseJwtAuthToken.setAuthAccount(subjectDetail[1]);
-            try {
-                baseJwtAuthToken.setUserTypeClass(Class.forName(subjectDetail[2]));
-            } catch (ClassNotFoundException e) {
-                log.debug("Token验证失败！用户类型{}不存在，url={}", subjectDetail[2], httpRequest.getRequestURL());
-                return false;
+            if(IamSecurityUtils.getSubject().isAuthenticated() == false){
+                // tenantId,account,userTypeClass,authType,60
+                String[] subjectDetail = subject.split(Cons.SEPARATOR_COMMA);
+                BaseJwtAuthToken baseJwtAuthToken = new BaseJwtAuthToken();
+                baseJwtAuthToken.setTenantId(Long.valueOf(subjectDetail[0]));
+                baseJwtAuthToken.setAuthAccount(subjectDetail[1]);
+                if(!IamUser.class.getName().equals(subjectDetail[2])){
+                    try {
+                        baseJwtAuthToken.setUserTypeClass(Class.forName(subjectDetail[2]));
+                    } catch (ClassNotFoundException e) {
+                        log.debug("Token验证失败！用户类型{}不存在，url={}", subjectDetail[2], httpRequest.getRequestURL());
+                        return false;
+                    }
+                }
+                baseJwtAuthToken.setAuthType(subjectDetail[3]);
+                baseJwtAuthToken.setAuthtoken(currentToken);
+                baseJwtAuthToken.setValidPassword(false);
+                IamSecurityUtils.getSubject().login(baseJwtAuthToken);
+                log.debug("无状态token自动登录完成");
             }
-            baseJwtAuthToken.setAuthType(subjectDetail[3]);
-            baseJwtAuthToken.setAuthtoken(currentToken);
-            baseJwtAuthToken.setValidPassword(false);
-            IamSecurityUtils.getSubject().login(baseJwtAuthToken);
             return true;
         }
         log.debug("Token验证失败！url=" + httpRequest.getRequestURL());

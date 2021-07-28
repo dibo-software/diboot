@@ -37,7 +37,7 @@ public class AcceptAnnoCopier {
     /**
      * 注解缓存
      */
-    private static Map<String, List<String[]>> CLASS_ACCEPT_ANNO_CACHE_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, List<String[]>> CLASS_ACCEPT_ANNO_CACHE_MAP = new ConcurrentHashMap<>();
     // 下标
     private static final int IDX_TARGET_FIELD = 0, IDX_SOURCE_FIELD = 1, IDX_OVERRIDE = 2;
 

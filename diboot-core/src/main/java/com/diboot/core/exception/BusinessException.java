@@ -29,6 +29,8 @@ import java.util.Map;
  */
 public class BusinessException extends RuntimeException {
 
+    private Integer code;
+
     /**
      * 错误的状态
      */
@@ -71,11 +73,22 @@ public class BusinessException extends RuntimeException {
     }
 
     /**
+     * 自定义状态码和内容提示
+     * @param code
+     * @param msg
+     */
+    public BusinessException(int code, String msg) {
+        super(msg);
+        this.code = code;
+    }
+
+    /**
      * 自定义内容提示
      * @param msg
      */
     public BusinessException(String msg) {
-        super( msg);
+        super(msg);
+        this.status = Status.FAIL_OPERATION;
     }
 
     /**
@@ -89,12 +102,22 @@ public class BusinessException extends RuntimeException {
     }
 
     /**
+     * 自定义内容提示
+     * @param code
+     * @param msg
+     */
+    public BusinessException(int code, String msg, Throwable ex) {
+        super(msg, ex);
+        this.code = code;
+    }
+
+    /**
      * 转换为Map
      * @return
      */
     public Map<String, Object> toMap(){
-        Map<String, Object> map = new HashMap<>();
-        map.put("code", status.code());
+        Map<String, Object> map = new HashMap<>(8);
+        map.put("code", getCode());
         map.put("msg", getMessage());
         return map;
     }
@@ -106,4 +129,12 @@ public class BusinessException extends RuntimeException {
     public Status getStatus(){
         return this.status;
     }
+
+    private int getCode(){
+        if(this.code == null && this.status != null){
+            this.code = this.status.code();
+        }
+        return this.code;
+    }
+
 }

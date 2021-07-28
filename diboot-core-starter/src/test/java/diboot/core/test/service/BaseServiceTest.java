@@ -32,8 +32,12 @@ import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.entity.UserRole;
+import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.vo.SimpleDictionaryVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,6 +66,9 @@ public class BaseServiceTest {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DepartmentService departmentService;
 
     @Test
     public void testGet(){
@@ -100,6 +107,10 @@ public class BaseServiceTest {
         List<Map<String, Object>> mapList = dictionaryService.getMapList(null, new Pagination());
         Assert.assertTrue(mapList.size() > 0 && mapList.size() <= BaseConfig.getPageSize());
 
+        List<Long> userIds = Arrays.asList(1001L, 1002L);
+        Map<Long, String> id2NameMap = userService.getId2NameMap(userIds, User::getUsername);
+        Assert.assertTrue(id2NameMap != null);
+        Assert.assertTrue(id2NameMap.get(1001) != null);
     }
 
     @Test
@@ -244,6 +255,23 @@ public class BaseServiceTest {
     }
 
     @Test
+    public void testEscInService(){
+        LambdaQueryWrapper<Department> queryWrapper = new QueryWrapper<Department>()
+                .lambda().isNotNull(Department::getCharacter);
+        List departments = departmentService.list(queryWrapper);
+        Assert.assertTrue(departments != null);
+        Department dept = (Department) departments.get(0);
+        Assert.assertTrue(dept.getCharacter() != null);
+
+        LambdaQueryWrapper<User> queryWrapperUser = new QueryWrapper<User>()
+                .lambda().isNotNull(User::getCharacter);
+        List users = userService.getEntityList(queryWrapperUser);
+        Assert.assertTrue(users != null);
+        User user = (User) users.get(0);
+        Assert.assertTrue(user.getCharacter() != null);
+    }
+
+    @Test
     public void testJsonResult(){
         Map map = new HashMap();
         map.put("k", "123");
@@ -261,6 +289,12 @@ public class BaseServiceTest {
     @Test
     public void testExist(){
         boolean exists = dictionaryService.exists(Dictionary::getType, "GENDER");
+        Assert.assertTrue(exists);
+
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER");
+        queryWrapper.eq("item_value", "F");
+        exists = dictionaryService.exists(queryWrapper);
         Assert.assertTrue(exists);
     }
 
@@ -340,6 +374,17 @@ public class BaseServiceTest {
 
         List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
         Assert.assertTrue(keyValues.size() >= 2);
+
+    }
+
+    @Test
+    public void testSimpleDictVo(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
+
+        List<SimpleDictionaryVO> simpleVOList = dictionaryService.getViewObjectList(queryWrapper, null, SimpleDictionaryVO.class);
+        Assert.assertTrue(simpleVOList.size() == 1);
+        Assert.assertTrue(simpleVOList.get(0).getChildren().size() >= 2);
     }
 
     /**

@@ -15,11 +15,9 @@
  */
 package com.diboot.scheduler.service.impl;
 
-import ch.qos.logback.core.db.BindDataSourceToJNDIAction;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Status;
-import com.diboot.scheduler.annotation.BindJob;
 import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.starter.SchedulerProperties;
@@ -30,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
@@ -93,12 +90,6 @@ public class QuartzSchedulerService {
             List<Map<String, Object>> result = loadJobs(annoJobList);
             CACHE_JOB.addAll(result);
         }
-        // 兼容旧版本BindJob注解
-        annoJobList = ContextHelper.getBeansByAnnotation(BindJob.class);
-        if (V.notEmpty(annoJobList)) {
-            List<Map<String, Object>> result = loadJobs(annoJobList);
-            CACHE_JOB.addAll(result);
-        }
         return CACHE_JOB;
     }
 
@@ -124,15 +115,6 @@ public class QuartzSchedulerService {
                 jobName = annotation.name();
                 paramJson = annotation.paramJson();
                 paramClass = annotation.paramClass();
-            }
-            else{ // 兼容旧版本BindJob注解
-                BindJob bindJobAnno = (BindJob) targetClass.getAnnotation(BindJob.class);
-                if(bindJobAnno != null){
-                    jobCron = bindJobAnno.cron();
-                    jobName = bindJobAnno.name();
-                    paramJson = bindJobAnno.paramJson();
-                    paramClass = bindJobAnno.paramClass();
-                }
             }
             temp.put("jobCron", jobCron);
             temp.put("jobName", jobName);

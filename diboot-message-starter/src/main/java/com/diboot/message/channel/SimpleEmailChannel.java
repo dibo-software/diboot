@@ -23,10 +23,14 @@ import com.diboot.message.entity.Message;
 import com.diboot.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import java.util.Date;
 
 /**
@@ -56,28 +60,62 @@ public class SimpleEmailChannel implements ChannelStrategy {
         String result = "success";
         String status = Cons.MESSAGE_STATUS.DELIVERY.getItemValue();
         try {
-            // 构建一个邮件对象
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            // 设置邮件主题
-            simpleMailMessage.setSubject(message.getTitle());
-            // 设置发送人
-            simpleMailMessage.setFrom(message.getSender());
-            // 优先使用Receivers
-            if (V.notEmpty(message.getReceivers())) {
-                simpleMailMessage.setTo(message.getReceivers());
-            } else {
-                simpleMailMessage.setTo(message.getReceiver());
+            if (V.isEmpty(message.getExtDataMap().get(Message.ATTACHMENTS))) {
+                // 构建一个邮件对象
+                SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+                // 设置邮件主题
+                simpleMailMessage.setSubject(message.getTitle());
+                // 设置发送人
+                simpleMailMessage.setFrom(message.getSender());
+                // 优先使用Receivers
+                if (V.notEmpty(message.getReceivers())) {
+                    simpleMailMessage.setTo(message.getReceivers());
+                } else {
+                    simpleMailMessage.setTo(message.getReceiver());
+                }
+                // 设置抄送人
+                simpleMailMessage.setCc(message.getCcEmails());
+                // 设置隐秘抄送人
+                simpleMailMessage.setBcc(message.getBccEmails());
+                // 设置邮件发送日期
+                simpleMailMessage.setSentDate(new Date());
+                // 设置邮件内容
+                simpleMailMessage.setText(message.getContent());
+
+                // 发送邮件(无附件)
+                javaMailSender.send(simpleMailMessage);
+            } else{
+                MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+                //发送有附件邮件
+                MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+                // 设置邮件主题
+                messageHelper.setSubject(message.getTitle());
+                // 设置发送人
+                messageHelper.setFrom(message.getSender());
+                // 优先使用Receivers
+                if (V.notEmpty(message.getReceivers())) {
+                    // 设置发送人
+                    messageHelper.setTo(message.getReceivers());
+                }else{
+                    messageHelper.setTo(message.getReceiver());
+                }
+                // 设置抄送人
+                messageHelper.setCc(message.getCcEmails());
+                // 设置隐秘抄送人
+                messageHelper.setBcc(message.getBccEmails());
+                // 设置邮件发送日期
+                messageHelper.setSentDate(new Date());
+                // 设置邮件内容
+                messageHelper.setText(message.getContent());
+                //添加附件
+                String[] fileUrlList = message.getAttachments();
+                for (String url:fileUrlList){
+                    FileSystemResource fileSystemResource = new FileSystemResource(url);
+                    messageHelper.addAttachment(MimeUtility.encodeWord(fileSystemResource.getFilename(),"utf-8","B"), fileSystemResource);
+                }
+                //发送邮件（有附件）
+                javaMailSender.send(mimeMessage);
             }
-            // 设置抄送人
-            simpleMailMessage.setCc(message.getCcEmails());
-            // 设置隐秘抄送人
-            simpleMailMessage.setBcc(message.getBccEmails());
-            // 设置邮件发送日期
-            simpleMailMessage.setSentDate(new Date());
-            // 设置邮件内容
-            simpleMailMessage.setText(message.getContent());
-            // 发送邮件
-            javaMailSender.send(simpleMailMessage);
         } catch (Exception e) {
             log.error("[发送邮件失败]：信息为： {} , 异常", message, e);
             result = e.getMessage();

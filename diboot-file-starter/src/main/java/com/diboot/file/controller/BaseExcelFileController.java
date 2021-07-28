@@ -94,7 +94,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
-        String accessUrl = FileHelper.getRelativePath(previewFileName);
+        String accessUrl = buildAccessUrl(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 描述
         String description = getString("description");
@@ -121,7 +121,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
-        String accessUrl = FileHelper.getRelativePath(previewFileName);
+        String accessUrl = buildAccessUrl(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 保存文件上传记录
         UploadFile uploadFile = new UploadFile().setUuid(fileUid)
@@ -180,11 +180,16 @@ public abstract class BaseExcelFileController extends BaseFileController {
         dataMap.put(ORIGIN_FILE_NAME, originFileName);
         dataMap.put(PREVIEW_FILE_NAME, FileHelper.getFileName(uploadFile.getStoragePath()));
         List dataList = listener.getDataList();
-        if (V.notEmpty(dataList) && dataList.size() > BaseConfig.getPageSize()) {
-            dataList = dataList.subList(0, BaseConfig.getPageSize());
+        int totalCount = 0;
+        if (V.notEmpty(dataList)) {
+            totalCount = dataList.size();
+            if(dataList.size() > BaseConfig.getPageSize()){
+                dataList = dataList.subList(0, BaseConfig.getPageSize());
+            }
         }
-        //最多返回前端十条数据
+        //最多返回前端1页数据
         dataMap.put("dataList", dataList);
+        dataMap.put("totalCount", totalCount);
         return dataMap;
     }
 

@@ -67,6 +67,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){
+            super.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
             //处理orderBy，附加排序
             this.appendOrderBy();
@@ -87,6 +88,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
+            super.simplifySelectColumns();
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             // 构建查询条件
@@ -128,14 +130,19 @@ public class EntityListBinder<T> extends EntityBinder<T> {
      */
     private Map<String, List> buildMatchKey2EntityListMap(List<T> list){
         Map<String, List> key2TargetListMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
+        StringBuilder sb = new StringBuilder();
         for(T entity : list){
-            joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinCols){
+            sb.setLength(0);
+            for(int i=0; i<refObjJoinCols.size(); i++){
+                String refObjJoinOnCol = refObjJoinCols.get(i);
                 String pkValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
-                joinOnValues.add(pkValue);
+                if(i > 0){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(pkValue);
             }
-            String matchKey = S.join(joinOnValues);
+            // 查找匹配Key
+            String matchKey = sb.toString();
             // 获取list
             List entityList = key2TargetListMap.get(matchKey);
             if(entityList == null){
@@ -148,6 +155,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             }
             entityList.add(target);
         }
+        sb.setLength(0);
         return key2TargetListMap;
     }
 

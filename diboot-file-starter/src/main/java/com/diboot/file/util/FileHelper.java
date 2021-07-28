@@ -41,7 +41,7 @@ public class FileHelper{
 	/**
 	 * file验证
 	 */
-	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe", "bat", "bin", "dll", "sh");
+	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe","bat","bin","dll","sh","php","pl","cgi","asp","aspx","jsp","php5","php4","php3","htm","html");
 
 	/**
 	 * excel格式
@@ -51,7 +51,7 @@ public class FileHelper{
 	/**
 	 * 文件存储路径参数名
 	 */
-	public static final String FILE_STORAGE_DIRECTORY = "files.storage.directory";
+	public static final String FILE_STORAGE_DIRECTORY = "diboot.component.file.storageDirectory";
 	/**
 	 * 文件存储路径
 	 */

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
@@ -92,7 +93,7 @@ public abstract class BaseBinder<T> {
             this.annoObjPropInfo = BindingCacheManager.getPropInfoByClass(voList.get(0).getClass());
         }
         this.queryWrapper = new QueryWrapper<>();
-        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+        this.referencedEntityClass = referencedService.getEntityClass();
         this.refObjPropInfo = BindingCacheManager.getPropInfoByClass(this.referencedEntityClass);
         // 列集合
         this.annoObjJoinCols = new ArrayList<>(8);
@@ -257,6 +258,11 @@ public abstract class BaseBinder<T> {
     }
 
     /**
+     * 简化select列，仅select必需列
+     */
+    protected abstract void simplifySelectColumns();
+
+    /**
      * 获取EntityList
      * @param queryWrapper
      * @return
@@ -308,16 +314,7 @@ public abstract class BaseBinder<T> {
      * @return
      */
     protected Object getValueIgnoreKeyCase(Map<String, Object> map, String key){
-        if(key == null){
-            return null;
-        }
-        if(map.containsKey(key)){
-            return map.get(key);
-        }
-        if(map.containsKey(key.toUpperCase())){
-            return map.get(key.toUpperCase());
-        }
-        return null;
+        return ResultAssembler.getValueIgnoreKeyCase(map, key);
     }
 
     /**
@@ -344,10 +341,10 @@ public abstract class BaseBinder<T> {
      * 注解宿主对象的列名转换为字段名
      * @return
      */
-    public List<String> getAnnoObjJoinFlds(){
-        List<String> fields = new ArrayList<>(annoObjJoinCols.size());
-        for(String col : annoObjJoinCols){
-            fields.add(toAnnoObjField(col));
+    public String[] getAnnoObjJoinFlds(){
+        String[] fields = new String[annoObjJoinCols.size()];
+        for(int i=0; i<annoObjJoinCols.size(); i++){
+            fields[i] = toAnnoObjField(annoObjJoinCols.get(i));
         }
         return fields;
     }

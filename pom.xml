@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.5</version>
+        <version>2.5.3</version>
         <relativePath/>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>2.2.1</version>
+    <version>2.3.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,11 +27,11 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.4.5</spring-boot.version>
+        <spring-boot.version>2.5.3</spring-boot.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
-        <mybatis-plus.version>3.4.2</mybatis-plus.version>
+        <mybatis-plus.version>3.4.3.1</mybatis-plus.version>
         <okhttp.version>4.9.1</okhttp.version>
-        <diboot.version>2.2.1</diboot.version>
+        <diboot.version>2.3.0</diboot.version>
     </properties>
 
     <dependencies>
@@ -47,6 +47,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.23</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>

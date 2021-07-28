@@ -38,7 +38,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MessageProperties.class)
 @ComponentScan(basePackages = {"com.diboot.message"})
 @MapperScan(basePackages = {"com.diboot.message.mapper"})
-public class MessageAutoConfiguration {
+public class MessageAutoConfig {
 
     /**
      * 模版变量服务

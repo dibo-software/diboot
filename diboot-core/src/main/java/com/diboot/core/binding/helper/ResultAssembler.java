@@ -15,6 +15,7 @@
  */
 package com.diboot.core.binding.helper;
 
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -39,25 +40,29 @@ public class ResultAssembler {
      * @param valueMatchMap
      * @param <E>
      */
-    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, List<String> getterFields, Map valueMatchMap){
+    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, String[] getterFields, Map valueMatchMap){
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        List<String> fieldValues = new ArrayList<>(getterFields.size());
+        StringBuilder sb = new StringBuilder();
         try{
             for(E object : fromList){
-                fieldValues.clear();
-                for(String getterField : getterFields){
-                    String fieldValue = BeanUtils.getStringProperty(object, getterField);
-                    fieldValues.add(fieldValue);
+                sb.setLength(0);
+                for(int i=0; i<getterFields.length; i++){
+                    String fieldValue = BeanUtils.getStringProperty(object, getterFields[i]);
+                    if(i > 0){
+                        sb.append(Cons.SEPARATOR_COMMA);
+                    }
+                    sb.append(fieldValue);
                 }
                 // 查找匹配Key
-                String matchKey = S.join(fieldValues);
+                String matchKey = sb.toString();
                 if(valueMatchMap.containsKey(matchKey)){
                     // 赋值
                     BeanUtils.setProperty(object, setterFieldName, valueMatchMap.get(matchKey));
                 }
             }
+            sb.setLength(0);
         }
         catch (Exception e){
             log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
@@ -76,10 +81,11 @@ public class ResultAssembler {
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        List<String> fieldValues = new ArrayList<>(trunkObjColMapping.size());
+        StringBuilder sb = new StringBuilder();
         try{
             for(E object : fromList){
-                fieldValues.clear();
+                boolean appendComma = false;
+                sb.setLength(0);
                 for(Map.Entry<String, String> entry :trunkObjColMapping.entrySet()){
                     //转换为字段名
                     String getterField = col2FieldMapping.get(entry.getKey());
@@ -87,16 +93,22 @@ public class ResultAssembler {
                         getterField = S.toLowerCaseCamel(entry.getKey());
                     }
                     String fieldValue = BeanUtils.getStringProperty(object, getterField);
-                    fieldValues.add(fieldValue);
+                    if(appendComma){
+                        sb.append(Cons.SEPARATOR_COMMA);
+                    }
+                    sb.append(fieldValue);
+                    if(appendComma == false){
+                        appendComma = true;
+                    }
                 }
                 // 查找匹配Key
-                String matchKey = S.join(fieldValues);
+                String matchKey = sb.toString();
                 if(valueMatchMap.containsKey(matchKey)){
                     // 赋值
                     BeanUtils.setProperty(object, setterFieldName, valueMatchMap.get(matchKey));
                 }
             }
-            fieldValues.clear();
+            sb.setLength(0);
         }
         catch (Exception e){
             log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
@@ -118,15 +130,22 @@ public class ResultAssembler {
         // 获取valueName
         String valueName = branchObjColMapping.entrySet().iterator().next().getKey();
         // 合并list为map
-        Map<String, Object> resultMap = new HashMap<>();
-        List<String> fieldValues = new ArrayList<>(trunkObjColMapping.size());
+        Map<String, Object> resultMap = new HashMap<>(resultSetMapList.size());
+        StringBuilder sb = new StringBuilder();
         for(Map<String, E> row : resultSetMapList){
-            fieldValues.clear();
+            boolean appendComma = false;
+            sb.setLength(0);
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
-                Object keyObj = row.containsKey(entry.getValue())? row.get(entry.getValue()) : row.get(entry.getValue().toUpperCase());
-                fieldValues.add(S.valueOf(keyObj));
+                Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
+                if(appendComma){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(S.valueOf(keyObj));
+                if(appendComma == false){
+                    appendComma = true;
+                }
             }
-            String matchKeys = S.join(fieldValues);
+            String matchKeys = sb.toString();
             Object valueObj = row.containsKey(valueName)? row.get(valueName) : row.get(valueName.toUpperCase());
             resultMap.put(matchKeys, valueObj);
         }
@@ -149,14 +168,21 @@ public class ResultAssembler {
         String valueName = branchObjColMapping.entrySet().iterator().next().getKey();
         // 合并list为map
         Map<String, List> resultMap = new HashMap<>();
-        List<String> fieldValues = new ArrayList<>(trunkObjColMapping.size());
+        StringBuilder sb = new StringBuilder();
         for(Map<String, E> row : resultSetMapList){
-            fieldValues.clear();
+            boolean appendComma = false;
+            sb.setLength(0);
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
-                Object keyObj = row.containsKey(entry.getValue())? row.get(entry.getValue()) : row.get(entry.getValue().toUpperCase());
-                fieldValues.add(S.valueOf(keyObj));
+                Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
+                if(appendComma){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(S.valueOf(keyObj));
+                if(appendComma == false){
+                    appendComma = true;
+                }
             }
-            String matchKeys = S.join(fieldValues);
+            String matchKeys = sb.toString();
             Object valueObj = row.containsKey(valueName)? row.get(valueName) : row.get(valueName.toUpperCase());
             if(valueObj != null){
                 List valueList = resultMap.get(matchKeys);
@@ -167,7 +193,29 @@ public class ResultAssembler {
                 valueList.add(valueObj);
             }
         }
+        sb.setLength(0);
         return resultMap;
+    }
+
+
+    /**
+     * 从map中取值，如直接取为null尝试转换大写后再取，以支持ORACLE等大写命名数据库
+     * @param map
+     * @param key
+     * @return
+     */
+    public static Object getValueIgnoreKeyCase(Map<String, ?> map, String key){
+        if(map == null || key == null){
+            return null;
+        }
+        key = S.removeEsc(key);
+        if(map.containsKey(key)){
+            return map.get(key);
+        }
+        if(map.containsKey(key.toUpperCase())){
+            return map.get(key.toUpperCase());
+        }
+        return null;
     }
 
 }

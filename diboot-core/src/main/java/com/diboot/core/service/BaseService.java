@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.diboot.core.binding.binder.EntityBinder;
 import com.diboot.core.binding.binder.EntityListBinder;
 import com.diboot.core.binding.binder.FieldBinder;
@@ -192,6 +191,13 @@ public interface BaseService<T> {
     boolean deleteEntity(Serializable id);
 
     /**
+     * 根据主键撤销删除
+     * @param id
+     * @return
+     */
+    boolean cancelDeletedById(Serializable id);
+
+    /**
      * 按条件删除实体
      * @param queryWrapper
      * @return
@@ -307,6 +313,15 @@ public interface BaseService<T> {
      * @return
      */
     Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
+
+    /**
+     * 获取id-指定name的映射map
+     * @param entityIds
+     * @param getterFn
+     * @param <ID>
+     * @return
+     */
+    <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn);
 
     /**
      * 获取Map

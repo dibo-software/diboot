@@ -13,16 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.util;
+package diboot.core.test.binder.vo;
+
+import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.entity.Dictionary;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
- * 注解相关工具类
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/12/23
- * @see com.diboot.core.util.AnnotationUtils
+ * 数据字典的简化VO测试类
  */
-@Deprecated
-public class AnnotationUtils extends com.diboot.core.util.AnnotationUtils {
+@Getter
+@Setter
+@Accessors(chain = true)
+public class SimpleDictionaryVO {
+
+    private Long id;
+
+    private String type;
+
+    private String sortId;
+
+    @BindEntityList(entity= Dictionary.class, condition="this.type=type AND this.id=parent_id", orderBy = "sort_id:ASC")
+    private List<Dictionary> children;
 
 }

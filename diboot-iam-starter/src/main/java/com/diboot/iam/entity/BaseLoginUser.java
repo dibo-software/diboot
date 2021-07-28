@@ -18,6 +18,7 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.vo.KeyValue;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 可登录用户Base类定义
@@ -40,6 +41,13 @@ public abstract class BaseLoginUser extends BaseEntity {
     public abstract String getUserType();
 
     /**
+     * 附加对象，当前auth-token
+     */
+    @JsonIgnore
+    @TableField(exist = false)
+    private String authToken;
+
+    /**
      * 附加对象，用于岗位等扩展
       */
     @TableField(exist = false)
@@ -52,4 +60,14 @@ public abstract class BaseLoginUser extends BaseEntity {
         this.extentionObj = extentionObj;
     }
 
+    public String getAuthToken(){
+        return this.authToken;
+    }
+    public void setAuthToken(String authToken){
+        this.authToken = authToken;
+    }
+
+    public String toString(){
+        return this.authToken;
+    }
 }

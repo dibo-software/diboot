@@ -47,7 +47,7 @@ public class ExcelBindAnnoHandler {
     /**
      * 注解缓存
      */
-    private static Map<String, Map<String, Annotation>> MODEL_BINDANNO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Annotation>> MODEL_BINDANNO_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 获取字段-绑定注解之间的map

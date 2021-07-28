@@ -45,11 +45,24 @@ public class Encryptor {
 	/**
 	 * 加密Cipher缓存
  	 */
-	private static Map<String, Cipher> encryptorMap = new ConcurrentHashMap<>();
+	private static Map<String, Cipher> encryptorMap = null;
+	private static Map<String, Cipher> getEncryptorMap(){
+		if(encryptorMap == null){
+			encryptorMap = new ConcurrentHashMap<>();
+		}
+		return encryptorMap;
+	}
+
 	/**
 	 * 解密Cipher缓存
 	 */
-	private static Map<String, Cipher> decryptorMap = new ConcurrentHashMap<>();
+	private static Map<String, Cipher> decryptorMap = null;
+	private static Map<String, Cipher> getDecryptorMap(){
+		if(decryptorMap == null){
+			decryptorMap = new ConcurrentHashMap<>();
+		}
+		return decryptorMap;
+	}
 
 	/**
 	 * 加密字符串（可指定加密密钥）
@@ -102,13 +115,13 @@ public class Encryptor {
 	 */
 	private static Cipher getEncryptor(String key) throws Exception{
 		byte[] keyBytes = getKey(key);
-		Cipher encryptor = encryptorMap.get(new String(keyBytes));
+		Cipher encryptor = getEncryptorMap().get(new String(keyBytes));
 		if(encryptor == null){
 			SecretKeySpec skeyspec = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
 			encryptor = Cipher.getInstance(CIPHER_ALGORITHM);
 			encryptor.init(Cipher.ENCRYPT_MODE, skeyspec);
 			// 放入缓存
-			encryptorMap.put(key, encryptor);
+			getEncryptorMap().put(key, encryptor);
 		}
 		return encryptor;
 	}
@@ -121,13 +134,13 @@ public class Encryptor {
 	 */
 	private static Cipher getDecryptor(String key) throws Exception{
 		byte[] keyBytes = getKey(key);
-		Cipher decryptor = encryptorMap.get(new String(keyBytes));
+		Cipher decryptor = getDecryptorMap().get(new String(keyBytes));
 		if(decryptor == null){
 			SecretKeySpec skeyspec = new SecretKeySpec(keyBytes, KEY_ALGORITHM);
 			decryptor = Cipher.getInstance(CIPHER_ALGORITHM);
 			decryptor.init(Cipher.DECRYPT_MODE, skeyspec);
 			// 放入缓存
-			decryptorMap.put(key, decryptor);
+			getDecryptorMap().put(key, decryptor);
 		}
 		return decryptor;
 	}

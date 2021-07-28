@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
-import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -155,10 +154,16 @@ public class QueryBuilder {
                 continue;
             }
             Object value = entry.getValue();
-            // 处理空字符串""
-            if(value instanceof String && S.isEmpty((String)value)){
-                if(query != null && query.strategy().equals(Strategy.IGNORE_EMPTY_STRING)){
+            if(query != null && query.strategy().equals(Strategy.IGNORE_EMPTY)){
+                // 处理空字符串""
+                if(value instanceof String && S.isEmpty((String)value)){
                     continue;
+                }
+                if(value instanceof Collection){
+                    Collection valueList = (Collection)value;
+                    if(valueList.size() == 0){
+                        continue;
+                    }
                 }
             }
             // 对比类型
@@ -251,15 +256,20 @@ public class QueryBuilder {
                         }
                     }
                     // 支持逗号分隔的字符串
-                    else if(value instanceof String && ((String) value).contains(",")){
-                        Object[] valueArray = ((String) value).split(",");
+                    else if(value instanceof String && ((String) value).contains(Cons.SEPARATOR_COMMA)){
+                        Object[] valueArray = ((String) value).split(Cons.SEPARATOR_COMMA);
                         wrapper.between(columnName, valueArray[0], valueArray[1]);
                     }
                     else{
                         wrapper.ge(columnName, value);
                     }
                     break;
+                // 不等于
+                case NOT_EQ:
+                    wrapper.ne(columnName, value);
+                    break;
                 default:
+                    break;
             }
         }
         return wrapper;
@@ -297,7 +307,6 @@ public class QueryBuilder {
     private static <DTO> LinkedHashMap<String, Object> extractNotNullValues(DTO dto, Collection<String> fields){
         LinkedHashMap<String, Object> resultMap = new LinkedHashMap<>();
         Class<?> dtoClass = dto.getClass();
-
         // 转换
         List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
         for (Field field : declaredFields) {
@@ -328,7 +337,7 @@ public class QueryBuilder {
             } catch (IllegalAccessException e) {
                 log.error("通过反射获取属性值出错：{}", e.getMessage());
             } catch (NoSuchMethodException e) {
-                log.warn("通过反射获取属性方法不存在：{}", e.getMessage());
+                log.debug("通过反射获取属性方法不存在：{}", e.getMessage());
             } catch (InvocationTargetException e) {
                 log.warn("通过反射执行属性方法出错：{}", e.getMessage());
             }
