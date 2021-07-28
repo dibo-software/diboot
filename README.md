@@ -1,6 +1,6 @@
-> 从此告别常规SQL和CRUD了！ diboot新用户: [看视频快速了解diboot](https://www.bilibili.com/video/BV17V411r7Cc) 、 [手把手跟我来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、 
+> 用上diboot，告别常规SQL和CRUD，写的更少，性能更好！ 
 
-> [看diboot如何把关联查询性能提升10倍](https://www.bilibili.com/video/BV1tL411p7CD)
+> 新用户指南: [手把手来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17V411r7Cc) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
@@ -16,9 +16,9 @@
 
 ![diboot平台组成结构图](https://www.diboot.com/structure.png)
 
-> [spring cloud版本，移步这里->](https://github.com/dibo-software/diboot-cloud)
+> [diboot-cloud 微服务版本，看这里->](https://www.diboot.com/ent/service.html)
 
-> [diboot-workflow 工作流授权](https://www.diboot.com/ent/service.html)
+> [diboot-workflow 工作流版本，看这里->](https://www.diboot.com/ent/service.html)
 
 ## diboot基础组件
 ### 1、 diboot-core: 精简优化内核：写的更少，性能更好
@@ -28,7 +28,7 @@
 * 数据字典无SQL（注解自动绑定）
 * 跨表查询无SQL（自动构建QueryWrapper与查询）
 * BaseService扩展增强，支持常规的单表及关联开发场景接口
-* 其他常用工具类、状态码、异常处理的最佳实践封装
+* 其他常用工具类、状态码、异常处理的更优实践封装
 
 基于diboot-core的CRUD和常规关联的功能实现，代码量比传统Mybatis项目减少80%+，且性能更好更易维护。
 > 详细文档: [diboot-core文档](https://www.diboot.com/guide/diboot-core/%E7%AE%80%E4%BB%8B.html). 
@@ -36,18 +36,19 @@
 ### 2、IAM 身份认证基础组件 及 配套VUE前端框架（diboot-antd-admin、diboot-element-admin）
 
 * 开箱即用的RBAC角色权限模型与预置组织人员岗位模型
-* 基于JWT的认证授权，支持申请token、刷新token
+* 基于JWT的认证授权，支持申请token、刷新token、无状态认证
 * 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
-* 简化的Log注解记录操作日志
 * 自动提取需要验证的后端接口, 借助前端功能方便绑定前后端菜单按钮权限
-* 支持基于注解的数据权限实现
+* 无缝适配redis，引入redis依赖即可启用shiro的redis缓存
+* 支持基于注解的数据权限实现、简化的Log注解记录操作日志等
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
 > 详细文档: [diboot-iam文档](https://www.diboot.com/guide/diboot-iam/%E4%BB%8B%E7%BB%8D.html). 
 
 ### 3、diboot-file 文件相关处理组件
 
 * EasyExcel轻量封装，支持Java注解校验与@ExcelBind*注解实现字典及关联字段的name-value转换，并提供完善的校验错误提示
-* 封装常用的文件本地存储、上传下载、图片压缩水印等常用处理
+* 文件存储接口化，预置本地存储，简单扩展OSS、分布式存储等实现
+* 封装常用的文件上传下载、图片压缩水印等常用处理
 > 详细文档: [diboot-file文档](https://www.diboot.com/guide/diboot-file/%E4%BB%8B%E7%BB%8D.html). 
 
 ### 4、diboot-scheduler 定时任务组件
@@ -61,22 +62,18 @@
 * 支持多通道的消息通知发送
 
 ## devtools开发助理
+* 极简易用（引入依赖jar，配置参数后，即可随应用启动运行）
+* 功能强大（数据结构与代码同步、前后端代码一键生成、前端面板组件编排）
+* 配置灵活（可按需配置生成代码路径及启用`Lombok`、`Swagger`等）
+* 代码标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
+* 支持多库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
 
-* 使用很简单（UI界面操作，引入依赖配置参数后，即可随Spring boot/Spring cloud本地项目启动运行）
-* 功能很强大：
-    * 单表与关联场景CRUD导入导出的完整功能全自动生成，无需手写代码
-    * 结合前端面板组件编排能力，覆盖更多场景的自动化生成
-    * 数据结构变更与代码联动同步，自动记录变更SQL、维护索引
-    * 一键生成代码&非覆盖式更新本地后端代码
-* 配置很灵活（可按需配置生成代码路径，是否启用`Lombok`、`Swagger`等）
-* SQL与代码很标准（devtools标准化了数据结构定义与代码实现）
-* 支持多数据库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/%E4%BB%8B%E7%BB%8D.html). 
 
 ## 捐助支持
 <img src="https://www.diboot.com/wechat_donate.png" width = "200" height = "200" alt="捐助二维码" align=center />
 
-感谢所有捐助的朋友为开源事业的发展做出的努力。
+感谢每一位支持diboot的粉丝朋友。
 
 ## 技术交流
 如遇diboot相关技术问题，欢迎加群交流：
