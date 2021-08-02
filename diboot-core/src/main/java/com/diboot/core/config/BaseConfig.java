@@ -83,7 +83,7 @@ public class BaseConfig {
 	 */
 	public static int getCutLength(){
 		if(cutLength == null){
-			cutLength = PropertiesUtils.getInteger("diboot.core.cutLength");
+			cutLength = PropertiesUtils.getInteger("diboot.core.cut-length");
 			if(cutLength == null){
 				cutLength = 20;
 			}
@@ -98,7 +98,7 @@ public class BaseConfig {
 	 */
     public static int getPageSize() {
 		if(pageSize == null){
-			pageSize = PropertiesUtils.getInteger("diboot.core.pageSize");
+			pageSize = PropertiesUtils.getInteger("diboot.core.page-size");
 			if(pageSize == null){
 				pageSize = 20;
 			}
@@ -113,7 +113,7 @@ public class BaseConfig {
 	 */
 	public static int getBatchSize() {
 		if(batchSize == null){
-			batchSize = PropertiesUtils.getInteger("diboot.core.batchSize");
+			batchSize = PropertiesUtils.getInteger("diboot.core.batch-size");
 			if(batchSize == null){
 				batchSize = 1000;
 			}
