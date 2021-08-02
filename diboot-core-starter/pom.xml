@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>2.3.0</version>
+        <version>2.3.1</version>
     </parent>
 
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
     <packaging>jar</packaging>
     <description>diboot core starter project</description>
 
