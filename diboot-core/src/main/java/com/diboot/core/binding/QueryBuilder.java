@@ -141,12 +141,10 @@ public class QueryBuilder {
         // 构建QueryWrapper
         for(Map.Entry<String, Object> entry : fieldValuesMap.entrySet()){
             Field field = BeanUtils.extractField(dto.getClass(), entry.getKey());
-            //单表场景，忽略注解 @TableField(exist = false) 的字段
-            if(hasJoinTable == false){
-                TableField tableField = field.getAnnotation(TableField.class);
-                if(tableField != null && tableField.exist() == false){
-                    continue;
-                }
+            //忽略注解 @TableField(exist = false) 的字段
+            TableField tableField = field.getAnnotation(TableField.class);
+            if(tableField != null && tableField.exist() == false){
+                continue;
             }
             //忽略字段
             BindQuery query = field.getAnnotation(BindQuery.class);
