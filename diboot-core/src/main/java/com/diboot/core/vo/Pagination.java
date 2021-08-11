@@ -141,6 +141,7 @@ public class Pagination implements Serializable {
             // orderBy=shortName:DESC,age:ASC,birthdate
             String[] orderByFields = S.split(this.orderBy);
             for (String field : orderByFields) {
+                V.securityCheck(field);
                 if (field.contains(":")) {
                     String[] fieldAndOrder = S.split(field, ":");
                     String fieldName = fieldAndOrder[0];
