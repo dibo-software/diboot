@@ -86,15 +86,25 @@ public class DefaultExceptionHandler {
         else{
             map = new HashMap<>();
             map.put("code", status.value());
-            String msg = e.getMessage();
-            //空指针异常
-            if(msg == null){
-                msg = e.getClass().getSimpleName();
-            }
+            String msg = buildMsg(status, e);
             map.put("msg", msg);
         }
         log.warn("请求处理异常", e);
         return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 构建 response msg 内容
+     * @param status
+     * @param e
+     * @return
+     */
+    protected String buildMsg(HttpStatus status, Exception e){
+        String msg = status.getReasonPhrase();
+        if(msg == null){
+            msg = status.name();
+        }
+        return msg;
     }
 
     /**
