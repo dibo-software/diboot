@@ -111,6 +111,8 @@ public class VTest {
         Assert.assertTrue(isValidCol);
         isValidCol = V.isValidSqlParam("birth_date");
         Assert.assertTrue(isValidCol);
+        isValidCol = V.isValidSqlParam("self.id:DESC");
+        Assert.assertTrue(isValidCol);
     }
 
 }

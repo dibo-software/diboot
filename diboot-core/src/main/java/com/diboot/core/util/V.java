@@ -238,7 +238,7 @@ public class V {
 	 * @param columnStr
 	 * @return
 	 */
-	private static Pattern pattern = Pattern.compile("^[A-Za-z_][\\w:]*$");
+	private static Pattern pattern = Pattern.compile("^[A-Za-z_][\\w.:]*$");
 	public static boolean isValidSqlParam(String columnStr){
 		if(isEmpty(columnStr)){
 			return true;
