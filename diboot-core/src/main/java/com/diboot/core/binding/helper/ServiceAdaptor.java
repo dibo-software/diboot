@@ -150,7 +150,7 @@ public class ServiceAdaptor {
         }
         Map<String, Field> fieldsMap = BindingCacheManager.getFieldsMap(voClass);
         for(TableFieldInfo col : allColumns){
-            if(fieldsMap.containsKey(col.getField().getName()) && V.notEmpty(col.getColumn())){
+            if(fieldsMap.containsKey(col.getField().getName()) && V.notEmpty(col.getColumn()) && !col.isLogicDelete()){
                 columns.add(col.getSqlSelect());
             }
         }
