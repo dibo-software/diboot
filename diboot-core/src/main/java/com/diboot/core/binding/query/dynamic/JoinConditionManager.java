@@ -178,28 +178,29 @@ public class JoinConditionManager extends BaseConditionManager {
      * @return
      */
     private static String formatColumn(Expression expression, AnnoJoiner joiner){
+        if(expression instanceof Column == false){
+            return expression.toString();
+        }
+        // 其他表列
         String annoColumn = S.toSnakeCase(expression.toString());
-        if(expression instanceof Column){
-            // 其他表列
-            if(annoColumn.contains(".")){
-                String tableName = S.substringBefore(annoColumn, ".");
-                // 当前表替换别名
-                if(tableName.equals("this")){
-                    annoColumn = "self." + S.substringAfter(annoColumn, "this.");
-                }
-                else if(tableName.equals("self")){
-                }
-                else if(tableName.equals(joiner.getMiddleTable())){
-                    annoColumn = joiner.getMiddleTableAlias() + "." + S.substringAfter(annoColumn, ".");
-                }
-                else{
-                    log.warn("无法识别的条件: {}", annoColumn);
-                }
+        if(annoColumn.contains(".")){
+            String tableName = S.substringBefore(annoColumn, ".");
+            // 当前表替换别名
+            if(tableName.equals("this")){
+                annoColumn = "self." + S.substringAfter(annoColumn, "this.");
             }
-            // 当前表列
+            else if(tableName.equals("self")){
+            }
+            else if(tableName.equals(joiner.getMiddleTable())){
+                annoColumn = joiner.getMiddleTableAlias() + "." + S.substringAfter(annoColumn, ".");
+            }
             else{
-                annoColumn = joiner.getAlias() + "." + annoColumn;
+                log.warn("无法识别的条件: {}", annoColumn);
             }
+        }
+        // 当前表列
+        else{
+            annoColumn = joiner.getAlias() + "." + annoColumn;
         }
         return annoColumn;
     }
