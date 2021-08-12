@@ -147,7 +147,7 @@ public class DynamicSqlProvider {
             if(i>0){
                 sb.append(Cons.SEPARATOR_COMMA);
             }
-            sb.append("self."+S.toSnakeCase(column));
+            sb.append("self."+column);
         }
         return sb.toString();
     }
