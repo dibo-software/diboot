@@ -41,7 +41,7 @@ public class FileHelper{
 	/**
 	 * file验证
 	 */
-	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe","bat","bin","dll","sh","php","pl","cgi","asp","aspx","jsp","php5","php4","php3","htm","html");
+	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe","bat","bin","dll","sh","php","pl","py","cgi","asp","aspx","jsp","php5","php4","php3","js","htm","html","go");
 
 	/**
 	 * excel格式

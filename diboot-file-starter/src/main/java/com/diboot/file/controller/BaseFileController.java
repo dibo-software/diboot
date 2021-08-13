@@ -57,9 +57,9 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 合法的文件后缀
      */
-    private static final List<String> VALID_FILE_EXTS = Arrays.asList(
-            "xls","xlsx","xlsm","doc","docx","dot","ppt","pptx","pdf","css","dtd","txt",
+    protected static List<String> VALID_FILE_EXTS = Arrays.asList(
             "gif","ico","jpeg","jpg","png","tif","bmp","gif","webp",
+            "csv", "xls","xlsx","xlsm","doc","docx","dot","ppt","pptx","pdf","css","dtd","txt",
             "mp3","mp4","wav","avi","wma","wsdl","xml","xsd","xsl","rar","zip","7z");
 
     /***
@@ -88,7 +88,7 @@ public abstract class BaseFileController extends BaseController {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的文件！");
         }
         String originFileName = file.getOriginalFilename();
-        if (V.isEmpty(originFileName) || !isValidFileExt(originFileName)) {
+        if (V.isEmpty(originFileName) || !isValidFileExt(file)) {
             log.debug("非法的文件类型: " + originFileName);
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的文件格式！");
         }
@@ -107,14 +107,17 @@ public abstract class BaseFileController extends BaseController {
 
     /**
      * 是否为合法的文件后缀
-     * @param originFileName
+     * @param file
      * @return
      */
-    protected boolean isValidFileExt(String originFileName){
-        if(V.isEmpty(originFileName)){
+    protected boolean isValidFileExt(MultipartFile file){
+        if(file == null){
+            return true;
+        }
+        if(V.isEmpty(file.getOriginalFilename())){
             return false;
         }
-        String ext = S.substringAfterLast(originFileName, ".");
+        String ext = S.substringAfterLast(file.getOriginalFilename(), ".");
         return VALID_FILE_EXTS.contains(ext);
     }
 
@@ -152,8 +155,9 @@ public abstract class BaseFileController extends BaseController {
         if(uploadFileFormDTO == null || uploadFileFormDTO.getFile() == null) {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的文件！");
         }
-        String originFileName = uploadFileFormDTO.getFile().getOriginalFilename();
-        if (V.isEmpty(originFileName) || !FileHelper.isValidFileExt(originFileName)) {
+        MultipartFile file = uploadFileFormDTO.getFile();
+        String originFileName = file.getOriginalFilename();
+        if (V.isEmpty(originFileName) || !isValidFileExt(file)) {
             log.debug("非法的文件类型: " + originFileName);
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的文件格式！");
         }
