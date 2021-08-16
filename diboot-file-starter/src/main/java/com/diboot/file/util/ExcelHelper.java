@@ -216,8 +216,8 @@ public class ExcelHelper {
             log.error("下载文件失败：", e);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.setHeader("err-code", String.valueOf(Status.FAIL_OPERATION.code()));
-            response.setHeader("err-msg", URLEncoder.encode("下载文件失败", StandardCharsets.UTF_8.name()));
+            response.setHeader("code", String.valueOf(Status.FAIL_OPERATION.code()));
+            response.setHeader("msg", URLEncoder.encode("下载文件失败", StandardCharsets.UTF_8.name()));
         }
     }
 
@@ -234,8 +234,8 @@ public class ExcelHelper {
         fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
         response.setHeader("Content-disposition", "attachment; filename=" + fileName);
         response.setHeader("filename", fileName);
-        response.setHeader("err-code", String.valueOf(Status.OK.code()));
-        response.setHeader("err-msg", URLEncoder.encode("操作成功", StandardCharsets.UTF_8.name()));
+        response.setHeader("code", String.valueOf(Status.OK.code()));
+        response.setHeader("msg", URLEncoder.encode("操作成功", StandardCharsets.UTF_8.name()));
     }
 
     /**
