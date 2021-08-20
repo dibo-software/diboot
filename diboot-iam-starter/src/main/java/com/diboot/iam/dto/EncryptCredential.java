@@ -1,10 +1,7 @@
 package com.diboot.iam.dto;
 
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.handler.IEncryptorHandler;
-import com.diboot.core.util.BeanUtils;
+import com.diboot.core.protect.encryptor.IEncryptStrategy;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -41,7 +38,7 @@ public class EncryptCredential implements Serializable {
      *
      * @return
      */
-    public <T extends AuthCredential> T getAuthCredential(IEncryptorHandler encryptorHandler, Class<? extends AuthCredential> authCredentialCls) {
+    public <T extends AuthCredential> T getAuthCredential(IEncryptStrategy encryptorHandler, Class<? extends AuthCredential> authCredentialCls) {
         try {
             String decryptContent = encryptorHandler.decrypt(ciphertext);
             T result = (T) JSON.parseObject(decryptContent, authCredentialCls);
