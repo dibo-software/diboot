@@ -100,6 +100,8 @@ public class HttpHelper {
         put("xsl", "text/xml");
         put("xslt", "text/xml");
         put("apk", "application/vnd.android.package-archive");
+        put("zip", "application/x-zip-compressed");
+        put("rar", "application/octet-stream");
     }};
 
     /**
