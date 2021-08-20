@@ -42,7 +42,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface ProtectField {
     /**
-     * 加密算法
+     * 加密策略
      */
     Class<? extends IEncryptStrategy> encryptor() default DefaultEncryptStrategy.class;
 
