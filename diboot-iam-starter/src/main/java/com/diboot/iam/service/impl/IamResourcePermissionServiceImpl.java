@@ -339,7 +339,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         if (V.notEmpty(deleteIdList)){
             LambdaQueryWrapper deleteWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
                     .in(IamResourcePermission::getId, deleteIdList);
-            int count = this.getEntityListCount(deleteWrapper);
+            long count = this.getEntityListCount(deleteWrapper);
             if (count > 0) {
                 this.deleteEntities(deleteWrapper);
                 log.info("共清理掉{}条无用数据", count);

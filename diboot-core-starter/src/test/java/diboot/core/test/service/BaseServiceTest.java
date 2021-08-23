@@ -73,7 +73,7 @@ public class BaseServiceTest {
     @Test
     public void testGet(){
         // 查询总数
-        int count = dictionaryService.getEntityListCount(null);
+        long count = dictionaryService.getEntityListCount(null);
         Assert.assertTrue(count > 0);
         // 查询list
         List<Dictionary> dictionaryList = dictionaryService.getEntityList(null);

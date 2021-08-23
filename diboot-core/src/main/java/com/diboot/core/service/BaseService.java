@@ -217,7 +217,7 @@ public interface BaseService<T> {
      * 获取符合条件的entity记录总数
      * @return
      */
-    int getEntityListCount(Wrapper queryWrapper);
+    long getEntityListCount(Wrapper queryWrapper);
 
     /**
      * 获取指定条件的Entity集合

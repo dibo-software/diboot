@@ -86,7 +86,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
         LambdaQueryWrapper deleteWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId);
-        int count = iamUserPositionMapper.selectCount(deleteWrapper);
+        long count = iamUserPositionMapper.selectCount(deleteWrapper);
         if (count > 0) {
             iamUserPositionMapper.delete(deleteWrapper);
         }
