@@ -71,6 +71,18 @@ public class IamSecurityUtils extends SecurityUtils {
     }
 
     /**
+     * 获取用户 "ID" 的值
+     * @return
+     */
+    public static Long getCurrentUserId(){
+        BaseLoginUser user = getCurrentUser();
+        if(user == null){
+            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "用户token已失效！");
+        }
+        return user.getId();
+    }
+
+    /**
      * 获取用户 "类型:ID" 的值
      * @return
      */
