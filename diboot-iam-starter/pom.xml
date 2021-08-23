@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.6</version>
+            <version>1.9.7</version>
         </dependency>
 
         <!-- redis可选依赖 -->
