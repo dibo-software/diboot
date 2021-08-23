@@ -16,6 +16,7 @@
 package com.diboot.core.handler;
 
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
@@ -81,6 +82,14 @@ public class DefaultExceptionHandler {
         }
         else if(e.getCause() instanceof BusinessException){
             BusinessException be = (BusinessException)e.getCause();
+            map = be.toMap();
+        }
+        else if(e instanceof InvalidUsageException){
+            InvalidUsageException be = (InvalidUsageException)e.getCause();
+            map = be.toMap();
+        }
+        else if(e.getCause() instanceof InvalidUsageException){
+            InvalidUsageException be = (InvalidUsageException)e.getCause();
             map = be.toMap();
         }
         else{
