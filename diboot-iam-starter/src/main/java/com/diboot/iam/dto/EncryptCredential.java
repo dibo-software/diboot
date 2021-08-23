@@ -38,9 +38,9 @@ public class EncryptCredential implements Serializable {
      *
      * @return
      */
-    public <T extends AuthCredential> T getAuthCredential(IEncryptStrategy encryptorHandler, Class<? extends AuthCredential> authCredentialCls) {
+    public <T extends AuthCredential> T getAuthCredential(IEncryptStrategy encryptor, Class<? extends AuthCredential> authCredentialCls) {
         try {
-            String decryptContent = encryptorHandler.decrypt(ciphertext);
+            String decryptContent = encryptor.decrypt(ciphertext);
             T result = (T) JSON.parseObject(decryptContent, authCredentialCls);
             String errMsg = V.validateBean(result);
             if (V.notEmpty(errMsg)) {
