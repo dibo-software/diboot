@@ -20,11 +20,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 
@@ -142,7 +141,7 @@ public class ParserCache {
     public static BaseMapper getMapperInstance(Class<?> entityClass){
         BaseMapper mapper = BindingCacheManager.getMapperByClass(entityClass);
         if(mapper == null){
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "未找到 "+entityClass.getName()+" 的Mapper定义！");
+            throw new InvalidUsageException("未找到 "+entityClass.getName()+" 的Mapper定义！");
         }
         return mapper;
     }

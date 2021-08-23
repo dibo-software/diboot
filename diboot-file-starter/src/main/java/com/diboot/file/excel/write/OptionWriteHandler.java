@@ -19,13 +19,12 @@ import com.alibaba.excel.util.ClassUtils;
 import com.alibaba.excel.write.handler.AbstractSheetWriteHandler;
 import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.metadata.holder.WriteWorkbookHolder;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
-import com.diboot.core.vo.Status;
 import com.diboot.file.excel.annotation.ExcelOption;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.DataValidation;
@@ -130,7 +129,7 @@ public class OptionWriteHandler extends AbstractSheetWriteHandler {
     private String[] getDictOptions(String dictType) {
         DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
         if (bindDictService == null) {
-            throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "DictionaryService未实现，@ExcelOption无法关联字典！");
+            throw new InvalidUsageException("DictionaryService未实现，@ExcelOption无法关联字典！");
         }
         String[] options = bindDictService.getKeyValueList(dictType).stream().map(KeyValue::getK).toArray(String[]::new);
         if (V.isEmpty(options)) {

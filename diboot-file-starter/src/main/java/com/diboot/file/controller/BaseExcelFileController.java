@@ -17,6 +17,7 @@ package com.diboot.file.controller;
 
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -90,7 +91,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
      */
     public <T> JsonResult excelPreviewSave(Class<T> entityClass, String previewFileName, String originFileName) throws Exception {
         if (V.isEmpty(previewFileName) || V.isEmpty(originFileName)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "预览保存失败，参数 tempFileName 或 originFileName 未指定！");
+            throw new InvalidUsageException("预览保存失败，参数 tempFileName 或 originFileName 未指定！");
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
@@ -117,7 +118,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
      */
     public <T> JsonResult excelPreviewSave(UploadFileFormDTO uploadFileFormDTO, String previewFileName, String originFileName) throws Exception {
         if (V.isEmpty(previewFileName) || V.isEmpty(originFileName)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "预览保存失败，参数 tempFileName 或 originFileName 未指定！");
+            throw new InvalidUsageException("预览保存失败，参数 tempFileName 或 originFileName 未指定！");
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);

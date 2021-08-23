@@ -16,6 +16,7 @@
 package com.diboot.message.service.impl;
 
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -73,7 +74,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         ChannelStrategy channelStrategy = channelStrategyMap.get(message.getChannel());
         if (V.isEmpty(channelStrategy)) {
             log.error("[获取发送通道失败]，当前发送通道为：{}", message.getChannel());
-            throw new BusinessException(Status.FAIL_OPERATION, "获取发送通道失败!");
+            throw new InvalidUsageException("获取发送通道失败! " +  message.getChannel());
         }
         try {
             // 设置模版内容

@@ -16,10 +16,9 @@
 package com.diboot.core.binding.query.dynamic;
 
 import com.diboot.core.binding.parser.BaseConditionManager;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -47,7 +46,7 @@ public class JoinConditionManager extends BaseConditionManager {
         List<Expression> expressionList = getExpressionList(joiner.getCondition());
         if(V.isEmpty(expressionList)){
             log.warn("无法解析注解条件: {} ", joiner.getCondition());
-            throw new BusinessException(Status.FAIL_VALIDATION);
+            throw new InvalidUsageException("无法解析注解条件: " + joiner.getCondition());
         }
         // 解析中间表关联
         String tableName = extractMiddleTableName(expressionList);

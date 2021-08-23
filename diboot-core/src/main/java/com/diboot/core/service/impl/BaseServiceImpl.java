@@ -43,6 +43,7 @@ import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
@@ -279,7 +280,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 													  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList)
 	{
 		if(driverId == null){
-			throw new BusinessException(Status.FAIL_INVALID_PARAM, "主动ID值不能为空！");
+			throw new InvalidUsageException("主动ID值不能为空！");
 		}
 		// 从getter中获取class和fieldName
 		LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
@@ -447,7 +448,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public int getEntityListCount(Wrapper queryWrapper) {
+	public long getEntityListCount(Wrapper queryWrapper) {
 		return super.count(queryWrapper);
 	}
 

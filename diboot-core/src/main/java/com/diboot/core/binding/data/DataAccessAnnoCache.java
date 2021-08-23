@@ -16,10 +16,9 @@
 package com.diboot.core.binding.data;
 
 import com.diboot.core.binding.QueryBuilder;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -88,7 +87,7 @@ public class DataAccessAnnoCache {
                 for(Field fld : fieldList){
                     DataAccessCheckpoint checkpoint = fld.getAnnotation(DataAccessCheckpoint.class);
                     if(V.notEmpty(results[checkpoint.type().index()])){
-                        throw new BusinessException(Status.FAIL_VALIDATION, entityDto.getSimpleName() + "中DataPermissionCheckpoint同类型注解重复！");
+                        throw new InvalidUsageException(entityDto.getSimpleName() + "中DataPermissionCheckpoint同类型注解重复！");
                     }
                     results[checkpoint.type().index()] = QueryBuilder.getColumnName(fld);
                 }

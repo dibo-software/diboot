@@ -25,14 +25,13 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.DynamicQueryMapper;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
-import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -101,7 +100,7 @@ public class JoinsBinder {
                 return ServiceAdaptor.queryList(iService, (QueryWrapper)queryWrapper, pagination, entityClazz);
             }
             else{
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
+                throw new InvalidUsageException("单表查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
             }
         }
         long begin = System.currentTimeMillis();

@@ -22,7 +22,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
@@ -87,7 +87,7 @@ public class MiddleTable {
             branchObjColMapping = new LinkedHashMap<>(8);
         }
         else if(branchObjColMapping.size() >= 1){
-            throw new BusinessException(BaseBinder.NOT_SUPPORT_MSG);
+            throw new InvalidUsageException(BaseBinder.NOT_SUPPORT_MSG);
         }
         branchObjColMapping.put(middleTableCol, branchObjCol);
         return this;

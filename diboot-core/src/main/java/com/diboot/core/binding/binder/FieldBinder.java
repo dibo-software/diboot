@@ -17,7 +17,7 @@ package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.config.Cons;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
         }
         else{
             if(refObjJoinCols.size() > 1){
-                throw new BusinessException(NOT_SUPPORT_MSG);
+                throw new InvalidUsageException(NOT_SUPPORT_MSG);
             }
             // 提取注解条件中指定的对应的列表
             Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();

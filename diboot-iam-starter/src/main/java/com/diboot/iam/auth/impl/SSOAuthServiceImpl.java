@@ -18,6 +18,7 @@ package com.diboot.iam.auth.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -65,7 +66,7 @@ public class SSOAuthServiceImpl implements AuthService {
             this.casUrlPrefix = BaseConfig.getProperty("cas.server-url-prefix");
         }
         if(V.isEmpty(this.casUrlPrefix)){
-            throw new BusinessException("未配置cas参数: cas.server-url-prefix");
+            throw new InvalidUsageException("未配置cas参数: cas.server-url-prefix");
         }
         if(!this.casUrlPrefix.endsWith("/")){
             this.casUrlPrefix += "/";

@@ -21,6 +21,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
+import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
@@ -162,6 +163,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     public void visit(OrExpression orExpression) {
         addError("暂不支持 OR 关联条件");
     }
+
+    @Override
+    public void visit(XorExpression xorExpression) {
+        addError("暂不支持 XOR 关联条件");
+    }
+
     // ------ 忽略的条件
     @Override
     public void visit(Column tableColumn) {
@@ -259,6 +266,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(RowConstructor rowConstructor) {
     }
+
+    @Override
+    public void visit(RowGetExpression rowGetExpression) {
+
+    }
+
     @Override
     public void visit(OracleHint hint) {
     }
@@ -289,11 +302,21 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
 
     @Override
+    public void visit(ArrayConstructor arrayConstructor) {
+
+    }
+
+    @Override
     public void visit(VariableAssignment variableAssignment) {
     }
 
     @Override
     public void visit(XMLSerializeExpr xmlSerializeExpr) {
+    }
+
+    @Override
+    public void visit(TimezoneExpression timezoneExpression) {
+
     }
 
     @Override
