@@ -17,6 +17,7 @@ package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.diboot.core.protect.encryptor.ProtectInterceptor;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -105,6 +107,17 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
+    }
+
+    /**
+     * 数据保护拦截器
+     * <p>
+     * 默认不注入，diboot.core.enable-data-protect=true可开启
+     */
+    @Bean
+    @ConditionalOnProperty(prefix = "diboot.core", name = "enable-data-protect", havingValue = "true")
+    public ProtectInterceptor protectInterceptor() {
+        return new ProtectInterceptor();
     }
 
     /**

@@ -37,6 +37,10 @@ public class CoreProperties {
      * 是否初始化，默认true自动安装SQL
      */
     private boolean initSql = true;
+    /**
+     * 启用数据保护，默认false关闭
+     */
+    private boolean enableDataProtect = false;
 
     public boolean isInitSql() {
         return initSql;
@@ -62,4 +66,11 @@ public class CoreProperties {
         return pageSize;
     }
 
+    public boolean isEnableDataProtect() {
+        return enableDataProtect;
+    }
+
+    public void setEnableDataProtect(boolean enableDataProtect) {
+        this.enableDataProtect = enableDataProtect;
+    }
 }

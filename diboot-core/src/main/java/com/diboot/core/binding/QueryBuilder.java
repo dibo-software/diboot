@@ -29,7 +29,9 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
+import com.diboot.core.protect.encryptor.IEncryptStrategy;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.PropertiesUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
@@ -49,6 +51,7 @@ import java.util.*;
  */
 public class QueryBuilder {
     private static Logger log = LoggerFactory.getLogger(QueryBuilder.class);
+    private static final boolean ENABLE_DATA_PROTECT = PropertiesUtils.getBoolean("diboot.core.enable-data-protect");
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
@@ -164,12 +167,18 @@ public class QueryBuilder {
                     }
                 }
             }
+            IEncryptStrategy encryptor = ENABLE_DATA_PROTECT ? ParserCache.getFieldEncryptorMap(dto.getClass()).get(entry.getKey()) : null;
+            if (encryptor != null) {
+                value = encryptor.encrypt((String) value);
+            }
             // 对比类型
             Comparison comparison = Comparison.EQ;
             // 转换条件
             String columnName = getColumnName(field);
-            if(query != null){
-                comparison = query.comparison();
+            if (query != null) {
+                if (encryptor == null) {
+                    comparison = query.comparison();
+                }
                 AnnoJoiner annoJoiner = ParserCache.getAnnoJoiner(dto.getClass(), entry.getKey());
                 if(annoJoiner != null && V.notEmpty(annoJoiner.getJoin())){
                     // 获取注解Table
