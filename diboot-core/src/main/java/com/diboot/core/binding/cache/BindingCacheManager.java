@@ -198,7 +198,7 @@ public class BindingCacheManager {
      * @return
      */
     public static List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
-        String key = S.join(beanClazz.getName(), annotation.getClass().getName());
+        String key = S.join(beanClazz.getName(), annotation.getName());
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
         if(fields == null){
             fields = initClassFields(beanClazz, annotation);
