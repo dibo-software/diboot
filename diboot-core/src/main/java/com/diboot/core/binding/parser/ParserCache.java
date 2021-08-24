@@ -21,12 +21,17 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.protect.annotation.ProtectField;
+import com.diboot.core.protect.encryptor.IEncryptStrategy;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import javax.lang.model.type.NullType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -50,6 +55,14 @@ public class ParserCache {
      * dto类-BindQuery注解的缓存
      */
     private static final Map<String, List<AnnoJoiner>> dtoClassBindQueryCacheMap = new ConcurrentHashMap<>();
+    /**
+     * 加密字段缓存
+     */
+    private static final Map<String, Map<String, IEncryptStrategy>> FIELD_ENCRYPTOR_MAP = new ConcurrentHashMap<>();
+    /**
+     * 加密器对象缓存
+     */
+    private static final Map<String, IEncryptStrategy> ENCRYPTOR_MAP = new ConcurrentHashMap<>();
 
     /**
      * 获取指定class对应的Bind相关注解
@@ -254,6 +267,62 @@ public class ParserCache {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取加密器对象
+     *
+     * @param clazz 加密器类型
+     * @return 加密器对象
+     */
+    @NonNull
+    public static IEncryptStrategy getEncryptor(@NonNull Class<? extends IEncryptStrategy> clazz) {
+        return ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
+            IEncryptStrategy encryptor = ContextHelper.getBean(clazz);
+            if (encryptor == null) {
+                try {
+                    encryptor = clazz.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    log.error("{} 初始化失败", clazz, e);
+                }
+            }
+            return Objects.requireNonNull(encryptor);
+        });
+    }
+
+    /**
+     * 获取该类保护字段加密器Map
+     *
+     * @param clazz 类型
+     * @return 非null，Map<字段名，加密器>
+     */
+    @NonNull
+    public static Map<String, IEncryptStrategy> getFieldEncryptorMap(@NonNull Class<?> clazz) {
+        return FIELD_ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
+            Map<String, IEncryptStrategy> fieldEncryptorMap = new HashMap<>();
+            for (Field field : BeanUtils.extractFields(clazz, ProtectField.class)) {
+                if (!field.getType().isAssignableFrom(String.class)) {
+                    log.error("`@ProtectField` 仅支持 String 类型字段。");
+                    continue;
+                }
+                ProtectField protect = field.getAnnotation(ProtectField.class);
+                IEncryptStrategy encryptor = getEncryptor(protect.encryptor());
+                fieldEncryptorMap.put(field.getName(), encryptor);
+            }
+            for (Field field : BeanUtils.extractFields(clazz, BindQuery.class)) {
+                if (!field.getType().isAssignableFrom(String.class)) {
+                    continue;
+                }
+                BindQuery query = field.getAnnotation(BindQuery.class);
+                if (query != null && V.notEmpty(query.field()) && query.entity() != NullType.class) {
+                    IEncryptStrategy encryptor = getFieldEncryptorMap(query.entity()).get(query.field());
+                    if (encryptor != null) {
+                        fieldEncryptorMap.put(field.getName(), encryptor);
+                    }
+                }
+            }
+            return fieldEncryptorMap.isEmpty() ? Collections.emptyMap() : fieldEncryptorMap;
+        });
     }
 
 }
