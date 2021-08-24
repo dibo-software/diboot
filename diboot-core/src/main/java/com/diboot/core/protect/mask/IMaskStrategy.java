@@ -30,14 +30,4 @@ public interface IMaskStrategy {
      * @return 脱敏之后的字符串
      */
     String mask(String content);
-
-    /**
-     * 是否为脱敏值
-     * <p>
-     * 如果是脱敏值将不会跟新至数据库
-     *
-     * @param content 字符串
-     * @return 是脱敏值返回true
-     */
-    boolean isMasked(String content);
 }

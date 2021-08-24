@@ -44,9 +44,4 @@ public class DefaultMaskStrategy implements IMaskStrategy {
                 return S.replace(content, 0, length - 4, '*');
         }
     }
-
-    @Override
-    public boolean isMasked(String str) {
-        return str.contains("*");
-    }
 }
