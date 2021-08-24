@@ -77,7 +77,11 @@ public class Cons {
         /**
          * 创建人
          */
-        createBy
+        createBy,
+        /**
+         * 更新人
+         */
+        updateBy
     }
 
     /**
