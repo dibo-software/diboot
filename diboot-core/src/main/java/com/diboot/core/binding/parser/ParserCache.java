@@ -23,6 +23,7 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.protect.annotation.ProtectField;
 import com.diboot.core.protect.encryptor.IEncryptStrategy;
+import com.diboot.core.protect.mask.IMaskStrategy;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -63,6 +64,10 @@ public class ParserCache {
      * 加密器对象缓存
      */
     private static final Map<String, IEncryptStrategy> ENCRYPTOR_MAP = new ConcurrentHashMap<>();
+    /**
+     * 脱敏策略对象缓存
+     */
+    private static final Map<String, IMaskStrategy> MASK_STRATEGY_MAP = new ConcurrentHashMap<>();
 
     /**
      * 获取指定class对应的Bind相关注解
@@ -325,4 +330,24 @@ public class ParserCache {
         });
     }
 
+    /**
+     * 获取脱敏策略对象
+     *
+     * @param clazz 脱敏策略类型
+     * @return 脱敏策略对象
+     */
+    @NonNull
+    public static IMaskStrategy getMaskStrategy(@NonNull Class<? extends IMaskStrategy> clazz) {
+        return MASK_STRATEGY_MAP.computeIfAbsent(clazz.getName(), k -> {
+            IMaskStrategy maskStrategy = ContextHelper.getBean(clazz);
+            if (maskStrategy == null) {
+                try {
+                    maskStrategy = clazz.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    log.error("{} 初始化失败", clazz, e);
+                }
+            }
+            return Objects.requireNonNull(maskStrategy);
+        });
+    }
 }
