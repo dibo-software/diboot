@@ -76,10 +76,7 @@ public class IamSecurityUtils extends SecurityUtils {
      */
     public static Long getCurrentUserId(){
         BaseLoginUser user = getCurrentUser();
-        if(user == null){
-            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "用户token已失效！");
-        }
-        return user.getId();
+        return user != null? user.getId() : null;
     }
 
     /**
@@ -89,7 +86,7 @@ public class IamSecurityUtils extends SecurityUtils {
     public static String getUserTypeAndId(){
         BaseLoginUser user = getCurrentUser();
         if(user == null){
-            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "用户token已失效！");
+            return null;
         }
         return S.join(user.getClass().getSimpleName(), Cons.SEPARATOR_COLON, user.getId());
     }
