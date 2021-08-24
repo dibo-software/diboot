@@ -16,7 +16,6 @@
 package com.diboot.core.protect.encryptor;
 
 import com.diboot.core.util.Encryptor;
-import org.springframework.stereotype.Component;
 
 /**
  * 加密算法默认实现
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
  * @version v2.3.1
  * @date 2021/08/19
  */
-@Component
 public class DefaultEncryptStrategy implements IEncryptStrategy {
 
     @Override

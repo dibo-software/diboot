@@ -16,7 +16,6 @@
 package com.diboot.core.protect.mask;
 
 import com.diboot.core.util.S;
-import org.springframework.stereotype.Component;
 
 /**
  * 脱敏策略默认实现
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
  * @version v2.3.1
  * @date 2021/08/19
  */
-@Component
 public class DefaultMaskStrategy implements IMaskStrategy {
 
     @Override
