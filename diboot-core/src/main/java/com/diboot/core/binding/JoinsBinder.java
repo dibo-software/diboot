@@ -27,10 +27,7 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.DynamicQueryMapper;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.Pagination;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +42,8 @@ import java.util.*;
  */
 @Slf4j
 public class JoinsBinder {
+
+    private static final boolean ENABLE_DATA_PROTECT = PropertiesUtils.getBoolean("diboot.core.enable-data-protect");
 
     /**
      * 关联查询一条数据
@@ -162,6 +161,12 @@ public class JoinsBinder {
             try{
                 E entityInst = entityClazz.newInstance();
                 BeanUtils.bindProperties(entityInst, fieldValueMap);
+                if (ENABLE_DATA_PROTECT) {
+                    ParserCache.getFieldEncryptorMap(entityClazz).forEach((k, v) -> {
+                        String value = BeanUtils.getStringProperty(entityInst, k);
+                        BeanUtils.setProperty(entityInst, k, value == null ? null : v.decrypt(value));
+                    });
+                }
                 entityList.add(entityInst);
             }
             catch (Exception e){
