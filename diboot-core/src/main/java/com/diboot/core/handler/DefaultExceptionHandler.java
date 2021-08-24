@@ -77,20 +77,16 @@ public class DefaultExceptionHandler {
         HttpStatus status = getStatus(request);
         Map<String, Object> map = null;
         if(e instanceof BusinessException){
-            BusinessException be = (BusinessException)e;
-            map = be.toMap();
+            map = ((BusinessException)e).toMap();
         }
         else if(e.getCause() instanceof BusinessException){
-            BusinessException be = (BusinessException)e.getCause();
-            map = be.toMap();
+            map = ((BusinessException)e.getCause()).toMap();
         }
         else if(e instanceof InvalidUsageException){
-            InvalidUsageException be = (InvalidUsageException)e.getCause();
-            map = be.toMap();
+            map = ((InvalidUsageException)e).toMap();
         }
         else if(e.getCause() instanceof InvalidUsageException){
-            InvalidUsageException be = (InvalidUsageException)e.getCause();
-            map = be.toMap();
+            map = ((InvalidUsageException)e.getCause()).toMap();
         }
         else{
             map = new HashMap<>();
@@ -133,5 +129,4 @@ public class DefaultExceptionHandler {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
-
 }
