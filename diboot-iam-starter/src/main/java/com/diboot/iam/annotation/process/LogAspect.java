@@ -30,6 +30,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -222,7 +223,8 @@ public class LogAspect {
         if(arg instanceof InputStreamSource
             || S.containsIgnoreCase(arg.getClass().getName(), "multipart")
             || arg instanceof ServletRequest
-            || arg instanceof ServletResponse)
+            || arg instanceof ServletResponse
+            || arg instanceof Errors)
         {
             return false;
         }
