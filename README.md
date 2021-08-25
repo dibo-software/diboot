@@ -1,6 +1,6 @@
 > 用上diboot，告别常规SQL和CRUD，写的更少，性能更好！ 
 
-> 新用户指南: [手把手来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17V411r7Cc) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
+> 新用户指南: [手把手来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17P4y1p7L4) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <p align="center">
