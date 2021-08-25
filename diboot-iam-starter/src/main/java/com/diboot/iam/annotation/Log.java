@@ -38,4 +38,10 @@ public @interface Log {
      * @return
      */
     String operation();
+
+    /**
+     *
+     * @return
+     */
+    boolean saveRequestData() default true;
 }
