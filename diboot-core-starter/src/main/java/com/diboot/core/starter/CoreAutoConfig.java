@@ -54,7 +54,7 @@ import java.util.TimeZone;
  * @date 2019/08/01
  */
 @Configuration
-@EnableConfigurationProperties(CoreProperties.class)
+@EnableConfigurationProperties({CoreProperties.class, GlobalProperties.class})
 @ComponentScan(basePackages = {"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 public class CoreAutoConfig implements WebMvcConfigurer {

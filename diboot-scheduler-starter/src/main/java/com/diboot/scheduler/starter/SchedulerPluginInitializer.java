@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,7 @@ import java.util.List;
 @Slf4j
 @Component
 @Order(940)
+@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true")
 public class SchedulerPluginInitializer implements ApplicationRunner {
 
     @Autowired
