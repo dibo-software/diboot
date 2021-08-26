@@ -1,7 +1,7 @@
 package com.diboot.iam.dto;
 
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.protect.encryptor.IEncryptStrategy;
+import com.diboot.core.data.encrypt.IEncryptStrategy;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
