@@ -15,6 +15,7 @@
  */
 package com.diboot.core.protect.encryptor;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.util.S;
 import org.apache.ibatis.executor.Executor;
@@ -27,7 +28,6 @@ import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -55,18 +55,17 @@ public class ProtectInterceptor implements Interceptor {
                 Object entity = args[1];
                 Configuration config = mappedStatement.getConfiguration();
                 if (entity instanceof Map) {
-                    for (Map.Entry<?, ?> entry : ((Map<?, ?>) entity).entrySet()) {
+                    for (Map.Entry<String, ?> entry : ((Map<String, ?>) entity).entrySet()) {
                         Object value = entry.getValue();
-                        if (null == value) {
-                            continue;
-                        }
-                        if (!(value instanceof ArrayList)) {
-                            encryptor(config, value, IEncryptStrategy::encrypt);
-                            break;
-                        }
-                        for (Object element : (ArrayList<?>) value) {
-                            if (!encryptor(config, element, IEncryptStrategy::encrypt)) {
-                                return invocation.proceed();
+                        if (null != value && !(value instanceof Wrapper) && !S.startsWith(entry.getKey(), "param")) {
+                            if (value instanceof List) {
+                                for (Object obj : (List<?>) value) {
+                                    if (!encryptor(config, obj, IEncryptStrategy::encrypt)) {
+                                        break;
+                                    }
+                                }
+                            } else {
+                                encryptor(config, value, IEncryptStrategy::encrypt);
                             }
                         }
                     }
@@ -103,7 +102,7 @@ public class ProtectInterceptor implements Interceptor {
      *
      * @param config 配置
      * @param entity 对象
-     * @param fun 函数
+     * @param fun    函数
      * @return 是否进行了处理
      */
     private boolean encryptor(Configuration config, Object entity, BiFunction<IEncryptStrategy, String, String> fun) {
