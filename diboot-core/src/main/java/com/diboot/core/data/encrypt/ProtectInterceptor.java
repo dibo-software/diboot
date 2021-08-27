@@ -28,8 +28,10 @@ import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 /**
@@ -55,18 +57,21 @@ public class ProtectInterceptor implements Interceptor {
                 Object entity = args[1];
                 Configuration config = mappedStatement.getConfiguration();
                 if (entity instanceof Map) {
-                    for (Map.Entry<String, ?> entry : ((Map<String, ?>) entity).entrySet()) {
+                    Set<Integer> set = new HashSet<>();
+                    for (Map.Entry<?, ?> entry : ((Map<?, ?>) entity).entrySet()) {
                         Object value = entry.getValue();
-                        if (null != value && !(value instanceof Wrapper) && !S.startsWith(entry.getKey(), "param")) {
-                            if (value instanceof List) {
-                                for (Object obj : (List<?>) value) {
-                                    if (!encryptor(config, obj, IEncryptStrategy::encrypt)) {
-                                        break;
-                                    }
+                        if (value == null || value instanceof Wrapper || set.contains(value.hashCode())) {
+                            continue;
+                        }
+                        set.add(value.hashCode());
+                        if (value instanceof List) {
+                            for (Object obj : (List<?>) value) {
+                                if (!encryptor(config, obj, IEncryptStrategy::encrypt)) {
+                                    break;
                                 }
-                            } else {
-                                encryptor(config, value, IEncryptStrategy::encrypt);
                             }
+                        } else {
+                            encryptor(config, value, IEncryptStrategy::encrypt);
                         }
                     }
                 } else {
