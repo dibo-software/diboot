@@ -29,7 +29,7 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
-import com.diboot.core.protect.encryptor.IEncryptStrategy;
+import com.diboot.core.data.encrypt.IEncryptStrategy;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.PropertiesUtils;
 import com.diboot.core.util.S;

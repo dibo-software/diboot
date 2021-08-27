@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.protect.mask;
+package com.diboot.core.data.mask;
 
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.protect.annotation.ProtectField;
+import com.diboot.core.data.annotation.ProtectField;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;

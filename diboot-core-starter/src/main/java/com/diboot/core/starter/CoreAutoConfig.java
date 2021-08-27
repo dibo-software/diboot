@@ -17,7 +17,7 @@ package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.diboot.core.protect.encryptor.ProtectInterceptor;
+import com.diboot.core.data.encrypt.ProtectInterceptor;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -54,7 +54,7 @@ import java.util.TimeZone;
  * @date 2019/08/01
  */
 @Configuration
-@EnableConfigurationProperties(CoreProperties.class)
+@EnableConfigurationProperties({CoreProperties.class, GlobalProperties.class})
 @ComponentScan(basePackages = {"com.diboot.core"})
 @MapperScan(basePackages = {"com.diboot.core.mapper"})
 public class CoreAutoConfig implements WebMvcConfigurer {

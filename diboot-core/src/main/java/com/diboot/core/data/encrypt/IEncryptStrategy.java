@@ -13,21 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.protect.mask;
+package com.diboot.core.data.encrypt;
 
 /**
- * 脱敏策略接口
+ * 加解密接口
  *
- * @author wind
- * @version v2.3.1
- * @date 2021/08/19
+ * @author : uu
+ * @version : v1.0
+ * @date 2021/7/13  09:45
  */
-public interface IMaskStrategy {
+public interface IEncryptStrategy {
+
     /**
-     * 脱敏处理
+     * 加密
      *
-     * @param content 字符串
-     * @return 脱敏之后的字符串
+     * @param content 内容
+     * @return 密文
      */
-    String mask(String content);
+    String encrypt(String content);
+
+    /**
+     * 解密
+     *
+     * @param content 内容
+     * @return 明文
+     */
+    String decrypt(String content);
+
 }
