@@ -49,15 +49,6 @@ public class EntityListBinder<T> extends EntityBinder<T> {
      * 构造方法
      * @param serviceInstance
      * @param voList
-     */
-    public EntityListBinder(IService<T> serviceInstance, List voList){
-        super(serviceInstance, voList);
-    }
-
-    /***
-     * 构造方法
-     * @param serviceInstance
-     * @param voList
      * @param annotation
      */
     public EntityListBinder(IService<T> serviceInstance, List voList, BindEntityList annotation){
@@ -144,7 +135,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 valueEntityListMap.put(entry.getKey(), valueList);
             }
             // 绑定结果
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap, getAnnoObjColumnToFieldMap());
+            ResultAssembler.bindEntityPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap, getAnnoObjColumnToFieldMap());
         }
     }
 

@@ -320,10 +320,10 @@ public class RelationsBinder {
      * @param voList
      * @return
      */
-    private static FieldBinder buildFieldBinder(Annotation annotation, List voList){
+    private static FieldBinder buildFieldBinder(BindField annotation, List voList){
         IService service = getService(annotation);
         if(service != null){
-            return new FieldBinder<>(service, voList);
+            return new FieldBinder<>(service, voList, annotation);
         }
         return null;
     }
@@ -334,10 +334,10 @@ public class RelationsBinder {
      * @param voList
      * @return
      */
-    private static EntityBinder buildEntityBinder(Annotation annotation, List voList){
+    private static EntityBinder buildEntityBinder(BindEntity annotation, List voList){
         IService service = getService(annotation);
         if(service != null){
-            return new EntityBinder<>(service, voList);
+            return new EntityBinder<>(service, voList, annotation);
         }
         return null;
     }
@@ -362,10 +362,10 @@ public class RelationsBinder {
      * @param voList
      * @return
      */
-    private static FieldListBinder buildFieldListBinder(Annotation annotation, List voList){
+    private static FieldListBinder buildFieldListBinder(BindFieldList annotation, List voList){
         IService service = getService(annotation);
         if(service != null){
-            return new FieldListBinder<>(service, voList);
+            return new FieldListBinder<>(service, voList, annotation);
         }
         return null;
     }

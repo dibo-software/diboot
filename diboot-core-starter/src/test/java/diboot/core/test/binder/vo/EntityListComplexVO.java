@@ -54,8 +54,4 @@ public class EntityListComplexVO extends User {
     @BindFieldList(entity = Role.class, field = "createTime", condition="this.id=user_role.user_id AND user_role.role_id=id")
     private List<Date> roleCreateDates;
 
-    // ，拆分的id值绑定
-    @BindEntityList(entity = TestUploadFile.class, condition="this.`character`=uuid", splitBy= Cons.SEPARATOR_COMMA)
-    private List<TestUploadFile> photos;
-
 }

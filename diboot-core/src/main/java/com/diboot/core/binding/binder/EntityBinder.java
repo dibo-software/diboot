@@ -17,6 +17,7 @@ package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.config.Cons;
@@ -54,6 +55,16 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param voList
      */
     public EntityBinder(IService<T> referencedService, List voList){
+        super(referencedService, voList);
+    }
+
+    /***
+     * 构造方法
+     * @param referencedService
+     * @param voList
+     * @param annotation
+     */
+    public EntityBinder(IService<T> referencedService, List voList, BindEntity annotation){
         super(referencedService, voList);
     }
 
@@ -137,7 +148,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 }
             }
             // 绑定结果
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
+            ResultAssembler.bindEntityPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
         }
     }
 

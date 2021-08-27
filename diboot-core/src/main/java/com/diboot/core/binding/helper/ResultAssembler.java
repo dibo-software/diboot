@@ -101,7 +101,7 @@ public class ResultAssembler {
      * @param valueMatchMap
      * @param <E>
      */
-    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, Map<String, String> trunkObjColMapping, Map valueMatchMap, Map<String, String> col2FieldMapping){
+    public static <E> void bindEntityPropValue(String setterFieldName, List<E> fromList, Map<String, String> trunkObjColMapping, Map valueMatchMap, Map<String, String> col2FieldMapping){
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
@@ -136,6 +136,73 @@ public class ResultAssembler {
         }
         catch (Exception e){
             log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+        }
+    }
+
+
+    /***
+     * 从对象集合提取某个属性值到list中
+     * @param fromList
+     * @param getterFields
+     * @param valueMatchMap
+     * @param <E>
+     */
+    public static <E> void bindFieldListPropValue(List<E> fromList, String[] getterFields, Map<String, List> valueMatchMap,
+                                                  List<String> annoObjSetterPropNameList, List<String> refGetterFieldNameList, String splitBy){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        try{
+            for(E object : fromList){
+                sb.setLength(0);
+                for(int i=0; i<getterFields.length; i++){
+                    String val = BeanUtils.getStringProperty(object, getterFields[i]);
+                    if(i>0){
+                        sb.append(Cons.SEPARATOR_COMMA);
+                    }
+                    sb.append(val);
+                }
+                // 查找匹配Key
+                String matchKey = sb.toString();
+                List entityList = valueMatchMap.get(matchKey);
+                if(entityList == null && V.notEmpty(splitBy) && matchKey.contains(splitBy)){
+                    String[] keys = matchKey.split(splitBy);
+                    List matchedValues = new ArrayList(keys.length);
+                    for(String key : keys){
+                        Object value = valueMatchMap.get(key);
+                        if(value != null){
+                            if(value instanceof Collection){
+                                Collection valueList = (Collection)value;
+                                for(Object obj : valueList){
+                                    if(!matchedValues.contains(obj)){
+                                        matchedValues.add(obj);
+                                    }
+                                }
+                            }
+                            else{
+                                if(!matchedValues.contains(value)){
+                                    matchedValues.add(value);
+                                }
+                            }
+                        }
+                    }
+                    if(matchedValues != null){
+                        entityList = matchedValues;
+                    }
+                }
+                if(entityList != null){
+                    // 赋值
+                    for(int i = 0; i< annoObjSetterPropNameList.size(); i++){
+                        List valObjList = BeanUtils.collectToList(entityList, refGetterFieldNameList.get(i));
+                        BeanUtils.setProperty(object, annoObjSetterPropNameList.get(i), valObjList);
+                    }
+                }
+            }
+            sb.setLength(0);
+        }
+        catch (Exception e){
+            log.warn("设置属性值异常", e);
         }
     }
 

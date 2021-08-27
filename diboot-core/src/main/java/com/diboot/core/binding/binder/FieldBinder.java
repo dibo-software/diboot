@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.*;
@@ -42,12 +43,23 @@ public class FieldBinder<T> extends BaseBinder<T> {
      * DO/Entity对象对应的getter取值属性名列表
      */
     protected List<String> referencedGetterFieldNameList;
+
     /***
      * 构造方法
      * @param serviceInstance
      * @param voList
      */
     public FieldBinder(IService<T> serviceInstance, List voList){
+        super(serviceInstance, voList);
+    }
+
+    /***
+     * 构造方法
+     * @param serviceInstance
+     * @param voList
+     * @param annotation
+     */
+    public FieldBinder(IService<T> serviceInstance, List voList, BindField annotation){
         super(serviceInstance, voList);
     }
 
