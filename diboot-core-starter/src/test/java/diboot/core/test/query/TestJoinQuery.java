@@ -135,15 +135,15 @@ public class TestJoinQuery {
         //boolean类型
         dto.setOrgName("苏州帝博");
 
-        // 转换为queryWrapper
-        queryWrapper.clear();
-        queryWrapper = QueryBuilder.toQueryWrapper(dto);
-        queryWrapper.select("id,name,parentId,org_id");
-
         // 验证直接查询指定字段
         List<String> fields = Arrays.asList("parentId", "parentName", "orgName");
         builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto, fields).queryList(Department.class);
         Assert.assertTrue(builderResultList.size() == 3);
+
+        // 转换为queryWrapper
+        queryWrapper.clear();
+        queryWrapper = QueryBuilder.toQueryWrapper(dto);
+        queryWrapper.select("id,name,parent_id,org_id");
 
         // 查询单条记录
         Department department = Binder.joinQueryOne(queryWrapper, Department.class);

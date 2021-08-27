@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,8 +16,9 @@
 package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindFieldList;
+import com.diboot.core.config.Cons;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,26 +26,19 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
+ * <Description>
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2019/1/5
+ * @date 2021/08/27
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class EntityListSimpleBinderVO extends Department {
-    private static final long serialVersionUID = -362116388664907913L;
+public class EntityListSimpleSplitVO extends Department {
 
-    // 直接关联多个Entity
-    @BindEntityList(entity = Department.class, condition = "this.id=parent_id", orderBy = "org_id:DESC,name")
-    private List<DepartmentVO> children;
-
-    // 1-n 关联，取单个属性
-    @BindFieldList(entity = Department.class, field = "parentId", condition = "this.id=parent_id")
-    private List<Long> childrenIds;
-
-    // 1-n 关联，取单个属性
-    @BindFieldList(entity = Department.class, field = "name", condition = "this.id=parent_id")
-    private List<String> childrenNames;
+    // ，拆分的id值绑定
+    @BindEntityList(entity = User.class, condition="this.`character`=id", splitBy= Cons.SEPARATOR_COMMA)
+    private List<User> managers;
 
 }

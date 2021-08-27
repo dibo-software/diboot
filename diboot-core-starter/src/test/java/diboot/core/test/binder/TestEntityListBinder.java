@@ -24,12 +24,12 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.OrganizationService;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.DepartmentVO;
-import diboot.core.test.binder.vo.EntityListComplexBinderVO;
-import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
+import diboot.core.test.binder.vo.*;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,6 +61,9 @@ public class TestEntityListBinder {
     @Autowired
     DictionaryService dictionaryService;
 
+    @Autowired
+    OrganizationService organizationService;
+
     /**
      * 验证直接关联的绑定
      */
@@ -71,10 +74,10 @@ public class TestEntityListBinder {
         queryWrapper.in(Department::getId, 10001L, 10003L);
         List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
-        List<EntityListSimpleBinderVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleBinderVO.class);
+        List<EntityListSimpleVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListSimpleBinderVO vo : voList){
+        for(EntityListSimpleVO vo : voList){
             // 验证直接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getChildren()));
             System.out.println(JSON.stringify(vo));
@@ -97,13 +100,19 @@ public class TestEntityListBinder {
         queryWrapper.in(User::getId, 1001L, 1002L);
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
-        List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
+        List<EntityListComplexVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListComplexBinderVO vo : voList){
+        for(EntityListComplexVO vo : voList){
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getRoleList()));
             System.out.println(JSON.stringify(vo));
+            if(vo.getId().equals(1002L)){
+                Assert.assertTrue(vo.getPhotos().size() == 2);
+            }
+            else{
+                Assert.assertTrue(vo.getPhotos() != null);
+            }
         }
     }
 
@@ -118,4 +127,61 @@ public class TestEntityListBinder {
         DictionaryVO vo = Binder.convertAndBindRelations(dictionary, DictionaryVO.class);
         Assert.assertTrue(vo.getChildren().size() > 0);
     }
+
+    /**
+     * 测试简单拆分绑定
+     */
+    @Test
+    public void testSplitBinder(){
+        // 加载测试数据
+        LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Department::getParentId, 10001L);
+        List<Department> departmentList = departmentService.list(queryWrapper);
+        // 自动绑定
+        List<EntityListSimpleSplitVO> voList = Binder.convertAndBindRelations(departmentList,
+                EntityListSimpleSplitVO.class);
+        // 验证绑定结果
+        Assert.assertTrue(V.notEmpty(voList));
+        for(EntityListSimpleSplitVO vo : voList){
+            // 验证通过中间表间接关联的绑定
+            Assert.assertTrue(V.notEmpty(vo.getManagers()));
+            System.out.println(JSON.stringify(vo));
+            if(vo.getCharacter().contains(",")){
+                String[] valueArr = vo.getCharacter().split(",");
+                if(valueArr[0].equals(valueArr[1])){
+                    Assert.assertTrue(vo.getManagers().size() == 1);
+                }
+                else{
+                    Assert.assertTrue(vo.getManagers().size() > 1);
+                }
+            }
+            else{
+                Assert.assertTrue(vo.getManagers().size() == 1);
+            }
+        }
+    }
+
+    /**
+     * 测试复杂拆分绑定
+     */
+    @Test
+    public void testComplexSplitBinder(){
+        // 加载测试数据
+        LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<>();
+        List<EntityListComplexSplitVO> voList = organizationService
+                .getViewObjectList(queryWrapper, null, EntityListComplexSplitVO.class);
+        // 验证绑定结果
+        Assert.assertTrue(V.notEmpty(voList));
+        for(EntityListComplexSplitVO vo : voList){
+            // 验证通过中间表间接关联的绑定
+            if(vo.getManagerId().equals(1001L)){
+                Assert.assertTrue(vo.getManagerPhotos().size() == 1);
+            }
+            else{
+                Assert.assertTrue(vo.getManagerPhotos().size() == 2);
+            }
+            System.out.println(JSON.stringify(vo));
+        }
+    }
+
 }

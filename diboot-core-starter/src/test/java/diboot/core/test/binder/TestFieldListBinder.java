@@ -24,8 +24,8 @@ import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.EntityListComplexBinderVO;
-import diboot.core.test.binder.vo.EntityListSimpleBinderVO;
+import diboot.core.test.binder.vo.EntityListComplexVO;
+import diboot.core.test.binder.vo.EntityListSimpleVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,10 +63,10 @@ public class TestFieldListBinder {
         queryWrapper.eq(Department::getId, 10001L);
         List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
-        List<EntityListSimpleBinderVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleBinderVO.class);
+        List<EntityListSimpleVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListSimpleBinderVO vo : voList){
+        for(EntityListSimpleVO vo : voList){
             // 验证直接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getChildrenIds()));
             System.out.println(JSON.stringify(vo.getChildrenIds()));
@@ -86,10 +86,10 @@ public class TestFieldListBinder {
         queryWrapper.in(User::getId, 1001L, 1002L);
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
-        List<EntityListComplexBinderVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexBinderVO.class);
+        List<EntityListComplexVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListComplexBinderVO vo : voList){
+        for(EntityListComplexVO vo : voList){
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getRoleCodes()));
             Assert.assertTrue(V.notEmpty(vo.getRoleCreateDates()));

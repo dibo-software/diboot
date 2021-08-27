@@ -104,7 +104,7 @@ public class TestFieldBinder {
     public void testBinderWithEscCol(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, 1003L);
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserEscVO> voList = Binder.convertAndBindRelations(userList, UserEscVO.class);
