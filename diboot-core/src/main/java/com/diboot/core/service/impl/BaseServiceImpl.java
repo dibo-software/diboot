@@ -32,10 +32,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.diboot.core.binding.Binder;
-import com.diboot.core.binding.binder.EntityBinder;
-import com.diboot.core.binding.binder.EntityListBinder;
-import com.diboot.core.binding.binder.FieldBinder;
-import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.EntityInfoCache;
@@ -675,26 +671,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
 		return super.getMap(queryWrapper);
-	}
-
-	@Override
-	public FieldBinder<T> bindingFieldTo(List voList){
-		return new FieldBinder<>(this, voList);
-	}
-
-	@Override
-	public FieldListBinder<T> bindingFieldListTo(List voList) {
-		return new FieldListBinder<>(this, voList);
-	}
-
-	@Override
-    public EntityBinder<T> bindingEntityTo(List voList){
-	    return new EntityBinder<>(this, voList);
-    }
-
-	@Override
-	public EntityListBinder<T> bindingEntityListTo(List voList){
-		return new EntityListBinder<>(this, voList);
 	}
 
 	/**

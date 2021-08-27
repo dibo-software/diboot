@@ -22,10 +22,6 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
-import com.diboot.core.binding.binder.EntityBinder;
-import com.diboot.core.binding.binder.EntityListBinder;
-import com.diboot.core.binding.binder.FieldBinder;
-import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
@@ -346,37 +342,5 @@ public interface BaseService<T> {
      * @throws Exception
      */
     <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass);
-
-    /***
-     * 绑定字段值到VO列表的元素中
-     * @param voList
-     * @return
-     */
-    @Deprecated
-    FieldBinder<T> bindingFieldTo(List voList);
-
-    /***
-     * 绑定字段值集合到VO列表的元素中
-     * @param voList
-     * @return
-     */
-    @Deprecated
-    FieldListBinder<T> bindingFieldListTo(List voList);
-
-    /***
-     * 绑定entity对象到VO列表元素中
-     * @param voList
-     * @return
-     */
-    @Deprecated
-    EntityBinder<T> bindingEntityTo(List voList);
-
-    /***
-     * 绑定entity对象列表到VO列表元素中(适用于VO-Entity一对多的关联)
-     * @param voList vo列表
-     * @return
-     */
-    @Deprecated
-    EntityListBinder<T> bindingEntityListTo(List voList);
 
 }
