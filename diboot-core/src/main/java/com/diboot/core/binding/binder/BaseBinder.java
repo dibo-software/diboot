@@ -81,6 +81,11 @@ public abstract class BaseBinder<T> {
 
     public static final String NOT_SUPPORT_MSG = "中间表关联暂不支持涉及目标表多列的情况!";
 
+    /**
+     * ,拼接的多个id值
+     */
+    protected String splitBy = null;
+
     /***
      * 构造方法
      * @param serviceInstance
@@ -246,12 +251,14 @@ public abstract class BaseBinder<T> {
                 queryWrapper.isNull(refObjJoinOnCol);
             }
             else{
+                List unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy)? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
+                        : annoObjectJoinOnList;
                 // 有null值
                 if(hasNullFlags[0]){
-                    queryWrapper.and(qw -> qw.isNull(refObjJoinOnCol).or(w -> w.in(refObjJoinOnCol, annoObjectJoinOnList)));
+                    queryWrapper.and(qw -> qw.isNull(refObjJoinOnCol).or(w -> w.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList)));
                 }
                 else{
-                    queryWrapper.in(refObjJoinOnCol, annoObjectJoinOnList);
+                    queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
                 }
             }
         }

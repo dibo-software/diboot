@@ -36,7 +36,7 @@ public class S extends StringUtils{
 	/***
 	 * 默认分隔符 ,
  	 */
-	public static final String SEPARATOR = ",";
+	public static final String SEPARATOR = Cons.SEPARATOR_COMMA;
 
 	/***
 	 * 裁剪字符串，显示前部分+...

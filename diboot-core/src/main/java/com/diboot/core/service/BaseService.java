@@ -352,6 +352,7 @@ public interface BaseService<T> {
      * @param voList
      * @return
      */
+    @Deprecated
     FieldBinder<T> bindingFieldTo(List voList);
 
     /***
@@ -359,6 +360,7 @@ public interface BaseService<T> {
      * @param voList
      * @return
      */
+    @Deprecated
     FieldListBinder<T> bindingFieldListTo(List voList);
 
     /***
@@ -366,6 +368,7 @@ public interface BaseService<T> {
      * @param voList
      * @return
      */
+    @Deprecated
     EntityBinder<T> bindingEntityTo(List voList);
 
     /***
@@ -373,6 +376,7 @@ public interface BaseService<T> {
      * @param voList vo列表
      * @return
      */
+    @Deprecated
     EntityListBinder<T> bindingEntityListTo(List voList);
 
 }

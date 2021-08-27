@@ -348,10 +348,10 @@ public class RelationsBinder {
      * @param voList
      * @return
      */
-    private static EntityListBinder buildEntityListBinder(Annotation annotation, List voList){
+    private static EntityListBinder buildEntityListBinder(BindEntityList annotation, List voList){
         IService service = getService(annotation);
         if(service != null){
-            return new EntityListBinder<>(service, voList);
+            return new EntityListBinder<>(service, voList, annotation);
         }
         return null;
     }

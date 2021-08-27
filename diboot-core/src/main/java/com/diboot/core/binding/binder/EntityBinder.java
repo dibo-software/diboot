@@ -85,8 +85,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            log.warn("调用错误：无法从condition中解析出字段关联.");
-            return;
+            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
         // 直接关联Entity
         if(middleTable == null){
@@ -98,7 +97,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
                 Map<String, Object> valueEntityMap = this.buildMatchKey2EntityMap(list);
-                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityMap);
+                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityMap, null);
             }
         }
         // 通过中间表关联Entity

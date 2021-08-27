@@ -45,4 +45,10 @@ public @interface BindFieldList {
      * @return
      */
     String condition();
+
+    /**
+     * 分隔符，用于拆解拼接存储的多个id值
+     * @return
+     */
+    String splitBy() default "";
 }

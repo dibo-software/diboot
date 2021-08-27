@@ -40,7 +40,7 @@ public class ResultAssembler {
      * @param valueMatchMap
      * @param <E>
      */
-    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, String[] getterFields, Map valueMatchMap){
+    public static <E> void bindPropValue(String setterFieldName, List<E> fromList, String[] getterFields, Map valueMatchMap, String splitBy){
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
@@ -60,6 +60,30 @@ public class ResultAssembler {
                 if(valueMatchMap.containsKey(matchKey)){
                     // 赋值
                     BeanUtils.setProperty(object, setterFieldName, valueMatchMap.get(matchKey));
+                }
+                else if(V.notEmpty(splitBy) && getterFields.length == 1 && matchKey.contains(splitBy)){
+                    String[] keys = matchKey.split(splitBy);
+                    List matchedValues = new ArrayList(keys.length);
+                    for(String key : keys){
+                        Object value = valueMatchMap.get(key);
+                        if(value != null){
+                            if(value instanceof Collection){
+                                Collection valueList = (Collection)value;
+                                for(Object obj : valueList){
+                                    if(!matchedValues.contains(obj)){
+                                        matchedValues.add(obj);
+                                    }
+                                }
+                            }
+                            else{
+                                if(!matchedValues.contains(value)){
+                                    matchedValues.add(value);
+                                }
+                            }
+                        }
+                    }
+                    // 赋值
+                    BeanUtils.setProperty(object, setterFieldName, matchedValues);
                 }
             }
             sb.setLength(0);
@@ -166,6 +190,7 @@ public class ResultAssembler {
         }
         // 获取valueName
         String valueName = branchObjColMapping.entrySet().iterator().next().getKey();
+        valueName = S.removeEsc(valueName);
         // 合并list为map
         Map<String, List> resultMap = new HashMap<>();
         StringBuilder sb = new StringBuilder();
@@ -216,6 +241,32 @@ public class ResultAssembler {
             return map.get(key.toUpperCase());
         }
         return null;
+    }
+
+    /**
+     * 拆解值列表
+     * @param valueList
+     * @param splitBy
+     * @return
+     */
+    public static List unpackValueList(List valueList, String splitBy) {
+        List newValueList = new ArrayList();
+        valueList.forEach( value -> {
+            if(value != null){
+                String valueStr = S.valueOf(value);
+                if(valueStr.contains(splitBy)){
+                    for(String oneVal :valueStr.split(splitBy)){
+                        if(!newValueList.contains(oneVal)){
+                            newValueList.add(oneVal);
+                        }
+                    }
+                }
+                else if(!newValueList.contains(valueStr)){
+                    newValueList.add(valueStr);
+                }
+            }
+        });
+        return newValueList;
     }
 
 }

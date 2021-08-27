@@ -67,7 +67,7 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
         PlainSelect selectBody = parseSelectBody(originSql);
         if (selectBody.getFromItem() instanceof Table) {
             Table mainTable = (Table) selectBody.getFromItem();
-            String tableName = mainTable.getName().replace("`", "");
+            String tableName = S.removeEsc(mainTable.getName());
             Class<?> entityClass = BindingCacheManager.getEntityClassByTable(tableName);
             // 无权限检查点注解，不处理
             if (entityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(entityClass)) {

@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
@@ -25,10 +26,7 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Entity集合绑定实现
@@ -56,14 +54,26 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         super(serviceInstance, voList);
     }
 
+    /***
+     * 构造方法
+     * @param serviceInstance
+     * @param voList
+     * @param annotation
+     */
+    public EntityListBinder(IService<T> serviceInstance, List voList, BindEntityList annotation){
+        super(serviceInstance, voList);
+        if(V.notEmpty(annotation.splitBy())){
+            this.splitBy = annotation.splitBy();
+        }
+    }
+
     @Override
     public void bind() {
         if(V.isEmpty(annoObjectList)){
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            log.warn("调用错误：无法从condition中解析出字段关联.");
-            return;
+            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){
@@ -76,7 +86,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.notEmpty(list)){
                 valueEntityListMap = this.buildMatchKey2EntityListMap(list);
             }
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityListMap);
+            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityListMap, this.splitBy);
         }
         else{
             if(refObjJoinCols.size() > 1){
@@ -91,6 +101,9 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             super.simplifySelectColumns();
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
+            if(V.notEmpty(this.splitBy)){
+                entityIdList = ResultAssembler.unpackValueList(entityIdList, this.splitBy);
+            }
             // 构建查询条件
             queryWrapper.in(refObjJoinCols.get(0), entityIdList);
             //处理orderBy，附加排序
@@ -111,9 +124,21 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 }
                 List valueList = new ArrayList();
                 for(Object obj : annoObjFKList){
-                    T ent = entityMap.get(String.valueOf(obj));
+                    if(obj == null){
+                        continue;
+                    }
+                    String valStr = String.valueOf(obj);
+                    T ent = entityMap.get(valStr);
                     if(ent != null){
                         valueList.add(cloneOrConvertBean(ent));
+                    }
+                    else if(V.notEmpty(splitBy) && valStr.contains(splitBy)){
+                        for(String key : valStr.split(splitBy)){
+                            ent = entityMap.get(key);
+                            if(ent != null){
+                                valueList.add(cloneOrConvertBean(ent));
+                            }
+                        }
                     }
                 }
                 valueEntityListMap.put(entry.getKey(), valueList);

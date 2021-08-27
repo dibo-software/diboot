@@ -86,12 +86,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            log.warn("调用错误：无法从condition中解析出字段关联.");
-            return;
+            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
         if(referencedGetterFieldNameList == null){
-            log.error("调用错误：字段绑定必须指定字段field");
-            return;
+            throw new InvalidUsageException("调用错误：字段绑定必须指定字段field");
         }
         // 直接关联
         if(middleTable == null){

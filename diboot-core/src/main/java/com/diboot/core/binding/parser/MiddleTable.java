@@ -157,8 +157,7 @@ public class MiddleTable {
      */
     public Map<String, List> executeOneToManyQuery(Map<String, List> trunkObjCol2ValuesMap){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
-            log.warn("不合理的中间表查询：无过滤条件！");
-            return Collections.emptyMap();
+            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
         }
         //user_id //role_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
