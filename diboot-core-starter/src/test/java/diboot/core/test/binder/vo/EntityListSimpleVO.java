@@ -37,14 +37,14 @@ public class EntityListSimpleVO extends Department {
 
     // 直接关联多个Entity
     @BindEntityList(entity = Department.class, condition = "this.id=parent_id", orderBy = "org_id:DESC,name")
-    private List<DepartmentVO> children;
+    private List<Department> children;
 
     // 1-n 关联，取单个属性
     @BindFieldList(entity = Department.class, field = "parentId", condition = "this.id=parent_id")
     private List<Long> childrenIds;
 
     // 1-n 关联，取单个属性
-    @BindFieldList(entity = Department.class, field = "name", condition = "this.id=parent_id")
+    @BindFieldList(entity = Department.class, field = "name", condition = "this.id=parent_id", orderBy = "org_id:DESC,name")
     private List<String> childrenNames;
 
 }

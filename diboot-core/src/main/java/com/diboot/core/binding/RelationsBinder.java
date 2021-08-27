@@ -250,7 +250,7 @@ public class RelationsBinder {
         if(binder != null){
             binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
             // 解析条件并且执行绑定
-            parseConditionsAndBinding(binder, bindAnnotation.condition(), bindAnnotation.orderBy());
+            parseConditionsAndBinding(binder, bindAnnotation.condition());
         }
     }
 
@@ -265,7 +265,7 @@ public class RelationsBinder {
         Map<String, List<FieldAnnotation>> clazzToListMap = new HashMap<>();
         for(FieldAnnotation anno : fieldListAnnoList){
             BindFieldList bindField = (BindFieldList) anno.getAnnotation();
-            String key = bindField.entity().getName() + ":" + bindField.condition();
+            String key = bindField.entity().getName() + ":" + bindField.condition() + ":" + bindField.orderBy();
             List<FieldAnnotation> list = clazzToListMap.computeIfAbsent(key, k -> new ArrayList<>());
             list.add(anno);
         }
@@ -290,23 +290,6 @@ public class RelationsBinder {
     private static void parseConditionsAndBinding(BaseBinder binder, String condition){
         try{
             ConditionManager.parseConditions(condition, binder);
-            binder.bind();
-        }
-        catch (Exception e){
-            log.error("解析注解条件与绑定执行异常", e);
-        }
-    }
-
-    /***
-     * 解析条件并且执行绑定
-     * @param condition
-     * @param binder
-     * @param orderBy
-     */
-    private static void parseConditionsAndBinding(BaseBinder binder, String condition, String orderBy){
-        try{
-            ConditionManager.parseConditions(condition, binder);
-            ((EntityListBinder)binder).setOrderBy(orderBy);
             binder.bind();
         }
         catch (Exception e){

@@ -81,11 +81,10 @@ public class TestEntityListBinder {
             // 验证直接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getChildren()));
             System.out.println(JSON.stringify(vo));
-
-            if(vo.getChildren() != null){
-                for(DepartmentVO dept : vo.getChildren()){
-                    System.out.println(dept.toString());
-                }
+            Assert.assertTrue(V.notEmpty(vo.getChildrenNames()));
+            for(int i=0; i<vo.getChildren().size(); i++){
+                Department dept = vo.getChildren().get(i);
+                Assert.assertTrue(dept.getName().equals(vo.getChildrenNames().get(i)));
             }
         }
     }

@@ -23,6 +23,7 @@ import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.IGetter;
@@ -85,6 +86,10 @@ public abstract class BaseBinder<T> {
      * ,拼接的多个id值
      */
     protected String splitBy = null;
+    /**
+     * List 排序
+     */
+    protected String orderBy;
 
     /***
      * 构造方法
@@ -410,6 +415,32 @@ public abstract class BaseBinder<T> {
             column = S.toSnakeCase(refObjField);
         }
         return column;
+    }
+
+    /**
+     * 附加排序字段，支持格式：orderBy=short_name:DESC,age:ASC,birthdate
+     */
+    protected void appendOrderBy(){
+        if(V.isEmpty(this.orderBy)){
+            return;
+        }
+        // 解析排序
+        String[] orderByFields = S.split(this.orderBy);
+        for(String field : orderByFields){
+            if(field.contains(":")){
+                String[] fieldAndOrder = S.split(field, ":");
+                String columnName = toRefObjColumn(fieldAndOrder[0]);
+                if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
+                    queryWrapper.orderByDesc(columnName);
+                }
+                else{
+                    queryWrapper.orderByAsc(columnName);
+                }
+            }
+            else{
+                queryWrapper.orderByAsc(toRefObjColumn(field.toLowerCase()));
+            }
+        }
     }
 
     /**

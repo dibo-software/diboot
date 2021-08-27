@@ -250,6 +250,21 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 }
             }
         }
+        // 添加orderBy排序
+        if(V.notEmpty(this.orderBy)){
+            // 解析排序
+            String[] orderByFields = S.split(this.orderBy);
+            for(String field : orderByFields){
+                String colName = field.toLowerCase();
+                if(colName.contains(":")){
+                    colName = S.split(colName, ":")[0];
+                }
+                colName = toRefObjColumn(colName);
+                if(!selectColumns.contains(colName)){
+                    selectColumns.add(colName);
+                }
+            }
+        }
         queryWrapper.select(S.toStringArray(selectColumns));
     }
 

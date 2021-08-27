@@ -16,6 +16,7 @@
 package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.annotation.BindFieldList;
 import com.diboot.core.entity.Dictionary;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,4 +41,6 @@ public class SimpleDictionaryVO {
     @BindEntityList(entity= Dictionary.class, condition="this.type=type AND this.id=parent_id", orderBy = "sort_id:ASC")
     private List<Dictionary> children;
 
+    @BindFieldList(entity= Dictionary.class, field = "itemName", condition="this.type=type AND this.id=parent_id", orderBy = "sort_id:ASC")
+    private List<String> childrenItemNames;
 }
