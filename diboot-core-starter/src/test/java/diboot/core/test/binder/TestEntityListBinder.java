@@ -107,12 +107,6 @@ public class TestEntityListBinder {
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getRoleList()));
             System.out.println(JSON.stringify(vo));
-            if(vo.getId().equals(1002L)){
-                Assert.assertTrue(vo.getPhotos().size() == 2);
-            }
-            else{
-                Assert.assertTrue(vo.getPhotos() != null);
-            }
         }
     }
 
@@ -138,11 +132,11 @@ public class TestEntityListBinder {
         queryWrapper.eq(Department::getParentId, 10001L);
         List<Department> departmentList = departmentService.list(queryWrapper);
         // 自动绑定
-        List<EntityListSimpleSplitVO> voList = Binder.convertAndBindRelations(departmentList,
-                EntityListSimpleSplitVO.class);
+        List<SimpleSplitVO> voList = Binder.convertAndBindRelations(departmentList,
+                SimpleSplitVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListSimpleSplitVO vo : voList){
+        for(SimpleSplitVO vo : voList){
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getManagers()));
             System.out.println(JSON.stringify(vo));
@@ -168,11 +162,11 @@ public class TestEntityListBinder {
     public void testComplexSplitBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<>();
-        List<EntityListComplexSplitVO> voList = organizationService
-                .getViewObjectList(queryWrapper, null, EntityListComplexSplitVO.class);
+        List<ComplexSplitVO> voList = organizationService
+                .getViewObjectList(queryWrapper, null, ComplexSplitVO.class);
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
-        for(EntityListComplexSplitVO vo : voList){
+        for(ComplexSplitVO vo : voList){
             // 验证通过中间表间接关联的绑定
             if(vo.getManagerId().equals(1001L)){
                 Assert.assertTrue(vo.getManagerPhotos().size() == 1);

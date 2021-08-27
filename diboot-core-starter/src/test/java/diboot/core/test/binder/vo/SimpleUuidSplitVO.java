@@ -16,9 +16,10 @@
 package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.annotation.BindFieldList;
 import com.diboot.core.config.Cons;
-import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.TestUploadFile;
+import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -35,10 +36,15 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class EntityListComplexSplitVO extends Organization {
+public class SimpleUuidSplitVO extends User {
 
     // ，拆分的id值绑定
-    @BindEntityList(entity = TestUploadFile.class, condition="this.manager_id=user.id AND user.`character`=uuid", splitBy= Cons.SEPARATOR_COMMA)
-    private List<TestUploadFile> managerPhotos;
+    @BindEntityList(entity = TestUploadFile.class, condition="this.`character`=uuid", splitBy= Cons.SEPARATOR_COMMA)
+    private List<TestUploadFile> photos;
+
+    // ，拆分的id值绑定
+    @BindFieldList(entity = TestUploadFile.class, field = "fileName", condition="this.`character`=uuid",
+            splitBy= Cons.SEPARATOR_COMMA)
+    private List<String> photoNames;
 
 }

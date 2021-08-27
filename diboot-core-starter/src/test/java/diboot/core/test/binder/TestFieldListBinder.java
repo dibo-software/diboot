@@ -21,11 +21,12 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.OrganizationService;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.EntityListComplexVO;
-import diboot.core.test.binder.vo.EntityListSimpleVO;
+import diboot.core.test.binder.vo.*;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,6 +53,8 @@ public class TestFieldListBinder {
     UserService userService;
     @Autowired
     DepartmentService departmentService;
+    @Autowired
+    OrganizationService organizationService;
 
     /**
      * 验证直接关联的绑定
@@ -95,6 +98,88 @@ public class TestFieldListBinder {
             Assert.assertTrue(V.notEmpty(vo.getRoleCreateDates()));
 
             System.out.println(JSON.stringify(vo.getRoleCodes()));
+        }
+    }
+
+    /**
+     * 测试简单拆分绑定
+     */
+    @Test
+    public void testSplitBinder(){
+        // 加载测试数据
+        LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Department::getParentId, 10001L);
+        List<Department> departmentList = departmentService.list(queryWrapper);
+        // 自动绑定
+        List<SimpleSplitVO> voList = Binder.convertAndBindRelations(departmentList,
+                SimpleSplitVO.class);
+        // 验证绑定结果
+        Assert.assertTrue(V.notEmpty(voList));
+        for(SimpleSplitVO vo : voList){
+            // 验证通过中间表间接关联的绑定
+            Assert.assertTrue(V.notEmpty(vo.getManagerNames()));
+            System.out.println(JSON.stringify(vo));
+            if(vo.getCharacter().contains(",")){
+                String[] valueArr = vo.getCharacter().split(",");
+                if(valueArr[0].equals(valueArr[1])){
+                    Assert.assertTrue(vo.getManagerNames().size() == 1);
+                }
+                else{
+                    Assert.assertTrue(vo.getManagerNames().size() > 1);
+                }
+            }
+            else{
+                Assert.assertTrue(vo.getManagerNames().size() == 1);
+            }
+        }
+    }
+
+    /**
+     * 验证通过中间表间接关联的绑定
+     */
+    @Test
+    public void testUUIDSplitBinder(){
+        // 加载测试数据
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, 1001L, 1002L);
+        List<User> userList = userService.getEntityList(queryWrapper);
+        // 自动绑定
+        List<SimpleUuidSplitVO> voList = Binder.convertAndBindRelations(userList, SimpleUuidSplitVO.class);
+        // 验证绑定结果
+        Assert.assertTrue(V.notEmpty(voList));
+        for(SimpleUuidSplitVO vo : voList){
+            // 验证通过中间表间接关联的绑定
+            if(vo.getId().equals(1002L)){
+                Assert.assertTrue(vo.getPhotos().size() == 2);
+                Assert.assertTrue(vo.getPhotoNames().size() == 2);
+            }
+            else{
+                Assert.assertTrue(vo.getPhotos() != null);
+                Assert.assertTrue(vo.getPhotoNames() != null);
+            }
+        }
+    }
+
+    /**
+     * 测试复杂拆分绑定
+     */
+    @Test
+    public void testComplexSplitBinder(){
+        // 加载测试数据
+        LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<>();
+        List<ComplexSplitVO> voList = organizationService
+                .getViewObjectList(queryWrapper, null, ComplexSplitVO.class);
+        // 验证绑定结果
+        Assert.assertTrue(V.notEmpty(voList));
+        for(ComplexSplitVO vo : voList){
+            // 验证通过中间表间接关联的绑定
+            if(vo.getManagerId().equals(1001L)){
+                Assert.assertTrue(vo.getManagerPhotoNames().size() == 1);
+            }
+            else{
+                Assert.assertTrue(vo.getManagerPhotoNames().size() == 2);
+            }
+            System.out.println(JSON.stringify(vo));
         }
     }
 
