@@ -15,8 +15,6 @@
  */
 package com.diboot.scheduler.handler;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.util.JSON;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.entity.ScheduleJobLog;
@@ -50,9 +48,7 @@ public class SchedulerAsyncWorker {
      * @param scheduleJobLog
      */
     public void saveScheduleJobLog(ScheduleJobLog scheduleJobLog) {
-        LambdaQueryWrapper<ScheduleJob> queryWrapper = new QueryWrapper<ScheduleJob>()
-                .lambda().eq(ScheduleJob::getJobKey, scheduleJobLog.getJobKey());
-        ScheduleJob scheduleJob = scheduleJobService.getSingleEntity(queryWrapper);
+        ScheduleJob scheduleJob = scheduleJobService.getEntity(scheduleJobLog.getJobId());
         if (scheduleJob == null) {
             log.error("获取定时任务`{}`异常；日志内容：{}", scheduleJobLog.getJobId(), JSON.toJSONString(scheduleJobLog));
         } else {

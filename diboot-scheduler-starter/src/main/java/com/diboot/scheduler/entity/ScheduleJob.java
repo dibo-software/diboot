@@ -48,7 +48,10 @@ public class ScheduleJob extends BaseEntity {
     @TableField
     private Long tenantId;
 
-    // job key
+    /**
+     * job key
+     */
+    @NotNull(message = "任务不能为空")
     @TableField()
     private String jobKey;
 
@@ -67,9 +70,6 @@ public class ScheduleJob extends BaseEntity {
     @Length(max = 100, message = "定时表达式长度应小于100")
     @TableField()
     private String cron;
-
-    @TableField(exist = false)
-    private Class<? extends Job> jobClass;
 
     /**
      * 参数json字符串
