@@ -9,9 +9,11 @@ CREATE TABLE schedule_job (
   init_strategy VARCHAR(50),
   job_status       VARCHAR(10)   default 'A'  not null,
   job_comment      VARCHAR(200),
+  save_log     BOOLEAN default TRUE    not null,
   is_deleted   BOOLEAN default FALSE   not null,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   create_by bigint DEFAULT 0 NOT NULL,
+  create_by_name VARCHAR(10),
   update_time  timestamp   null
 );
 comment on column schedule_job.id is 'ID';
@@ -23,7 +25,9 @@ comment on column schedule_job.param_json is '参数';
 comment on column schedule_job.init_strategy is '初始化策略';
 comment on column schedule_job.job_status is '状态';
 comment on column schedule_job.job_comment is '备注';
+comment on column schedule_job.save_log is '是否记录日志';
 comment on column schedule_job.create_by is '创建人';
+comment on column schedule_job.create_by_name is '创建人名称';
 comment on column schedule_job.update_time is '更新时间';
 comment on column schedule_job.is_deleted is '是否删除';
 comment on column schedule_job.create_time is '创建时间';
