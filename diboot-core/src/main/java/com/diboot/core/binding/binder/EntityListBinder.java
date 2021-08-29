@@ -37,14 +37,6 @@ import java.util.*;
 public class EntityListBinder<T> extends EntityBinder<T> {
     private static final Logger log = LoggerFactory.getLogger(EntityListBinder.class);
 
-    /**
-     * EntityList 排序
-     */
-    private String orderBy;
-    public void setOrderBy(String orderBy){
-        this.orderBy = orderBy;
-    }
-
     /***
      * 构造方法
      * @param serviceInstance
@@ -55,6 +47,9 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         super(serviceInstance, voList);
         if(V.notEmpty(annotation.splitBy())){
             this.splitBy = annotation.splitBy();
+        }
+        if(V.notEmpty(annotation.orderBy())){
+            this.orderBy = annotation.orderBy();
         }
     }
 
@@ -175,29 +170,4 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         return key2TargetListMap;
     }
 
-    /**
-     * 附加排序字段，支持格式：orderBy=short_name:DESC,age:ASC,birthdate
-     */
-    private void appendOrderBy(){
-        if(V.isEmpty(this.orderBy)){
-            return;
-        }
-        // 解析排序
-        String[] orderByFields = S.split(this.orderBy);
-        for(String field : orderByFields){
-            if(field.contains(":")){
-                String[] fieldAndOrder = S.split(field, ":");
-                String columnName = toRefObjColumn(fieldAndOrder[0]);
-                if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
-                    queryWrapper.orderByDesc(columnName);
-                }
-                else{
-                    queryWrapper.orderByAsc(columnName);
-                }
-            }
-            else{
-                queryWrapper.orderByAsc(toRefObjColumn(field.toLowerCase()));
-            }
-        }
-    }
 }

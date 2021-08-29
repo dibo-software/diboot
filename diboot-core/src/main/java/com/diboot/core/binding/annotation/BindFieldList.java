@@ -47,6 +47,12 @@ public @interface BindFieldList {
     String condition();
 
     /**
+     * EntityList排序，示例 `id:DESC,age:ASC`
+     * @return
+     */
+    String orderBy() default "";
+
+    /**
      * 分隔符，用于拆解拼接存储的多个id值
      * @return
      */

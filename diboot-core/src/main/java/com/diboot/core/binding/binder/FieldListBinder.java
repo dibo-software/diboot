@@ -47,6 +47,9 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         if(V.notEmpty(annotation.splitBy())){
             this.splitBy = annotation.splitBy();
         }
+        if(V.notEmpty(annotation.orderBy())){
+            this.orderBy = annotation.orderBy();
+        }
     }
 
     @Override
@@ -65,6 +68,8 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         if(middleTable == null){
             super.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
+            //处理orderBy，附加排序
+            this.appendOrderBy();
             // 查询entity列表: List<Role>
             List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
@@ -87,6 +92,8 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 return;
             }
             super.simplifySelectColumns();
+            //处理orderBy，附加排序
+            this.appendOrderBy();
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             if(V.notEmpty(this.splitBy)){
@@ -130,7 +137,6 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             bindPropValue(annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap);
         }
     }
-
 
     /***
      * 从对象集合提取某个属性值到list中
