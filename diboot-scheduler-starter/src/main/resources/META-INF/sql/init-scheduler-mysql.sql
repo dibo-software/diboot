@@ -35,9 +35,7 @@ create table schedule_job_log
   data_count int        comment '数据计数',
   execute_msg  varchar(500)  not null comment '执行结果信息',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
-  create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  create_by bigint NOT NULL DEFAULT 0 COMMENT '创建人ID',
-  update_time  timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
 )
   AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务日志';
 -- 创建索引

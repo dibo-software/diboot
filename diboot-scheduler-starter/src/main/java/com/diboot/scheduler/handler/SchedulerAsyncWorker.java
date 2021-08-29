@@ -56,8 +56,7 @@ public class SchedulerAsyncWorker {
                         .setJobId(scheduleJob.getId())
                         .setJobName(scheduleJob.getJobName())
                         .setParamJson(scheduleJob.getParamJson())
-                        .setTenantId(scheduleJob.getTenantId())
-                        .setCreateBy(scheduleJob.getCreateBy());
+                        .setTenantId(scheduleJob.getTenantId());
             }
             scheduleJobLogService.createEntity(scheduleJobLog);
         }

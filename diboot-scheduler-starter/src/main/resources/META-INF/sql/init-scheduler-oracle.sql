@@ -48,8 +48,6 @@ CREATE TABLE ${SCHEMA}.schedule_job_log (
  execute_msg  VARCHAR2(500)  not null,
  is_deleted   NUMBER(1) DEFAULT 0    not null,
  create_time  timestamp default CURRENT_TIMESTAMP   not null,
- create_by NUMBER(20) DEFAULT 0 NOT NULL,
- update_time  timestamp   null,
  constraint PK_schedule_job_log primary key (id)
 );
 comment on column ${SCHEMA}.schedule_job_log.id is 'ID';
@@ -64,8 +62,6 @@ comment on column ${SCHEMA}.schedule_job_log.elapsed_seconds is '耗时(s)';
 comment on column ${SCHEMA}.schedule_job_log.run_status is '运行状态';
 comment on column ${SCHEMA}.schedule_job_log.data_count is '数据计数';
 comment on column ${SCHEMA}.schedule_job_log.execute_msg is '执行结果信息';
-comment on column ${SCHEMA}.schedule_job_log.create_by is '创建人';
-comment on column ${SCHEMA}.schedule_job_log.update_time is '更新时间';
 comment on column ${SCHEMA}.schedule_job_log.is_deleted is '是否删除';
 comment on column ${SCHEMA}.schedule_job_log.create_time is '创建时间';
 comment on table ${SCHEMA}.schedule_job_log is '定时任务日志';

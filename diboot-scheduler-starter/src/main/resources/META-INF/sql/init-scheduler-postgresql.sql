@@ -46,9 +46,7 @@ CREATE TABLE schedule_job_log (
   data_count int,
   execute_msg  VARCHAR(500)  not null,
   is_deleted   BOOLEAN default FALSE  not null,
-  create_time  timestamp default CURRENT_TIMESTAMP   not null,
-  create_by bigint DEFAULT 0 NOT NULL,
-  update_time  timestamp   null
+  create_time  timestamp default CURRENT_TIMESTAMP   not null
 );
 comment on column schedule_job_log.id is 'ID';
 comment on column schedule_job_log.tenant_id is '租户ID';
@@ -62,8 +60,6 @@ comment on column schedule_job_log.elapsed_seconds is '耗时(s)';
 comment on column schedule_job_log.run_status is '运行状态';
 comment on column schedule_job_log.data_count is '数据计数';
 comment on column schedule_job_log.execute_msg is '执行结果信息';
-comment on column schedule_job_log.create_by is '创建人';
-comment on column schedule_job_log.update_time is '更新时间';
 comment on column schedule_job_log.is_deleted is '是否删除';
 comment on column schedule_job_log.create_time is '创建时间';
 comment on table schedule_job_log is '定时任务日志';
