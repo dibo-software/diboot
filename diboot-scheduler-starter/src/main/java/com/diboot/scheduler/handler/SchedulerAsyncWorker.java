@@ -17,6 +17,7 @@ package com.diboot.scheduler.handler;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.util.JSON;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import com.diboot.scheduler.service.ScheduleJobLogService;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 定时任务异步相关处理
+ *
  * @author mazc@dibo.ltd
  * @version v2.2
  * @date 2020/10/21
@@ -44,24 +46,26 @@ public class SchedulerAsyncWorker {
 
     /**
      * 保存job执行日志
+     *
      * @param scheduleJobLog
      */
     public void saveScheduleJobLog(ScheduleJobLog scheduleJobLog) {
-        try{
-            LambdaQueryWrapper<ScheduleJob> queryWrapper = new QueryWrapper<ScheduleJob>()
-                    .lambda().eq(ScheduleJob::getJobKey, scheduleJobLog.getJobKey());
-            ScheduleJob scheduleJob = scheduleJobService.getSingleEntity(queryWrapper);
-            if(scheduleJob != null){
-                scheduleJobLog.setCron(scheduleJob.getCron())
-                        .setJobId(scheduleJob.getId())
-                        .setJobName(scheduleJob.getJobName())
-                        .setParamJson(scheduleJob.getParamJson())
-                        .setTenantId(scheduleJob.getTenantId());
+        LambdaQueryWrapper<ScheduleJob> queryWrapper = new QueryWrapper<ScheduleJob>()
+                .lambda().eq(ScheduleJob::getJobKey, scheduleJobLog.getJobKey());
+        ScheduleJob scheduleJob = scheduleJobService.getSingleEntity(queryWrapper);
+        if (scheduleJob == null) {
+            log.error("获取定时任务`{}`异常；日志内容：{}", scheduleJobLog.getJobId(), JSON.toJSONString(scheduleJobLog));
+        } else {
+            scheduleJobLog.setJobKey(scheduleJob.getJobKey())
+                    .setCron(scheduleJob.getCron())
+                    .setJobName(scheduleJob.getJobName())
+                    .setParamJson(scheduleJob.getParamJson())
+                    .setTenantId(scheduleJob.getTenantId());
+            if (scheduleJob.getSaveLog()) {
+                scheduleJobLogService.createEntity(scheduleJobLog);
+            } else {
+                log.debug("定时任务`{}`关闭了日志记录，日志内容：{}", scheduleJobLog.getJobId(), JSON.toJSONString(scheduleJobLog));
             }
-            scheduleJobLogService.createEntity(scheduleJobLog);
-        }
-        catch (Exception e){
-            log.error("保存Job执行日志异常", e);
         }
     }
 
