@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.entity.ScheduleJob;
@@ -49,9 +48,6 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
 
     @Override
     public boolean createEntity(ScheduleJob entity) {
-        if (V.isEmpty(entity.getJobKey())) {
-            entity.setJobKey(S.newUuid());
-        }
         boolean success = super.createEntity(entity);
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "创建定时任务失败!");
@@ -71,15 +67,16 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "更新定时任务失败!");
         }
-        // 如果参数发生变化 或状态为I,或策略改变，那么先触发删除原来的job
-        if (V.notEquals(oldJob.getParamJson(), entity.getParamJson())
-                || V.equals(oldJob.getJobStatus(), Cons.ENABLE_STATUS.I.name())
-                || V.notEquals(oldJob.getInitStrategy(), entity.getInitStrategy())
+        // job如果存在且参数发生了变化，那么先触发删除原来的job
+        if (quartzSchedulerService.existJob(entity.getId()) &&
+                (V.notEquals(oldJob.getJobStatus(), entity.getJobStatus())
+                || V.notEquals(oldJob.getJobKey(), entity.getJobKey())
                 || V.notEquals(oldJob.getCron(), entity.getCron())
+                || V.notEquals(oldJob.getParamJson(), entity.getParamJson())
+                || V.notEquals(oldJob.getInitStrategy(), entity.getInitStrategy()))
         ) {
-            quartzSchedulerService.deleteJob(oldJob.getJobKey());
+            quartzSchedulerService.deleteJob(entity.getId());
         }
-        entity.setJobKey(oldJob.getJobKey());
         if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
             quartzSchedulerService.addJob(entity);
         }
@@ -88,23 +85,21 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
 
     @Override
     public boolean deleteEntity(Serializable jobId) {
-        String jobKeyObj = getValueOfField(ScheduleJob::getId, jobId, ScheduleJob::getJobKey);
-        quartzSchedulerService.deleteJob(jobKeyObj);
+        quartzSchedulerService.deleteJob((Long) jobId);
         return super.deleteEntity(jobId);
     }
 
     @Override
     public boolean executeOnceJob(Long jobId) {
-        String jobKeyObj = getValueOfField(ScheduleJob::getId, jobId, ScheduleJob::getJobKey);
         // 如果已经存在job，那么直接恢复，否则添加job
-        if (!quartzSchedulerService.existJob(jobKeyObj)) {
+        if (!quartzSchedulerService.existJob(jobId)) {
             ScheduleJob entity = this.getEntity(jobId);
             if (V.isEmpty(entity)) {
                 throw new BusinessException(Status.FAIL_OPERATION, "当前任务无效！");
             }
             quartzSchedulerService.addJobExecuteOnce(entity);
         } else {
-            quartzSchedulerService.runJob(jobKeyObj);
+            quartzSchedulerService.runJob(jobId);
         }
 
         return true;
@@ -120,12 +115,11 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "更新状态失败！");
         }
-        String jobKeyObj = getValueOfField(ScheduleJob::getId, jobId, ScheduleJob::getJobKey);
         // 恢复
         if (Cons.ENABLE_STATUS.A.name().equals(jobStatus)) {
             // 如果已经存在job，那么直接恢复，否则添加job
-            if (quartzSchedulerService.existJob(jobKeyObj)) {
-                quartzSchedulerService.resumeJob((String) jobKeyObj);
+            if (quartzSchedulerService.existJob(jobId)) {
+                quartzSchedulerService.resumeJob(jobId);
             } else {
                 ScheduleJob entity = this.getEntity(jobId);
                 if (V.isEmpty(entity)) {
@@ -136,7 +130,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
         }
         // 停止
         else if (Cons.ENABLE_STATUS.I.name().equals(jobStatus)) {
-            quartzSchedulerService.pauseJob((String) jobKeyObj);
+            quartzSchedulerService.pauseJob(jobId);
         } else {
             log.warn("无效的action参数: {}", jobStatus);
         }
@@ -148,6 +142,4 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
     public List<Map<String, Object>> getAllJobs() throws Exception {
         return quartzSchedulerService.loadAllJobs();
     }
-
-
 }

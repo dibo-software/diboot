@@ -16,7 +16,10 @@
 package com.diboot.scheduler.service.impl;
 
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
@@ -63,14 +66,13 @@ public class QuartzSchedulerService {
 
     @PostConstruct
     public void startScheduler() {
-        if(schedulerProperties.isEnable() == false){
+        if (schedulerProperties.isEnable() == false) {
             log.info("定时任务组件已暂停，如需启用设置:diboot.component.scheduler.enable=true");
             return;
         }
         try {
             scheduler.start();
-        }
-        catch (SchedulerException e) {
+        } catch (SchedulerException e) {
             log.error("定时任务scheduler初始化异常，请检查！", e);
         }
     }
@@ -95,10 +97,11 @@ public class QuartzSchedulerService {
 
     /**
      * 加载job定义
+     *
      * @param annoJobList
      * @return
      */
-    private List<Map<String, Object>> loadJobs(List<Object> annoJobList){
+    private List<Map<String, Object>> loadJobs(List<Object> annoJobList) {
         List<Map<String, Object>> result = new ArrayList<>();
         for (Object job : annoJobList) {
             if (!(job instanceof Job)) {
@@ -106,24 +109,15 @@ public class QuartzSchedulerService {
                 continue;
             }
             Map<String, Object> temp = new HashMap<>(8);
-            Class targetClass = BeanUtils.getTargetClass(job);
-            String jobCron = null, jobName = null, paramJson = null;
-            Class<?> paramClass = null;
-            CollectThisJob annotation = (CollectThisJob) targetClass.getAnnotation(CollectThisJob.class);
-            if(annotation != null){
-                jobCron = annotation.cron();
-                jobName = annotation.name();
-                paramJson = annotation.paramJson();
-                paramClass = annotation.paramClass();
-            }
-            temp.put("jobCron", jobCron);
-            temp.put("jobName", jobName);
+            Class<?> targetClass = BeanUtils.getTargetClass(job);
+            CollectThisJob annotation = targetClass.getAnnotation(CollectThisJob.class);
+            temp.put("jobKey", targetClass.getSimpleName());
+            temp.put("jobCron", annotation.cron());
+            temp.put("jobName", annotation.name());
             temp.put("jobClass", targetClass);
-            String paramJsonExample = "";
-            if (V.notEmpty(paramJson)) {
-                paramJsonExample = paramJson;
-            }
-            else if (!Object.class.getTypeName().equals(paramClass.getTypeName())) {
+            Class<?> paramClass = annotation.paramClass();
+            String paramJsonExample = annotation.paramJson();
+            if (V.isEmpty(paramJsonExample) && !Object.class.getTypeName().equals(paramClass.getTypeName())) {
                 try {
                     paramJsonExample = JSON.stringify(paramClass.newInstance());
                 } catch (Exception e) {
@@ -173,17 +167,12 @@ public class QuartzSchedulerService {
      * 添加 cron表达式job
      *
      * @param job
-     * @return
      */
-    public String addJob(ScheduleJob job) {
+    public void addJob(ScheduleJob job) {
         try {
-            // 设置job
-            if (V.isEmpty(job.getJobClass())) {
-                setJobClass(job);
-            }
-            TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobKey());
+            TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
             // 构建参数
-            JobDetail jobDetail = JobBuilder.newJob(job.getJobClass()).withIdentity(job.getJobKey()).build();
+            JobDetail jobDetail = JobBuilder.newJob(getJobClass(job.getJobKey())).withIdentity(job.getId().toString()).build();
             if (V.notEmpty(job.getParamJson())) {
                 Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
                 jobDetail.getJobDataMap().putAll(jsonData);
@@ -202,27 +191,18 @@ public class QuartzSchedulerService {
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
         }
-        return job.getJobKey();
     }
 
     /**
      * 添加一个立即执行一次的job
      *
      * @param job
-     * @return
      */
-    public String addJobExecuteOnce(ScheduleJob job) {
+    public void addJobExecuteOnce(ScheduleJob job) {
         try {
-            if (V.isEmpty(job.getJobKey())) {
-                job.setJobKey(S.newUuid());
-            }
-            // 设置job
-            if (V.isEmpty(job.getJobClass())) {
-                setJobClass(job);
-            }
-            TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobKey());
+            TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
             // 构建参数
-            JobDetail jobDetail = JobBuilder.newJob(job.getJobClass()).withIdentity(job.getJobKey()).build();
+            JobDetail jobDetail = JobBuilder.newJob(getJobClass(job.getJobKey())).withIdentity(job.getId().toString()).build();
             if (V.notEmpty(job.getParamJson())) {
                 Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
                 jobDetail.getJobDataMap().putAll(jsonData);
@@ -233,18 +213,17 @@ public class QuartzSchedulerService {
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
         }
-        return job.getJobKey();
     }
 
 
     /**
      * 立即执行job
      *
-     * @param jobKey
+     * @param jobId
      */
-    public void runJob(String jobKey) {
+    public void runJob(Long jobId) {
         try {
-            scheduler.triggerJob(JobKey.jobKey(jobKey));
+            scheduler.triggerJob(JobKey.jobKey(jobId.toString()));
         } catch (SchedulerException e) {
             log.error("运行job异常", e);
         }
@@ -253,11 +232,11 @@ public class QuartzSchedulerService {
     /**
      * 暂停job
      *
-     * @param jobKey
+     * @param jobId
      */
-    public void pauseJob(String jobKey) {
+    public void pauseJob(Long jobId) {
         try {
-            scheduler.pauseJob(JobKey.jobKey(jobKey));
+            scheduler.pauseJob(JobKey.jobKey(jobId.toString()));
         } catch (Exception e) {
             log.error("暂停job异常", e);
         }
@@ -266,11 +245,11 @@ public class QuartzSchedulerService {
     /**
      * 恢复job
      *
-     * @param jobKey
+     * @param jobId
      */
-    public void resumeJob(String jobKey) {
+    public void resumeJob(Long jobId) {
         try {
-            scheduler.resumeJob(JobKey.jobKey(jobKey));
+            scheduler.resumeJob(JobKey.jobKey(jobId.toString()));
         } catch (SchedulerException e) {
             log.error("恢复job异常", e);
         }
@@ -279,16 +258,14 @@ public class QuartzSchedulerService {
     /**
      * 删除job
      *
-     * @param jobKey
+     * @param jobId
      */
-    public void deleteJob(String jobKey) {
+    public void deleteJob(Long jobId) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
-            if (V.notEmpty(triggerKey)) {
-                scheduler.pauseTrigger(triggerKey);
-                scheduler.unscheduleJob(triggerKey);
-                scheduler.deleteJob(JobKey.jobKey(jobKey));
-            }
+            scheduler.pauseTrigger(triggerKey);
+            scheduler.unscheduleJob(triggerKey);
+            scheduler.deleteJob(JobKey.jobKey(jobId.toString()));
         } catch (Exception e) {
             log.error("删除job异常", e);
         }
@@ -297,12 +274,12 @@ public class QuartzSchedulerService {
     /**
      * 更新一个job的cron表达式
      *
-     * @param jobKey
-     * @param cron   定时表达式
+     * @param jobId
+     * @param cron  定时表达式
      */
-    public void updateJobCron(String jobKey, String cron) {
+    public void updateJobCron(Long jobId, String cron) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
-            TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
             Trigger trigger = scheduler.getTrigger(triggerKey);
             CronTrigger cronTrigger = (CronTrigger) trigger;
             if (!cronTrigger.getCronExpression().equals(cron)) {
@@ -320,8 +297,8 @@ public class QuartzSchedulerService {
      *
      * @return
      */
-    public boolean existJob(String jobKey) {
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobKey);
+    public boolean existJob(Long jobId) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
             Trigger trigger = scheduler.getTrigger(triggerKey);
             return V.notEmpty(trigger);
@@ -332,27 +309,24 @@ public class QuartzSchedulerService {
     }
 
     /**
-     * 设置ScheduleJob#JobClass
+     * 获取JobClass
      *
-     * @param entity
+     * @param jobKey
+     * @return jobClass
      */
-    public void setJobClass(ScheduleJob entity) {
-        String jobName = V.isEmpty(entity.getJobName()) ? "" : entity.getJobName();
-        if (V.isEmpty(CACHE_JOB)) {
-            try {
-                loadAllJobs();
-            } catch (Exception e) {
-                throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！");
+    public Class<? extends Job> getJobClass(String jobKey) {
+        try {
+            Class<? extends Job> jobClass = loadAllJobs().stream()
+                    .filter(e -> String.valueOf(e.get("jobKey")).equals(jobKey))
+                    .map(e -> (Class<? extends Job>) e.get("jobClass"))
+                    .findAny()
+                    .orElse(null);
+            if (jobClass == null) {
+                throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法的定时任务!" + jobKey);
             }
+            return jobClass;
+        } catch (Exception e) {
+            throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！");
         }
-        Map<String, Object> jobMap = CACHE_JOB.stream()
-                .filter(s -> jobName.equals(String.valueOf(s.get("jobName"))))
-                .findFirst()
-                .get();
-        if (jobMap == null) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法的定时任务名称!");
-        }
-        entity.setJobClass((Class<? extends Job>) jobMap.get("jobClass"));
     }
-
 }
