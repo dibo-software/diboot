@@ -30,7 +30,6 @@ import com.diboot.file.dto.UploadFileResult;
 import com.diboot.file.entity.UploadFile;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.service.UploadFileService;
-import com.diboot.file.util.FileHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;

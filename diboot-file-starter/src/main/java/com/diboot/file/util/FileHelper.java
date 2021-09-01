@@ -45,7 +45,7 @@ public class FileHelper{
 	/**
 	 * excel格式
 	 */
-	private static final List<String> EXCEL_SUFFIX = Arrays.asList("xls", "xlsx", "xlsm");
+	private static final List<String> EXCEL_SUFFIX = Arrays.asList("csv", "xls", "xlsx", "xlsm");
 
 	/**
 	 * 文件存储路径参数名

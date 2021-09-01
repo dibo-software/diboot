@@ -20,7 +20,6 @@ import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamRole;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

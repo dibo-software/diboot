@@ -15,13 +15,9 @@
  */
 package com.diboot.iam.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamUser;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 /**
 * 系统用户Mapper
@@ -33,4 +29,3 @@ import org.apache.ibatis.annotations.Select;
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
 
 }
-

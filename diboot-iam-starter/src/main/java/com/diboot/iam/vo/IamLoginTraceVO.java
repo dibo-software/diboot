@@ -17,7 +17,6 @@ package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.iam.entity.IamLoginTrace;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

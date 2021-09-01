@@ -22,10 +22,8 @@ import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.entity.User;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import java.util.List;
 

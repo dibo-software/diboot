@@ -17,9 +17,7 @@ package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindFieldList;
-import com.diboot.core.config.Cons;
 import diboot.core.test.binder.entity.Role;
-import diboot.core.test.binder.entity.TestUploadFile;
 import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;

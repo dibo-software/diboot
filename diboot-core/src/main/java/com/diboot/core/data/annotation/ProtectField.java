@@ -15,8 +15,8 @@
  */
 package com.diboot.core.data.annotation;
 
-import com.diboot.core.data.encrypt.IEncryptStrategy;
 import com.diboot.core.data.encrypt.DefaultEncryptStrategy;
+import com.diboot.core.data.encrypt.IEncryptStrategy;
 import com.diboot.core.data.mask.DefaultMaskStrategy;
 import com.diboot.core.data.mask.IMaskStrategy;
 import com.diboot.core.data.mask.SensitiveInfoSerialize;

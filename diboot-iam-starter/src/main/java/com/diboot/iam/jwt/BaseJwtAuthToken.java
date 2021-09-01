@@ -20,7 +20,6 @@ import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.JwtUtils;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 

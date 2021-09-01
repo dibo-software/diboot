@@ -21,7 +21,6 @@ import com.diboot.core.binding.annotation.BindField;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
