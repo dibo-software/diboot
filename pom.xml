@@ -28,7 +28,7 @@
     <properties>
         <java.version>1.8</java.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
-        <mybatis-plus.version>3.4.3.2</mybatis-plus.version>
+        <mybatis-plus.version>3.4.3.3</mybatis-plus.version>
         <okhttp.version>4.9.1</okhttp.version>
         <diboot.version>2.3.1</diboot.version>
     </properties>
