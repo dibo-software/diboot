@@ -204,7 +204,10 @@ public abstract class BaseExcelFileController extends BaseFileController {
             ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
         } catch (Exception e) {
             log.warn("解析并校验excel文件失败", e);
-            if (V.notEmpty(e.getMessage())) {
+            if(e instanceof BusinessException){
+                throw e;
+            }
+            else if (V.notEmpty(e.getMessage())) {
                 throw new Exception(e.getMessage());
             }
             throw e;
