@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
  * @date 2021/08/29
  */
 @Component
-@ConditionalOnProperty(prefix = "diboot.component.scheduler", name = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "diboot.component.scheduler", name = "enable", havingValue = "true", matchIfMissing = true)
 public class SchedulerJobInitializer implements ApplicationRunner {
 
     @Autowired

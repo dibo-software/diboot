@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(940)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true")
+@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
 public class SchedulerPluginInitializer implements ApplicationRunner {
 
     @Autowired

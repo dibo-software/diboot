@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(910)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true")
+@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
 public class CorePluginInitializer implements ApplicationRunner {
     @Autowired
     private Environment environment;

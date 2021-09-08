@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(930)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true")
+@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
 public class FilePluginInitializer implements ApplicationRunner {
 
     @Autowired
