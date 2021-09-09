@@ -155,7 +155,7 @@ public class ServiceAdaptor {
             }
         }
         // select全部列，不特殊处理
-        if(allColumns.size() == columns.size()){
+        if(allColumns.size() <= columns.size()){
             return queryWrapper;
         }
         return ((QueryWrapper)queryWrapper).select(S.toStringArray(columns));
