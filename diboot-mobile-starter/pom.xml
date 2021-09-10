@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>diboot-root</artifactId>
+        <groupId>com.diboot</groupId>
+        <version>2.3.1</version>
+    </parent>
+
+    <groupId>com.diboot</groupId>
+    <artifactId>diboot-mobile-spring-boot-starter</artifactId>
+    <packaging>jar</packaging>
+    <description>diboot mobile starter project</description>
+
+    <properties>
+        <weixin.java.version>4.1.0</weixin.java.version>
+    </properties>
+    <dependencies>
+        <!-- 依赖 core -->
+        <dependency>
+            <groupId>com.diboot</groupId>
+            <artifactId>diboot-core-spring-boot-starter</artifactId>
+            <version>${diboot.version}</version>
+        </dependency>
+
+        <!-- 依赖 IAM -->
+        <dependency>
+            <groupId>com.diboot</groupId>
+            <artifactId>diboot-iam-spring-boot-starter</artifactId>
+            <version>${diboot.version}</version>
+        </dependency>
+
+        <!--   引入mp工具包     -->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-mp</artifactId>
+            <version>${weixin.java.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--   引入mini工具包     -->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>${weixin.java.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+
+</project>
