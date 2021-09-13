@@ -8,12 +8,12 @@ CREATE TABLE ${SCHEMA}.schedule_job (
   param_json VARCHAR2(200),
   init_strategy VARCHAR2(50),
   job_status       VARCHAR2(10)   default 'A'  not null,
-  job_comment      VARCHAR2(200),
   save_log   NUMBER(1) DEFAULT 1    not null,
+  job_comment      VARCHAR2(200),
   is_deleted   NUMBER(1) DEFAULT 0    not null,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   create_by NUMBER(20) DEFAULT 0 NOT NULL,
-  create_by_name  VARCHAR2(10),
+  create_by_name  VARCHAR2(50),
   update_time  timestamp   null,
   constraint PK_schedule_job primary key (id)
 );

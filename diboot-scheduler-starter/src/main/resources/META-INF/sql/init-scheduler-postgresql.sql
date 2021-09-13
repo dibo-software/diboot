@@ -8,12 +8,12 @@ CREATE TABLE schedule_job (
   param_json VARCHAR(200),
   init_strategy VARCHAR(50),
   job_status       VARCHAR(10)   default 'A'  not null,
-  job_comment      VARCHAR(200),
   save_log     BOOLEAN default TRUE    not null,
+  job_comment      VARCHAR(200),
   is_deleted   BOOLEAN default FALSE   not null,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   create_by bigint DEFAULT 0 NOT NULL,
-  create_by_name VARCHAR(10),
+  create_by_name VARCHAR(50),
   update_time  timestamp   null
 );
 comment on column schedule_job.id is 'ID';

@@ -8,12 +8,12 @@ CREATE TABLE schedule_job (
   param_json VARCHAR(200),
   init_strategy VARCHAR(50),
   job_status       VARCHAR(10)   default 'A'  not null,
-  job_comment      VARCHAR(200),
   save_log     tinyint not null DEFAULT 1,
+  job_comment      VARCHAR(200),
   is_deleted   tinyint not null DEFAULT 0,
   create_time  datetime default CURRENT_TIMESTAMP   not null,
   create_by bigint DEFAULT 0 NOT NULL,
-  create_by_name VARCHAR(10),
+  create_by_name VARCHAR(50),
   update_time  datetime   null,
   constraint PK_schedule_job primary key (id)
 );
