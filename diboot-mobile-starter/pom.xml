@@ -17,14 +17,8 @@
     <properties>
         <weixin.java.version>4.1.0</weixin.java.version>
     </properties>
-    <dependencies>
-        <!-- 依赖 core -->
-        <dependency>
-            <groupId>com.diboot</groupId>
-            <artifactId>diboot-core-spring-boot-starter</artifactId>
-            <version>${diboot.version}</version>
-        </dependency>
 
+    <dependencies>
         <!-- 依赖 IAM -->
         <dependency>
             <groupId>com.diboot</groupId>
@@ -61,5 +55,4 @@
         </dependency>
 
     </dependencies>
-
 </project>

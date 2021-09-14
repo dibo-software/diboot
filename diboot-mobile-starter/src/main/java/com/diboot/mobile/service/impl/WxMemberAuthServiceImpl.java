@@ -75,7 +75,7 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
         }
         if (V.isEmpty(code)) {
             log.error("请求参数有误: code = null");
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请求参数有误");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请求参数有误: code is null");
         }
         WxOAuth2AccessToken accessToken = wxMpService.getOAuth2Service().getAccessToken(code);
         // 获取用户信息
@@ -132,7 +132,7 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
         IamMember iamMember = iamMemberService.getSingleEntity(
                 Wrappers.<IamMember>lambdaQuery()
                         .eq(IamMember::getOpenid, wxInfoDTO.getOpenid())
-                        .eq(IamMember::getStatus, IamMember.MEMBER_STATUS.NORMAL)
+                        .eq(IamMember::getStatus, Cons.DICTCODE_ACCOUNT_STATUS.A.name())
         );
         if (V.notEmpty(iamMember)) {
             return Binder.convertAndBindRelations(iamMember, IamMemberVO.class);
@@ -167,7 +167,7 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
                 .setAvatarUrl(userInfo.getHeadImgUrl())
                 .setGender(this.sex2gender(userInfo.getSex()))
                 .setNickname(userInfo.getNickname())
-                .setStatus(IamMember.MEMBER_STATUS.NORMAL.name());
+                .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
     }
 
     /**
@@ -184,7 +184,7 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
                 .setCountry(wxMemberDTO.getCountry())
                 .setProvince(wxMemberDTO.getProvince())
                 .setCity(wxMemberDTO.getCity())
-                .setStatus(IamMember.MEMBER_STATUS.NORMAL.name());
+                .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
     }
 
     /**

@@ -27,8 +27,6 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 移动端登陆用户
@@ -46,26 +44,19 @@ public class IamMember extends BaseLoginUser {
     private static final long serialVersionUID = -1947077615295781979L;
 
     /**
-     * now_status关联字典
-     */
-    public static final String DICT_MEMBER_STATUS = "MEMBER_STATUS";
-
-    public enum MEMBER_STATUS {
-        NORMAL,
-        LOCK,
-        STOP
-    }
-
-    public static final Map<String, String> MEMBER_STATUS_MAP = new HashMap<String, String>() {{
-        put(MEMBER_STATUS.NORMAL.name(), "正常");
-        put(MEMBER_STATUS.LOCK.name(), "锁定");
-        put(MEMBER_STATUS.STOP.name(), "停用");
-    }};
-
-    /**
      * gender字段的关联字典
      */
     public static final String DICT_GENDER = "GENDER";
+    /**
+     * 移动端用户状态
+     */
+    public static final String DICT_MEMBER_STATUS = "ACCOUNT_STATUS";
+
+    /**
+     * 租户id
+     */
+    @TableField()
+    private Long tenantId;
 
     /**
      * 组织

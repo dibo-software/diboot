@@ -36,10 +36,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @AllArgsConstructor
 @Configuration
-@ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx.mp.appid') != null ||  environment.getProperty('diboot.mobile.wx.miniapp.appid') != null}")
-public class WeiXinConfiguration {
+@ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-mp.appid') != null ||  environment.getProperty('diboot.mobile.wx-miniapp.appid') != null}")
+public class WeiXinConfig {
 
-    private final WeiXinProperties properties;
+    private final MobileProperties mobileProperties;
 
     /**
      * 微信公众号配置
@@ -47,10 +47,10 @@ public class WeiXinConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx.mp.appid') != null}")
+    @ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-mp.appid') != null}")
     public WxMpService wxMpService() {
         WxMpDefaultConfigImpl configStorage = new WxMpDefaultConfigImpl();
-        WeiXinProperties.Config mp = properties.getMp();
+        MobileProperties.Config mp = mobileProperties.getWxMp();
         configStorage.setAppId(mp.getAppid());
         configStorage.setSecret(mp.getSecret());
         configStorage.setAesKey(mp.getAesKey());
@@ -66,10 +66,10 @@ public class WeiXinConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx.miniapp.appid') != null}")
+    @ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-miniapp.appid') != null}")
     public WxMaService wxMaService() {
         WxMaDefaultConfigImpl configStorage = new WxMaDefaultConfigImpl();
-        WeiXinProperties.Config miniapp = properties.getMiniapp();
+        MobileProperties.Config miniapp = mobileProperties.getWxMiniapp();
         configStorage.setAppid(miniapp.getAppid());
         configStorage.setSecret(miniapp.getSecret());
         configStorage.setAesKey(miniapp.getAesKey());

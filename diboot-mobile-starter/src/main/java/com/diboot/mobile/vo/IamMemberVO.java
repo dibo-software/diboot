@@ -39,8 +39,9 @@ public class IamMemberVO extends IamMember {
     private String genderLabel;
 
     /**
-     * 关联字典：GENDER
+     * 关联字典：account_status
      */
     @BindDict(type = DICT_MEMBER_STATUS, field = "status")
     private String statusLabel;
+
 }

@@ -31,18 +31,23 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "diboot.mobile.wx")
-public class WeiXinProperties {
+@ConfigurationProperties(prefix = "diboot.mobile")
+public class MobileProperties {
+
+    /**
+     * 是否初始化SQL
+     */
+    private boolean initSql = true;
 
     /**
      * 小程序的配置
      */
-    private Config miniapp;
+    private Config wxMiniapp;
 
     /**
      * 公众号的配置
      */
-    private Config mp;
+    private Config wxMp;
 
     @Setter
     @Getter
