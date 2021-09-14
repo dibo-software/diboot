@@ -164,9 +164,6 @@ public class LogAspect {
         String paramsJson = null;
         if(V.notEmpty(paramsMap)){
             paramsJson = JSON.stringify(paramsMap);
-            if(paramsJson.length() > maxLength){
-                paramsJson = S.cut(paramsJson, maxLength);
-            }
         }
         operationLog.setRequestParams(paramsJson);
 

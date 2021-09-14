@@ -17,6 +17,8 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -122,5 +124,13 @@ public class IamOperationLog extends BaseEntity {
     @Length(max = 1000, message = "用户类型长度应小于1000")
     @TableField()
     private String errorMsg;
+
+    public IamOperationLog setRequestParams(String requestParams){
+        if(V.notEmpty(requestParams) && requestParams.length() > 1000){
+            requestParams = S.cut(requestParams, 1000);
+        }
+        this.requestParams = requestParams;
+        return this;
+    }
 
 }

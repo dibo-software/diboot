@@ -17,6 +17,8 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -76,6 +78,14 @@ public class IamLoginTrace extends BaseEntity {
     @Length(max=200, message="User-Agent长度应小于200")
     @TableField()
     private String userAgent;
+
+    public IamLoginTrace setUserAgent(String userAgent){
+        if(V.notEmpty(userAgent) && userAgent.length() > 200){
+            userAgent = S.cut(userAgent, 200);
+        }
+        this.userAgent = userAgent;
+        return this;
+    }
 
     @TableField(exist = false)
     private boolean deleted;
