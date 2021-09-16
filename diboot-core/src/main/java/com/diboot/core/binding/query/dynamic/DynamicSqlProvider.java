@@ -69,10 +69,10 @@ public class DynamicSqlProvider {
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
             if(V.isEmpty(ew.getSqlSelect())){
-                SELECT("self.*");
+                SELECT_DISTINCT("self.*");
             }
             else{
-                SELECT(formatSqlSelect(ew.getSqlSelect()));
+                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect()));
             }
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
