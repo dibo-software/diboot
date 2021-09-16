@@ -136,11 +136,11 @@ public class IamMember extends BaseLoginUser {
     private String gender;
 
     /**
-     * 性别
+     * 备注
      */
     @Length(max = 200, message = "用户备注应小于200")
     @TableField()
-    private String comment;
+    private String description;
 
     /**
      * 更新时间
