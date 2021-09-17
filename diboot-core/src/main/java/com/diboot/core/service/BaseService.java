@@ -16,6 +16,7 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -31,6 +32,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 基础服务Service
@@ -110,13 +112,34 @@ public interface BaseService<T> {
     /**
      * 创建或更新n-n关联
      * （在主对象的service中调用，不依赖中间表service实现中间表操作）
-     * @param driverIdGetter 驱动对象getter
-     * @param driverId 驱动对象ID
+     *
+     * @param driverIdGetter   驱动对象getter
+     * @param driverId         驱动对象ID
      * @param followerIdGetter 从动对象getter
-     * @param followerIdList 从动对象id集合
+     * @param followerIdList   从动对象id集合
      * @return
      */
-    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId, SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+
+    /**
+     * 创建或更新n-n关联
+     * （在主对象的service中调用，不依赖中间表service实现中间表操作）
+     * <p>
+     * 可自定附加条件、参数
+     *
+     * @param driverIdGetter   驱动对象getter
+     * @param driverId         驱动对象ID
+     * @param followerIdGetter 从动对象getter
+     * @param followerIdList   从动对象id集合
+     * @param queryConsumer    附加查询条件
+     * @param setConsumer      附加插入参数
+     * @param <R>              关联对象类型
+     * @return
+     */
+    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                           Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer);
 
     /**
      * 更新Entity实体

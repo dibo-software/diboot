@@ -96,9 +96,10 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         }
         // 查询权限
         List<IamResourcePermission> resourcePermissions = iamResourcePermissionService.getEntityList(
-            Wrappers.<IamResourcePermission>lambdaQuery()
-            .select(IamResourcePermission::getApiSet)
-            .in(IamResourcePermission::getId, permissionIds)
+                Wrappers.<IamResourcePermission>lambdaQuery()
+                        .select(IamResourcePermission::getApiSet)
+                        .in(IamResourcePermission::getId, permissionIds)
+                        .isNotNull(IamResourcePermission::getApiSet)
         );
         if(resourcePermissions == null){
             return Collections.emptyList();

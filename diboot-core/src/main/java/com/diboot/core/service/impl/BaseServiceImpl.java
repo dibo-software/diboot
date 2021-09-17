@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.diboot.core.binding.Binder;
@@ -53,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 /***
  * CRUD通用接口实现类
@@ -266,66 +268,118 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
 	}
 
-	/**
-	 * 更新n-n关联
-	 * @return
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public     <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-													  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList)
-	{
-		if(driverId == null){
+    @Override
+    public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+                                                  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList) {
+        return createOrUpdateN2NRelations(driverIdGetter, driverId, followerIdGetter, followerIdList, null, null);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+                                                  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                                  Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer) {
+		if (driverId == null) {
 			throw new InvalidUsageException("主动ID值不能为空！");
+		}
+		if (followerIdList == null) {
+			log.debug("从动对象ID集合为null，不做关联关系更新处理");
+			return false;
 		}
 		// 从getter中获取class和fieldName
 		LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
 		Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
+		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(middleTableClass);
+		boolean isExistPk = entityInfo.getIdColumn() != null;
+
 		// 获取主动从动字段名
 		String driverFieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
 		String followerFieldName = convertGetterToFieldName(followerIdGetter);
-		List<R> n2nRelations = null;
-		if(V.notEmpty(followerIdList)){
-			n2nRelations = new ArrayList<>(followerIdList.size());
-			try{
-				for(Serializable followerId : followerIdList){
-					R relation = middleTableClass.newInstance();
-					BeanUtils.setProperty(relation, driverFieldName, driverId);
-					BeanUtils.setProperty(relation, followerFieldName, followerId);
-					n2nRelations.add(relation);
+		String driverColumnName = entityInfo.getColumnByField(driverFieldName);
+		String followerColumnName = entityInfo.getColumnByField(followerFieldName);
+
+		// 查询已有关联
+		QueryWrapper<R> selectOld = new QueryWrapper<R>().eq(driverColumnName, driverId);
+		if (queryConsumer != null) {
+			queryConsumer.accept(selectOld);
+		}
+		if (isExistPk) {
+			selectOld.select(entityInfo.getIdColumn(), followerColumnName);
+		} else {
+			selectOld.select(followerColumnName);
+		}
+		List<Map<String, Object>> oldMap = null;
+
+		IService<R> iService = entityInfo.getService();
+		BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
+		if (iService != null) {
+			oldMap = iService.listMaps(selectOld);
+		} else if (baseMapper != null) {
+			oldMap = baseMapper.selectMaps(selectOld);
+		} else {
+			throw new InvalidUsageException("未找到 " + middleTableClass.getName() + " 的 Service 或 Mapper 定义！");
+		}
+
+		// 删除失效关联
+		List<Serializable> delIds = new ArrayList<>();
+		for (Map<String, Object> map : oldMap) {
+			if (V.notEmpty(followerIdList) && followerIdList.remove((Serializable) map.get(followerColumnName))) {
+				continue;
+			}
+			delIds.add((Serializable) map.get(isExistPk ? entityInfo.getIdColumn() : followerColumnName));
+		}
+		if (!delIds.isEmpty()) {
+			if (isExistPk) {
+				if (iService != null) {
+					iService.removeByIds(delIds);
+				} else {
+					baseMapper.deleteBatchIds(delIds);
+				}
+			} else {
+				QueryWrapper<R> delOld = new QueryWrapper<R>().eq(driverColumnName, driverId)
+						.in(entityInfo.getColumnByField(followerFieldName), delIds);
+				if (queryConsumer != null) {
+					queryConsumer.accept(selectOld);
+				}
+				if (iService != null) {
+					iService.remove(delOld);
+				} else if (!delIds.isEmpty()) {
+					baseMapper.delete(delOld);
 				}
 			}
-			catch (Exception e){
-				throw new BusinessException(Status.FAIL_EXCEPTION, e);
-			}
 		}
-		// 删除已有关联
-		LambdaQueryWrapper<R> queryWrapper = new QueryWrapper<R>().lambda()
-				.eq(driverIdGetter, driverId);
-		// 查找service
-		BaseService baseService = ContextHelper.getBaseServiceByEntity(middleTableClass);
-		if(baseService != null){
-			// 条件为空，不删除
-			baseService.deleteEntities(queryWrapper);
-			// 添加
-			if(V.notEmpty(n2nRelations)){
-				baseService.createEntities(n2nRelations);
-			}
-		}
-		else{
-			// 查找mapper
-			BaseMapper mapper = ContextHelper.getBaseMapperByEntity(middleTableClass);
-			// 条件为空，不删除
-			mapper.delete(queryWrapper);
-			// 新增关联，无service只能循环插入
-			if(V.notEmpty(n2nRelations)){
-				for(R relation : n2nRelations){
-					mapper.insert(relation);
-				}
-			}
-		}
-		return true;
-	}
+
+        // 新增关联
+        if (V.notEmpty(followerIdList)) {
+            List<R> n2nRelations = new ArrayList<>(followerIdList.size());
+            try {
+                for (Serializable followerId : followerIdList) {
+                    R relation = middleTableClass.newInstance();
+                    BeanUtils.setProperty(relation, driverFieldName, driverId);
+                    BeanUtils.setProperty(relation, followerFieldName, followerId);
+                    if (setConsumer != null) {
+                        setConsumer.accept(relation);
+                    }
+                    n2nRelations.add(relation);
+                }
+            } catch (Exception e) {
+                throw new BusinessException(Status.FAIL_EXCEPTION, e);
+            }
+            if (iService != null) {
+                if (iService instanceof BaseService) {
+                    ((BaseService<R>) iService).createEntities(n2nRelations);
+                } else {
+                    iService.saveBatch(n2nRelations);
+                }
+            } else {
+                // 新增关联，无service只能循环插入
+                for (R relation : n2nRelations) {
+                    baseMapper.insert(relation);
+                }
+            }
+        }
+        return true;
+    }
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)

@@ -403,13 +403,13 @@ public class BaseServiceTest {
         Assert.assertTrue(list.size() == roleIdList.size());
 
         // 更新
-        roleIdList = Arrays.asList(13L);
+        roleIdList = Arrays.asList(12L, 13L);
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
-        Assert.assertTrue(list.size() == 1);
+        Assert.assertTrue(list.size() == 2);
 
         // 删除
-        roleIdList = null;
+        roleIdList = Collections.emptyList();
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 0);

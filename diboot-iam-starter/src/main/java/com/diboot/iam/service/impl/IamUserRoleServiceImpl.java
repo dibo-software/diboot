@@ -150,63 +150,36 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean createUserRoleRelations(String userType, Long userId, List<Long> roleIds) {
-        if(V.isEmpty(roleIds)){
+        if (V.isEmpty(roleIds)) {
             return true;
         }
         Long superAdminRoleId = getSuperAdminRoleId();
         // 给用户赋予了超级管理员，需确保当前用户为超级管理员权限
-        if(superAdminRoleId != null && roleIds.contains(superAdminRoleId)){
+        if (superAdminRoleId != null && roleIds.contains(superAdminRoleId)) {
             checkSuperAdminIdentity();
         }
-        List<IamUserRole> entityList = new ArrayList<>();
-        for(Long roleId : roleIds){
-            entityList.add(new IamUserRole(userType, userId, roleId));
-        }
-        boolean success = super.createEntities(entityList);
-        if(success){
-            // 清空用户缓存
-            clearUserAuthCache(userType, userId);
-        }
-        return success;
+        return super.createOrUpdateN2NRelations(IamUserRole::getUserId, userId, IamUserRole::getRoleId, roleIds,
+                q -> q.lambda().eq(IamUserRole::getUserType, userType), e -> e.setUserType(userType));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateUserRoleRelations(String userType, Long userId, List<Long> roleIds) {
-        if (V.isEmpty(roleIds)){
+        if (V.isEmpty(roleIds)) {
             return true;
         }
-        // 需要先获取旧的角色列表，来进行超级管理员权限判定
-        List<IamUserRole> oldUserRoleList = this.getEntityList(
-                Wrappers.<IamUserRole>lambdaQuery()
-                        .eq(IamUserRole::getUserType, userType)
-                        .eq(IamUserRole::getUserId, userId)
-        );
-        List oldRoleIds = new ArrayList();
-        if (V.notEmpty(oldUserRoleList)){
-            oldRoleIds = oldUserRoleList.stream()
-                    .map(IamUserRole::getRoleId)
-                    .collect(Collectors.toList());
-        }
-
         Long superAdminRoleId = getSuperAdminRoleId();
         // 给用户赋予了超级管理员，需确保当前用户为超级管理员权限
-        if(superAdminRoleId != null && (roleIds.contains(superAdminRoleId) || oldRoleIds.contains(superAdminRoleId))){
+        if (superAdminRoleId != null && (
+                roleIds.contains(superAdminRoleId) || this.exists(Wrappers.<IamUserRole>lambdaQuery()
+                        .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
+                        .eq(IamUserRole::getRoleId, superAdminRoleId))
+        )) {
             checkSuperAdminIdentity();
         }
-
-        // 删除旧的用户-角色关联关系
-        this.deleteEntities(
-                Wrappers.<IamUserRole>lambdaQuery()
-                        .eq(IamUserRole::getUserId, userId)
-                        .eq(IamUserRole::getUserType, userType)
-        );
-        List<IamUserRole> entityList = new ArrayList<>();
-        for(Long roleId : roleIds){
-            entityList.add(new IamUserRole(userType, userId, roleId));
-        }
-        boolean success = super.createEntities(entityList);
-        if(success){
+        boolean success = super.createOrUpdateN2NRelations(IamUserRole::getUserId, userId, IamUserRole::getRoleId, roleIds,
+                q -> q.lambda().eq(IamUserRole::getUserType, userType), e -> e.setUserType(userType));
+        if (success) {
             // 清空用户缓存
             clearUserAuthCache(userType, userId);
         }
