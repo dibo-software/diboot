@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * 组件初始化
@@ -35,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
  * @Copyright © diboot.com
  */
 @Configuration
+@EnableAsync
 @EnableConfigurationProperties(MessageProperties.class)
 @ComponentScan(basePackages = {"com.diboot.message"})
 @MapperScan(basePackages = {"com.diboot.message.mapper"})

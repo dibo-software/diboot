@@ -43,6 +43,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -59,6 +60,7 @@ import java.util.Set;
 @Slf4j
 @Order(922)
 @Configuration
+@EnableAsync
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
