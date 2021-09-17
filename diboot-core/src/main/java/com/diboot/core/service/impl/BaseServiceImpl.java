@@ -279,33 +279,39 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
                                                   SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
                                                   Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer) {
-        if (driverId == null) {
-            throw new InvalidUsageException("主动ID值不能为空！");
-        }
+		if (driverId == null) {
+			throw new InvalidUsageException("主动ID值不能为空！");
+		}
 		if (followerIdList == null) {
 			log.debug("从动对象ID集合为null，不做关联关系更新处理");
 			return false;
 		}
-        // 从getter中获取class和fieldName
-        LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
-        Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
-        EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(middleTableClass);
+		// 从getter中获取class和fieldName
+		LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
+		Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
+		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(middleTableClass);
+		boolean isExistPk = entityInfo.getIdColumn() != null;
 
-        // 获取主动从动字段名
-        String driverFieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
-        String followerFieldName = convertGetterToFieldName(followerIdGetter);
-        String followerColumnName = entityInfo.getColumnByField(followerFieldName);
+		// 获取主动从动字段名
+		String driverFieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
+		String followerFieldName = convertGetterToFieldName(followerIdGetter);
+		String driverColumnName = entityInfo.getColumnByField(driverFieldName);
+		String followerColumnName = entityInfo.getColumnByField(followerFieldName);
 
-        // 查询已有关联
-        QueryWrapper<R> selectOld = new QueryWrapper<R>().eq(entityInfo.getColumnByField(driverFieldName), driverId)
-                .select(entityInfo.getIdColumn(), followerColumnName);
-        if (queryConsumer != null) {
-            queryConsumer.accept(selectOld);
-        }
-        List<Map<String, Object>> oldMap = null;
+		// 查询已有关联
+		QueryWrapper<R> selectOld = new QueryWrapper<R>().eq(driverColumnName, driverId);
+		if (queryConsumer != null) {
+			queryConsumer.accept(selectOld);
+		}
+		if (isExistPk) {
+			selectOld.select(entityInfo.getIdColumn(), followerColumnName);
+		} else {
+			selectOld.select(followerColumnName);
+		}
+		List<Map<String, Object>> oldMap = null;
 
-        IService<R> iService = entityInfo.getService();
-        BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
+		IService<R> iService = entityInfo.getService();
+		BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
 		if (iService != null) {
 			oldMap = iService.listMaps(selectOld);
 		} else if (baseMapper != null) {
@@ -314,19 +320,34 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			throw new InvalidUsageException("未找到 " + middleTableClass.getName() + " 的 Service 或 Mapper 定义！");
 		}
 
-        // 删除失效关联
-        List<Serializable> delIds = new ArrayList<>();
-        for (Map<String, Object> map : oldMap) {
-            if (V.notEmpty(followerIdList) && followerIdList.remove((Serializable) map.get(followerColumnName))) {
-                continue;
-            }
-            delIds.add((Serializable) map.get(entityInfo.getIdColumn()));
-        }
-        if (iService != null) {
-            iService.removeByIds(delIds);
-        } else if (!delIds.isEmpty()) {
-            baseMapper.deleteBatchIds(delIds);
-        }
+		// 删除失效关联
+		List<Serializable> delIds = new ArrayList<>();
+		for (Map<String, Object> map : oldMap) {
+			if (V.notEmpty(followerIdList) && followerIdList.remove((Serializable) map.get(followerColumnName))) {
+				continue;
+			}
+			delIds.add((Serializable) map.get(isExistPk ? entityInfo.getIdColumn() : followerColumnName));
+		}
+		if (!delIds.isEmpty()) {
+			if (isExistPk) {
+				if (iService != null) {
+					iService.removeByIds(delIds);
+				} else {
+					baseMapper.deleteBatchIds(delIds);
+				}
+			} else {
+				QueryWrapper<R> delOld = new QueryWrapper<R>().eq(driverColumnName, driverId)
+						.in(entityInfo.getColumnByField(followerFieldName), delIds);
+				if (queryConsumer != null) {
+					queryConsumer.accept(selectOld);
+				}
+				if (iService != null) {
+					iService.remove(delOld);
+				} else if (!delIds.isEmpty()) {
+					baseMapper.delete(delOld);
+				}
+			}
+		}
 
         // 新增关联
         if (V.notEmpty(followerIdList)) {
