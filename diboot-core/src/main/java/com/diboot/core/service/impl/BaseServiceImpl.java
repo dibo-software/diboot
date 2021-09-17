@@ -282,6 +282,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
         if (driverId == null) {
             throw new InvalidUsageException("主动ID值不能为空！");
         }
+		if (followerIdList == null) {
+			log.debug("从动对象ID集合为null，不做关联关系更新处理");
+			return false;
+		}
         // 从getter中获取class和fieldName
         LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
         Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
