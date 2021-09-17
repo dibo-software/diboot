@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  * @date 2020/10/21
  */
 @Slf4j
-@Async
+@Async("schedulerAsyncExecutor")
 @Component
 public class SchedulerAsyncWorker {
     @Autowired
