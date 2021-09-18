@@ -290,6 +290,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		LambdaMeta lambdaMeta = LambdaUtils.extract(driverIdGetter);
 		Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
 		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(middleTableClass);
+		if (entityInfo == null) {
+			throw new InvalidUsageException("未找到 " + middleTableClass.getName() + " 的 Service 或 Mapper 定义！");
+		}
 		boolean isExistPk = entityInfo.getIdColumn() != null;
 
 		// 获取主动从动字段名
@@ -314,10 +317,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
 		if (iService != null) {
 			oldMap = iService.listMaps(selectOld);
-		} else if (baseMapper != null) {
-			oldMap = baseMapper.selectMaps(selectOld);
 		} else {
-			throw new InvalidUsageException("未找到 " + middleTableClass.getName() + " 的 Service 或 Mapper 定义！");
+			oldMap = baseMapper.selectMaps(selectOld);
 		}
 
 		// 删除失效关联
