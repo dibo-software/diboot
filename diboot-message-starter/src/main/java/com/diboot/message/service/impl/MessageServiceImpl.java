@@ -64,25 +64,31 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
     private MessageTemplateService messageTemplateService;
 
     @Override
-    public boolean send(Message message, BaseVariableData variableData) throws Exception {
-        MessageTemplate messageTemplate = messageTemplateService.getEntity(message.getTemplateId());
-        if (V.isEmpty(messageTemplate)) {
-            log.error("[获取模版失败]，模版id为：{}",  message.getTemplateId());
-            throw new BusinessException(Status.FAIL_OPERATION, "获取模版失败!");
-        }
+    public boolean send(Message message, BaseVariableData variableData) {
         // 获取发送通道
         ChannelStrategy channelStrategy = channelStrategyMap.get(message.getChannel());
         if (V.isEmpty(channelStrategy)) {
             log.error("[获取发送通道失败]，当前发送通道为：{}", message.getChannel());
             throw new InvalidUsageException("获取发送通道失败! " +  message.getChannel());
         }
-        try {
-            // 设置模版内容
-            String content = templateVariableService.parseTemplate2Content(messageTemplate.getContent(), variableData);
-            message.setContent(content);
-        } catch (Exception e) {
-            log.error("[消息解析失败]，消息体为：{}", message);
-            throw new BusinessException(Status.FAIL_OPERATION, "消息解析失败!");
+        // 是否根据模板构建邮件内容
+        if (V.notEmpty(message.getTemplateId())) {
+            MessageTemplate messageTemplate = messageTemplateService.getEntity(message.getTemplateId());
+            if (V.isEmpty(messageTemplate)) {
+                log.error("[获取模版失败]，模版id为：{}",  message.getTemplateId());
+                throw new BusinessException(Status.FAIL_OPERATION, "获取模版失败!");
+            }
+            try {
+                // 设置模版内容
+                String content = templateVariableService.parseTemplate2Content(messageTemplate.getContent(), variableData);
+                message.setContent(content);
+            } catch (Exception e) {
+                log.error("[消息解析失败]，消息体为：{}", message);
+                throw new BusinessException(Status.FAIL_OPERATION, "消息解析失败!");
+            }
+        }
+        if (V.isEmpty(message.getContent())) {
+            throw new BusinessException("邮件内容不能为 null");
         }
         // 设置定时发送，则等待定时任务发送
         if (V.notEmpty(message.getScheduleTime())) {
