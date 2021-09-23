@@ -384,7 +384,11 @@ public class RelationsBinder {
             return null;
         }
         // 根据entity获取Service
-        return ContextHelper.getIServiceByEntity(entityClass);
+        IService iService = ContextHelper.getIServiceByEntity(entityClass);
+        if(iService == null){
+            throw new InvalidUsageException(entityClass.getSimpleName() + " 无 BaseService/IService实现类，无法执行注解绑定！");
+        }
+        return iService;
     }
 
 }
