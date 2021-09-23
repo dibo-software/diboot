@@ -198,9 +198,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     public void visit(ExistsExpression existsExpression) {
     }
     @Override
-    public void visit(AllComparisonExpression allComparisonExpression) {
-    }
-    @Override
     public void visit(AnyComparisonExpression anyComparisonExpression) {
     }
     @Override
@@ -316,9 +313,19 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
 
     @Override
     public void visit(TimezoneExpression timezoneExpression) {
-
     }
-
+    @Override
+    public void visit(JsonAggregateFunction jsonAggregateFunction) {
+    }
+    @Override
+    public void visit(JsonFunction jsonFunction) {
+    }
+    @Override
+    public void visit(ConnectByRootOperator connectByRootOperator) {
+    }
+    @Override
+    public void visit(OracleNamedFunctionParameter oracleNamedFunctionParameter) {
+    }
     @Override
     public void visit(BitwiseRightShift aThis) {
     }
