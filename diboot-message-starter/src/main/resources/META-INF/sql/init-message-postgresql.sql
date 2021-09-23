@@ -36,7 +36,7 @@ CREATE TABLE message (
   id bigserial not null,
   tenant_id          bigint           default 0  not null,
   app_module         VARCHAR(50),
-  template_id    bigint          not null,
+  template_id        bigint,
   business_type       VARCHAR(100)          not null,
   business_code       VARCHAR(50) default 0  not null,
   sender VARCHAR(100)  not null,
