@@ -121,6 +121,38 @@ CREATE TABLE test_upload_file (
     create_time  timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
 ) DEFAULT CHARSET=utf8 COMMENT='测试uuid';
 
+-- playground.demo_test definition
+
+CREATE TABLE `demo_test` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' primary key,
+    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+    `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
+    `age` bigint NOT NULL COMMENT '年龄',
+    `id_card` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '身份证号',
+    `mobile_phone` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '手机号',
+    `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
+    `sex` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '性别',
+    `birthday` date DEFAULT NULL COMMENT '生日',
+    `sss_img` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单图片',
+    `mmm_img` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '多图片',
+    `data_file` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据文件',
+    `file_test` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单文件',
+    `create_by` bigint DEFAULT '0' COMMENT '创建人',
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Demo测试';
+
+-- playground.demo_test_join definition
+
+CREATE TABLE `demo_test_join` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' primary key,
+  `demo_test_id` bigint DEFAULT NULL COMMENT 'Demo测试',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
+
 -- 初始化样例数据
 INSERT INTO department (id, parent_id, org_id, name, `character`) VALUES (10001, 0, 100001, '产品部', 'WW'), (10002, 10001, 100001, '研发组', '1001'), (10003, 10001, 100001, '测试组', '1001,1001'),
        (10004, 10001, 100001, '1001,1002'), (10005, 10003, 100001, '自动化测试'), (10006, 10003, 100001, '功能测试');
@@ -135,3 +167,17 @@ INSERT INTO db_purchase_rel_plan_goods(rel_id, purchase_form_plan_id, goods_id, 
 INSERT INTO db_purchase_form_plan(purchase_form_plan_id, name, is_del)VALUES(1, '5月份采购计划', 0);
 INSERT INTO test_upload_file(uuid, rel_obj_type, rel_obj_id, file_name, access_url, storage_path) values
 ('test123456', 'IamUser', 1001, '123456.jpg', 'http://www.baidu.com', '/temp'),('test234567', 'IamUser', 1002, '234567.jpg', 'http://www.baidu.com', '/temp');
+
+INSERT INTO demo_test
+(id, is_deleted, name, age, id_card, mobile_phone, email, sex, birthday, sss_img, mmm_img, data_file, file_test, create_by)
+VALUES(10000074, 0, '666', 666, 'kdt3kHX4lAEshODwXMaqAg==', 'dI7AKyanaPYiWL0c5CfuPQ==', 'kdt3kHX4lAEshODwXMaqAg==', NULL, NULL, NULL, NULL, NULL, NULL, 0),
+(10000075, 0, '1', 111, 'kBzIU3XgeowKFQnyeGZfZZHbd5B1+JQBLITg8FzGqgI=', 'AYdMZnNVJwYmpHh8VmC11A==', '5tEbe9Q9hti2Z0spAE5fsA==', NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+INSERT INTO demo_test_join (id, demo_test_id, name, email)
+VALUES(10000081, 10000074, '111', 'L9vrF7wJBKbbLRZChI33WA=='),
+    (10000084, 10000074, '114', 'A2Y6CZ4tv0V7QxPbq9EYkg=='),
+    (10000089, 10000075, '119', 'VVnnuR7fXzsIHCMilEsgLw=='),
+    (10000091, 10000075, '112', 'BqAefnSadfixkCebXakUDg=='),
+    (10000093, 10000075, '114', 'A2Y6CZ4tv0V7QxPbq9EYkg==');
+
+

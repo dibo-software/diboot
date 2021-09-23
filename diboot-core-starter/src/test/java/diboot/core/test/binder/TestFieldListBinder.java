@@ -20,9 +20,11 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.DemoTest;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.service.DemoTestService;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.OrganizationService;
 import diboot.core.test.binder.service.UserService;
@@ -55,6 +57,8 @@ public class TestFieldListBinder {
     DepartmentService departmentService;
     @Autowired
     OrganizationService organizationService;
+    @Autowired
+    DemoTestService demoTestService;
 
     /**
      * 验证直接关联的绑定
@@ -98,6 +102,24 @@ public class TestFieldListBinder {
             Assert.assertTrue(V.notEmpty(vo.getRoleCreateDates()));
 
             System.out.println(JSON.stringify(vo.getRoleCodes()));
+        }
+    }
+
+    /**
+     * 验证DemoTestJoin反向绑定
+     */
+    @Test
+    public void testDemoTestJoinBinder(){
+        // 加载测试数据
+        LambdaQueryWrapper<DemoTest> queryWrapper = new LambdaQueryWrapper<>();
+        //queryWrapper.in(DemoTest::getId, 1001L, 1002L);
+        List<DemoTest> entList = demoTestService.getEntityList(queryWrapper);
+        // 自动绑定
+        List<DemoTestVO> voList = Binder.convertAndBindRelations(entList, DemoTestVO.class);
+        // 验证绑定结果
+        Assert.assertTrue(V.notEmpty(voList));
+        for(DemoTestVO vo : voList){
+            Assert.assertTrue(vo.getEmails() != null);
         }
     }
 
