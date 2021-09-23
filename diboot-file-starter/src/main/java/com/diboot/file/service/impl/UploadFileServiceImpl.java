@@ -47,32 +47,26 @@ public class UploadFileServiceImpl extends BaseServiceImpl<UploadFileMapper, Upl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void bindRelObjId(Object relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) throws Exception {
-
-        //如果不存在需要绑定的么清除所有当前关联的所有文件
-        if (V.isEmpty(fileUuidList)) {
-            this.update(
-                    Wrappers.<UploadFile>lambdaUpdate()
-                    .set(true, UploadFile::isDeleted, true)
-                    .eq(UploadFile::getRelObjId, relObjId.toString())
-                    .eq(UploadFile::getRelObjType, relObjTypeClass.getSimpleName())
-            );
+    public void bindRelObjId(Object relObjId, Class<?> relObjTypeClass, List<String> fileUuidList) {
+        // 如果fileUuidList为null，不进行绑定关联更新
+        if (fileUuidList == null) {
             return;
         }
         // 删除 relObjId + relObjType下的 并且不包含fileIdList的file。
         this.update(
                 Wrappers.<UploadFile>lambdaUpdate()
-                        .set(true, UploadFile::isDeleted, true)
+                        .set(UploadFile::isDeleted, true)
                         .eq(UploadFile::getRelObjId, relObjId.toString())
                         .eq(UploadFile::getRelObjType, relObjTypeClass.getSimpleName())
-                        .notIn(UploadFile::getUuid, fileUuidList)
+                        .notIn(V.notEmpty(fileUuidList), UploadFile::getUuid, fileUuidList)
         );
         // 绑定绑定数据
-        this.update(
-                Wrappers.<UploadFile>lambdaUpdate()
-                        .set(true, UploadFile::getRelObjId, relObjId.toString())
-                        .in(UploadFile::getUuid, fileUuidList)
-        );
+        if (V.notEmpty(fileUuidList)) {
+            this.update(
+                    Wrappers.<UploadFile>lambdaUpdate()
+                            .set(UploadFile::getRelObjId, relObjId.toString())
+                            .in(UploadFile::getUuid, fileUuidList)
+            );
+        }
     }
-
 }
