@@ -22,9 +22,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @Date 2021/8/31  00:18
  */
 @Configuration
-@EnableAutoConfiguration(exclude = MultipartAutoConfiguration.class)
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(exposeProxy = true)
 @ComponentScan(basePackages = {"com.diboot.mobile"})
 @MapperScan("com.diboot.mobile.mapper.**")
 public class MobileAutoConfig implements WebMvcConfigurer {

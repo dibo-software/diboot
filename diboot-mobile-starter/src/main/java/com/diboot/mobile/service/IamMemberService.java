@@ -18,6 +18,8 @@ package com.diboot.mobile.service;
 import com.diboot.core.service.BaseService;
 import com.diboot.mobile.entity.IamMember;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 移动端用户service
  *
@@ -27,4 +29,23 @@ import com.diboot.mobile.entity.IamMember;
  * @Date 2021/8/31  14:08
  */
 public interface IamMemberService extends BaseService<IamMember> {
+
+
+    /**
+     * 根据token获取openId
+     *
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    String getOpenId(HttpServletRequest request) throws Exception;
+
+    /**
+     * 根据token获取IamMember
+     *
+     * @param openid
+     * @return
+     * @throws Exception
+     */
+    IamMember getIamMemberByOpenid(String openid) throws Exception;
 }

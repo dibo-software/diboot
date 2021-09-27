@@ -18,11 +18,17 @@ package com.diboot.mobile.starter;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.config.impl.WxMaDefaultConfigImpl;
+import com.diboot.iam.service.IamAccountService;
+import com.diboot.mobile.service.IamMemberService;
+import com.diboot.mobile.service.WxMpMemberAuthService;
+import com.diboot.mobile.service.impl.WxMpMemberAuthServiceImpl;
 import lombok.AllArgsConstructor;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,8 +42,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @AllArgsConstructor
 @Configuration
-@ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-mp.appid') != null ||  environment.getProperty('diboot.mobile.wx-miniapp.appid') != null}")
-public class WeiXinConfig {
+@ConditionalOnResource(resources = "me/chanjar/weixin/mp")
+@ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-mp.appid') != null}")
+public class WxMpConfig {
 
     private final MobileProperties mobileProperties;
 
@@ -47,7 +54,7 @@ public class WeiXinConfig {
      * @return
      */
     @Bean
-    @ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-mp.appid') != null}")
+    @ConditionalOnMissingBean
     public WxMpService wxMpService() {
         WxMpDefaultConfigImpl configStorage = new WxMpDefaultConfigImpl();
         MobileProperties.Config mp = mobileProperties.getWxMp();
@@ -61,22 +68,13 @@ public class WeiXinConfig {
     }
 
     /**
-     * 微信小程序配置
+     * 微信公众号用户操作配置
      *
      * @return
      */
     @Bean
-    @ConditionalOnExpression("#{environment.getProperty('diboot.mobile.wx-miniapp.appid') != null}")
-    public WxMaService wxMaService() {
-        WxMaDefaultConfigImpl configStorage = new WxMaDefaultConfigImpl();
-        MobileProperties.Config miniapp = mobileProperties.getWxMiniapp();
-        configStorage.setAppid(miniapp.getAppid());
-        configStorage.setSecret(miniapp.getSecret());
-        configStorage.setAesKey(miniapp.getAesKey());
-        configStorage.setToken(miniapp.getToken());
-        WxMaService service = new WxMaServiceImpl();
-        service.setWxMaConfig(configStorage);
-        return service;
+    @ConditionalOnMissingBean
+    public WxMpMemberAuthService wxMpMemberAuthService(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
+        return new WxMpMemberAuthServiceImpl(wxMpService, iamMemberService, iamAccountService);
     }
-
 }

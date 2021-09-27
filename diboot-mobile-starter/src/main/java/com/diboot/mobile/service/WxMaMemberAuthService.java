@@ -16,8 +16,11 @@
 package com.diboot.mobile.service;
 
 
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.diboot.mobile.dto.WxMemberDTO;
 import com.diboot.mobile.entity.IamMember;
+import com.diboot.mobile.vo.IamMemberVO;
+import com.diboot.mobile.vo.WxMaSessionInfoVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,44 +33,23 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2021-08-31
  * Copyright © diboot.com
  */
-public interface WxMemberAuthService {
+public interface WxMaMemberAuthService {
 
     /**
-     * 申请登陆
+     * 获取登录后的session信息.
      *
-     * @param code
-     * @param state
+     * @param jsCode – 登录时获取的 code
      * @return
      * @throws Exception
      */
-    String applyLogin(String code, String state) throws Exception;
+    WxMaSessionInfoVO getSessionInfo(String jsCode) throws Exception;
 
     /**
-     * 公众号使用：根据token获取openId
+     * 保存用户
      *
-     * @param request
+     * @param wxInfoDTO
      * @return
      * @throws Exception
      */
-    String getOpenId(HttpServletRequest request) throws Exception;
-
-    /**
-     * 公众号使用：根据token获取IamMember
-     *
-     * @param openid
-     * @return
-     * @throws Exception
-     */
-    IamMember getIamMemberByOpenid(String openid)  throws Exception;
-
-    /**
-     * 更新用户手机号
-     *
-     * @param wxMemberDTO
-     * @return
-     * @throws Exception
-     */
-    boolean updateWxMemberPhone(WxMemberDTO wxMemberDTO) throws Exception;
-
-    Object saveWxMember(WxMemberDTO wxInfoDTO);
+    IamMemberVO saveWxMember(WxMemberDTO wxInfoDTO) throws Exception;
 }

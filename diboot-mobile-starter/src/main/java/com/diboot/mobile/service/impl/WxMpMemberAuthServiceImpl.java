@@ -16,7 +16,6 @@
 package com.diboot.mobile.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.Binder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -24,24 +23,17 @@ import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.util.JwtUtils;
 import com.diboot.mobile.dto.MobileCredential;
-import com.diboot.mobile.dto.WxMemberDTO;
 import com.diboot.mobile.entity.IamMember;
 import com.diboot.mobile.service.IamMemberService;
-import com.diboot.mobile.service.WxMemberAuthService;
-import com.diboot.mobile.vo.IamMemberVO;
-import io.jsonwebtoken.Claims;
+import com.diboot.mobile.service.WxMpMemberAuthService;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.mp.api.WxMpService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 微信公众号相关操作
@@ -52,19 +44,27 @@ import javax.servlet.http.HttpServletRequest;
  * @Date 2021/7/20  16:32
  */
 @Slf4j
-@Service
-public class WxMemberAuthServiceImpl implements WxMemberAuthService {
+public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
     @Value("${wechat.state}")
     private String STATE;
 
-    @Autowired(required = false)
     private WxMpService wxMpService;
 
-    @Autowired
     private IamMemberService iamMemberService;
 
-    @Autowired
     private IamAccountService iamAccountService;
+
+    public WxMpMemberAuthServiceImpl(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
+        this.wxMpService = wxMpService;
+        this.iamMemberService = iamMemberService;
+        this.iamAccountService = iamAccountService;
+    }
+
+    @Override
+    public String buildOAuthUrl4mp(String url) throws Exception {
+        return wxMpService.getOAuth2Service()
+                .buildAuthorizationUrl(url, WxConsts.OAuth2Scope.SNSAPI_USERINFO, STATE);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -103,57 +103,8 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
         return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.WX_MP.name()).applyToken(credential);
     }
 
-    @Override
-    public String getOpenId(HttpServletRequest request) throws Exception {
-        Claims claimsFromRequest = JwtUtils.getClaimsFromRequest(request);
-        String subject = claimsFromRequest.getSubject();
-        String openId = subject.split(",")[0];
-        if (V.isEmpty(openId)) {
-            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "获取用户信息失败");
-        }
-        return openId;
-    }
-
-    @Override
-    public IamMember getIamMemberByOpenid(String openid) throws Exception {
-        return iamMemberService.getSingleEntity(
-                Wrappers.<IamMember>lambdaQuery().eq(IamMember::getOpenid, openid)
-        );
-    }
-
-    @Override
-    public boolean updateWxMemberPhone(WxMemberDTO wxMemberDTO) throws Exception {
-        return false;
-    }
-
-    @Override
-    public Object saveWxMember(WxMemberDTO wxInfoDTO) {
-        // 校验用户是否存在，如果已经存在，那么直接返回数据
-        IamMember iamMember = iamMemberService.getSingleEntity(
-                Wrappers.<IamMember>lambdaQuery()
-                        .eq(IamMember::getOpenid, wxInfoDTO.getOpenid())
-                        .eq(IamMember::getStatus, Cons.DICTCODE_ACCOUNT_STATUS.A.name())
-        );
-        if (V.notEmpty(iamMember)) {
-            return Binder.convertAndBindRelations(iamMember, IamMemberVO.class);
-        }
-        // 创建微信用户基本信息
-        IamMember wxMember = maInfo2IamMemberEntity(wxInfoDTO);
-        boolean success = iamMemberService.createEntity(wxMember);
-        if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "绑定用户信息失败！");
-        }
-        // 创建当前用户的账户
-        IamAccount iamAccount = createIamAccountEntity(wxMember);
-        success = iamAccountService.createEntity(iamAccount);
-        if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "绑定系统账户失败！");
-        }
-        return Binder.convertAndBindRelations(wxMember, IamMemberVO.class);
-    }
-
     /**
-     * 小程序用户信息构建IamMember
+     * 公众号用户信息构建IamMember
      *
      * @param userInfo
      * @return
@@ -165,25 +116,8 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
                 .setProvince(userInfo.getProvince())
                 .setCity(userInfo.getCity())
                 .setAvatarUrl(userInfo.getHeadImgUrl())
-                .setGender(this.sex2gender(userInfo.getSex()))
+                .setGender(sex2gender(userInfo.getSex()))
                 .setNickname(userInfo.getNickname())
-                .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
-    }
-
-    /**
-     * 小程序用户信息构建IamMember
-     *
-     * @param wxMemberDTO
-     * @return
-     */
-    private IamMember maInfo2IamMemberEntity(WxMemberDTO wxMemberDTO) {
-        return new IamMember().setOpenid(wxMemberDTO.getOpenid())
-                .setNickname(wxMemberDTO.getNickName())
-                .setGender(sex2gender(wxMemberDTO.getGender()))
-                .setAvatarUrl(wxMemberDTO.getAvatarUrl())
-                .setCountry(wxMemberDTO.getCountry())
-                .setProvince(wxMemberDTO.getProvince())
-                .setCity(wxMemberDTO.getCity())
                 .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
     }
 
@@ -208,7 +142,7 @@ public class WxMemberAuthServiceImpl implements WxMemberAuthService {
      * @param sex
      * @return
      */
-    private String sex2gender(Integer sex) {
+    protected String sex2gender(Integer sex) {
         String gender = null;
         if (V.equals(sex, 1)) {
             gender = "M";

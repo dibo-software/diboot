@@ -15,12 +15,20 @@
  */
 package com.diboot.mobile.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
+import com.diboot.iam.util.JwtUtils;
 import com.diboot.mobile.entity.IamMember;
 import com.diboot.mobile.mapper.IamMemberMapper;
 import com.diboot.mobile.service.IamMemberService;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 移动端用户service是实现类
@@ -33,4 +41,22 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class IamMemberServiceImpl extends BaseServiceImpl<IamMemberMapper, IamMember> implements IamMemberService {
+
+    @Override
+    public String getOpenId(HttpServletRequest request) throws Exception {
+        Claims claimsFromRequest = JwtUtils.getClaimsFromRequest(request);
+        String subject = claimsFromRequest.getSubject();
+        String openId = subject.split(",")[0];
+        if (V.isEmpty(openId)) {
+            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "获取用户信息失败");
+        }
+        return openId;
+    }
+
+    @Override
+    public IamMember getIamMemberByOpenid(String openid) throws Exception {
+        return getSingleEntity(
+                Wrappers.<IamMember>lambdaQuery().eq(IamMember::getOpenid, openid)
+        );
+    }
 }
