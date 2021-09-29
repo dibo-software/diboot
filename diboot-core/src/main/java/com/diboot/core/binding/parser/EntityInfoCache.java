@@ -123,4 +123,13 @@ public class EntityInfoCache implements Serializable {
         return this.propInfo.getDeletedColumn();
     }
 
+    /**
+     * 是否包含某字段
+     * @param column
+     * @return
+     */
+    public boolean containsColumn(String column){
+        return this.propInfo.getColumns().contains(column);
+    }
+
 }

@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
@@ -124,7 +125,10 @@ public class ServiceAdaptor {
             if(!Cons.FieldName.id.name().equals(pk)){
                 pagination.clearDefaultOrder();
                 //设置时间排序
-                pagination.setDefaultCreateTimeOrderBy();
+                EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
+                if(entityInfoCache.containsColumn(Cons.COLUMN_CREATE_TIME)){
+                    pagination.setDefaultCreateTimeOrderBy();
+                }
             }
         }
         return pagination.toPage();
