@@ -77,5 +77,10 @@ public class MobileProperties {
          * 消息格式，XML或者JSON
          */
         private String msgDataFormat;
+
+        /**
+         * 授权state
+         */
+        private String state;
     }
 }

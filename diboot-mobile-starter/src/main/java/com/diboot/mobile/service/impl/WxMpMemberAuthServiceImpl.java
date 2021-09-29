@@ -45,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Slf4j
 public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
-    @Value("${wechat.state}")
     private String STATE;
 
     private WxMpService wxMpService;
@@ -54,10 +53,11 @@ public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
 
     private IamAccountService iamAccountService;
 
-    public WxMpMemberAuthServiceImpl(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
+    public WxMpMemberAuthServiceImpl(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService, String STATE) {
         this.wxMpService = wxMpService;
         this.iamMemberService = iamMemberService;
         this.iamAccountService = iamAccountService;
+        this.STATE = STATE;
     }
 
     @Override

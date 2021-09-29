@@ -71,7 +71,7 @@ public class WxMaConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public WxMaMemberAuthService wxMpMemberAuthService(WxMaService wxMaService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
+    public WxMaMemberAuthService wxMaMemberAuthService(WxMaService wxMaService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
         return new WxMaMemberAuthServiceImpl(wxMaService, iamMemberService, iamAccountService);
     }
 

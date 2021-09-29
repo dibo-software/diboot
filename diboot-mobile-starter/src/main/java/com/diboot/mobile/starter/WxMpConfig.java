@@ -75,6 +75,6 @@ public class WxMpConfig {
     @Bean
     @ConditionalOnMissingBean
     public WxMpMemberAuthService wxMpMemberAuthService(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
-        return new WxMpMemberAuthServiceImpl(wxMpService, iamMemberService, iamAccountService);
+        return new WxMpMemberAuthServiceImpl(wxMpService, iamMemberService, iamAccountService, mobileProperties.getWxMp().getState());
     }
 }
