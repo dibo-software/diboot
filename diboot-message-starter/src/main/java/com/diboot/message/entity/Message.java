@@ -96,7 +96,6 @@ public class Message extends BaseEntity {
     /**
      * 信息模版id
      */
-    @NotNull(message = "信息模版id不能为空")
     @TableField()
     private Long templateId;
 
@@ -178,7 +177,7 @@ public class Message extends BaseEntity {
     /**
      * 扩展数据
      */
-    @Length(max = 200, message = "扩展数据长度应小于200")
+    @Length(max = 500, message = "扩展数据长度应小于500")
     @TableField()
     private String extData;
 
