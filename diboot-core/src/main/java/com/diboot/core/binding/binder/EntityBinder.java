@@ -15,17 +15,23 @@
  */
 package com.diboot.core.binding.binder;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.helper.ResultAssembler;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.binding.helper.ServiceAdaptor;
+import com.diboot.core.config.Cons;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -52,6 +58,16 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * @param voList
      */
     public EntityBinder(IService<T> referencedService, List voList){
+        super(referencedService, voList);
+    }
+
+    /***
+     * 构造方法
+     * @param referencedService
+     * @param voList
+     * @param annotation
+     */
+    public EntityBinder(IService<T> referencedService, List voList, BindEntity annotation){
         super(referencedService, voList);
     }
 
@@ -83,11 +99,11 @@ public class EntityBinder<T> extends BaseBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            log.warn("调用错误：无法从condition中解析出字段关联.");
-            return;
+            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
         // 直接关联Entity
         if(middleTable == null){
+            simplifySelectColumns();
             // @BindEntity(entity = Department.class, condition="this.department_id=id AND this.type=type")
             // Department department;
             super.buildQueryWrapperJoinOn();
@@ -95,13 +111,13 @@ public class EntityBinder<T> extends BaseBinder<T> {
             List<T> list = getEntityList(queryWrapper);
             if(V.notEmpty(list)){
                 Map<String, Object> valueEntityMap = this.buildMatchKey2EntityMap(list);
-                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityMap);
+                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityMap, null);
             }
         }
         // 通过中间表关联Entity
         else{
             if(refObjJoinCols.size() > 1){
-                throw new BusinessException(NOT_SUPPORT_MSG);
+                throw new InvalidUsageException(NOT_SUPPORT_MSG);
             }
             // 提取注解条件中指定的对应的列表
             Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();
@@ -109,6 +125,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             Map<String, Object> valueEntityMap = new HashMap<>();
             Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(trunkObjCol2ValuesMap);
             if(V.notEmpty(middleTableResultMap)){
+                simplifySelectColumns();
                 // 提取entity主键值集合
                 Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
                 // 构建查询条件
@@ -134,7 +151,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 }
             }
             // 绑定结果
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
+            ResultAssembler.bindEntityPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
         }
     }
 
@@ -145,21 +162,26 @@ public class EntityBinder<T> extends BaseBinder<T> {
      */
     private Map<String, Object> buildMatchKey2EntityMap(List<T> list){
         Map<String, Object> key2TargetMap = new HashMap<>(list.size());
-        List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
+        StringBuilder sb = new StringBuilder();
         for(T entity : list){
-            joinOnValues.clear();
-            for(String refObjJoinOnCol : refObjJoinCols){
+            sb.setLength(0);
+            for(int i=0; i<refObjJoinCols.size(); i++){
+                String refObjJoinOnCol = refObjJoinCols.get(i);
                 String pkValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
-                joinOnValues.add(pkValue);
+                if(i > 0){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(pkValue);
             }
-            String matchKey = S.join(joinOnValues);
-
+            // 查找匹配Key
+            String matchKey = sb.toString();
             Object target = entity;
             if(target instanceof Map == false){
                 target = cloneOrConvertBean(entity);
             }
             key2TargetMap.put(matchKey, target);
         }
+        sb.setLength(0);
         return key2TargetMap;
     }
 
@@ -178,4 +200,15 @@ public class EntityBinder<T> extends BaseBinder<T> {
             return BeanUtils.convert(value, annoObjectFieldClass);
         }
     }
+
+    /**
+     * 简化select列，仅select必需列
+     */
+    @Override
+    protected void simplifySelectColumns(){
+        if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
+            queryWrapper = (QueryWrapper<T>) ServiceAdaptor.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
+        }
+    }
+
 }

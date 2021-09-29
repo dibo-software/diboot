@@ -18,7 +18,7 @@ package com.diboot.file.excel.cache;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.BeanUtils;
@@ -26,7 +26,6 @@ import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.KeyValue;
-import com.diboot.core.vo.Status;
 import com.diboot.file.excel.annotation.ExcelBindDict;
 import com.diboot.file.excel.annotation.ExcelBindField;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,7 @@ public class ExcelBindAnnoHandler {
     /**
      * 注解缓存
      */
-    private static Map<String, Map<String, Annotation>> MODEL_BINDANNO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Annotation>> MODEL_BINDANNO_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 获取字段-绑定注解之间的map
@@ -108,7 +107,7 @@ public class ExcelBindAnnoHandler {
             }
             DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
             if(bindDictService == null){
-                throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "DictionaryService未实现，无法使用ExcelBindDict注解！");
+                throw new InvalidUsageException("DictionaryService未实现，无法使用ExcelBindDict注解！");
             }
             List<KeyValue> list = bindDictService.getKeyValueList(dictType);
             return convertKvListToMap(list);

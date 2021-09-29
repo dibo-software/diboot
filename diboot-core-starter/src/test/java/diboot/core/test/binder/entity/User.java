@@ -53,4 +53,7 @@ public class User extends BaseEntity {
 
     @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     private LocalDateTime localDatetime;
+
+    @TableField("`character`")
+    private String character;
 }

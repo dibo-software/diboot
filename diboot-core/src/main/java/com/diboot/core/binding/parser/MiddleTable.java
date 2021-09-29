@@ -22,8 +22,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.exception.BusinessException;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
@@ -88,7 +87,7 @@ public class MiddleTable {
             branchObjColMapping = new LinkedHashMap<>(8);
         }
         else if(branchObjColMapping.size() >= 1){
-            throw new BusinessException(BaseBinder.NOT_SUPPORT_MSG);
+            throw new InvalidUsageException(BaseBinder.NOT_SUPPORT_MSG);
         }
         branchObjColMapping.put(middleTableCol, branchObjCol);
         return this;
@@ -158,8 +157,7 @@ public class MiddleTable {
      */
     public Map<String, List> executeOneToManyQuery(Map<String, List> trunkObjCol2ValuesMap){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
-            log.warn("不合理的中间表查询：无过滤条件！");
-            return Collections.emptyMap();
+            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
         }
         //user_id //role_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);

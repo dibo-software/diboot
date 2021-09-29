@@ -15,13 +15,11 @@
  */
 package com.diboot.core.holder.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**

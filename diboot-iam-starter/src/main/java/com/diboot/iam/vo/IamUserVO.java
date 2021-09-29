@@ -21,7 +21,9 @@ import com.diboot.core.binding.annotation.BindField;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -31,7 +33,9 @@ import java.util.List;
 * @version 2.0
 * @date 2019-12-17
 */
-@Data
+@Getter
+@Setter
+@Accessors(chain = true)
 public class IamUserVO extends IamUser {
     private static final long serialVersionUID = 7571698765478647277L;
 

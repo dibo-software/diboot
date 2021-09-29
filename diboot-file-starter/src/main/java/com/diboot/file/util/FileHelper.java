@@ -15,10 +15,9 @@
  */
 package com.diboot.file.util;
 
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.D;
 import com.diboot.core.util.PropertiesUtils;
-import com.diboot.core.vo.Status;
 import com.diboot.file.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -41,17 +40,17 @@ public class FileHelper{
 	/**
 	 * file验证
 	 */
-	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe", "bat", "bin", "dll", "sh");
+	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe","bat","bin","dll","sh","php","pl","py","cgi","asp","aspx","jsp","php5","php4","php3","js","htm","html","go");
 
 	/**
 	 * excel格式
 	 */
-	private static final List<String> EXCEL_SUFFIX = Arrays.asList("xls", "xlsx", "xlsm");
+	private static final List<String> EXCEL_SUFFIX = Arrays.asList("csv", "xls", "xlsx", "xlsm");
 
 	/**
 	 * 文件存储路径参数名
 	 */
-	public static final String FILE_STORAGE_DIRECTORY = "files.storage.directory";
+	public static final String FILE_STORAGE_DIRECTORY = "diboot.component.file.storage-directory";
 	/**
 	 * 文件存储路径
 	 */
@@ -199,7 +198,7 @@ public class FileHelper{
 		if(fileStorageDirectory == null){
 			fileStorageDirectory = PropertiesUtils.get(FILE_STORAGE_DIRECTORY);
 			if(fileStorageDirectory == null){
-				throw new BusinessException(Status.FAIL_VALIDATION, "文件存储路径参数 "+FILE_STORAGE_DIRECTORY+" 未配置.");
+				throw new InvalidUsageException("文件存储路径参数 "+FILE_STORAGE_DIRECTORY+" 未配置.");
 			}
 		}
 		return fileStorageDirectory;

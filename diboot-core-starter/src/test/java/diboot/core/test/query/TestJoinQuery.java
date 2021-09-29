@@ -61,9 +61,26 @@ public class TestJoinQuery {
         Department example = departmentService.list(null).get(0);
         DepartmentDTO departmentDTO = new DepartmentDTO();
         departmentDTO.setCreateTime(example.getCreateTime());
+        departmentDTO.setCharacter(example.getCharacter());
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
         List<Department> list = departmentService.list(queryWrapper);
         Assert.assertTrue(list.size() >= 1);
+    }
+
+    @Test
+    public void testInQuery(){
+        List<Long> parentIds = new ArrayList<>();
+        DepartmentDTO departmentDTO = new DepartmentDTO();
+        departmentDTO.setParentIds(parentIds);
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        System.out.println(queryWrapper.getExpression());
+        List<Department> list = Binder.joinQueryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() > 1);
+
+        parentIds.add(10001L);
+        queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        list = Binder.joinQueryList(queryWrapper, Department.class);
+        Assert.assertTrue(list.size() > 0);
     }
 
     @Test
@@ -118,15 +135,15 @@ public class TestJoinQuery {
         //boolean类型
         dto.setOrgName("苏州帝博");
 
-        // 转换为queryWrapper
-        queryWrapper.clear();
-        queryWrapper = QueryBuilder.toQueryWrapper(dto);
-        queryWrapper.select("id,name,parentId,org_id");
-
         // 验证直接查询指定字段
         List<String> fields = Arrays.asList("parentId", "parentName", "orgName");
         builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto, fields).queryList(Department.class);
         Assert.assertTrue(builderResultList.size() == 3);
+
+        // 转换为queryWrapper
+        queryWrapper.clear();
+        queryWrapper = QueryBuilder.toQueryWrapper(dto);
+        queryWrapper.select("id,name,parent_id,org_id");
 
         // 查询单条记录
         Department department = Binder.joinQueryOne(queryWrapper, Department.class);

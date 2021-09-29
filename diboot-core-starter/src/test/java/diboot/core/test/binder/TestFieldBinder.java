@@ -100,6 +100,22 @@ public class TestFieldBinder {
         }
     }
 
+    @Test
+    public void testBinderWithEscCol(){
+        // 加载测试数据
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, 1003L);
+        List<User> userList = userService.getEntityList(queryWrapper);
+        // 自动绑定
+        List<UserEscVO> voList = Binder.convertAndBindRelations(userList, UserEscVO.class);
+        if(V.notEmpty(voList)){
+            for(UserEscVO vo : voList){
+                Assert.assertNotNull(vo.getDeptCharacter());
+                Assert.assertNotNull(vo.getDeptName());
+                Assert.assertNotNull(vo.getOrgName());
+            }
+        }
+    }
 
     @Test
     public void testDictVoBind(){

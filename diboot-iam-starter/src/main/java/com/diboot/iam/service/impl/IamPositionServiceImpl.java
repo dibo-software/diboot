@@ -36,6 +36,7 @@ import java.util.List;
 
 /**
  * 岗位相关Service实现
+ *
  * @author mazc@dibo.ltd
  * @version 2.2
  * @date 2019-12-03
@@ -85,7 +86,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
         LambdaQueryWrapper deleteWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId);
-        int count = iamUserPositionMapper.selectCount(deleteWrapper);
+        long count = iamUserPositionMapper.selectCount(deleteWrapper);
         if (count > 0) {
             iamUserPositionMapper.delete(deleteWrapper);
         }
@@ -93,7 +94,8 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
         if (V.isEmpty(userPositionList)) {
             return true;
         }
-        for(IamUserPosition userPosition : userPositionList){
+        for (IamUserPosition userPosition : userPositionList) {
+            userPosition.setId(null);
             iamUserPositionMapper.insert(userPosition);
         }
         return true;

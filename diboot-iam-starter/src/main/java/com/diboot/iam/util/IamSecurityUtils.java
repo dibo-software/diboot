@@ -15,9 +15,7 @@
  */
 package com.diboot.iam.util;
 
-import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
-import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
@@ -71,13 +69,22 @@ public class IamSecurityUtils extends SecurityUtils {
     }
 
     /**
+     * 获取用户 "ID" 的值
+     * @return
+     */
+    public static Long getCurrentUserId(){
+        BaseLoginUser user = getCurrentUser();
+        return user != null? user.getId() : null;
+    }
+
+    /**
      * 获取用户 "类型:ID" 的值
      * @return
      */
     public static String getUserTypeAndId(){
         BaseLoginUser user = getCurrentUser();
         if(user == null){
-            throw new BusinessException(Status.FAIL_INVALID_TOKEN, "用户token已失效！");
+            return null;
         }
         return S.join(user.getClass().getSimpleName(), Cons.SEPARATOR_COLON, user.getId());
     }
@@ -106,9 +113,7 @@ public class IamSecurityUtils extends SecurityUtils {
         if(baseJwtRealm != null){
             Cache<Object, AuthorizationInfo> cache = baseJwtRealm.getAuthorizationCache();
             if(cache != null) {
-                for(Object key : cache.keys()) {
-                    cache.remove(key);
-                }
+                cache.clear();
                 log.debug("已清空全部登录用户的权限缓存，以便新权限生效.");
             }
         }

@@ -16,10 +16,9 @@
 package com.diboot.core.binding.query.dynamic;
 
 import com.diboot.core.binding.parser.BaseConditionManager;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -47,7 +46,7 @@ public class JoinConditionManager extends BaseConditionManager {
         List<Expression> expressionList = getExpressionList(joiner.getCondition());
         if(V.isEmpty(expressionList)){
             log.warn("无法解析注解条件: {} ", joiner.getCondition());
-            throw new BusinessException(Status.FAIL_VALIDATION);
+            throw new InvalidUsageException("无法解析注解条件: " + joiner.getCondition());
         }
         // 解析中间表关联
         String tableName = extractMiddleTableName(expressionList);
@@ -178,28 +177,29 @@ public class JoinConditionManager extends BaseConditionManager {
      * @return
      */
     private static String formatColumn(Expression expression, AnnoJoiner joiner){
+        if(expression instanceof Column == false){
+            return expression.toString();
+        }
+        // 其他表列
         String annoColumn = S.toSnakeCase(expression.toString());
-        if(expression instanceof Column){
-            // 其他表列
-            if(annoColumn.contains(".")){
-                String tableName = S.substringBefore(annoColumn, ".");
-                // 当前表替换别名
-                if(tableName.equals("this")){
-                    annoColumn = "self." + S.substringAfter(annoColumn, "this.");
-                }
-                else if(tableName.equals("self")){
-                }
-                else if(tableName.equals(joiner.getMiddleTable())){
-                    annoColumn = joiner.getMiddleTableAlias() + "." + S.substringAfter(annoColumn, ".");
-                }
-                else{
-                    log.warn("无法识别的条件: {}", annoColumn);
-                }
+        if(annoColumn.contains(".")){
+            String tableName = S.substringBefore(annoColumn, ".");
+            // 当前表替换别名
+            if(tableName.equals("this")){
+                annoColumn = "self." + S.substringAfter(annoColumn, "this.");
             }
-            // 当前表列
+            else if(tableName.equals("self")){
+            }
+            else if(tableName.equals(joiner.getMiddleTable())){
+                annoColumn = joiner.getMiddleTableAlias() + "." + S.substringAfter(annoColumn, ".");
+            }
             else{
-                annoColumn = joiner.getAlias() + "." + annoColumn;
+                log.warn("无法识别的条件: {}", annoColumn);
             }
+        }
+        // 当前表列
+        else{
+            annoColumn = joiner.getAlias() + "." + annoColumn;
         }
         return annoColumn;
     }

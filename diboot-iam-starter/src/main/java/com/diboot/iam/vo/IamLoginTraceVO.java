@@ -17,7 +17,9 @@ package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.iam.entity.IamLoginTrace;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
 * 登录记录 VO定义
@@ -25,7 +27,9 @@ import lombok.Data;
 * @version 2.0
 * @date 2019-12-17
 */
-@Data
+@Getter
+@Setter
+@Accessors(chain = true)
 public class IamLoginTraceVO extends IamLoginTrace  {
     private static final long serialVersionUID = -753084580143028183L;
 

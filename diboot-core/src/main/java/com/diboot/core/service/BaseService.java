@@ -16,17 +16,13 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.diboot.core.binding.binder.EntityBinder;
-import com.diboot.core.binding.binder.EntityListBinder;
-import com.diboot.core.binding.binder.FieldBinder;
-import com.diboot.core.binding.binder.FieldListBinder;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.KeyValue;
@@ -36,6 +32,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 基础服务Service
@@ -115,13 +112,34 @@ public interface BaseService<T> {
     /**
      * 创建或更新n-n关联
      * （在主对象的service中调用，不依赖中间表service实现中间表操作）
-     * @param driverIdGetter 驱动对象getter
-     * @param driverId 驱动对象ID
+     *
+     * @param driverIdGetter   驱动对象getter
+     * @param driverId         驱动对象ID
      * @param followerIdGetter 从动对象getter
-     * @param followerIdList 从动对象id集合
+     * @param followerIdList   从动对象id集合
      * @return
      */
-    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId, SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+
+    /**
+     * 创建或更新n-n关联
+     * （在主对象的service中调用，不依赖中间表service实现中间表操作）
+     * <p>
+     * 可自定附加条件、参数
+     *
+     * @param driverIdGetter   驱动对象getter
+     * @param driverId         驱动对象ID
+     * @param followerIdGetter 从动对象getter
+     * @param followerIdList   从动对象id集合
+     * @param queryConsumer    附加查询条件
+     * @param setConsumer      附加插入参数
+     * @param <R>              关联对象类型
+     * @return
+     */
+    <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
+                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                           Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer);
 
     /**
      * 更新Entity实体
@@ -192,6 +210,13 @@ public interface BaseService<T> {
     boolean deleteEntity(Serializable id);
 
     /**
+     * 根据主键撤销删除
+     * @param id
+     * @return
+     */
+    boolean cancelDeletedById(Serializable id);
+
+    /**
      * 按条件删除实体
      * @param queryWrapper
      * @return
@@ -211,7 +236,7 @@ public interface BaseService<T> {
      * 获取符合条件的entity记录总数
      * @return
      */
-    int getEntityListCount(Wrapper queryWrapper);
+    long getEntityListCount(Wrapper queryWrapper);
 
     /**
      * 获取指定条件的Entity集合
@@ -309,6 +334,15 @@ public interface BaseService<T> {
     Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
 
     /**
+     * 获取id-指定name的映射map
+     * @param entityIds
+     * @param getterFn
+     * @param <ID>
+     * @return
+     */
+    <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn);
+
+    /**
      * 获取Map
      * @param queryWrapper
      * @return
@@ -331,33 +365,5 @@ public interface BaseService<T> {
      * @throws Exception
      */
     <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass);
-
-    /***
-     * 绑定字段值到VO列表的元素中
-     * @param voList
-     * @return
-     */
-    FieldBinder<T> bindingFieldTo(List voList);
-
-    /***
-     * 绑定字段值集合到VO列表的元素中
-     * @param voList
-     * @return
-     */
-    FieldListBinder<T> bindingFieldListTo(List voList);
-
-    /***
-     * 绑定entity对象到VO列表元素中
-     * @param voList
-     * @return
-     */
-    EntityBinder<T> bindingEntityTo(List voList);
-
-    /***
-     * 绑定entity对象列表到VO列表元素中(适用于VO-Entity一对多的关联)
-     * @param voList vo列表
-     * @return
-     */
-    EntityListBinder<T> bindingEntityListTo(List voList);
 
 }

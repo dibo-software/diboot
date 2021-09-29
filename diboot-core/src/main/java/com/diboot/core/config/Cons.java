@@ -77,7 +77,11 @@ public class Cons {
         /**
          * 创建人
          */
-        createBy
+        createBy,
+        /**
+         * 更新人
+         */
+        updateBy
     }
 
     /**
@@ -129,7 +133,7 @@ public class Cons {
     /**
      * 成功/失败 结果状态字典定义
      */
-    public static enum RESULT_STATUS{
+    public enum RESULT_STATUS{
         /**
          * 正常
          */

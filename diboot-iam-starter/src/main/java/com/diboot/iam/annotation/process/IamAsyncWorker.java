@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
  * @date 2020/09/21
  */
 @Slf4j
-@Async
+@Async("applicationTaskExecutor")
 @Component
 public class IamAsyncWorker {
     @Autowired

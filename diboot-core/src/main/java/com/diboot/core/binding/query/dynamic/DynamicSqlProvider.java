@@ -21,12 +21,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.SQL;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,10 +69,10 @@ public class DynamicSqlProvider {
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
             if(V.isEmpty(ew.getSqlSelect())){
-                SELECT("self.*");
+                SELECT_DISTINCT("self.*");
             }
             else{
-                SELECT(formatSqlSelect(ew.getSqlSelect()));
+                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect()));
             }
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
@@ -141,12 +141,15 @@ public class DynamicSqlProvider {
      */
     private String formatSqlSelect(String sqlSelect){
         String[] columns = S.split(sqlSelect);
-        List<String> selects = new ArrayList<>(columns.length);
-        for(String column : columns){
-            column = S.removeDuplicateBlank(column).trim();
-            selects.add("self."+S.toSnakeCase(column));
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<columns.length; i++){
+            String column = S.removeDuplicateBlank(columns[i]).trim();
+            if(i>0){
+                sb.append(Cons.SEPARATOR_COMMA);
+            }
+            sb.append("self."+column);
         }
-        return S.join(selects);
+        return sb.toString();
     }
 
     /**

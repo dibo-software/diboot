@@ -32,11 +32,9 @@ import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
 import com.diboot.iam.vo.InvalidResourcePermissionVO;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -341,7 +339,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         if (V.notEmpty(deleteIdList)){
             LambdaQueryWrapper deleteWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
                     .in(IamResourcePermission::getId, deleteIdList);
-            int count = this.getEntityListCount(deleteWrapper);
+            long count = this.getEntityListCount(deleteWrapper);
             if (count > 0) {
                 this.deleteEntities(deleteWrapper);
                 log.info("共清理掉{}条无用数据", count);

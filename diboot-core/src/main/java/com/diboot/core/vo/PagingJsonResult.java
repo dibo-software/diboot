@@ -37,6 +37,9 @@ public class PagingJsonResult extends JsonResult{
      */
     private Pagination page;
 
+    public PagingJsonResult(){
+    }
+
     /**
      * 默认成功，无返回数据
       */
@@ -69,6 +72,11 @@ public class PagingJsonResult extends JsonResult{
         }
         this.page = pagination;
         this.data(iPage.getRecords());
+    }
+
+    public PagingJsonResult setPage(Pagination pagination){
+        this.page = pagination;
+        return this;
     }
 
     public Pagination getPage() {

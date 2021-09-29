@@ -63,5 +63,5 @@ public @interface BindQuery {
      * 查询处理策略：默认忽略空字符串
      * @return
      */
-    Strategy strategy() default Strategy.IGNORE_EMPTY_STRING;
+    Strategy strategy() default Strategy.IGNORE_EMPTY;
 }

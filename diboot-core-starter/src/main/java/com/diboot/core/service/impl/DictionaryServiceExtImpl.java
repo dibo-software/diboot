@@ -18,6 +18,7 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.binder.FieldBinder;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
@@ -177,7 +178,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         if(V.isEmpty(voList)){
             return;
         }
-        bindingFieldTo(voList)
+        new FieldBinder<>(this, voList)
                 .link(Cons.FIELD_ITEM_NAME, setFieldName)
                 .joinOn(getFieldName, Cons.COLUMN_ITEM_VALUE)
                 .andEQ(Cons.FIELD_TYPE, type)

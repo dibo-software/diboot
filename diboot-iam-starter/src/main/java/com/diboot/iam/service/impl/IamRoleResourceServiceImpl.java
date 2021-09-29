@@ -96,9 +96,10 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         }
         // 查询权限
         List<IamResourcePermission> resourcePermissions = iamResourcePermissionService.getEntityList(
-            Wrappers.<IamResourcePermission>lambdaQuery()
-            .select(IamResourcePermission::getApiSet)
-            .in(IamResourcePermission::getId, permissionIds)
+                Wrappers.<IamResourcePermission>lambdaQuery()
+                        .select(IamResourcePermission::getApiSet)
+                        .in(IamResourcePermission::getId, permissionIds)
+                        .isNotNull(IamResourcePermission::getApiSet)
         );
         if(resourcePermissions == null){
             return Collections.emptyList();
@@ -139,13 +140,16 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateRoleResourceRelations(Long roleId, List<Long> resourceIdList) {
+        if (resourceIdList == null) {
+            return true;
+        }
         // 删除新列表中不存在的关联记录
         this.deleteEntities(
                 Wrappers.<IamRoleResource>lambdaQuery()
                         .eq(IamRoleResource::getRoleId, roleId)
         );
         // 批量新增
-        if (V.isEmpty(resourceIdList)) {
+        if (resourceIdList.isEmpty()) {
             return true;
         }
         List<IamRoleResource> roleResourceList = new ArrayList<>();

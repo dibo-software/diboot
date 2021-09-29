@@ -93,4 +93,26 @@ public class VTest {
         Assert.assertTrue(msg != null);
     }
 
+    @Test
+    public void testValid(){
+        boolean isValidCol = V.isValidSqlParam("123sdfSDKF_WER");
+        Assert.assertFalse(isValidCol);
+        isValidCol = V.isValidSqlParam("s123sdfSDKFWER");
+        Assert.assertTrue(isValidCol);
+        isValidCol = V.isValidSqlParam("s123sdfSDKF_,WER");
+        Assert.assertFalse(isValidCol);
+        isValidCol = V.isValidSqlParam("s_123sdfSDKF_WER*");
+        Assert.assertFalse(isValidCol);
+        isValidCol = V.isValidSqlParam("s_123sdfSDKF_:WER");
+        Assert.assertTrue(isValidCol);
+        isValidCol = V.isValidSqlParam("/SELECT*/(test)");
+        Assert.assertFalse(isValidCol);
+        isValidCol = V.isValidSqlParam("shortName:DESC");
+        Assert.assertTrue(isValidCol);
+        isValidCol = V.isValidSqlParam("birth_date");
+        Assert.assertTrue(isValidCol);
+        isValidCol = V.isValidSqlParam("self.id:DESC");
+        Assert.assertTrue(isValidCol);
+    }
+
 }

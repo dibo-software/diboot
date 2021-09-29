@@ -3,7 +3,6 @@ package diboot.core.test.binder.entity;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -34,9 +33,5 @@ public abstract class MyBaseEntity implements Serializable {
             insertStrategy = FieldStrategy.NEVER,
             updateStrategy = FieldStrategy.NOT_NULL)
     private LocalDateTime updateTs;
-
-
-    @Version
-    private Integer version;
 
 }

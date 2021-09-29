@@ -30,16 +30,18 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.validation.Errors;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -144,31 +146,27 @@ public class LogAspect {
         if(V.notEmpty(request.getQueryString())){
             paramsMap.put("query", request.getQueryString());
         }
-        Object[] bodyParams = joinPoint.getArgs();
-        if(V.notEmpty(bodyParams)){
-            for(Object arg : bodyParams){
-                // 忽略文件上传等流参数
-                if(arg == null
-                        || arg instanceof InputStreamSource
-                        || S.containsIgnoreCase(arg.getClass().getName(), "multipart")){
-                    continue;
+        // 补充注解信息
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        Log logAnno = AnnotationUtils.getAnnotation(method, Log.class);
+        // 保存requestBody数据
+        if(logAnno.saveRequestData()){
+            Object[] bodyParams = joinPoint.getArgs();
+            if(V.notEmpty(bodyParams)){
+                for(Object arg : bodyParams){
+                    if(arg != null && isSimpleDataType(arg)){
+                        paramsMap.put(arg.getClass().getSimpleName(), arg);
+                    }
                 }
-                paramsMap.put(arg.getClass().getSimpleName(), arg);
             }
         }
         String paramsJson = null;
         if(V.notEmpty(paramsMap)){
             paramsJson = JSON.stringify(paramsMap);
-            if(paramsJson.length() > maxLength){
-                paramsJson = S.cut(paramsJson, maxLength);
-            }
         }
         operationLog.setRequestParams(paramsJson);
-        // 补充注解信息
-        // 需要验证
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method method = signature.getMethod();
-        Log logAnno = AnnotationUtils.getAnnotation(method, Log.class);
+
         String businessObj = logAnno.businessObj();
         if(V.isEmpty(businessObj)){
             Class clazz = method.getDeclaringClass();
@@ -187,5 +185,47 @@ public class LogAspect {
         return operationLog;
     }
 
+    /**
+     * 是否为简单类型数据
+     * @param arg
+     * @return
+     */
+    private boolean isSimpleDataType(Object arg){
+        Class<?> clazz = arg.getClass();
+        if (arg instanceof Collection) {
+            Collection collection = (Collection) arg;
+            for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                return isSimpleClassType(iter.next().getClass());
+            }
+        }
+        else if (clazz.isArray()) {
+            return isSimpleClassType(clazz.getComponentType());
+        }
+        else if (arg instanceof Map) {
+            Map map = (Map)arg;
+            for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                return isSimpleClassType(entry.getValue().getClass());
+            }
+        }
+        return isSimpleClassType(arg);
+    }
+
+    private boolean isSimpleClassType(Object arg){
+        Class<?> clazz = arg.getClass();
+        boolean isSimple = org.springframework.beans.BeanUtils.isSimpleProperty(clazz);
+        if(isSimple){
+            return true;
+        }
+        if(arg instanceof InputStreamSource
+            || S.containsIgnoreCase(arg.getClass().getName(), "multipart")
+            || arg instanceof ServletRequest
+            || arg instanceof ServletResponse
+            || arg instanceof Errors)
+        {
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -56,8 +56,8 @@ public class IamHelper {
             return null;
         }
         // 对RoleList做聚合处理，以适配前端
-        List<String> nameList = new ArrayList<>();
-        List<String> codeList = new ArrayList<>();
+        List<String> nameList = new ArrayList<>(roleVOList.size());
+        List<String> codeList = new ArrayList<>(roleVOList.size());
         List<IamResourcePermission> allPermissionList = new ArrayList<>();
         roleVOList.forEach(vo -> {
             nameList.add(vo.getName());

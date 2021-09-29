@@ -21,7 +21,6 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.entity.ScheduleJobLog;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -34,6 +33,7 @@ import java.util.Date;
 
 /**
  * job执行日志的切面处理
+ *
  * @author mazc@dibo.ltd
  * @version v2.2
  * @date 2020/11/30
@@ -44,60 +44,42 @@ import java.util.Date;
 public class JobAspect {
     @Autowired
     private SchedulerAsyncWorker schedulerAsyncWorker;
-    private static final int maxLength = 500;
+
+    private static final int MAX_LENGTH = 500;
 
     /**
      * 切面
      */
     @Pointcut("execution(void *.execute*(org.quartz.JobExecutionContext))")
-    public void pointCut() {}
+    public void pointCut() {
+    }
 
     /**
      * 定时任务日志处理
+     *
      * @param joinPoint
      */
     @Around(value = "pointCut()")
     public void afterHandler(ProceedingJoinPoint joinPoint) {
-        ScheduleJobLog jobLog = buildScheduleJobLog(joinPoint);
-        try{
+        ScheduleJobLog jobLog = new ScheduleJobLog();
+        jobLog.setJobId(Long.valueOf(((JobExecutionContext) joinPoint.getArgs()[0]).getJobDetail().getKey().getName()));
+        try {
+            jobLog.setStartTime(new Date());
             joinPoint.proceed(joinPoint.getArgs());
             jobLog.setEndTime(new Date());
             long seconds = (jobLog.getEndTime().getTime() - jobLog.getStartTime().getTime()) / 1000;
-            jobLog.setElapsedSeconds(seconds);
-            jobLog.setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
-        }
-        catch (Throwable throwable){
+            jobLog.setElapsedSeconds(seconds).setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
+        } catch (Throwable throwable) {
             // 处理异常返回结果
-            String errorMsg = null;
-            if(throwable != null){
-                errorMsg = throwable.toString();
-                StackTraceElement[] stackTraceElements = throwable.getStackTrace();
-                if(V.notEmpty(stackTraceElements)){
-                    errorMsg += " : " + stackTraceElements[0].toString();
-                }
-                errorMsg = S.cut(errorMsg, maxLength);
+            String errorMsg = throwable.toString();
+            StackTraceElement[] stackTraceElements = throwable.getStackTrace();
+            if (V.notEmpty(stackTraceElements)) {
+                errorMsg += " : " + stackTraceElements[0].toString();
             }
-            jobLog.setRunStatus(Cons.RESULT_STATUS.F.name()).setExecuteMsg(Status.FAIL_EXCEPTION.code() + ":" + errorMsg);
+            errorMsg = S.cut(Status.FAIL_EXCEPTION.code() + ":" + errorMsg, MAX_LENGTH);
+            jobLog.setRunStatus(Cons.RESULT_STATUS.F.name()).setExecuteMsg(errorMsg);
         }
         // 异步保存日志
         schedulerAsyncWorker.saveScheduleJobLog(jobLog);
     }
-
-    /**
-     * 构建Job执行日志对象
-     * @param joinPoint
-     * @return
-     */
-    private ScheduleJobLog buildScheduleJobLog(JoinPoint joinPoint){
-        ScheduleJobLog jobLog = new ScheduleJobLog();
-        jobLog.setStartTime(new Date());
-
-        JobExecutionContext context = (JobExecutionContext)joinPoint.getArgs()[0];
-        // 获取参数
-        String jobKey = context.getJobDetail().getKey().getName();
-        jobLog.setJobKey(jobKey);
-
-        return jobLog;
-    }
-
 }

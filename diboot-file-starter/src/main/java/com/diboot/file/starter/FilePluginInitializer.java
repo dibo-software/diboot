@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(930)
+@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
 public class FilePluginInitializer implements ApplicationRunner {
 
     @Autowired

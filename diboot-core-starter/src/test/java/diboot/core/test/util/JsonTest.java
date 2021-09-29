@@ -17,11 +17,16 @@ package diboot.core.test.util;
 
 import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.Pagination;
+import com.diboot.core.vo.PagingJsonResult;
 import diboot.core.test.binder.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * JSON单元测试
@@ -42,6 +47,28 @@ public class JsonTest {
 
         User user2 = JSON.toJavaObject(jsonStr, User.class);
         Assert.assertTrue("1988-09-12".equals(D.convert2DateString(user2.getBirthdate())));
+    }
+
+
+    @Test
+    public void testJsonResult(){
+        User user = new User();
+        user.setId(123L);
+        user.setUsername("zhangs").setCreateTime(new Date());
+        user.setBirthdate(D.convert2Date("1988-09-12 12:34"));
+        List<User> userList = new ArrayList<>();
+        userList.add(user);
+
+        Pagination pagination = new Pagination();
+        pagination.setTotalCount(100).setPageIndex(2);
+        JsonResult jsonResult = JsonResult.OK(userList).bindPagination(pagination);
+
+        String jsonStr = JSON.toJSONString(jsonResult);
+        PagingJsonResult pagingJsonResult = JSON.toJavaObject(jsonStr, PagingJsonResult.class);
+
+        Assert.assertTrue(pagingJsonResult.getPage().getPageIndex() == 2);
+        List<User> userList1 = (List<User>)pagingJsonResult.getData();
+        Assert.assertTrue(userList1 != null && userList1.size() == 1);
     }
 
 }

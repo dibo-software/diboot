@@ -57,7 +57,7 @@ public class HttpHelper {
     /***
      * 文件扩展名-ContentType的对应关系
      */
-    private static Map<String, String> EXT_CONTENT_TYPE_MAP = new HashMap(){{
+    private static final Map<String, String> EXT_CONTENT_TYPE_MAP = new HashMap(){{
         put("xls", "application/x-msdownload");
         put("xlsx", "application/x-msdownload");
         put("doc", "application/x-msdownload");
@@ -100,6 +100,8 @@ public class HttpHelper {
         put("xsl", "text/xml");
         put("xslt", "text/xml");
         put("apk", "application/vnd.android.package-archive");
+        put("zip", "application/x-zip-compressed");
+        put("rar", "application/octet-stream");
     }};
 
     /**

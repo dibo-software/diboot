@@ -19,9 +19,11 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.IGetter;
@@ -80,6 +82,15 @@ public abstract class BaseBinder<T> {
 
     public static final String NOT_SUPPORT_MSG = "中间表关联暂不支持涉及目标表多列的情况!";
 
+    /**
+     * ,拼接的多个id值
+     */
+    protected String splitBy = null;
+    /**
+     * List 排序
+     */
+    protected String orderBy;
+
     /***
      * 构造方法
      * @param serviceInstance
@@ -92,7 +103,7 @@ public abstract class BaseBinder<T> {
             this.annoObjPropInfo = BindingCacheManager.getPropInfoByClass(voList.get(0).getClass());
         }
         this.queryWrapper = new QueryWrapper<>();
-        this.referencedEntityClass = BeanUtils.getGenericityClass(referencedService, 1);
+        this.referencedEntityClass = referencedService.getEntityClass();
         this.refObjPropInfo = BindingCacheManager.getPropInfoByClass(this.referencedEntityClass);
         // 列集合
         this.annoObjJoinCols = new ArrayList<>(8);
@@ -245,16 +256,23 @@ public abstract class BaseBinder<T> {
                 queryWrapper.isNull(refObjJoinOnCol);
             }
             else{
+                List unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy)? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
+                        : annoObjectJoinOnList;
                 // 有null值
                 if(hasNullFlags[0]){
-                    queryWrapper.and(qw -> qw.isNull(refObjJoinOnCol).or(w -> w.in(refObjJoinOnCol, annoObjectJoinOnList)));
+                    queryWrapper.and(qw -> qw.isNull(refObjJoinOnCol).or(w -> w.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList)));
                 }
                 else{
-                    queryWrapper.in(refObjJoinOnCol, annoObjectJoinOnList);
+                    queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
                 }
             }
         }
     }
+
+    /**
+     * 简化select列，仅select必需列
+     */
+    protected abstract void simplifySelectColumns();
 
     /**
      * 获取EntityList
@@ -308,16 +326,7 @@ public abstract class BaseBinder<T> {
      * @return
      */
     protected Object getValueIgnoreKeyCase(Map<String, Object> map, String key){
-        if(key == null){
-            return null;
-        }
-        if(map.containsKey(key)){
-            return map.get(key);
-        }
-        if(map.containsKey(key.toUpperCase())){
-            return map.get(key.toUpperCase());
-        }
-        return null;
+        return ResultAssembler.getValueIgnoreKeyCase(map, key);
     }
 
     /**
@@ -344,10 +353,10 @@ public abstract class BaseBinder<T> {
      * 注解宿主对象的列名转换为字段名
      * @return
      */
-    public List<String> getAnnoObjJoinFlds(){
-        List<String> fields = new ArrayList<>(annoObjJoinCols.size());
-        for(String col : annoObjJoinCols){
-            fields.add(toAnnoObjField(col));
+    public String[] getAnnoObjJoinFlds(){
+        String[] fields = new String[annoObjJoinCols.size()];
+        for(int i=0; i<annoObjJoinCols.size(); i++){
+            fields[i] = toAnnoObjField(annoObjJoinCols.get(i));
         }
         return fields;
     }
@@ -406,6 +415,32 @@ public abstract class BaseBinder<T> {
             column = S.toSnakeCase(refObjField);
         }
         return column;
+    }
+
+    /**
+     * 附加排序字段，支持格式：orderBy=short_name:DESC,age:ASC,birthdate
+     */
+    protected void appendOrderBy(){
+        if(V.isEmpty(this.orderBy)){
+            return;
+        }
+        // 解析排序
+        String[] orderByFields = S.split(this.orderBy);
+        for(String field : orderByFields){
+            if(field.contains(":")){
+                String[] fieldAndOrder = S.split(field, ":");
+                String columnName = toRefObjColumn(fieldAndOrder[0]);
+                if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
+                    queryWrapper.orderByDesc(columnName);
+                }
+                else{
+                    queryWrapper.orderByAsc(columnName);
+                }
+            }
+            else{
+                queryWrapper.orderByAsc(toRefObjColumn(field.toLowerCase()));
+            }
+        }
     }
 
     /**

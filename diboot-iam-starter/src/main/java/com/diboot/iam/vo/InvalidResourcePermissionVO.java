@@ -16,7 +16,6 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamResourcePermission;
@@ -24,7 +23,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

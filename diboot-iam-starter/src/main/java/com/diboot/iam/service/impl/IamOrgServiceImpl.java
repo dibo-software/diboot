@@ -139,13 +139,16 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
 
     @Override
     public List<Long> getParentOrgIds(Long orgId, boolean includeThis) {
+        if(orgId == null){
+            return Collections.emptyList();
+        }
         List<Long> scopeIds = new ArrayList<>();
         if(includeThis){
             scopeIds.add(orgId);
         }
         // 查询所有上级
         IamOrg org = getEntity(orgId);
-        if(org.getDepth() != null){
+        if(org != null && org.getDepth() != null){
             if(org.getDepth() >= 2){
                 scopeIds.add(org.getParentId());
                 if(org.getDepth() > 2) {

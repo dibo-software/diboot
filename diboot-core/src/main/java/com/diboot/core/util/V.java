@@ -15,6 +15,8 @@
  */
 package com.diboot.core.util;
 
+import com.diboot.core.exception.BusinessException;
+import com.diboot.core.vo.Status;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /***
  * Validator校验类
@@ -214,6 +217,34 @@ public class V {
 		}
         return valid;
     }
+
+	/**
+	 * 对参数值做安全检查
+	 * @param paramValues
+	 */
+	public static void securityCheck(String... paramValues) {
+		if(isEmpty(paramValues)){
+			return;
+		}
+		for(String param : paramValues){
+			if(V.isValidSqlParam(param) == false){
+				throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数: " + param);
+			}
+		}
+	}
+
+	/**
+	 * 是否为合法的数据库列参数（orderBy等参数安全检查）
+	 * @param columnStr
+	 * @return
+	 */
+	private static Pattern pattern = Pattern.compile("^[A-Za-z_][\\w.:]*$");
+	public static boolean isValidSqlParam(String columnStr){
+		if(isEmpty(columnStr)){
+			return true;
+		}
+		return pattern.matcher(columnStr).matches();
+	}
 
 	/**
 	 * 是否boolean值范围

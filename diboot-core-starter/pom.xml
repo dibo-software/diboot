@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>2.2.1</version>
+        <version>2.3.1</version>
     </parent>
 
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>2.2.1</version>
+    <version>2.3.1</version>
     <packaging>jar</packaging>
     <description>diboot core starter project</description>
 
@@ -20,13 +20,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <!-- SpringBoot 2.3.x+ 新增依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -41,6 +39,12 @@
             <version>${diboot.version}</version>
         </dependency>
 
+        <!-- redis可选依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- 单元测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -52,6 +56,5 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 </project>

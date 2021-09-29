@@ -16,6 +16,7 @@
 package com.diboot.core.handler;
 
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
@@ -76,25 +77,39 @@ public class DefaultExceptionHandler {
         HttpStatus status = getStatus(request);
         Map<String, Object> map = null;
         if(e instanceof BusinessException){
-            BusinessException be = (BusinessException)e;
-            map = be.toMap();
+            map = ((BusinessException)e).toMap();
         }
         else if(e.getCause() instanceof BusinessException){
-            BusinessException be = (BusinessException)e.getCause();
-            map = be.toMap();
+            map = ((BusinessException)e.getCause()).toMap();
+        }
+        else if(e instanceof InvalidUsageException){
+            map = ((InvalidUsageException)e).toMap();
+        }
+        else if(e.getCause() instanceof InvalidUsageException){
+            map = ((InvalidUsageException)e.getCause()).toMap();
         }
         else{
             map = new HashMap<>();
             map.put("code", status.value());
-            String msg = e.getMessage();
-            //空指针异常
-            if(msg == null){
-                msg = e.getClass().getSimpleName();
-            }
+            String msg = buildMsg(status, e);
             map.put("msg", msg);
         }
         log.warn("请求处理异常", e);
         return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    /**
+     * 构建 response msg 内容
+     * @param status
+     * @param e
+     * @return
+     */
+    protected String buildMsg(HttpStatus status, Exception e){
+        String msg = status.getReasonPhrase();
+        if(msg == null){
+            msg = status.name();
+        }
+        return msg;
     }
 
     /**
@@ -114,5 +129,4 @@ public class DefaultExceptionHandler {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
-
 }

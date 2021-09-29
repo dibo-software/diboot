@@ -22,7 +22,8 @@ import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.entity.User;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -32,7 +33,8 @@ import java.util.List;
  * @version v2.0
  * @date 2018/12/27
  */
-@Data
+@Getter
+@Setter
 public class UserDTO extends User {
 
     // 字段关联
@@ -45,7 +47,7 @@ public class UserDTO extends User {
 
     // 通过中间表关联Entity
     @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name",
-            condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0", strategy = Strategy.INCLUDE_EMPTY_STRING)
+            condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0", strategy = Strategy.INCLUDE_EMPTY)
     private String orgName;
     // LEFT JOIN department r2m ON self.department_id = r2m.id
     // LEFT JOIN organization r1 ON r2m.org_id=r2.id

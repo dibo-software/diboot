@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
@@ -29,11 +30,11 @@ import com.diboot.file.dto.UploadFileResult;
 import com.diboot.file.entity.UploadFile;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.service.UploadFileService;
-import com.diboot.file.util.FileHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,6 +52,14 @@ public abstract class BaseFileController extends BaseController {
 
     @Autowired
     protected FileStorageService fileStorageService;
+
+    /**
+     * 合法的文件后缀
+     */
+    protected static List<String> VALID_FILE_EXTS = Arrays.asList(
+            "gif","ico","jpeg","jpg","png","tif","bmp","gif","webp",
+            "csv", "xls","xlsx","xlsm","doc","docx","dot","ppt","pptx","pdf","css","dtd","txt","md",
+            "mp3","mp4","wav","avi","wma","wsdl","xml","xsd","xsl","rar","zip","7z");
 
     /***
      * 获取文件上传记录
@@ -78,7 +87,7 @@ public abstract class BaseFileController extends BaseController {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的文件！");
         }
         String originFileName = file.getOriginalFilename();
-        if (V.isEmpty(originFileName) || !FileHelper.isValidFileExt(originFileName)) {
+        if (V.isEmpty(originFileName) || !isValidFileExt(file)) {
             log.debug("非法的文件类型: " + originFileName);
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的文件格式！");
         }
@@ -93,6 +102,22 @@ public abstract class BaseFileController extends BaseController {
             put("accessUrl", uploadFile.getAccessUrl());
             put("fileName", uploadFile.getFileName());
         }});
+    }
+
+    /**
+     * 是否为合法的文件后缀
+     * @param file
+     * @return
+     */
+    protected boolean isValidFileExt(MultipartFile file){
+        if(file == null){
+            return true;
+        }
+        if(V.isEmpty(file.getOriginalFilename())){
+            return false;
+        }
+        String ext = S.substringAfterLast(file.getOriginalFilename(), ".");
+        return VALID_FILE_EXTS.contains(ext);
     }
 
     /**
@@ -129,8 +154,9 @@ public abstract class BaseFileController extends BaseController {
         if(uploadFileFormDTO == null || uploadFileFormDTO.getFile() == null) {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的文件！");
         }
-        String originFileName = uploadFileFormDTO.getFile().getOriginalFilename();
-        if (V.isEmpty(originFileName) || !FileHelper.isValidFileExt(originFileName)) {
+        MultipartFile file = uploadFileFormDTO.getFile();
+        String originFileName = file.getOriginalFilename();
+        if (V.isEmpty(originFileName) || !isValidFileExt(file)) {
             log.debug("非法的文件类型: " + originFileName);
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的文件格式！");
         }

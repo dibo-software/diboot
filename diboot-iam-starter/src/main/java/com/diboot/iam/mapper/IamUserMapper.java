@@ -15,13 +15,9 @@
  */
 package com.diboot.iam.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamUser;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 /**
 * 系统用户Mapper
@@ -32,13 +28,4 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
 
-    /***
-     * 通过org层级的排序来获取用户分页数据
-     * @param page
-     * @param queryWrapper
-     * @return
-     */
-    @Select("select u.* from iam_user u left join iam_org o on u.org_id=o.id ${ew.customSqlSegment} order by o.depth asc, o.sort_id desc, o.id desc, u.id desc")
-    IPage<IamUser> selectPageSortByOrg(IPage page, @Param("ew") Wrapper<IamUser> queryWrapper);
 }
-

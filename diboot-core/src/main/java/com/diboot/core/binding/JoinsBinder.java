@@ -25,14 +25,10 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.DynamicQueryMapper;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.Pagination;
-import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -46,6 +42,8 @@ import java.util.*;
  */
 @Slf4j
 public class JoinsBinder {
+
+    private static final boolean ENABLE_DATA_PROTECT = PropertiesUtils.getBoolean("diboot.core.enable-data-protect");
 
     /**
      * 关联查询一条数据
@@ -101,7 +99,7 @@ public class JoinsBinder {
                 return ServiceAdaptor.queryList(iService, (QueryWrapper)queryWrapper, pagination, entityClazz);
             }
             else{
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "单表查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
+                throw new InvalidUsageException("单表查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
             }
         }
         long begin = System.currentTimeMillis();
@@ -163,6 +161,12 @@ public class JoinsBinder {
             try{
                 E entityInst = entityClazz.newInstance();
                 BeanUtils.bindProperties(entityInst, fieldValueMap);
+                if (ENABLE_DATA_PROTECT) {
+                    ParserCache.getFieldEncryptorMap(entityClazz).forEach((k, v) -> {
+                        String value = BeanUtils.getStringProperty(entityInst, k);
+                        BeanUtils.setProperty(entityInst, k, value == null ? null : v.decrypt(value));
+                    });
+                }
                 entityList.add(entityInst);
             }
             catch (Exception e){

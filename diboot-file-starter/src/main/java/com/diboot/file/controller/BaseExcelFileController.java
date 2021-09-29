@@ -17,6 +17,7 @@ package com.diboot.file.controller;
 
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -90,11 +91,11 @@ public abstract class BaseExcelFileController extends BaseFileController {
      */
     public <T> JsonResult excelPreviewSave(Class<T> entityClass, String previewFileName, String originFileName) throws Exception {
         if (V.isEmpty(previewFileName) || V.isEmpty(originFileName)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "预览保存失败，参数 tempFileName 或 originFileName 未指定！");
+            throw new InvalidUsageException("预览保存失败，参数 tempFileName 或 originFileName 未指定！");
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
-        String accessUrl = FileHelper.getRelativePath(previewFileName);
+        String accessUrl = buildAccessUrl(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 描述
         String description = getString("description");
@@ -117,11 +118,11 @@ public abstract class BaseExcelFileController extends BaseFileController {
      */
     public <T> JsonResult excelPreviewSave(UploadFileFormDTO uploadFileFormDTO, String previewFileName, String originFileName) throws Exception {
         if (V.isEmpty(previewFileName) || V.isEmpty(originFileName)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "预览保存失败，参数 tempFileName 或 originFileName 未指定！");
+            throw new InvalidUsageException("预览保存失败，参数 tempFileName 或 originFileName 未指定！");
         }
         String fileUid = S.substringBefore(previewFileName, ".");
         String fullPath = FileHelper.getFullPath(previewFileName);
-        String accessUrl = FileHelper.getRelativePath(previewFileName);
+        String accessUrl = buildAccessUrl(previewFileName);
         String ext = FileHelper.getFileExtByName(originFileName);
         // 保存文件上传记录
         UploadFile uploadFile = new UploadFile().setUuid(fileUid)
@@ -180,11 +181,16 @@ public abstract class BaseExcelFileController extends BaseFileController {
         dataMap.put(ORIGIN_FILE_NAME, originFileName);
         dataMap.put(PREVIEW_FILE_NAME, FileHelper.getFileName(uploadFile.getStoragePath()));
         List dataList = listener.getDataList();
-        if (V.notEmpty(dataList) && dataList.size() > BaseConfig.getPageSize()) {
-            dataList = dataList.subList(0, BaseConfig.getPageSize());
+        int totalCount = 0;
+        if (V.notEmpty(dataList)) {
+            totalCount = dataList.size();
+            if(dataList.size() > BaseConfig.getPageSize()){
+                dataList = dataList.subList(0, BaseConfig.getPageSize());
+            }
         }
-        //最多返回前端十条数据
+        //最多返回前端1页数据
         dataMap.put("dataList", dataList);
+        dataMap.put("totalCount", totalCount);
         return dataMap;
     }
 
@@ -198,7 +204,10 @@ public abstract class BaseExcelFileController extends BaseFileController {
             ExcelHelper.previewReadExcel(uploadFile.getStoragePath(), listener);
         } catch (Exception e) {
             log.warn("解析并校验excel文件失败", e);
-            if (V.notEmpty(e.getMessage())) {
+            if(e instanceof BusinessException){
+                throw e;
+            }
+            else if (V.notEmpty(e.getMessage())) {
                 throw new Exception(e.getMessage());
             }
             throw e;

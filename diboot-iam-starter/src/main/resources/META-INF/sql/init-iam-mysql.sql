@@ -18,7 +18,7 @@ create table iam_user
 -- 索引
 create index idx_iam_user_1 on iam_user (org_id);
 create index idx_iam_user_2 on iam_user (mobile_phone);
-create unique index uidx_iam_user on iam_user (tenant_id, user_num);
+create index idx_iam_user_num on iam_user (user_num);
 create index idx_iam_user_tenant on iam_user (tenant_id);
 
 -- 账号表
@@ -37,7 +37,7 @@ create table iam_account
   create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '登录账号';
 -- 创建索引
-create unique index idx_iam_account on iam_account(tenant_id, auth_account, auth_type, user_type);
+create index idx_iam_account on iam_account(auth_account, auth_type, user_type);
 create index idx_iam_account_tenant on iam_account (tenant_id);
 
 -- 角色表

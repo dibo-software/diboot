@@ -40,7 +40,7 @@ public class BaseConditionManager {
     /**
      * 表达式缓存Map
      */
-    private static Map<String, List<Expression>> expressionParseResultMap = new ConcurrentHashMap<>();
+    private static final Map<String, List<Expression>> expressionParseResultMap = new ConcurrentHashMap<>();
 
     /**
      * 获取解析后的Expression列表

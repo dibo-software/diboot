@@ -16,6 +16,8 @@
 package com.diboot.file.util;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
@@ -24,6 +26,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.file.excel.listener.FixedHeadExcelListener;
+import com.diboot.file.excel.write.OptionWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -117,16 +120,27 @@ public class ExcelHelper {
     }
 
     /**
-     * 简单将数据写入excel文件,列宽自适应数据长度
+     * 简单将数据写入excel文件
+     * <p>默认列宽自适应数据长度, 可自定义</p>
      *
      * @param filePath
      * @param sheetName
      * @param dataList
+     * @param writeHandlers
      * @return
      */
-    public static boolean writeDynamicData(String filePath, String sheetName, List<List<String>> dataList) throws Exception {
+    public static boolean writeDynamicData(String filePath, String sheetName, List<List<String>> dataList,
+                                           WriteHandler... writeHandlers) throws Exception {
         try {
-            EasyExcel.write(filePath).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).sheet(sheetName).doWrite(dataList);
+            ExcelWriterBuilder write = EasyExcel.write(filePath);
+            if (writeHandlers.length == 0) {
+                write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+            } else {
+                for (WriteHandler handler : writeHandlers) {
+                    write = write.registerWriteHandler(handler);
+                }
+            }
+            write.sheet(sheetName).doWrite(dataList);
             return true;
         } catch (Exception e) {
             log.error("数据写入excel文件失败", e);
@@ -135,21 +149,33 @@ public class ExcelHelper {
     }
 
     /**
-     * 简单将数据写入excel文件,列宽自适应数据长度
+     * 简单将数据写入excel文件
+     * <p>默认列宽自适应数据长度、写入单元格下拉选项, 可自定义</p>
      *
      * @param filePath
      * @param sheetName
      * @param dataList
      * @param <T>
+     * @param writeHandlers
      * @return
      */
-    public static <T extends BaseExcelModel> boolean writeData(String filePath, String sheetName, List<T> dataList) throws Exception {
+    public static <T extends BaseExcelModel> boolean writeData(String filePath, String sheetName, List<T> dataList,
+                                                               WriteHandler... writeHandlers) throws Exception {
         try {
             if (V.isEmpty(dataList)) {
                 return writeDynamicData(filePath, sheetName, Collections.emptyList());
             }
             Class<T> tClass = (Class<T>) dataList.get(0).getClass();
-            EasyExcel.write(filePath, tClass).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).sheet(sheetName).doWrite(dataList);
+            ExcelWriterBuilder write = EasyExcel.write(filePath, tClass);
+            if (writeHandlers.length == 0) {
+                write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                        .registerWriteHandler(new OptionWriteHandler(tClass));
+            } else {
+                for (WriteHandler handler : writeHandlers) {
+                    write = write.registerWriteHandler(handler);
+                }
+            }
+            write.sheet(sheetName).doWrite(dataList);
             return true;
         } catch (Exception e) {
             log.error("数据写入excel文件失败", e);
@@ -159,28 +185,39 @@ public class ExcelHelper {
 
     /**
      * web 导出excel
+     * <p>默认列宽自适应数据长度、写入单元格下拉选项, 可自定义</p>
      *
      * @param response
-     * @param clazz    导出的类
-     * @param data     导出的数据
-     * @param <T>
+     * @param clazz         导出的类
+     * @param data          导出的数据
+     * @param writeHandlers 写入处理程序
      * @throws Exception
      */
-    public static <T extends BaseExcelModel> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz, List<T> data) throws Exception {
+    public static <T extends BaseExcelModel> void exportExcel(HttpServletResponse response, String fileName,
+                                                              Class<T> clazz, List<T> data,
+                                                              WriteHandler... writeHandlers) throws Exception {
         try {
             setExportExcelResponseHeader(response, fileName);
+
+            ExcelWriterBuilder write = EasyExcel.write(response.getOutputStream(), clazz);
+            if (writeHandlers.length == 0) {
+                write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+                        .registerWriteHandler(new OptionWriteHandler(clazz));
+            } else {
+                for (WriteHandler handler : writeHandlers) {
+                    write = write.registerWriteHandler(handler);
+                }
+            }
             // 这里需要设置不关闭流
-            EasyExcel.write(response.getOutputStream(), clazz)
-                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                    .autoCloseStream(Boolean.FALSE)
+            write.autoCloseStream(Boolean.FALSE)
                     .sheet("sheet1")
                     .doWrite(data);
         } catch (Exception e) {
             log.error("下载文件失败：", e);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.setHeader("err-code", String.valueOf(Status.FAIL_OPERATION.code()));
-            response.setHeader("err-msg", URLEncoder.encode("下载文件失败", StandardCharsets.UTF_8.name()));
+            response.setHeader("code", String.valueOf(Status.FAIL_OPERATION.code()));
+            response.setHeader("msg", URLEncoder.encode("下载文件失败", StandardCharsets.UTF_8.name()));
         }
     }
 
@@ -197,8 +234,8 @@ public class ExcelHelper {
         fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
         response.setHeader("Content-disposition", "attachment; filename=" + fileName);
         response.setHeader("filename", fileName);
-        response.setHeader("err-code", String.valueOf(Status.OK.code()));
-        response.setHeader("err-msg", URLEncoder.encode("操作成功", StandardCharsets.UTF_8.name()));
+        response.setHeader("code", String.valueOf(Status.OK.code()));
+        response.setHeader("msg", URLEncoder.encode("操作成功", StandardCharsets.UTF_8.name()));
     }
 
     /**

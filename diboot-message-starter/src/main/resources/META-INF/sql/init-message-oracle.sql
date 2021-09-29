@@ -37,7 +37,7 @@ CREATE TABLE ${SCHEMA}.message (
   id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
   tenant_id          NUMBER(20)           default 0  not null,
   app_module         VARCHAR2(50),
-  template_id    NUMBER(20)          not null,
+  template_id        NUMBER(20),
   business_type       VARCHAR2(100)          not null,
   business_code       VARCHAR2(100) default 0  not null,
   sender VARCHAR2(100)  not null,

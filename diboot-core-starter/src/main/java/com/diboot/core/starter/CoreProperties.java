@@ -25,11 +25,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "diboot.core")
 public class CoreProperties {
-
+    /**
+     * 每页记录数量
+     */
+    private int pageSize = 20;
+    /**
+     * 每批次数量
+     */
+    private int batchSize = 1000;
     /**
      * 是否初始化，默认true自动安装SQL
      */
     private boolean initSql = true;
+    /**
+     * 启用数据保护，默认false关闭
+     */
+    private boolean enableDataProtect = false;
 
     public boolean isInitSql() {
         return initSql;
@@ -37,5 +48,29 @@ public class CoreProperties {
 
     public void setInitSql(boolean initSql) {
         this.initSql = initSql;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public boolean isEnableDataProtect() {
+        return enableDataProtect;
+    }
+
+    public void setEnableDataProtect(boolean enableDataProtect) {
+        this.enableDataProtect = enableDataProtect;
     }
 }

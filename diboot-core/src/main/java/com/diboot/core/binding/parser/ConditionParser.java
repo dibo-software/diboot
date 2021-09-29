@@ -21,6 +21,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
+import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
@@ -40,7 +41,7 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
 
     private List<String> errorMsgList = null;
-    private List<Expression> expressList = new ArrayList<>();
+    private List<Expression> expressList = new ArrayList<>(8);
 
     /**
      * 添加错误信息
@@ -162,6 +163,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     public void visit(OrExpression orExpression) {
         addError("暂不支持 OR 关联条件");
     }
+
+    @Override
+    public void visit(XorExpression xorExpression) {
+        addError("暂不支持 XOR 关联条件");
+    }
+
     // ------ 忽略的条件
     @Override
     public void visit(Column tableColumn) {
@@ -189,9 +196,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
     @Override
     public void visit(ExistsExpression existsExpression) {
-    }
-    @Override
-    public void visit(AllComparisonExpression allComparisonExpression) {
     }
     @Override
     public void visit(AnyComparisonExpression anyComparisonExpression) {
@@ -259,6 +263,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(RowConstructor rowConstructor) {
     }
+
+    @Override
+    public void visit(RowGetExpression rowGetExpression) {
+
+    }
+
     @Override
     public void visit(OracleHint hint) {
     }
@@ -289,6 +299,11 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
 
     @Override
+    public void visit(ArrayConstructor arrayConstructor) {
+
+    }
+
+    @Override
     public void visit(VariableAssignment variableAssignment) {
     }
 
@@ -296,6 +311,21 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     public void visit(XMLSerializeExpr xmlSerializeExpr) {
     }
 
+    @Override
+    public void visit(TimezoneExpression timezoneExpression) {
+    }
+    @Override
+    public void visit(JsonAggregateFunction jsonAggregateFunction) {
+    }
+    @Override
+    public void visit(JsonFunction jsonFunction) {
+    }
+    @Override
+    public void visit(ConnectByRootOperator connectByRootOperator) {
+    }
+    @Override
+    public void visit(OracleNamedFunctionParameter oracleNamedFunctionParameter) {
+    }
     @Override
     public void visit(BitwiseRightShift aThis) {
     }

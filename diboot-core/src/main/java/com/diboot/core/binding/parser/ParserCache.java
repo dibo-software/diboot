@@ -20,16 +20,19 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.data.annotation.ProtectField;
+import com.diboot.core.data.encrypt.IEncryptStrategy;
+import com.diboot.core.data.mask.IMaskStrategy;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Status;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import javax.lang.model.type.NullType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -48,15 +51,23 @@ public class ParserCache {
     /**
      * VO类-绑定注解缓存
      */
-    private static Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
-    /**
-     * 表及相关信息的缓存
-     */
-    private static Map<String, TableLinkage> tableToLinkageCacheMap = new ConcurrentHashMap<>();
+    private static final Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
     /**
      * dto类-BindQuery注解的缓存
      */
-    private static Map<String, List<AnnoJoiner>> dtoClassBindQueryCacheMap = new ConcurrentHashMap<>();
+    private static final Map<String, List<AnnoJoiner>> dtoClassBindQueryCacheMap = new ConcurrentHashMap<>();
+    /**
+     * 加密字段缓存
+     */
+    private static final Map<String, Map<String, IEncryptStrategy>> FIELD_ENCRYPTOR_MAP = new ConcurrentHashMap<>();
+    /**
+     * 加密器对象缓存
+     */
+    private static final Map<String, IEncryptStrategy> ENCRYPTOR_MAP = new ConcurrentHashMap<>();
+    /**
+     * 脱敏策略对象缓存
+     */
+    private static final Map<String, IMaskStrategy> MASK_STRATEGY_MAP = new ConcurrentHashMap<>();
 
     /**
      * 获取指定class对应的Bind相关注解
@@ -98,39 +109,6 @@ public class ParserCache {
     }
 
     /**
-     * 初始化Table的相关对象信息
-     */
-    @Deprecated
-    private static void initTableToLinkageCacheMap(){
-        if(tableToLinkageCacheMap.isEmpty()){
-            SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
-            Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
-            if(V.notEmpty(mappers)){
-                mappers.forEach(m->{
-                    Type[] types = m.getGenericInterfaces();
-                    try{
-                        if(types != null && types.length > 0 && types[0] != null){
-                            ParameterizedType genericType = (ParameterizedType) types[0];
-                            Type[] superTypes = genericType.getActualTypeArguments();
-                            if(superTypes != null && superTypes.length > 0 && superTypes[0] != null){
-                                String entityClassName = superTypes[0].getTypeName();
-                                if(entityClassName.length() > 1){
-                                    Class<?> entityClass = Class.forName(entityClassName);
-                                    TableLinkage linkage = new TableLinkage(entityClass, m);
-                                    tableToLinkageCacheMap.put(linkage.getTable(), linkage);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e){
-                        log.warn("解析mapper异常", e);
-                    }
-                });
-            }
-        }
-    }
-
-    /**
      * 是否有is_deleted列
      * @return
      */
@@ -141,17 +119,6 @@ public class ParserCache {
         }
         log.debug("未能识别到逻辑删除字段, table={}", table);
         return null;
-    }
-
-    /**
-     * 获取table相关信息
-     * @return
-     */
-    @Deprecated
-    public static TableLinkage getTableLinkage(String table){
-        initTableToLinkageCacheMap();
-        TableLinkage linkage = tableToLinkageCacheMap.get(table);
-        return linkage;
     }
 
     /**
@@ -192,7 +159,7 @@ public class ParserCache {
     public static BaseMapper getMapperInstance(Class<?> entityClass){
         BaseMapper mapper = BindingCacheManager.getMapperByClass(entityClass);
         if(mapper == null){
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "未找到 "+entityClass.getName()+" 的Mapper定义！");
+            throw new InvalidUsageException("未找到 "+entityClass.getName()+" 的Mapper定义！");
         }
         return mapper;
     }
@@ -307,4 +274,80 @@ public class ParserCache {
         return null;
     }
 
+    /**
+     * 获取加密器对象
+     *
+     * @param clazz 加密器类型
+     * @return 加密器对象
+     */
+    @NonNull
+    public static IEncryptStrategy getEncryptor(@NonNull Class<? extends IEncryptStrategy> clazz) {
+        return ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
+            IEncryptStrategy encryptor = ContextHelper.getBean(clazz);
+            if (encryptor == null) {
+                try {
+                    encryptor = clazz.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    log.error("{} 初始化失败", clazz, e);
+                }
+            }
+            return Objects.requireNonNull(encryptor);
+        });
+    }
+
+    /**
+     * 获取该类保护字段加密器Map
+     *
+     * @param clazz 类型
+     * @return 非null，Map<字段名，加密器>
+     */
+    @NonNull
+    public static Map<String, IEncryptStrategy> getFieldEncryptorMap(@NonNull Class<?> clazz) {
+        return FIELD_ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
+            Map<String, IEncryptStrategy> fieldEncryptorMap = new HashMap<>();
+            for (Field field : BeanUtils.extractFields(clazz, ProtectField.class)) {
+                if (!field.getType().isAssignableFrom(String.class)) {
+                    log.error("`@ProtectField` 仅支持 String 类型字段。");
+                    continue;
+                }
+                ProtectField protect = field.getAnnotation(ProtectField.class);
+                IEncryptStrategy encryptor = getEncryptor(protect.encryptor());
+                fieldEncryptorMap.put(field.getName(), encryptor);
+            }
+            for (Field field : BeanUtils.extractFields(clazz, BindQuery.class)) {
+                if (!field.getType().isAssignableFrom(String.class)) {
+                    continue;
+                }
+                BindQuery query = field.getAnnotation(BindQuery.class);
+                if (query != null && V.notEmpty(query.field()) && query.entity() != NullType.class) {
+                    IEncryptStrategy encryptor = getFieldEncryptorMap(query.entity()).get(query.field());
+                    if (encryptor != null) {
+                        fieldEncryptorMap.put(field.getName(), encryptor);
+                    }
+                }
+            }
+            return fieldEncryptorMap.isEmpty() ? Collections.emptyMap() : fieldEncryptorMap;
+        });
+    }
+
+    /**
+     * 获取脱敏策略对象
+     *
+     * @param clazz 脱敏策略类型
+     * @return 脱敏策略对象
+     */
+    @NonNull
+    public static IMaskStrategy getMaskStrategy(@NonNull Class<? extends IMaskStrategy> clazz) {
+        return MASK_STRATEGY_MAP.computeIfAbsent(clazz.getName(), k -> {
+            IMaskStrategy maskStrategy = ContextHelper.getBean(clazz);
+            if (maskStrategy == null) {
+                try {
+                    maskStrategy = clazz.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    log.error("{} 初始化失败", clazz, e);
+                }
+            }
+            return Objects.requireNonNull(maskStrategy);
+        });
+    }
 }

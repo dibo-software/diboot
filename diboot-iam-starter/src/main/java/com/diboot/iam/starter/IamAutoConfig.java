@@ -16,7 +16,6 @@
 package com.diboot.iam.starter;
 
 import com.diboot.core.util.V;
-import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import com.diboot.iam.jwt.DefaultJwtAuthFilter;
 import com.diboot.iam.jwt.StatelessJwtAuthFilter;
@@ -24,8 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
@@ -39,14 +40,14 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.*;
+import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * IAM自动配置类
@@ -56,7 +57,9 @@ import java.util.Map;
  * @Date 2019-10-11  10:54
  */
 @Slf4j
+@Order(922)
 @Configuration
+@EnableAsync
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
@@ -109,7 +112,18 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BasicHttpAuthenticationFilter shiroFilter() {
+        if (iamProperties.isEnableStatelessSession()) {
+            return new StatelessJwtAuthFilter();
+        }
         return new DefaultJwtAuthFilter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Lazy SecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
     }
 
     @Bean
@@ -156,9 +170,9 @@ public class IamAutoConfig {
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
         boolean allAnon = false;
-        String anonUrls = iamProperties.getAnonUrls();
+        Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
-            for (String url : anonUrls.split(Cons.SEPARATOR_COMMA)) {
+            for (String url : anonUrls) {
                 filterChainMap.put(url, "anon");
                 if (url.equals("/**")) {
                     allAnon = true;
@@ -166,8 +180,7 @@ public class IamAutoConfig {
             }
         }
         filterChainMap.put("/login", "authc");
-        filterChainMap.put("/logout", "logout");
-        if (allAnon && iamProperties.isEnablePermissionCheck() == false) {
+        if (allAnon && !iamProperties.isEnablePermissionCheck()) {
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "jwt");

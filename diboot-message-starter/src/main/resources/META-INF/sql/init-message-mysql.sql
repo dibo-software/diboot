@@ -21,7 +21,7 @@ CREATE TABLE `message` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' PRIMARY KEY,
   `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户id',
   `app_module` varchar(50) DEFAULT NULL COMMENT '应用模块',
-  `template_id` bigint NOT NULL COMMENT '信息模版id',
+  `template_id` bigint COMMENT '信息模版id',
   `business_type` varchar(100) NOT NULL COMMENT '业务类型',
   `business_code` varchar(100) NOT NULL DEFAULT '0' COMMENT '业务标识',
   `sender` varchar(100) NOT NULL COMMENT '发送方',

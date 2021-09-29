@@ -15,22 +15,15 @@
  */
 package com.diboot.scheduler.starter;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.SqlFileInitializer;
-import com.diboot.core.util.V;
-import com.diboot.scheduler.entity.ScheduleJob;
-import com.diboot.scheduler.service.ScheduleJobService;
-import com.diboot.scheduler.service.impl.QuartzSchedulerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * 定时任务插件
@@ -41,16 +34,12 @@ import java.util.List;
 @Slf4j
 @Component
 @Order(940)
+@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
 public class SchedulerPluginInitializer implements ApplicationRunner {
 
     @Autowired
     private SchedulerProperties schedulerProperties;
 
-    @Autowired
-    private QuartzSchedulerService quartzSchedulerService;
-
-    @Autowired
-    private ScheduleJobService scheduleJobService;
     @Autowired
     private Environment environment;
 
@@ -68,26 +57,5 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
                 log.info("diboot-scheduler 初始化SQL完成.");
             }
         }
-        // 初始化job
-        initJob();
     }
-
-    /**
-     * 初始化job
-     */
-    private void initJob() {
-        // 开发环境可禁用
-        if(schedulerProperties.isEnable() == false){
-            return;
-        }
-        // 初始化数据库里面状态为启用的定时任务
-        List<ScheduleJob> scheduleJobList = scheduleJobService.getEntityList(
-                Wrappers.<ScheduleJob>lambdaQuery()
-                        .eq(ScheduleJob::getJobStatus, Cons.ENABLE_STATUS.A.name())
-        );
-        if (V.notEmpty(scheduleJobList)) {
-            scheduleJobList.stream().forEach(scheduleJob -> quartzSchedulerService.addJob(scheduleJob));
-        }
-    }
-
 }

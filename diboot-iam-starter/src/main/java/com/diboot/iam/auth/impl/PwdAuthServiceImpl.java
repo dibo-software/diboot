@@ -133,11 +133,11 @@ public class PwdAuthServiceImpl implements AuthService {
     private BaseJwtAuthToken initBaseJwtAuthToken(AuthCredential credential){
         BaseJwtAuthToken token = new BaseJwtAuthToken(getAuthType(), credential.getUserTypeClass());
         // 设置账号密码
-        token.setAuthAccount(credential.getAuthAccount())
-                .setAuthSecret(credential.getAuthSecret())
-                .setRememberMe(credential.isRememberMe())
-                .setTenantId(credential.getTenantId())
-                .setExtObj(credential.getExtObj());
+        token.setAuthAccount(credential.getAuthAccount());
+        token.setAuthSecret(credential.getAuthSecret());
+        token.setRememberMe(credential.isRememberMe());
+        token.setTenantId(credential.getTenantId());
+        token.setExtObj(credential.getExtObj());
         // 生成token
         return token.generateAuthtoken(getExpiresInMinutes());
     }

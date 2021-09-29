@@ -19,10 +19,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.vo.Pagination;
-import com.diboot.core.vo.Status;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -61,7 +60,7 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
             return ServiceAdaptor.getSingleEntity(iService, this);
         }
         else{
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "查询对象无BaseService/IService实现: "+this.mainEntityClass.getSimpleName());
+            throw new InvalidUsageException("查询对象无BaseService/IService实现: "+this.mainEntityClass.getSimpleName());
         }
     }
 
@@ -77,7 +76,7 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
             return ServiceAdaptor.queryList(iService, this);
         }
         else{
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
+            throw new InvalidUsageException("查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
         }
     }
 
@@ -93,7 +92,7 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
             return ServiceAdaptor.queryList(iService, (QueryWrapper)this, pagination, entityClazz);
         }
         else{
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
+            throw new InvalidUsageException("查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
         }
     }
 

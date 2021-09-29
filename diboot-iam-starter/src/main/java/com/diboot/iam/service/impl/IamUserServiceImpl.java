@@ -15,16 +15,11 @@
  */
 package com.diboot.iam.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.Binder;
-import com.diboot.core.binding.RelationsBinder;
-import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
@@ -70,41 +65,6 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired(required = false)
     private IamCustomize iamCustomize;
-
-    @Override
-    public List<IamUser> getEntityListSortByOrg(QueryWrapper queryWrapper, Pagination pagination) {
-        // 如果是动态join，则调用JoinsBinder
-        if(queryWrapper instanceof DynamicJoinQueryWrapper){
-            return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
-        }
-        // 否则，调用MP默认实现
-        if(pagination != null){
-            IPage<IamUser> page = convertToIPage(queryWrapper, pagination);
-            page = super.getBaseMapper().selectPageSortByOrg(page, queryWrapper);
-            // 如果重新执行了count进行查询，则更新pagination中的总数
-            if(page.isSearchCount()){
-                pagination.setTotalCount(page.getTotal());
-            }
-            return page.getRecords();
-        }
-        else{
-            List<IamUser> list = super.list(queryWrapper);
-            if(list == null){
-                list = Collections.emptyList();
-            }
-            else if(list.size() > BaseConfig.getBatchSize()){
-                log.warn("单次查询记录数量过大，返回结果数={}", list.size());
-            }
-            return list;
-        }
-    }
-
-    @Override
-    public <VO> List<VO> getViewObjectListSortByOrg(QueryWrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-        List<IamUser> entityList = this.getEntityListSortByOrg(queryWrapper, pagination);
-        List<VO> voList = RelationsBinder.convertAndBind(entityList, voClass);
-        return voList;
-    }
 
     @Override
     public IamRoleVO buildRoleVo4FrontEnd(IamUser iamUser) {
@@ -229,6 +189,20 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return allDuplicateUserNumList;
     }
 
+    @Override
+    public boolean isUserNumExists(Long id, String userNum) {
+        if(V.isEmpty(userNum)){
+            return true;
+        }
+        LambdaQueryWrapper<IamUser> wrapper = Wrappers.<IamUser>lambdaQuery()
+                .select(IamUser::getUserNum)
+                .eq(IamUser::getUserNum, userNum);
+        if (V.notEmpty(id)){
+            wrapper.ne(IamUser::getId, id);
+        }
+        return exists(wrapper);
+    }
+
     /***
      * 检查重复用户编号
      * @param userNumList
@@ -277,6 +251,32 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         );
     }
 
+    /**
+     * 判断员工编号是否存在
+     * @param iamUser
+     * @return
+     */
+    @Override
+    protected void beforeCreateEntity(IamUser iamUser){
+        if(isUserNumExists(null, iamUser.getUserNum())){
+            String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
+            log.warn("保存用户异常:{}", errorMsg);
+            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+        }
+    }
 
+    /**
+     * 判断员工编号是否存在
+     * @param iamUser
+     * @return
+     */
+    @Override
+    protected void beforeUpdateEntity(IamUser iamUser){
+        if(isUserNumExists(iamUser.getId(), iamUser.getUserNum())){
+            String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
+            log.warn("保存用户异常:{}", errorMsg);
+            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+        }
+    }
 
 }

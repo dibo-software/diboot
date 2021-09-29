@@ -20,7 +20,6 @@ import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.JwtUtils;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
@@ -31,7 +30,7 @@ import java.util.Map;
  * @version v2.0
  * @date 2019/6/6
  */
-@Getter @Setter @Accessors(chain = true)
+@Getter @Setter
 @Slf4j
 public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     private static final long serialVersionUID = -5518501153334708409L;
@@ -75,6 +74,10 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
      */
     private boolean validPassword = true;
 
+    private Object principal;
+
+    private Object credentials;
+
     public BaseJwtAuthToken(){
     }
 
@@ -116,8 +119,6 @@ public class BaseJwtAuthToken implements RememberMeAuthenticationToken {
     public String getUserType(){
         return userTypeClass.getSimpleName();
     }
-
-
 
     /**
      * 生成token  tenantId,account,userTypeClass,authType,60

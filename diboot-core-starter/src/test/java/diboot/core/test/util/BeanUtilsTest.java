@@ -16,14 +16,26 @@
 package diboot.core.test.util;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.vo.DictionaryVO;
+import com.sun.management.OperatingSystemMXBean;
+import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -33,7 +45,32 @@ import java.util.*;
  * @version v2.0
  * @date 2019/06/02
  */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
+@SpringBootTest(classes = {StartupApplication.class})
 public class BeanUtilsTest {
+    private static OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+
+    @Autowired
+    private DictionaryService dictionaryService;
+
+    @Test
+    public void testFields(){
+        List<Field> fields = BindingCacheManager.getFields(Dictionary.class);
+        Assert.assertTrue(fields.size() > 0);
+        long start = System.currentTimeMillis();
+        for(int i=0; i<10000; i++){
+            Class<?> dict = BeanUtils.getGenericityClass(dictionaryService, 1);
+        }
+        long end = System.currentTimeMillis() - start;
+        System.out.println(" takes "+ end);
+        start = System.currentTimeMillis();
+        for(int i=0; i<10000; i++){
+            Class<?> dict = ((IService)dictionaryService).getEntityClass();
+        }
+        end = System.currentTimeMillis() - start;
+        System.out.println(" takes "+ end);
+    }
 
     @Test
     public void testCopyBean(){
