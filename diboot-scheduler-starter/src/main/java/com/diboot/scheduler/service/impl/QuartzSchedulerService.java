@@ -169,14 +169,14 @@ public class QuartzSchedulerService {
      * @param job
      */
     public void addJob(ScheduleJob job) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
+        // 构建参数
+        JobDetail jobDetail = JobBuilder.newJob(getJobClass(job.getJobKey())).withIdentity(job.getId().toString()).build();
+        if (V.notEmpty(job.getParamJson())) {
+            Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
+            jobDetail.getJobDataMap().putAll(jsonData);
+        }
         try {
-            TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
-            // 构建参数
-            JobDetail jobDetail = JobBuilder.newJob(getJobClass(job.getJobKey())).withIdentity(job.getId().toString()).build();
-            if (V.notEmpty(job.getParamJson())) {
-                Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
-                jobDetail.getJobDataMap().putAll(jsonData);
-            }
             // 表达式调度构建器
             CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCron());
             // 设置定时任务初始化策略
@@ -190,6 +190,7 @@ public class QuartzSchedulerService {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
+            throw new BusinessException(Status.FAIL_OPERATION, "添加定时任务异常", e);
         }
     }
 
@@ -199,19 +200,20 @@ public class QuartzSchedulerService {
      * @param job
      */
     public void addJobExecuteOnce(ScheduleJob job) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
+        // 构建参数
+        JobDetail jobDetail = JobBuilder.newJob(getJobClass(job.getJobKey())).withIdentity(job.getId().toString()).build();
+        if (V.notEmpty(job.getParamJson())) {
+            Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
+            jobDetail.getJobDataMap().putAll(jsonData);
+        }
         try {
-            TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
-            // 构建参数
-            JobDetail jobDetail = JobBuilder.newJob(getJobClass(job.getJobKey())).withIdentity(job.getId().toString()).build();
-            if (V.notEmpty(job.getParamJson())) {
-                Map<String, Object> jsonData = JSON.toMap(job.getParamJson());
-                jobDetail.getJobDataMap().putAll(jsonData);
-            }
             // 立即执行,且只执行一次
             Trigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(SimpleScheduleBuilder.simpleSchedule().withRepeatCount(0)).build();
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
+            throw new BusinessException(Status.FAIL_OPERATION, "添加定时任务异常", e);
         }
     }
 
