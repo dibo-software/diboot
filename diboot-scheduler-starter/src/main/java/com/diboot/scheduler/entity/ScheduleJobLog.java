@@ -16,6 +16,8 @@
 package com.diboot.scheduler.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -63,6 +65,7 @@ public class ScheduleJobLog extends BaseEntity {
     @NotNull(message = "任务名称不能为空")
     @Length(max = 50, message = "任务名称长度应小于50")
     @TableField()
+    @BindQuery(comparison = Comparison.LIKE)
     private String jobName;
 
     /**
