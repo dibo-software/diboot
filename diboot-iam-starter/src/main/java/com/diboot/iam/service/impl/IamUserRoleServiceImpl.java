@@ -24,24 +24,26 @@ import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.BaseLoginUser;
+import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
+import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
+import com.diboot.iam.util.IamHelper;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * 用户角色关联相关Service实现
@@ -57,6 +59,8 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private IamRoleService iamRoleService;
     @Autowired
     private IamAccountService iamAccountService;
+    @Autowired
+    private IamResourcePermissionService iamResourcePermissionService;
 
     // 扩展接口
     @Autowired(required = false)
@@ -202,6 +206,24 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     @Override
     public IamExtensible getIamExtensible(){
         return iamExtensible;
+    }
+
+    @Override
+    public IamRoleVO buildRoleVo4FrontEnd(BaseLoginUser loginUser) {
+        List<IamRoleVO> roleVOList = getAllRoleVOList(loginUser);
+        if (V.isEmpty(roleVOList)){
+            return null;
+        }
+        // 附加额外的一些权限给与特性的角色
+        for (IamRoleVO roleVO : roleVOList){
+            if (Cons.ROLE_SUPER_ADMIN.equalsIgnoreCase(roleVO.getCode())){
+                List<IamResourcePermission> iamPermissions = iamResourcePermissionService.getAllResourcePermissions(Cons.APPLICATION);
+                roleVO.setPermissionList(iamPermissions);
+                break;
+            }
+        }
+        // 组合为前端格式
+        return IamHelper.buildRoleVo4FrontEnd(roleVOList);
     }
 
     /**

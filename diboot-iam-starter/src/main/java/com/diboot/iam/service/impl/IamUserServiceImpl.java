@@ -25,7 +25,6 @@ import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.mapper.IamUserMapper;
@@ -33,8 +32,6 @@ import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
-import com.diboot.iam.util.IamHelper;
-import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,36 +63,6 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     @Autowired(required = false)
     private IamCustomize iamCustomize;
 
-    @Override
-    public IamRoleVO buildRoleVo4FrontEnd(IamUser iamUser) {
-        List<IamRoleVO> roleVOList = getAllRoleVOList(iamUser);
-        if (V.isEmpty(roleVOList)){
-            return null;
-        }
-        // 附加额外的一些权限给与特性的角色
-        attachExtraPermissions(roleVOList);
-        // 组合为前端格式
-        return IamHelper.buildRoleVo4FrontEnd(roleVOList);
-    }
-
-    @Override
-    public List<IamRoleVO> getAllRoleVOList(IamUser iamUser) {
-        return iamUserRoleService.getAllRoleVOList(iamUser);
-    }
-
-    @Override
-    public void attachExtraPermissions(List<IamRoleVO> roleVOList) {
-        if (V.isEmpty(roleVOList)){
-            return;
-        }
-        for (IamRoleVO roleVO : roleVOList){
-            if (Cons.ROLE_SUPER_ADMIN.equalsIgnoreCase(roleVO.getCode())){
-                List<IamResourcePermission> iamPermissions = iamResourcePermissionService.getAllResourcePermissions(Cons.APPLICATION);
-                roleVO.setPermissionList(iamPermissions);
-                return;
-            }
-        }
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

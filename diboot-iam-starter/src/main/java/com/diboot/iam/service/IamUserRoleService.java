@@ -17,6 +17,7 @@ package com.diboot.iam.service;
 
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.iam.auth.IamExtensible;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.vo.IamRoleVO;
@@ -78,4 +79,11 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @return
      */
     IamExtensible getIamExtensible();
+
+    /**
+     * 构建role-permission角色权限数据格式(合并role等)，用于前端适配
+     * @param loginUser 登录用户
+     * @return 角色VO
+     */
+    IamRoleVO buildRoleVo4FrontEnd(BaseLoginUser loginUser);
 }
