@@ -26,7 +26,6 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamUser;
-import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourcePermissionService;
@@ -215,11 +214,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                         .eq(IamAccount::getUserId, userId)
         );
         // 删除用户角色关联关系列表
-        iamUserRoleService.deleteEntities(
-                Wrappers.<IamUserRole>lambdaQuery()
-                        .eq(IamUserRole::getUserType, IamUser.class.getSimpleName())
-                        .eq(IamUserRole::getUserId, userId)
-        );
+        iamUserRoleService.deleteUserRoleRelations(IamUser.class.getSimpleName(), userId);
     }
 
     /**

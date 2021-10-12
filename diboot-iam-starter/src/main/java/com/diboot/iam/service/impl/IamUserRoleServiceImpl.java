@@ -24,10 +24,7 @@ import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.BaseLoginUser;
-import com.diboot.iam.entity.IamResourcePermission;
-import com.diboot.iam.entity.IamRole;
-import com.diboot.iam.entity.IamUserRole;
+import com.diboot.iam.entity.*;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
@@ -188,6 +185,25 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
             clearUserAuthCache(userType, userId);
         }
         return success;
+    }
+
+    @Override
+    public boolean deleteUserRoleRelations(String userType, Long userId) {
+        Long superAdminRoleId = getSuperAdminRoleId();
+        // 删除超级管理员，需确保当前用户为超级管理员权限
+        if (superAdminRoleId != null &&  this.exists(Wrappers.<IamUserRole>lambdaQuery()
+                        .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
+                        .eq(IamUserRole::getRoleId, superAdminRoleId))
+        ) {
+            if(!iamCustomize.checkCurrentUserHasRole(Cons.ROLE_SUPER_ADMIN)){
+                throw new PermissionException("非超级管理员用户不可删除超级管理员用户权限！");
+            }
+        }
+        return deleteEntities(
+                Wrappers.<IamUserRole>lambdaQuery()
+                        .eq(IamUserRole::getUserType, userType)
+                        .eq(IamUserRole::getUserId, userId)
+        );
     }
 
     @Override

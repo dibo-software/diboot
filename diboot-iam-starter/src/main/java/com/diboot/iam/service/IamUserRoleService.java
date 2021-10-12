@@ -67,6 +67,15 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      */
     boolean updateUserRoleRelations(String userType, Long userId, List<Long> roleIds);
 
+    /**
+     * 批量删除用户-角色的关系
+     *
+     * @param userType
+     * @param userId
+     * @return
+     */
+    boolean deleteUserRoleRelations(String userType, Long userId);
+
     /***
      * 获取用户的所有角色列表（包括扩展的关联角色）
      * @param userObject
