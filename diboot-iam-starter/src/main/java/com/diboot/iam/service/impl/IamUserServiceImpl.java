@@ -32,6 +32,7 @@ import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
+import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -204,6 +205,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     private void deleteAccount(Long userId) throws Exception {
+        if (V.equals(userId, IamSecurityUtils.getCurrentUserId())) {
+            throw new BusinessException("不可删除自己的账号");
+        }
         // 删除账号信息
         iamAccountService.deleteEntities(
                 Wrappers.<IamAccount>lambdaQuery()
