@@ -141,6 +141,9 @@ public class ApiPermissionExtractor {
                 }
                 if(bindPermission != null){
                     String permissionCode = (codePrefix != null)? codePrefix+":"+bindPermission.code() : bindPermission.code();
+                    if (":".equals(permissionCode)) {
+                        continue;
+                    }
                     // 提取请求url-permission code的关系
                     buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name());
                 }
