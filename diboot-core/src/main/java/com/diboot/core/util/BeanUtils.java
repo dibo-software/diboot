@@ -20,7 +20,7 @@ import com.diboot.core.binding.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
@@ -756,13 +756,16 @@ public class BeanUtils {
     }
 
     /**
-     * 转换keyValue集合为Map
-     * @param keyValueList
+     * 转换labelValueList为Map
+     * <p>
+     * 需确保Label唯一
+     *
+     * @param labelValueList
      * @return
      */
-    public static Map<String, Object> convertKeyValueList2Map(List<KeyValue> keyValueList) {
-        if(V.notEmpty(keyValueList)){
-            return keyValueList.stream().collect(Collectors.toMap(KeyValue::getK, KeyValue::getV));
+    public static Map<String, Object> convertLabelValueList2Map(List<LabelValue> labelValueList) {
+        if (V.notEmpty(labelValueList)) {
+            return labelValueList.stream().collect(Collectors.toMap(LabelValue::getLabel, LabelValue::getValue));
         }
         return Collections.EMPTY_MAP;
     }

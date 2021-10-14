@@ -172,12 +172,12 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void testKV(){
-        List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
-        Assert.assertTrue(keyValues.size() >= 2);
-        Assert.assertTrue(keyValues.get(0).getV().equals("M") || keyValues.get(1).getV().equals("M"));
-        Map<String, Object> kvMap = BeanUtils.convertKeyValueList2Map(keyValues);
-        Assert.assertTrue(kvMap.get("女").equals("F"));
+    public void testLabelValue(){
+        List<LabelValue> labelValueList = dictionaryService.getLabelValueList("GENDER");
+        Assert.assertTrue(labelValueList.size() >= 2);
+        Assert.assertTrue(labelValueList.get(0).getValue().equals("M") || labelValueList.get(1).getValue().equals("M"));
+        Map<String, Object> labelValueMap = BeanUtils.convertLabelValueList2Map(labelValueList);
+        Assert.assertTrue(labelValueMap.get("女").equals("F"));
     }
 
     @Test
@@ -372,8 +372,8 @@ public class BaseServiceTest {
         Assert.assertTrue(voList.size() == 1);
         Assert.assertTrue(voList.get(0).getChildren().size() >= 2);
 
-        List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
-        Assert.assertTrue(keyValues.size() >= 2);
+        List<LabelValue> options = dictionaryService.getLabelValueList("GENDER");
+        Assert.assertTrue(options.size() >= 2);
 
     }
 

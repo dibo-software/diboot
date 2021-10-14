@@ -17,7 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -51,12 +51,12 @@ public abstract class BaseLoginUser extends BaseEntity {
      * 附加对象，用于岗位等扩展
       */
     @TableField(exist = false)
-    private KeyValue extentionObj;
+    private LabelValue extentionObj;
 
-    public KeyValue getExtentionObj(){
+    public LabelValue getExtentionObj(){
         return this.extentionObj;
     }
-    public void setExtentionObj(KeyValue extentionObj){
+    public void setExtentionObj(LabelValue extentionObj){
         this.extentionObj = extentionObj;
     }
 
@@ -67,6 +67,7 @@ public abstract class BaseLoginUser extends BaseEntity {
         this.authToken = authToken;
     }
 
+    @Override
     public String toString(){
         return this.authToken;
     }

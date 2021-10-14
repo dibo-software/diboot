@@ -27,7 +27,7 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceExtImpl.class);
 
     @Override
-    public List<KeyValue> getKeyValueList(String type) {
+    public List<LabelValue> getLabelValueList(String type) {
         // 构建查询条件
         Wrapper queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue)
@@ -59,7 +59,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .gt(Dictionary::getParentId, 0)
                 .orderByAsc(Dictionary::getSortId, Dictionary::getId);
         // 返回构建条件
-        return getKeyValueList(queryDictionary);
+        return getLabelValueList(queryDictionary);
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
 * attachMore 用于加载关联数据传递的DTO格式
 * <p>
-* [{type: 'T', target: 'category', value: 'id', key: 'name’}, {type: 'D', target: 'GENDER'}]
+* [{type: 'T', target: 'category', label: 'name’, value: 'id'}, {type: 'D', target: 'GENDER'}]
 * </p>
  * @author mazc@dibo.ltd
  * @version v2.0
@@ -51,11 +51,11 @@ public class AttachMoreDTO implements Serializable {
     private String target;
 
     /**
-     * 需要的key字段
-     * 当{@link REF_TYPE#T} key为表中字段名
-     * 当{@link REF_TYPE#D} key为表中{@link com.diboot.core.entity.Dictionary#itemName}
+     * 需要的label字段
+     * 当{@link REF_TYPE#T} label为表中字段名
+     * 当{@link REF_TYPE#D} label为表中{@link com.diboot.core.entity.Dictionary#itemName}
      */
-    private String key;
+    private String label;
 
     /**
      * 需要查询的value字段

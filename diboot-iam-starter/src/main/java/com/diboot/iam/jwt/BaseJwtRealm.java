@@ -18,7 +18,7 @@ package com.diboot.iam.jwt;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.auth.IamExtensible;
@@ -107,7 +107,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
             loginUser.setAuthToken(jwtToken.getAuthtoken());
             IamExtensible iamExtensible = getIamUserRoleService().getIamExtensible();
             if(iamExtensible != null){
-                KeyValue extentionObj = iamExtensible.getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId(), jwtToken.getExtObj());
+                LabelValue extentionObj = iamExtensible.getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId(), jwtToken.getExtObj());
                 if(extentionObj != null){
                     loginUser.setExtentionObj(extentionObj);
                 }
@@ -129,9 +129,9 @@ public class BaseJwtRealm extends AuthorizingRealm {
         BaseLoginUser currentUser = (BaseLoginUser) principals.getPrimaryPrincipal();
         // 根据用户类型与用户id获取roleList
         Long extentionObjId = null;
-        KeyValue extentionObj = currentUser.getExtentionObj();
+        LabelValue extentionObj = currentUser.getExtentionObj();
         if(extentionObj != null){
-            extentionObjId = (Long)extentionObj.getV();
+            extentionObjId = (Long)extentionObj.getValue();
         }
         // 获取角色列表
         List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extentionObjId);

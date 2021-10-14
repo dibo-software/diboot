@@ -30,7 +30,7 @@ import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
@@ -316,8 +316,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             AttachMoreDTO.REF_TYPE type = attachMoreDTO.getType();
             String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
             if (type.equals(AttachMoreDTO.REF_TYPE.D)) {
-                List<KeyValue> keyValueList = dictionaryService.getKeyValueList(attachMoreDTO.getTarget());
-                result.put(targetKeyPrefix + "KvList", keyValueList);
+                List<LabelValue> labelValueList = dictionaryService.getLabelValueList(attachMoreDTO.getTarget());
+                result.put(targetKeyPrefix + "LabelValueList", labelValueList);
             }
             else if (type.equals(AttachMoreDTO.REF_TYPE.T)) {
                 String entityClassName = S.capFirst(targetKeyPrefix);
@@ -332,18 +332,18 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
                     continue;
                 }
                 String value = V.isEmpty(attachMoreDTO.getValue()) ? ContextHelper.getIdFieldName(entityClass) : attachMoreDTO.getValue();
-                String key = attachMoreDTO.getKey();
-                if (V.isEmpty(key)) {
+                String label = attachMoreDTO.getLabel();
+                if (V.isEmpty(label)) {
                     for (Field field : entityClass.getDeclaredFields()) {
                         if (V.equals(field.getType().getName(), String.class.getName())) {
-                            key = field.getName();
+                            label = field.getName();
                             break;
                         }
                     }
                 }
                 // 构建前端下拉框的初始化数据
-                List<KeyValue> keyValueList = baseService.getKeyValueList(Wrappers.query().select(key, value));
-                result.put(targetKeyPrefix + "KvList", keyValueList);
+                List<LabelValue> labelValueList = baseService.getLabelValueList(Wrappers.query().select(label, value));
+                result.put(targetKeyPrefix + "LabelValueList", labelValueList);
             }
             else {
                 log.error("错误的加载绑定类型：{}", attachMoreDTO.getType());

@@ -44,7 +44,7 @@ import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
@@ -645,11 +645,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public List<KeyValue> getKeyValueList(Wrapper queryWrapper) {
+	public List<LabelValue> getLabelValueList(Wrapper queryWrapper) {
 		String sqlSelect = queryWrapper.getSqlSelect();
-		// 最多支持3个属性：k, v, ext
+		// 最多支持3个属性：label, value, ext
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
-			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
+			log.error("调用错误: getLabelValueList必须用select依次指定返回的Label,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 			return Collections.emptyList();
 		}
 		// 获取mapList
@@ -660,41 +660,35 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		else if(mapList.size() > BaseConfig.getBatchSize()){
 			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", mapList.size());
 		}
-		// 转换为Key-Value键值对
-		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
-		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
+		// 转换为LabelValue
+		String[] selectArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
+		List<LabelValue> labelValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
 			// 如果key和value的的值都为null的时候map也为空，则不处理此项
 			if (V.isEmpty(map)) {
 				continue;
 			}
-			String key = keyValueArray[0], value = keyValueArray[1], ext = null;
+			String label = selectArray[0], value = selectArray[1], ext = null;
 			// 兼容oracle大写
-			if(map.containsKey(key) == false && map.containsKey(key.toUpperCase())){
-				key = key.toUpperCase();
+			if(map.containsKey(label) == false && map.containsKey(label.toUpperCase())){
+				label = label.toUpperCase();
 			}
 			if(map.containsKey(value) == false && map.containsKey(value.toUpperCase())){
 				value = value.toUpperCase();
 			}
-			if(map.containsKey(key)){
-				KeyValue kv = new KeyValue(S.valueOf(map.get(key)), map.get(value));
-				if(keyValueArray.length > 2){
-					ext = keyValueArray[2];
+			if(map.containsKey(label)){
+				LabelValue labelValue = new LabelValue(S.valueOf(map.get(label)), map.get(value));
+				if(selectArray.length > 2){
+					ext = selectArray[2];
 					if(map.containsKey(ext) == false && map.containsKey(ext.toUpperCase())){
 						ext = ext.toUpperCase();
 					}
-					kv.setExt(map.get(ext));
+					labelValue.setExt(map.get(ext));
 				}
-				keyValueList.add(kv);
+				labelValueList.add(labelValue);
 			}
 		}
-		return keyValueList;
-	}
-
-	@Override
-	public Map<String, Object> getKeyValueMap(Wrapper queryWrapper) {
-		List<KeyValue> keyValueList = getKeyValueList(queryWrapper);
-		return BeanUtils.convertKeyValueList2Map(keyValueList);
+		return labelValueList;
 	}
 
 	@Override

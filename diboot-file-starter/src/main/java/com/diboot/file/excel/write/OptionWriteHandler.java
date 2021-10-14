@@ -24,7 +24,7 @@ import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.file.excel.annotation.ExcelOption;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.DataValidation;
@@ -131,7 +131,7 @@ public class OptionWriteHandler extends AbstractSheetWriteHandler {
         if (bindDictService == null) {
             throw new InvalidUsageException("DictionaryService未实现，@ExcelOption无法关联字典！");
         }
-        String[] options = bindDictService.getKeyValueList(dictType).stream().map(KeyValue::getK).toArray(String[]::new);
+        String[] options = bindDictService.getLabelValueList(dictType).stream().map(LabelValue::getLabel).toArray(String[]::new);
         if (V.isEmpty(options)) {
             log.warn(clazz.getSimpleName() + " @ExcelOption 关联字典: " + dictType + " 无值");
         }
