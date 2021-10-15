@@ -40,7 +40,7 @@ public class TemplateUtils {
     /**
      * 加载所有TemplateVariableService实现类
      */
-    public static List<String> loadTemplateTemplateVariableList() {
+    public static List<String> loadTemplateVariableList() {
         if (V.notEmpty(TEMPLATE_STRATEGY_LIST)) {
             return TEMPLATE_STRATEGY_LIST;
         }
@@ -48,7 +48,7 @@ public class TemplateUtils {
         if (V.isEmpty(templateVariableService)) {
             return TEMPLATE_STRATEGY_LIST;
         }
-        Class targetClass = BeanUtils.getTargetClass(templateVariableService);
+        Class<?> targetClass = BeanUtils.getTargetClass(templateVariableService);
         Method[] methods = targetClass.getDeclaredMethods();
         for (Method method : methods) {
             TemplateVariable templateVariable = method.getAnnotation(TemplateVariable.class);

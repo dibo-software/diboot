@@ -69,7 +69,7 @@ public interface TemplateVariableService {
     default String[] getMessageTemplateVariables(String templateContent) throws Exception {
         // 提取变量之前校验方法缓存是否有值，无值需要重新加载
         if (V.isEmpty(TEMPLATE_STRATEGY_CACHE)) {
-            TemplateUtils.loadTemplateTemplateVariableList();
+            TemplateUtils.loadTemplateVariableList();
         }
         // 提取模版变量并将值设置
         Matcher matcher = TEMPLATE_VARIABLE.matcher(templateContent);

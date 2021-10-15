@@ -33,7 +33,7 @@ import java.util.List;
 /**
 * 消息模版相关Service实现
 * @author uu
-* @version 1.0
+* @version v2.2.1
 * @date 2021-02-18
  * @Copyright © diboot.com
 */
@@ -42,8 +42,8 @@ import java.util.List;
 public class MessageTemplateServiceImpl extends BaseServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateService {
 
     @Override
-    public List<String> getTemplateTemplateVariableList() throws Exception{
-        return TemplateUtils.loadTemplateTemplateVariableList();
+    public List<String> getTemplateVariableList() throws Exception{
+        return TemplateUtils.loadTemplateVariableList();
     }
 
     @Override

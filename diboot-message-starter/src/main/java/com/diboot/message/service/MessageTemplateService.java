@@ -36,7 +36,7 @@ public interface MessageTemplateService extends BaseService<MessageTemplate> {
      * @return
      * @throws Exception
      */
-    List<String> getTemplateTemplateVariableList() throws Exception;
+    List<String> getTemplateVariableList() throws Exception;
 
     /**
      * 检查是否有重复的code
