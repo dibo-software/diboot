@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,11 +54,11 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<LabelValue> getLabelValueList(String type) {
         // 构建查询条件
-        Wrapper queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                .select(Dictionary::getItemName, Dictionary::getItemValue)
+        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtdata)
                 .eq(Dictionary::getType, type)
                 .gt(Dictionary::getParentId, 0)
-                .orderByAsc(Dictionary::getSortId, Dictionary::getId);
+                .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
         return getLabelValueList(queryDictionary);
     }

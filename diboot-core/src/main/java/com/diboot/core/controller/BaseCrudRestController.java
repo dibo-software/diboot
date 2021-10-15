@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.Cons;
 import com.diboot.core.dto.AttachMoreDTO;
 import com.diboot.core.entity.AbstractEntity;
@@ -38,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.BiFunction;
 
 /***
  * CRUD增删改查通用RestController-父类
@@ -317,33 +318,39 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
             if (type.equals(AttachMoreDTO.REF_TYPE.D)) {
                 List<LabelValue> labelValueList = dictionaryService.getLabelValueList(attachMoreDTO.getTarget());
-                result.put(targetKeyPrefix + "LabelValueList", labelValueList);
+                result.put(targetKeyPrefix + "Options", labelValueList);
             }
             else if (type.equals(AttachMoreDTO.REF_TYPE.T)) {
                 String entityClassName = S.capFirst(targetKeyPrefix);
                 Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
                 if (V.isEmpty(entityClass)) {
-                    log.warn("传递错误的实体类型：{}", attachMoreDTO.getTarget());
+                    log.error("传递错误的实体类型：{}", attachMoreDTO.getTarget());
                     continue;
                 }
-                BaseService baseService = ContextHelper.getBaseServiceByEntity(entityClass);
-                if(baseService == null){
-                    log.warn("未找到实体类型{} 对应的Service定义", attachMoreDTO.getTarget());
+                BaseService<?> baseService = ContextHelper.getBaseServiceByEntity(entityClass);
+                if (baseService == null) {
+                    log.error("未找到实体类型{} 对应的Service定义", attachMoreDTO.getTarget());
                     continue;
                 }
-                String value = V.isEmpty(attachMoreDTO.getValue()) ? ContextHelper.getIdFieldName(entityClass) : attachMoreDTO.getValue();
-                String label = attachMoreDTO.getLabel();
-                if (V.isEmpty(label)) {
-                    for (Field field : entityClass.getDeclaredFields()) {
-                        if (V.equals(field.getType().getName(), String.class.getName())) {
-                            label = field.getName();
-                            break;
-                        }
+                EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
+                BiFunction<String, String, String> columnByField = (field, defValue) -> {
+                    if (V.notEmpty(field)) {
+                        String column = entityInfoCache.getColumnByField(field);
+                        return V.notEmpty(column) ? column : field;
                     }
+                    return defValue;
+                };
+                String label = columnByField.apply(attachMoreDTO.getLabel(), null);
+                if (V.isEmpty(label)) {
+                    log.error("实体类型：{} ，未指定label属性", attachMoreDTO.getTarget());
+                    continue;
                 }
+                String value = columnByField.apply(attachMoreDTO.getValue(), entityInfoCache.getIdColumn());
+                String ext = columnByField.apply(attachMoreDTO.getExt(), null);
+                String[] columns = V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext};
                 // 构建前端下拉框的初始化数据
-                List<LabelValue> labelValueList = baseService.getLabelValueList(Wrappers.query().select(label, value));
-                result.put(targetKeyPrefix + "LabelValueList", labelValueList);
+                List<LabelValue> labelValueList = baseService.getLabelValueList(Wrappers.query().select(columns));
+                result.put(targetKeyPrefix + "Options", labelValueList);
             }
             else {
                 log.error("错误的加载绑定类型：{}", attachMoreDTO.getType());

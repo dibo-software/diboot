@@ -63,4 +63,11 @@ public class AttachMoreDTO implements Serializable {
      * 当{@link REF_TYPE#D} value为表中{@link com.diboot.core.entity.Dictionary#itemValue}
      */
     private String value;
+
+    /**
+     * 需要查询的ext字段
+     * 当{@link REF_TYPE#T} ext为表中字段名
+     * 当{@link REF_TYPE#D} ext为表中{@link com.diboot.core.entity.Dictionary#extdata}
+     */
+    private String ext;
 }
