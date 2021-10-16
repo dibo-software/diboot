@@ -313,7 +313,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         Map<String, Object> result = new HashMap<>(attachMoreDTOList.size());
         for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
             // 请求参数安全检查
-            V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue());
+            V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
             AttachMoreDTO.REF_TYPE type = attachMoreDTO.getType();
             String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
             if (type.equals(AttachMoreDTO.REF_TYPE.D)) {
