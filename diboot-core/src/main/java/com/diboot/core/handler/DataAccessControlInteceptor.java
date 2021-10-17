@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -112,16 +113,11 @@ public class DataAccessControlInteceptor implements InnerInterceptor {
                 }
                 Expression joinDataAccessExpression = buildDataAccessExpression(joinTable, joinEntityClass);
                 // 主表需要数据权限检查
-                if(joinDataAccessExpression != null){
-                    String joinOnStmt = join.getOnExpression() == null? null : join.getOnExpression().toString();
-                    if (join.getOnExpression() == null) {
-                        join.setOnExpression(joinDataAccessExpression);
-                    }
-                    else {
-                        AndExpression andExpression = new AndExpression(join.getOnExpression(), joinDataAccessExpression);
-                        join.setOnExpression(andExpression);
-                    }
-                    log.debug("DataAccess Inteceptor Join: {} => {}", joinOnStmt, join.getOnExpression().toString());
+                if (joinDataAccessExpression != null) {
+                    Expression onExpression = ((List<Expression>) join.getOnExpressions()).get(0);
+                    Expression onAndExpression = new AndExpression(onExpression, joinDataAccessExpression);
+                    join.setOnExpressions(Collections.singletonList(onAndExpression));
+                    log.debug("DataAccess Inteceptor Join: {} => {}", onExpression, onAndExpression);
                 }
             }
         }
