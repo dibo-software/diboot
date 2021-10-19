@@ -17,30 +17,24 @@ package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.Cons;
-import com.diboot.core.dto.AttachMoreDTO;
 import com.diboot.core.entity.AbstractEntity;
-import com.diboot.core.entity.ValidList;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
-import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.function.BiFunction;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /***
  * CRUD增删改查通用RestController-父类
@@ -58,30 +52,27 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * Service实现类
      */
     private BaseService baseService;
-    /**
-     * 字典service
-     */
-    @Autowired(required = false)
-    protected DictionaryService dictionaryService;
 
     /**
      * 查询ViewObject，用于子类重写的方法
+     *
      * @param id
      * @return
      * @throws Exception
      */
-    protected <VO> JsonResult getViewObject(Serializable id, Class<VO> voClass) throws Exception{
-        VO vo = (VO)getService().getViewObject(id, voClass);
+    protected <VO> JsonResult getViewObject(Serializable id, Class<VO> voClass) throws Exception {
+        VO vo = (VO) getService().getViewObject(id, voClass);
         return new JsonResult(vo);
     }
 
     /**
      * 查询Entity，用于子类直接调用
-    * @return
+     *
+     * @return
      * @throws Exception
      */
-    protected <E> E getEntity(Serializable id) throws Exception{
-        return (E)getService().getEntity(id);
+    protected <E> E getEntity(Serializable id) throws Exception {
+        return (E) getService().getEntity(id);
     }
 
     /***
@@ -110,7 +101,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      */
     protected <VO> JsonResult getViewObjectList(E entity, Pagination pagination, Class<VO> voClass, boolean buildQueryWrapperByDTO) throws Exception {
         //DTO全部属性参与构建时调用
-        QueryWrapper<E> queryWrapper = buildQueryWrapperByDTO? super.buildQueryWrapperByDTO(entity) : super.buildQueryWrapperByQueryParams(entity);
+        QueryWrapper<E> queryWrapper = buildQueryWrapperByDTO ? super.buildQueryWrapperByDTO(entity) : super.buildQueryWrapperByQueryParams(entity);
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
         // 返回结果
@@ -119,6 +110,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
 
     /**
      * 获取符合查询条件的全部数据（不分页）
+     *
      * @param queryWrapper
      * @return
      * @throws Exception
@@ -180,13 +172,12 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      */
     protected JsonResult updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
-        if(entity.getId() == null){
+        if (entity.getId() == null) {
             String pk = ContextHelper.getIdFieldName(getEntityClass());
-            if(Cons.FieldName.id.name().equals(pk)){
-                Long longId = (id instanceof Long)? (Long)id : Long.parseLong((String)id);
+            if (Cons.FieldName.id.name().equals(pk)) {
+                Long longId = (id instanceof Long) ? (Long) id : Long.parseLong((String) id);
                 entity.setId(longId);
-            }
-            else if(BeanUtils.getProperty(entity, pk) == null){
+            } else if (BeanUtils.getProperty(entity, pk) == null) {
                 BeanUtils.setProperty(entity, pk, id);
             }
         }
@@ -247,7 +238,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     public JsonResult cancelDeletedEntity(Serializable id) throws Exception {
         boolean success = getService().cancelDeletedById(id);
         E entity = null;
-        if (success){
+        if (success) {
             entity = (E) getService().getEntity(id);
             this.afterDeletedCanceled(entity);
             log.info("撤回删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
@@ -282,84 +273,28 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             log.info("删除操作成功，{}:{}", getEntityClass().getSimpleName(), S.join(ids));
             return new JsonResult();
         } else {
-            log.warn("删除操作未成功，{}:{}",getEntityClass().getSimpleName(), S.join(ids));
+            log.warn("删除操作未成功，{}:{}", getEntityClass().getSimpleName(), S.join(ids));
             return new JsonResult(Status.FAIL_OPERATION);
         }
     }
 
     /**
      * 构建主键的返回值Data
+     *
      * @param entity
      * @return
      */
-    private Map<String, Object> buildPKDataMap(E entity){
+    private Map<String, Object> buildPKDataMap(E entity) {
         // 组装返回结果
         Map<String, Object> data = new HashMap<>(2);
         String pk = ContextHelper.getIdFieldName(getEntityClass());
-        Object pkValue = (Cons.FieldName.id.name().equals(pk))? entity.getId() : BeanUtils.getProperty(entity, pk);
+        Object pkValue = (Cons.FieldName.id.name().equals(pk)) ? entity.getId() : BeanUtils.getProperty(entity, pk);
         data.put(pk, pkValue);
         return data;
     }
 
-    /**
-     * 通用的attachMore接口，附加更多下拉选型数据
-     * @param attachMoreDTOList
-     * @return
-     */
-    protected Map<String, Object> attachMoreRelatedData(ValidList<AttachMoreDTO> attachMoreDTOList) {
-        if(V.isEmpty(attachMoreDTOList)){
-            return Collections.emptyMap();
-        }
-        Map<String, Object> result = new HashMap<>(attachMoreDTOList.size());
-        for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
-            // 请求参数安全检查
-            V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
-            AttachMoreDTO.REF_TYPE type = attachMoreDTO.getType();
-            String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
-            if (type.equals(AttachMoreDTO.REF_TYPE.D)) {
-                List<LabelValue> labelValueList = dictionaryService.getLabelValueList(attachMoreDTO.getTarget());
-                result.put(targetKeyPrefix + "Options", labelValueList);
-            }
-            else if (type.equals(AttachMoreDTO.REF_TYPE.T)) {
-                String entityClassName = S.capFirst(targetKeyPrefix);
-                Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
-                if (V.isEmpty(entityClass)) {
-                    log.error("传递错误的实体类型：{}", attachMoreDTO.getTarget());
-                    continue;
-                }
-                BaseService<?> baseService = ContextHelper.getBaseServiceByEntity(entityClass);
-                if (baseService == null) {
-                    log.error("未找到实体类型{} 对应的Service定义", attachMoreDTO.getTarget());
-                    continue;
-                }
-                EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
-                BiFunction<String, String, String> columnByField = (field, defValue) -> {
-                    if (V.notEmpty(field)) {
-                        String column = entityInfoCache.getColumnByField(field);
-                        return V.notEmpty(column) ? column : field;
-                    }
-                    return defValue;
-                };
-                String label = columnByField.apply(attachMoreDTO.getLabel(), null);
-                if (V.isEmpty(label)) {
-                    log.error("实体类型：{} ，未指定label属性", attachMoreDTO.getTarget());
-                    continue;
-                }
-                String value = columnByField.apply(attachMoreDTO.getValue(), entityInfoCache.getIdColumn());
-                String ext = columnByField.apply(attachMoreDTO.getExt(), null);
-                String[] columns = V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext};
-                // 构建前端下拉框的初始化数据
-                List<LabelValue> labelValueList = baseService.getLabelValueList(Wrappers.query().select(columns));
-                result.put(targetKeyPrefix + "Options", labelValueList);
-            }
-            else {
-                log.error("错误的加载绑定类型：{}", attachMoreDTO.getType());
-            }
-        }
-        return result;
-    }
-
     //============= 供子类继承重写的方法 =================
+
     /***
      * 创建前的相关处理
      * @param entityOrDto
@@ -399,7 +334,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeDelete(E entityOrDto) throws Exception{
+    protected String beforeDelete(E entityOrDto) throws Exception {
         return null;
     }
 
@@ -424,7 +359,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param ids
      * @return
      */
-    protected String beforeBatchDelete(Collection<? extends Serializable> ids) throws Exception{
+    protected String beforeBatchDelete(Collection<? extends Serializable> ids) throws Exception {
         return null;
     }
 
@@ -438,15 +373,16 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
 
     /**
      * 得到service
+     *
      * @return
      */
     protected BaseService getService() {
-        if(this.baseService == null){
+        if (this.baseService == null) {
             Class<E> clazz = getEntityClass();
-            if(clazz != null){
+            if (clazz != null) {
                 this.baseService = ContextHelper.getBaseServiceByEntity(clazz);
             }
-            if(this.baseService == null){
+            if (this.baseService == null) {
                 log.warn("Entity: {} 无对应的Service定义，请检查！", clazz.getName());
             }
         }
@@ -455,14 +391,15 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
 
     /**
      * 获取Entity的class
+     *
      * @return
      */
-    protected Class<E> getEntityClass(){
-        if(this.entityClass == null){
-             this.entityClass = BeanUtils.getGenericityClass(this, 0);
-             if(this.entityClass == null) {
+    protected Class<E> getEntityClass() {
+        if (this.entityClass == null) {
+            this.entityClass = BeanUtils.getGenericityClass(this, 0);
+            if (this.entityClass == null) {
                 log.warn("无法从 {} 类定义中获取泛型类entityClass", this.getClass().getName());
-             }
+            }
         }
         return this.entityClass;
     }

@@ -17,17 +17,27 @@ package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.Cons;
+import com.diboot.core.dto.AttachMoreDTO;
+import com.diboot.core.entity.ValidList;
+import com.diboot.core.service.BaseService;
+import com.diboot.core.service.DictionaryService;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.LabelValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.function.BiFunction;
 
 /***
  * Controller的父类
@@ -40,6 +50,12 @@ public class BaseController {
 
 	@Autowired
 	protected HttpServletRequest request;
+
+	/**
+	 * 字典service
+	 */
+	@Autowired(required = false)
+	protected DictionaryService dictionaryService;
 
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
@@ -209,6 +225,74 @@ public class BaseController {
 		return voList;
 	}
 
+	/**
+	 * 通用的attachMore接口，附加更多下拉选型数据
+	 *
+	 * @param attachMoreDTOList
+	 * @return
+	 */
+	protected Map<String, List<LabelValue>> attachMoreRelatedData(ValidList<AttachMoreDTO> attachMoreDTOList) {
+		if (V.isEmpty(attachMoreDTOList)) {
+			return Collections.emptyMap();
+		}
+		Map<String, List<LabelValue>> result = new HashMap<>(attachMoreDTOList.size());
+		for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
+			// 请求参数安全检查
+			V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
+			AttachMoreDTO.REF_TYPE type = attachMoreDTO.getType();
+			String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
+			if (AttachMoreDTO.REF_TYPE.D.equals(type)) {
+				List<LabelValue> labelValueList = dictionaryService.getLabelValueList(attachMoreDTO.getTarget());
+				result.put(targetKeyPrefix + "Options", labelValueList);
+			} else if (AttachMoreDTO.REF_TYPE.T.equals(type)) {
+				result.computeIfAbsent(targetKeyPrefix + "Options", key -> attachMoreRelatedData(attachMoreDTO));
+			} else {
+				log.error("错误的加载绑定类型：{}，绑定类型不能为空，且只能为:T或D类型！", attachMoreDTO.getType());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 通用的attachMore过滤接口
+	 *
+	 * @param attachMoreDTO
+	 * @return labelValue列表
+	 */
+	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO) {
+		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMoreDTO.getTarget()));
+		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
+		if (V.isEmpty(entityClass)) {
+			log.error("传递错误的实体类型：{}", attachMoreDTO.getTarget());
+			return null;
+		}
+		BaseService<?> baseService = ContextHelper.getBaseServiceByEntity(entityClass);
+		if (baseService == null) {
+			log.error("未找到实体类型{} 对应的Service定义", attachMoreDTO.getTarget());
+			return null;
+		}
+		EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
+		BiFunction<String, String, String> columnByField = (field, defValue) -> {
+			if (V.notEmpty(field)) {
+				String column = entityInfoCache.getColumnByField(field);
+				return V.notEmpty(column) ? column : field;
+			}
+			return defValue;
+		};
+		String label = columnByField.apply(attachMoreDTO.getLabel(), null);
+		if (V.isEmpty(label)) {
+			log.error("实体类型：{} ，未指定label属性", attachMoreDTO.getTarget());
+			return null;
+		}
+		String value = columnByField.apply(attachMoreDTO.getValue(), entityInfoCache.getIdColumn());
+		String ext = columnByField.apply(attachMoreDTO.getExt(), null);
+		// 构建前端下拉框的初始化数据
+		QueryWrapper<?> queryWrapper = Wrappers.query()
+				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
+				.like(V.notEmpty(attachMoreDTO.getKeyword()), label, attachMoreDTO.getKeyword());
+		return baseService.getLabelValueList(queryWrapper);
+	}
+
 	/***
 	 * 打印所有参数信息
 	 */
@@ -225,7 +309,7 @@ public class BaseController {
 			log.debug(sb.toString());
 		}
 	}
-	
+
 	/**
 	 * 从request获取Long参数
 	 * @param param
@@ -244,7 +328,7 @@ public class BaseController {
 	protected long getLong(String param, Long defaultValue){
 		return S.toLong(request.getParameter(param), defaultValue);
 	}
-	
+
 	/**
 	 * 从request获取Int参数
 	 * @param param

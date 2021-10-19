@@ -39,7 +39,6 @@ public class AttachMoreDTO implements Serializable {
     /**
      * 关联的类型
      */
-    @NotNull(message = "绑定类型不能为空，且只能为:T或D类型！")
     private REF_TYPE type;
 
     /**
@@ -70,4 +69,9 @@ public class AttachMoreDTO implements Serializable {
      * 当{@link REF_TYPE#D} ext为表中{@link com.diboot.core.entity.Dictionary#extdata}
      */
     private String ext;
+
+    /**
+     * 关键字（用于前端远程搜索label）
+     */
+    private String keyword;
 }
