@@ -15,9 +15,9 @@
  */
 package com.diboot.core.data.annotation;
 
-import com.diboot.core.data.encrypt.DefaultEncryptStrategy;
+import com.diboot.core.data.encrypt.DoNothingEncryptStrategy;
 import com.diboot.core.data.encrypt.IEncryptStrategy;
-import com.diboot.core.data.mask.DefaultMaskStrategy;
+import com.diboot.core.data.mask.DoNothingMaskStrategy;
 import com.diboot.core.data.mask.IMaskStrategy;
 import com.diboot.core.data.mask.SensitiveInfoSerialize;
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
@@ -44,10 +44,10 @@ public @interface ProtectField {
     /**
      * 加密策略
      */
-    Class<? extends IEncryptStrategy> encryptor() default DefaultEncryptStrategy.class;
+    Class<? extends IEncryptStrategy> encryptor() default DoNothingEncryptStrategy.class;
 
     /**
      * 脱敏策略
      */
-    Class<? extends IMaskStrategy> mask() default DefaultMaskStrategy.class;
+    Class<? extends IMaskStrategy> mask() default DoNothingMaskStrategy.class;
 }
