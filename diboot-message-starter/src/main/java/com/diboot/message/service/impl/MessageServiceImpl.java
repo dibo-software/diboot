@@ -15,6 +15,8 @@
  */
 package com.diboot.message.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.impl.BaseServiceImpl;
@@ -69,15 +71,25 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         ChannelStrategy channelStrategy = channelStrategyMap.get(message.getChannel());
         if (V.isEmpty(channelStrategy)) {
             log.error("[获取发送通道失败]，当前发送通道为：{}", message.getChannel());
-            throw new InvalidUsageException("获取发送通道失败! " +  message.getChannel());
+            throw new InvalidUsageException("获取发送通道失败! " + message.getChannel());
         }
         // 是否根据模板构建邮件内容
-        if (V.notEmpty(message.getTemplateId())) {
-            MessageTemplate messageTemplate = messageTemplateService.getEntity(message.getTemplateId());
+        LambdaQueryWrapper<MessageTemplate> queryWrapper = Wrappers.<MessageTemplate>lambdaQuery()
+                .eq(V.notEmpty(message.getTemplateId()), MessageTemplate::getId, message.getTemplateId())
+                .eq(V.notEmpty(message.getTemplateCode()), MessageTemplate::getCode, message.getTemplateCode());
+        if (queryWrapper.nonEmptyOfNormal()) {
+            MessageTemplate messageTemplate = messageTemplateService.getSingleEntity(queryWrapper);
             if (V.isEmpty(messageTemplate)) {
-                log.error("[获取模版失败]，模版id为：{}",  message.getTemplateId());
+                if (V.isEmpty(message.getTemplateCode())) {
+                    log.error("[获取模版失败] 模版id为：{}", message.getTemplateId());
+                } else if (V.isEmpty(message.getTemplateId())) {
+                    log.error("[获取模版失败] 模版code为：{}", message.getTemplateCode());
+                } else {
+                    log.error("[获取模版失败] 模版id为：{} ，模版code为：{}", message.getTemplateId(), message.getTemplateCode());
+                }
                 throw new BusinessException(Status.FAIL_OPERATION, "获取模版失败!");
             }
+            message.setTemplateId(messageTemplate.getId());
             try {
                 // 设置模版内容
                 String content = templateVariableService.parseTemplate2Content(messageTemplate.getContent(), variableData);
@@ -108,4 +120,5 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         channelStrategy.send(message);
         return true;
     }
+
 }

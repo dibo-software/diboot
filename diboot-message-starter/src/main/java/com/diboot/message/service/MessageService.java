@@ -28,15 +28,12 @@ import com.diboot.message.entity.Message;
  * @Copyright © diboot.com
  */
 public interface MessageService extends BaseService<Message> {
-
-
     /**
      * 发送信息
      *
      * @param message      {@link Message} 待发送的消息
      * @param variableData {@link BaseVariableData} 变量替换值
      * @return
-     * @throws Exception
      */
-    boolean send(Message message, BaseVariableData variableData) throws Exception;
+    boolean send(Message message, BaseVariableData variableData);
 }

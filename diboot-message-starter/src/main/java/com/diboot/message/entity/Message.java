@@ -100,6 +100,12 @@ public class Message extends BaseEntity {
     private Long templateId;
 
     /**
+     * 信息模板code
+     */
+    @TableField(exist = false)
+    private String templateCode;
+
+    /**
      * 业务类型
      */
     @NotNull(message = "业务类型不能为空")
