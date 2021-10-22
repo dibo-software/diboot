@@ -20,6 +20,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.service.ScheduleJobService;
 import com.diboot.scheduler.service.impl.QuartzSchedulerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Component;
  * @version v2.3.1
  * @date 2021/08/29
  */
+@Slf4j
 @Component
 @ConditionalOnProperty(prefix = "diboot.component.scheduler", name = "enable", havingValue = "true", matchIfMissing = true)
 public class SchedulerJobInitializer implements ApplicationRunner {
@@ -46,9 +48,15 @@ public class SchedulerJobInitializer implements ApplicationRunner {
     private QuartzSchedulerService quartzSchedulerService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         scheduleJobService.getEntityList(
                 Wrappers.<ScheduleJob>lambdaQuery().eq(ScheduleJob::getJobStatus, Cons.ENABLE_STATUS.A.name())
-        ).forEach(scheduleJob -> quartzSchedulerService.addJob(scheduleJob));
+        ).forEach(scheduleJob -> {
+            try {
+                quartzSchedulerService.addJob(scheduleJob);
+            } catch (Exception e) {
+                log.error("定时任务：jobKey={}，初始化加载失败！", scheduleJob.getJobKey(), e);
+            }
+        });
     }
 }
