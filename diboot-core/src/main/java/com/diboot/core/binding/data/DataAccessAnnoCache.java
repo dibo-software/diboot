@@ -15,7 +15,6 @@
  */
 package com.diboot.core.binding.data;
 
-import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -89,7 +88,7 @@ public class DataAccessAnnoCache {
                     if(V.notEmpty(results[checkpoint.type().index()])){
                         throw new InvalidUsageException(entityDto.getSimpleName() + "中DataPermissionCheckpoint同类型注解重复！");
                     }
-                    results[checkpoint.type().index()] = QueryBuilder.getColumnName(fld);
+                    results[checkpoint.type().index()] = BeanUtils.getColumnName(fld);
                 }
             }
             DATA_PERMISSION_ANNO_CACHE.put(key, results);

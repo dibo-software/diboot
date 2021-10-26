@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.BindQueryGroup;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.data.annotation.ProtectField;
 import com.diboot.core.data.encrypt.IEncryptStrategy;
@@ -32,13 +33,14 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import javax.lang.model.type.NullType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 /**
  *  对象中的绑定注解 缓存管理类
@@ -194,38 +196,39 @@ public class ParserCache {
             return dtoClassBindQueryCacheMap.get(dtoClassName);
         }
         // 初始化
-        List<AnnoJoiner> annos = null;
-        List<Field> declaredFields = BeanUtils.extractFields(dtoClass, BindQuery.class);
-        int index = 1;
+        List<AnnoJoiner> annos = new ArrayList<>();
+        AtomicInteger index = new AtomicInteger(1);
         Map<String, String> joinOn2Alias = new HashMap<>();
-        for (Field field : declaredFields) {
-            BindQuery query = field.getAnnotation(BindQuery.class);
-            if(query == null || query.ignore()){
-                continue;
-            }
-            if(annos == null){
-                annos = new ArrayList<>();
-            }
+        // 构建AnnoJoiner
+        BiConsumer<Field, BindQuery> buildAnnoJoiner = (field, query) -> {
             AnnoJoiner annoJoiner = new AnnoJoiner(field, query);
             // 关联对象，设置别名
-            if(V.notEmpty(annoJoiner.getJoin())){
+            if (V.notEmpty(annoJoiner.getJoin())) {
                 String key = annoJoiner.getJoin() + ":" + annoJoiner.getCondition();
                 String alias = joinOn2Alias.get(key);
-                if(alias == null){
-                    alias = "r"+index;
+                if (alias == null) {
+                    alias = "r" + index.getAndIncrement();
                     annoJoiner.setAlias(alias);
-                    index++;
                     joinOn2Alias.put(key, alias);
-                }
-                else{
+                } else {
                     annoJoiner.setAlias(alias);
                 }
                 annoJoiner.parse();
             }
             annos.add(annoJoiner);
+        };
+        for (Field field : BeanUtils.extractFields(dtoClass, BindQuery.class)) {
+            BindQuery query = field.getAnnotation(BindQuery.class);
+            if (query == null || query.ignore()) {
+                continue;
+            }
+            buildAnnoJoiner.accept(field, query);
         }
-        if(annos == null){
-            annos = Collections.emptyList();
+        for (Field field : BeanUtils.extractFields(dtoClass, BindQueryGroup.class)) {
+            BindQueryGroup queryGroup = field.getAnnotation(BindQueryGroup.class);
+            for (BindQuery bindQuery : queryGroup.value()) {
+                buildAnnoJoiner.accept(field, bindQuery);
+            }
         }
         dtoClassBindQueryCacheMap.put(dtoClassName, annos);
         return annos;
@@ -254,24 +257,6 @@ public class ParserCache {
             return matchedAnnoList;
         }
         return Collections.emptyList();
-    }
-
-    /**
-     * 获取注解joiner
-     * @param dtoClass
-     * @param key
-     * @return
-     */
-    public static AnnoJoiner getAnnoJoiner(Class<?> dtoClass, String key) {
-        List<AnnoJoiner> annoList = getBindQueryAnnos(dtoClass);
-        if(V.notEmpty(annoList)){
-            for(AnnoJoiner anno : annoList){
-                if(key.equals(anno.getFieldName())){
-                    return anno;
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -313,18 +298,6 @@ public class ParserCache {
                 ProtectField protect = field.getAnnotation(ProtectField.class);
                 IEncryptStrategy encryptor = getEncryptor(protect.encryptor());
                 fieldEncryptorMap.put(field.getName(), encryptor);
-            }
-            for (Field field : BeanUtils.extractFields(clazz, BindQuery.class)) {
-                if (!field.getType().isAssignableFrom(String.class)) {
-                    continue;
-                }
-                BindQuery query = field.getAnnotation(BindQuery.class);
-                if (query != null && V.notEmpty(query.field()) && query.entity() != NullType.class) {
-                    IEncryptStrategy encryptor = getFieldEncryptorMap(query.entity()).get(query.field());
-                    if (encryptor != null) {
-                        fieldEncryptorMap.put(field.getName(), encryptor);
-                    }
-                }
             }
             return fieldEncryptorMap.isEmpty() ? Collections.emptyMap() : fieldEncryptorMap;
         });

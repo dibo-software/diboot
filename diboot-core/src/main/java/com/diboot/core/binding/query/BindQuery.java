@@ -24,6 +24,7 @@ import java.lang.annotation.*;
  * @version v2.0
  * @date 2019/7/18
  */
+@Repeatable(BindQueryGroup.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -45,7 +46,7 @@ public @interface BindQuery {
      * 绑定的Entity类
      * @return
      */
-    Class entity() default NullType.class;
+    Class<?> entity() default NullType.class;
 
     /***
      * JOIN连接条件，支持动态的跨表JOIN查询

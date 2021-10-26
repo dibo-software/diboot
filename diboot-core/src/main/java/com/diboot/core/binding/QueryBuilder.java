@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.BindQueryGroup;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
@@ -37,11 +38,13 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.lang.model.type.NullType;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * QueryWrapper构建器
@@ -120,188 +123,187 @@ public class QueryBuilder {
 
     /**
      * 转换具体实现
+     *
      * @param dto
      * @return
      */
-    private static <DTO> QueryWrapper<DTO> dtoToWrapper(DTO dto, Collection<String> fields){
-        QueryWrapper wrapper;
+    private static <DTO> QueryWrapper<?> dtoToWrapper(DTO dto, Collection<String> fields) {
+        QueryWrapper<?> wrapper;
         // 转换
         LinkedHashMap<String, Object> fieldValuesMap = extractNotNullValues(dto, fields);
-        if(V.isEmpty(fieldValuesMap)){
-            wrapper = new QueryWrapper<>();
-            return wrapper;
+        if (V.isEmpty(fieldValuesMap)) {
+            return new QueryWrapper<>();
         }
         // 只解析有值的
         fields = fieldValuesMap.keySet();
         // 是否有join联表查询
         boolean hasJoinTable = ParserCache.hasJoinTable(dto, fields);
-        if(hasJoinTable){
+        if (hasJoinTable) {
             wrapper = new DynamicJoinQueryWrapper<>(dto.getClass(), fields);
-        }
-        else{
+        } else {
             wrapper = new ExtQueryWrapper<>();
         }
+        // 构建 ColumnName
+        List<AnnoJoiner> annoJoinerList = ParserCache.getBindQueryAnnos(dto.getClass());
+        BiFunction<BindQuery, Field, String> buildColumnName = (bindQuery, field) -> {
+            if (bindQuery != null) {
+                String key = field.getName() + bindQuery;
+                for (AnnoJoiner annoJoiner : annoJoinerList) {
+                    if (key.equals(annoJoiner.getKey())) {
+                        if (V.notEmpty(annoJoiner.getJoin())) {
+                            // 获取注解Table
+                            return annoJoiner.getAlias() + "." + annoJoiner.getColumnName();
+                        } else {
+                            return hasJoinTable ? "self." + annoJoiner.getColumnName() : annoJoiner.getColumnName();
+                        }
+                    }
+                }
+            }
+            return hasJoinTable ? "self." + BeanUtils.getColumnName(field) : BeanUtils.getColumnName(field);
+        };
+        // 忽略空字符串"",空集合等
+        BiFunction<Object, BindQuery, Boolean> ignoreEmpty = (value, bindQuery) -> bindQuery != null
+                && bindQuery.strategy().equals(Strategy.IGNORE_EMPTY) // 忽略空字符串"",空集合等
+                && (value instanceof String && S.isEmpty((String) value) // 字符串""
+                || (value instanceof Collection && ((Collection<?>) value).size() == 0));// 空集合
+        // 查找加密策略
+        BiFunction<BindQuery, String, IEncryptStrategy> findEncryptStrategy = (bindQuery, defFieldName) -> {
+            if (ENABLE_DATA_PROTECT) {
+                Class<?> clazz = bindQuery == null || bindQuery.entity() == NullType.class ? dto.getClass() : bindQuery.entity();
+                String fieldName = bindQuery == null || S.isEmpty(bindQuery.field()) ? defFieldName : bindQuery.field();
+                return ParserCache.getFieldEncryptorMap(clazz).get(fieldName);
+            }
+            return null;
+        };
         // 构建QueryWrapper
-        for(Map.Entry<String, Object> entry : fieldValuesMap.entrySet()){
+        for (Map.Entry<String, Object> entry : fieldValuesMap.entrySet()) {
             Field field = BeanUtils.extractField(dto.getClass(), entry.getKey());
             //忽略注解 @TableField(exist = false) 的字段
             TableField tableField = field.getAnnotation(TableField.class);
-            if(tableField != null && tableField.exist() == false){
+            if (tableField != null && tableField.exist() == false) {
                 continue;
             }
             //忽略字段
             BindQuery query = field.getAnnotation(BindQuery.class);
-            if(query != null && query.ignore()){
+            if (query != null && query.ignore()) {
                 continue;
             }
+            BindQueryGroup queryGroup = field.getAnnotation(BindQueryGroup.class);
             Object value = entry.getValue();
-            if(query != null && query.strategy().equals(Strategy.IGNORE_EMPTY)){
-                // 处理空字符串""
-                if(value instanceof String && S.isEmpty((String)value)){
+            // 构建Query
+            if (queryGroup != null) {
+                wrapper.and(queryWrapper -> {
+                    for (BindQuery bindQuery : queryGroup.value()) {
+                        if (ignoreEmpty.apply(value, bindQuery)) {
+                            continue;
+                        }
+                        IEncryptStrategy encryptor = findEncryptStrategy.apply(bindQuery, entry.getKey());
+                        Comparison comparison = encryptor == null ? bindQuery.comparison() : Comparison.EQ;
+                        String columnName = buildColumnName.apply(bindQuery, field);
+                        buildQuery(queryWrapper.or(), comparison, columnName, encryptor == null ? value : encryptor.encrypt(value.toString()));
+                    }
+                });
+            } else {
+                if (ignoreEmpty.apply(value, query)) {
                     continue;
                 }
-                if(value instanceof Collection){
-                    Collection valueList = (Collection)value;
-                    if(valueList.size() == 0){
-                        continue;
-                    }
-                }
-            }
-            IEncryptStrategy encryptor = ENABLE_DATA_PROTECT ? ParserCache.getFieldEncryptorMap(dto.getClass()).get(entry.getKey()) : null;
-            if (encryptor != null) {
-                value = encryptor.encrypt((String) value);
-            }
-            // 对比类型
-            Comparison comparison = Comparison.EQ;
-            // 转换条件
-            String columnName = getColumnName(field);
-            if (query != null) {
-                if (encryptor == null) {
-                    comparison = query.comparison();
-                }
-                AnnoJoiner annoJoiner = ParserCache.getAnnoJoiner(dto.getClass(), entry.getKey());
-                if(annoJoiner != null && V.notEmpty(annoJoiner.getJoin())){
-                    // 获取注解Table
-                    columnName = annoJoiner.getAlias() + "." + annoJoiner.getColumnName();
-                }
-                else if(hasJoinTable){
-                    columnName = "self."+columnName;
-                }
-            }
-            else if(hasJoinTable){
-                columnName = "self."+columnName;
-            }
-            // 构建对象
-            switch (comparison) {
-                case EQ:
-                    wrapper.eq(columnName, value);
-                    break;
-                case IN:
-                    if(value.getClass().isArray()){
-                        Object[] valueArray = (Object[])value;
-                        if(valueArray.length == 1){
-                            wrapper.eq(columnName, valueArray[0]);
-                        }
-                        else if(valueArray.length >= 2){
-                            wrapper.in(columnName, valueArray);
-                        }
-                    }
-                    else if(value instanceof Collection){
-                        wrapper.in(columnName, (Collection)value);
-                    }
-                    else{
-                        log.warn("字段类型错误：IN支持List及数组.");
-                    }
-                    break;
-                case CONTAINS:
-                    wrapper.like(columnName, value);
-                    break;
-                case LIKE:
-                    wrapper.like(columnName, value);
-                    break;
-                case STARTSWITH:
-                    wrapper.likeRight(columnName, value);
-                    break;
-                case ENDSWITH:
-                    wrapper.likeLeft(columnName, value);
-                    break;
-                case GT:
-                    wrapper.gt(columnName, value);
-                    break;
-                case BETWEEN_BEGIN:
-                    wrapper.ge(columnName, value);
-                    break;
-                case GE:
-                    wrapper.ge(columnName, value);
-                    break;
-                case LT:
-                    wrapper.lt(columnName, value);
-                    break;
-                case BETWEEN_END:
-                    wrapper.le(columnName, value);
-                    break;
-                case LE:
-                    wrapper.le(columnName, value);
-                    break;
-                case BETWEEN:
-                    if(value.getClass().isArray()){
-                        Object[] valueArray = (Object[])value;
-                        if(valueArray.length == 1){
-                            wrapper.ge(columnName, valueArray[0]);
-                        }
-                        else if(valueArray.length >= 2){
-                            wrapper.between(columnName, valueArray[0], valueArray[1]);
-                        }
-                    }
-                    else if(value instanceof List){
-                        List valueList = (List)value;
-                        if(valueList.size() == 1){
-                            wrapper.ge(columnName, valueList.get(0));
-                        }
-                        else if(valueList.size() >= 2){
-                            wrapper.between(columnName, valueList.get(0), valueList.get(1));
-                        }
-                    }
-                    // 支持逗号分隔的字符串
-                    else if(value instanceof String && ((String) value).contains(Cons.SEPARATOR_COMMA)){
-                        Object[] valueArray = ((String) value).split(Cons.SEPARATOR_COMMA);
-                        wrapper.between(columnName, valueArray[0], valueArray[1]);
-                    }
-                    else{
-                        wrapper.ge(columnName, value);
-                    }
-                    break;
-                // 不等于
-                case NOT_EQ:
-                    wrapper.ne(columnName, value);
-                    break;
-                default:
-                    break;
+                IEncryptStrategy encryptor = findEncryptStrategy.apply(query, entry.getKey());
+                Comparison comparison = query != null && encryptor == null ? query.comparison() : Comparison.EQ;
+                String columnName = buildColumnName.apply(query, field);
+                buildQuery(wrapper, comparison, columnName, encryptor == null ? value : encryptor.encrypt(value.toString()));
             }
         }
         return wrapper;
     }
 
     /**
-     * 获取数据表的列名（驼峰转下划线蛇形命名）
-     * <br>
-     * 列名取值优先级： @BindQuery.field > @TableField.value > field.name
+     * 建立条件
      *
-     * @param field
-     * @return
+     * @param wrapper    条件包装器
+     * @param comparison 比较类型
+     * @param columnName 列名
+     * @param value      值
      */
-    public static String getColumnName(Field field){
-        String columnName = null;
-        if (field.isAnnotationPresent(BindQuery.class)) {
-            columnName = field.getAnnotation(BindQuery.class).field();
-            if(V.notEmpty(columnName)){
-                columnName = S.toSnakeCase(columnName);
-            }
+    private static void buildQuery(QueryWrapper<?> wrapper, Comparison comparison, String columnName, Object value) {
+        switch (comparison) {
+            case EQ:
+                wrapper.eq(columnName, value);
+                break;
+            case IN:
+                if (value.getClass().isArray()) {
+                    Object[] valueArray = (Object[]) value;
+                    if (valueArray.length == 1) {
+                        wrapper.eq(columnName, valueArray[0]);
+                    } else if (valueArray.length >= 2) {
+                        wrapper.in(columnName, valueArray);
+                    }
+                } else if (value instanceof Collection) {
+                    wrapper.in(columnName, (Collection<?>) value);
+                } else {
+                    log.warn("字段类型错误：IN支持List及数组.");
+                }
+                break;
+            case CONTAINS:
+                wrapper.like(columnName, value);
+                break;
+            case LIKE:
+                wrapper.like(columnName, value);
+                break;
+            case STARTSWITH:
+                wrapper.likeRight(columnName, value);
+                break;
+            case ENDSWITH:
+                wrapper.likeLeft(columnName, value);
+                break;
+            case GT:
+                wrapper.gt(columnName, value);
+                break;
+            case BETWEEN_BEGIN:
+                wrapper.ge(columnName, value);
+                break;
+            case GE:
+                wrapper.ge(columnName, value);
+                break;
+            case LT:
+                wrapper.lt(columnName, value);
+                break;
+            case BETWEEN_END:
+                wrapper.le(columnName, value);
+                break;
+            case LE:
+                wrapper.le(columnName, value);
+                break;
+            case BETWEEN:
+                if (value.getClass().isArray()) {
+                    Object[] valueArray = (Object[]) value;
+                    if (valueArray.length == 1) {
+                        wrapper.ge(columnName, valueArray[0]);
+                    } else if (valueArray.length >= 2) {
+                        wrapper.between(columnName, valueArray[0], valueArray[1]);
+                    }
+                } else if (value instanceof List) {
+                    List<?> valueList = (List<?>) value;
+                    if (valueList.size() == 1) {
+                        wrapper.ge(columnName, valueList.get(0));
+                    } else if (valueList.size() >= 2) {
+                        wrapper.between(columnName, valueList.get(0), valueList.get(1));
+                    }
+                }
+                // 支持逗号分隔的字符串
+                else if (value instanceof String && ((String) value).contains(Cons.SEPARATOR_COMMA)) {
+                    Object[] valueArray = ((String) value).split(Cons.SEPARATOR_COMMA);
+                    wrapper.between(columnName, valueArray[0], valueArray[1]);
+                } else {
+                    wrapper.ge(columnName, value);
+                }
+                break;
+            // 不等于
+            case NOT_EQ:
+                wrapper.ne(columnName, value);
+                break;
+            default:
+                break;
         }
-        if (V.isEmpty(columnName) && field.isAnnotationPresent(TableField.class)) {
-            columnName = field.getAnnotation(TableField.class).value();
-        }
-        return V.notEmpty(columnName) ? columnName : S.toSnakeCase(field.getName());
     }
 
     /**

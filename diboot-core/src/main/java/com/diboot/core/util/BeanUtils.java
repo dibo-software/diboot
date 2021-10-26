@@ -15,6 +15,7 @@
  */
 package com.diboot.core.util;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
@@ -723,6 +724,22 @@ public class BeanUtils {
      */
     public static Field extractField(Class clazz, String fieldName){
         return ReflectionUtils.findField(clazz, fieldName);
+    }
+
+    /**
+     * 获取数据表的列名（驼峰转下划线蛇形命名）
+     * <br>
+     * 列名取值优先级： @TableField.value > field.name
+     *
+     * @param field
+     * @return
+     */
+    public static String getColumnName(Field field) {
+        String columnName = null;
+        if (field.isAnnotationPresent(TableField.class)) {
+            columnName = field.getAnnotation(TableField.class).value();
+        }
+        return S.getIfEmpty(columnName, () -> S.toSnakeCase(field.getName()));
     }
 
     /**
