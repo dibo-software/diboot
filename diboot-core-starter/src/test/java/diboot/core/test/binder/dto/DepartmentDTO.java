@@ -56,6 +56,12 @@ public class DepartmentDTO implements Serializable {
     @BindQuery(entity = Department.class, field = "name", condition = "this.parent_id=id")
     private String parentName;
 
+    // 多绑定or连接
+    @BindQuery(comparison = Comparison.CONTAINS, field = "name")
+    @BindQuery(comparison = Comparison.STARTSWITH, field = "`character`")
+    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    private String search;
+
     // 数据权限检查点
     @DataAccessCheckpoint(type = CheckpointType.ORG)
     private Long orgId;
