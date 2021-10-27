@@ -17,6 +17,8 @@ package com.diboot.mobile.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.util.D;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -75,6 +77,7 @@ public class IamMember extends BaseLoginUser {
      */
     @NotNull(message = "昵称不能为空")
     @Length(max = 100, message = "昵称长度应小于100")
+    @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String nickname;
 
