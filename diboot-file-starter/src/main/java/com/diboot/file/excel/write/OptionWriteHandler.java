@@ -16,7 +16,7 @@
 package com.diboot.file.excel.write;
 
 import com.alibaba.excel.util.ClassUtils;
-import com.alibaba.excel.write.handler.AbstractSheetWriteHandler;
+import com.alibaba.excel.write.handler.SheetWriteHandler;
 import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.metadata.holder.WriteWorkbookHolder;
 import com.diboot.core.exception.InvalidUsageException;
@@ -46,7 +46,7 @@ import java.util.function.BiConsumer;
  * @version v2.3.0
  */
 @Slf4j
-public class OptionWriteHandler extends AbstractSheetWriteHandler {
+public class OptionWriteHandler implements SheetWriteHandler {
 
     /**
      * ExcelModel
@@ -94,7 +94,7 @@ public class OptionWriteHandler extends AbstractSheetWriteHandler {
     private void setCellOption(Class<?> clazz, BiConsumer<CellRangeAddressList, String[]> action) {
         Map<Integer, Field> sortedAllFiledMap = new TreeMap<>();
         // 获取 Excel 中的字段（排序后的）
-        ClassUtils.declaredFields(clazz, sortedAllFiledMap, null, false, null);
+        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
         for (Map.Entry<Integer, Field> entry : sortedAllFiledMap.entrySet()) {
             ExcelOption option = AnnotationUtils.getAnnotation(entry.getValue(), ExcelOption.class);
             // 行数不大于0时不添加 单元格验证（单元下拉选项）
