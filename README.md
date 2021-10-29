@@ -2,7 +2,12 @@
 
 > 新用户指南: [手把手来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17P4y1p7L4) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
+# 招聘
+<hr>
+diboot 产品与项目团队诚招 `Java开发` 岗位，基础扎实、经验不限，地点苏州，有意者加微信 `wx20201024` 详聊。
+
 # diboot - 基础组件化繁为简，高效工具以简驭繁
+<hr>
 <p align="center">
     <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">
         <img src="https://img.shields.io/hexpm/l/plug.svg">
