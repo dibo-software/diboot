@@ -21,10 +21,13 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 提供常用的日期操作的工具类
@@ -430,6 +433,41 @@ public class D extends DateUtils{
 		else{
 			return convert2FormatDate(date, FORMAT_DATE_Y4MD);
 		}
+	}
+
+	/**
+	 * 获取两个时间范围内的所有日期
+	 *
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 * @throws ParseException
+	 */
+	public static List<String> rangeDateList(Date startTime , Date endTime) throws ParseException {
+		//日期工具类准备
+		DateFormat format = new SimpleDateFormat(D.FORMAT_DATE_Y4MD);
+		String dBegin = format.format(startTime);
+		String dEnd = format.format(endTime);
+
+		//设置开始时间
+		Calendar calBegin = Calendar.getInstance();
+		calBegin.setTime(format.parse(dBegin));
+
+		//设置结束时间
+		Calendar calEnd = Calendar.getInstance();
+		calEnd.setTime(format.parse(dEnd));
+
+		//装返回的日期集合容器
+		List<String> rangeDateList = new ArrayList<>();
+		rangeDateList.add(format.format(calBegin.getTime()));
+
+		// 每次循环给calBegin日期加一天，直到calBegin.getTime()时间等于dEnd
+		while (format.parse(dEnd).after(calBegin.getTime())) {
+			// 根据日历的规则，为给定的日历字段添加或减去指定的时间量
+			calBegin.add(Calendar.DAY_OF_MONTH , 1);
+			rangeDateList.add(format.format(calBegin.getTime()));
+		}
+		return rangeDateList;
 	}
 
 	/**
