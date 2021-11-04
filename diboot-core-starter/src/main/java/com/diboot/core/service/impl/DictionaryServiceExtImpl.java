@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
@@ -182,8 +181,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
                 .select(Dictionary::getItemValue, Dictionary::getItemName)
                 .eq(Dictionary::getType, type).gt(Dictionary::getParentId, 0);
-        List<?> values = BeanUtils.collectToList(voList, getFieldName);
-        queryWrapper.in(Dictionary::getItemValue, ResultAssembler.unpackValueList(values, S.SEPARATOR));
         List<Dictionary> entityList = super.getEntityList(queryWrapper);
         Map<String, String> map = entityList.stream().collect(Collectors.toMap(Dictionary::getItemValue, Dictionary::getItemName));
         for (Object item : voList) {
@@ -191,14 +188,16 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             if (V.isEmpty(value)) {
                 continue;
             }
-            if (value.contains(S.SEPARATOR)) {
+            String label = map.get(value);
+            if (label == null && value.contains(S.SEPARATOR)) {
                 ArrayList<String> labelList = new ArrayList<>();
                 for (String key : value.split(S.SEPARATOR)) {
                     labelList.add(map.get(key));
                 }
-                BeanUtils.setProperty(item, setFieldName, S.join(labelList));
-            } else {
-                BeanUtils.setProperty(item, setFieldName, map.get(value));
+                label = S.join(labelList);
+            }
+            if (S.isNotEmpty(label)) {
+                BeanUtils.setProperty(item, setFieldName, label);
             }
         }
     }
