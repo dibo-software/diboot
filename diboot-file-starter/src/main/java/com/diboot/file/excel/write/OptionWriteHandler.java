@@ -37,7 +37,6 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.BiConsumer;
 
 /**
  * Excel写入 下拉选项 Handler
@@ -68,12 +67,37 @@ public class OptionWriteHandler implements SheetWriteHandler {
     @Override
     public void afterSheetCreate(WriteWorkbookHolder writeWorkbookHolder, WriteSheetHolder writeSheetHolder) {
         Sheet sheet = writeSheetHolder.getSheet();
-        // 开始设置下拉框
         DataValidationHelper helper = sheet.getDataValidationHelper();
-        setCellOption(clazz, (addressList, options) -> {
+        // 获取 Excel 中的字段（排序后的）
+        Map<Integer, Field> sortedAllFiledMap = new TreeMap<>();
+        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
+        for (Map.Entry<Integer, Field> entry : sortedAllFiledMap.entrySet()) {
+            ExcelOption option = AnnotationUtils.getAnnotation(entry.getValue(), ExcelOption.class);
+            // 起始行索引错误 或 非整列时的行数小于等于0时，不添加 单元格验证（单元下拉选项）
+            if (option == null || option.firstRow() < -1 || option.firstRow() != -1 && option.rows() <= 0) {
+                continue;
+            }
+            String[] options = null;
+            String dictType = option.dict();
+            if (V.notEmpty(dictType)) {
+                options = getDictOptions(dictType);
+            }
+            if (V.isEmpty(options)) {
+                options = option.options();
+            }
+            // 下拉框选为空时不添加 单元格验证（单元下拉选项）
+            if (V.isEmpty(options)) {
+                continue;
+            }
+            int col = entry.getKey();
+            int firstRow = option.firstRow();
+            int lastRow = firstRow - 1 + option.rows();
+            // 创建单元格范围 —— 起始行、终止行、起始列、终止列
+            CellRangeAddressList addressList = new CellRangeAddressList(firstRow, lastRow, col, col);
             // 设置下拉框数据
             DataValidationConstraint constraint = helper.createExplicitListConstraint(options);
             DataValidation dataValidation = helper.createValidation(constraint, addressList);
+            dataValidation.setErrorStyle(option.errorStyle());
             // 处理Excel兼容性问题
             if (dataValidation instanceof XSSFDataValidation) {
                 dataValidation.setSuppressDropDownArrow(true);
@@ -82,41 +106,6 @@ public class OptionWriteHandler implements SheetWriteHandler {
                 dataValidation.setSuppressDropDownArrow(false);
             }
             sheet.addValidationData(dataValidation);
-        });
-    }
-
-    /**
-     * 设置单元格下拉框选项
-     *
-     * @param clazz  ExcelModel.class
-     * @param action 设置单元格下拉框选项的行动
-     */
-    private void setCellOption(Class<?> clazz, BiConsumer<CellRangeAddressList, String[]> action) {
-        Map<Integer, Field> sortedAllFiledMap = new TreeMap<>();
-        // 获取 Excel 中的字段（排序后的）
-        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
-        for (Map.Entry<Integer, Field> entry : sortedAllFiledMap.entrySet()) {
-            ExcelOption option = AnnotationUtils.getAnnotation(entry.getValue(), ExcelOption.class);
-            // 行数不大于0时不添加 单元格验证（单元下拉选项）
-            if (option != null && option.rows() > 0) {
-                String[] options = null;
-                String dictType = option.dict();
-                if (V.notEmpty(dictType)) {
-                    options = getDictOptions(dictType);
-                }
-                if (V.isEmpty(options)) {
-                    options = option.options();
-                }
-                // 下拉框选为空时不添加 单元格验证（单元下拉选项）
-                if (V.notEmpty(options)) {
-                    int col = entry.getKey();
-                    int firstRow = option.firstRow();
-                    int lastRow = firstRow - 1 + option.rows();
-                    // 创建单元格范围 —— 起始行、终止行、起始列、终止列
-                    CellRangeAddressList addressList = new CellRangeAddressList(firstRow, lastRow, col, col);
-                    action.accept(addressList, options);
-                }
-            }
         }
     }
 

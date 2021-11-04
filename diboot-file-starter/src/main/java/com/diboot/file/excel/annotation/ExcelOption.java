@@ -15,6 +15,7 @@
  */
 package com.diboot.file.excel.annotation;
 
+import org.apache.poi.ss.usermodel.DataValidation;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
@@ -72,9 +73,15 @@ public @interface ExcelOption {
     /**
      * 行数
      * <p>
-     * 行数应大于0，不大于0时不添加 单元格验证（单元下拉选项）
+     * 行数应大于0，小于等于0时不添加 单元格验证（单元下拉选项）
      * <p>
      * 默认值 10,000
      */
     int rows() default 10_000;
+
+    /**
+     * 错误框样式
+     * @see DataValidation.ErrorStyle
+     */
+    int errorStyle() default DataValidation.ErrorStyle.INFO;
 }
