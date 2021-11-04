@@ -192,6 +192,9 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
             boolean valueNotNull = (field.getAnnotation(NotNull.class) != null);
             for(T data : dataList){
                 String name = BeanUtils.getStringProperty(data, entry.getKey());
+                if (S.isEmpty(name)) {
+                    continue;
+                }
                 List valList = map.get(name);
                 if(entry.getValue() instanceof ExcelBindField){
                     ExcelBindField excelBindField = (ExcelBindField)entry.getValue();
@@ -228,17 +231,25 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
                     }
                 }
                 else if(entry.getValue() instanceof ExcelBindDict || entry.getValue() instanceof BindDict){
-                    if(V.isEmpty(valList)){
+                    if (V.isEmpty(valList)) {
+                        if (name.contains(S.SEPARATOR)) {
+                            valList = new LinkedList<>();
+                            for (String item : name.split(S.SEPARATOR)) {
+                                valList.addAll(map.get(item));
+                            }
+                            if (valList.size() > 0) {
+                                valList.add(0, S.join(valList));
+                            }
+                        }
                         // 非空才报错
-                        if(valueNotNull){
+                        if (valueNotNull && V.isEmpty(valList)) {
                             data.addValidateError(name + " 无匹配字典");
+                            continue;
                         }
                     }
-                    else{
-                        // 非预览时 赋值
-                        if(!preview){
-                            BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
-                        }
+                    // 非预览时 赋值
+                    if (!preview) {
+                        BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
                     }
                 }
             }
