@@ -18,13 +18,15 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.binder.FieldBinder;
-import com.diboot.core.config.Cons;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.LabelValue;
@@ -35,10 +37,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据字典相关service实现
@@ -179,12 +179,28 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         if(V.isEmpty(voList)){
             return;
         }
-        new FieldBinder<>(this, voList)
-                .link(Cons.FIELD_ITEM_NAME, setFieldName)
-                .joinOn(getFieldName, Cons.COLUMN_ITEM_VALUE)
-                .andEQ(Cons.FIELD_TYPE, type)
-                .andGT(Cons.FieldName.parentId.name(), 0)
-                .bind();
+        LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
+                .select(Dictionary::getItemValue, Dictionary::getItemName)
+                .eq(Dictionary::getType, type).gt(Dictionary::getParentId, 0);
+        List<?> values = BeanUtils.collectToList(voList, getFieldName);
+        queryWrapper.in(Dictionary::getItemValue, ResultAssembler.unpackValueList(values, S.SEPARATOR));
+        List<Dictionary> entityList = super.getEntityList(queryWrapper);
+        Map<String, String> map = entityList.stream().collect(Collectors.toMap(Dictionary::getItemValue, Dictionary::getItemName));
+        for (Object item : voList) {
+            String value = BeanUtils.getStringProperty(item, getFieldName);
+            if (V.isEmpty(value)) {
+                continue;
+            }
+            if (value.contains(S.SEPARATOR)) {
+                ArrayList<String> labelList = new ArrayList<>();
+                for (String key : value.split(S.SEPARATOR)) {
+                    labelList.add(map.get(key));
+                }
+                BeanUtils.setProperty(item, setFieldName, S.join(labelList));
+            } else {
+                BeanUtils.setProperty(item, setFieldName, map.get(value));
+            }
+        }
     }
 
     /***
