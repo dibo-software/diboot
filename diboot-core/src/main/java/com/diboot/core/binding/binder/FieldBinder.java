@@ -15,8 +15,9 @@
  */
 package com.diboot.core.binding.binder;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.binding.binder.remote.RemoteBindDTO;
+import com.diboot.core.binding.binder.remote.RemoteBindingManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.*;
@@ -46,21 +47,20 @@ public class FieldBinder<T> extends BaseBinder<T> {
 
     /***
      * 构造方法
-     * @param serviceInstance
+     * @param entityClass
      * @param voList
      */
-    public FieldBinder(IService<T> serviceInstance, List voList){
-        super(serviceInstance, voList);
+    public FieldBinder(Class<T> entityClass, List voList){
+        super(entityClass, voList);
     }
 
     /***
      * 构造方法
-     * @param serviceInstance
-     * @param voList
      * @param annotation
+     * @param voList
      */
-    public FieldBinder(IService<T> serviceInstance, List voList, BindField annotation){
-        super(serviceInstance, voList);
+    public FieldBinder(BindField annotation, List voList){
+        super(annotation.entity(), voList);
     }
 
     /***
@@ -82,11 +82,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
      */
     public FieldBinder<T> link(String fromDoField, String toVoField){
         if(annoObjectSetterPropNameList == null){
-            annoObjectSetterPropNameList = new ArrayList<>(8);
+            annoObjectSetterPropNameList = new ArrayList<>(4);
         }
         annoObjectSetterPropNameList.add(toVoField);
         if(referencedGetterFieldNameList == null){
-            referencedGetterFieldNameList = new ArrayList<>(8);
+            referencedGetterFieldNameList = new ArrayList<>(4);
         }
         referencedGetterFieldNameList.add(fromDoField);
         return this;
@@ -103,12 +103,21 @@ public class FieldBinder<T> extends BaseBinder<T> {
         if(referencedGetterFieldNameList == null){
             throw new InvalidUsageException("调用错误：字段绑定必须指定字段field");
         }
+        // 构建跨模块绑定DTO
+        RemoteBindDTO remoteBindDTO = V.isEmpty(this.module)? null : new RemoteBindDTO(referencedEntityClass);
         // 直接关联
         if(middleTable == null){
-            this.simplifySelectColumns();
-            super.buildQueryWrapperJoinOn();
-            // 获取匹配结果的mapList
-            List<Map<String, Object>> mapList = getMapList(queryWrapper);
+            List<Map<String, Object>> mapList = null;
+            this.simplifySelectColumns(remoteBindDTO);
+            super.buildQueryWrapperJoinOn(remoteBindDTO);
+            if(V.isEmpty(this.module)){
+                // 本地查询获取匹配结果的mapList
+                mapList = getMapList(queryWrapper);
+            }
+            else{
+                // 远程调用获取
+                mapList = RemoteBindingManager.fetchMapList(module, remoteBindDTO);
+            }
             if(V.isEmpty(mapList)){
                 return;
             }
@@ -133,12 +142,21 @@ public class FieldBinder<T> extends BaseBinder<T> {
             }
             // 收集查询结果values集合
             Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
-            this.simplifySelectColumns();
+            this.simplifySelectColumns(remoteBindDTO);
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
-            queryWrapper.in(refObjJoinOnCol, refObjValues);
             // 获取匹配结果的mapList
-            List<Map<String, Object>> mapList = getMapList(queryWrapper);
+            List<Map<String, Object>> mapList = null;
+            if(V.isEmpty(this.module)){
+                // 本地查询获取匹配结果的mapList
+                queryWrapper.in(refObjJoinOnCol, refObjValues);
+                mapList = getMapList(queryWrapper);
+            }
+            else{
+                // 远程调用获取
+                remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(refObjValues);
+                mapList = RemoteBindingManager.fetchMapList(module, remoteBindDTO);
+            }
             if(V.isEmpty(mapList)){
                 return;
             }
@@ -239,7 +257,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
     }
 
     @Override
-    protected void simplifySelectColumns() {
+    protected void simplifySelectColumns(RemoteBindDTO remoteBindDTO) {
         List<String> selectColumns = new ArrayList<>(8);
         selectColumns.addAll(refObjJoinCols);
         if(V.notEmpty(referencedGetterFieldNameList)){
@@ -265,7 +283,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 }
             }
         }
-        queryWrapper.select(S.toStringArray(selectColumns));
+        String[] selectColsArray = S.toStringArray(selectColumns);
+        if(remoteBindDTO != null){
+            remoteBindDTO.setSelectColumns(selectColsArray);
+        }
+        this.queryWrapper.select(selectColsArray);
     }
 
 }

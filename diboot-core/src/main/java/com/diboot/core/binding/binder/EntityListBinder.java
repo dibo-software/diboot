@@ -15,8 +15,9 @@
  */
 package com.diboot.core.binding.binder;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.binder.remote.RemoteBindDTO;
+import com.diboot.core.binding.binder.remote.RemoteBindingManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
@@ -41,12 +42,11 @@ public class EntityListBinder<T> extends EntityBinder<T> {
 
     /***
      * 构造方法
-     * @param serviceInstance
-     * @param voList
      * @param annotation
+     * @param voList
      */
-    public EntityListBinder(IService<T> serviceInstance, List voList, BindEntityList annotation){
-        super(serviceInstance, voList);
+    public EntityListBinder(BindEntityList annotation, List voList){
+        super(annotation.entity(), voList);
         if(V.notEmpty(annotation.splitBy())){
             this.splitBy = annotation.splitBy();
         }
@@ -63,16 +63,26 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         if(V.isEmpty(refObjJoinCols)){
             throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
+        // 构建跨模块绑定DTO
+        RemoteBindDTO remoteBindDTO = V.isEmpty(this.module)? null : new RemoteBindDTO(referencedEntityClass);
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){
-            super.simplifySelectColumns();
-            super.buildQueryWrapperJoinOn();
+            super.simplifySelectColumns(remoteBindDTO);
+            super.buildQueryWrapperJoinOn(remoteBindDTO);
             //处理orderBy，附加排序
-            this.appendOrderBy();
-            // 查询entity列表
-            List<T> list = getEntityList(queryWrapper);
-            if(V.notEmpty(list)){
-                valueEntityListMap = this.buildMatchKey2EntityListMap(list);
+            this.appendOrderBy(remoteBindDTO);
+            List<T> entityList = null;
+            // 查询entity列表: List<Role>
+            if(V.isEmpty(this.module)){
+                // 本地查询获取匹配结果的entityList
+                entityList = getEntityList(queryWrapper);
+            }
+            else{
+                // 远程调用获取
+                entityList = RemoteBindingManager.fetchEntityList(module, remoteBindDTO, referencedEntityClass);
+            }
+            if(V.notEmpty(entityList)){
+                valueEntityListMap = this.buildMatchKey2EntityListMap(entityList);
             }
             ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityListMap, this.splitBy);
         }
@@ -86,24 +96,34 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
-            super.simplifySelectColumns();
+            super.simplifySelectColumns(remoteBindDTO);
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             if(V.notEmpty(this.splitBy)){
                 entityIdList = ResultAssembler.unpackValueList(entityIdList, this.splitBy);
             }
-            // 构建查询条件
-            queryWrapper.in(refObjJoinCols.get(0), entityIdList);
             //处理orderBy，附加排序
-            this.appendOrderBy();
+            this.appendOrderBy(remoteBindDTO);
+            // 构建查询条件
+            String refObjJoinOnCol = refObjJoinCols.get(0);
+            List<T> entityList = null;
             // 查询entity列表: List<Role>
-            List list = getEntityList(queryWrapper);
-            if(V.isEmpty(list)){
+            if(V.isEmpty(this.module)){
+                // 本地查询获取匹配结果的entityList
+                queryWrapper.in(refObjJoinOnCol, entityIdList);
+                entityList = getEntityList(queryWrapper);
+            }
+            else{
+                // 远程调用获取
+                remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(entityIdList);
+                entityList = RemoteBindingManager.fetchEntityList(module, remoteBindDTO, referencedEntityClass);
+            }
+            if(V.isEmpty(entityList)){
                 return;
             }
-            String refObjJoinOnField = toRefObjField(refObjJoinCols.get(0));
+            String refObjJoinOnField = toRefObjField(refObjJoinOnCol);
             // 转换entity列表为Map<ID, Entity>
-            Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(list, refObjJoinOnField);
+            Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(entityList, refObjJoinOnField);
             for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
                 // List<roleId>
                 List annoObjFKList = entry.getValue();

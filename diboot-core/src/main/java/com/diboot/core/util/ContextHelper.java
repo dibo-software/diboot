@@ -152,7 +152,7 @@ public class ContextHelper implements ApplicationContextAware {
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
         IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
         if(iService == null){
-            log.error("未能识别到Entity: "+entity.getName()+" 的IService实现！");
+            log.info("未能识别到Entity: "+entity.getName()+" 的IService实现！");
         }
         return iService;
     }

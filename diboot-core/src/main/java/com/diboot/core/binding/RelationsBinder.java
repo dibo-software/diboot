@@ -15,7 +15,6 @@
  */
 package com.diboot.core.binding;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.annotation.*;
 import com.diboot.core.binding.binder.*;
 import com.diboot.core.binding.helper.DeepRelationsBinder;
@@ -23,17 +22,12 @@ import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.DictionaryServiceExtProvider;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -210,7 +204,7 @@ public class RelationsBinder {
         for(Map.Entry<String, List<FieldAnnotation>> entry : clazzToListMap.entrySet()){
             List<FieldAnnotation> list = entry.getValue();
             BindField bindAnnotation = (BindField) list.get(0).getAnnotation();
-            FieldBinder binder = buildFieldBinder(bindAnnotation, voList);
+            FieldBinder binder = new FieldBinder(bindAnnotation, voList);
             for(FieldAnnotation anno : list){
                 BindField bindField = (BindField) anno.getAnnotation();
                 binder.link(bindField.field(), anno.getFieldName());
@@ -228,7 +222,7 @@ public class RelationsBinder {
     private static <VO> void doBindingEntity(List<VO> voList, FieldAnnotation fieldAnnotation) {
         BindEntity annotation = (BindEntity) fieldAnnotation.getAnnotation();
         // 绑定关联对象entity
-        EntityBinder binder = buildEntityBinder(annotation, voList);
+        EntityBinder binder = new EntityBinder(annotation, voList);
         if(binder != null){
             // 构建binder
             binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
@@ -246,7 +240,7 @@ public class RelationsBinder {
     private static <VO> void doBindingEntityList(List<VO> voList, FieldAnnotation fieldAnnotation) {
         BindEntityList bindAnnotation = (BindEntityList) fieldAnnotation.getAnnotation();
         // 构建binder
-        EntityListBinder binder = buildEntityListBinder(bindAnnotation, voList);
+        EntityListBinder binder = new EntityListBinder(bindAnnotation, voList);
         if(binder != null){
             binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
             // 解析条件并且执行绑定
@@ -273,7 +267,7 @@ public class RelationsBinder {
         for(Map.Entry<String, List<FieldAnnotation>> entry : clazzToListMap.entrySet()){
             List<FieldAnnotation> list = entry.getValue();
             BindFieldList bindAnnotation = (BindFieldList) list.get(0).getAnnotation();
-            FieldListBinder binder = buildFieldListBinder(bindAnnotation, voList);
+            FieldListBinder binder = new FieldListBinder(bindAnnotation, voList);
             for(FieldAnnotation anno : list){
                 BindFieldList bindField = (BindFieldList) anno.getAnnotation();
                 binder.link(bindField.field(), anno.getFieldName());
@@ -295,100 +289,6 @@ public class RelationsBinder {
         catch (Exception e){
             log.error("解析注解条件与绑定执行异常", e);
         }
-    }
-
-    /**
-     * 构建FieldBinder
-     * @param annotation
-     * @param voList
-     * @return
-     */
-    private static FieldBinder buildFieldBinder(BindField annotation, List voList){
-        IService service = getService(annotation);
-        if(service != null){
-            return new FieldBinder<>(service, voList, annotation);
-        }
-        return null;
-    }
-
-    /**
-     * 构建EntityBinder
-     * @param annotation
-     * @param voList
-     * @return
-     */
-    private static EntityBinder buildEntityBinder(BindEntity annotation, List voList){
-        IService service = getService(annotation);
-        if(service != null){
-            return new EntityBinder<>(service, voList, annotation);
-        }
-        return null;
-    }
-
-    /**
-     * 构建EntityListBinder
-     * @param annotation
-     * @param voList
-     * @return
-     */
-    private static EntityListBinder buildEntityListBinder(BindEntityList annotation, List voList){
-        IService service = getService(annotation);
-        if(service != null){
-            return new EntityListBinder<>(service, voList, annotation);
-        }
-        return null;
-    }
-
-    /**
-     * 构建FieldListBinder
-     * @param annotation
-     * @param voList
-     * @return
-     */
-    private static FieldListBinder buildFieldListBinder(BindFieldList annotation, List voList){
-        IService service = getService(annotation);
-        if(service != null){
-            return new FieldListBinder<>(service, voList, annotation);
-        }
-        return null;
-    }
-
-    /**
-     * 通过Entity获取对应的Service实现类
-     * @param annotation
-     * @return
-     */
-    private static IService getService(Annotation annotation){
-        Class<?> entityClass = null;
-        if(annotation instanceof BindDict){
-            entityClass = Dictionary.class;
-        }
-        else if(annotation instanceof BindField){
-            BindField bindAnnotation = (BindField)annotation;
-            entityClass = bindAnnotation.entity();
-        }
-        else if(annotation instanceof BindEntity){
-            BindEntity bindAnnotation = (BindEntity)annotation;
-            entityClass = bindAnnotation.entity();
-        }
-        else if(annotation instanceof BindEntityList){
-            BindEntityList bindAnnotation = (BindEntityList)annotation;
-            entityClass = bindAnnotation.entity();
-        }
-        else if(annotation instanceof BindFieldList){
-            BindFieldList bindAnnotation = (BindFieldList)annotation;
-            entityClass = bindAnnotation.entity();
-        }
-        else{
-            log.warn("非预期的注解: "+ annotation.getClass().getSimpleName());
-            return null;
-        }
-        // 根据entity获取Service
-        IService iService = ContextHelper.getIServiceByEntity(entityClass);
-        if(iService == null){
-            throw new InvalidUsageException(entityClass.getSimpleName() + " 无 BaseService/IService实现类，无法执行注解绑定！");
-        }
-        return iService;
     }
 
 }

@@ -41,7 +41,7 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
 
     private List<String> errorMsgList = null;
-    private List<Expression> expressList = new ArrayList<>(8);
+    private List<Expression> expressList = new ArrayList<>(4);
 
     /**
      * 添加错误信息
