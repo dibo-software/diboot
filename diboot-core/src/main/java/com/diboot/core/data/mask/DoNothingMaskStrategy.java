@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,18 +16,16 @@
 package com.diboot.core.data.mask;
 
 /**
- * 脱敏策略接口
+ * 脱敏策略空实现
  *
  * @author wind
- * @version v2.3.1
- * @date 2021/08/19
+ * @version v2.4.0
+ * @date 2021/10/19
  */
-public interface IMaskStrategy {
-    /**
-     * 脱敏处理
-     *
-     * @param content 字符串
-     * @return 脱敏之后的字符串
-     */
-    String mask(String content);
+public class DoNothingMaskStrategy implements IMaskStrategy {
+
+    @Override
+    public String mask(String content) {
+        return content;
+    }
 }
