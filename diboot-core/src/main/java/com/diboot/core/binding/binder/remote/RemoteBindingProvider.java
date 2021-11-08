@@ -16,6 +16,7 @@
 package com.diboot.core.binding.binder.remote;
 
 import com.diboot.core.vo.JsonResult;
+import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * 远程绑定Provider接口
@@ -31,6 +32,7 @@ public interface RemoteBindingProvider {
      * @param remoteBindDTO
      * @return
      */
+    @PostMapping("/common/remoteBinding")
     JsonResult<String> loadBindingData(RemoteBindDTO remoteBindDTO);
 
 }

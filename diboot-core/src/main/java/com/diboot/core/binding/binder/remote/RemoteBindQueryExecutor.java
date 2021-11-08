@@ -58,14 +58,17 @@ public class RemoteBindQueryExecutor {
             log.error("无法找到Entity类: {}", remoteBindDTO.getEntityClassName(), e);
             return JsonResult.FAIL_INVALID_PARAM("模块下无Entity类: "+remoteBindDTO.getEntityClassName());
         }
+        Collection inConditionValues = remoteBindDTO.getInConditionValues();
+        if(inConditionValues == null){
+            return JsonResult.OK();
+        }
         // 构建queryWrpper
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.setEntityClass(entityClass);
         queryWrapper.select(remoteBindDTO.getSelectColumns());
         // 构建查询条件
         String refJoinCol = remoteBindDTO.getRefJoinCol();
-        Collection inConditionValues = remoteBindDTO.getInConditionValues();
-        if(V.isEmpty(inConditionValues)){
+        if(inConditionValues.isEmpty()){
             queryWrapper.isNull(refJoinCol);
         }
         else{// 有null值

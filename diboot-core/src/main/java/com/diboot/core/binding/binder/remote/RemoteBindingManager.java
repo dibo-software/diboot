@@ -15,12 +15,11 @@
  */
 package com.diboot.core.binding.binder.remote;
 
-import com.diboot.core.binding.annotation.Module;
-import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.JsonResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.openfeign.FeignClientBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +37,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RemoteBindingManager {
 
     /**
-     * restTemplate实例
+     * restTemplate 实例缓存
      */
     private static Map<String, RemoteBindingProvider> MODULE_PROVIDER_MAP;
+    /**
+     * feignClientBuilder 实例
+     */
+    private static FeignClientBuilder feignClientBuilder;
 
     /**
      * 从远程接口抓取 Map List
@@ -92,27 +95,14 @@ public class RemoteBindingManager {
      */
     private static RemoteBindingProvider getRemoteBindingProvider(String module){
         if(MODULE_PROVIDER_MAP == null){
-            List<RemoteBindingProvider> providers = ContextHelper.getBeans(RemoteBindingProvider.class);
-            if(V.isEmpty(providers)){
-                MODULE_PROVIDER_MAP = Collections.emptyMap();
-                log.debug("无 RemoteBindingProvider 实例");
-            }
-            else{
-                MODULE_PROVIDER_MAP = new ConcurrentHashMap<>();
-                for(RemoteBindingProvider provider : providers){
-                    Module moduleAnno = AnnotationUtils.findAnnotation(BeanUtils.getTargetClass(provider), Module.class);
-                    if(moduleAnno != null){
-                        MODULE_PROVIDER_MAP.put(moduleAnno.value(), provider);
-                        log.debug("RemoteBindingProvider 实例 {} - {}", moduleAnno.value(), provider.getClass().getName());
-                    }
-                }
-            }
+            MODULE_PROVIDER_MAP = new ConcurrentHashMap<>();
         }
-        RemoteBindingProvider bindingProvider = MODULE_PROVIDER_MAP.get(module);
-        if(bindingProvider == null){
-           throw new InvalidUsageException("远程绑定必须初始化 "+module+" 的 RemoteBindingProvider 实现类！");
-        }
-        return bindingProvider;
+        return MODULE_PROVIDER_MAP.computeIfAbsent(module, key -> {
+            if(feignClientBuilder == null){
+                feignClientBuilder = new FeignClientBuilder(ContextHelper.getApplicationContext());
+            }
+            return feignClientBuilder.forType(RemoteBindingProvider.class, module).build();
+        });
     }
 
 }
