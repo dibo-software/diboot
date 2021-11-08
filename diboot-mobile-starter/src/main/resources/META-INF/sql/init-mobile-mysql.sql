@@ -18,7 +18,7 @@ CREATE TABLE `iam_member` (
     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
-) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT='移动端用户';
+) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='移动端用户';
 -- 索引
 create index idx_member_tenant on iam_member (tenant_id);
 create index idx_member_orgid on iam_member (org_id);
