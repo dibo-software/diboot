@@ -20,6 +20,7 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.PagingJsonResult;
+import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,11 +43,25 @@ public class JsonTest {
         user.setId(123L);
         user.setUsername("zhangs").setCreateTime(new Date());
         user.setBirthdate(D.convert2Date("1988-09-12 12:34"));
-        String jsonStr = JSON.toJSONString(user);
+        user.setCreateTime(new Date());
+        String jsonStr = JSON.stringify(user);
         Assert.assertTrue(jsonStr != null);
-
+        System.out.println(jsonStr);
         User user2 = JSON.toJavaObject(jsonStr, User.class);
         Assert.assertTrue("1988-09-12".equals(D.convert2DateString(user2.getBirthdate())));
+    }
+
+
+    @Test
+    public void testJsonConvert(){
+        Role role = new Role();
+        role.setCreateTime(new Date());
+        role.setId(1L);
+        role.setCode("ADMIN").setName("管理员");
+
+        String jsonStr = JSON.stringify(role);
+        Assert.assertTrue(jsonStr != null);
+        System.out.println(jsonStr);
     }
 
 
