@@ -29,5 +29,7 @@ public interface IMaskStrategy {
      * @param content 字符串
      * @return 脱敏之后的字符串
      */
-    String mask(String content);
+    default String mask(String content){
+        return content;
+    }
 }

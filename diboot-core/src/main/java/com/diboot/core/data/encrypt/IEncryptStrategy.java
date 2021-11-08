@@ -30,7 +30,9 @@ public interface IEncryptStrategy {
      * @param content 内容
      * @return 密文
      */
-    String encrypt(String content);
+    default String encrypt(String content){
+        return content;
+    }
 
     /**
      * 解密
@@ -38,6 +40,8 @@ public interface IEncryptStrategy {
      * @param content 内容
      * @return 明文
      */
-    String decrypt(String content);
+    default String decrypt(String content){
+        return content;
+    }
 
 }
