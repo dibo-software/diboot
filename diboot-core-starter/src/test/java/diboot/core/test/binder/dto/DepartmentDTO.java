@@ -16,8 +16,8 @@
 package diboot.core.test.binder.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.data.CheckpointType;
-import com.diboot.core.binding.data.DataAccessCheckpoint;
+import com.diboot.core.data.access.CheckpointType;
+import com.diboot.core.data.access.DataAccessCheckpoint;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.util.D;

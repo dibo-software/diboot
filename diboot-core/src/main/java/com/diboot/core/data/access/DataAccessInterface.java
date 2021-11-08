@@ -13,23 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.data;
+package com.diboot.core.data.access;
 
-import java.lang.annotation.*;
+import java.util.List;
 
 /**
- * 数据权限检查点 - 添加在entity/dto字段上的注解，可以支持自动检查数据权限
+ * 数据权限校验扩展接口
  * @author mazc@dibo.ltd
  * @version v2.1
- * @date 2020/04/23
+ * @date 2020/04/24
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-@Documented
-public @interface DataAccessCheckpoint {
+public interface DataAccessInterface {
+
     /**
-     * 数据权限类型
-     * @return
+     * 可访问的对象ID
      */
-    CheckpointType type();
+    List<Long> getAccessibleIds(CheckpointType type);
+
 }

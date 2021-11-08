@@ -15,8 +15,8 @@
  */
 package diboot.core.test.service;
 
-import com.diboot.core.binding.data.CheckpointType;
-import com.diboot.core.binding.data.DataAccessInterface;
+import com.diboot.core.data.access.CheckpointType;
+import com.diboot.core.data.access.DataAccessInterface;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

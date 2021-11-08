@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.data;
+package com.diboot.core.data.access;
 
 /**
  * checkpoint类型
