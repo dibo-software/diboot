@@ -169,7 +169,7 @@ public class ExcelHelper {
             ExcelWriterBuilder write = EasyExcel.write(filePath, tClass);
             if (writeHandlers.length == 0) {
                 write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                        .registerWriteHandler(new OptionWriteHandler(tClass));
+                        .registerWriteHandler(new OptionWriteHandler());
             } else {
                 for (WriteHandler handler : writeHandlers) {
                     write = write.registerWriteHandler(handler);
@@ -202,7 +202,7 @@ public class ExcelHelper {
             ExcelWriterBuilder write = EasyExcel.write(response.getOutputStream(), clazz);
             if (writeHandlers.length == 0) {
                 write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                        .registerWriteHandler(new OptionWriteHandler(clazz));
+                        .registerWriteHandler(new OptionWriteHandler());
             } else {
                 for (WriteHandler handler : writeHandlers) {
                     write = write.registerWriteHandler(handler);

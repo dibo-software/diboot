@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,14 +15,14 @@
  */
 package com.diboot.file.excel.write;
 
-import com.alibaba.excel.util.ClassUtils;
-import com.alibaba.excel.write.handler.SheetWriteHandler;
-import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
-import com.alibaba.excel.write.metadata.holder.WriteWorkbookHolder;
+import com.alibaba.excel.metadata.Head;
+import com.alibaba.excel.write.handler.CellWriteHandler;
+import com.alibaba.excel.write.handler.context.CellWriteHandlerContext;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.file.excel.annotation.ExcelOption;
@@ -34,10 +34,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.TreeMap;
-
 /**
  * Excel写入 下拉选项 Handler
  *
@@ -45,68 +41,53 @@ import java.util.TreeMap;
  * @version v2.3.0
  */
 @Slf4j
-public class OptionWriteHandler implements SheetWriteHandler {
+public class OptionWriteHandler implements CellWriteHandler {
 
     /**
-     * ExcelModel
-     */
-    private final Class<?> clazz;
-
-    /**
-     * 构造方法
-     *
-     * @param clazz ExcelModel
-     */
-    public OptionWriteHandler(Class<?> clazz) {
-        this.clazz = clazz;
-    }
-
-    /**
-     * Sheet页创建之后，设置单元格下拉框选项
+     * 设置单元格下拉框选项
      */
     @Override
-    public void afterSheetCreate(WriteWorkbookHolder writeWorkbookHolder, WriteSheetHolder writeSheetHolder) {
-        Sheet sheet = writeSheetHolder.getSheet();
-        DataValidationHelper helper = sheet.getDataValidationHelper();
-        // 获取 Excel 中的字段（排序后的）
-        Map<Integer, Field> sortedAllFiledMap = new TreeMap<>();
-        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
-        for (Map.Entry<Integer, Field> entry : sortedAllFiledMap.entrySet()) {
-            ExcelOption option = AnnotationUtils.getAnnotation(entry.getValue(), ExcelOption.class);
-            // 起始行索引错误 或 非整列时的行数小于等于0时，不添加 单元格验证（单元下拉选项）
-            if (option == null || option.firstRow() < -1 || option.firstRow() != -1 && option.rows() <= 0) {
-                continue;
-            }
-            String[] options = null;
-            String dictType = option.dict();
-            if (V.notEmpty(dictType)) {
-                options = getDictOptions(dictType);
-            }
-            if (V.isEmpty(options)) {
-                options = option.options();
-            }
-            // 下拉框选为空时不添加 单元格验证（单元下拉选项）
-            if (V.isEmpty(options)) {
-                continue;
-            }
-            int col = entry.getKey();
-            int firstRow = option.firstRow();
-            int lastRow = firstRow - 1 + option.rows();
-            // 创建单元格范围 —— 起始行、终止行、起始列、终止列
-            CellRangeAddressList addressList = new CellRangeAddressList(firstRow, lastRow, col, col);
-            // 设置下拉框数据
-            DataValidationConstraint constraint = helper.createExplicitListConstraint(options);
-            DataValidation dataValidation = helper.createValidation(constraint, addressList);
-            dataValidation.setErrorStyle(option.errorStyle());
-            // 处理Excel兼容性问题
-            if (dataValidation instanceof XSSFDataValidation) {
-                dataValidation.setSuppressDropDownArrow(true);
-                dataValidation.setShowErrorBox(true);
-            } else {
-                dataValidation.setSuppressDropDownArrow(false);
-            }
-            sheet.addValidationData(dataValidation);
+    public void beforeCellCreate(CellWriteHandlerContext context) {
+        Sheet sheet = context.getWriteSheetHolder().getSheet();
+        if (sheet.getLastRowNum() != 0) {
+            return;
         }
+        Head head = context.getHeadData();
+        ExcelOption option = AnnotationUtils.getAnnotation(head.getField(), ExcelOption.class);
+        if (option == null) {
+            return;
+        }
+        String[] options = null;
+        String dictType = option.dict();
+        if (S.isNotEmpty(dictType)) {
+            options = getDictOptions(dictType);
+        }
+        if (V.isEmpty(options)) {
+            options = option.options();
+        }
+        // 下拉框选为空时不添加 单元格验证（单元下拉选项）
+        if (V.isEmpty(options)) {
+            return;
+        }
+        // 单元格范围地址
+        int col = context.getColumnIndex();
+        int rows = option.rows();
+        int firstRow = -1;
+        int lastRow = rows > 0 ? (firstRow = head.getHeadNameList().size()) - 1 + rows : -1;
+        CellRangeAddressList addressList = new CellRangeAddressList(firstRow, lastRow, col, col);
+        // 设置数据验证
+        DataValidationHelper helper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = helper.createExplicitListConstraint(options);
+        DataValidation dataValidation = helper.createValidation(constraint, addressList);
+        dataValidation.setErrorStyle(option.errorStyle());
+        // 处理Excel兼容性问题
+        if (dataValidation instanceof XSSFDataValidation) {
+            dataValidation.setSuppressDropDownArrow(true);
+            dataValidation.setShowErrorBox(true);
+        } else {
+            dataValidation.setSuppressDropDownArrow(false);
+        }
+        sheet.addValidationData(dataValidation);
     }
 
     /**
@@ -115,14 +96,14 @@ public class OptionWriteHandler implements SheetWriteHandler {
      * @param dictType 字典类型
      * @return 选项数组
      */
-    private String[] getDictOptions(String dictType) {
+    protected String[] getDictOptions(String dictType) {
         DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
         if (bindDictService == null) {
             throw new InvalidUsageException("DictionaryService未实现，@ExcelOption无法关联字典！");
         }
         String[] options = bindDictService.getLabelValueList(dictType).stream().map(LabelValue::getLabel).toArray(String[]::new);
         if (V.isEmpty(options)) {
-            log.warn(clazz.getSimpleName() + " @ExcelOption 关联字典: " + dictType + " 无值");
+            log.warn(" @ExcelOption 关联字典: " + dictType + " 无值");
         }
         return options;
     }

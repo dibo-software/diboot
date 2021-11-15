@@ -62,18 +62,9 @@ public @interface ExcelOption {
     String dict() default "";
 
     /**
-     * 起始行索引
-     * <p>
-     * 当该值为-1时为整个列，且不可小于-1
-     * <p>
-     * 默认起始索引为 1
-     */
-    int firstRow() default 1;
-
-    /**
      * 行数
      * <p>
-     * 行数应大于0，小于等于0时不添加 单元格验证（单元下拉选项）
+     * 当 rows <= 0 时为个整列
      * <p>
      * 默认值 10,000
      */
