@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.copy;
+package com.diboot.core.data.copy;
 
 import java.lang.annotation.*;
 
