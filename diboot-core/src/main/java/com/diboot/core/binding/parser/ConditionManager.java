@@ -41,7 +41,7 @@ public class ConditionManager extends BaseConditionManager{
      * @param binder
      * @throws Exception
      */
-    public static <T> void parseConditions(String condition, BaseBinder<T> binder) throws Exception{
+    public static <T> void parseConditions(String condition, BaseBinder<T> binder) {
         List<Expression> expressionList = getExpressionList(condition);
         if(V.isEmpty(expressionList)){
             log.warn("无法解析注解条件: {} ", condition);
