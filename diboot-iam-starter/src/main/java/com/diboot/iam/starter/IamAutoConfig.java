@@ -42,7 +42,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -59,7 +58,6 @@ import java.util.Set;
 @Slf4j
 @Order(922)
 @Configuration
-@EnableAsync
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})

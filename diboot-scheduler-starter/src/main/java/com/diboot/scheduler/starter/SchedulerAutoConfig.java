@@ -20,7 +20,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * scheduler组件自动初始化
@@ -30,7 +29,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @Slf4j
 @Configuration
-@EnableAsync
 @EnableConfigurationProperties({SchedulerProperties.class})
 @ComponentScan(basePackages = {"com.diboot.scheduler"})
 @MapperScan(basePackages = {"com.diboot.scheduler.mapper"})

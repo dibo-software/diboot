@@ -19,7 +19,9 @@ import com.diboot.core.binding.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * VO绑定注解的归类分组，用于缓存解析后的结果
@@ -33,9 +35,9 @@ public class BindAnnotationGroup {
      */
     private List<FieldAnnotation> bindDictAnnotations;
     /**
-     * 字段关联注解
+     * BindField分组Map
      */
-    private List<FieldAnnotation> bindFieldAnnotations;
+    private Map<String, List<FieldAnnotation>> bindFieldGroupMap;
     /**
      * 实体关联注解
      */
@@ -45,9 +47,17 @@ public class BindAnnotationGroup {
      */
     private List<FieldAnnotation> bindEntityListAnnotations;
     /**
-     * 实体集合关联注解
+     * BindFieldList分组Map
      */
-    private List<FieldAnnotation> bindFieldListAnnotations;
+    private Map<String, List<FieldAnnotation>> bindFieldListGroupMap;
+    /**
+     * 深度绑定实体
+     */
+    private List<FieldAnnotation> deepBindEntityAnnotations;
+    /**
+     * 深度绑定实体
+     */
+    private List<FieldAnnotation> deepBindEntityListAnnotations;
 
     /**
      * 添加注解
@@ -57,42 +67,59 @@ public class BindAnnotationGroup {
     public void addBindAnnotation(String fieldName, Class<?> fieldClass, Annotation annotation){
         if(annotation instanceof BindDict){
             if(bindDictAnnotations == null){
-                bindDictAnnotations = new ArrayList<>();
+                bindDictAnnotations = new ArrayList<>(4);
             }
             bindDictAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
         else if(annotation instanceof BindField){
-            if(bindFieldAnnotations == null){
-                bindFieldAnnotations = new ArrayList<>();
+            if(bindFieldGroupMap == null){
+                bindFieldGroupMap = new HashMap<>(4);
             }
-            bindFieldAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            BindField bindField = (BindField) annotation;
+            String key = bindField.entity().getName() + ":" + bindField.condition();
+            List<FieldAnnotation> list = bindFieldGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
+            list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
         else if(annotation instanceof BindEntity){
             if(bindEntityAnnotations == null){
-                bindEntityAnnotations = new ArrayList<>();
+                bindEntityAnnotations = new ArrayList<>(4);
             }
-            bindEntityAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            FieldAnnotation fieldAnno = new FieldAnnotation(fieldName, fieldClass, annotation);
+            bindEntityAnnotations.add(fieldAnno);
+            if(((BindEntity)annotation).deepBind()){
+                if(deepBindEntityAnnotations == null){
+                    deepBindEntityAnnotations = new ArrayList<>(4);
+                }
+                deepBindEntityAnnotations.add(fieldAnno);
+            }
         }
         else if(annotation instanceof BindEntityList){
             if(bindEntityListAnnotations == null){
-                bindEntityListAnnotations = new ArrayList<>();
+                bindEntityListAnnotations = new ArrayList<>(4);
             }
-            bindEntityListAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            FieldAnnotation fieldAnno = new FieldAnnotation(fieldName, fieldClass, annotation);
+            bindEntityListAnnotations.add(fieldAnno);
+            if(((BindEntityList)annotation).deepBind()){
+                if(deepBindEntityListAnnotations == null){
+                    deepBindEntityListAnnotations = new ArrayList<>(4);
+                }
+                deepBindEntityListAnnotations.add(fieldAnno);
+            }
         }
         else if(annotation instanceof BindFieldList){
-            if(bindFieldListAnnotations == null){
-                bindFieldListAnnotations = new ArrayList<>();
+            //多个字段，合并查询，以减少SQL数
+            if(bindFieldListGroupMap == null){
+                bindFieldListGroupMap = new HashMap<>(4);
             }
-            bindFieldListAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            BindFieldList bindField = (BindFieldList) annotation;
+            String key = bindField.entity().getName() + ":" + bindField.condition() + ":" + bindField.orderBy();
+            List<FieldAnnotation> list = bindFieldListGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
+            list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
     }
 
     public List<FieldAnnotation> getBindDictAnnotations() {
         return bindDictAnnotations;
-    }
-
-    public List<FieldAnnotation> getBindFieldAnnotations() {
-        return bindFieldAnnotations;
     }
 
     public List<FieldAnnotation> getBindEntityAnnotations() {
@@ -103,12 +130,25 @@ public class BindAnnotationGroup {
         return bindEntityListAnnotations;
     }
 
-    public List<FieldAnnotation> getBindFieldListAnnotations() {
-        return bindFieldListAnnotations;
+    public Map<String, List<FieldAnnotation>> getBindFieldGroupMap(){
+        return bindFieldGroupMap;
     }
 
-    public boolean isNotEmpty() {
-        return bindDictAnnotations != null || bindFieldAnnotations != null || bindEntityAnnotations != null || bindEntityListAnnotations != null || bindFieldListAnnotations != null;
+    public Map<String, List<FieldAnnotation>> getBindFieldListGroupMap(){
+        return bindFieldListGroupMap;
+    }
+
+    public List<FieldAnnotation> getDeepBindEntityAnnotations() {
+        return deepBindEntityAnnotations;
+    }
+
+    public List<FieldAnnotation> getDeepBindEntityListAnnotations() {
+        return deepBindEntityListAnnotations;
+    }
+
+    public boolean isEmpty() {
+        return bindDictAnnotations == null && bindFieldGroupMap == null && bindEntityAnnotations == null
+                && bindEntityListAnnotations == null && bindFieldListGroupMap == null;
     }
 
 }

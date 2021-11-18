@@ -42,9 +42,8 @@ public class FieldListBinder<T> extends FieldBinder<T> {
 
     /***
      * 构造方法
-     * @param serviceInstance
-     * @param voList
      * @param annotation
+     * @param voList
      */
     public FieldListBinder(BindFieldList annotation, List voList) {
         super(annotation.entity(), voList);
