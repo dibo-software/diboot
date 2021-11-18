@@ -16,26 +16,37 @@
 package com.diboot.file.util;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.util.ClassUtils;
+import com.alibaba.excel.util.FieldUtils;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
+import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.file.excel.listener.FixedHeadExcelListener;
+import com.diboot.file.excel.write.CommentWriteHandler;
 import com.diboot.file.excel.write.OptionWriteHandler;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /***
  * excel数据导入导出工具类
@@ -46,12 +57,58 @@ import java.util.List;
 public class ExcelHelper {
 
     /**
+     * 读取ecxel
+     *
+     * @param filePath
+     * @param listener
+     */
+    public static void read(String filePath, ReadListener<?> listener) {
+        read(filePath, listener, null);
+    }
+
+    /**
+     * 读取ecxel
+     *
+     * @param filePath
+     * @param listener
+     * @param headClazz 固定头
+     * @param <T>       ExcelModel泛型
+     */
+    public static <T> void read(String filePath, ReadListener<T> listener, Class<T> headClazz) {
+        File excel = getExcelFile(filePath);
+        EasyExcel.read(excel).registerReadListener(listener).head(headClazz).sheet().doRead();
+    }
+
+    /**
+     * 读取ecxel
+     *
+     * @param inputStream
+     * @param listener
+     */
+    public static void read(InputStream inputStream, ReadListener<?> listener) {
+        read(inputStream, listener, null);
+    }
+
+    /**
+     * 读取ecxel
+     *
+     * @param inputStream
+     * @param listener
+     * @param headClazz   固定头
+     * @param <T>         ExcelModel泛型
+     */
+    public static <T> void read(InputStream inputStream, ReadListener<T> listener, Class<T> headClazz) {
+        EasyExcel.read(inputStream).registerReadListener(listener).head(headClazz).sheet().doRead();
+    }
+
+    /**
      * 预览读取excel文件数据
      *
      * @param filePath
      * @param listener
      * @return
      */
+    @Deprecated
     public static <T extends BaseExcelModel> boolean previewReadExcel(String filePath, FixedHeadExcelListener listener) throws Exception {
         listener.setPreview(true);
         return readAndSaveExcel(filePath, listener);
@@ -64,6 +121,7 @@ public class ExcelHelper {
      * @param listener
      * @return
      */
+    @Deprecated
     public static <T extends BaseExcelModel> boolean previewReadExcel(InputStream inputStream, FixedHeadExcelListener listener) throws Exception {
         listener.setPreview(true);
         return readAndSaveExcel(inputStream, listener);
@@ -76,6 +134,7 @@ public class ExcelHelper {
      * @param listener
      * @return
      */
+    @Deprecated
     public static <T extends BaseExcelModel> boolean readAndSaveExcel(String filePath, FixedHeadExcelListener listener) throws Exception {
         File excel = getExcelFile(filePath);
         Class<T> headClazz = BeanUtils.getGenericityClass(listener, 0);
@@ -89,6 +148,7 @@ public class ExcelHelper {
      * @param listener
      * @return
      */
+    @Deprecated
     public static <T extends BaseExcelModel> boolean readAndSaveExcel(InputStream inputStream, FixedHeadExcelListener listener) throws Exception {
         Class<T> headClazz = BeanUtils.getGenericityClass(listener, 0);
         EasyExcel.read(inputStream).registerReadListener(listener).head(headClazz).sheet().doRead();
@@ -101,6 +161,7 @@ public class ExcelHelper {
      * @param filePath
      * @return
      */
+    @Deprecated
     public static boolean readDynamicHeadExcel(String filePath, DynamicHeadExcelListener listener) {
         File excel = getExcelFile(filePath);
         EasyExcel.read(excel).registerReadListener(listener).sheet().doRead();
@@ -114,6 +175,7 @@ public class ExcelHelper {
      * @param listener
      * @return
      */
+    @Deprecated
     public static boolean readDynamicHeadExcel(InputStream inputStream, DynamicHeadExcelListener listener) {
         EasyExcel.read(inputStream).registerReadListener(listener).sheet().doRead();
         return true;
@@ -129,18 +191,17 @@ public class ExcelHelper {
      * @param writeHandlers
      * @return
      */
+    @Deprecated
     public static boolean writeDynamicData(String filePath, String sheetName, List<List<String>> dataList,
                                            WriteHandler... writeHandlers) throws Exception {
         try {
             ExcelWriterBuilder write = EasyExcel.write(filePath);
-            if (writeHandlers.length == 0) {
-                write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
-            } else {
-                for (WriteHandler handler : writeHandlers) {
-                    write = write.registerWriteHandler(handler);
-                }
+            write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+            for (WriteHandler handler : writeHandlers) {
+                write = write.registerWriteHandler(handler);
             }
-            write.sheet(sheetName).doWrite(dataList);
+            ExcelWriterSheetBuilder sheet = write.sheet(sheetName);
+            sheet.doWrite(dataList);
             return true;
         } catch (Exception e) {
             log.error("数据写入excel文件失败", e);
@@ -156,9 +217,9 @@ public class ExcelHelper {
      * @param sheetName
      * @param dataList
      * @param <T>
-     * @param writeHandlers
      * @return
      */
+    @Deprecated
     public static <T extends BaseExcelModel> boolean writeData(String filePath, String sheetName, List<T> dataList,
                                                                WriteHandler... writeHandlers) throws Exception {
         try {
@@ -167,13 +228,9 @@ public class ExcelHelper {
             }
             Class<T> tClass = (Class<T>) dataList.get(0).getClass();
             ExcelWriterBuilder write = EasyExcel.write(filePath, tClass);
-            if (writeHandlers.length == 0) {
-                write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                        .registerWriteHandler(new OptionWriteHandler());
-            } else {
-                for (WriteHandler handler : writeHandlers) {
-                    write = write.registerWriteHandler(handler);
-                }
+            write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+            for (WriteHandler handler : writeHandlers) {
+                write = write.registerWriteHandler(handler);
             }
             write.sheet(sheetName).doWrite(dataList);
             return true;
@@ -184,40 +241,115 @@ public class ExcelHelper {
     }
 
     /**
-     * web 导出excel
-     * <p>默认列宽自适应数据长度、写入单元格下拉选项, 可自定义</p>
+     * Excel写入流
+     * <p>
+     * 默认支持：批注写入、单元格下拉选项写入
+     *
+     * @param outputStream
+     * @param clazz         导出的ExcelModel
+     * @param dataList
+     * @param writeHandlers 写入处理程序
+     * @return
+     */
+    public static <T> boolean write(OutputStream outputStream, Class<T> clazz, List<T> dataList, WriteHandler... writeHandlers) {
+        return write(outputStream, clazz, null, dataList, writeHandlers);
+    }
+
+    /**
+     * Excel写入流
+     *
+     * @param outputStream
+     * @param clazz          导出的ExcelModel
+     * @param columnNameList 需要导出的列属性名，为空时导出所有列
+     * @param dataList
+     * @param writeHandlers  写入处理程序
+     * @param <T>
+     * @return
+     */
+    public static <T> boolean write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
+                                    List<T> dataList, WriteHandler... writeHandlers) {
+        try {
+            ExcelWriterBuilder write = EasyExcel.write(outputStream, clazz);
+            CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
+            if (V.notEmpty(dataList) && BaseExcelModel.class.isAssignableFrom(clazz)) {
+                commentWriteHandler.setDataList((List<? extends BaseExcelModel>) dataList);
+            }
+            write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+            write.registerWriteHandler(new OptionWriteHandler());
+            write.registerWriteHandler(commentWriteHandler);
+            for (WriteHandler handler : writeHandlers) {
+                write.registerWriteHandler(handler);
+            }
+            if (V.notEmpty(columnNameList)) {
+                write.includeColumnFiledNames(columnNameList);
+            }
+            write.sheet().doWrite(dataList);
+            return true;
+        } catch (Exception e) {
+            log.error("数据写入excel文件失败", e);
+            return false;
+        }
+    }
+
+    /**
+     * web 导出excel     *
+     * <p>
+     * 写入单元格下拉选项、写入批注
      *
      * @param response
-     * @param clazz         导出的类
-     * @param data          导出的数据
+     * @param fileName
+     * @param clazz         导出的ExcelModel
+     * @param dataList
      * @param writeHandlers 写入处理程序
-     * @throws Exception
      */
-    public static <T extends BaseExcelModel> void exportExcel(HttpServletResponse response, String fileName,
-                                                              Class<T> clazz, List<T> data,
-                                                              WriteHandler... writeHandlers) throws Exception {
+    public static <T> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz, List<T> dataList,
+                                       WriteHandler... writeHandlers) {
+        exportExcel(response, fileName, clazz, null, dataList, writeHandlers);
+    }
+
+    /**
+     * web 导出excel
+     * <p>默认列宽自适应数据长度、可自定义</p>
+     *
+     * @param response
+     * @param clazz          导出的ExcelModel
+     * @param dataList       导出的数据
+     * @param columnNameList 需要导出的ExcelModel列字段名称列表，为空时导出所有列
+     * @param writeHandlers  写入处理程序
+     */
+    public static <T> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz,
+                                       List<String> columnNameList, List<T> dataList, WriteHandler... writeHandlers) {
         try {
             setExportExcelResponseHeader(response, fileName);
 
             ExcelWriterBuilder write = EasyExcel.write(response.getOutputStream(), clazz);
-            if (writeHandlers.length == 0) {
-                write = write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                        .registerWriteHandler(new OptionWriteHandler());
-            } else {
-                for (WriteHandler handler : writeHandlers) {
-                    write = write.registerWriteHandler(handler);
-                }
+            CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
+            if (V.notEmpty(dataList) && BaseExcelModel.class.isAssignableFrom(clazz)) {
+                commentWriteHandler.setDataList((List<? extends BaseExcelModel>) dataList);
+            }
+            write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+            write.registerWriteHandler(new OptionWriteHandler());
+            write.registerWriteHandler(commentWriteHandler);
+            for (WriteHandler handler : writeHandlers) {
+                write.registerWriteHandler(handler);
+            }
+            if (V.notEmpty(columnNameList)) {
+                write.includeColumnFiledNames(columnNameList);
             }
             // 这里需要设置不关闭流
             write.autoCloseStream(Boolean.FALSE)
                     .sheet("sheet1")
-                    .doWrite(data);
+                    .doWrite(dataList);
         } catch (Exception e) {
             log.error("下载文件失败：", e);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
             response.setHeader("code", String.valueOf(Status.FAIL_OPERATION.code()));
-            response.setHeader("msg", URLEncoder.encode("下载文件失败", StandardCharsets.UTF_8.name()));
+            try {
+                response.setHeader("msg", URLEncoder.encode("下载文件失败", StandardCharsets.UTF_8.name()));
+            } catch (UnsupportedEncodingException ex) {
+                log.error("不支持字符编码", ex);
+            }
         }
     }
 
@@ -226,16 +358,19 @@ public class ExcelHelper {
      *
      * @param response
      * @param fileName
-     * @throws Exception
      */
-    public static void setExportExcelResponseHeader(HttpServletResponse response, String fileName) throws Exception {
+    public static void setExportExcelResponseHeader(HttpServletResponse response, String fileName) {
         response.setContentType("application/x-msdownload");
         response.setCharacterEncoding("utf-8");
-        fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName);
-        response.setHeader("filename", fileName);
         response.setHeader("code", String.valueOf(Status.OK.code()));
-        response.setHeader("msg", URLEncoder.encode("操作成功", StandardCharsets.UTF_8.name()));
+        try {
+            fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
+            response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+            response.setHeader("filename", fileName);
+            response.setHeader("msg", URLEncoder.encode("操作成功", StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            log.error("不支持字符编码", e);
+        }
     }
 
     /**
