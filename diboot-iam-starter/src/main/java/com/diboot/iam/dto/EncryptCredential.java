@@ -42,7 +42,7 @@ public class EncryptCredential implements Serializable {
         try {
             String decryptContent = encryptor.decrypt(ciphertext);
             T result = (T) JSON.parseObject(decryptContent, authCredentialCls);
-            String errMsg = V.validateBean(result);
+            String errMsg = V.validateBeanErrMsg(result);
             if (V.notEmpty(errMsg)) {
                 throw new BusinessException(Status.FAIL_INVALID_PARAM, errMsg);
             }

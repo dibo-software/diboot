@@ -88,7 +88,7 @@ public class VTest {
 
     @Test
     public void testValidateBean(){
-        String msg = V.validateBean(new Dictionary());
+        String msg = V.validateBeanErrMsg(new Dictionary());
         System.out.println(msg);
         Assert.assertTrue(msg != null);
     }

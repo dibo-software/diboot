@@ -168,7 +168,7 @@ public abstract class FixedHeadExcelListener<T extends BaseExcelModel> extends A
     private void validateHeaderAndDataList() {
         // 校验数据是否合法
         dataList.stream().forEach(data->{
-            String errMsg = V.validateBean(data);
+            String errMsg = V.validateBeanErrMsg(data);
             if(V.notEmpty(errMsg)){
                 data.addValidateError(errMsg);
             }

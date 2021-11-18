@@ -75,7 +75,7 @@ public class V {
 	public static boolean isEmpty(String value){
 		return S.isBlank(value);
 	}
-	
+
 	/***
 	 * 字符串数组是否不为空
 	 * @param values
@@ -84,7 +84,7 @@ public class V {
 	public static boolean isEmpty(String[] values){
 		return values == null || values.length == 0;
 	}
-	
+
 	/***
 	 * 集合为空
 	 * @param list
@@ -93,7 +93,7 @@ public class V {
 	public static <T> boolean isEmpty(Collection<T> list) {
 		return list == null || list.isEmpty();
 	}
-	
+
 	/***
 	 * Map为空
 	 * @param obj
@@ -170,7 +170,7 @@ public class V {
 	public static boolean notEmptyOrZero(Integer intObj){
 		return intObj != null && intObj.intValue() != 0;
 	}
-	
+
 	/***
 	 * Map为空
 	 * @param obj
@@ -179,36 +179,36 @@ public class V {
 	public static boolean notEmpty(Map obj){
 		return obj != null && !obj.isEmpty();
 	}
-	
-	/** 
+
+	/**
      * 判断是否为数字（允许小数点）
-     * @param str 
-     * @return true Or false 
-     */  
+     * @param str
+     * @return true Or false
+     */
     public static boolean isNumber(String str){
 		String regex = "^(-?[1-9]\\d*\\.?\\d*)|(-?0\\.\\d*[1-9])|(-?[0])|(-?[0]\\.\\d*)$";
 		return str.matches(regex);
     }
 
-    /** 
-     * 判断是否为正确的邮件格式 
-     * @param str 
-     * @return boolean 
-     */  
-    public static boolean isEmail(String str){  
+    /**
+     * 判断是否为正确的邮件格式
+     * @param str
+     * @return boolean
+     */
+    public static boolean isEmail(String str){
         if(isEmpty(str)) {
 			return false;
 		}
-        return str.matches("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$");  
-    }  
-      
-    /** 
+        return str.matches("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+$");
+    }
+
+    /**
      * 判断字符串是否为电话号码
-     * @param str 
-     * @return boolean 
-     */  
-    public static boolean isPhone(String str){  
-        if(isEmpty(str)){  
+     * @param str
+     * @return boolean
+     */
+    public static boolean isPhone(String str){
+        if(isEmpty(str)){
             return false;
         }
         boolean valid = str.matches("^1\\d{10}$");
@@ -476,24 +476,37 @@ public class V {
 		return S.join(allErrors);
 	}
 
-	/**
-	 * 基于Bean中的validator注解校验
-	 * @param obj
-	 */
-	public static <T> String validateBean(T obj) {
-		if(VALIDATOR == null){
-			VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
-		}
-		// 校验
-		Set<ConstraintViolation<T>> errors = VALIDATOR.validate(obj);
-		if(errors == null || errors.size() == 0){
-			return null;
-		}
-		List<String> allErrors = new ArrayList<>(errors.size());
-		for(ConstraintViolation<T> err : errors){
-			allErrors.add(err.getMessage());
-		}
-		return S.join(allErrors);
-	}
+    /**
+     * 基于Bean中的validator注解校验
+     *
+     * @param obj
+     * @param groups
+     * @return 违法约束的集合
+     */
+    public static <T> Set<ConstraintViolation<T>> validateBean(T obj, Class<?>... groups) {
+        if (VALIDATOR == null) {
+            VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
+        }
+        return VALIDATOR.validate(obj, groups);
+    }
+
+    /**
+     * 基于Bean中的validator注解校验
+     *
+     * @param obj
+     * @param groups
+     * @return 违法约束的消息内容
+     */
+    public static <T> String validateBeanErrMsg(T obj, Class<?>... groups) {
+        Set<ConstraintViolation<T>> errors = validateBean(obj, groups);
+        if (isEmpty(errors)) {
+            return null;
+        }
+        List<String> allErrors = new ArrayList<>(errors.size());
+        for (ConstraintViolation<T> err : errors) {
+            allErrors.add(err.getMessage());
+        }
+        return S.join(allErrors);
+    }
 
 }
