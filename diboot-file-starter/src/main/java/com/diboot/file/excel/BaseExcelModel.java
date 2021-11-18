@@ -19,6 +19,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
+import java.util.*;
 
 /***
  * excel数据导入导出实体基类
@@ -28,29 +29,47 @@ import java.io.Serializable;
 public class BaseExcelModel implements Serializable {
     private static final long serialVersionUID = 6343247548525494223L;
 
+    @JsonIgnore
+    @ExcelIgnore
+    private int rowIndex;
+
     /**
      * 验证错误
      */
-    @ExcelIgnore
+    @Deprecated
     @JsonIgnore
+    @ExcelIgnore
     private String validateError;
 
-    @ExcelIgnore
+    /**
+     * 批注
+     */
     @JsonIgnore
-    private int rowIndex;
+    @ExcelIgnore
+    private Map<String, List<String>> comment;
 
     public int getRowIndex(){
         return rowIndex;
     }
 
+    @Deprecated
     public String getValidateError(){
         return validateError;
+    }
+
+    public Map<String, List<String>> getComment() {
+        return comment == null ? Collections.emptyMap() : comment;
+    }
+
+    public void setRowIndex(int rowIndex){
+        this.rowIndex = rowIndex;
     }
 
     /**
      * 绑定错误
      * @param validateError
      */
+    @Deprecated
     public void addValidateError(String validateError){
         if(this.validateError == null){
             this.validateError = validateError;
@@ -60,7 +79,17 @@ public class BaseExcelModel implements Serializable {
         }
     }
 
-    public void setRowIndex(int rowIndex){
-        this.rowIndex = rowIndex;
+    /**
+     * 添加批注
+     *
+     * @param propertyName 属性
+     * @param message      信息
+     */
+    public void addComment(String propertyName, String message) {
+        if (comment == null) {
+            comment = new HashMap<>();
+        }
+        comment.computeIfAbsent(propertyName, key -> new ArrayList<>()).add(message);
     }
+
 }
