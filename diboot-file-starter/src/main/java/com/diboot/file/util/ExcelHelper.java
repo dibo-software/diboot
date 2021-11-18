@@ -253,5 +253,128 @@ public class ExcelHelper {
         return file;
     }
 
+    /**
+     * 获取 Excel 模板中的表头
+     *
+     * @param clazz ExcelModel
+     * @return excel表头映射
+     */
+    public static List<TableHead> getTableHead(Class<?> clazz) {
+        TreeMap<Integer, Field> sortedAllFiledMap = new TreeMap<>();
+        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
+        TreeMap<Integer, List<String>> headNameMap = new TreeMap<>();
+        HashMap<Integer, String> fieldNameMap = new HashMap<>();
+        sortedAllFiledMap.forEach((index, field) -> {
+            fieldNameMap.put(index, field.getName());
+            headNameMap.put(index, getHeadColumnName(field));
+        });
+        return buildTableHead(headNameMap, fieldNameMap);
+    }
 
+    /**
+     * 获取表头列名称
+     *
+     * @param field 列字段
+     * @return 列名称列表
+     */
+    public static List<String> getHeadColumnName(Field field) {
+        ExcelProperty excelProperty = field.getAnnotation(ExcelProperty.class);
+        return excelProperty == null ? Collections.singletonList(FieldUtils.resolveCglibFieldName(field))
+                : Arrays.asList(excelProperty.value());
+    }
+
+    /**
+     * 构建 Excel 表头映射
+     *
+     * @param headNameMap
+     * @param fieldNameMap
+     * @return 表头映射
+     */
+    public static List<TableHead> buildTableHead(Map<Integer, List<String>> headNameMap, Map<Integer, String> fieldNameMap) {
+        List<TableHead> tableHead = new ArrayList<>();
+        Map<String, TableHead> hashMap = new HashMap<>();
+        int col = Integer.MIN_VALUE;
+        for (Map.Entry<Integer, List<String>> entry : headNameMap.entrySet()) {
+            if (entry.getKey() - 1 != col) {
+                // 表头断列
+                hashMap = new HashMap<>();
+            }
+            col = entry.getKey();
+            List<String> list = entry.getValue();
+            // 移除尾部重复列名
+            boolean bool = true;
+            while (list.size() > 1 && bool) {
+                int lastIndex = list.size() - 1;
+                if (list.get(lastIndex).equals(list.get(lastIndex - 1))) {
+                    list.remove(lastIndex);
+                } else {
+                    bool = false;
+                }
+            }
+            List<String> path = new ArrayList<>();
+            // 当前节点
+            TableHead node = null;
+            int lastIndex = list.size() - 1;
+            for (int i = 0; i <= lastIndex; i++) {
+                String name = list.get(i);
+                path.add(name);
+                String key = S.join(path, "→");
+                TableHead item;
+                if (hashMap.containsKey(key)) {
+                    item = hashMap.get(key);
+                } else {
+                    if (i == 0) {
+                        // 避免跨列合并
+                        hashMap = new HashMap<>();
+                    }
+                    item = new TableHead() {{
+                        setTitle(name);
+                    }};
+                    hashMap.put(key, item);
+                    if (node == null) {
+                        tableHead.add(item);
+                    } else {
+                        List<TableHead> children = node.getChildren();
+                        if (children == null) {
+                            // 创建children
+                            children = new ArrayList<>();
+                            node.setChildren(children);
+                        }
+                        if (node.getKey() != null) {
+                            // 原节点延伸
+                            TableHead originalNode = new TableHead();
+                            originalNode.setKey(node.getKey());
+                            originalNode.setTitle(node.getTitle());
+                            node.setKey(null);
+                            children.add(originalNode);
+                        }
+                        children.add(item);
+                    }
+                }
+                node = item;
+                if (i == lastIndex) {
+                    // 添加key
+                    List<TableHead> children = item.getChildren();
+                    if (children == null) {
+                        item.setKey(fieldNameMap.get(col));
+                    } else {
+                        // 当前节点延伸
+                        TableHead thisNode = new TableHead();
+                        thisNode.setKey(fieldNameMap.get(col));
+                        thisNode.setTitle(item.getTitle());
+                        children.add(thisNode);
+                    }
+                }
+            }
+        }
+        return tableHead;
+    }
+
+    @Getter
+    @Setter
+    public static class TableHead {
+        private String key;
+        private String title;
+        private List<TableHead> children;
+    }
 }
