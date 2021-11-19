@@ -15,6 +15,7 @@
  */
 package com.diboot.file.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -50,6 +51,13 @@ public class UploadFile extends BaseEntity {
     @JsonIgnore
     @TableField
     private Long tenantId;
+
+    /**
+     * 组织ID
+     */
+    @NotNull(message = "组织ID不能为空")
+    @TableField(fill = FieldFill.INSERT)
+    private Long orgId;
 
     /**
      * 应用模块
@@ -95,5 +103,11 @@ public class UploadFile extends BaseEntity {
     @TableField
     @Length(max = 200, message = "备注长度超出了最大限制！")
     private String description;
+
+    /**
+     * 创建人
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Long createBy;
 
 }
