@@ -60,4 +60,11 @@ public interface FileStorageService {
      */
     void download(UploadFile uploadFile, HttpServletResponse response) throws Exception;
 
+    /**
+     * 删除文件
+     *
+     * @param filePath 文件路径
+     * @return 是否删除成功
+     */
+    boolean delete(String filePath);
 }

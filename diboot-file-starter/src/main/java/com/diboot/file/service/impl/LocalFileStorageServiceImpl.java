@@ -27,6 +27,7 @@ import com.diboot.file.util.HttpHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -76,5 +77,11 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
             throw new BusinessException(Status.FAIL_OPERATION, "文件不存在");
         }
         HttpHelper.downloadLocalFile(uploadFile.getStoragePath(), uploadFile.getFileName(), response);
+    }
+
+    @Override
+    public boolean delete(String filePath) {
+        File file = new File(filePath);
+        return file.delete();
     }
 }
