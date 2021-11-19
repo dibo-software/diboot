@@ -15,6 +15,7 @@
  */
 package com.diboot.scheduler.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
@@ -110,7 +111,7 @@ public class ScheduleJob extends BaseEntity {
     /**
      * 创建人
      */
-    @TableField()
+    @TableField(fill = FieldFill.INSERT)
     private Long createBy;
 
     /**
