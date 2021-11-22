@@ -16,6 +16,7 @@
 package com.diboot.core.binding.parser;
 
 import com.diboot.core.binding.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @version 2.0<br>
  * @date 2019/04/03 <br>
  */
+@Slf4j
 public class BindAnnotationGroup {
     /**
      * Dictionary注解
@@ -70,13 +72,31 @@ public class BindAnnotationGroup {
                 bindDictAnnotations = new ArrayList<>(4);
             }
             bindDictAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            return;
         }
-        else if(annotation instanceof BindField){
+        String key = null;
+        try {
+            if (annotation instanceof BindField) {
+                BindField bindField = (BindField) annotation;
+                key = bindField.entity().getName() + ":" + bindField.condition();
+            } else if (annotation instanceof BindFieldList) {
+                BindFieldList bindField = (BindFieldList) annotation;
+                key = bindField.entity().getName() + ":" + bindField.condition() + ":" + bindField.orderBy();
+            } else if (annotation instanceof BindEntity) {
+                BindEntity bindEntity = (BindEntity) annotation;
+                key = bindEntity.entity().getName();
+            } else if (annotation instanceof BindEntityList) {
+                BindEntityList bindEntity = (BindEntityList) annotation;
+                key = bindEntity.entity().getName();
+            }
+        } catch (Exception e) {
+            log.warn("获取绑定信息异常", e);
+            return;
+        }
+        if(annotation instanceof BindField){
             if(bindFieldGroupMap == null){
                 bindFieldGroupMap = new HashMap<>(4);
             }
-            BindField bindField = (BindField) annotation;
-            String key = bindField.entity().getName() + ":" + bindField.condition();
             List<FieldAnnotation> list = bindFieldGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
             list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
@@ -111,8 +131,6 @@ public class BindAnnotationGroup {
             if(bindFieldListGroupMap == null){
                 bindFieldListGroupMap = new HashMap<>(4);
             }
-            BindFieldList bindField = (BindFieldList) annotation;
-            String key = bindField.entity().getName() + ":" + bindField.condition() + ":" + bindField.orderBy();
             List<FieldAnnotation> list = bindFieldListGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
             list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
         }
