@@ -60,6 +60,10 @@ public class BindAnnotationGroup {
      * 深度绑定实体
      */
     private List<FieldAnnotation> deepBindEntityListAnnotations;
+    /**
+     * 需要序列
+     */
+    private boolean requireSequential = false;
 
     /**
      * 添加注解
@@ -72,6 +76,16 @@ public class BindAnnotationGroup {
                 bindDictAnnotations = new ArrayList<>(4);
             }
             bindDictAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            if(requireSequential == false && bindFieldGroupMap != null){
+                bindFieldGroupMap.values().forEach(list -> {
+                    list.forEach(item -> {
+                        if(item.getFieldName().equals(fieldName) && item.getFieldClass().getName().equals(fieldClass.getName())){
+                            requireSequential = true;
+                            return;
+                        }
+                    });
+                });
+            }
             return;
         }
         String key = null;
@@ -99,6 +113,14 @@ public class BindAnnotationGroup {
             }
             List<FieldAnnotation> list = bindFieldGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
             list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            if(requireSequential == false && bindDictAnnotations != null){
+                bindDictAnnotations.forEach(item -> {
+                    if(item.getFieldName().equals(fieldName) && item.getFieldClass().getName().equals(fieldClass.getName())){
+                        requireSequential = true;
+                        return;
+                    }
+                });
+            }
         }
         else if(annotation instanceof BindEntity){
             if(bindEntityAnnotations == null){
@@ -167,6 +189,14 @@ public class BindAnnotationGroup {
     public boolean isEmpty() {
         return bindDictAnnotations == null && bindFieldGroupMap == null && bindEntityAnnotations == null
                 && bindEntityListAnnotations == null && bindFieldListGroupMap == null;
+    }
+
+    /**
+     * 是否有序
+     * @return
+     */
+    public boolean isRequireSequential(){
+        return requireSequential;
     }
 
 }

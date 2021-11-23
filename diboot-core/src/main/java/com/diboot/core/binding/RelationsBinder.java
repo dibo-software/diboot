@@ -122,7 +122,7 @@ public class RelationsBinder {
         // 绑定数据字典
         List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();
         if(dictAnnoList != null){
-            if(!binderFutures.isEmpty()){
+            if(bindAnnotationGroup.isRequireSequential()){
                 CompletableFuture.allOf(binderFutures.stream().toArray(CompletableFuture[]::new)).join();
             }
             for(FieldAnnotation annotation : dictAnnoList){
