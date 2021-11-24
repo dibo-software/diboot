@@ -429,7 +429,7 @@ public class BaseServiceTest {
         BaseMapper baseMapper = BindingCacheManager.getMapperByTable("user_role");
         Assert.assertTrue(baseMapper != null);
 
-        Class<?> entityClass = ParserCache.getEntityClassByClassName("Dictionary");
+        Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName("Dictionary");
         Assert.assertTrue(entityClass != null && entityClass.getName().equals(Dictionary.class.getName()));
     }
 
@@ -466,6 +466,20 @@ public class BaseServiceTest {
         Assert.assertTrue(success == false);
         dict = dictionaryService.getEntity(dictId);
         Assert.assertTrue(dict == null);
+    }
+
+    @Test
+    public void testDictExtdata(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        if(dictionary.getExtdata() == null){
+            dictionary.setExtdata("{\"createByName\":\"张三\"}");
+            dictionaryService.updateEntity(dictionary);
+            dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        }
+        Assert.assertTrue(dictionary.getExtdata() != null);
+        Assert.assertTrue(dictionary.getFromExt("createByName").equals("张三"));
     }
 
 }
