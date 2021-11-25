@@ -60,29 +60,6 @@ public class ExcelHelper {
     /**
      * 读取ecxel
      *
-     * @param filePath
-     * @param listener
-     */
-    public static void read(String filePath, ReadListener<?> listener) {
-        read(filePath, listener, null);
-    }
-
-    /**
-     * 读取ecxel
-     *
-     * @param filePath
-     * @param listener
-     * @param headClazz 固定头
-     * @param <T>       ExcelModel泛型
-     */
-    public static <T> void read(String filePath, ReadListener<T> listener, Class<T> headClazz) {
-        File excel = getExcelFile(filePath);
-        EasyExcel.read(excel).registerReadListener(listener).head(headClazz).sheet().doRead();
-    }
-
-    /**
-     * 读取ecxel
-     *
      * @param inputStream
      * @param excelType   excel类型，为空自动推断
      * @param listener
@@ -381,6 +358,7 @@ public class ExcelHelper {
      * @param filePath
      * @return
      */
+    @Deprecated
     private static File getExcelFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
