@@ -16,6 +16,7 @@
 package com.diboot.file.util;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
@@ -24,6 +25,7 @@ import com.alibaba.excel.util.FieldUtils;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.handler.WriteHandler;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
@@ -48,6 +50,9 @@ import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /***
  * excel数据导入导出工具类
@@ -220,7 +225,7 @@ public class ExcelHelper {
     }
 
     /**
-     * Excel写入流
+     * Excel写入
      * <p>
      * 默认支持：批注写入、单元格下拉选项写入
      *
@@ -235,39 +240,91 @@ public class ExcelHelper {
     }
 
     /**
-     * Excel写入流
+     * Excel写入
      *
      * @param outputStream
      * @param clazz          导出的ExcelModel
      * @param columnNameList 需要导出的列属性名，为空时导出所有列
      * @param dataList
      * @param writeHandlers  写入处理程序
-     * @param <T>
      * @return
      */
     public static <T> boolean write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
                                     List<T> dataList, WriteHandler... writeHandlers) {
+        AtomicBoolean first = new AtomicBoolean(true);
+        return write(outputStream, clazz, columnNameList, () -> first.getAndSet(false) ? dataList : null, writeHandlers);
+    }
+
+    /**
+     * 分批多次写入
+     *
+     * @param outputStream
+     * @param clazz
+     * @param columnNameList
+     * @param dataList
+     * @param writeHandlers
+     * @return
+     */
+    public static <T> boolean write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
+                                    Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
         try {
-            ExcelWriterBuilder write = EasyExcel.write(outputStream, clazz);
-            CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
-            if (V.notEmpty(dataList) && BaseExcelModel.class.isAssignableFrom(clazz)) {
-                commentWriteHandler.setDataList((List<? extends BaseExcelModel>) dataList);
-            }
-            write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
-            write.registerWriteHandler(new OptionWriteHandler());
-            write.registerWriteHandler(commentWriteHandler);
-            for (WriteHandler handler : writeHandlers) {
-                write.registerWriteHandler(handler);
-            }
-            if (V.notEmpty(columnNameList)) {
-                write.includeColumnFiledNames(columnNameList);
-            }
-            write.sheet().doWrite(dataList);
+            write(outputStream, clazz, columnNameList, null, dataList, writeHandlers);
             return true;
         } catch (Exception e) {
             log.error("数据写入excel文件失败", e);
             return false;
         }
+    }
+
+    /**
+     * 多次写入
+     *
+     * @param outputStream
+     * @param clazz
+     * @param columnNameList
+     * @param autoClose      是否自动关闭流
+     * @param dataList
+     * @param writeHandlers
+     */
+    public static <T> void write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
+                                 Boolean autoClose, Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
+        ExcelWriter writer = EasyExcel.write(outputStream, clazz).autoCloseStream(autoClose).build();
+        buildWriteSheet(columnNameList, (commentWriteHandler, writeSheet) -> {
+            List<T> list;
+            boolean assignableFrom = BaseExcelModel.class.isAssignableFrom(clazz);
+            while (V.notEmpty(list = dataList.get())) {
+                if (assignableFrom) {
+                    commentWriteHandler.setDataList((List<? extends BaseExcelModel>) list);
+                }
+                writer.write(list, writeSheet);
+            }
+        }, writeHandlers);
+        writer.finish();
+    }
+
+    /**
+     * 构建WriteSheet
+     * <p>
+     * 默认：自列适应宽、单元格下拉选项（验证）写入，批注写入
+     *
+     * @param columnNameList 需要导出的ExcelModel列字段名称列表，为空时导出所有列
+     * @param consumer
+     * @param writeHandlers
+     */
+    public static <T> void buildWriteSheet(Collection<String> columnNameList, BiConsumer<CommentWriteHandler, WriteSheet> consumer,
+                                           WriteHandler... writeHandlers) {
+        ExcelWriterSheetBuilder writerSheet = EasyExcel.writerSheet();
+        CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
+        writerSheet.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
+        writerSheet.registerWriteHandler(new OptionWriteHandler());
+        writerSheet.registerWriteHandler(commentWriteHandler);
+        for (WriteHandler handler : writeHandlers) {
+            writerSheet.registerWriteHandler(handler);
+        }
+        if (V.notEmpty(columnNameList)) {
+            writerSheet.includeColumnFiledNames(columnNameList);
+        }
+        consumer.accept(commentWriteHandler, writerSheet.build());
     }
 
     /**
