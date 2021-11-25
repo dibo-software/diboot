@@ -328,9 +328,9 @@ public class ExcelHelper {
     }
 
     /**
-     * web 导出excel     *
+     * web 导出excel
      * <p>
-     * 写入单元格下拉选项、写入批注
+     * 默认：自列适应宽、单元格下拉选项（验证）写入，批注写入
      *
      * @param response
      * @param fileName
@@ -345,7 +345,8 @@ public class ExcelHelper {
 
     /**
      * web 导出excel
-     * <p>默认列宽自适应数据长度、可自定义</p>
+     * <p>
+     * 默认 自列适应宽、单元格下拉选项（验证）写入，批注写入
      *
      * @param response
      * @param clazz          导出的ExcelModel
@@ -353,29 +354,30 @@ public class ExcelHelper {
      * @param columnNameList 需要导出的ExcelModel列字段名称列表，为空时导出所有列
      * @param writeHandlers  写入处理程序
      */
-    public static <T> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz,
-                                       List<String> columnNameList, List<T> dataList, WriteHandler... writeHandlers) {
-        try {
-            setExportExcelResponseHeader(response, fileName);
+    public static <T> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz, Collection<String> columnNameList,
+                                       List<T> dataList, WriteHandler... writeHandlers) {
+        AtomicBoolean first = new AtomicBoolean(true);
+        exportExcel(response, fileName, clazz, columnNameList, () -> first.getAndSet(false) ? dataList : null, writeHandlers);
+    }
 
-            ExcelWriterBuilder write = EasyExcel.write(response.getOutputStream(), clazz);
-            CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
-            if (V.notEmpty(dataList) && BaseExcelModel.class.isAssignableFrom(clazz)) {
-                commentWriteHandler.setDataList((List<? extends BaseExcelModel>) dataList);
-            }
-            write.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
-            write.registerWriteHandler(new OptionWriteHandler());
-            write.registerWriteHandler(commentWriteHandler);
-            for (WriteHandler handler : writeHandlers) {
-                write.registerWriteHandler(handler);
-            }
-            if (V.notEmpty(columnNameList)) {
-                write.includeColumnFiledNames(columnNameList);
-            }
-            // 这里需要设置不关闭流
-            write.autoCloseStream(Boolean.FALSE)
-                    .sheet("sheet1")
-                    .doWrite(dataList);
+    /**
+     * web 导出excel
+     * <p>
+     * 分批多次写入
+     *
+     * @param response
+     * @param fileName
+     * @param clazz
+     * @param columnNameList
+     * @param dataList
+     * @param writeHandlers
+     * @param <T>
+     */
+    public static <T> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz, Collection<String> columnNameList,
+                                       Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
+        setExportExcelResponseHeader(response, fileName);
+        try {
+            write(response.getOutputStream(), clazz, columnNameList, Boolean.FALSE, dataList, writeHandlers);
         } catch (Exception e) {
             log.error("下载文件失败：", e);
             response.setContentType("application/json");
