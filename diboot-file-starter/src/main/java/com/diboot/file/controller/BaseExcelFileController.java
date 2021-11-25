@@ -198,7 +198,8 @@ public abstract class BaseExcelFileController extends BaseFileController {
      */
     protected <T extends BaseExcelModel> void readExcelFile(UploadFile uploadFile, FixedHeadExcelListener<T> listener) throws Exception {
         try {
-            ExcelHelper.read(uploadFile.getStoragePath(), listener, listener.getExcelModelClass());
+            ExcelTypeEnum excelType = "csv".equalsIgnoreCase(uploadFile.getFileType()) ? ExcelTypeEnum.CSV : null;
+            ExcelHelper.read(fileStorageService.getFile(uploadFile.getStoragePath()), excelType, listener, listener.getExcelModelClass());
         } catch (Exception e) {
             log.warn("解析excel文件失败", e);
             if (e instanceof BusinessException) {

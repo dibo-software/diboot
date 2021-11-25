@@ -18,6 +18,7 @@ package com.diboot.file.util;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.util.ClassUtils;
 import com.alibaba.excel.util.FieldUtils;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
@@ -83,22 +84,23 @@ public class ExcelHelper {
      * 读取ecxel
      *
      * @param inputStream
+     * @param excelType   excel类型，为空自动推断
      * @param listener
      */
-    public static void read(InputStream inputStream, ReadListener<?> listener) {
-        read(inputStream, listener, null);
+    public static void read(InputStream inputStream, ExcelTypeEnum excelType, ReadListener<?> listener) {
+        read(inputStream, excelType, listener, null);
     }
 
     /**
      * 读取ecxel
      *
      * @param inputStream
+     * @param excelType   excel类型，为空自动推断
      * @param listener
-     * @param headClazz   固定头
-     * @param <T>         ExcelModel泛型
+     * @param headClazz   ExcelModel.class
      */
-    public static <T> void read(InputStream inputStream, ReadListener<T> listener, Class<T> headClazz) {
-        EasyExcel.read(inputStream).registerReadListener(listener).head(headClazz).sheet().doRead();
+    public static <T> void read(InputStream inputStream, ExcelTypeEnum excelType, ReadListener<T> listener, Class<T> headClazz) {
+        EasyExcel.read(inputStream).excelType(excelType).registerReadListener(listener).head(headClazz).sheet().doRead();
     }
 
     /**
