@@ -13,52 +13,43 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.mobile.dto;
+package com.diboot.mobile.vo;
 
-import com.diboot.iam.dto.AuthCredential;
+import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindEntity;
+import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 /**
- * 移动端登陆凭证
+ * 移动端用户VO(绑定User)
  *
  * @author : uu
- * @version : v2.3.1
+ * @version : v2.4.0
  * @Copyright © diboot.com
- * @Date 2021/8/31  10:34
+ * @Date 2021/8/31  18:00
  */
 @Getter
 @Setter
-@Accessors(chain = true)
-public class MobileCredential extends AuthCredential {
+public class IamMemberUserVO extends IamMemberVO {
 
-    private static final long serialVersionUID = 7727490783637840611L;
-
-    public MobileCredential() {
-    }
-
-    public MobileCredential(String authAccount) {
-        this.authAccount = authAccount;
-    }
+    private static final long serialVersionUID = -6745864206439737631L;
+    /**
+     * 关联字典：GENDER
+     */
+    @BindDict(type = DICT_GENDER, field = "gender")
+    private String genderLabel;
 
     /**
-     * 账号
+     * 关联字典：account_status
      */
-    private String authAccount;
+    @BindDict(type = DICT_MEMBER_STATUS, field = "status")
+    private String statusLabel;
 
     /**
-     * 密码
+     * IamMember绑定IamUser
      */
-    private String authSecret;
+    @BindEntity(entity = IamUser.class, condition = "this.user_id = id")
+    private IamUser iamUser;
 
-    @Override
-    public String getAuthAccount() {
-        return this.authAccount;
-    }
-
-    @Override
-    public String getAuthSecret() {
-        return this.authSecret;
-    }
 }

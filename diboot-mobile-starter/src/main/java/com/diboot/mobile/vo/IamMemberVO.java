@@ -28,7 +28,8 @@ import lombok.Setter;
  * @Copyright © diboot.com
  * @Date 2021/8/31  18:00
  */
-@Getter@Setter
+@Getter
+@Setter
 public class IamMemberVO extends IamMember {
     private static final long serialVersionUID = 184852946461084449L;
 

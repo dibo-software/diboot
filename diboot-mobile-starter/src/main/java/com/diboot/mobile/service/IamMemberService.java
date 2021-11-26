@@ -30,22 +30,4 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface IamMemberService extends BaseService<IamMember> {
 
-
-    /**
-     * 根据token获取openId
-     *
-     * @param request
-     * @return
-     * @throws Exception
-     */
-    String getOpenId(HttpServletRequest request) throws Exception;
-
-    /**
-     * 根据token获取IamMember
-     *
-     * @param openid
-     * @return
-     * @throws Exception
-     */
-    IamMember getIamMemberByOpenid(String openid) throws Exception;
 }
