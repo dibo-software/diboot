@@ -313,7 +313,22 @@ public class ExcelHelper {
      */
     public static <T> void buildWriteSheet(Collection<String> columnNameList, BiConsumer<CommentWriteHandler, WriteSheet> consumer,
                                            WriteHandler... writeHandlers) {
-        ExcelWriterSheetBuilder writerSheet = EasyExcel.writerSheet();
+        buildWriteSheet("Sheet1", columnNameList, consumer, writeHandlers);
+    }
+
+    /**
+     * 构建WriteSheet
+     * <p>
+     * 默认：自列适应宽、单元格下拉选项（验证）写入，批注写入
+     *
+     * @param sheetName      可指定sheetName
+     * @param columnNameList 需要导出的ExcelModel列字段名称列表，为空时导出所有列
+     * @param consumer
+     * @param writeHandlers
+     */
+    public static <T> void buildWriteSheet(String sheetName, Collection<String> columnNameList,
+                                           BiConsumer<CommentWriteHandler, WriteSheet> consumer, WriteHandler... writeHandlers) {
+        ExcelWriterSheetBuilder writerSheet = EasyExcel.writerSheet().sheetName(sheetName);
         CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
         writerSheet.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
         writerSheet.registerWriteHandler(new OptionWriteHandler());
