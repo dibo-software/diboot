@@ -16,13 +16,10 @@
 package com.diboot.mobile.service;
 
 
-import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.diboot.mobile.dto.WxMemberDTO;
 import com.diboot.mobile.entity.IamMember;
 import com.diboot.mobile.vo.IamMemberVO;
 import com.diboot.mobile.vo.WxMaSessionInfoVO;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 微信扫码登录相关Service
@@ -33,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2021-08-31
  * Copyright © diboot.com
  */
-public interface WxMaMemberAuthService {
+public interface WxMaAuthService {
 
     /**
      * 获取登录后的session信息.
@@ -45,11 +42,24 @@ public interface WxMaMemberAuthService {
     WxMaSessionInfoVO getSessionInfo(String jsCode) throws Exception;
 
     /**
-     * 保存用户
+     * 用户绑定小程序(先登陆，后绑定)
+     *
+     * 已经绑定提示已经绑定
+     * 未绑定，IamMember自动创建，绑定IamUser
      *
      * @param wxInfoDTO
      * @return
      * @throws Exception
      */
-    IamMemberVO saveWxMember(WxMemberDTO wxInfoDTO) throws Exception;
+    IamMember bindWxMa(WxMemberDTO wxInfoDTO) throws Exception;
+
+    /**
+     * 获取并保存用户
+     *
+     * 如果用户已经存在，那么直接返回
+     * @param wxInfoDTO
+     * @return
+     * @throws Exception
+     */
+    IamMemberVO getAndSaveWxMember(WxMemberDTO wxInfoDTO) throws Exception;
 }

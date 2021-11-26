@@ -3,6 +3,8 @@ CREATE TABLE iam_member (
     id bigint identity,
     tenant_id bigint default 0  not null,
     org_id bigint default 0 not null,
+    user_id bigint default 0 not null,
+    user_type VARCHAR(100) NOT NULL DEFAULT 'IamUser',
     openid VARCHAR(50) NOT NULL,
     nickname VARCHAR(100) NOT NULL,
     avatar_url VARCHAR(255),
@@ -24,6 +26,8 @@ CREATE TABLE iam_member (
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'组织', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'org_id';
+execute sp_addextendedproperty 'MS_Description', N'用户id', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'user_id';
+execute sp_addextendedproperty 'MS_Description', N'用户类型', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'user_type';
 execute sp_addextendedproperty 'MS_Description', N'openid', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'openid';
 execute sp_addextendedproperty 'MS_Description', N'昵称', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'nickname';
 execute sp_addextendedproperty 'MS_Description', N'头像', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'avatar_url';
@@ -44,3 +48,4 @@ create nonclustered index idx_member_tenant on iam_member (tenant_id);
 create nonclustered index idx_member_orgid on iam_member (org_id);
 create nonclustered index idx_member_openid on iam_member (openid);
 create nonclustered index idx_member_phone on iam_member (mobile_phone);
+create nonclustered index idx_member_user on iam_member (user_id, user_type);

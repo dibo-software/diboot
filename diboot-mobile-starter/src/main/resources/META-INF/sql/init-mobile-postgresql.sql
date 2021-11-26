@@ -3,6 +3,8 @@ CREATE TABLE iam_member (
   id bigserial not null,
   tenant_id bigint default 0  not null,
   org_id bigint default 0 not null,
+  user_id bigint default 0 not null,
+  user_type VARCHAR(100) NOT NULL DEFAULT 'IamUser',
   openid VARCHAR(50) NOT NULL,
   nickname VARCHAR(100) NOT NULL,
   avatar_url VARCHAR(255),
@@ -22,6 +24,8 @@ CREATE TABLE iam_member (
 comment on column iam_member.id is 'ID';
 comment on column iam_member.tenant_id is '租户ID';
 comment on column iam_member.org_id is '组织';
+comment on column iam_member.user_id is '用户id';
+comment on column iam_member.user_type is '用户类型';
 comment on column iam_member.openid is 'openid';
 comment on column iam_member.nickname is '昵称';
 comment on column iam_member.avatar_url is '头像';
@@ -41,3 +45,4 @@ create index idx_member_tenant on iam_member (tenant_id);
 create index idx_member_orgid on iam_member (org_id);
 create index idx_member_openid on iam_member (openid);
 create index idx_member_phone on iam_member (mobile_phone);
+create index idx_member_user on iam_member(user_id, user_type);

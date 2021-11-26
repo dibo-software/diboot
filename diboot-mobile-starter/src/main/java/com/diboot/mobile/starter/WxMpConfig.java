@@ -15,12 +15,9 @@
  */
 package com.diboot.mobile.starter;
 
-import cn.binarywang.wx.miniapp.api.WxMaService;
-import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
-import cn.binarywang.wx.miniapp.config.impl.WxMaDefaultConfigImpl;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.mobile.service.IamMemberService;
-import com.diboot.mobile.service.WxMpMemberAuthService;
+import com.diboot.mobile.service.WxMpAuthService;
 import com.diboot.mobile.service.impl.WxMpMemberAuthServiceImpl;
 import lombok.AllArgsConstructor;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -74,7 +71,7 @@ public class WxMpConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public WxMpMemberAuthService wxMpMemberAuthService(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
-        return new WxMpMemberAuthServiceImpl(wxMpService, iamMemberService, iamAccountService, mobileProperties.getWxMp().getState());
+    public WxMpAuthService wxMpAuthService(WxMpService wxMpService, IamAccountService iamAccountService, IamMemberService iamMemberService) {
+        return new WxMpMemberAuthServiceImpl(wxMpService, iamAccountService, iamMemberService, mobileProperties.getWxMp().getState());
     }
 }
