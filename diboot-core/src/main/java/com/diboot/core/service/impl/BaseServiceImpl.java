@@ -593,7 +593,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public boolean exists(IGetter<T> getterFn, Object value) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
 		String field = BeanUtils.convertToFieldName(getterFn);
-		String column = S.toSnakeCase(field);
+		String column = BindingCacheManager.getEntityInfoByClass(getEntityClass()).getColumnByField(field);
 		queryWrapper.select(column).eq(column, value);
 		return exists(queryWrapper);
 	}
@@ -601,7 +601,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean exists(Wrapper queryWrapper) {
 		if((queryWrapper instanceof QueryWrapper) && queryWrapper.getSqlSelect() == null){
-			String pk = ContextHelper.getIdFieldName(getEntityClass());
+			String pk = ContextHelper.getIdColumnName(getEntityClass());
 			((QueryWrapper)queryWrapper).select(pk);
 		}
 		T entity = getSingleEntity(queryWrapper);
@@ -611,7 +611,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<T> getEntityListByIds(List ids) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHelper.getIdFieldName(getEntityClass());
+		String pk = ContextHelper.getIdColumnName(getEntityClass());
 		queryWrapper.in(pk, ids);
 		return getEntityList(queryWrapper);
 	}
