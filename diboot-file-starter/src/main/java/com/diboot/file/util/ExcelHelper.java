@@ -290,14 +290,14 @@ public class ExcelHelper {
                                  Boolean autoClose, Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
         ExcelWriter writer = EasyExcel.write(outputStream, clazz).autoCloseStream(autoClose).build();
         buildWriteSheet(columnNameList, (commentWriteHandler, writeSheet) -> {
-            List<T> list;
+            List<T> list = dataList.get();
             boolean assignableFrom = BaseExcelModel.class.isAssignableFrom(clazz);
-            while (V.notEmpty(list = dataList.get())) {
+            do {
                 if (assignableFrom) {
                     commentWriteHandler.setDataList((List<? extends BaseExcelModel>) list);
                 }
                 writer.write(list, writeSheet);
-            }
+            } while (V.notEmpty(list = dataList.get()));
         }, writeHandlers);
         writer.finish();
     }
