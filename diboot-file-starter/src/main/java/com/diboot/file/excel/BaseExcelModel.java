@@ -48,12 +48,19 @@ public class BaseExcelModel implements Serializable {
     @ExcelIgnore
     private Map<String, List<String>> comment;
 
-    public int getRowIndex(){
+    /**
+     * 无效值
+     */
+    @JsonIgnore
+    @ExcelIgnore
+    private Map<String, String> field2InvalidValueMap;
+
+    public int getRowIndex() {
         return rowIndex;
     }
 
     @Deprecated
-    public String getValidateError(){
+    public String getValidateError() {
         return validateError;
     }
 
@@ -61,7 +68,11 @@ public class BaseExcelModel implements Serializable {
         return comment == null ? Collections.emptyMap() : comment;
     }
 
-    public void setRowIndex(int rowIndex){
+    public Map<String, String> getField2InvalidValueMap() {
+        return field2InvalidValueMap == null ? Collections.emptyMap() : field2InvalidValueMap;
+    }
+
+    public void setRowIndex(int rowIndex) {
         this.rowIndex = rowIndex;
     }
 
@@ -90,6 +101,19 @@ public class BaseExcelModel implements Serializable {
             comment = new HashMap<>();
         }
         comment.computeIfAbsent(propertyName, key -> new ArrayList<>()).add(message);
+    }
+
+    /**
+     * 添加无效值
+     *
+     * @param propertyName 属性
+     * @param value        值
+     */
+    public void addInvalidValue(String propertyName, String value) {
+        if (field2InvalidValueMap == null) {
+            field2InvalidValueMap = new HashMap<>();
+        }
+        field2InvalidValueMap.put(propertyName, value);
     }
 
 }

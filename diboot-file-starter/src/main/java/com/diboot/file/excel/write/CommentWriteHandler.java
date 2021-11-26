@@ -23,6 +23,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.annotation.ExcelComment;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -30,6 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 批注写入处理器
@@ -70,30 +72,40 @@ public class CommentWriteHandler implements CellWriteHandler {
             return;
         }
         ExcelComment comment = AnnotationUtils.getAnnotation(head.getField(), ExcelComment.class);
-        if (comment == null) {
+        // 空批注不写入
+        if (comment == null || V.isEmpty(comment.value())) {
             return;
         }
         Sheet sheet = context.getWriteSheetHolder().getSheet();
-        context.getCell().setCellComment(buildComment(sheet.createDrawingPatriarch(),
-                context.getColumnIndex(), sheet.getLastRowNum(), comment.value()));
+        Cell cell = context.getCell();
+        cell.setCellComment(buildComment(sheet.createDrawingPatriarch(), cell.getColumnIndex(), sheet.getLastRowNum(), comment.value()));
     }
 
     /**
      * 数据批注处理
+     * <p>
+     * 包含回写异常数据
      */
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
-        Integer relativeRowIndex = context.getRelativeRowIndex();
-        if (context.getHead() || V.isEmpty(dataList) || dataList.size() <= relativeRowIndex) {
+        int dataIndex = context.getRelativeRowIndex();
+        if (context.getHead() || V.isEmpty(dataList) || dataList.size() <= dataIndex) {
             return;
         }
-        List<String> comments = dataList.get(relativeRowIndex).getComment().get(context.getHeadData().getFieldName());
-        if (V.isEmpty(comments)) {
-            return;
+        BaseExcelModel excelModel = dataList.get(dataIndex);
+        String fieldName = context.getHeadData().getFieldName();
+        Cell cell = context.getCell();
+        // 批注写入
+        String comment = S.join(excelModel.getComment().get(fieldName), ";\n");
+        if (V.notEmpty(comment)) {
+            Sheet sheet = context.getWriteSheetHolder().getSheet();
+            cell.setCellComment(buildComment(sheet.createDrawingPatriarch(), cell.getColumnIndex(), sheet.getLastRowNum(), comment));
         }
-        Sheet sheet = context.getWriteSheetHolder().getSheet();
-        context.getCell().setCellComment(buildComment(sheet.createDrawingPatriarch(),
-                context.getColumnIndex(), sheet.getLastRowNum(), S.join(comments, ";\n")));
+        // 回写无效值
+        Map<String, String> field2InvalidValueMap = excelModel.getField2InvalidValueMap();
+        if (field2InvalidValueMap.containsKey(fieldName)) {
+            cell.setCellValue(field2InvalidValueMap.get(fieldName));
+        }
     }
 
     /**
