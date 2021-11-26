@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -77,6 +79,7 @@ public class UploadFile extends BaseEntity {
     private String relObjField;
 
     @TableField
+    @BindQuery(comparison = Comparison.LIKE)
     @NotNull(message = "文件名不能为空！")
     @Length(max = 100, message = "文件名长度超出了最大限制！")
     private String fileName;
