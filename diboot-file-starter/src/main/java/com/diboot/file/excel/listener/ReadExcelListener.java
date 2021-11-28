@@ -186,7 +186,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
     }
 
     /**
-     * <h3>完成</h3> 处理结束后需调用一次
+     * <h3>完成</h3>
+     * 处理结束后需调用一次
      */
     public void finish() {
         if (excelWriter != null) {
@@ -232,8 +233,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                 }
             } else {
                 log.error("数据转换异常", exception);
-                StringBuilder errorMsg = new StringBuilder(context.readRowHolder().getRowIndex() + 1 + "行，");
-                errorMsgMap.forEach((fieldName, msg) -> errorMsg.append(fieldHeadMap.get(fieldName) + "：" + msg));
+                StringBuilder errorMsg = new StringBuilder("第 " + context.readRowHolder().getRowIndex() + 1 + " 行，");
+                errorMsgMap.forEach((fieldName, msg) -> errorMsg.append(fieldHeadMap.get(fieldName)).append("：").append(msg));
                 addExceptionMsg(errorMsg.toString());
                 return;
             }
@@ -255,7 +256,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
             this.cachedData(currentRowAnalysisResult);
         } else {
             log.error("出现未预知的异常：", exception);
-            addExceptionMsg(context.readRowHolder().getRowIndex() + 1 + "行，解析异常: " + exception.getMessage());
+            addExceptionMsg("第 " + context.readRowHolder().getRowIndex() + 1 + " 行，解析异常: " + exception.getMessage());
         }
     }
 
@@ -305,7 +306,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
     }
 
     /**
-     * <h3>是否为正确数据</h3> 供子类重写
+     * <h3>是否为正确数据</h3>
+     * 供子类重写
      *
      * @param data 数据
      * @return
@@ -434,12 +436,13 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
     }
 
     /**
-     * 自定义数据检验方式，例：数据重复性校验等,添加校验批注信息
+     * <h3>自定义数据检验方式</h3>
+     * 例：数据重复性校验等，添加校验批注信息
      */
     protected abstract void additionalValidate(List<T> dataList, Map<String, Object> requestParams);
 
     /**
-     * 保存数据
+     * <h3>保存数据</h3>
      */
     protected abstract void saveData(List<T> dataList, Map<String, Object> requestParams);
 
