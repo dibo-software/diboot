@@ -15,10 +15,7 @@
  */
 package com.diboot.file.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -101,10 +98,11 @@ public class UploadFile extends BaseEntity {
      * 文件包含记录数
      */
     @TableField
+    @BindQuery(ignore = true)
     private int dataCount = 0;
 
     @TableField
-    @Length(max = 200, message = "备注长度超出了最大限制！")
+    @Length(max = 100, message = "备注长度超出了最大限制！")
     private String description;
 
     /**
