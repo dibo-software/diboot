@@ -100,7 +100,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             }
         }
         if (V.isEmpty(message.getContent())) {
-            throw new BusinessException("邮件内容不能为 null");
+            throw new BusinessException("消息内容不能为 null");
         }
         // 设置定时发送，则等待定时任务发送
         if (V.notEmpty(message.getScheduleTime())) {
