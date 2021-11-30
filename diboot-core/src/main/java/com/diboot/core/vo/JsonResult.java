@@ -51,6 +51,13 @@ public class JsonResult<T> implements Serializable {
     }
 
     /**
+     * 成功或失败
+     */
+    public JsonResult(boolean ok){
+        this(ok ? Status.OK : Status.FAIL_OPERATION);
+    }
+
+    /**
      * 默认成功，有返回数据
      */
     public JsonResult(T data){
