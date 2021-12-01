@@ -201,8 +201,12 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }
         String fileName = file.getOriginalFilename();
         if (V.isEmpty(fileName) || !FileHelper.isExcel(fileName)) {
-            log.debug("非Excel类型: " + fileName);
+            log.debug("非Excel类型: {}", fileName);
             throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的Excel格式文件！");
+        }
+        if (file.isEmpty()) {
+            log.debug("空文件：{}", fileName);
+            throw new BusinessException(Status.FAIL_VALIDATION, "该文件无内容！");
         }
     }
 
