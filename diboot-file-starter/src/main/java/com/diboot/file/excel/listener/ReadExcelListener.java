@@ -29,11 +29,10 @@ import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.file.entity.UploadFile;
+import com.diboot.file.config.Cons;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.annotation.DuplicateStrategy;
 import com.diboot.file.excel.annotation.EmptyStrategy;
@@ -41,16 +40,14 @@ import com.diboot.file.excel.annotation.ExcelBindDict;
 import com.diboot.file.excel.annotation.ExcelBindField;
 import com.diboot.file.excel.cache.ExcelBindAnnoHandler;
 import com.diboot.file.excel.write.CommentWriteHandler;
-import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.ExcelHelper;
+import com.diboot.file.util.FileHelper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -102,8 +99,6 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      */
     @Setter
     protected String uploadFileUuid;
-    @Setter
-    protected String uploadFileName;
 
     /**
      * 预览数据
@@ -132,11 +127,11 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      * <h3>保存错误数据</h3>
      * 写到excel文件中
      */
-    private CommentWriteHandler commentWriteHandler;
+    @Getter
+    private String errorDataFilePath;
     private ExcelWriter excelWriter;
     private WriteSheet writeSheet;
-    @Getter
-    private UploadFile errorFile;
+    private CommentWriteHandler commentWriteHandler;
 
     /**
      * 获取正确数据数量
@@ -189,10 +184,9 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      * <h3>完成</h3>
      * 处理结束后需调用一次
      */
-    public void finish() {
+    protected void finish() {
         if (excelWriter != null) {
             excelWriter.finish();
-            errorFile.setDataCount(getErrorCount());
         }
         // 有错误 抛出异常
         if (V.notEmpty(this.exceptionMsgs)) {
@@ -201,7 +195,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
     }
 
     /**
-     * <h3>异常处理</h3> 修复数据，回写错误
+     * <h3>异常处理</h3>
+     * 修补数据，回写错误
      */
     @Override
     public void onException(Exception exception, AnalysisContext context) throws Exception {
@@ -282,7 +277,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      *
      * @param dataList 数据列表
      */
-    public void handle(List<T> dataList) {
+    protected void handle(List<T> dataList) {
         if (preview && previewDataList == null) {
             int pageSize = BaseConfig.getPageSize();
             previewDataList = dataList.size() > pageSize ? dataList.subList(0, pageSize) : dataList;
@@ -341,17 +336,14 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
             return;
         }
         if (excelWriter == null) {
-            int index = S.lastIndexOf(uploadFileName, ".");
-            String fileName = uploadFileName.substring(0, index) + "-错误数据" + uploadFileName.substring(index);
-            errorFile = new UploadFile().setFileName(fileName);
-            OutputStream outputStream = null;
-            try {
-                outputStream = ContextHelper.getBean(FileStorageService.class).upload(errorFile);
-            } catch (IOException e) {
-                log.error("保存错误数据文件异常", e);
-                return;
+            if (FileHelper.isLocalStorage()) {
+                errorDataFilePath = FileHelper.getFullPath(S.newUuid() + ".xlsx");
+            } else {
+                errorDataFilePath = FileHelper.getSystemTempDir() + BaseConfig.getProperty("spring.application.name", "diboot")
+                        + Cons.FILE_PATH_SEPARATOR + S.newUuid() + ".xlsx";
             }
-            excelWriter = EasyExcel.write(outputStream, getExcelModelClass()).build();
+            FileHelper.makeDirectory(errorDataFilePath);
+            excelWriter = EasyExcel.write(errorDataFilePath, getExcelModelClass()).build();
             ExcelHelper.buildWriteSheet(null, (commentWriteHandler, writeSheet) -> {
                 this.commentWriteHandler = commentWriteHandler;
                 this.writeSheet = writeSheet;

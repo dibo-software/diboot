@@ -29,6 +29,8 @@ import com.diboot.file.util.FileHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,25 +55,27 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @return
      * @throws Exception
      */
-    public JsonResult excelPreview(MultipartFile file, Class<?> clazz) throws Exception {
+    public JsonResult excelPreview(MultipartFile file, Class<?> entityClass, Map<String, Object> params) throws Exception {
         checkIsExcel(file);
-        // 保存文件到本地
-        UploadFile uploadFile = super.saveFile(file, clazz);
-        uploadFile.setDescription(getString("description", "Excel预览数据"));
+        // 保存文件
+        UploadFile uploadFile = super.saveFile(file, entityClass);
+        uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览数据")).toString());
 
         ReadExcelListener<?> listener = getExcelDataListener();
+        listener.setUploadFileUuid(uploadFile.getUuid());
+        listener.setRequestParams(params);
         // 预览
         listener.setPreview(true);
         // 读取excel
-        readExcelFile(uploadFile, listener);
+        readExcelFile(file.getInputStream(), uploadFile.getFileType(), listener);
 
         uploadFile.setDataCount(listener.getTotalCount());
         // 保存文件上传记录
-        super.createUploadFile(uploadFile);
+        uploadFileService.createEntity(uploadFile);
 
         Map<String, Object> dataMap = new HashMap<>(8);
+        dataMap.put("uuid", uploadFile.getUuid());
         dataMap.put("tableHead", listener.getTableHead());
-        dataMap.put("uuid", FileHelper.getFileName(uploadFile.getStoragePath()));
         dataMap.put("dataList", listener.getPreviewDataList());
         dataMap.put("totalCount", listener.getTotalCount());
         if (listener.getErrorCount() > 0) {
@@ -88,9 +92,14 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @return
      * @throws Exception
      */
-    public <T> JsonResult excelPreviewSave(String uuid) throws Exception {
-        UploadFile uploadFile = uploadFileService.getEntity(S.substringBefore(uuid, "."));
-        return importData(uploadFile, false);
+    public <T> JsonResult excelPreviewSave(Map<String, Object> params) throws Exception {
+        String uuid = params.get("uuid").toString();
+        if (V.isEmpty(uuid)) {
+            throw new BusinessException("未知的预览保存");
+        }
+        UploadFile uploadFile = uploadFileService.getEntity(uuid);
+        uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览后导入数据")).toString());
+        return importData(uploadFile, fileStorageService.getFile(uploadFile.getStoragePath()), params);
     }
 
 
@@ -101,36 +110,56 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @return
      * @throws Exception
      */
-    public <T> JsonResult uploadExcelFile(MultipartFile file, Class<T> entityClass) throws Exception {
+    public <T> JsonResult uploadExcelFile(MultipartFile file, Class<T> entityClass, Map<String, Object> params) throws Exception {
         checkIsExcel(file);
         // 保存文件
         UploadFile uploadFile = super.saveFile(file, entityClass);
-        return importData(uploadFile, true);
+        uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel导入数据")).toString());
+        uploadFileService.createEntity(uploadFile);
+        return importData(uploadFile, file.getInputStream(), params);
     }
 
-    private JsonResult<Map<String, Object>> importData(UploadFile uploadFile, boolean isDirectUpload) throws Exception {
+    /**
+     * 导入数据
+     *
+     * @param uploadFile
+     * @return
+     * @throws Exception
+     */
+    private JsonResult<Map<String, Object>> importData(UploadFile uploadFile, InputStream inputStream,
+                                                       Map<String, Object> params) throws Exception {
         ReadExcelListener<?> listener = getExcelDataListener();
+        listener.setUploadFileUuid(uploadFile.getUuid());
+        listener.setRequestParams(params);
         // 读excel
-        readExcelFile(uploadFile, listener);
+        readExcelFile(inputStream, uploadFile.getFileType(), listener);
+        uploadFile.setDataCount(listener.getProperCount());
+        uploadFileService.updateEntity(uploadFile);
 
-        if (isDirectUpload) {
-            uploadFile.setDataCount(listener.getTotalCount());
-            uploadFile.setDescription(getString("description", "Excel导入数据"));
-            super.createUploadFile(uploadFile);
-        } else {
-            uploadFile.setDataCount(listener.getProperCount());
-            uploadFile.setDescription(getString("description", "Excel预览后导入数据"));
-            uploadFileService.updateEntity(uploadFile);
-        }
-
-        UploadFile errorFile = listener.getErrorFile();
-        if (errorFile == null) {
+        String errorDataFilePath = listener.getErrorDataFilePath();
+        if (errorDataFilePath == null) {
             return JsonResult.OK();
         }
-        errorFile.setAccessUrl(buildAccessUrl(errorFile.getUuid()))
+        String errorDataFileName = uploadFile.getFileName().replaceFirst("\\.\\w+$", "_错误数据.xlsx");
+        UploadFile errorFile;
+        if (FileHelper.isLocalStorage()) {
+            String errorDataFileUidName = S.substringAfterLast(errorDataFilePath, "/");
+            String errorDataFileUid = S.substringBefore(errorDataFileUidName, ".");
+            errorFile = new UploadFile()
+                    .setUuid(errorDataFileUid)
+                    .setFileType("xlsx")
+                    .setFileName(errorDataFileName)
+                    .setStoragePath(errorDataFilePath)
+                    .setAccessUrl(buildAccessUrl(errorDataFileUidName));
+        } else {
+            errorFile = super.saveFile(new FileInputStream(errorDataFilePath), errorDataFileName);
+            FileHelper.deleteFile(errorDataFilePath);
+        }
+        errorFile.setDataCount(listener.getErrorCount())
                 .setRelObjType(uploadFile.getRelObjType())
                 .setDescription(uploadFile.getFileName() + " - 错误数据");
-        super.createUploadFile(errorFile);
+        // 创建异常数据记录
+        uploadFileService.createEntity(errorFile);
         return JsonResult.OK(new HashMap<String, Object>() {{
             put("totalCount", listener.getTotalCount());
             put("errorUrl", errorFile.getAccessUrl());
@@ -139,20 +168,16 @@ public abstract class BaseExcelFileController extends BaseFileController {
         }});
     }
 
-
     /**
      * 读取excel方法
      *
-     * @param uploadFile
+     * @param inputStream
+     * @param fileExt     文件扩展名（不包含`.`）
      * @param listener
      */
-    protected <T extends BaseExcelModel> void readExcelFile(UploadFile uploadFile, ReadExcelListener<T> listener) throws Exception {
-        listener.setRequestParams(super.getParamsMap());
-        listener.setUploadFileUuid(uploadFile.getUuid());
-        listener.setUploadFileName(uploadFile.getFileName());
+    protected <T extends BaseExcelModel> void readExcelFile(InputStream inputStream, String fileExt, ReadExcelListener<T> listener) throws Exception {
         try {
-            ExcelTypeEnum excelType = "csv".equalsIgnoreCase(uploadFile.getFileType()) ? ExcelTypeEnum.CSV : null;
-            ExcelHelper.read(fileStorageService.getFile(uploadFile.getStoragePath()), excelType, listener, listener.getExcelModelClass());
+            ExcelHelper.read(inputStream, "csv".equalsIgnoreCase(fileExt) ? ExcelTypeEnum.CSV : null, listener, listener.getExcelModelClass());
         } catch (Exception e) {
             log.warn("解析excel文件失败", e);
             if (e instanceof BusinessException) {
