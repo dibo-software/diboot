@@ -24,11 +24,12 @@ import com.diboot.file.entity.UploadFile;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
-import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * 本地存储
@@ -72,21 +73,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public OutputStream upload(UploadFile uploadFile) throws IOException {
-        if (uploadFile == null || V.isEmpty(uploadFile.getFileName())) {
-            return null;
-        }
-        String fileName = uploadFile.getFileName();
-        String fileUid = S.newUuid();
-        String ext = FileHelper.getFileExtByName(fileName);
-        String newFileName = fileUid + "." + ext;
-        String fileFullPath = FileHelper.getFullPath(newFileName);
-        uploadFile.setUuid(fileUid).setFileType(ext).setStoragePath(fileFullPath);
-        return FileUtils.openOutputStream(new File(fileFullPath));
-    }
-
-    @Override
-    public InputStream getFile(String filePath) throws IOException {
+    public InputStream getFile(String filePath) throws Exception {
         File file = new File(filePath);
         if (file.exists() && file.isFile()) {
             return new FileInputStream(filePath);
@@ -107,4 +94,5 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
         File file = new File(filePath);
         return file.delete();
     }
+
 }
