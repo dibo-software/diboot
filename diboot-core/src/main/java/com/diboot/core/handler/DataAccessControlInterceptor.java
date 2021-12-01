@@ -53,8 +53,8 @@ import java.util.List;
  * @version v2.0
  * @date 2020/09/29
  */
-public class DataAccessControlInteceptor implements InnerInterceptor {
-    private static Logger log = LoggerFactory.getLogger(DataAccessControlInteceptor.class);
+public class DataAccessControlInterceptor implements InnerInterceptor {
+    private static Logger log = LoggerFactory.getLogger(DataAccessControlInterceptor.class);
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
