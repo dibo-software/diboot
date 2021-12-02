@@ -15,15 +15,18 @@
  */
 package com.diboot.core.binding;
 
-import com.diboot.core.binding.annotation.*;
+import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.binder.parallel.ParallelBindingManager;
 import com.diboot.core.binding.helper.DeepRelationsBinder;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +112,7 @@ public class RelationsBinder {
         if(bindAnnotationGroup.isEmpty()){
             return;
         }
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         ParallelBindingManager parallelBindingManager = ContextHelper.getBean(ParallelBindingManager.class);
         List<CompletableFuture<Boolean>> binderFutures = new ArrayList<>();
         // 绑定Field字段名
