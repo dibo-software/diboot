@@ -118,11 +118,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
     protected IamMember mpInfo2IamMemberEntity(WxOAuth2UserInfo userInfo) {
         return new IamMember()
                 .setOpenid(userInfo.getOpenid())
-                .setCountry(userInfo.getCountry())
-                .setProvince(userInfo.getProvince())
-                .setCity(userInfo.getCity())
                 .setAvatarUrl(userInfo.getHeadImgUrl())
-                .setGender(sex2gender(userInfo.getSex()))
                 .setNickname(userInfo.getNickname())
                 .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
     }
