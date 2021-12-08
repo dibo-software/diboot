@@ -50,7 +50,10 @@ public class V {
 	 * @return
 	 */
 	public static boolean isEmpty(Object obj){
-		if(obj instanceof String){
+		if(obj == null){
+			return true;
+		}
+		else if(obj instanceof String){
 			return isEmpty((String)obj);
 		}
 		else if(obj instanceof Collection){
@@ -62,9 +65,7 @@ public class V {
 		else if(obj instanceof String[]){
 			return isEmpty((String[])obj);
 		}
-		else{
-			return obj == null;
-		}
+		return false;
 	}
 
 	/***
@@ -109,7 +110,10 @@ public class V {
 	 * @return
 	 */
 	public static boolean notEmpty(Object obj){
-		if(obj instanceof String){
+		if(obj == null){
+			return false;
+		}
+		else if(obj instanceof String){
 			return notEmpty((String)obj);
 		}
 		else if(obj instanceof Collection){
@@ -121,9 +125,7 @@ public class V {
 		else if(obj instanceof String[]){
 			return notEmpty((String[])obj);
 		}
-		else{
-			return obj != null;
-		}
+		return true;
 	}
 
 	/***
