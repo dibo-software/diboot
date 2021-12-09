@@ -348,8 +348,6 @@ public class V {
                     return false;
                 }
             }
-//			可以考虑直接调用containsAll
-//			return sourceList.containsAll(targetList);
             return true;
         } else if (source instanceof Map) {
             Map<?, ?> sourceMap = (Map<?, ?>) source, targetMap = (Map<?, ?>) target;
