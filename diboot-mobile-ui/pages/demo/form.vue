@@ -8,13 +8,8 @@
 				<u-form-item label="性别" prop="sex">
 					<di-select v-model="form.sex" placeholder="请选择性别" :list="list"></di-select>
 				</u-form-item>
-				<u-form-item label="水果" prop="fruitsLabel">
-					<u-checkbox-group @change="checkboxGroupChange" :active-color="activeColor">
-						<u-checkbox v-model="item.checked" v-for="(item, index) in checkboxList" :key="index"
-							:name="item.name">
-							{{ item.name }}
-						</u-checkbox>
-					</u-checkbox-group>
+				<u-form-item label="水果" prop="fruits">
+					<di-checkbox-list v-model="form.fruits" :list="checkboxList"></di-checkbox-list>
 				</u-form-item>
 				<u-form-item label="味道" prop="taste">
 					<u-radio-group v-model="form.taste" :active-color="activeColor">
@@ -99,7 +94,7 @@
 					name: '',
 					sex: '',
 					sexLabel: '',
-					fruits: [],
+					fruits: '',
 					fruitsLabel: '',
 					taste: '',
 					switchVal: true,
@@ -122,104 +117,18 @@
 						label: '女'
 					}
 				],
-				list2: [
-									[
-										{
-											value: '1',
-											label: '江'
-										},
-										{
-											value: '2',
-											label: '湖'
-										}
-									],
-									[
-										{
-											value: '3',
-											label: '夜'
-										},
-										{
-											value: '4',
-											label: '雨'
-										}
-									],[
-										{
-											value: '6',
-											label: '夜'
-										},
-										{
-											value: '7',
-											label: '雨'
-										}
-									],
-									
-								],
-				list3: [
+				checkboxList: [
 					{
-						value: 1,
-						label: '中国',
-						children: [
-							{
-								value: 2,
-								label: '广东',
-								children: [
-									{
-										value: 3,
-										label: '深圳'
-									},
-									{
-										value: 4,
-										label: '广州'
-									}
-								]
-							},
-							{
-								value: 5,
-								label: '广西',
-								children: [
-									{
-										value: 6,
-										label: '南宁'
-									},
-									{
-										value: 7,
-										label: '桂林'
-									}
-								]
-							}
-						]
+						value: 'apple',
+						label: '苹果'
 					},
 					{
-						value: 8,
-						label: '美国',
-						children: [
-							{
-								value: 9,
-								label: '纽约',
-								children: [
-									{
-										value: 10,
-										label: '皇后街区'
-									}
-								]
-							}
-						]
-					}
-				],
-				checkboxList: [{
-						name: '苹果',
-						checked: false,
-						disabled: false
+						value: 'banana',
+						label: '香蕉'
 					},
 					{
-						name: '雪梨',
-						checked: false,
-						disabled: false
-					},
-					{
-						name: '柠檬',
-						checked: false,
-						disabled: false
+						value: 'mango',
+						label: '芒果'
 					}
 				],
 				radioList: [{
@@ -259,7 +168,7 @@
 						message: '请选择性别',
 						trigger: ['blur', 'change']
 					}],
-					fruitsLabel: [{
+					fruits: [{
 						required: true,
 						message: '请选择水果',
 						trigger: ['blur', 'change']
@@ -303,6 +212,7 @@
 				this.form.sexLabel = list[0].label
 			},
 			checkboxGroupChange(e) {
+				console.log('---', e)
 				this.form.fruits = e
 				this.form.fruitsLabel = e.join(',')
 			},
