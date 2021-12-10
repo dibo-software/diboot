@@ -7,6 +7,13 @@
 </template>
 
 <script>
+	/**
+	 * 时间选择器
+	 * @property {String} value 可以使用v-model双向绑定
+	 * @property {String} placeholder 提示信息
+	 * @property {String} mode = [date|datetime] 模式选择，"date"-日期模式（默认），"datetime"-日期时间选择
+	 * @event {Function} confirm 点击确定按钮，传递出所选的完整的时间对象
+	 */
 	export default {
 		data() {
 			return {
@@ -25,6 +32,7 @@
 					date += ` ${value.hour}:${value.minute}:${value.second}`
 				}
 				this.$emit('input', date)
+				this.$emit('confirm', value)
 			}
 		},
 		computed: {
