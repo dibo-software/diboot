@@ -24,17 +24,16 @@
 					</u-switch>
 				</u-form-item>
 				<u-form-item label="日历" prop="calendarDate">
-					<u-input v-model="form.calendarDate" disabled @click="openCalendar('date')" placeholder="请选择日历" />
+					<di-calendar-picker v-model="form.calendarDate" placeholder="请选择日期范围"/>
 				</u-form-item>
 				<u-form-item label="日历范围" prop="calendarRange">
-					<u-input v-model="form.calendarRange" disabled @click="openCalendar('range')"
-						placeholder="请选择日历范围" />
+					<di-calendar-picker v-model="form.calendarRange" mode="range" placeholder="请选择日期范围"/>
 				</u-form-item>
 				<u-form-item label="地区" prop="region">
-					<di-region-picker v-model="form.region" placeholder="请选择地区"></di-region-picker>
+					<di-region-picker v-model="form.region" placeholder="请选择地区"/>
 				</u-form-item>
 				<u-form-item label="时间" prop="time">
-					<di-date-picker v-model="form.time" placeholder="请选择时间" mode="datetime"></di-date-picker>
+					<di-date-picker v-model="form.time" placeholder="请选择时间" mode="datetime"/>
 				</u-form-item>
 				<u-form-item label="上传图片" prop="picture">
 					<di-upload
@@ -51,9 +50,6 @@
 				<u-button @click="submit" type="success">提交</u-button>
 			</view>
 		</view>
-		<u-select v-model="selectShow" :list="list" @confirm="selectConfirm"></u-select>
-		<u-calendar v-model="calendarShow" :mode="calendarMode" @change="calendarChange" btn-type="success"
-			:active-bg-color="activeColor" safe-area-inset-bottom z-index="99999"></u-calendar>
 	</view>
 </template>
 
@@ -164,17 +160,6 @@
 		},
 		mixins:[form],
 		methods: {
-			openCalendar(mode) {
-				this.calendarMode = mode
-				this.calendarShow = true
-			},
-			calendarChange(obj) {
-				if (this.calendarMode === 'date') {
-					this.form.calendarDate = obj.result
-				} else {
-					this.form.calendarRange = obj.startDate + ' - ' + obj.endDate
-				}
-			},
 			// 删除文件
 			removePicture(index, list) {
 				this.fileList = this.fileList.filter((v, i) => i !== index)
