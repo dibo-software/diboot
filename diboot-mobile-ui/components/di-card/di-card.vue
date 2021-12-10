@@ -41,7 +41,7 @@
 	/**
 	 * 图片卡片组件
 	 * @description 适合文章列表的图片卡片组件
-	 * @property {String Number} id 卡片唯一id
+	 * @property {String Number} index 卡片唯一值
 	 * @property {String} title 卡片标题
 	 * @property {Array} image-list 卡片图片
 	 * @property {String} mode = [default|pictureCard|multiple] 模式选择，"default"- 左图右文字（默认），"pictureCard"-大图模式，"multiple"-多图模式
@@ -50,11 +50,11 @@
 	export default {
 		methods: {
 			handleClick() {
-				this.$emit('click', this.id)
+				this.$emit('click', this.index)
 			}
 		},
 		props: {
-			id: {
+			index: {
 				type: [String, Number],
 				require: true
 			},
