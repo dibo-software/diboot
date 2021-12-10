@@ -1,5 +1,5 @@
 <template>
-	<view class="home h100 page-bg-color u-rela u-p-24">
+	<view class="home page-bg-color u-rela u-p-24">
 		<view class="u-abso home-bg-color"
 			:style="{'background-image': `linear-gradient(${swiperBgColor}, rgba(255,255,255,0))`}"></view>
 		<view class="u-m-b-40">
@@ -8,17 +8,22 @@
 		<view class="u-m-b-40">
 			<di-scroll-menu-list :menu-list="menuList"></di-scroll-menu-list>
 		</view>
-		<view class="u-m-b-40 card" >
-			<u-notice-bar padding="24rpx" mode="vertical" :list="noticeList"></u-notice-bar>
+		<view class="u-m-b-40 page-card" >
+			<u-notice-bar padding="24rpx" type="success" mode="vertical" :list="noticeList"></u-notice-bar>
+		</view>
+		<view class="u-m-b-80 page-card">
+			<navigation></navigation>
 		</view>
 	</view>
 </template>
 
 <script>
 	import banner from './banner/index.vue'
+	import navigation from './navigation/index.vue'
 	export default {
 		components: {
-			banner
+			banner,
+			navigation
 		},
 		data() {
 			return {
@@ -52,14 +57,6 @@
 						icon: require('@/static/logo.png'),
 						title: '标题2'
 					},
-					{
-						icon: require('@/static/logo.png'),
-						title: '标题3'
-					},
-					{
-						icon: require('@/static/logo.png'),
-						title: '标题4'
-					}
 				]
 			}
 		},
@@ -75,12 +72,15 @@
 </script>
 
 <style scoped lang="scss">
+	page {
+		height: 100%;
+	}
 	.home {
 		&-bg-color {
 			top: 0;
 			left: 0;
 			width: 100%;
-			height: 600rpx;
+			height: 560rpx;
 		}
 	}
 </style>

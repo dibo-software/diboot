@@ -18,7 +18,7 @@
 				</view>
 			</view>
 		</view>
-		<!-- 大图模式 -->
+		<!-- 大图模式/左图右文字模式 -->
 		<view v-else class="card" :class="{'mode-picture-card': mode === 'pictureCard'}">
 			<view class="card-image">
 				<image :src="imageList[0]" mode="aspectFill"></image>
@@ -39,11 +39,12 @@
 
 <script>
 	/**
-	 * 卡片
+	 * 图片卡片组件
+	 * @description 适合文章列表的图片卡片组件
 	 * @property {String Number} id 卡片唯一id
 	 * @property {String} title 卡片标题
 	 * @property {Array} image-list 卡片图片
-	 * @property {String} mode = [default|card|multiple] 模式选择，"default"-（默认），"card"-，"multiple"-
+	 * @property {String} mode = [default|pictureCard|multiple] 模式选择，"default"- 左图右文字（默认），"pictureCard"-大图模式，"multiple"-多图模式
 	 * @event {Function} click
 	 */
 	export default {
@@ -53,6 +54,10 @@
 			}
 		},
 		props: {
+			id: {
+				type: [String, Number],
+				require: true
+			},
 			// 模式
 			mode: {
 				type: String,
@@ -64,10 +69,6 @@
 			},
 			imageList: {
 				type: Array,
-				require: true
-			},
-			id: {
-				type: [String, Number],
 				require: true
 			}
 		}
