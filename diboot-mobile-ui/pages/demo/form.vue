@@ -30,22 +30,11 @@
 					<u-input v-model="form.calendarRange" disabled @click="openCalendar('range')"
 						placeholder="请选择日历范围" />
 				</u-form-item>
-				<u-form-item label="滑块">
-					<u-slider v-model="form.slider" :active-color="activeColor"></u-slider>
-				</u-form-item>
-				<u-form-item label="步进器">
-					<u-number-box v-model="form.numberBox" :step="5" :min="0" :max="100"></u-number-box>
-				</u-form-item>
-				<u-form-item label="评分">
-					<u-rate :count="5" v-model="form.rate" :active-color="activeColor"></u-rate>
-				</u-form-item>
 				<u-form-item label="地区" prop="region">
-					<u-input v-model="form.region" @click="openPicker('region')" disabled :select-open="pickerShow"
-						type="select" placeholder="请选择地区" />
+					<di-region-picker v-model="form.region" placeholder="请选择地区"></di-region-picker>
 				</u-form-item>
 				<u-form-item label="时间" prop="time">
-					<u-input v-model="form.time" @click="openPicker('time')" disabled :select-open="pickerShow"
-						type="select" placeholder="请选择时间" />
+					<di-date-picker v-model="form.time" placeholder="请选择时间" mode="datetime"></di-date-picker>
 				</u-form-item>
 				<u-form-item label="上传图片" prop="picture">
 					<di-upload
@@ -63,51 +52,18 @@
 			</view>
 		</view>
 		<u-select v-model="selectShow" :list="list" @confirm="selectConfirm"></u-select>
-		<u-picker v-model="pickerShow" :params="pickerParams" :mode="pickerMode" @confirm="pickerConfirm"></u-picker>
 		<u-calendar v-model="calendarShow" :mode="calendarMode" @change="calendarChange" btn-type="success"
 			:active-bg-color="activeColor" safe-area-inset-bottom z-index="99999"></u-calendar>
 	</view>
 </template>
 
 <script>
+	import form from '@/mixins/form'
 	export default {
 		data() {
 			return {
-				selectShow: false,
-				pickerShow: false,
-				pickerMode: 'region',
-				pickerParams: {
-					year: true,
-					month: true,
-					day: true,
-					hour: true,
-					minute: true,
-					second: true,
-					province: true,
-					city: true,
-					area: true,
-					timestamp: false, // 选择时间的时间戳
-				},
 				calendarShow: false,
 				calendarMode: 'date',
-				form: {
-					name: '',
-					sex: '',
-					sexLabel: '',
-					fruits: '',
-					fruitsLabel: '',
-					taste: '',
-					switchVal: true,
-					calendarDate: '',
-					calendarRange: '',
-					slider: 20,
-					numberBox: 30,
-					rate: 2,
-					region: '',
-					time: '',
-					picture: ''
-				},
-				activeColor: this.$color.success,
 				list: [{
 						value: '1',
 						label: '男'
@@ -198,24 +154,16 @@
 						message: '请选择时间',
 						trigger: ['blur', 'change']
 					}],
-					picture: [{
-						required: true,
-						message: '请上传图片',
-						trigger: ['blur', 'change']
-					}],
+					// picture: [{
+					// 	required: true,
+					// 	message: '请上传图片',
+					// 	trigger: ['blur', 'change']
+					// }],
 				}
 			};
 		},
+		mixins:[form],
 		methods: {
-			selectConfirm(list) {
-				this.form.sex = list[0].value
-				this.form.sexLabel = list[0].label
-			},
-			checkboxGroupChange(e) {
-				console.log('---', e)
-				this.form.fruits = e
-				this.form.fruitsLabel = e.join(',')
-			},
 			openCalendar(mode) {
 				this.calendarMode = mode
 				this.calendarShow = true
@@ -225,18 +173,6 @@
 					this.form.calendarDate = obj.result
 				} else {
 					this.form.calendarRange = obj.startDate + ' - ' + obj.endDate
-				}
-			},
-			openPicker(mode) {
-				this.pickerMode = mode
-				this.pickerShow = true
-			},
-			pickerConfirm(obj) {
-				if (this.pickerMode === 'region') {
-					this.form.region = obj.province.label + '-' + obj.city.label + '-' + obj.area.label
-				} else if (this.pickerMode === 'time') {
-					this.form.time = obj.year + '-' + obj.month + '-' + obj.day + ' ' + obj.hour + ':' + obj.minute + ':' +
-						obj.second
 				}
 			},
 			// 删除文件
