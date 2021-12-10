@@ -15,8 +15,6 @@ export default {
 			updateApiPrefix: '',
 			// 标题
 			title: '',
-			// 表单初始数据（表示表单数据结构）
-			initFormData: {},
 			// 存储当前对象form数据
 			form: {},
 			// 当前form是否包含上传
@@ -35,7 +33,12 @@ export default {
 			/**
 			 * uuid集合
 			 */
-			fileUuidList: []
+			fileUuidList: [],
+			/**
+			 * 
+			 * 激活的颜色：主要用于checkbox、radio等，保持风格统一
+			 */
+			activeColor: this.$color.success
 		}
 	},
 	/**
@@ -43,26 +46,35 @@ export default {
 	 * @param id ；/test?id=1
 	 */
 	onLoad(option) {
-		if (id === undefined) {
-			// 没有id数据则认为是新建
-			this.title = '新建'
-			this.form = this.$u.cloneDeep(this.initFormData)
-			this.afterOpen(id)
-		} else {
-			// 否则作为更新处理
-			const res = await dibootApi.get(`${this.baseApi}/${id}`)
-			if (res.code === 0) {
-				this.form = res.data
-				this.title = '更新'
-				this.afterOpen(id)
-			} else {
-				uni.showToast({
-					title: res.msg
-				});
-			}
-		}
+		this.open(option.id)
 	},
 	methods: {
+		/**
+		 * 打开
+		 * @param {Object} id
+		 */
+		async open(id) {
+			if (id === undefined) {
+				// 没有id数据则认为是新建
+				this.title = '新建'
+				this.afterOpen(id)
+			} else {
+				// 否则作为更新处理
+				const res = await dibootApi.get(`${this.baseApi}/${id}`)
+				if (res.code === 0) {
+					this.form = res.data
+					this.title = '更新'
+					this.afterOpen(id)
+				} else {
+					uni.showToast({
+						title: res.msg
+					});
+				}
+			}
+		},
+		afterOpen(id) {
+			
+		},
 		/** *
 		 * 提交前的验证流程
 		 * @returns {Promise<any>}
@@ -88,7 +100,7 @@ export default {
 			if (res.code === 0) {
 				return {
 					data: res.data,
-					msg: '添加记录成功'
+					msg: '添加成功'
 				}
 			} else {
 				throw new Error(res.msg)
@@ -142,8 +154,7 @@ export default {
 		 * @param msg
 		 */
 		submitSuccess(result) {
-			this.$emit('complete')
-			this.$emit('changeKey', result.data)
+			// TODO
 		},
 		/** *
 		 * 提交失败之后的处理
