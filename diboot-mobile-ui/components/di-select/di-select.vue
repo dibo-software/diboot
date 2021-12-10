@@ -2,15 +2,18 @@
 	<view class="di-select">
 		<u-input v-model="label" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
-		<u-select v-model="show" :mode='mode' :list="labelValueList" @confirm="handleSelectConfirm"></u-select>
+		<u-select v-model="show" :mode='mode' :list="list" @confirm="handleSelectConfirm"></u-select>
 	</view>
 </template>
 
 <script>
 	/**
 	 * 选择框
-	 * @pa
-	 * @property {type} mode = [single-column|mutil-column|mutil-column-auto] 模式选择，"single-column"-单列模式，"mutil-column"-多列模式，"mutil-column-auto"-多列联动模式
+	 * @property {Number String Array} value 可以使用v-model双向绑定
+	 * @property {String} placeholder 提示信息
+	 * @property {Array} list select展示的列表数据，与u-select的list保持一直
+	 * @property {String} mode = [single-column|mutil-column|mutil-column-auto] 模式选择，"single-column"-单列模式，"mutil-column"-多列模式，"mutil-column-auto"-多列联动模式
+	 * @event {Function} confirm 点击确定按钮，返回当前选择的值
 	 */
 	export default {
 		data() {
@@ -20,8 +23,13 @@
 			};
 		},
 		methods: {
+			/**
+			 * 点击确认
+			 * 
+			 * @param {Object} e
+			 */
 			handleSelectConfirm(e) {
-				if(this.mode === 'mutil-column' || this.mode === 'mutil-column') {
+				if(this.mode === 'mutil-column' || this.mode === 'mutil-column-auto') {
 					let labelList = []
 					let valueList = []
 					e.forEach(item => {
@@ -29,12 +37,12 @@
 						valueList.push(item.value)
 					})
 					this.label = labelList.join('-')
-					console.log(this.label)
 					this.$emit('input', valueList)
 				} else {
 					this.label =  e[0].label
 					this.$emit('input', e[0].value)
 				}
+				this.$emit("confirm", e)
 			}
 		},
 		props: {
@@ -50,7 +58,7 @@
 				type: String,
 				default: 'single-column'
 			},
-			labelValueList: {
+			list: {
 				type: Array,
 				default: () => []
 			}

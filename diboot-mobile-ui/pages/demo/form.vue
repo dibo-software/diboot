@@ -5,19 +5,8 @@
 				<u-form-item label="姓名" prop="name">
 					<u-input v-model="form.name" placeholder="请输入姓名" />
 				</u-form-item>
-				<!-- <u-form-item label="性别" prop="sex">
-					<u-input v-model="form.sexLabel" @click="selectShow = true" disabled :select-open="selectShow"
-						type="select" placeholder="请选择性别" />
-				</u-form-item> -->
-				<u-form-item label="单列选择" prop="sex">
-					<!-- <u-input v-model="form.sexLabel" @click="selectShow = true" disabled :select-open="selectShow"
-						type="select" placeholder="请选择性别" /> -->
-						<!-- <di-select
-						v-model="form.sex"
-						placeholder="请选择性别"
-						mode="mutil-column"
-						:label-value-list="list2"
-						></di-select> -->
+				<u-form-item label="性别" prop="sex">
+					<di-select v-model="form.sex" placeholder="请选择性别" :list="list"></di-select>
 				</u-form-item>
 				<u-form-item label="水果" prop="fruitsLabel">
 					<u-checkbox-group @change="checkboxGroupChange" :active-color="activeColor">
@@ -268,7 +257,6 @@
 					sex: [{
 						required: true,
 						message: '请选择性别',
-						type: 'array',
 						trigger: ['blur', 'change']
 					}],
 					fruitsLabel: [{

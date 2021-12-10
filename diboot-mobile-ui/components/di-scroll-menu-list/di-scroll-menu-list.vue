@@ -15,7 +15,7 @@
 	* di-scroll-menu-list 滚动菜单
 	* @description 单行滚动菜单，可以用在首页单行展示多个菜单
 	* @property  {Array}  menu-list= [{title: '', icon: '', path: ''}] 
-	* @event {Function(menu)} click 点击传入当前menu的参数 
+	* @event {Function} click 点击传入当前menu的参数 
 	*/
 	export default {
 		methods: {
