@@ -1,6 +1,6 @@
 <template>
 	<view class="u-p-24 page-bg-color" style="min-height: 100%;">
-		<view class="card u-p-l-24 u-p-r-24 u-p-b-24">
+		<view class="page-card u-p-l-24 u-p-r-24 u-p-b-24">
 			<u-form :model="form" ref="uForm" :label-width="150">
 				<u-form-item label="姓名" prop="name">
 					<u-input v-model="form.name" placeholder="请输入姓名" />
@@ -71,9 +71,7 @@
 						:file-list="fileList"
 						@add="addPicture" 
 						@remove="removePicture"
-					>
-						
-					</di-upload>
+					/>
 				</u-form-item>
 			</u-form>
 			<view class="u-m-t-60">

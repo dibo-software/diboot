@@ -22,6 +22,11 @@
 	.page-bg-color {
 		background-color: $u-bg-color;
 	}
+	.page-card {
+		border-radius: 20rpx;
+		background-color: #fff;
+		overflow: hidden;
+	}
 	.di-scroll {
 		width: 100%;
 		height: 100%;

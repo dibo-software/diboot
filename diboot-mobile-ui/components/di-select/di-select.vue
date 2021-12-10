@@ -1,0 +1,65 @@
+<template>
+	<view class="di-select">
+		<u-input v-model="label" @click="show = true" disabled :select-open="show"
+			type="select" :placeholder="placeholder" />
+		<u-select v-model="show" :mode='mode' :list="labelValueList" @confirm="handleSelectConfirm"></u-select>
+	</view>
+</template>
+
+<script>
+	/**
+	 * 选择框
+	 * @pa
+	 * @property {type} mode = [single-column|mutil-column|mutil-column-auto] 模式选择，"single-column"-单列模式，"mutil-column"-多列模式，"mutil-column-auto"-多列联动模式
+	 */
+	export default {
+		data() {
+			return {
+				show: false,
+				label: ''
+			};
+		},
+		methods: {
+			handleSelectConfirm(e) {
+				if(this.mode === 'mutil-column' || this.mode === 'mutil-column') {
+					let labelList = []
+					let valueList = []
+					e.forEach(item => {
+						labelList.push(item.label)
+						valueList.push(item.value)
+					})
+					this.label = labelList.join('-')
+					console.log(this.label)
+					this.$emit('input', valueList)
+				} else {
+					this.label =  e[0].label
+					this.$emit('input', e[0].value)
+				}
+			}
+		},
+		props: {
+			placeholder: {
+				type: String,
+				default: '请选择'
+			},
+			value: {
+				type: [Number, String, Array],
+				require: true
+			},
+			mode: {
+				type: String,
+				default: 'single-column'
+			},
+			labelValueList: {
+				type: Array,
+				default: () => []
+			}
+		}
+	}
+</script>
+
+<style scoped lang="scss">
+.di-select {
+	width: 100%;
+}
+</style>
