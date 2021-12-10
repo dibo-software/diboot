@@ -16,17 +16,24 @@ export default {
 	 * @param id ；/test?id=1
 	 */
 	onLoad(option) {
-		const res = await dibootApi.get(`${this.baseApi}/${option.id}`)
-		if (res.code === 0) {
-			this.model = res.data、
-		} else {
-			uni.showToast({
-				title: '获取数据失败',
-				icon: 'error'
-			});
-		}
+		this.open(option.id)
 	},
 	methods: {
+		/**
+		 * 打开详情
+		 * @returns {Promise<void>}
+		 */
+		async open(id) {
+			const res = await dibootApi.get(`${this.baseApi}/${option.id}`)
+			if (res.code === 0) {
+				this.model = res.data
+			} else {
+				uni.showToast({
+					title: '获取数据失败',
+					icon: 'error'
+				});
+			}
+		},
 		/**
 		 * 预览保存图片
 		 * @param path

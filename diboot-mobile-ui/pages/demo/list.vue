@@ -6,7 +6,7 @@
 				<!-- 右滑 -->
 				<u-swipe-action
 					v-for="(item, index) in list"
-					:show="activeIndex === item.id"
+					:show="activeIndex === item[primaryKey]"
 					:key="index" 
 					:index='item.id'
 					:options="actionOptions"

@@ -4,7 +4,8 @@ import more from './more'
 export default {
 	mixins: [more],
 	data() {
-		return {			
+		return {
+			primaryKey: 'id',
 			// 请求接口基础路径
 			baseApi: '/',
 			// 列表数据接口
