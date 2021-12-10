@@ -1,5 +1,5 @@
 <template>
-	<u-checkbox-group ref='diCheckbox' class="di-checkbox-list" @change="handleChange" :active-color="$color.success">
+	<u-checkbox-group ref='diCheckbox' class="di-checkbox-list" @change="handleChange" :active-color="activeColor">
 		<u-checkbox class="di-checkbox-list__item"  v-model="item.checked" v-for="(item, index) in checkboxList" :key="`di-checkbox-list__item-${index}`"
 			:name="item.value">
 			{{ item.label }}
@@ -11,7 +11,8 @@
 	/**
 	* di-checkbox-list checkbox列表
 	* @description check列表组，基于uview，适应与diboot接口的checkbox列表
-	* @property  {Array String}  value，支持数组和字符串，修改后响应为，所以建议使用字符串
+	* @property  {String}  activeColor 激活时候的颜色
+	* @property  {Array String}  value 支持数组和字符串，修改后响应为，所以建议使用字符串
 	* @property  {Array}  list 传入labelValue列表
 	* @event {Function} click 点击传入当前menu的参数 
 	*/
@@ -50,7 +51,7 @@
 			 * 将数据转化成list
 			 */
 			value2List() {
-				return this.value && typeof this.value === 'string' && this.value.split(',') || this.value 
+				return this.value && typeof this.value === 'string' && this.value.split(',') || this.value || []
 			}
 		},
 		props: {
@@ -61,6 +62,10 @@
 			list: {
 				type: Array,
 				require: true
+			},
+			activeColor: {
+				type: String,
+				default: '#19be6b'
 			}
 		}
 	}
