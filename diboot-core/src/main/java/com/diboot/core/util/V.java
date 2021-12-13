@@ -385,7 +385,6 @@ public class V {
             return (boolean) target == V.isTrue((String) source);
         }
         // Date-String类型
-        // Timestamp也是Date的子类，方法体中也没用到Timestamp，删掉更合理
         else if (source instanceof Date && target instanceof String) {
             return D.getDateTime((Date) source).equals(target) || D.getDate((Date) source).equals(target);
         } else if (target instanceof Date && source instanceof String) {
