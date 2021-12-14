@@ -47,11 +47,12 @@ export default {
 					backgroundColor: this.$color.error
 				}
 			}],
+			allowGoDetail: true,
 			// 数据列表
 			list: []
 		}
 	},
-	created() {
+	onLoad() {
 		this.getListFromMixin && this.getList();
 	},
 	methods: {
@@ -59,19 +60,26 @@ export default {
 		 * 新增
 		 */
 		handleCreate() {
-			console.log('新增')
+			uni.navigateTo({
+				url: './form'
+			})
 		},
 		/*
 		 * 详情
 		 */
 		handleDetail(id) {
-			console.log("go detail", id)
+			uni.navigateTo({
+				url:`./detail?id=${id}`
+			})
 		},
 		/* 
 		 * 编辑
 		 */
 		handleUpdate(id) {
-			console.log(item)
+			console.log('----', id)
+			uni.navigateTo({
+				url: `./form?id=${id}`
+			})
 		},
 		/**
 		 * 删除

@@ -19,6 +19,8 @@ export default {
 			form: {},
 			// 当前form是否包含上传
 			isUpload: false,
+			// 确认提交
+			confirmSubmit: false,
 			/**
 			 * 所有文件的集合都放置与fileWrapper对象中，提交的时候会自动遍历
 			 * 格式如下：
@@ -59,16 +61,25 @@ export default {
 				this.title = '新建'
 				this.afterOpen(id)
 			} else {
-				// 否则作为更新处理
-				const res = await dibootApi.get(`${this.baseApi}/${id}`)
-				if (res.code === 0) {
-					this.form = res.data
-					this.title = '更新'
-					this.afterOpen(id)
-				} else {
-					uni.showToast({
-						title: res.msg
-					});
+				uni.showLoading({
+				    title: '加载中'
+				});
+				try{
+					// 否则作为更新处理
+					const res = await dibootApi.get(`${this.baseApi}/${id}`)
+					if (res.code === 0) {
+						this.form = res.data
+						this.title = '更新'
+						this.afterOpen(id)
+					} else {
+						uni.showToast({
+							title: res.msg
+						});
+					}
+				}catch(e){
+					//TODO handle the exception
+				} finally {
+					uni.hideLoading()
 				}
 			}
 		},
@@ -129,17 +140,21 @@ export default {
 		 * @returns {Promise<void>}
 		 */
 		async onSubmit() {
-			this.state.confirmSubmit = true
+			uni.showLoading({
+			    title: '提交中...'
+			});
 			try {
-				const values = await this.validate()
-				await this.enhance(values)
+				const valid = await this.validate()
+				if(!valid) {
+					return
+				}
 				let result = {}
 				if (this.form[this.primaryKey] === undefined) {
 					// 新增该记录
-					result = await this.add(values)
+					result = await this.add(this.form)
 				} else {
 					// 更新该记录
-					result = await this.update(values)
+					result = await this.update(this.form)
 				}
 				// 执行提交失败后的一系列后续操作
 				this.submitSuccess(result)
@@ -147,6 +162,8 @@ export default {
 				// 执行一系列后续操作
 				this.submitFailed(e)
 				console.log(e)
+			} finally {
+				uni.hideLoading()
 			}
 		},
 		/** *
@@ -154,7 +171,16 @@ export default {
 		 * @param msg
 		 */
 		submitSuccess(result) {
-			// TODO
+			uni.showToast({
+				title: '操作成功',
+				duration: 2000,
+				success: ()=>{
+					uni.navigateTo({
+						url: './list'
+					})
+				}
+			});
+			
 		},
 		/** *
 		 * 提交失败之后的处理
@@ -168,13 +194,9 @@ export default {
 			} else {
 				msg = e.message || e.msg
 			}
-			// 如果还没有消息内容，则可能是校验错误信息，进行校验错误信息提取
-			if (!msg && typeof e === 'object') {
-				msg = this.validateErrorToMsg(e)
-			}
 			uni.showToast({
-				title: msg,
-				icon: 'error'
+				title: res.msg,
+				type: 'error'
 			});
 		},
 		/**

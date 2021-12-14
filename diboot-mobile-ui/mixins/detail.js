@@ -1,6 +1,4 @@
-import {
-	dibootApi
-} from '@/utils/request'
+import dibootApi from '@/utils/dibootApi'
 
 export default {
 	data() {
@@ -24,7 +22,7 @@ export default {
 		 * @returns {Promise<void>}
 		 */
 		async open(id) {
-			const res = await dibootApi.get(`${this.baseApi}/${option.id}`)
+			const res = await dibootApi.get(`${this.baseApi}/${id}`)
 			if (res.code === 0) {
 				this.model = res.data
 			} else {
