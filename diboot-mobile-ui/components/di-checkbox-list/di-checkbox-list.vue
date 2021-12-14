@@ -17,6 +17,11 @@
 	* @event {Function} click 点击传入当前menu的参数 
 	*/
 	export default {
+		data() {
+			return {
+				checkboxList: []
+			}
+		},
 		methods: {
 			/**
 			 * 改变选择
@@ -35,23 +40,29 @@
 					this.$refs.diCheckbox.dispatch('u-form-item', 'on-form-change', valueStr);
 				}, 60)
 				
-			}
-		},
-		computed: {
+			},
 			/**
 			 * 渲染成适配uview数据
+			 * @param {Object} list
 			 */
-			checkboxList() {
-				return this.list.map(item => {
+			__setCheckboxList(list) {
+				this.checkboxList = list.map(item => {
 					item['checked'] = this.value2List.includes(item.value)
 					return item
 				})
-			},
+			}
+		},
+		computed: {
 			/**
 			 * 将数据转化成list
 			 */
 			value2List() {
 				return this.value && typeof this.value === 'string' && this.value.split(',') || this.value || []
+			}
+		},
+		watch: {
+			list(value) {
+				this.__setCheckboxList(value)
 			}
 		},
 		props: {
