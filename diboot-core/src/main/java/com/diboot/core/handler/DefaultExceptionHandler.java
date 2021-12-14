@@ -39,17 +39,16 @@ import java.util.Map;
  * @version v2.0
  * @date 2019/07/19
  */
+@SuppressWarnings("JavaDoc")
 public class DefaultExceptionHandler {
     private final static Logger log = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
     /**
      * 统一处理校验错误 BindResult
-     * @param ex
-     * @return
      */
+    @SuppressWarnings("ConstantConditions")
     @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
     public Object validExceptionHandler(Exception ex){
-        Map<String, Object> map = new HashMap<>();
         BindingResult br = null;
         if(ex instanceof BindException){
             br = ((BindException)ex).getBindingResult();
@@ -57,6 +56,7 @@ public class DefaultExceptionHandler {
         else if(ex instanceof MethodArgumentNotValidException){
             br = ((MethodArgumentNotValidException)ex).getBindingResult();
         }
+        Map<String, Object> map = new HashMap<>(8);
         if (br != null && br.hasErrors()) {
             map.put("code", Status.FAIL_VALIDATION.code());
             String validateErrorMsg = V.getBindingError(br);
@@ -75,7 +75,7 @@ public class DefaultExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Object handleException(HttpServletRequest request, Exception e) {
         HttpStatus status = getStatus(request);
-        Map<String, Object> map = null;
+        Map<String, Object> map;
         if(e instanceof BusinessException){
             map = ((BusinessException)e).toMap();
         }
@@ -89,7 +89,7 @@ public class DefaultExceptionHandler {
             map = ((InvalidUsageException)e.getCause()).toMap();
         }
         else{
-            map = new HashMap<>();
+            map = new HashMap<>(8);
             map.put("code", status.value());
             String msg = buildMsg(status, e);
             map.put("msg", msg);
@@ -105,11 +105,8 @@ public class DefaultExceptionHandler {
      * @return
      */
     protected String buildMsg(HttpStatus status, Exception e){
-        String msg = status.getReasonPhrase();
-        if(msg == null){
-            msg = status.name();
-        }
-        return msg;
+        // 绝对不会为null
+        return status.getReasonPhrase();
     }
 
     /**

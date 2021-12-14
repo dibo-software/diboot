@@ -46,7 +46,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义状态码
-     * @param status
      */
     public BusinessException(Status status) {
         super(status.label());
@@ -55,7 +54,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义状态码和异常
-     * @param status
      */
     public BusinessException(Status status, Throwable ex) {
         super(status.label(), ex);
@@ -64,8 +62,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义状态码和内容提示
-     * @param status
-     * @param msg
      */
     public BusinessException(Status status, String msg) {
         super(status.label() + ": "+ msg);
@@ -74,8 +70,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义状态码和内容提示
-     * @param code
-     * @param msg
      */
     public BusinessException(int code, String msg) {
         super(msg);
@@ -84,7 +78,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义内容提示
-     * @param msg
      */
     public BusinessException(String msg) {
         super(msg);
@@ -93,8 +86,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义内容提示
-     * @param status
-     * @param msg
      */
     public BusinessException(Status status, String msg, Throwable ex) {
         super(status.label() + ": "+ msg, ex);
@@ -103,8 +94,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 自定义内容提示
-     * @param code
-     * @param msg
      */
     public BusinessException(int code, String msg, Throwable ex) {
         super(msg, ex);
@@ -113,7 +102,6 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 转换为Map
-     * @return
      */
     public Map<String, Object> toMap(){
         Map<String, Object> map = new HashMap<>(8);
@@ -124,13 +112,12 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 获取status，以便复用
-     * @return
      */
     public Status getStatus(){
         return this.status;
     }
 
-    private int getCode(){
+    private Integer getCode(){
         if(this.code == null && this.status != null){
             this.code = this.status.code();
         }
