@@ -189,13 +189,14 @@ export default {
 			let msg
 			if (typeof e === 'string') {
 				msg = e
+			} else if (typeof e === 'boolean') {
+				msg = ''
 			} else {
 				msg = e.message || e.msg
 			}
-			uni.showToast({
-				title: res.msg,
-				type: 'error'
-			});
+			if(msg) {
+				uni.showToast({ title: msg, icon: 'error'})
+			}
 		},
 		/**
 		 * 文件转化

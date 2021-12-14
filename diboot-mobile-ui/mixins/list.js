@@ -76,7 +76,6 @@ export default {
 		 * 编辑
 		 */
 		handleUpdate(id) {
-			console.log('----', id)
 			uni.navigateTo({
 				url: `./form?id=${id}`
 			})
