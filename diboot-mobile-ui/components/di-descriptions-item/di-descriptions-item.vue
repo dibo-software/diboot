@@ -34,7 +34,6 @@
 			},
 			descriptions() {
 			  let parent = this.$parent;
-			  console.log(parent.$options.name)
 			  let parentName = parent.$options._componentTag;
 			  while (parentName !== 'di-descriptions') {
 				if(!(parent = parent.$parent)) {

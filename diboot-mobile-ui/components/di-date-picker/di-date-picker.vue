@@ -2,7 +2,7 @@
 	<view class="di-date-picker">
 		<u-input v-model="value" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
-		<u-picker v-model="show" :params="pickerParams" mode="time" @confirm="handlePicker" :default-time="value"></u-picker>
+		<u-picker confirm-color="#18b566" v-model="show" :params="pickerParams" mode="time" @confirm="handlePicker" :default-time="value"></u-picker>
 	</view>
 </template>
 

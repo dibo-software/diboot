@@ -2,7 +2,7 @@
 	<view class="di-region-picker">
 		<u-input v-model="value" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
-		<u-picker v-model="show" :params="pickerParams" mode="region" @confirm="handlePicker" :default-region="defaultRegion"></u-picker>
+		<u-picker confirm-color="#18b566" v-model="show" :params="pickerParams" mode="region" @confirm="handlePicker" :default-region="defaultRegion"></u-picker>
 	</view>
 </template>
 
