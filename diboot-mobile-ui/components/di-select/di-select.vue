@@ -42,7 +42,7 @@
 				}
 				this.$emit("confirm", e)
 			},
-			__setLabel(val) {
+			async __setLabel(val) {
 				let time = setTimeout(() => {
 					clearTimeout(time)
 					if(this.mode === 'mutil-column' || this.mode === 'mutil-column-auto') {
@@ -60,7 +60,7 @@
 						const selectItem = val.filter(item => item.value === this.value)
 						this.label = selectItem && selectItem[0].label || ''
 					}
-				}, 16)
+				}, 0)
 			}
 		},
 		watch: {

@@ -35,13 +35,7 @@
 			border-radius: 20rpx;
 			overflow: hidden;
 			margin: 20rpx;
-		}
-		&_create {
-			width: 100%;
-			position: fixed;
-			left: 0;
-			bottom: 100rpx;
-			padding: 0 24rpx;
+			margin-top: 100rpx;
 		}
 	}
 </style>
