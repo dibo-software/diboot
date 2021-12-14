@@ -42,8 +42,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MobileAutoConfig implements WebMvcConfigurer {
 
     @Bean
-    @ConditionalOnMissingBean
-    public FilterRegistrationBean filterRegistrationBean(){
+    public FilterRegistrationBean customCorsFilter(){
         FilterRegistrationBean registrationBean = new FilterRegistrationBean(new CustomCorsFilter());
         //过滤所有路径
         registrationBean.addUrlPatterns("/*");
