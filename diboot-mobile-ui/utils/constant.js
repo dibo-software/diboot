@@ -7,10 +7,11 @@
  */
 // 环境修改
 const ENV = 'dev'
+const BASE_URL = '/api'
 
 // 后端多环境配置
 const hostConfig = {
-	dev: "http://localhost:8080/api",
+	dev: "http://localhost:8035",
 	test: "",
 	prod: ""
 }
@@ -23,13 +24,13 @@ const frontIndexConfig = {
 	prod: ""
 }
 const cons = {
-
+	BASE_URL,
 	/**
 	 * 获取当前环境配置
 	 * @param {Object} env {dev、test、prod}
 	 */
 	host(env = ENV) {
-		return hostConfig[env]
+		return `${hostConfig[env]}${BASE_URL}`
 	},
 
 	/**

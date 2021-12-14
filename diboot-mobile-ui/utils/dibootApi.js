@@ -34,7 +34,7 @@ dibootApi.interceptors.response.use((response) => {
 		uni.removeStorageSync(JWT_HEADER_KEY)
 		uni.removeStorageSync(REDIRECT)
 		//#ifdef H5
-		// 重置为首页地址
+		// TODO 重置为首页地址(应该为页面地址)
 		window.location.href = constant.frontIndex()
 		//#endif
 	}
