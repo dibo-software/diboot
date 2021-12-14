@@ -76,15 +76,12 @@ export default {
 							title: res.msg
 						});
 					}
-				}catch(e){
-					//TODO handle the exception
 				} finally {
 					uni.hideLoading()
 				}
 			}
 		},
 		afterOpen(id) {
-			
 		},
 		/** *
 		 * 提交前的验证流程
@@ -148,6 +145,7 @@ export default {
 				if(!valid) {
 					return
 				}
+				this.enhance()
 				let result = {}
 				if (this.form[this.primaryKey] === undefined) {
 					// 新增该记录
@@ -200,6 +198,18 @@ export default {
 			});
 		},
 		/**
+		 * 文件转化
+		 * 
+		 * @param {Object} data
+		 */
+		fileFormatter(data) {
+			return {
+				uid: data.uuid,
+				filePath: data.accessUrl,
+				url: `${this.$cons.host()}${data.accessUrl}/image`
+			}
+		},
+		/**
 		 * 将属性值转化为数组
 		 * @param fieldName
 		 * @param separator
@@ -215,11 +225,15 @@ export default {
 		strSplit(str, separator = ',') {
 			return str ? str.split(',') : []
 		},
+		// 针对form增强处理
+		enhance() {
+			
+		},
 		/**
 		 * 设置文件uuid
 		 * @private
 		 */
-		__setFileUuidList__(values) {
+		__setFileUuidList__() {
 			// 如果包含上传功能，那么设置uuid
 			if (this.isUpload) {
 				this.fileUuidList = []
@@ -231,7 +245,7 @@ export default {
 							this.fileUuidList.push(...tempFileList.map(item => item.uid))
 						}
 					}
-					values['fileUuidList'] = this.fileUuidList
+					this.form['fileUuidList'] = this.fileUuidList
 				}
 			}
 		},
