@@ -16,6 +16,7 @@
 </template>
 
 <script>
+	import detail from '@/mixins/detail'
 	export default {
 		data() {
 			return {

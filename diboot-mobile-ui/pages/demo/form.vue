@@ -58,8 +58,6 @@
 	export default {
 		data() {
 			return {
-				calendarShow: false,
-				calendarMode: 'date',
 				list: [{
 						value: '1',
 						label: '男'
@@ -103,7 +101,7 @@
 						deletable: false
 					}
 				},
-				action: `/uploadFile/upload/dto`,
+				action: '/uploadFile/upload/dto',
 				fileList: [],
 				formData: {
 					relObjField: '',
