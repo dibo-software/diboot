@@ -132,7 +132,7 @@
 			},
 			limitCount: {
 				type: Number,
-				default: 2
+				default: 1
 			},
 			maxSize: {
 				type: Number,
