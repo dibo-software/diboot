@@ -46,10 +46,12 @@
 			 * @param {Object} list
 			 */
 			__setCheckboxList(list) {
+				let time = setTimeout(() => {
+					clearTimeout(time)
 				this.checkboxList = list.map(item => {
 					item['checked'] = this.value2List.includes(item.value)
 					return item
-				})
+				})}, 16)
 			}
 		},
 		computed: {

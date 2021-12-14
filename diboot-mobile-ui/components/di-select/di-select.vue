@@ -36,13 +36,36 @@
 						labelList.push(item.label)
 						valueList.push(item.value)
 					})
-					this.label = labelList.join('-')
 					this.$emit('input', valueList)
 				} else {
-					this.label =  e[0].label
 					this.$emit('input', e[0].value)
 				}
 				this.$emit("confirm", e)
+			},
+			__setLabel(val) {
+				let time = setTimeout(() => {
+					clearTimeout(time)
+					if(this.mode === 'mutil-column' || this.mode === 'mutil-column-auto') {
+						let valueList = this.value.split(',')
+						if(!!valueList) {
+							return
+						}
+						let labelList = []
+						valueList.forEach(valueItem => {
+							let selectItem = val.filter(item => item.value === valueItem)
+							selectItem && labelList.push(selectItem.label)
+						})
+						this.label = labelList.join('-')
+					} else {
+						const selectItem = val.filter(item => item.value === this.value)
+						this.label = selectItem && selectItem[0].label || ''
+					}
+				}, 16)
+			}
+		},
+		watch: {
+			list(val) {
+				this.__setLabel(val)
 			}
 		},
 		props: {
