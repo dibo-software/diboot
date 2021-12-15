@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
@@ -431,6 +432,15 @@ public class BaseServiceTest {
 
         Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName("Dictionary");
         Assert.assertTrue(entityClass != null && entityClass.getName().equals(Dictionary.class.getName()));
+
+        // 测试PropInfo缓存
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER").eq("item_value", "F");
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+
+        DictionaryVO dictionaryVO = RelationsBinder.convertAndBind(dictionary, DictionaryVO.class);
+        Assert.assertTrue(dictionaryVO.getPrimaryKeyVal().equals(dictionary.getId()));
+        Assert.assertTrue(ContextHelper.getIdFieldName(dictionaryVO.getClass()).equals("id"));
     }
 
     @Test
@@ -480,6 +490,16 @@ public class BaseServiceTest {
         }
         Assert.assertTrue(dictionary.getExtdata() != null);
         Assert.assertTrue(dictionary.getFromExt("createByName").equals("张三"));
+    }
+
+    @Test
+    public void testGetEntityList(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "item_name", "item_value")
+                .eq("id", -1L);
+        List<Dictionary> dictionaries = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(dictionaries != null);
+        Assert.assertTrue(dictionaries.size() == 0);
     }
 
 }

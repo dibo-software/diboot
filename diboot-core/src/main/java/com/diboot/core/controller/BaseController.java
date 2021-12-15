@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.Cons;
 import com.diboot.core.dto.AttachMoreDTO;
 import com.diboot.core.dto.CascaderDTO;
@@ -32,15 +32,12 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.LabelValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -282,10 +279,10 @@ public class BaseController {
 			log.error("未找到实体类型{} 对应的Service定义", attachMoreDTO.getTarget());
 			return null;
 		}
-		EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
+		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
 		BiFunction<String, String, String> columnByField = (field, defValue) -> {
 			if (V.notEmpty(field)) {
-				String column = entityInfoCache.getColumnByField(field);
+				String column = propInfoCache.getColumnByField(field);
 				return V.notEmpty(column) ? column : field;
 			}
 			return defValue;
@@ -295,7 +292,7 @@ public class BaseController {
 			log.error("实体类型：{} ，未指定label属性", attachMoreDTO.getTarget());
 			return null;
 		}
-		String value = columnByField.apply(attachMoreDTO.getValue(), entityInfoCache.getIdColumn());
+		String value = columnByField.apply(attachMoreDTO.getValue(), propInfoCache.getIdColumn());
 		String ext = columnByField.apply(attachMoreDTO.getExt(), null);
 		// 构建前端下拉框的初始化数据
 		QueryWrapper<?> queryWrapper = Wrappers.query()

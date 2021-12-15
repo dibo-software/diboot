@@ -114,4 +114,26 @@ public class PropInfo implements Serializable {
 
     }
 
+    /**
+     * 根据列名获取字段
+     * @return
+     */
+    public String getFieldByColumn(String columnName){
+        if(V.isEmpty(this.columnToFieldMap)){
+            return null;
+        }
+        return this.columnToFieldMap.get(columnName);
+    }
+
+    /**
+     * 根据列名获取字段
+     * @return
+     */
+    public String getColumnByField(String fieldName){
+        if(V.isEmpty(this.fieldToColumnMap)){
+            return null;
+        }
+        return this.fieldToColumnMap.get(fieldName);
+    }
+
 }
