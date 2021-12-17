@@ -23,6 +23,7 @@ import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -53,6 +55,7 @@ import java.util.stream.Collectors;
  * @version v2.0
  * @date 2019/01/01
  */
+@SuppressWarnings({"unchecked", "rawtypes", "JavaDoc", "unused"})
 public class BeanUtils {
     private static final Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
@@ -73,6 +76,7 @@ public class BeanUtils {
      * @param source
      * @param target
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Object copyProperties(Object source, Object target){
         // 链式调用无法使用BeanCopier拷贝，换用BeanUtils
         org.springframework.beans.BeanUtils.copyProperties(source, target);
@@ -110,13 +114,14 @@ public class BeanUtils {
      * @param <T>
      * @return
      */
-    public static <T> List<T> convertList(List sourceList, Class<T> clazz){
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> convertList(List<?> sourceList, Class<T> clazz) {
         if(V.isEmpty(sourceList)){
             return Collections.emptyList();
         }
         // 类型相同，直接跳过
-        if(clazz.getName().equals(sourceList.get(0).getClass().getName())){
-            return sourceList;
+        if (clazz.equals(sourceList.get(0).getClass())) {
+            return (List<T>) sourceList;
         }
         // 不同，则转换
         List<T> resultList = new ArrayList<>(sourceList.size());
@@ -140,7 +145,7 @@ public class BeanUtils {
      * @param propMap
      */
     public static void bindProperties(Object model, Map<String, Object> propMap){
-        if(V.isEmpty(propMap)){
+        if (V.isAnyEmpty(model, propMap)) {
             return;
         }
         Map<String, Field> fieldNameMaps = BindingCacheManager.getFieldsMap(model.getClass());
@@ -201,6 +206,19 @@ public class BeanUtils {
     }
 
     /**
+     * 类型class对象-转换方法
+     */
+    private static final Map<Class<?>, Function<String, Object>> fieldConverterMap = new HashMap<Class<?>, Function<String, Object>>() {{
+        put(Integer.class, Integer::parseInt);
+        put(Long.class, Long::parseLong);
+        put(Double.class, Double::parseDouble);
+        put(BigDecimal.class, BigDecimal::new);
+        put(Float.class, Float::parseFloat);
+        put(Boolean.class, V::isTrue);
+        put(Date.class, D::fuzzyConvert);
+    }};
+
+    /**
      * 转换为field对应的类型
      * @param value
      * @param field
@@ -210,49 +228,20 @@ public class BeanUtils {
         if(value == null){
             return null;
         }
-        String type = field.getGenericType().getTypeName();
-        if(value.getClass().getName().equals(type)){
+        Class<?> type = field.getType();
+        if (value.getClass().equals(type)) {
             return value;
         }
-        if(Integer.class.getName().equals(type)){
-            return Integer.parseInt(S.valueOf(value));
-        }
-        else if(Long.class.getName().equals(type)){
-            return Long.parseLong(S.valueOf(value));
-        }
-        else if(Double.class.getName().equals(type)){
-            return Double.parseDouble(S.valueOf(value));
-        }
-        else if(BigDecimal.class.getName().equals(type)){
-            return new BigDecimal(S.valueOf(value));
-        }
-        else if(Float.class.getName().equals(type)){
-            return Float.parseFloat(S.valueOf(value));
-        }
-        else if(Boolean.class.getName().equals(type)){
-            return V.isTrue(S.valueOf(value));
-        }
-        else if(Date.class.getName().equals(type)){
-            return D.fuzzyConvert(S.valueOf(value));
-        }
-        else if(LocalDate.class.getName().equals(type) || LocalDateTime.class.getName().equals(type)){
-            if(LocalDate.class.getName().equals(type)){
-                String dateValStr = (value instanceof Date)? D.convert2DateString((Date)value) : S.valueOf(value);
-                Date dateVal = D.fuzzyConvert(dateValStr);
-                if(dateVal == null){
-                    return null;
-                }
-                return dateVal.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String valueStr = S.valueOf(value);
+        if (fieldConverterMap.containsKey(type)) {
+            return fieldConverterMap.get(type).apply(valueStr);
+        } else if (LocalDate.class.equals(type) || LocalDateTime.class.equals(type)) {
+            Date dateVal = (value instanceof Date) ? (Date) value : D.fuzzyConvert(valueStr);
+            if (dateVal == null) {
+                return null;
             }
-            //LocalDateTime
-            else{
-                String dateValStr = (value instanceof Date)? D.convert2DateTimeString((Date)value) : S.valueOf(value);
-                Date dateVal = D.fuzzyConvert(dateValStr);
-                if(dateVal == null){
-                    return null;
-                }
-                return dateVal.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            }
+            ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
+            return LocalDateTime.class.equals(type) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
         }
         return value;
     }
@@ -279,26 +268,12 @@ public class BeanUtils {
             return Collections.EMPTY_MAP;
         }
         Map<String, T> allListMap = new LinkedHashMap<>(allLists.size());
+        ModelKeyGenerator keyGenerator = new ModelKeyGenerator(fields);
         // 转换为map
-        try{
-            for(T model : allLists){
-                String key = null;
-                if(V.isEmpty(fields)){
-                    //未指定字段，以id为key
-                    key = getStringProperty(model, Cons.FieldName.id.name());
-                }
-                // 指定了一个字段，以该字段为key，类型同该字段
-                else if(fields.length == 1){
-                    key = getStringProperty(model, fields[0]);
-                }
-                else{ // 指定了多个字段，以字段S.join的结果为key，类型为String
-                    List list = new ArrayList();
-                    for(String fld : fields){
-                        list.add(getProperty(model, fld));
-                    }
-                    key = S.join(list);
-                }
-                if(key != null){
+        try {
+            for (T model : allLists) {
+                String key = keyGenerator.generate(model);
+                if (key != null) {
                     allListMap.put(key, model);
                 }
                 else{
@@ -332,35 +307,17 @@ public class BeanUtils {
      * @return
      */
     public static <T> Map<String, List<T>> convertToStringKeyObjectListMap(List<T> allLists, String... fields){
-        if (allLists == null || allLists.isEmpty()){
-            return null;
+        if (V.isEmpty(allLists)) {
+            return Collections.emptyMap();
         }
         Map<String, List<T>> allListMap = new LinkedHashMap<>(allLists.size());
+        ModelKeyGenerator keyGenerator = new ModelKeyGenerator(fields);
         // 转换为map
         try {
-            for (T model : allLists){
-                String key = null;
-                if(V.isEmpty(fields)){
-                    //未指定字段，以id为key
-                    key = getStringProperty(model, Cons.FieldName.id.name());
-                }
-                // 指定了一个字段，以该字段为key，类型同该字段
-                else if(fields.length == 1){
-                    key = getStringProperty(model, fields[0]);
-                }
-                else{ // 指定了多个字段，以字段S.join的结果为key，类型为String
-                    List list = new ArrayList();
-                    for(String fld : fields){
-                        list.add(getProperty(model, fld));
-                    }
-                    key = S.join(list);
-                }
+            for (T model : allLists) {
+                String key = keyGenerator.generate(model);
                 if(key != null){
-                    List<T> list = allListMap.get(key);
-                    if (list == null){
-                        list = new ArrayList<T>();
-                        allListMap.put(key, list);
-                    }
+                    List<T> list = allListMap.computeIfAbsent(key, k -> new ArrayList<>());
                     list.add(model);
                 }
                 else{
@@ -373,6 +330,54 @@ public class BeanUtils {
 
         return allListMap;
     }
+
+    /**
+     * key生成器，按照传入的fields字段列表给指定对象生成key
+     */
+    private static class ModelKeyGenerator {
+        private final String[] fields;
+        /**
+         * fields是否为空
+         */
+        private final boolean isFieldsEmpty;
+        /**
+         * fields是否只有一个元素
+         */
+        private final boolean isFieldsOnlyOne;
+
+        public ModelKeyGenerator(String[] fields) {
+            this.fields = fields;
+            isFieldsEmpty = V.isEmpty(fields);
+            isFieldsOnlyOne = !isFieldsEmpty && fields.length == 1;
+        }
+        /**
+         * 从model中提取指定字段生成key，如果为指定字段则默认为id字段
+         * 不建议大量数据循环时调用
+         *
+         * @param model  提取对象
+         * @return model中字段生成的key
+         */
+        public String generate(Object model) {
+            String key = null;
+            if (isFieldsEmpty) {
+                //未指定字段，以id为key
+                return getStringProperty(model, Cons.FieldName.id.name());
+            }
+            // 指定了一个字段，以该字段为key，类型同该字段
+            else if (isFieldsOnlyOne) {
+                return getStringProperty(model, fields[0]);
+            } else {
+                // 指定了多个字段，以字段S.join的结果为key，类型为String
+                List<Object> list = new ArrayList(fields.length);
+                for (String field : fields) {
+                    list.add(getProperty(model, field));
+                }
+                return S.join(list);
+            }
+        }
+    }
+
+
 
     /***
      * 构建上下级关联的树形结构的model（上级parentId、子节点children），根节点=0
@@ -398,7 +403,7 @@ public class BeanUtils {
     /***
      * 构建指定根节点的上下级关联的树形结构（上级parentId、子节点children）
      * @param allNodes 所有节点对象
-     * @param rootNodeId 跟节点ID
+     * @param rootNodeId 根节点ID
      * @param parentIdFieldName 父节点属性名
      * @param childrenFieldName 子节点集合属性名
      * @param <T>
@@ -421,7 +426,7 @@ public class BeanUtils {
             }
         }
         if(V.isEmpty(topLevelModels)){
-            return topLevelModels;
+            return Collections.emptyList();
         }
         // 遍历第一级节点，并挂载 children 子节点
         for(T node : allNodes) {
@@ -474,13 +479,28 @@ public class BeanUtils {
         return extractDiff(oldModel, newModel, null);
     }
 
+    /**
+     * 提取两个model的差异值，只对比指定字段
+     * 使用默认的忽略字段
+     *
+     * @param oldModel
+     * @param newModel
+     * @param fields   对比字段
+     * @return
+     */
+    public static String extractDiff(BaseEntity oldModel, BaseEntity newModel, Set<String> fields) {
+        return extractDiff(oldModel, newModel, fields, IGNORE_FIELDS);
+    }
+
     /***
      * 提取两个model的差异值，只对比指定字段
      * @param oldModel
      * @param newModel
+     * @param fields 对比字段
+     * @param ignoreFields 不对比的字段
      * @return
      */
-    public static String extractDiff(BaseEntity oldModel, BaseEntity newModel, Set<String> fields){
+    public static String extractDiff(BaseEntity oldModel, BaseEntity newModel, Set<String> fields, Set<String> ignoreFields) {
         if(newModel == null || oldModel == null){
             log.warn("调用错误，Model不能为空！");
             return null;
@@ -488,38 +508,37 @@ public class BeanUtils {
         Map<String, Object> oldMap = oldModel.toMap();
         Map<String, Object> newMap = newModel.toMap();
         Map<String, Object> result = new HashMap<>(oldMap.size()+newMap.size());
-        for(Map.Entry<String, Object> entry : oldMap.entrySet()){
-            if(IGNORE_FIELDS.contains(entry.getKey())){
+        for(Map.Entry<String, Object> entry : oldMap.entrySet()) {
+            String key = entry.getKey();
+            if (ignoreFields.contains(key)) {
                 continue;
             }
-            String oldValue = entry.getValue()!=null ? String.valueOf(entry.getValue()) : "";
-            Object newValueObj = newMap.get(entry.getKey());
-            String newValue = newValueObj!=null? String.valueOf(newValueObj) : "";
+            String oldValue = S.defaultValueOf(entry.getValue());
+            Object newValueObj = newMap.get(key);
+            String newValue = S.defaultValueOf(newValueObj);
             // 设置变更的值
-            boolean checkThisField = fields == null || fields.contains(entry.getKey());
-            if(checkThisField && !oldValue.equals(newValue)){
-                result.put(entry.getKey(), S.join(oldValue, CHANGE_FLAG, newValue));
+            boolean checkThisField = fields == null || fields.contains(key);
+            if (checkThisField && !oldValue.equals(newValue)) {
+                result.put(key, S.join(oldValue, CHANGE_FLAG, newValue));
             }
             // 从新的map中移除该key
-            if(newValueObj!=null){
-                newMap.remove(entry.getKey());
+            if (newValueObj != null) {
+                newMap.remove(key);
             }
         }
         if(!newMap.isEmpty()){
-            for(Map.Entry<String, Object> entry : newMap.entrySet()){
-                if(IGNORE_FIELDS.contains(entry.getKey())){
+            for(Map.Entry<String, Object> entry : newMap.entrySet()) {
+                String key = entry.getKey();
+                if (ignoreFields.contains(key)) {
                     continue;
                 }
-                Object newValueObj = entry.getValue();
-                String newValue = newValueObj!=null? String.valueOf(newValueObj) : "";
+                String newValue = S.defaultValueOf(entry.getValue());
                 // 设置变更的值
-                if(fields==null || fields.contains(entry.getKey())){
-                    result.put(entry.getKey(), S.join("", CHANGE_FLAG, newValue));
+                if (fields == null || fields.contains(key)) {
+                    result.put(key, S.join("", CHANGE_FLAG, newValue));
                 }
             }
         }
-        oldMap = null;
-        newMap = null;
         // 转换结果为String
         return JSON.toJSONString(result);
     }
@@ -563,11 +582,12 @@ public class BeanUtils {
         if(V.isEmpty(objectList)){
             return Collections.emptyList();
         }
-        List fieldValueList = new ArrayList();
+        List fieldValueList = new ArrayList(objectList.size());
         try{
             for(E object : objectList){
                 Object fieldValue = getProperty(object, getterPropName);
-                if(fieldValue != null && !fieldValueList.contains(fieldValue)){
+                // E类型中的提取的字段值不需要进行重复判断，如果一定要查重，那应该使用Set代替List
+                if (fieldValue != null) {
                     fieldValueList.add(fieldValue);
                 }
             }
@@ -590,16 +610,15 @@ public class BeanUtils {
         if(V.isEmpty(objectList)){
             return Collections.emptyList();
         }
-        List fieldValueList = new ArrayList();
+        List fieldValueList = new ArrayList(objectList.size());
         try{
             for(E object : objectList){
                 Object fieldValue = getProperty(object, getterPropName);
                 if(fieldValue == null){
                     hasNullFlags[0] = true;
                 }
-                else if(!fieldValueList.contains(fieldValue)){
-                    fieldValueList.add(fieldValue);
-                }
+                // E类型中的提取的字段值不需要进行重复判断，如果一定要查重，那应该使用Set代替List
+                fieldValueList.add(fieldValue);
             }
         }
         catch (Exception e){
@@ -640,13 +659,17 @@ public class BeanUtils {
         try{
             for(E object : fromList){
                 Object fieldValue = getProperty(object, getterFieldName);
-                Object value = null;
+                // 该obj的字段值为空，在Map中也必然不存在对应值
+                if (V.isEmpty(fieldValue)) {
+                    continue;
+                }
+                Object value;
                 if(valueMatchMap.containsKey(fieldValue)){
                     value = valueMatchMap.get(fieldValue);
                 }
                 else{
-                    // 获取到当前的属性值
-                    String fieldValueStr = getStringProperty(object, getterFieldName);
+                    // 可能是类型不匹配，转为String尝试
+                    String fieldValueStr = String.valueOf(fieldValue);
                     // 获取到当前的value
                     value = valueMatchMap.get(fieldValueStr);
                 }
@@ -722,7 +745,7 @@ public class BeanUtils {
      * @param fieldName
      * @return
      */
-    public static Field extractField(Class clazz, String fieldName){
+    public static Field extractField(Class<?> clazz, String fieldName) {
         return ReflectionUtils.findField(clazz, fieldName);
     }
 
@@ -747,8 +770,8 @@ public class BeanUtils {
      * @param instance
      * @return
      */
-    public static Class getTargetClass(Object instance){
-        return (instance instanceof Class)? (Class)instance : AopProxyUtils.ultimateTargetClass(instance);
+    public static Class<?> getTargetClass(Object instance) {
+        return (instance instanceof Class) ? (Class<?>) instance : AopProxyUtils.ultimateTargetClass(instance);
     }
 
     /**
@@ -833,14 +856,15 @@ public class BeanUtils {
      * @param <T>
      * @return
      */
+    @SafeVarargs
     private static <T> String[] convertGettersToFields(IGetter<T>... getterFns){
-        String[] fields = null;
-        if(getterFns != null){
-            fields = new String[getterFns.length];
-            for(int i=0; i<getterFns.length; i++){
-                IGetter<T> getter = getterFns[i];
-                fields[i] = convertToFieldName(getter);
-            }
+        if (V.isEmpty(getterFns)) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+        int length = getterFns.length;
+        String[] fields = new String[length];
+        for (int i = 0; i < length; i++) {
+            fields[i] = convertToFieldName(getterFns[i]);
         }
         return fields;
     }
