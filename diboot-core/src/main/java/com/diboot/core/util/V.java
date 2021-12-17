@@ -17,6 +17,7 @@ package com.diboot.core.util;
 
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.Status;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import org.springframework.validation.ObjectError;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,7 @@ import java.util.regex.Pattern;
  * @version v2.0
  * @date 2019/01/01
  */
+@SuppressWarnings("unused")
 public class V {
     private static final Logger log = LoggerFactory.getLogger(V.class);
     /**
@@ -49,14 +52,14 @@ public class V {
     public static boolean isEmpty(Object obj) {
         if (obj == null) {
             return true;
-        } else if (obj instanceof String) {
-            return isEmpty((String) obj);
+        } else if (obj instanceof CharSequence) {
+            return isEmpty((CharSequence) obj);
         } else if (obj instanceof Collection) {
             return isEmpty((Collection<?>) obj);
         } else if (obj instanceof Map) {
             return isEmpty((Map<?, ?>) obj);
-        } else if (obj instanceof String[]) {
-            return isEmpty((String[]) obj);
+        } else if (obj.getClass().isArray()) {
+            return Array.getLength(obj) == 0;
         }
         return false;
     }
@@ -64,15 +67,8 @@ public class V {
     /**
      * 字符串是否为空
      */
-    public static boolean isEmpty(String value) {
+    public static boolean isEmpty(CharSequence value) {
         return S.isBlank(value);
-    }
-
-    /**
-     * 字符串数组是否不为空
-     */
-    public static boolean isEmpty(String[] values) {
-        return values == null || values.length == 0;
     }
 
     /**
@@ -89,20 +85,120 @@ public class V {
         return obj == null || obj.isEmpty();
     }
 
+    public static boolean isEmpty(boolean[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(byte[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(char[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(double[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(float[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(int[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(long[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(short[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean isEmpty(Object[] array) {
+        return array == null || array.length == 0;
+    }
+
+    public static boolean notEmpty(boolean[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(byte[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(char[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(double[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(float[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(int[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(long[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(short[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(Object[] array) {
+        return array != null && array.length != 0;
+    }
+
+    /**
+     * 任意元素为空则返回true
+     *
+     * @param objs objs
+     * @return true/false
+     */
+    public static boolean isAnyEmpty(Object... objs) {
+        if (ArrayUtils.isEmpty(objs)) {
+            return true;
+        }
+        for (Object obj : objs) {
+            if (isEmpty(obj)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 全都不为空则返回true
+     *
+     * @param objs objs
+     * @return true/false
+     */
+    public static boolean isNoneEmpty(Object... objs) {
+        return !isAnyEmpty(objs);
+    }
+
     /**
      * 对象是否为空
      */
     public static boolean notEmpty(Object obj) {
         if (obj == null) {
             return false;
-        } else if (obj instanceof String) {
-            return notEmpty((String) obj);
+        } else if (obj instanceof CharSequence) {
+            return notEmpty((CharSequence) obj);
         } else if (obj instanceof Collection) {
             return notEmpty((Collection<?>) obj);
         } else if (obj instanceof Map) {
             return notEmpty((Map<?, ?>) obj);
-        } else if (obj instanceof String[]) {
-            return notEmpty((String[]) obj);
+        } else if (obj.getClass().isArray()) {
+            return Array.getLength(obj) != 0;
         }
         return true;
     }
@@ -110,15 +206,8 @@ public class V {
     /**
      * 字符串不为空，或者不是所有字符都为whitespace字符
      */
-    public static boolean notEmpty(String value) {
+    public static boolean notEmpty(CharSequence value) {
         return S.isNotBlank(value);
-    }
-
-    /**
-     * 字符串数组是否不为空
-     */
-    public static boolean notEmpty(String[] values) {
-        return values != null && values.length > 0;
     }
 
     /**
@@ -138,7 +227,6 @@ public class V {
     /**
      * 对象不为空且不为0
      */
-    @SuppressWarnings("unused")
     public static boolean notEmptyOrZero(Long longObj) {
         return longObj != null && longObj != 0;
     }
@@ -146,9 +234,30 @@ public class V {
     /**
      * 对象不为空且不为0
      */
-    @SuppressWarnings("unused")
     public static boolean notEmptyOrZero(Integer intObj) {
         return intObj != null && intObj != 0;
+    }
+
+    /**
+     * 集合中是否包含指定元素
+     *
+     * @param collection 集合
+     * @param target     查找元素
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static <T> boolean contains(Collection<T> collection, T target) {
+        return collection != null && collection.contains(target);
+    }
+
+    /**
+     * 集合中是否不包含指定元素
+     *
+     * @param collection 集合
+     * @param target     查找元素
+     * @return 集合为空或者包含元素，则返回false
+     */
+    public static <T> boolean notContains(Collection<T> collection, T target) {
+        return collection != null && !collection.contains(target);
     }
 
     /**
@@ -328,7 +437,7 @@ public class V {
      * 判定两个对象是否类型相同值相等
      */
     public static <T> boolean equals(T source, T target) {
-        if (source == null && target == null) {
+        if (source == target) {
             return true;
         } else if (source == null || target == null) {
             return false;
