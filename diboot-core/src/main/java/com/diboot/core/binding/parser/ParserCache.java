@@ -48,12 +48,13 @@ import java.util.function.BiConsumer;
  * @version 2.0<br>
  * @date 2019/04/03 <br>
  */
+@SuppressWarnings({"rawtypes", "JavaDoc"})
 @Slf4j
 public class ParserCache {
     /**
      * VO类-绑定注解缓存
      */
-    private static final Map<Class, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, BindAnnotationGroup> allVoBindAnnotationCacheMap = new ConcurrentHashMap<>();
     /**
      * dto类-BindQuery注解的缓存
      */
@@ -76,14 +77,14 @@ public class ParserCache {
      * @param voClass
      * @return
      */
-    public static BindAnnotationGroup getBindAnnotationGroup(Class voClass){
+    public static BindAnnotationGroup getBindAnnotationGroup(Class<?> voClass){
         BindAnnotationGroup group = allVoBindAnnotationCacheMap.get(voClass);
         if(group == null){
             // 获取注解并缓存
             group = new BindAnnotationGroup();
             // 获取当前VO的注解
             List<Field> fields = BeanUtils.extractAllFields(voClass);
-            if(fields != null){
+            if(V.notEmpty(fields)){
                 for (Field field : fields) {
                     //遍历属性
                     Annotation[] annotations = field.getDeclaredAnnotations();
@@ -177,7 +178,7 @@ public class ParserCache {
         List<AnnoJoiner> annoList = getBindQueryAnnos(dto.getClass());
         if(V.notEmpty(annoList)){
             for(AnnoJoiner anno : annoList){
-                if(V.notEmpty(anno.getJoin()) && fieldNameSet != null && fieldNameSet.contains(anno.getFieldName())){
+                if(V.notEmpty(anno.getJoin()) && V.contains(fieldNameSet, anno.getFieldName())) {
                     return true;
                 }
             }
@@ -198,7 +199,7 @@ public class ParserCache {
         // 初始化
         List<AnnoJoiner> annos = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(1);
-        Map<String, String> joinOn2Alias = new HashMap<>();
+        Map<String, String> joinOn2Alias = new HashMap<>(8);
         // 构建AnnoJoiner
         BiConsumer<Field, BindQuery> buildAnnoJoiner = (field, query) -> {
             AnnoJoiner annoJoiner = new AnnoJoiner(field, query);
@@ -219,7 +220,8 @@ public class ParserCache {
         };
         for (Field field : BeanUtils.extractFields(dtoClass, BindQuery.class)) {
             BindQuery query = field.getAnnotation(BindQuery.class);
-            if (query == null || query.ignore()) {
+            // 不可能为null
+            if (query.ignore()) {
                 continue;
             }
             buildAnnoJoiner.accept(field, query);

@@ -17,7 +17,6 @@ package com.diboot.core.util;
 
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.Status;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,7 +163,7 @@ public class V {
      * @return true/false
      */
     public static boolean isAnyEmpty(Object... objs) {
-        if (ArrayUtils.isEmpty(objs)) {
+        if (isEmpty(objs)) {
             return true;
         }
         for (Object obj : objs) {
@@ -183,6 +182,24 @@ public class V {
      */
     public static boolean isNoneEmpty(Object... objs) {
         return !isAnyEmpty(objs);
+    }
+
+    /**
+     * 全为空则返回true
+     *
+     * @param objs objs
+     * @return true/false
+     */
+    public static boolean isAllEmpty(Object... objs) {
+        if(isEmpty(objs)){
+            return true;
+        }
+        for (Object obj : objs) {
+            if (notEmpty(obj)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -477,6 +494,27 @@ public class V {
             log.warn("暂未实现类型 " + source.getClass().getSimpleName() + "-" + target.getClass().getSimpleName() + " 的比对！");
             return false;
         }
+    }
+
+    /**
+     * 列表others中是否包含source
+     *
+     * @param source 查询对象
+     * @param others 可能值列表
+     * @param <T>    类型
+     * @return others列表为空或者不包含source，则返回false
+     */
+    @SafeVarargs
+    public static <T> boolean anyEquals(T source, T... others) {
+        if (isEmpty(others)) {
+            return false;
+        }
+        for (T other : others) {
+            if (equals(source, other)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
