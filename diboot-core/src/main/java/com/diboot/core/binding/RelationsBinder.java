@@ -15,7 +15,6 @@
  */
 package com.diboot.core.binding;
 
-import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.binder.parallel.ParallelBindingManager;
 import com.diboot.core.binding.helper.DeepRelationsBinder;
 import com.diboot.core.binding.parser.BindAnnotationGroup;
@@ -29,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +39,7 @@ import java.util.concurrent.CompletableFuture;
  * @version v2.0
  * @date 2019/7/18
  */
+@SuppressWarnings("JavaDoc")
 public class RelationsBinder {
     private static final Logger log = LoggerFactory.getLogger(RelationsBinder.class);
 
@@ -80,9 +81,7 @@ public class RelationsBinder {
      * @throws Exception
      */
     public static <VO> void bind(VO vo){
-        List<VO> voList = new ArrayList<>(1);
-        voList.add(vo);
-        bind(voList);
+        bind(Collections.singletonList(vo));
     }
 
     /**
@@ -107,13 +106,15 @@ public class RelationsBinder {
             return;
         }
         // 获取VO类
-        Class voClass = voList.get(0).getClass();
+        Class<?> voClass = voList.get(0).getClass();
         BindAnnotationGroup bindAnnotationGroup = ParserCache.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isEmpty()){
             return;
         }
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         ParallelBindingManager parallelBindingManager = ContextHelper.getBean(ParallelBindingManager.class);
+        // 不可能出现的错误，但是编译器需要
+        assert parallelBindingManager != null;
         List<CompletableFuture<Boolean>> binderFutures = new ArrayList<>();
         // 绑定Field字段名
         Map<String, List<FieldAnnotation>> bindFieldGroupMap = bindAnnotationGroup.getBindFieldGroupMap();
@@ -127,7 +128,7 @@ public class RelationsBinder {
         List<FieldAnnotation> dictAnnoList = bindAnnotationGroup.getBindDictAnnotations();
         if(dictAnnoList != null){
             if(bindAnnotationGroup.isRequireSequential()){
-                CompletableFuture.allOf(binderFutures.stream().toArray(CompletableFuture[]::new)).join();
+                CompletableFuture.allOf(binderFutures.toArray(new CompletableFuture[0])).join();
             }
             for(FieldAnnotation annotation : dictAnnoList){
                 CompletableFuture<Boolean> bindDictFuture = parallelBindingManager.doBindingDict(voList, annotation);
@@ -139,7 +140,6 @@ public class RelationsBinder {
 
         if(entityAnnoList != null){
             for(FieldAnnotation anno : entityAnnoList){
-                BindEntity annotation = (BindEntity) anno.getAnnotation();
                 // 绑定关联对象entity
                 CompletableFuture<Boolean> bindEntFuture = parallelBindingManager.doBindingEntity(voList, anno);
                 binderFutures.add(bindEntFuture);
@@ -164,7 +164,7 @@ public class RelationsBinder {
             }
         }
         // 执行绑定
-        CompletableFuture.allOf(binderFutures.stream().toArray(CompletableFuture[]::new)).join();
+        CompletableFuture.allOf(binderFutures.toArray(new CompletableFuture[0])).join();
         // 深度绑定
         if(enableDeepBind){
             List<FieldAnnotation> deepBindEntityAnnoList = bindAnnotationGroup.getDeepBindEntityAnnotations();
