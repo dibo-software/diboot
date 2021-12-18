@@ -71,10 +71,23 @@ public class V {
     }
 
     /**
+     * 字符串是否为空
+     */
+    public static boolean isEmpty(String value) {
+        return S.isBlank(value);
+    }
+    /**
      * 集合为空
      */
     public static <T> boolean isEmpty(Collection<T> list) {
         return list == null || list.isEmpty();
+    }
+
+    /**
+     * 字符串数组是否不为空
+     */
+    public static boolean isEmpty(String[] values) {
+        return values == null || values.length == 0;
     }
 
     /**
@@ -225,6 +238,20 @@ public class V {
      */
     public static boolean notEmpty(CharSequence value) {
         return S.isNotBlank(value);
+    }
+
+    /**
+     * 字符串不为空，或者不是所有字符都为whitespace字符
+     */
+    public static boolean notEmpty(String value) {
+        return S.isNotBlank(value);
+    }
+
+    /**
+     * 字符串数组是否不为空
+     */
+    public static boolean notEmpty(String[] values) {
+        return values != null && values.length > 0;
     }
 
     /**
@@ -456,8 +483,12 @@ public class V {
     public static <T> boolean equals(T source, T target) {
         if (source == target) {
             return true;
-        } else if (source == null || target == null) {
+        }
+        else if (source == null || target == null) {
             return false;
+        }
+        else if (source instanceof Class<?> && target instanceof Class<?>) {
+            return ((Class<?>) source).getName().equals(((Class<?>) target).getName());
         }
         // 不为空，调用equals比较
         else if (source instanceof Comparable) {

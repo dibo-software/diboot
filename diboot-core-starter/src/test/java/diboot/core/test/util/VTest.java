@@ -16,12 +16,16 @@
 package diboot.core.test.util;
 
 import com.diboot.core.entity.Dictionary;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.D;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,6 +88,10 @@ public class VTest {
         list2.add(128L);
 
         Assert.assertTrue(V.equals(list1, list2));
+
+        Field field = BeanUtils.extractField(Dictionary.class, "createTime");
+        Assert.assertTrue(V.equals(field.getType(), Date.class));
+        Assert.assertTrue(V.equals(field.getType().getName(), "java.util.Date"));
     }
 
     @Test
