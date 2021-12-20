@@ -17,6 +17,7 @@ package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.diboot.core.binding.annotation.*;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.BindQueryGroup;
@@ -73,6 +74,13 @@ public class ParserCache {
     private static final Map<String, IMaskStrategy> MASK_STRATEGY_MAP = new ConcurrentHashMap<>();
 
     /**
+     * 用于查询注解是否是Bind相关注解
+     */
+    private static final Set<Class<?>> BIND_ANNOTATION_SET = new HashSet<>(Arrays.asList(
+            BindDict.class, BindField.class, BindFieldList.class, BindEntity.class, BindEntityList.class
+    ));
+
+    /**
      * 获取指定class对应的Bind相关注解
      * @param voClass
      * @return
@@ -82,26 +90,34 @@ public class ParserCache {
         if(group == null){
             // 获取注解并缓存
             group = new BindAnnotationGroup();
-            // 获取当前VO的注解
+            // 获取当前VO的所有字段
             List<Field> fields = BeanUtils.extractAllFields(voClass);
             if(V.notEmpty(fields)){
+                //遍历属性
                 for (Field field : fields) {
-                    //遍历属性
+                    // 获取当前字段所有注解
                     Annotation[] annotations = field.getDeclaredAnnotations();
                     if (V.isEmpty(annotations)) {
                         continue;
                     }
-                    for (Annotation annotation : annotations) {
-                        Class<?> setterObjClazz = field.getType();
-                        if(setterObjClazz.equals(java.util.List.class) || setterObjClazz.equals(java.util.Collections.class)){
-                            // 如果是集合，获取其泛型参数class
-                            Type genericType = field.getGenericType();
-                            if(genericType instanceof ParameterizedType){
-                                ParameterizedType pt = (ParameterizedType) genericType;
-                                setterObjClazz = (Class<?>)pt.getActualTypeArguments()[0];
-                            }
+                    // 字段名称
+                    String fieldName = field.getName();
+                    // 字段类型
+                    Class<?> setterObjClazz = field.getType();
+                    // 如果是集合，获取其泛型参数class
+                    // 这里是不是写错了，Collections是工具类，应该是Collection吧
+                    if(setterObjClazz.equals(java.util.List.class) || setterObjClazz.equals(java.util.Collection.class)){
+                        Type genericType = field.getGenericType();
+                        if(genericType instanceof ParameterizedType){
+                            ParameterizedType pt = (ParameterizedType) genericType;
+                            setterObjClazz = (Class<?>)pt.getActualTypeArguments()[0];
                         }
-                        group.addBindAnnotation(field.getName(), setterObjClazz, annotation);
+                    }
+                    for (Annotation annotation : annotations) {
+                        // 是bind相关注解则添加
+                        if(BIND_ANNOTATION_SET.contains(annotation.annotationType())) {
+                            group.addBindAnnotation(fieldName, setterObjClazz, annotation);
+                        }
                     }
                 }
             }
@@ -291,7 +307,7 @@ public class ParserCache {
     @NonNull
     public static Map<String, IEncryptStrategy> getFieldEncryptorMap(@NonNull Class<?> clazz) {
         return FIELD_ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
-            Map<String, IEncryptStrategy> fieldEncryptorMap = new HashMap<>();
+            Map<String, IEncryptStrategy> fieldEncryptorMap = new HashMap<>(4);
             for (Field field : BeanUtils.extractFields(clazz, ProtectField.class)) {
                 if (!field.getType().isAssignableFrom(String.class)) {
                     log.error("`@ProtectField` 仅支持 String 类型字段。");

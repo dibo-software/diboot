@@ -16,6 +16,7 @@
 package com.diboot.core.binding.parser;
 
 import com.diboot.core.binding.annotation.*;
+import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
@@ -30,6 +31,7 @@ import java.util.Map;
  * @version 2.0<br>
  * @date 2019/04/03 <br>
  */
+@SuppressWarnings("JavaDoc")
 @Slf4j
 public class BindAnnotationGroup {
     /**
@@ -71,20 +73,19 @@ public class BindAnnotationGroup {
      * @param annotation
      */
     public void addBindAnnotation(String fieldName, Class<?> fieldClass, Annotation annotation){
+        FieldAnnotation fieldAnnotation = new FieldAnnotation(fieldName, fieldClass, annotation);
         if(annotation instanceof BindDict){
             if(bindDictAnnotations == null){
                 bindDictAnnotations = new ArrayList<>(4);
             }
-            bindDictAnnotations.add(new FieldAnnotation(fieldName, fieldClass, annotation));
-            if(requireSequential == false && bindFieldGroupMap != null){
-                bindFieldGroupMap.values().forEach(list -> {
-                    list.forEach(item -> {
-                        if(item.getFieldName().equals(fieldName) && item.getFieldClass().getName().equals(fieldClass.getName())){
-                            requireSequential = true;
-                            return;
-                        }
-                    });
-                });
+            bindDictAnnotations.add(fieldAnnotation);
+            if(!requireSequential && bindFieldGroupMap != null){
+                // 是否存在重复的字段
+                // 只要任意一个符合条件，即可结束遍历
+                requireSequential = bindFieldGroupMap.values().stream().anyMatch(list ->
+                        list.stream().anyMatch(item ->
+                                item.getFieldName().equals(fieldName) && item.getFieldClass().equals(fieldClass)
+                        ));
             }
             return;
         }
@@ -112,40 +113,36 @@ public class BindAnnotationGroup {
                 bindFieldGroupMap = new HashMap<>(4);
             }
             List<FieldAnnotation> list = bindFieldGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
-            list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
-            if(requireSequential == false && bindDictAnnotations != null){
-                bindDictAnnotations.forEach(item -> {
-                    if(item.getFieldName().equals(fieldName) && item.getFieldClass().getName().equals(fieldClass.getName())){
-                        requireSequential = true;
-                        return;
-                    }
-                });
+            list.add(fieldAnnotation);
+            if(!requireSequential && bindDictAnnotations != null){
+                // 是否存在重复的字段
+                requireSequential = bindDictAnnotations.stream().anyMatch(item ->
+                        item.getFieldName().equals(fieldName) && item.getFieldClass().equals(fieldClass)
+                );
             }
         }
         else if(annotation instanceof BindEntity){
             if(bindEntityAnnotations == null){
                 bindEntityAnnotations = new ArrayList<>(4);
             }
-            FieldAnnotation fieldAnno = new FieldAnnotation(fieldName, fieldClass, annotation);
-            bindEntityAnnotations.add(fieldAnno);
+            bindEntityAnnotations.add(fieldAnnotation);
             if(((BindEntity)annotation).deepBind()){
                 if(deepBindEntityAnnotations == null){
                     deepBindEntityAnnotations = new ArrayList<>(4);
                 }
-                deepBindEntityAnnotations.add(fieldAnno);
+                deepBindEntityAnnotations.add(fieldAnnotation);
             }
         }
         else if(annotation instanceof BindEntityList){
             if(bindEntityListAnnotations == null){
                 bindEntityListAnnotations = new ArrayList<>(4);
             }
-            FieldAnnotation fieldAnno = new FieldAnnotation(fieldName, fieldClass, annotation);
-            bindEntityListAnnotations.add(fieldAnno);
+            bindEntityListAnnotations.add(fieldAnnotation);
             if(((BindEntityList)annotation).deepBind()){
                 if(deepBindEntityListAnnotations == null){
                     deepBindEntityListAnnotations = new ArrayList<>(4);
                 }
-                deepBindEntityListAnnotations.add(fieldAnno);
+                deepBindEntityListAnnotations.add(fieldAnnotation);
             }
         }
         else if(annotation instanceof BindFieldList){
@@ -154,7 +151,7 @@ public class BindAnnotationGroup {
                 bindFieldListGroupMap = new HashMap<>(4);
             }
             List<FieldAnnotation> list = bindFieldListGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
-            list.add(new FieldAnnotation(fieldName, fieldClass, annotation));
+            list.add(fieldAnnotation);
         }
     }
 
@@ -187,8 +184,7 @@ public class BindAnnotationGroup {
     }
 
     public boolean isEmpty() {
-        return bindDictAnnotations == null && bindFieldGroupMap == null && bindEntityAnnotations == null
-                && bindEntityListAnnotations == null && bindFieldListGroupMap == null;
+        return V.isAllEmpty(bindDictAnnotations, bindFieldGroupMap, bindEntityAnnotations, bindEntityListAnnotations, bindFieldListGroupMap);
     }
 
     /**
