@@ -561,14 +561,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
-		List<FT> fldValues = new ArrayList<>(entityList.size());
+		Set<FT> fldValues = new HashSet<>(entityList.size());
 		for(T entity : entityList){
 			FT value = (FT)BeanUtils.getProperty(entity, fieldName);
-			if(value != null && !fldValues.contains(value)){
+			if(value != null){
 				fldValues.add(value);
 			}
 		}
-		return fldValues;
+		return new ArrayList<>(fldValues);
 	}
 
 	@Override
