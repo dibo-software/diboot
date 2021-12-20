@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.BindQueryGroup;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
@@ -190,12 +189,12 @@ public class QueryBuilder {
             if (query != null && query.ignore()) {
                 continue;
             }
-            BindQueryGroup queryGroup = field.getAnnotation(BindQueryGroup.class);
+            BindQuery.List queryList = field.getAnnotation(BindQuery.List.class);
             Object value = fieldAndValue.getValue();
             // 构建Query
-            if (queryGroup != null) {
+            if (queryList != null) {
                 wrapper.and(queryWrapper -> {
-                    for (BindQuery bindQuery : queryGroup.value()) {
+                    for (BindQuery bindQuery : queryList.value()) {
                         if (ignoreEmpty.apply(value, bindQuery)) {
                             continue;
                         }

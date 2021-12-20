@@ -20,49 +20,60 @@ import java.lang.annotation.*;
 
 /**
  * 绑定管理器
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/7/18
  */
-@Repeatable(BindQueryGroup.class)
 @Target(ElementType.FIELD)
+@Repeatable(BindQuery.List.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BindQuery {
 
     /**
      * 查询条件
-     * @return
      */
     Comparison comparison() default Comparison.EQ;
 
     /**
      * 数据库字段，默认为空，自动根据驼峰转下划线
-     * @return
      */
     String field() default "";
 
-    /***
+    /**
      * 绑定的Entity类
-     * @return
      */
     Class<?> entity() default NullType.class;
 
-    /***
+    /**
      * JOIN连接条件，支持动态的跨表JOIN查询
-     * @return
      */
     String condition() default "";
 
     /**
      * 忽略该字段
-     * @return
      */
     boolean ignore() default false;
 
     /**
      * 查询处理策略：默认忽略空字符串
-     * @return
      */
     Strategy strategy() default Strategy.IGNORE_EMPTY;
+
+    /**
+     * 在同一个字段上支持多个{@link BindQuery}，之间会用采用OR的方式连接
+     *
+     * @author wind
+     * @since v2.4.0
+     */
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @interface List {
+
+        BindQuery[] value();
+
+    }
+
 }
