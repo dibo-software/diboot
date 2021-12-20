@@ -55,7 +55,7 @@ public class MessageAutoConfig {
      * @return
      */
     @Bean("EMAIL")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "EMAIL")
     public ChannelStrategy simpleEmailChannel() {
         return new SimpleEmailChannel();
     }
