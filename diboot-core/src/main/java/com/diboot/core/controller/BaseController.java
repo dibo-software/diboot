@@ -249,16 +249,8 @@ public class BaseController {
 		for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
 			// 请求参数安全检查
 			V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
-			AttachMoreDTO.REF_TYPE type = attachMoreDTO.getType();
-			String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
-			if (AttachMoreDTO.REF_TYPE.D.equals(type)) {
-				List<LabelValue> labelValueList = dictionaryService.getLabelValueList(attachMoreDTO.getTarget());
-				result.put(targetKeyPrefix + "Options", labelValueList);
-			} else if (AttachMoreDTO.REF_TYPE.T.equals(type)) {
-				result.computeIfAbsent(targetKeyPrefix + "Options", key -> attachMoreRelatedData(attachMoreDTO));
-			} else {
-				log.error("错误的加载绑定类型：{}，绑定类型不能为空，且只能为:T或D类型！", attachMoreDTO.getType());
-			}
+			result.computeIfAbsent(S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options", key -> V.isEmpty(attachMoreDTO.getLabel()) ?
+					dictionaryService.getLabelValueList(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
 		}
 		return result;
 	}
