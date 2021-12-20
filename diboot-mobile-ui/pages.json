@@ -9,44 +9,7 @@
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
 			}
-		},{
-			"path": "pages/mobileTest/list",
-			"style": {
-				"navigationBarTitleText": "列表",
-				"navigationStyle": "custom"
-			}
-		}, {
-			"path": "pages/mobileTest/form",
-			"style": {
-				"navigationBarTitleText": "表单",
-				"navigationStyle": "default"
-			}
-		}, {
-			"path": "pages/mobileTest/detail",
-			"style": {
-				"navigationBarTitleText": "详情",
-				"navigationStyle": "default"
-			}
 		},
-		 {
-		 	"path": "pages/testAllField/form",
-		 	"style": {
-		 		"navigationBarTitleText": "表单",
-		 		"navigationStyle": "default"
-		 	}
-		 }, {
-		 	"path": "pages/testAllField/detail",
-		 	"style": {
-		 		"navigationBarTitleText": "详情aasa",
-		 		"navigationStyle": "custom"
-		 	}
-		 }, {
-		 	"path": "pages/testAllField/list",
-		 	"style": {
-		 		"navigationBarTitleText": "列表",
-		 		"navigationStyle": "custom"
-		 	}
-		 },
 		{
 			"path": "pages/home/home",
 			"style": {
