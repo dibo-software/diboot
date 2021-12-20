@@ -71,6 +71,11 @@ public class AttachMoreDTO implements Serializable {
     private String ext;
 
     /**
+     * 额外的条件
+     */
+    private Map<String, Object> additional;
+
+    /**
      * 关键字（用于前端远程搜索label）
      */
     private String keyword;
