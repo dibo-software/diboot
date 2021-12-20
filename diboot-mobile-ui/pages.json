@@ -9,7 +9,8 @@
 				"navigationBarTitleText": "",
 				"navigationStyle": "custom"
 			}
-		}, {
+		},
+		{
 			"path": "pages/home/home",
 			"style": {
 				"navigationBarTitleText": "首页",

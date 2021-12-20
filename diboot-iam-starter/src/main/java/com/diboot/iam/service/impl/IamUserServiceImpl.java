@@ -37,9 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
 * 系统用户相关Service实现
@@ -47,6 +45,7 @@ import java.util.List;
 * @version 2.0
 * @date 2019-12-17
 */
+@SuppressWarnings("JavaDoc")
 @Service
 @Slf4j
 public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUser> implements IamUserService {
@@ -66,7 +65,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception {
+    public boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) {
         // 创建用户信息
         this.createEntity(userAccountDTO);
         // 如果提交的有账号信息，则新建账号信息
@@ -79,7 +78,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception {
+    public boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) {
         // 更新用户信息
         this.updateEntity(userAccountDTO);
 
@@ -120,7 +119,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteUserAndAccount(Long id) throws Exception {
+    public boolean deleteUserAndAccount(Long id) {
         if (exists(IamUser::getId, id) == false){
             throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
         }
@@ -134,26 +133,23 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     public List<String> filterDuplicateUserNums(List<String> userNumList) {
-        List<String> batchUserNumList = new ArrayList<>();
-        List<String> allDuplicateUserNumList = new ArrayList<>();
-            for (int i = 0; i < userNumList.size(); i++) {
-            if (i > 0 && i % BaseConfig.getBatchSize() == 0) {
-                List<String> duplicateUserNumList = this.checkUserNumDuplicate(batchUserNumList);
-                if (V.notEmpty(duplicateUserNumList)) {
-                    allDuplicateUserNumList.addAll(duplicateUserNumList);
-                }
-                batchUserNumList.clear();
-            }
-            batchUserNumList.add(userNumList.get(i));
+        if (V.isEmpty(userNumList)) {
+            return Collections.emptyList();
         }
-        if (V.notEmpty(batchUserNumList)) {
-            List<String> duplicateUserNumList = this.checkUserNumDuplicate(batchUserNumList);
-            if (V.notEmpty(duplicateUserNumList)) {
-                allDuplicateUserNumList.addAll(duplicateUserNumList);
+        int totalSize = userNumList.size(), batchSize = BaseConfig.getBatchSize();
+        Set<String> uniqueUserNumSet = new HashSet<>(totalSize);
+        int startInx = 0;
+        while (startInx < totalSize) {
+            List<String> existUserNumList = this.checkUserNumDuplicate(
+                    // 截取子列表：[0, batchSize)、[batchSize, 2*batchSize)...[n*batchSize, totalSize)
+                    userNumList.subList(startInx, Math.min(startInx + batchSize, totalSize))
+            );
+            if (V.notEmpty(existUserNumList)) {
+                uniqueUserNumSet.addAll(existUserNumList);
             }
-            batchUserNumList.clear();
+            startInx += batchSize;
         }
-        return allDuplicateUserNumList;
+        return new ArrayList<>(uniqueUserNumSet);
     }
 
     @Override
@@ -186,7 +182,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return iamUserNums;
     }
 
-    private void createAccount(IamUserAccountDTO userAccountDTO) throws Exception{
+    private void createAccount(IamUserAccountDTO userAccountDTO) {
         // 创建账号信息
         IamAccount iamAccount = new IamAccount();
         iamAccount
@@ -203,7 +199,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         iamUserRoleService.createUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
     }
 
-    private void deleteAccount(Long userId) throws Exception {
+    private void deleteAccount(Long userId) {
         if (V.equals(userId, IamSecurityUtils.getCurrentUserId())) {
             throw new BusinessException("不可删除自己的账号");
         }
