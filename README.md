@@ -2,13 +2,6 @@
 
 > 新用户指南: [手把手来体验](https://www.diboot.com/guide/newer/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17P4y1p7L4) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
-# 鼓励一下
-<hr>
-喜欢diboot就投一票鼓励我们一下，让我们更有劲迭代！
-
-[中国开源项目评选，打开页面搜索diboot，投票](https://www.oschina.net/project/top_cn_2021)
-
-
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <hr>
 <p align="center">
