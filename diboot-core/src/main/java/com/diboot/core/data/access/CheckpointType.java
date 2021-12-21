@@ -26,7 +26,8 @@ public enum CheckpointType {
     USER(0), // 用户范围
     ORG(1), // 组织范围
     POSITION(2), // 岗位范围
-
+    LEVEL(4),  // 级别
+    GROUP(5),   // 组
     EXT_OBJ(3); // 扩展对象范围
 
     private int index;
