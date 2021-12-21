@@ -63,20 +63,15 @@
 			 */
 			login(data) {
 				// 密码登陆
-				// this.$pwdLogin
-				// 	// .setTip(this.$refs.uTips)
-				// 	.go(data)
-				// 	.then(() => {
-				// 		// 跳转到首页
-				// 		uni.switchTab({
-				// 			url: '/pages/home/home'
-				// 		})
-				// 	})
-				this.$tip(this.$refs.uTips, '登陆成功').then(() => {
-					uni.switchTab({
-						url: '/pages/home/home'
-					});
-				})
+				this.$pwdLogin
+					// .setTip(this.$refs.uTips)
+					.go(data)
+					.then(() => {
+						// 跳转到首页
+						uni.switchTab({
+							url: '/pages/home/home'
+						})
+					})
 			},
 			/**
 			 * 微信登陆：
