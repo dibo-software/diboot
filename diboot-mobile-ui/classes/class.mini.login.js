@@ -5,10 +5,16 @@ export default class MiniLogin extends Member {
 	constructor() {
 		super()
 		this.$path = null
+		this.bindWx = false
 	}
 
 	setUrlPath(path){
 		this.$path = path
+		return this
+	}
+
+	setBindWx(bindWx){
+		this.bindWx = bindWx
 		return this
 	}
 	/**
@@ -40,8 +46,10 @@ export default class MiniLogin extends Member {
 	 * @param {Object} encodePhone 加密的手机号信息
 	 */
 	async miniAuthLogin(code, infoRes) {
+		let msg = this.bindWx ? '绑定中' : '登录中'
+		let msgFail = this.bindWx ? '绑定失败' : '登陆失败'
 		uni.showLoading({
-		    title: '登录中'
+		    title: msg
 		});
 		try {
 			// 调用登陆接口
@@ -50,10 +58,14 @@ export default class MiniLogin extends Member {
 				const {sessionKey, openid} = res.data
 				// 存储sessionKey
 				uni.setStorageSync("sessionKey", sessionKey)
-				// 存储用户信息
-				this.wxStorageUserInfo({sessionKey, openid, ...infoRes})
+				if(this.bindWx) {
+					this.bindWxMa({sessionKey, openid, ...infoRes})
+				} else {
+					// 存储用户信息
+					this.wxStorageUserInfo({sessionKey, openid, ...infoRes})
+				}
 			} else {
-				this.$tip ? this.$tip.show({ title: '登录失败', type: 'error', duration: '3000'}) : uni.showToast({ title: res.msg, icon: 'error'})
+				this.$tip ? this.$tip.show({ title: msgFail, type: 'error', duration: '3000'}) : uni.showToast({ title: res.msg, icon: 'error'})
 				uni.hideLoading()
 			}
 		} catch(e) {
@@ -70,9 +82,9 @@ export default class MiniLogin extends Member {
 	 * sessionKey, openid, signature, rawData, encryptedData, iv
 	 */
 	async wxStorageUserInfo(data) {
-		const saveRes = await dibootApi.post('/wx-ma/auth/saveWxMember', data)
+		const saveRes = await dibootApi.post('/wx-ma/auth/getAndSaveWxMember', data)
 		if(saveRes.code === 0 ) {
-			uni.setStorageSync("userInfo", JSON.stringify(saveRes.data))
+			uni.setStorageSync("member", JSON.stringify(saveRes.data))
 			// 调用iam登陆接口
 			const loginForm =  {authAccount: saveRes.data.openid, authType: 'WX_MP'}
 			const loginRes = await dibootApi.post('/wx-ma/auth/login', loginForm)
@@ -80,7 +92,6 @@ export default class MiniLogin extends Member {
 				uni.setStorageSync("authtoken", loginRes.data)
 				this.$tip ? this.$tip.show({ title: '登录成功', type: 'success' }) : uni.showToast({ title: '登录成功', icon: 'success' })
 				uni.hideLoading()
-				this.getMemberInfo()
 				// 跳转到首页
 				uni.switchTab({
 					url: this.$path
@@ -90,9 +101,27 @@ export default class MiniLogin extends Member {
 				uni.hideLoading()
 			}
 		} else {
-			this.$tip ? this.$tip.show({ title: '请先授权', type: 'error', duration: '3000'})  : uni.showToast({ title: '请先授权', icon: 'error'})
+			this.$tip ? this.$tip.show({ title: saveRes.msg, type: 'error', duration: '3000'})  : uni.showToast({ title: saveRes.msg, icon: 'error'})
 			uni.hideLoading()
 		}
 	}
-
+	/**
+	 * 绑定微信
+	 * @param {Object} data
+	 */
+	async bindWxMa(data) {
+		const bindRes = await dibootApi.post('/wx-ma/bindMa', data)
+		if(bindRes.code === 0 ) {
+			uni.setStorageSync("member", JSON.stringify(bindRes.data))
+			this.$tip ? this.$tip.show({ title: '绑定成功', type: 'success' }) : uni.showToast({ title: '绑定成功', icon: 'success' })
+			uni.hideLoading()
+			// 跳转到首页
+			uni.reLaunch({
+				url: this.$path
+			})
+		} else {
+			this.$tip ? this.$tip.show({ title: bindRes.msg, type: 'error', duration: '3000'})  : uni.showToast({ title: bindRes.msg, icon: 'error'})
+			uni.hideLoading()
+		}
+	}
 }

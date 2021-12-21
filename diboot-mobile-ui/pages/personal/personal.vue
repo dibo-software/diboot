@@ -8,8 +8,10 @@
 			</view>
 			<u-icon size="40" name="edit-pen"></u-icon>
 		</view>
-		<view class="personal-cell">
-			<cell :list="cellList"></cell>
+		<view class="u-m-t-20">
+			<u-cell-group>
+				<u-cell-item icon="weixin-fill" title="绑定微信" @click="weiBind"></u-cell-item>
+			</u-cell-group>
 		</view>
 		<view class="u-m-t-80">
 			<u-button type="error" @click="logOut">退出登录</u-button>
@@ -21,18 +23,7 @@
 <script>
 	export default {
 		data() {
-			return {
-				cellList: [{
-						title: '标题1',
-					},
-					{
-						title: '标题2',
-					},
-					{
-						title: '标题3',
-					}
-				]
-			}
+			return {}
 		},
 		methods: {
 			logOut() {
@@ -41,8 +32,21 @@
 						url: '/pages/login/index'
 					});
 				})
+			},
+			/**
+			 * 微信绑定
+			 */
+			weiBind() {
+				// 小程序登陆
+				// #ifdef MP-WEIXIN
+				this.$miniLogin.setBindWx(true).setTip(this.$refs.uToast).setUrlPath('/pages/personal/personal').go()
+				//#endif
+				// 微信公众号登陆
+				// #ifdef H5
+				this.$mpLogin.redirect(true)
+				//#endif
 			}
-		}
+		},
 	}
 </script>
 
@@ -69,11 +73,6 @@
 					font-size: 32rpx;
 				}
 			}
-		}
-
-		&-cell {
-			border-radius: 20rpx;
-			overflow: hidden;
 		}
 	}
 </style>
