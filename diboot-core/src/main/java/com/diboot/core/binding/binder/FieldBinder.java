@@ -110,6 +110,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
             List<Map<String, Object>> mapList = null;
             this.simplifySelectColumns(remoteBindDTO);
             super.buildQueryWrapperJoinOn(remoteBindDTO);
+            // 查询条件为空时不进行查询
+            if (queryWrapper.isEmptyOfNormal()) {
+                return;
+            }
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的mapList
                 mapList = getMapList(queryWrapper);
