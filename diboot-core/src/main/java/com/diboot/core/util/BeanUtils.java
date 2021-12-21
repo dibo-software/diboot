@@ -606,6 +606,7 @@ public class BeanUtils {
      * @param <E>
      * @return
      */
+    @Deprecated
     public static <E> List collectToList(List<E> objectList, String getterPropName, boolean[] hasNullFlags){
         if(V.isEmpty(objectList)){
             return Collections.emptyList();

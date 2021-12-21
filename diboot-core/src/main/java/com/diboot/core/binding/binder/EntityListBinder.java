@@ -69,6 +69,10 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         if(middleTable == null){
             super.simplifySelectColumns(remoteBindDTO);
             super.buildQueryWrapperJoinOn(remoteBindDTO);
+            // 查询条件为空时不进行查询
+            if (queryWrapper.isEmptyOfNormal()) {
+                return;
+            }
             //处理orderBy，附加排序
             this.appendOrderBy(remoteBindDTO);
             List<T> entityList = null;

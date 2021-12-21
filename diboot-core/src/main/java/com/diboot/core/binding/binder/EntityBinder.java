@@ -109,6 +109,10 @@ public class EntityBinder<T> extends BaseBinder<T> {
             // @BindEntity(entity = Department.class, condition="this.department_id=id AND this.type=type")
             // Department department;
             super.buildQueryWrapperJoinOn(remoteBindDTO);
+            // 查询条件为空时不进行查询
+            if (queryWrapper.isEmptyOfNormal()) {
+                return;
+            }
             List<T> entityList = null;
             // 查询entity列表: List<T>
             if(V.isEmpty(this.module)){
@@ -131,12 +135,12 @@ public class EntityBinder<T> extends BaseBinder<T> {
             }
             // 提取注解条件中指定的对应的列表
             Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();
-            // 结果转换Map
-            Map<String, Object> valueEntityMap = new HashMap<>();
             Map<String, Object> middleTableResultMap = middleTable.executeOneToOneQuery(trunkObjCol2ValuesMap);
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
+            // 结果转换Map
+            Map<String, Object> valueEntityMap = new HashMap<>();
             this.simplifySelectColumns(remoteBindDTO);
             // 提取entity主键值集合
             Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());

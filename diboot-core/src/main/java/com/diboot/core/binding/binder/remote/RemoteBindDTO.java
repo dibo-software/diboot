@@ -24,6 +24,7 @@ import java.util.Collection;
 
 /**
  * 远程绑定DTO定义
+ *
  * @author JerryMa
  * @version v2.4.0
  * @date 2021/11/2
@@ -36,15 +37,14 @@ public class RemoteBindDTO implements Serializable {
     private String entityClassName;
     private String[] selectColumns;
     private String refJoinCol;
-    private Collection inConditionValues;
-    private boolean hasNullValue;
+    private Collection<?> inConditionValues;
     private String orderBy;
     private String resultType;
 
-    public RemoteBindDTO(){
+    public RemoteBindDTO() {
     }
 
-    public RemoteBindDTO(Class entityClass){
+    public RemoteBindDTO(Class<?> entityClass) {
         this.entityClassName = entityClass.getName();
     }
 
