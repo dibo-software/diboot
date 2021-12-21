@@ -91,7 +91,6 @@ public class IamMember extends BaseLoginUser {
     /**
      * 昵称
      */
-    @NotNull(message = "昵称不能为空")
     @Length(max = 100, message = "昵称长度应小于100")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()

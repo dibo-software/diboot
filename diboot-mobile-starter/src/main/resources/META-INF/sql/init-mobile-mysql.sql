@@ -6,7 +6,7 @@ CREATE TABLE `iam_member` (
     `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
     `user_type` varchar(100) NOT NULL DEFAULT 'IamUser' COMMENT '用户类型',
     `openid` varchar(32) NOT NULL COMMENT 'openid',
-    `nickname` varchar(100) NOT NULL COMMENT '昵称',
+    `nickname` varchar(100) COMMENT '昵称',
     `avatar_url` varchar(255) COMMENT '头像',
     `country` varchar(50) COMMENT '国家',
     `province` varchar(50) COMMENT '省',

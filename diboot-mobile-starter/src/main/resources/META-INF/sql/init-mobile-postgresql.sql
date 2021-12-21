@@ -6,7 +6,7 @@ CREATE TABLE iam_member (
   user_id bigint default 0 not null,
   user_type VARCHAR(100) NOT NULL DEFAULT 'IamUser',
   openid VARCHAR(50) NOT NULL,
-  nickname VARCHAR(100) NOT NULL,
+  nickname VARCHAR(100),
   avatar_url VARCHAR(255),
   country VARCHAR(50),
   province VARCHAR(50),

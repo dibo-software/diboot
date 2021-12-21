@@ -6,7 +6,7 @@ CREATE TABLE ${SCHEMA}.iam_member (
   user_id NUMBER(20) default 0 not null,
   user_type VARCHAR2(100) NOT NULL DEFAULT 'IamUser',
   openid VARCHAR2(50) NOT NULL,
-  nickname VARCHAR2(100) NOT NULL,
+  nickname VARCHAR2(100),
   avatar_url VARCHAR2(255),
   country VARCHAR2(50),
   province VARCHAR2(50),

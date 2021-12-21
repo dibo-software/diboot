@@ -36,7 +36,7 @@ export default class MiniLogin extends Member {
 				});
 		    },
 		    fail : function( res ){
-		        console.log('wx.getUserProfile=>用户拒绝了授权', res);
+		        console.log('wx.getUserProfile=>获取用户失败', res);
 		    }
 		})
 	}
