@@ -58,28 +58,20 @@ public class RemoteBindQueryExecutor {
             log.error("无法找到Entity类: {}", remoteBindDTO.getEntityClassName(), e);
             return JsonResult.FAIL_INVALID_PARAM("模块下无Entity类: "+remoteBindDTO.getEntityClassName());
         }
-        Collection inConditionValues = remoteBindDTO.getInConditionValues();
+        Collection<?> inConditionValues = remoteBindDTO.getInConditionValues();
         if(inConditionValues == null){
             return JsonResult.OK();
         }
         // 构建queryWrpper
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper<?> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(entityClass);
         queryWrapper.select(remoteBindDTO.getSelectColumns());
         // 构建查询条件
         String refJoinCol = remoteBindDTO.getRefJoinCol();
-        if(inConditionValues.isEmpty()){
-            queryWrapper.isNull(refJoinCol);
-        }
-        else{// 有null值
-            if(remoteBindDTO.isHasNullValue()){
-                queryWrapper.isNull(refJoinCol);
-                queryWrapper.or();
-                queryWrapper.in(refJoinCol, inConditionValues);
-            }
-            else{
-                queryWrapper.in(refJoinCol, inConditionValues);
-            }
+        if (inConditionValues.isEmpty()) {
+            return JsonResult.OK(Collections.emptyList());
+        } else {
+            queryWrapper.in(refJoinCol, inConditionValues);
         }
         // 排序
         if(V.notEmpty(remoteBindDTO.getOrderBy())){
@@ -107,7 +99,7 @@ public class RemoteBindQueryExecutor {
                 jsonStr = JSON.stringify(resultMap);
             }
             else if("Entity".equals(remoteBindDTO.getResultType())){
-                List resultList = getEntityList(entityClass, queryWrapper);
+                List<?> resultList = getEntityList(entityClass, queryWrapper);
                 jsonStr = JSON.stringify(resultList);
             }
             return JsonResult.OK(jsonStr);
