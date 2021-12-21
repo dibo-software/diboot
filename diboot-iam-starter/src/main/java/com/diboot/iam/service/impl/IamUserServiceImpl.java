@@ -28,7 +28,6 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamSecurityUtils;
@@ -52,9 +51,6 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired
     private IamUserRoleService iamUserRoleService;
-
-    @Autowired
-    private IamResourcePermissionService iamResourcePermissionService;
 
     @Autowired
     private IamAccountService iamAccountService;

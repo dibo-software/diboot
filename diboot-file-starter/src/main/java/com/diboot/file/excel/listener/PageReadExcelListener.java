@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -43,9 +44,9 @@ public abstract class PageReadExcelListener<T extends BaseExcelModel> extends Re
      * 缓存数据列表
      */
     @Getter
-    private List<T> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private final List<T> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    private CompletableFuture<Boolean> completableFuture;
+    protected CompletableFuture<Boolean> completableFuture;
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
@@ -65,8 +66,8 @@ public abstract class PageReadExcelListener<T extends BaseExcelModel> extends Re
             if (completableFuture != null) {
                 completableFuture.join();
             }
-            completableFuture = asyncHandle(cachedDataList);
-            cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+            completableFuture = asyncHandle(new ArrayList<>(cachedDataList));
+            cachedDataList.clear();
         }
     }
 

@@ -26,6 +26,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.dto.AttachMoreDTO;
 import com.diboot.core.dto.CascaderDTO;
 import com.diboot.core.entity.ValidList;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.CascaderService;
 import com.diboot.core.service.DictionaryService;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /***
@@ -247,16 +249,8 @@ public class BaseController {
 		for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
 			// 请求参数安全检查
 			V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
-			AttachMoreDTO.REF_TYPE type = attachMoreDTO.getType();
-			String targetKeyPrefix = S.toLowerCaseCamel(attachMoreDTO.getTarget());
-			if (AttachMoreDTO.REF_TYPE.D.equals(type)) {
-				List<LabelValue> labelValueList = dictionaryService.getLabelValueList(attachMoreDTO.getTarget());
-				result.put(targetKeyPrefix + "Options", labelValueList);
-			} else if (AttachMoreDTO.REF_TYPE.T.equals(type)) {
-				result.computeIfAbsent(targetKeyPrefix + "Options", key -> attachMoreRelatedData(attachMoreDTO));
-			} else {
-				log.error("错误的加载绑定类型：{}，绑定类型不能为空，且只能为:T或D类型！", attachMoreDTO.getType());
-			}
+			result.computeIfAbsent(S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options", key -> V.isEmpty(attachMoreDTO.getLabel()) ?
+					dictionaryService.getLabelValueList(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
 		}
 		return result;
 	}
@@ -267,30 +261,59 @@ public class BaseController {
 	 * @param attachMoreDTO
 	 * @return labelValue列表
 	 */
-	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO) {
+    protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO) {
+        return attachMoreRelatedData(attachMoreDTO, (queryWrapper, columnByField) -> {
+            if (attachMoreDTO.getAdditional() == null) {
+                return;
+            }
+            for (Map.Entry<String, Object> item : attachMoreDTO.getAdditional().entrySet()) {
+                String columnName = columnByField.apply(item.getKey(), null);
+                if (V.isEmpty(columnName)) {
+                    throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 无 " + item.getKey() + " 属性");
+                }
+                Object itemValue = item.getValue();
+                if (itemValue == null) {
+                    queryWrapper.isNull(columnName);
+                } else {
+                    if (itemValue instanceof Collection) {
+                        queryWrapper.in(columnName, (Collection<?>) itemValue);
+                    } else {
+                        queryWrapper.eq(columnName, itemValue);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 通用的attachMore过滤接口
+     *
+     * @param attachMoreDTO
+     * @param custom        自定义条件
+     * @return labelValue列表
+     */
+	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO,
+													 BiConsumer<QueryWrapper<?>,BiFunction<String, String, String>> custom) {
 		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMoreDTO.getTarget()));
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
-			log.error("传递错误的实体类型：{}", attachMoreDTO.getTarget());
-			return null;
+			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 不存在");
 		}
 		BaseService<?> baseService = ContextHelper.getBaseServiceByEntity(entityClass);
 		if (baseService == null) {
-			log.error("未找到实体类型{} 对应的Service定义", attachMoreDTO.getTarget());
-			return null;
+			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 的Service不存在 ");
 		}
 		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
 		BiFunction<String, String, String> columnByField = (field, defValue) -> {
 			if (V.notEmpty(field)) {
 				String column = propInfoCache.getColumnByField(field);
-				return V.notEmpty(column) ? column : field;
+				return V.notEmpty(column) ? column : defValue;
 			}
 			return defValue;
 		};
 		String label = columnByField.apply(attachMoreDTO.getLabel(), null);
 		if (V.isEmpty(label)) {
-			log.error("实体类型：{} ，未指定label属性", attachMoreDTO.getTarget());
-			return null;
+			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 的label属性 " + attachMoreDTO.getLabel() + " 不存在");
 		}
 		String value = columnByField.apply(attachMoreDTO.getValue(), propInfoCache.getIdColumn());
 		String ext = columnByField.apply(attachMoreDTO.getExt(), null);
@@ -298,6 +321,9 @@ public class BaseController {
 		QueryWrapper<?> queryWrapper = Wrappers.query()
 				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
 				.like(V.notEmpty(attachMoreDTO.getKeyword()), label, attachMoreDTO.getKeyword());
+		if (custom != null) {
+			custom.accept(queryWrapper, columnByField);
+		}
 		return baseService.getLabelValueList(queryWrapper);
 	}
 

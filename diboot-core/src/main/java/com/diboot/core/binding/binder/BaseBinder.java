@@ -46,7 +46,7 @@ public abstract class BaseBinder<T> {
     /***
      * 需要绑定到的VO注解对象List
      */
-    protected List annoObjectList;
+    protected List<?> annoObjectList;
     /***
      * VO注解对象中的join on对象列名集合
      */
@@ -257,29 +257,16 @@ public abstract class BaseBinder<T> {
      * 构建join on
      */
     protected void buildQueryWrapperJoinOn(RemoteBindDTO remoteBindDTO){
-        for(int i = 0; i< annoObjJoinCols.size(); i++){
+        for (int i = 0; i < annoObjJoinCols.size(); i++) {
             String annoObjJoinOnCol = annoObjJoinCols.get(i);
-            boolean[] hasNullFlags = new boolean[1];
-            List annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol), hasNullFlags);
+            List<?> annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol));
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(i);
-            if(V.isEmpty(annoObjectJoinOnList)){
-                queryWrapper.isNull(refObjJoinOnCol);
-            }
-            else{
-                List unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy)? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
+            if (V.notEmpty(annoObjectJoinOnList)) {
+                List<?> unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy) ? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
                         : annoObjectJoinOnList;
-                // 有null值
-                if(hasNullFlags[0]){
-                    if(remoteBindDTO != null){
-                        remoteBindDTO.setHasNullValue(true);
-                    }
-                    queryWrapper.and(qw -> qw.isNull(refObjJoinOnCol).or(w -> w.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList)));
-                }
-                else{
-                    queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
-                }
-                if(remoteBindDTO != null){
+                queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
+                if (remoteBindDTO != null) {
                     remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(unpackAnnoObjectJoinOnList);
                 }
             }

@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.annotation.*;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.BindQueryGroup;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.data.annotation.ProtectField;
 import com.diboot.core.data.encrypt.IEncryptStrategy;
@@ -242,9 +241,9 @@ public class ParserCache {
             }
             buildAnnoJoiner.accept(field, query);
         }
-        for (Field field : BeanUtils.extractFields(dtoClass, BindQueryGroup.class)) {
-            BindQueryGroup queryGroup = field.getAnnotation(BindQueryGroup.class);
-            for (BindQuery bindQuery : queryGroup.value()) {
+        for (Field field : BeanUtils.extractFields(dtoClass, BindQuery.List.class)) {
+            BindQuery.List queryList = field.getAnnotation(BindQuery.List.class);
+            for (BindQuery bindQuery : queryList.value()) {
                 buildAnnoJoiner.accept(field, bindQuery);
             }
         }
