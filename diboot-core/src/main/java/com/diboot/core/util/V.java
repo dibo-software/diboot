@@ -487,8 +487,8 @@ public class V {
         else if (source == null || target == null) {
             return false;
         }
-        else if (source instanceof Class<?> && target instanceof Class<?>) {
-            return ((Class<?>) source).getName().equals(((Class<?>) target).getName());
+        else if (source instanceof Class && target instanceof Class) {
+            return ((Class) source).getName().equals(((Class) target).getName());
         }
         // 不为空，调用equals比较
         else if (source instanceof Comparable) {
@@ -522,7 +522,7 @@ public class V {
             }
             return true;
         } else {
-            log.warn("暂未实现类型 " + source.getClass().getSimpleName() + "-" + target.getClass().getSimpleName() + " 的比对！");
+            log.warn("暂未实现类型 " + source.getClass().getName() + "-" + target.getClass().getName() + " 的比对！");
             return false;
         }
     }

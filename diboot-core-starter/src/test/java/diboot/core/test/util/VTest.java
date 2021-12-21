@@ -16,10 +16,7 @@
 package diboot.core.test.util;
 
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.D;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -92,6 +89,16 @@ public class VTest {
         Field field = BeanUtils.extractField(Dictionary.class, "createTime");
         Assert.assertTrue(V.equals(field.getType(), Date.class));
         Assert.assertTrue(V.equals(field.getType().getName(), "java.util.Date"));
+
+        Dictionary dictionary = BeanUtils.cloneBean(new Dictionary());
+        Dictionary dictionary1 = JSON.parseObject("{}", Dictionary.class);
+        Assert.assertTrue(V.equals(dictionary.getClass(), dictionary1.getClass()));
+
+        field = BeanUtils.extractField(Dictionary.class, "isDeletable");
+        Assert.assertTrue(V.equals(Boolean.class, field.getType()));
+
+        field = BeanUtils.extractField(Dictionary.class, "deleted");
+        Assert.assertTrue(V.equals(boolean.class, field.getType()));
     }
 
     @Test
