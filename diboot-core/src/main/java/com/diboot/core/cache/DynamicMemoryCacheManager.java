@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 public class DynamicMemoryCacheManager extends BaseCacheManager{
 
     public DynamicMemoryCacheManager(String... cacheNames){
-        List<Cache> caches = new ArrayList<>();
+        List<Cache> caches = new ArrayList<>(cacheNames.length);
         for(String cacheName : cacheNames){
             caches.add(new ConcurrentMapCache(cacheName));
         }
@@ -40,6 +40,16 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
     public DynamicMemoryCacheManager(int expiredMinutes){
         this.expiredMinutes = expiredMinutes;
         this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+    }
+
+    public DynamicMemoryCacheManager(int expiredMinutes, String... cacheNames){
+        this.expiredMinutes = expiredMinutes;
+        this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+        List<Cache> caches = new ArrayList<>(cacheNames.length);
+        for(String cacheName : cacheNames){
+            caches.add(new ConcurrentMapCache(cacheName));
+        }
+        setCaches(caches);
     }
 
     /**
