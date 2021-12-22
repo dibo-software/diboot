@@ -52,10 +52,13 @@ public abstract class BaseExcelFileController extends BaseFileController {
     /**
      * excel数据预览
      *
+     * @param file        excel文件
+     * @param entityClass 对应实体class
+     * @param params      请求参数
      * @return
      * @throws Exception
      */
-    public JsonResult excelPreview(MultipartFile file, Class<?> entityClass, Map<String, Object> params) throws Exception {
+    public JsonResult<Map<String, Object>> excelPreview(MultipartFile file, Class<?> entityClass, Map<String, Object> params) throws Exception {
         checkIsExcel(file);
         // 保存文件
         UploadFile uploadFile = super.saveFile(file, entityClass);
@@ -88,11 +91,11 @@ public abstract class BaseExcelFileController extends BaseFileController {
     /**
      * 预览后提交保存
      *
-     * @param
+     * @param params 请求参数；必需包含预览返回的文件uuid
      * @return
      * @throws Exception
      */
-    public <T> JsonResult excelPreviewSave(Map<String, Object> params) throws Exception {
+    public JsonResult<Map<String, Object>> excelPreviewSave(Map<String, Object> params) throws Exception {
         String uuid = params.get("uuid").toString();
         if (V.isEmpty(uuid)) {
             throw new BusinessException("未知的预览保存");
@@ -106,11 +109,13 @@ public abstract class BaseExcelFileController extends BaseFileController {
     /**
      * 直接上传excel
      *
-     * @param
+     * @param file        excel文件
+     * @param entityClass 对应实体class
+     * @param params      请求参数
      * @return
      * @throws Exception
      */
-    public <T> JsonResult uploadExcelFile(MultipartFile file, Class<T> entityClass, Map<String, Object> params) throws Exception {
+    public JsonResult<Map<String, Object>> uploadExcelFile(MultipartFile file, Class<?> entityClass, Map<String, Object> params) throws Exception {
         checkIsExcel(file);
         // 保存文件
         UploadFile uploadFile = super.saveFile(file, entityClass);
@@ -122,7 +127,9 @@ public abstract class BaseExcelFileController extends BaseFileController {
     /**
      * 导入数据
      *
-     * @param uploadFile
+     * @param uploadFile  上传文件对象
+     * @param inputStream excel文件输入流
+     * @param params      请求参数
      * @return
      * @throws Exception
      */
@@ -147,7 +154,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
             String errorDataFileUid = S.substringBefore(errorDataFileUidName, ".");
             errorFile = new UploadFile()
                     .setUuid(errorDataFileUid)
-                    .setFileType("xlsx")
+                    .setFileType("excel")
                     .setFileName(errorDataFileName)
                     .setStoragePath(errorDataFilePath)
                     .setAccessUrl(buildAccessUrl(errorDataFileUidName));
@@ -209,5 +216,4 @@ public abstract class BaseExcelFileController extends BaseFileController {
             throw new BusinessException(Status.FAIL_VALIDATION, "该文件无内容！");
         }
     }
-
 }
