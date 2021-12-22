@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.1</version>
+        <version>2.6.2</version>
         <relativePath/>
     </parent>
 
@@ -31,6 +31,7 @@
         <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
         <okhttp.version>4.9.2</okhttp.version>
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
+        <commons.io>2.11.0</commons.io>
         <diboot.version>2.4.0</diboot.version>
     </properties>
 
