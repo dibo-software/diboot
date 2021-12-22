@@ -228,7 +228,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                 }
             } else {
                 log.error("数据转换异常", exception);
-                StringBuilder errorMsg = new StringBuilder("第 " + context.readRowHolder().getRowIndex() + 1 + " 行，");
+                StringBuilder errorMsg = new StringBuilder().append("第 ").append(context.readRowHolder().getRowIndex() + 1).append(" 行，");
                 errorMsgMap.forEach((fieldName, msg) -> errorMsg.append(fieldHeadMap.get(fieldName)).append("：").append(msg));
                 addExceptionMsg(errorMsg.toString());
                 return;
@@ -251,7 +251,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
             this.cachedData(currentRowAnalysisResult);
         } else {
             log.error("出现未预知的异常：", exception);
-            addExceptionMsg("第 " + context.readRowHolder().getRowIndex() + 1 + " 行，解析异常: " + exception.getMessage());
+            addExceptionMsg("第 " + (context.readRowHolder().getRowIndex() + 1) + " 行，解析异常: " + exception.getMessage());
         }
     }
 
@@ -327,7 +327,9 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                 builder.setLength(0);
                 builder.append("第 ").append(data.getRowIndex() + 1).append(" 行，");
                 data.getComment().forEach((k, v) -> {
-                    builder.append(fieldHeadMap.get(k)).append("：").append(S.join(v)).append("；");
+                    builder.append(fieldHeadMap.get(k)).append("：")
+                            .append(S.getIfEmpty(data.getField2InvalidValueMap().get(k), () -> S.defaultValueOf(BeanUtils.getProperty(data, k)))).append(" ")
+                            .append(S.join(v)).append("；");
                 });
                 return builder.toString();
             }).forEach(errorMsgs::add);
