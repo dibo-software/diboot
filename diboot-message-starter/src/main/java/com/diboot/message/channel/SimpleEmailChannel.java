@@ -52,7 +52,7 @@ public class SimpleEmailChannel implements ChannelStrategy {
     private MessageService messageService;
 
     @Override
-    @Async("applicationTaskExecutor")
+    @Async
     public void send(Message message) {
         log.debug("[开始发送邮件]：邮件内容：{}", JSON.stringify(message));
         String result = "success";
