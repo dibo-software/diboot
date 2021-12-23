@@ -14,7 +14,7 @@
 	@on-remove="handleRemove"
 	:form-data="uploadFormData"
 	:header="header"
-	:file-list="fileList">
+	:file-list="tempFileList">
 	</u-upload>
 </template>
 
@@ -35,12 +35,20 @@
 	 * @property {String} config 上传组件配置
 	 * @event {Function} confirm 点击确定按钮，返回当前选择的值
 	 */
+	import Emitter from '../../uview-ui/libs/util/emitter.js';
 	export default {
+		mixins: [Emitter],
 		computed: {
 			header() {
 				return {
 					authtoken: uni.getStorageSync('authtoken') || ''
 				}
+			},
+			tempFileList: {
+				get() {
+					return this.fileList
+				},
+				set() {}
 			},
 			uploadFormData() {
 				let tempFormData = this.formData || {}
@@ -83,7 +91,7 @@
 				    this.fileList.push(this.fileFormatter(data.data))
 				}
 				console.log('add end', this.fileList)
-				this.$emit('input', this.fileList.map(file => file.filePath).join(','))
+				this.handleInputEvent()
 			},
 			/**
 			 * 删除图片触发
@@ -97,7 +105,7 @@
 				this.fileList.length = 0
 				this.fileList.push(...newFileList)
 				console.log('remove end', this.fileList)
-				this.$emit('input', this.fileList.map(file => file.filePath).join(','))
+				this.handleInputEvent()
 			},
 			/**
 			 * 文件转化
@@ -110,6 +118,28 @@
 					filePath: data.accessUrl,
 					url: `${this.$cons.host()}${data.accessUrl}/image`
 				}
+			},
+			/**
+			 * 发送input消息
+			 * 过一个生命周期再发送事件给u-form-item，否则this.$emit('input')更新了父组件的值
+			 * 但是微信小程序上 尚未更新到u-form-item，导致获取的值为空
+			 */
+			handleInputEvent() {
+				const value = this.fileList.map(file => file.filePath).join(',')
+				this.$emit('input', value)
+				this.$nextTick(function(){
+					// 将当前的值发送到 u-form-item 进行校验
+					this.dispatch('u-form-item', 'on-form-change', value);
+				})
+			}
+		},
+		watch: {
+			tempFileList: {
+				handler(val) {
+					// 双向绑定
+					this.$emit('update:fileList', val)
+				},
+				deep: true
 			}
 		},
 		props: {
