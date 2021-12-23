@@ -14,11 +14,15 @@
 						})
 					})
 				} else {
-					this.$member.getMemberInfo()
-					// 跳转到首页
-					uni.switchTab({
-						url: '/pages/home/home'
-					})
+					let routes = getCurrentPages()
+					let lastRoute = routes && routes.length > 0 && routes[routes.length - 1].route
+					// 如果路由路由是登陆页，跳转至首页
+					if(lastRoute === '/pages/login/index') {
+						uni.switchTab({
+							url: '/pages/home/home'
+						})
+						this.$member.getMemberInfo()
+					}
 				}
 			} else {
 				let redirect = uni.getStorageSync("redirect")
@@ -38,7 +42,7 @@
 					let timer = setTimeout(() => {
 						clearTimeout(timer)
 					      uni.redirectTo({
-					          url: 'pages/login/login'
+					          url: 'pages/login/index'
 					      })
 					  }, 0)
 				}
