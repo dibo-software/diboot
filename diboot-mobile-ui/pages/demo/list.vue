@@ -1,9 +1,9 @@
 <template>
-	<view class="h100 page-bg-color">
-		<u-navbar title="列表" :immersive="true" :background="{background: '#f8f8f8'}" :border-bottom="false">
+	<view class="h100 page-bg-color" :style="{paddingTop: diStatusBarHeight + 44 + 'px'}">
+		<u-navbar title="列表" height="44" :immersive="true" :background="{background: '#f8f8f8'}" :border-bottom="false">
 			<u-icon @click="handleCreate" style="margin-right: 40rpx;" slot="right" name="plus" size="28" label="新建" color="#19be6b" label-color="#19be6b"/>
 		</u-navbar>
-		<scroll-view class="di-scroll" :style="{marginTop: diStatusBarHeight + 44 + 'px'}" scroll-y  @scrolltolower="handleOnreachBottom" :refresher-triggered="triggered"
+		<scroll-view class="di-scroll" scroll-y  @scrolltolower="handleOnreachBottom" :refresher-triggered="triggered"
 			refresher-enabled @refresherrefresh="handlePullDownRefresh">
 			<view class="di-scroll-list">
 				<!-- 右滑 -->
