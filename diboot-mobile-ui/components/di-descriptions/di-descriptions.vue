@@ -31,6 +31,10 @@
 	* @property {Number String} value-col value宽度，等分12份，设置后子元素di-descriptions-item可以继承
 	*/
 	export default {
+		// #ifdef MP-WEIXIN
+		// 解决小程序样式无法使用
+		options: { styleIsolation: 'shared' },
+		// #endif
 		name: 'DiDescriptions',
 		props: {
 			title: {
@@ -62,6 +66,7 @@
 
 <style lang="scss">
 .di-descriptions {
+	width: 100%;
 	/deep/.u-cell_title {
 		width: 100% !important;
 	}
@@ -70,6 +75,5 @@
 		display: flex;
 		justify-content: space-between;
 	}
-	
 }
 </style>
