@@ -77,7 +77,7 @@ public abstract class PageReadExcelListener<T extends BaseExcelModel> extends Re
      * @param dataList
      * @return
      */
-    @Async("applicationTaskExecutor")
+    @Async
     public CompletableFuture<Boolean> asyncHandle(List<T> dataList) {
         super.handle(dataList);
         return CompletableFuture.completedFuture(true);

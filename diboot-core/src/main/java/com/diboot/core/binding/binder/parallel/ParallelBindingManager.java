@@ -51,7 +51,7 @@ public class ParallelBindingManager {
      * @param fieldAnno
      * @return
      */
-    @Async("applicationTaskExecutor")
+    @Async
     public CompletableFuture<Boolean> doBindingDict(List voList, FieldAnnotation fieldAnno){
         if(dictionaryServiceExtProvider != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
@@ -74,7 +74,7 @@ public class ParallelBindingManager {
      * @param voList
      * @param fieldAnnotations
      */
-    @Async("applicationTaskExecutor")
+    @Async
     public CompletableFuture<Boolean> doBindingField(List voList, List<FieldAnnotation> fieldAnnotations){
         BindField bindAnnotation = (BindField) fieldAnnotations.get(0).getAnnotation();
         FieldBinder binder = new FieldBinder(bindAnnotation, voList);
@@ -91,7 +91,7 @@ public class ParallelBindingManager {
      * @param voList
      * @param fieldAnnotations
      */
-    @Async("applicationTaskExecutor")
+    @Async
     public CompletableFuture<Boolean> doBindingFieldList(List voList, List<FieldAnnotation> fieldAnnotations){
         BindFieldList bindAnnotation = (BindFieldList) fieldAnnotations.get(0).getAnnotation();
         FieldListBinder binder = new FieldListBinder(bindAnnotation, voList);
@@ -108,7 +108,7 @@ public class ParallelBindingManager {
      * @param voList
      * @param fieldAnnotation
      */
-    @Async("applicationTaskExecutor")
+    @Async
     public CompletableFuture<Boolean> doBindingEntity(List voList, FieldAnnotation fieldAnnotation) {
         BindEntity annotation = (BindEntity) fieldAnnotation.getAnnotation();
         // 绑定关联对象entity
@@ -124,7 +124,7 @@ public class ParallelBindingManager {
      * @param voList
      * @param fieldAnnotation
      */
-    @Async("applicationTaskExecutor")
+    @Async
     public CompletableFuture<Boolean> doBindingEntityList(List voList, FieldAnnotation fieldAnnotation) {
         BindEntityList annotation = (BindEntityList) fieldAnnotation.getAnnotation();
         // 构建binder
