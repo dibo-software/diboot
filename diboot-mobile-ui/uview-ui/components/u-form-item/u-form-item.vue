@@ -274,7 +274,7 @@
 			validation(trigger, value, callback = () => {}) {
 				// prop 未设置不进行任何操作
 				if(!this.prop) {
-					return
+					return callback('');
 				}
 				// 检验之间，先获取需要校验的值
 				this.parent.model[this.prop] = value
