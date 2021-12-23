@@ -250,13 +250,13 @@
 			},
 
 			// blur事件时进行表单校验
-			onFieldBlur() {
-				this.validation('blur');
+			onFieldBlur(value) {
+				this.validation('blur', value);
 			},
 
 			// change事件进行表单校验
-			onFieldChange() {
-				this.validation('change');
+			onFieldChange(value) {
+				this.validation('change', value);
 			},
 
 			// 过滤出符合要求的rule规则
@@ -271,9 +271,10 @@
 			},
 
 			// 校验数据
-			validation(trigger, callback = () => {}) {
+			validation(trigger, value, callback = () => {}) {
 				// 检验之间，先获取需要校验的值
-				this.fieldValue = this.parent.model[this.prop];
+				// this.fieldValue = this.parent.model[this.prop]
+				this.fieldValue = value
 				// blur和change是否有当前方式的校验规则
 				let rules = this.getFilteredRule(trigger);
 				// 判断是否有验证规则，如果没有规则，也调用回调方法，否则父组件u-form会因为
@@ -324,6 +325,7 @@
 					this.errorType = this.parent.errorType;
 					// 设置初始值
 					this.initialValue = this.fieldValue;
+					// this.parent.model[this.prop] = this.initialValue
 					// 添加表单校验，这里必须要写在$nextTick中，因为u-form的rules是通过ref手动传入的
 					// 不在$nextTick中的话，可能会造成执行此处代码时，父组件还没通过ref把规则给u-form，导致规则为空
 					this.$nextTick(() => {
