@@ -16,12 +16,14 @@
 	* @property  {Array}  list 传入labelValue列表
 	* @event {Function} click 点击传入当前menu的参数 
 	*/
+	import Emitter from '../../uview-ui/libs/util/emitter.js';
 	export default {
 		data() {
 			return {
 				checkboxList: []
 			}
 		},
+		mixins: [Emitter],
 		methods: {
 			/**
 			 * 改变选择
@@ -33,10 +35,10 @@
 					if(val.checked) values.push(val.value);
 				})
 				let valueStr = values.join(',')
-				this.$emit('input', valueStr)
 				this.$forceUpdate()
 				// 由于头条小程序执行迟钝，故需要用几十毫秒的延时
 				setTimeout(() => {
+					this.$emit('input', valueStr)
 					this.$refs.diCheckbox.dispatch('u-form-item', 'on-form-change', valueStr);
 				}, 60)
 				
