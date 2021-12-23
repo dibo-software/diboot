@@ -32,8 +32,20 @@
 				const result = [province.label]
 				city && result.push(city.label)
 				area && result.push(area.label)
-				this.$emit('input', result.join('-'))
+				this.handleInputEvent(result.join('-'))
 				this.$emit('confirm', value)
+			},
+			/**
+			 * 发送input消息
+			 * 过一个生命周期再发送事件给u-form-item，否则this.$emit('input')更新了父组件的值
+			 * 但是微信小程序上 尚未更新到u-form-item，导致获取的值为空
+			 */
+			handleInputEvent(value) {
+				this.$emit('input', value)
+				this.$nextTick(function(){
+					// 将当前的值发送到 u-form-item 进行校验
+					this.$refs.diDate.dispatch('u-form-item', 'on-form-change', value);
+				})
 			}
 		},
 		computed: {
