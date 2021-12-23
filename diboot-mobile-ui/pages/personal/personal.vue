@@ -1,10 +1,10 @@
 <template>
 	<view class="personal page-bg-color">
 		<view class="personal-header">
-			<u-avatar src="" size="large"></u-avatar>
+			<u-avatar :src="require('@/static/logo.png')" size="large"></u-avatar>
 			<view class="personal-header-info">
-				<text class="personal-header-info-name">张三</text>
-				<text class="u-tips-color">管理员</text>
+				<text class="personal-header-info-name">{{userInfo.displayName || '-'}}</text>
+				<text class="u-tips-color">{{userInfo.displayName || '-'}}</text>
 			</view>
 			<u-icon size="40" name="edit-pen"></u-icon>
 		</view>
@@ -23,14 +23,20 @@
 <script>
 	export default {
 		data() {
-			return {}
+			return {
+				userInfo: JSON.parse(uni.getStorageSync('userInfo') || '{}')
+			}
 		},
 		methods: {
 			logOut() {
 				this.$tip(this.$refs.uTips, '退出登陆成功').then(() => {
-					uni.reLaunch({
-						url: '/pages/login/index'
-					});
+					uni.clearStorageSync()
+					let timer = setTimeout(() => {
+						clearTimeout(timer)
+					      uni.reLaunch({
+					      	url: '/pages/login/index'
+					      });
+					  }, 0)
 				})
 			},
 			/**
