@@ -1,6 +1,6 @@
 <template>
 	<view class="di-select">
-		<u-input v-model="label" @click="show = true" disabled :select-open="show"
+		<u-input ref="diSelect" v-model="label" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
 		<u-select v-model="show" :mode='mode' :list="list" @confirm="handleSelectConfirm"></u-select>
 	</view>
@@ -37,10 +37,10 @@
 						valueList.push(item.value)
 					})
 					this.label = labelList.join('-')
-					this.$emit('input', valueList)
+					this.handleInputEvent(valueList)
 				} else {
 					this.label = e[0].label
-					this.$emit('input', e[0].value)
+					this.handleInputEvent(e[0].value)
 				}
 				this.$emit("confirm", e)
 			},
@@ -63,7 +63,18 @@
 						this.label = selectItem && selectItem.length > 0 && selectItem[0].label || ''
 					}
 				}, 0)
-			}
+			},
+		    /**
+		    * 发送input消息
+		    * 过一个生命周期再发送事件给u-form-item，否则this.$emit('input')更新了父组件的值
+		    * 但是微信小程序上 尚未更新到u-form-item，导致获取的值为空
+		    */
+		    handleInputEvent(value) {
+			setTimeout(() => {
+			  this.$emit('input', value)
+			  this.$refs.diSelect.dispatch('u-form-item', 'on-form-change', value);
+			}, 60)
+      }
 		},
 		watch: {
 			list(val) {
