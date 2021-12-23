@@ -1,6 +1,6 @@
 <template>
 	<view class="di-calendar-picker">
-		<u-input v-model="value" @click="show = true" disabled :select-open="show"
+		<u-input ref='diCalendar' v-model="tempVal" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
 		<u-calendar v-model="show" :mode="mode" @change="handleSelect" btn-type="success"
 			:active-bg-color="activeBgcolor" :range-color="rangecolor" :range-bg-color="rangeBgcolor" safe-area-inset-bottom z-index="99999"/>
@@ -23,6 +23,14 @@
 				show: false
 			}
 		},
+		computed: {
+		  tempVal: {
+		  	get() {
+		  	 return this.value
+		  	},
+		  	set(val) {}
+		  }
+		},
 		methods: {
 			/**
 			 * 确认选择
@@ -30,14 +38,28 @@
 			 * @param {Object} value
 			 */
 			handleSelect(value) {
+				let result = ''
 				if(this.mode === 'range') {
 					const { startDate, endDate} = value
-					this.$emit('input', [startDate, endDate].join('~'))
+					result = [startDate, endDate].join('~')
+					this.handleInputEvent(result)
 				} else {
-					const { result } = value
-					this.$emit('input', result)
+					result = value.result
 				}
+				this.handleInputEvent(result)
 				this.$emit('confirm', value)
+			},
+			/**
+			 * 发送input消息
+			 * 过一个生命周期再发送事件给u-form-item，否则this.$emit('input')更新了父组件的值
+			 * 但是微信小程序上 尚未更新到u-form-item，导致获取的值为空
+			 */
+			handleInputEvent(value) {
+				this.$emit('input', value)
+				this.$nextTick(function(){
+					// 将当前的值发送到 u-form-item 进行校验
+					this.$refs.diCalendar.dispatch('u-form-item', 'on-form-change', value);
+				})
 			}
 		},
 		props: {
