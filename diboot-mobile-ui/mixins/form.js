@@ -37,7 +37,7 @@ export default {
 			 */
 			fileUuidList: [],
 			/**
-			 * 
+			 *
 			 * 激活的颜色：主要用于checkbox、radio等，保持风格统一
 			 */
 			activeColor: this.$color.success
@@ -97,7 +97,6 @@ export default {
 				} else {
 					resolve(true)
 				}
-				
 			})
 		},
 		/** *
@@ -154,7 +153,7 @@ export default {
 					uni.hideLoading()
 					return
 				}
-				this.enhance()
+				await this.enhance()
 				let result = {}
 				if (this.form[this.primaryKey] === undefined) {
 					// 新增该记录
@@ -187,7 +186,6 @@ export default {
 					});
 				}
 			});
-			
 		},
 		/** *
 		 * 提交失败之后的处理
@@ -209,7 +207,7 @@ export default {
 		},
 		/**
 		 * 文件转化
-		 * 
+		 *
 		 * @param {Object} data
 		 */
 		fileFormatter(data) {
@@ -234,10 +232,6 @@ export default {
 		 */
 		strSplit(str, separator = ',') {
 			return str ? str.split(',') : []
-		},
-		// 针对form增强处理
-		enhance() {
-			
 		},
 		/**
 		 * 设置文件uuid
