@@ -36,14 +36,7 @@
 					<di-date-picker v-model="form.time" placeholder="请选择时间" mode="datetime"/>
 				</u-form-item>
 				<u-form-item label="上传图片" prop="picture">
-					<di-upload
-						:config="uploadConfig"
-						:action="action" 
-						:form-data="formData" 
-						:file-list="fileList"
-						@add="addPicture" 
-						@remove="removePicture"
-					/>
+					<di-upload v-model="form.picture" :file-list="fileWrapper.pictureList" rel-obj-field="picture" :rel-obj-type="relObjType"/>
 				</u-form-item>
 			</u-form>
 			<view class="u-m-t-60">
@@ -90,23 +83,11 @@
 						disabled: false
 					}
 				],
-				uploadConfig: {
-					options: {
-						maxSize: 'Number.MAX_VALUE',
-						maxCount: 9,
-						uploadText: '选择图片',
-						width: 140,
-						height: 140,
-						showProgress: false,
-						deletable: false
-					}
+				relObjType: 'Demo',
+				fileWrapper: {
+				  pictureList: []
 				},
-				action: '/uploadFile/upload/dto',
-				fileList: [],
-				formData: {
-					relObjField: '',
-					relObjType: '',
-				},
+				isUpload: true,
 				rules: {
 					name: [{
 						required: true,
@@ -148,72 +129,37 @@
 						message: '请选择时间',
 						trigger: ['blur', 'change']
 					}],
-					// picture: [{
-					// 	required: true,
-					// 	message: '请上传图片',
-					// 	trigger: ['blur', 'change']
-					// }],
+					picture: [{
+						required: true,
+						message: '请上传图片',
+						trigger: ['blur', 'change']
+					}],
 				}
 			};
 		},
 		mixins:[form],
 		methods: {
-			// 删除文件
-			removePicture(index, list) {
-				this.fileList = this.fileList.filter((v, i) => i !== index)
-				this.setUpload(this.fileList)
+			enhance (values) {
+			  this.__setFileUuidList__(values)
 			},
-			// 上传文件
-			addPicture(list) {
-				this.fileList.push(list[list.length - 1])
-				this.setUpload(this.fileList)
-			},
-			setUpload(list) {
-				let fileUuidList = []
-				let pictureUrlList = list.map((item) => {
-					if (item.response) {
-						fileUuidList.push(item.response.data.uuid)
-						return item.response.data.accessUrl
-					} else {
-						return ''
-					}
-				}) || []
-				this.form['picture'] = pictureUrlList.join(",")
-				this.form['fileUuidList'] = fileUuidList
-			},
-			/**
-			 * 数据转化
+			
+			/****
+			 * 打开表单之后的操作
+			 * @param id
 			 */
-			fileFormatter(data, isImage) {
-				const file = {
-					uid: data.uuid, // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
-					name: data.fileName || ' ', // 文件名
-					status: 'done', // 状态有：uploading done error removed
-					response: {
-						data: {
-							accessUrl: data.accessUrl,
-							fileName: data.fileName,
-							uuid: data.uuid
-						}
-					}, // 服务端响应内容
-					filePath: data.accessUrl
+			afterOpen (id) {
+				// 回显图片
+				if(id) {
+					// this.$dibootApi.get(`/uploadFile/getList/${id}/${this.relObjType}/picture`).then(res => {
+					//   if (res.code === 0) {
+					// 	if (res.data && res.data.length > 0) {
+					// 	  res.data.forEach(data => {
+					// 		this.fileWrapper.pictureList.push(this.fileFormatter(data,true))
+					// 	  })
+					// 	}
+					//   }
+					// })
 				}
-				if (isImage) {
-					Object.assign(file, {
-						url: `${this.$cons.host()}${data.accessUrl}/image`,
-						thumbUrl: `${this.$cons.host()}${data.accessUrl}/image`
-					})
-				}
-				return file
-			},
-			submit() {
-				this.$refs.uForm.validate(valid => {
-					if (valid) {
-						console.log('验证通过');
-					} else {
-						console.log('验证失败');
-					}
-				});
 			}
 		},
 		// 必须要在onReady生命周期，因为onLoad生命周期组件可能尚未创建完毕
