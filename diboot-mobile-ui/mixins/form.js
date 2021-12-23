@@ -89,7 +89,15 @@ export default {
 		 */
 		validate() {
 			return new Promise((resolve, reject) => {
-				this.$refs.uForm.validate(valid => valid ? resolve(true) : reject(false));
+				// rules存在，进行校验
+				if(this.$refs.uForm.rules && Object.keys(this.$refs.uForm.rules).length > 0) {
+					this.$refs.uForm.validate(valid => {
+						valid ? resolve(true) : reject(false)
+					});
+				} else {
+					resolve(true)
+				}
+				
 			})
 		},
 		/** *
@@ -142,7 +150,9 @@ export default {
 			});
 			try {
 				const valid = await this.validate()
+				console.log(valid)
 				if(!valid) {
+					uni.hideLoading()
 					return
 				}
 				this.enhance()
@@ -173,9 +183,9 @@ export default {
 				title: '操作成功',
 				duration: 2000,
 				success: ()=>{
-					uni.navigateTo({
-						url: './list'
-					})
+					uni.navigateBack({
+					    delta: 1
+					});
 				}
 			});
 			

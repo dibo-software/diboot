@@ -86,11 +86,6 @@ export default {
 		// 不能定义在data中，否则微信小程序会造成循环引用而报错
 		this.fields = [];
 	},
-	watch: {
-		model(val) {
-			console.log(val)
-		}
-	},
 	methods: {
 		setRules(rules) {
 			this.rules = rules;
@@ -109,7 +104,6 @@ export default {
 				let count = 0; // 用于标记是否检查完毕
 				let errorArr = []; // 存放错误信息
 				this.fields.map(field => {
-					
 					// 调用每一个u-form-item实例的validation的校验方法
 					field.prop && field.validation('', this.model[field.prop], error => {
 						// 如果任意一个u-form-item校验不通过，就意味着整个表单不通过
