@@ -55,6 +55,7 @@ export default {
 	},
 	onLoad() {
 		this.diStatusBarHeight = uni.getSystemInfoSync().statusBarHeight
+		
 	},
 	onShow() {
 		this.getListFromMixin && this.getList(true)

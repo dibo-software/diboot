@@ -149,7 +149,6 @@ export default {
 			});
 			try {
 				const valid = await this.validate()
-				console.log(valid)
 				if(!valid) {
 					uni.hideLoading()
 					return
@@ -244,10 +243,10 @@ export default {
 		 * @private
 		 */
 		__setFileUuidList__() {
-			// 如果包含上传功能，那么设置uuid
 			if (!this.isUpload) {
 				return
 			}
+			// 如果包含上传功能，那么设置uuid
 			this.fileUuidList = []
 			const fileWrapperKeys = Object.keys(this.fileWrapper)
 			if (fileWrapperKeys.length === 0) {
