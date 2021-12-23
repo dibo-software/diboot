@@ -45,6 +45,14 @@
 				currentType: ''
 			}
 		},
+		onShow() {
+			if(uni.getStorageSync("authtoken")) {
+				uni.switchTab({
+						url: '/pages/home/home'
+				})
+			}
+			
+		},
 		onLoad() {
 			this.currentType = 'login'
 		},
