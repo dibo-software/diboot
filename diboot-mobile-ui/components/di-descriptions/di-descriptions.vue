@@ -1,6 +1,6 @@
 <template>
-	<u-cell-group class="di-descriptions" :border="border" :class="{'u-border-bottom': borderBottom}">
-		<u-cell-item :arrow="false" :use-label-slot='true' :border-bottom='false' :border-top="false">
+	<u-cell-group class="di-descriptions" :border="border">
+		<u-cell-item :arrow="false" :use-label-slot='true' :border-bottom='borderBottom' :border-top="false">
 			<view slot="title" class="di-descriptions__title" :class="{'u-border-bottom': titleBottom}">
 				<view class="di-descriptions__title-left">
 					<slot name="title">
