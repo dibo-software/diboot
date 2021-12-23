@@ -1,6 +1,6 @@
 <template>
 	<u-checkbox-group ref='diCheckbox' class="di-checkbox-list" @change="handleChange" :active-color="activeColor">
-		<u-checkbox class="di-checkbox-list__item"  v-model="item.checked" v-for="(item, index) in checkboxList" :key="`di-checkbox-list__item-${index}`"
+		<u-checkbox class="di-checkbox-list__item"  v-model="item.checked" v-for="(item, index) in checkboxList" :key="index"
 			:name="item.value">
 			{{ item.label }}
 		</u-checkbox>

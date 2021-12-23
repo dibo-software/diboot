@@ -24,6 +24,7 @@
 			 * @param {Object} menu
 			 */
 			handleClick(menu) {
+				console.log('------')
 				menu.path && uni.navigateTo({
 					url: menu.path
 				})

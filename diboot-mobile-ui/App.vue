@@ -71,7 +71,6 @@
 			border-radius: 20rpx;
 			overflow: hidden;
 			margin: 20rpx;
-			margin-top: 100rpx;
 		}
 	}
 </style>

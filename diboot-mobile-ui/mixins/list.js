@@ -49,10 +49,12 @@ export default {
 			}],
 			allowGoDetail: true,
 			// 数据列表
-			list: []
+			list: [],
+			diStatusBarHeight: 0
 		}
 	},
 	onLoad() {
+		this.diStatusBarHeight = uni.getSystemInfoSync().statusBarHeight
 		this.getListFromMixin && this.getList();
 	},
 	methods: {

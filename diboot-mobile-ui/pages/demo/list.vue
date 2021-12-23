@@ -1,6 +1,9 @@
 <template>
 	<view class="h100 page-bg-color">
-		<scroll-view class="di-scroll" scroll-y  @scrolltolower="handleOnreachBottom" :refresher-triggered="triggered"
+		<u-navbar title="列表" :immersive="true" :background="{background: '#f8f8f8'}" :border-bottom="false">
+			<u-icon @click="handleCreate" style="margin-right: 40rpx;" slot="right" name="plus" size="28" label="新建" :color="$color.success" :label-color="$color.success"/>
+		</u-navbar>
+		<scroll-view class="di-scroll" :style="{marginTop: diStatusBarHeight + 44 + 'px'}" scroll-y  @scrolltolower="handleOnreachBottom" :refresher-triggered="triggered"
 			refresher-enabled @refresherrefresh="handlePullDownRefresh">
 			<view class="di-scroll-list">
 				<!-- 右滑 -->
@@ -21,9 +24,6 @@
 			</view>
 			<u-loadmore v-if="!triggered" :status="status" :loadText='loadText' margin-top="24" margin-bottom="24" />
 		</scroll-view>
-		<view class="di-scroll_create">
-			<u-button type="success" @click="handleCreate">新建</u-button>
-		</view>
 		<u-modal 
 		 v-model="deleteShow"
 		 title="删除"
