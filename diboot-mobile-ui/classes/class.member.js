@@ -26,9 +26,16 @@ export default class Member {
 	async getMemberInfo() {
 		const res = await dibootApi.get('/h5/userInfo')
 		if (res.code === 0) {
-			uni.setStorageSync("authInfo", JSON.stringify(res.data))
+			uni.setStorageSync("userInfo", JSON.stringify(res.data))
 		} else {
-			console.log('login错误：', res)
+			console.log('加载用户错误：', res)
+			uni.clearStorageSync()
+			let timer = setTimeout(() => {
+				clearTimeout(timer)
+			      uni.redirectTo({
+			          url: 'pages/login/login'
+			      })
+			  }, 0)
 		}
 	}
 }
