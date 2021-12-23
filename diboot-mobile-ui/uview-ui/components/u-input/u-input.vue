@@ -326,7 +326,11 @@ export default {
 			this.$emit('confirm', e.detail.value);
 		},
 		onClear(event) {
-			this.$emit('input', '');
+			this.handleInput({
+				detail: {
+					value: ''
+				}
+			})
 		},
 		inputClick() {
 			this.$emit('click');
