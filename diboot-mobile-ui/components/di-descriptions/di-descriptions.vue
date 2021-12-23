@@ -4,7 +4,7 @@
 			<view slot="title" class="di-descriptions__title" :class="{'u-border-bottom': titleBottom}">
 				<view class="di-descriptions__title-left">
 					<slot name="title">
-						{{title || '-'}}
+						<text v-if="title">{{title}}</text>
 					</slot>
 				</view>
 				<view class="di-descriptions__title-right">
