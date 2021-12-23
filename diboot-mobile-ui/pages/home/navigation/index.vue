@@ -2,7 +2,7 @@
 	<view class="navigation">
 		<view class="navigation-header u-border-bottom">
 			<text class="navigation-header-title">标题</text>
-			<view class="u-tips-color" @click="toListPage">
+			<view class="u-tips-color" @click.native="toListPage">
 				<text>更多</text>
 				<u-icon name="arrow-right"></u-icon>
 			</view>

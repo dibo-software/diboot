@@ -51,7 +51,8 @@
 					},
 					{
 						icon: require('@/static/logo.png'),
-						title: '标题1'
+						title: '标题1',
+						path: '/pages/mobileTest/list'
 					},
 					{
 						icon: require('@/static/logo.png'),

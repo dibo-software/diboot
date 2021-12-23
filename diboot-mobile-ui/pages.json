@@ -28,7 +28,7 @@
 			"path": "pages/demo/list",
 			"style": {
 				"navigationBarTitleText": "列表",
-				"enablePullDownRefresh": false
+				"navigationStyle": "custom"
 			}
 		},{
 			"path": "pages/demo/detail",
@@ -42,7 +42,44 @@
 				"navigationBarTitleText": "表单",
 				"enablePullDownRefresh": false
 			}
-		}
+		},
+		{
+			"path": "pages/testOne/list",
+			"style": {
+				"navigationBarTitleText": "列表",
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/testOne/form",
+			"style": {
+				"navigationBarTitleText": "表单",
+				"navigationStyle": "default"
+			}
+		}, {
+			"path": "pages/testOne/detail",
+			"style": {
+				"navigationBarTitleText": "详情",
+				"navigationStyle": "default"
+			}
+		},{
+	"path": "pages/mobileTest/list",
+	"style": {
+		"navigationBarTitleText": "列表",
+		"navigationStyle": "custom"
+	}
+}, {
+	"path": "pages/mobileTest/form",
+	"style": {
+		"navigationBarTitleText": "表单",
+		"navigationStyle": "default"
+	}
+}, {
+	"path": "pages/mobileTest/detail",
+	"style": {
+		"navigationBarTitleText": "详情",
+		"navigationStyle": "default"
+	}
+}
 	],
 	"tabBar": {
 		"color": "#606266",
