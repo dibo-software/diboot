@@ -129,8 +129,7 @@ export default {
 		 */
 		async update(values) {
 			const updateApiPrefix = this.updateApiPrefix ? this.updateApiPrefix : ''
-			const res = await dibootApi.put(`${this.baseApi}${updateApiPrefix}/${this.form[this.primaryKey]}`,
-				values)
+			const res = await dibootApi.put(`${this.baseApi}${updateApiPrefix}/${this.form[this.primaryKey]}`, values)
 			if (res.code === 0) {
 				return {
 					data: res.data,
@@ -246,19 +245,21 @@ export default {
 		 */
 		__setFileUuidList__() {
 			// 如果包含上传功能，那么设置uuid
-			if (this.isUpload) {
-				this.fileUuidList = []
-				const fileWrapperKeys = Object.keys(this.fileWrapper)
-				if (fileWrapperKeys.length > 0) {
-					for (const fileWrapperKey of fileWrapperKeys) {
-						const tempFileList = this.fileWrapper[fileWrapperKey]
-						if (tempFileList && tempFileList.length && tempFileList.length > 0) {
-							this.fileUuidList.push(...tempFileList.map(item => item.uid))
-						}
-					}
-					this.form['fileUuidList'] = this.fileUuidList
+			if (!this.isUpload) {
+				return
+			}
+			this.fileUuidList = []
+			const fileWrapperKeys = Object.keys(this.fileWrapper)
+			if (fileWrapperKeys.length === 0) {
+				return
+			}
+			for (const fileWrapperKey of fileWrapperKeys) {
+				const tempFileList = this.fileWrapper[fileWrapperKey]
+				if (tempFileList && tempFileList.length && tempFileList.length > 0) {
+					this.fileUuidList.push(...tempFileList.map(item => item.uid))
 				}
 			}
+			this.form['fileUuidList'] = this.fileUuidList
 		},
 		/**
 		 * 初始化fileWrapper

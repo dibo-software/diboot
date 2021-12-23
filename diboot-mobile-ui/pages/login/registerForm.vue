@@ -65,14 +65,13 @@
 			},
 			async submit() {
 				// 校验
-				const r = await this.validated()
+				await this.validated()
 				this.$emit('register', this.form)
 			}
 		},
-		// 必须要在onReady生命周期，因为onLoad生命周期组件可能尚未创建完毕
-		onReady() {
+		mounted() {
 			this.$refs.uForm.setRules(this.rules)
-		},
+		}
 	}
 </script>
 

@@ -19,6 +19,9 @@
 
 <script>
 	export default {
+		mounted() {
+			this.$refs.uForm.setRules(this.rules)
+		},
 		data() {
 			return {
 				form: {
@@ -49,21 +52,18 @@
 			/**
 			 * 校验
 			 */
-			validated() {
+			validate() {
 				return new Promise((resolve, reject) => {
-					this.$refs.uForm.validate(valid => valid ? resolve(true) : reject(false));
+					this.$refs.uForm.validate(valid => valid && resolve(true) || reject(false))
+		
 				})
 			},
 			async submit() {
 				// 校验
-				const r = await this.validated()
+				await this.validate()
 				this.$emit('login', this.form)
 			}
-		},
-		// 必须要在onReady生命周期，因为onLoad生命周期组件可能尚未创建完毕
-		onReady() {
-			this.$refs.uForm.setRules(this.rules)
-		},
+		}
 	}
 </script>
 
