@@ -1,6 +1,6 @@
 <template>
 	<view class="di-date-picker">
-		<u-input v-model="value" @click="show = true" disabled :select-open="show"
+		<u-input ref="diDate" v-model="tempVal" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
 		<u-picker confirm-color="#18b566" v-model="show" :params="pickerParams" mode="time" @confirm="handlePicker" :default-time="value"></u-picker>
 	</view>
@@ -31,8 +31,20 @@
 				if(this.mode === 'datetime') {
 					date += ` ${value.hour}:${value.minute}:${value.second}`
 				}
-				this.$emit('input', date)
+				this.handleInputEvent(date)
 				this.$emit('confirm', value)
+			},
+			/**
+			 * 发送input消息
+			 * 过一个生命周期再发送事件给u-form-item，否则this.$emit('input')更新了父组件的值
+			 * 但是微信小程序上 尚未更新到u-form-item，导致获取的值为空
+			 */
+			handleInputEvent(value) {
+				this.$emit('input', value)
+				this.$nextTick(function(){
+					// 将当前的值发送到 u-form-item 进行校验
+					this.$refs.diDate.dispatch('u-form-item', 'on-form-change', value);
+				})
 			}
 		},
 		computed: {
@@ -48,6 +60,12 @@
 					params.second = true 
 				}
 				return params
+			},
+			tempVal: {
+				get() {
+				 return this.value
+				},
+				set(val) {}
 			}
 		},
 		props: {
