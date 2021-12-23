@@ -51,7 +51,6 @@
 						url: '/pages/home/home'
 				})
 			}
-			
 		},
 		onLoad() {
 			this.currentType = 'login'
