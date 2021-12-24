@@ -80,6 +80,7 @@ export default {
 					uni.hideLoading()
 				}
 			}
+			await this.attachMore()
 		},
 		afterOpen(id) {
 		},

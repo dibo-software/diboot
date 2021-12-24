@@ -57,8 +57,5 @@ export default {
 				this.attachMoreLoading = false
 			})
 		}
-	},
-	async mounted() {
-		await this.attachMore()
 	}
 }
