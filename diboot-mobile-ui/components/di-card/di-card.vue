@@ -10,7 +10,7 @@
 				</view>
 				<view class="card-image">
 					<view class="card-image__item" v-for="(item, index) in imageList" :key="index">
-						<image :src="item" mode="aspectFill"></image>
+						<image class="el-image" :src="item" mode="aspectFill"></image>
 					</view>
 				</view>
 				<view class="card-content__footer">
@@ -21,7 +21,7 @@
 		<!-- 大图模式/左图右文字模式 -->
 		<view v-else class="card" :class="{'mode-picture-card': mode === 'pictureCard'}">
 			<view class="card-image">
-				<image :src="imageList[0]" mode="aspectFill"></image>
+				<image class="el-image" :src="imageList[0]" mode="aspectFill"></image>
 			</view>
 			<view class="card-content">
 				<view class="card-content__title">
@@ -143,7 +143,7 @@
 						&:first-child {
 							margin-left: 0;
 						}
-						image {
+						.el-image {
 							width: 100%;
 							height: 100%;
 						}
