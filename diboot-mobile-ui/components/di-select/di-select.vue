@@ -63,7 +63,7 @@
 						this.label = selectItem && selectItem.length > 0 && selectItem[0].label || ''
 					}
 					// H5下，label值会覆盖value值
-					this.handleInputEvent(this.value)
+					this.value && this.handleInputEvent(this.value)
 				}, 0)
 			},
 		    /**
