@@ -61,6 +61,7 @@
 		width: 100%;
 		height: 100%;
 		&-list {
+			box-sizing: border-box;
 			background-color: #fff;
 			border-radius: 20rpx;
 			overflow: hidden;

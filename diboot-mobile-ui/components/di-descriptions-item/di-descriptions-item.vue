@@ -8,7 +8,7 @@
 		<u-col :span="valueCol || parentCol.valueCol || 9" class="di-descriptions-item__value">
 			<slot name="value">
 				<view :class="{'di-descriptions-item__ellipsis': ellipsis}">
-				{{value}}
+				{{value || ''}}
 				</view>
 			</slot>
 		</u-col>
