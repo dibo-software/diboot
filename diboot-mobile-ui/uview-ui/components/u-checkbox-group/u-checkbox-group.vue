@@ -84,6 +84,11 @@
 				type: [String, Number],
 				default: 20
 			},
+			//适配diboot
+			adapterDiboot: {
+				type: Boolean,
+				default: true
+			}
 		},
 		data() {
 			return {
@@ -100,12 +105,14 @@
 					if(val.value) values.push(val.name);
 				})
 				this.$emit('change', values);
-				// 发出事件，用于在表单组件中嵌入checkbox的情况，进行验证
-				// 由于头条小程序执行迟钝，故需要用几十毫秒的延时
-				// setTimeout(() => {
-				// 	// 将当前的值发送到 u-form-item 进行校验
-				// 	this.dispatch('u-form-item', 'on-form-change', values);
-				// }, 60)
+				if(!this.adapterDiboot) {
+					// 发出事件，用于在表单组件中嵌入checkbox的情况，进行验证
+					// 由于头条小程序执行迟钝，故需要用几十毫秒的延时
+					setTimeout(() => {
+						// 将当前的值发送到 u-form-item 进行校验
+						this.dispatch('u-form-item', 'on-form-change', values);
+					}, 60)
+				}
 			}
 		}
 	}

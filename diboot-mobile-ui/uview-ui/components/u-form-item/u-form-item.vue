@@ -142,6 +142,11 @@
 			required: {
 				type: Boolean,
 				default: false
+			},
+			//适配diboot
+			adapterDiboot: {
+				type: Boolean,
+				default: true
 			}
 		},
 		data() {
@@ -251,12 +256,12 @@
 
 			// blur事件时进行表单校验
 			onFieldBlur(value) {
-				this.validation('blur', value);
+				this.adapterDiboot ? this.validationDiboot('blur', value) : this.validation('blur')
 			},
 
 			// change事件进行表单校验
 			onFieldChange(value) {
-				this.validation('change', value);
+				this.adapterDiboot ? this.validationDiboot('change', value) : this.validation('change')
 			},
 
 			// 过滤出符合要求的rule规则
@@ -271,7 +276,7 @@
 			},
 
 			// 校验数据
-			validation(trigger, value, callback = () => {}) {
+			validationDiboot(trigger, value, callback = () => {}) {
 				// prop 未设置不进行任何操作
 				if(!this.prop) {
 					return callback('');
@@ -279,6 +284,36 @@
 				// 检验之间，先获取需要校验的值
 				this.parent.model[this.prop] = value
 				this.fieldValue = this.parent.model[this.prop]
+				// blur和change是否有当前方式的校验规则
+				let rules = this.getFilteredRule(trigger);
+				// 判断是否有验证规则，如果没有规则，也调用回调方法，否则父组件u-form会因为
+				// 对count变量的统计错误而无法进入上一层的回调
+				if (!rules || rules.length === 0) {
+					return callback('');
+				}
+				// 设置当前的装填，标识为校验中
+				this.validateState = 'validating';
+				// 调用async-validator的方法
+				let validator = new schema({
+					[this.prop]: rules
+				});
+				validator.validate({
+					[this.prop]: this.fieldValue
+				}, {
+					firstFields: true
+				}, (errors, fields) => {
+					// 记录状态和报错信息
+					this.validateState = !errors ? 'success' : 'error';
+					this.validateMessage = errors ? errors[0].message : '';
+					// 调用回调方法
+					callback(this.validateMessage);
+				});
+			},
+
+			// 校验数据
+			validation(trigger, callback = () => {}) {
+				// 检验之间，先获取需要校验的值
+				this.fieldValue = this.parent.model[this.prop];
 				// blur和change是否有当前方式的校验规则
 				let rules = this.getFilteredRule(trigger);
 				// 判断是否有验证规则，如果没有规则，也调用回调方法，否则父组件u-form会因为
@@ -329,7 +364,9 @@
 					this.errorType = this.parent.errorType;
 					// 设置初始值
 					this.initialValue = this.fieldValue;
-					this.parent.model[this.prop] = this.initialValue
+					if(this.adapterDiboot) {
+						this.parent.model[this.prop] = this.initialValue
+					}
 					// 添加表单校验，这里必须要写在$nextTick中，因为u-form的rules是通过ref手动传入的
 					// 不在$nextTick中的话，可能会造成执行此处代码时，父组件还没通过ref把规则给u-form，导致规则为空
 					this.$nextTick(() => {
