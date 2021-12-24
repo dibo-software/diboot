@@ -20,7 +20,7 @@
 	* di-descriptions-item 描述列表项
 	* @description 描述列表项，用于展示label value的值，比如对象详细页面等。 搭配父组件di-descriptions
 	* @property {String slot} label label
-	* @property {String slot} value value
+	* @property {String Number slot} value value
 	* @property {Boolean} ellipsis value过长是否显示省略（默认false）
 	* @property {Number String} label-col label宽度，等分12份，可以继承di-descriptions#label-col，默认值3
 	* @property {Number String} value-col value宽度，等分12份，可以继承di-descriptions#value-col，默认值9
@@ -52,17 +52,17 @@
 				require: true
 			},
 			value: {
-				type: String,
+				type: [String, Number],
 			},
 			ellipsis: {
 				type: Boolean,
 				default: false
 			},
 			labelCol: {
-				type: String | Number
+				type: [String, Number]
 			},
 			valueCol: {
-				type: String | Number
+				type: [String, Number]
 			}
 		}
 	}

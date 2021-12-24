@@ -1,7 +1,8 @@
 <template>
 	<u-cell-group class="di-descriptions" :border="border">
 		<u-cell-item :arrow="false" :use-label-slot='true' :border-bottom='borderBottom' :border-top="false">
-			<view slot="title" class="di-descriptions__title" :class="{'u-border-bottom': titleBottom}">
+			<template #title>
+			<view class="di-descriptions__title" :class="{'u-border-bottom': titleBottom}">
 				<view class="di-descriptions__title-left">
 					<slot name="title">
 						<text v-if="title">{{title}}</text>
@@ -11,9 +12,12 @@
 					<slot name="right"></slot>
 				</view>
 			</view>
-			<view slot="label" class="di-descriptions__body">
-				<slot></slot>
-			</view>
+			</template>
+			<template #label>
+				<view class="di-descriptions__body">
+					<slot></slot>
+				</view>
+			</template>
 		</u-cell-item>
 	</u-cell-group>
 </template>
