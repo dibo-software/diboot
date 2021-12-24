@@ -96,13 +96,15 @@ export default {
 		 * 确认删除
 		 * @param {Object} id
 		 */
-		async handleConfirmDel(id) {
+		async handleConfirmDel() {
 			try{
-				const res = await dibootApi.remove(`${this.baseApi}/${id}`)
+				const res = await dibootApi.delete(`${this.baseApi}/${this.activeIndex}`)
 				this.showToast(res.msg, res.code === 0 ? 'success' : 'error')
 			}catch(e){
+				console.log(e)
 				this.showToast('网络异常！')
 			} finally {
+				this.getList(true)
 				this.handleCancelDel()
 			}
 			
@@ -170,6 +172,11 @@ export default {
 			    title,
 				icon
 			});
+		}
+	},
+	computed: {
+		listMargin() {
+			return `margin: ${this.list.length === 0 ? 0 : 20}rpx`
 		}
 	}
 }
