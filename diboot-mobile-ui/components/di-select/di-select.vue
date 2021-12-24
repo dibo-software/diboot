@@ -62,6 +62,8 @@
 						const selectItem = val.filter(item => item.value === this.value)
 						this.label = selectItem && selectItem.length > 0 && selectItem[0].label || ''
 					}
+					// H5下，label值会覆盖value值
+					this.handleInputEvent(this.value)
 				}, 0)
 			},
 		    /**
@@ -70,11 +72,11 @@
 		    * 但是微信小程序上 尚未更新到u-form-item，导致获取的值为空
 		    */
 		    handleInputEvent(value) {
-			setTimeout(() => {
-			  this.$emit('input', value)
-			  this.$refs.diSelect.dispatch('u-form-item', 'on-form-change', value);
-			}, 60)
-      }
+				this.$emit('input', value)
+				setTimeout(() => {
+				  this.$refs.diSelect.dispatch('u-form-item', 'on-form-change', value);
+				}, 60)
+			}
 		},
 		watch: {
 			list(val) {
