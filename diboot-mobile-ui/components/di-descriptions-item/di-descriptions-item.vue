@@ -5,9 +5,11 @@
 				{{label ? label + ':' : ''}}
 			</slot>
 		</u-col>
-		<u-col :span="valueCol || parentCol.valueCol || 9" class="di-descriptions-item__value" :class="{'di-descriptions-item__ellipsis': ellipsis}">
+		<u-col :span="valueCol || parentCol.valueCol || 9" class="di-descriptions-item__value">
 			<slot name="value">
+				<view :class="{'di-descriptions-item__ellipsis': ellipsis}">
 				{{value}}
+				</view>
 			</slot>
 		</u-col>
 	</u-row>
@@ -74,14 +76,9 @@
 		color: #a3a3a3;;
 	}
 	&__ellipsis {
-		white-space: normal;
-		text-overflow: -o-ellipsis-lastline;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-line-clamp: 1;
-		line-clamp: 1;
-		-webkit-box-orient: vertical;
-	}    
+		white-space: nowrap;
+	}
 }
 </style>
