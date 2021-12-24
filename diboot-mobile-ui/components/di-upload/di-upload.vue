@@ -14,7 +14,8 @@
 	@on-remove="handleRemove"
 	:form-data="uploadFormData"
 	:header="header"
-	:file-list="tempFileList">
+	:file-list="tempFileList"
+	>
 	</u-upload>
 </template>
 
@@ -44,6 +45,7 @@
 					authtoken: uni.getStorageSync('authtoken') || ''
 				}
 			},
+			// 更新回显
 			tempFileList: {
 				get() {
 					return this.fileList
@@ -80,17 +82,13 @@
 			 * @param {Object} name
 			 */
 			handleSuccess(data, index, lists, name) {
+				lists.length = 0
 				if (this.limitCount === 1) {
 				    this.fileList.length = 0
-					// 将组件本身数据清空，设置到fileList中
-				    lists.length = 0
-				    this.fileList.push(this.fileFormatter(data.data))
-				} else {
-					// 将组件本身数据清空，设置到fileList中
-					lists.length = 0
-				    this.fileList.push(this.fileFormatter(data.data))
 				}
+				this.fileList.push(this.fileFormatter(data.data))
 				console.log('add end', this.fileList)
+				this.$forceUpdate()
 				this.handleInputEvent()
 			},
 			/**
@@ -138,8 +136,7 @@
 				handler(val) {
 					// 双向绑定
 					this.$emit('update:fileList', val)
-				},
-				deep: true
+				}
 			}
 		},
 		props: {
