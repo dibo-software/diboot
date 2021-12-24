@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /***
  * Controller的父类
@@ -267,10 +267,7 @@ public class BaseController {
                 return;
             }
             for (Map.Entry<String, Object> item : attachMoreDTO.getAdditional().entrySet()) {
-                String columnName = columnByField.apply(item.getKey(), null);
-                if (V.isEmpty(columnName)) {
-                    throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 无 " + item.getKey() + " 属性");
-                }
+                String columnName = columnByField.apply(item.getKey());
                 Object itemValue = item.getValue();
                 if (itemValue == null) {
                     queryWrapper.isNull(columnName);
@@ -292,8 +289,7 @@ public class BaseController {
      * @param custom        自定义条件
      * @return labelValue列表
      */
-	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO,
-													 BiConsumer<QueryWrapper<?>,BiFunction<String, String, String>> custom) {
+	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO, BiConsumer<QueryWrapper<?>, Function<String, String>> custom) {
 		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMoreDTO.getTarget()));
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
@@ -304,23 +300,39 @@ public class BaseController {
 			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 的Service不存在 ");
 		}
 		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
-		BiFunction<String, String, String> columnByField = (field, defValue) -> {
+		Function<String, String> columnByField = field -> {
 			if (V.notEmpty(field)) {
 				String column = propInfoCache.getColumnByField(field);
-				return V.notEmpty(column) ? column : defValue;
+				if (V.notEmpty(column)) {
+					return column;
+				} else {
+					throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 无 `" + field + "` 属性");
+				}
 			}
-			return defValue;
+			return null;
 		};
-		String label = columnByField.apply(attachMoreDTO.getLabel(), null);
-		if (V.isEmpty(label)) {
-			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 的label属性 " + attachMoreDTO.getLabel() + " 不存在");
-		}
-		String value = columnByField.apply(attachMoreDTO.getValue(), propInfoCache.getIdColumn());
-		String ext = columnByField.apply(attachMoreDTO.getExt(), null);
-		// 构建前端下拉框的初始化数据
+		String label = columnByField.apply(S.defaultIfBlank(attachMoreDTO.getLabel(), "label"));
+		String value = S.defaultString(columnByField.apply(attachMoreDTO.getValue()), propInfoCache.getIdColumn());
+		String ext = columnByField.apply(attachMoreDTO.getExt());
+
+		// 构建查询条件
 		QueryWrapper<?> queryWrapper = Wrappers.query()
 				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
 				.like(V.notEmpty(attachMoreDTO.getKeyword()), label, attachMoreDTO.getKeyword());
+		// 解析排序
+		if (V.notEmpty(attachMoreDTO.getOrderBy())) {
+			String[] orderByFields = S.split(attachMoreDTO.getOrderBy(), ",");
+			for (String field : orderByFields) {
+				V.securityCheck(field);
+				String[] fieldAndOrder = field.split(":");
+				String columnName = columnByField.apply(fieldAndOrder[0]);
+				if (fieldAndOrder.length > 1 && Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
+					queryWrapper.orderByDesc(columnName);
+				} else {
+					queryWrapper.orderByAsc(columnName);
+				}
+			}
+		}
 		if (custom != null) {
 			custom.accept(queryWrapper, columnByField);
 		}

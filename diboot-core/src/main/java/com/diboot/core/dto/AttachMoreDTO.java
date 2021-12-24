@@ -79,4 +79,9 @@ public class AttachMoreDTO implements Serializable {
      * 关键字（用于前端远程搜索label）
      */
     private String keyword;
+
+    /**
+     * 排序，示例 `id:DESC,age:ASC`
+     */
+    private String orderBy;
 }
