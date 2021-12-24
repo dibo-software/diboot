@@ -14,7 +14,7 @@
 			</u-cell-group>
 		</view>
 		<view class="u-m-t-80">
-			<u-button type="error" @click="logOut">退出登录</u-button>
+			<u-button type="error" @click="logout">退出登录</u-button>
 		</view>
 		<u-top-tips ref="uTips"></u-top-tips>
 	</view>
@@ -28,17 +28,22 @@
 			}
 		},
 		methods: {
-			logOut() {
-				this.$tip(this.$refs.uTips, '退出登陆成功').then(() => {
-					uni.clearStorageSync()
-					let timer = setTimeout(() => {
-						clearTimeout(timer)
-					      uni.reLaunch({
-					      	url: '/pages/login/index'
-					      });
-					  }, 0)
+			logout() {
+				const that = this
+				that.$dibootApi.post('/h5/logout').then(() => {
+					that.$tip(that.$refs.uTips, '退出成功!').then(() => {
+						uni.clearStorageSync()
+						let timer = setTimeout(() => {
+							clearTimeout(timer)
+						      uni.reLaunch({
+						      	url: '/pages/login/index'
+						      });
+						  }, 0)
+						
+					})
 				})
 			},
+			//
 			/**
 			 * 微信绑定
 			 */
