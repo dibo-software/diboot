@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="container-title u-font-40">diboot移动端开发框架</view>
+		<view class="container-title u-font-40">diboot-mobile-ui</view>
 		<view class="u-m-b-60 container-type u-flex">
 			<view v-for="(item,index) in typeList" :key="item.name">
 				<text :class="{'u-font-40': item.value === currentType}"
