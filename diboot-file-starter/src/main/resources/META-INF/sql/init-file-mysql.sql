@@ -2,7 +2,6 @@
 CREATE TABLE upload_file (
   uuid varchar(32) NOT NULL COMMENT '编号' primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
-  org_id    bigint NOT NULL DEFAULT 0 COMMENT '组织ID',
   app_module  varchar(50)   null comment '应用模块',
   rel_obj_type varchar(50) DEFAULT NULL COMMENT '关联对象类',
   rel_obj_id varchar(32) DEFAULT NULL COMMENT '关联对象ID',

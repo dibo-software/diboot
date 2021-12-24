@@ -52,13 +52,6 @@ public class UploadFile extends BaseEntity {
     private Long tenantId;
 
     /**
-     * 组织ID
-     */
-    @NotNull(message = "组织ID不能为空")
-    @TableField(fill = FieldFill.INSERT)
-    private Long orgId;
-
-    /**
      * 应用模块
      */
     @TableField
