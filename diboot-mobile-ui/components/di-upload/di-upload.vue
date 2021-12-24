@@ -88,6 +88,7 @@
 				}
 				this.fileList.push(this.fileFormatter(data.data))
 				console.log('add end', this.fileList)
+				this.$emit('update:fileList', this.fileList)
 				this.$forceUpdate()
 				this.handleInputEvent()
 			},
@@ -102,6 +103,7 @@
 				newFileList.splice(index, 1)
 				this.fileList.length = 0
 				this.fileList.push(...newFileList)
+				this.$emit('update:fileList', this.fileList)
 				console.log('remove end', this.fileList)
 				this.handleInputEvent()
 			},
@@ -129,14 +131,6 @@
 					// 将当前的值发送到 u-form-item 进行校验
 					this.dispatch('u-form-item', 'on-form-change', value);
 				})
-			}
-		},
-		watch: {
-			tempFileList: {
-				handler(val) {
-					// 双向绑定
-					this.$emit('update:fileList', val)
-				}
 			}
 		},
 		props: {
