@@ -2,7 +2,6 @@
 CREATE TABLE ${SCHEMA}.upload_file (
     uuid varchar(32) NOT NULL,
     tenant_id            bigint        not null default 0,
-    org_id            bigint        not null default 0,
     app_module          varchar(50),
     rel_obj_type varchar(50),
     rel_obj_id varchar(32),
@@ -21,7 +20,6 @@ CREATE TABLE ${SCHEMA}.upload_file (
 -- 添加备注,
 execute sp_addextendedproperty 'MS_Description', N'UUID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'uuid';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'tenant_id';
-execute sp_addextendedproperty 'MS_Description', N'组织ID','SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'org_id';
 execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'app_module';
 execute sp_addextendedproperty 'MS_Description', N'关联对象类', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_type';
 execute sp_addextendedproperty 'MS_Description', N'关联对象ID', 'SCHEMA', '${SCHEMA}', 'table', upload_file, 'column', 'rel_obj_id';
