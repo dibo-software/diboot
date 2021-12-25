@@ -17,7 +17,13 @@
 	export default {
 		data() {
 			return {
-				show: false
+				show: false,
+				tempVal: ''
+			}
+		},
+		watch: {
+			value(val) {
+				this.tempVal = val
 			}
 		},
 		methods: {
@@ -31,6 +37,7 @@
 				if(this.mode === 'datetime') {
 					date += ` ${value.hour}:${value.minute}:${value.second}`
 				}
+				this.tempVal = date
 				this.handleInputEvent(date)
 				this.$emit('confirm', value)
 			},
@@ -60,12 +67,6 @@
 					params.second = true 
 				}
 				return params
-			},
-			tempVal: {
-				get() {
-				 return this.value
-				},
-				set(val) {}
 			}
 		},
 		props: {

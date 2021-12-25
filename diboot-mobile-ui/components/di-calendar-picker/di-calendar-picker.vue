@@ -20,16 +20,14 @@
 	export default {
 		data() {
 			return {
-				show: false
+				show: false,
+				tempVal: ''
 			}
 		},
-		computed: {
-		  tempVal: {
-		  	get() {
-		  	 return this.value
-		  	},
-		  	set(val) {}
-		  }
+		watch: {
+			value(val) {
+				this.tempVal = val
+			}
 		},
 		methods: {
 			/**
@@ -42,10 +40,10 @@
 				if(this.mode === 'range') {
 					const { startDate, endDate} = value
 					result = [startDate, endDate].join('~')
-					this.handleInputEvent(result)
 				} else {
 					result = value.result
 				}
+				this.tempVal = result
 				this.handleInputEvent(result)
 				this.$emit('confirm', value)
 			},
