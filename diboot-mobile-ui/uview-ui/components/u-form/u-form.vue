@@ -129,8 +129,8 @@ export default {
 							}
 						});
 					} else {
-						// 调用每一个u-form-item实例的validation的校验方法
-						field.prop && field.validation('', this.model[field.prop], error => {
+						// 调用每一个u-form-item实例的validationDiboot的校验方法
+						field.prop && field.validationDiboot('', this.model[field.prop], error => {
 							// 如果任意一个u-form-item校验不通过，就意味着整个表单不通过
 							if (error) {
 								valid = false;
