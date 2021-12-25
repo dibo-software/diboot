@@ -9,11 +9,13 @@
 
 <script>
 	/**
-	 * 时间选择器
+	 * di-calendar-picker 时间选择器
+	 * @description yyyy-MM-dd格式的选择
 	 * @property {String} value 可以使用v-model双向绑定
 	 * @property {String} placeholder 提示信息
 	 * @property {String} active-bg-color 激活的背景色
 	 * @property {String} range-bg-color 激活范围的背景色
+	 * @property {String} rangecolor 激活范围的字体颜色
 	 * @property {String} mode = [date|range] 模式选择，"date"-日期模式（默认），"range"-选择日期范围
 	 * @event {Function} confirm 点击确定按钮，传递出所选的完整的时间对象
 	 */
@@ -63,7 +65,7 @@
 		props: {
 			placeholder: {
 				type: String,
-				default: '请选择'
+				default: '请选择日期'
 			},
 			value: {
 				type: String,

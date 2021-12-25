@@ -7,6 +7,13 @@
 </template>
 
 <script>
+	/**
+	* di-radio-list radio列表
+	* @description radio列表组，基于uview，适应与diboot接口的radio列表
+	* @property  {String}  activeColor 激活时候的颜色
+	* @property  {String Boolean}  value 支持字符串和布尔值
+	* @property  {Array}  list 传入labelValue列表
+	*/
 	export default {
 		name:"di-radio-list",
 		data() {

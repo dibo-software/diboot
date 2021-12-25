@@ -10,7 +10,9 @@ export default {
 			baseApi: '/',
 			// 列表数据接口
 			listApi: '',
-			// 是否从mixin中自动获取初始的列表数据
+			// 删除接口
+			deleteApiPrefix: '',
+			// 是否在页面初始化时自动加载列表数据
 			getListFromMixin: true,
 			// 与查询条件绑定的参数（会被查询表单重置和改变的参数）
 			queryParam: {},
@@ -47,9 +49,11 @@ export default {
 					backgroundColor: this.$color.error
 				}
 			}],
-			allowGoDetail: true,
 			// 数据列表
 			list: [],
+			// 是否允许访问详情
+			allowGoDetail: true,
+			// 状态栏高度
 			diStatusBarHeight: 0
 		}
 	},
@@ -73,6 +77,9 @@ export default {
 		 * 详情
 		 */
 		handleDetail(id) {
+			if(!this.allowGoDetail) {
+				return
+			}
 			uni.navigateTo({
 				url:`./detail?id=${id}`
 			})
@@ -98,7 +105,8 @@ export default {
 		 */
 		async handleConfirmDel() {
 			try{
-				const res = await dibootApi.delete(`${this.baseApi}/${this.activeIndex}`)
+				const deleteApiPrefix = this.deleteApiPrefix ? this.deleteApiPrefix : ''
+				const res = await dibootApi.delete(`${this.baseApi}${deleteApiPrefix}/${this.activeIndex}`)
 				this.showToast(res.msg, res.code === 0 ? 'success' : 'error')
 			}catch(e){
 				console.log(e)
@@ -116,18 +124,19 @@ export default {
 			this.deleteShow = false
 			this.activeIndex = -100
 		},
-		/**
-		 * @param {Number} index  所在列表的primaryKey
-		 * @param {Number} optionIdx  操作列表actionOptions的下标
-		 */
-		handleActionClick(index, optionIdx) {
-			this[this.actionOptions[optionIdx]['type']](index)
-		},
 		/*
 		 * 打开左滑操作
 		 */
 		handleActiveSwipeAction(index) {
 			this.activeIndex = index
+		},
+		/**
+		 * 点击左滑按钮
+		 * @param {Number} index  所在列表的primaryKey
+		 * @param {Number} optionIdx  操作列表actionOptions的下标
+		 */
+		handleActionClick(index, optionIdx) {
+			this[this.actionOptions[optionIdx]['type']](index)
 		},
 		/**
 		 * 下拉刷新
@@ -152,7 +161,9 @@ export default {
 		 * 获取数据列表
 		 */
 		async getList(replace = false) {
-			const res = await dibootApi.get(this.listApi ? this.listApi : `${this.baseApi}/list`, this.queryParam)
+			const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, {
+				params: this.queryParam
+			})
 			if (res.code === 0) {
 				this.list = replace ? res.data : this.list.concat(res.data)
 				this.page = res.page

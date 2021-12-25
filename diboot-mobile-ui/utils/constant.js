@@ -24,6 +24,7 @@ const frontIndexConfig = {
 	prod: ""
 }
 const cons = {
+	ENV,
 	BASE_URL,
 	/**
 	 * 获取当前环境配置

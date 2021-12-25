@@ -5,6 +5,10 @@
 </template>
 
 <script>
+	/**
+	 * switch
+	 * @property {Boolean} value 可以使用v-model双向绑定
+	 */
 	export default {
 		name:"di-switch",
 		data() {
