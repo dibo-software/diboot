@@ -15,11 +15,13 @@
  */
 package com.diboot.core.vo;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * LabelValue键值对形式的VO（用于构建显示名Name-存储值Value形式的结果）
@@ -43,6 +45,11 @@ public class LabelValue implements Serializable {
     }
 
     /**
+     * 对象类型
+     */
+    private String type;
+
+    /**
      * label: 显示值
      */
     private String label;
@@ -56,5 +63,25 @@ public class LabelValue implements Serializable {
      * 扩展值
      */
     private Object ext;
+
+    /**
+     * 是否为叶子节点
+     */
+    private Boolean leaf;
+
+    /**
+     * 是否禁用；非异步加载时，非叶子节点且无叶子节点时会自动禁用该节点
+     */
+    private Boolean disabled;
+
+    /**
+     * 子节点集合
+     */
+    private List<LabelValue> children;
+
+    @JsonGetter("isLeaf")
+    public Boolean isLeaf() {
+        return leaf;
+    }
 
 }

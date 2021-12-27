@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /***
@@ -236,7 +235,7 @@ public class BaseController {
 	}
 
 	/**
-	 * 通用的attachMore接口，附加更多下拉选型数据
+	 * 通用的attachMore获取数据
 	 *
 	 * @param attachMoreDTOList
 	 * @return
@@ -250,82 +249,117 @@ public class BaseController {
 			// 请求参数安全检查
 			V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
 			result.computeIfAbsent(S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options", key -> V.isEmpty(attachMoreDTO.getLabel()) ?
-					dictionaryService.getLabelValueList(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
+					attachMoreRelatedData(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
 		}
 		return result;
 	}
 
 	/**
-	 * 通用的attachMore过滤接口
+	 * 获取字典指定类型的元素集合
+	 *
+	 * @param dictType 字典类型
+	 * @return labelValue集合
+	 */
+	protected List<LabelValue> attachMoreRelatedData(String dictType) {
+		return dictionaryService.getLabelValueList(dictType);
+	}
+
+	/**
+	 * 通用的attachMore获取相应对象数据
 	 *
 	 * @param attachMoreDTO
-	 * @return labelValue列表
+	 * @return labelValue集合
 	 */
-    protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO) {
-        return attachMoreRelatedData(attachMoreDTO, (queryWrapper, columnByField) -> {
-            if (attachMoreDTO.getAdditional() == null) {
-                return;
-            }
-            for (Map.Entry<String, Object> item : attachMoreDTO.getAdditional().entrySet()) {
-                String columnName = columnByField.apply(item.getKey());
-                Object itemValue = item.getValue();
-                if (itemValue == null) {
-                    queryWrapper.isNull(columnName);
-                } else {
-                    if (itemValue instanceof Collection) {
-                        queryWrapper.in(columnName, (Collection<?>) itemValue);
-                    } else {
-                        queryWrapper.eq(columnName, itemValue);
-                    }
-                }
-            }
-        });
-    }
+	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO) {
+		if (!attachMoreDTO.isTree()) {
+			attachMoreDTO.setParent(null);
+		}
+		return attachMoreRelatedData(attachMoreDTO, null, null);
+	}
 
-    /**
-     * 通用的attachMore过滤接口
-     *
-     * @param attachMoreDTO
-     * @param custom        自定义条件
-     * @return labelValue列表
-     */
-	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO, BiConsumer<QueryWrapper<?>, Function<String, String>> custom) {
-		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMoreDTO.getTarget()));
+	/**
+	 * 获取attachMore指定层级的数据集合
+	 * <p>
+	 * 用于异步加树形数据
+	 *
+	 * @param attachMoreDTO
+	 * @param parentValue   父级值
+	 * @param parentType    父级类型
+	 * @return labelValue集合
+	 */
+	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMoreDTO, String parentValue, String parentType) {
+		if (V.notEmpty(parentType)) {
+			attachMoreDTO = findAttachMoreByType(attachMoreDTO, parentType);
+			if (attachMoreDTO != null && !attachMoreDTO.isTree()) {
+				attachMoreDTO = attachMoreDTO.getChild().setTree(false);
+			}
+		}
+		if (attachMoreDTO == null) {
+			return Collections.emptyList();
+		}
+		List<LabelValue> labelValueList = attachMoreRelatedData(attachMoreDTO, parentValue);
+		if (attachMoreDTO.isTree() && attachMoreDTO.getChild() != null) {
+			labelValueList.addAll(attachMoreRelatedData(attachMoreDTO.getChild().setTree(false), parentValue));
+		}
+		return labelValueList;
+	}
+
+	/**
+	 * 根据type查找AttachMore
+	 *
+	 * @param attachMore
+	 * @param type       类型，与attachMore.target对应
+	 * @return labelValue集合
+	 */
+	private AttachMoreDTO findAttachMoreByType(AttachMoreDTO attachMore, String type) {
+		return attachMore.getTarget().equals(type) ? attachMore
+				: (attachMore.getChild() == null ? null : findAttachMoreByType(attachMore.getChild(), type));
+	}
+
+	/**
+	 * 通用的attachMore获取数据
+	 *
+	 * @param attachMore  相应的attachMore
+	 * @param parentValue 父级值
+	 * @return labelValue集合
+	 */
+	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMore, String parentValue) {
+		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMore.getTarget()));
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
-			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 不存在");
+			throw new BusinessException("attachMore: " + attachMore.getTarget() + " 不存在");
 		}
 		BaseService<?> baseService = ContextHelper.getBaseServiceByEntity(entityClass);
 		if (baseService == null) {
-			throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 的Service不存在 ");
+			throw new BusinessException("attachMore: " + attachMore.getTarget() + " 的Service不存在 ");
 		}
 		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
-		Function<String, String> columnByField = field -> {
+		Function<String, String> field2column = field -> {
 			if (V.notEmpty(field)) {
 				String column = propInfoCache.getColumnByField(field);
 				if (V.notEmpty(column)) {
 					return column;
 				} else {
-					throw new BusinessException("attachMore: " + attachMoreDTO.getTarget() + " 无 `" + field + "` 属性");
+					throw new BusinessException("attachMore: " + attachMore.getTarget() + " 无 `" + field + "` 属性");
 				}
 			}
 			return null;
 		};
-		String label = columnByField.apply(S.defaultIfBlank(attachMoreDTO.getLabel(), "label"));
-		String value = S.defaultString(columnByField.apply(attachMoreDTO.getValue()), propInfoCache.getIdColumn());
-		String ext = columnByField.apply(attachMoreDTO.getExt());
+		String label = field2column.apply(S.defaultIfBlank(attachMore.getLabel(), "label"));
+		String value = S.defaultString(field2column.apply(attachMore.getValue()), propInfoCache.getIdColumn());
+		String ext = field2column.apply(attachMore.getExt());
 
 		// 构建查询条件
 		QueryWrapper<?> queryWrapper = Wrappers.query()
 				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
-				.like(V.notEmpty(attachMoreDTO.getKeyword()), label, attachMoreDTO.getKeyword());
+				.like(V.notEmpty(attachMore.getKeyword()), label, attachMore.getKeyword());
 		// 解析排序
-		if (V.notEmpty(attachMoreDTO.getOrderBy())) {
-			String[] orderByFields = S.split(attachMoreDTO.getOrderBy(), ",");
+		if (V.notEmpty(attachMore.getOrderBy())) {
+			String[] orderByFields = S.split(attachMore.getOrderBy(), ",");
 			for (String field : orderByFields) {
 				V.securityCheck(field);
 				String[] fieldAndOrder = field.split(":");
-				String columnName = columnByField.apply(fieldAndOrder[0]);
+				String columnName = field2column.apply(fieldAndOrder[0]);
 				if (fieldAndOrder.length > 1 && Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
 					queryWrapper.orderByDesc(columnName);
 				} else {
@@ -333,10 +367,60 @@ public class BaseController {
 				}
 			}
 		}
-		if (custom != null) {
-			custom.accept(queryWrapper, columnByField);
+		// 父级限制
+		String parentColumn = field2column.apply(S.defaultIfBlank(attachMore.getParent(), attachMore.isTree() ? "parentId" : null));
+		if (V.notEmpty(parentColumn)) {
+			if (V.notEmpty(parentValue)) {
+				queryWrapper.eq(parentColumn, parentValue);
+			} else {
+				queryWrapper.and(e -> e.isNull(parentColumn).or().eq(parentColumn, 0));
+			}
 		}
-		return baseService.getLabelValueList(queryWrapper);
+		// 构建附加条件
+		buildAttachMoreCondition(attachMore, queryWrapper, field2column);
+		// 获取数据并做相应填充
+		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper);
+		if (attachMore.isTree() || attachMore.getChild() != null) {
+			String type = attachMore.getTarget();
+			Boolean leaf = !attachMore.isTree() && attachMore.getChild() == null ? true : null;
+			labelValueList.forEach(item -> {
+				item.setType(type);
+				item.setLeaf(leaf);
+				// 非异步加载
+				if (!attachMore.isLazy()) {
+					List<LabelValue> children = attachMoreRelatedData(attachMore, S.valueOf(item.getValue()), type);
+					item.setChildren(children.isEmpty() ? null : children);
+					item.setDisabled(children.isEmpty() && attachMore.getChild() != null ? true : null);
+				}
+			});
+		}
+		return labelValueList;
+	}
+
+	/**
+	 * 构建AttachMore的筛选条件
+	 *
+	 * @param attachMore
+	 * @param queryWrapper
+	 * @param field2column attachMore.target对象的属性名转列名
+	 */
+	protected void buildAttachMoreCondition(AttachMoreDTO attachMore, QueryWrapper<?> queryWrapper, Function<String, String> field2column) {
+		if (attachMore.getCondition() == null) {
+			return;
+		}
+		for (Map.Entry<String, Object> item : attachMore.getCondition().entrySet()) {
+			String columnName = field2column.apply(item.getKey());
+			Object itemValue = item.getValue();
+			if (itemValue == null) {
+				queryWrapper.isNull(columnName);
+			} else {
+				if (itemValue instanceof Collection) {
+					queryWrapper.in(columnName, (Collection<?>) itemValue);
+				} else {
+					queryWrapper.eq(columnName, itemValue);
+				}
+			}
+		}
 	}
 
 	/**
