@@ -24,11 +24,9 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.Cons;
 import com.diboot.core.dto.AttachMoreDTO;
-import com.diboot.core.dto.CascaderDTO;
 import com.diboot.core.entity.ValidList;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.service.CascaderService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -59,12 +57,6 @@ public class BaseController {
 	 */
 	@Autowired(required = false)
 	protected DictionaryService dictionaryService;
-
-	/**
-	 * 级联service实现类
-	 */
-	@Autowired(required = false)
-	private Map<String, CascaderService> cascaderServiceMap;
 
 	/***
 	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
@@ -421,31 +413,6 @@ public class BaseController {
 				}
 			}
 		}
-	}
-
-	/**
-	 * 级联目标数据获取
-	 * @param cascaderDTO
-	 * @return
-	 * @throws Exception
-	 */
-	public Map<String, List<LabelValue>> cascaderTargetList(CascaderDTO cascaderDTO) throws Exception {
-		Map<String, List<LabelValue>> result = new HashMap<>(16);
-		if (V.isEmpty(cascaderServiceMap)) {
-			log.error("未实现CascaderService定义，无法获取级联数据！");
-			return Collections.emptyMap();
-		}
-		for (String entityName : cascaderDTO.getTargetList()) {
-			String entityClassName = S.uncapFirst(entityName);
-			CascaderService cascaderService = cascaderServiceMap.get(entityClassName + "ServiceImpl");
-			if(cascaderService == null){
-				log.error("请检查实体类型{} 是否实现CascaderService定义", entityName);
-				continue;
-			}
-			// 构建前端下拉框的初始化数据
-			result.put(entityClassName + "Options", cascaderService.getCascaderLabelValue(cascaderDTO));
-		}
-		return result;
 	}
 
 	/***
