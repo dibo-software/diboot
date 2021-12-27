@@ -112,8 +112,8 @@ public class AttachMoreDTO implements Serializable {
     private boolean lazy = true;
 
     /**
-     * <h3>嵌套子项</h3>
+     * <h3>下一层</h3>
      */
-    private AttachMoreDTO child;
+    private AttachMoreDTO next;
 
 }

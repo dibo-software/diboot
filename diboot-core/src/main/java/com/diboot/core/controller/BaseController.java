@@ -291,15 +291,15 @@ public class BaseController {
 		if (V.notEmpty(parentType)) {
 			attachMoreDTO = findAttachMoreByType(attachMoreDTO, parentType);
 			if (attachMoreDTO != null && !attachMoreDTO.isTree()) {
-				attachMoreDTO = attachMoreDTO.getChild().setTree(false);
+				attachMoreDTO = attachMoreDTO.getNext().setTree(false);
 			}
 		}
 		if (attachMoreDTO == null) {
 			return Collections.emptyList();
 		}
 		List<LabelValue> labelValueList = attachMoreRelatedData(attachMoreDTO, parentValue);
-		if (attachMoreDTO.isTree() && attachMoreDTO.getChild() != null) {
-			labelValueList.addAll(attachMoreRelatedData(attachMoreDTO.getChild().setTree(false), parentValue));
+		if (attachMoreDTO.isTree() && attachMoreDTO.getNext() != null) {
+			labelValueList.addAll(attachMoreRelatedData(attachMoreDTO.getNext().setTree(false), parentValue));
 		}
 		return labelValueList;
 	}
@@ -313,7 +313,7 @@ public class BaseController {
 	 */
 	private AttachMoreDTO findAttachMoreByType(AttachMoreDTO attachMore, String type) {
 		return attachMore.getTarget().equals(type) ? attachMore
-				: (attachMore.getChild() == null ? null : findAttachMoreByType(attachMore.getChild(), type));
+				: (attachMore.getNext() == null ? null : findAttachMoreByType(attachMore.getNext(), type));
 	}
 
 	/**
@@ -380,9 +380,9 @@ public class BaseController {
 		buildAttachMoreCondition(attachMore, queryWrapper, field2column);
 		// 获取数据并做相应填充
 		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper);
-		if (attachMore.isTree() || attachMore.getChild() != null) {
+		if (attachMore.isTree() || attachMore.getNext() != null) {
 			String type = attachMore.getTarget();
-			Boolean leaf = !attachMore.isTree() && attachMore.getChild() == null ? true : null;
+			Boolean leaf = !attachMore.isTree() && attachMore.getNext() == null ? true : null;
 			labelValueList.forEach(item -> {
 				item.setType(type);
 				item.setLeaf(leaf);
@@ -390,7 +390,7 @@ public class BaseController {
 				if (!attachMore.isLazy()) {
 					List<LabelValue> children = attachMoreRelatedData(attachMore, S.valueOf(item.getValue()), type);
 					item.setChildren(children.isEmpty() ? null : children);
-					item.setDisabled(children.isEmpty() && attachMore.getChild() != null ? true : null);
+					item.setDisabled(children.isEmpty() && attachMore.getNext() != null ? true : null);
 				}
 			});
 		}
