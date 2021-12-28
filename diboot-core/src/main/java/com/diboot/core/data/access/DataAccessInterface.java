@@ -15,6 +15,7 @@
  */
 package com.diboot.core.data.access;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -28,6 +29,6 @@ public interface DataAccessInterface {
     /**
      * 可访问的对象ID
      */
-    List<Long> getAccessibleIds(CheckpointType type);
+    List<Serializable> getAccessibleIds(CheckpointType type);
 
 }

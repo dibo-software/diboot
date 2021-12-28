@@ -80,7 +80,7 @@ public class DataAccessAnnoCache {
     private static void initClassCheckpoint(Class<?> entityDto){
         String key = entityDto.getName();
         if(!DATA_PERMISSION_ANNO_CACHE.containsKey(key)){
-            String[] results = {"", "", "", "", ""};
+            String[] results = {"", "", "", "", "", ""};
             List<Field> fieldList = BeanUtils.extractFields(entityDto, DataAccessCheckpoint.class);
             if(V.notEmpty(fieldList)){
                 for(Field fld : fieldList){

@@ -26,7 +26,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -43,6 +43,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -137,7 +138,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             if(V.isEmpty(idCol)){
                 continue;
             }
-            List<Long> idValues = checkImpl.getAccessibleIds(type);
+            List<Serializable> idValues = checkImpl.getAccessibleIds(type);
             if(V.isEmpty(idValues)){
                 continue;
             }
@@ -147,7 +148,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
                     idCol = mainTable.getAlias().getName() + "." + idCol;
                 }
                 equalsTo.setLeftExpression(new Column(idCol));
-                equalsTo.setRightExpression(new LongValue(idValues.get(0)));
+                equalsTo.setRightExpression(new StringValue(S.defaultValueOf(idValues.get(0))));
 
                 dataAccessExpression = equalsTo;
             }
