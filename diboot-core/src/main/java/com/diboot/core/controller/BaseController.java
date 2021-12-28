@@ -372,9 +372,10 @@ public class BaseController {
 		buildAttachMoreCondition(attachMore, queryWrapper, field2column);
 		// 获取数据并做相应填充
 		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper);
-		if (attachMore.isTree() || attachMore.getNext() != null) {
-			String type = attachMore.getTarget();
+		if (V.notEmpty(parentColumn) || attachMore.getNext() != null) {
 			Boolean leaf = !attachMore.isTree() && attachMore.getNext() == null ? true : null;
+			// 第一层tree与最后一层无需返回type
+			String type = attachMore.isTree() || Boolean.TRUE.equals(leaf) ? null : attachMore.getTarget();
 			labelValueList.forEach(item -> {
 				item.setType(type);
 				item.setLeaf(leaf);
