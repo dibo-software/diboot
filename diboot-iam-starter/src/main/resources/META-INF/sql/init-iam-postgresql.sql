@@ -116,9 +116,9 @@ create index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 create table iam_resource_permission
 (
   id bigserial not null,
+  parent_id bigint default 0   not null,
   tenant_id            bigint        not null default 0,
   app_module          varchar(50),
-  parent_id bigint default 0   not null,
   display_type varchar(20) not null,
   display_name varchar(100) not null,
   resource_code varchar(100)   null,
@@ -152,19 +152,19 @@ create table iam_role_resource
   id bigserial not null ,
   tenant_id            bigint        not null default 0,
   role_id bigint not null ,
-  permission_id bigint not null ,
+  resource_id bigint not null ,
   is_deleted BOOLEAN default FALSE not null ,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column iam_role_resource.id is 'ID';
 comment on column iam_role_resource.tenant_id is '租户ID';
 comment on column iam_role_resource.role_id is '角色ID';
-comment on column iam_role_resource.permission_id is '权限ID';
+comment on column iam_role_resource.resource_id is '权限ID';
 comment on column iam_role_resource.is_deleted is '是否删除';
 comment on column iam_role_resource.create_time is '创建时间';
 comment on table iam_role_resource is '角色资源';
 -- 索引
-create index idx_iam_role_resource on iam_role_resource (role_id, permission_id);
+create index idx_iam_role_resource on iam_role_resource (role_id, resource_id);
 create index idx_iam_role_resource_tenant on iam_role_resource(tenant_id);
 
 -- 登录日志表
