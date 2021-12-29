@@ -18,7 +18,7 @@
 		data() {
 			return {
 				show: false,
-				tempVal: ''
+				tempVal: this.value
 			}
 		},
 		watch: {

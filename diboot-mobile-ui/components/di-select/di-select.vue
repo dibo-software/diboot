@@ -79,8 +79,11 @@
 			}
 		},
 		watch: {
-			list(val) {
-				this.__setLabel(val)
+			list: {
+				immediate: true,
+				handler(value) {
+					this.__setLabel(value)
+				}
 			}
 		},
 		props: {

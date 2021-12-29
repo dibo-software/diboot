@@ -62,6 +62,7 @@ export default {
 		
 	},
 	onShow() {
+		this.activeIndex = -100
 		this.getListFromMixin && this.getList(true)
 	},
 	methods: {

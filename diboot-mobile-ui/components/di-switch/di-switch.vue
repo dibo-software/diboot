@@ -16,20 +16,18 @@
 				tempVal: this.value
 			};
 		},
-		mounted() {
-			// 设置初始化值
-			this.$nextTick(function(){
-				this.$emit('input', this.value || false)
-			})
-		},
 		watch: {
 			tempVal(val) {
 				this.$emit('input', val)
 			},
 			//回显
-			value(val) {
-				this.tempVal = val
+			value: {
+				immediate: true,
+				handler(value) {
+					this.tempVal = value
+				}
 			}
+			
 		},
 		props: {
 			value: {

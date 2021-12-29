@@ -365,7 +365,9 @@
 					// 设置初始值
 					this.initialValue = this.fieldValue;
 					if(this.adapterDiboot) {
-						this.parent.model[this.prop] = this.initialValue
+						if(this.initialValue) {
+							this.parent.model[this.prop] = this.initialValue
+						}
 					}
 					// 添加表单校验，这里必须要写在$nextTick中，因为u-form的rules是通过ref手动传入的
 					// 不在$nextTick中的话，可能会造成执行此处代码时，父组件还没通过ref把规则给u-form，导致规则为空

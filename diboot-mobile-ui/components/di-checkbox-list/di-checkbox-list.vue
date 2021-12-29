@@ -64,8 +64,11 @@
 			}
 		},
 		watch: {
-			list(value) {
-				this.__setCheckboxList(value)
+			list: {
+				immediate: true,
+				handler(value) {
+					this.__setCheckboxList(value)
+				}
 			}
 		},
 		props: {
