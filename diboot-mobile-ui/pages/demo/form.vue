@@ -12,16 +12,12 @@
 					<di-checkbox-list v-model="form.fruits" :list="checkboxList"></di-checkbox-list>
 				</u-form-item>
 				<u-form-item label="味道" prop="taste">
-					<u-radio-group v-model="form.taste" :active-color="activeColor">
-						<u-radio v-for="(item, index) in radioList" :key="index" :name="item.name"
-							:disabled="item.disabled">
-							{{ item.name }}
-						</u-radio>
-					</u-radio-group>
+					<di-radio-list v-model="form.taste" :list="radioList"/>
 				</u-form-item>
 				<u-form-item label="开关">
-					<u-switch slot="right" vibrate-short :active-color="activeColor" v-model="form.switchVal">
-					</u-switch>
+					<template #right>
+						<di-switch v-model="form.switchVal"></di-switch>
+					</template>
 				</u-form-item>
 				<u-form-item label="日历" prop="calendarDate">
 					<di-calendar-picker v-model="form.calendarDate" placeholder="请选择日期范围"/>
@@ -51,6 +47,18 @@
 	export default {
 		data() {
 			return {
+				form: {
+					"name": "123",
+					"taste": "麻辣",
+					"sex": "1",
+					"switchVal": false,
+					"fruits": "apple,mango",
+					"calendarDate": "2021-12-24",
+					"calendarRange": "2021-12-14~2021-12-24",
+					"region": "北京市-市辖区-东城区",
+					"time": "2021-12-29 17:36:38",
+					"picture": ""
+				},
 				list: [{
 						value: '1',
 						label: '男'
@@ -75,12 +83,12 @@
 					}
 				],
 				radioList: [{
-						name: '鲜甜',
-						disabled: false
+						label: '鲜甜',
+						value: '鲜甜'
 					},
 					{
-						name: '麻辣',
-						disabled: false
+						label: '麻辣',
+						value: '麻辣'
 					}
 				],
 				relObjType: 'Demo',

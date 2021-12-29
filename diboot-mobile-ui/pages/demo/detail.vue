@@ -29,7 +29,8 @@
 					description: '<p>简述：请点击链接查看更多：<img style="max-width:100%" alt="logo" src="https://dibootm.oss-cn-shanghai.aliyuncs.com/loading-img.png" data-img-size-val="900,500"/></p>'
 				}
 			}
-		}
+		},
+		mixins:[detail]
 	}
 </script>
 
