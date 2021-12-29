@@ -1,6 +1,6 @@
 <template>
 	<view class="di-region-picker">
-		<u-input v-model="value" @click="show = true" disabled :select-open="show"
+		<u-input ref='diRegion' v-model="tempVal" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
 		<u-picker confirm-color="#18b566" v-model="show" :params="pickerParams" mode="region" @confirm="handlePicker" :default-region="defaultRegion"></u-picker>
 	</view>
@@ -18,7 +18,13 @@
 	export default {
 		data() {
 			return {
-				show: false
+				show: false,
+				tempVal: ''
+			}
+		},
+		watch: {
+			value(val) {
+				this.tempVal = val
 			}
 		},
 		methods: {
@@ -32,7 +38,8 @@
 				const result = [province.label]
 				city && result.push(city.label)
 				area && result.push(area.label)
-				this.handleInputEvent(result.join('-'))
+				this.tempVal = result.join('-')
+				this.handleInputEvent(this.tempVal)
 				this.$emit('confirm', value)
 			},
 			/**
@@ -44,7 +51,7 @@
 				this.$emit('input', value)
 				this.$nextTick(function(){
 					// 将当前的值发送到 u-form-item 进行校验
-					this.$refs.diDate.dispatch('u-form-item', 'on-form-change', value);
+					this.$refs.diRegion.dispatch('u-form-item', 'on-form-change', value);
 				})
 			}
 		},
