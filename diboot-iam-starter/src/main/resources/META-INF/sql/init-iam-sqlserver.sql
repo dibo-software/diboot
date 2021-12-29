@@ -157,7 +157,7 @@ create table ${SCHEMA}.iam_role_resource
    id bigint identity ,
    tenant_id            bigint        not null default 0,
    role_id bigint not null ,
-   permission_id bigint not null ,
+   resource_id bigint not null ,
    is_deleted tinyint default 0 not null ,
    create_time datetime default CURRENT_TIMESTAMP not null,
    constraint PK_iam_role_resource primary key (id)
@@ -165,12 +165,12 @@ create table ${SCHEMA}.iam_role_resource
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'角色ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'role_id';
-execute sp_addextendedproperty 'MS_Description', N'权限ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'permission_id';
+execute sp_addextendedproperty 'MS_Description', N'权限ID', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'resource_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'角色资源', 'SCHEMA', '${SCHEMA}', 'table', iam_role_resource, null, null;
 -- 索引
-create nonclustered index idx_iam_role_resource on iam_role_resource (role_id, permission_id);
+create nonclustered index idx_iam_role_resource on iam_role_resource (role_id, resource_id);
 create nonclustered index idx_iam_role_resource_tenant on iam_role_resource(tenant_id);
 
 -- 登录日志表
