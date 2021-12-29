@@ -154,7 +154,6 @@ export default {
 		handleOnreachBottom() {
 			this.status = 'nomore'
 			if (this.page.pageIndex < this.page.totalCount / this.page.pageSize) {
-				this.status = 'loading'
 				this.getList()
 			}
 		},
@@ -162,6 +161,7 @@ export default {
 		 * 获取数据列表
 		 */
 		async getList(replace = false) {
+			this.status = 'loading'
 			const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, {
 				params: this.queryParam
 			})
