@@ -161,11 +161,11 @@
 			},
 			height: {
 				type: [Number, String],
-				default: Number.MAX_VALUE
+				default: 200
 			},
 			width: {
 				type: [Number, String],
-				default: Number.MAX_VALUE
+				default: 200
 			},
 			deletable: {
 				type: Boolean,
