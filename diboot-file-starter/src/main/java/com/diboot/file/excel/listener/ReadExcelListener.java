@@ -377,11 +377,12 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                 List valList = map.get(name);
                 if (entry.getValue() instanceof ExcelBindField) {
                     ExcelBindField excelBindField = (ExcelBindField) entry.getValue();
+                    String setFieldName = S.defaultIfEmpty(excelBindField.setIdField(), entry.getKey());
                     if (V.isEmpty(valList)) {
                         if (excelBindField.empty().equals(EmptyStrategy.SET_0)) {
                             // 非预览时 赋值
                             if (!preview) {
-                                BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
+                                BeanUtils.setProperty(data, setFieldName, 0);
                             }
                         } else if (excelBindField.empty().equals(EmptyStrategy.WARN)) {
                             data.addComment(entry.getKey(), name + " 值不存在");
@@ -391,7 +392,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                     } else if (valList.size() == 1) {
                         // 非预览时 赋值
                         if (!preview) {
-                            BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
+                            BeanUtils.setProperty(data, setFieldName, valList.get(0));
                         }
                     } else {
                         if (excelBindField.duplicate().equals(DuplicateStrategy.WARN)) {
@@ -399,7 +400,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         } else if (excelBindField.duplicate().equals(DuplicateStrategy.FIRST)) {
                             // 非预览时 赋值
                             if (!preview) {
-                                BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
+                                BeanUtils.setProperty(data, setFieldName, valList.get(0));
                             }
                         }
                     }
@@ -421,7 +422,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         }
                     }
                     // 非预览时 赋值
-                    if (!preview) {
+                    if (!preview && V.notEmpty(valList)) {
                         BeanUtils.setProperty(data, entry.getKey(), valList.get(0));
                     }
                 }
