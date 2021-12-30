@@ -15,7 +15,7 @@
 					<di-radio-list v-model="form.taste" :list="radioList"/>
 				</u-form-item>
 				<u-form-item label="开关">
-					<template #right>
+					<template slot="right">
 						<di-switch v-model="form.switchVal"></di-switch>
 					</template>
 				</u-form-item>
@@ -51,7 +51,7 @@
 					"name": "123",
 					"taste": "麻辣",
 					"sex": "1",
-					"switchVal": false,
+					"switchVal": true,
 					"fruits": "apple,mango",
 					"calendarDate": "2021-12-24",
 					"calendarRange": "2021-12-14~2021-12-24",

@@ -13,7 +13,7 @@
 				</view>
 			</view>
 			</template>
-			<template #label>
+			<template slot="label">
 				<view class="di-descriptions__body">
 					<slot></slot>
 				</view>
@@ -70,7 +70,7 @@
 
 <style lang="scss">
 .di-descriptions {
-	width: 100%;
+	// width: 100%;
 	/deep/.u-cell_title {
 		width: 100% !important;
 	}
