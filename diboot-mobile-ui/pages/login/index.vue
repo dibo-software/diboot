@@ -86,7 +86,7 @@
 			weiLogin() {
 				// 小程序登陆
 				// #ifdef MP-WEIXIN
-				this.$miniLogin.setTip(this.$refs.uTips).setUrlPath('/pages/home/home').go()
+				this.$miniLogin.setTip(this.$refs.uTips).setBindWx(false).setUrlPath('/pages/home/home').go()
 				//#endif
 				// 微信公众号登陆
 				// #ifdef H5
