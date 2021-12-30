@@ -53,7 +53,7 @@ public class IamMember extends BaseLoginUser {
     /**
      * 移动端用户状态
      */
-    public static final String DICT_MEMBER_STATUS = "ACCOUNT_STATUS";
+    public static final String DICT_MEMBER_STATUS = "MEMBER_STATUS";
 
     /**
      * 租户id
