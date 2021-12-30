@@ -10,17 +10,14 @@ import constant from '@/utils/constant.js'
 const JWT_HEADER_KEY = 'authtoken'
 const JWT_REFRESH_TOKEN_KEY = 'refreshtoken'
 const REDIRECT = 'redirect'
-const dibootApi = new Request({
-	baseURL: constant.host(),
-	header: {
-		"content-type": "application/json;charset=utf-8"
-	}
+const service = new Request({
+	baseURL: constant.host()
 })
 
 /**
  * 请求发送之前需要做的处理
  */
-dibootApi.interceptors.request.use((config) => { // 可使用async await 做异步操作
+service.interceptors.request.use((config) => { // 可使用async await 做异步操作
   config.header.authtoken = uni.getStorageSync(JWT_HEADER_KEY) || ''
   config.header.refreshtoken = uni.getStorageSync(JWT_REFRESH_TOKEN_KEY) || ''
   return config
@@ -29,7 +26,7 @@ dibootApi.interceptors.request.use((config) => { // 可使用async await 做异�
 })
 
 /* 响应结束需要做的处理*/
-dibootApi.interceptors.response.use((response) => { 
+service.interceptors.response.use((response) => { 
 	if(response.data.code === 4001) {
 		uni.removeStorageSync(JWT_HEADER_KEY)
 		uni.removeStorageSync(REDIRECT)
@@ -52,5 +49,71 @@ dibootApi.interceptors.response.use((response) => {
 }, (response) => { /*  对响应错误做点什么 （statusCode !== 200）*/
   return Promise.reject(response)
 })
-export default dibootApi
+const dibootApi = {
+	/**
+	 * post请求
+	 * @param {Object} url
+	 * @param {Object} data
+	 */
+	post(url, data) {
+		return service.post(url, data, {
+			header: {
+				"content-type": "application/json;charset=utf-8"
+			}
+		})
+	},
+	/**
+	 * get请求
+	 * @param {Object} url
+	 * @param {Object} params
+	 */
+	get(url, params) {
+		return service.get(url, {
+			params,
+			header: {
+				"content-type": "application/json;charset=utf-8"
+			}
+		})
+	},
+	/**
+	 * put请求
+	 * @param {Object} url
+	 * @param {Object} data
+	 */
+	put(url, data) {
+		return service.put(url, data, {
+			header: {
+				"content-type": "application/json;charset=utf-8"
+			}
+		})
+	},
+	/**
+	 * delete请求
+	 * @param {Object} url
+	 * @param {Object} data
+	 */
+	delete(url, data) {
+		return service.delete(url, data, {
+			header: {
+				"content-type": "application/json;charset=utf-8"
+			}
+		})
+	},
+	/**
+	 * 提交form表单
+	 * @param {Object} url
+	 * @param {Object} data
+	 */
+	postForm(url, data) {
+		return service.post(url, data, {
+			header: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		})
+	}
+}
+export {
+	dibootApi,
+	service
+} 
 

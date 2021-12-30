@@ -10,7 +10,7 @@ App.mpType = 'app'
 import uView from "uview-ui";
 Vue.use(uView);
 
-import dibootApi from './utils/dibootApi.js'
+import {dibootApi} from './utils/dibootApi.js'
 import constant from './utils/constant.js'
 import Member from './classes/class.member.js'
 import PwdLogin from './classes/class.pwd.login.js'

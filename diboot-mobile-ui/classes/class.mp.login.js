@@ -1,4 +1,4 @@
-import dibootApi from '@/utils/dibootApi.js'
+import {service as dibootApi} from '@/utils/dibootApi.js'
 import constant from '@/utils/constant.js'
 import Member from './class.member.js'
 

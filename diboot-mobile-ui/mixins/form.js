@@ -1,4 +1,4 @@
-import dibootApi from '@/utils/dibootApi'
+import {dibootApi} from '@/utils/dibootApi'
 import more from './more'
 
 export default {

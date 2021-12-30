@@ -1,4 +1,4 @@
-import dibootApi from '@/utils/dibootApi'
+import {dibootApi} from '@/utils/dibootApi'
 import more from './more'
 
 export default {
@@ -162,9 +162,7 @@ export default {
 		 */
 		async getList(replace = false) {
 			this.status = 'loading'
-			const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, {
-				params: this.queryParam
-			})
+			const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, this.queryParam)
 			if (res.code === 0) {
 				this.list = replace ? res.data : this.list.concat(res.data)
 				this.page = res.page

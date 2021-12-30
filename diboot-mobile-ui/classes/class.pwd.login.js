@@ -1,4 +1,4 @@
-import dibootApi from '@/utils/dibootApi.js'
+import {service as dibootApi} from '@/utils/dibootApi.js'
 import Member from './class.member.js'
 
 export default class PwdLogin extends Member {

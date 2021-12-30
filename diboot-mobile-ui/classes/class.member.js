@@ -1,4 +1,4 @@
-import dibootApi from '@/utils/dibootApi.js'
+import {service as dibootApi} from '@/utils/dibootApi.js'
 export default class Member {
 	constructor(){
 		this.$vue = null
