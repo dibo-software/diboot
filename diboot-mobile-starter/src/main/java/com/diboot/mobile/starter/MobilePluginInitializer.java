@@ -82,7 +82,7 @@ public class MobilePluginInitializer implements ApplicationRunner {
         // 插入mobile组件所需的数据字典
         // 插入iam组件所需的数据字典
         DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
-        if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "AUTH_TYPE")){
+        if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MEMBER_STATUS")){
             String[] DICT_INIT_DATA = {
                     "{\"type\":\"MEMBER_STATUS\", \"itemName\":\"用户状态\", \"description\":\"Member用户状态\", \"children\":[{\"itemName\":\"有效\", \"itemValue\":\"A\", \"sortId\":1},{\"itemName\":\"无效\", \"itemValue\":\"I\", \"sortId\":2}]}",
             };
