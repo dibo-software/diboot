@@ -44,7 +44,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons.io}</version>
+            <version>${commons-io.version}</version>
         </dependency>
         <!-- Excel处理 -->
         <dependency>

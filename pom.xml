@@ -31,7 +31,7 @@
         <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
         <okhttp.version>4.9.2</okhttp.version>
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
-        <commons.io>2.11.0</commons.io>
+        <commons-io.version>2.11.0</commons-io.version>
         <diboot.version>2.4.0</diboot.version>
     </properties>
 
