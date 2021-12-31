@@ -211,6 +211,20 @@ public class TestJoinQuery {
     }
 
     @Test
+    public void testBindQueryGroup(){
+        DepartmentDTO departmentDTO = new DepartmentDTO();
+        departmentDTO.setSearch("帝博");
+        List<Department> list = QueryBuilder.toDynamicJoinQueryWrapper(departmentDTO).queryList(Department.class);
+        Assert.assertTrue(list.size() > 5);
+        departmentDTO.setSearch("测试");
+        list = QueryBuilder.toDynamicJoinQueryWrapper(departmentDTO).queryList(Department.class);
+        Assert.assertTrue(list.size() > 2);
+        departmentDTO.setSearch("WW");
+        list = QueryBuilder.toDynamicJoinQueryWrapper(departmentDTO).queryList(Department.class);
+        Assert.assertTrue(list.size() > 0);
+    }
+
+    @Test
     public void test(){
         String sql = buildCheckDeletedColSql("test");
         Assert.assertTrue(sql.contains("SELECT is_deleted"));

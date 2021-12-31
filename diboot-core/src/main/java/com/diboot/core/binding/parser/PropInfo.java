@@ -27,11 +27,18 @@ import java.util.Map;
 @Setter
 public class PropInfo implements Serializable {
     private static final long serialVersionUID = 5921667308129991326L;
-
+    /**
+     * 主键列
+     */
     private String idColumn;
-
+    /**
+     * 主键字段类型
+     */
+    private Class<?> idFieldType;
+    /**
+     * 逻辑删除列
+     */
     private String deletedColumn;
-
     /**
      * 列集合
      */
@@ -83,6 +90,7 @@ public class PropInfo implements Serializable {
                         columnName = S.toSnakeCase(fldName);
                     }
                     this.idColumn = columnName;
+                    this.idFieldType = fld.getType();
                 }
                 else{
                     TableLogic tableLogic = fld.getAnnotation(TableLogic.class);
@@ -104,6 +112,28 @@ public class PropInfo implements Serializable {
             }
         }
 
+    }
+
+    /**
+     * 根据列名获取字段
+     * @return
+     */
+    public String getFieldByColumn(String columnName){
+        if(V.isEmpty(this.columnToFieldMap)){
+            return null;
+        }
+        return this.columnToFieldMap.get(columnName);
+    }
+
+    /**
+     * 根据列名获取字段
+     * @return
+     */
+    public String getColumnByField(String fieldName){
+        if(V.isEmpty(this.fieldToColumnMap)){
+            return null;
+        }
+        return this.fieldToColumnMap.get(fieldName);
     }
 
 }

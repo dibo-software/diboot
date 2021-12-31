@@ -32,6 +32,7 @@ import java.util.*;
  * @version v2.0
  * @date 2019/01/01
  */
+@SuppressWarnings({"JavaDoc", "unused"})
 public class S extends StringUtils{
 	/***
 	 * 默认分隔符 ,
@@ -61,7 +62,7 @@ public class S extends StringUtils{
 	 * @param stringList
 	 * @return
 	 */
-	public static String join(List<String> stringList){
+	public static String join(Iterable<?> stringList){
 		return StringUtils.join(stringList, SEPARATOR);
 	}
 
@@ -92,7 +93,7 @@ public class S extends StringUtils{
 	 * @return
 	 */
 	public static String[] toStringArray(List<String> stringList){
-		return stringList.toArray(new String[stringList.size()]);
+		return stringList.toArray(new String[0]);
 	}
 
 	/***
@@ -204,7 +205,7 @@ public class S extends StringUtils{
 				sb.append(word.substring(0, 1).toUpperCase()).append(word.substring(1).toLowerCase());
 			}
 		}
-		if(snakeCaseStr.endsWith(Cons.SEPARATOR_UNDERSCORE)){
+		if (snakeCaseStr.endsWith(Cons.SEPARATOR_UNDERSCORE) && sb != null) {
 			sb.append(Cons.SEPARATOR_UNDERSCORE);
 		}
 		return sb != null? sb.toString() : null;
@@ -305,7 +306,34 @@ public class S extends StringUtils{
     	if (o == null){
     		return null;
 		}
-    	return String.valueOf(o);
+		return String.valueOf(o);
+	}
+
+	/**
+	 * 字符串转换，如果是null则返回空字符串
+	 *
+	 * @param o 转换对象
+	 * @return 字符串对象
+	 */
+	public static String defaultValueOf(Object o) {
+		if (o == null) {
+			return EMPTY;
+		}
+		return String.valueOf(o);
+	}
+
+	/**
+	 * 字符串转换，如果是null，则使用默认字符串代替
+	 *
+	 * @param o          转换对象
+	 * @param defaultStr 默认字符串对象
+	 * @return 字符串对象
+	 */
+	public static String defaultValueOf(Object o, String defaultStr) {
+		if (o == null) {
+			return defaultStr;
+		}
+		return String.valueOf(o);
 	}
 
 	/***

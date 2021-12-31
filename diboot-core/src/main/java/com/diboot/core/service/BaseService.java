@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 
 import java.io.Serializable;
@@ -323,15 +323,7 @@ public interface BaseService<T> {
      * @param queryWrapper
      * @return
      */
-    List<KeyValue> getKeyValueList(Wrapper queryWrapper);
-
-    /***
-     * 获取键值对的Map
-     *
-     * @param queryWrapper
-     * @return
-     */
-    Map<String, Object> getKeyValueMap(Wrapper queryWrapper);
+    List<LabelValue> getLabelValueList(Wrapper queryWrapper);
 
     /**
      * 获取id-指定name的映射map

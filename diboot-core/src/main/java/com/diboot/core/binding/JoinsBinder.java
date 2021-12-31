@@ -203,23 +203,19 @@ public class JoinsBinder {
                     orderType = fieldAndOrder[1];
                 }
                 // 获取列定义的AnnoJoiner 得到别名
-                AnnoJoiner joiner = ParserCache.getAnnoJoiner(queryWrapper.getDtoClass(), fieldName);
-                if(joiner != null){
-                    if(V.notEmpty(joiner.getAlias())){
-                        fieldName = joiner.getAlias() + "." + joiner.getColumnName();
-                    }
-                    else{
-                        fieldName = "self." + joiner.getColumnName();
-                    }
-                }
-                else{
+                List<AnnoJoiner> joinerList = ParserCache.getAnnoJoiners(queryWrapper.getDtoClass(), Collections.singletonList(fieldName));
+                if (joinerList.isEmpty()) {
                     fieldName = "self." + S.toSnakeCase(fieldName);
-                }
-                if(V.notEmpty(orderType)){
-                    orderByList.add(fieldName + ":" + orderType);
-                }
-                else{
-                    orderByList.add(fieldName);
+                    orderByList.add(V.isEmpty(orderType) ? fieldName : fieldName + ":" + orderType);
+                } else {
+                    for (AnnoJoiner annoJoiner : joinerList) {
+                        if (V.notEmpty(annoJoiner.getAlias())) {
+                            fieldName = annoJoiner.getAlias() + "." + annoJoiner.getColumnName();
+                        } else {
+                            fieldName = "self." + annoJoiner.getColumnName();
+                        }
+                        orderByList.add(V.isEmpty(orderType) ? fieldName : fieldName + ":" + orderType);
+                    }
                 }
             }
             pagination.setOrderBy(S.join(orderByList));

@@ -21,43 +21,44 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.mobile.dto.MobileCredential;
 import com.diboot.mobile.entity.IamMember;
 import com.diboot.mobile.service.IamMemberService;
-import com.diboot.mobile.service.WxMpMemberAuthService;
+import com.diboot.mobile.service.WxMpAuthService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.mp.api.WxMpService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 微信公众号相关操作
+ * 微信公众号相关操作（登陆用户为IamMember类型）
  *
  * @author : uu
- * @version : v2.3.1
+ * @version : v2.4.0
  * @Copyright © diboot.com
  * @Date 2021/7/20  16:32
  */
 @Slf4j
-public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
-    @Value("${wechat.state}")
-    private String STATE;
+public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
 
-    private WxMpService wxMpService;
+    protected String STATE;
 
-    private IamMemberService iamMemberService;
+    protected WxMpService wxMpService;
 
-    private IamAccountService iamAccountService;
+    protected IamMemberService iamMemberService;
 
-    public WxMpMemberAuthServiceImpl(WxMpService wxMpService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
+    protected IamAccountService iamAccountService;
+
+    public WxMpMemberAuthServiceImpl(WxMpService wxMpService, IamAccountService iamAccountService, IamMemberService iamMemberService, String STATE) {
         this.wxMpService = wxMpService;
         this.iamMemberService = iamMemberService;
         this.iamAccountService = iamAccountService;
+        this.STATE = STATE;
     }
 
     @Override
@@ -67,8 +68,13 @@ public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
     }
 
     @Override
+    public IamMember bindWxMp(String code, String state) throws Exception {
+        throw new BusinessException(Status.FAIL_OPERATION, "当前业务不支持绑定");
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public String applyLogin(String code, String state) throws Exception {
+    public String applyToken(String code, String state) throws Exception {
         // 校验STATE
         if (V.notEmpty(STATE) && !STATE.equals(state)) {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法来源");
@@ -84,22 +90,22 @@ public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
                         .eq(IamAccount::getUserType, IamMember.class.getSimpleName())
                         .eq(IamAccount::getAuthAccount, accessToken.getOpenId())
                         .eq(IamAccount::getAuthType, Cons.DICTCODE_AUTH_TYPE.WX_MP.name()));
+        MobileCredential credential = new MobileCredential(accessToken.getOpenId());
+        credential.setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name());
+        credential.setUserTypeClass(IamMember.class);
         // 账户存在，直接登陆
         if (V.notEmpty(account)) {
-            MobileCredential credential = new MobileCredential(accessToken.getOpenId());
             return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.WX_MP.name()).applyToken(credential);
         }
         // 账户不存在，表示首次进入，那么需要存储信息
         WxOAuth2UserInfo userInfo = wxMpService.getOAuth2Service().getUserInfo(accessToken, null);
-        IamMember iamMember = mpInfo2IamMemberEntity(userInfo);
+        IamMember iamMember = mpInfo2IamMemberEntity(userInfo)
+                .setUserId(0L).setOrgId(0L)
+                .setUserType(IamMember.class.getSimpleName());
         iamMemberService.createEntity(iamMember);
-
         // 创建iam_account账号
-        IamAccount iamAccount = createIamAccountEntity(iamMember);
+        IamAccount iamAccount = createIamAccountEntity(iamMember, iamMember.getId(), IamMember.class);
         iamAccountService.createEntity(iamAccount);
-
-        MobileCredential credential = new MobileCredential(accessToken.getOpenId());
-        credential.setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name());
         return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.WX_MP.name()).applyToken(credential);
     }
 
@@ -109,14 +115,10 @@ public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
      * @param userInfo
      * @return
      */
-    private IamMember mpInfo2IamMemberEntity(WxOAuth2UserInfo userInfo) {
+    protected IamMember mpInfo2IamMemberEntity(WxOAuth2UserInfo userInfo) {
         return new IamMember()
                 .setOpenid(userInfo.getOpenid())
-                .setCountry(userInfo.getCountry())
-                .setProvince(userInfo.getProvince())
-                .setCity(userInfo.getCity())
                 .setAvatarUrl(userInfo.getHeadImgUrl())
-                .setGender(sex2gender(userInfo.getSex()))
                 .setNickname(userInfo.getNickname())
                 .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
     }
@@ -127,14 +129,12 @@ public class WxMpMemberAuthServiceImpl implements WxMpMemberAuthService {
      * @param iamMember
      * @return
      */
-    private IamAccount createIamAccountEntity(IamMember iamMember) {
-        IamAccount iamAccount = new IamAccount();
-        iamAccount.setAuthAccount(iamMember.getOpenid())
+    protected IamAccount createIamAccountEntity(IamMember iamMember, Long userId, Class<? extends BaseLoginUser> userCls) {
+        return new IamAccount().setAuthAccount(iamMember.getOpenid())
                 .setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name())
-                .setUserId(iamMember.getId())
-                .setUserType(IamMember.class.getSimpleName())
+                .setUserId(userId)
+                .setUserType(userCls.getSimpleName())
                 .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
-        return iamAccount;
     }
 
     /***

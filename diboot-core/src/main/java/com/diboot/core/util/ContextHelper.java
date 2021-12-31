@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.service.BaseService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
@@ -152,7 +153,7 @@ public class ContextHelper implements ApplicationContextAware {
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
         IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
         if(iService == null){
-            log.error("未能识别到Entity: "+entity.getName()+" 的IService实现！");
+            log.info("未能识别到Entity: "+entity.getName()+" 的IService实现！");
         }
         return iService;
     }
@@ -188,8 +189,8 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static String getIdColumnName(Class entity){
-        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
-        return entityInfoCache != null? entityInfoCache.getIdColumn() : null;
+        PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entity);
+        return propInfoCache != null? propInfoCache.getIdColumn() : null;
     }
 
     /**
@@ -197,9 +198,9 @@ public class ContextHelper implements ApplicationContextAware {
      * @return
      */
     public static String getIdFieldName(Class entity){
-        EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
-        if(entityInfoCache != null && entityInfoCache.getIdColumn() != null){
-            return entityInfoCache.getFieldByColumn(entityInfoCache.getIdColumn());
+        PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entity);
+        if(propInfoCache != null && propInfoCache.getIdColumn() != null){
+            return propInfoCache.getIdColumn();
         }
         return null;
     }

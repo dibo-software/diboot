@@ -16,7 +16,6 @@
 package com.diboot.mobile.dto;
 
 import com.diboot.iam.dto.AuthCredential;
-import com.diboot.mobile.entity.IamMember;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -37,12 +36,10 @@ public class MobileCredential extends AuthCredential {
     private static final long serialVersionUID = 7727490783637840611L;
 
     public MobileCredential() {
-        setUserTypeClass(IamMember.class);
     }
 
     public MobileCredential(String authAccount) {
         this.authAccount = authAccount;
-        setUserTypeClass(IamMember.class);
     }
 
     /**

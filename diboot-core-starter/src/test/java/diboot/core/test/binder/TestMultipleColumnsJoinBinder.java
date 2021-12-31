@@ -70,7 +70,7 @@ public class TestMultipleColumnsJoinBinder {
         vo2.setDictId(ids.get(1));
 
         vo2.setOrgPid(0L);
-        vo2.setTelphone(null);
+        vo2.setTelphone("028-62988949");
         voList.add(vo2);
 
         // 自动绑定

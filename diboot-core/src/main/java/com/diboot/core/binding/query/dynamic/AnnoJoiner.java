@@ -39,6 +39,7 @@ public class AnnoJoiner implements Serializable {
     private static final long serialVersionUID = 5998965277333389063L;
 
     public AnnoJoiner(Field field, BindQuery query){
+        this.key = field.getName() + query;
         this.fieldName = field.getName();
         this.comparison = query.comparison();
         // 列名
@@ -60,6 +61,8 @@ public class AnnoJoiner implements Serializable {
             this.condition = query.condition();
         }
     }
+
+    private String key;
 
     private Comparison comparison;
 

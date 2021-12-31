@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
@@ -172,12 +173,12 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void testKV(){
-        List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
-        Assert.assertTrue(keyValues.size() >= 2);
-        Assert.assertTrue(keyValues.get(0).getV().equals("M") || keyValues.get(1).getV().equals("M"));
-        Map<String, Object> kvMap = BeanUtils.convertKeyValueList2Map(keyValues);
-        Assert.assertTrue(kvMap.get("女").equals("F"));
+    public void testLabelValue(){
+        List<LabelValue> labelValueList = dictionaryService.getLabelValueList("GENDER");
+        Assert.assertTrue(labelValueList.size() >= 2);
+        Assert.assertTrue(labelValueList.get(0).getValue().equals("M") || labelValueList.get(1).getValue().equals("M"));
+        Map<String, Object> labelValueMap = BeanUtils.convertLabelValueList2Map(labelValueList);
+        Assert.assertTrue(labelValueMap.get("女").equals("F"));
     }
 
     @Test
@@ -372,8 +373,8 @@ public class BaseServiceTest {
         Assert.assertTrue(voList.size() == 1);
         Assert.assertTrue(voList.get(0).getChildren().size() >= 2);
 
-        List<KeyValue> keyValues = dictionaryService.getKeyValueList("GENDER");
-        Assert.assertTrue(keyValues.size() >= 2);
+        List<LabelValue> options = dictionaryService.getLabelValueList("GENDER");
+        Assert.assertTrue(options.size() >= 2);
 
     }
 
@@ -429,8 +430,17 @@ public class BaseServiceTest {
         BaseMapper baseMapper = BindingCacheManager.getMapperByTable("user_role");
         Assert.assertTrue(baseMapper != null);
 
-        Class<?> entityClass = ParserCache.getEntityClassByClassName("Dictionary");
+        Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName("Dictionary");
         Assert.assertTrue(entityClass != null && entityClass.getName().equals(Dictionary.class.getName()));
+
+        // 测试PropInfo缓存
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", "GENDER").eq("item_value", "F");
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+
+        DictionaryVO dictionaryVO = RelationsBinder.convertAndBind(dictionary, DictionaryVO.class);
+        Assert.assertTrue(dictionaryVO.getPrimaryKeyVal().equals(dictionary.getId()));
+        Assert.assertTrue(ContextHelper.getIdFieldName(dictionaryVO.getClass()).equals("id"));
     }
 
     @Test
@@ -466,6 +476,30 @@ public class BaseServiceTest {
         Assert.assertTrue(success == false);
         dict = dictionaryService.getEntity(dictId);
         Assert.assertTrue(dict == null);
+    }
+
+    @Test
+    public void testDictExtdata(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
+        Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        if(dictionary.getExtdata() == null){
+            dictionary.setExtdata("{\"createByName\":\"张三\"}");
+            dictionaryService.updateEntity(dictionary);
+            dictionary = dictionaryService.getSingleEntity(queryWrapper);
+        }
+        Assert.assertTrue(dictionary.getExtdata() != null);
+        Assert.assertTrue(dictionary.getFromExt("createByName").equals("张三"));
+    }
+
+    @Test
+    public void testGetEntityList(){
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "item_name", "item_value")
+                .eq("id", -1L);
+        List<Dictionary> dictionaries = dictionaryService.getEntityList(queryWrapper);
+        Assert.assertTrue(dictionaries != null);
+        Assert.assertTrue(dictionaries.size() == 0);
     }
 
 }

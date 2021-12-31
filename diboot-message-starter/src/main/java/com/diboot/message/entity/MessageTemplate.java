@@ -15,8 +15,11 @@
  */
 package com.diboot.message.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
@@ -72,6 +75,7 @@ public class MessageTemplate extends BaseEntity {
      */
     @NotNull(message = "模版标题不能为空")
     @Length(max = 100, message = "模版标题长度应小于100")
+    @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String title;
 
@@ -98,7 +102,7 @@ public class MessageTemplate extends BaseEntity {
     /**
      * 创建人
      */
-    @TableField()
+    @TableField(fill = FieldFill.INSERT)
     private Long createBy;
 
     /**
@@ -126,5 +130,4 @@ public class MessageTemplate extends BaseEntity {
         this.extDataMap = extDataMap;
         this.extData = JSON.stringify(extDataMap);
     }
-
-} 
+}

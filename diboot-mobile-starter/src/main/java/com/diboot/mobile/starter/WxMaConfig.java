@@ -20,7 +20,7 @@ import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.config.impl.WxMaDefaultConfigImpl;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.mobile.service.IamMemberService;
-import com.diboot.mobile.service.WxMaMemberAuthService;
+import com.diboot.mobile.service.WxMaAuthService;
 import com.diboot.mobile.service.impl.WxMaMemberAuthServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -71,7 +71,7 @@ public class WxMaConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public WxMaMemberAuthService wxMpMemberAuthService(WxMaService wxMaService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
+    public WxMaAuthService wxMaAuthService(WxMaService wxMaService, IamMemberService iamMemberService, IamAccountService iamAccountService) {
         return new WxMaMemberAuthServiceImpl(wxMaService, iamMemberService, iamAccountService);
     }
 

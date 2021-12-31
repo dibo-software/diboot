@@ -16,9 +16,12 @@
 package com.diboot.file.util;
 
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.D;
 import com.diboot.core.util.PropertiesUtils;
 import com.diboot.file.config.Cons;
+import com.diboot.file.service.FileStorageService;
+import com.diboot.file.service.impl.LocalFileStorageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +67,12 @@ public class FileHelper{
 	 * 文件和图片的后台存储路径
 	 */
 	private static String fileStorageDirectory = null;
-	
+
+	/**
+	 * 是否为本地存储
+	 */
+    private static Boolean isLocalStorage;
+
 	/***
 	 * 是否为合法的文件类型
 	 * @param ext
@@ -83,6 +91,19 @@ public class FileHelper{
 		String ext = FileHelper.getFileExtByName(fileName);
 		return EXCEL_SUFFIX.contains(ext.toLowerCase());
 	}
+
+    /**
+     * 判断是否为本地存储
+     *
+     * @return
+     * @since v2.4.0
+     */
+    public static boolean isLocalStorage() {
+        if (isLocalStorage == null) {
+            isLocalStorage = LocalFileStorageServiceImpl.class.equals(ContextHelper.getBean(FileStorageService.class).getClass());
+        }
+        return Boolean.TRUE.equals(isLocalStorage);
+    }
 
 	/***
 	 * 获取系统临时目录
@@ -187,7 +208,7 @@ public class FileHelper{
 		if(StringUtils.contains(fileUrl, QUESTION_MARK)){
 			temp = StringUtils.substring(temp, 0, temp.lastIndexOf(QUESTION_MARK));
 		}
-		return temp; 
+		return temp;
 	}
 
 	/**
@@ -203,7 +224,7 @@ public class FileHelper{
 		}
 		return fileStorageDirectory;
 	}
-	
+
 	/***
 	 * 创建文件夹
 	 * @param dirPath

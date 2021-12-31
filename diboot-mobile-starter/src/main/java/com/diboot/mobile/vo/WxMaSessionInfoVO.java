@@ -1,6 +1,5 @@
 package com.diboot.mobile.vo;
 
-import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -13,10 +12,12 @@ import java.io.Serializable;
  * 微信返回报文：{"session_key":"nzoqhc3OnwHzeTxJs+inbQ==","openid":"oVBkZ0aYgDMDIywRdgPW8-joxXc4"}
  *
  * @author : uu
- * @version : v1.0
+ * @version : v2.3.1
  * @Date 2021/9/27  11:17
  */
-@Setter@Getter@Accessors(chain = true)
+@Setter
+@Getter
+@Accessors(chain = true)
 public class WxMaSessionInfoVO implements Serializable {
     private static final long serialVersionUID = 5085761592400763401L;
 

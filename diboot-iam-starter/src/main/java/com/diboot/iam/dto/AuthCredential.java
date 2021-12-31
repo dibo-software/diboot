@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.dto;
 
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +40,7 @@ public abstract class AuthCredential implements Serializable {
     /**
      * 用户类型的Class
      */
-    private Class userTypeClass = IamUser.class;
+    private Class<? extends BaseLoginUser> userTypeClass = IamUser.class;
     /**
      * 用户类型
      */
@@ -88,7 +89,7 @@ public abstract class AuthCredential implements Serializable {
      * 指定用户类型class
      * @param userTypeClass
      */
-    public void setUserTypeClass(Class userTypeClass){
+    public void setUserTypeClass(Class<? extends BaseLoginUser> userTypeClass){
        this.userTypeClass = userTypeClass;
        if(this.userType == null){
            this.userType = userTypeClass.getSimpleName();

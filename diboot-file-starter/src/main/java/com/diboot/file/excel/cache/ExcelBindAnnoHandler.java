@@ -25,7 +25,7 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.file.excel.annotation.ExcelBindDict;
 import com.diboot.file.excel.annotation.ExcelBindField;
 import lombok.extern.slf4j.Slf4j;
@@ -109,8 +109,8 @@ public class ExcelBindAnnoHandler {
             if(bindDictService == null){
                 throw new InvalidUsageException("DictionaryService未实现，无法使用ExcelBindDict注解！");
             }
-            List<KeyValue> list = bindDictService.getKeyValueList(dictType);
-            return convertKvListToMap(list);
+            List<LabelValue> list = bindDictService.getLabelValueList(dictType);
+            return convertLabelValueListToMap(list);
         }
         else if(annotation instanceof ExcelBindField){
             ExcelBindField bindField = (ExcelBindField)annotation;
@@ -135,8 +135,8 @@ public class ExcelBindAnnoHandler {
         String nameColumn = S.toSnakeCase(bindField.field());
         String idColumn = ContextHelper.getIdColumnName(bindField.entity());
         QueryWrapper queryWrapper = Wrappers.query().select(nameColumn, idColumn).in(nameColumn, nameList);
-        List<KeyValue> list = service.getKeyValueList(queryWrapper);
-        return convertKvListToMap(list);
+        List<LabelValue> list = service.getLabelValueList(queryWrapper);
+        return convertLabelValueListToMap(list);
     }
 
     /**
@@ -144,17 +144,17 @@ public class ExcelBindAnnoHandler {
      * @param list
      * @return
      */
-    private static Map<String, List> convertKvListToMap(List<KeyValue> list){
+    private static Map<String, List> convertLabelValueListToMap(List<LabelValue> list){
         Map<String, List> resultMap = new HashMap<>(list.size());
         if(V.notEmpty(list)){
-            for(KeyValue kv : list){
-                List mapVal = resultMap.get(kv.getK());
+            for(LabelValue labelValue : list){
+                List mapVal = resultMap.get(labelValue.getLabel());
                 if(mapVal == null){
                     mapVal = new ArrayList();
-                    resultMap.put(kv.getK(), mapVal);
+                    resultMap.put(labelValue.getLabel(), mapVal);
                 }
-                if(!mapVal.contains(kv.getV())){
-                    mapVal.add(kv.getV());
+                if(!mapVal.contains(labelValue.getValue())){
+                    mapVal.add(labelValue.getValue());
                 }
             }
         }

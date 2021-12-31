@@ -39,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.math.BigInteger;
@@ -53,6 +54,7 @@ import java.util.TimeZone;
  * @version v2.0
  * @date 2019/08/01
  */
+@EnableAsync
 @Configuration
 @EnableConfigurationProperties({CoreProperties.class, GlobalProperties.class})
 @ComponentScan(basePackages = {"com.diboot.core"})

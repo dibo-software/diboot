@@ -23,28 +23,21 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.util.JwtUtils;
 import com.diboot.mobile.dto.WxMemberDTO;
 import com.diboot.mobile.entity.IamMember;
 import com.diboot.mobile.service.IamMemberService;
-import com.diboot.mobile.service.WxMaMemberAuthService;
+import com.diboot.mobile.service.WxMaAuthService;
 import com.diboot.mobile.vo.IamMemberVO;
 import com.diboot.mobile.vo.WxMaSessionInfoVO;
-import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
- * 微信公众号相关操作
+ * 微信公众号相关操作（登陆用户为IamMember类型）
  *
  * @author : uu
  * @version : v2.3.1
@@ -53,13 +46,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 @AllArgsConstructor
-public class WxMaMemberAuthServiceImpl implements WxMaMemberAuthService {
+public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
 
-    private final WxMaService wxMaService;
+    protected final WxMaService wxMaService;
 
-    private final IamMemberService iamMemberService;
+    protected final IamMemberService iamMemberService;
 
-    private final IamAccountService iamAccountService;
+    protected final IamAccountService iamAccountService;
 
     @Override
     public WxMaSessionInfoVO getSessionInfo(String jsCode) throws WxErrorException {
@@ -71,7 +64,12 @@ public class WxMaMemberAuthServiceImpl implements WxMaMemberAuthService {
     }
 
     @Override
-    public IamMemberVO saveWxMember(WxMemberDTO wxInfoDTO) {
+    public IamMember bindWxMa(WxMemberDTO wxInfoDTO) throws Exception {
+        throw new BusinessException(Status.FAIL_OPERATION, "当前业务不支持绑定");
+    }
+
+    @Override
+    public IamMemberVO getAndSaveWxMember(WxMemberDTO wxInfoDTO) {
         // 校验用户是否存在，如果已经存在，那么直接返回数据
         IamMember iamMember = iamMemberService.getSingleEntity(
                 Wrappers.<IamMember>lambdaQuery()
@@ -82,16 +80,18 @@ public class WxMaMemberAuthServiceImpl implements WxMaMemberAuthService {
             return Binder.convertAndBindRelations(iamMember, IamMemberVO.class);
         }
         // 创建微信用户基本信息
-        IamMember wxMember = maInfo2IamMemberEntity(wxInfoDTO);
+        IamMember wxMember = maInfo2IamMemberEntity(wxInfoDTO)
+                .setUserId(0L).setOrgId(0L)
+                .setUserType(IamMember.class.getSimpleName());
         boolean success = iamMemberService.createEntity(wxMember);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "绑定用户信息失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "创建用户信息失败！");
         }
         // 创建当前用户的账户
-        IamAccount iamAccount = createIamAccountEntity(wxMember);
+        IamAccount iamAccount = createIamAccountEntity(wxMember, wxMember.getId(), IamMember.class);
         success = iamAccountService.createEntity(iamAccount);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "绑定系统账户失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "创建系统账户失败！");
         }
         return Binder.convertAndBindRelations(wxMember, IamMemberVO.class);
     }
@@ -102,7 +102,7 @@ public class WxMaMemberAuthServiceImpl implements WxMaMemberAuthService {
      * @param wxMemberDTO
      * @return
      */
-    private IamMember maInfo2IamMemberEntity(WxMemberDTO wxMemberDTO) {
+    protected IamMember maInfo2IamMemberEntity(WxMemberDTO wxMemberDTO) {
         return new IamMember().setOpenid(wxMemberDTO.getOpenid())
                 .setNickname(wxMemberDTO.getNickName())
                 .setGender(sex2gender(wxMemberDTO.getGender()))
@@ -119,14 +119,11 @@ public class WxMaMemberAuthServiceImpl implements WxMaMemberAuthService {
      * @param iamMember
      * @return
      */
-    private IamAccount createIamAccountEntity(IamMember iamMember) {
-        IamAccount iamAccount = new IamAccount();
-        iamAccount.setAuthAccount(iamMember.getOpenid())
+    protected IamAccount createIamAccountEntity(IamMember iamMember, Long userId, Class<? extends BaseLoginUser> userCls) {
+        return new IamAccount().setAuthAccount(iamMember.getOpenid())
                 .setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name())
-                .setUserId(iamMember.getId())
-                .setUserType(IamMember.class.getSimpleName())
+                .setUserId(userId).setUserType(userCls.getSimpleName())
                 .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
-        return iamAccount;
     }
 
     /***

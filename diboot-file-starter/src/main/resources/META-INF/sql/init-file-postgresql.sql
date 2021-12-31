@@ -13,6 +13,7 @@ CREATE TABLE upload_file (
    data_count int  not null DEFAULT 0,
    description varchar(100),
    is_deleted BOOLEAN not null DEFAULT FALSE,
+   create_by  bigint  default 0,
    create_time  timestamp   not null default CURRENT_TIMESTAMP,
    constraint PK_upload_file primary key (uuid)
 );
@@ -30,6 +31,7 @@ comment on column upload_file.file_type is '文件类型';
 comment on column upload_file.data_count is '数据量';
 comment on column upload_file.description is '备注';
 comment on column upload_file.is_deleted is '删除标记';
+comment on column upload_file.create_by is '创建人';
 comment on column upload_file.create_time is '创建时间';
 comment on table upload_file is '上传文件';
 -- 索引

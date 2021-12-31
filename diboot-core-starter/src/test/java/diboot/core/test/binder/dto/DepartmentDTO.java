@@ -16,8 +16,8 @@
 package diboot.core.test.binder.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.data.CheckpointType;
-import com.diboot.core.binding.data.DataAccessCheckpoint;
+import com.diboot.core.data.access.CheckpointType;
+import com.diboot.core.data.access.DataAccessCheckpoint;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.util.D;
@@ -55,6 +55,12 @@ public class DepartmentDTO implements Serializable {
     // 绑定join查询
     @BindQuery(entity = Department.class, field = "name", condition = "this.parent_id=id")
     private String parentName;
+
+    // 多绑定or连接
+    @BindQuery(comparison = Comparison.CONTAINS, field = "name")
+    @BindQuery(comparison = Comparison.STARTSWITH, field = "`character`")
+    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    private String search;
 
     // 数据权限检查点
     @DataAccessCheckpoint(type = CheckpointType.ORG)

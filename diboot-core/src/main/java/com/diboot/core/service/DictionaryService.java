@@ -17,7 +17,7 @@ package com.diboot.core.service;
 
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.vo.DictionaryVO;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public interface DictionaryService extends BaseService<Dictionary>{
      * @param type
      * @return
      */
-    List<KeyValue> getKeyValueList(String type);
+    List<LabelValue> getLabelValueList(String type);
 
     /**
      * 添加字典定义及其子项

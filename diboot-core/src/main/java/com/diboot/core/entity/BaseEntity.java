@@ -83,6 +83,9 @@ public abstract class BaseEntity extends AbstractEntity<Long> {
     @JsonIgnore
     public Object getPrimaryKeyVal(){
         String pk = ContextHelper.getIdFieldName(this.getClass());
+        if(pk == null){
+            return null;
+        }
         if(Cons.FieldName.id.name().equals(pk)){
             return getId();
         }

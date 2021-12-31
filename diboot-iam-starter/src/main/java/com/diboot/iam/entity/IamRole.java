@@ -16,6 +16,8 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -51,6 +53,7 @@ public class IamRole extends BaseEntity {
     // 名称
     @NotNull(message = "名称不能为空")
     @Length(max=50, message="名称长度应小于50")
+    @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String name;
 

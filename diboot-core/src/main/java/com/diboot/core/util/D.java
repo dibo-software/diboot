@@ -21,10 +21,10 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 提供常用的日期操作的工具类
@@ -32,10 +32,11 @@ import java.util.Date;
  * @version 2.0
  * @date 2019/01/01
  */
+
+@SuppressWarnings({"unused", "SpellCheckingInspection", "AlibabaConstantFieldShouldBeUpperCase", "AlibabaUndefineMagicConstant", "AlibabaClassNamingShouldBeCamel"})
 public class D extends DateUtils{
 	private static final Logger log = LoggerFactory.getLogger(DateUtils.class);
-	
-	/***
+	/**
 	 * 日期时间格式
 	 */
 	public static final String FORMAT_DATE_y2M = "yyMM";
@@ -51,11 +52,11 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_SLASH_Y4MD = "yyyy/MM/dd";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHM = "yyyy/MM/dd HH:mm";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHMS = "yyyy/MM/dd HH:mm:ss";
-	/***
+	/**
 	 * 星期（中文）
 	 */
 	public static final String[] WEEK = new String[]{"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
-	/***
+	/**
 	 * 星期（英文）
 	 */
 	public static final String[] WEEK_EN = new String[]{"Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"};
@@ -76,16 +77,16 @@ public class D extends DateUtils{
 	public static final long MS_1HOUR = 60 * MS_1MINUTE;
 	public static final long MS_1DAY = 24 * MS_1HOUR;
 
-	/***
+	/**
 	 * 当前的日期时间
 	 * @return format指定格式的日期时间
 	 */
 	public static String now(String format){
 		Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf = new SimpleDateFormat(format);
-	    return sdf.format(cal.getTime());
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(cal.getTime());
 	}
-	
+
 	/**
 	 * 当前日期时间串
 	 * @return yyMMddhhmmss
@@ -94,17 +95,16 @@ public class D extends DateUtils{
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_TIMESTAMP);
 		return sdf.format(date.getTime());
 	}
-	
+
 	/**
 	 * 获取月份
-	 * @return
 	 */
 	@Deprecated
 	public static String getMonth(){
 		return now(FORMAT_DATE_y2M);
 	}
-	
-	/***
+
+	/**
 	 * 获取今天的日期
 	 * @return yyyyMMdd
 	 */
@@ -112,11 +112,8 @@ public class D extends DateUtils{
 		return now(FORMAT_DATE_y4Md);
 	}
 
-	/***
+	/**
 	 * 转换字符串为日期date
-	 * @param datetime
-	 * @param fmt
-	 * @return
 	 */
 	public static Date convert2FormatDate(String datetime, String fmt){
 		if (StringUtils.isBlank(datetime)){
@@ -124,8 +121,7 @@ public class D extends DateUtils{
 		}
 		SimpleDateFormat format =  new SimpleDateFormat(fmt);
 		try {
-			Date date = format.parse(datetime);
-			return date;
+			return format.parse(datetime);
 		}
 		catch (ParseException e) {
 			log.warn("日期格式转换异常");
@@ -133,38 +129,22 @@ public class D extends DateUtils{
 		return null;
 	}
 
-	/***
+	/**
 	 * 转换date为日期Y4MD格式化字符串
-	 * @param date
-	 * @return
 	 */
 	public static String convert2DateString(Date date) {
-		if (date == null) {
-			return null;
-		}
-		SimpleDateFormat format = new SimpleDateFormat(FORMAT_DATE_Y4MD);
-		return format.format(date);
+		return convert2FormatString(date, FORMAT_DATE_Y4MD);
 	}
 
-	/***
+	/**
 	 * 转换date为日期时间Y4MDHMS格式化字符串
-	 * @param date
-	 * @return
 	 */
 	public static String convert2DateTimeString(Date date) {
-		if (date == null) {
-			return null;
-		} else {
-			SimpleDateFormat format = new SimpleDateFormat(FORMAT_DATETIME_SLASH_Y4MDHMS);
-			return format.format(date);
-		}
+		return convert2FormatString(date, FORMAT_DATETIME_SLASH_Y4MDHMS);
 	}
 
-	/***
+	/**
 	 * 转换date为格式化字符串
-	 * @param date
-	 * @param fmt
-	 * @return
 	 */
 	public static String convert2FormatString(Date date, String fmt) {
 		if (date == null) {
@@ -182,14 +162,7 @@ public class D extends DateUtils{
 	 * @return yyyy-MM-dd
 	 */
 	public static String getDate(Date date, int... daysOffset){
-		if(date == null){
-			date = new Date();
-		}
-		if(daysOffset != null && daysOffset.length > 0){
-			date = addDays(date, daysOffset[0]);
-		}
-		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_Y4MD);
-		return sdf.format(date);
+		return getDate(date, FORMAT_DATE_Y4MD, daysOffset);
 	}
 
 	/**
@@ -204,35 +177,45 @@ public class D extends DateUtils{
 		return addDays(date, 1);
 	}
 
-	/***
+	/**
 	 * 获取格式化的日期时间
-	 * @param date
-	 * @return yyyy-MM-dd HH:mm
 	 */
-	public static String getDateTime(Date date, int... daysOffset){
-		if(date == null){
+	public static String getDateTime(Date date, int... daysOffset) {
+		return getDate(date, FORMAT_DATETIME_Y4MDHM, daysOffset);
+	}
+
+	/**
+	 * 获取格式化的日期时间
+	 *
+	 * @param date       日期
+	 * @param format     日期格式
+	 * @param daysOffset 偏移天数，在日期上add，要么不传，要么只有一个值
+	 */
+	public static String getDate(Date date, String format, int... daysOffset) {
+		if (date == null) {
 			date = new Date();
 		}
-		if(daysOffset != null && daysOffset.length > 0){
+		if (daysOffset != null && daysOffset.length > 0) {
 			date = addDays(date, daysOffset[0]);
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATETIME_Y4MDHM);
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(date);
 	}
-	
+
 	/**
 	 * 是否是工作时间段，用于后台程序等
-	 * @return 
+	 *
+	 * @return 是否是工作时间段
 	 */
-	public static boolean isWorkingTime(){
+	public static boolean isWorkingTime() {
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
 		return (hour >= 8 && hour < 20);
 	}
 
-	/***
+	/**
 	 * 获取上午/下午
-	 * @return
+	 * @return 上午/下午
 	 */
 	public static String getAmPm() {
 		Calendar c = Calendar.getInstance();
@@ -240,13 +223,13 @@ public class D extends DateUtils{
 		if (hours <= 9){
 			return "早上";
 		}
-		else if (9 < hours && hours <= 12){
+		else if (hours <= 12){
 			return "上午";
 		}
-		else if (12 < hours && hours <= 13){
+		else if (hours == 13){
 			return "中午";
 		}
-		else if (13 < hours && hours <= 18){
+		else if (hours <= 18){
 			return "下午";
 		}
 		else{
@@ -255,57 +238,52 @@ public class D extends DateUtils{
 	}
 
 	/**
-	 * 得到当前的年月YYMM，用于生成文件夹名称
-	 * @return
+	 * 得到当前的年月yyMM，用于生成文件夹名称
+	 * @return 年月
 	 */
 	public static String getYearMonth(){
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_y2M);
 		return sdf.format(cal.getTime());
 	}
-	
+
 	/**
-	 * 得到当前的年月YYMM，用于生成文件夹
-	 * @return
+	 * 得到当前的年月日yyMMdd，用于生成文件夹
+	 * @return 年月日
 	 */
 	public static String getYearMonthDay(){
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATE_y2Md);
 		return sdf.format(cal.getTime());
 	}
-	
+
 	/**
-	 * 得到当前的年月YYMM，用于生成文件夹
-	 * @return
+	 * 得到当前的月，用于生成文件夹
+	 * @return 月
 	 */
 	public static int getDay(){
 		Calendar cal = Calendar.getInstance();
 		return cal.get(Calendar.DAY_OF_MONTH);
 	}
 
-	/***
+	/**
 	 * 获取日期对应的星期
-	 * @param date
-	 * @return
 	 */
 	@Deprecated
 	public static String getWeek(Date date){
 		return getCnWeek(date);
 	}
 
-	/***
-	 * 获取当前日期对应的星期
-	 * @return
+	/**
+	 * 获取当前日期对应的星期（中文）
 	 */
 	public static String getCnWeek(){
 		int index = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
 		return WEEK[index];
 	}
 
-	/***
-	 * 获取日期对应的星期
-	 * @param date
-	 * @return
+	/**
+	 * 获取日期对应的星期（中文）
 	 */
 	public static String getCnWeek(Date date){
 		Calendar cal = Calendar.getInstance();
@@ -313,19 +291,16 @@ public class D extends DateUtils{
 		return WEEK[cal.get(Calendar.DAY_OF_WEEK) - 1];
 	}
 
-	/***
-	 * 获取当前日期对应的星期
-	 * @return
+	/**
+	 * 获取当前日期对应的星期（英文）
 	 */
 	public static String getEnWeek(){
 		int index = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
 		return WEEK_EN[index];
 	}
 
-	/***
-	 * 获取日期对应的星期
-	 * @param date
-	 * @return
+	/**
+	 * 获取日期对应的星期（英文）
 	 */
 	public static String getEnWeek(Date date){
 		Calendar cal = Calendar.getInstance();
@@ -333,18 +308,16 @@ public class D extends DateUtils{
 		return WEEK_EN[cal.get(Calendar.DAY_OF_WEEK) - 1];
 	}
 
-	/***
+	/**
 	 * 获取当前日期对应的月份（中文）
-	 * @return
 	 */
 	public static String getCnMonth(){
 		return MONTH_CN[Calendar.getInstance().get(Calendar.MONTH)];
 	}
 
-	/***
+	/**
 	 * 获取指定日期对应的月份（中文）
 	 * @param date 日期
-	 * @return
 	 */
 	public static String getCnMonth(Date date){
 		Calendar cal = Calendar.getInstance();
@@ -352,39 +325,32 @@ public class D extends DateUtils{
 		return MONTH_CN[cal.get(Calendar.MONTH)];
 	}
 
-	/***
+	/**
 	 * 获取当前日期对应的月份（英文）
-	 * @return
 	 */
 	public static String getEnMonth(){
 		return MONTH_EN[Calendar.getInstance().get(Calendar.MONTH)];
 	}
 
-	/***
+	/**
 	 * 获取指定日期对应的月份（中文）
 	 * @param date 日期
-	 * @return
 	 */
 	public static String getEnMonth(Date date){
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return MONTH_EN[cal.get(Calendar.MONTH)];
 	}
-	
+
 	/**
 	 * 毫秒数转date
-	 * @param timeMillis
-	 * @return
 	 */
 	public static Date timeMillis2Date(Long timeMillis){
 		return new Date(timeMillis);
 	}
-	
+
 	/**
 	 * 字符串时间戳转日期
-	 * @param value
-	 * @return
-	 * @throws ParseException
 	 */
 	public static Date datetimeString2Date(String value){
 		return convert2DateTime(value, FORMAT_DATETIME_Y4MDHMS);
@@ -392,27 +358,26 @@ public class D extends DateUtils{
 
 	/**
 	 * 转换耗时毫秒数为 d,h,m,s显示文本
-	 * @param duration
-	 * @return
 	 */
-	public static String formatDurationLabel(Long duration){
-		if(duration == null){
+	public static String formatDurationLabel(Long duration) {
+		if (duration == null) {
 			return "-";
 		}
 		long days = duration / MS_1DAY;
-		if(days > 0){
+		if (days > 0) {
 			return days + "d";
 		}
-		long hours = (duration % MS_1DAY) / MS_1HOUR;
-		if(hours > 0){
+		// 必然小于MS_1DAY，不需要取模
+		long hours = duration / MS_1HOUR;
+		if (hours > 0) {
 			return hours + "h";
 		}
-		long minutes = (duration % MS_1HOUR) / MS_1MINUTE;
-		if(minutes > 0){
+		long minutes = duration / MS_1MINUTE;
+		if (minutes > 0) {
 			return minutes + "m";
 		}
-		long seconds = (duration % MS_1MINUTE) / MS_1SECOND;
-		if(seconds > 0){
+		long seconds = duration / MS_1SECOND;
+		if (seconds > 0) {
 			return seconds + "s";
 		}
 		return "<1s";
@@ -420,8 +385,6 @@ public class D extends DateUtils{
 
 	/**
 	 * 字符串时间戳转日期
-	 * @return
-	 * @throws ParseException
 	 */
 	public static Date convert2Date(String date){
 		if(date.contains("/")){
@@ -433,10 +396,39 @@ public class D extends DateUtils{
 	}
 
 	/**
+	 * 获取两个时间范围内的所有日期
+	 *
+	 * @param startTime 包含
+	 * @param endTime 不包含
+	 */
+	public static List<String> rangeDateList(Date startTime, Date endTime) throws ParseException {
+		if (startTime == null || endTime == null || startTime.after(endTime)) {
+			return Collections.emptyList();
+		}
+		//日期工具类准备
+		DateFormat format = new SimpleDateFormat(D.FORMAT_DATE_Y4MD);
+		String dBegin = format.format(startTime);
+
+		//设置开始时间
+		Calendar calBegin = Calendar.getInstance();
+		calBegin.setTime(format.parse(dBegin));
+
+		// 两个时间相差的天数
+		int days = (int) ((endTime.getTime() - startTime.getTime()) / MS_1DAY);
+
+		//装返回的日期集合容器
+		List<String> rangeDateList = new ArrayList<>(days);
+		// 每次循环给calBegin日期加一天
+		for (int i = 0; i < days; i++) {
+			rangeDateList.add(format.format(calBegin.getTime()));
+			// 根据日历的规则，为给定的日历字段添加或减去指定的时间量
+			calBegin.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		return rangeDateList;
+	}
+
+	/**
 	 * 字符串时间戳转日期
-	 * @param dateTime
-	 * @return
-	 * @throws ParseException
 	 */
 	public static Date convert2DateTime(String dateTime, String... dateFormat){
 		String f = FORMAT_DATETIME_Y4MDHM;
@@ -446,23 +438,19 @@ public class D extends DateUtils{
 		return convert2FormatDate(dateTime, f);
 	}
 
-	/***
+	/**
 	 * 模糊转换日期
-	 * @param dateString
-	 * @return
 	 */
 	public static Date fuzzyConvert(String dateString){
 		if(V.isEmpty(dateString)){
 			return null;
 		}
 		// 清洗
-		if(dateString.contains("-")){
-		}
-		else if(dateString.contains("月")){
+		if(dateString.contains("月")){
 			dateString = dateString.replaceAll("年", "-").replaceAll("月", "-").replaceAll("日", "").replaceAll("号", "");
 		}
 		else{
-			dateString = dateString.replaceAll("\\/", "-").replaceAll("\\.", "-");
+			dateString = dateString.replaceAll("/", "-").replaceAll("\\.", "-");
 		}
 		String[] parts = dateString.split(" ");
 		String[] ymd = parts[0].split("-");
@@ -507,7 +495,7 @@ public class D extends DateUtils{
 			hmsArray[2] = "00";
 		}
 		parts[1] = S.join(hmsArray, ":");
-		return D.convert2FormatDate(S.join(parts, " "), D.FORMAT_DATETIME_Y4MDHMS);
+		return convert2FormatDate(S.join(parts, " "), FORMAT_DATETIME_Y4MDHMS);
 	}
 
 }

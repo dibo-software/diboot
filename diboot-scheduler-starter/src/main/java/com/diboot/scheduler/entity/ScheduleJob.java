@@ -15,6 +15,7 @@
  */
 package com.diboot.scheduler.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
@@ -95,6 +96,12 @@ public class ScheduleJob extends BaseEntity {
     private String jobStatus;
 
     /**
+     * 是否保存日志，默认true
+     */
+    @TableField()
+    private Boolean saveLog;
+
+    /**
      * 备注
      */
     @Length(max = 200, message = "备注长度应小于200")
@@ -102,21 +109,15 @@ public class ScheduleJob extends BaseEntity {
     private String jobComment;
 
     /**
-     * 是否保存日志，默认true
-     */
-    @TableField()
-    private Boolean saveLog;
-
-    /**
      * 创建人
      */
-    @TableField()
+    @TableField(fill = FieldFill.INSERT)
     private Long createBy;
 
     /**
      * 创建人名称
      */
-    @Length(max = 10, message = "创建人名称长度应小于10")
+    @Length(max = 50, message = "创建人名称长度应小于50")
     @TableField()
     private String createByName;
 

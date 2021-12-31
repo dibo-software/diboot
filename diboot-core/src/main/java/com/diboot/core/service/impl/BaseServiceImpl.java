@@ -44,7 +44,7 @@ import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
@@ -64,6 +64,7 @@ import java.util.function.Consumer;
  * @version 2.0
  * @date 2019/01/01
  */
+@SuppressWarnings({"unchecked", "rawtypes", "JavaDoc"})
 public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl<M, T> implements BaseService<T> {
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
 
@@ -144,16 +145,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return false;
 		}
 		if(V.isEmpty(relatedEntities)){
-			return success;
+			return true;
 		}
 		Class relatedEntityClass = relatedEntities.get(0).getClass();
 		// 获取主键
 		Object pkValue = getPrimaryKeyValue(entity);
 		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
 		// 填充关联关系
-		relatedEntities.stream().forEach(relatedEntity->{
-			BeanUtils.setProperty(relatedEntity, attributeName, pkValue);
-		});
+		relatedEntities.forEach(relatedEntity-> BeanUtils.setProperty(relatedEntity, attributeName, pkValue));
 		// 获取关联对象对应的Service
 		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService != null){
@@ -311,7 +310,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		} else {
 			selectOld.select(followerColumnName);
 		}
-		List<Map<String, Object>> oldMap = null;
+		List<Map<String, Object>> oldMap;
 
 		IService<R> iService = entityInfo.getService();
 		BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
@@ -391,7 +390,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return false;
 		}
 		// 获取关联entity的类
-		Class relatedEntityClass = null;
+		Class relatedEntityClass;
 		if(V.notEmpty(relatedEntities)){
 			relatedEntityClass = BeanUtils.getTargetClass(relatedEntities.get(0));
 		}
@@ -400,7 +399,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				relatedEntityClass = Class.forName(BeanUtils.getSerializedLambda(relatedEntitySetter).getImplClass().replaceAll("/", "."));
 			}
 			catch (Exception e){
-				log.warn("无法识别关联Entity的Class", e.getMessage());
+				log.warn("无法识别关联Entity的Class: {}", e.getMessage());
 				return false;
 			}
 		}
@@ -461,7 +460,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 获取关联对象对应的Service
 		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService == null){
-			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getClass().getName());
+			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
 			return false;
 		}
 		// 获取主键的关联属性
@@ -562,14 +561,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
-		List<FT> fldValues = new ArrayList<>(entityList.size());
+		Set<FT> fldValues = new HashSet<>(entityList.size());
 		for(T entity : entityList){
 			FT value = (FT)BeanUtils.getProperty(entity, fieldName);
-			if(value != null && !fldValues.contains(value)){
+			if(value != null){
 				fldValues.add(value);
 			}
 		}
-		return fldValues;
+		return new ArrayList<>(fldValues);
 	}
 
 	@Override
@@ -593,7 +592,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public boolean exists(IGetter<T> getterFn, Object value) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
 		String field = BeanUtils.convertToFieldName(getterFn);
-		String column = S.toSnakeCase(field);
+		String column = BindingCacheManager.getEntityInfoByClass(getEntityClass()).getColumnByField(field);
 		queryWrapper.select(column).eq(column, value);
 		return exists(queryWrapper);
 	}
@@ -601,7 +600,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean exists(Wrapper queryWrapper) {
 		if((queryWrapper instanceof QueryWrapper) && queryWrapper.getSqlSelect() == null){
-			String pk = ContextHelper.getIdFieldName(getEntityClass());
+			String pk = ContextHelper.getIdColumnName(getEntityClass());
 			((QueryWrapper)queryWrapper).select(pk);
 		}
 		T entity = getSingleEntity(queryWrapper);
@@ -611,7 +610,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<T> getEntityListByIds(List ids) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHelper.getIdFieldName(getEntityClass());
+		String pk = ContextHelper.getIdColumnName(getEntityClass());
 		queryWrapper.in(pk, ids);
 		return getEntityList(queryWrapper);
 	}
@@ -645,11 +644,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public List<KeyValue> getKeyValueList(Wrapper queryWrapper) {
+	public List<LabelValue> getLabelValueList(Wrapper queryWrapper) {
 		String sqlSelect = queryWrapper.getSqlSelect();
-		// 最多支持3个属性：k, v, ext
+		// 最多支持3个属性：label, value, ext
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
-			log.error("调用错误: getKeyValueList必须用select依次指定返回的Key,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
+			log.error("调用错误: getLabelValueList必须用select依次指定返回的Label,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 			return Collections.emptyList();
 		}
 		// 获取mapList
@@ -660,41 +659,37 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		else if(mapList.size() > BaseConfig.getBatchSize()){
 			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", mapList.size());
 		}
-		// 转换为Key-Value键值对
-		String[] keyValueArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
-		List<KeyValue> keyValueList = new ArrayList<>(mapList.size());
+		// 转换为LabelValue
+		String[] selectArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
+		// 是否有ext字段
+		boolean hasExt = selectArray.length > 2;
+		List<LabelValue> labelValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
 			// 如果key和value的的值都为null的时候map也为空，则不处理此项
 			if (V.isEmpty(map)) {
 				continue;
 			}
-			String key = keyValueArray[0], value = keyValueArray[1], ext = null;
+			String label = selectArray[0], value = selectArray[1], ext;
 			// 兼容oracle大写
-			if(map.containsKey(key) == false && map.containsKey(key.toUpperCase())){
-				key = key.toUpperCase();
-			}
-			if(map.containsKey(value) == false && map.containsKey(value.toUpperCase())){
-				value = value.toUpperCase();
-			}
-			if(map.containsKey(key)){
-				KeyValue kv = new KeyValue(S.valueOf(map.get(key)), map.get(value));
-				if(keyValueArray.length > 2){
-					ext = keyValueArray[2];
-					if(map.containsKey(ext) == false && map.containsKey(ext.toUpperCase())){
-						ext = ext.toUpperCase();
-					}
-					kv.setExt(map.get(ext));
+			if (map.containsKey(label) || map.containsKey(label = label.toUpperCase())) {
+				LabelValue labelValue = new LabelValue();
+				// 设置label
+				labelValue.setLabel(S.valueOf(map.get(label)));
+				// 设置value
+				if (map.containsKey(value) || map.containsKey(value = value.toUpperCase())) {
+					labelValue.setValue(map.get(value));
 				}
-				keyValueList.add(kv);
+				// 设置ext
+				if (hasExt) {
+					ext = selectArray[2];
+					if (map.containsKey(ext) || map.containsKey(ext = ext.toUpperCase())) {
+						labelValue.setExt(map.get(ext));
+					}
+				}
+				labelValueList.add(labelValue);
 			}
 		}
-		return keyValueList;
-	}
-
-	@Override
-	public Map<String, Object> getKeyValueMap(Wrapper queryWrapper) {
-		List<KeyValue> keyValueList = getKeyValueList(queryWrapper);
-		return BeanUtils.convertKeyValueList2Map(keyValueList);
+		return labelValueList;
 	}
 
 	@Override
@@ -714,7 +709,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(mapList)){
 			return Collections.emptyMap();
 		}
-		Map<ID, String> idNameMap = new HashMap<>();
+		Map<ID, String> idNameMap = new HashMap<>(mapList.size());
 		for(Map<String, Object> map : mapList){
 			ID key = (ID)map.get(entityInfo.getIdColumn());
 			String value = S.valueOf(map.get(columnName));
@@ -775,10 +770,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	/**
 	 * 转换SFunction为属性名
 	 * @param getterFn
-	 * @param <T>
+	 * @param <R>
 	 * @return
 	 */
-	private <T> String convertGetterToFieldName(SFunction<T, ?> getterFn) {
+	private <R> String convertGetterToFieldName(SFunction<R, ?> getterFn) {
 		LambdaMeta lambdaMeta = LambdaUtils.extract(getterFn);
 		String fieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
 		return fieldName;

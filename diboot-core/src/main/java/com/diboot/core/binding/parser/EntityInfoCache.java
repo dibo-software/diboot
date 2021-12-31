@@ -84,10 +84,10 @@ public class EntityInfoCache implements Serializable {
      * @return
      */
     public String getFieldByColumn(String columnName){
-        if(this.propInfo == null || V.isEmpty(this.propInfo.getColumnToFieldMap())){
+        if(this.propInfo == null){
             return null;
         }
-        return this.propInfo.getColumnToFieldMap().get(columnName);
+        return this.propInfo.getFieldByColumn(columnName);
     }
 
     /**
@@ -95,10 +95,10 @@ public class EntityInfoCache implements Serializable {
      * @return
      */
     public String getColumnByField(String fieldName){
-        if(this.propInfo == null || V.isEmpty(this.propInfo.getFieldToColumnMap())){
+        if(this.propInfo == null){
             return null;
         }
-        return this.propInfo.getFieldToColumnMap().get(fieldName);
+        return this.propInfo.getColumnByField(fieldName);
     }
 
     /**
@@ -121,6 +121,15 @@ public class EntityInfoCache implements Serializable {
             return null;
         }
         return this.propInfo.getDeletedColumn();
+    }
+
+    /**
+     * 是否包含某字段
+     * @param column
+     * @return
+     */
+    public boolean containsColumn(String column){
+        return this.propInfo.getColumns().contains(column);
     }
 
 }

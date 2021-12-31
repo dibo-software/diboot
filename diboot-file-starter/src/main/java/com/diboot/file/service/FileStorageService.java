@@ -53,6 +53,15 @@ public interface FileStorageService {
     /**
      * 获取文件
      *
+     * @param filePath 文件路径
+     * @return
+     * @throws Exception
+     */
+    InputStream getFile(String filePath) throws Exception;
+
+    /**
+     * 获取文件
+     *
      * @param uploadFile
      * @param response
      * @return
@@ -60,4 +69,11 @@ public interface FileStorageService {
      */
     void download(UploadFile uploadFile, HttpServletResponse response) throws Exception;
 
+    /**
+     * 删除文件
+     *
+     * @param filePath 文件路径
+     * @return 是否删除成功
+     */
+    boolean delete(String filePath);
 }

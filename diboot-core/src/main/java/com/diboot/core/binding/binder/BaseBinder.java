@@ -18,17 +18,17 @@ package com.diboot.core.binding.binder;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.annotation.Module;
+import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.IGetter;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public abstract class BaseBinder<T> {
     /***
      * 需要绑定到的VO注解对象List
      */
-    protected List annoObjectList;
+    protected List<?> annoObjectList;
     /***
      * VO注解对象中的join on对象列名集合
      */
@@ -90,24 +90,35 @@ public abstract class BaseBinder<T> {
      * List 排序
      */
     protected String orderBy;
+    /**
+     * 模块/服务 名
+     */
+    protected String module;
 
     /***
      * 构造方法
-     * @param serviceInstance
+     * @param entityClass
      * @param voList
      */
-    public BaseBinder(IService<T> serviceInstance, List voList){
-        this.referencedService = serviceInstance;
+    public BaseBinder(Class<T> entityClass, List voList){
+        this.referencedEntityClass = entityClass;
         this.annoObjectList = voList;
         if(V.notEmpty(voList)){
             this.annoObjPropInfo = BindingCacheManager.getPropInfoByClass(voList.get(0).getClass());
         }
         this.queryWrapper = new QueryWrapper<>();
-        this.referencedEntityClass = referencedService.getEntityClass();
         this.refObjPropInfo = BindingCacheManager.getPropInfoByClass(this.referencedEntityClass);
+        Module moduleAnno = AnnotationUtils.findAnnotation(this.referencedEntityClass, Module.class);
+        this.referencedService = getService(entityClass, moduleAnno);
+        if(moduleAnno != null){
+            String applicationName = PropertiesUtils.get("spring.application.name");
+            if(V.notEquals(moduleAnno.value(), applicationName)){
+                this.module = moduleAnno.value();
+            }
+        }
         // 列集合
-        this.annoObjJoinCols = new ArrayList<>(8);
-        this.refObjJoinCols = new ArrayList<>(8);
+        this.annoObjJoinCols = new ArrayList<>(4);
+        this.refObjJoinCols = new ArrayList<>(4);
     }
 
     /**
@@ -245,25 +256,18 @@ public abstract class BaseBinder<T> {
     /**
      * 构建join on
      */
-    protected void buildQueryWrapperJoinOn(){
-        for(int i = 0; i< annoObjJoinCols.size(); i++){
+    protected void buildQueryWrapperJoinOn(RemoteBindDTO remoteBindDTO){
+        for (int i = 0; i < annoObjJoinCols.size(); i++) {
             String annoObjJoinOnCol = annoObjJoinCols.get(i);
-            boolean[] hasNullFlags = new boolean[1];
-            List annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol), hasNullFlags);
+            List<?> annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol));
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(i);
-            if(V.isEmpty(annoObjectJoinOnList)){
-                queryWrapper.isNull(refObjJoinOnCol);
-            }
-            else{
-                List unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy)? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
+            if (V.notEmpty(annoObjectJoinOnList)) {
+                List<?> unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy) ? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
                         : annoObjectJoinOnList;
-                // 有null值
-                if(hasNullFlags[0]){
-                    queryWrapper.and(qw -> qw.isNull(refObjJoinOnCol).or(w -> w.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList)));
-                }
-                else{
-                    queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
+                queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
+                if (remoteBindDTO != null) {
+                    remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(unpackAnnoObjectJoinOnList);
                 }
             }
         }
@@ -272,7 +276,7 @@ public abstract class BaseBinder<T> {
     /**
      * 简化select列，仅select必需列
      */
-    protected abstract void simplifySelectColumns();
+    protected abstract void simplifySelectColumns(RemoteBindDTO remoteBindDTO);
 
     /**
      * 获取EntityList
@@ -419,28 +423,72 @@ public abstract class BaseBinder<T> {
 
     /**
      * 附加排序字段，支持格式：orderBy=short_name:DESC,age:ASC,birthdate
+     * @param remoteBindDTO
      */
-    protected void appendOrderBy(){
+    protected void appendOrderBy(RemoteBindDTO remoteBindDTO){
         if(V.isEmpty(this.orderBy)){
             return;
         }
+        String orderByFormatStr = null;
         // 解析排序
         String[] orderByFields = S.split(this.orderBy);
         for(String field : orderByFields){
             if(field.contains(":")){
                 String[] fieldAndOrder = S.split(field, ":");
                 String columnName = toRefObjColumn(fieldAndOrder[0]);
+                if(remoteBindDTO != null){
+                    if(orderByFormatStr != null){
+                        orderByFormatStr += ",";
+                    }
+                    if(orderByFormatStr == null){
+                        orderByFormatStr = "";
+                    }
+                    orderByFormatStr += columnName;
+                }
                 if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
                     queryWrapper.orderByDesc(columnName);
+                    if(remoteBindDTO != null){
+                        orderByFormatStr += ":DESC";
+                    }
                 }
                 else{
                     queryWrapper.orderByAsc(columnName);
                 }
             }
             else{
-                queryWrapper.orderByAsc(toRefObjColumn(field.toLowerCase()));
+                String columnName = toRefObjColumn(field.toLowerCase());
+                if(remoteBindDTO != null){
+                    if(orderByFormatStr != null){
+                        orderByFormatStr += ",";
+                    }
+                    if(orderByFormatStr == null){
+                        orderByFormatStr = "";
+                    }
+                    orderByFormatStr += columnName;
+                }
+                queryWrapper.orderByAsc(columnName);
+            }
+            if(remoteBindDTO != null){
+                remoteBindDTO.setOrderBy(orderByFormatStr);
             }
         }
+    }
+
+    /**
+     * 通过Entity获取对应的Service实现类
+     * @param entityClass
+     * @return
+     */
+    private IService<T> getService(Class<T> entityClass, Module moduleAnno){
+        // 根据entity获取Service
+        IService iService = ContextHelper.getIServiceByEntity(entityClass);
+        if(iService == null){
+            // 本地绑定需确保有Service实现类
+            if(moduleAnno == null){
+                throw new InvalidUsageException(entityClass.getSimpleName() + " 无 BaseService/IService实现类，无法执行注解绑定！");
+            }
+        }
+        return iService;
     }
 
     /**

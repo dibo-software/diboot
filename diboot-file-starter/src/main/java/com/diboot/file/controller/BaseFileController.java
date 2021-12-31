@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +96,6 @@ public abstract class BaseFileController extends BaseController {
         UploadFile uploadFile = saveFile(file, entityClass);
         // 保存上传记录
         createUploadFile(uploadFile);
-        // 返回结果
         // 返回结果
         return JsonResult.OK(new HashMap(16) {{
             put("uuid", uploadFile.getUuid());
@@ -195,6 +195,27 @@ public abstract class BaseFileController extends BaseController {
     }
 
     /**
+     * 保存文件
+     *
+     * @param inputStream
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    protected UploadFile saveFile(InputStream inputStream, String fileName) throws Exception{
+        UploadFileResult uploadFileResult= fileStorageService.upload(inputStream, fileName);
+        String accessUrl = buildAccessUrl(uploadFileResult.getFilename());
+        UploadFile uploadFile = new UploadFile();
+        uploadFile.setUuid(uploadFileResult.getUuid())
+                .setFileName(uploadFileResult.getOriginalFilename())
+                .setFileType(uploadFileResult.getExt())
+                .setStoragePath(uploadFileResult.getStorageFullPath())
+                .setAccessUrl(accessUrl);
+        // 返回uploadFile对象
+        return uploadFile;
+    }
+
+    /**
      * 构建文件访问/下载的url
      * @param newFileName
      * @return
@@ -208,10 +229,7 @@ public abstract class BaseFileController extends BaseController {
      * @param uploadFile
      * @throws Exception
      */
-    protected void createUploadFile(UploadFile uploadFile) throws Exception{
-        // 保存文件之后的处理逻辑
-        int dataCount = extractDataCount(uploadFile);
-        uploadFile.setDataCount(dataCount);
+    protected void createUploadFile(UploadFile uploadFile) {
         // 保存文件上传记录
         uploadFileService.createEntity(uploadFile);
     }
@@ -238,12 +256,4 @@ public abstract class BaseFileController extends BaseController {
         }
         return uploadFileService.getEntityList(wrapper);
     }
-
-    /**
-     * 保存文件之后的处理逻辑，如解析excel
-     */
-    protected int extractDataCount(UploadFile uploadFile) throws Exception{
-        return 0;
-    }
-
 }

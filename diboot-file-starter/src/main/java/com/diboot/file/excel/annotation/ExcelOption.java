@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,6 +15,7 @@
  */
 package com.diboot.file.excel.annotation;
 
+import org.apache.poi.ss.usermodel.DataValidation;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
@@ -61,20 +62,18 @@ public @interface ExcelOption {
     String dict() default "";
 
     /**
-     * 起始行索引
-     * <p>
-     * 当该值为-1时为整个列，且不可小于-1
-     * <p>
-     * 默认起始索引为 1
-     */
-    int firstRow() default 1;
-
-    /**
      * 行数
      * <p>
-     * 行数应大于0，不大于0时不添加 单元格验证（单元下拉选项）
+     * 当 rows <= 0 时为个整列
      * <p>
      * 默认值 10,000
      */
     int rows() default 10_000;
+
+    /**
+     * 错误框样式
+     * @see DataValidation.ErrorStyle
+     */
+    int errorStyle() default DataValidation.ErrorStyle.INFO;
+
 }

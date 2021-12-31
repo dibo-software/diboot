@@ -18,16 +18,17 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.binder.FieldBinder;
-import com.diboot.core.config.Cons;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +36,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据字典相关service实现
@@ -51,15 +51,15 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceExtImpl.class);
 
     @Override
-    public List<KeyValue> getKeyValueList(String type) {
+    public List<LabelValue> getLabelValueList(String type) {
         // 构建查询条件
-        Wrapper queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                .select(Dictionary::getItemName, Dictionary::getItemValue)
+        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtdata)
                 .eq(Dictionary::getType, type)
                 .gt(Dictionary::getParentId, 0)
-                .orderByAsc(Dictionary::getSortId, Dictionary::getId);
+                .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
-        return getKeyValueList(queryDictionary);
+        return getLabelValueList(queryDictionary);
     }
 
     @Override
@@ -178,12 +178,28 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         if(V.isEmpty(voList)){
             return;
         }
-        new FieldBinder<>(this, voList)
-                .link(Cons.FIELD_ITEM_NAME, setFieldName)
-                .joinOn(getFieldName, Cons.COLUMN_ITEM_VALUE)
-                .andEQ(Cons.FIELD_TYPE, type)
-                .andGT(Cons.FieldName.parentId.name(), 0)
-                .bind();
+        LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
+                .select(Dictionary::getItemValue, Dictionary::getItemName)
+                .eq(Dictionary::getType, type).gt(Dictionary::getParentId, 0);
+        List<Dictionary> entityList = super.getEntityList(queryWrapper);
+        Map<String, String> map = entityList.stream().collect(Collectors.toMap(Dictionary::getItemValue, Dictionary::getItemName));
+        for (Object item : voList) {
+            String value = BeanUtils.getStringProperty(item, getFieldName);
+            if (V.isEmpty(value)) {
+                continue;
+            }
+            String label = map.get(value);
+            if (label == null && value.contains(S.SEPARATOR)) {
+                ArrayList<String> labelList = new ArrayList<>();
+                for (String key : value.split(S.SEPARATOR)) {
+                    labelList.add(map.get(key));
+                }
+                label = S.join(labelList);
+            }
+            if (S.isNotEmpty(label)) {
+                BeanUtils.setProperty(item, setFieldName, label);
+            }
+        }
     }
 
     /***

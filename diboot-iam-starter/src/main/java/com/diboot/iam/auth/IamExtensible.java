@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.auth;
 
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamRole;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public interface IamExtensible {
      * @param extObj 登录扩展信息
      * @return
      */
-    KeyValue getUserExtentionObj(String userType, Long userId, Map<String, Object> extObj);
+    LabelValue getUserExtentionObj(String userType, Long userId, Map<String, Object> extObj);
 
     /**
      * 获取可扩展的角色

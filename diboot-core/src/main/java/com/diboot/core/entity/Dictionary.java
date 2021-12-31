@@ -16,6 +16,8 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,6 +69,7 @@ public class Dictionary extends BaseExtEntity {
      */
     @NotNull(message = "数据字典项名称不能为空！")
     @Length(max = 100, message = "数据字典项名称长度超长！")
+    @BindQuery(comparison = Comparison.LIKE)
     @TableField
     private String itemName;
 

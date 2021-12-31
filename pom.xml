@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.5</version>
+        <version>2.6.2</version>
         <relativePath/>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>2.3.1</version>
+    <version>2.4.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,12 +27,12 @@
     </modules>
 
     <properties>
-        <java.version>1.8</java.version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
-        <okhttp.version>4.9.1</okhttp.version>
+        <okhttp.version>4.9.2</okhttp.version>
         <aspectjweaver.version>1.9.7</aspectjweaver.version>
-        <diboot.version>2.3.1</diboot.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <diboot.version>2.4.0</diboot.version>
     </properties>
 
     <dependencies>
@@ -40,13 +40,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+            <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
+            <version>8.0.27</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

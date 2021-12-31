@@ -18,11 +18,12 @@ import java.util.concurrent.ConcurrentMap;
 public class DynamicMemoryCacheManager extends BaseCacheManager{
 
     public DynamicMemoryCacheManager(String... cacheNames){
-        List<Cache> caches = new ArrayList<>();
+        List<Cache> caches = new ArrayList<>(cacheNames.length);
         for(String cacheName : cacheNames){
             caches.add(new ConcurrentMapCache(cacheName));
         }
         setCaches(caches);
+        super.afterPropertiesSet();
     }
 
     /**
@@ -36,10 +37,23 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
 
     public DynamicMemoryCacheManager(){
         this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+        super.afterPropertiesSet();
     }
     public DynamicMemoryCacheManager(int expiredMinutes){
         this.expiredMinutes = expiredMinutes;
         this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+        super.afterPropertiesSet();
+    }
+
+    public DynamicMemoryCacheManager(int expiredMinutes, String... cacheNames){
+        this.expiredMinutes = expiredMinutes;
+        this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+        List<Cache> caches = new ArrayList<>(cacheNames.length);
+        for(String cacheName : cacheNames){
+            caches.add(new ConcurrentMapCache(cacheName));
+        }
+        setCaches(caches);
+        super.afterPropertiesSet();
     }
 
     /**
@@ -89,7 +103,7 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
             return false;
         }
         long currentTimestamp = System.currentTimeMillis();
-        return (cacheTimestamp + expiredMinutes*60000) > currentTimestamp;
+        return (currentTimestamp - cacheTimestamp) > (expiredMinutes*60000);
     }
 
     /**

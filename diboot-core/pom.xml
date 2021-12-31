@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>2.3.1</version>
+        <version>2.4.0</version>
     </parent>
 
     <artifactId>diboot-core</artifactId>
-    <version>2.3.1</version>
+    <version>2.4.0</version>
     <packaging>jar</packaging>
     <description>diboot core project</description>
 
@@ -55,6 +55,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
+        </dependency>
+        <!-- openfeign可选依赖 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

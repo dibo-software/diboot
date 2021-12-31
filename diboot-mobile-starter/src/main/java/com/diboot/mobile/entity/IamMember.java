@@ -17,9 +17,12 @@ package com.diboot.mobile.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.query.BindQuery;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.util.D;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -50,13 +53,27 @@ public class IamMember extends BaseLoginUser {
     /**
      * 移动端用户状态
      */
-    public static final String DICT_MEMBER_STATUS = "ACCOUNT_STATUS";
+    public static final String DICT_MEMBER_STATUS = "MEMBER_STATUS";
 
     /**
      * 租户id
      */
     @TableField()
+    @JsonIgnore
     private Long tenantId;
+
+    /**
+     * 默认绑定IamUser
+     */
+    @TableField()
+    private Long userId;
+
+    /**
+     * 默认绑定用户类型
+     */
+    @TableField()
+    @NotNull(message = "用户类型不能为空")
+    private String userType;
 
     /**
      * 组织
@@ -65,16 +82,17 @@ public class IamMember extends BaseLoginUser {
     private Long orgId;
 
     /**
-     * 组织
+     * openid
      */
     @TableField()
+    @NotNull(message = "openid不能为空")
     private String openid;
 
     /**
      * 昵称
      */
-    @NotNull(message = "昵称不能为空")
     @Length(max = 100, message = "昵称长度应小于100")
+    @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String nickname;
 
@@ -156,6 +174,6 @@ public class IamMember extends BaseLoginUser {
 
     @Override
     public String getUserType() {
-        return IamMember.class.getSimpleName();
+        return this.userType;
     }
 }

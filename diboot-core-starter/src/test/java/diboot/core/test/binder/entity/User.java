@@ -16,7 +16,7 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.copy.Accept;
+import com.diboot.core.data.copy.Accept;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonFormat;

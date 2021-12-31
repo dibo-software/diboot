@@ -39,7 +39,7 @@ public class FixedHeadExcelReadTest extends ExcelWriteTest {
         department.setParentName("产品部");
         department.setMemCount(1);
         department.setUserStatus("S");
-        String msg = V.validateBean(department);
+        String msg = V.validateBeanErrMsg(department);
         Assert.assertTrue(msg != null);
     }
 

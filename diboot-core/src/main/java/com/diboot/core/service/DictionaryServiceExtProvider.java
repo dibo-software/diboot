@@ -17,7 +17,7 @@ package com.diboot.core.service;
 
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.vo.DictionaryVO;
-import com.diboot.core.vo.KeyValue;
+import com.diboot.core.vo.LabelValue;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public interface DictionaryServiceExtProvider {
      * @param dictType
      * @return
      */
-    List<KeyValue> getKeyValueList(String dictType);
+    List<LabelValue> getLabelValueList(String dictType);
 
     /**
      * 是否存在某字典类型定义

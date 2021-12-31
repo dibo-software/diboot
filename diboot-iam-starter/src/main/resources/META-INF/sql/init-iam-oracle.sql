@@ -157,7 +157,7 @@ create table ${SCHEMA}.iam_role_resource
     id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
     tenant_id          NUMBER(20)           default 0  not null,
     role_id int    not null,
-    permission_id int    not null,
+    resource_id int    not null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     constraint PK_iam_role_resource primary key (id)
@@ -165,12 +165,12 @@ create table ${SCHEMA}.iam_role_resource
 comment on column ${SCHEMA}.iam_role_resource.id is 'ID';
 comment on column ${SCHEMA}.iam_role_resource.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_role_resource.role_id is '角色ID';
-comment on column ${SCHEMA}.iam_role_resource.permission_id is '权限ID';
+comment on column ${SCHEMA}.iam_role_resource.resource_id is '权限ID';
 comment on column ${SCHEMA}.iam_role_resource.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_role_resource.create_time is '创建时间';
 comment on table ${SCHEMA}.iam_role_resource is '角色资源';
 -- 索引
-create index idx_iam_role_resource on ${SCHEMA}.iam_role_resource (role_id, permission_id);
+create index idx_iam_role_resource on ${SCHEMA}.iam_role_resource (role_id, resource_id);
 create index idx_iam_role_resource_tenant on ${SCHEMA}.iam_role_resource (tenant_id);
 
 -- 登录日志表

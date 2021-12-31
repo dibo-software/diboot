@@ -15,6 +15,8 @@
  */
 package com.diboot.message.vo;
 
+import com.diboot.core.binding.annotation.BindField;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.message.entity.MessageTemplate;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,5 +33,11 @@ import lombok.experimental.Accessors;
 @Getter @Setter @Accessors(chain = true)
 public class MessageTemplateDetailVO extends MessageTemplate {
     private static final long serialVersionUID = 2078910002798372017L;
+
+    /**
+     * 创建人姓名
+     */
+    @BindField(entity = IamUser.class, field = "realname", condition = "this.create_by=id")
+    private String createByName;
 
 }

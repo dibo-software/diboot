@@ -16,12 +16,13 @@
 package diboot.core.test.util;
 
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,11 +85,25 @@ public class VTest {
         list2.add(128L);
 
         Assert.assertTrue(V.equals(list1, list2));
+
+        Field field = BeanUtils.extractField(Dictionary.class, "createTime");
+        Assert.assertTrue(V.equals(field.getType(), Date.class));
+        Assert.assertTrue(V.equals(field.getType().getName(), "java.util.Date"));
+
+        Dictionary dictionary = BeanUtils.cloneBean(new Dictionary());
+        Dictionary dictionary1 = JSON.parseObject("{}", Dictionary.class);
+        Assert.assertTrue(V.equals(dictionary.getClass(), dictionary1.getClass()));
+
+        field = BeanUtils.extractField(Dictionary.class, "isDeletable");
+        Assert.assertTrue(V.equals(Boolean.class, field.getType()));
+
+        field = BeanUtils.extractField(Dictionary.class, "deleted");
+        Assert.assertTrue(V.equals(boolean.class, field.getType()));
     }
 
     @Test
     public void testValidateBean(){
-        String msg = V.validateBean(new Dictionary());
+        String msg = V.validateBeanErrMsg(new Dictionary());
         System.out.println(msg);
         Assert.assertTrue(msg != null);
     }

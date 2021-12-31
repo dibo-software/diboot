@@ -46,6 +46,10 @@ public class Cons {
      * 逻辑删除列名
      */
     public static final String COLUMN_IS_DELETED = "is_deleted";
+    /**
+     * 创建时间列名
+     */
+    public static final String COLUMN_CREATE_TIME = "create_time";
     /***
      * 默认字段名定义
      */

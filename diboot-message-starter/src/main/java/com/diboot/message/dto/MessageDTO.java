@@ -40,6 +40,6 @@ public class MessageDTO extends Message {
     /**
      * 关联字段 MessageTemplate.title
      */
-    @BindQuery(comparison = Comparison.EQ, entity = MessageTemplate.class, field = "title", condition = "this.template_id=id")
+    @BindQuery(comparison = Comparison.LIKE, entity = MessageTemplate.class, field = "title", condition = "this.template_id=id")
     private String messageTemplateTitle;
 }
