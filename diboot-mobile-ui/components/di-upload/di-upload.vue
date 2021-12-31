@@ -21,20 +21,22 @@
 
 <script>
 	/**
-	 * 上传组件
-	 * @property {String} action 上传文件地址，默认为：/uploadFile/upload/dto
-	 * @property {String} rel-obj-type 绑定的业务对象，自动设置到form-data对象中
-	 * @property {String} rel-obj-field 绑定的业务对象的字段，自动设置到form-data对象中
-	 * @property {Object} form-data 提交的form-data
-	 * @property {Array} fileList 文件存储数据
-	 * @property {String} limit-count 限制数，自动设置到config对象中
-	 * @property {String} show-progress 是否显示进度条 ，自动设置到config对象中
-	 * @property {String} maxSize 选择单个文件的最大大小，单位B(byte)，默认不限制，自动设置到config对象中
-	 * @property {String} deletable	是否显示删除图片的按钮，自动设置到config对象中
-	 * @property {String} width 是否显示进度条 ，自动设置到config对象中
-	 * @property {String} height 是否显示进度条 ，自动设置到config对象中
-	 * @property {String} config 上传组件配置
-	 * @event {Function} confirm 点击确定按钮，返回当前选择的值
+	 * di-upload 上传组件
+	 * @description 上传组件，基于u-upload，适配form
+	 * @property {String} value 上传后的后端返回地址，支持v-model双向绑定
+	 * @property {String} action 向后端发送的请求地址，默认'/uploadFile/upload/dto'
+	 * @property {String} rel-obj-type 绑定的业务对象名，自动设置到form-data对象中
+	 * @property {String} rel-obj-field 绑定业务对象的属性，自动设置到form-data对象中
+	 * @property {Object} form-data 提交的form-data，优先级最低，单独的属性设置会覆盖对象的配置
+	 * @property {Array} file-list 文件存储位置
+	 * @property {String} limit-count 上传数量限制，默认1，自动设置到config对象中
+	 * @property {Boolean} show-progress 是否显示进度条，默认true，自动设置到config对象中
+	 * @property {String} max-size 选择单个文件的最大大小，单位B(byte)，默认不限制，自动设置到config对象中
+	 * @property {Boolean} deletable 是否显示删除图片的按钮，默认true，自动设置到config对象中
+	 * @property {String} width 图片预览区域和添加图片按钮的宽度(单位：rpx)，默认200 ，自动设置到config对象中
+	 * @property {String} height 图片预览区域和添加图片按钮的高度(单位：rpx) ，默认200,自动设置到config对象中
+	 * @property {String} upload-text 上传框里面的文本 ，默认 ‘上传’,自动设置到config对象中
+	 * @property {Object} config 上传组件配置，优先级最低，单独的属性设置会覆盖对象的配置
 	 */
 	import Emitter from '../../uview-ui/libs/util/emitter.js';
 	export default {
@@ -134,6 +136,10 @@
 			}
 		},
 		props: {
+			value: {
+				type: String,
+				require: true
+			},
 			action: {
 				type: String,
 				default: '/uploadFile/upload/dto'
@@ -186,10 +192,6 @@
 			config: {
 				type: Object,
 				default: () => {}
-			},
-			value: {
-				type: String,
-				require: true
 			}
 		}
 	}

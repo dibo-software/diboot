@@ -8,7 +8,8 @@
 
 <script>
 	/**
-	 * 区域选择器
+	 * di-region-picker 区域选择器
+	 * @description 基于u-picker mode='region'模式
 	 * @property {String} value 可以使用v-model双向绑定，省市区请使用“-”分割，提交后自行处理
 	 * @property {String} placeholder 提示信息
 	 * @property {Boolean} city 是否选择市 默认true

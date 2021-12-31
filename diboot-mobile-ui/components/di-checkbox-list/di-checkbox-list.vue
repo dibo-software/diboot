@@ -10,11 +10,10 @@
 <script>
 	/**
 	* di-checkbox-list checkbox列表
-	* @description check列表组，基于uview，适应与diboot接口的checkbox列表
-	* @property  {String}  activeColor 激活时候的颜色
+	* @description checkbox列表组件，封装u-checkbox，适配form
 	* @property  {Array String}  value 支持数组和字符串，修改后响应为，所以建议使用字符串
+	* @property  {String}  active-color 激活时候的颜色
 	* @property  {Array}  list 传入labelValue列表
-	* @event {Function} click 点击传入当前menu的参数 
 	*/
 	export default {
 		name: 'di-checkbox-list',
