@@ -24,6 +24,8 @@ import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.AllTableColumns;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 import java.util.ArrayList;
@@ -218,6 +220,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(CastExpression cast) {
     }
+
+    @Override
+    public void visit(TryCastExpression tryCastExpression) {
+
+    }
+
     @Override
     public void visit(Modulo modulo) {
     }
@@ -326,6 +334,22 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(OracleNamedFunctionParameter oracleNamedFunctionParameter) {
     }
+
+    @Override
+    public void visit(AllColumns allColumns) {
+
+    }
+
+    @Override
+    public void visit(AllTableColumns allTableColumns) {
+
+    }
+
+    @Override
+    public void visit(AllValue allValue) {
+
+    }
+
     @Override
     public void visit(BitwiseRightShift aThis) {
     }
