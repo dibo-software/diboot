@@ -15,7 +15,9 @@
  */
 package com.diboot.scheduler.vo;
 
+import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.config.Cons;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.scheduler.entity.ScheduleJob;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,4 +43,9 @@ public class ScheduleJobVO extends ScheduleJob {
         return Cons.ENABLE_STATUS.getLabel(this.getJobStatus());
      }
 
+     /**
+      * 创建人姓名
+      */
+     @BindField(entity = IamUser.class, field = "realname", condition = "this.create_by=id")
+     private String createByName;
 }
