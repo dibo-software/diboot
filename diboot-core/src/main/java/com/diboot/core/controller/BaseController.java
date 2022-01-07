@@ -31,6 +31,7 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.util.WrapperHelper;
 import com.diboot.core.vo.LabelValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -345,20 +346,8 @@ public class BaseController {
 		QueryWrapper<?> queryWrapper = Wrappers.query()
 				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
 				.like(V.notEmpty(attachMore.getKeyword()), label, attachMore.getKeyword());
-		// 解析排序
-		if (V.notEmpty(attachMore.getOrderBy())) {
-			String[] orderByFields = S.split(attachMore.getOrderBy(), ",");
-			for (String field : orderByFields) {
-				V.securityCheck(field);
-				String[] fieldAndOrder = field.split(":");
-				String columnName = field2column.apply(fieldAndOrder[0]);
-				if (fieldAndOrder.length > 1 && Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
-					queryWrapper.orderByDesc(columnName);
-				} else {
-					queryWrapper.orderByAsc(columnName);
-				}
-			}
-		}
+		// 构建排序
+        WrapperHelper.buildOrderBy(queryWrapper, attachMore.getOrderBy(), field2column);
 		// 父级限制
 		String parentColumn = field2column.apply(S.defaultIfBlank(attachMore.getParent(), attachMore.isTree() ? "parentId" : null));
 		if (V.notEmpty(parentColumn)) {

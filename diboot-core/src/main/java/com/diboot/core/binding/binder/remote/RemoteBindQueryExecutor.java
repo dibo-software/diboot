@@ -19,12 +19,10 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.WrapperHelper;
 import com.diboot.core.vo.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,23 +72,7 @@ public class RemoteBindQueryExecutor {
             queryWrapper.in(refJoinCol, inConditionValues);
         }
         // 排序
-        if(V.notEmpty(remoteBindDTO.getOrderBy())){
-            for(String column : S.split(remoteBindDTO.getOrderBy())){
-                if(column.contains(":")){
-                    String[] columnAndOrder = S.split(column, ":");
-                    String columnName = columnAndOrder[0];
-                    if(Cons.ORDER_DESC.equalsIgnoreCase(columnAndOrder[1])){
-                        queryWrapper.orderByDesc(columnName);
-                    }
-                    else{
-                        queryWrapper.orderByAsc(columnName);
-                    }
-                }
-                else{
-                    queryWrapper.orderByAsc(column);
-                }
-            }
-        }
+        WrapperHelper.buildOrderBy(queryWrapper, remoteBindDTO.getOrderBy(), e -> e);
         // 执行查询返回结果List
         try{
             String jsonStr = null;

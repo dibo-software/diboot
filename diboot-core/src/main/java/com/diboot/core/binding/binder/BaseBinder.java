@@ -25,7 +25,6 @@ import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
@@ -429,49 +428,12 @@ public abstract class BaseBinder<T> {
         if(V.isEmpty(this.orderBy)){
             return;
         }
-        String orderByFormatStr = null;
-        // 解析排序
-        String[] orderByFields = S.split(this.orderBy);
-        for(String field : orderByFields){
-            if(field.contains(":")){
-                String[] fieldAndOrder = S.split(field, ":");
-                String columnName = toRefObjColumn(fieldAndOrder[0]);
-                if(remoteBindDTO != null){
-                    if(orderByFormatStr != null){
-                        orderByFormatStr += ",";
-                    }
-                    if(orderByFormatStr == null){
-                        orderByFormatStr = "";
-                    }
-                    orderByFormatStr += columnName;
-                }
-                if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
-                    queryWrapper.orderByDesc(columnName);
-                    if(remoteBindDTO != null){
-                        orderByFormatStr += ":DESC";
-                    }
-                }
-                else{
-                    queryWrapper.orderByAsc(columnName);
-                }
-            }
-            else{
-                String columnName = toRefObjColumn(field.toLowerCase());
-                if(remoteBindDTO != null){
-                    if(orderByFormatStr != null){
-                        orderByFormatStr += ",";
-                    }
-                    if(orderByFormatStr == null){
-                        orderByFormatStr = "";
-                    }
-                    orderByFormatStr += columnName;
-                }
-                queryWrapper.orderByAsc(columnName);
-            }
-            if(remoteBindDTO != null){
-                remoteBindDTO.setOrderBy(orderByFormatStr);
-            }
+        if(remoteBindDTO != null){
+            remoteBindDTO.setOrderBy(this.orderBy);
+            return;
         }
+        // 构建排序
+        WrapperHelper.buildOrderBy(queryWrapper, this.orderBy, this::toRefObjColumn);
     }
 
     /**
