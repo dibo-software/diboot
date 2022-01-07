@@ -37,7 +37,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -68,6 +67,9 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @Value("${spring.jackson.time-zone:GMT+8}")
     private String defaultTimeZone;
 
+    @Value("${spring.jackson.default-property-inclusion:NON_NULL}")
+    private JsonInclude.Include defaultPropertyInclusion;
+
     @Bean
     @ConditionalOnMissingBean
     public HttpMessageConverters jacksonHttpMessageConverters() {
@@ -75,14 +77,12 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         ObjectMapper objectMapper = converter.getObjectMapper();
         // Long转换成String避免JS超长问题
         SimpleModule simpleModule = new SimpleModule();
-
-        // 不显示为null的字段
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
         simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
-
         objectMapper.registerModule(simpleModule);
+        // 设置序列化包含策略
+        objectMapper.setSerializationInclusion(defaultPropertyInclusion);
         // 时间格式化
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setTimeZone(TimeZone.getTimeZone(defaultTimeZone));
@@ -96,8 +96,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         // 设置格式化内容
         converter.setObjectMapper(objectMapper);
 
-        HttpMessageConverter<?> httpMsgConverter = converter;
-        return new HttpMessageConverters(httpMsgConverter);
+        return new HttpMessageConverters(converter);
     }
 
     /**
