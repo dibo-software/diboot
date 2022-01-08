@@ -12,9 +12,8 @@ create table schedule_job
   save_log     tinyint(1)   default 1                 not null comment '是否记录日志',
   job_comment      varchar(200)  comment '备注',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
+  create_by bigint NOT NULL DEFAULT 0 COMMENT '创建人',
   create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  create_by bigint NOT NULL DEFAULT 0 COMMENT '创建人ID',
-  create_by_name varchar(50)        COMMENT '创建人名称',
   update_time  timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
 )
 AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务';
