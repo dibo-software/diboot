@@ -62,7 +62,18 @@
             <artifactId>spring-cloud-openfeign-core</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
-        </dependency>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+    </dependency>
 
     </dependencies>
 
