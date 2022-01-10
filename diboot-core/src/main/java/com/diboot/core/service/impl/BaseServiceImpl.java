@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
@@ -740,7 +741,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		queryWrapper = ServiceAdaptor.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);

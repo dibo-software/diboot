@@ -31,7 +31,7 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.util.WrapperHelper;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.vo.LabelValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
