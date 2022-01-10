@@ -44,6 +44,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 /**
@@ -163,10 +164,9 @@ public class QueryBuilder {
             return (hasJoinTable ? "self." : "") + BeanUtils.getColumnName(field);
         };
         // 忽略空字符串"",空集合等
-        BiFunction<Object, BindQuery, Boolean> ignoreEmpty = (value, bindQuery) -> bindQuery != null
-                && bindQuery.strategy().equals(Strategy.IGNORE_EMPTY) // 忽略空字符串"",空集合等
-                && (value instanceof String && S.isEmpty((String) value) // 字符串""
-                || (value instanceof Collection && ((Collection<?>) value).size() == 0));// 空集合
+        BiPredicate<Object, BindQuery> ignoreEmpty = (value, bindQuery) -> bindQuery != null &&
+                (Strategy.IGNORE_EMPTY.equals(bindQuery.strategy()) && value instanceof String && S.isEmpty((String) value) // 忽略空字符串""
+                        || Comparison.IN.equals(bindQuery.comparison()) && V.isEmpty(value)); // 忽略空集合
         // 查找加密策略
         BiFunction<BindQuery, String, IEncryptStrategy> findEncryptStrategy = (bindQuery, defFieldName) -> {
             if (ENABLE_DATA_PROTECT) {
@@ -194,7 +194,7 @@ public class QueryBuilder {
             Object value = fieldAndValue.getValue();
             // 构建Query
             if (queryList != null) {
-                List<BindQuery> bindQueryList = Arrays.stream(queryList.value()).filter(e -> !ignoreEmpty.apply(value, e)).collect(Collectors.toList());
+                List<BindQuery> bindQueryList = Arrays.stream(queryList.value()).filter(e -> !ignoreEmpty.test(value, e)).collect(Collectors.toList());
                 wrapper.and(V.notEmpty(bindQueryList), queryWrapper -> {
                     for (BindQuery bindQuery : bindQueryList) {
                         IEncryptStrategy encryptor = findEncryptStrategy.apply(bindQuery, entry.getKey());
@@ -204,7 +204,7 @@ public class QueryBuilder {
                     }
                 });
             } else {
-                if (ignoreEmpty.apply(value, query)) {
+                if (ignoreEmpty.test(value, query)) {
                     continue;
                 }
                 IEncryptStrategy encryptor = findEncryptStrategy.apply(query, entry.getKey());
@@ -238,7 +238,7 @@ public class QueryBuilder {
                         wrapper.in(columnName, valueArray);
                     }
                 } else if (value instanceof Collection) {
-                    wrapper.in(columnName, (Collection<?>) value);
+                    wrapper.in(!((Collection) value).isEmpty(), columnName, (Collection<?>) value);
                 } else {
                     log.warn("字段类型错误：IN仅支持List及数组.");
                 }
