@@ -44,6 +44,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * QueryWrapper构建器
@@ -193,11 +194,9 @@ public class QueryBuilder {
             Object value = fieldAndValue.getValue();
             // 构建Query
             if (queryList != null) {
-                wrapper.and(queryWrapper -> {
-                    for (BindQuery bindQuery : queryList.value()) {
-                        if (ignoreEmpty.apply(value, bindQuery)) {
-                            continue;
-                        }
+                List<BindQuery> bindQueryList = Arrays.stream(queryList.value()).filter(e -> !ignoreEmpty.apply(value, e)).collect(Collectors.toList());
+                wrapper.and(V.notEmpty(bindQueryList), queryWrapper -> {
+                    for (BindQuery bindQuery : bindQueryList) {
                         IEncryptStrategy encryptor = findEncryptStrategy.apply(bindQuery, entry.getKey());
                         Comparison comparison = encryptor == null ? bindQuery.comparison() : Comparison.EQ;
                         String columnName = buildColumnName.apply(bindQuery, field);
