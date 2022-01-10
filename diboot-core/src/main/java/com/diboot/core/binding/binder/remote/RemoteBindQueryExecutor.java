@@ -18,11 +18,10 @@ package com.diboot.core.binding.binder.remote;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.WrapperHelper;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,6 +70,7 @@ public class RemoteBindQueryExecutor {
         } else {
             queryWrapper.in(refJoinCol, inConditionValues);
         }
+        queryWrapper.and(V.notEmpty(remoteBindDTO.getAdditionalConditions()), e -> remoteBindDTO.getAdditionalConditions().forEach(e::apply));
         // 排序
         WrapperHelper.buildOrderBy(queryWrapper, remoteBindDTO.getOrderBy(), e -> e);
         // 执行查询返回结果List

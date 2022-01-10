@@ -84,9 +84,11 @@ public class ConditionManager extends BaseConditionManager{
                 }
                 else{
                     binder.andEQ(annoColumn, express.getRightExpression().toString());
+                    binder.additionalCondition(annoColumn + " = " + express.getRightExpression().toString());
                 }
+                continue;
             }
-            else if(operator instanceof NotEqualsTo){
+            if(operator instanceof NotEqualsTo){
                 NotEqualsTo express = (NotEqualsTo)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
@@ -179,7 +181,9 @@ public class ConditionManager extends BaseConditionManager{
             }
             else{
                 log.warn("不支持的条件: "+operator.toString());
+                continue;
             }
+            binder.additionalCondition(operator.toString().replaceAll("^\\w+\\.", ""));
         }
     }
 

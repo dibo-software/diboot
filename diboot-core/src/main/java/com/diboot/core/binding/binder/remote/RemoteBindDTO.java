@@ -21,6 +21,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 远程绑定DTO定义
@@ -38,6 +39,7 @@ public class RemoteBindDTO implements Serializable {
     private String[] selectColumns;
     private String refJoinCol;
     private Collection<?> inConditionValues;
+    private List<String> additionalConditions;
     private String orderBy;
     private String resultType;
 

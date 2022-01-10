@@ -16,7 +16,6 @@
 package com.diboot.core.binding.binder;
 
 import com.diboot.core.binding.annotation.BindFieldList;
-import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
@@ -67,12 +66,10 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             throw new InvalidUsageException("调用错误：字段绑定必须指定字段field.");
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
-        // 构建跨模块绑定DTO
-        RemoteBindDTO remoteBindDTO = V.isEmpty(this.module)? null : new RemoteBindDTO(referencedEntityClass);
         // 直接关联
         if(middleTable == null){
-            super.simplifySelectColumns(remoteBindDTO);
-            super.buildQueryWrapperJoinOn(remoteBindDTO);
+            super.simplifySelectColumns();
+            super.buildQueryWrapperJoinOn();
             // 查询条件为空时不进行查询
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
@@ -108,7 +105,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
-            super.simplifySelectColumns(remoteBindDTO);
+            super.simplifySelectColumns();
             //处理orderBy，附加排序
             this.appendOrderBy(remoteBindDTO);
             // 收集查询结果values集合
