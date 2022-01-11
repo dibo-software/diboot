@@ -21,7 +21,9 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.PropInfo;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.dto.AttachMoreDTO;
 import com.diboot.core.entity.ValidList;
@@ -31,7 +33,6 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.vo.LabelValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -320,6 +321,9 @@ public class BaseController {
 		if (!attachMorePermissionCheck(attachMore)) {
 			return null;
 		}
+		if (V.notEmpty(parentValue) && !attachMore.isTree() && V.isEmpty(attachMore.getParent())) {
+			throw new BusinessException("attachMore跨表级联中的 " + attachMore.getTarget() + " 未指定关联父级属性 parent: ?");
+		}
 		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMore.getTarget()));
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
@@ -364,6 +368,9 @@ public class BaseController {
 		buildAttachMoreCondition(attachMore, queryWrapper, field2column);
 		// 获取数据并做相应填充
 		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper);
+		if (V.isEmpty(attachMore.getKeyword()) && labelValueList.size() > BaseConfig.getBatchSize()) {
+			log.warn("attachMore: {} 数据量超过 {} 条, 建议采用远程搜索接口过滤数据", entityClassName, BaseConfig.getBatchSize());
+		}
 		if (V.notEmpty(parentColumn) || attachMore.getNext() != null) {
 			Boolean leaf = !attachMore.isTree() && attachMore.getNext() == null ? true : null;
 			// 第一层tree与最后一层无需返回type
@@ -372,7 +379,7 @@ public class BaseController {
 				item.setType(type);
 				item.setLeaf(leaf);
 				// 非异步加载
-				if (!attachMore.isLazy()) {
+				if (!Boolean.TRUE.equals(leaf) && !attachMore.isLazy()) {
 					List<LabelValue> children = attachMoreRelatedData(attachMore, S.valueOf(item.getValue()), type);
 					item.setChildren(children.isEmpty() ? null : children);
 					item.setDisabled(children.isEmpty() && attachMore.getNext() != null ? true : null);
