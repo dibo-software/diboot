@@ -317,6 +317,9 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMore, String parentValue) {
+		if (!attachMorePermissionCheck(attachMore)) {
+			return null;
+		}
 		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMore.getTarget()));
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
@@ -378,6 +381,16 @@ public class BaseController {
 		}
 		return labelValueList;
 	}
+
+    /**
+     * attachMore 权限检查
+     *
+     * @param attachMore
+     * @return 是否拥有权限
+     */
+    protected boolean attachMorePermissionCheck(AttachMoreDTO attachMore) {
+        return true;
+    }
 
 	/**
 	 * 构建AttachMore的筛选条件
