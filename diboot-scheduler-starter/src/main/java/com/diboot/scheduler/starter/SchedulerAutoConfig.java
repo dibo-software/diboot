@@ -15,14 +15,19 @@
  */
 package com.diboot.scheduler.starter;
 
+import com.diboot.scheduler.service.QuartzSchedulerService;
+import com.diboot.scheduler.service.impl.QuartzSchedulerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * scheduler组件自动初始化
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2020/11/28
@@ -33,5 +38,14 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = {"com.diboot.scheduler"})
 @MapperScan(basePackages = {"com.diboot.scheduler.mapper"})
 public class SchedulerAutoConfig {
+
+    /**
+     * 任务调度
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public QuartzSchedulerService quartzSchedulerService() {
+        return new QuartzSchedulerServiceImpl();
+    }
 
 }
