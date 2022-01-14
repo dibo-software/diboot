@@ -29,6 +29,7 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -51,7 +52,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     /**
      * Service实现类
      */
-    private BaseService baseService;
+    @Autowired(required = false)
+    private BaseService<E> baseService;
 
     /**
      * 查询ViewObject，用于子类重写的方法
@@ -377,15 +379,6 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      */
     protected BaseService getService() {
-        if (this.baseService == null) {
-            Class<E> clazz = getEntityClass();
-            if (clazz != null) {
-                this.baseService = ContextHelper.getBaseServiceByEntity(clazz);
-            }
-            if (this.baseService == null) {
-                log.warn("Entity: {} 无对应的Service定义，请检查！", clazz.getName());
-            }
-        }
         return this.baseService;
     }
 

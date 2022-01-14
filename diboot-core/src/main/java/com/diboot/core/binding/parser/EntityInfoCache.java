@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
-import com.diboot.core.util.V;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -40,12 +40,11 @@ public class EntityInfoCache implements Serializable {
     /**
      * service 实现类
      */
-    @Setter
-    private IService service;
+    private Class<? extends IService> serviceClass;
     /**
      * 表对应的mapper类
      */
-    private BaseMapper baseMapper;
+    private Class<? extends BaseMapper> mapperClass;
 
     public EntityInfoCache(Class<?> entityClass, IService iService){
         this.entityClass = entityClass;
@@ -61,9 +60,9 @@ public class EntityInfoCache implements Serializable {
             this.tableName = S.toSnakeCase(entityClass.getSimpleName());
         }
         // 设置当前service实例
-        this.service = iService;
+        this.serviceClass = iService.getClass();
         if(iService != null){
-            this.baseMapper = iService.getBaseMapper();
+            this.mapperClass = iService.getBaseMapper().getClass();
         }
     }
 
@@ -73,10 +72,22 @@ public class EntityInfoCache implements Serializable {
      */
     public void setService(IService iService){
         // 设置当前service实例
-        this.service = iService;
+        this.serviceClass = iService.getClass();
         if(iService != null){
-            this.baseMapper = iService.getBaseMapper();
+            this.mapperClass = iService.getBaseMapper().getClass();
         }
+    }
+
+    public IService getService(){
+        return ContextHelper.getBean(this.serviceClass);
+    }
+
+    public void setBaseMapper(BaseMapper mapper) {
+        this.mapperClass = mapper.getClass();
+    }
+
+    public BaseMapper getBaseMapper(){
+        return ContextHelper.getBean(this.mapperClass);
     }
 
     /**

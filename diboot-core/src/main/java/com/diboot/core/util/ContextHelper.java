@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
@@ -48,7 +50,7 @@ import java.util.Map;
  */
 @Component
 @Lazy(false)
-public class ContextHelper implements ApplicationContextAware {
+public class ContextHelper implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
     private static final Logger log = LoggerFactory.getLogger(ContextHelper.class);
 
     /***
@@ -64,6 +66,11 @@ public class ContextHelper implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         APPLICATION_CONTEXT = applicationContext;
+    }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        APPLICATION_CONTEXT = event.getApplicationContext();
     }
 
     /***
