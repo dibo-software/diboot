@@ -52,7 +52,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     /**
      * Service实现类
      */
-    @Autowired(required = false)
+    @Autowired
     private BaseService<E> baseService;
 
     /**
@@ -378,7 +378,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      *
      * @return
      */
-    protected BaseService getService() {
+    protected BaseService<E> getService() {
         return this.baseService;
     }
 

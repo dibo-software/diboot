@@ -38,15 +38,15 @@ public class EntityInfoCache implements Serializable {
      */
     private Class<?> entityClass;
     /**
-     * service 实现类
+     * service 实例名
      */
-    private Class<? extends IService> serviceClass;
+    private String serviceBeanName;
     /**
      * 表对应的mapper类
      */
     private Class<? extends BaseMapper> mapperClass;
 
-    public EntityInfoCache(Class<?> entityClass, IService iService){
+    public EntityInfoCache(Class<?> entityClass, String serviceBeanName){
         this.entityClass = entityClass;
         this.entityClassName = entityClass.getName();
         // 初始化字段-列名的映射
@@ -59,35 +59,28 @@ public class EntityInfoCache implements Serializable {
         else{
             this.tableName = S.toSnakeCase(entityClass.getSimpleName());
         }
-        // 设置当前service实例
-        this.serviceClass = iService.getClass();
-        if(iService != null){
-            this.mapperClass = iService.getBaseMapper().getClass();
-        }
+        // 设置当前service实例名
+        this.serviceBeanName = serviceBeanName;
     }
 
     /**
-     * 设置当前service实例
-     * @param iService
+     * 设置当前service实例名
+     * @param serviceBeanName
      */
-    public void setService(IService iService){
-        // 设置当前service实例
-        this.serviceClass = iService.getClass();
-        if(iService != null){
-            this.mapperClass = iService.getBaseMapper().getClass();
-        }
+    public void setService(String serviceBeanName){
+        this.serviceBeanName = serviceBeanName;
     }
 
     public IService getService(){
-        return ContextHelper.getBean(this.serviceClass);
+        return (IService) ContextHelper.getApplicationContext().getBean(this.serviceBeanName);
     }
 
-    public void setBaseMapper(BaseMapper mapper) {
-        this.mapperClass = mapper.getClass();
+    public void setBaseMapper(Class<? extends BaseMapper> mapper) {
+        this.mapperClass = mapper;
     }
 
-    public BaseMapper getBaseMapper(){
-        return ContextHelper.getBean(this.mapperClass);
+    public BaseMapper getBaseMapper() {
+        return mapperClass == null ? getService().getBaseMapper() : ContextHelper.getBean(this.mapperClass);
     }
 
     /**
