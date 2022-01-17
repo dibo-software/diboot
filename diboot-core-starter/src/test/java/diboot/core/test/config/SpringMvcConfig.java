@@ -15,6 +15,9 @@
  */
 package diboot.core.test.config;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.diboot.core.handler.DataAccessControlInterceptor;
 import com.diboot.core.util.D;
 import com.diboot.core.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -93,6 +97,18 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
        registry.addConverter(new DateConverter());
+    }
+
+    /**
+     * 配置拦截器
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 数据权限拦截器
+        interceptor.addInnerInterceptor(new DataAccessControlInterceptor());
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        return interceptor;
     }
 
 }
