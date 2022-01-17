@@ -32,9 +32,11 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectBody;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -67,7 +69,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
         String originSql = mpBoundSql.sql();
         PlainSelect selectBody = parseSelectBody(originSql);
-        if (selectBody.getFromItem() instanceof Table) {
+        if (selectBody != null && selectBody.getFromItem() instanceof Table) {
             Table mainTable = (Table) selectBody.getFromItem();
             String tableName = S.removeEsc(mainTable.getName());
             Class<?> entityClass = BindingCacheManager.getEntityClassByTable(tableName);
@@ -178,13 +180,18 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
      * @return
      */
     private PlainSelect parseSelectBody(String sql){
-        Select select = null;
         try{
-            select = (Select) CCJSqlParserUtil.parse(sql);
+            Statement statement = CCJSqlParserUtil.parse(sql);
+            if(statement != null && statement instanceof Select){
+                SelectBody selectBody = ((Select)statement).getSelectBody();
+                if(selectBody instanceof PlainSelect){
+                    return (PlainSelect) selectBody;
+                }
+            }
         }
         catch (JSQLParserException e){
             log.warn("解析SQL异常: "+sql, e);
         }
-        return select != null? (PlainSelect) select.getSelectBody() : null;
+        return null;
     }
 }
