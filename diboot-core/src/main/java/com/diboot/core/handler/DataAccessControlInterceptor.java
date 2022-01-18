@@ -21,6 +21,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.data.access.CheckpointType;
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -33,7 +34,6 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
@@ -47,8 +47,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 数据权限控制拦截器
@@ -59,10 +60,11 @@ import java.util.List;
 public class DataAccessControlInterceptor implements InnerInterceptor {
     private static Logger log = LoggerFactory.getLogger(DataAccessControlInterceptor.class);
 
+    private final Set<String> noCheckpointCache = new CopyOnWriteArraySet<>();
+
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        // 未启用数据权限
-        if(ContextHelper.getBean(DataAccessInterface.class) == null){
+        if (noCheckpointCache.contains(ms.getId())) {
             return;
         }
         // 替换SQL
@@ -75,6 +77,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             Class<?> entityClass = BindingCacheManager.getEntityClassByTable(tableName);
             // 无权限检查点注解，不处理
             if (entityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(entityClass)) {
+                noCheckpointCache.add(ms.getId());
                 return;
             }
             appendDataAccessCondition(selectBody, mainTable, entityClass);
@@ -84,45 +87,28 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             if(log.isTraceEnabled() && V.notEquals(originSql, newSql)){
                 log.trace("DataAccess Inteceptor SQL : {}", newSql);
             }
+        } else {
+            noCheckpointCache.add(ms.getId());
         }
     }
 
     /**
      * 附加数据访问权限控制SQL条件
+     *
      * @param entityClass
-     * @return
      */
-    private void appendDataAccessCondition(PlainSelect selectBody, Table mainTable, Class<?> entityClass){
+    private void appendDataAccessCondition(PlainSelect selectBody, Table mainTable, Class<?> entityClass) {
         Expression dataAccessExpression = buildDataAccessExpression(mainTable, entityClass);
         // 主表需要数据权限检查
-        if(dataAccessExpression != null){
-            String whereStmt = selectBody.getWhere() == null? null : selectBody.getWhere().toString();
+        if (dataAccessExpression != null) {
+            String whereStmt = selectBody.getWhere() == null ? null : selectBody.getWhere().toString();
             if (selectBody.getWhere() == null) {
                 selectBody.setWhere(dataAccessExpression);
-            }
-            else {
+            } else {
                 AndExpression andExpression = new AndExpression(selectBody.getWhere(), dataAccessExpression);
                 selectBody.setWhere(andExpression);
             }
             log.debug("DataAccess Inteceptor Where: {} => {}", whereStmt, selectBody.getWhere().toString());
-        }
-        if(V.notEmpty(selectBody.getJoins())){
-            for (Join join : selectBody.getJoins()) {
-                Table joinTable = (Table) join.getRightItem();
-                Class<?> joinEntityClass = BindingCacheManager.getEntityClassByTable(joinTable.getName());
-                // 无权限检查点注解，不处理
-                if (joinEntityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(joinEntityClass)) {
-                    continue;
-                }
-                Expression joinDataAccessExpression = buildDataAccessExpression(joinTable, joinEntityClass);
-                // 主表需要数据权限检查
-                if (joinDataAccessExpression != null) {
-                    Expression onExpression = ((List<Expression>) join.getOnExpressions()).get(0);
-                    Expression onAndExpression = new AndExpression(onExpression, joinDataAccessExpression);
-                    join.setOnExpressions(Collections.singletonList(onAndExpression));
-                    log.debug("DataAccess Inteceptor Join: {} => {}", onExpression, onAndExpression);
-                }
-            }
         }
     }
 
@@ -133,8 +119,12 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
      * @return
      */
     private Expression buildDataAccessExpression(Table mainTable, Class<?> entityClass) {
-        Expression dataAccessExpression = null;
         DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
+        // 未启用数据权限
+        if (checkImpl == null) {
+            throw new InvalidUsageException("未实现数据权限校验接口：DataAccessInterface");
+        }
+        Expression dataAccessExpression = null;
         for(CheckpointType type : CheckpointType.values()){
             String idCol = DataAccessAnnoCache.getDataPermissionColumn(entityClass, type);
             if(V.isEmpty(idCol)){
@@ -144,20 +134,17 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             if(V.isEmpty(idValues)){
                 continue;
             }
+            if(mainTable.getAlias() != null){
+                idCol = mainTable.getAlias().getName() + "." + idCol;
+            }
             if(idValues.size() == 1){
                 EqualsTo equalsTo = new EqualsTo();
-                if(mainTable.getAlias() != null){
-                    idCol = mainTable.getAlias().getName() + "." + idCol;
-                }
                 equalsTo.setLeftExpression(new Column(idCol));
                 equalsTo.setRightExpression(new StringValue(S.defaultValueOf(idValues.get(0))));
 
                 dataAccessExpression = equalsTo;
             }
             else{
-                if(mainTable.getAlias() != null){
-                    idCol = mainTable.getAlias().getName() + "." + idCol;
-                }
                 String conditionExpr = idCol + " IN (" + S.join(idValues, ",") + ")";
                 Expression valuesExpression = null;
                 try{
