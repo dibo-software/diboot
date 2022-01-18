@@ -70,16 +70,16 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
             if (V.isEmpty(types)) {
                 continue;
             }
-            for (Class<? extends Enum<? extends SystemConfigType>> systemType : types) {
-                Enum<? extends SystemConfigType>[] enumConstants = systemType.getEnumConstants();
+            for (Class<? extends Enum<? extends SystemConfigType>> configType : types) {
+                Enum<? extends SystemConfigType>[] enumConstants = configType.getEnumConstants();
                 if (enumConstants.length == 0) {
                     continue;
                 }
-                String type = systemType.getSimpleName();
+                String type = configType.getSimpleName();
                 LabelValue labelValue = new LabelValue(((SystemConfigType) enumConstants[0]).typeLabel(), type);
-                if (SystemConfigTest.class.isAssignableFrom(systemType)) {
+                if (SystemConfigTest.class.isAssignableFrom(configType)) {
                     configTypeTestMap.put(type, (SystemConfigTest<?>) enumConstants[0]);
-                    Class<?> testDataClass = findTestDataClass(ResolvableType.forClass(systemType));
+                    Class<?> testDataClass = findTestDataClass(ResolvableType.forClass(configType));
                     configTestDataClassMap.put(type, testDataClass);
                     labelValue.setExt(BeanUtils.extractAllFields(testDataClass).stream().map(Field::getName).collect(Collectors.toSet()));
                 }

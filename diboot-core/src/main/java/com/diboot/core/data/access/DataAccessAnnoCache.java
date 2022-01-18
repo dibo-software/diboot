@@ -40,12 +40,12 @@ public class DataAccessAnnoCache {
 
     /**
      * 是否有检查点注解
-     * @param entityDto
+     * @param entityClass
      * @return
      */
-    public static boolean hasDataAccessCheckpoint(Class<?> entityDto){
-        initClassCheckpoint(entityDto);
-        String[] columns = DATA_PERMISSION_ANNO_CACHE.get(entityDto.getName());
+    public static boolean hasDataAccessCheckpoint(Class<?> entityClass){
+        initClassCheckpoint(entityClass);
+        String[] columns = DATA_PERMISSION_ANNO_CACHE.get(entityClass.getName());
         if(V.isEmpty(columns)){
             return false;
         }
@@ -59,13 +59,13 @@ public class DataAccessAnnoCache {
 
     /**
      * 获取数据权限的用户类型列名
-     * @param entityDto
+     * @param entityClass
      * @return
      */
-    public static String getDataPermissionColumn(Class<?> entityDto, CheckpointType type){
-        initClassCheckpoint(entityDto);
+    public static String getDataPermissionColumn(Class<?> entityClass, CheckpointType type){
+        initClassCheckpoint(entityClass);
         int typeIndex = type.index();
-        String key = entityDto.getName();
+        String key = entityClass.getName();
         String[] columns = DATA_PERMISSION_ANNO_CACHE.get(key);
         if(columns != null && (columns.length-1) >= typeIndex){
             return columns[typeIndex];
@@ -75,18 +75,18 @@ public class DataAccessAnnoCache {
 
     /**
      * 初始化entityDto的检查点缓存
-     * @param entityDto
+     * @param entityClass
      */
-    private static void initClassCheckpoint(Class<?> entityDto){
-        String key = entityDto.getName();
+    private static void initClassCheckpoint(Class<?> entityClass){
+        String key = entityClass.getName();
         if(!DATA_PERMISSION_ANNO_CACHE.containsKey(key)){
             String[] results = {"", "", "", "", "", ""};
-            List<Field> fieldList = BeanUtils.extractFields(entityDto, DataAccessCheckpoint.class);
+            List<Field> fieldList = BeanUtils.extractFields(entityClass, DataAccessCheckpoint.class);
             if(V.notEmpty(fieldList)){
                 for(Field fld : fieldList){
                     DataAccessCheckpoint checkpoint = fld.getAnnotation(DataAccessCheckpoint.class);
                     if(V.notEmpty(results[checkpoint.type().index()])){
-                        throw new InvalidUsageException(entityDto.getSimpleName() + "中DataPermissionCheckpoint同类型注解重复！");
+                        throw new InvalidUsageException(entityClass.getSimpleName() + "中DataPermissionCheckpoint同类型注解重复！");
                     }
                     results[checkpoint.type().index()] = BeanUtils.getColumnName(fld);
                 }
