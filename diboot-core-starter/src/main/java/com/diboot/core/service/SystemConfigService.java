@@ -41,7 +41,7 @@ public interface SystemConfigService extends BaseService<SystemConfig> {
     List<LabelValue> getTypeList();
 
     /**
-     * 根据类型获取配置映射
+     * 根据类型获取配置值
      * <p>
      * 用于代码中通过类型获取所有配置，避免多次查询
      *
@@ -49,7 +49,7 @@ public interface SystemConfigService extends BaseService<SystemConfig> {
      * @param <E>       配置类型
      * @return 配置映射
      */
-    <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> getTypeMap(Class<E> typeClass);
+    <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> getValuesByType(Class<E> typeClass);
 
     /**
      * 根据类型获取配置

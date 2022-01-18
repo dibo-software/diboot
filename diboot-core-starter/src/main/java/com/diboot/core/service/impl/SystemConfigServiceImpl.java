@@ -87,7 +87,6 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
                 configTypeMapLait.put(type, Arrays.asList(enumConstants));
             }
         }
-
     }
 
     /**
@@ -132,7 +131,7 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
     }
 
     @Override
-    public <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> getTypeMap(Class<E> typeClass) {
+    public <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> getValuesByType(Class<E> typeClass) {
         List<SystemConfig> entityList = this.getEntityList(Wrappers.<SystemConfig>lambdaQuery()
                 .select(SystemConfig::getProp, SystemConfig::getValue).eq(SystemConfig::getType, typeClass.getSimpleName()));
         return new SystemConfigValues<>(entityList);

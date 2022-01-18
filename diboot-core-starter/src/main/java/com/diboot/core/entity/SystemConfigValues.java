@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 单类型配置映射
+ * 单类型配置值映射
  * <p>
- * 用于获取同类型获取配置减少查询
+ * 用于获取同类型获取配置值减少查询
  *
  * @author wind
  * @version v2.5.0

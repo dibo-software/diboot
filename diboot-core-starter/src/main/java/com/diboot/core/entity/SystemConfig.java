@@ -68,5 +68,4 @@ public class SystemConfig extends BaseEntity {
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
     private Date updateTime;
 
-
 }
