@@ -18,6 +18,8 @@ package diboot.core.test.binder.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.data.access.CheckpointType;
+import com.diboot.core.data.access.DataAccessCheckpoint;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +41,7 @@ public class Department extends BaseEntity {
     private Long parentId;
 
     @TableField
+    @DataAccessCheckpoint(type = CheckpointType.ORG)
     private Long orgId;
 
     @BindQuery(comparison = Comparison.CONTAINS)
