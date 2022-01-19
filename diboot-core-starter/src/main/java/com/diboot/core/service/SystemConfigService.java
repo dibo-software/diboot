@@ -15,8 +15,6 @@
  */
 package com.diboot.core.service;
 
-import com.diboot.core.entity.SystemConfigValues;
-import com.diboot.core.config.SystemConfigType;
 import com.diboot.core.entity.SystemConfig;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.SystemConfigVO;
@@ -39,17 +37,6 @@ public interface SystemConfigService extends BaseService<SystemConfig> {
      * @return 配置类型列表
      */
     List<LabelValue> getTypeList();
-
-    /**
-     * 根据类型获取配置值
-     * <p>
-     * 用于代码中通过类型获取所有配置，避免多次查询
-     *
-     * @param typeClass 配置类型class
-     * @param <E>       配置类型
-     * @return 配置映射
-     */
-    <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> getValuesByType(Class<E> typeClass);
 
     /**
      * 根据类型获取配置
@@ -75,5 +62,4 @@ public interface SystemConfigService extends BaseService<SystemConfig> {
      * @param data 数据
      */
     void configTest(String type, Map<String, Object> data);
-
 }

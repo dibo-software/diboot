@@ -21,7 +21,6 @@ import com.diboot.core.config.SystemConfigInjection;
 import com.diboot.core.config.SystemConfigTest;
 import com.diboot.core.config.SystemConfigType;
 import com.diboot.core.entity.SystemConfig;
-import com.diboot.core.entity.SystemConfigValues;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.SystemConfigMapper;
 import com.diboot.core.service.SystemConfigService;
@@ -128,13 +127,6 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
                     }}).setPropLabel(S.defaultIfEmpty(configProp.propLabel(), item.name())).setDefaultValue(defaultValue)
                     .setOptions(configProp.options()).setRequired(configProp.required()).setOrdinal(item.ordinal());
         }).sorted(Comparator.comparingInt(SystemConfigVO::getOrdinal)).collect(Collectors.toList());
-    }
-
-    @Override
-    public <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> getValuesByType(Class<E> typeClass) {
-        List<SystemConfig> entityList = this.getEntityList(Wrappers.<SystemConfig>lambdaQuery()
-                .select(SystemConfig::getProp, SystemConfig::getValue).eq(SystemConfig::getType, typeClass.getSimpleName()));
-        return new SystemConfigValues<>(entityList);
     }
 
     @Override

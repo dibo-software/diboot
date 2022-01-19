@@ -15,7 +15,11 @@
  */
 package com.diboot.core.entity;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.SystemConfigType;
+import com.diboot.core.service.SystemConfigService;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 
 import java.util.List;
@@ -37,8 +41,21 @@ public class SystemConfigValues<E extends Enum<? extends SystemConfigType>> {
      */
     private final Map<String, String> valueMap;
 
-    public SystemConfigValues(List<SystemConfig> configInfoList) {
+    private SystemConfigValues(List<SystemConfig> configInfoList) {
         this.valueMap = configInfoList.stream().collect(Collectors.toMap(SystemConfig::getProp, SystemConfig::getValue));
+    }
+
+    /**
+     * 构建指定类型的配置值映射
+     *
+     * @param typeClass 配置类型class
+     * @param <E>       配置类型
+     * @return 指定类型配置值映射
+     */
+    public static <E extends Enum<? extends SystemConfigType>> SystemConfigValues<E> build(Class<E> typeClass) {
+        LambdaQueryWrapper<SystemConfig> queryWrapper = Wrappers.<SystemConfig>lambdaQuery()
+                .select(SystemConfig::getProp, SystemConfig::getValue).eq(SystemConfig::getType, typeClass.getSimpleName());
+        return new SystemConfigValues<>(ContextHelper.getBean(SystemConfigService.class).getEntityList(queryWrapper));
     }
 
     /**
@@ -98,4 +115,5 @@ public class SystemConfigValues<E extends Enum<? extends SystemConfigType>> {
     public String toString() {
         return valueMap.toString();
     }
+
 }
