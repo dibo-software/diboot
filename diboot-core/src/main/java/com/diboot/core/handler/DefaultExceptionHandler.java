@@ -19,10 +19,12 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,15 +49,11 @@ public class DefaultExceptionHandler {
     /**
      * 统一处理校验错误 BindResult
      */
-    @SuppressWarnings("ConstantConditions")
     @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
     public Object validExceptionHandler(Exception ex){
         BindingResult br = null;
         if(ex instanceof BindException){
             br = ((BindException)ex).getBindingResult();
-        }
-        else if(ex instanceof MethodArgumentNotValidException){
-            br = ((MethodArgumentNotValidException)ex).getBindingResult();
         }
         Map<String, Object> map = new HashMap<>(8);
         if (br != null && br.hasErrors()) {
@@ -105,8 +104,8 @@ public class DefaultExceptionHandler {
      * @return
      */
     protected String buildMsg(HttpStatus status, Exception e){
-        // 绝对不会为null
-        return status.getReasonPhrase();
+        // 返回最原始的异常信息
+        return e == null ? status.getReasonPhrase() : getRootCauseMessage(e);
     }
 
     /**
@@ -125,5 +124,17 @@ public class DefaultExceptionHandler {
         catch (Exception ex) {
             return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+    }
+
+    /**
+     * 返回最开始的异常信息
+     *
+     * @param t 异常对象
+     * @return 异常信息
+     */
+    public static String getRootCauseMessage(Throwable t) {
+        List<Throwable> list = ExceptionUtils.getThrowableList(t);
+        Assert.notEmpty(list, () -> "没有异常信息");
+        return list.get(list.size() - 1).getMessage();
     }
 }
