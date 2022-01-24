@@ -206,10 +206,7 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
      */
     public static String getIdFieldName(Class entity){
         PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entity);
-        if(propInfoCache != null && propInfoCache.getIdColumn() != null){
-            return propInfoCache.getIdColumn();
-        }
-        return null;
+        return propInfoCache != null ? propInfoCache.getIdFieldName() : null;
     }
 
     /**
