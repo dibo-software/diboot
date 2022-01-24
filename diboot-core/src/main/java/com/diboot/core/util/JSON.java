@@ -15,17 +15,16 @@
  */
 package com.diboot.core.util;
 
-import com.diboot.core.config.BaseConfig;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.diboot.core.exception.BusinessException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /***
  * JSON操作辅助类
@@ -33,6 +32,7 @@ import java.util.*;
  * @version v2.0
  * @date 2019/01/01
  */
+@SuppressWarnings({"unchecked", "JavaDoc", "UnnecessaryLocalVariable"})
 public class JSON {
     private static final Logger log = LoggerFactory.getLogger(JSON.class);
 
@@ -46,21 +46,11 @@ public class JSON {
         if(objectMapper != null){
             return objectMapper;
         }
-        objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        // 设置时区和日期转换
-        String defaultDatePattern = BaseConfig.getProperty("spring.jackson.date-format", D.FORMAT_DATETIME_Y4MDHMS);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
-            @Override
-            public Date parse(String dateStr) {
-                return D.fuzzyConvert(dateStr);
-            }
-        };
-        objectMapper.setDateFormat(dateFormat);
-        String timeZone = BaseConfig.getProperty("spring.jackson.time-zone", "GMT+8");
-        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
-        // 不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // 获取全局的ObjectMapper, 避免重复配置
+        objectMapper = ContextHelper.getBean(ObjectMapper.class);
+        if (objectMapper == null) {
+            throw new BusinessException("获取全局ObjectMapper失败");
+        }
         return objectMapper;
     }
 
@@ -168,8 +158,9 @@ public class JSON {
      * @param jsonStr
      * @return
      */
-    public static Map toMap(String jsonStr) {
-        return toJavaObject(jsonStr, Map.class);
+
+    public static <K, T> Map<K, T> toMap(String jsonStr) {
+        return (Map<K, T>) toJavaObject(jsonStr, Map.class);
     }
 
     /***
@@ -177,10 +168,10 @@ public class JSON {
      * @param jsonStr
      * @return
      */
-    public static LinkedHashMap toLinkedHashMap(String jsonStr) {
+    public static<K, T> LinkedHashMap<K, T> toLinkedHashMap(String jsonStr) {
         if (V.isEmpty(jsonStr)) {
             return null;
         }
-        return toJavaObject(jsonStr, LinkedHashMap.class);
+        return (LinkedHashMap<K, T>)toJavaObject(jsonStr, LinkedHashMap.class);
     }
 }
