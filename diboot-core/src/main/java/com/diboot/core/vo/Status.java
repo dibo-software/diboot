@@ -73,6 +73,11 @@ public enum Status {
     FAIL_REQUEST_TIMEOUT(4008, "请求连接超时"),
 
     /***
+     * 认证不通过（用户名密码错误等认证失败场景）
+     */
+    FAIL_AUTHENTICATION(4009, "认证不通过"),
+
+    /***
      * 系统异常
      */
     FAIL_EXCEPTION(5000, "系统异常"),
@@ -80,13 +85,7 @@ public enum Status {
     /**
      * 服务不可用
      */
-    FAIL_SERVICE_UNAVAILABLE(5003, "服务不可用"),
-
-    /***
-     * 缓存清空
-     */
-    @Deprecated
-    MEMORY_EMPTY_LOST(9999, "缓存清空");
+    FAIL_SERVICE_UNAVAILABLE(5003, "服务不可用");
 
     private int code;
     private String label;

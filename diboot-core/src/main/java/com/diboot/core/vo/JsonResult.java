@@ -289,12 +289,12 @@ public class JsonResult<T> implements Serializable {
     public static JsonResult<?> FAIL_SERVICE_UNAVAILABLE(String msg){
         return new JsonResult<>(Status.FAIL_SERVICE_UNAVAILABLE).msg(msg);
     }
+
     /***
-     * 缓存清空
+     * 认证不通过
      */
-    @Deprecated
-    public static JsonResult<?> MEMORY_EMPTY_LOST(String msg){
-        return new JsonResult<>(Status.MEMORY_EMPTY_LOST).msg(msg);
+    public static JsonResult<?> FAIL_AUTHENTICATION(String msg){
+        return new JsonResult<>(Status.FAIL_AUTHENTICATION).msg(msg);
     }
 
     /**
