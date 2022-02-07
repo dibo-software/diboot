@@ -242,8 +242,8 @@ public class BaseController {
 		for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
 			// 请求参数安全检查
 			V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
-			result.computeIfAbsent(S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options", key -> V.isEmpty(attachMoreDTO.getLabel()) ?
-					attachMoreRelatedData(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
+			result.computeIfAbsent(S.getIfEmpty(attachMoreDTO.getAlias(), () -> S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options"),
+					key -> V.isEmpty(attachMoreDTO.getLabel()) ? attachMoreRelatedData(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
 		}
 		return result;
 	}

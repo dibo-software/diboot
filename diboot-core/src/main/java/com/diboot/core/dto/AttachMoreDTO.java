@@ -57,6 +57,12 @@ public class AttachMoreDTO implements Serializable {
     private String target;
 
     /**
+     * <h3>别名</h3>
+     * 仅在批量获取选项时生效
+     */
+    private String alias;
+
+    /**
      * <h3>需要查询的label字段</h3>
      * 当为空时，则为获取字典，label为{@link Dictionary#itemName}
      */
