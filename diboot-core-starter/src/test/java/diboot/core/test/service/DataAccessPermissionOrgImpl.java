@@ -13,29 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data.access;
+package diboot.core.test.service;
+
+import com.diboot.core.data.access.DataAccessInterface;
+import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * checkpoint类型
+ * 数据访问控制测试
  * @author Mazc@dibo.ltd
- * @version v2.1
+ * @version v2.0
  * @date 2020/04/24
  */
-public enum CheckpointType {
+@Component
+public class DataAccessPermissionOrgImpl implements DataAccessInterface {
 
-    USER(0), // 用户范围
-    ORG(1), // 组织范围
-    POSITION(2), // 岗位范围
-    LEVEL(4),  // 级别
-    GROUP(5),   // 组
-    EXT_OBJ(3); // 扩展对象范围
-
-    private int index;
-    CheckpointType(int index){
-        this.index = index;
-    }
-
-    public int index(){
-        return index;
+    @Override
+    public List<Serializable> getAccessibleIds() {
+        return Collections.singletonList(100001L);
     }
 }

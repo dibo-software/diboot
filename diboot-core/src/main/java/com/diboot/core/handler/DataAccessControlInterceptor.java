@@ -18,7 +18,6 @@ package com.diboot.core.handler;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.data.access.CheckpointType;
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.exception.InvalidUsageException;
@@ -30,6 +29,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -48,17 +48,19 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 数据权限控制拦截器
+ *
  * @author jerryma@dibo.ltd
  * @version v2.0
  * @date 2020/09/29
  */
 public class DataAccessControlInterceptor implements InnerInterceptor {
-    private static Logger log = LoggerFactory.getLogger(DataAccessControlInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(DataAccessControlInterceptor.class);
 
     private final Set<String> noCheckpointCache = new CopyOnWriteArraySet<>();
 
@@ -84,7 +86,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             String newSql = selectBody.toString();
             mpBoundSql.sql(newSql);
             // 打印修改后的SQL
-            if(log.isTraceEnabled() && V.notEquals(originSql, newSql)){
+            if (log.isTraceEnabled() && V.notEquals(originSql, newSql)) {
                 log.trace("DataAccess Inteceptor SQL : {}", newSql);
             }
         } else {
@@ -114,70 +116,61 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
 
     /**
      * 构建数据权限检查条件
+     *
      * @param mainTable
      * @param entityClass
      * @return
      */
     private Expression buildDataAccessExpression(Table mainTable, Class<?> entityClass) {
-        DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
-        // 未启用数据权限
-        if (checkImpl == null) {
-            throw new InvalidUsageException("未实现数据权限校验接口：DataAccessInterface");
-        }
-        Expression dataAccessExpression = null;
-        for(CheckpointType type : CheckpointType.values()){
-            String idCol = DataAccessAnnoCache.getDataPermissionColumn(entityClass, type);
-            if(V.isEmpty(idCol)){
-                continue;
+        return DataAccessAnnoCache.getDataPermissionMap(entityClass).entrySet().stream().map(entry -> {
+            DataAccessInterface checkImpl = ContextHelper.getBean(entry.getKey());
+            if (checkImpl == null) {
+                throw new InvalidUsageException("无法从上下文中获取数据权限校验对象：" + entry.getKey().getName());
             }
-            List<Serializable> idValues = checkImpl.getAccessibleIds(type);
-            if(V.isEmpty(idValues)){
-                continue;
+            List<Serializable> idValues = checkImpl.getAccessibleIds();
+            if (idValues == null) {
+                return null;
             }
-            if(mainTable.getAlias() != null){
+            String idCol = entry.getValue();
+            if (mainTable.getAlias() != null) {
                 idCol = mainTable.getAlias().getName() + "." + idCol;
             }
-            if(idValues.size() == 1){
+            if (idValues.isEmpty()) {
+                return new IsNullExpression().withLeftExpression(new Column(idCol));
+            } else if (idValues.size() == 1) {
                 EqualsTo equalsTo = new EqualsTo();
                 equalsTo.setLeftExpression(new Column(idCol));
                 equalsTo.setRightExpression(new StringValue(S.defaultValueOf(idValues.get(0))));
-
-                dataAccessExpression = equalsTo;
-            }
-            else{
-                String conditionExpr = idCol + " IN (" + S.join(idValues, ",") + ")";
-                Expression valuesExpression = null;
-                try{
-                    valuesExpression = CCJSqlParserUtil.parseCondExpression(conditionExpr);
-                }
-                catch (JSQLParserException e){
+                return equalsTo;
+            } else {
+                String conditionExpr = idCol + " IN ('" + S.join(idValues, "', '") + "')";
+                try {
+                    return CCJSqlParserUtil.parseCondExpression(conditionExpr);
+                } catch (JSQLParserException e) {
                     log.warn("解析condition异常: " + conditionExpr, e);
                 }
-                dataAccessExpression = valuesExpression;
             }
-            // 数据权限只有一个
-            break;
-        }
-        return dataAccessExpression;
+            return null;
+        }).filter(Objects::nonNull).reduce(AndExpression::new).orElse(null);
     }
 
     /**
      * 解析SelectBody
+     *
      * @param sql
      * @return
      */
-    private PlainSelect parseSelectBody(String sql){
-        try{
+    private PlainSelect parseSelectBody(String sql) {
+        try {
             Statement statement = CCJSqlParserUtil.parse(sql);
-            if(statement != null && statement instanceof Select){
-                SelectBody selectBody = ((Select)statement).getSelectBody();
-                if(selectBody instanceof PlainSelect){
+            if (statement instanceof Select) {
+                SelectBody selectBody = ((Select) statement).getSelectBody();
+                if (selectBody instanceof PlainSelect) {
                     return (PlainSelect) selectBody;
                 }
             }
-        }
-        catch (JSQLParserException e){
-            log.warn("解析SQL异常: "+sql, e);
+        } catch (JSQLParserException e) {
+            log.warn("解析SQL异常: " + sql, e);
         }
         return null;
     }
