@@ -39,6 +39,10 @@ public class Cons {
      */
     public final static  String SEPARATOR_COLON = ":";
     /**
+     * 斜杠路径分隔符
+     */
+    public final static  String SEPARATOR_SLASH = "/";
+    /**
      * 排序 - 降序标记
      */
     public static final String ORDER_DESC = "DESC";
