@@ -449,7 +449,7 @@ public class S extends StringUtils{
 	 */
 	public static String extractToken(String authToken){
 		if(S.startsWithIgnoreCase(authToken, Cons.TOKEN_PREFIX_BEARER)){
-			authToken = S.substringAfter(authToken, Cons.TOKEN_PREFIX_BEARER).trim();
+			authToken = S.substring(authToken, Cons.TOKEN_PREFIX_BEARER.length()).trim();
 		}
 		return authToken;
 	}

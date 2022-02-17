@@ -43,6 +43,10 @@ public class Cons {
      */
     public final static  String SEPARATOR_SLASH = "/";
     /**
+     * 竖线分隔符，or
+     */
+    public final static  String SEPARATOR_OR = "|";
+    /**
      * 排序 - 降序标记
      */
     public static final String ORDER_DESC = "DESC";
