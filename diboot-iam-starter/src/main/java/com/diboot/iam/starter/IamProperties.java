@@ -23,11 +23,13 @@ import java.util.Set;
 
 /**
  * 认证相关的配置参数
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/23
  */
-@Getter @Setter
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "diboot.iam")
 public class IamProperties {
     /**
@@ -66,4 +68,32 @@ public class IamProperties {
      * 是否开启无状态 Jwt 身份验证过滤器
      */
     private boolean enableStatelessSession = false;
+    /**
+     * oauth2 客户端配置
+     */
+    private Oauth2ClientProperties oauth2Client;
+
+    /**
+     * oauth2 客户端 SSO 配置项
+     */
+    @Getter
+    @Setter
+    public static class Oauth2ClientProperties {
+        /**
+         * 客户端ID
+         */
+        private String clientId;
+        /**
+         * 客户端密钥
+         */
+        private String clientSecret;
+        /**
+         * 重定向地址
+         */
+        private String redirectUri;
+        /**
+         * 获取token地址
+         */
+        private String accessTokenUri;
+    }
 }
