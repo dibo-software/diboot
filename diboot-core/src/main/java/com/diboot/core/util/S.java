@@ -441,4 +441,17 @@ public class S extends StringUtils{
 		}
 		return new String(chars);
 	}
+
+	/**
+	 * 提取token，去除前缀
+	 * @param authToken
+	 * @return
+	 */
+	public static String extractToken(String authToken){
+		if(S.startsWithIgnoreCase(authToken, Cons.TOKEN_PREFIX_BEARER)){
+			authToken = S.substringAfter(authToken, Cons.TOKEN_PREFIX_BEARER).trim();
+		}
+		return authToken;
+	}
+
 }

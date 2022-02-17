@@ -101,13 +101,13 @@ public class Cons {
     public static final String FIELD_TYPE = "type";
 
     /**
-     * JWT token前缀
+     * token前缀
      */
-    public static final String JWT_TOKEN_PREFIX = "Bearer ";
+    public static final String TOKEN_PREFIX_BEARER = "Bearer";
     /**
-     * JWT token header头名称
+     * token header头名称
      */
-    public static final String JWT_TOKEN_HEADER_NAME = "Authorization";
+    public static final String TOKEN_HEADER_NAME = "Authorization";
 
     /**
      * 启用/停用 状态字典定义
