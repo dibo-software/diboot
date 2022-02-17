@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,35 +22,29 @@ import lombok.experimental.Accessors;
 
 /**
  * 登录凭证
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/12/18
+ *
+ * @author wind
+ * @version v2.5.0
+ * @date 2022/02/16
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@Deprecated
-public class SSOCredential extends AuthCredential {
-    private static final long serialVersionUID = -5020652642432896556L;
+public class OAuth2SSOCredential extends AuthCredential {
+    private static final long serialVersionUID = -5020652662632896556L;
 
-    public SSOCredential(){
-        setAuthType(Cons.DICTCODE_AUTH_TYPE.SSO.name());
-    }
-
-    public SSOCredential(String serviceUrl, String ticket){
-        this.serviceUrl = serviceUrl;
-        this.ticket = ticket;
-        setAuthType(Cons.DICTCODE_AUTH_TYPE.SSO.name());
-    }
-
-    // serviceUrl
-    private String serviceUrl;
-
-    // CAS ticket
-    private String ticket;
-
-    // auth account账号
+    /**
+     * 授权码
+     */
+    private String code;
+    /**
+     * 账户
+     */
     private String authAccount;
+
+    public OAuth2SSOCredential() {
+        this.setAuthType(Cons.DICTCODE_AUTH_TYPE.SSO.name());
+    }
 
     @Override
     public String getAuthAccount() {
