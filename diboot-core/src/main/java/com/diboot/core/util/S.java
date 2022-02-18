@@ -454,4 +454,18 @@ public class S extends StringUtils{
 		return authToken;
 	}
 
+	/**
+	 * 格式化字符串，将{}替换为指定值
+	 * @param template 字符串内容
+	 * @param params 参数值
+	 * @return
+	 */
+	public static String format(String template, String... params){
+		if(V.isEmpty(params)){
+			return template;
+		}
+		template = S.replaceChars(template, "{}", "%s");
+		return String.format(template, params);
+	}
+
 }
