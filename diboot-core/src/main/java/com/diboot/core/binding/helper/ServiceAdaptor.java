@@ -100,12 +100,12 @@ public class ServiceAdaptor {
     }
 
 
-    /***
+    /**
      * 转换为IPage
      * @param pagination 分页
      * @return
      */
-    public static <E> Page<E> convertToIPage(Pagination pagination, Class entityClass){
+    public static <E> Page<E> convertToIPage(Pagination pagination, Class<?> entityClass) {
         if(pagination == null){
             return null;
         }
@@ -123,7 +123,7 @@ public class ServiceAdaptor {
                 }
             }
         }
-        return pagination.toPage();
+        return pagination.setEntityClass(entityClass).toPage();
     }
 
 }
