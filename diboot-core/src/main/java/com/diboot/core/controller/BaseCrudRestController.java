@@ -17,6 +17,7 @@ package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.service.BaseService;
@@ -345,6 +346,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      */
     protected String beforeUpdate(E entityOrDto) throws Exception {
+        BeanUtils.fillField2Null(entityOrDto, BindingCacheManager.getPropInfoByClass(entityClass).getFillUpdateFieldList());
         return null;
     }
 

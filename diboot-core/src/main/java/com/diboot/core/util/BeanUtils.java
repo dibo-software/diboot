@@ -869,4 +869,20 @@ public class BeanUtils {
         }
         return fields;
     }
+
+    /**
+     * 填充属性值置为null
+     *
+     * @param object        对象
+     * @param fieldNameList 属性名称列表
+     */
+    public static void fillField2Null(Object object, List<String> fieldNameList) {
+        if (fieldNameList == null) {
+            return;
+        }
+        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+        for (String fieldName : fieldNameList) {
+            wrapper.setPropertyValue(fieldName, null);
+        }
+    }
 }
