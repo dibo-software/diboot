@@ -346,7 +346,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      */
     protected String beforeUpdate(E entityOrDto) throws Exception {
-        BeanUtils.fillField2Null(entityOrDto, BindingCacheManager.getPropInfoByClass(entityClass).getFillUpdateFieldList());
+        BeanUtils.clearFieldValue(entityOrDto, BindingCacheManager.getPropInfoByClass(entityClass).getFillUpdateFieldList());
         return null;
     }
 

@@ -871,12 +871,12 @@ public class BeanUtils {
     }
 
     /**
-     * 填充属性值置为null
+     * 清除属性值值
      *
      * @param object        对象
      * @param fieldNameList 属性名称列表
      */
-    public static void fillField2Null(Object object, List<String> fieldNameList) {
+    public static void clearFieldValue(Object object, List<String> fieldNameList) {
         if (fieldNameList == null) {
             return;
         }
