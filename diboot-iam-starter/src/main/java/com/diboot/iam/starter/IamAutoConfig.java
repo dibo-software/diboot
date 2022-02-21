@@ -40,10 +40,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -208,9 +206,4 @@ public class IamAutoConfig {
         }
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
 }

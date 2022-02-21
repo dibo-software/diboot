@@ -17,7 +17,9 @@ package com.diboot.iam.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.config.Cons;
@@ -37,6 +39,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -68,7 +71,7 @@ public class OAuth2SSOServiceImpl implements AuthService {
     private IamAccountService accountService;
     @Autowired
     private IamLoginTraceService iamLoginTraceService;
-    @Autowired
+    @Autowired(required = false)
     private RestTemplate restTemplate;
     @Autowired
     private IamProperties iamProperties;
@@ -86,7 +89,7 @@ public class OAuth2SSOServiceImpl implements AuthService {
                 .eq(IamAccount::getUserType, jwtToken.getUserType())
                 .eq(IamAccount::getTenantId, jwtToken.getTenantId())
                 //.eq(IamAccount::getAuthType, jwtToken.getAuthType()) SSO只检查用户名，支持任意类型账号
-                .eq(IamAccount::getUserId, jwtToken.getAuthAccount()) // 直接查询对应用户ID
+                .eq(IamAccount::getAuthAccount, jwtToken.getAuthAccount())
                 .orderByDesc(IamAccount::getId);
         IamAccount latestAccount = accountService.getSingleEntity(queryWrapper);
         if (latestAccount == null) {
@@ -103,6 +106,12 @@ public class OAuth2SSOServiceImpl implements AuthService {
 
     @Override
     public String applyToken(AuthCredential credential) {
+        // 通过授权码得到账号
+        parseCode(credential);
+        OAuth2SSOCredential ssoCredential = (OAuth2SSOCredential) credential;
+        if(V.isEmpty(ssoCredential.getAuthAccount())){
+            throw new BusinessException(Status.FAIL_OPERATION, "认证中心验证失败");
+        }
         BaseJwtAuthToken authToken = initBaseJwtAuthToken(credential);
         try {
             Subject subject = SecurityUtils.getSubject();
@@ -131,8 +140,6 @@ public class OAuth2SSOServiceImpl implements AuthService {
      * @return
      */
     private BaseJwtAuthToken initBaseJwtAuthToken(AuthCredential credential) {
-        // 通过授权码得到账号
-        parseCode(credential);
         BaseJwtAuthToken token = new BaseJwtAuthToken(getAuthType(), credential.getUserTypeClass());
         // 设置账号密码
         token.setAuthAccount(credential.getAuthAccount());
@@ -146,6 +153,9 @@ public class OAuth2SSOServiceImpl implements AuthService {
      * 解析授权码
      */
     protected void parseCode(AuthCredential credential) {
+        if(restTemplate == null){
+            throw new InvalidUsageException("请初始化 RestTemplate !");
+        }
         OAuth2SSOCredential ssoCredential = (OAuth2SSOCredential) credential;
         IamProperties.Oauth2ClientProperties oauth2Client = iamProperties.getOauth2Client();
 
@@ -161,7 +171,11 @@ public class OAuth2SSOServiceImpl implements AuthService {
         param.add("redirect_uri", oauth2Client.getRedirectUri());
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(param, headers);
         ResponseEntity<Map> response = restTemplate.postForEntity(oauth2Client.getAccessTokenUri(), request, Map.class);
-        ssoCredential.setAuthAccount(S.valueOf(response.getBody().get("userId")));
+        Map tokenMap = response.getBody();
+        if(V.notEmpty(tokenMap)){
+            ssoCredential.setUserType(S.valueOf(tokenMap.get("userType")));
+            ssoCredential.setAuthAccount(S.valueOf(tokenMap.get("username")));
+        }
     }
 
     /**
