@@ -70,7 +70,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
                 int parentLevel = parentOrg.getDepth().intValue();
                 iamOrg.setDepth(parentLevel + 1);
                 // 设置公司ID
-                if (V.equals(parentOrg.getParentId(), 0) || V.isEmpty(parentOrg.getParentId())) {
+                if (V.equals(parentOrg.getParentId(), 0L) || V.isEmpty(parentOrg.getParentId())) {
                     iamOrg.setTopOrgId(parentOrg.getId());
                 }
                 else {
