@@ -71,7 +71,12 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Transactional(rollbackFor = Exception.class)
     public boolean createDictAndChildren(DictionaryVO dictVO) {
         Dictionary dictionary = dictVO;
-        dictionary.setIsDeletable(true).setIsEditable(true);
+        if (dictionary.getIsEditable() == null){
+            dictionary.setIsDeletable(true);
+        }
+        if (dictionary.getIsDeletable() == null) {
+            dictionary.setIsDeletable(true);
+        }
         if(!super.createEntity(dictionary)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
             return false;
