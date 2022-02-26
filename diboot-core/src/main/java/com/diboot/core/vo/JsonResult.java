@@ -226,75 +226,75 @@ public class JsonResult<T> implements Serializable {
     /***
      * 部分成功（一般用于批量处理场景，只处理筛选后的合法数据）
      */
-    public static JsonResult<?> WARN_PARTIAL_SUCCESS(String msg){
-        return new JsonResult<>(Status.WARN_PARTIAL_SUCCESS).msg(msg);
+    public static <T> JsonResult<T> WARN_PARTIAL_SUCCESS(String msg){
+        return new JsonResult<T>(Status.WARN_PARTIAL_SUCCESS).msg(msg);
     }
     /***
      * 有潜在的性能问题
      */
-    public static JsonResult<?> WARN_PERFORMANCE_ISSUE(String msg){
-        return new JsonResult<>(Status.WARN_PERFORMANCE_ISSUE).msg(msg);
+    public static <T> JsonResult<T> WARN_PERFORMANCE_ISSUE(String msg){
+        return new JsonResult<T>(Status.WARN_PERFORMANCE_ISSUE).msg(msg);
     }
     /***
      * 传入参数不对
      */
-    public static JsonResult<?> FAIL_INVALID_PARAM(String msg){
-        return new JsonResult<>(Status.FAIL_INVALID_PARAM).msg(msg);
+    public static <T> JsonResult<T> FAIL_INVALID_PARAM(String msg){
+        return new JsonResult<T>(Status.FAIL_INVALID_PARAM).msg(msg);
     }
     /***
      * Token无效或已过期
      */
-    public static JsonResult<?> FAIL_INVALID_TOKEN(String msg){
-        return new JsonResult<>(Status.FAIL_INVALID_TOKEN).msg(msg);
+    public static <T> JsonResult<T> FAIL_INVALID_TOKEN(String msg){
+        return new JsonResult<T>(Status.FAIL_INVALID_TOKEN).msg(msg);
     }
     /***
      * 没有权限执行该操作
      */
-    public static JsonResult<?> FAIL_NO_PERMISSION(String msg){
-        return new JsonResult<>(Status.FAIL_NO_PERMISSION).msg(msg);
+    public static <T> JsonResult<T> FAIL_NO_PERMISSION(String msg){
+        return new JsonResult<T>(Status.FAIL_NO_PERMISSION).msg(msg);
     }
     /***
      * 请求资源不存在
      */
-    public static JsonResult<?> FAIL_NOT_FOUND(String msg){
-        return new JsonResult<>(Status.FAIL_NOT_FOUND).msg(msg);
+    public static <T> JsonResult<T> FAIL_NOT_FOUND(String msg){
+        return new JsonResult<T>(Status.FAIL_NOT_FOUND).msg(msg);
     }
     /***
      * 数据校验不通过
      */
-    public static JsonResult<?> FAIL_VALIDATION(String msg){
-        return new JsonResult<>(Status.FAIL_VALIDATION).msg(msg);
+    public static <T> JsonResult<T> FAIL_VALIDATION(String msg){
+        return new JsonResult<T>(Status.FAIL_VALIDATION).msg(msg);
     }
     /***
      * 操作执行失败
      */
-    public static JsonResult<?> FAIL_OPERATION(String msg){
-        return new JsonResult<>(Status.FAIL_OPERATION).msg(msg);
+    public static <T> JsonResult<T> FAIL_OPERATION(String msg){
+        return new JsonResult<T>(Status.FAIL_OPERATION).msg(msg);
     }
     /***
      * 系统异常
      */
-    public static JsonResult<?> FAIL_EXCEPTION(String msg){
-        return new JsonResult<>(Status.FAIL_EXCEPTION).msg(msg);
+    public static <T> JsonResult<T> FAIL_EXCEPTION(String msg){
+        return new JsonResult<T>(Status.FAIL_EXCEPTION).msg(msg);
     }
     /***
      * 服务不可用
      */
-    public static JsonResult<?> FAIL_FAIL_REQUEST_TIMEOUT(String msg){
-        return new JsonResult<>(Status.FAIL_REQUEST_TIMEOUT).msg(msg);
+    public static <T> JsonResult<T> FAIL_FAIL_REQUEST_TIMEOUT(String msg){
+        return new JsonResult<T>(Status.FAIL_REQUEST_TIMEOUT).msg(msg);
     }
     /***
      * 服务不可用
      */
-    public static JsonResult<?> FAIL_SERVICE_UNAVAILABLE(String msg){
-        return new JsonResult<>(Status.FAIL_SERVICE_UNAVAILABLE).msg(msg);
+    public static <T> JsonResult<T> FAIL_SERVICE_UNAVAILABLE(String msg){
+        return new JsonResult<T>(Status.FAIL_SERVICE_UNAVAILABLE).msg(msg);
     }
 
     /***
      * 认证不通过
      */
-    public static JsonResult<?> FAIL_AUTHENTICATION(String msg){
-        return new JsonResult<>(Status.FAIL_AUTHENTICATION).msg(msg);
+    public static <T> JsonResult<T> FAIL_AUTHENTICATION(String msg){
+        return new JsonResult<T>(Status.FAIL_AUTHENTICATION).msg(msg);
     }
 
     /**
