@@ -72,7 +72,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public boolean createDictAndChildren(DictionaryVO dictVO) {
         Dictionary dictionary = dictVO;
         if (dictionary.getIsEditable() == null){
-            dictionary.setIsDeletable(true);
+            dictionary.setIsEditable(true);
         }
         if (dictionary.getIsDeletable() == null) {
             dictionary.setIsDeletable(true);
