@@ -84,6 +84,12 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean
     public HttpMessageConverters jacksonHttpMessageConverters() {
+        return new HttpMessageConverters(jacksonMessageConverter());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = converter.getObjectMapper();
         // Long转换成String避免JS超长问题
@@ -97,6 +103,8 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         // LocalDateTime
         DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
+
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(localDateTimeFormatter));
         // LocalDate
@@ -124,7 +132,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         // 设置格式化内容
         converter.setObjectMapper(objectMapper);
 
-        return new HttpMessageConverters(converter);
+        return converter;
     }
 
     /**
