@@ -78,6 +78,7 @@ public class IamAutoConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     @DependsOn({"shiroCacheManager"})
     public Realm realm() {
         BaseJwtRealm realm = new BaseJwtRealm();
