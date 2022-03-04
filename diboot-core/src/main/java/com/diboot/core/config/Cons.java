@@ -67,6 +67,10 @@ public class Cons {
          */
         id,
         /**
+         * 租户ID
+         */
+        tenantId,
+        /**
          * 默认的上级ID属性名
          */
         parentId,
