@@ -97,7 +97,15 @@ public class Cons {
         /**
          * 更新人
          */
-        updateBy
+        updateBy,
+        /**
+         * 组织id
+         */
+        orgId,
+        /**
+         * 用户id
+         */
+        userId
     }
 
     /**

@@ -123,11 +123,11 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
      */
     private Expression buildDataAccessExpression(Table mainTable, Class<?> entityClass) {
         return DataAccessAnnoCache.getDataPermissionMap(entityClass).entrySet().stream().map(entry -> {
-            DataAccessInterface checkImpl = ContextHelper.getBean(entry.getKey());
+            DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
             if (checkImpl == null) {
-                throw new InvalidUsageException("无法从上下文中获取数据权限校验对象：" + entry.getKey().getName());
+                throw new InvalidUsageException("无法从上下文中获取数据权限的接口实现：DataAccessInterface");
             }
-            List<Serializable> idValues = checkImpl.getAccessibleIds();
+            List<Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
             if (idValues == null) {
                 return null;
             }

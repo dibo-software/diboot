@@ -50,7 +50,7 @@ import java.util.TimeZone;
  * @date 2019/6/10
  */
 @TestConfiguration
-@ComponentScan(basePackages={"com.diboot", "diboot.core"})
+@ComponentScan(basePackages={"com.diboot.core", "diboot.core.test"})
 @MapperScan({"com.diboot.core.mapper", "diboot.core.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);

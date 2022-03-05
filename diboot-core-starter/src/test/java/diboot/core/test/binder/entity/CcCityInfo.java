@@ -16,6 +16,7 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.data.access.DataAccessCheckpoint;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,8 +35,10 @@ import java.util.Date;
 public class CcCityInfo extends BaseEntity {
     private static final long serialVersionUID = 3701095453152116088L;
 
+    @DataAccessCheckpoint
     private Long parentId;
 
+    @DataAccessCheckpoint
     private Long regionId;
 
     private String regionName;

@@ -29,9 +29,4 @@ import java.lang.annotation.*;
 @Documented
 public @interface DataAccessCheckpoint {
 
-    /**
-     * 检查点处理程序实现类
-     */
-    Class<? extends DataAccessInterface> value();
-
 }

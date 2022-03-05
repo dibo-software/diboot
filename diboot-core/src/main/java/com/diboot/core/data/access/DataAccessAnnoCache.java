@@ -15,7 +15,6 @@
  */
 package com.diboot.core.data.access;
 
-import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class DataAccessAnnoCache {
     /**
      * 注解缓存
      */
-    private static final Map<String, Map<Class<? extends DataAccessInterface>, String>> DATA_PERMISSION_ANNO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, String>> DATA_PERMISSION_ANNO_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 是否有检查点注解
@@ -57,7 +56,7 @@ public class DataAccessAnnoCache {
      * @param entityClass
      * @return
      */
-    public static Map<Class<? extends DataAccessInterface>, String> getDataPermissionMap(Class<?> entityClass) {
+    public static Map<String, String> getDataPermissionMap(Class<?> entityClass) {
         return DATA_PERMISSION_ANNO_CACHE.computeIfAbsent(entityClass.getName(), k -> initClassCheckpoint(entityClass));
     }
 
@@ -67,22 +66,18 @@ public class DataAccessAnnoCache {
      * @param entityClass
      * @return
      */
-    private static Map<Class<? extends DataAccessInterface>, String> initClassCheckpoint(Class<?> entityClass) {
-        Map<Class<? extends DataAccessInterface>, String> results;
+    private static Map<String, String> initClassCheckpoint(Class<?> entityClass) {
         List<Field> fieldList = BeanUtils.extractFields(entityClass, DataAccessCheckpoint.class);
         if (V.notEmpty(fieldList)) {
-            results = new HashMap<>();
+            Map<String, String> results = new HashMap<>();
             for (Field fld : fieldList) {
-                DataAccessCheckpoint checkpoint = fld.getAnnotation(DataAccessCheckpoint.class);
-                if (results.containsKey(checkpoint.value())) {
-                    throw new InvalidUsageException(entityClass.getSimpleName() + "中DataPermissionCheckpoint同类型检测点解重复！");
-                }
-                results.put(checkpoint.value(), BeanUtils.getColumnName(fld));
+                results.put(fld.getName(), BeanUtils.getColumnName(fld));
             }
-        } else {
-            results = Collections.emptyMap();
+            return results;
         }
-        return results;
+        else {
+            return Collections.emptyMap();
+        }
     }
 
 }

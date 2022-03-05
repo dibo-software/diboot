@@ -20,7 +20,6 @@ import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.data.access.DataAccessCheckpoint;
 import com.diboot.core.entity.BaseEntity;
-import diboot.core.test.service.DataAccessPermissionOrgImpl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -41,7 +40,7 @@ public class Department extends BaseEntity {
     private Long parentId;
 
     @TableField
-    @DataAccessCheckpoint(DataAccessPermissionOrgImpl.class)
+    @DataAccessCheckpoint()
     private Long orgId;
 
     @BindQuery(comparison = Comparison.CONTAINS)

@@ -15,13 +15,14 @@
  */
 package com.diboot.iam.data;
 
+import com.diboot.core.config.Cons;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.util.IamSecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,30 +36,41 @@ import java.util.List;
  * @version v2.5.0
  * @date 2022/02/15
  */
-@Component
-public class DataAccessPermissionOrgImpl implements DataAccessInterface {
+@Slf4j
+public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
 
     @Autowired
     private IamOrgService iamOrgService;
 
     @Override
-    public List<Serializable> getAccessibleIds() {
-        Long OrgId; //当前部门ID
+    public List<Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
+        // 获取当前登录用户
+        IamUser currentUser = null;
         try {
-            IamUser currentUser =  IamSecurityUtils.getCurrentUser();
-            if (currentUser == null) {
-                return Collections.emptyList();
-            }
-            OrgId = currentUser.getOrgId();
-        } catch (Exception e){
+            currentUser = IamSecurityUtils.getCurrentUser();
+        }
+        catch (Exception e){
+            log.warn("获取数据权限可访问ids异常: ", e);
             return Collections.emptyList();
         }
-        List<Serializable> orgIds = new ArrayList<>();
-        orgIds.add(OrgId);
-        List<Long> childOrgIds = iamOrgService.getChildOrgIds(OrgId);
-        if(V.notEmpty(childOrgIds)){
-            orgIds.addAll(childOrgIds);
+        if (currentUser == null) {
+            return Collections.emptyList();
         }
-        return orgIds;
+        // 提取其可访问ids
+        List<Serializable> accessibleIds = new ArrayList<>();
+        if(Cons.FieldName.orgId.name().equals(fieldName)){
+            //添加当前部门ID
+            Long currentOrgId = currentUser.getOrgId();
+            accessibleIds.add(currentOrgId);
+            List<Long> childOrgIds = iamOrgService.getChildOrgIds(currentOrgId);
+            if(V.notEmpty(childOrgIds)){
+                accessibleIds.addAll(childOrgIds);
+            }
+        }
+        else if(Cons.FieldName.userId.name().equals(fieldName)){
+            accessibleIds.add(currentUser.getId());
+        }
+        // ... 其他类型字段
+        return accessibleIds;
     }
 }
