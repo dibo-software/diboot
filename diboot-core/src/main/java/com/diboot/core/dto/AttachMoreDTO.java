@@ -1,8 +1,11 @@
 package com.diboot.core.dto;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.entity.Dictionary;
+import com.diboot.core.util.S;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -121,5 +124,10 @@ public class AttachMoreDTO implements Serializable {
      * <h3>下一层</h3>
      */
     private AttachMoreDTO next;
+
+    @JsonIgnore
+    public String getTargetClassName(){
+        return S.capFirst(S.toLowerCaseCamel(this.target));
+    }
 
 }

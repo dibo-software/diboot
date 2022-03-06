@@ -31,6 +31,7 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -318,13 +319,14 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMore, String parentValue) {
-		if (!attachMorePermissionCheck(attachMore)) {
+		if (!attachMoreSecurityCheck(attachMore)) {
+			log.warn("attachMore安全检查不通过: ", JSON.stringify(attachMore));
 			return null;
 		}
 		if (V.notEmpty(parentValue) && !attachMore.isTree() && V.isEmpty(attachMore.getParent())) {
 			throw new BusinessException("attachMore跨表级联中的 " + attachMore.getTarget() + " 未指定关联父级属性 parent: ?");
 		}
-		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMore.getTarget()));
+		String entityClassName = attachMore.getTargetClassName();
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
 			throw new BusinessException("attachMore: " + attachMore.getTarget() + " 不存在");
@@ -390,13 +392,13 @@ public class BaseController {
 	}
 
     /**
-     * attachMore 权限检查
+     * attachMore 安全检查
      *
      * @param attachMore
-     * @return 是否拥有权限
+     * @return 是否允许访问该类型接口
      */
-    protected boolean attachMorePermissionCheck(AttachMoreDTO attachMore) {
-        return true;
+    protected boolean attachMoreSecurityCheck(AttachMoreDTO attachMore) {
+		return S.equalsIgnoreCase(attachMore.getTargetClassName(), "IamAccount");
     }
 
 	/**
