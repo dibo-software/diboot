@@ -262,7 +262,7 @@ public interface BaseService<T> {
      * @return
      * @throws Exception
      */
-    <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, ?> getterFn);
+    <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn);
 
     /**
      * 获取指定条件的Entity集合
