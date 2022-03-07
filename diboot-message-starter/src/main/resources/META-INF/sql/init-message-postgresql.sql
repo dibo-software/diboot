@@ -11,7 +11,7 @@ CREATE TABLE message_template (
      is_deleted   BOOLEAN default FALSE   not null,
      create_by bigint DEFAULT 0 NOT NULL,
      create_time  timestamp default CURRENT_TIMESTAMP   not null,
-     update_time  timestamp   null
+     update_time  timestamp default CURRENT_TIMESTAMP null
 );
 -- 添加备注
 comment on column message_template.id is 'ID';
@@ -49,8 +49,8 @@ CREATE TABLE message (
   schedule_time  timestamp   null,
   ext_data VARCHAR(200),
   is_deleted   BOOLEAN default FALSE   not null,
-  create_time  timestamp default CURRENT_TIMESTAMP   not null,
-  update_time  timestamp   null
+  create_time  timestamp default CURRENT_TIMESTAMP  not null,
+  update_time  timestamp default CURRENT_TIMESTAMP  null
 );
 comment on column message.id is 'ID';
 comment on column message.tenant_id is '租户ID';

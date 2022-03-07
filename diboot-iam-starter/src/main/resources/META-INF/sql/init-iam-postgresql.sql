@@ -126,7 +126,7 @@ create table iam_resource_permission
   sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
-  update_time timestamp null,
+  update_time timestamp default CURRENT_TIMESTAMP null,
   constraint PK_iam_resource_permission primary key (id)
 );
 comment on column iam_resource_permission.id is 'ID';
@@ -315,7 +315,7 @@ create table iam_user_position
   is_primary_position BOOLEAN   default FALSE             not null,
   is_deleted BOOLEAN DEFAULT FALSE  not null,
   create_time timestamp default CURRENT_TIMESTAMP   not null,
-  update_time         timestamp    default CURRENT_TIMESTAMP null
+  update_time timestamp default CURRENT_TIMESTAMP null
 );
 comment on column iam_user_position.id is 'ID';
 comment on column iam_user_position.tenant_id is '租户ID';

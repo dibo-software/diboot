@@ -108,8 +108,7 @@ public class MessageTemplate extends BaseEntity {
     /**
      * 更新时间
      */
-    @JsonFormat(pattern = D.FORMAT_DATETIME_Y4MDHM)
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
     /**

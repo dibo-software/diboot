@@ -130,7 +130,7 @@ create table ${SCHEMA}.iam_resource_permission
    sort_id bigint   null,
    is_deleted tinyint default 0 not null,
    create_time datetime default CURRENT_TIMESTAMP not null,
-   update_time datetime null,
+   update_time datetime default CURRENT_TIMESTAMP null,
    constraint PK_iam_resource_permission primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'id';
@@ -327,7 +327,7 @@ create table iam_user_position
    is_primary_position tinyint   default 1                 not null,
    is_deleted tinyint DEFAULT 0    not null,
    create_time datetime default CURRENT_TIMESTAMP   not null,
-   update_time         datetime    default CURRENT_TIMESTAMP null,
+   update_time datetime default CURRENT_TIMESTAMP null,
    constraint PK_iam_user_position primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_user_position, 'column', 'id';

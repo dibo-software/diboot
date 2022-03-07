@@ -13,7 +13,7 @@ CREATE TABLE ${SCHEMA}.schedule_job (
   is_deleted   NUMBER(1) DEFAULT 0    not null,
   create_by NUMBER(20) DEFAULT 0 NOT NULL,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
-  update_time  timestamp   null,
+  update_time  timestamp default CURRENT_TIMESTAMP  null,
   constraint PK_schedule_job primary key (id)
 );
 comment on column schedule_job.id is 'ID';

@@ -48,7 +48,7 @@ create table ${SCHEMA}.system_config
     value VARCHAR2 (255),
     is_deleted NUMBER (1) default 0 not null,
     create_time TIMESTAMP default CURRENT_TIMESTAMP not null,
-    update_time timestamp                           null,
+    update_time timestamp default CURRENT_TIMESTAMP null,
     constraint PK_system_config primary key (id)
 );
 -- 添加备注

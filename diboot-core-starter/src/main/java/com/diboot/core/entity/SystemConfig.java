@@ -15,7 +15,7 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
@@ -65,7 +65,7 @@ public class SystemConfig extends BaseEntity {
     /**
      * 更新时间
      */
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
 }

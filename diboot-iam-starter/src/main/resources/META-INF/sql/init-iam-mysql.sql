@@ -1,7 +1,7 @@
 -- 用户表
 create table iam_user
 (
-  id           bigint auto_increment comment 'ID'  primary key,
+  id           bigint comment 'ID'  primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   org_id       bigint      default 0                 not null comment '组织ID',
   user_num     varchar(20)                           not null comment '用户编号',
@@ -83,7 +83,7 @@ create table iam_resource_permission
   sort_id       bigint                               null comment '排序号',
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
   create_time    timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time    timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
+  update_time    timestamp   default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '资源权限';
 -- 索引
 create index idx_iam_resource_permission on iam_resource_permission (parent_id);

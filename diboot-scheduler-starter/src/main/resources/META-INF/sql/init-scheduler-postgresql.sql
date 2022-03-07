@@ -13,7 +13,7 @@ CREATE TABLE schedule_job (
   is_deleted   BOOLEAN default FALSE   not null,
   create_by bigint DEFAULT 0 NOT NULL,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
-  update_time  timestamp   null
+  update_time  timestamp default CURRENT_TIMESTAMP  null
 );
 comment on column schedule_job.id is 'ID';
 comment on column schedule_job.tenant_id is '租户ID';

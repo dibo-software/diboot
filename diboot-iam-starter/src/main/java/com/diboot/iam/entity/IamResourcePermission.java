@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -90,7 +90,7 @@ public class IamResourcePermission extends BaseEntity {
     private Long sortId;
 
     // 更新时间
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
 

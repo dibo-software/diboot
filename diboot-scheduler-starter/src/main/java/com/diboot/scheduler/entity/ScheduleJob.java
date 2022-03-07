@@ -117,7 +117,7 @@ public class ScheduleJob extends BaseEntity {
     /**
      * 更新时间
      */
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
 }

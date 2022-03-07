@@ -47,7 +47,7 @@ create table system_config
     value       VARCHAR(255),
     is_deleted  BOOLEAN     not null default FALSE,
     create_time timestamp   not null default CURRENT_TIMESTAMP,
-    update_time timestamp   null,
+    update_time timestamp   null default CURRENT_TIMESTAMP,
     constraint PK_system_config primary key (id)
 );
 -- 添加备注

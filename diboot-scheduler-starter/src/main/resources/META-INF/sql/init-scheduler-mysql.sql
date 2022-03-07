@@ -14,7 +14,7 @@ create table schedule_job
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
   create_by bigint NOT NULL DEFAULT 0 COMMENT '创建人',
   create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time  timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
+  update_time  timestamp   null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
 AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务';
 -- 创建索引

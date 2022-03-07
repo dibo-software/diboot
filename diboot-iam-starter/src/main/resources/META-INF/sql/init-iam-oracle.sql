@@ -130,7 +130,7 @@ create table ${SCHEMA}.iam_resource_permission
     sort_id NUMBER(20)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
-    update_time timestamp   null,
+    update_time timestamp default CURRENT_TIMESTAMP  null,
     constraint PK_iam_permission primary key (id)
 );
 comment on column ${SCHEMA}.iam_resource_permission.id is 'ID';
@@ -325,7 +325,7 @@ create table ${SCHEMA}.iam_user_position
     is_primary_position NUMBER(1)   default 1                 not null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
-    update_time         timestamp    default CURRENT_TIMESTAMP null,
+    update_time timestamp default CURRENT_TIMESTAMP null,
     constraint PK_iam_user_position primary key (id)
 );
 comment on column ${SCHEMA}.iam_user_position.id is 'ID';
