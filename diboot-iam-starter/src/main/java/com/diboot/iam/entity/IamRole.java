@@ -15,7 +15,10 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -26,6 +29,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
 * 角色 Entity定义
@@ -42,6 +46,12 @@ public class IamRole extends BaseEntity {
         this.name = name;
         this.code = code;
     }
+
+    /**
+     * 更改id为雪花
+     */
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
      * 租户ID
@@ -67,4 +77,9 @@ public class IamRole extends BaseEntity {
     @TableField()
     private String description;
 
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
 }
