@@ -13,7 +13,7 @@ CREATE TABLE `dictionary` (
   `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
   `is_deletable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可删',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '数据字典';
 -- 创建索引
@@ -29,8 +29,8 @@ CREATE TABLE `system_config`
     `prop`        varchar(50) CHARACTER SET utf8  NOT NULL COMMENT '属性',
     `value`       varchar(255) CHARACTER SET utf8 NULL     DEFAULT NULL COMMENT '属性值',
     `is_deleted`  tinyint(1)                      NOT NULL DEFAULT 0 COMMENT '删除标记',
-    `create_time` timestamp                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` timestamp                       NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `create_time` datetime                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime                       NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX `idx_system_config_tenant_id` (`tenant_id`) USING BTREE,
     INDEX `idx_system_config` (`type`, `prop`) USING BTREE

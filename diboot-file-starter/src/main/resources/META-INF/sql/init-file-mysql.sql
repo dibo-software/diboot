@@ -14,7 +14,7 @@ CREATE TABLE upload_file (
   description varchar(100) DEFAULT NULL COMMENT '备注',
   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
   create_by    bigint      default 0 COMMENT '创建人',
-  create_time  timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
+  create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
 ) DEFAULT CHARSET=utf8 COMMENT='上传文件';
 -- 索引
 create index idx_upload_file on upload_file (rel_obj_type, rel_obj_id, rel_obj_field);

@@ -13,8 +13,8 @@ create table iam_user
   avatar_url   varchar(200)                          null comment '头像地址',
   status       varchar(10) default 'A'               not null comment '状态',
   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
-  create_time  timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time  timestamp null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '系统用户';
 -- 索引
 create index idx_iam_user_1 on iam_user (org_id);
@@ -35,8 +35,8 @@ create table iam_account
   secret_salt  varchar(32)                            null comment '加密盐',
   status       varchar(10)  default 'A'               not null comment '用户状态',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
-  create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time  timestamp null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '登录账号';
 -- 创建索引
 create index idx_iam_account on iam_account(auth_account, auth_type, user_type);
@@ -51,8 +51,8 @@ create table iam_role
   code        varchar(50)                          not null comment '编码',
   description varchar(100)                         null comment '备注',
   is_deleted  tinyint(1) default 0                not null comment '是否删除',
-  create_time timestamp  default CURRENT_TIMESTAMP null comment '创建时间',
-  update_time  timestamp null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time datetime  default CURRENT_TIMESTAMP null comment '创建时间',
+  update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色';
 -- 创建索引
 create index idx_iam_role_tenant on iam_role (tenant_id);
@@ -66,8 +66,8 @@ create table iam_user_role
   user_id     bigint                                 not null comment '用户ID',
   role_id     bigint                                    not null comment '角色ID',
   is_deleted  tinyint(1)   default 0                 not null comment '是否删除',
-  create_time timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time timestamp    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '用户角色关联';
 -- 索引
 create index idx_iam_user_role on iam_user_role (user_type, user_id);
@@ -86,8 +86,8 @@ create table iam_resource_permission
   api_set       varchar(3000)                        null comment '接口列表',
   sort_id       bigint                               null comment '排序号',
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
-  create_time    timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time    timestamp   default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time    datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time    datetime   default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '资源权限';
 -- 索引
 create index idx_iam_resource_permission on iam_resource_permission (parent_id);
@@ -101,7 +101,7 @@ create table iam_role_resource
   role_id       bigint                               not null comment '角色ID',
   resource_id bigint                               not null comment '资源ID',
   is_deleted    tinyint(1) default 0                 not null comment '是否删除',
-  create_time   timestamp  default CURRENT_TIMESTAMP not null comment '创建时间'
+  create_time   datetime  default CURRENT_TIMESTAMP not null comment '创建时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '角色资源';
 -- 索引
 create index idx_iam_role_resource on iam_role_resource (role_id, resource_id);
@@ -119,7 +119,7 @@ create table iam_login_trace
   ip_address   varchar(50)                            null comment 'IP',
   user_agent   varchar(200)                           null comment '客户端信息',
   is_success   tinyint(1)   default 0                 not null comment '是否成功',
-  create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
+  create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '登录日志';
 -- 创建索引
 create index idx_iam_login_trace on iam_login_trace (user_type, user_id);
@@ -144,7 +144,7 @@ create table iam_operation_log
   status_code   smallint   default 0   not null comment '状态码',
   error_msg     varchar(1000)                  null comment '异常信息',
   is_deleted       tinyint(1)                            null comment '删除标记',
-  create_time      timestamp   default CURRENT_TIMESTAMP null comment '创建时间'
+  create_time      datetime   default CURRENT_TIMESTAMP null comment '创建时间'
 )
   AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '操作日志';
 -- 创建索引
@@ -168,8 +168,8 @@ create table iam_org
   status      varchar(10)  default 'A'               not null comment '状态',
   org_comment varchar(200) COMMENT '备注',
   is_deleted  tinyint(1)   default 0                 not null comment '是否删除',
-  create_time timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time timestamp null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
   comment '组织';
 create index idx_iam_org on iam_org (parent_id);
@@ -187,8 +187,8 @@ create table iam_position
   grade_value          varchar(30) default '0'               null comment '职级',
   data_permission_type varchar(20) default 'SELF'            null comment '数据权限类型',
   is_deleted           tinyint(1)  default 0                 not null comment '是否删除',
-  create_time          timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time  timestamp null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time          datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
 comment '岗位';
 create index idx_iam_position on iam_position (code);
@@ -205,8 +205,8 @@ create table iam_user_position
   position_id         bigint                                 not null comment '岗位ID',
   is_primary_position tinyint(1)   default 1                 not null comment '是否主岗',
   is_deleted          tinyint(1)   default 0                 not null comment '是否删除',
-  create_time         timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time         timestamp    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
+  create_time         datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time         datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )
 comment '用户岗位关联';
 create index idx_iam_user_position on iam_user_position (user_type, user_id);
