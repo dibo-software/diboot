@@ -242,6 +242,8 @@ public class BeanUtils {
             }
             ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
             return LocalDateTime.class.equals(type) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
+        } else if (Serializable.class.isAssignableFrom(type)) {
+            return JSON.parseObject(valueStr, type);
         }
         return value;
     }
