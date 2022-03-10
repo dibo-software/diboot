@@ -36,11 +36,13 @@ public class DataAccessPermissionTestImpl implements DataAccessInterface {
         // 提取其可访问ids
         List<Serializable> accessibleIds = new ArrayList<>();
         if("parentId".equals(fieldName)){
-            accessibleIds.add(100001L);
-            accessibleIds.add(200001L);
+            accessibleIds.add(0L);
+            accessibleIds.add(10000L);
         }
         else if("regionId".equals(fieldName)){
-            accessibleIds.add(123L);
+            return null;
+        } else if ("orgId".equals(fieldName)) {
+            accessibleIds.add(100001L);
         }
         // ... 其他类型字段
         return accessibleIds;

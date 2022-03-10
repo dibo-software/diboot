@@ -1,14 +1,9 @@
 package diboot.core.test.binder;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.entity.CcCityInfo;
-import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.service.CcCityInfoService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -38,8 +33,8 @@ public class TestDataAccessControl {
     @Test
     public void testDataControl(){
         DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
-        Assert.assertTrue(checkImpl != null);
+        Assert.assertNotNull(checkImpl);
         List<CcCityInfo> ccCityInfoList = ccCityInfoService.list(null);
-        Assert.assertTrue(V.isEmpty(ccCityInfoList));
+        Assert.assertEquals(2, ccCityInfoList.size());
     }
 }
