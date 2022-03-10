@@ -560,7 +560,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
-		return entityList.stream().map(getterFn).distinct().collect(Collectors.toList());
+		return entityList.stream().filter(Objects::nonNull).map(getterFn).distinct().collect(Collectors.toList());
 	}
 
 	@Override
