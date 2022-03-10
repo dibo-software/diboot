@@ -72,7 +72,7 @@ public class EntityInfoCache implements Serializable {
     }
 
     public IService getService(){
-        return (IService) ContextHelper.getApplicationContext().getBean(this.serviceBeanName);
+        return this.serviceBeanName == null ? null : (IService) ContextHelper.getApplicationContext().getBean(this.serviceBeanName);
     }
 
     public void setBaseMapper(Class<? extends BaseMapper> mapper) {
