@@ -162,10 +162,10 @@ export default {
 					// 更新该记录
 					result = await this.update(this.form)
 				}
-				// 执行提交失败后的一系列后续操作
+				// 执行提交成功后的一系列后续操作
 				this.submitSuccess(result)
 			} catch (e) {
-				// 执行一系列后续操作
+				// 执行提交失败后的一系列后续操作
 				this.submitFailed(e)
 				console.log(e)
 			} finally {
