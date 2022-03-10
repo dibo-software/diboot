@@ -124,7 +124,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             }
             String refObjJoinOnField = toRefObjField(refObjJoinOnCol);
             // 转换entity列表为Map<ID, Entity>
-            Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(entityList, refObjJoinOnField);
+            Map<String, List<T>> entityMap = BeanUtils.convertToStringKeyObjectListMap(entityList, refObjJoinOnField);
             for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
                 // List<roleId>
                 List annoObjFKList = entry.getValue();
@@ -137,15 +137,19 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                         continue;
                     }
                     String valStr = String.valueOf(obj);
-                    T ent = entityMap.get(valStr);
+                    List<T> ent = entityMap.get(valStr);
                     if(ent != null){
-                        valueList.add(cloneOrConvertBean(ent));
+                        for (T item : ent) {
+                            valueList.add(cloneOrConvertBean(item));
+                        }
                     }
                     else if(V.notEmpty(splitBy) && valStr.contains(splitBy)){
                         for(String key : valStr.split(splitBy)){
                             ent = entityMap.get(key);
                             if(ent != null){
-                                valueList.add(cloneOrConvertBean(ent));
+                                for (T item : ent) {
+                                    valueList.add(cloneOrConvertBean(item));
+                                }
                             }
                         }
                     }
