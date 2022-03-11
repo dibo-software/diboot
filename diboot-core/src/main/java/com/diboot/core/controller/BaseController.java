@@ -320,7 +320,7 @@ public class BaseController {
 	 */
 	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMore, String parentValue) {
 		if (!attachMoreSecurityCheck(attachMore)) {
-			log.warn("attachMore安全检查不通过: ", JSON.stringify(attachMore));
+			log.warn("attachMore安全检查不通过: {}", JSON.stringify(attachMore));
 			return null;
 		}
 		if (V.notEmpty(parentValue) && !attachMore.isTree() && V.isEmpty(attachMore.getParent())) {
@@ -398,7 +398,7 @@ public class BaseController {
      * @return 是否允许访问该类型接口
      */
     protected boolean attachMoreSecurityCheck(AttachMoreDTO attachMore) {
-		return S.equalsIgnoreCase(attachMore.getTargetClassName(), "IamAccount");
+		return true;
     }
 
 	/**
