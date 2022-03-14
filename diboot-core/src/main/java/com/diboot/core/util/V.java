@@ -76,6 +76,7 @@ public class V {
     public static boolean isEmpty(String value) {
         return S.isBlank(value);
     }
+
     /**
      * 集合为空
      */
@@ -204,7 +205,7 @@ public class V {
      * @return true/false
      */
     public static boolean isAllEmpty(Object... objs) {
-        if(isEmpty(objs)){
+        if (isEmpty(objs)) {
             return true;
         }
         for (Object obj : objs) {
@@ -483,40 +484,52 @@ public class V {
     public static <T> boolean equals(T source, T target) {
         if (source == target) {
             return true;
-        }
-        else if (source == null || target == null) {
+        } else if (source == null || target == null) {
             return false;
-        }
-        else if (source instanceof Class && target instanceof Class) {
-            return ((Class) source).getName().equals(((Class) target).getName());
-        }
-        // 不为空，调用equals比较
-        else if (source instanceof Comparable) {
-            return (source).equals(target);
+        } else if (source.getClass() != target.getClass()) {
+            // 根据equals设计原则，类型不一致，直接false
+            // 避免子类与父类、子类与子类比较时可能出现的问题
+            log.warn("source和target类型不匹配：" + source.getClass() + " 和 " + target.getClass());
+            return false;
+        } else if (source instanceof Class) {
+            return ((Class<?>) source).getName().equals(((Class<?>) target).getName());
+        } else if (source instanceof Comparable) {
+            // 部分java早期类的equals和compareTo结果不一致，避免直接调用equals
+            //noinspection unchecked
+            return ((Comparable<T>) source).compareTo(target) == 0;
         } else if (source instanceof Collection) {
             Collection<?> sourceList = (Collection<?>) source, targetList = (Collection<?>) target;
             // size不等
             if (sourceList.size() != targetList.size()) {
                 return false;
+            } else if (sourceList.isEmpty()) {
+                // size相等，且一个为空集合
+                return true;
             }
-            // 已经确定两个集合的数量相等，如果某个值不存在，则必定不相等
-            for (Object obj : sourceList) {
-                if (!targetList.contains(obj)) {
+            // 已经确定两个集合的数量相等，如果相同位置的值不相等，则必定不相等
+            // 避免使用某些集合容器低效率的contains方法
+            Iterator<?> sourceIterator = sourceList.iterator();
+            Iterator<?> targetIterator = targetList.iterator();
+            while (sourceIterator.hasNext()) {
+                if (!equals(sourceIterator.next(), targetIterator.next())) {
                     return false;
                 }
             }
             return true;
         } else if (source instanceof Map) {
             Map<?, ?> sourceMap = (Map<?, ?>) source, targetMap = (Map<?, ?>) target;
-            if (V.isEmpty(sourceMap) && V.isEmpty(targetMap)) {
-                return true;
-            }
             if (sourceMap.size() != targetMap.size()) {
                 return false;
+            } else if (sourceMap.isEmpty()) {
+                return true;
             }
-            // entry遍历效率更高
-            for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
-                if (notEquals(entry.getValue(), targetMap.get(entry.getKey()))) {
+            Iterator<? extends Map.Entry<?, ?>> sourceIterator = sourceMap.entrySet().iterator();
+            Iterator<? extends Map.Entry<?, ?>> targetIterator = targetMap.entrySet().iterator();
+            while (sourceIterator.hasNext()) {
+                Map.Entry<?, ?> sourceEntry = sourceIterator.next();
+                Map.Entry<?, ?> targetEntry = targetIterator.next();
+                if (!equals(sourceEntry.getKey(), targetEntry.getKey())
+                        || !equals(sourceEntry.getValue(), targetEntry.getValue())) {
                     return false;
                 }
             }
