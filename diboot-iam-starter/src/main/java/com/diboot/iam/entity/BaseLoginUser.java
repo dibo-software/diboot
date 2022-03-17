@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.S;
 import com.diboot.core.vo.LabelValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -65,6 +66,10 @@ public abstract class BaseLoginUser extends BaseEntity {
     }
     public void setAuthToken(String authToken){
         this.authToken = authToken;
+    }
+
+    public String getUserTypeAndId(){
+        return S.join(this.getUserType(), ":", this.getId());
     }
 
     @Override
