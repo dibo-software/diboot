@@ -13,23 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.service.impl;
+package com.diboot.iam.service.impl;
+
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.config.SystemConfigInjection;
-import com.diboot.core.config.SystemConfigTest;
-import com.diboot.core.config.SystemConfigType;
-import com.diboot.core.entity.SystemConfig;
 import com.diboot.core.exception.BusinessException;
-import com.diboot.core.mapper.SystemConfigMapper;
-import com.diboot.core.service.SystemConfigService;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
-import com.diboot.core.vo.SystemConfigVO;
+import com.diboot.iam.config.SystemConfigInjection;
+import com.diboot.iam.config.SystemConfigTest;
+import com.diboot.iam.config.SystemConfigType;
+import com.diboot.iam.entity.SystemConfig;
+import com.diboot.iam.mapper.SystemConfigMapper;
+import com.diboot.iam.service.SystemConfigService;
+import com.diboot.iam.vo.SystemConfigVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;

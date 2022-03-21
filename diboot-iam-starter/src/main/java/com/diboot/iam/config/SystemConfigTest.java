@@ -13,51 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.vo;
+package com.diboot.iam.config;
 
-import com.diboot.core.entity.SystemConfig;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-import java.util.Set;
+import com.diboot.core.exception.BusinessException;
 
 /**
- * 系统配置VO定义
+ * <h3>系统配置测试</h3>
+ * 用于配置枚举类继承，实现测试方法
  *
  * @author wind
  * @version v2.5.0
- * @date 2022-01-13
+ * @date 2022/01/13
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class SystemConfigVO extends SystemConfig {
-    private static final long serialVersionUID = -1032238711168691001L;
+public interface SystemConfigTest<T> {
 
     /**
-     * 属性标签
+     * <h3>测试</h3>
+     * 可使用{@link BusinessException} 抛出运行时异常提示
+     *
+     * @param data 测试数据
      */
-    private String propLabel;
-
-    /**
-     * 默认值
-     */
-    private Object defaultValue;
-
-    /**
-     * 选项集
-     */
-    private Set<String> options;
-
-    /**
-     * 是否必填
-     */
-    private boolean required;
-
-    /**
-     * 序号
-     */
-    private int ordinal;
+    void test(T data);
 
 }

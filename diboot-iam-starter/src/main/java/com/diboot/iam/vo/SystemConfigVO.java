@@ -13,20 +13,51 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.mapper;
+package com.diboot.iam.vo;
 
-import com.diboot.core.entity.SystemConfig;
-import org.apache.ibatis.annotations.Mapper;
+import com.diboot.iam.entity.SystemConfig;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.Set;
 
 /**
- * 系统配置Mapper
+ * 系统配置VO定义
  *
  * @author wind
  * @version v2.5.0
  * @date 2022-01-13
  */
-@Mapper
-public interface SystemConfigMapper extends BaseCrudMapper<SystemConfig> {
+@Getter
+@Setter
+@Accessors(chain = true)
+public class SystemConfigVO extends SystemConfig {
+    private static final long serialVersionUID = -1032238711168691001L;
+
+    /**
+     * 属性标签
+     */
+    private String propLabel;
+
+    /**
+     * 默认值
+     */
+    private Object defaultValue;
+
+    /**
+     * 选项集
+     */
+    private Set<String> options;
+
+    /**
+     * 是否必填
+     */
+    private boolean required;
+
+    /**
+     * 序号
+     */
+    private int ordinal;
 
 }
-

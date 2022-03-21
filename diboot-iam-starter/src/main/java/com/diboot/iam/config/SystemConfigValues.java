@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.config;
+package com.diboot.iam.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.entity.SystemConfig;
-import com.diboot.core.service.SystemConfigService;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
+import com.diboot.iam.entity.SystemConfig;
+import com.diboot.iam.service.SystemConfigService;
 
 import java.util.List;
 import java.util.Map;

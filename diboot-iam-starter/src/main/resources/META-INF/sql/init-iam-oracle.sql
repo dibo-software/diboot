@@ -352,3 +352,31 @@ comment on column ${SCHEMA}.iam_user_position.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_user_position is '用户岗位关联';
 create index idx_iam_user_position on ${SCHEMA}.iam_user_position (user_type, user_id);
 create index idx_iam_user_position_pos on ${SCHEMA}.iam_user_position (position_id);
+
+-- 系统配置表
+create table ${SCHEMA}.system_config
+(
+    id NUMBER (20) generated as identity ( start with 10000 nocycle noorder),
+    tenant_id NUMBER (20) default 0 not null,
+    type VARCHAR2 (50) not null,
+    prop VARCHAR2 (50) not null,
+    value VARCHAR2 (255),
+    is_deleted NUMBER (1) default 0 not null,
+    create_time TIMESTAMP default CURRENT_TIMESTAMP not null,
+    update_time timestamp default CURRENT_TIMESTAMP null,
+    constraint PK_system_config primary key (id)
+);
+-- 添加备注
+comment on column ${SCHEMA}.system_config.id is 'ID';
+comment on column ${SCHEMA}.system_config.tenant_id is '租户ID';
+comment on column ${SCHEMA}.system_config.type is '类型';
+comment on column ${SCHEMA}.system_config.prop is '属性';
+comment on column ${SCHEMA}.system_config.value is '属性值';
+comment on column ${SCHEMA}.system_config.is_deleted is '删除标记';
+comment on column ${SCHEMA}.system_config.create_time is '创建时间';
+comment on column ${SCHEMA}.system_config.update_time is '更新时间';
+
+comment on table ${SCHEMA}.system_config is '系统配置';
+-- 创建索引
+create index idx_system_config on ${SCHEMA}.system_config (type, prop);
+create index idx_system_config_tenant on ${SCHEMA}.system_config (tenant_id);

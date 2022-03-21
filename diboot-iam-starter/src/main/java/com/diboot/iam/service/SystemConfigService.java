@@ -13,11 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.service;
+package com.diboot.iam.service;
 
-import com.diboot.core.entity.SystemConfig;
+import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.LabelValue;
-import com.diboot.core.vo.SystemConfigVO;
+import com.diboot.iam.entity.SystemConfig;
+import com.diboot.iam.vo.SystemConfigVO;
 
 import java.util.List;
 import java.util.Map;

@@ -342,3 +342,31 @@ comment on column iam_user_position.update_time is '更新时间';
 comment on table iam_user_position is '用户岗位关联';
 create index idx_iam_user_position on iam_user_position (user_type, user_id);
 create index idx_iam_user_position_pos on iam_user_position (position_id);
+
+-- 系统配置表
+create table system_config
+(
+    id          bigserial   not null,
+    tenant_id   bigint      not null default 0,
+    type        VARCHAR(50) not null,
+    prop        VARCHAR(50) not null,
+    value       VARCHAR(255),
+    is_deleted  BOOLEAN     not null default FALSE,
+    create_time timestamp   not null default CURRENT_TIMESTAMP,
+    update_time timestamp   null default CURRENT_TIMESTAMP,
+    constraint PK_system_config primary key (id)
+);
+-- 添加备注
+comment on column system_config.id is 'ID';
+comment on column system_config.tenant_id is '租户ID';
+comment on column system_config.type is '类型';
+comment on column system_config.prop is '属性';
+comment on column system_config.value is '属性值';
+comment on column system_config.is_deleted is '删除标记';
+comment on column system_config.create_time is '创建时间';
+comment on column system_config.update_time is '更新时间';
+
+comment on table system_config is '系统配置';
+-- 创建索引
+create index idx_system_config on system_config (type, prop);
+create index idx_system_config_tenant on system_config (tenant_id);

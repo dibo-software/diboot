@@ -13,26 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.config;
+package com.diboot.iam.mapper;
 
-import com.diboot.core.exception.BusinessException;
+import com.diboot.core.mapper.BaseCrudMapper;
+import com.diboot.iam.entity.SystemConfig;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * <h3>系统配置测试</h3>
- * 用于配置枚举类继承，实现测试方法
+ * 系统配置Mapper
  *
  * @author wind
  * @version v2.5.0
- * @date 2022/01/13
+ * @date 2022-01-13
  */
-public interface SystemConfigTest<T> {
-
-    /**
-     * <h3>测试</h3>
-     * 可使用{@link BusinessException} 抛出运行时异常提示
-     *
-     * @param data 测试数据
-     */
-    void test(T data);
+@Mapper
+public interface SystemConfigMapper extends BaseCrudMapper<SystemConfig> {
 
 }
+

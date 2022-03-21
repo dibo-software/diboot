@@ -211,3 +211,20 @@ create table iam_user_position
 comment '用户岗位关联';
 create index idx_iam_user_position on iam_user_position (user_type, user_id);
 create index idx_iam_user_position_2 on iam_user_position (org_id, position_id);
+
+-- 系统配置表
+CREATE TABLE `system_config`
+(
+    `id`          bigint(20) UNSIGNED             NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `tenant_id`   bigint(20)                      NOT NULL DEFAULT 0 COMMENT '租户ID',
+    `type`        varchar(50) CHARACTER SET utf8  NOT NULL COMMENT '类型',
+    `prop`        varchar(50) CHARACTER SET utf8  NOT NULL COMMENT '属性',
+    `value`       varchar(255) CHARACTER SET utf8 NULL     DEFAULT NULL COMMENT '属性值',
+    `is_deleted`  tinyint(1)                      NOT NULL DEFAULT 0 COMMENT '删除标记',
+    `create_time` datetime                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime                       NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `idx_system_config_tenant_id` (`tenant_id`) USING BTREE,
+    INDEX `idx_system_config` (`type`, `prop`) USING BTREE
+) AUTO_INCREMENT = 10000
+  DEFAULT CHARSET = utf8 COMMENT = '系统配置';
