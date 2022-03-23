@@ -102,7 +102,6 @@
 				justify-content: space-between;
 				.card-content__title {
 					position: relative;
-					padding-right: 40px;
 					font-size: 28rpx;
 					font-weight: 400;
 					color: #333;
