@@ -9,16 +9,16 @@
 		data() {
 			return {
 				list: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						bgColor:'#ffa4b4',
+						image: require('@/static/images/1.png'),
+						// bgColor:'#ffa4b4',
 					},
 					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						bgColor:'skyblue',
+						image: require('@/static/images/2.png'),
+						// bgColor:'skyblue',
 					},
 					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						bgColor:'#74ca74',
+						image: require('@/static/images/3.png'),
+						// bgColor:'#74ca74',
 					}
 				],
 			}

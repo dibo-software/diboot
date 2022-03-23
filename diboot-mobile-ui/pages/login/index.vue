@@ -19,7 +19,7 @@
 				<u-icon @click="weiLogin" size="90" name="weixin-circle-fill" color="rgb(83,194,64)"></u-icon>
 			</view>
 		</view>
-		<u-top-tips ref="uTips" navbar-height="0"></u-top-tips>
+		<u-top-tips ref="uTips" navbar-height="0"/>
 	</view>
 </template>
 

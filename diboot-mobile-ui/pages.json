@@ -14,32 +14,39 @@
 			"path": "pages/home/home",
 			"style": {
 				"navigationBarTitleText": "首页",
-				"enablePullDownRefresh": false
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
 			}
-
-		}, {
-			"path": "pages/personal/personal",
+		},
+		{
+			"path": "pages/component-page/index",
 			"style": {
-				"navigationBarTitleText": "我的",
+				"navigationBarTitleText": "组件",
 				"enablePullDownRefresh": false
 			}
 
 		},{
-			"path": "pages/demo/list",
+			"path": "pages/component-page/crud/list",
 			"style": {
 				"navigationBarTitleText": "列表",
 				"navigationStyle": "custom"
 			}
 		},{
-			"path": "pages/demo/detail",
+			"path": "pages/component-page/crud/detail",
 			"style": {
 				"navigationBarTitleText": "详细",
 				"enablePullDownRefresh": false
 			}
 		},{
-			"path": "pages/demo/form",
+			"path": "pages/component-page/crud/form",
 			"style": {
 				"navigationBarTitleText": "表单",
+				"enablePullDownRefresh": false
+			}
+		},{
+			"path": "pages/personal/personal",
+			"style": {
+				"navigationBarTitleText": "个人中心",
 				"enablePullDownRefresh": false
 			}
 		}
@@ -54,6 +61,11 @@
 			"iconPath": "static/images/home.png",
 			"selectedIconPath": "static/images/home_selected.png",
 			"text": "首页"
+		},{
+			"pagePath": "pages/component-page/index",
+			"iconPath": "static/images/component.png",
+			"selectedIconPath": "static/images/component_selected.png",
+			"text": "组件"
 		}, {
 			"pagePath": "pages/personal/personal",
 			"iconPath": "static/images/personal.png",

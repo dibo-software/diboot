@@ -32,37 +32,24 @@
 			return {
 				list: [{
 						id: 1,
-						title: '内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
+						title: '卡片组件-大图',
+						imageList: [require('@/static/images/3.png')],
+						date: '2022-03-22 10:27',
 						mode: 'pictureCard'
 					},
 					{
 						id: 2,
-						title: '内容2',
-						imageList: [require('@/static/logo.png'), require('@/static/logo.png'), require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
-						mode: 'multiple'
-					},
-					{
-						id: 3,
-						title: '内容3',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
+						title: '卡片组件-小图',
+						imageList: [require('@/static/images/2.png')],
+						date: '2022-03-22 10:27',
 						mode: 'card'
 					},
 					{
-						id: 4,
-						title: '内容4',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
+						id: 3,
+						title: '卡片组件-多图',
+						imageList: [require('@/static/images/1.png'), require('@/static/images/2.png')],
+						date: '2022-03-22 10:27',
 						mode: 'multiple'
-					},
-					{
-						id: 5,
-						title: '内容5',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27'
 					}
 				]
 			}
@@ -98,7 +85,7 @@
 			justify-content: space-between;
 
 			&-title {
-				font-size: 32rpx;
+				font-size: 28rpx;
 				font-weight: bold;
 			}
 		}
