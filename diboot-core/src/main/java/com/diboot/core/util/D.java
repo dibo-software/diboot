@@ -358,6 +358,7 @@ public class D extends DateUtils{
 
 	/**
 	 * 转换耗时毫秒数为 d,h,m,s显示文本
+	 * @param duration 时长毫秒数
 	 */
 	public static String formatDurationLabel(Long duration) {
 		if (duration == null) {
