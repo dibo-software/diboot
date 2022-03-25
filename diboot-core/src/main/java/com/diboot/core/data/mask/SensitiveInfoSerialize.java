@@ -15,8 +15,10 @@
  */
 package com.diboot.core.data.mask;
 
-import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.annotation.ProtectField;
+import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.ContextHelper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -42,23 +44,38 @@ import java.util.stream.Collectors;
 public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements ContextualSerializer {
 
     /**
-     * 脱敏策略
+     * 保护字段处理器
      */
-    private IMaskStrategy maskStrategy;
+    private ProtectFieldHandler protectFieldHandler;
+
+    /**
+     * Class类型
+     */
+    private Class<?> clazz;
+
+    /**
+     * 属性名
+     */
+    private String fieldName;
 
     public SensitiveInfoSerialize() {
     }
 
-    public SensitiveInfoSerialize(Class<? extends IMaskStrategy> clazz) {
-        this.maskStrategy = ParserCache.getMaskStrategy(clazz);
+    public SensitiveInfoSerialize(Class<?> clazz, String fieldName) {
+        this.protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
+        if (protectFieldHandler == null) {
+            throw new InvalidUsageException("未注入 ProtectFieldHandler 实现");
+        }
+        this.clazz = clazz;
+        this.fieldName = fieldName;
     }
 
     @Override
     public void serialize(E value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         if (value instanceof List) {
-            gen.writeObject(((List<String>) value).stream().map(e -> maskStrategy.mask(e)).collect(Collectors.toList()));
+            gen.writeObject(((List<String>) value).stream().map(e -> protectFieldHandler.mask(clazz, fieldName, e)).collect(Collectors.toList()));
         } else {
-            gen.writeObject(maskStrategy.mask((String) value));
+            gen.writeObject(protectFieldHandler.mask(clazz, fieldName, (String) value));
         }
     }
 
@@ -74,7 +91,7 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
                 protect = property.getContextAnnotation(ProtectField.class);
             }
             if (null != protect) {
-                return new SensitiveInfoSerialize(protect.mask());
+                return new SensitiveInfoSerialize(property.getMember().getDeclaringClass(), property.getName());
             }
         } else {
             log.error("`@ProtectField` 只支持 String 与 List<String> 类型脱敏！");

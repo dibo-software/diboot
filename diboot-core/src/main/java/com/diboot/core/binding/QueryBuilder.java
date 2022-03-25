@@ -29,9 +29,9 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.encrypt.IEncryptStrategy;
+import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.PropertiesUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
@@ -45,6 +45,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +57,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unchecked", "rawtypes", "JavaDoc"})
 public class QueryBuilder {
     private static Logger log = LoggerFactory.getLogger(QueryBuilder.class);
-    private static final boolean ENABLE_DATA_PROTECT = PropertiesUtils.getBoolean("diboot.core.enable-data-protect");
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
@@ -167,15 +167,12 @@ public class QueryBuilder {
         BiPredicate<Object, BindQuery> ignoreEmpty = (value, bindQuery) -> bindQuery != null &&
                 (Strategy.IGNORE_EMPTY.equals(bindQuery.strategy()) && value instanceof String && S.isEmpty((String) value) // 忽略空字符串""
                         || Comparison.IN.equals(bindQuery.comparison()) && V.isEmpty(value)); // 忽略空集合
-        // 查找加密策略
-        BiFunction<BindQuery, String, IEncryptStrategy> findEncryptStrategy = (bindQuery, defFieldName) -> {
-            if (ENABLE_DATA_PROTECT) {
-                Class<?> clazz = bindQuery == null || bindQuery.entity() == NullType.class ? dto.getClass() : bindQuery.entity();
-                String fieldName = bindQuery == null || S.isEmpty(bindQuery.field()) ? defFieldName : bindQuery.field();
-                return ParserCache.getFieldEncryptorMap(clazz).get(fieldName);
-            }
-            return null;
-        };
+        // 获取Class类型
+        Function<BindQuery, Class<?>> getClass = bindQuery -> bindQuery == null || bindQuery.entity() == NullType.class ? dto.getClass() : bindQuery.entity();
+        // 获取属性名类型
+        BiFunction<BindQuery, String, String> getFieldName = (bindQuery, defFieldName) -> bindQuery == null || S.isEmpty(bindQuery.field()) ? defFieldName : bindQuery.field();
+        // 保护字段处理器
+        ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
         // 构建QueryWrapper
         for (Map.Entry<String, FieldAndValue> entry : fieldValuesMap.entrySet()) {
             FieldAndValue fieldAndValue = entry.getValue();
@@ -197,20 +194,32 @@ public class QueryBuilder {
                 List<BindQuery> bindQueryList = Arrays.stream(queryList.value()).filter(e -> !ignoreEmpty.test(value, e)).collect(Collectors.toList());
                 wrapper.and(V.notEmpty(bindQueryList), queryWrapper -> {
                     for (BindQuery bindQuery : bindQueryList) {
-                        IEncryptStrategy encryptor = findEncryptStrategy.apply(bindQuery, entry.getKey());
-                        Comparison comparison = encryptor == null ? bindQuery.comparison() : Comparison.EQ;
                         String columnName = buildColumnName.apply(bindQuery, field);
-                        buildQuery(queryWrapper.or(), comparison, columnName, encryptor == null ? value : encryptor.encrypt(value.toString()));
+                        if (protectFieldHandler != null) {
+                            Class<?> clazz = getClass.apply(query);
+                            String fieldName = getFieldName.apply(query, entry.getKey());
+                            if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
+                                buildQuery(queryWrapper.or(), Comparison.EQ, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                                continue;
+                            }
+                        }
+                        buildQuery(queryWrapper.or(), bindQuery.comparison(), columnName, value);
                     }
                 });
             } else {
                 if (ignoreEmpty.test(value, query)) {
                     continue;
                 }
-                IEncryptStrategy encryptor = findEncryptStrategy.apply(query, entry.getKey());
-                Comparison comparison = query != null && encryptor == null ? query.comparison() : Comparison.EQ;
                 String columnName = buildColumnName.apply(query, field);
-                buildQuery(wrapper, comparison, columnName, encryptor == null ? value : encryptor.encrypt(value.toString()));
+                if (protectFieldHandler != null){
+                    Class<?> clazz = getClass.apply(query);
+                    String fieldName = getFieldName.apply(query, entry.getKey());
+                    if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
+                        buildQuery(wrapper, Comparison.EQ, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                        continue;
+                    }
+                }
+                buildQuery(wrapper, query != null ? query.comparison() : Comparison.EQ, columnName, value);
             }
         }
         return wrapper;
