@@ -24,6 +24,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,7 @@ public class JwtUtils {
             }
         }
         catch (Exception e){
-            log.warn("token解析异常", e);
+            log.warn("token解析异常\n{}", ExceptionUtils.getRootCauseMessage(e));
         }
         return null;
     }
