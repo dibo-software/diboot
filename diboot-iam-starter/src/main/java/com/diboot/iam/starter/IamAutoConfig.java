@@ -94,9 +94,10 @@ public class IamAutoConfig {
 
     /**
      * 配置securityManager
+     *
      * @return
      */
-    @Bean(name="shiroSecurityManager")
+    @Bean(name = "shiroSecurityManager")
     @ConditionalOnMissingBean
     public SessionsSecurityManager shiroSecurityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -107,6 +108,7 @@ public class IamAutoConfig {
 
     /**
      * 配置ShiroFilter
+     *
      * @return
      */
     @Bean
@@ -144,7 +146,7 @@ public class IamAutoConfig {
             //详情见org.apache.shiro.mgt.DefaultSubjectDAO#save
             DefaultWebSessionStorageEvaluator webEvalutator = new DefaultWebSessionStorageEvaluator();
             webEvalutator.setSessionStorageEnabled(false);
-            ((DefaultSubjectDAO)defaultWebSecurityManager.getSubjectDAO())
+            ((DefaultSubjectDAO) defaultWebSecurityManager.getSubjectDAO())
                     .setSessionStorageEvaluator(webEvalutator);
         }
         shiroFilterFactoryBean.setFilters(filters);
@@ -177,7 +179,7 @@ public class IamAutoConfig {
             }
         }
         filterChainMap.put("/login", "authc");
-        if (anonUrls.contains("/**") && !iamProperties.isEnablePermissionCheck()) {
+        if (V.notEmpty(anonUrls) && anonUrls.contains("/**") && !iamProperties.isEnablePermissionCheck()) {
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "jwt");
