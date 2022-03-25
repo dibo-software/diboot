@@ -38,27 +38,27 @@ import java.util.List;
  */
 @Slf4j
 @DisallowConcurrentExecution
-@CollectThisJob(name = "清除过期操作日志", paramJson = "{\"daysBefore\":30}", cron = "* * 1 * * ?")
+@CollectThisJob(name = "清除过期操作日志", paramJson = "{\"daysBefore\":30}", cron = "0 0 1 * * ?")
 public class ClearOperationLogJob extends QuartzJobBean {
     /**
      * 清理过期日志的SQL示例
      */
     private static final String SQL = "DELETE FROM iam_operation_log WHERE create_time <= ?";
+    private static final String PARAM_KEY_DAYS_BEFORE = "daysBefore";
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         // 获取参数
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
         int days = 30;
-        if(jobDataMap.containsKey("daysBefore")){
-            days = jobDataMap.getInt("daysBefore");
+        if (jobDataMap.containsKey(PARAM_KEY_DAYS_BEFORE)) {
+            days = jobDataMap.getInt(PARAM_KEY_DAYS_BEFORE);
         }
-        List params = new ArrayList(1);
-        params.add(D.getDate(new Date(), 0 - days));
-        try{
+        List<Object> params = new ArrayList<>(1);
+        params.add(D.getDate(new Date(), -days));
+        try {
             SqlExecutor.executeUpdate(SQL, params);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("ClearOperationLogJob执行异常", e);
             throw new JobExecutionException(e);
         }

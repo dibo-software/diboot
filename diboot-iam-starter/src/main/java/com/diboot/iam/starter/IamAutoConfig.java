@@ -53,8 +53,9 @@ import java.util.Set;
  *
  * @author : uu
  * @version : v2.0
- * @Date 2019-10-11  10:54
+ * @date 2019-10-11  10:54
  */
+@SuppressWarnings("JavaDoc")
 @Slf4j
 @Order(922)
 @Configuration
@@ -169,18 +170,14 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/2step-code", "anon");
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
-        boolean allAnon = false;
         Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
             for (String url : anonUrls) {
                 filterChainMap.put(url, "anon");
-                if (url.equals("/**")) {
-                    allAnon = true;
-                }
             }
         }
         filterChainMap.put("/login", "authc");
-        if (allAnon && !iamProperties.isEnablePermissionCheck()) {
+        if (anonUrls.contains("/**") && !iamProperties.isEnablePermissionCheck()) {
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "jwt");
@@ -195,7 +192,7 @@ public class IamAutoConfig {
      *
      * @author : uu
      * @version : v1.0
-     * @Date 2020/11/19  11:06
+     * @date 2020/11/19  11:06
      */
     static class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
 
