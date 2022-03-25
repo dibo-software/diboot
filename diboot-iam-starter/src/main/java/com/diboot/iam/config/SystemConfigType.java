@@ -184,7 +184,7 @@ public interface SystemConfigType {
          * @return
          */
         public String get(E prop) {
-            return S.getIfEmpty(valueMap.get(prop.name()), () -> S.valueOf(((SystemConfigType) prop).buildDefaultValue()));
+            return valueMap.computeIfAbsent(prop.name(), k -> S.valueOf(((SystemConfigType) prop).buildDefaultValue()));
         }
 
         /**
