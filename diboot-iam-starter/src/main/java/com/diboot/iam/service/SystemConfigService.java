@@ -63,4 +63,22 @@ public interface SystemConfigService extends BaseService<SystemConfig> {
      * @param data 数据
      */
     void configTest(String type, Map<String, Object> data);
+
+    /**
+     * 查找配置值
+     *
+     * @param type 类型
+     * @param prop 属性名
+     * @return 值
+     */
+    String findConfigValue(String type, String prop);
+
+    /**
+     * 根据类型获取配置映射
+     *
+     * @param type 类型
+     * @return 配置值映射
+     */
+    Map<String, String> getConfigMapByType(String type);
+
 }

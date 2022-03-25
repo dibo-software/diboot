@@ -15,15 +15,13 @@
  */
 package com.diboot.iam.config;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.PropertiesUtils;
 import com.diboot.core.util.S;
-import com.diboot.iam.entity.SystemConfig;
 import com.diboot.iam.service.SystemConfigService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -110,10 +108,8 @@ public interface SystemConfigType {
      * @return
      */
     default String getValue() {
-        LambdaQueryWrapper<SystemConfig> queryWrapper = Wrappers.<SystemConfig>lambdaQuery()
-                .eq(SystemConfig::getType, this.getClass().getSimpleName()).eq(SystemConfig::getProp, this.name());
-        SystemConfig info = ContextHelper.getBean(SystemConfigService.class).getSingleEntity(queryWrapper);
-        return S.getIfEmpty(info == null ? null : info.getValue(), () -> S.valueOf(buildDefaultValue()));
+        String value = ContextHelper.getBean(SystemConfigService.class).findConfigValue(this.getClass().getSimpleName(), this.name());
+        return value == null ? S.valueOf(buildDefaultValue()) : value;
     }
 
     /**
@@ -130,7 +126,7 @@ public interface SystemConfigType {
      *
      * @return
      */
-    default boolean getValueBoolean() {
+    default boolean getBoolean() {
         return S.toBoolean(getValue());
     }
 
@@ -139,7 +135,7 @@ public interface SystemConfigType {
      *
      * @return
      */
-    default Integer getValueInteger() {
+    default Integer getInteger() {
         return S.toInt(getValue());
     }
 
@@ -150,9 +146,90 @@ public interface SystemConfigType {
      * @param <T>
      * @return
      */
-    default <T extends Enum<T>> T getValueEnum(Class<T> clazz) {
+    default <T extends Enum<T>> T getEnum(Class<T> clazz) {
         String value = getValue();
         return S.isBlank(value) ? null : Enum.valueOf(clazz, value.trim());
+    }
+
+    /**
+     * 构建指定类型的配置值映射
+     *
+     * @param typeClass 配置类型class
+     * @param <E>       配置类型
+     * @return 指定类型配置值映射
+     */
+    static <E extends Enum<? extends SystemConfigType>> Values<E> values(Class<E> typeClass) {
+        return new Values<E>(ContextHelper.getBean(SystemConfigService.class).getConfigMapByType(typeClass.getSimpleName()));
+    }
+
+    /**
+     * 单类型配置值映射
+     * <p>
+     * 用于获取同类型获取配置值减少查询
+     */
+    class Values<E extends Enum<? extends SystemConfigType>> {
+        /**
+         * 值映射
+         */
+        private final Map<String, String> valueMap;
+
+        private Values(Map<String, String> valueMap) {
+            this.valueMap = valueMap;
+        }
+
+        /**
+         * 获取值
+         *
+         * @param prop
+         * @return
+         */
+        public String get(E prop) {
+            return S.getIfEmpty(valueMap.get(prop.name()), () -> S.valueOf(((SystemConfigType) prop).buildDefaultValue()));
+        }
+
+        /**
+         * 获取字符串列表（逗号切分）
+         *
+         * @param prop
+         * @return
+         */
+        public List<String> getList(E prop) {
+            return S.splitToList(get(prop));
+        }
+
+        /**
+         * 获取布尔类型值
+         *
+         * @param prop
+         * @return
+         */
+        public boolean geBoolean(E prop) {
+            return S.toBoolean(get(prop));
+        }
+
+        /**
+         * 获取整数类型值
+         *
+         * @param prop
+         * @return
+         */
+        public Integer getInteger(E prop) {
+            return S.toInt(get(prop));
+        }
+
+        /**
+         * 获取指定类型枚举值
+         *
+         * @param clazz
+         * @param prop
+         * @param <T>
+         * @return 枚举值
+         */
+        public <T extends Enum<T>> T getEnum(Class<T> clazz, E prop) {
+            String value = get(prop);
+            return S.isBlank(value) ? null : Enum.valueOf(clazz, value.trim());
+        }
+
     }
 
 }

@@ -20,10 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.SystemConfigInjection;
 import com.diboot.iam.config.SystemConfigTest;
@@ -57,7 +54,7 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
     private List<SystemConfigInjection> configInjections;
 
     private final List<LabelValue> configTypeList = new ArrayList<>();
-    private final Map<String, List<Enum<? extends SystemConfigType>>> configTypeMapLait = new HashMap<>();
+    private final Map<String, List<Enum<? extends SystemConfigType>>> configItemListMap = new HashMap<>();
     private final Map<String, SystemConfigTest<?>> configTypeTestMap = new HashMap<>();
     private final Map<String, Class<?>> configTestDataClassMap = new HashMap<>();
 
@@ -85,7 +82,7 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
                     labelValue.setExt(BeanUtils.extractAllFields(testDataClass).stream().map(Field::getName).collect(Collectors.toSet()));
                 }
                 configTypeList.add(labelValue);
-                configTypeMapLait.put(type, Arrays.asList(enumConstants));
+                configItemListMap.put(type, Arrays.asList(enumConstants));
             }
         }
     }
@@ -115,13 +112,13 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
 
     @Override
     public List<SystemConfigVO> getConfigByType(String type) {
-        if (!configTypeMapLait.containsKey(type)) {
+        if (!configItemListMap.containsKey(type)) {
             return Collections.emptyList();
         }
         LambdaQueryWrapper<SystemConfig> queryWrapper = Wrappers.<SystemConfig>lambdaQuery().eq(SystemConfig::getType, type);
         Map<String, SystemConfigVO> configInfoMap = this.getViewObjectList(queryWrapper, null, SystemConfigVO.class)
                 .stream().collect(Collectors.toMap(SystemConfig::getProp, e -> e));
-        return configTypeMapLait.get(type).stream().map(item -> {
+        return configItemListMap.get(type).stream().map(item -> {
             SystemConfigType configProp = (SystemConfigType) item;
             Object defaultValue = configProp.buildDefaultValue();
             return configInfoMap.getOrDefault(item.name(), new SystemConfigVO() {{
@@ -132,7 +129,7 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
     }
 
     @Override
-    public boolean deleteByTypeAndProp(String type,String prop) {
+    public boolean deleteByTypeAndProp(String type, String prop) {
         LambdaQueryWrapper<SystemConfig> queryWrapper = Wrappers.<SystemConfig>lambdaQuery()
                 .eq(SystemConfig::getType, type).eq(V.notEmpty(prop), SystemConfig::getProp, prop);
         return this.deleteEntities(queryWrapper);
@@ -146,6 +143,20 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
         }
         Class<?> testDataClass = configTestDataClassMap.get(type);
         systemConfigTest.test(Object.class.equals(testDataClass) ? null : JSON.parseObject(JSON.stringify(data), testDataClass));
+    }
+
+    @Override
+    public String findConfigValue(String type, String prop) {
+        SystemConfig info = this.getSingleEntity(Wrappers.<SystemConfig>lambdaQuery()
+                .eq(SystemConfig::getType, type).eq(SystemConfig::getProp, prop));
+        return info == null ? null : info.getValue();
+    }
+
+    @Override
+    public Map<String, String> getConfigMapByType(String type) {
+        return getEntityList(Wrappers.<SystemConfig>lambdaQuery()
+                .select(SystemConfig::getProp, SystemConfig::getValue).eq(SystemConfig::getType, type))
+                .stream().collect(Collectors.toMap(SystemConfig::getProp, SystemConfig::getValue));
     }
 
 }
