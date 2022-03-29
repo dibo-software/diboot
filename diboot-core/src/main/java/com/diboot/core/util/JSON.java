@@ -16,6 +16,7 @@
 package com.diboot.core.util;
 
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.exception.InvalidUsageException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -48,29 +49,9 @@ public class JSON {
         if(objectMapper != null){
             return objectMapper;
         }
-        // 获取全局的ObjectMapper, 避免重复配置
-        MappingJackson2HttpMessageConverter jacksonMessageConvertor = ContextHelper.getBean(MappingJackson2HttpMessageConverter.class);
-        if(jacksonMessageConvertor != null){
-            objectMapper = jacksonMessageConvertor.getObjectMapper();
-            log.debug("初始化ObjectMapper完成（复用全局定义）");
-        }
-        else{
-            objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            // 设置时区和日期转换
-            String defaultDatePattern = BaseConfig.getProperty("spring.jackson.date-format", D.FORMAT_DATETIME_Y4MDHMS);
-            SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
-                @Override
-                public Date parse(String dateStr) {
-                    return D.fuzzyConvert(dateStr);
-                }
-            };
-            objectMapper.setDateFormat(dateFormat);
-            String timeZone = BaseConfig.getProperty("spring.jackson.time-zone", "GMT+8");
-            objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
-            // 不存在的属性，不转化，否则报错：com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            log.debug("初始化ObjectMapper完成（new新实例）");
+        objectMapper = ContextHelper.getBean(ObjectMapper.class);
+        if(objectMapper == null){
+            throw new InvalidUsageException("未找到 ObjectMapper实例，请检查配置类！");
         }
         return objectMapper;
     }
