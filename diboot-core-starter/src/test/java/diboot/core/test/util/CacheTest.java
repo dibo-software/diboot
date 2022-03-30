@@ -20,7 +20,8 @@ import com.diboot.core.entity.Dictionary;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * V校验工具类测试

@@ -17,8 +17,8 @@ package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.data.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
+import com.diboot.core.data.copy.AcceptAnnoCopier;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.LabelValue;

@@ -16,7 +16,10 @@
 package diboot.core.test.util;
 
 import com.diboot.core.entity.Dictionary;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import org.junit.Assert;
 import org.junit.Test;
 
