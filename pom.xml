@@ -27,10 +27,10 @@
     </modules>
 
     <properties>
-        <hibernate-validator.version>6.2.2.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
         <okhttp.version>4.9.3</okhttp.version>
-        <aspectjweaver.version>1.9.8</aspectjweaver.version>
+        <aspectjweaver.version>1.9.9</aspectjweaver.version>
         <commons-io.version>2.11.0</commons-io.version>
         <diboot.version>2.5.0</diboot.version>
     </properties>
