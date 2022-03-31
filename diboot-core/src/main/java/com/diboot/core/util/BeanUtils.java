@@ -388,7 +388,7 @@ public class BeanUtils {
      * @return
      */
     public static <T> List<T> buildTree(List<T> allNodes){
-        return buildTree(allNodes, 0);
+        return buildTree(allNodes, 0L);
     }
 
     /***
