@@ -144,6 +144,7 @@ export default {
 		 * @returns {Promise<void>}
 		 */
 		async onSubmit() {
+			this.confirmSubmit = true
 			uni.showLoading({
 			    title: '提交中...'
 			});
@@ -170,6 +171,7 @@ export default {
 				console.log(e)
 			} finally {
 				uni.hideLoading()
+				this.confirmSubmit = false
 			}
 		},
 		/** *
