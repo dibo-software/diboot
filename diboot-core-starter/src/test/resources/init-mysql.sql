@@ -14,7 +14,7 @@ CREATE TABLE `dictionary` (
     `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
     `is_deletable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否可删',
     `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '数据字典';
 
@@ -28,7 +28,7 @@ create table department
     extdata varchar(100) null comment '扩展字段',
     `character` varchar(100) null comment '关键字',
     is_deleted tinyint(1) default 0 not null comment '已删除',
-    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间'
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 )
     comment '部门' charset=utf8mb4;
 
@@ -41,7 +41,7 @@ create table organization
     telphone varchar(20) null comment '电话',
     manager_id bigint not null comment '负责人id',
     is_deleted tinyint(1) default 0 not null comment '是否有效',
-    create_time timestamp default CURRENT_TIMESTAMP not null comment '创建时间'
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 )
     comment '单位' charset=utf8mb4;
 
@@ -51,7 +51,7 @@ create table role
     name varchar(20) null,
     code varchar(20) null,
     is_deleted tinyint(1) default 0 null,
-    create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间'
+    create_time datetime default CURRENT_TIMESTAMP null comment '创建时间'
 ) comment '角色' charset=utf8mb4;
 
 create table user
@@ -63,7 +63,7 @@ create table user
     birthdate date null,
     `character` varchar(100) null comment '关键字',
     is_deleted tinyint(1) default 0 null,
-    create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间',
+    create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
     local_datetime datetime null comment '本地时间'
 ) comment '用户' charset=utf8mb4;
 
@@ -86,8 +86,8 @@ create table cc_city_info
 CREATE TABLE `db_goods_goods_info` (
                                        `goods_id` bigint DEFAULT NULL,
                                        `goods_nm` varchar(10) DEFAULT NULL,
-                                       `create_ts` timestamp default CURRENT_TIMESTAMP null,
-                                       `update_ts`  timestamp null,
+                                       `create_ts` datetime default CURRENT_TIMESTAMP null,
+                                       `update_ts`  datetime null,
                                        `is_del` tinyint DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -95,8 +95,8 @@ CREATE TABLE `db_purchase_rel_plan_goods` (
                                               `rel_id` bigint DEFAULT NULL,
                                               `purchase_form_plan_id` bigint DEFAULT NULL,
                                               `goods_id` bigint DEFAULT NULL,
-                                              `create_ts` timestamp default CURRENT_TIMESTAMP null,
-                                              `update_ts`  timestamp null,
+                                              `create_ts` datetime default CURRENT_TIMESTAMP null,
+                                              `update_ts`  datetime null,
                                               `is_del` tinyint DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -104,8 +104,8 @@ CREATE TABLE `db_purchase_form_plan` (
                                          `purchase_form_plan_id` bigint DEFAULT NULL,
                                          `name` varchar(100) DEFAULT NULL,
                                          `is_del` tinyint DEFAULT '0',
-                                         `create_ts` timestamp default CURRENT_TIMESTAMP null,
-                                         `update_ts`  timestamp null
+                                         `create_ts` datetime default CURRENT_TIMESTAMP null,
+                                         `update_ts`  datetime null
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 上传文件表
@@ -119,7 +119,7 @@ CREATE TABLE test_upload_file (
                                   access_url varchar(200) NULL COMMENT '访问地址',
                                   file_type varchar(20) DEFAULT NULL COMMENT '文件类型',
                                   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
-                                  create_time  timestamp   default CURRENT_TIMESTAMP not null comment '创建时间'
+                                  create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
 ) DEFAULT CHARSET=utf8 COMMENT='测试uuid';
 
 -- playground.demo_test definition
@@ -139,8 +139,8 @@ CREATE TABLE `demo_test` (
                              `data_file` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据文件',
                              `file_test` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单文件',
                              `create_by` bigint DEFAULT '0' COMMENT '创建人',
-                             `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                             `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                             `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Demo测试';
 
 -- playground.demo_test_join definition
@@ -151,7 +151,7 @@ CREATE TABLE `demo_test_join` (
                                   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
                                   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
                                   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-                                  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
 
 -- 初始化样例数据
@@ -166,8 +166,9 @@ INSERT INTO cc_city_info (id, parent_id, region_id, region_name) VALUES (10000, 
 INSERT INTO db_goods_goods_info (goods_id, goods_nm, is_del) VALUES(1001, 'abcde', 0), (1002, 'abcd', 0);
 INSERT INTO db_purchase_rel_plan_goods(rel_id, purchase_form_plan_id, goods_id, is_del)VALUES(1, 1, 1001, 0), (2, 1, 1002, 0);
 INSERT INTO db_purchase_form_plan(purchase_form_plan_id, name, is_del)VALUES(1, '5月份采购计划', 0);
-INSERT INTO test_upload_file(uuid, rel_obj_type, rel_obj_id, file_name, access_url, storage_path) values
-                                                                                                      ('test123456', 'IamUser', 1001, '123456.jpg', 'http://www.baidu.com', '/temp'),('test234567', 'IamUser', 1002, '234567.jpg', 'http://www.baidu.com', '/temp');
+INSERT INTO test_upload_file(uuid, rel_obj_type, rel_obj_id, file_name, access_url, storage_path)
+values ('test123456', 'IamUser', 1001, '123456.jpg', 'http://www.baidu.com', '/temp'),
+       ('test234567', 'IamUser', 1001, '234567.jpg', 'http://www.baidu.com', '/temp');
 
 INSERT INTO demo_test
 (id, is_deleted, name, age, id_card, mobile_phone, email, sex, birthday, sss_img, mmm_img, data_file, file_test, create_by)

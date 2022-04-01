@@ -1,6 +1,5 @@
 package com.diboot.iam.dto;
 
-import com.diboot.core.data.encrypt.IEncryptStrategy;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.function.Function;
 
 /**
  * 加密认证
@@ -38,10 +38,10 @@ public class EncryptCredential implements Serializable {
      *
      * @return
      */
-    public <T extends AuthCredential> T getAuthCredential(IEncryptStrategy encryptor, Class<? extends AuthCredential> authCredentialCls) {
+    public <T extends AuthCredential> T getAuthCredential(Function<String, String> decrypt, Class<T> authCredentialCls) {
         try {
-            String decryptContent = encryptor.decrypt(ciphertext);
-            T result = (T) JSON.parseObject(decryptContent, authCredentialCls);
+            String decryptContent = decrypt.apply(ciphertext);
+            T result = JSON.parseObject(decryptContent, authCredentialCls);
             String errMsg = V.validateBeanErrMsg(result);
             if (V.notEmpty(errMsg)) {
                 throw new BusinessException(Status.FAIL_INVALID_PARAM, errMsg);

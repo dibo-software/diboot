@@ -32,37 +32,24 @@
 			return {
 				list: [{
 						id: 1,
-						title: '内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1内容1',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
+						title: 'diboot 是一套全新的基于"坚固地基(基础框架)+高效脚手架(devtools代码生成工具)"的低代码开发平台，致力于解决开发的质量效率和可维护难题。',
+						imageList: [require('@/static/images/diboot/diboot-lowcode.jpeg')],
+						date: '2022-03-22 10:27',
 						mode: 'pictureCard'
 					},
 					{
 						id: 2,
-						title: '内容2',
-						imageList: [require('@/static/logo.png'), require('@/static/logo.png'), require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
-						mode: 'multiple'
-					},
-					{
-						id: 3,
-						title: '内容3',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
+						title: 'diboot-cloud，基于diboot spring boot版本打造，将diboot的优势延伸到微服务开发场景。',
+						imageList: [require('@/static/images/diboot/diboot-cloud.jpeg')],
+						date: '2022-03-22 10:27',
 						mode: 'card'
 					},
 					{
-						id: 4,
-						title: '内容4',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27',
+						id: 3,
+						title: '结合diboot平台的架构设计经验优势，匠心打磨出了 diboot-workflow 项目，助力企业客户基于我们的源码，跳过沼泽地，高效无风险落地流程审批业务。',
+						imageList: [require('@/static/images/diboot/diboot-workflow.png'), require('@/static/images/diboot/diboot-workflow2.png')],
+						date: '2022-03-22 10:27',
 						mode: 'multiple'
-					},
-					{
-						id: 5,
-						title: '内容5',
-						imageList: [require('@/static/logo.png')],
-						date: '2021-11-22 10:27'
 					}
 				]
 			}
@@ -98,7 +85,7 @@
 			justify-content: space-between;
 
 			&-title {
-				font-size: 32rpx;
+				font-size: 28rpx;
 				font-weight: bold;
 			}
 		}

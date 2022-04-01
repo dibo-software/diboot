@@ -11,7 +11,7 @@ CREATE TABLE ${SCHEMA}.message_template (
      is_deleted   NUMBER(1) DEFAULT 0    not null,
      create_time  timestamp default CURRENT_TIMESTAMP   not null,
      create_by NUMBER(20) DEFAULT 0 NOT NULL,
-     update_time  timestamp   null,
+     update_time  timestamp   default CURRENT_TIMESTAMP null,
      constraint PK_message_template primary key (id)
 );
 -- 添加备注
@@ -51,7 +51,7 @@ CREATE TABLE ${SCHEMA}.message (
   ext_data VARCHAR2(200),
   is_deleted   NUMBER(1) DEFAULT 0    not null,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
-  update_time  timestamp   null,
+  update_time  timestamp default CURRENT_TIMESTAMP null,
   constraint PK_message primary key (id)
 );
 comment on column ${SCHEMA}.message.id is 'ID';

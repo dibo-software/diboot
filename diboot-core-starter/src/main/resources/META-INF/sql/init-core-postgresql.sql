@@ -1,4 +1,4 @@
--- 建表
+-- 字典表
 create table dictionary (
      id                   bigserial not null,
      parent_id            bigint        not null,

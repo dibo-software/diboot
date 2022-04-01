@@ -18,8 +18,6 @@ package com.diboot.mobile.service;
 import com.diboot.core.service.BaseService;
 import com.diboot.mobile.entity.IamMember;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 移动端用户service
  *

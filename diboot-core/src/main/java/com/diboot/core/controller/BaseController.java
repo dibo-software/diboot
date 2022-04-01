@@ -21,7 +21,9 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.PropInfo;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.dto.AttachMoreDTO;
 import com.diboot.core.entity.ValidList;
@@ -29,6 +31,7 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -240,8 +243,8 @@ public class BaseController {
 		for (AttachMoreDTO attachMoreDTO : attachMoreDTOList) {
 			// 请求参数安全检查
 			V.securityCheck(attachMoreDTO.getTarget(), attachMoreDTO.getValue(), attachMoreDTO.getLabel(), attachMoreDTO.getExt());
-			result.computeIfAbsent(S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options", key -> V.isEmpty(attachMoreDTO.getLabel()) ?
-					attachMoreRelatedData(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
+			result.computeIfAbsent(S.getIfEmpty(attachMoreDTO.getAlias(), () -> S.toLowerCaseCamel(attachMoreDTO.getTarget()) + "Options"),
+					key -> V.isEmpty(attachMoreDTO.getLabel()) ? attachMoreRelatedData(attachMoreDTO.getTarget()) : attachMoreRelatedData(attachMoreDTO));
 		}
 		return result;
 	}
@@ -316,7 +319,14 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	protected List<LabelValue> attachMoreRelatedData(AttachMoreDTO attachMore, String parentValue) {
-		String entityClassName = S.capFirst(S.toLowerCaseCamel(attachMore.getTarget()));
+		if (!attachMoreSecurityCheck(attachMore)) {
+			log.warn("attachMore安全检查不通过: {}", JSON.stringify(attachMore));
+			return null;
+		}
+		if (V.notEmpty(parentValue) && !attachMore.isTree() && V.isEmpty(attachMore.getParent())) {
+			throw new BusinessException("attachMore跨表级联中的 " + attachMore.getTarget() + " 未指定关联父级属性 parent: ?");
+		}
+		String entityClassName = attachMore.getTargetClassName();
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
 			throw new BusinessException("attachMore: " + attachMore.getTarget() + " 不存在");
@@ -345,20 +355,8 @@ public class BaseController {
 		QueryWrapper<?> queryWrapper = Wrappers.query()
 				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
 				.like(V.notEmpty(attachMore.getKeyword()), label, attachMore.getKeyword());
-		// 解析排序
-		if (V.notEmpty(attachMore.getOrderBy())) {
-			String[] orderByFields = S.split(attachMore.getOrderBy(), ",");
-			for (String field : orderByFields) {
-				V.securityCheck(field);
-				String[] fieldAndOrder = field.split(":");
-				String columnName = field2column.apply(fieldAndOrder[0]);
-				if (fieldAndOrder.length > 1 && Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
-					queryWrapper.orderByDesc(columnName);
-				} else {
-					queryWrapper.orderByAsc(columnName);
-				}
-			}
-		}
+		// 构建排序
+        WrapperHelper.buildOrderBy(queryWrapper, attachMore.getOrderBy(), field2column);
 		// 父级限制
 		String parentColumn = field2column.apply(S.defaultIfBlank(attachMore.getParent(), attachMore.isTree() ? "parentId" : null));
 		if (V.notEmpty(parentColumn)) {
@@ -372,6 +370,9 @@ public class BaseController {
 		buildAttachMoreCondition(attachMore, queryWrapper, field2column);
 		// 获取数据并做相应填充
 		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper);
+		if (V.isEmpty(attachMore.getKeyword()) && labelValueList.size() > BaseConfig.getBatchSize()) {
+			log.warn("attachMore: {} 数据量超过 {} 条, 建议采用远程搜索接口过滤数据", entityClassName, BaseConfig.getBatchSize());
+		}
 		if (V.notEmpty(parentColumn) || attachMore.getNext() != null) {
 			Boolean leaf = !attachMore.isTree() && attachMore.getNext() == null ? true : null;
 			// 第一层tree与最后一层无需返回type
@@ -380,7 +381,7 @@ public class BaseController {
 				item.setType(type);
 				item.setLeaf(leaf);
 				// 非异步加载
-				if (!attachMore.isLazy()) {
+				if (!Boolean.TRUE.equals(leaf) && !attachMore.isLazy()) {
 					List<LabelValue> children = attachMoreRelatedData(attachMore, S.valueOf(item.getValue()), type);
 					item.setChildren(children.isEmpty() ? null : children);
 					item.setDisabled(children.isEmpty() && attachMore.getNext() != null ? true : null);
@@ -389,6 +390,16 @@ public class BaseController {
 		}
 		return labelValueList;
 	}
+
+    /**
+     * attachMore 安全检查
+     *
+     * @param attachMore
+     * @return 是否允许访问该类型接口
+     */
+    protected boolean attachMoreSecurityCheck(AttachMoreDTO attachMore) {
+		return true;
+    }
 
 	/**
 	 * 构建AttachMore的筛选条件

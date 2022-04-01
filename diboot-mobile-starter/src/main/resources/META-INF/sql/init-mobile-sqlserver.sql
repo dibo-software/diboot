@@ -19,7 +19,7 @@ CREATE TABLE iam_member (
     is_deleted   tinyint not null DEFAULT 0,
     create_by bigint DEFAULT 0 NOT NULL,
     create_time  datetime default CURRENT_TIMESTAMP   not null,
-    update_time  datetime   null,
+    update_time  datetime default CURRENT_TIMESTAMP  null,
     constraint PK_iam_member primary key (id)
 );
 -- 添加备注

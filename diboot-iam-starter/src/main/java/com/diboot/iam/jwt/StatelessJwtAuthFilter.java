@@ -80,7 +80,7 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
                 JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
             }
             // 构建登陆的token
-            if(IamSecurityUtils.getSubject().isAuthenticated() == false){
+            if(IamSecurityUtils.getSubject().isAuthenticated() == false || refreshToken != null){
                 // tenantId,account,userTypeClass,authType,60
                 String[] subjectDetail = subject.split(Cons.SEPARATOR_COMMA);
                 BaseJwtAuthToken baseJwtAuthToken = new BaseJwtAuthToken();

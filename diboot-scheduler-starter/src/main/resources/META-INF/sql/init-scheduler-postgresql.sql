@@ -11,10 +11,9 @@ CREATE TABLE schedule_job (
   save_log     BOOLEAN default TRUE    not null,
   job_comment      VARCHAR(200),
   is_deleted   BOOLEAN default FALSE   not null,
-  create_time  timestamp default CURRENT_TIMESTAMP   not null,
   create_by bigint DEFAULT 0 NOT NULL,
-  create_by_name VARCHAR(50),
-  update_time  timestamp   null
+  create_time  timestamp default CURRENT_TIMESTAMP   not null,
+  update_time  timestamp default CURRENT_TIMESTAMP  null
 );
 comment on column schedule_job.id is 'ID';
 comment on column schedule_job.tenant_id is '租户ID';
@@ -26,11 +25,10 @@ comment on column schedule_job.init_strategy is '初始化策略';
 comment on column schedule_job.job_status is '状态';
 comment on column schedule_job.job_comment is '备注';
 comment on column schedule_job.save_log is '是否记录日志';
-comment on column schedule_job.create_by is '创建人';
-comment on column schedule_job.create_by_name is '创建人名称';
-comment on column schedule_job.update_time is '更新时间';
 comment on column schedule_job.is_deleted is '是否删除';
+comment on column schedule_job.create_by is '创建人';
 comment on column schedule_job.create_time is '创建时间';
+comment on column schedule_job.update_time is '更新时间';
 comment on table schedule_job is '定时任务';
 create index idx_schedule_job on schedule_job (job_key);
 create index idx_schedule_job_tenant on schedule_job (tenant_id);

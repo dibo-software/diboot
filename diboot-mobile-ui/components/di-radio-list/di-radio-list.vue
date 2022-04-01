@@ -8,10 +8,10 @@
 
 <script>
 	/**
-	* di-radio-list radio列表
-	* @description radio列表组，基于uview，适应与diboot接口的radio列表
+	* di-radio-list 单选列表
+	* @description 单选列表组件，基于uview，适应与diboot接口的radio列表
 	* @property  {String}  activeColor 激活时候的颜色
-	* @property  {String Boolean}  value 支持字符串和布尔值
+	* @property  {String Boolean, Number}  value 支持字符串、布尔、数字
 	* @property  {Array}  list 传入labelValue列表
 	*/
 	export default {
@@ -37,7 +37,7 @@
 		},
 		props: {
 			value: {
-				type: [String, Boolean],
+				type: [String, Boolean, Number],
 				require: true
 			},
 			list: {

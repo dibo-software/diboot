@@ -53,6 +53,7 @@
 			},
 			value: {
 				type: [String, Number],
+				require: true
 			},
 			ellipsis: {
 				type: Boolean,

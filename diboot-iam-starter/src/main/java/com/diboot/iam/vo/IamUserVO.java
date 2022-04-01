@@ -39,8 +39,6 @@ import java.util.List;
 public class IamUserVO extends IamUser {
     private static final long serialVersionUID = 7571698765478647277L;
 
-    private String username;
-
     @BindField(entity = IamOrg.class, field = "shortName", condition = "this.org_id=id")
     private String orgShortName;
 
@@ -50,7 +48,7 @@ public class IamUserVO extends IamUser {
     @BindDict(type="USER_STATUS", field = "status")
     private String statusLabel;
 
-    // 字段关联：this.id=iam_user_role.user_id AND iam_user_role.role_id=id
-    @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id")
+    // 字段关联：this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'
+    @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'")
     private List<IamRole> roleList;
 }

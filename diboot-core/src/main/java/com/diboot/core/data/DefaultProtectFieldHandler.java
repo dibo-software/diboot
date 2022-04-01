@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,21 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data.mask;
+package com.diboot.core.data;
 
+import com.diboot.core.util.Encryptor;
 import com.diboot.core.util.S;
 
 /**
- * 脱敏策略默认实现
+ * 保护字段默认处理器
  *
  * @author wind
- * @version v2.3.1
- * @date 2021/08/19
+ * @version v2.5.0
+ * @date 2022/03/25
  */
-public class DefaultMaskStrategy implements IMaskStrategy {
+public class DefaultProtectFieldHandler implements ProtectFieldHandler {
 
     @Override
-    public String mask(String content) {
+    public String encrypt(Class<?> clazz, String fieldName, String content) {
+        return Encryptor.encrypt(content, fieldName);
+    }
+
+    @Override
+    public String decrypt(Class<?> clazz, String fieldName, String content) {
+        return Encryptor.decrypt(content, fieldName);
+    }
+
+    @Override
+    public String mask(Class<?> clazz, String fieldName, String content) {
         if (S.isBlank(content)) {
             return S.EMPTY;
         }

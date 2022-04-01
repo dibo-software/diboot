@@ -15,7 +15,10 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,6 +39,11 @@ import java.util.Date;
 @Getter @Setter @Accessors(chain = true)
 public class IamUser extends BaseLoginUser {
     private static final long serialVersionUID = -8462352695775599715L;
+    /**
+     * 更改id为雪花
+     */
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
      * 租户ID
@@ -92,6 +100,12 @@ public class IamUser extends BaseLoginUser {
     // 头像
     @TableField()
     private String avatarUrl;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
 
     @Override
     public String getDisplayName() {

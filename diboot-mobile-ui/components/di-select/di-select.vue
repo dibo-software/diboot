@@ -8,12 +8,13 @@
 
 <script>
 	/**
-	 * 选择框
+	 * di-select选择框
+	 * @description select列表组件，基于u-select，适配form
 	 * @property {Number String Array} value 可以使用v-model双向绑定
 	 * @property {String} placeholder 提示信息
 	 * @property {Array} list select展示的列表数据，与u-select的list保持一直
 	 * @property {String} mode = [single-column|mutil-column|mutil-column-auto] 模式选择，"single-column"-单列模式，"mutil-column"-多列模式，"mutil-column-auto"-多列联动模式
-	 * @event {Function} confirm 点击确定按钮，返回当前选择的值
+	 * @event {Function} confirm 点击确定按钮，返回u-select#confirm事件保持一致
 	 */
 	export default {
 		data() {

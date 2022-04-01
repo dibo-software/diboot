@@ -23,12 +23,12 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
+import com.diboot.scheduler.service.QuartzSchedulerService;
 import com.diboot.scheduler.starter.SchedulerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -41,8 +41,7 @@ import java.util.*;
  * @date 2020/11/27
  */
 @Slf4j
-@Service
-public class QuartzSchedulerService {
+public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
     @Autowired
     private SchedulerProperties schedulerProperties;
 
@@ -82,6 +81,7 @@ public class QuartzSchedulerService {
      *
      * @return
      */
+    @Override
     public List<Map<String, Object>> loadAllJobs() {
         if (V.notEmpty(CACHE_JOB)) {
             return CACHE_JOB;
@@ -135,6 +135,7 @@ public class QuartzSchedulerService {
      *
      * @return
      */
+    @Override
     public List<Map<String, Object>> loadJobsInScheduler() {
         List<Map<String, Object>> jobList = null;
         try {
@@ -168,6 +169,7 @@ public class QuartzSchedulerService {
      *
      * @param job
      */
+    @Override
     public void addJob(ScheduleJob job) {
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
         // 构建参数
@@ -199,6 +201,7 @@ public class QuartzSchedulerService {
      *
      * @param job
      */
+    @Override
     public void addJobExecuteOnce(ScheduleJob job) {
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getId().toString());
         // 构建参数
@@ -223,6 +226,7 @@ public class QuartzSchedulerService {
      *
      * @param jobId
      */
+    @Override
     public void runJob(Long jobId) {
         try {
             scheduler.triggerJob(JobKey.jobKey(jobId.toString()));
@@ -236,6 +240,7 @@ public class QuartzSchedulerService {
      *
      * @param jobId
      */
+    @Override
     public void pauseJob(Long jobId) {
         try {
             scheduler.pauseJob(JobKey.jobKey(jobId.toString()));
@@ -249,6 +254,7 @@ public class QuartzSchedulerService {
      *
      * @param jobId
      */
+    @Override
     public void resumeJob(Long jobId) {
         try {
             scheduler.resumeJob(JobKey.jobKey(jobId.toString()));
@@ -262,6 +268,7 @@ public class QuartzSchedulerService {
      *
      * @param jobId
      */
+    @Override
     public void deleteJob(Long jobId) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
@@ -279,6 +286,7 @@ public class QuartzSchedulerService {
      * @param jobId
      * @param cron  定时表达式
      */
+    @Override
     public void updateJobCron(Long jobId, String cron) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
@@ -299,6 +307,7 @@ public class QuartzSchedulerService {
      *
      * @return
      */
+    @Override
     public boolean existJob(Long jobId) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {

@@ -1,4 +1,4 @@
--- 建表
+-- 字典表
 create table ${SCHEMA}.dictionary (
    id                   bigint                  identity,
    parent_id            bigint               not null,

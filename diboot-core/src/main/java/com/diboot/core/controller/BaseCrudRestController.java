@@ -17,6 +17,7 @@ package com.diboot.core.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.service.BaseService;
@@ -42,16 +43,13 @@ import java.util.Map;
  * @version 2.0
  * @date 2019/01/01
  */
+@SuppressWarnings({"unchecked", "JavaDoc"})
 public class BaseCrudRestController<E extends AbstractEntity> extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(BaseCrudRestController.class);
     /**
      * Entity，VO对应的class
      */
     private Class<E> entityClass;
-    /**
-     * Service实现类
-     */
-    private BaseService baseService;
 
     /**
      * 查询ViewObject，用于子类重写的方法
@@ -60,9 +58,9 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    protected <VO> JsonResult getViewObject(Serializable id, Class<VO> voClass) throws Exception {
-        VO vo = (VO) getService().getViewObject(id, voClass);
-        return new JsonResult(vo);
+    protected <VO> JsonResult<VO> getViewObject(Serializable id, Class<VO> voClass) throws Exception {
+        VO vo = getService().getViewObject(id, voClass);
+        return ok(vo);
     }
 
     /**
@@ -71,8 +69,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    protected <E> E getEntity(Serializable id) throws Exception {
-        return (E) getService().getEntity(id);
+    protected E getEntity(Serializable id) throws Exception {
+        return getService().getEntity(id);
     }
 
     /***
@@ -83,7 +81,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return JsonResult
      * @throws Exception
      */
-    protected <VO> JsonResult getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
+    protected <VO> JsonResult<List<VO>> getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
         QueryWrapper<E> queryWrapper = super.buildQueryWrapperByQueryParams(entity);
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
@@ -99,7 +97,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return JsonResult
      * @throws Exception
      */
-    protected <VO> JsonResult getViewObjectList(E entity, Pagination pagination, Class<VO> voClass, boolean buildQueryWrapperByDTO) throws Exception {
+    protected <VO> JsonResult<List<VO>> getViewObjectList(E entity, Pagination pagination, Class<VO> voClass, boolean buildQueryWrapperByDTO) throws Exception {
         //DTO全部属性参与构建时调用
         QueryWrapper<E> queryWrapper = buildQueryWrapperByDTO ? super.buildQueryWrapperByDTO(entity) : super.buildQueryWrapperByQueryParams(entity);
         // 查询当前页的数据
@@ -115,9 +113,9 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    protected JsonResult getEntityList(Wrapper queryWrapper) throws Exception {
+    protected JsonResult<List<E>> getEntityList(Wrapper<?> queryWrapper) throws Exception {
         // 查询当前页的数据
-        List entityList = getService().getEntityList(queryWrapper);
+        List<E> entityList = getService().getEntityList(queryWrapper);
         // 返回结果
         return JsonResult.OK(entityList);
     }
@@ -130,9 +128,9 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult getEntityListWithPaging(Wrapper queryWrapper, Pagination pagination) throws Exception {
+    protected JsonResult<List<E>> getEntityListWithPaging(Wrapper<?> queryWrapper, Pagination pagination) throws Exception {
         // 查询当前页的数据
-        List entityList = getService().getEntityList(queryWrapper, pagination);
+        List<E> entityList = getService().getEntityList(queryWrapper, pagination);
         // 返回结果
         return JsonResult.OK(entityList).bindPagination(pagination);
     }
@@ -143,7 +141,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult createEntity(E entity) throws Exception {
+    protected JsonResult<?> createEntity(E entity) throws Exception {
         // 执行创建资源前的操作
         String validateResult = this.beforeCreate(entity);
         if (validateResult != null) {
@@ -160,7 +158,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         } else {
             log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
             // 组装返回结果
-            return new JsonResult(Status.FAIL_OPERATION);
+            return failOperation();
         }
     }
 
@@ -170,7 +168,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return JsonResult
      * @throws Exception
      */
-    protected JsonResult updateEntity(Serializable id, E entity) throws Exception {
+    protected JsonResult<?> updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
         if (entity.getId() == null) {
             String pk = ContextHelper.getIdFieldName(getEntityClass());
@@ -195,7 +193,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         } else {
             log.warn("更新操作失败，{}:{}", entity.getClass().getSimpleName(), entity.getId());
             // 返回操作结果
-            return new JsonResult(Status.FAIL_OPERATION);
+            return failOperation();
         }
     }
 
@@ -205,16 +203,16 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    protected JsonResult deleteEntity(Serializable id) throws Exception {
+    protected JsonResult<?> deleteEntity(Serializable id) throws Exception {
         if (id == null) {
-            return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
+            return failInvalidParam( "请选择需要删除的条目！");
         }
         // 是否有权限删除
-        E entity = (E) getService().getEntity(id);
+        E entity = getService().getEntity(id);
         String validateResult = beforeDelete(entity);
         if (validateResult != null) {
             // 返回json
-            return new JsonResult(Status.FAIL_OPERATION, validateResult);
+            return failOperation(validateResult);
         }
         // 执行删除操作
         boolean success = getService().deleteEntity(id);
@@ -225,7 +223,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             return JsonResult.OK();
         } else {
             log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
-            return new JsonResult(Status.FAIL_OPERATION);
+            return failOperation();
         }
     }
 
@@ -235,17 +233,17 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    public JsonResult cancelDeletedEntity(Serializable id) throws Exception {
+    public JsonResult<?> cancelDeletedEntity(Serializable id) throws Exception {
         boolean success = getService().cancelDeletedById(id);
-        E entity = null;
+        E entity;
         if (success) {
-            entity = (E) getService().getEntity(id);
+            entity = getService().getEntity(id);
             this.afterDeletedCanceled(entity);
             log.info("撤回删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
             return JsonResult.OK("撤回成功");
         } else {
-            log.warn("撤回删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
-            return JsonResult.FAIL_OPERATION("撤回失败");
+            log.warn("撤回删除操作未成功，{}:{}", getEntityClass().getSimpleName(), id);
+            return failOperation("撤回失败");
         }
     }
 
@@ -255,15 +253,15 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      * @throws Exception
      */
-    protected JsonResult batchDeleteEntities(Collection<? extends Serializable> ids) throws Exception {
+    protected JsonResult<?> batchDeleteEntities(Collection<? extends Serializable> ids) throws Exception {
         if (V.isEmpty(ids)) {
-            return new JsonResult(Status.FAIL_INVALID_PARAM, "请选择需要删除的条目！");
+            return failInvalidParam("请选择需要删除的条目！");
         }
         // 是否有权限删除
         String validateResult = beforeBatchDelete(ids);
         if (validateResult != null) {
             // 返回json
-            return new JsonResult(Status.FAIL_OPERATION, validateResult);
+            return failOperation(validateResult);
         }
         // 执行删除操作
         boolean success = getService().deleteEntities(ids);
@@ -271,10 +269,10 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             // 执行更新成功后的操作
             this.afterBatchDeleted(ids);
             log.info("删除操作成功，{}:{}", getEntityClass().getSimpleName(), S.join(ids));
-            return new JsonResult();
+            return ok();
         } else {
             log.warn("删除操作未成功，{}:{}", getEntityClass().getSimpleName(), S.join(ids));
-            return new JsonResult(Status.FAIL_OPERATION);
+            return failOperation();
         }
     }
 
@@ -291,6 +289,36 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         Object pkValue = (Cons.FieldName.id.name().equals(pk)) ? entity.getId() : BeanUtils.getProperty(entity, pk);
         data.put(pk, pkValue);
         return data;
+    }
+
+    //============= 封装部分快速构造返回结果的方法 =================
+
+    protected JsonResult<?> ok() {
+        return JsonResult.OK();
+    }
+
+    protected <T> JsonResult<T> ok(T data) {
+        return JsonResult.OK(data);
+    }
+
+    protected JsonResult<?> failOperation() {
+        return new JsonResult<>(Status.FAIL_OPERATION);
+    }
+
+    protected JsonResult<?> failOperation(String msg) {
+        return JsonResult.FAIL_OPERATION(msg);
+    }
+
+    protected JsonResult<?> failInvalidParam() {
+        return new JsonResult<>(Status.FAIL_INVALID_PARAM);
+    }
+
+    protected JsonResult<?> failInvalidParam(String msg) {
+        return JsonResult.FAIL_INVALID_PARAM(msg);
+    }
+
+    protected JsonResult<?> fail(Status status, String msg) {
+        return new JsonResult<>(status).msg(msg);
     }
 
     //============= 供子类继承重写的方法 =================
@@ -318,6 +346,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      */
     protected String beforeUpdate(E entityOrDto) throws Exception {
+        BeanUtils.clearFieldValue(entityOrDto, BindingCacheManager.getPropInfoByClass(getEntityClass()).getFillUpdateFieldList());
         return null;
     }
 
@@ -376,17 +405,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      *
      * @return
      */
-    protected BaseService getService() {
-        if (this.baseService == null) {
-            Class<E> clazz = getEntityClass();
-            if (clazz != null) {
-                this.baseService = ContextHelper.getBaseServiceByEntity(clazz);
-            }
-            if (this.baseService == null) {
-                log.warn("Entity: {} 无对应的Service定义，请检查！", clazz.getName());
-            }
-        }
-        return this.baseService;
+    protected BaseService<E> getService() {
+        return ContextHelper.getBaseServiceByEntity(getEntityClass());
     }
 
     /**

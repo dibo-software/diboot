@@ -16,7 +16,6 @@
 package com.diboot.core.binding.binder;
 
 import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
@@ -63,12 +62,10 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         if(V.isEmpty(refObjJoinCols)){
             throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
-        // 构建跨模块绑定DTO
-        RemoteBindDTO remoteBindDTO = V.isEmpty(this.module)? null : new RemoteBindDTO(referencedEntityClass);
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){
-            super.simplifySelectColumns(remoteBindDTO);
-            super.buildQueryWrapperJoinOn(remoteBindDTO);
+            super.simplifySelectColumns();
+            super.buildQueryWrapperJoinOn();
             // 查询条件为空时不进行查询
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
@@ -100,7 +97,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.isEmpty(middleTableResultMap)){
                 return;
             }
-            super.simplifySelectColumns(remoteBindDTO);
+            super.simplifySelectColumns();
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             if(V.notEmpty(this.splitBy)){
@@ -127,7 +124,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             }
             String refObjJoinOnField = toRefObjField(refObjJoinOnCol);
             // 转换entity列表为Map<ID, Entity>
-            Map<String, T> entityMap = BeanUtils.convertToStringKeyObjectMap(entityList, refObjJoinOnField);
+            Map<String, List<T>> entityMap = BeanUtils.convertToStringKeyObjectListMap(entityList, refObjJoinOnField);
             for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
                 // List<roleId>
                 List annoObjFKList = entry.getValue();
@@ -140,15 +137,19 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                         continue;
                     }
                     String valStr = String.valueOf(obj);
-                    T ent = entityMap.get(valStr);
+                    List<T> ent = entityMap.get(valStr);
                     if(ent != null){
-                        valueList.add(cloneOrConvertBean(ent));
+                        for (T item : ent) {
+                            valueList.add(cloneOrConvertBean(item));
+                        }
                     }
                     else if(V.notEmpty(splitBy) && valStr.contains(splitBy)){
                         for(String key : valStr.split(splitBy)){
                             ent = entityMap.get(key);
                             if(ent != null){
-                                valueList.add(cloneOrConvertBean(ent));
+                                for (T item : ent) {
+                                    valueList.add(cloneOrConvertBean(item));
+                                }
                             }
                         }
                     }

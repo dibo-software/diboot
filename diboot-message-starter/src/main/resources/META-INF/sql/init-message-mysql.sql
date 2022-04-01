@@ -10,8 +10,8 @@ CREATE TABLE `message_template` (
   `ext_data` varchar(500) DEFAULT NULL COMMENT '扩展数据',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_by` bigint DEFAULT '0' COMMENT '创建人',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '消息模版';
 -- 索引
 create index idx_msg_tmpl_tenant on message_template (tenant_id);
@@ -31,11 +31,11 @@ CREATE TABLE `message` (
   `channel` varchar(30) NOT NULL COMMENT '发送通道',
   `status` varchar(30) NOT NULL COMMENT '消息状态',
   `result` varchar(200) DEFAULT NULL COMMENT '发送结果',
-  `schedule_time` timestamp NULL DEFAULT NULL COMMENT '定时发送时间',
+  `schedule_time` datetime NULL DEFAULT NULL COMMENT '定时发送时间',
   `ext_data` varchar(500) DEFAULT NULL COMMENT '扩展数据',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '消息';
 -- 索引
 create index idx_msg_tenant on message (tenant_id);

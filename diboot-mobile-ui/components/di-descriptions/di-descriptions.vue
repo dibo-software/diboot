@@ -25,7 +25,7 @@
 <script>
 	/**
 	* di-descriptions 描述列表
-	* @description 描述列表，用于展示label value的值，比如对象详细页面等。 搭配 di-descriptions-item
+	* @description 描述列表，用于展示label value的值，常见于详情页的信息展示。 搭配 di-descriptions-item
 	* @property {String slot} title 头部信息，也可以使用插槽
 	* @property {String slot} right 插槽
 	* @property {Boolean} border 是否显示边框（默认false）

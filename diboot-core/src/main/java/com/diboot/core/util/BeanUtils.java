@@ -17,8 +17,8 @@ package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.data.copy.AcceptAnnoCopier;
 import com.diboot.core.config.Cons;
+import com.diboot.core.data.copy.AcceptAnnoCopier;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.LabelValue;
@@ -242,6 +242,8 @@ public class BeanUtils {
             }
             ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
             return LocalDateTime.class.equals(type) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
+        } else if (Serializable.class.isAssignableFrom(type)) {
+            return JSON.parseObject(valueStr, type);
         }
         return value;
     }
@@ -386,7 +388,7 @@ public class BeanUtils {
      * @return
      */
     public static <T> List<T> buildTree(List<T> allNodes){
-        return buildTree(allNodes, 0);
+        return buildTree(allNodes, 0L);
     }
 
     /***
@@ -868,5 +870,21 @@ public class BeanUtils {
             fields[i] = convertToFieldName(getterFns[i]);
         }
         return fields;
+    }
+
+    /**
+     * 清除属性值值
+     *
+     * @param object        对象
+     * @param fieldNameList 属性名称列表
+     */
+    public static void clearFieldValue(Object object, List<String> fieldNameList) {
+        if (fieldNameList == null) {
+            return;
+        }
+        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+        for (String fieldName : fieldNameList) {
+            wrapper.setPropertyValue(fieldName, null);
+        }
     }
 }

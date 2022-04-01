@@ -39,7 +39,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,8 +48,8 @@ import javax.servlet.http.HttpServletRequest;
  * @version v2.0
  * @date 2019/12/25
  */
-@Service
 @Slf4j
+@Deprecated
 public class SSOAuthServiceImpl implements AuthService {
     @Autowired
     private HttpServletRequest request;

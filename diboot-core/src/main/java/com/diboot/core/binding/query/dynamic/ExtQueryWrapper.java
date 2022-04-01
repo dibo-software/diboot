@@ -89,7 +89,7 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
         this.mainEntityClass = entityClazz;
         IService iService = ContextHelper.getIServiceByEntity(entityClazz);
         if(iService != null){
-            return ServiceAdaptor.queryList(iService, (QueryWrapper)this, pagination, entityClazz);
+            return ServiceAdaptor.queryList(iService, this, pagination, entityClazz);
         }
         else{
             throw new InvalidUsageException("查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());

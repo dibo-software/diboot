@@ -222,6 +222,9 @@ public class TestJoinQuery {
         departmentDTO.setSearch("WW");
         list = QueryBuilder.toDynamicJoinQueryWrapper(departmentDTO).queryList(Department.class);
         Assert.assertTrue(list.size() > 0);
+        departmentDTO.setSearch("").setOrgName("苏州");
+        list = QueryBuilder.toDynamicJoinQueryWrapper(departmentDTO).queryList(Department.class);
+        Assert.assertTrue(list.size() > 5);
     }
 
     @Test

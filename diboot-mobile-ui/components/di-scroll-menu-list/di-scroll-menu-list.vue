@@ -3,7 +3,7 @@
 		<view class="di-scroll-menu-list__item" :style="{'width':menuList.length > 4 ? '23%' : '25%'}" v-for="(menu, index) in menuList"
 			:key="menu.title">
 			<view class="di-scroll-menu-list__item-body" @click="handleClick(menu)">
-				<u-image width="100rpx" height="100rpx" shape="circle" :src="menu.icon"></u-image>
+				<u-image width="64rpx" height="64rpx" :src="menu.icon"></u-image>
 				<text class="u-m-t-24">{{menu.title}}</text>
 			</view>
 		</view>

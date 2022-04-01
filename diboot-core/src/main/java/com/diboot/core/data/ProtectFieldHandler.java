@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,21 +13,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data.mask;
+package com.diboot.core.data;
 
 /**
- * 脱敏策略接口
+ * 保护字段处理器
  *
  * @author wind
- * @version v2.3.1
- * @date 2021/08/19
+ * @version v2.5.0
+ * @date 2022/03/25
  */
-public interface IMaskStrategy {
+public interface ProtectFieldHandler {
+
+    /**
+     * 加密
+     *
+     * @param content 内容
+     * @return 密文
+     */
+    String encrypt(Class<?> clazz, String fieldName, String content);
+
+    /**
+     * 解密
+     *
+     * @param content 内容
+     * @return 明文
+     */
+    String decrypt(Class<?> clazz, String fieldName, String content);
+
     /**
      * 脱敏处理
      *
      * @param content 字符串
      * @return 脱敏之后的字符串
      */
-    String mask(String content);
+    String mask(Class<?> clazz, String fieldName, String content);
+
 }

@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.jwt;
 
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -23,6 +24,7 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.util.JwtUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -62,6 +64,15 @@ public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
             if(refreshToken != null){
                 // 写入response header中
                 JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
+                CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
+                if(cacheManager != null){
+                    // 记录新的token
+                    if(cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
+                        String currentToken = JwtUtils.getRequestToken(httpRequest);
+                        Object cacheVal = cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).get(currentToken);
+                        cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).put(refreshToken, cacheVal);
+                    }
+                }
                 log.debug("返回新的token: {}", refreshToken);
             }
             return true;

@@ -441,4 +441,31 @@ public class S extends StringUtils{
 		}
 		return new String(chars);
 	}
+
+	/**
+	 * 提取token，去除前缀
+	 * @param authToken
+	 * @return
+	 */
+	public static String extractToken(String authToken){
+		if(S.startsWithIgnoreCase(authToken, Cons.TOKEN_PREFIX_BEARER)){
+			authToken = S.substring(authToken, Cons.TOKEN_PREFIX_BEARER.length()).trim();
+		}
+		return authToken;
+	}
+
+	/**
+	 * 格式化字符串，将{}替换为指定值
+	 * @param template 字符串内容
+	 * @param params 参数值
+	 * @return
+	 */
+	public static String format(String template, String... params){
+		if(V.isEmpty(params)){
+			return template;
+		}
+		template = S.replaceChars(template, "{}", "%s");
+		return String.format(template, params);
+	}
+
 }

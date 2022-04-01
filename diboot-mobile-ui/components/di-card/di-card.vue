@@ -1,5 +1,5 @@
 <template>
-	<view class="di-card" @click.native="handleClick">
+	<view class="di-card" :class="{'u-border-bottom' : true}" @click.native="handleClick">
 		<!-- 多图卡片 -->
 		<view v-if="mode === 'multiple'" class="card mode-multiple">
 			<view class="card-content">
@@ -102,8 +102,7 @@
 				justify-content: space-between;
 				.card-content__title {
 					position: relative;
-					padding-right: 40px;
-					font-size: 14px;
+					font-size: 28rpx;
 					font-weight: 400;
 					color: #333;
 					line-height: 1.2;
@@ -120,7 +119,7 @@
 					display: flex;
 					justify-content: flex-end;
 					align-items: center;
-					font-size: 12px;
+					font-size: 24rpx;
 				}
 			}
 			&.mode-multiple {

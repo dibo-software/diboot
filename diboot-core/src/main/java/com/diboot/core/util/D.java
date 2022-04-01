@@ -43,7 +43,7 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_y2Md = "yyMMdd";
 	public static final String FORMAT_DATE_y4 = "yyyy";
 	public static final String FORMAT_DATE_y4Md = "yyyyMMdd";
-	public static final String FORMAT_TIMESTAMP = "yyMMddhhmmss";
+	public static final String FORMAT_TIMESTAMP = "yyMMddHHmmss";
 	public static final String FORMAT_TIME_HHmm = "HH:mm";
 	public static final String FORMAT_TIME_HHmmss = "HH:mm:ss";
 	public static final String FORMAT_DATE_Y4MD = "yyyy-MM-dd";
@@ -358,6 +358,7 @@ public class D extends DateUtils{
 
 	/**
 	 * 转换耗时毫秒数为 d,h,m,s显示文本
+	 * @param duration 时长毫秒数
 	 */
 	public static String formatDurationLabel(Long duration) {
 		if (duration == null) {

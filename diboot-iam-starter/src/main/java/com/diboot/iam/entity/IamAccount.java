@@ -15,7 +15,10 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.iam.config.Cons;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,6 +28,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * 认证用户 Entity定义
@@ -35,6 +39,12 @@ import javax.validation.constraints.NotNull;
 @Getter @Setter @Accessors(chain = true)
 public class IamAccount extends BaseEntity {
     private static final long serialVersionUID = -6825516429612507644L;
+
+    /**
+     * 更改id为雪花
+     */
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
      * 租户ID
@@ -82,4 +92,10 @@ public class IamAccount extends BaseEntity {
     @Length(max = 10, message = "状态长度应小于10")
     @TableField()
     private String status;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
 }

@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<u-swiper :height="300" :list="list" @change="change"></u-swiper>
+		<u-swiper :height="390" :list="list" @change="change"></u-swiper>
 	</view>
 </template>
 
@@ -8,17 +8,18 @@
 	export default {
 		data() {
 			return {
-				list: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						bgColor:'#ffa4b4',
+				list: [
+					{
+						image: require('@/static/images/diboot/diboot-lowcode.jpeg'),
 					},
 					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						bgColor:'skyblue',
+						image: require('@/static/images/diboot/diboot-workflow2.png'),
 					},
 					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						bgColor:'#74ca74',
+						image: require('@/static/images/diboot/diboot-cloud.jpeg'),
+					},
+					{
+						image: require('@/static/images/diboot/diboot-workflow.png'),
 					}
 				],
 			}

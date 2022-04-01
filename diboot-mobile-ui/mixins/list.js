@@ -161,16 +161,23 @@ export default {
 		 * 获取数据列表
 		 */
 		async getList(replace = false) {
-			this.status = 'loading'
-			const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, this.queryParam)
-			if (res.code === 0) {
-				this.list = replace ? res.data : this.list.concat(res.data)
-				this.page = res.page
-				this.page.pageIndex++
-			} else {
-				this.showToast(res.msg)
+			try{
+				this.status = 'loading'
+				const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, this.queryParam)
+				if (res.code === 0) {
+					this.list = replace ? res.data : this.list.concat(res.data)
+					this.page = res.page
+					this.page.pageIndex++
+				} else {
+					this.showToast(res.msg)
+				}
+			}catch(e){
+				//TODO handle the exception
+			} finally {
+				this.triggered = false
+				this.status = (this.list || []).length == this.page.totalCount ? 'nomore' : 'loadmore'
 			}
-			this.triggered = false
+			
 		},
 		/**
 		 * 展示提示

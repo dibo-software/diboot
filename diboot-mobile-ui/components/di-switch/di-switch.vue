@@ -6,7 +6,8 @@
 
 <script>
 	/**
-	 * switch
+	 * di-switch 开关组件
+	 * @description 开关组件，基于u-switch，适配form
 	 * @property {Boolean} value 可以使用v-model双向绑定
 	 */
 	export default {

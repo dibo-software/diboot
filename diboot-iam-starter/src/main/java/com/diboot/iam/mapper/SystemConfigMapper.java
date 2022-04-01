@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,24 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data.encrypt;
+package com.diboot.iam.mapper;
+
+import com.diboot.core.mapper.BaseCrudMapper;
+import com.diboot.iam.entity.SystemConfig;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 加密策略空实现
+ * 系统配置Mapper
  *
  * @author wind
- * @version v2.4.0
- * @date 2021/10/19
+ * @version v2.5.0
+ * @date 2022-01-13
  */
-public class DoNothingEncryptStrategy implements IEncryptStrategy {
+@Mapper
+public interface SystemConfigMapper extends BaseCrudMapper<SystemConfig> {
 
-    @Override
-    public String encrypt(String content) {
-        return content;
-    }
-
-    @Override
-    public String decrypt(String content) {
-        return content;
-    }
 }
+

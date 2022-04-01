@@ -16,7 +16,6 @@
 package com.diboot.core.binding.binder;
 
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
@@ -103,13 +102,11 @@ public class FieldBinder<T> extends BaseBinder<T> {
         if(referencedGetterFieldNameList == null){
             throw new InvalidUsageException("调用错误：字段绑定必须指定字段field");
         }
-        // 构建跨模块绑定DTO
-        RemoteBindDTO remoteBindDTO = V.isEmpty(this.module)? null : new RemoteBindDTO(referencedEntityClass);
         // 直接关联
         if(middleTable == null){
             List<Map<String, Object>> mapList = null;
-            this.simplifySelectColumns(remoteBindDTO);
-            super.buildQueryWrapperJoinOn(remoteBindDTO);
+            this.simplifySelectColumns();
+            super.buildQueryWrapperJoinOn();
             // 查询条件为空时不进行查询
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
@@ -146,7 +143,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             }
             // 收集查询结果values集合
             Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
-            this.simplifySelectColumns(remoteBindDTO);
+            this.simplifySelectColumns();
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
             // 获取匹配结果的mapList
@@ -261,7 +258,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
     }
 
     @Override
-    protected void simplifySelectColumns(RemoteBindDTO remoteBindDTO) {
+    protected void simplifySelectColumns() {
         List<String> selectColumns = new ArrayList<>(8);
         selectColumns.addAll(refObjJoinCols);
         if(V.notEmpty(referencedGetterFieldNameList)){

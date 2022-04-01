@@ -1,4 +1,4 @@
--- 建表
+-- 字典表
 create table ${SCHEMA}.dictionary (
     id                 NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
     parent_id          NUMBER(20)           default 0  not null,
@@ -37,5 +37,3 @@ comment on table ${SCHEMA}.dictionary is '数据字典';
 -- 创建索引
 create index idx_directory on ${SCHEMA}.dictionary (type, item_value);
 create index idx_directory_tenant on ${SCHEMA}.dictionary(tenant_id);
-
-

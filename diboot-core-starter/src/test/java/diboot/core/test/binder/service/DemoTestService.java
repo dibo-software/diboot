@@ -15,11 +15,8 @@
  */
 package diboot.core.test.binder.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.service.impl.BaseServiceImpl;
 import diboot.core.test.binder.entity.DemoTest;
-import diboot.core.test.binder.entity.Role;
 
 /**
  * 角色相关Service

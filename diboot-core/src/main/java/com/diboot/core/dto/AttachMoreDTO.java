@@ -3,6 +3,8 @@ package com.diboot.core.dto;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.entity.Dictionary;
+import com.diboot.core.util.S;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -55,6 +57,12 @@ public class AttachMoreDTO implements Serializable {
      */
     @NotNull(message = "查询类型不能为空！")
     private String target;
+
+    /**
+     * <h3>别名</h3>
+     * 仅在批量获取选项时生效
+     */
+    private String alias;
 
     /**
      * <h3>需要查询的label字段</h3>
@@ -115,5 +123,10 @@ public class AttachMoreDTO implements Serializable {
      * <h3>下一层</h3>
      */
     private AttachMoreDTO next;
+
+    @JsonIgnore
+    public String getTargetClassName(){
+        return S.capFirst(S.toLowerCaseCamel(this.target));
+    }
 
 }

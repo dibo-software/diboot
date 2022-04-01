@@ -1,4 +1,4 @@
--- 建表
+-- 字典表
 CREATE TABLE `dictionary` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
@@ -13,7 +13,7 @@ CREATE TABLE `dictionary` (
   `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
   `is_deletable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可删',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '数据字典';
 -- 创建索引

@@ -12,10 +12,9 @@ create table schedule_job
   save_log     tinyint(1)   default 1                 not null comment '是否记录日志',
   job_comment      varchar(200)  comment '备注',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
-  create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
-  create_by bigint NOT NULL DEFAULT 0 COMMENT '创建人ID',
-  create_by_name varchar(50)        COMMENT '创建人名称',
-  update_time  timestamp   null on update CURRENT_TIMESTAMP comment '更新时间'
+  create_by bigint NOT NULL DEFAULT 0 COMMENT '创建人',
+  create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+  update_time  datetime   null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
 AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务';
 -- 创建索引
@@ -30,14 +29,14 @@ create table schedule_job_log
   job_name  varchar(100)          not null comment 'job名称',
   cron       varchar(50)           comment '定时表达式',
   param_json varchar(200)          comment '参数',
-  start_time timestamp         null comment '开始时间',
-  end_time timestamp          null comment '结束时间',
+  start_time datetime         null comment '开始时间',
+  end_time datetime          null comment '结束时间',
   elapsed_seconds int        comment '耗时(s)',
   run_status       varchar(10)   default 'A'  not null comment '运行状态',
   data_count int        comment '数据计数',
   execute_msg  varchar(500)  not null comment '执行结果信息',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
-  create_time  timestamp    default CURRENT_TIMESTAMP not null comment '创建时间'
+  create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间'
 )
   AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务日志';
 -- 创建索引

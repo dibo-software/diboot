@@ -279,7 +279,7 @@ public class HttpHelper {
             }
         }
         catch (Exception e) {
-            log.error("下载导出文件失败:"+localFile.getAbsolutePath(), e);
+            log.error("下载文件失败:{}", localFile.getAbsolutePath(), e);
         }
         finally {
             if (bis != null) {

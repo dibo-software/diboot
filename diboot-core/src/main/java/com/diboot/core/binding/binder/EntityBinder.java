@@ -15,12 +15,10 @@
  */
 package com.diboot.core.binding.binder;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.annotation.BindEntity;
-import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
 import com.diboot.core.binding.helper.ResultAssembler;
-import com.diboot.core.binding.helper.ServiceAdaptor;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
@@ -101,14 +99,12 @@ public class EntityBinder<T> extends BaseBinder<T> {
         if(V.isEmpty(refObjJoinCols)){
             throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
-        // 构建跨模块绑定DTO
-        RemoteBindDTO remoteBindDTO = V.isEmpty(this.module)? null : new RemoteBindDTO(referencedEntityClass);
         // 直接关联Entity
         if(middleTable == null){
-            this.simplifySelectColumns(remoteBindDTO);
+            this.simplifySelectColumns();
             // @BindEntity(entity = Department.class, condition="this.department_id=id AND this.type=type")
             // Department department;
-            super.buildQueryWrapperJoinOn(remoteBindDTO);
+            super.buildQueryWrapperJoinOn();
             // 查询条件为空时不进行查询
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
@@ -141,7 +137,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             }
             // 结果转换Map
             Map<String, Object> valueEntityMap = new HashMap<>();
-            this.simplifySelectColumns(remoteBindDTO);
+            this.simplifySelectColumns();
             // 提取entity主键值集合
             Collection refObjValues = middleTableResultMap.values().stream().distinct().collect(Collectors.toList());
             // 构建查询条件
@@ -232,9 +228,9 @@ public class EntityBinder<T> extends BaseBinder<T> {
      * 简化select列，仅select必需列
      */
     @Override
-    protected void simplifySelectColumns(RemoteBindDTO remoteBindDTO){
+    protected void simplifySelectColumns() {
         if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
-            queryWrapper = (QueryWrapper<T>) ServiceAdaptor.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
+            WrapperHelper.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
         }
     }
 

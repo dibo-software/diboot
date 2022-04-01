@@ -15,7 +15,10 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -24,6 +27,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * 组织机构 Entity定义
@@ -42,6 +46,12 @@ public class IamOrg extends BaseEntity {
      * 组织树的虚拟根节点 ID
      */
     public static final Long VIRTUAL_ROOT_ID = 0L;
+
+    /**
+     * 更改id为雪花
+     */
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
      * 租户ID
@@ -102,4 +112,10 @@ public class IamOrg extends BaseEntity {
      * 组织备注
      */
     private String orgComment;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime;
 }
