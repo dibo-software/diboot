@@ -120,35 +120,7 @@ public class SqlFileInitializer {
             return false;
         }
         // 解析SQL
-        List<String> sqlStatementList = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        for(String line : sqlFileReadLines){
-            if(line.contains("--")){
-                line = line.substring(0, line.indexOf("--"));
-            }
-            sb.append(" ");
-            if(line.contains(";")){
-                // 语句结束
-                sb.append(line.substring(0, line.indexOf(";")));
-                String cleanSql = buildPureSqlStatement(sb.toString());
-                sqlStatementList.add(cleanSql);
-                sb.setLength(0);
-                if(line.indexOf(";") < line.length()-1){
-                    String leftSql = line.substring(line.indexOf(";")+1);
-                    if(V.notEmpty(leftSql)){
-                        sb.append(leftSql);
-                    }
-                }
-            }
-            else if(V.notEmpty(line)){
-                sb.append(line);
-            }
-        }
-        if(sb.length() > 0){
-            String cleanSql = buildPureSqlStatement(sb.toString());
-            sqlStatementList.add(cleanSql);
-            sb.setLength(0);
-        }
+        List<String> sqlStatementList = extractSqlStatements(sqlFileReadLines);
         // 过滤sql语句
         sqlStatementList = sqlStatementList.stream()
                 .filter(sql -> {
@@ -182,6 +154,45 @@ public class SqlFileInitializer {
                 .collect(Collectors.toList());
         // 返回解析后的SQL语句
         return executeMultipleUpdateSqls(sqlStatementList);
+    }
+
+    /**
+     * 从文件读取到的行提取出SQL语句
+     * @param sqlFileReadLines
+     * @return
+     */
+    public static List<String> extractSqlStatements(List<String> sqlFileReadLines){
+        // 解析SQL
+        List<String> sqlStatementList = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for(String line : sqlFileReadLines){
+            if(line.contains("--")){
+                line = line.substring(0, line.indexOf("--"));
+            }
+            sb.append(" ");
+            if(line.contains(";")){
+                // 语句结束
+                sb.append(line.substring(0, line.indexOf(";")));
+                String cleanSql = buildPureSqlStatement(sb.toString());
+                sqlStatementList.add(cleanSql);
+                sb.setLength(0);
+                if(line.indexOf(";") < line.length()-1){
+                    String leftSql = line.substring(line.indexOf(";")+1);
+                    if(V.notEmpty(leftSql)){
+                        sb.append(leftSql);
+                    }
+                }
+            }
+            else if(V.notEmpty(line)){
+                sb.append(line);
+            }
+        }
+        if(sb.length() > 0){
+            String cleanSql = buildPureSqlStatement(sb.toString());
+            sqlStatementList.add(cleanSql);
+            sb.setLength(0);
+        }
+        return sqlStatementList;
     }
 
     /**

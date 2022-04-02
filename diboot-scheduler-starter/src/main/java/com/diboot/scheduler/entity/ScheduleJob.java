@@ -115,16 +115,9 @@ public class ScheduleJob extends BaseEntity {
     private Long createBy;
 
     /**
-     * 创建人名称
-     */
-    @Length(max = 50, message = "创建人名称长度应小于50")
-    @TableField()
-    private String createByName;
-
-    /**
      * 更新时间
      */
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
 }

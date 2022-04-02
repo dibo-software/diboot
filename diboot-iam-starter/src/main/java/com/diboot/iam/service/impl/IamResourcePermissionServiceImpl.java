@@ -303,7 +303,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     }
 
     /***
-     * 检测是否又脏数据存在
+     * 检测是否具有脏数据存在
      * @return
      */
     private boolean hasDirtyData() {

@@ -22,10 +22,10 @@ import com.diboot.core.binding.annotation.Module;
 import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
@@ -94,6 +94,10 @@ public abstract class BaseBinder<T> {
      * 模块/服务 名
      */
     protected String module;
+    /**
+     * 远程bind
+     */
+    protected RemoteBindDTO remoteBindDTO;
 
     /***
      * 构造方法
@@ -114,6 +118,7 @@ public abstract class BaseBinder<T> {
             String applicationName = PropertiesUtils.get("spring.application.name");
             if(V.notEquals(moduleAnno.value(), applicationName)){
                 this.module = moduleAnno.value();
+                remoteBindDTO = new RemoteBindDTO(referencedEntityClass);
             }
         }
         // 列集合
@@ -134,6 +139,25 @@ public abstract class BaseBinder<T> {
         String annoObjectForeignKey = toAnnoObjColumn(BeanUtils.convertToFieldName(annoObjectFkGetter));
         String referencedEntityPrimaryKey = toRefObjColumn(BeanUtils.convertToFieldName(referencedEntityPkGetter));
         return joinOn(annoObjectForeignKey, referencedEntityPrimaryKey);
+    }
+
+    /**
+     * 附加条件
+     *
+     * @param condition
+     * @return
+     */
+    public BaseBinder<T> additionalCondition(String condition) {
+        if (remoteBindDTO == null) {
+            return this;
+        }
+        List<String> bindDTOWhere = remoteBindDTO.getAdditionalConditions();
+        if (bindDTOWhere == null) {
+            bindDTOWhere = new ArrayList<>();
+            remoteBindDTO.setAdditionalConditions(bindDTOWhere);
+        }
+        bindDTOWhere.add(condition);
+        return this;
     }
 
     /**
@@ -256,7 +280,7 @@ public abstract class BaseBinder<T> {
     /**
      * 构建join on
      */
-    protected void buildQueryWrapperJoinOn(RemoteBindDTO remoteBindDTO){
+    protected void buildQueryWrapperJoinOn() {
         for (int i = 0; i < annoObjJoinCols.size(); i++) {
             String annoObjJoinOnCol = annoObjJoinCols.get(i);
             List<?> annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol));
@@ -276,7 +300,7 @@ public abstract class BaseBinder<T> {
     /**
      * 简化select列，仅select必需列
      */
-    protected abstract void simplifySelectColumns(RemoteBindDTO remoteBindDTO);
+    protected abstract void simplifySelectColumns();
 
     /**
      * 获取EntityList
@@ -429,49 +453,12 @@ public abstract class BaseBinder<T> {
         if(V.isEmpty(this.orderBy)){
             return;
         }
-        String orderByFormatStr = null;
-        // 解析排序
-        String[] orderByFields = S.split(this.orderBy);
-        for(String field : orderByFields){
-            if(field.contains(":")){
-                String[] fieldAndOrder = S.split(field, ":");
-                String columnName = toRefObjColumn(fieldAndOrder[0]);
-                if(remoteBindDTO != null){
-                    if(orderByFormatStr != null){
-                        orderByFormatStr += ",";
-                    }
-                    if(orderByFormatStr == null){
-                        orderByFormatStr = "";
-                    }
-                    orderByFormatStr += columnName;
-                }
-                if(Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])){
-                    queryWrapper.orderByDesc(columnName);
-                    if(remoteBindDTO != null){
-                        orderByFormatStr += ":DESC";
-                    }
-                }
-                else{
-                    queryWrapper.orderByAsc(columnName);
-                }
-            }
-            else{
-                String columnName = toRefObjColumn(field.toLowerCase());
-                if(remoteBindDTO != null){
-                    if(orderByFormatStr != null){
-                        orderByFormatStr += ",";
-                    }
-                    if(orderByFormatStr == null){
-                        orderByFormatStr = "";
-                    }
-                    orderByFormatStr += columnName;
-                }
-                queryWrapper.orderByAsc(columnName);
-            }
-            if(remoteBindDTO != null){
-                remoteBindDTO.setOrderBy(orderByFormatStr);
-            }
+        if(remoteBindDTO != null){
+            remoteBindDTO.setOrderBy(this.orderBy);
+            return;
         }
+        // 构建排序
+        WrapperHelper.buildOrderBy(queryWrapper, this.orderBy, this::toRefObjColumn);
     }
 
     /**

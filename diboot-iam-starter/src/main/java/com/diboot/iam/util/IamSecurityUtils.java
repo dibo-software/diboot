@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.util;
 
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
@@ -22,14 +23,18 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.jwt.BaseJwtRealm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * IAM认证相关工具类
@@ -65,6 +70,27 @@ public class IamSecurityUtils extends SecurityUtils {
         Subject subject = getSubject();
         if(subject.isAuthenticated() || subject.getPrincipals() != null){
             subject.logout();
+        }
+    }
+
+    /**
+     * 退出 注销指定用户
+     */
+    public static void logout(String userTypeAndId){
+        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
+        if(cacheManager == null || cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) == null){
+            log.warn("cacheManager 实例异常");
+            return;
+        }
+        Collection<Object> cacheVals = cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).values();
+        for(Object obj : cacheVals){
+            SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo)obj;
+            SimplePrincipalCollection principalCollection = (SimplePrincipalCollection) authInfo.getPrincipals();
+            BaseLoginUser user = (BaseLoginUser) principalCollection.getPrimaryPrincipal();
+            if (userTypeAndId.equals(user.getUserTypeAndId())) {
+                cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(authInfo.getCredentials());
+                log.info("强制退出用户: {}", userTypeAndId);
+            }
         }
     }
 

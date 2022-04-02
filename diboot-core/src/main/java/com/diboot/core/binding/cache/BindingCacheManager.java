@@ -242,7 +242,7 @@ public class BindingCacheManager {
                         if(entityIService.getClass().getAnnotation(Primary.class) != null){
                             EntityInfoCache entityInfoCache = cacheManager.getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), EntityInfoCache.class);
                             if(entityInfoCache != null){
-                                entityInfoCache.setService(entityIService);
+                                entityInfoCache.setService(entry.getKey());
                             }
                         }
                         else{
@@ -250,7 +250,7 @@ public class BindingCacheManager {
                         }
                     }
                     else{
-                        EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, entityIService);
+                        EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, entry.getKey());
                         cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
                         cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
                         cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
@@ -276,9 +276,8 @@ public class BindingCacheManager {
                             String entityClassName = superTypes[0].getTypeName();
                             if(!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1){
                                 Class<?> entityClass = Class.forName(entityClassName);
-                                BaseMapper mapper = (BaseMapper) ContextHelper.getBean(mapperClass);
                                 EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null);
-                                entityInfoCache.setBaseMapper(mapper);
+                                entityInfoCache.setBaseMapper((Class<? extends BaseMapper>) mapperClass);
                                 cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
                                 cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
                                 cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);

@@ -29,6 +29,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated
 public class SSOCredential extends AuthCredential {
     private static final long serialVersionUID = -5020652642432896556L;
 

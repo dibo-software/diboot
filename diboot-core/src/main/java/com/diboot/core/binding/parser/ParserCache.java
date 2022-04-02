@@ -104,7 +104,6 @@ public class ParserCache {
                     // 字段类型
                     Class<?> setterObjClazz = field.getType();
                     // 如果是集合，获取其泛型参数class
-                    // 这里是不是写错了，Collections是工具类，应该是Collection吧
                     if(setterObjClazz.equals(java.util.List.class) || setterObjClazz.equals(java.util.Collection.class)){
                         Type genericType = field.getGenericType();
                         if(genericType instanceof ParameterizedType){

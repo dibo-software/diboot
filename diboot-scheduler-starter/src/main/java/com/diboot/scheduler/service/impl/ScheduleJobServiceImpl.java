@@ -23,6 +23,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.mapper.ScheduleJobMapper;
+import com.diboot.scheduler.service.QuartzSchedulerService;
 import com.diboot.scheduler.service.ScheduleJobService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ import java.util.Map;
  * @version 2.2
  * @date 2020-11-27
  */
-@Service
 @Slf4j
+@Service
 public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, ScheduleJob> implements ScheduleJobService {
 
     @Autowired

@@ -15,7 +15,7 @@
  */
 package com.diboot.message.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
@@ -190,8 +190,7 @@ public class Message extends BaseEntity {
     /**
      * 更新时间
      */
-    @JsonFormat(pattern = D.FORMAT_DATETIME_Y4MDHM)
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
     /**

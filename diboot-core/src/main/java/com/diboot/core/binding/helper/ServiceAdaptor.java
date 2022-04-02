@@ -15,11 +15,8 @@
  */
 package com.diboot.core.binding.helper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
@@ -27,14 +24,9 @@ import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Service适配器
@@ -108,12 +100,12 @@ public class ServiceAdaptor {
     }
 
 
-    /***
+    /**
      * 转换为IPage
      * @param pagination 分页
      * @return
      */
-    public static <E> Page<E> convertToIPage(Pagination pagination, Class entityClass){
+    public static <E> Page<E> convertToIPage(Pagination pagination, Class<?> entityClass) {
         if(pagination == null){
             return null;
         }
@@ -131,38 +123,7 @@ public class ServiceAdaptor {
                 }
             }
         }
-        return pagination.toPage();
-    }
-
-    /**
-     * 基于VO提取最小集select字段
-     * @param queryWrapper
-     * @param voClass
-     */
-    public static <T> Wrapper<T> optimizeSelect(Wrapper<T> queryWrapper, Class<T> entityClass, Class<?> voClass){
-        if(!(queryWrapper instanceof QueryWrapper) || queryWrapper.getSqlSelect() != null){
-            return queryWrapper;
-        }
-        List<TableFieldInfo> allColumns = TableInfoHelper.getTableInfo(entityClass).getFieldList();
-        if(V.isEmpty(allColumns)){
-            return queryWrapper;
-        }
-        List<String> columns = new ArrayList<>();
-        String pk = ContextHelper.getIdColumnName(entityClass);
-        if(V.notEmpty(pk)){
-            columns.add(pk);
-        }
-        Map<String, Field> fieldsMap = BindingCacheManager.getFieldsMap(voClass);
-        for(TableFieldInfo col : allColumns){
-            if(fieldsMap.containsKey(col.getField().getName()) && V.notEmpty(col.getColumn()) && !col.isLogicDelete()){
-                columns.add(col.getSqlSelect());
-            }
-        }
-        // select全部列，不特殊处理
-        if(allColumns.size() <= columns.size()){
-            return queryWrapper;
-        }
-        return ((QueryWrapper)queryWrapper).select(S.toStringArray(columns));
+        return pagination.setEntityClass(entityClass).toPage();
     }
 
 }

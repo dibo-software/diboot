@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -72,7 +72,7 @@ public class IamUserPosition extends BaseEntity {
     private Boolean isPrimaryPosition = true;
 
     // 更新时间
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
 }

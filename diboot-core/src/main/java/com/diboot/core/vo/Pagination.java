@@ -21,7 +21,6 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -72,12 +71,12 @@ public class Pagination implements Serializable {
      */
     private String orderBy = DEFAULT_ORDER_BY;
 
-    private Class<? extends AbstractEntity> entityClass;
+    private Class<?> entityClass;
 
     public Pagination() {
     }
 
-    public Pagination(Class<? extends AbstractEntity> entityClass) {
+    public Pagination(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 

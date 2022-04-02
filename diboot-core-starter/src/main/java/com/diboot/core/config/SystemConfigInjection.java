@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,29 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data.access;
+package com.diboot.core.config;
+
+import java.util.List;
 
 /**
- * checkpoint类型
- * @author Mazc@dibo.ltd
- * @version v2.1
- * @date 2020/04/24
+ * 系统配置注入
+ *
+ * @author wind
+ * @version v2.5.0
+ * @date 2022/01/13
  */
-public enum CheckpointType {
+public interface SystemConfigInjection {
 
-    USER(0), // 用户范围
-    ORG(1), // 组织范围
-    POSITION(2), // 岗位范围
-    LEVEL(4),  // 级别
-    GROUP(5),   // 组
-    EXT_OBJ(3); // 扩展对象范围
+    /**
+     * 获取配置类型
+     */
+    List<Class<? extends Enum<? extends SystemConfigType>>> getTypes();
 
-    private int index;
-    CheckpointType(int index){
-        this.index = index;
-    }
-
-    public int index(){
-        return index;
-    }
 }

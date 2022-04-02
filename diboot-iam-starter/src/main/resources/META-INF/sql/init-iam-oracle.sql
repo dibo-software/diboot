@@ -1,7 +1,7 @@
 -- 用户表
 create table ${SCHEMA}.iam_user
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    id NUMBER(20) not null,
     tenant_id          NUMBER(20)           default 0  not null,
     org_id NUMBER(20)   default 0 not null,
     user_num VARCHAR2(20)   not null,
@@ -14,6 +14,7 @@ create table ${SCHEMA}.iam_user
     status VARCHAR2(10)   default 'A' not null,
     is_deleted NUMBER(1)   DEFAULT 0 not null,
     create_time timestamp   default CURRENT_TIMESTAMP not null,
+    update_time timestamp   default CURRENT_TIMESTAMP null,
     constraint PK_iam_user primary key (id)
 );
 -- 添加备注,
@@ -30,6 +31,7 @@ comment on column ${SCHEMA}.iam_user.avatar_url is '头像';
 comment on column ${SCHEMA}.iam_user.status is '状态';
 comment on column ${SCHEMA}.iam_user.is_deleted is '删除标记';
 comment on column ${SCHEMA}.iam_user.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_user.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on ${SCHEMA}.iam_user (org_id);
@@ -40,17 +42,18 @@ create index idx_iam_user_tenant on ${SCHEMA}.iam_user (tenant_id);
 -- 账号表
 create table ${SCHEMA}.iam_account
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    id NUMBER(20) not null,
     tenant_id          NUMBER(20)           default 0  not null,
     user_type VARCHAR2(100) default 'IamUser'   not null,
     user_id NUMBER(20)   not null,
     auth_type VARCHAR2(20) default 'PWD'   not null,
     auth_account VARCHAR2(100)   not null,
-    auth_secret VARCHAR2(32)   null,
+    auth_secret VARCHAR2(100)   null,
     secret_salt VARCHAR2(32)   null,
     status VARCHAR2(10) default 'A'   not null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
+    update_time timestamp   default CURRENT_TIMESTAMP null,
     constraint PK_iam_account primary key (id)
 );
 comment on column ${SCHEMA}.iam_account.id is 'ID';
@@ -64,6 +67,7 @@ comment on column ${SCHEMA}.iam_account.secret_salt is '加密盐';
 comment on column ${SCHEMA}.iam_account.status is '用户状态';
 comment on column ${SCHEMA}.iam_account.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_account.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_account.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_account is '登录账号';
 -- 创建索引
 create index idx_iam_account on ${SCHEMA}.iam_account(auth_account, auth_type, user_type);
@@ -72,7 +76,7 @@ create index idx_iam_account_tenant on ${SCHEMA}.iam_account (tenant_id);
 -- 角色表
 create table ${SCHEMA}.iam_role
 (
-    id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
+    id NUMBER(20) not null,
     tenant_id          NUMBER(20)           default 0  not null,
     name VARCHAR2(50)   not null,
     code VARCHAR2(50)   not null,
@@ -88,6 +92,7 @@ comment on column ${SCHEMA}.iam_role.code is '编码';
 comment on column ${SCHEMA}.iam_role.description is '备注';
 comment on column ${SCHEMA}.iam_role.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_role.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_role.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_role is '角色';
 -- 创建索引
 create index idx_iam_role_tenant on ${SCHEMA}.iam_role (tenant_id);
@@ -102,6 +107,7 @@ create table ${SCHEMA}.iam_user_role
     role_id int not null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
+    update_time timestamp   default CURRENT_TIMESTAMP null,
     constraint PK_iam_user_role primary key (id)
 );
 comment on column ${SCHEMA}.iam_user_role.id is 'ID';
@@ -111,6 +117,7 @@ comment on column ${SCHEMA}.iam_user_role.user_id is '用户ID';
 comment on column ${SCHEMA}.iam_user_role.role_id is '角色ID';
 comment on column ${SCHEMA}.iam_user_role.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_user_role.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_user_role.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_user_role is '用户角色关联';
 -- 索引
 create index idx_iam_user_role on ${SCHEMA}.iam_user_role (user_type, user_id);
@@ -130,7 +137,7 @@ create table ${SCHEMA}.iam_resource_permission
     sort_id NUMBER(20)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
-    update_time timestamp   null,
+    update_time timestamp default CURRENT_TIMESTAMP  null,
     constraint PK_iam_permission primary key (id)
 );
 comment on column ${SCHEMA}.iam_resource_permission.id is 'ID';
@@ -248,7 +255,7 @@ create index idx_iam_operation_log_tenant on ${SCHEMA}.iam_operation_log (tenant
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.iam_org (
-   id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+   id NUMBER(20) not null,
    tenant_id          NUMBER(20)           default 0  not null,
    parent_id NUMBER(20) DEFAULT 0 NOT NULL,
    top_org_id NUMBER(20) DEFAULT 0 NOT NULL,
@@ -263,6 +270,7 @@ CREATE TABLE ${SCHEMA}.iam_org (
    org_comment VARCHAR2(255)   null,
    is_deleted NUMBER(1) DEFAULT 0    not null,
    create_time timestamp default CURRENT_TIMESTAMP   not null,
+   update_time timestamp   default CURRENT_TIMESTAMP null,
    constraint PK_iam_org primary key (id)
 );
 comment on column ${SCHEMA}.iam_org.id is 'ID';
@@ -280,6 +288,7 @@ comment on column ${SCHEMA}.iam_org.status is '状态';
 comment on column ${SCHEMA}.iam_org.org_comment is '备注';
 comment on column ${SCHEMA}.iam_org.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_org.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_org.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_org is '部门';
 create index idx_iam_org on ${SCHEMA}.iam_org (parent_id);
 create index idx_iam_org_tenant on ${SCHEMA}.iam_org (tenant_id);
@@ -287,7 +296,7 @@ create index idx_iam_org_tenant on ${SCHEMA}.iam_org (tenant_id);
 -- 岗位
 create table ${SCHEMA}.iam_position
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
+    id NUMBER(20) not null,
     tenant_id          NUMBER(20)           default 0  not null,
     name                 VARCHAR2(100)                          not null,
     code                 VARCHAR2(50)                           not null,
@@ -297,6 +306,7 @@ create table ${SCHEMA}.iam_position
     data_permission_type VARCHAR2(20) default 'SELF'            null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
+    update_time timestamp   default CURRENT_TIMESTAMP null,
     constraint PK_iam_position primary key (id)
 );
 comment on column ${SCHEMA}.iam_position.id is 'ID';
@@ -309,6 +319,7 @@ comment on column ${SCHEMA}.iam_position.grade_value is '职级';
 comment on column ${SCHEMA}.iam_position.data_permission_type is '数据权限类型';
 comment on column ${SCHEMA}.iam_position.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_position.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_position.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_position is '岗位';
 create index idx_iam_position on ${SCHEMA}.iam_position (code);
 create index idx_iam_position_tenant on ${SCHEMA}.iam_position (tenant_id);
@@ -325,7 +336,7 @@ create table ${SCHEMA}.iam_user_position
     is_primary_position NUMBER(1)   default 1                 not null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
-    update_time         timestamp    default CURRENT_TIMESTAMP null,
+    update_time timestamp default CURRENT_TIMESTAMP null,
     constraint PK_iam_user_position primary key (id)
 );
 comment on column ${SCHEMA}.iam_user_position.id is 'ID';
@@ -337,6 +348,7 @@ comment on column ${SCHEMA}.iam_user_position.position_id is '岗位ID';
 comment on column ${SCHEMA}.iam_user_position.is_primary_position is '是否主岗';
 comment on column ${SCHEMA}.iam_user_position.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_user_position.create_time is '创建时间';
+comment on column ${SCHEMA}.iam_user_position.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_user_position is '用户岗位关联';
 create index idx_iam_user_position on ${SCHEMA}.iam_user_position (user_type, user_id);
 create index idx_iam_user_position_pos on ${SCHEMA}.iam_user_position (position_id);

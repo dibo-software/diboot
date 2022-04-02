@@ -11,7 +11,7 @@ CREATE TABLE message_template (
      is_deleted   tinyint not null DEFAULT 0,
      create_by bigint DEFAULT 0 NOT NULL,
      create_time  datetime default CURRENT_TIMESTAMP   not null,
-     update_time  datetime   null,
+     update_time  datetime default CURRENT_TIMESTAMP  null,
      constraint PK_message_template primary key (id)
 );
 -- 添加备注
@@ -51,8 +51,8 @@ CREATE TABLE message (
   schedule_time  datetime   null,
   ext_data VARCHAR(200),
   is_deleted   tinyint not null DEFAULT 0,
-  create_time  datetime default CURRENT_TIMESTAMP   not null,
-  update_time  datetime   null,
+  create_time  datetime default CURRENT_TIMESTAMP  not null,
+  update_time  datetime default CURRENT_TIMESTAMP  null,
   constraint PK_message primary key (id)
 );
 -- 添加备注

@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
-import com.diboot.core.util.V;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -38,16 +38,15 @@ public class EntityInfoCache implements Serializable {
      */
     private Class<?> entityClass;
     /**
-     * service 实现类
+     * service 实例名
      */
-    @Setter
-    private IService service;
+    private String serviceBeanName;
     /**
      * 表对应的mapper类
      */
-    private BaseMapper baseMapper;
+    private Class<? extends BaseMapper> mapperClass;
 
-    public EntityInfoCache(Class<?> entityClass, IService iService){
+    public EntityInfoCache(Class<?> entityClass, String serviceBeanName){
         this.entityClass = entityClass;
         this.entityClassName = entityClass.getName();
         // 初始化字段-列名的映射
@@ -60,23 +59,28 @@ public class EntityInfoCache implements Serializable {
         else{
             this.tableName = S.toSnakeCase(entityClass.getSimpleName());
         }
-        // 设置当前service实例
-        this.service = iService;
-        if(iService != null){
-            this.baseMapper = iService.getBaseMapper();
-        }
+        // 设置当前service实例名
+        this.serviceBeanName = serviceBeanName;
     }
 
     /**
-     * 设置当前service实例
-     * @param iService
+     * 设置当前service实例名
+     * @param serviceBeanName
      */
-    public void setService(IService iService){
-        // 设置当前service实例
-        this.service = iService;
-        if(iService != null){
-            this.baseMapper = iService.getBaseMapper();
-        }
+    public void setService(String serviceBeanName){
+        this.serviceBeanName = serviceBeanName;
+    }
+
+    public IService getService(){
+        return this.serviceBeanName == null ? null : (IService) ContextHelper.getApplicationContext().getBean(this.serviceBeanName);
+    }
+
+    public void setBaseMapper(Class<? extends BaseMapper> mapper) {
+        this.mapperClass = mapper;
+    }
+
+    public BaseMapper getBaseMapper() {
+        return mapperClass == null ? getService().getBaseMapper() : ContextHelper.getBean(this.mapperClass);
     }
 
     /**

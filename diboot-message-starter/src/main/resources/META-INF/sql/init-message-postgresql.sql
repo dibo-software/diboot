@@ -11,7 +11,7 @@ CREATE TABLE message_template (
      is_deleted   BOOLEAN default FALSE   not null,
      create_by bigint DEFAULT 0 NOT NULL,
      create_time  timestamp default CURRENT_TIMESTAMP   not null,
-     update_time  timestamp   null
+     update_time  timestamp default CURRENT_TIMESTAMP null
 );
 -- 添加备注
 comment on column message_template.id is 'ID';
@@ -26,7 +26,7 @@ comment on column message_template.is_deleted is '是否删除';
 comment on column message_template.create_by is '创建人';
 comment on column message_template.create_time is '创建时间';
 comment on column message_template.update_time is '更新时间';
-comment on table dictionary is '消息模版';
+comment on table message_template is '消息模版';
 -- 创建索引
 create index idx_msg_tmpl_tenant on message_template (tenant_id);
 create index idx_msg_tmpl_code ON message_template(code);
@@ -49,8 +49,8 @@ CREATE TABLE message (
   schedule_time  timestamp   null,
   ext_data VARCHAR(200),
   is_deleted   BOOLEAN default FALSE   not null,
-  create_time  timestamp default CURRENT_TIMESTAMP   not null,
-  update_time  timestamp   null
+  create_time  timestamp default CURRENT_TIMESTAMP  not null,
+  update_time  timestamp default CURRENT_TIMESTAMP  null
 );
 comment on column message.id is 'ID';
 comment on column message.tenant_id is '租户ID';

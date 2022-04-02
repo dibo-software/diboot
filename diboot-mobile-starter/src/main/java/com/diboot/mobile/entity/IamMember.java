@@ -15,13 +15,11 @@
  */
 package com.diboot.mobile.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
-import com.diboot.core.util.D;
 import com.diboot.iam.entity.BaseLoginUser;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -163,8 +161,7 @@ public class IamMember extends BaseLoginUser {
     /**
      * 更新时间
      */
-    @JsonFormat(pattern = D.FORMAT_DATETIME_Y4MDHM)
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NOT_NULL)
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
     @Override

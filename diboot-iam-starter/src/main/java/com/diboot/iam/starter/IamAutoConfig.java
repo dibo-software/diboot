@@ -78,6 +78,7 @@ public class IamAutoConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     @DependsOn({"shiroCacheManager"})
     public Realm realm() {
         BaseJwtRealm realm = new BaseJwtRealm();
@@ -164,6 +165,7 @@ public class IamAutoConfig {
         filterChainMap.put("/error/**", "anon");
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
+        filterChainMap.put("/auth/token", "anon");
         filterChainMap.put("/auth/2step-code", "anon");
         filterChainMap.put("/uploadFile/download/*/image", "anon");
 
@@ -204,4 +206,5 @@ public class IamAutoConfig {
             return super.createSubject(context);
         }
     }
+
 }

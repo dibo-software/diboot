@@ -1,5 +1,6 @@
 package com.diboot.core.binding.parser;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -7,7 +8,6 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -24,7 +24,6 @@ import java.util.Map;
  * Copyright © diboot.com
  */
 @Getter
-@Setter
 public class PropInfo implements Serializable {
     private static final long serialVersionUID = 5921667308129991326L;
     /**
@@ -42,25 +41,25 @@ public class PropInfo implements Serializable {
     /**
      * 列集合
      */
-    private List<String> columns;
+    private final List<String> columns = new ArrayList<>();
     /**
      * 字段-列的映射
      */
-    private Map<String, String> fieldToColumnMap;
+    private final Map<String, String> fieldToColumnMap = new HashMap<>();
     /**
      * 列-字段的映射
      */
-    private Map<String, String> columnToFieldMap;
+    private final Map<String, String> columnToFieldMap = new HashMap<>();
+    /**
+     * 自动更新字段列表
+     */
+    private final List<String> fillUpdateFieldList = new ArrayList<>();
 
     /**
      * 初始化
      * @param beanClass
      */
-    public PropInfo(Class<?> beanClass){
-        // 初始化字段-列名的映射
-        this.fieldToColumnMap = new HashMap<>();
-        this.columnToFieldMap = new HashMap<>();
-        this.columns = new ArrayList<>();
+    public PropInfo(Class<?> beanClass) {
         List<Field> fields = BeanUtils.extractAllFields(beanClass);
         if(V.notEmpty(fields)){
             for(Field fld : fields){
@@ -77,6 +76,10 @@ public class PropInfo implements Serializable {
                         }
                         else{
                             columnName = S.toSnakeCase(fldName);
+                        }
+                        FieldFill fill = tableField.fill();
+                        if (FieldFill.UPDATE.equals(fill) || FieldFill.INSERT_UPDATE.equals(fill)) {
+                            fillUpdateFieldList.add(fldName);
                         }
                     }
                 }
@@ -134,6 +137,18 @@ public class PropInfo implements Serializable {
             return null;
         }
         return this.fieldToColumnMap.get(fieldName);
+    }
+
+    /**
+     * 获取主键属性名
+     *
+     * @return
+     */
+    public String getIdFieldName() {
+        if (V.isEmpty(this.columnToFieldMap)) {
+            return null;
+        }
+        return this.columnToFieldMap.get(idColumn);
     }
 
 }

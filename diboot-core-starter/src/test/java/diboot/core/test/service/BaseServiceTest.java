@@ -25,8 +25,8 @@ import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
-import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.*;
@@ -494,6 +494,8 @@ public class BaseServiceTest {
 
     @Test
     public void testGetEntityList(){
+        DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
+        Assert.assertTrue(checkImpl != null);
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id", "item_name", "item_value")
                 .eq("id", -1L);

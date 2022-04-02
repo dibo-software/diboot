@@ -39,6 +39,14 @@ public class Cons {
      */
     public final static  String SEPARATOR_COLON = ":";
     /**
+     * 斜杠路径分隔符
+     */
+    public final static  String SEPARATOR_SLASH = "/";
+    /**
+     * 竖线分隔符，or
+     */
+    public final static  String SEPARATOR_OR = "|";
+    /**
      * 排序 - 降序标记
      */
     public static final String ORDER_DESC = "DESC";
@@ -58,6 +66,10 @@ public class Cons {
          * 主键属性名
          */
         id,
+        /**
+         * 租户ID
+         */
+        tenantId,
         /**
          * 默认的上级ID属性名
          */
@@ -85,7 +97,15 @@ public class Cons {
         /**
          * 更新人
          */
-        updateBy
+        updateBy,
+        /**
+         * 组织id
+         */
+        orgId,
+        /**
+         * 用户id
+         */
+        userId
     }
 
     /**
@@ -97,13 +117,13 @@ public class Cons {
     public static final String FIELD_TYPE = "type";
 
     /**
-     * JWT token前缀
+     * token前缀
      */
-    public static final String JWT_TOKEN_PREFIX = "Bearer ";
+    public static final String TOKEN_PREFIX_BEARER = "Bearer";
     /**
-     * JWT token header头名称
+     * token header头名称
      */
-    public static final String JWT_TOKEN_HEADER_NAME = "Authorization";
+    public static final String TOKEN_HEADER_NAME = "Authorization";
 
     /**
      * 启用/停用 状态字典定义

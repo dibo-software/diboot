@@ -13,14 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package diboot.core.test.service;
+package diboot.core.test.binder;
 
-import com.diboot.core.data.access.CheckpointType;
 import com.diboot.core.data.access.DataAccessInterface;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,13 +29,22 @@ import java.util.List;
  * @date 2020/04/24
  */
 @Component
-public class  DataAccessPermissionImpl implements DataAccessInterface {
+public class DataAccessPermissionTestImpl implements DataAccessInterface {
 
     @Override
-    public List<Serializable> getAccessibleIds(CheckpointType type) {
-        if(type.equals(CheckpointType.ORG)){
-            return Collections.singletonList(100001L);
+    public List<Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
+        // 提取其可访问ids
+        List<Serializable> accessibleIds = new ArrayList<>();
+        if("parentId".equals(fieldName)){
+            accessibleIds.add(0L);
+            accessibleIds.add(10000L);
         }
-        return Collections.emptyList();
+        else if("regionId".equals(fieldName)){
+            return null;
+        } else if ("orgId".equals(fieldName)) {
+            accessibleIds.add(100001L);
+        }
+        // ... 其他类型字段
+        return accessibleIds;
     }
 }

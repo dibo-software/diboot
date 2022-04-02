@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
@@ -55,6 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /***
  * CRUD通用接口实现类
@@ -111,8 +113,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(entity == null){
 			return null;
 		}
-		String fieldName = convertGetterToFieldName(getterFn);
-		return (FT)BeanUtils.getProperty(entity, fieldName);
+		return getterFn.apply(entity);
 	}
 
 	@Override
@@ -543,32 +544,23 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @throws Exception
 	 */
 	@Override
-	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, ?> getterFn){
-		String fieldName = convertGetterToFieldName(getterFn);
-		String columnName = S.toSnakeCase(fieldName);
+	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
+		LambdaQueryWrapper query = null;
 		// 优化SQL，只查询当前字段
 		if(queryWrapper instanceof QueryWrapper){
-			if(V.isEmpty(queryWrapper.getSqlSelect())){
-				((QueryWrapper)queryWrapper).select(columnName);
-			}
+				query = ((QueryWrapper)queryWrapper).lambda();
 		}
 		else if(queryWrapper instanceof LambdaQueryWrapper){
-			if(V.isEmpty(queryWrapper.getSqlSelect())){
-				((LambdaQueryWrapper) queryWrapper).select(getterFn);
-			}
+				query = ((LambdaQueryWrapper) queryWrapper);
 		}
-		List<T> entityList = getEntityList(queryWrapper);
+		else {
+			throw new InvalidUsageException("不支持的Wrapper类型：" + (queryWrapper == null ? "null" : queryWrapper.getClass()));
+		}
+		List<T> entityList = getEntityList(query.select(getterFn));
 		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
-		Set<FT> fldValues = new HashSet<>(entityList.size());
-		for(T entity : entityList){
-			FT value = (FT)BeanUtils.getProperty(entity, fieldName);
-			if(value != null){
-				fldValues.add(value);
-			}
-		}
-		return new ArrayList<>(fldValues);
+		return entityList.stream().filter(Objects::nonNull).map(getterFn).distinct().collect(Collectors.toList());
 	}
 
 	@Override
@@ -740,7 +732,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		queryWrapper = ServiceAdaptor.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);

@@ -64,12 +64,21 @@ public class JwtUtils {
             log.debug("Token为空！url={}", request.getRequestURL());
             return null;
         }
+        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
+        if(cacheManager != null){
+            if(cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
+                Object cacheVal = cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).get(authtoken);
+                if(cacheVal == null){
+                    log.warn("非系统颁发的token: {}", authtoken);
+                    return null;
+                }
+            }
+        }
         try {
             return Jwts.parser().setSigningKey(SIGN_KEY).parseClaimsJws(authtoken).getBody();
         }
         catch (ExpiredJwtException e) {
             log.warn("token已过期:{}", authtoken);
-            CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
             if(cacheManager != null){
                 if(cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
                     cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(authtoken);
@@ -100,7 +109,6 @@ public class JwtUtils {
         }
         return null;
     }
-
 
     /***
      * 将刷新的token放入response header

@@ -242,6 +242,8 @@ public class BeanUtils {
             }
             ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
             return LocalDateTime.class.equals(type) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
+        } else if (Serializable.class.isAssignableFrom(type)) {
+            return JSON.parseObject(valueStr, type);
         }
         return value;
     }
@@ -868,5 +870,21 @@ public class BeanUtils {
             fields[i] = convertToFieldName(getterFns[i]);
         }
         return fields;
+    }
+
+    /**
+     * 清除属性值值
+     *
+     * @param object        对象
+     * @param fieldNameList 属性名称列表
+     */
+    public static void clearFieldValue(Object object, List<String> fieldNameList) {
+        if (fieldNameList == null) {
+            return;
+        }
+        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+        for (String fieldName : fieldNameList) {
+            wrapper.setPropertyValue(fieldName, null);
+        }
     }
 }

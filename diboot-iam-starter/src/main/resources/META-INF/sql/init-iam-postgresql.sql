@@ -1,7 +1,7 @@
 -- 用户表
 create table iam_user
 (
-  id bigserial not null,
+  id bigint not null primary key,
   tenant_id            bigint        not null default 0,
   org_id bigint not null default 0,
   user_num varchar(20) not null,
@@ -13,7 +13,8 @@ create table iam_user
   avatar_url varchar(200) null,
   status varchar(10) not null default 'A',
   is_deleted BOOLEAN not null DEFAULT FALSE,
-  create_time  timestamp   not null default CURRENT_TIMESTAMP
+  create_time  timestamp   not null default CURRENT_TIMESTAMP,
+  update_time timestamp   null default CURRENT_TIMESTAMP
 );
 -- 添加备注
 comment on column iam_user.id is 'ID';
@@ -29,6 +30,7 @@ comment on column iam_user.avatar_url is '头像';
 comment on column iam_user.status is '状态';
 comment on column iam_user.is_deleted is '删除标记';
 comment on column iam_user.create_time is '创建时间';
+comment on column iam_user.update_time is '更新时间';
 comment on table iam_user is '系统用户';
 -- 索引
 create index idx_iam_user_1 on iam_user (org_id);
@@ -39,17 +41,18 @@ create index idx_iam_user_tenant on iam_user(tenant_id);
 -- 账号表
 create table iam_account
 (
-  id bigserial not null,
+  id bigint not null primary key,
   tenant_id            bigint        not null default 0,
   user_type varchar(100) default 'IamUser' not null,
   user_id bigint not null,
   auth_type varchar(20) default 'PWD' not null,
   auth_account varchar(100) not null,
-  auth_secret varchar(32) null,
+  auth_secret varchar(100) null,
   secret_salt varchar(32) null,
   status varchar(10) default 'A' not null,
   is_deleted BOOLEAN default FALSE not null,
-  create_time timestamp default CURRENT_TIMESTAMP not null
+  create_time timestamp default CURRENT_TIMESTAMP not null,
+  update_time timestamp   null default CURRENT_TIMESTAMP
 );
 comment on column iam_account.id is 'ID';
 comment on column iam_account.tenant_id is '租户ID';
@@ -62,6 +65,7 @@ comment on column iam_account.secret_salt is '加密盐';
 comment on column iam_account.status is '用户状态';
 comment on column iam_account.is_deleted is '是否删除';
 comment on column iam_account.create_time is '创建时间';
+comment on column iam_account.update_time is '更新时间';
 comment on table iam_account is '登录账号';
 -- 创建索引
 create index idx_iam_account on iam_account(auth_account, auth_type, user_type);
@@ -70,13 +74,14 @@ create index idx_iam_account_tenant on iam_account(tenant_id);
 -- 角色表
 create table iam_role
 (
-  id bigserial not null,
+  id bigint not null primary key,
   tenant_id            bigint        not null default 0,
   name varchar(50) not null,
   code varchar(50) not null,
   description varchar(100) null,
   is_deleted BOOLEAN default FALSE not null,
-  create_time timestamp default CURRENT_TIMESTAMP null
+  create_time timestamp default CURRENT_TIMESTAMP null,
+  update_time timestamp   null default CURRENT_TIMESTAMP
 );
 comment on column iam_role.id is 'ID';
 comment on column iam_role.tenant_id is '租户ID';
@@ -85,6 +90,7 @@ comment on column iam_role.code is '编码';
 comment on column iam_role.description is '备注';
 comment on column iam_role.is_deleted is '是否删除';
 comment on column iam_role.create_time is '创建时间';
+comment on column iam_role.update_time is '更新时间';
 comment on table iam_role is '角色';
 -- 创建索引
 create index idx_iam_role_tenant on iam_role(tenant_id);
@@ -98,7 +104,8 @@ create table iam_user_role
   user_id bigint not null,
   role_id bigint not null,
   is_deleted BOOLEAN default FALSE not null,
-  create_time timestamp default CURRENT_TIMESTAMP not null
+  create_time timestamp default CURRENT_TIMESTAMP not null,
+  update_time timestamp   null default CURRENT_TIMESTAMP
 );
 comment on column iam_user_role.id is 'ID';
 comment on column iam_user_role.tenant_id is '租户ID';
@@ -107,6 +114,7 @@ comment on column iam_user_role.user_id is '用户ID';
 comment on column iam_user_role.role_id is '角色ID';
 comment on column iam_user_role.is_deleted is '是否删除';
 comment on column iam_user_role.create_time is '创建时间';
+comment on column iam_user_role.update_time is '更新时间';
 comment on table iam_user_role is '用户角色关联';
 -- 索引
 create index idx_iam_user_role on iam_user_role (user_type, user_id);
@@ -126,7 +134,7 @@ create table iam_resource_permission
   sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
-  update_time timestamp null,
+  update_time timestamp default CURRENT_TIMESTAMP null,
   constraint PK_iam_resource_permission primary key (id)
 );
 comment on column iam_resource_permission.id is 'ID';
@@ -240,21 +248,22 @@ create index idx_iam_operation_log_tenant on iam_operation_log(tenant_id);
 
 -- 部门表
 CREATE TABLE iam_org (
-  id bigserial not null,
-  tenant_id          bigint           default 0  not null,
-  parent_id bigint DEFAULT 0 NOT NULL,
-  top_org_id bigint DEFAULT 0 NOT NULL,
-  name varchar(100) NOT NULL,
-  short_name varchar(50) NOT NULL,
-  type        varchar(100) DEFAULT 'DEPT' NOT NULL,
-  code        varchar(50)  NOT NULL,
-  manager_id  bigint   DEFAULT 0 NOT NULL,
-  depth smallint DEFAULT 1 NOT NULL,
-  sort_id bigint DEFAULT 1 NOT NULL,
-  status      varchar(10)  DEFAULT 'A' NOT NULL,
-  org_comment varchar(255)   null,
-  is_deleted BOOLEAN DEFAULT FALSE  not null,
-  create_time timestamp default CURRENT_TIMESTAMP   not null
+    id bigint not null primary key,
+    tenant_id          bigint           default 0  not null,
+    parent_id bigint DEFAULT 0 NOT NULL,
+    top_org_id bigint DEFAULT 0 NOT NULL,
+    name varchar(100) NOT NULL,
+    short_name varchar(50) NOT NULL,
+    type        varchar(100) DEFAULT 'DEPT' NOT NULL,
+    code        varchar(50)  NOT NULL,
+    manager_id  bigint   DEFAULT 0 NOT NULL,
+    depth smallint DEFAULT 1 NOT NULL,
+    sort_id bigint DEFAULT 1 NOT NULL,
+    status      varchar(10)  DEFAULT 'A' NOT NULL,
+    org_comment varchar(255)   null,
+    is_deleted BOOLEAN DEFAULT FALSE  not null,
+    create_time timestamp default CURRENT_TIMESTAMP   not null,
+    update_time timestamp   null default CURRENT_TIMESTAMP
 );
 comment on column iam_org.id is 'ID';
 comment on column iam_org.tenant_id is '租户ID';
@@ -271,6 +280,7 @@ comment on column iam_org.status is '状态';
 comment on column iam_org.org_comment is '备注';
 comment on column iam_org.is_deleted is '是否删除';
 comment on column iam_org.create_time is '创建时间';
+comment on column iam_org.update_time is '更新时间';
 comment on table iam_org is '部门';
 create index idx_iam_org on iam_org (parent_id);
 create index idx_iam_org_tenant on iam_org (tenant_id);
@@ -278,7 +288,7 @@ create index idx_iam_org_tenant on iam_org (tenant_id);
 -- 岗位
 create table iam_position
 (
-  id bigserial not null,
+  id bigint not null primary key,
   tenant_id          bigint           default 0  not null,
   name                 varchar(100)                          not null,
   code                 varchar(50)                           not null,
@@ -287,7 +297,8 @@ create table iam_position
   grade_value          varchar(30) default '0'               null,
   data_permission_type varchar(20) default 'SELF'            null,
   is_deleted BOOLEAN DEFAULT FALSE  not null,
-  create_time timestamp default CURRENT_TIMESTAMP   not null
+  create_time timestamp default CURRENT_TIMESTAMP   not null,
+  update_time timestamp   null default CURRENT_TIMESTAMP
 );
 comment on column iam_position.id is 'ID';
 comment on column iam_position.tenant_id is '租户ID';
@@ -299,6 +310,7 @@ comment on column iam_position.grade_value is '职级';
 comment on column iam_position.data_permission_type is '数据权限类型';
 comment on column iam_position.is_deleted is '是否删除';
 comment on column iam_position.create_time is '创建时间';
+comment on column iam_position.update_time is '更新时间';
 comment on table iam_position is '岗位';
 create index idx_iam_position on iam_position (code);
 create index idx_iam_position_tenant on iam_position (tenant_id);
@@ -315,7 +327,7 @@ create table iam_user_position
   is_primary_position BOOLEAN   default FALSE             not null,
   is_deleted BOOLEAN DEFAULT FALSE  not null,
   create_time timestamp default CURRENT_TIMESTAMP   not null,
-  update_time         timestamp    default CURRENT_TIMESTAMP null
+  update_time timestamp default CURRENT_TIMESTAMP null
 );
 comment on column iam_user_position.id is 'ID';
 comment on column iam_user_position.tenant_id is '租户ID';
@@ -326,6 +338,7 @@ comment on column iam_user_position.position_id is '岗位ID';
 comment on column iam_user_position.is_primary_position is '是否主岗';
 comment on column iam_user_position.is_deleted is '是否删除';
 comment on column iam_user_position.create_time is '创建时间';
+comment on column iam_user_position.update_time is '更新时间';
 comment on table iam_user_position is '用户岗位关联';
 create index idx_iam_user_position on iam_user_position (user_type, user_id);
 create index idx_iam_user_position_pos on iam_user_position (position_id);

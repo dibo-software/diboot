@@ -3,7 +3,7 @@
 		<u-input ref='diCalendar' v-model="tempVal" @click="show = true" disabled :select-open="show"
 			type="select" :placeholder="placeholder" />
 		<u-calendar v-model="show" :mode="mode" @change="handleSelect" btn-type="success"
-			:active-bg-color="activeBgcolor" :range-color="rangecolor" :range-bg-color="rangeBgcolor" safe-area-inset-bottom z-index="99999"/>
+			:active-bg-color="activeBgcolor" :range-color="rangeColor" :range-bg-color="rangeBgcolor" safe-area-inset-bottom z-index="99999"/>
 	</view>
 </template>
 
@@ -15,7 +15,7 @@
 	 * @property {String} placeholder 提示信息
 	 * @property {String} active-bg-color 激活的背景色
 	 * @property {String} range-bg-color 激活范围的背景色
-	 * @property {String} rangecolor 激活范围的字体颜色
+	 * @property {String} range-color 激活范围的字体颜色
 	 * @property {String} mode = [date|range] 模式选择，"date"-日期模式（默认），"range"-选择日期范围
 	 * @event {Function} confirm 点击确定按钮，传递出所选的完整的时间对象
 	 */
@@ -83,7 +83,7 @@
 				type: String,
 				default: '#dbf1e1'
 			},
-			rangecolor: {
+			rangeColor: {
 				type: String,
 				default: '#18b566'
 			}

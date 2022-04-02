@@ -19,6 +19,7 @@ import java.lang.annotation.*;
 
 /**
  * 数据权限检查点 - 添加在entity/dto字段上的注解，可以支持自动检查数据权限
+ *
  * @author mazc@dibo.ltd
  * @version v2.1
  * @date 2020/04/23
@@ -27,9 +28,5 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Documented
 public @interface DataAccessCheckpoint {
-    /**
-     * 数据权限类型
-     * @return
-     */
-    CheckpointType type();
+
 }
