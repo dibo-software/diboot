@@ -403,6 +403,17 @@ public class V {
     }
 
     /**
+     * 是否是false
+     * <p>不要再写"xxx == false"了</p>
+     *
+     * @param expression bool表达式
+     * @return 入参为false时返回true
+     */
+    public static boolean isFalse(boolean expression) {
+        return !expression;
+    }
+
+    /**
      * 根据指定规则校验字符串的值是否合法
      */
     @SuppressWarnings("StatementWithEmptyBody")
@@ -506,12 +517,22 @@ public class V {
                 // size相等，且一个为空集合
                 return true;
             }
-            // 已经确定两个集合的数量相等，如果相同位置的值不相等，则必定不相等
-            // 避免使用某些集合容器低效率的contains方法
-            Iterator<?> sourceIterator = sourceList.iterator();
-            Iterator<?> targetIterator = targetList.iterator();
-            while (sourceIterator.hasNext()) {
-                if (!equals(sourceIterator.next(), targetIterator.next())) {
+            if (source instanceof Set) {
+                //noinspection SuspiciousMethodCalls
+                return ((Set<?>) source).containsAll(targetList);
+            }
+
+            // copy from org.apache.commons.collections4.CollectionUtils.isEqualCollection()
+            // 分别统计 Collection中 元素对应的数量
+            CardinalityHelper<Object> helper = new CardinalityHelper<>(sourceList, targetList);
+            // 如果 两个Collection的统计结果 不一致
+            if (helper.cardinalityA.size() != helper.cardinalityB.size()) {
+                return false;
+            }
+            // 遍历统计结果
+            for (final Object obj : helper.cardinalityA.keySet()) {
+                // 相同元素 在两个Collection中的数量却不等
+                if (helper.freqA(obj) != helper.freqB(obj)) {
                     return false;
                 }
             }
@@ -523,13 +544,8 @@ public class V {
             } else if (sourceMap.isEmpty()) {
                 return true;
             }
-            Iterator<? extends Map.Entry<?, ?>> sourceIterator = sourceMap.entrySet().iterator();
-            Iterator<? extends Map.Entry<?, ?>> targetIterator = targetMap.entrySet().iterator();
-            while (sourceIterator.hasNext()) {
-                Map.Entry<?, ?> sourceEntry = sourceIterator.next();
-                Map.Entry<?, ?> targetEntry = targetIterator.next();
-                if (!equals(sourceEntry.getKey(), targetEntry.getKey())
-                        || !equals(sourceEntry.getValue(), targetEntry.getValue())) {
+            for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
+                if (!equals(entry.getValue(), targetMap.get(entry.getKey()))) {
                     return false;
                 }
             }
@@ -630,6 +646,106 @@ public class V {
             allErrors.add(err.getMessage());
         }
         return S.join(allErrors);
+    }
+
+    /**
+     * Helper class to easily access cardinality properties of two collections.
+     *
+     * @param <O> the element type
+     */
+    private static class CardinalityHelper<O> {
+
+        /**
+         * Contains the cardinality for each object in collection A.
+         */
+        final Map<O, Integer> cardinalityA;
+
+        /**
+         * Contains the cardinality for each object in collection B.
+         */
+        final Map<O, Integer> cardinalityB;
+
+        /**
+         * Create a new CardinalityHelper for two collections.
+         *
+         * @param a the first collection
+         * @param b the second collection
+         */
+        CardinalityHelper(final Iterable<? extends O> a, final Iterable<? extends O> b) {
+            cardinalityA = getCardinalityMap(a);
+            cardinalityB = getCardinalityMap(b);
+        }
+
+        /**
+         * Returns a {@link Map} mapping each unique element in the given
+         * {@link Collection} to an {@link Integer} representing the number
+         * of occurrences of that element in the {@link Collection}.
+         * <p>
+         * Only those elements present in the collection will appear as
+         * keys in the map.
+         * </p>
+         *
+         * @param <O>  the type of object in the returned {@link Map}. This is a super type of &lt;I&gt;.
+         * @param coll the collection to get the cardinality map for, must not be null
+         * @return the populated cardinality map
+         * @throws NullPointerException if coll is null
+         */
+        public static <O> Map<O, Integer> getCardinalityMap(final Iterable<? extends O> coll) {
+            Objects.requireNonNull(coll, "coll");
+            final Map<O, Integer> count = new HashMap<>();
+            for (final O obj : coll) {
+                count.merge(obj, 1, Integer::sum);
+            }
+            return count;
+        }
+
+        /**
+         * Returns the maximum frequency of an object.
+         *
+         * @param obj the object
+         * @return the maximum frequency of the object
+         */
+        public final int max(final Object obj) {
+            return Math.max(freqA(obj), freqB(obj));
+        }
+
+        /**
+         * Returns the minimum frequency of an object.
+         *
+         * @param obj the object
+         * @return the minimum frequency of the object
+         */
+        public final int min(final Object obj) {
+            return Math.min(freqA(obj), freqB(obj));
+        }
+
+        /**
+         * Returns the frequency of this object in collection A.
+         *
+         * @param obj the object
+         * @return the frequency of the object in collection A
+         */
+        public int freqA(final Object obj) {
+            return getFreq(obj, cardinalityA);
+        }
+
+        /**
+         * Returns the frequency of this object in collection B.
+         *
+         * @param obj the object
+         * @return the frequency of the object in collection B
+         */
+        public int freqB(final Object obj) {
+            return getFreq(obj, cardinalityB);
+        }
+
+        private int getFreq(final Object obj, final Map<?, Integer> freqMap) {
+            final Integer count = freqMap.get(obj);
+            if (count != null) {
+                return count;
+            }
+            return 0;
+        }
     }
 
 }
