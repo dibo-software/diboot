@@ -64,7 +64,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
                 accessibleIds.addAll(childOrgIds);
             }
         }
-        else if(Cons.FieldName.userId.name().equals(fieldName)){
+        else if(Cons.FieldName.userId.name().equals(fieldName) || Cons.FieldName.createBy.name().equals(fieldName)){
             accessibleIds.add(currentUser.getId());
         }
         // ... 其他类型字段
