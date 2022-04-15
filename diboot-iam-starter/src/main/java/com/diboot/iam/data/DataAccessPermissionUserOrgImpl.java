@@ -17,12 +17,12 @@ package com.diboot.iam.data;
 
 import com.diboot.core.config.Cons;
 import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,9 +38,6 @@ import java.util.List;
  */
 @Slf4j
 public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
-
-    @Autowired
-    private IamOrgService iamOrgService;
 
     @Override
     public List<Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
@@ -62,7 +59,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
             //添加当前部门ID
             Long currentOrgId = currentUser.getOrgId();
             accessibleIds.add(currentOrgId);
-            List<Long> childOrgIds = iamOrgService.getChildOrgIds(currentOrgId);
+            List<Long> childOrgIds = ContextHelper.getBean(IamOrgService.class).getChildOrgIds(currentOrgId);
             if(V.notEmpty(childOrgIds)){
                 accessibleIds.addAll(childOrgIds);
             }
