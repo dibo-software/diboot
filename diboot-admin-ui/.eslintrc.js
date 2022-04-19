@@ -18,12 +18,6 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: ['vue', '@typescript-eslint', 'prettier'],
-  globals: {
-    defineProps: 'readonly',
-    defineEmits: 'readonly',
-    defineExpose: 'readonly',
-    withDefaults: 'readonly'
-  },
   rules: {
     '@typescript-eslint/no-explicit-any': 0,
     'comma-dangle': ['warn', 'only-multiline'],
