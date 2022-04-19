@@ -1,19 +1,25 @@
 {
-  "name": "vite-project",
+  "name": "diboot-admin-ui",
   "private": true,
-  "version": "0.0.0",
+  "version": "3.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint --ext ./src"
   },
   "dependencies": {
     "vue": "^3.2.25"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
     "@vitejs/plugin-vue": "^2.3.1",
+    "eslint": "^8.13.0",
+    "eslint-plugin-vue": "^8.6.0",
     "typescript": "^4.5.4",
     "vite": "^2.9.2",
+    "vite-plugin-eslint": "^1.4.0",
     "vue-tsc": "^0.29.8"
   }
 }
