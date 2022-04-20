@@ -6,11 +6,12 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "lint": "eslint --ext ./src"
+    "lint": "eslint --ext .{js,jsx,ts,tsx,vue} ./src"
   },
   "dependencies": {
     "element-plus": "^2.1.10",
-    "vue": "^3.2.25"
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@types/node": "^17.0.25",
