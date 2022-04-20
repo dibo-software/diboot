@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.dto;
 
+import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +33,9 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 public class IamUserAccountDTO extends IamUser {
+
+    // 认证方式
+    private String authType = Cons.DICTCODE_AUTH_TYPE.PWD.name();
 
     private String username;
 

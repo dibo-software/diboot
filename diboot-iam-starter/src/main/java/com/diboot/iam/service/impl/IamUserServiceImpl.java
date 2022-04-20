@@ -186,7 +186,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 .setUserId(userAccountDTO.getId())
                 .setAuthAccount(userAccountDTO.getUsername())
                 .setAuthSecret(userAccountDTO.getPassword())
-                .setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name())
+                .setAuthType(userAccountDTO.getAuthType())
                 .setStatus(userAccountDTO.getStatus());
         // 保存账号
         iamAccountService.createEntity(iamAccount);
