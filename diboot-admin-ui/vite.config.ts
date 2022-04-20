@@ -16,7 +16,7 @@ export default defineConfig({
       // 解析器
       resolvers: [ElementPlusResolver()],
       // 自动导入Api
-      imports: ['vue', 'vue-router'],
+      imports: ['vue', 'vue-router', 'pinia'],
       // 为true时在项目根目录自动创建
       dts: 'types/auto-imports.d.ts'
     }),
