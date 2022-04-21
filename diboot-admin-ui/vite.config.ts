@@ -35,8 +35,8 @@ export default defineConfig(({ command }) => {
         importPathTransform: path => path.replace(/^.+\/src/g, '@')
       }),
       viteMockServe({
-        // 忽略以_开头文件
-        ignore: /^_/,
+        // 忽略以_开头的文件及目录
+        ignore: /^_|\/_/,
         // 开发打包开关(默认开启)
         localEnabled: command === 'serve',
         // 生产打包开关(默认不打包)
