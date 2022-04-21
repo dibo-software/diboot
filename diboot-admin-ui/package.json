@@ -12,6 +12,7 @@
     "axios": "^0.26.1",
     "element-plus": "^2.1.10",
     "lodash": "^4.17.21",
+    "mockjs": "^1.1.0",
     "pinia": "^2.0.13",
     "qs": "^6.10.3",
     "vue": "^3.2.25",
@@ -35,6 +36,7 @@
     "unplugin-vue-components": "^0.19.3",
     "vite": "^2.9.2",
     "vite-plugin-eslint": "^1.4.0",
+    "vite-plugin-mock": "^2.9.6",
     "vue-tsc": "^0.29.8"
   }
 }
