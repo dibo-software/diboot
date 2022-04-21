@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ msg: string }>()
+withDefaults(defineProps<{ msg: string }>(), { msg: 'Hello Vue 3 + TypeScript + Vite' })
 
 const count = ref(0)
 </script>

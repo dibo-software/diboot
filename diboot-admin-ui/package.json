@@ -6,14 +6,21 @@
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "lint": "eslint --ext ./src"
+    "lint": "eslint --ext .{js,jsx,ts,tsx,vue} ./src"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "element-plus": "^2.1.10",
-    "vue": "^3.2.25"
+    "lodash": "^4.17.21",
+    "pinia": "^2.0.13",
+    "qs": "^6.10.3",
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.182",
     "@types/node": "^17.0.25",
+    "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "@vitejs/plugin-vue": "^2.3.1",
