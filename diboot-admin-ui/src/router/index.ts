@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw, RouterView } from 'vue-router'
-import Layout from '@/layout/index.vue'
+import { createRouterGuard } from '@/router/router-guards'
 
 /**
  * constantRoutes
@@ -8,43 +8,39 @@ import Layout from '@/layout/index.vue'
  */
 export const constantRoutes: RouteRecordRaw[] = [
   {
-    path: '/redirect',
+    path: '/redirect/:path(.*)*',
     name: 'Redirect',
-    component: Layout,
-    children: [
-      {
-        path: ':path(.*)*', // '/redirect/:path(.*)*'
-        name: 'Redirect',
-        redirect: to => {
-          const path = to.params.path
-          return { path: `/${Array.isArray(path) ? path.join('/') : path}`, query: to.query, replace: true }
-        }
-      }
-    ]
+    meta: { hidden: true, ignoreAuth: true },
+    redirect: to => {
+      const path = to.params.path
+      return { path: `/${Array.isArray(path) ? path.join('/') : path}`, query: to.query, replace: true }
+    }
   },
   {
     path: '/exception',
     name: 'Exception',
+    redirect: '404',
     component: RouterView,
-    meta: { title: 'Exception' },
+    meta: { title: 'Exception', hidden: true, ignoreAuth: true },
     children: [
       {
         path: '404',
         name: '404',
         component: () => import('@/views/exception/404.vue'),
-        meta: { title: '404' }
+        meta: { title: '404', ignoreAuth: true }
       },
       {
         path: '500',
         name: '500',
         component: () => import('@/views/exception/500.vue'),
-        meta: { title: '500' }
+        meta: { title: '500', ignoreAuth: true }
       }
     ]
   },
   {
     path: '/:path(.*)*',
     name: 'ErrorPage',
+    meta: { hidden: true, ignoreAuth: true },
     redirect: to => {
       return { name: '404', query: { path: to.path }, replace: true }
     }
@@ -53,7 +49,22 @@ export const constantRoutes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login/index.vue'),
-    meta: { hidden: true }
+    meta: { hidden: true, ignoreAuth: true }
+  },
+  {
+    path: '/',
+    name: 'Home',
+    redirect: '/dashboard',
+    component: () => import('@/layout/index.vue'),
+    meta: { title: '首页' },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        meta: { title: '仪表盘' }
+      }
+    ]
   }
 ]
 
@@ -66,23 +77,8 @@ const router = createRouter({
   routes: constantRoutes
 })
 
-// home route
-const homeRoute: RouteRecordRaw = {
-  path: '/',
-  name: 'Home',
-  component: Layout,
-  redirect: '/dashboard',
-  meta: { title: '首页' },
-  children: [
-    {
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index.vue'),
-      meta: { title: '仪表盘', ignoreAuth: true }
-    }
-  ]
-}
-
-router.addRoute(homeRoute)
+createRouterGuard(router)
 
 export default router
+
+setTimeout(() => console.log(router.getRoutes()), 1000)

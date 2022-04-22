@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { FormInstance } from 'element-plus'
-import useUserStore from '@/store/user'
+import useAuthStore from '@/store/auth'
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const formRef = ref<FormInstance>()
 const form = reactive({ username: 'admin', password: '123456' })
@@ -12,11 +12,22 @@ const rules = {
 }
 const router = useRouter()
 
+const redirect = () => {
+  const query = router.currentRoute.value.query
+  const redirect = query.redirect
+  if (redirect) {
+    delete query.redirect
+    router.push({ path: '/redirect' + redirect, query })
+  } else {
+    router.push('/')
+  }
+}
+
 const submitForm = async () => {
   await formRef.value?.validate(valid => {
     if (valid) {
-      userStore.login(form).then(() => {
-        router.push('/')
+      authStore.login(form).then(() => {
+        redirect()
       })
     }
   })

@@ -88,7 +88,6 @@ function resetPingTimer() {
 }
 
 interface ApiData<T> {
-  ok: boolean
   code: number
   msg: string
   data?: T

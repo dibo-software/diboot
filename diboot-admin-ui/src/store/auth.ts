@@ -1,21 +1,23 @@
 import auth from '@/utils/auth'
 import { ElMessage } from 'element-plus'
 
-interface IUserInfo {
+interface IAuthStore {
   realname: string
   email: string
   avatar: string
+  info: any
 }
 
-export default defineStore('user', {
+export default defineStore('auth', {
   state: () => {
-    return <IUserInfo>{
-      realname: '游客',
-      avatar: ''
+    return <IAuthStore>{
+      realname: '',
+      avatar: '',
+      info: null
     }
   },
   actions: {
-    login: (account: any) => {
+    login(account: any) {
       return new Promise((resolve, reject) => {
         api
           .post<{ token: string }>('/auth/login', account)
@@ -31,24 +33,22 @@ export default defineStore('user', {
           })
       })
     },
-    getInfo: () => {
-      return new Promise((resolve, reject) => {
-        api
-          .get('/auth/userInfo')
-          .then(res => {
-            if (res.data) resolve(res.data)
-            else reject()
-          })
-          .catch(err => {
-            reject(err)
-          })
-      })
+    getInfo: async function () {
+      try {
+        const res = await api.get<{ realname: string }>('/auth/userInfo')
+        this.info = res.data
+        this.realname = `${res.data?.realname}`
+      } catch (e) {
+        throw new Error('获取登录者信息异常')
+      }
     },
-    logout: () => {
-      // this.realname = 'asd'
-      api.post('/auth/logout').finally(() => {
+    async logout() {
+      try {
+        await api.post('/auth/logout')
+      } finally {
         auth.cleanToken()
-      })
+        this.$reset()
+      }
     }
   }
 })

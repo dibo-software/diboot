@@ -5,12 +5,14 @@ declare module 'vue-router' {
     title?: string
     icon?: string
     module?: string
+    component?: string
     ignoreAuth?: boolean
     keepAlive?: boolean
     hidden?: boolean
     hollow?: boolean
     hideFooter?: boolean
     borderless?: boolean
+    openNewWindow?: boolean
     hideBreadcrumb?: boolean
   }
 }
