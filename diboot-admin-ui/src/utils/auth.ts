@@ -9,7 +9,7 @@ export default {
   setToken(token: string) {
     localStorage.setItem(TOKEN_KEY, token)
   },
-  cleanToken() {
+  clearToken() {
     localStorage.removeItem(TOKEN_KEY)
   }
 }

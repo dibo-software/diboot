@@ -46,7 +46,7 @@ export default defineStore('auth', {
       try {
         await api.post('/auth/logout')
       } finally {
-        auth.cleanToken()
+        auth.clearToken()
         this.$reset()
       }
     }
