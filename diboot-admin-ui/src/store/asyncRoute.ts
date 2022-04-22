@@ -94,7 +94,7 @@ function filterAsyncMenu(asyncRoutes: RouteRecordRaw[], parent?: RouteRecordRaw)
       routes.push(child)
     } else {
       route.children = filterAsyncMenu(route.children, route)
-      routes.push(route)
+      route.children.length && routes.push(route)
     }
   }
   return routes
