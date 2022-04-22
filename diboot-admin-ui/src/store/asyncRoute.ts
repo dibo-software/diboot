@@ -25,6 +25,16 @@ export default defineStore({
 
 // 加载所有页面
 const pages = import.meta.globEager('@/views/**/*.vue')
+// 获取组件
+const resolveComponent = (name: any) => {
+  const importPage = pages[`../views/${name}.vue`]
+
+  if (!importPage) {
+    throw new Error(`Unknown page ${name}. Is it located under Pages with a .vue extension?`)
+  }
+
+  return importPage.default
+}
 
 /**
  * <h2>过滤异步路由</h2>
@@ -40,7 +50,7 @@ function filterAsyncRouter(asyncRoutes: RouteRecordRaw[]) {
       } else if (!component) {
         route.component = RouterView
       } else {
-        route.component = pages[`../views/${component}.vue`]
+        route.component = resolveComponent(component)
       }
       // 父级目录重定向首个子菜单
       const childrenPath = route.children[0].path
@@ -48,7 +58,7 @@ function filterAsyncRouter(asyncRoutes: RouteRecordRaw[]) {
     } else {
       delete route.children
       if (route.meta?.component) {
-        route.component = pages[`../views/${route.meta?.component}.vue`]
+        route.component = resolveComponent(route.meta?.component)
       } else return false
     }
     return true
