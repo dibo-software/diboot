@@ -69,20 +69,4 @@ public interface IamCustomize {
      */
     void clearAuthorizationCache(String username);
 
-    /**
-     * 清空所有权限
-     */
-    void clearAllAuthorizationCache();
-
-    /**
-     * 是否启用权限检查
-     * @return
-     */
-    boolean isEnablePermissionCheck();
-
-    /**
-     * 获取原生的权限码
-     * @return
-     */
-    String[] getOrignPermissionCodes(Method method);
 }

@@ -77,16 +77,4 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      */
     void sortList(List<IamResourcePermission> permissionList);
 
-    /***
-     * 提取代码中的权限和已经存在数据库的权限不同的数据
-     *
-     * 1、获取DB存储的API<br/>
-     * 2、获取代码中的API<br/>
-     * 3、对比，提出返回结果<br/>
-     * 结果返回：数据库中无效的API、数据库无效的记录id
-     *
-     * @param application
-     * @return
-     */
-    Map<String, Object> extractCodeDiffDbPermissions(String application);
 }
