@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@types/lodash': ^4.14.182
   '@types/node': ^17.0.25
+  '@types/nprogress': ^0.2.0
   '@types/qs': ^6.9.7
   '@typescript-eslint/eslint-plugin': ^5.20.0
   '@typescript-eslint/parser': ^5.20.0
@@ -16,6 +17,7 @@ specifiers:
   eslint-plugin-vue: ^8.6.0
   lodash: ^4.17.21
   mockjs: ^1.1.0
+  nprogress: ^0.2.0
   pinia: ^2.0.13
   prettier: 2.6.2
   qs: ^6.10.3
@@ -34,6 +36,7 @@ dependencies:
   element-plus: registry.npmmirror.com/element-plus/2.1.10_vue@3.2.33
   lodash: registry.npmmirror.com/lodash/4.17.21
   mockjs: registry.npmmirror.com/mockjs/1.1.0
+  nprogress: registry.npmmirror.com/nprogress/0.2.0
   pinia: registry.npmmirror.com/pinia/2.0.13_typescript@4.6.3+vue@3.2.33
   qs: registry.npmmirror.com/qs/6.10.3
   vue: registry.npmmirror.com/vue/3.2.33
@@ -42,6 +45,7 @@ dependencies:
 devDependencies:
   '@types/lodash': registry.npmmirror.com/@types/lodash/4.14.182
   '@types/node': registry.npmmirror.com/@types/node/17.0.25
+  '@types/nprogress': registry.npmmirror.com/@types/nprogress/0.2.0
   '@types/qs': registry.npmmirror.com/@types/qs/6.9.7
   '@typescript-eslint/eslint-plugin': registry.npmmirror.com/@typescript-eslint/eslint-plugin/5.20.0_b9ac9b5656ce5dffade639fcf5e491bf
   '@typescript-eslint/parser': registry.npmmirror.com/@typescript-eslint/parser/5.20.0_eslint@8.13.0+typescript@4.6.3
@@ -291,6 +295,12 @@ packages:
     resolution: {integrity: sha512-wANk6fBrUwdpY4isjWrKTufkrXdu1D2YHCot2fD/DfWxF5sMrVSA+KN7ydckvaTCh0HiqX9IVl0L5/ZoXg5M7w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/node/-/node-17.0.25.tgz}
     name: '@types/node'
     version: 17.0.25
+    dev: true
+
+  registry.npmmirror.com/@types/nprogress/0.2.0:
+    resolution: {integrity: sha512-1cYJrqq9GezNFPsWTZpFut/d4CjpZqA0vhqDUPFWYKF1oIyBz5qnoYMzR+0C/T96t3ebLAC1SSnwrVOm5/j74A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/nprogress/-/nprogress-0.2.0.tgz}
+    name: '@types/nprogress'
+    version: 0.2.0
     dev: true
 
   registry.npmmirror.com/@types/qs/6.9.7:
@@ -2181,6 +2191,12 @@ packages:
     resolution: {integrity: sha512-scX83plWJXYH1J4+BhAuIHadROzxX0UBF3+HuZNY2Ks8BciE7tSTQ+5JhTsvzjaO0/EJdm4JBGrfObKxFf3Png==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/normalize-wheel-es/-/normalize-wheel-es-1.1.2.tgz}
     name: normalize-wheel-es
     version: 1.1.2
+    dev: false
+
+  registry.npmmirror.com/nprogress/0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/nprogress/-/nprogress-0.2.0.tgz}
+    name: nprogress
+    version: 0.2.0
     dev: false
 
   registry.npmmirror.com/object-assign/4.1.1:

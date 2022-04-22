@@ -1,4 +1,5 @@
-import { isNavigationFailure, Router, RouteRecordRaw, RouterView } from 'vue-router'
+import { isNavigationFailure, Router } from 'vue-router'
+import nProgress from 'nprogress'
 import useUserStore from '@/store/auth'
 import useRouteStore from '@/store/asyncRoute'
 import useTabsViewStore from '@/store/tabsView'
@@ -10,6 +11,7 @@ import auth from '@/utils/auth'
  */
 export function createRouterGuard(router: Router) {
   router.beforeEach(async (to, from, next) => {
+    nProgress.start()
     // 未登录
     if (auth.getToken()) {
       const userStore = useUserStore()
@@ -56,8 +58,10 @@ export function createRouterGuard(router: Router) {
 
   router.afterEach((to, from, failure) => {
     if (isNavigationFailure(failure)) {
+      nProgress.remove()
       return
     }
+    nProgress.done()
     useTabsViewStore().addView(to)
   })
 
