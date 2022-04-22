@@ -40,10 +40,12 @@ const resolveComponent = (name: any) => {
  * <h2>过滤异步路由</h2>
  * 加载component及自动丢弃无用路由
  * @param asyncRoutes
+ * @param parentPath
  */
-function filterAsyncRouter(asyncRoutes: RouteRecordRaw[]) {
+function filterAsyncRouter(asyncRoutes: RouteRecordRaw[], parentPath?: string) {
   return asyncRoutes.filter(route => {
-    if (route.children?.length && (route.children = filterAsyncRouter(route.children)).length) {
+    const fullPath = buildFullPath(route.path, parentPath)
+    if (route.children?.length && (route.children = filterAsyncRouter(route.children, fullPath)).length) {
       const component = route.meta?.component
       if (component?.toLowerCase() === 'layout' || component?.toLowerCase() === 'layout/index') {
         route.component = Layout
@@ -53,8 +55,7 @@ function filterAsyncRouter(asyncRoutes: RouteRecordRaw[]) {
         route.component = resolveComponent(component)
       }
       // 父级目录重定向首个子菜单
-      const childrenPath = route.children[0].path
-      route.redirect = /^\//.exec(childrenPath) ? childrenPath : `${route.path}/${childrenPath}`
+      route.redirect = buildFullPath(route.children[0].path, fullPath)
     } else {
       delete route.children
       if (route.meta?.component) {
@@ -66,6 +67,15 @@ function filterAsyncRouter(asyncRoutes: RouteRecordRaw[]) {
 }
 
 /**
+ * 构建全路径
+ *
+ * @param path
+ * @param parentPath
+ */
+const buildFullPath = (path: string, parentPath = '/') =>
+  /^\//.exec(path) ? path : `${parentPath === '/' ? '' : parentPath}/${path}`
+
+/**
  * 过滤菜单
  *
  * @param asyncRoutes
@@ -75,7 +85,7 @@ function filterAsyncMenu(asyncRoutes: RouteRecordRaw[], parent?: RouteRecordRaw)
   const routes: RouteRecordRaw[] = []
   for (const route of asyncRoutes) {
     if (route.meta?.hidden) continue
-    if (parent && !/^\//.exec(route.path)) route.path = `${parent.path === '/' ? '' : parent.path}/${route.path}`
+    if (parent) route.path = buildFullPath(route.path, parent.path)
     if (!route.children) {
       routes.push(route)
     } else if (!route.meta?.title && route.children.length === 1) {
