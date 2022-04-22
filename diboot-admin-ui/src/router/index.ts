@@ -19,7 +19,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/exception',
     name: 'Exception',
-    redirect: '404',
+    redirect: '/exception/404',
     component: RouterView,
     meta: { title: 'Exception', hidden: true, ignoreAuth: true },
     children: [

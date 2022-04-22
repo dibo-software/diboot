@@ -26,7 +26,7 @@ export function createRouterGuard(router: Router) {
         // 加载异步路由
         await routeStore.generateRoutes(router)
 
-        const redirectPath = (from.query.redirect || to.path) as string
+        const redirectPath = ((to.name === '404' && to.query.path) || from.query.redirect || to.path) as string
         const redirect = decodeURIComponent(redirectPath)
         const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
         next(nextData)
