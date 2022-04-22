@@ -24,6 +24,7 @@ import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.ApiUri;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -161,12 +162,12 @@ public class AnnotationRestApiHolder {
                 // 处理Annotation注解
                 CollectThisApi restApiAnno = AnnotationUtils.getAnnotation(method, CollectThisApi.class);
                 // 提取方法上的注解url
-                String[] methodAndUrl = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
-                if(methodAndUrl[0] == null || methodAndUrl[1] == null){
+                ApiUri apiUri = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
+                if(apiUri.isEmpty()){
                     continue;
                 }
                 // 提取请求url-注解的关系
-                buildRestApi(wrapper, urlPrefix, methodAndUrl, restApiAnno);
+                buildRestApi(wrapper, urlPrefix, apiUri, restApiAnno);
             }
         }
     }
@@ -175,10 +176,10 @@ public class AnnotationRestApiHolder {
      * 构建restApiList
      * @param wrapper
      * @param urlPrefix
-     * @param methodAndUrl
+     * @param apiUri
      */
-    private static void buildRestApi(RestApiWrapper wrapper, String urlPrefix, String[] methodAndUrl, CollectThisApi annotation){
-        String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
+    private static void buildRestApi(RestApiWrapper wrapper, String urlPrefix, ApiUri apiUri, CollectThisApi annotation){
+        String requestMethod = apiUri.getMethod(), url = apiUri.getUri();
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
                 if(V.notEmpty(urlPrefix)){

@@ -82,7 +82,7 @@ resetPingTimer()
 function resetPingTimer() {
   clearTimeout(pingTimer)
   pingTimer = setTimeout(() => {
-    service.get('/ping').then()
+    service.get('/auth/ping').then()
     resetPingTimer()
   }, TOKEN_REFRESH_EXPIRE * 60 * 1000)
 }
@@ -123,10 +123,10 @@ function unpack<T>(request: Promise<AxiosResponse<ApiData<T>>>): Promise<ApiData
 }
 
 const api = {
-  get<T>(url: string, params: any) {
+  get<T>(url: string, params?: any) {
     return unpack(service.get<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, { params }))
   },
-  post<T>(url: string, data: any) {
+  post<T>(url: string, data?: any) {
     return unpack(
       service.post<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, JSON.stringify(data), {
         headers: {
@@ -135,7 +135,7 @@ const api = {
       })
     )
   },
-  put<T>(url: string, data: any) {
+  put<T>(url: string, data?: any) {
     return unpack(
       service.put<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, JSON.stringify(data), {
         headers: {
@@ -144,7 +144,7 @@ const api = {
       })
     )
   },
-  patch<T>(url: string, data: any) {
+  patch<T>(url: string, data?: any) {
     return unpack(
       service.patch<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, JSON.stringify(data), {
         headers: {
@@ -153,7 +153,7 @@ const api = {
       })
     )
   },
-  delete<T>(url: string, params: any) {
+  delete<T>(url: string, params?: any) {
     return unpack(
       service.delete<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, {
         params,
@@ -180,7 +180,7 @@ const api = {
    * @param url
    * @param params
    */
-  download(url: string, params: any) {
+  download(url: string, params?: any) {
     return unpack(
       service.get<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, any>(url, {
         responseType: 'arraybuffer',
@@ -198,7 +198,7 @@ const api = {
    * @param url
    * @param data
    */
-  postDownload(url: string, data: any) {
+  postDownload(url: string, data?: any) {
     return unpack(
       service.post<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, any>(url, JSON.stringify(data), {
         responseType: 'arraybuffer',

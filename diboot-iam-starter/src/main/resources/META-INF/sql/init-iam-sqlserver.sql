@@ -134,7 +134,7 @@ create table ${SCHEMA}.iam_resource_permission
     display_type varchar(20) not null,
     display_name varchar(100) not null,
     resource_code varchar(100)   null,
-    api_set varchar(3000)   null,
+    permission_code varchar(100)   null,
     sort_id bigint   null,
     is_deleted tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
@@ -148,7 +148,7 @@ execute sp_addextendedproperty 'MS_Description', N'父资源ID', 'SCHEMA', '${SC
 execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_type';
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
 execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'resource_code';
-execute sp_addextendedproperty 'MS_Description', N'接口列表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'api_set';
+execute sp_addextendedproperty 'MS_Description', N'权限码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'permission_code';
 execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'create_time';

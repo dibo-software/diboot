@@ -15,11 +15,13 @@
  */
 package com.diboot.iam.cache;
 
-import com.diboot.core.cache.StaticMemoryCacheManager;
+import com.diboot.core.util.AnnotationUtils;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.iam.annotation.process.ApiPermission;
-import com.diboot.iam.annotation.process.ApiPermissionExtractor;
-import com.diboot.iam.annotation.process.ApiPermissionWrapper;
+import com.diboot.iam.annotation.BindPermission;
+import com.diboot.iam.annotation.process.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -32,99 +34,57 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2021/4/22
  * Copyright © diboot.com
  */
+@Slf4j
 public class IamCacheManager {
 
     /**
-     * 接口相关定义缓存管理器
+     * controller-权限码 缓存
      */
-    private static StaticMemoryCacheManager iamMemoryCacheManager;
-    /**
-     * controller-API 权限
-     */
-    private static final String CACHE_NAME_CONTROLLER_API = "CONTROLLER_API";
-    /**
-     * url-permission 缓存
-     */
-    private static Map<String, String> URL_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>(8);
-
-    private static StaticMemoryCacheManager getCacheManager(){
-        if(iamMemoryCacheManager == null){
-            iamMemoryCacheManager = new StaticMemoryCacheManager(
-                    CACHE_NAME_CONTROLLER_API);
-            URL_PERMISSIONCODE_CACHE.clear();
-        }
-        return iamMemoryCacheManager;
-    }
+    private static Map<String, PermissionCodeWrapper> CLASS_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 读取缓存permission
-     * @param requestMethodAndUrl
+     * 返回全部接口权限码ApiPermission
      * @return
      */
-    public static String getPermissionCode(String requestMethodAndUrl){
-        return getUrlPermissionCacheMap().get(requestMethodAndUrl);
-    }
-
-    /**
-     * 读取缓存permission
-     * @param requestMethod
-     * @param url
-     * @return
-     */
-    public static String getPermissionCode(String requestMethod, String url){
-        return getUrlPermissionCacheMap().get(requestMethod.toUpperCase()+":"+url);
-    }
-
-    /**
-     * 返回全部ApiPermissionVO
-     * @return
-     */
-    public static List<ApiPermissionWrapper> getApiPermissionVoList(){
-        return ApiPermissionExtractor.extractAllApiPermissions();
-    }
-
-    /**
-     * 获取接口权限wrapper
-     * @param className
-     * @return
-     */
-    public static ApiPermissionWrapper getApiPermissionWrapper(String className){
-        initApiPermissionCache();
-        return getCacheManager().getCacheObj(CACHE_NAME_CONTROLLER_API, className, ApiPermissionWrapper.class);
+    public static List<PermissionCodeWrapper> getApiPermissionVoList(){
+        return PermissionCodeExtractor.extractAllApiPermissions();
     }
 
     /**
      * 缓存全部permissions
      */
-    private static Map<String, String> getUrlPermissionCacheMap(){
-        if(V.notEmpty(URL_PERMISSIONCODE_CACHE)){
-            return URL_PERMISSIONCODE_CACHE;
+    public static PermissionCodeWrapper getPermissionCodeWrapper(Class<?> controllerClass){
+        // 优先从缓存中读取
+        PermissionCodeWrapper wrapper = CLASS_PERMISSIONCODE_CACHE.get(controllerClass.getName());
+        if(wrapper != null){
+            return wrapper;
         }
-        initApiPermissionCache();
-        return URL_PERMISSIONCODE_CACHE;
-    }
-
-    /**
-     * 初始化
-     */
-    private static synchronized void initApiPermissionCache() {
-        StaticMemoryCacheManager cacheManager = getCacheManager();
-        if (cacheManager.isUninitializedCache(CACHE_NAME_CONTROLLER_API) == false) {
-            return;
-        }
-        List<ApiPermissionWrapper> permissions = ApiPermissionExtractor.extractAllApiPermissions();
-        if(V.notEmpty(permissions)){
-            for(ApiPermissionWrapper wrapper : permissions){
-                if(wrapper.getChildren() != null){
-                    for(ApiPermission apiPermission : wrapper.getChildren()){
-                        // 缓存url-permission
-                        URL_PERMISSIONCODE_CACHE.put(apiPermission.getApiMethod().toUpperCase()+":"+apiPermission.getApiUri(), apiPermission.getPermissionCode());
-                        // 缓存class-api
-                        cacheManager.putCacheObj(CACHE_NAME_CONTROLLER_API, wrapper.getClassName(), wrapper);
-                    }
+        // 从controller中解析
+        String name = null;
+        // 提取类信息
+        String codePrefix = null;
+        // 注解
+        BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
+        if(bindPermission != null){
+            // 当前资源权限
+            name = bindPermission.name();
+            codePrefix = bindPermission.code();
+            if(V.isEmpty(codePrefix)){
+                Class<?> entityClazz = BeanUtils.getGenericityClass(controllerClass, 0);
+                if(entityClazz != null){
+                    codePrefix = entityClazz.getSimpleName();
+                }
+                else{
+                    log.warn("无法获取{}相关的Entity，请指定注解BindPermission.code参数！", controllerClass.getName());
                 }
             }
         }
+        else{
+            name = S.substringBeforeLast(controllerClass.getSimpleName(), "Controller");
+        }
+        wrapper = new PermissionCodeWrapper(name, codePrefix);
+        CLASS_PERMISSIONCODE_CACHE.put(controllerClass.getName(), wrapper);
+        return wrapper;
     }
 
 }

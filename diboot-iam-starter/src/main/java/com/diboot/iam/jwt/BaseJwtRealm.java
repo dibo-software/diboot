@@ -17,12 +17,12 @@ package com.diboot.iam.jwt;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.auth.IamExtensible;
-import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
@@ -147,22 +147,24 @@ public class BaseJwtRealm extends AuthorizingRealm {
             allRoleCodes.add(role.getCode());
             roleIds.add(role.getId());
         });
+        authorizationInfo.setRoles(allRoleCodes);
         // 整理所有权限许可列表，从缓存匹配
-        Set<String> allPermissionCodes = new HashSet<>();
-        List<String> apiUrlList = getIamRoleResourceService().getApiUrlList(Cons.APPLICATION, roleIds);
-        if(V.notEmpty(apiUrlList)){
-            apiUrlList.stream().forEach(set->{
-                for(String uri : set.split(Cons.SEPARATOR_COMMA)){
-                    String permissionCode = IamCacheManager.getPermissionCode(uri);
-                    if(permissionCode != null){
-                        allPermissionCodes.add(permissionCode);
+        List<String> allPermissionCodes = getIamRoleResourceService().getPermissionCodeList(Cons.APPLICATION, roleIds);
+        Set<String> permissionCodesSet = new HashSet<>();
+        if(V.notEmpty(allPermissionCodes)){
+            allPermissionCodes.forEach(permCodeStr -> {
+                if(!permCodeStr.contains(Cons.SEPARATOR_COMMA)){
+                    permissionCodesSet.add(permCodeStr);
+                }
+                else{
+                    for(String permCode : S.split(permCodeStr)){
+                        permissionCodesSet.add(permCode);
                     }
                 }
             });
         }
         // 将所有角色和权限许可授权给用户
-        authorizationInfo.setRoles(allRoleCodes);
-        authorizationInfo.setStringPermissions(allPermissionCodes);
+        authorizationInfo.setStringPermissions(permissionCodesSet);
         return authorizationInfo;
     }
 

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { FormInstance } from 'element-plus'
+import useUserStore from '@/store/user'
+
+const userStore = useUserStore()
 
 const formRef = ref<FormInstance>()
 const form = reactive({ username: 'admin', password: '123456' })
@@ -10,12 +13,11 @@ const rules = {
 const router = useRouter()
 
 const submitForm = async () => {
-  await formRef.value?.validate((valid, fields) => {
+  await formRef.value?.validate(valid => {
     if (valid) {
-      console.log('submit!')
-      router.push('/')
-    } else {
-      console.log('error submit!', fields)
+      userStore.login(form).then(() => {
+        router.push('/')
+      })
     }
   })
 }

@@ -63,6 +63,14 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
     List<String> getApiUrlList(String appModule, List<Long> roleIds);
 
     /**
+     * 获取指定角色集合对应的权限码集合
+     * @param appModule
+     * @param roleIds
+     * @return
+     */
+    List<String> getPermissionCodeList(String appModule, List<Long> roleIds);
+
+    /**
      * 获取资源角色VO集合
      * @return
      */
