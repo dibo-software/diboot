@@ -15,6 +15,7 @@
  */
 package com.diboot.core.util;
 
+import com.diboot.core.vo.ApiUri;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
      * @param method
      * @return
      */
-    public static String[] extractRequestMethodAndMappingUrl(Method method){
+    public static ApiUri extractRequestMethodAndMappingUrl(Method method){
         String requestMethod = null, url = null;
         if(method.getAnnotation(GetMapping.class) != null){
             GetMapping anno = AnnotationUtils.getAnnotation(method, GetMapping.class);
@@ -73,14 +74,14 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
                 requestMethod = S.join(methods);
             }
             else{
-                requestMethod = "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS,TRACE";
+                requestMethod = "GET,POST";
             }
             url = getNotEmptyStr(anno.value(), anno.path());
         }
         else{
             log.warn("无法识别到URL Mapping相关注解: "+method.getName());
         }
-        return new String[]{requestMethod, url};
+        return new ApiUri(requestMethod, url);
     }
 
     /**
