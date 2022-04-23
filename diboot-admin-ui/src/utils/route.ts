@@ -77,8 +77,7 @@ export const buildMenuTree = (routes: RouteRecord[]) => {
     if (!name) return
     const index = routeTree.findIndex(e => e.name === name)
     const find = index > -1 ? routeTree.splice(index, 1)[0] : routes.find(e => e.name === name)
-    // @ts-ignore
-    find && arr.push(find) && find.children?.length === 0 && delete find.children
+    find && arr.push(find)
   }
 
   for (const route of routes) {
@@ -94,14 +93,14 @@ export const buildMenuTree = (routes: RouteRecord[]) => {
   }
 
   // 菜单排序
-  const menuSort = (e1: RouteRecordRaw, e2: RouteRecordRaw) => (e1.meta?.sort || 0) - (e2.meta?.sort || 0)
+  const menuSort = (e1: RouteRecordRaw, e2: RouteRecordRaw) => (e1.meta?.sort ?? 0) - (e2.meta?.sort ?? 0)
 
   // 过滤菜单（隐藏菜单、无 title 时减少层级）
   function filterMenu(routeTree: RouteRecordRaw[]) {
     const routes: RouteRecordRaw[] = []
     for (const route of routeTree.sort(menuSort)) {
       if (route.meta?.hidden) continue
-      if (!route.children) {
+      if (!route.children || route.children.length === 0) {
         routes.push(route)
       } else if (!route.meta?.title && route.children.length === 1) {
         const child = route.children[0]

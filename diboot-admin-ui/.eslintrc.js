@@ -19,7 +19,6 @@ module.exports = {
   },
   plugins: ['vue', '@typescript-eslint', 'prettier'],
   rules: {
-    '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/no-explicit-any': 0,
     'comma-dangle': ['warn', 'only-multiline'],
     'vue/html-self-closing': ['warn', { html: { void: 'always' } }],
