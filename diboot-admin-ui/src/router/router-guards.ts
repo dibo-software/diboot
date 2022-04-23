@@ -1,8 +1,8 @@
 import { isNavigationFailure, Router } from 'vue-router'
 import nProgress from 'nprogress'
 import useUserStore from '@/store/auth'
-import useRouteStore from '@/store/asyncRoute'
 import useTabsViewStore from '@/store/tabsView'
+import { buildAsyncRoutes } from '@/utils/route'
 import auth from '@/utils/auth'
 
 /**
@@ -20,13 +20,15 @@ export function createRouterGuard(router: Router) {
         next()
         return
       }
-      const routeStore = useRouteStore()
 
       try {
         await userStore.getInfo()
 
         // 加载异步路由
-        await routeStore.generateRoutes(router)
+        const res = await api.get<Array<any>>('/auth/menu')
+        if (res.data?.length) {
+          buildAsyncRoutes(res.data).forEach(e => router.addRoute(e))
+        }
 
         const redirectPath = ((to.name === '404' && to.query.path) || from.query.redirect || to.path) as string
         const redirect = decodeURIComponent(redirectPath)
@@ -44,15 +46,14 @@ export function createRouterGuard(router: Router) {
       next()
       return
     }
+
     // redirect login page
     const redirectData = {
       name: 'Login',
       replace: true,
       query: to.query
     }
-    if (to.path) {
-      redirectData.query.redirect = to.path
-    }
+    redirectData.query.redirect = to.path
     next(redirectData)
   })
 

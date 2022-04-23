@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import SubMenu from './subMenu.vue'
-import useAsyncRouteStore from '@/store/asyncRoute'
+import { buildMenuTree } from '@/utils/route'
 
-const asyncRouteStore = useAsyncRouteStore()
+const menuTree = buildMenuTree(useRouter().getRoutes())
 </script>
+
 <template>
   <el-menu router>
-    <SubMenu :menu-list="asyncRouteStore.menus" />
+    <sub-menu :menu-tree="menuTree" />
   </el-menu>
 </template>

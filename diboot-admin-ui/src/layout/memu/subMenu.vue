@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import { RouteRecordRaw } from 'vue-router'
 
-defineProps<{ menuList: RouteRecordRaw[] }>()
-
-const router = useRouter()
-
-const goto = (name: string) => {
-  router.push({ name })
-}
+defineProps<{ menuTree: RouteRecordRaw[] }>()
 </script>
 
 <template>
-  <template v-for="(item, index) in menuList" :key="index">
-    <el-sub-menu v-if="item.children?.length > 0" :index="item.path">
+  <template v-for="(item, index) in menuTree" :key="index">
+    <el-sub-menu v-if="item.children?.length" :index="item.path">
       <template #title>
         图标：
         <span>{{ item.meta.title }}</span>
       </template>
-      <sub-menu :menu-list="item.children" />
+      <sub-menu :menu-tree="item.children" />
     </el-sub-menu>
     <el-menu-item v-else :index="item.path">
       图标：
@@ -25,5 +19,3 @@ const goto = (name: string) => {
     </el-menu-item>
   </template>
 </template>
-
-<style scoped></style>

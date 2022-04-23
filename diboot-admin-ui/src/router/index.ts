@@ -56,7 +56,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'Home',
     redirect: '/dashboard',
     component: () => import('@/layout/index.vue'),
-    meta: { title: '首页' },
+    meta: { title: '首页', sort: -1 },
     children: [
       {
         path: 'dashboard',
@@ -80,5 +80,3 @@ const router = createRouter({
 createRouterGuard(router)
 
 export default router
-
-setTimeout(() => console.log(router.getRoutes()), 1000)
