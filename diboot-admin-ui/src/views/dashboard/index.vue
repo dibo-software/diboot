@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Dashboard">
 console.log('Dashboard')
 </script>
 

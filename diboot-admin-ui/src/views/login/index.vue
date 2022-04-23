@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Login">
 import { FormInstance } from 'element-plus'
 import useAuthStore from '@/store/auth'
 

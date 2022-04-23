@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="500">
 console.log('500')
 </script>
 

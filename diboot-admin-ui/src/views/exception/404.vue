@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="404">
 const router = useRouter()
 // 返回首页
 const goHome = () => {

@@ -27,6 +27,7 @@ specifiers:
   vite: ^2.9.2
   vite-plugin-eslint: ^1.4.0
   vite-plugin-mock: ^2.9.6
+  vite-plugin-vue-setup-extend: ^0.4.0
   vue: ^3.2.25
   vue-router: ^4.0.14
   vue-tsc: ^0.29.8
@@ -62,6 +63,7 @@ devDependencies:
   vite: registry.npmmirror.com/vite/2.9.5
   vite-plugin-eslint: registry.npmmirror.com/vite-plugin-eslint/1.4.0_eslint@8.13.0+vite@2.9.5
   vite-plugin-mock: registry.npmmirror.com/vite-plugin-mock/2.9.6_mockjs@1.1.0+vite@2.9.5
+  vite-plugin-vue-setup-extend: registry.npmmirror.com/vite-plugin-vue-setup-extend/0.4.0_vite@2.9.5
   vue-tsc: registry.npmmirror.com/vue-tsc/0.29.8_typescript@4.6.3
 
 packages:
@@ -585,7 +587,6 @@ packages:
       magic-string: registry.npmmirror.com/magic-string/0.25.9
       postcss: registry.npmmirror.com/postcss/8.4.12
       source-map: registry.npmmirror.com/source-map/0.6.1
-    dev: false
 
   registry.npmmirror.com/@vue/compiler-ssr/3.2.33:
     resolution: {integrity: sha512-XQh1Xdk3VquDpXsnoCd7JnMoWec9CfAzQDQsaMcSU79OrrO2PNR0ErlIjm/mGq3GmBfkQjzZACV+7GhfRB8xMQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/compiler-ssr/-/compiler-ssr-3.2.33.tgz}
@@ -594,7 +595,6 @@ packages:
     dependencies:
       '@vue/compiler-dom': registry.npmmirror.com/@vue/compiler-dom/3.2.33
       '@vue/shared': registry.npmmirror.com/@vue/shared/3.2.33
-    dev: false
 
   registry.npmmirror.com/@vue/devtools-api/6.1.4:
     resolution: {integrity: sha512-IiA0SvDrJEgXvVxjNkHPFfDx6SXw0b/TUkqMcDZWNg9fnCAHbTpoo59YfJ9QLFkwa3raau5vSlRVzMSLDnfdtQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.1.4.tgz}
@@ -627,7 +627,6 @@ packages:
       '@vue/shared': registry.npmmirror.com/@vue/shared/3.2.33
       estree-walker: registry.npmmirror.com/estree-walker/2.0.2
       magic-string: registry.npmmirror.com/magic-string/0.25.9
-    dev: false
 
   registry.npmmirror.com/@vue/reactivity/3.2.33:
     resolution: {integrity: sha512-62Sq0mp9/0bLmDuxuLD5CIaMG2susFAGARLuZ/5jkU1FCf9EDbwUuF+BO8Ub3Rbodx0ziIecM/NsmyjardBxfQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/reactivity/-/reactivity-3.2.33.tgz}
@@ -2095,7 +2094,6 @@ packages:
     version: 0.25.9
     dependencies:
       sourcemap-codec: registry.npmmirror.com/sourcemap-codec/1.4.8
-    dev: false
 
   registry.npmmirror.com/magic-string/0.26.1:
     resolution: {integrity: sha512-ndThHmvgtieXe8J/VGPjG+Apu7v7ItcD5mhEIvOscWjPF/ccOiLxHaSuCAS2G+3x4GKsAbT8u7zdyamupui8Tg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/magic-string/-/magic-string-0.26.1.tgz}
@@ -2908,6 +2906,19 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
+    dev: true
+
+  registry.npmmirror.com/vite-plugin-vue-setup-extend/0.4.0_vite@2.9.5:
+    resolution: {integrity: sha512-WMbjPCui75fboFoUTHhdbXzu4Y/bJMv5N9QT9a7do3wNMNHHqrk+Tn2jrSJU0LS5fGl/EG+FEDBYVUeWIkDqXQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vite-plugin-vue-setup-extend/-/vite-plugin-vue-setup-extend-0.4.0.tgz}
+    id: registry.npmmirror.com/vite-plugin-vue-setup-extend/0.4.0
+    name: vite-plugin-vue-setup-extend
+    version: 0.4.0
+    peerDependencies:
+      vite: '>=2.0.0'
+    dependencies:
+      '@vue/compiler-sfc': registry.npmmirror.com/@vue/compiler-sfc/3.2.33
+      magic-string: registry.npmmirror.com/magic-string/0.25.9
+      vite: registry.npmmirror.com/vite/2.9.5
     dev: true
 
   registry.npmmirror.com/vite/2.9.5:

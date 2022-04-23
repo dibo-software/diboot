@@ -76,12 +76,12 @@ const authMenu = [
   {
     path: '/demo',
     name: 'Demo',
-    meta: { title: 'Demo', component: 'layout' },
+    meta: { title: 'Demo', componentName: 'Layout' },
     children: [
       {
         path: 'hello',
         name: 'Hello',
-        meta: { title: '仪表盘', component: `dashboard/index` }
+        meta: { title: 'Hello', componentName: 'Dashboard' }
       }
     ]
   }

@@ -37,7 +37,7 @@ export function createRouterGuard(router: Router) {
         return
       } catch (e) {
         // 获取数据异常
-        console.log('加载授权路由失败', e)
+        console.log('动态加载授权路由失败', e)
       }
     }
 

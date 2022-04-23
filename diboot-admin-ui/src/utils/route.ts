@@ -13,22 +13,23 @@ const RouterView = defineComponent({
  */
 export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
   // 加载所有页面
-  const pages = import.meta.globEager('@/views/**/*.vue')
+  const viewComponents = Object.values(import.meta.globEager('@/views/**/*.{vue,tsx}'))
+    .map(e => e.default)
+    .filter(e => e.name)
+    .reduce(
+      (components, view) => {
+        components[view.name ?? '_'] = view
+        return components
+      },
+      { Layout }
+    )
   // 获取组件
   const resolveComponent = (name: any) => {
-    const importPage = pages[`../views/${name}.vue`]
-
-    if (importPage) return importPage.default
-
-    throw new Error(`Unknown page ${name}. Is it located under Pages with a .vue extension?`)
+    if (viewComponents[name]) return viewComponents[name]
+    throw new Error(`Unknown component '${name}'. Is it located under 'views' with extension?`)
   }
 
-  /**
-   * 构建全路径
-   *
-   * @param path
-   * @param parentPath
-   */
+  // 构建完整路径
   const buildFullPath = (path: string, parentPath = '/') =>
     /^\//.exec(path) ? path : `${parentPath === '/' ? '' : parentPath}/${path}`
 
@@ -42,20 +43,18 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
     return routes.filter(route => {
       const fullPath = buildFullPath(route.path, parentPath)
       if (route.children?.length && (route.children = buildRouter(route.children, fullPath)).length) {
-        const component = route.meta?.component
-        if (component?.toLowerCase() === 'layout' || component?.toLowerCase() === 'layout/index') {
-          route.component = Layout
-        } else if (!component) {
-          route.component = RouterView
+        const componentName = route.meta?.componentName
+        if (componentName) {
+          route.component = resolveComponent(componentName)
         } else {
-          route.component = resolveComponent(component)
+          route.component = RouterView
         }
         // 父级目录重定向首个子菜单
         route.redirect = buildFullPath(route.children[0].path, fullPath)
       } else {
         delete route.children
-        if (route.meta?.component) {
-          route.component = resolveComponent(route.meta?.component)
+        if (route.meta?.componentName) {
+          route.component = resolveComponent(route.meta?.componentName)
         } else return false
       }
       return true
@@ -66,11 +65,10 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
 }
 
 /**
- * 构建菜单Tree
- *
- * @param routes 路由列表
+ * 获取菜单Tree
  */
-export const buildMenuTree = (routes: RouteRecord[]) => {
+export const getMenuTree = () => {
+  const routes = useRouter().getRoutes()
   const routeTree: RouteRecord[] = []
 
   const findByNameAndCollect = (name: RouteRecordName | undefined, arr: RouteRecord[]) => {
@@ -88,6 +86,8 @@ export const buildMenuTree = (routes: RouteRecord[]) => {
       const newChildren: RouteRecord[] = []
       children.forEach(child => findByNameAndCollect(child.name, newChildren))
       route.children = newChildren
+      routeTree.push(route)
+    } else {
       routeTree.push(route)
     }
   }

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import eslintPlugin from 'vite-plugin-eslint/dist'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -12,6 +13,7 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
+      VueSetupExtend(),
       // eslint 自动修复
       eslintPlugin({ fix: true }),
       AutoImport({
