@@ -1,6 +1,6 @@
 import { isNavigationFailure, Router } from 'vue-router'
 import nProgress from 'nprogress'
-import useUserStore from '@/store/auth'
+import useAuthStore from '@/store/auth'
 import useTabsViewStore from '@/store/tabsView'
 import { buildAsyncRoutes } from '@/utils/route'
 import auth from '@/utils/auth'
@@ -14,7 +14,7 @@ export function createRouterGuard(router: Router) {
     nProgress.start()
     // 未登录
     if (auth.getToken()) {
-      const userStore = useUserStore()
+      const userStore = useAuthStore()
       // 已加载完基本数据
       if (userStore.info) {
         next()

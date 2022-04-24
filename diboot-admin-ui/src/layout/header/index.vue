@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import useAuthauthStore from '@/store/auth'
+import useAuthStore from '@/store/auth'
 import { useRouter } from 'vue-router'
-const authStore = useAuthauthStore()
+const authStore = useAuthStore()
 const router = useRouter()
 const logout = async () => {
   await authStore.logout()
