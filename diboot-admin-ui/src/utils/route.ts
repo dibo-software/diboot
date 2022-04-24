@@ -13,12 +13,12 @@ const RouterView = defineComponent({
  */
 export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
   // 加载所有页面
-  const viewComponents = Object.values(import.meta.globEager('@/views/**/*.{vue,tsx}'))
+  const viewComponents = Object.values(import.meta.globEager('@/views/**/*.{vue,tsx,jsx}'))
     .map(e => e.default)
     .filter(e => e.name)
     .reduce(
       (components, view) => {
-        components[view.name ?? '_'] = view
+        components[view.name || '_'] = view
         return components
       },
       { Layout }
