@@ -40,22 +40,22 @@ public class IamCacheManager {
     /**
      * controller-权限码 缓存
      */
-    private static Map<String, PermissionCodeWrapper> CLASS_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>();
+    private static Map<String, ApiPermissionWrapper> CLASS_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 返回全部接口权限码ApiPermission
      * @return
      */
-    public static List<PermissionCodeWrapper> getApiPermissionVoList(){
-        return PermissionCodeExtractor.extractAllApiPermissions();
+    public static List<ApiPermissionWrapper> getApiPermissionVoList(){
+        return ApiPermissionExtractor.extractAllApiPermissions();
     }
 
     /**
      * 缓存全部permissions
      */
-    public static PermissionCodeWrapper getPermissionCodeWrapper(Class<?> controllerClass){
+    public static ApiPermissionWrapper getPermissionCodeWrapper(Class<?> controllerClass){
         // 优先从缓存中读取
-        PermissionCodeWrapper wrapper = CLASS_PERMISSIONCODE_CACHE.get(controllerClass.getName());
+        ApiPermissionWrapper wrapper = CLASS_PERMISSIONCODE_CACHE.get(controllerClass.getName());
         if(wrapper != null){
             return wrapper;
         }
@@ -82,7 +82,7 @@ public class IamCacheManager {
         else{
             name = S.substringBeforeLast(controllerClass.getSimpleName(), "Controller");
         }
-        wrapper = new PermissionCodeWrapper(name, codePrefix);
+        wrapper = new ApiPermissionWrapper(name, codePrefix);
         CLASS_PERMISSIONCODE_CACHE.put(controllerClass.getName(), wrapper);
         return wrapper;
     }

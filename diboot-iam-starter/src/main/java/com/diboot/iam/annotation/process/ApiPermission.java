@@ -35,10 +35,10 @@ import java.util.List;
  * Copyright © diboot.com
 */
 @Getter @Setter @Accessors(chain = true)
-public class PermissionCode implements Serializable {
+public class ApiPermission implements Serializable {
     private static final long serialVersionUID = -17224355139977969L;
 
-    public PermissionCode(String code){
+    public ApiPermission(String code){
         this.code = code;
     }
     /**

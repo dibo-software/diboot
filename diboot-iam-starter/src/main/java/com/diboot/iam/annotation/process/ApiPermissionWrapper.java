@@ -31,12 +31,12 @@ import java.util.List;
  * Copyright © diboot.com
  */
 @Getter @Setter
-public class PermissionCodeWrapper implements Serializable {
+public class ApiPermissionWrapper implements Serializable {
     private static final long serialVersionUID = 7795636645748631729L;
 
-    public PermissionCodeWrapper(){}
+    public ApiPermissionWrapper(){}
 
-    public PermissionCodeWrapper(String name, String code){
+    public ApiPermissionWrapper(String name, String code){
         this.name = name;
         this.code = code;
     }
@@ -54,10 +54,10 @@ public class PermissionCodeWrapper implements Serializable {
     /**
      * 子节点权限码集合
      */
-    private List<PermissionCode> permissionCodeList;
+    private List<ApiPermission> apiPermissionList;
 
     @JsonIgnore
     public boolean notEmpty(){
-        return V.notEmpty(code) && V.notEmpty(permissionCodeList);
+        return V.notEmpty(code) && V.notEmpty(apiPermissionList);
     }
 }

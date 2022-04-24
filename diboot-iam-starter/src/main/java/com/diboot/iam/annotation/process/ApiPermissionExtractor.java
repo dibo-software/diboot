@@ -37,12 +37,12 @@ import java.util.*;
  * Copyright © diboot.com
  */
 @Slf4j
-public class PermissionCodeExtractor {
+public class ApiPermissionExtractor {
 
     /**
      * 接口权限缓存
      */
-    private static List<PermissionCodeWrapper> API_PERMISSION_CACHE = null;
+    private static List<ApiPermissionWrapper> API_PERMISSION_CACHE = null;
     /**
      * 唯一KEY
      */
@@ -52,7 +52,7 @@ public class PermissionCodeExtractor {
      * 提取所有的权限定义
      * @return
      */
-    public static List<PermissionCodeWrapper> extractAllApiPermissions(){
+    public static List<ApiPermissionWrapper> extractAllApiPermissions(){
         if(API_PERMISSION_CACHE == null){
             API_PERMISSION_CACHE = new ArrayList<>();
             UNIQUE_KEY_SET = new HashSet<>();
@@ -81,7 +81,7 @@ public class PermissionCodeExtractor {
                continue;
             }
             UNIQUE_KEY_SET.add(controllerClass.getName());
-            PermissionCodeWrapper wrapper = IamCacheManager.getPermissionCodeWrapper(controllerClass);
+            ApiPermissionWrapper wrapper = IamCacheManager.getPermissionCodeWrapper(controllerClass);
             buildApiPermissionsInClass(wrapper, controllerClass);
             if(wrapper.notEmpty()){
                 API_PERMISSION_CACHE.add(wrapper);
@@ -94,7 +94,7 @@ public class PermissionCodeExtractor {
      * @param wrapper
      * @param controllerClass
      */
-    private static void buildApiPermissionsInClass(PermissionCodeWrapper wrapper, Class controllerClass) {
+    private static void buildApiPermissionsInClass(ApiPermissionWrapper wrapper, Class controllerClass) {
         List<Method> annoMethods = AnnotationUtils.extractAnnotationMethods(controllerClass, BindPermission.class);
         if(V.isEmpty(annoMethods)){
             return;
@@ -104,8 +104,8 @@ public class PermissionCodeExtractor {
         if(requestMapping != null){
             urlPrefix = AnnotationUtils.getNotEmptyStr(requestMapping.value(), requestMapping.path());
         }
-        List<PermissionCode> apiPermissions = new ArrayList<>();
-        Map<String, PermissionCode> tempCode2ObjMap = new HashMap<>();
+        List<ApiPermission> apiPermissions = new ArrayList<>();
+        Map<String, ApiPermission> tempCode2ObjMap = new HashMap<>();
         for(Method method : annoMethods){
             // 忽略私有方法
             if(Modifier.isPrivate(method.getModifiers())){
@@ -128,32 +128,32 @@ public class PermissionCodeExtractor {
                 }
                 String name = bindPermission.name();
                 String code = (wrapper.getCode() != null)? wrapper.getCode()+":"+bindPermission.code() : bindPermission.code();
-                PermissionCode permissionCode = tempCode2ObjMap.get(code);
-                if(permissionCode == null){
-                    permissionCode = new PermissionCode(code);
-                    tempCode2ObjMap.put(code, permissionCode);
-                    apiPermissions.add(permissionCode);
+                ApiPermission apiPermission = tempCode2ObjMap.get(code);
+                if(apiPermission == null){
+                    apiPermission = new ApiPermission(code);
+                    tempCode2ObjMap.put(code, apiPermission);
+                    apiPermissions.add(apiPermission);
                 }
                 apiUriCombo.setLabel(name);
                 // 提取请求url-permission code的关系
-                buildApiPermission(permissionCode, urlPrefix, apiUriCombo);
+                buildApiPermission(apiPermission, urlPrefix, apiUriCombo);
             }
         }
         // 添加至wrapper
         if(apiPermissions.size() > 0){
-            wrapper.setPermissionCodeList(apiPermissions);
+            wrapper.setApiPermissionList(apiPermissions);
         }
     }
 
     /**
      * 构建ApiPermission
-     * @param permissionCode
+     * @param apiPermission
      * @param urlPrefix
      * @param apiUriCombo
      */
-    private static void buildApiPermission(PermissionCode permissionCode, String urlPrefix, ApiUri apiUriCombo){
+    private static void buildApiPermission(ApiPermission apiPermission, String urlPrefix, ApiUri apiUriCombo){
         String requestMethod = apiUriCombo.getMethod(), url = apiUriCombo.getUri();
-        List<ApiUri> apiUriList = permissionCode.getApiUriList();
+        List<ApiUri> apiUriList = apiPermission.getApiUriList();
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
                 String uri = u;
