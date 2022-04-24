@@ -6,5 +6,4 @@ app.use(router)
 app.use(createPinia())
 app.mount('#app')
 
-import 'element-plus/es/components/message/style/css'
 import 'nprogress/nprogress.css'

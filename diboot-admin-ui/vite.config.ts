@@ -5,6 +5,7 @@ import eslintPlugin from 'vite-plugin-eslint/dist'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import ElementPlus from 'unplugin-element-plus/vite'
 import { viteMockServe } from 'vite-plugin-mock'
 import { resolve } from 'path'
 
@@ -36,6 +37,7 @@ export default defineConfig(({ command }) => {
         // 导入路径变换
         importPathTransform: path => path.replace(/^.+\/src/g, '@')
       }),
+      ElementPlus({ useSource: false }),
       viteMockServe({
         // 忽略以_开头的文件及目录
         ignore: /^_|\/_/,
