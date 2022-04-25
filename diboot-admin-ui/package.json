@@ -9,6 +9,7 @@
     "lint": "eslint --ext .{js,jsx,ts,tsx,vue} ./src"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^1.1.4",
     "axios": "^0.26.1",
     "element-plus": "^2.1.10",
     "lodash": "^4.17.21",

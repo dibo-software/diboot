@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@element-plus/icons-vue': ^1.1.4
   '@types/lodash': ^4.14.182
   '@types/node': ^17.0.25
   '@types/nprogress': ^0.2.0
@@ -37,6 +38,7 @@ specifiers:
   vue-tsc: ^0.29.8
 
 dependencies:
+  '@element-plus/icons-vue': registry.npmmirror.com/@element-plus/icons-vue/1.1.4_vue@3.2.33
   axios: registry.npmmirror.com/axios/0.26.1
   element-plus: registry.npmmirror.com/element-plus/2.1.10_vue@3.2.33
   lodash: registry.npmmirror.com/lodash/4.17.21
