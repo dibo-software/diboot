@@ -79,11 +79,18 @@ const authMenu = [
     path: '/demo',
     name: 'Demo',
     meta: { title: 'Demo', componentName: 'Layout' },
-    children: [
+    'children|20': [
       {
-        path: 'hello',
-        name: 'Hello',
-        meta: { title: 'Hello', componentName: 'Dashboard' }
+        path: `hello@string('number', 5)`,
+        name: 'Hello-@increment',
+        meta: {
+          title: 'Hello-@increment',
+          componentName: 'Dashboard',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: '@boolean',
+          hideFooter: '@boolean'
+        }
       }
     ]
   }

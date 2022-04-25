@@ -1,7 +1,6 @@
 import { isNavigationFailure, Router } from 'vue-router'
 import nProgress from 'nprogress'
 import useAuthStore from '@/store/auth'
-import useTabsViewStore from '@/store/tabsView'
 import { buildAsyncRoutes } from '@/utils/route'
 import auth from '@/utils/auth'
 
@@ -63,7 +62,6 @@ export function createRouterGuard(router: Router) {
       return
     }
     nProgress.done()
-    useTabsViewStore().addView(to)
   })
 
   router.onError(error => {

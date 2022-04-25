@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import useRouteStore from '@/store/tabsView'
-const routeStore = useRouteStore()
+import useViewTabsStore from '@/store/viewTabs'
+
+const viewTabsStore = useViewTabsStore()
 </script>
 
 <template>
   <router-view v-slot="{ Component, route }">
     <transition :name="route.meta.transition" mode="out-in">
-      <keep-alive :include="routeStore.cachedViews">
+      <keep-alive :include="viewTabsStore.cachedViews">
         <div :key="route.fullPath" class="content">
           <div :class="route.meta.hollow ? '' : 'bounded'">
             <component :is="Component" />

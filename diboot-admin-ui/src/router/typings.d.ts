@@ -7,6 +7,7 @@ declare module 'vue-router' {
     module?: string
     componentName?: string
     sort?: number
+    affixTab?: boolean
     ignoreAuth?: boolean
     keepAlive?: boolean
     hidden?: boolean
