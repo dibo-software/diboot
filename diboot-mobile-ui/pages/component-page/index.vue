@@ -36,7 +36,8 @@
 					},
 					{
 						icon: require('@/static/logo.png'),
-						title: '测试'
+						title: '测试',
+						path: '/pages/testPage/list'
 					},
 					{
 						icon: require('@/static/logo.png'),
