@@ -2,8 +2,4 @@
 console.log('footer')
 </script>
 
-<template>
-  <h5 style="text-align: center">footer</h5>
-</template>
-
-<style scoped></style>
+<template>Diboot © 2015-2022</template>
