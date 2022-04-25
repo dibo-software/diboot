@@ -123,7 +123,7 @@ public class ApiPermissionExtractor {
             }
             if(bindPermission != null){
                 if(V.isEmpty(bindPermission.code())){
-                    log.warn("忽略无效的权限配置(未指定code): {}.{}", controllerClass.getClass().getSimpleName(), method.getName());
+                    log.warn("忽略无效的权限配置(未指定code): {}.{}", controllerClass.getSimpleName(), method.getName());
                     continue;
                 }
                 String name = bindPermission.name();

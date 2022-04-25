@@ -130,7 +130,7 @@ create table iam_resource_permission
   display_type varchar(20) not null,
   display_name varchar(100) not null,
   resource_code varchar(100)   null,
-  permission_code varchar(100)   null,
+  permission_code varchar(200)   null,
   sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
