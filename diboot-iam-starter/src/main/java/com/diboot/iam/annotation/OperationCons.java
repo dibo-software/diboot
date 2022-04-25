@@ -23,6 +23,15 @@ package com.diboot.iam.annotation;
  */
 public class OperationCons {
     /**
+     * 操作权限类型 - 读数据
+     */
+    public static final String CODE_READ = "read";
+    /**
+     * 操作权限类型 - 写数据
+     */
+    public static final String CODE_WRITE = "write";
+
+    /**
      * 操作权限类型 - 首页
      */
     public static final String CODE_INDEX = "index";
@@ -66,6 +75,16 @@ public class OperationCons {
      * 操作权限类型 - 导出
      */
     public static final String CODE_EXPORT = "export";
+
+    /**
+     * 操作权限类型描述 - 读数据
+     */
+    public static final String LABEL_READ = "读权限";
+    /**
+     * 操作权限类型描述 - 写数据
+     */
+    public static final String LABEL_WRITE = "写权限";
+
     /**
      * 操作权限类型描述 - 查看首页
      */
