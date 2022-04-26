@@ -118,4 +118,9 @@ public class Cons extends com.diboot.core.config.Cons {
     public static final String AUTHENTICATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authenticationCache";
     public static final String AUTHORIZATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authorizationCache";
 
+    /**
+     * 验证码
+     */
+    public static final String CAPTCHA = "captcha";
+
 }
