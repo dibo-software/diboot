@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,22 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.jwt;
+package com.diboot.iam.shiro;
 
 import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.jwt.BaseJwtAuthToken;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.JwtUtils;
 import io.jsonwebtoken.Claims;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.filter.AccessControlFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -40,16 +38,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * 无状态JWT过滤器
- *
- * @author : uu
- * @version : v1.0
- * @Date 2020/11/19  10:46
+ * 无状态的访问控制过滤器
+ * @author JerryMa
+ * @version v2.6.0
+ * @date 2022/4/26
+ * Copyright © diboot.com
  */
-@Deprecated
 @Slf4j
-@Getter @Setter
-public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
+public class StatelessAccessControlFilter extends AccessControlFilter {
 
     /**
      * 判断是否登录
@@ -71,7 +67,7 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
         String currentToken = JwtUtils.getRequestToken(httpRequest);
         //解密是否成功
         if(V.notEmpty(claims.getSubject())){
-            String subject = S.substringBeforeLast(claims.getSubject(), Cons.SEPARATOR_COMMA);
+            String subject = claims.getSubject();
             log.debug("Token验证成功！subject={}", subject);
             // 如果临近过期，则生成新的token返回
             String refreshToken = JwtUtils.generateNewTokenIfRequired(claims);
@@ -79,6 +75,7 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
                 currentToken = refreshToken;
                 // 写入response header中
                 JwtUtils.addTokenToResponseHeader((HttpServletResponse) response, refreshToken);
+                log.debug("写回刷新token :{}", refreshToken);
             }
             // 构建登陆的token
             if(IamSecurityUtils.getSubject().isAuthenticated() == false || refreshToken != null){
@@ -140,4 +137,5 @@ public class StatelessJwtAuthFilter extends BasicHttpAuthenticationFilter {
             log.error("处理异步请求异常", e);
         }
     }
+
 }

@@ -42,6 +42,7 @@ import java.io.PrintWriter;
  * @version v2.0
  * @date 2019/6/6
  */
+@Deprecated
 @Slf4j
 public class DefaultJwtAuthFilter extends BasicHttpAuthenticationFilter {
 

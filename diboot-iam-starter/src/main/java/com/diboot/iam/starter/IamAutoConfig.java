@@ -15,24 +15,27 @@
  */
 package com.diboot.iam.starter;
 
+import com.diboot.core.cache.BaseCacheManager;
+import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.util.V;
+import com.diboot.iam.config.Cons;
 import com.diboot.iam.jwt.BaseJwtRealm;
-import com.diboot.iam.jwt.DefaultJwtAuthFilter;
-import com.diboot.iam.jwt.StatelessJwtAuthFilter;
+import com.diboot.iam.shiro.StatelessAccessControlFilter;
+import com.diboot.iam.shiro.StatelessSubjectFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
-import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.*;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
-import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
@@ -99,11 +102,38 @@ public class IamAutoConfig {
      */
     @Bean(name = "shiroSecurityManager")
     @ConditionalOnMissingBean
-    public SessionsSecurityManager shiroSecurityManager() {
+    public DefaultWebSecurityManager shiroSecurityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setSubjectFactory(subjectFactory());
+        securityManager.setSessionManager(sessionManager());
         securityManager.setRealm(realm());
         securityManager.setCacheManager(shiroCacheManager());
+        // subject禁止存储到session
+        ((DefaultSubjectDAO) securityManager.getSubjectDAO()).setSessionStorageEvaluator(sessionStorageEvaluator());
         return securityManager;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    protected SessionStorageEvaluator sessionStorageEvaluator() {
+        DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        sessionStorageEvaluator.setSessionStorageEnabled(false);
+        return sessionStorageEvaluator;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultWebSubjectFactory subjectFactory(){
+        StatelessSubjectFactory subjectFactory = new StatelessSubjectFactory();
+        return subjectFactory;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultSessionManager sessionManager(){
+        DefaultSessionManager sessionManager = new DefaultSessionManager();
+        sessionManager.setSessionValidationSchedulerEnabled(false);
+        return sessionManager;
     }
 
     /**
@@ -113,11 +143,8 @@ public class IamAutoConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public BasicHttpAuthenticationFilter shiroFilter() {
-        if (iamProperties.isEnableStatelessSession()) {
-            return new StatelessJwtAuthFilter();
-        }
-        return new DefaultJwtAuthFilter();
+    public AccessControlFilter shiroFilter() {
+        return new StatelessAccessControlFilter();
     }
 
     @Bean
@@ -135,20 +162,6 @@ public class IamAutoConfig {
         // 设置过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
         filters.put("jwt", shiroFilter());
-
-        // 设置无状态session
-        if (securityManager instanceof DefaultWebSecurityManager &&
-                V.equals(shiroFilter().getClass().getTypeName(), StatelessJwtAuthFilter.class.getTypeName())) {
-            DefaultWebSecurityManager defaultWebSecurityManager = ((DefaultWebSecurityManager) securityManager);
-            // 设置不创建session
-            defaultWebSecurityManager.setSubjectFactory(new StatelessDefaultSubjectFactory());
-            // subject禁止存储到session
-            //详情见org.apache.shiro.mgt.DefaultSubjectDAO#save
-            DefaultWebSessionStorageEvaluator webEvalutator = new DefaultWebSessionStorageEvaluator();
-            webEvalutator.setSessionStorageEnabled(false);
-            ((DefaultSubjectDAO) defaultWebSecurityManager.getSubjectDAO())
-                    .setSessionStorageEvaluator(webEvalutator);
-        }
         shiroFilterFactoryBean.setFilters(filters);
         //Shiro securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -190,20 +203,13 @@ public class IamAutoConfig {
     }
 
     /**
-     * 禁用session
-     *
-     * @author : uu
-     * @version : v1.0
-     * @date 2020/11/19  11:06
+     * 验证码的缓存管理
+     * @return
      */
-    static class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
-
-        @Override
-        public Subject createSubject(SubjectContext context) {
-            //不创建session
-            context.setSessionCreationEnabled(false);
-            return super.createSubject(context);
-        }
+    @Bean
+    @ConditionalOnMissingBean
+    public BaseCacheManager captchaCacheManager(){
+        return new DynamicMemoryCacheManager(30, Cons.CAPTCHA);
     }
 
 }

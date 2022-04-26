@@ -65,10 +65,6 @@ public class IamProperties {
      */
     private boolean enablePermissionCheck = true;
     /**
-     * 是否开启无状态 Jwt 身份验证过滤器
-     */
-    private boolean enableStatelessSession = false;
-    /**
      * oauth2 客户端配置
      */
     private Oauth2ClientProperties oauth2Client;
