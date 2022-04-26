@@ -25,6 +25,15 @@ public abstract class BaseCacheManager extends SimpleCacheManager {
     }
 
     /**
+     * 获取缓存对象
+     * @param objKey
+     * @return
+     */
+    public String getCacheString(String cacheName, Object objKey){
+        return getCacheObj(cacheName, objKey, String.class);
+    }
+
+    /**
      * 缓存对象
      * @param cacheName
      * @param objKey
@@ -33,6 +42,16 @@ public abstract class BaseCacheManager extends SimpleCacheManager {
     public void putCacheObj(String cacheName, Object objKey, Object obj){
         Cache cache = getCache(cacheName);
         cache.put(objKey, obj);
+    }
+
+    /**
+     * 删除缓存对象
+     * @param cacheName
+     * @param objKey
+     */
+    public void removeCacheObj(String cacheName, Object objKey){
+        Cache cache = getCache(cacheName);
+        cache.evict(objKey);
     }
 
     /**
