@@ -4,7 +4,7 @@ import { getMenuTree } from '@/utils/route'
 </script>
 
 <template>
-  <el-menu router>
+  <el-menu router :default-active="$route.path">
     <sub-menu :menu-tree="getMenuTree()" />
   </el-menu>
 </template>

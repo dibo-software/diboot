@@ -1,32 +1,60 @@
 <script setup lang="ts">
-import { onBeforeRouteUpdate, RouteLocationNormalized } from 'vue-router'
+import { RouteLocationNormalized } from 'vue-router'
 import { Close, Menu, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { ElScrollbar } from 'element-plus'
 import useViewTabsStore from '@/store/viewTabs'
 
+// tabs 滚动控制
+const tabsRef = ref<HTMLDivElement>()
+const tabsScrollRef = ref<InstanceType<typeof ElScrollbar>>()
+
+const showButtons = ref(false) // computed(() => (tabsRef.value?.clientWidth ?? 0) < (tabsRef.value?.scrollWidth ?? 0))
+// 刷新按钮
+const refreshButton = () =>
+  nextTick(() => (showButtons.value = (tabsRef.value?.clientWidth ?? 0) < (tabsRef.value?.scrollWidth ?? 0)))
+
+// tabs 位置
+const tabsPosition = ref(0)
+
+const scroll = ({ scrollLeft }: any) => {
+  tabsPosition.value = scrollLeft
+}
+
+// 手动滚动 Tabs 列表
+const operateScroll = (left = true) => {
+  const step = 50 // 步长，调解速度
+  let deviation = (tabsRef.value?.clientWidth ?? 500) * 0.7
+  let timer = setInterval(() => {
+    tabsScrollRef.value?.setScrollLeft(tabsPosition.value + (left ? step : -step))
+    if ((deviation -= step) <= 0) {
+      clearInterval(timer)
+    }
+  }, 20)
+}
+
+// tabs 收集
 const viewTabsStore = useViewTabsStore()
 
 const allowClose = (item: RouteLocationNormalized) => !item.meta.affixTab && viewTabsStore.tabList.length > 1
-const findTabIndex = (item: RouteLocationNormalized) => viewTabsStore.tabList.findIndex(e => e.name === item?.name)
+const findTabIndex = (item?: RouteLocationNormalized) => viewTabsStore.tabList.findIndex(e => e.name === item?.name)
 
 const route = useRoute()
+const router = useRouter()
+// 收集 Tabs
 viewTabsStore.addTab(_.cloneDeep(route))
-watch(route, value => {
-  viewTabsStore.addTab(_.cloneDeep(value))
-})
-
-// 首次加载与第一次跳转路由不进入！！！
-onBeforeRouteUpdate(to => {
-  console.log('to', to.name)
-})
-
-// onBeforeRouteUpdate((to, from, next) => {
-//   console.log('to', to.name)
-//   next()
-// })
+watch(
+  route,
+  value => {
+    if (viewTabsStore.addTab(_.cloneDeep(value))) {
+      refreshButton()
+      operateScroll()
+    }
+  },
+  { immediate: true }
+)
 
 // 右键菜单
-const menu = reactive<{ route?: RouteLocationNormalized; locator?: any }>({})
+const menu = reactive<{ route?: RouteLocationNormalized; locator?: any }>({ route })
 const contentMenuTarget = ref()
 const contentMenu = ref()
 
@@ -43,15 +71,44 @@ const rightClick = (event: MouseEvent, route: RouteLocationNormalized) => {
   }, 0)
 }
 
-const showButtons = ref(false)
+const closeTab = (tab: RouteLocationNormalized) => {
+  viewTabsStore.closeTab(tab, router)
+  refreshButton()
+}
+const closeLeftTabs = (tab?: RouteLocationNormalized) => {
+  if (tab == null) return
+  viewTabsStore.closeLeftTabs(tab, router)
+  refreshButton()
+}
+const closeRightTabs = (tab?: RouteLocationNormalized) => {
+  if (tab == null) return
+  viewTabsStore.closeRightTabs(tab, router)
+  refreshButton()
+}
+const closeOtherTabs = (tab?: RouteLocationNormalized) => {
+  if (tab == null) return
+  viewTabsStore.closeOtherTabs(tab, router)
+  refreshButton()
+}
+const closeAllTabs = () => {
+  viewTabsStore.closeAllTabs(router)
+  refreshButton()
+}
 </script>
 
 <template>
-  <div ref="tabsShellRef" style="display: flex; align-items: center">
-    <el-icon v-show="showButtons" :size="22" class="icon-button" style="border-right: 1px solid #eee" color="#AAA">
+  <div style="display: flex; align-items: center; border-bottom: 1px solid #eee">
+    <el-icon
+      v-show="showButtons"
+      :size="22"
+      class="icon-button"
+      style="border-right: 1px solid #eee"
+      color="#AAA"
+      @click="operateScroll(false)"
+    >
       <arrow-left />
     </el-icon>
-    <el-scrollbar ref="tabsScrollRef" style="height: 36px; width: calc(100% - 36px)" @scroll="scroll">
+    <el-scrollbar ref="tabsScrollRef" style="width: 100%" @scroll="scroll">
       <div ref="tabsRef" class="tabs">
         <el-button
           v-for="item in viewTabsStore.tabList"
@@ -61,22 +118,29 @@ const showButtons = ref(false)
           @click="$router.push(item.fullPath)"
         >
           {{ item.meta.title }}
-          <el-icon v-show="allowClose(item)" :size="18" @click="viewTabsStore.closeTab(item, $router)">
+          <el-icon v-show="allowClose(item)" :size="18" @click="closeTab(item)">
             <Close />
           </el-icon>
         </el-button>
       </div>
     </el-scrollbar>
-    <el-icon v-show="showButtons" :size="22" class="icon-button" style="border-left: 1px solid #eee" color="#AAA">
+    <el-icon
+      v-show="showButtons"
+      :size="22"
+      class="icon-button"
+      style="border-left: 1px solid #eee"
+      color="#AAA"
+      @click="operateScroll(true)"
+    >
       <arrow-right />
     </el-icon>
-    <el-dropdown size="small" style="border-left: 1px solid #eeeeee">
+    <el-dropdown size="small">
       <el-icon :size="22" class="icon-button" style="border-left: 1px solid #eee" color="#AAA">
         <Menu />
       </el-icon>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item @click="viewTabsStore.closeAllTabs($router)">关闭所有页签</el-dropdown-item>
+          <el-dropdown-item @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
           <el-dropdown-item command="FullScreen" divided>全屏</el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -87,19 +151,16 @@ const showButtons = ref(false)
     <div ref="contentMenuTarget" />
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item :disabled="findTabIndex(menu.route) === 0" @click="viewTabsStore.closeLeftTabs(menu.route)">
+        <el-dropdown-item :disabled="findTabIndex(menu.route) === 0" @click="closeLeftTabs(menu.route)">
           关闭左侧页签
         </el-dropdown-item>
         <el-dropdown-item
           :disabled="findTabIndex(menu.route) === viewTabsStore.tabList.length - 1"
-          @click="viewTabsStore.closeRightTabs(menu.route)"
+          @click="closeRightTabs(menu.route)"
         >
           关闭右侧页签
         </el-dropdown-item>
-        <el-dropdown-item
-          :disabled="viewTabsStore.tabList.length === 1"
-          @click="viewTabsStore.closeOtherTabs(menu.route)"
-        >
+        <el-dropdown-item :disabled="viewTabsStore.tabList.length === 1" @click="closeOtherTabs(menu.route)">
           关闭其他页签
         </el-dropdown-item>
         <el-dropdown-item command="FullScreen" divided>全屏</el-dropdown-item>
@@ -111,7 +172,7 @@ const showButtons = ref(false)
 <style scoped lang="scss">
 .tabs {
   display: flex;
-  margin: 3px;
+  margin: 0 3px;
 
   .el-button {
     height: 30px;
@@ -133,14 +194,9 @@ const showButtons = ref(false)
   }
 }
 
-.add-fun {
-  width: 33px;
-  border-left: 2px solid #eeeeee;
-}
-
 .icon-button {
   width: 33px;
-  height: 36px;
+  height: 35px;
   cursor: pointer;
 }
 
