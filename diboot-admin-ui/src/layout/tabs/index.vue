@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { RouteLocationNormalized } from 'vue-router'
-import { Close, Menu, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
 import { ElScrollbar } from 'element-plus'
 import useViewTabsStore from '@/store/viewTabs'
+import useAppStore from '@/store/app'
+import { WatchStopHandle } from 'vue'
+
+const appStore = useAppStore()
 
 // tabs 滚动控制
-const tabsRef = ref<HTMLDivElement>()
+const tabsRef = ref<HTMLElement>()
 const tabsScrollRef = ref<InstanceType<typeof ElScrollbar>>()
 
 const showButtons = ref(false) // computed(() => (tabsRef.value?.clientWidth ?? 0) < (tabsRef.value?.scrollWidth ?? 0))
@@ -40,14 +44,25 @@ const findTabIndex = (item?: RouteLocationNormalized) => viewTabsStore.tabList.f
 
 const route = useRoute()
 const router = useRouter()
-// 收集 Tabs
-viewTabsStore.addTab(_.cloneDeep(route))
+let collectTabs: WatchStopHandle
 watch(
-  route,
+  () => appStore.enableTabs,
   value => {
-    if (viewTabsStore.addTab(_.cloneDeep(value))) {
-      refreshButton()
-      operateScroll()
+    if (value) {
+      // 收集 Tabs
+      collectTabs = watch(
+        route,
+        value => {
+          if (viewTabsStore.addTab(_.cloneDeep(value))) {
+            refreshButton()
+            operateScroll()
+          }
+        },
+        { immediate: true }
+      )
+    } else {
+      collectTabs()
+      viewTabsStore.tabList = []
     }
   },
   { immediate: true }
@@ -94,57 +109,83 @@ const closeAllTabs = () => {
   viewTabsStore.closeAllTabs(router)
   refreshButton()
 }
+
+// 全屏
+const fullScreen = ref<boolean | 'Tabs'>()
+// 全屏指定Tab
+const fullScreenTabView = (tab?: RouteLocationNormalized) => {
+  if (tab == null) fullScreen.value = false
+  else {
+    if (tab.name !== route.name) router.push(tab.fullPath).finally()
+    fullScreen.value = true
+  }
+  refreshButton()
+}
+// 全屏Tabs
+const fullScreenTabsView = () => {
+  if (fullScreen.value) fullScreen.value = false
+  else fullScreen.value = 'Tabs'
+  refreshButton()
+}
 </script>
 
 <template>
-  <div style="display: flex; align-items: center; border-bottom: 1px solid #eee">
-    <el-icon
-      v-show="showButtons"
-      :size="22"
-      class="icon-button"
-      style="border-right: 1px solid #eee"
-      color="#AAA"
-      @click="operateScroll(false)"
-    >
-      <arrow-left />
-    </el-icon>
-    <el-scrollbar ref="tabsScrollRef" style="width: 100%" @scroll="scroll">
-      <div ref="tabsRef" class="tabs">
-        <el-button
-          v-for="item in viewTabsStore.tabList"
-          :key="item.fullPath"
-          :type="$route.name === item.name ? 'primary' : ''"
-          @contextmenu.prevent="event => rightClick(event, item)"
-          @click="$router.push(item.fullPath)"
-        >
-          {{ item.meta.title }}
-          <el-icon v-show="allowClose(item)" :size="18" @click="closeTab(item)">
-            <Close />
-          </el-icon>
-        </el-button>
-      </div>
-    </el-scrollbar>
-    <el-icon
-      v-show="showButtons"
-      :size="22"
-      class="icon-button"
-      style="border-left: 1px solid #eee"
-      color="#AAA"
-      @click="operateScroll(true)"
-    >
-      <arrow-right />
-    </el-icon>
-    <el-dropdown size="small">
-      <el-icon :size="22" class="icon-button" style="border-left: 1px solid #eee" color="#AAA">
-        <Menu />
+  <div :class="fullScreen === 'Tabs' ? 'fullScreen' : ''">
+    <div v-if="appStore.enableTabs" class="tabs-hull">
+      <el-icon
+        v-show="showButtons"
+        :size="22"
+        class="icon-button"
+        style="border-right: 1px solid #eee"
+        color="#AAA"
+        @click="operateScroll(false)"
+      >
+        <arrow-left />
       </el-icon>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
-          <el-dropdown-item command="FullScreen" divided>全屏</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+      <el-scrollbar ref="tabsScrollRef" style="width: 100%" @scroll="scroll">
+        <div ref="tabsRef" class="tabs">
+          <el-button
+            v-for="item in viewTabsStore.tabList"
+            :key="item.fullPath"
+            :type="$route.name === item.name ? 'primary' : ''"
+            @contextmenu.prevent="event => rightClick(event, item)"
+            @click="$router.push(item.fullPath)"
+          >
+            {{ item.meta.title }}
+            <el-icon v-show="allowClose(item)" :size="18" @click="closeTab(item)">
+              <Close />
+            </el-icon>
+          </el-button>
+        </div>
+      </el-scrollbar>
+      <el-icon
+        v-show="showButtons"
+        :size="22"
+        class="icon-button"
+        style="border-left: 1px solid #eee"
+        color="#AAA"
+        @click="operateScroll(true)"
+      >
+        <arrow-right />
+      </el-icon>
+      <el-dropdown size="small">
+        <el-icon :size="22" class="icon-button" style="border-left: 1px solid #eee" color="#AAA">
+          <Menu />
+        </el-icon>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
+            <el-dropdown-item @click="fullScreenTabsView()">{{ fullScreen ? '关闭' : '开启' }}全屏</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
+    <div :class="fullScreen === true ? 'fullScreen' : ''">
+      <div v-show="fullScreen === true" class="fullScreen-close" title="关闭全屏" @click="fullScreenTabView()">
+        <el-icon :size="20"><close-bold /></el-icon>
+      </div>
+      <slot :full-screen="fullScreen" />
+    </div>
   </div>
   <!-- tab 菜单 -->
   <el-dropdown ref="contentMenu" trigger="click" size="small" :style="menu.locator" style="position: fixed">
@@ -163,44 +204,81 @@ const closeAllTabs = () => {
         <el-dropdown-item :disabled="viewTabsStore.tabList.length === 1" @click="closeOtherTabs(menu.route)">
           关闭其他页签
         </el-dropdown-item>
-        <el-dropdown-item command="FullScreen" divided>全屏</el-dropdown-item>
+        <el-dropdown-item divided @click="fullScreenTabView(menu.route)">当前页全屏</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
 </template>
 
 <style scoped lang="scss">
-.tabs {
+.tabs-hull {
   display: flex;
-  margin: 0 3px;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  background-color: var(--el-bg-color);
 
-  .el-button {
-    height: 30px;
+  .tabs {
+    display: flex;
+    margin: 0 3px;
 
-    .el-icon {
-      border-radius: 100%;
-      position: relative;
-      right: -6px;
+    .el-button {
+      height: 30px;
 
-      &:hover {
-        color: var(--el-color-white);
-        background-color: var(--el-color-primary-light-5);
+      .el-icon {
+        border-radius: 100%;
+        position: relative;
+        right: -6px;
+
+        &:hover {
+          color: var(--el-color-white);
+          background-color: var(--el-color-primary-light-5);
+        }
       }
+    }
+
+    .el-button + .el-button {
+      margin-left: 5px;
     }
   }
 
-  .el-button + .el-button {
-    margin-left: 5px;
+  .icon-button {
+    width: 33px;
+    height: 35px;
+    cursor: pointer;
+  }
+
+  .icon-button:hover {
+    color: var(--el-color-primary);
   }
 }
+.fullScreen {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
 
-.icon-button {
-  width: 33px;
-  height: 35px;
-  cursor: pointer;
-}
+  .fullScreen-close {
+    width: 39px;
+    height: 39px;
+    border-bottom-left-radius: 100%;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 
-.icon-button:hover {
-  color: var(--el-color-primary);
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .el-icon {
+      top: 6px;
+      left: 12px;
+      position: relative;
+      color: var(--el-fill-color-extra-light);
+    }
+  }
 }
 </style>
