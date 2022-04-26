@@ -35,8 +35,9 @@ export default defineStore('auth', {
     },
     getInfo: async function () {
       try {
-        const res = await api.get<{ realname: string }>('/auth/userInfo')
+        const res = await api.get<{ realname: string; avatar: string }>('/auth/userInfo')
         this.info = res.data
+        this.avatar = `${res.data?.avatar}`
         this.realname = `${res.data?.realname}`
       } catch (e) {
         throw new Error('获取登录者信息异常')

@@ -34,12 +34,14 @@ export default [
     method: 'get',
     response: ({ headers }: any) => {
       const token = headers.authorization
-      if (token && token.length >= 32)
+      if (token && token.length >= 32) {
+        const name = Random.cname()
         return JsonResult.OK({
-          realname: Random.cname(),
+          realname: name,
           email: Random.email(),
-          avatar: Random.image('250x250')
+          avatar: Random.image('50x50', Random.color(), Random.color(), name[0])
         })
+      }
       return JsonResult.FAIL_INVALID_TOKEN()
     }
   },
@@ -77,11 +79,18 @@ const authMenu = [
     path: '/demo',
     name: 'Demo',
     meta: { title: 'Demo', componentName: 'Layout' },
-    children: [
+    'children|20': [
       {
-        path: 'hello',
-        name: 'Hello',
-        meta: { title: 'Hello', componentName: 'Dashboard' }
+        path: `hello@string('number', 5)`,
+        name: 'Hello-@increment',
+        meta: {
+          title: 'Hello-@increment',
+          componentName: 'Dashboard',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: '@boolean',
+          hideFooter: '@boolean'
+        }
       }
     ]
   }

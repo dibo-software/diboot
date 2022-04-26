@@ -82,7 +82,7 @@ create table iam_resource_permission
   app_module  varchar(50)   null comment '应用模块',
   display_type  varchar(20)                          not null comment '展现类型',
   display_name  varchar(100)                         not null comment '显示名称',
-  resource_code varchar(100)                         not null comment '前端编码',
+  resource_code varchar(100)                        null comment '权限编码',
   permission_code varchar(200)                         not null comment '权限编码',
   sort_id       bigint                               null comment '排序号',
   is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
