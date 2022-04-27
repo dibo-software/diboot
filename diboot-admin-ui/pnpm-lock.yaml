@@ -36,6 +36,7 @@ specifiers:
   vue: ^3.2.25
   vue-router: ^4.0.14
   vue-tsc: ^0.29.8
+  vuedraggable: ^4.1.0
 
 dependencies:
   '@element-plus/icons-vue': registry.npmmirror.com/@element-plus/icons-vue/1.1.4_vue@3.2.33
@@ -48,6 +49,7 @@ dependencies:
   qs: registry.npmmirror.com/qs/6.10.3
   vue: registry.npmmirror.com/vue/3.2.33
   vue-router: registry.npmmirror.com/vue-router/4.0.14_vue@3.2.33
+  vuedraggable: registry.npmmirror.com/vuedraggable/4.1.0_vue@3.2.33
 
 devDependencies:
   '@types/lodash': registry.npmmirror.com/@types/lodash/4.14.182
@@ -4107,6 +4109,12 @@ packages:
       smart-buffer: registry.npmmirror.com/smart-buffer/4.2.0
     dev: true
 
+  registry.npmmirror.com/sortablejs/1.14.0:
+    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/sortablejs/-/sortablejs-1.14.0.tgz}
+    name: sortablejs
+    version: 1.14.0
+    dev: false
+
   registry.npmmirror.com/source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/source-map-js/-/source-map-js-1.0.2.tgz}
     name: source-map-js
@@ -4927,6 +4935,18 @@ packages:
       '@vue/runtime-dom': registry.npmmirror.com/@vue/runtime-dom/3.2.33
       '@vue/server-renderer': registry.npmmirror.com/@vue/server-renderer/3.2.33_vue@3.2.33
       '@vue/shared': registry.npmmirror.com/@vue/shared/3.2.33
+    dev: false
+
+  registry.npmmirror.com/vuedraggable/4.1.0_vue@3.2.33:
+    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vuedraggable/-/vuedraggable-4.1.0.tgz}
+    id: registry.npmmirror.com/vuedraggable/4.1.0
+    name: vuedraggable
+    version: 4.1.0
+    peerDependencies:
+      vue: ^3.0.1
+    dependencies:
+      sortablejs: registry.npmmirror.com/sortablejs/1.14.0
+      vue: registry.npmmirror.com/vue/3.2.33
     dev: false
 
   registry.npmmirror.com/webpack-sources/3.2.3:

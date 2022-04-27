@@ -2,6 +2,7 @@
 import { RouteLocationNormalized } from 'vue-router'
 import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
 import { ElScrollbar } from 'element-plus'
+import Draggable from 'vuedraggable'
 import useViewTabsStore from '@/store/viewTabs'
 import useAppStore from '@/store/app'
 import { WatchStopHandle } from 'vue'
@@ -86,6 +87,7 @@ const rightClick = (event: MouseEvent, route: RouteLocationNormalized) => {
   }, 0)
 }
 
+// tab 操作
 const closeTab = (tab: RouteLocationNormalized) => {
   viewTabsStore.closeTab(tab, router)
   refreshButton()
@@ -143,19 +145,21 @@ const fullScreenTabsView = () => {
         <arrow-left />
       </el-icon>
       <el-scrollbar ref="tabsScrollRef" class="tabs-scrollbar" @scroll="scroll">
-        <div ref="tabsRef" class="tabs">
-          <el-button
-            v-for="item in viewTabsStore.tabList"
-            :key="item.fullPath"
-            :type="$route.name === item.name ? 'primary' : ''"
-            @contextmenu.prevent="event => rightClick(event, item)"
-            @click="$router.push(item.fullPath)"
-          >
-            {{ item.meta.title }}
-            <el-icon v-show="allowClose(item)" :size="18" @click="closeTab(item)">
-              <Close />
-            </el-icon>
-          </el-button>
+        <div ref="tabsRef">
+          <draggable :list="viewTabsStore.tabList" animation="300" item-key="fullPath" class="tabs">
+            <template #item="{ element }">
+              <el-button
+                :type="$route.name === element.name ? 'primary' : ''"
+                @contextmenu.prevent="event => rightClick(event, element)"
+                @click="$router.push(element.fullPath)"
+              >
+                {{ element.meta.title }}
+                <el-icon v-show="allowClose(element)" :size="18" @click="closeTab(element)">
+                  <Close />
+                </el-icon>
+              </el-button>
+            </template>
+          </draggable>
         </div>
       </el-scrollbar>
       <el-icon
