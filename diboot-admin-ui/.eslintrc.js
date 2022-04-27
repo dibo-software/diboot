@@ -21,6 +21,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': 0,
     'comma-dangle': ['warn', 'only-multiline'],
+    'vue/multi-word-component-names': 'off',
     'vue/html-self-closing': ['warn', { html: { void: 'always' } }],
     'no-undef': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
