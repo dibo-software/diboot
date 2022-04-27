@@ -19,14 +19,15 @@ import AppTabs from './tabs/index.vue'
       </el-aside>
       <el-container>
         <el-main style="padding: 0">
-          <app-tabs />
-          <el-scrollbar style="height: calc(100vh - 86px)">
-            <app-main>
-              <template #footer>
-                <app-footer />
-              </template>
-            </app-main>
-          </el-scrollbar>
+          <app-tabs>
+            <template #default="{ fullScreen }">
+              <app-main :full-screen="fullScreen">
+                <template #footer>
+                  <app-footer />
+                </template>
+              </app-main>
+            </template>
+          </app-tabs>
         </el-main>
       </el-container>
     </el-container>
