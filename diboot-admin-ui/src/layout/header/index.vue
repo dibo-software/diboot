@@ -19,7 +19,7 @@ const goPersonal = () => {
   <div style="height: 100%; display: flex; align-items: center">
     <img :src="Logo" alt="Logo" style="height: 39px" />
     <div style="position: absolute; right: 1.5rem">
-      <el-dropdown @command="command">
+      <el-dropdown>
         <span style="display: flex; align-items: center">
           <el-avatar :size="33" :icon="UserFilled" :src="authStore.avatar" />
           <span style="margin: 0 8px">{{ authStore.realname }}</span>

@@ -35,11 +35,9 @@ const usedVisibleHeight = (route: RouteLocationNormalized) =>
 // footer 插槽是否存在内容
 const slotFooter = !!useSlots().footer
 
-// 获取自定义内容的 class
-const customContentClass = (route: RouteLocationNormalized) => {
-  if (route.meta.hollow) return slotFooter && !route.meta.hideFooter ? 'hollow-footer' : ''
-  return slotFooter && !route.meta.hideFooter ? 'bounded-footer' : 'bounded'
-}
+// footer
+const footerRef = ref<HTMLElement>()
+const footerHeight = computed(() => footerRef.value?.offsetHeight ?? 0)
 
 const viewTabsStore = useViewTabsStore()
 </script>
@@ -50,10 +48,10 @@ const viewTabsStore = useViewTabsStore()
       <transition :name="route.meta.transition" mode="out-in">
         <keep-alive :include="viewTabsStore.cachedViews">
           <div :key="route.fullPath" class="content">
-            <div :class="customContentClass(route)">
+            <div :class="route.meta.hollow ? 'hollow' : 'bounded'">
               <component :is="Component" :used-visible-height="usedVisibleHeight(route)" />
             </div>
-            <div v-if="slotFooter && !route.meta.hideFooter" class="footer">
+            <div v-if="slotFooter && !route.meta.hideFooter" ref="footerRef" class="footer">
               <slot name="footer" />
             </div>
           </div>
@@ -67,37 +65,27 @@ const viewTabsStore = useViewTabsStore()
 .content {
   padding: 10px;
   background-color: var(--el-fill-color-light);
-  min-height: calc(100vh - v-bind('layoutUsedHeight + "px"'));
 
-  .hollow-footer {
-    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - 52px);
-  }
-
-  .bounded,
-  .bounded-footer {
-    padding: 10px 15px;
-    background-color: var(--el-bg-color);
+  .hollow {
+    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - v-bind('footerHeight + "px"'));
   }
 
   .bounded {
-    border-radius: 5px;
-    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - 20px);
-  }
-
-  .bounded-footer {
-    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - 72px);
-    border-radius: 5px 5px 0 0;
+    padding: 10px 15px;
+    background-color: var(--el-bg-color);
+    border-radius: v-bind('footerHeight ? "5px 5px 0 0" : "5px"');
+    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - 20px - v-bind('footerHeight + "px"'));
   }
 
   .footer {
-    height: 50px;
-    color: darkgray;
+    min-height: 50px;
+    color: var(--el-color-info);
     display: flex;
     align-items: center;
     justify-content: space-around;
-    border-top: 2px dashed #eeeeee;
+    border-top: 2px dashed var(--el-border-color-lighter);
     border-radius: 0 0 5px 5px;
-    background-color: #fff;
+    background-color: var(--el-bg-color);
   }
 }
 </style>
