@@ -73,16 +73,18 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
         // 构建登陆的token
         log.debug("当前用户1: {}", (IamUser)IamSecurityUtils.getCurrentUser());
         log.debug("当前用户1 getSubject: {}", IamSecurityUtils.getSubject());
+        log.debug("判断hasRole1: {}", IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN));
         String cachedUserInfo = TokenCacheHelper.getCachedUserInfoStr(currentToken);
         if(IamSecurityUtils.getSubject().isAuthenticated() == false){
-            log.debug("当前用户2: {}", (IamUser)IamSecurityUtils.getCurrentUser());
+            log.debug("当前用户2-1: {}", (IamUser)IamSecurityUtils.getCurrentUser());
             IamAuthToken authToken = new IamAuthToken(cachedUserInfo);
             authToken.setAuthtoken(currentToken);
             authToken.setValidPassword(false);
             IamSecurityUtils.getSubject().login(authToken);
             log.debug("无状态token自动登录完成");
-            log.debug("当前用户3: {}", (IamUser)IamSecurityUtils.getCurrentUser());
+            log.debug("当前用户2-2: {}", (IamUser)IamSecurityUtils.getCurrentUser());
             log.debug("当前用户isAuthenticated: {}", IamSecurityUtils.getSubject().isAuthenticated());
+            log.debug("判断hasRole2: {}", IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN));
         }
         // 如果临近过期，则生成新的token返回
         TokenUtils.responseNewTokenIfRequired(response, currentToken, cachedUserInfo);

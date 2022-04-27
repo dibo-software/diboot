@@ -78,7 +78,11 @@ public class TokenUtils {
     public static void responseNewTokenIfRequired(ServletResponse response, String currentToken, String cachedUserInfo) {
         if(TokenCacheHelper.isCloseToExpired(cachedUserInfo)){
             //将刷新的token放入response header
-            String refreshToken = generateToken();
+            String refreshToken = TokenCacheHelper.getCachedRefreshToken(currentToken);
+            if(refreshToken == null){
+                refreshToken = generateToken();
+                TokenCacheHelper.cacheRefreshToken(currentToken, refreshToken);
+            }
             ((HttpServletResponse)response).setHeader(AUTH_HEADER, refreshToken);
             log.debug("写回刷新token :{}", refreshToken);
         }

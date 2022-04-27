@@ -206,7 +206,9 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BaseCacheManager baseCacheManager(){
-        return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(), Cons.CACHE_TOKEN_USERINFO, Cons.CACHE_CAPTCHA);
+        return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(),
+                Cons.CACHE_TOKEN_USERINFO, Cons.CACHE_TOKEN_REFRESHTOKEN,
+                Cons.CACHE_CAPTCHA);
     }
 
 }

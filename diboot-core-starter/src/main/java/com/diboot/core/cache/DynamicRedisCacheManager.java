@@ -1,6 +1,7 @@
 package com.diboot.core.cache;
 
 import org.springframework.cache.Cache;
+import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 
 /**
@@ -50,4 +51,5 @@ public class DynamicRedisCacheManager implements BaseCacheManager{
     public boolean isUninitializedCache(String cacheName) {
         return false;
     }
+
 }

@@ -109,22 +109,6 @@ public class IamSecurityUtils extends SecurityUtils {
     }
 
     /**
-     * 从缓存中获取用户
-     * @param authtoken
-     * @return
-     */
-    public static BaseLoginUser getUserFromCache(String authtoken){
-        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
-        if(cacheManager == null || cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) == null){
-            log.warn("cacheManager 实例异常");
-            return null;
-        }
-        SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo)cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).get(authtoken);
-        SimplePrincipalCollection principalCollection = (SimplePrincipalCollection) authInfo.getPrincipals();
-        return (BaseLoginUser) principalCollection.getPrimaryPrincipal();
-    }
-
-    /**
      * 获取用户 "ID" 的值
      * @return
      */

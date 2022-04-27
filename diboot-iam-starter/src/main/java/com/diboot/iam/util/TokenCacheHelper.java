@@ -55,6 +55,11 @@ public class TokenCacheHelper {
     public static void removeAccessToken(String accessToken) {
         BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
         baseCacheManager.removeCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken);
+        String refreshToken = baseCacheManager.getCacheString(Cons.CACHE_TOKEN_REFRESHTOKEN, accessToken);
+        if(refreshToken != null){
+            baseCacheManager.removeCacheObj(Cons.CACHE_TOKEN_REFRESHTOKEN, refreshToken);
+        }
+        baseCacheManager.removeCacheObj(Cons.CACHE_TOKEN_REFRESHTOKEN, accessToken);
     }
 
     /**
@@ -75,7 +80,12 @@ public class TokenCacheHelper {
     public static boolean isActiveAccessToken(String accessToken) {
         String userInfoStr = getCachedUserInfoStr(accessToken);
         if(V.isEmpty(userInfoStr)){
-            //TODO 判断是否为刷新token
+            // 判断是否为刷新token
+            if(TokenCacheHelper.isRefreshToken(accessToken)){
+                log.debug("刷新token已切换 : {}", accessToken);
+                return true;
+            }
+            return false;
         }
         CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
         if(isExpired(userInfoStr)){
@@ -100,6 +110,37 @@ public class TokenCacheHelper {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 获取刷新token
+     * @param currentToken
+     * @return
+     */
+    public static String getCachedRefreshToken(String currentToken) {
+        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        return baseCacheManager.getCacheString(Cons.CACHE_TOKEN_REFRESHTOKEN, currentToken);
+    }
+
+    /**
+     * 缓存刷新token
+     * @param currentToken
+     * @param refreshToken
+     */
+    public static void cacheRefreshToken(String currentToken, String refreshToken) {
+        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_REFRESHTOKEN, currentToken, refreshToken);
+        baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_REFRESHTOKEN, refreshToken, currentToken);
+    }
+
+    /**
+     * 判断是否为刷新token
+     * @param accessToken
+     * @return
+     */
+    private static boolean isRefreshToken(String accessToken) {
+        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        return baseCacheManager.getCacheString(Cons.CACHE_TOKEN_REFRESHTOKEN, accessToken) != null;
     }
 
     /**
@@ -133,17 +174,16 @@ public class TokenCacheHelper {
         String[] userFields = S.split(userInfoStr);
         AuthService authService = AuthServiceFactory.getAuthService(userFields[3]);
         int expiresInMinutes = authService.getExpiresInMinutes();
-        // 获取当前token的过期时间
-        long issuedAt = Long.parseLong(userFields[4]);
-        // 获取当前token的过期时间
-        long expiredBefore = issuedAt + expiresInMinutes * 60000;
         // 当前token是否临近过期
         long current = System.currentTimeMillis();
-        long takes = (current - issuedAt)/60000;
-        if(takes < expiresInMinutes){
-            if((takes / expiresInMinutes) > 3/4){
-                return true;
-            }
+        long expiration = System.currentTimeMillis() + expiresInMinutes*60000;
+        long remaining = expiration - current;
+        if(remaining > 0){
+            long issuedAt = Long.parseLong(userFields[4]);
+            long elapsed = current - issuedAt;
+            // 小于1/4 则更新
+            double past = (elapsed / remaining);
+            return past > 3.0;
         }
         return false;
     }

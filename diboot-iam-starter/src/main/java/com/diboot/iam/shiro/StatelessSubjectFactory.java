@@ -32,7 +32,6 @@ public class StatelessSubjectFactory extends DefaultWebSubjectFactory {
     public Subject createSubject(SubjectContext context) {
         //不创建session
         context.setSessionCreationEnabled(false);
-        log.debug("SubjectContext禁用session.");
         return super.createSubject(context);
     }
 }
