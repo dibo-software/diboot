@@ -27,7 +27,7 @@ const scroll = ({ scrollLeft }: any) => {
 // 手动滚动 Tabs 列表
 const operateScroll = (left = true) => {
   const step = 50 // 步长，调解速度
-  let deviation = (tabsRef.value?.clientWidth ?? 500) * 0.7
+  let deviation = (tabsRef.value?.clientWidth ?? 500) * 0.8
   let timer = setInterval(() => {
     tabsScrollRef.value?.setScrollLeft(tabsPosition.value + (left ? step : -step))
     if ((deviation -= step) <= 0) {
@@ -142,7 +142,7 @@ const fullScreenTabsView = () => {
       >
         <arrow-left />
       </el-icon>
-      <el-scrollbar ref="tabsScrollRef" style="width: 100%" @scroll="scroll">
+      <el-scrollbar ref="tabsScrollRef" class="tabs-scrollbar" @scroll="scroll">
         <div ref="tabsRef" class="tabs">
           <el-button
             v-for="item in viewTabsStore.tabList"
@@ -217,6 +217,14 @@ const fullScreenTabsView = () => {
   border-bottom: 1px solid #eee;
   background-color: var(--el-bg-color);
 
+  .tabs-scrollbar {
+    width: 100%;
+
+    &:deep(.el-scrollbar__thumb) {
+      display: none;
+    }
+  }
+
   .tabs {
     display: flex;
     margin: 0 3px;
@@ -251,6 +259,7 @@ const fullScreenTabsView = () => {
     color: var(--el-color-primary);
   }
 }
+
 .fullScreen {
   position: absolute;
   width: 100%;
