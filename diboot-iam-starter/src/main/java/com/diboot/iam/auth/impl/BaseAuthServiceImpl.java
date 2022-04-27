@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,11 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.mobile.auth.impl;
+package com.diboot.iam.auth.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.annotation.process.IamAsyncWorker;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.AuthCredential;
@@ -25,56 +26,47 @@ import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthToken;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
-import com.diboot.mobile.dto.MobileCredential;
+import com.diboot.iam.util.TokenCacheHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 微信认证实现
- *
- * @author : uu
- * @version : v2.3.1
- * @Copyright © diboot.com
- * @Date 2021/8/31  14:08
+ * 用户名密码认证的service实现
+ * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2019/12/25
  */
 @Slf4j
-@Service
-public class WxAuthServiceImpl implements AuthService {
-
+public abstract class BaseAuthServiceImpl implements AuthService {
+    @Autowired
+    private IamAccountService accountService;
+    @Autowired
+    private IamAsyncWorker iamAsyncWorker;
     @Autowired
     private HttpServletRequest request;
 
-    @Autowired
-    private IamAccountService accountService;
-
-    @Autowired
-    private IamLoginTraceService iamLoginTraceService;
-
     @Override
     public String getAuthType() {
-        return Cons.DICTCODE_AUTH_TYPE.WX_MP.name();
+        return Cons.DICTCODE_AUTH_TYPE.PWD.name();
     }
+
+    /**
+     * 构建查询条件
+     * @return
+     */
+    protected abstract Wrapper buildQueryWrapper(IamAuthToken iamAuthToken);
 
     @Override
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
-        // 查询最新的记录
-        LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
-                .select(IamAccount::getAuthAccount, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
-                .eq(IamAccount::getUserType, iamAuthToken.getUserType())
-                .eq(IamAccount::getAuthType, iamAuthToken.getAuthType())
-                .eq(IamAccount::getAuthAccount, iamAuthToken.getAuthAccount())
-                .orderByDesc(IamAccount::getId);
-        IamAccount latestAccount = accountService.getSingleEntity(queryWrapper);
+        IamAccount latestAccount = accountService.getSingleEntity(buildQueryWrapper(iamAuthToken));
         if(latestAccount == null){
             return null;
         }
@@ -94,10 +86,13 @@ public class WxAuthServiceImpl implements AuthService {
             Subject subject = SecurityUtils.getSubject();
             subject.login(authToken);
             if (subject.isAuthenticated()) {
+                String accessToken = (String) authToken.getCredentials();
+                // 缓存当前token与用户信息
+                TokenCacheHelper.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), getExpiresInMinutes());
                 log.debug("申请token成功！authtoken={}", authToken.getCredentials());
                 saveLoginTrace(authToken, true);
-                // 跳转到首页
-                return (String) authToken.getCredentials();
+                // 返回
+                return accessToken;
             }
             else {
                 log.error("认证失败");
@@ -116,16 +111,17 @@ public class WxAuthServiceImpl implements AuthService {
      * @param credential
      * @return
      */
-    private IamAuthToken initAuthToken(AuthCredential credential){
-        MobileCredential wxMpCredential = (MobileCredential)credential;
-        IamAuthToken token = new IamAuthToken(getAuthType(), wxMpCredential.getUserTypeClass());
-        // 设置登陆的
-        token.setAuthAccount(wxMpCredential.getAuthAccount());
-        token.setRememberMe(wxMpCredential.isRememberMe());
+    protected IamAuthToken initAuthToken(AuthCredential credential){
+        IamAuthToken token = new IamAuthToken(getAuthType(), credential.getUserTypeClass());
+        // 设置账号密码
+        token.setAuthAccount(credential.getAuthAccount());
+        token.setAuthSecret(credential.getAuthSecret());
+        token.setRememberMe(credential.isRememberMe());
+        token.setTenantId(credential.getTenantId());
+        token.setExtObj(credential.getExtObj());
         // 生成token
         return token.generateAuthtoken();
     }
-
 
     /**
      * 保存登录日志
@@ -137,18 +133,13 @@ public class WxAuthServiceImpl implements AuthService {
         loginTrace.setAuthType(getAuthType()).setAuthAccount(authToken.getAuthAccount()).setUserType(authToken.getUserType()).setSuccess(isSuccess);
         BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
         if(currentUser != null){
-            Long userId = currentUser.getId();
-            loginTrace.setUserId(userId);
+            loginTrace.setUserId(currentUser.getId());
         }
         // 记录客户端信息
         String userAgent = HttpHelper.getUserAgent(request);
         String ipAddress = HttpHelper.getRequestIp(request);
         loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
-        try{
-            iamLoginTraceService.createEntity(loginTrace);
-        }
-        catch (Exception e){
-            log.warn("保存登录日志异常", e);
-        }
+        iamAsyncWorker.saveLoginTraceLog(loginTrace);
     }
+
 }

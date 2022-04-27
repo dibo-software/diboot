@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.jwt;
+package com.diboot.iam.shiro;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.ContextHelper;
@@ -46,24 +46,26 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Yangzhao
- * @version v2.0
- * @date 2019/6/6
+ * IAM realm定义
+ * @author JerryMa
+ * @version v2.6.0
+ * @date 2022/4/26
+ * Copyright © diboot.com
  */
 @Slf4j
-public class BaseJwtRealm extends AuthorizingRealm {
+public class IamAuthorizingRealm extends AuthorizingRealm {
 
     private IamUserRoleService iamUserRoleService;
     private IamRoleResourceService iamRoleResourceService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token != null && token instanceof BaseJwtAuthToken;
+        return token != null && token instanceof IamAuthToken;
     }
 
     @Override
     public Class<?> getAuthenticationTokenClass() {
-        return BaseJwtRealm.class;
+        return IamAuthorizingRealm.class;
     }
 
     /***
@@ -74,47 +76,48 @@ public class BaseJwtRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        BaseJwtAuthToken jwtToken = (BaseJwtAuthToken) token;
-        String authAccount = (String) jwtToken.getPrincipal();
+        IamAuthToken iamAuthToken = (IamAuthToken) token;
+        String authAccount = (String) iamAuthToken.getPrincipal();
         if (V.isEmpty(authAccount)){
             throw new AuthenticationException("无效的用户标识");
         }
         else {
             // 获取认证方式
-            AuthService authService = AuthServiceFactory.getAuthService(jwtToken.getAuthType());
+            AuthService authService = AuthServiceFactory.getAuthService(iamAuthToken.getAuthType());
             if(authService == null){
-                jwtToken.clearAuthtoken();
-                throw new AuthenticationException("认证类型: "+jwtToken.getAuthType()+" 的AccountAuthService未实现！");
+                iamAuthToken.clearAuthtoken();
+                throw new AuthenticationException("认证类型: "+iamAuthToken.getAuthType()+" 的AccountAuthService未实现！");
             }
-            IamAccount account = authService.getAccount(jwtToken);
+            IamAccount account = authService.getAccount(iamAuthToken);
             // 登录失败则抛出相关异常
             if (account == null){
-                jwtToken.clearAuthtoken();
+                iamAuthToken.clearAuthtoken();
                 throw new AuthenticationException("用户账号或密码错误！");
             }
             // 获取当前user对象并缓存
             BaseLoginUser loginUser = null;
-            BaseService userService = ContextHelper.getBaseServiceByEntity(jwtToken.getUserTypeClass());
+            BaseService userService = ContextHelper.getBaseServiceByEntity(iamAuthToken.getUserTypeClass());
             if(userService != null){
                 loginUser = (BaseLoginUser)userService.getEntity(account.getUserId());
             }
             else{
-                throw new AuthenticationException("用户 "+jwtToken.getUserTypeClass().getName()+" 相关的Service未定义！");
+                throw new AuthenticationException("用户 "+iamAuthToken.getUserTypeClass().getName()+" 相关的Service未定义！");
             }
             if(loginUser == null){
                 throw new AuthenticationException("用户不存在");
             }
-            loginUser.setAuthToken(jwtToken.getAuthtoken());
+            loginUser.setAuthToken(iamAuthToken.getAuthtoken());
             IamExtensible iamExtensible = getIamUserRoleService().getIamExtensible();
             if(iamExtensible != null){
-                LabelValue extentionObj = iamExtensible.getUserExtentionObj(jwtToken.getUserTypeClass().getSimpleName(), account.getUserId(), jwtToken.getExtObj());
+                LabelValue extentionObj = iamExtensible.getUserExtentionObj(iamAuthToken.getUserTypeClass().getSimpleName(), account.getUserId(), iamAuthToken.getExtObj());
                 if(extentionObj != null){
                     loginUser.setExtentionObj(extentionObj);
                 }
             }
             // 清空当前用户缓存
             this.clearCachedAuthorizationInfo(IamSecurityUtils.getSubject().getPrincipals());
-            return new SimpleAuthenticationInfo(loginUser, jwtToken.getCredentials(), this.getName());
+            log.debug("获取用户认证信息完成 : {}", iamAuthToken.getCredentials());
+            return new SimpleAuthenticationInfo(loginUser, iamAuthToken.getCredentials(), this.getName());
         }
     }
 
@@ -165,6 +168,7 @@ public class BaseJwtRealm extends AuthorizingRealm {
         }
         // 将所有角色和权限许可授权给用户
         authorizationInfo.setStringPermissions(permissionCodesSet);
+        log.debug("获取用户授权信息完成 : {}", currentUser.getDisplayName());
         return authorizationInfo;
     }
 

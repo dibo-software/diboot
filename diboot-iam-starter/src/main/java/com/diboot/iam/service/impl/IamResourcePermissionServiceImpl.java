@@ -17,25 +17,24 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourcePermissionDTO;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.mapper.IamResourcePermissionMapper;
 import com.diboot.iam.service.IamResourcePermissionService;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
-import com.diboot.iam.vo.InvalidResourcePermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

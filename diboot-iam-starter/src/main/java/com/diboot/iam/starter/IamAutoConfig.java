@@ -19,25 +19,22 @@ import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.jwt.BaseJwtRealm;
+import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
-import org.apache.shiro.mgt.*;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +82,7 @@ public class IamAutoConfig {
     @ConditionalOnMissingBean
     @DependsOn({"shiroCacheManager"})
     public Realm realm() {
-        BaseJwtRealm realm = new BaseJwtRealm();
+        IamAuthorizingRealm realm = new IamAuthorizingRealm();
         CacheManager cacheManager = shiroCacheManager();
         if (cacheManager != null) {
             realm.setCachingEnabled(true);
@@ -203,13 +200,13 @@ public class IamAutoConfig {
     }
 
     /**
-     * 验证码的缓存管理
+     * 用户token缓存管理器
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public BaseCacheManager captchaCacheManager(){
-        return new DynamicMemoryCacheManager(30, Cons.CAPTCHA);
+    public BaseCacheManager baseCacheManager(){
+        return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(), Cons.CACHE_TOKEN_USERINFO, Cons.CACHE_CAPTCHA);
     }
 
 }

@@ -17,8 +17,8 @@ package com.diboot.iam.auth;
 
 import com.diboot.iam.dto.AuthCredential;
 import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.jwt.BaseJwtAuthToken;
-import com.diboot.iam.util.JwtUtils;
+import com.diboot.iam.shiro.IamAuthToken;
+import com.diboot.iam.util.TokenUtils;
 import org.apache.shiro.authc.AuthenticationException;
 
 /**
@@ -40,16 +40,16 @@ public interface AuthService {
      * @return
      */
     default int getExpiresInMinutes(){
-        return JwtUtils.EXPIRES_IN_MINUTES;
+        return TokenUtils.EXPIRES_IN_MINUTES;
     }
 
     /**
      * 获取用户
-     * @param jwtToken
+     * @param iamAuthToken
      * @return
      * @throws AuthenticationException
      */
-    IamAccount getAccount(BaseJwtAuthToken jwtToken) throws AuthenticationException;
+    IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException;
 
     /**
      * 申请Token

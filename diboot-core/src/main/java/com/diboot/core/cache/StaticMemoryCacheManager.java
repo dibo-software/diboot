@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2021/4/17
  * Copyright © diboot.com
  */
-public class StaticMemoryCacheManager extends BaseCacheManager{
+public class StaticMemoryCacheManager extends BaseMemoryCacheManager implements BaseCacheManager{
 
     public StaticMemoryCacheManager(String... cacheNames){
         List<Cache> caches = new ArrayList<>();

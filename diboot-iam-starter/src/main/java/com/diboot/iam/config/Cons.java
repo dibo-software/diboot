@@ -16,6 +16,7 @@
 package com.diboot.iam.config;
 
 import com.diboot.core.config.BaseConfig;
+import com.diboot.iam.shiro.IamAuthorizingRealm;
 
 /**
  * IAM数据字典等常量定义
@@ -115,12 +116,18 @@ public class Cons extends com.diboot.core.config.Cons {
      */
     public static final String ROLE_SUPER_ADMIN = "SUPER_ADMIN";
 
-    public static final String AUTHENTICATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authenticationCache";
-    public static final String AUTHORIZATION_CAHCE_NAME = "com.diboot.iam.jwt.BaseJwtRealm.authorizationCache";
+    public static final String AUTHENTICATION_CAHCE_NAME = IamAuthorizingRealm.class.getName() + ".authenticationCache";
+
+    public static final String AUTHORIZATION_CAHCE_NAME = IamAuthorizingRealm.class.getName() + ".authorizationCache";
 
     /**
      * 验证码
      */
-    public static final String CAPTCHA = "captcha";
+    public static final String CACHE_CAPTCHA = "CAPTCHA";
+
+    /**
+     * 验证码
+     */
+    public static final String CACHE_TOKEN_USERINFO = "TOKEN_USERINFO";
 
 }

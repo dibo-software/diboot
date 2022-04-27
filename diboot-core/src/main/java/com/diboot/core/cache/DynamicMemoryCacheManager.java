@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
  * @date 2021/4/17
  * Copyright © diboot.com
  */
-public class DynamicMemoryCacheManager extends BaseCacheManager{
+public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements BaseCacheManager{
 
     public DynamicMemoryCacheManager(String... cacheNames){
         List<Cache> caches = new ArrayList<>(cacheNames.length);
@@ -27,9 +27,10 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
     }
 
     /**
-     * 默认的过期时间（分钟）
+     * cache的时间戳缓存
      */
-    private long expiredMinutes = 60;
+    private ConcurrentHashMap<String, Integer> CACHE_EXPIREDMINUTES_CACHE = null;
+
     /**
      * cache的时间戳缓存
      */
@@ -37,20 +38,17 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
 
     public DynamicMemoryCacheManager(){
         this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
-        super.afterPropertiesSet();
-    }
-    public DynamicMemoryCacheManager(int expiredMinutes){
-        this.expiredMinutes = expiredMinutes;
-        this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+        this.CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
         super.afterPropertiesSet();
     }
 
     public DynamicMemoryCacheManager(int expiredMinutes, String... cacheNames){
-        this.expiredMinutes = expiredMinutes;
         this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+        this.CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
         List<Cache> caches = new ArrayList<>(cacheNames.length);
         for(String cacheName : cacheNames){
             caches.add(new ConcurrentMapCache(cacheName));
+            this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expiredMinutes);
         }
         setCaches(caches);
         super.afterPropertiesSet();
@@ -69,7 +67,7 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
         }
         // 已过期，则清空缓存返回null
         if(isExpired(cacheName, objKey)){
-            cache.clear();
+            cache.evict(objKey);
             return null;
         }
         return cache.get(objKey, tClass);
@@ -84,6 +82,19 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
     public void putCacheObj(String cacheName, Object objKey, Object obj) {
         super.putCacheObj(cacheName, objKey, obj);
         refreshCacheTimestamp(cacheName, objKey);
+    }
+
+    /**
+     * 缓存对象
+     * @param cacheName
+     * @param objKey
+     * @param obj
+     */
+    public void putCacheObj(String cacheName, Object objKey, Object obj, int expireMinutes) {
+        this.putCacheObj(cacheName, objKey, obj);
+        if(!this.CACHE_EXPIREDMINUTES_CACHE.containsKey(cacheName)){
+            this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expireMinutes);
+        }
     }
 
     /**
@@ -103,6 +114,7 @@ public class DynamicMemoryCacheManager extends BaseCacheManager{
             return false;
         }
         long currentTimestamp = System.currentTimeMillis();
+        int expiredMinutes = CACHE_EXPIREDMINUTES_CACHE.get(cacheName);
         return (currentTimestamp - cacheTimestamp) > (expiredMinutes*60000);
     }
 

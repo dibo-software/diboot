@@ -1,5 +1,6 @@
 package com.diboot.core.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
@@ -11,7 +12,7 @@ import org.springframework.cache.support.SimpleCacheManager;
  * @date 2021/4/17
  * Copyright © diboot.com
  */
-public abstract class BaseCacheManager extends SimpleCacheManager {
+public interface BaseCacheManager {
 
     /**
      * 获取缓存对象
@@ -19,19 +20,14 @@ public abstract class BaseCacheManager extends SimpleCacheManager {
      * @param <T>
      * @return
      */
-    public <T> T getCacheObj(String cacheName, Object objKey, Class<T> tClass){
-        Cache cache = getCache(cacheName);
-        return cache != null? cache.get(objKey, tClass) : null;
-    }
+    <T> T getCacheObj(String cacheName, Object objKey, Class<T> tClass);
 
     /**
      * 获取缓存对象
      * @param objKey
      * @return
      */
-    public String getCacheString(String cacheName, Object objKey){
-        return getCacheObj(cacheName, objKey, String.class);
-    }
+    String getCacheString(String cacheName, Object objKey);
 
     /**
      * 缓存对象
@@ -39,9 +35,16 @@ public abstract class BaseCacheManager extends SimpleCacheManager {
      * @param objKey
      * @param obj
      */
-    public void putCacheObj(String cacheName, Object objKey, Object obj){
-        Cache cache = getCache(cacheName);
-        cache.put(objKey, obj);
+    void putCacheObj(String cacheName, Object objKey, Object obj);
+
+    /**
+     * 缓存对象 - 支持过期时间
+     * @param cacheName
+     * @param objKey
+     * @param obj
+     */
+    default void putCacheObj(String cacheName, Object objKey, Object obj, int expiredMinutes){
+        putCacheObj(cacheName, objKey, obj);
     }
 
     /**
@@ -49,19 +52,13 @@ public abstract class BaseCacheManager extends SimpleCacheManager {
      * @param cacheName
      * @param objKey
      */
-    public void removeCacheObj(String cacheName, Object objKey){
-        Cache cache = getCache(cacheName);
-        cache.evict(objKey);
-    }
+    void removeCacheObj(String cacheName, Object objKey);
 
     /**
      * 尚未初始化的
      * @param cacheName
      * @return
      */
-    public boolean isUninitializedCache(String cacheName){
-        ConcurrentMapCache cache = (ConcurrentMapCache)getCache(cacheName);
-        return cache.getNativeCache().isEmpty();
-    }
+    boolean isUninitializedCache(String cacheName);
 
 }

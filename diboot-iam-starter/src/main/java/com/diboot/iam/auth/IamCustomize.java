@@ -19,8 +19,6 @@ import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.exception.PermissionException;
 
-import java.lang.reflect.Method;
-
 /**
  * IAM自定义接口
  * @author mazc@dibo.ltd

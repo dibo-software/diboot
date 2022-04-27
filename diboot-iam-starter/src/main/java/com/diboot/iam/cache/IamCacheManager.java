@@ -20,7 +20,8 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.annotation.BindPermission;
-import com.diboot.iam.annotation.process.*;
+import com.diboot.iam.annotation.process.ApiPermissionExtractor;
+import com.diboot.iam.annotation.process.ApiPermissionWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
