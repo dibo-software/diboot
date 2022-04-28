@@ -81,6 +81,8 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
 
     private Object credentials;
 
+    private int expiresInMinutes;
+
     public IamAuthToken(){
     }
 
@@ -107,6 +109,7 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
             }
         }
         this.authType = fields[3];
+        this.expiresInMinutes = Integer.parseInt(fields[4]);
     }
 
     /***
@@ -158,6 +161,6 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
      */
     public String buildUserInfoStr(){
         return S.joinWith(Cons.SEPARATOR_COMMA,
-                this.getTenantId(), this.getAuthAccount(), this.getUserTypeClass().getName(), this.getAuthType(), System.currentTimeMillis());
+                this.getTenantId(), this.getAuthAccount(), this.getUserTypeClass().getName(), this.getAuthType(), this.expiresInMinutes, System.currentTimeMillis());
     }
 }

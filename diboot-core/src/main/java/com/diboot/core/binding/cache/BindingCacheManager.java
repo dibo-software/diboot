@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.cache.StaticMemoryCacheManager;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -263,7 +264,7 @@ public class BindingCacheManager {
      * @return
      */
     public static List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
-        String key = S.join(beanClazz.getName(), annotation.getName());
+        String key = S.joinWith(Cons.SEPARATOR_COMMA, beanClazz.getName(), annotation.getName());
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
         if(fields == null){
             fields = initClassFields(beanClazz, annotation);

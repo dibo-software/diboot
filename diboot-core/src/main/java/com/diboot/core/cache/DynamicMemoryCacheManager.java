@@ -1,5 +1,7 @@
 package com.diboot.core.cache;
 
+import com.diboot.core.util.V;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  * @date 2021/4/17
  * Copyright © diboot.com
  */
+@Slf4j
 public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements BaseCacheManager{
 
     public DynamicMemoryCacheManager(String... cacheNames){
@@ -29,22 +32,23 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     /**
      * cache的时间戳缓存
      */
-    private ConcurrentHashMap<String, Integer> CACHE_EXPIREDMINUTES_CACHE = null;
+    private ConcurrentHashMap<String, Integer> CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
 
     /**
      * cache的时间戳缓存
      */
-    private ConcurrentHashMap<String, ConcurrentHashMap<Object, Long>> CACHE_TIMESTAMP_CACHE = null;
+    private ConcurrentHashMap<String, ConcurrentHashMap<Object, Long>> CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
 
     public DynamicMemoryCacheManager(){
-        this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
-        this.CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
         super.afterPropertiesSet();
     }
 
+    /**
+     * 统一过期时间
+     * @param expiredMinutes
+     * @param cacheNames
+     */
     public DynamicMemoryCacheManager(int expiredMinutes, String... cacheNames){
-        this.CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
-        this.CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
         List<Cache> caches = new ArrayList<>(cacheNames.length);
         for(String cacheName : cacheNames){
             caches.add(new ConcurrentMapCache(cacheName));
@@ -68,6 +72,9 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         // 已过期，则清空缓存返回null
         if(isExpired(cacheName, objKey)){
             cache.evict(objKey);
+            if(log.isDebugEnabled()){
+                log.debug("缓存已过期被清理: {}.{}", cacheName, objKey);
+            }
             return null;
         }
         return cache.get(objKey, tClass);
@@ -94,6 +101,9 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         this.putCacheObj(cacheName, objKey, obj);
         if(!this.CACHE_EXPIREDMINUTES_CACHE.containsKey(cacheName)){
             this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expireMinutes);
+            if(log.isDebugEnabled()){
+                log.debug("设置缓存过期时间: {}={}", cacheName, expireMinutes);
+            }
         }
     }
 
@@ -106,7 +116,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
      */
     public boolean isExpired(String cacheName, Object objKey) {
         ConcurrentMap<Object, Long> timestampCache = CACHE_TIMESTAMP_CACHE.get(cacheName);
-        if(timestampCache == null){
+        if(V.isEmpty(timestampCache)){
             return false;
         }
         Long cacheTimestamp = timestampCache.get(objKey);

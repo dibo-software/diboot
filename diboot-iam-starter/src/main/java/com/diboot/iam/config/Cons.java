@@ -134,5 +134,9 @@ public class Cons extends com.diboot.core.config.Cons {
      * token-刷新token 缓存
      */
     public static final String CACHE_TOKEN_REFRESHTOKEN = "TOKEN_REFRESHTOKEN";
+    /**
+     * 刷新token-前token 缓存
+     */
+    public static final String CACHE_REFRESHTOKEN_TOKEN = "REFRESHTOKEN_TOKEN";
 
 }

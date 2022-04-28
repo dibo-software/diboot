@@ -75,7 +75,7 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
         log.debug("当前用户1 getSubject: {}", IamSecurityUtils.getSubject());
         log.debug("判断hasRole1: {}", IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN));
         String cachedUserInfo = TokenCacheHelper.getCachedUserInfoStr(currentToken);
-        if(IamSecurityUtils.getSubject().isAuthenticated() == false){
+        if(IamSecurityUtils.getSubject().isAuthenticated() == false && cachedUserInfo != null){
             log.debug("当前用户2-1: {}", (IamUser)IamSecurityUtils.getCurrentUser());
             IamAuthToken authToken = new IamAuthToken(cachedUserInfo);
             authToken.setAuthtoken(currentToken);

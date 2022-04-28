@@ -105,7 +105,7 @@ public class IamSecurityUtils extends SecurityUtils {
         if(cacheManager != null && cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
             cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(accessToken);
         }
-        TokenCacheHelper.removeAccessToken(accessToken);
+        TokenCacheHelper.removeAccessTokens(accessToken);
     }
 
     /**

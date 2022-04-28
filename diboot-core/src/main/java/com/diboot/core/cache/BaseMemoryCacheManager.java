@@ -1,5 +1,6 @@
 package com.diboot.core.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
@@ -11,6 +12,7 @@ import org.springframework.cache.support.SimpleCacheManager;
  * @date 2021/4/17
  * Copyright © diboot.com
  */
+@Slf4j
 public abstract class BaseMemoryCacheManager extends SimpleCacheManager implements BaseCacheManager{
 
     /**
@@ -21,7 +23,11 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
      */
     public <T> T getCacheObj(String cacheName, Object objKey, Class<T> tClass){
         Cache cache = getCache(cacheName);
-        return cache != null? cache.get(objKey, tClass) : null;
+        T value = cache != null? cache.get(objKey, tClass) : null;
+        if(log.isTraceEnabled()){
+            log.trace("从缓存读取: {}.{} = {}", cacheName, objKey, value);
+        }
+        return value;
     }
 
     /**
@@ -42,6 +48,10 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
     public void putCacheObj(String cacheName, Object objKey, Object obj){
         Cache cache = getCache(cacheName);
         cache.put(objKey, obj);
+        if(log.isDebugEnabled()){
+            ConcurrentMapCache mapCache = (ConcurrentMapCache)cache;
+            log.debug("缓存: {} 新增-> {} , 当前size={}", cacheName, objKey, mapCache.getNativeCache().size());
+        }
     }
 
     /**
@@ -52,6 +62,10 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
     public void removeCacheObj(String cacheName, Object objKey){
         Cache cache = getCache(cacheName);
         cache.evict(objKey);
+        if(log.isDebugEnabled()){
+            ConcurrentMapCache mapCache = (ConcurrentMapCache)cache;
+            log.debug("缓存删除: {}.{} , 当前size={}", cacheName, objKey, mapCache.getNativeCache().size());
+        }
     }
 
     /**

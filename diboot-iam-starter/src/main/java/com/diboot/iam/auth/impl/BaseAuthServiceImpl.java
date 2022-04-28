@@ -88,7 +88,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
             if (subject.isAuthenticated()) {
                 String accessToken = (String) authToken.getCredentials();
                 // 缓存当前token与用户信息
-                TokenCacheHelper.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), getExpiresInMinutes());
+                TokenCacheHelper.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), authToken.getExpiresInMinutes());
                 log.debug("申请token成功！authtoken={}", authToken.getCredentials());
                 saveLoginTrace(authToken, true);
                 // 返回
@@ -119,6 +119,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
         token.setRememberMe(credential.isRememberMe());
         token.setTenantId(credential.getTenantId());
         token.setExtObj(credential.getExtObj());
+        token.setExpiresInMinutes(getExpiresInMinutes());
         // 生成token
         return token.generateAuthtoken();
     }

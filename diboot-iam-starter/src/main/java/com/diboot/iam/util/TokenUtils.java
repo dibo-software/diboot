@@ -18,6 +18,7 @@ package com.diboot.iam.util;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.iam.config.Cons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 public class TokenUtils {
     private static final Logger log = LoggerFactory.getLogger(TokenUtils.class);
 
-    private static final String TOKEN_PREFIX = "Bearer ";
     private static final String AUTH_HEADER = getConfigValue("diboot.iam.token-header-key", "authtoken");
     public static final int EXPIRES_IN_MINUTES = getConfigIntValue("diboot.iam.token-expires-minutes", 60);
 
@@ -46,10 +46,10 @@ public class TokenUtils {
     public static String getRequestToken(HttpServletRequest request) {
         String authtoken = request.getHeader(AUTH_HEADER);
         if(authtoken != null){
-            authtoken = authtoken.trim();
-            if(authtoken.startsWith(TOKEN_PREFIX)){
-                authtoken = authtoken.substring(TOKEN_PREFIX.length());
+            if(authtoken.startsWith(Cons.TOKEN_PREFIX_BEARER)){
+                authtoken = authtoken.substring(Cons.TOKEN_PREFIX_BEARER.length());
             }
+            authtoken = authtoken.trim();
         }
         if(V.isEmpty(authtoken)){
             log.warn("请求未指定token: {}", authtoken);
@@ -75,7 +75,7 @@ public class TokenUtils {
      * @param currentToken
      * @return
      */
-    public static void responseNewTokenIfRequired(ServletResponse response, String currentToken, String cachedUserInfo) {
+    public static synchronized void responseNewTokenIfRequired(ServletResponse response, String currentToken, String cachedUserInfo) {
         if(TokenCacheHelper.isCloseToExpired(cachedUserInfo)){
             //将刷新的token放入response header
             String refreshToken = TokenCacheHelper.getCachedRefreshToken(currentToken);
@@ -105,6 +105,5 @@ public class TokenUtils {
         String value = BaseConfig.getProperty(key);
         return value != null? Integer.parseInt(value) : defaultValue;
     }
-
 
 }
