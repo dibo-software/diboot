@@ -17,6 +17,7 @@ const showButtons = ref(false) // computed(() => (tabsRef.value?.clientWidth ?? 
 // 刷新按钮
 const refreshButton = () =>
   nextTick(() => (showButtons.value = (tabsRef.value?.clientWidth ?? 0) < (tabsRef.value?.scrollWidth ?? 0)))
+onMounted(() => refreshButton())
 
 // tabs 位置
 const tabsPosition = ref(0)
@@ -61,13 +62,16 @@ watch(
         },
         { immediate: true }
       )
-    } else {
-      collectTabs()
+    } else if (collectTabs) {
+      collectTabs() // 关闭监听
       viewTabsStore.tabList = []
     }
   },
   { immediate: true }
 )
+onUnmounted(() => {
+  appStore.enableTabs && viewTabsStore.tabList.splice(viewTabsStore.tabList.length - 1)
+})
 
 // 右键菜单
 const menu = reactive<{ route?: RouteLocationNormalized; locator?: any }>({ route })
