@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
+import { UserFilled, ArrowDown, ZoomIn } from '@element-plus/icons-vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
+import useAppStore from '@/store/app'
+
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -13,15 +15,31 @@ const logout = async () => {
 const goPersonal = () => {
   router.push({ name: 'Personal' }).finally()
 }
+
+const appStore = useAppStore()
 </script>
 
 <template>
   <div style="height: 100%; display: flex; align-items: center">
     <img :src="Logo" alt="Logo" style="height: 39px" />
-    <div style="position: absolute; right: 1.5rem">
+    <div style="position: absolute; right: 1.5rem; display: flex; align-items: center">
+      <el-dropdown @command="command => (appStore.globalSize = command)">
+        <div class="item">
+          <el-icon :size="22">
+            <zoom-in />
+          </el-icon>
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="large" :disabled="appStore.globalSize === 'large'">large</el-dropdown-item>
+            <el-dropdown-item command="default" :disabled="appStore.globalSize === 'default'">default</el-dropdown-item>
+            <el-dropdown-item command="small" :disabled="appStore.globalSize === 'small'">small</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <el-dropdown>
-        <span style="display: flex; align-items: center">
-          <el-avatar :size="33" :icon="UserFilled" :src="authStore.avatar" />
+        <span class="item">
+          <el-avatar :size="36" :icon="UserFilled" :src="authStore.avatar" />
           <span style="margin: 0 8px">{{ authStore.realname }}</span>
           <el-icon><arrow-down /></el-icon>
         </span>
@@ -36,4 +54,11 @@ const goPersonal = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.item {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+</style>

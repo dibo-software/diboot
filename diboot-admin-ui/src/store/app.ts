@@ -1,12 +1,23 @@
 export interface IAppStore {
   enableTabs: boolean
+  enableFooter: boolean
+  globalSize: 'large' | 'default' | 'small'
 }
 
 export default defineStore('app', {
-  state: () => {
-    const tabsState = localStorage.getItem('enableTabs')
-    return <IAppStore>{
-      enableTabs: tabsState ? tabsState === 'true' : true
+  state: (): IAppStore => {
+    return {
+      enableTabs: true,
+      enableFooter: true,
+      globalSize: 'default'
     }
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        storage: localStorage
+      }
+    ]
   }
 })
