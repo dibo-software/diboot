@@ -15,11 +15,6 @@
  */
 package com.diboot.core.cache;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
-import org.springframework.cache.support.SimpleCacheManager;
-
 /**
  * 缓存manager父类
  * @author JerryMa
