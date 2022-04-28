@@ -27,13 +27,13 @@ const layoutUsedHeight = computed(
   //             是否全屏                                      (全屏包含 Tabs )  (未开启全屏 header + tabs)  padding
   () => (props.fullScreen ? (props.fullScreen === true ? 0 : tabsHeight.value) : 50 + tabsHeight.value) + 20
 )
-// 计算已占可视高度
-const usedVisibleHeight = (route: RouteLocationNormalized) =>
-  // 布局已用高度    +  bounded-padding
-  layoutUsedHeight.value + (route.meta.hollow ? 0 : 20)
-
-// footer 插槽是否存在内容
-const slotFooter = !!useSlots().footer
+// 为需要已占可视高度的组件bind usedVisibleHeight
+const bindUsedVisibleHeight = (component: any, route: RouteLocationNormalized) => {
+  if (component.type?.props?.usedVisibleHeight)
+    //                                 布局已用高度    +  bounded-padding
+    return { usedVisibleHeight: layoutUsedHeight.value + (route.meta.hollow ? 0 : 20) }
+  else return {}
+}
 
 // footer
 const footerRef = ref<HTMLElement>()
@@ -49,9 +49,9 @@ const viewTabsStore = useViewTabsStore()
         <keep-alive :include="viewTabsStore.cachedViews">
           <div :key="route.fullPath" class="content">
             <div :class="route.meta.hollow ? 'hollow' : 'bounded'">
-              <component :is="Component" :used-visible-height="usedVisibleHeight(route)" />
+              <component :is="Component" v-bind="bindUsedVisibleHeight(Component, route)" />
             </div>
-            <div v-if="slotFooter && !route.meta.hideFooter" ref="footerRef" class="footer">
+            <div v-if="appStore.enableFooter && $slots.footer && !route.meta.hideFooter" ref="footerRef" class="footer">
               <slot name="footer" />
             </div>
           </div>
