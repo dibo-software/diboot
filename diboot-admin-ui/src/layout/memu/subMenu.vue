@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouteRecordRaw } from 'vue-router'
+import { Eleme } from '@element-plus/icons-vue'
 
 defineProps<{ menuTree: RouteRecordRaw[] }>()
 </script>
@@ -8,14 +9,18 @@ defineProps<{ menuTree: RouteRecordRaw[] }>()
   <template v-for="(item, index) in menuTree" :key="index">
     <el-sub-menu v-if="item.children?.length" :index="item.path">
       <template #title>
-        图标：
-        <span>{{ item.meta.title }}</span>
+        <el-icon :size="22">
+          <eleme />
+        </el-icon>
+        <span>{{ item.meta?.title }}</span>
       </template>
       <sub-menu :menu-tree="item.children" />
     </el-sub-menu>
     <el-menu-item v-else :index="item.path">
-      图标：
-      <span>{{ item.meta.title }}</span>
+      <el-icon :size="22">
+        <eleme />
+      </el-icon>
+      <span>{{ item.meta?.title }}</span>
     </el-menu-item>
   </template>
 </template>

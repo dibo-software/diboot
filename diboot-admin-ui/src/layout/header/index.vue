@@ -21,8 +21,14 @@ const appStore = useAppStore()
 
 <template>
   <div style="height: 100%; display: flex; align-items: center">
-    <img :src="Logo" alt="Logo" style="height: 39px" />
+    <img v-if="appStore.layout !== 'default'" :src="Logo" alt="Logo" style="height: 39px" />
+    <div :style="$slots.dock ? { width: '50vw' } : {}" style="margin-left: 20px">
+      <slot name="dock" />
+    </div>
     <div style="position: absolute; right: 1.5rem; display: flex; align-items: center">
+      <div :class="$slots.topNav ? 'top-nav' : ''">
+        <slot name="topNav" />
+      </div>
       <el-dropdown @command="command => (appStore.globalSize = command)">
         <div class="item">
           <el-icon :size="22">
@@ -54,7 +60,16 @@ const appStore = useAppStore()
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+.top-nav {
+  max-width: 50vw;
+  margin-right: 25px;
+
+  :deep(.el-menu) {
+    height: 50px;
+  }
+}
+
 .item {
   height: 36px;
   display: flex;
