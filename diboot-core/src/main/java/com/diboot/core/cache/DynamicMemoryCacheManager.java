@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.diboot.core.cache;
 
 import com.diboot.core.util.V;
@@ -7,6 +22,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -103,6 +119,26 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
             this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expireMinutes);
             if(log.isDebugEnabled()){
                 log.debug("设置缓存过期时间: {}={}", cacheName, expireMinutes);
+            }
+        }
+    }
+
+    @Override
+    public synchronized void clearAllOutOfDateData() {
+        for(String cacheName : this.getCacheNames()){
+            Cache cache = getCache(cacheName);
+            ConcurrentMap<Object, Object> cacheMap = (ConcurrentMap<Object, Object>)cache.getNativeCache();
+            if(V.isEmpty(cacheMap)){
+                continue;
+            }
+            for(Map.Entry<Object, Object> entry : cacheMap.entrySet()){
+                // 已过期，则清空缓存返回null
+                if(isExpired(cacheName, entry.getKey())){
+                    cache.evict(entry.getKey());
+                    if(log.isDebugEnabled()){
+                        log.debug("统一清理已过期的缓存: {}.{}", cacheName, entry.getKey());
+                    }
+                }
             }
         }
     }

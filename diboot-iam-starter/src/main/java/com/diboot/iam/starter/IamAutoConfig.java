@@ -206,6 +206,7 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BaseCacheManager baseCacheManager(){
+        log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
         return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(),
                 Cons.CACHE_TOKEN_USERINFO,
                 Cons.CACHE_TOKEN_REFRESHTOKEN,

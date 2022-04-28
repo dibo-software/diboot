@@ -19,6 +19,7 @@ import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.redis.ShiroRedisCacheManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -47,6 +48,7 @@ import java.util.Set;
  * @date 2021/7/20
  * Copyright © diboot.com
  */
+@Slf4j
 @Order(921)
 @Configuration
 @ConditionalOnBean(RedisTemplate.class)
@@ -68,6 +70,7 @@ public class IamRedisAutoConfig {
      @Bean(name = "shiroCacheManager")
      @ConditionalOnMissingBean(CacheManager.class)
      public CacheManager shiroCacheManager(RedisTemplate<String, Object> redisTemplate) {
+         log.info("初始化shiro缓存: ShiroRedisCacheManager");
         return new ShiroRedisCacheManager(redisTemplate, iamProperties.getJwtTokenExpiresMinutes());
      }
 
@@ -83,7 +86,6 @@ public class IamRedisAutoConfig {
                         .defaultCacheConfig()
                             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getStringSerializer()))
                             .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()))
-                            .disableCachingNullValues()
                             .entryTtl(Duration.ofMinutes(iamProperties.getTokenExpiresMinutes()));
         Set<String> cacheNames = new HashSet<String>(){{
                 add(Cons.CACHE_TOKEN_USERINFO);
@@ -100,6 +102,7 @@ public class IamRedisAutoConfig {
                         .initialCacheNames(cacheNames)
                         .transactionAware()
                         .build();
+        log.info("初始化IAM缓存: DynamicRedisCacheManager");
         return new DynamicRedisCacheManager(redisCacheManager);
     }
 
