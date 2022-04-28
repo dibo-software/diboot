@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.shiro;
 
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -25,7 +24,6 @@ import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenCacheHelper;
 import com.diboot.iam.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -111,17 +109,6 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
         catch (IOException e) {
             log.error("处理异步请求异常", e);
         }
-    }
-
-    private Object getUserInfoFromCache(String currentToken){
-        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
-        if(cacheManager != null){
-            if(cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
-                Object cacheVal = cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).get(currentToken);
-                return cacheVal;
-            }
-        }
-        return null;
     }
 
 }
