@@ -18,6 +18,9 @@ import java.io.Serializable;
 public class ApiUri implements Serializable {
     private static final long serialVersionUID = 662520281067250572L;
 
+    public ApiUri() {
+    }
+
     public ApiUri(String method, String uri){
         this.method = method;
         this.uri = uri;
