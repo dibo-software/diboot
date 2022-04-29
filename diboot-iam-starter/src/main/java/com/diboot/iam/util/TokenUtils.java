@@ -15,7 +15,9 @@
  */
 package com.diboot.iam.util;
 
+import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
@@ -55,7 +57,7 @@ public class TokenUtils {
             log.warn("请求未指定token: {}", authtoken);
             return null;
         }
-        if(TokenCacheHelper.isActiveAccessToken(authtoken) == false){
+        if(isActiveAccessToken(authtoken) == false){
             log.warn("已过期或非系统颁发的token: {}", authtoken);
             return null;
         }
@@ -72,20 +74,123 @@ public class TokenUtils {
 
     /**
      * 临近过期时生成新的token
-     * @param currentToken
+     * @param cachedUserInfo
      * @return
      */
-    public static synchronized void responseNewTokenIfRequired(ServletResponse response, String currentToken, String cachedUserInfo) {
-        if(TokenCacheHelper.isCloseToExpired(cachedUserInfo)){
+    public static synchronized void responseNewTokenIfRequired(ServletResponse response, String cachedUserInfo) {
+        if(isCloseToExpired(cachedUserInfo)){
             //将刷新的token放入response header
-            String refreshToken = TokenCacheHelper.getCachedRefreshToken(currentToken);
-            if(refreshToken == null){
-                refreshToken = generateToken();
-                TokenCacheHelper.cacheRefreshToken(currentToken, refreshToken);
-            }
+            String refreshToken = generateToken();
+            cacheRefreshToken(refreshToken, cachedUserInfo);
             ((HttpServletResponse)response).setHeader(AUTH_HEADER, refreshToken);
             log.debug("写回刷新token :{}", refreshToken);
         }
+    }
+
+    /**
+     * 缓存新的token
+     * @param accessToken
+     * @param userInfoStr
+     */
+    public static void cacheAccessToken(String accessToken, String userInfoStr, int expiresInMinutes) {
+        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken, userInfoStr, expiresInMinutes);
+    }
+
+    /**
+     * 退出时移除失效的全部token
+     * @param accessToken
+     */
+    public static void removeAccessTokens(String accessToken) {
+        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        baseCacheManager.removeCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken);
+    }
+
+    /**
+     * 获取缓存的token信息
+     * @param accessToken
+     * @return
+     */
+    public static String getCachedUserInfoStr(String accessToken) {
+        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        String userInfoStr = baseCacheManager.getCacheString(Cons.CACHE_TOKEN_USERINFO, accessToken);
+        if(userInfoStr == null){
+            log.info("token {} 缓存信息不存在", accessToken);
+        }
+        return userInfoStr;
+    }
+
+    /**
+     * token是否有效: 未过期/刷新token 均有效
+     * @param accessToken
+     * @return
+     */
+    public static boolean isActiveAccessToken(String accessToken) {
+        String userInfoStr = getCachedUserInfoStr(accessToken);
+        if(V.isEmpty(userInfoStr)){
+            return false;
+        }
+        if(isExpired(userInfoStr)){
+            IamSecurityUtils.logoutByToken(accessToken);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 缓存刷新token
+     * @param refreshToken
+     */
+    public synchronized static void cacheRefreshToken(String refreshToken, String userInfoStr) {
+        String prefixTemp = S.substringBeforeLast(userInfoStr, Cons.SEPARATOR_COMMA);
+        int expiresMinutes = Integer.parseInt(S.substringAfterLast(prefixTemp, Cons.SEPARATOR_COMMA));
+        //如果是刷新token则更新颁发时间
+        userInfoStr = prefixTemp + Cons.SEPARATOR_COMMA + System.currentTimeMillis();
+        cacheAccessToken(refreshToken, userInfoStr, expiresMinutes + 1); //适当延长1m避免临界点问题
+    }
+
+    /**
+     * 是否已过期
+     * @param userInfoStr
+     * @return
+     */
+    private static final int EXPIRES_MINUTES_INDEX = 4, ISSUED_AT_INDEX = 5;
+    public static boolean isExpired(String userInfoStr){
+        if(V.isEmpty(userInfoStr)){
+            return false;
+        }
+        String[] userFields = S.split(userInfoStr);
+        int expiresInMinutes = Integer.parseInt(userFields[EXPIRES_MINUTES_INDEX]);
+        // 获取当前token的过期时间
+        long issuedAt = Long.parseLong(userFields[ISSUED_AT_INDEX]);
+        // 获取当前token的过期时间
+        long expiredBefore = issuedAt + expiresInMinutes * 60000;
+        return System.currentTimeMillis() > expiredBefore;
+    }
+
+    /**
+     * 是否临近过期
+     * @param userInfoStr
+     * @return
+     */
+    public static boolean isCloseToExpired(String userInfoStr){
+        if(V.isEmpty(userInfoStr)){
+            return false;
+        }
+        String[] userFields = S.split(userInfoStr);
+        int expiresInMinutes = Integer.parseInt(userFields[EXPIRES_MINUTES_INDEX]);
+        // 当前token是否临近过期
+        long current = System.currentTimeMillis();
+        long issuedAt = Long.parseLong(userFields[ISSUED_AT_INDEX]);
+        long expiration = issuedAt + expiresInMinutes*60000;
+        long remaining = expiration - current;
+        if(remaining > 0){
+            long elapsed = current - issuedAt;
+            // 小于1/4 则更新
+            double past = (elapsed / remaining);
+            return past > 3.0;
+        }
+        return false;
     }
 
     /**

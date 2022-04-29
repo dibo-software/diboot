@@ -29,7 +29,7 @@ import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.shiro.IamAuthToken;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
-import com.diboot.iam.util.TokenCacheHelper;
+import com.diboot.iam.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -88,7 +88,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
             if (subject.isAuthenticated()) {
                 String accessToken = (String) authToken.getCredentials();
                 // 缓存当前token与用户信息
-                TokenCacheHelper.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), authToken.getExpiresInMinutes());
+                TokenUtils.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), authToken.getExpiresInMinutes());
                 log.debug("申请token成功！authtoken={}", authToken.getCredentials());
                 saveLoginTrace(authToken, true);
                 // 返回

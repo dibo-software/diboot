@@ -21,7 +21,6 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.util.IamSecurityUtils;
-import com.diboot.iam.util.TokenCacheHelper;
 import com.diboot.iam.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -60,20 +59,20 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
         // 从header获取Token
         String currentToken = TokenUtils.getRequestToken(httpRequest);
         if (V.isEmpty(currentToken)) {
-            log.debug("Token验证失败！uri={}", httpRequest.getRequestURI());
+            log.debug("token: {} 验证失败, uri={}", currentToken, httpRequest.getRequestURI());
             return false;
         }
-        log.debug("Token验证成功！token={}, uri={}", currentToken, httpRequest.getRequestURI());
-        String cachedUserInfo = TokenCacheHelper.getCachedUserInfoStr(currentToken);
+        log.debug("token: {} 验证通过", currentToken);
+        String cachedUserInfo = TokenUtils.getCachedUserInfoStr(currentToken);
         if(IamSecurityUtils.getSubject().isAuthenticated() == false && cachedUserInfo != null){
             IamAuthToken authToken = new IamAuthToken(cachedUserInfo);
             authToken.setAuthtoken(currentToken);
             authToken.setValidPassword(false);
             IamSecurityUtils.getSubject().login(authToken);
-            log.debug("Token验证成功！token={}", currentToken);
+            log.debug("token: {} 保活完成, uri={}", currentToken, httpRequest.getRequestURI());
         }
         // 如果临近过期，则生成新的token返回
-        TokenUtils.responseNewTokenIfRequired(response, currentToken, cachedUserInfo);
+        TokenUtils.responseNewTokenIfRequired(response, cachedUserInfo);
         return true;
     }
 

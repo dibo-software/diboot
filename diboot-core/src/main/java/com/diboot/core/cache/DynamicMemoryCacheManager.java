@@ -20,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,14 +48,19 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     }
 
     /**
-     * cache的时间戳缓存
+     * cache的清理时间缓存
      */
-    private ConcurrentHashMap<String, Integer> CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String> CACHE_CLEANDATE_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * cache的过期时间缓存
+     */
+    private final ConcurrentHashMap<String, Integer> CACHE_EXPIREDMINUTES_CACHE = new ConcurrentHashMap<>();
 
     /**
      * cache的时间戳缓存
      */
-    private ConcurrentHashMap<String, ConcurrentHashMap<Object, Long>> CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<Object, Long>> CACHE_TIMESTAMP_CACHE = new ConcurrentHashMap<>();
 
     public DynamicMemoryCacheManager(){
         super.afterPropertiesSet();
@@ -69,6 +76,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         for(String cacheName : cacheNames){
             caches.add(new ConcurrentMapCache(cacheName));
             this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expiredMinutes);
+            this.CACHE_CLEANDATE_CACHE.put(cacheName, "");
         }
         setCaches(caches);
         super.afterPropertiesSet();
@@ -105,6 +113,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     public void putCacheObj(String cacheName, Object objKey, Object obj) {
         super.putCacheObj(cacheName, objKey, obj);
         refreshCacheTimestamp(cacheName, objKey);
+        clearOutOfDateDataIfNeeded(cacheName);
     }
 
     /**
@@ -114,33 +123,33 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
      * @param obj
      */
     public void putCacheObj(String cacheName, Object objKey, Object obj, int expireMinutes) {
-        this.putCacheObj(cacheName, objKey, obj);
-        if(!this.CACHE_EXPIREDMINUTES_CACHE.containsKey(cacheName)){
+        if(!this.CACHE_EXPIREDMINUTES_CACHE.containsKey(cacheName) || (this.CACHE_EXPIREDMINUTES_CACHE.get(cacheName) != expireMinutes)){
             this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expireMinutes);
             if(log.isDebugEnabled()){
                 log.debug("设置缓存过期时间: {}={}", cacheName, expireMinutes);
             }
         }
+        this.putCacheObj(cacheName, objKey, obj);
     }
 
     @Override
-    public synchronized void clearAllOutOfDateData() {
-        for(String cacheName : this.getCacheNames()){
-            Cache cache = getCache(cacheName);
-            ConcurrentMap<Object, Object> cacheMap = (ConcurrentMap<Object, Object>)cache.getNativeCache();
-            if(V.isEmpty(cacheMap)){
-                continue;
-            }
-            for(Map.Entry<Object, Object> entry : cacheMap.entrySet()){
-                // 已过期，则清空缓存返回null
-                if(isExpired(cacheName, entry.getKey())){
-                    cache.evict(entry.getKey());
-                    if(log.isDebugEnabled()){
-                        log.debug("统一清理已过期的缓存: {}.{}", cacheName, entry.getKey());
-                    }
-                }
+    public synchronized void clearOutOfDateData(String cacheName) {
+        Cache cache = getCache(cacheName);
+        ConcurrentMap<Object, Object> cacheMap = (ConcurrentMap<Object, Object>)cache.getNativeCache();
+        if(V.isEmpty(cacheMap)){
+            log.debug("暂无缓存数据: {}", cacheName);
+            return;
+        }
+        int count = 0;
+        for(Map.Entry<Object, Object> entry : cacheMap.entrySet()){
+            // 已过期，则清空缓存返回null
+            if(isExpired(cacheName, entry.getKey())){
+                cache.evict(entry.getKey());
+                count++;
+                log.debug("清理已过期的缓存: {}.{}", cacheName, entry.getKey());
             }
         }
+        log.debug("清理完成已过期缓存数据: {} 共 {} 条", cacheName, count);
     }
 
     /**
@@ -164,19 +173,16 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         return (currentTimestamp - cacheTimestamp) > (expiredMinutes*60000);
     }
 
-    /**
-     * 清空缓存
-     * @param cacheName
-     */
-    public void clearCache(String cacheName) {
-        Cache cache = getCache(cacheName);
-        if(cache != null){
-            cache.clear();
-            // 清空时间戳
-            ConcurrentMap<Object, Long> timestampCache = CACHE_TIMESTAMP_CACHE.get(cacheName);
-            if(timestampCache != null){
-                timestampCache.clear();
-            }
+    private void clearOutOfDateDataIfNeeded(String cacheName){
+        boolean needed = true;
+        String today = LocalDate.now().toString();
+        if(CACHE_CLEANDATE_CACHE.containsKey(cacheName)){
+            needed = V.notEquals(today, CACHE_CLEANDATE_CACHE.get(cacheName));
+        }
+        if(needed){
+            log.debug("新的执行周期清理过期的本地缓存: {}", cacheName);
+            clearOutOfDateData(cacheName);
+            CACHE_CLEANDATE_CACHE.put(cacheName, today);
         }
     }
 
@@ -191,5 +197,4 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         }
         timestampCache.put(objKey, System.currentTimeMillis());
     }
-
 }

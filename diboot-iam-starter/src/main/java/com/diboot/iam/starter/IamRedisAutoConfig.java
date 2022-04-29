@@ -89,8 +89,6 @@ public class IamRedisAutoConfig {
                             .entryTtl(Duration.ofMinutes(iamProperties.getTokenExpiresMinutes()));
         Set<String> cacheNames = new HashSet<String>(){{
                 add(Cons.CACHE_TOKEN_USERINFO);
-                add(Cons.CACHE_TOKEN_REFRESHTOKEN);
-                add(Cons.CACHE_REFRESHTOKEN_TOKEN);
                 add(Cons.CACHE_CAPTCHA);
         }};
 

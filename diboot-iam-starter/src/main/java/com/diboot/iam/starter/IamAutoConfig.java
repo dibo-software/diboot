@@ -209,8 +209,6 @@ public class IamAutoConfig {
         log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
         return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(),
                 Cons.CACHE_TOKEN_USERINFO,
-                Cons.CACHE_TOKEN_REFRESHTOKEN,
-                Cons.CACHE_REFRESHTOKEN_TOKEN,
                 Cons.CACHE_CAPTCHA);
     }
 

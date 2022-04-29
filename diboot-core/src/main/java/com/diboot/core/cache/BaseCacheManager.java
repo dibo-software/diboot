@@ -74,6 +74,6 @@ public interface BaseCacheManager {
     /**
      * 清理所有过期的数据：系统空闲时调用
      */
-    void clearAllOutOfDateData();
+    void clearOutOfDateData(String cacheName);
 
 }

@@ -41,7 +41,7 @@ public class StaticMemoryCacheManager extends BaseMemoryCacheManager implements 
     }
 
     @Override
-    public void clearAllOutOfDateData() {
+    public void clearOutOfDateData(String cacheName) {
         throw new InvalidUsageException("StaticMemoryCacheManager 缓存不存在过期，不支持清理！");
     }
 }

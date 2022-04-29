@@ -69,7 +69,7 @@ public class DynamicRedisCacheManager implements BaseCacheManager{
     }
 
     @Override
-    public void clearAllOutOfDateData() {
+    public void clearOutOfDateData(String cacheName) {
     }
 
 }
