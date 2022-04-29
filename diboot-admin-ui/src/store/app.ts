@@ -11,7 +11,7 @@ export default defineStore('app', {
       enableTabs: true,
       enableFooter: true,
       globalSize: 'default',
-      layout: 'dock'
+      layout: 'default'
     }
   },
   persist: {

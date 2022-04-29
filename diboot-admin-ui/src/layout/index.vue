@@ -16,41 +16,44 @@ import { RouteRecordRaw } from 'vue-router'
 
 const appStore = useAppStore()
 
-const menuTree = computed(() => getMenuTree())
+const menuTree = getMenuTree()
 
 const router = useRouter()
 
-const submenu = ref<Array<RouteRecordRaw>>([])
+const oneLevel = ref<RouteRecordRaw>()
 const openOneLevel = (menu: RouteRecordRaw) => {
-  submenu.value = menu.children?.length ? menu.children : []
+  oneLevel.value = menu
   if (router.currentRoute.value.name !== menu.name) router.push({ name: menu.name })
 }
-onMounted(() => {
-  openOneLevel(menuTree.value[0])
-})
+openOneLevel(menuTree[0])
+
+const isMenuCollapse = ref(false)
 </script>
 
 <template>
   <el-container v-if="appStore.layout === 'default'">
     <el-container>
-      <el-aside :width="submenu.length ? '260px' : '71px'">
+      <el-aside :width="oneLevel.children?.length ? (isMenuCollapse ? '135px' : '260px') : '71px'">
         <div class="subfield">
           <div class="one-level">
             <div class="one-level-logo">
               <img :src="Logo" alt="Logo" style="height: 39px" />
             </div>
-            <div v-for="item in menuTree" :key="item.name" class="one-level-item" @click="openOneLevel(item)">
-              <el-icon :size="30">
-                <eleme />
-              </el-icon>
-              {{ item.meta?.title }}
-            </div>
+            <el-menu :default-active="oneLevel.path">
+              <el-menu-item v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
+                <el-icon :size="30">
+                  <eleme />
+                </el-icon>
+                <span>{{ item.meta?.title }}</span>
+              </el-menu-item>
+            </el-menu>
           </div>
-          <div class="submenu">
-            <div class="title">asd</div>
-            <el-scrollbar v-show="submenu.length" height="calc(100vh - 50px)">
-              <app-menu :menu-tree="submenu" />
-            </el-scrollbar>
+          <div v-show="oneLevel.children?.length" class="submenu">
+            <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children">
+              <template #title>
+                <div class="title">{{ oneLevel.meta?.title }}</div>
+              </template>
+            </app-menu>
           </div>
         </div>
       </el-aside>
@@ -77,7 +80,7 @@ onMounted(() => {
     <el-header height="50px" style="border-bottom: 1px solid #eee">
       <app-header>
         <template #dock>
-          <el-menu style="height: 50px" mode="horizontal">
+          <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel.path">
             <el-menu-item v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
               <el-icon :size="22">
                 <eleme />
@@ -89,10 +92,8 @@ onMounted(() => {
       </app-header>
     </el-header>
     <el-container>
-      <el-aside v-show="submenu.length" width="220px">
-        <el-scrollbar height="calc(100vh - 50px)">
-          <app-menu :menu-tree="submenu" />
-        </el-scrollbar>
+      <el-aside v-show="oneLevel.children?.length" :width="isMenuCollapse ? '64px' : '220px'">
+        <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children" />
       </el-aside>
       <el-container>
         <el-main style="padding: 0">
@@ -138,10 +139,8 @@ onMounted(() => {
       <app-header />
     </el-header>
     <el-container>
-      <el-aside width="220px">
-        <el-scrollbar height="calc(100vh - 50px)">
-          <app-menu :menu-tree="menuTree" />
-        </el-scrollbar>
+      <el-aside :width="isMenuCollapse ? '64px' : '220px'" class="aside-width">
+        <app-menu v-model:collapse="isMenuCollapse" :menu-tree="menuTree" />
       </el-aside>
       <el-container>
         <el-main style="padding: 0">
@@ -163,6 +162,11 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
+.el-aside {
+  transition: width 0.3s;
+  -webkit-transition: width 0.3s;
+}
+
 .subfield {
   display: flex;
 
@@ -170,27 +174,24 @@ onMounted(() => {
     min-height: 100vh;
     border-right: 1px solid var(--el-border-color-lighter);
 
-    .one-level-logo,
-    .one-level-item {
-      width: 60px;
-      height: 60px;
-      margin: 5px;
-      cursor: pointer;
-      border-radius: 6px;
+    .one-level-logo {
+      width: 70px;
+      height: 50px;
       display: flex;
       align-items: center;
       flex-direction: column;
       justify-content: center;
     }
 
-    .one-level-item {
-      color: var(--el-color-white);
-      font-size: 13px;
+    .el-menu {
+      width: 70px;
+      margin-top: 10px;
 
-      background-color: var(--el-color-primary);
-
-      &:hover {
-        background-color: var(--el-color-primary-light-3);
+      .el-menu-item {
+        height: 60px;
+        padding-top: 5px;
+        line-height: 15px;
+        flex-direction: column;
       }
     }
   }
