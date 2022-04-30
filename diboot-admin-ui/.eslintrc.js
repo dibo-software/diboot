@@ -23,7 +23,8 @@ module.exports = {
     defineProps: 'readonly',
     defineEmits: 'readonly',
     defineExpose: 'readonly',
-    withDefaults: 'readonly'
+    withDefaults: 'readonly',
+    NodeJS: 'readonly'
   },
   rules: {
     '@typescript-eslint/no-explicit-any': 0,
