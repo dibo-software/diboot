@@ -28,11 +28,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
@@ -50,7 +50,7 @@ import java.util.Map;
  */
 @Component
 @Lazy(false)
-public class ContextHelper implements ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
+public class ContextHelper implements ApplicationContextAware, ApplicationListener<ApplicationReadyEvent> {
     private static final Logger log = LoggerFactory.getLogger(ContextHelper.class);
 
     /***
@@ -66,11 +66,13 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         APPLICATION_CONTEXT = applicationContext;
+        log.debug("ApplicationContext已赋值: {}", APPLICATION_CONTEXT.toString());
     }
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationEvent(ApplicationReadyEvent event) {
         APPLICATION_CONTEXT = event.getApplicationContext();
+        log.debug("ApplicationContext已注入: {}", APPLICATION_CONTEXT.toString());
     }
 
     /***
@@ -78,6 +80,7 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
      */
     public static ApplicationContext getApplicationContext() {
         if (APPLICATION_CONTEXT == null){
+            log.debug("ApplicationContext未初始化，通过ContextLoader获取!");
             APPLICATION_CONTEXT = ContextLoader.getCurrentWebApplicationContext();
         }
         if(APPLICATION_CONTEXT == null){
