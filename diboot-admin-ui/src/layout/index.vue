@@ -40,7 +40,13 @@ const isMenuCollapse = ref(false)
               <img :src="Logo" alt="Logo" style="height: 39px" />
             </div>
             <el-menu class="default-menu" :default-active="oneLevel?.path">
-              <el-menu-item class="default-menu-item" v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
+              <el-menu-item
+                v-for="item in menuTree"
+                :key="item.name"
+                class="default-menu-item"
+                :index="item.path"
+                @click="openOneLevel(item)"
+              >
                 <el-icon :size="30">
                   <eleme />
                 </el-icon>
