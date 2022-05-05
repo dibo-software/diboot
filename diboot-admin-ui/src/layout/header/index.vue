@@ -74,5 +74,6 @@ const appStore = useAppStore()
   display: flex;
   align-items: center;
   padding: 0 10px;
+  cursor: pointer;
 }
 </style>
