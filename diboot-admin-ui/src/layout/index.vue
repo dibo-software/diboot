@@ -39,12 +39,18 @@ const isMenuCollapse = ref(false)
             <div class="one-level-logo">
               <img :src="Logo" alt="Logo" style="height: 39px" />
             </div>
-            <el-menu :default-active="oneLevel.path">
-              <el-menu-item v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
-                <el-icon :size="30">
+            <el-menu class="default-menu" :default-active="oneLevel.path">
+              <el-menu-item
+                v-for="item in menuTree"
+                :key="item.name"
+                class="default-menu-item"
+                :index="item.path"
+                @click="openOneLevel(item)"
+              >
+                <el-icon :size="24">
                   <eleme />
                 </el-icon>
-                <span>{{ item.meta?.title }}</span>
+                <span class="title">{{ item.meta?.title }}</span>
               </el-menu-item>
             </el-menu>
           </div>
@@ -207,6 +213,23 @@ const isMenuCollapse = ref(false)
       align-items: center;
       border-bottom: 1px solid var(--el-border-color-lighter);
       border-right: 1px solid var(--el-border-color-lighter);
+    }
+  }
+}
+.default-menu {
+  border: none;
+  .default-menu-item {
+    height: 70px !important;
+    width: 70px;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    .title {
+      line-height: 24px;
+      font-size: 14px;
     }
   }
 }
