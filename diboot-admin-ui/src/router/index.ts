@@ -70,12 +70,22 @@ export const constantRoutes: RouteRecordRaw[] = [
 /**
  * 创建路由
  */
-const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL), // hash 模式
-  // history: createWebHistory(import.meta.env.BASE_URL), // HTML5 模式
-  routes: constantRoutes
-})
+const createAppRouter = () =>
+  createRouter({
+    history: createWebHashHistory(import.meta.env.BASE_URL), // hash 模式
+    // history: createWebHistory(import.meta.env.BASE_URL), // HTML5 模式
+    routes: constantRoutes
+  })
 
+const router = createAppRouter()
+
+// 添加路由守卫等
 createRouterGuard(router)
 
 export default router
+
+// 重置路由
+export const resetRouter = () => {
+  router.currentRoute.value.matched = createAppRouter().currentRoute.value.matched
+  router.go(0)
+}

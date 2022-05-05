@@ -1,19 +1,24 @@
 import auth from '@/utils/auth'
+import { resetRouter } from '@/router'
 import { ElMessage } from 'element-plus'
 
-interface IAuthStore {
+export interface IAuthStore {
   realname: string
-  email: string
-  avatar: string
-  info: any
+  avatar?: string
+  info?: IUserInfo
+}
+
+export interface IUserInfo extends Record<string, unknown> {
+  realname?: string
+  avatar?: string
 }
 
 export default defineStore('auth', {
   state: () => {
     return <IAuthStore>{
       realname: '',
-      avatar: '',
-      info: null
+      avatar: undefined,
+      info: undefined
     }
   },
   actions: {
@@ -49,6 +54,7 @@ export default defineStore('auth', {
       } finally {
         auth.clearToken()
         this.$reset()
+        resetRouter()
       }
     }
   }
