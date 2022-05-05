@@ -24,3 +24,9 @@ defineProps<{ menuTree: RouteRecordRaw[] }>()
     </el-menu-item>
   </template>
 </template>
+
+<style scoped lang="scss">
+.el-menu-item.is-active {
+  background-color: var(--el-color-primary-light-9);
+}
+</style>

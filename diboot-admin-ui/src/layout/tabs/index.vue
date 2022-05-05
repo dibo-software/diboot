@@ -170,7 +170,7 @@ const fullScreenTabsView = () => {
       >
         <arrow-right />
       </el-icon>
-      <el-dropdown size="small">
+      <el-dropdown>
         <el-icon :size="22" class="icon-button" style="border-left: 1px solid #eee" color="#AAA">
           <Menu />
         </el-icon>
@@ -190,7 +190,7 @@ const fullScreenTabsView = () => {
     </div>
   </div>
   <!-- tab 菜单 -->
-  <el-dropdown ref="contentMenu" trigger="click" size="small" :style="menu.locator" style="position: fixed">
+  <el-dropdown ref="contentMenu" trigger="click" :style="menu.locator" style="position: fixed">
     <div ref="contentMenuTarget" />
     <template #dropdown>
       <el-dropdown-menu>
@@ -229,7 +229,7 @@ const fullScreenTabsView = () => {
 
   .tabs {
     display: flex;
-    margin: 0 3px;
+    margin: 0 10px;
 
     .el-button {
       height: 30px;
