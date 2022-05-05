@@ -19,7 +19,6 @@ const appStore = useAppStore()
 const menuTree = getMenuTree()
 
 const router = useRouter()
-
 const oneLevel = ref<RouteRecordRaw>()
 const openOneLevel = (menu: RouteRecordRaw) => {
   oneLevel.value = menu
@@ -28,6 +27,16 @@ const openOneLevel = (menu: RouteRecordRaw) => {
 openOneLevel(menuTree[0])
 
 const isMenuCollapse = ref(false)
+
+watch(
+  () => router.currentRoute.value,
+  value => {
+    // 存在redirect，且存在title（（上级菜单menu中显示的情况））
+    // 或
+    // 路径匹配（上级菜单menu中不显示的情况）
+    oneLevel.value = value.matched.find(item => (item.redirect && item.meta.title) || item.path === value.path)
+  }
+)
 </script>
 
 <template>
