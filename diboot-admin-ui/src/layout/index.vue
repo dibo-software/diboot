@@ -182,6 +182,11 @@ watch(
   -webkit-transition: width 0.3s;
 }
 
+.el-sub-menu.is-active,
+.el-menu-item.is-active {
+  background-color: var(--el-color-primary-light-9) !important;
+}
+
 .subfield {
   display: flex;
 
@@ -225,8 +230,10 @@ watch(
     }
   }
 }
+
 .default-menu {
   border: none;
+
   .default-menu-item {
     height: 70px !important;
     width: 70px;
@@ -236,6 +243,7 @@ watch(
     align-items: center;
     text-align: center;
     justify-content: center;
+
     .title {
       line-height: 24px;
       font-size: 14px;
