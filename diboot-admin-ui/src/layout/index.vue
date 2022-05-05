@@ -33,31 +33,25 @@ const isMenuCollapse = ref(false)
 <template>
   <el-container v-if="appStore.layout === 'default'">
     <el-container>
-      <el-aside :width="oneLevel.children?.length ? (isMenuCollapse ? '135px' : '260px') : '71px'">
+      <el-aside :width="oneLevel?.children?.length ? (isMenuCollapse ? '135px' : '260px') : '71px'">
         <div class="subfield">
           <div class="one-level">
             <div class="one-level-logo">
               <img :src="Logo" alt="Logo" style="height: 39px" />
             </div>
-            <el-menu class="default-menu" :default-active="oneLevel.path">
-              <el-menu-item
-                v-for="item in menuTree"
-                :key="item.name"
-                class="default-menu-item"
-                :index="item.path"
-                @click="openOneLevel(item)"
-              >
-                <el-icon :size="24">
+            <el-menu class="default-menu" :default-active="oneLevel?.path">
+              <el-menu-item class="default-menu-item" v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
+                <el-icon :size="30">
                   <eleme />
                 </el-icon>
                 <span class="title">{{ item.meta?.title }}</span>
               </el-menu-item>
             </el-menu>
           </div>
-          <div v-show="oneLevel.children?.length" class="submenu">
-            <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children">
+          <div v-show="oneLevel?.children?.length" class="submenu">
+            <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel?.children">
               <template #title>
-                <div class="title">{{ oneLevel.meta?.title }}</div>
+                <div class="title">{{ oneLevel?.meta?.title }}</div>
               </template>
             </app-menu>
           </div>
@@ -86,7 +80,7 @@ const isMenuCollapse = ref(false)
     <el-header height="50px" style="border-bottom: 1px solid #eee">
       <app-header>
         <template #dock>
-          <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel.path">
+          <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel?.path">
             <el-menu-item v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
               <el-icon :size="22">
                 <eleme />
@@ -98,8 +92,8 @@ const isMenuCollapse = ref(false)
       </app-header>
     </el-header>
     <el-container>
-      <el-aside v-show="oneLevel.children?.length" :width="isMenuCollapse ? '64px' : '220px'">
-        <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children" />
+      <el-aside v-show="oneLevel?.children?.length" :width="isMenuCollapse ? '64px' : '220px'">
+        <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel?.children" />
       </el-aside>
       <el-container>
         <el-main style="padding: 0">

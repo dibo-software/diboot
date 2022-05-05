@@ -10,7 +10,7 @@ import { WatchStopHandle } from 'vue'
 const appStore = useAppStore()
 
 // tabs 滚动控制
-const tabsRef = ref<HTMLElement>()
+const tabsRef = ref()
 const tabsScrollRef = ref<InstanceType<typeof ElScrollbar>>()
 
 const showButtons = ref(false) // computed(() => (tabsRef.value?.clientWidth ?? 0) < (tabsRef.value?.scrollWidth ?? 0))
@@ -27,15 +27,9 @@ const scroll = ({ scrollLeft }: any) => {
 }
 
 // 手动滚动 Tabs 列表
-const operateScroll = (left = true) => {
-  const step = 50 // 步长，调解速度
+const operateScroll = (right = true) => {
   let deviation = (tabsRef.value?.clientWidth ?? 500) * 0.8
-  let timer = setInterval(() => {
-    tabsScrollRef.value?.setScrollLeft(tabsPosition.value + (left ? step : -step))
-    if ((deviation -= step) <= 0) {
-      clearInterval(timer)
-    }
-  }, 20)
+  tabsScrollRef.value?.scrollTo({ left: tabsPosition.value + (right ? deviation : -deviation), behavior: 'smooth' })
 }
 
 // tabs 收集
@@ -55,10 +49,10 @@ watch(
       collectTabs = watch(
         route,
         value => {
-          if (viewTabsStore.addTab(_.cloneDeep(value))) {
-            refreshButton()
-            operateScroll()
-          }
+          const index = viewTabsStore.addTab(_.cloneDeep(value))
+          refreshButton().then(() =>
+            tabsRef.value?.childNodes[0].childNodes[index]?.scrollIntoView({ behavior: 'smooth' })
+          )
         },
         { immediate: true }
       )

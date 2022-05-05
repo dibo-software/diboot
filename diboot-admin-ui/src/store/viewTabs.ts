@@ -45,7 +45,7 @@ export default defineStore({
       if (index === -1) this.tabList.push(route)
       else this.tabList.splice(index, 1, route)
       if (!route.meta.title) route.meta.title = 'no-title'
-      return index === -1
+      return index === -1 ? this.tabList.length - 1 : index
     },
     // 更新
     updateTabTitle(route: RouteLocationNormalized, title: string) {
