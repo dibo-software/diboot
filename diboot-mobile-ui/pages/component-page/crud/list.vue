@@ -17,8 +17,8 @@
 					@click="handleActionClick"
 					@open="handleActiveSwipeAction">
 					<di-descriptions :title="item.title" label-col="4" value-col="8" :border-bottom="true" >
-						<di-descriptions-item label="文字省略" value="你好你好你好你好你好你好你好你好你好你好你好你好你好你好" :ellipsis="true"/>
-						<di-descriptions-item label="createTime" :value="item.createTime"/>
+						<di-descriptions-item label="姓名" :value="item.value" :ellipsis="true"/>
+						<di-descriptions-item label="创建时间" :value="item.createTime"/>
 					</di-descriptions>
 				</u-swipe-action>
 			</view>
@@ -51,7 +51,8 @@
 					for (let i = 1; i <= this.page.pageSize; i++) {
 						list.push({
 							id: ++count,
-							title: '列表展示 ' + count,
+							title: '标题' + count,
+							value: 'Didoot',
 							createTime: '2021-11-22 10:27'
 						})
 					}

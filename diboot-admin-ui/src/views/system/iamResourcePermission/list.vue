@@ -1,11 +1,11 @@
 <script setup lang="ts" name="IamResourcePermissionList">
-import { useAttachMore, LabelValue } from '@/utils/attachMore'
+import { useLoadRelatedData } from '@/utils/relatedData'
 // script
 const queryParams = reactive({})
 const onSubmit = () => {
   console.log(queryParams)
 }
-const more: LabelValue = useAttachMore([{}], '/iamResource')
+const relatedData = useLoadRelatedData([{}], '/iamResource')
 
 type User = {
   id: number
@@ -53,17 +53,15 @@ const tableData: User[] = [
   <div class="list-container">
     <div class="search-container">
       <el-form :inline="true" :model="queryParams" class="demo-form-inline">
-        <el-form-item label="菜单名称">
+        <el-form-item>
           <el-input v-model="queryParams.displayName" placeholder="菜单名称" />
         </el-form-item>
-        <el-form-item label="菜单编码">
+        <el-form-item>
           <el-input v-model="queryParams.resourceCode" placeholder="菜单编码" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button @click="onSubmit">重置</el-button>
-          <el-button @click="onSubmit">{{ more.genderOptions && more.genderOptions[0].label }}</el-button>
-          <el-button @click="onSubmit">{{ more.iamResourceOptions && more.iamResourceOptions[0].label }}</el-button>
         </el-form-item>
       </el-form>
     </div>
