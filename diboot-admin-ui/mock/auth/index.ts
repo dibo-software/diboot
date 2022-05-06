@@ -93,5 +93,25 @@ const authMenu = [
         }
       }
     ]
+  },
+  {
+    path: '/system',
+    name: 'System',
+    redirect: '/system/iamResourcePermission',
+    meta: { title: '系统管理', componentName: 'Layout' },
+    children: [
+      {
+        path: 'iamResourcePermission',
+        name: 'iamResourcePermission-@increment',
+        meta: {
+          title: '资源权限管理',
+          componentName: 'IamResourcePermissionList',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: '@boolean',
+          hideFooter: '@boolean'
+        }
+      }
+    ]
   }
 ]
