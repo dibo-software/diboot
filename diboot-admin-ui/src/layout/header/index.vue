@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserFilled, ArrowDown, ZoomIn } from '@element-plus/icons-vue'
+import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
@@ -31,7 +31,7 @@ const appStore = useAppStore()
       <el-dropdown @command="command => (appStore.globalSize = command)">
         <div class="item">
           <el-icon :size="22">
-            <zoom-in />
+            <icon-show name="LocalSvg:TextFontSize" />
           </el-icon>
         </div>
         <template #dropdown>
