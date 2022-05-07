@@ -11,12 +11,13 @@ const value = ref<string>('Element:HotWater')
 
   回显图标：
   <el-icon :size="25" style="vertical-align: middle">
-    <icon-show :name="value" />
+    <icon :name="value" />
   </el-icon>
 
   <br />
 
-  图标选择：<icon-select v-model="value" />
+  图标选择：
+  <icon-select v-model="value" />
 </template>
 
 <style scoped></style>

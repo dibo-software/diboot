@@ -38,8 +38,8 @@ declare module '@vue/runtime-core' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    Icon: typeof import('@/components/icon/index.vue')['default']
     IconSelect: typeof import('@/components/icon/select.vue')['default']
-    IconShow: typeof import('@/components/icon/show.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

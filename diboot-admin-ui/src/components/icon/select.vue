@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { library } from './library'
+import IconLibrary from '@/config/iconLibrary'
 
-const getIconMap = (key: string): any => Object.values(library[key])
+const getIconList = (key: string): any => Object.values(IconLibrary[key])
 
 defineProps<{ modelValue?: string }>()
 
@@ -19,7 +19,7 @@ const selectIcon = (name?: string) => {
 
 <template>
   <el-icon :size="25" style="vertical-align: middle; margin-right: 10px">
-    <icon-show :name="modelValue" />
+    <icon :name="modelValue" />
   </el-icon>
   <el-button type="text" @click="visible = true">{{ modelValue ? '重选' : '选择' }}</el-button>
   <el-button v-show="modelValue" type="text" style="color: var(--el-color-danger)" @click="selectIcon()">
@@ -27,15 +27,15 @@ const selectIcon = (name?: string) => {
   </el-button>
   <el-dialog v-model="visible" title="图标选择器">
     <el-tabs style="margin-top: -30px">
-      <el-tab-pane v-for="key in Object.keys(library)" :key="key" lazy>
+      <el-tab-pane v-for="key in Object.keys(IconLibrary)" :key="key" lazy>
         <template #label>
           {{ key }}
-          <el-tag size="small" type="info">{{ Object.keys(library[key]).length }}</el-tag>
+          <el-tag size="small" type="info">{{ Object.keys(IconLibrary[key]).length }}</el-tag>
         </template>
         <el-scrollbar style="height: 60vh">
           <el-space wrap>
             <el-card
-              v-for="item in getIconMap(key)"
+              v-for="item in getIconList(key)"
               :key="item.name"
               shadow="hover"
               @click="selectIcon(`${key}:${item.name}`)"
@@ -55,10 +55,10 @@ const selectIcon = (name?: string) => {
 
 <style scoped lang="scss">
 .el-card {
-  &:hover {
-    .el-icon {
-      color: var(--el-color-primary);
-    }
+  cursor: pointer;
+
+  &:hover .el-icon {
+    color: var(--el-color-primary);
   }
 }
 </style>
