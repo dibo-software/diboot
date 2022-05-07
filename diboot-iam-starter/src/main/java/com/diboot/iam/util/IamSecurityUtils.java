@@ -106,7 +106,7 @@ public class IamSecurityUtils extends SecurityUtils {
             cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(accessToken);
         }
         TokenUtils.removeAccessTokens(accessToken);
-        log.warn("token 已过期注销: {}", accessToken);
+        log.debug("token 已过期注销: {}", accessToken);
     }
 
     /**

@@ -81,7 +81,6 @@ public class IamResourcePermission extends BaseEntity {
     private String resourceCode;
 
     // 权限编码
-    @NotNull(message = "权限编码不能为空")
     @Length(max=200, message="权限编码长度应小于200")
     @TableField()
     private String permissionCode;
