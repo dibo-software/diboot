@@ -119,30 +119,31 @@ public class BindingCacheManager {
             }
             // 初始化没有service的table-mapper缓存
             SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
-            Objects.requireNonNull(sqlSessionFactory, "sqlSessionFactory");
-            Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
-            if (V.notEmpty(mappers)) {
-                for (Class<?> mapperClass : mappers) {
-                    Type[] types = mapperClass.getGenericInterfaces();
-                    try {
-                        if (types.length > 0 && types[0] != null) {
-                            ParameterizedType genericType = (ParameterizedType) types[0];
-                            Type[] superTypes = genericType.getActualTypeArguments();
-                            if (superTypes != null && superTypes.length > 0 && superTypes[0] != null) {
-                                String entityClassName = superTypes[0].getTypeName();
-                                if (!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1) {
-                                    Class<?> entityClass = Class.forName(entityClassName);
-                                    EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null);
-                                    entityInfoCache.setBaseMapper((Class<? extends BaseMapper>) mapperClass);
-                                    cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
-                                    cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
-                                    cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
-                                    uniqueEntitySet.add(entityClass.getName());
+            if(sqlSessionFactory != null){
+                Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
+                if (V.notEmpty(mappers)) {
+                    for (Class<?> mapperClass : mappers) {
+                        Type[] types = mapperClass.getGenericInterfaces();
+                        try {
+                            if (types.length > 0 && types[0] != null) {
+                                ParameterizedType genericType = (ParameterizedType) types[0];
+                                Type[] superTypes = genericType.getActualTypeArguments();
+                                if (superTypes != null && superTypes.length > 0 && superTypes[0] != null) {
+                                    String entityClassName = superTypes[0].getTypeName();
+                                    if (!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1) {
+                                        Class<?> entityClass = Class.forName(entityClassName);
+                                        EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null);
+                                        entityInfoCache.setBaseMapper((Class<? extends BaseMapper>) mapperClass);
+                                        cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
+                                        cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
+                                        cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
+                                        uniqueEntitySet.add(entityClass.getName());
+                                    }
                                 }
                             }
+                        } catch (Exception e) {
+                            log.warn("解析mapper异常", e);
                         }
-                    } catch (Exception e) {
-                        log.warn("解析mapper异常", e);
                     }
                 }
             }
