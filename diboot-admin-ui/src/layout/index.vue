@@ -74,7 +74,7 @@ watch(
       </el-aside>
       <el-container>
         <el-main style="padding: 0">
-          <el-header height="50px" style="border-bottom: 1px solid #eee">
+          <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
             <app-header />
           </el-header>
           <app-tabs>
@@ -92,7 +92,7 @@ watch(
   </el-container>
 
   <el-container v-if="appStore.layout === 'dock'">
-    <el-header height="50px" style="border-bottom: 1px solid #eee">
+    <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header>
         <template #dock>
           <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel?.path">
@@ -127,7 +127,7 @@ watch(
   </el-container>
 
   <el-container v-if="appStore.layout === 'topNav'">
-    <el-header height="50px" style="border-bottom: 1px solid #eee">
+    <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header>
         <template #topNav>
           <app-menu :menu-tree="menuTree" mode="horizontal" />
@@ -150,7 +150,7 @@ watch(
   </el-container>
 
   <el-container v-if="appStore.layout === 'menu'">
-    <el-header height="50px" style="border-bottom: 1px solid #eee">
+    <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header />
     </el-header>
     <el-container>

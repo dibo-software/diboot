@@ -5,7 +5,6 @@ import eslintPlugin from 'vite-plugin-eslint/dist'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import ElementPlus from 'unplugin-element-plus/vite'
 import { viteMockServe } from 'vite-plugin-mock'
 import { resolve } from 'path'
 
@@ -19,7 +18,7 @@ export default defineConfig(({ command }) => {
       eslintPlugin({ fix: true }),
       AutoImport({
         // 解析器
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
         // 自动导入Api
         imports: ['vue', 'vue-router', 'pinia', { lodash: [['*', '_']] }, { '@/utils/request': ['api', 'baseURL'] }],
         // 为true时在项目根目录自动创建
@@ -29,7 +28,7 @@ export default defineConfig(({ command }) => {
       }),
       Components({
         // 解析器
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
         // 自动加载的组件目录，默认值为 ['src/components']
         dirs: ['src/components'],
         // 组件名称包含目录，防止同名组件冲突
@@ -39,7 +38,6 @@ export default defineConfig(({ command }) => {
         // 导入路径变换
         importPathTransform: path => path.replace(/^.+\/src/g, '@')
       }),
-      ElementPlus({ useSource: false }),
       viteMockServe({
         // 忽略以_开头的文件及目录
         ignore: /^_|\/_/,
@@ -55,6 +53,14 @@ export default defineConfig(({ command }) => {
         `
       })
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // javascriptEnabled: true,
+          additionalData: `@use "@/styles/element/index.scss" as *;`
+        }
+      }
+    },
     resolve: {
       alias: [
         { find: '@', replacement: resolve(__dirname, 'src') },

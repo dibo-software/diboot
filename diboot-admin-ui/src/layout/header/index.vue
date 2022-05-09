@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
+import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
+import { useDark, useToggle } from '@vueuse/core'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -28,6 +32,9 @@ const appStore = useAppStore()
       <div :class="$slots.topNav ? 'top-nav' : ''">
         <slot name="topNav" />
       </div>
+      <el-icon class="item" :size="22" @click="toggleDark()">
+        <component :is="isDark ? Sunny : Moon" />
+      </el-icon>
       <el-dropdown @command="command => (appStore.globalSize = command)">
         <div class="item">
           <el-icon :size="22">

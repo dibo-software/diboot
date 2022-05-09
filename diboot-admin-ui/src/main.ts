@@ -7,4 +7,5 @@ app.use(router)
 app.use(pinia)
 app.mount('#app')
 
+import '@/styles/index.scss'
 import 'nprogress/nprogress.css'
