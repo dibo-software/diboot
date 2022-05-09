@@ -80,7 +80,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     }
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, Long userId, Long extentionObjId) {
+    public List<IamRole> getUserRoleList(String userType, Long userId, Long extensionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
@@ -96,7 +96,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
                 .in(IamRole::getId, roleIds));
         // 加载扩展角色
         if(getIamExtensible() != null){
-            List<IamRole> extRoles = getIamExtensible().getExtentionRoles(userType, userId, extentionObjId);
+            List<IamRole> extRoles = getIamExtensible().getExtensionRoles(userType, userId, extensionObjId);
             if(V.notEmpty(extRoles)){
                 roles.addAll(extRoles);
                 roles = BeanUtils.distinctByKey(roles, IamRole::getId);

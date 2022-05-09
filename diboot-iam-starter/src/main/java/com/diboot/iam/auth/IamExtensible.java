@@ -36,15 +36,15 @@ public interface IamExtensible {
      * @param extObj 登录扩展信息
      * @return
      */
-    LabelValue getUserExtentionObj(String userType, Long userId, Map<String, Object> extObj);
+    LabelValue getUserExtensionObj(String userType, Long userId, Map<String, Object> extObj);
 
     /**
      * 获取可扩展的角色
      * @param userType
      * @param userId
-     * @param extentionObjId 岗位等当前扩展对象id
+     * @param extensionObjId 岗位等当前扩展对象id
      * @return
      */
-    List<IamRole> getExtentionRoles(String userType, Long userId, Long extentionObjId);
+    List<IamRole> getExtensionRoles(String userType, Long userId, Long extensionObjId);
 
 }

@@ -65,4 +65,11 @@ public interface IamUserService extends BaseIamService<IamUser> {
      */
     boolean isUserNumExists(Long id, String userNum);
 
+    /**
+     * 获取指定管理者的下属人员
+     * @param managerId
+     * @return
+     */
+    List<Long> getUserIdsByManagerId(Long managerId);
+
 }

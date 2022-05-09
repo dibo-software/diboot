@@ -27,6 +27,7 @@ import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.IamAccountService;
+import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.util.IamSecurityUtils;
@@ -53,6 +54,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired
     private IamAccountService iamAccountService;
+
+    @Autowired
+    private IamOrgService iamOrgService;
 
     @Autowired(required = false)
     private IamCustomize iamCustomize;
@@ -159,6 +163,22 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             wrapper.ne(IamUser::getId, id);
         }
         return exists(wrapper);
+    }
+
+    @Override
+    public List<Long> getUserIdsByManagerId(Long managerId) {
+        if(managerId == null){
+            return null;
+        }
+        List<Long> orgIds = iamOrgService.getOrgIdsByManagerId(managerId);
+        if(V.isEmpty(orgIds)){
+            return Collections.emptyList();
+        }
+        List<Long> iamUserIds = getValuesOfField(
+                Wrappers.<IamUser>lambdaQuery().in(IamUser::getOrgId, orgIds),
+                IamUser::getId
+        );
+        return iamUserIds;
     }
 
     /***

@@ -36,6 +36,14 @@ public interface IamPositionService extends BaseIamService<IamPosition> {
      */
     List<IamUserPosition> getUserPositionListByUser(String userType, Long userId);
 
+    /**
+     * 获取用户的第一主岗
+     * @param userType
+     * @param userId
+     * @return
+     */
+    IamUserPosition getUserPrimaryPosition(String userType, Long userId);
+
     /***
      * 通过用户ID获取用户的所有任职岗位集合
      * @param userType
