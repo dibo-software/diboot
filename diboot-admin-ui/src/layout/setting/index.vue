@@ -1,10 +1,50 @@
 <script setup lang="ts">
 import { Opportunity } from '@element-plus/icons-vue'
 import useAppStore from '@/store/app'
+import { useCssVar } from '@vueuse/core'
 
 const openSetting = ref(false)
 
 const appStore = useAppStore()
+
+// 动态主题色
+// 变量前缀
+const pre = '--el-color-primary'
+// 白色混合色
+const mixWhite = '#ffffff'
+// 黑色混合色
+const mixBlack = '#000000'
+
+const colorPrimary = useCssVar(pre)
+
+watch(
+  () => appStore.colorPrimary,
+  value => (colorPrimary.value = value ? value : '#409eff'),
+  { immediate: true }
+)
+
+const mix = (color1: string, color2: string, weight: number) => {
+  weight = Math.max(Math.min(Number(weight), 1), 0)
+  const unit = (color: string, position: number) => parseInt(color.substring(position, position + 2), 16)
+  const unitColor = (position: number) => {
+    const num = Math.round(unit(color1, position) * (1 - weight) + unit(color2, position) * weight)
+    return ('0' + (num || 0).toString(16)).slice(-2)
+  }
+  return '#' + unitColor(1) + unitColor(3) + unitColor(5)
+}
+
+watch(
+  colorPrimary,
+  value => {
+    console.log(123)
+    appStore.colorPrimary = value
+    for (let i = 1; i < 10; i += 1) {
+      useCssVar(`${pre}-light-${i}`).value = mix(value, mixWhite, i * 0.1)
+    }
+    useCssVar(`${pre}-dark`).value = mix(value, mixBlack, 0.1)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -37,6 +77,9 @@ const appStore = useAppStore()
         <el-form-item label="开启 Footer">
           <el-switch v-model="appStore.enableFooter" />
         </el-form-item>
+        <el-form-item label="主题色">
+          <el-color-picker v-model="colorPrimary" />
+        </el-form-item>
       </el-form>
       <el-button style="width: 100%" @click="appStore.$reset()">重置</el-button>
     </el-drawer>
@@ -63,6 +106,7 @@ const appStore = useAppStore()
     color: var(--el-color-white);
   }
 }
+
 .setting {
   :deep(.el-drawer__header) {
     margin-bottom: 0;
