@@ -36,6 +36,7 @@ import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.entity.UserRole;
+import diboot.core.test.binder.service.CcCityInfoService;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.SimpleDictionaryVO;
@@ -502,6 +503,12 @@ public class BaseServiceTest {
         List<Dictionary> dictionaries = dictionaryService.getEntityList(queryWrapper);
         Assert.assertTrue(dictionaries != null);
         Assert.assertTrue(dictionaries.size() == 0);
+    }
+
+    @Test
+    public void testDelete(){
+        CcCityInfo cityInfo = ContextHelper.getBean(CcCityInfoService.class).list().get(0);
+        //ContextHelper.getBean(CcCityInfoService.class).removeById(cityInfo.getId());
     }
 
 }

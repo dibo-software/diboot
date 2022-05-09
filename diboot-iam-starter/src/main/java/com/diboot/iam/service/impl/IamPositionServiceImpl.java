@@ -58,6 +58,22 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
     }
 
     @Override
+    public IamUserPosition getUserPrimaryPosition(String userType, Long userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .eq(IamUserPosition::getIsPrimaryPosition, true);
+        List<IamUserPosition> userPositionList = iamUserPositionMapper.selectList(queryWrapper);
+        if(V.isEmpty(userPositionList)){
+            return null;
+        }
+        if(userPositionList.size() > 1){
+            log.warn("用户 {}:{} 主岗多于1个，当前以第一个为准", userType, userId);
+        }
+        return userPositionList.get(0);
+    }
+
+    @Override
     public List<IamPosition> getPositionListByUser(String userType, Long userId) {
         // 根据user与position的关联获取positionId列表
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()

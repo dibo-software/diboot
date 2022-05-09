@@ -45,9 +45,10 @@ public class Cons extends com.diboot.core.config.Cons {
      * 字典编码 - 数据权限类型
      */
     public enum DICTCODE_DATA_PERMISSION_TYPE{
-        INDIVIDUAL,
+        SELF,
+        SELF_AND_SUB,
         DEPT,
-        DEPT_MEMS,
+        DEPT_AND_SUB,
         ALL
     }
 

@@ -44,10 +44,10 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * 获取用户所有的全部角色
      * @param userType
      * @param userId
-     * @param extentionObjId 岗位等扩展对象id
+     * @param extensionObjId 岗位等扩展对象id
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, Long userId, Long extentionObjId);
+    List<IamRole> getUserRoleList(String userType, Long userId, Long extensionObjId);
 
     /**
      * 批量创建用户-角色的关系
