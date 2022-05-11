@@ -37,7 +37,7 @@ const appStore = useAppStore()
       <el-dropdown @command="command => (appStore.globalSize = command)">
         <div class="item">
           <el-icon :size="22">
-            <icon name="LocalSvg:TextFontSize" />
+            <icon name="Local:TextFontSize" />
           </el-icon>
         </div>
         <template #dropdown>
