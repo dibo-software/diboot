@@ -70,7 +70,8 @@ export default [
     response: () => {
       return JsonResult.OK(authMenu)
     }
-  }
+  },
+
 ] as MockMethod[]
 
 // 授权菜单
@@ -110,6 +111,22 @@ const authMenu = [
           keepAlive: false,
           hollow: '@boolean',
           hideFooter: '@boolean'
+        }
+      }
+    ]
+  },
+  {
+    path: '/system',
+    name: 'System',
+    meta: {title: 'System', componentName: 'Layout'},
+    'children': [
+      {
+        path: 'dictionary',
+        name: 'Dictionary',
+        meta: {
+          title: 'Dictionary',
+          componentName: 'DictionaryList',
+          keepAlive: false,
         }
       }
     ]
