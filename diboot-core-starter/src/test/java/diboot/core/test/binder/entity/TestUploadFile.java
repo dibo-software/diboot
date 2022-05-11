@@ -26,6 +26,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
  * file基础父类
@@ -70,4 +71,7 @@ public class TestUploadFile extends BaseEntity {
     @TableField
     private String accessUrl;
 
+
+    @TableField(exist = false)
+    private LocalDateTime localDateTime;
 }

@@ -18,6 +18,7 @@ package com.diboot.core.util;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
+import com.diboot.core.converter.*;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
@@ -30,7 +31,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.boot.convert.ApplicationConversionService;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -148,17 +153,12 @@ public class BeanUtils {
         if (V.isAnyEmpty(model, propMap)) {
             return;
         }
-        Map<String, Field> fieldNameMaps = BindingCacheManager.getFieldsMap(model.getClass());
         for(Map.Entry<String, Object> entry : propMap.entrySet()){
-            Field field = fieldNameMaps.get(entry.getKey());
-            if(field != null){
-                try{
-                    Object value = convertValueToFieldType(entry.getValue(), field);
-                    setProperty(model, entry.getKey(), value);
-                }
-                catch (Exception e){
-                    log.warn("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
-                }
+            try{
+                setProperty(model, entry.getKey(), entry.getValue());
+            }
+            catch (Exception e){
+                log.warn("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
             }
         }
     }
@@ -202,6 +202,10 @@ public class BeanUtils {
      */
     public static void setProperty(Object obj, String field, Object value) {
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        if(wrapper.getConversionService() == null){
+            ConversionService conversionService = ContextHelper.getBean(EnhancedConversionService.class);
+            wrapper.setConversionService(conversionService);
+        }
         wrapper.setPropertyValue(field, value);
     }
 

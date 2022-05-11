@@ -48,7 +48,7 @@ public class User extends BaseEntity {
     @TableField
     private String gender;
 
-    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
+    //@JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     private Date birthdate;
 
     @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)

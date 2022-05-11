@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,27 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.util;
+package com.diboot.core.converter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
-
-import java.util.Date;
+import org.springframework.stereotype.Component;
 
 /**
- * Spring表单自动绑定到Java属性时的日期格式转换<br>
- * @see com.diboot.core.converter.String2DateConverter
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/01/01
+ * String - boolean 转换器
+ * @author JerryMa
+ * @version v2.6.0
+ * @date 2022/5/11
+ * Copyright © diboot.com
  */
-@Deprecated
-public class DateConverter implements Converter<String, Date> {
-    private static final Logger log = LoggerFactory.getLogger(DateConverter.class);
+public class String2BooleanConverter implements Converter<String, Boolean> {
 
     @Override
-    public Date convert(String dateString) {
-        return D.fuzzyConvert(dateString);
+    public Boolean convert(String source) {
+        return V.isTrue(source);
     }
 }
