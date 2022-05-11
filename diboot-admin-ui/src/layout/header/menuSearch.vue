@@ -46,10 +46,29 @@ const { search, results } = useVueFuse(tree2List(getMenuTree()), {
 })
 const value = ref('')
 const visible = ref(false)
-watch(value, v => (search.value = v))
+const inputRef = ref()
+
+const open = () => {
+  visible.value = true
+  inputRef.value?.focus()
+}
+// 监听全局快捷键 （ctrl + k）
+onMounted(() => {
+  let keyList: string[] = []
+  document.addEventListener('keyup', e => {
+    keyList = keyList.filter(key => key !== e.key)
+  })
+  document.addEventListener('keydown', e => {
+    keyList.push(e.key)
+    if (keyList[0] === 'Control' && keyList[1] === 'k') {
+      e.preventDefault()
+      open()
+    }
+  })
+})
 
 const router = useRouter()
-const open = (name: string) => {
+const go = (name: string) => {
   router.push({ name })
   visible.value = false
   value.value = ''
@@ -57,13 +76,21 @@ const open = (name: string) => {
 </script>
 
 <template>
-  <span class="router-search">
-    <el-icon :size="22" @click="visible = true">
-      <Search />
-    </el-icon>
+  <span class="menu-search">
+    <el-tooltip effect="light" content="ctrl + k" placement="bottom" :show-after="300">
+      <el-icon :size="22" @click="open">
+        <Search />
+      </el-icon>
+    </el-tooltip>
     <el-dialog v-model="visible" :show-close="false" top="10vh">
       <template #title>
-        <el-input v-model="value" placeholder="搜索菜单">
+        <el-input
+          ref="inputRef"
+          v-model="value"
+          autofocus
+          placeholder="搜索菜单"
+          @update:modelValue="v => (search = v)"
+        >
           <template #prefix>
             <el-icon :size="20">
               <Search />
@@ -72,7 +99,7 @@ const open = (name: string) => {
         </el-input>
       </template>
       <el-scrollbar max-height="60vh">
-        <el-card v-for="item in results" :key="item.routeName" shadow="hover" @click="open(item.routeName)">
+        <el-card v-for="item in results" :key="item.routeName" shadow="hover" @click="go(item.routeName)">
           {{ item.title }}
         </el-card>
       </el-scrollbar>
@@ -81,7 +108,7 @@ const open = (name: string) => {
 </template>
 
 <style scoped lang="scss">
-.router-search {
+.menu-search {
   :deep(.el-dialog) {
     .el-dialog__header {
       margin-right: 0;
