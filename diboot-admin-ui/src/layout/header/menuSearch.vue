@@ -89,7 +89,7 @@ const go = (name: string) => {
           v-model="value"
           autofocus
           placeholder="搜索菜单"
-          @update:modelValue="v => (search = v)"
+          @update:model-value="v => (search = v)"
         >
           <template #prefix>
             <el-icon :size="20">
