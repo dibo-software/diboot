@@ -5,12 +5,14 @@ import { ElMessage } from 'element-plus'
 export interface IAuthStore {
   realname: string
   avatar?: string
+  roles: Array<string>
   info?: IUserInfo
 }
 
 export interface IUserInfo extends Record<string, unknown> {
   realname?: string
   avatar?: string
+  roles: Array<string>
 }
 
 export default defineStore('auth', {
@@ -18,6 +20,7 @@ export default defineStore('auth', {
     return <IAuthStore>{
       realname: '',
       avatar: undefined,
+      roles: [],
       info: undefined
     }
   },
@@ -40,10 +43,11 @@ export default defineStore('auth', {
     },
     getInfo: async function () {
       try {
-        const res = await api.get<{ realname: string; avatar: string }>('/auth/userInfo')
+        const res = await api.get<{ realname: string; avatar: string; roles: Array<string> }>('/auth/userInfo')
         this.info = res.data
         this.avatar = `${res.data?.avatar}`
         this.realname = `${res.data?.realname}`
+        this.roles = res.data?.roles ?? []
       } catch (e) {
         throw new Error('获取登录者信息异常')
       }

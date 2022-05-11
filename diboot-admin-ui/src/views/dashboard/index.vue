@@ -3,6 +3,9 @@
 defineProps<{ usedVisibleHeight?: number }>()
 
 const value = ref<string>('Element:HotWater')
+
+const roles = ['admin', 'develop', 'test']
+const permissions = ['detail', 'create', 'update', 'delete', 'import', 'export']
 </script>
 
 <template>
@@ -18,6 +21,13 @@ const value = ref<string>('Element:HotWater')
 
   图标选择：
   <icon-select v-model="value" />
+
+  <br />
+  角色：
+  <el-tag v-for="item in roles" :key="item" v-has-role="[item]">{{ item }}</el-tag>
+  <br />
+  权限：
+  <el-tag v-for="item in permissions" :key="item" v-has-permission="item">{{ item }}</el-tag>
 </template>
 
 <style scoped></style>

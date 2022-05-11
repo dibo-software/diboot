@@ -6,6 +6,7 @@ declare module 'vue-router' {
     icon?: string
     module?: string
     componentName?: string
+    permissions?: Array<string>
     sort?: number
     affixTab?: boolean
     ignoreAuth?: boolean
