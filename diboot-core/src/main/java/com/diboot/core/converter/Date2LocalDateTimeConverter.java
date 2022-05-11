@@ -16,7 +16,6 @@
 package com.diboot.core.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.time.LocalDateTime;
