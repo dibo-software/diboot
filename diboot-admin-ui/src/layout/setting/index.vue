@@ -46,7 +46,7 @@ watch(
           <el-switch v-model="appStore.enableFooter" />
         </el-form-item>
         <el-form-item label="主题色">
-          <el-color-picker v-model="colorPrimary" @update:modelValue="value => (appStore.colorPrimary = value)" />
+          <el-color-picker v-model="colorPrimary" @update:model-value="value => (appStore.colorPrimary = value)" />
         </el-form-item>
       </el-form>
       <el-button style="width: 100%" @click="appStore.$reset()">重置</el-button>
