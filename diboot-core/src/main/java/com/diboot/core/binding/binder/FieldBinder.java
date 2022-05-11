@@ -22,6 +22,7 @@ import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -181,9 +182,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
     private void setFieldValueToTrunkObj(Map<String, Map<String, Object>> key2DataMap, Object annoObject, String matchKey) {
         Map<String, Object> relationMap = key2DataMap.get(matchKey);
         if (relationMap != null) {
+            BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(annoObject);
             for (int i = 0; i < annoObjectSetterPropNameList.size(); i++) {
                 Object valObj = getValueIgnoreKeyCase(relationMap, toRefObjColumn(referencedGetterFieldNameList.get(i)));
-                BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), valObj);
+                beanWrapper.setPropertyValue(annoObjectSetterPropNameList.get(i), valObj);
             }
         }
     }

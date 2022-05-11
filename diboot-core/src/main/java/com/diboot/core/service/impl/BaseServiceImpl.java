@@ -51,6 +51,7 @@ import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -356,8 +357,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
             try {
                 for (Serializable followerId : followerIdList) {
                     R relation = middleTableClass.newInstance();
-                    BeanUtils.setProperty(relation, driverFieldName, driverId);
-                    BeanUtils.setProperty(relation, followerFieldName, followerId);
+					BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(relation);
+					beanWrapper.setPropertyValue(driverFieldName, driverId);
+					beanWrapper.setPropertyValue(followerFieldName, followerId);
                     if (setConsumer != null) {
                         setConsumer.accept(relation);
                     }

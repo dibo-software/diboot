@@ -34,6 +34,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -165,10 +166,11 @@ public class JoinsBinder {
                 E entityInst = entityClazz.newInstance();
                 BeanUtils.bindProperties(entityInst, fieldValueMap);
                 if (protectFieldHandler != null) {
+                    BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(entityInst);
                     ParserCache.getProtectFieldList(entityClazz).forEach(fieldName -> {
                         String value = BeanUtils.getStringProperty(entityInst, fieldName);
                         if (value != null) {
-                            BeanUtils.setProperty(entityInst, fieldName, protectFieldHandler.decrypt(entityClazz,fieldName,value));
+                            beanWrapper.setPropertyValue(fieldName, protectFieldHandler.decrypt(entityClazz,fieldName,value));
                         }
                     });
                 }

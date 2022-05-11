@@ -153,9 +153,10 @@ public class BeanUtils {
         if (V.isAnyEmpty(model, propMap)) {
             return;
         }
+        BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(model);
         for(Map.Entry<String, Object> entry : propMap.entrySet()){
             try{
-                setProperty(model, entry.getKey(), entry.getValue());
+                beanWrapper.setPropertyValue(entry.getKey(), entry.getValue());
             }
             catch (Exception e){
                 log.warn("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
@@ -197,15 +198,24 @@ public class BeanUtils {
     /***
      * 设置属性值
      * @param obj
-     * @param field
-     * @param value
      */
-    public static void setProperty(Object obj, String field, Object value) {
+    public static BeanWrapper getBeanWrapper(Object obj) {
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         if(wrapper.getConversionService() == null){
             ConversionService conversionService = ContextHelper.getBean(EnhancedConversionService.class);
             wrapper.setConversionService(conversionService);
         }
+        return wrapper;
+    }
+
+    /***
+     * 设置属性值
+     * @param obj
+     * @param field
+     * @param value
+     */
+    public static void setProperty(Object obj, String field, Object value) {
+        BeanWrapper wrapper = getBeanWrapper(obj);
         wrapper.setPropertyValue(field, value);
     }
 

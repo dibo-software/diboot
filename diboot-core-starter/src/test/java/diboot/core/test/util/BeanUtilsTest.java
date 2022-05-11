@@ -31,6 +31,7 @@ import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -257,6 +258,34 @@ public class BeanUtilsTest {
         Assert.assertTrue(object.getCreateTime() != null);
         BeanUtils.setProperty(object, "localDateTime", new Timestamp(System.currentTimeMillis()));
         Assert.assertTrue(object.getLocalDateTime() != null);
+    }
+
+    /**
+     * 测试属性赋值的性能优化
+     */
+    @Test
+    public void testSetPropertyOptimize(){
+        User user2 = new User();
+        long begin = System.currentTimeMillis();
+        for(int i=0; i< 10000; i++){
+            BeanUtils.setProperty(user2, "username", "test");
+            BeanUtils.setProperty(user2, "birthdate", "1980-10-12");
+            BeanUtils.setProperty(user2, "localDatetime", new Date());
+        }
+        long end = System.currentTimeMillis();
+        long takes1 = (end - begin);
+        begin = System.currentTimeMillis();
+
+        BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(user2);
+        for(int i=0; i< 10000; i++){
+            beanWrapper.setPropertyValue("username", "test");
+            beanWrapper.setPropertyValue("birthdate", "1980-10-12");
+            beanWrapper.setPropertyValue("localDatetime", new Date());
+        }
+        end = System.currentTimeMillis();
+        long takes2 = (end - begin);
+        System.out.println(takes1 + " ms , after: " + takes2 + " ms") ;
+        Assert.assertTrue(takes2 < takes1);
     }
 
 }

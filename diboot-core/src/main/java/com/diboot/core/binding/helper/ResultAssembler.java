@@ -20,6 +20,7 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
 
 import java.util.*;
 
@@ -47,6 +48,7 @@ public class ResultAssembler {
         StringBuilder sb = new StringBuilder();
         try{
             for(E object : fromList){
+                BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
                 sb.setLength(0);
                 for(int i=0; i<getterFields.length; i++){
                     String fieldValue = BeanUtils.getStringProperty(object, getterFields[i]);
@@ -59,7 +61,7 @@ public class ResultAssembler {
                 String matchKey = sb.toString();
                 if(valueMatchMap.containsKey(matchKey)){
                     // 赋值
-                    BeanUtils.setProperty(object, setterFieldName, valueMatchMap.get(matchKey));
+                    beanWrapper.setPropertyValue(setterFieldName, valueMatchMap.get(matchKey));
                 }
                 else if(V.notEmpty(splitBy) && getterFields.length == 1 && matchKey.contains(splitBy)){
                     String[] keys = matchKey.split(splitBy);
@@ -83,7 +85,7 @@ public class ResultAssembler {
                         }
                     }
                     // 赋值
-                    BeanUtils.setProperty(object, setterFieldName, matchedValues);
+                    beanWrapper.setPropertyValue(setterFieldName, matchedValues);
                 }
             }
             sb.setLength(0);
@@ -193,9 +195,10 @@ public class ResultAssembler {
                 }
                 if(entityList != null){
                     // 赋值
+                    BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
                     for(int i = 0; i< annoObjSetterPropNameList.size(); i++){
                         List valObjList = BeanUtils.collectToList(entityList, refGetterFieldNameList.get(i));
-                        BeanUtils.setProperty(object, annoObjSetterPropNameList.get(i), valObjList);
+                        beanWrapper.setPropertyValue(annoObjSetterPropNameList.get(i), valObjList);
                     }
                 }
             }
