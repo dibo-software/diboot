@@ -1,4 +1,5 @@
 import { ElNotification } from 'element-plus'
+import { Ref } from 'vue'
 
 export interface BaseModel {
   id: string
@@ -214,13 +215,13 @@ export class BaseListPageLoader<T> {
 
 type Results<T> = {
   pageLoader: BaseListPageLoader<T>
-  queryParam: object
-  dataList: T[]
-  loading: boolean
-  pagination: Pagination
+  queryParam: Ref<{ [p: string]: any } | undefined> | undefined
+  dataList: Ref<T[] | undefined> | undefined
+  loading: Ref<boolean | undefined> | undefined
+  pagination: Ref<Pagination | undefined> | undefined
 }
 
-export default function <T>(options: HookOptions<T>) {
+export default function <T>(options: HookOptions<T>): Results<T> {
   let { pageLoader, autoLoad } = options
   const { baseApi } = options
   pageLoader = pageLoader || new BaseListPageLoader<T>()
