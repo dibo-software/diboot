@@ -39,7 +39,8 @@ export default [
         return JsonResult.OK({
           realname: name,
           email: Random.email(),
-          avatar: Random.image('50x50', Random.color(), Random.color(), name[0])
+          avatar: Random.image('50x50', Random.color(), Random.color(), name[0]),
+          roles: [Random.pick(['admin', 'develop', 'test'])]
         })
       }
       return JsonResult.FAIL_INVALID_TOKEN()
@@ -73,6 +74,9 @@ export default [
   }
 ] as MockMethod[]
 
+// 随机按钮权限
+const permission = '@pick(["detail", "create", "update", "delete", "import", "export"])'
+
 // 授权菜单
 const authMenu = [
   {
@@ -89,7 +93,8 @@ const authMenu = [
           sort: '@natural',
           keepAlive: false,
           hollow: '@boolean',
-          hideFooter: '@boolean'
+          hideFooter: '@boolean',
+          permissions: [permission, permission, permission]
         }
       }
     ]
@@ -110,6 +115,22 @@ const authMenu = [
           keepAlive: false,
           hollow: '@boolean',
           hideFooter: '@boolean'
+        }
+      }
+    ]
+  },
+  {
+    path: '/system',
+    name: 'System',
+    meta: { title: 'System', componentName: 'Layout' },
+    children: [
+      {
+        path: 'dictionary',
+        name: 'Dictionary',
+        meta: {
+          title: 'Dictionary',
+          componentName: 'DictionaryList',
+          keepAlive: false
         }
       }
     ]

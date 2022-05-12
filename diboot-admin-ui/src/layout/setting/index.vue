@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { Opportunity } from '@element-plus/icons-vue'
 import useAppStore from '@/store/app'
+import { colorPrimary } from '@/utils/theme'
 
 const openSetting = ref(false)
 
 const appStore = useAppStore()
+
+// 监听主题色
+watch(
+  () => appStore.colorPrimary,
+  value => (colorPrimary.value = value ? value : '#409eff')
+)
 </script>
 
 <template>
@@ -37,6 +44,9 @@ const appStore = useAppStore()
         <el-form-item label="开启 Footer">
           <el-switch v-model="appStore.enableFooter" />
         </el-form-item>
+        <el-form-item label="主题色">
+          <el-color-picker v-model="colorPrimary" @update:model-value="value => (appStore.colorPrimary = value)" />
+        </el-form-item>
       </el-form>
       <el-button style="width: 100%" @click="appStore.$reset()">重置</el-button>
     </el-drawer>
@@ -63,6 +73,7 @@ const appStore = useAppStore()
     color: var(--el-color-white);
   }
 }
+
 .setting {
   :deep(.el-drawer__header) {
     margin-bottom: 0;

@@ -25,11 +25,13 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.vo.DictionaryVO;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.TestUploadFile;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,6 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -105,13 +108,13 @@ public class BeanUtilsTest {
 
     @Test
     public void testDateCopy(){
-        //User user1 = new User().setUsername("test").setGender("").setBirthdate(new Date()).setLocalDatetime(LocalDate.now());
         User user2 = new User();
         Map<String, Object> map = new HashMap<>();
         map.put("username", "test");
         map.put("birthdate", "1980-10-12");
         map.put("localDatetime", new Date());
-
+        BeanUtils.setProperty(user2, "birthdate", "1980-10-12");
+        Assert.assertTrue(user2.getBirthdate() != null);
         BeanUtils.bindProperties(user2, map);
         Assert.assertTrue(user2.getLocalDatetime() != null);
         System.out.println(JSON.stringify(user2));
@@ -241,6 +244,48 @@ public class BeanUtilsTest {
         catch (Exception e){
             Assert.assertTrue(e.getMessage().contains("请检查"));
         }
+    }
+
+    @Test
+    public void testSetProperty(){
+        TestUploadFile object = new TestUploadFile();
+        BeanUtils.setProperty(object, "id", 123l);
+        BeanUtils.setProperty(object, "storagePath", "/test/xxx");
+        Assert.assertTrue(object.getStoragePath() != null);
+        BeanUtils.setProperty(object, "createTime", new Timestamp(System.currentTimeMillis()));
+        Assert.assertTrue(object.getCreateTime() != null);
+        BeanUtils.setProperty(object, "createTime", new Date());
+        Assert.assertTrue(object.getCreateTime() != null);
+        BeanUtils.setProperty(object, "localDateTime", new Timestamp(System.currentTimeMillis()));
+        Assert.assertTrue(object.getLocalDateTime() != null);
+    }
+
+    /**
+     * 测试属性赋值的性能优化
+     */
+    @Test
+    public void testSetPropertyOptimize(){
+        User user2 = new User();
+        long begin = System.currentTimeMillis();
+        for(int i=0; i< 10000; i++){
+            BeanUtils.setProperty(user2, "username", "test");
+            BeanUtils.setProperty(user2, "birthdate", "1980-10-12");
+            BeanUtils.setProperty(user2, "localDatetime", new Date());
+        }
+        long end = System.currentTimeMillis();
+        long takes1 = (end - begin);
+        begin = System.currentTimeMillis();
+
+        BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(user2);
+        for(int i=0; i< 10000; i++){
+            beanWrapper.setPropertyValue("username", "test");
+            beanWrapper.setPropertyValue("birthdate", "1980-10-12");
+            beanWrapper.setPropertyValue("localDatetime", new Date());
+        }
+        end = System.currentTimeMillis();
+        long takes2 = (end - begin);
+        System.out.println(takes1 + " ms , after: " + takes2 + " ms") ;
+        Assert.assertTrue(takes2 < takes1);
     }
 
 }

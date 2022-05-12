@@ -57,6 +57,6 @@ public interface DataAccessInterface {
      * </tr>
      * </table>
      */
-    List<Serializable> getAccessibleIds(Class<?> entityClass, String fieldName);
+    List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName);
 
 }

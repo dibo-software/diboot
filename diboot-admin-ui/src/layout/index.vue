@@ -4,7 +4,6 @@ import AppMenu from './memu/index.vue'
 import AppMain from './main/index.vue'
 import AppFooter from './footer/index.vue'
 import AppTabs from './tabs/index.vue'
-import AppSetting from './setting/index.vue'
 
 import { Eleme } from '@element-plus/icons-vue'
 
@@ -37,6 +36,12 @@ watch(
     oneLevel.value = value.matched.find(item => (item.redirect && item.meta.title) || item.path === value.path)
   }
 )
+
+// 动态引入配置组件（生产环境舍弃）
+const AppSetting = defineAsyncComponent({
+  loader: () => (import.meta.env.DEV ? import('./setting/index.vue') : Promise.reject()),
+  onError: () => null
+})
 </script>
 
 <template>
@@ -74,7 +79,7 @@ watch(
       </el-aside>
       <el-container>
         <el-main style="padding: 0">
-          <el-header height="50px" style="border-bottom: 1px solid #eee">
+          <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
             <app-header />
           </el-header>
           <app-tabs>
@@ -92,7 +97,7 @@ watch(
   </el-container>
 
   <el-container v-if="appStore.layout === 'dock'">
-    <el-header height="50px" style="border-bottom: 1px solid #eee">
+    <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header>
         <template #dock>
           <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel?.path">
@@ -127,7 +132,7 @@ watch(
   </el-container>
 
   <el-container v-if="appStore.layout === 'topNav'">
-    <el-header height="50px" style="border-bottom: 1px solid #eee">
+    <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header>
         <template #topNav>
           <app-menu :menu-tree="menuTree" mode="horizontal" />
@@ -150,7 +155,7 @@ watch(
   </el-container>
 
   <el-container v-if="appStore.layout === 'menu'">
-    <el-header height="50px" style="border-bottom: 1px solid #eee">
+    <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header />
     </el-header>
     <el-container>

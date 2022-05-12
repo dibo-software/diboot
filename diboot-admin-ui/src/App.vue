@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+import { colorPrimary } from '@/utils/theme'
 import useAppStore from './store/app'
 
 const appStore = useAppStore()
+
+// 初始化自定义主题色
+onMounted(() => appStore.colorPrimary && (colorPrimary.value = appStore.colorPrimary))
 
 const locale = reactive(zhCn)
 </script>

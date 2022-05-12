@@ -22,11 +22,13 @@ import org.springframework.core.convert.converter.Converter;
 import java.util.Date;
 
 /**
- * Spring表单自动绑定到Java属性时的日期格式转换
+ * Spring表单自动绑定到Java属性时的日期格式转换<br>
+ * @see com.diboot.core.converter.String2DateConverter
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/01/01
  */
+@Deprecated
 public class DateConverter implements Converter<String, Date> {
     private static final Logger log = LoggerFactory.getLogger(DateConverter.class);
 

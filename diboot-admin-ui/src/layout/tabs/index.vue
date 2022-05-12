@@ -136,7 +136,7 @@ const fullScreenTabsView = () => {
         v-show="showButtons"
         :size="22"
         class="icon-button"
-        style="border-right: 1px solid #eee"
+        style="border-right: 1px solid var(--el-border-color-lighter)"
         color="#AAA"
         @click="operateScroll(false)"
       >
@@ -164,14 +164,19 @@ const fullScreenTabsView = () => {
         v-show="showButtons"
         :size="22"
         class="icon-button"
-        style="border-left: 1px solid #eee"
+        style="border-left: 1px solid var(--el-border-color-lighter)"
         color="#AAA"
         @click="operateScroll(true)"
       >
         <arrow-right />
       </el-icon>
       <el-dropdown>
-        <el-icon :size="22" class="icon-button" style="border-left: 1px solid #eee" color="#AAA">
+        <el-icon
+          :size="22"
+          class="icon-button"
+          style="border-left: 1px solid var(--el-border-color-lighter)"
+          color="#AAA"
+        >
           <Menu />
         </el-icon>
         <template #dropdown>
@@ -216,7 +221,7 @@ const fullScreenTabsView = () => {
 .tabs-hull {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--el-border-color-lighter);
   background-color: var(--el-bg-color);
 
   .tabs-scrollbar {

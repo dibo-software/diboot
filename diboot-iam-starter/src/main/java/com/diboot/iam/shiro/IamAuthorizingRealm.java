@@ -30,6 +30,7 @@ import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRoleResourceService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamSecurityUtils;
+import com.diboot.iam.vo.PositionDataScope;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -109,9 +110,9 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
             loginUser.setAuthToken(iamAuthToken.getAuthtoken());
             IamExtensible iamExtensible = getIamUserRoleService().getIamExtensible();
             if(iamExtensible != null){
-                LabelValue extentionObj = iamExtensible.getUserExtentionObj(iamAuthToken.getUserTypeClass().getSimpleName(), account.getUserId(), iamAuthToken.getExtObj());
-                if(extentionObj != null){
-                    loginUser.setExtentionObj(extentionObj);
+                LabelValue extensionObj = iamExtensible.getUserExtensionObj(iamAuthToken.getUserTypeClass().getSimpleName(), account.getUserId(), iamAuthToken.getExtObj());
+                if(extensionObj != null){
+                    loginUser.setExtensionObj(extensionObj);
                 }
             }
             // 清空当前用户缓存
@@ -131,13 +132,13 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         BaseLoginUser currentUser = (BaseLoginUser) principals.getPrimaryPrincipal();
         // 根据用户类型与用户id获取roleList
-        Long extentionObjId = null;
-        LabelValue extentionObj = currentUser.getExtentionObj();
-        if(extentionObj != null){
-            extentionObjId = (Long)extentionObj.getValue();
+        Long extensionObjId = null;
+        LabelValue extensionObj = currentUser.getExtensionObj();
+        if(extensionObj != null){
+            extensionObjId = ((PositionDataScope)extensionObj.getValue()).getPositionId();
         }
         // 获取角色列表
-        List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extentionObjId);
+        List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
         // 如果没有任何角色，返回
         if (V.isEmpty(roleList)){
             return authorizationInfo;

@@ -53,8 +53,8 @@ const submitForm = async () => {
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button style="width: 100%" type="primary" plain @click="submitForm">登 陆</el-button>
-      </el-form-item>
+        <el-button style="width: 100%" type="primary" plain @click="submitForm">登 陆</el-button> </el-form-item
+      >、
     </el-form>
   </div>
 </template>

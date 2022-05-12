@@ -17,8 +17,10 @@ package com.diboot.iam.starter;
 
 import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
+import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.data.DataAccessPermissionUserOrgImpl;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
@@ -210,6 +212,16 @@ public class IamAutoConfig {
         return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(),
                 Cons.CACHE_TOKEN_USERINFO,
                 Cons.CACHE_CAPTCHA);
+    }
+
+    /**
+     * 数据访问控制实现，默认基于用户和部门过滤
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public DataAccessInterface dataAccessInterface(){
+        return new DataAccessPermissionUserOrgImpl();
     }
 
 }

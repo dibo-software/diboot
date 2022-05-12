@@ -17,18 +17,28 @@ package diboot.core.test.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.diboot.core.converter.*;
 import com.diboot.core.handler.DataAccessControlInterceptor;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.D;
-import com.diboot.core.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -39,6 +49,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -61,42 +75,78 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     @Value("${spring.jackson.time-zone:GMT+8}")
     private String defaultTimeZone;
 
+    @Value("${spring.jackson.default-property-inclusion:NON_NULL}")
+    private JsonInclude.Include defaultPropertyInclusion;
+
     /**
-     * 覆盖Jackson转换
-     **/
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        ObjectMapper objectMapper = converter.getObjectMapper();
-        // Long转换成String避免JS超长问题
-        SimpleModule simpleModule = new SimpleModule();
+     * 默认配置 ObjectMapper, 并允许用户覆盖
+     *
+     * @return Jackson2ObjectMapperBuilderCustomizer
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> {
+            // Long转换成String避免JS超长问题
+            builder.serializerByType(Long.class, ToStringSerializer.instance);
+            builder.serializerByType(Long.TYPE, ToStringSerializer.instance);
+            builder.serializerByType(BigInteger.class, ToStringSerializer.instance);
 
-        // 不显示为null的字段
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
-        simpleModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+            // 支持java8时间类型
+            // LocalDateTime
+            DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
+            builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
+            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(localDateTimeFormatter));
+            // LocalDate
+            DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD);
+            builder.serializerByType(LocalDate.class, new LocalDateSerializer(localDateFormatter));
+            builder.deserializerByType(LocalDate.class, new LocalDateDeserializer(localDateFormatter));
+            // LocalTime
+            DateTimeFormatter localTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_TIME_HHmmss);
+            builder.serializerByType(LocalTime.class, new LocalTimeSerializer(localTimeFormatter));
+            builder.deserializerByType(LocalTime.class, new LocalTimeDeserializer(localTimeFormatter));
 
-        objectMapper.registerModule(simpleModule);
-        // 时间格式化
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setTimeZone(TimeZone.getTimeZone(defaultTimeZone));
-        SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
-            @Override
-            public Date parse(String dateStr) {
-                return D.fuzzyConvert(dateStr);
-            }
+            // 设置序列化包含策略
+            builder.serializationInclusion(defaultPropertyInclusion);
+            // 时间格式化
+            builder.failOnUnknownProperties(false);
+            builder.timeZone(TimeZone.getTimeZone(defaultTimeZone));
+            SimpleDateFormat dateFormat = new SimpleDateFormat(defaultDatePattern) {
+                @Override
+                public Date parse(String dateStr) {
+                    return D.fuzzyConvert(dateStr);
+                }
+            };
+            builder.dateFormat(dateFormat);
         };
-        objectMapper.setDateFormat(dateFormat);
-        // 设置格式化内容
-        converter.setObjectMapper(objectMapper);
+    }
 
-        converters.add(0, converter);
+    @Bean
+    @ConditionalOnMissingBean
+    public HttpMessageConverters jacksonHttpMessageConverters() {
+        return new HttpMessageConverters(jacksonMessageConverter());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        // 优先使用全局默认ObjectMapper, 保证ObjectMapper全局配置相同
+        ObjectMapper objectMapper = ContextHelper.getBean(ObjectMapper.class);
+        if (objectMapper == null) {
+            objectMapper = converter.getObjectMapper();
+        }
+        converter.setObjectMapper(objectMapper);
+        return converter;
     }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-       registry.addConverter(new DateConverter());
+        registry.addConverter(new Date2LocalDateConverter());
+        registry.addConverter(new Date2LocalDateTimeConverter());
+        registry.addConverter(new String2DateConverter());
+        registry.addConverter(new String2BooleanConverter());
+        registry.addConverter(new Timestamp2LocalDateTimeConverter());
     }
 
     /**

@@ -24,6 +24,7 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -193,9 +194,10 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 List entityList = valueMatchMap.get(sb.toString());
                 if(entityList != null){
                     // 赋值
+                    BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
                     for(int i = 0; i< annoObjectSetterPropNameList.size(); i++){
                         List valObjList = BeanUtils.collectToList(entityList, referencedGetterFieldNameList.get(i));
-                        BeanUtils.setProperty(object, annoObjectSetterPropNameList.get(i), valObjList);
+                        beanWrapper.setPropertyValue(annoObjectSetterPropNameList.get(i), valObjList);
                     }
                 }
             }

@@ -3,6 +3,7 @@ export interface IAppStore {
   enableFooter: boolean
   globalSize: 'large' | 'default' | 'small'
   layout: 'default' | 'dock' | 'menu' | 'topNav'
+  colorPrimary?: string
 }
 
 export default defineStore('app', {
@@ -11,7 +12,8 @@ export default defineStore('app', {
       enableTabs: true,
       enableFooter: true,
       globalSize: 'default',
-      layout: 'default'
+      layout: 'default',
+      colorPrimary: undefined
     }
   },
   persist: {

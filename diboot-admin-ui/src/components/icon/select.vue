@@ -21,18 +21,16 @@ const selectIcon = (name?: string) => {
   <el-icon :size="25" style="vertical-align: middle; margin-right: 10px">
     <icon :name="modelValue" />
   </el-icon>
-  <el-button type="text" @click="visible = true">{{ modelValue ? '重选' : '选择' }}</el-button>
-  <el-button v-show="modelValue" type="text" style="color: var(--el-color-danger)" @click="selectIcon()">
-    清除
-  </el-button>
-  <el-dialog v-model="visible" title="图标选择器">
+  <el-button text bg type="primary" @click="visible = true">{{ modelValue ? '重选' : '选择' }}</el-button>
+  <el-button v-show="modelValue" text bg type="danger" @click="selectIcon()"> 清除 </el-button>
+  <el-dialog v-model="visible" title="图标选择器" top="10vh">
     <el-tabs style="margin-top: -30px">
       <el-tab-pane v-for="key in Object.keys(IconLibrary)" :key="key" lazy>
         <template #label>
           {{ key }}
           <el-tag size="small" type="info">{{ Object.keys(IconLibrary[key]).length }}</el-tag>
         </template>
-        <el-scrollbar style="height: 60vh">
+        <el-scrollbar height="60vh">
           <el-space wrap>
             <el-card
               v-for="item in getIconList(key)"

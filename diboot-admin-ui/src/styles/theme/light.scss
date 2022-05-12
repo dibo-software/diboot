@@ -1,0 +1,12 @@
+// Custom light color scheme（Share light color schemes when dark color schemes are not overridden）
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // default color scheme
+  $colors: (
+        'primary': ( 'base': #409eff ),
+        'success': ( 'base': #67c23a ),
+        'warning': ( 'base': #e6a23c ),
+        'danger': ( 'base': #f56c6c ),
+        'error': ( 'base': #f56c6c ),
+        'info': ( 'base': #909399 ),
+  ),
+);

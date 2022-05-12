@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
+import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
+import { isDark, toggleTheme } from '@/utils/theme'
+import MenuSearch from './menuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
@@ -28,10 +30,14 @@ const appStore = useAppStore()
       <div :class="$slots.topNav ? 'top-nav' : ''">
         <slot name="topNav" />
       </div>
+      <menu-search class="item" />
+      <el-icon class="item" :size="22" @click="toggleTheme()">
+        <component :is="isDark ? Sunny : Moon" />
+      </el-icon>
       <el-dropdown @command="command => (appStore.globalSize = command)">
         <div class="item">
           <el-icon :size="22">
-            <icon name="LocalSvg:TextFontSize" />
+            <icon name="Local:TextFontSize" />
           </el-icon>
         </div>
         <template #dropdown>
@@ -75,5 +81,9 @@ const appStore = useAppStore()
   align-items: center;
   padding: 0 10px;
   cursor: pointer;
+
+  &:hover {
+    color: var(--el-color-primary);
+  }
 }
 </style>

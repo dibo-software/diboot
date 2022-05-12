@@ -33,6 +33,9 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
   const buildFullPath = (path: string, parentPath = '/') =>
     /^\//.exec(path) ? path : `${parentPath === '/' ? '' : parentPath}/${path}`
 
+  // 路由排序
+  const routeSort = (e1: RouteRecordRaw, e2: RouteRecordRaw) => (e1.meta?.sort ?? 0) - (e2.meta?.sort ?? 0)
+
   /**
    * 构建路由
    *
@@ -42,7 +45,7 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
   function buildRouter(routes: RouteRecordRaw[], parentPath?: string) {
     return routes.filter(route => {
       const fullPath = buildFullPath(route.path, parentPath)
-      if (route.children?.length && (route.children = buildRouter(route.children, fullPath)).length) {
+      if (route.children?.length && (route.children = buildRouter(route.children.sort(routeSort), fullPath)).length) {
         const componentName = route.meta?.componentName
         if (componentName) {
           route.component = resolveComponent(componentName)
