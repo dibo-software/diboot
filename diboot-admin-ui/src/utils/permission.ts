@@ -14,7 +14,7 @@ export function checkRole(value: string | Array<string>, not = false, all = fals
     const roles = useAuthStore().roles
     const permissionRoles = value instanceof Array ? value : [value]
     const findFn = (role: string) => permissionRoles.includes(role)
-    const exist = all ? roles.every(findFn) : roles.some(findFn)
+    const exist = all ? roles.every(findFn) : roles?.some(findFn)
     return not ? !exist : exist
   } else {
     console.error(`need roles!`)
