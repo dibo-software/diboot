@@ -10,8 +10,7 @@ const appStore = useAppStore()
 // 监听主题色
 watch(
   () => appStore.colorPrimary,
-  value => (colorPrimary.value = value ? value : '#409eff'),
-  { immediate: true }
+  value => (colorPrimary.value = value ? value : '#409eff')
 )
 </script>
 

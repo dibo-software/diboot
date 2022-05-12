@@ -4,7 +4,6 @@ import AppMenu from './memu/index.vue'
 import AppMain from './main/index.vue'
 import AppFooter from './footer/index.vue'
 import AppTabs from './tabs/index.vue'
-import AppSetting from './setting/index.vue'
 
 import { Eleme } from '@element-plus/icons-vue'
 
@@ -37,6 +36,12 @@ watch(
     oneLevel.value = value.matched.find(item => (item.redirect && item.meta.title) || item.path === value.path)
   }
 )
+
+// 动态引入配置组件（生产环境舍弃）
+const AppSetting = defineAsyncComponent({
+  loader: () => (import.meta.env.DEV ? import('./setting/index.vue') : Promise.reject()),
+  onError: () => null
+})
 </script>
 
 <template>
