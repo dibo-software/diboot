@@ -26,13 +26,10 @@ const mixColorPrimary = (color: string, light: string, dark: string) => {
 }
 // 设置从主题色
 const subColorPrimary = (color: string, isDark: boolean) => {
-  if (isDark) {
-    mixColorPrimary(color, '#141414', '#ffffff')
-  } else {
-    mixColorPrimary(color, '#ffffff', '#000000')
-  }
+  const bgColor = useCssVar('--el-bg-color').value.trim()
+  mixColorPrimary(color, bgColor, isDark ? '#ffffff' : '#000000')
 }
 // 监听主题色变化
 watch(colorPrimary, value => subColorPrimary(value, isDark.value))
 // 监听主题变化，随着改变主题色
-watch(isDark, value => subColorPrimary(colorPrimary.value, value))
+watch(isDark, value => nextTick(() => subColorPrimary(colorPrimary.value.trim(), value)))
