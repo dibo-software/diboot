@@ -191,7 +191,7 @@ public class Pagination implements Serializable {
      * @param paramName
      * @return
      */
-    public static boolean isFParam(String paramName){
+    public static boolean isPaginationParam(String paramName){
         return "pageIndex".equals(paramName)
                 || "pageSize".equals(paramName)
                 || "orderBy".equals(paramName)
