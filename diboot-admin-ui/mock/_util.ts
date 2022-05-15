@@ -28,6 +28,7 @@ class JsonResult {
    * 数据分页
    */
   PAGINATION<T = any>(page: number, pageSize: number, list: T[] = []) {
+    page = page ? page : 1
     pageSize = pageSize ? pageSize : 20
     return resultJson(0, '操作成功', pagination(page, pageSize, list), {
       page: {
