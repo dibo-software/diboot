@@ -116,14 +116,16 @@ const authMenu = [
           hollow: '@boolean',
           hideFooter: '@boolean'
         }
-      }
-    ]
-  },
-  {
-    path: '/system',
-    name: 'System',
-    meta: { title: 'System', componentName: 'Layout' },
-    children: [
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        meta: {
+          title: '角色管理',
+          componentName: 'RoleList',
+          sort: 3
+        }
+      },
       {
         path: 'dictionary',
         name: 'Dictionary',
