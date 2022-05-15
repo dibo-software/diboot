@@ -23,14 +23,17 @@ export default <T>(option: ListOption<T> & DeleteOption) => {
   // 标记加载状态
   const loading = ref(false)
 
-  const dataList = reactive<Array<T>>([])
+  const dataList: Array<T> = reactive([])
 
-  const pagination = reactive<Pagination>({ pageSize: 20, current: 1, total: 0 })
+  const pagination: Partial<Pagination> = reactive({})
 
-  const queryParam = reactive<QueryParam<T>>(_.cloneDeep(option.initQueryParam ?? {}))
+  const queryParam: QueryParam<T> = reactive(_.cloneDeep(option.initQueryParam ?? {}))
 
-  const dateRangeQuery = reactive<Record<string, [string | number | Date, string | number | Date]>>({})
+  const dateRangeQuery: Record<string, [string | number | Date, string | number | Date]> = reactive({})
 
+  /**
+   * 构建查询参数
+   */
   const buildQueryParam = () => {
     // 合并自定义查询
     const tempQueryParam: QueryParam<unknown> = _.cloneDeep(queryParam)
@@ -48,16 +51,18 @@ export default <T>(option: ListOption<T> & DeleteOption) => {
     return option.rebuildQuery ? option.rebuildQuery(tempQueryParam) : tempQueryParam
   }
 
-  // 获取数据列表
+  /**
+   * 获取数据列表
+   */
   const getList = _.debounce(() => {
     loading.value = true
     api
       .get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
       .then(res => {
         dataList.splice(0, dataList.length)
-        if (res.data) dataList.push(...reactive(res.data ?? []))
-        pagination.pageSize = res.page?.pageSize ?? 20
-        pagination.current = res.page?.pageIndex ?? 1
+        if (res.data) dataList.push(...(res.data ?? []))
+        pagination.pageSize = res.page?.pageSize
+        pagination.current = res.page?.pageIndex
         pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
       })
       .catch(err => {
@@ -88,7 +93,7 @@ export default <T>(option: ListOption<T> & DeleteOption) => {
   }
 
   // 删除
-  const del = useDelete({ ...option, deleteCallback: getList })
+  const del = useDelete({ deleteCallback: getList, ...option })
 
   return {
     queryParam,
@@ -116,10 +121,59 @@ export interface DeleteOption {
 }
 
 export const useDelete = (option: DeleteOption) => {
-  const removeSuccess = (ids: Array<string>) => {
+  /**
+   * 删除数据
+   *
+   * @param id
+   */
+  const remove = (id: string) => {
+    ElMessageBox.confirm('确认删除该数据吗？', '删除', { type: 'warning' })
+      .then(() => {
+        api
+          .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)
+          .then(() => removeSuccessHandler([id]))
+          .catch(err => {
+            ElMessage.error(err.msg || err.message || '删除失败')
+          })
+      })
+      .catch(() => null)
+  }
+
+  /**
+   * 批量删除数据
+   *
+   * @param ids
+   */
+  const batchRemove = (ids: Array<string>) => {
+    if (!(ids && ids.length)) {
+      ElMessage.warning('未选择数据')
+      return
+    }
+
+    ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
+      .then(() => {
+        api
+          .post(`${option.baseApi}/batchDelete`, ids)
+          .then(() => removeSuccessHandler(ids))
+          .catch(err => {
+            ElMessage.error(err.msg || err.message || '删除失败')
+          })
+      })
+      .catch(() => null)
+  }
+
+  /**
+   * 删除成功处理
+   *
+   * @param ids
+   */
+  const removeSuccessHandler = (ids: Array<string>) => {
     if (option.deleteCallback) option.deleteCallback()
 
-    if (option.allowCanceledDelete === false) return ElMessage.success('数据删除成功')
+    if (option.allowCanceledDelete === false) {
+      ElMessage.success('数据删除成功')
+      return
+    }
 
     // 支持撤回的删除成功提示
     const message = ElMessage.success({
@@ -148,34 +202,6 @@ export const useDelete = (option: DeleteOption) => {
         )
       ])
     })
-  }
-
-  const remove = (id: string) => {
-    ElMessageBox.confirm('确认删除该数据吗？', '删除', { type: 'warning' })
-      .then(() => {
-        api
-          .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)
-          .then(() => removeSuccess([id]))
-          .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
-          })
-      })
-      .catch(() => null)
-  }
-
-  const batchRemove = (ids: Array<string>) => {
-    if (!(ids && ids.length)) return ElMessage.warning('未选择数据')
-
-    ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
-      .then(() => {
-        api
-          .post(`${option.baseApi}/batchDelete`, ids)
-          .then(() => removeSuccess(ids))
-          .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
-          })
-      })
-      .catch(() => null)
   }
 
   return { remove, batchRemove }
