@@ -1,6 +1,5 @@
 <script setup lang="ts" name="RoleList">
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
-import useList from '@/hooks/list'
 
 defineProps<{ usedVisibleHeight?: number }>()
 

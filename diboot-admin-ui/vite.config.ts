@@ -26,7 +26,8 @@ export default defineConfig(({ command }) => {
           'pinia',
           { lodash: [['*', '_']] },
           { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
-          { '@/utils/request': ['api', 'baseURL'] }
+          { '@/utils/request': ['api', 'baseURL'] },
+          { '@/hooks/list': [['default', 'useList']] }
         ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',
