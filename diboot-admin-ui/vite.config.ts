@@ -20,7 +20,14 @@ export default defineConfig(({ command }) => {
         // 解析器
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
         // 自动导入Api
-        imports: ['vue', 'vue-router', 'pinia', { lodash: [['*', '_']] }, { '@/utils/request': ['api', 'baseURL'] }],
+        imports: [
+          'vue',
+          'vue-router',
+          'pinia',
+          { lodash: [['*', '_']] },
+          { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
+          { '@/utils/request': ['api', 'baseURL'] }
+        ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',
         // 启用 eslint

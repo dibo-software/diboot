@@ -1,6 +1,5 @@
 import auth from '@/utils/auth'
 import { resetRouter } from '@/router'
-import { ElMessage } from 'element-plus'
 
 export interface IAuthStore {
   realname: string
