@@ -148,6 +148,8 @@ const openEdit = (id: any) => {
     background
     layout="total, sizes, prev, pager, next, jumper"
     :total="pagination.total"
+    @size-change="getList()"
+    @current-change="getList()"
   />
 </template>
 
