@@ -63,6 +63,7 @@
     "useCssModule": "readonly",
     "useCssVars": "readonly",
     "useList": "readonly",
+    "useListDefault": "readonly",
     "useRoute": "readonly",
     "useRouter": "readonly",
     "useSlots": "readonly",

@@ -1,208 +1,242 @@
-import { ElButton } from 'element-plus'
+import { ElNotification } from 'element-plus'
+import { Ref } from 'vue'
 
-export interface ListOption<T> {
-  // 请求接口基础路径
+import { reactive } from 'vue'
+
+type HookOptions<T> = {
+  pageLoader?: BaseListPageLoader<T>
   baseApi: string
-  // 列表数据接口
   listApi?: string
-  // 自定义参数（不被查询表单重置和改变的参数）
-  initQueryParam?: QueryParam<T>
-  // 重建查询条件
-  rebuildQuery?: (query: QueryParam<T>) => QueryParam<T>
+  deleteApi?: string
+  exportApi?: string
+  autoLoad?: boolean
 }
-
-export type QueryParam<T> = Partial<T> & Record<string, unknown>
 
 export interface Pagination {
   pageSize: number
   current: number
   total: number
+  showSizeChanger: boolean
+  pageSizeOptions: string[]
 }
 
-export default <T>(option: ListOption<T> & DeleteOption) => {
+export interface ListOptions<T> {
+  baseUrl?: string
+  // 主键字段名
+  primaryKey?: string
+  // 请求接口基础路径
+  baseApi?: string
+  // 列表数据接口
+  listApi?: string
+  // 删除接口
+  deleteApiPrefix?: string
+  // 导出接口
+  exportApi?: string
+  // 自定义参数（不被查询表单重置和改变的参数）
+  customQueryParam?: { [key: string]: any }
+  // 与查询条件绑定的参数（会被查询表单重置和改变的参数）
+  queryParam?: { [key: string]: any }
+  // 日期区间选择配置
+  dateRangeQuery?: any[]
+  // 高级搜索 展开/关闭
+  advanced?: boolean
+  // 列表数据
+  list?: T[]
+  // 是否将children转化为_children
+  childrenConvert: boolean
+  // 是否从mixin中自动获取初始的列表数据
+  getListFromMixin?: boolean
   // 标记加载状态
-  const loading = ref(false)
+  loading?: boolean
+  // 标记导出
+  exportLoadingData?: boolean
+  // 是否允许撤回删除
+  allowCanceledDelete?: boolean
+  // 是否重新加载
+  reload?: boolean
+  // 当前激活value
+  currentPrimaryValue?: string | number
+  // 分页数据
+  pagination?: Pagination
+}
 
-  const dataList: Array<T> = reactive([])
-
-  const pagination: Partial<Pagination> = reactive({})
-
-  const queryParam: QueryParam<T> = reactive(_.cloneDeep(option.initQueryParam ?? {}))
-
-  const dateRangeQuery: Record<string, [string | number | Date, string | number | Date]> = reactive({})
-
-  /**
-   * 构建查询参数
-   */
-  const buildQueryParam = () => {
-    // 合并自定义查询
-    const tempQueryParam: QueryParam<unknown> = _.cloneDeep(queryParam)
-    // 合并分页参数
-    tempQueryParam.pageIndex = pagination.current
-    tempQueryParam.pageSize = pagination.pageSize
-    // 合并日期范围查询参数
-    for (const [key, value] of Object.entries(dateRangeQuery)) {
-      tempQueryParam[`${key}Begin`] = value[0]
-      tempQueryParam[`${key}End`] = value[1]
+export class BaseListPageLoader<T> {
+  public options: ListOptions<T> = reactive({
+    // 主键字段名
+    primaryKey: 'id',
+    // 请求接口基础路径
+    baseApi: '/',
+    // 列表数据接口
+    listApi: '',
+    // 删除接口
+    deleteApiPrefix: '',
+    // 导出接口
+    exportApi: '',
+    // 自定义参数（不被查询表单重置和改变的参数）
+    customQueryParam: {},
+    // 与查询条件绑定的参数（会被查询表单重置和改变的参数）
+    queryParam: {},
+    // 日期区间选择配置
+    dateRangeQuery: [],
+    // 高级搜索 展开/关闭
+    advanced: false,
+    // 列表数据
+    list: [],
+    // 是否将children转化为_children
+    childrenConvert: true,
+    // 是否从mixin中自动获取初始的列表数据
+    getListFromMixin: true,
+    // 标记加载状态
+    loading: false,
+    // 标记导出
+    exportLoadingData: false,
+    // 是否允许撤回删除
+    allowCanceledDelete: false,
+    // 是否重新加载
+    reload: false,
+    // 当前激活value
+    currentPrimaryValue: '',
+    // 分页数据
+    pagination: {
+      pageSize: 10,
+      current: 1,
+      total: 0,
+      showSizeChanger: true,
+      pageSizeOptions: ['10', '20', '30', '50', '100']
     }
-    // TODO 日期格式化
-
-    // 改造查询条件（用于列表页扩展）
-    return option.rebuildQuery ? option.rebuildQuery(tempQueryParam) : tempQueryParam
-  }
-
-  /**
-   * 获取数据列表
-   */
-  const getList = _.debounce(() => {
-    loading.value = true
-    api
-      .get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
-      .then(res => {
-        dataList.splice(0, dataList.length)
-        if (res.data) dataList.push(...(res.data ?? []))
-        pagination.pageSize = res.page?.pageSize
-        pagination.current = res.page?.pageIndex
-        pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
-      })
-      .catch(err => {
-        ElNotification.error({
-          title: '获取列表数据失败',
-          message: err.msg || err.message
-        })
-      })
-      .finally(() => (loading.value = false))
-  }, 300)
-
+  })
   /**
    * 搜索，查询第一页
    */
-  const onSearch = () => {
-    pagination.current = 1
-    getList()
+  public onSearch() {
+    if (this.options?.pagination) this.options.pagination.current = 1
+    this.getList()
   }
-
+  public toggleLoading() {
+    if (this.options) this.options.loading = true
+  }
   /**
-   * 重置筛选条件
+   * get请求获取列表
+   * @returns {Promise<any>}
    */
-  const resetFilter = () => {
-    Object.keys(dateRangeQuery).forEach(key => delete dateRangeQuery[key])
-    Object.keys(queryParam).forEach(key => delete queryParam[key])
-    Object.assign(queryParam, _.cloneDeep(option.initQueryParam ?? {}))
-    onSearch()
-  }
-
-  // 删除
-  const del = useDelete({ deleteCallback: getList, ...option })
-
-  return {
-    queryParam,
-    dateRangeQuery,
-    onSearch,
-    resetFilter,
-    getList,
-    loading,
-    dataList,
-    pagination,
-    ...del
-  }
-}
-
-// 删除数据
-export interface DeleteOption {
-  // 请求接口基础路径
-  baseApi: string
-  // 删除数据接口前缀
-  deleteApiPrefix?: string
-  // 是否允许撤回删除 (默认允许)
-  allowCanceledDelete?: boolean
-  // 删除回调
-  deleteCallback?: () => void
-}
-
-export const useDelete = (option: DeleteOption) => {
-  /**
-   * 删除数据
-   *
-   * @param id
-   */
-  const remove = (id: string) => {
-    ElMessageBox.confirm('确认删除该数据吗？', '删除', { type: 'warning' })
-      .then(() => {
-        api
-          .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)
-          .then(() => removeSuccessHandler([id]))
-          .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
-          })
+  public async getList() {
+    try {
+      this.toggleLoading()
+      const res = await api.get<T[]>(
+        this.options?.listApi ? this.options?.listApi : `${this.options?.baseApi}/list`,
+        this.buildQueryParam()
+      )
+      if (res.code === 0) {
+        if (this.options) this.options.list = this.listFilter(res.data)
+        console.log('this.options.list', this.options.list)
+        if (res.page) {
+          if (this.options?.pagination) {
+            this.options.pagination.pageSize = res.page.pageSize
+            this.options.pagination.current = res.page.pageIndex
+            this.options.pagination.total = res.page.totalCount ? Number(res.page.totalCount) : 0
+          }
+        }
+      } else {
+        ElNotification.error({
+          title: '获取列表数据失败',
+          message: res.msg
+        })
+      }
+    } catch (e) {
+      ElNotification.error({
+        title: '获取列表数据失败',
+        message: e as string
       })
-      .catch(() => null)
-  }
-
-  /**
-   * 批量删除数据
-   *
-   * @param ids
-   */
-  const batchRemove = (ids: Array<string>) => {
-    if (!(ids && ids.length)) {
-      ElMessage.warning('未选择数据')
-      return
+    } finally {
+      // this.toggleLoadingData()
+      console.log(this.options?.loading)
     }
-
-    ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
-      .then(() => {
-        api
-          .post(`${option.baseApi}/batchDelete`, ids)
-          .then(() => removeSuccessHandler(ids))
-          .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
-          })
-      })
-      .catch(() => null)
   }
-
   /**
-   * 删除成功处理
-   *
-   * @param ids
+   * 列表过滤器
+   * @param list
+   * @returns {*}
    */
-  const removeSuccessHandler = (ids: Array<string>) => {
-    if (option.deleteCallback) option.deleteCallback()
-
-    if (option.allowCanceledDelete === false) {
-      ElMessage.success('数据删除成功')
-      return
+  public listFilter(list: T[] | undefined) {
+    if (!list || list.length === 0) {
+      return []
     }
-
-    // 支持撤回的删除成功提示
-    const message = ElMessage.success({
-      type: 'success',
-      message: h('span', null, [
-        h('span', { style: { color: 'var(--el-color-success)' } }, '数据删除成功'),
-        h(
-          ElButton,
-          {
-            bg: true,
-            text: true,
-            type: 'primary',
-            style: { height: '25px', position: 'absolute', right: '13px' },
-            onClick: () => {
-              message.close()
-              api
-                .patch(`${option.baseApi}/cancelDeleted`, ids)
-                .then(() => {
-                  ElMessage.success('撤回成功')
-                  if (option.deleteCallback) option.deleteCallback()
-                })
-                .catch(() => ElMessage.error('撤回失败'))
-            }
-          },
-          { default: () => '撤回' }
-        )
-      ])
+    return list
+  }
+  /**
+   * 构建查询参数
+   */
+  public buildQueryParam() {
+    this.dateRange2queryParam()
+    // 进行前置处理，获取查询条件初始值
+    let tempQueryParam = this.beforeBuildQueryParam()
+    // 合并自定义查询参数
+    _.merge(tempQueryParam, this.options?.customQueryParam)
+    // 合并搜索参数
+    _.merge(tempQueryParam, this.options?.queryParam)
+    // 进行后置处理，可用于改造查询条件（用于列表页扩展等场景）
+    tempQueryParam = this.afterBuildQueryParam(tempQueryParam)
+    return tempQueryParam
+  }
+  /**
+   * 查询条件前置处理
+   */
+  beforeBuildQueryParam(): object {
+    return {}
+  }
+  /**
+   * 查询条件后置处理
+   */
+  afterBuildQueryParam(queryParam: object): object {
+    return {}
+  }
+  clearQueryParam(): void {
+    this.options.queryParam = {}
+  }
+  public onReset(): void {
+    this.clearQueryParam()
+    this.getList()
+  }
+  /**
+   * 构建区间查询参数
+   */
+  dateRange2queryParam() {
+    _.forEach(this.options?.dateRangeQuery || [], (v, k) => {
+      if (k && v && v.length === 2) {
+        if (this.options?.queryParam) {
+          this.options.queryParam[`${k}Begin`] = v[0]
+          this.options.queryParam[`${k}End`] = v[1]
+        }
+      }
     })
   }
+}
 
-  return { remove, batchRemove }
+type Results<T> = {
+  pageLoader: BaseListPageLoader<T>
+  queryParam: Ref<{ [p: string]: any } | undefined> | undefined
+  dataList: Ref<T[] | undefined> | undefined
+  loading: Ref<boolean | undefined> | undefined
+  pagination: Ref<Pagination | undefined> | undefined
+}
+
+export default function <T>(options: HookOptions<T>) {
+  let { pageLoader, autoLoad } = options
+  const { baseApi } = options
+  pageLoader = pageLoader || new BaseListPageLoader<T>()
+  pageLoader.options.baseApi = baseApi
+  autoLoad = autoLoad == null ? true : autoLoad
+  onMounted(() => {
+    if (autoLoad) {
+      pageLoader?.onSearch()
+    }
+  })
+  const { list: dataList, queryParam, loading, pagination } = toRefs(pageLoader.options)
+  return {
+    pageLoader,
+    queryParam,
+    dataList,
+    loading,
+    pagination
+  }
 }
