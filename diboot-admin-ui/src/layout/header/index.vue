@@ -6,8 +6,11 @@ import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
 
-const authStore = useAuthStore()
+withDefaults(defineProps<{ showLogo?: boolean }>(), { showLogo: true })
+
 const router = useRouter()
+const appStore = useAppStore()
+const authStore = useAuthStore()
 
 const logout = async () => {
   await authStore.logout()
@@ -16,13 +19,11 @@ const logout = async () => {
 const goPersonal = () => {
   router.push({ name: 'Personal' }).finally()
 }
-
-const appStore = useAppStore()
 </script>
 
 <template>
   <div style="height: 100%; display: flex; align-items: center">
-    <img v-if="appStore.layout !== 'default'" :src="Logo" alt="Logo" style="height: 39px" />
+    <img v-if="showLogo" :src="Logo" alt="Logo" style="height: 39px" />
     <div :style="$slots.dock ? { width: '50vw' } : {}" style="margin-left: 20px">
       <slot name="dock" />
     </div>

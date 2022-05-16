@@ -5,7 +5,7 @@ import { RouteRecordRaw } from 'vue-router'
 import { Fold, Expand } from '@element-plus/icons-vue'
 
 const props = withDefaults(
-  defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean; mode?: 'horizontal' | 'vertical' }>(),
+  defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean; mode?: 'horizontal' | 'vertical'; height?: string }>(),
   { menuTree: () => [], mode: 'vertical' }
 )
 
@@ -18,6 +18,11 @@ const toggleState = () => emits('update:collapse', !props.collapse)
   <el-menu v-if="mode === 'horizontal'" router :default-active="$route.path" mode="horizontal">
     <sub-menu :menu-tree="menuTree" />
   </el-menu>
+  <el-scrollbar v-else-if="height" :height="height">
+    <el-menu router :default-active="$route.path" :style="{ minHeight: height }">
+      <sub-menu :menu-tree="menuTree" />
+    </el-menu>
+  </el-scrollbar>
   <div v-else>
     <span v-show="!collapse">
       <slot name="title" />
