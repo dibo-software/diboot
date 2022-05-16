@@ -5,7 +5,7 @@ import AppMain from './main/index.vue'
 import AppFooter from './footer/index.vue'
 import AppTabs from './tabs/index.vue'
 
-import { Eleme, Menu } from '@element-plus/icons-vue'
+import { Menu } from '@element-plus/icons-vue'
 
 import Logo from '@/assets/logo.png'
 
@@ -86,8 +86,8 @@ watch(router.currentRoute, () => (showMenu.value = false))
                 :index="item.path"
                 @click="openOneLevel(item)"
               >
-                <el-icon :size="30">
-                  <eleme />
+                <el-icon v-if="item.meta?.icon" :size="30">
+                  <icon :name="item.meta?.icon" />
                 </el-icon>
                 <span class="title">{{ item.meta?.title }}</span>
               </el-menu-item>
@@ -127,8 +127,8 @@ watch(router.currentRoute, () => (showMenu.value = false))
         <template #dock>
           <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel?.path">
             <el-menu-item v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
-              <el-icon :size="22">
-                <eleme />
+              <el-icon v-if="item.meta?.icon" :size="22">
+                <icon :name="item.meta?.icon" />
               </el-icon>
               <span>{{ item.meta?.title }}</span>
             </el-menu-item>
