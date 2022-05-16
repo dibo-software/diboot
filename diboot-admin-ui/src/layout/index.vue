@@ -23,19 +23,9 @@ const openOneLevel = (menu: RouteRecordRaw) => {
   oneLevel.value = menu
   if (router.currentRoute.value.name !== menu.name) router.push({ name: menu.name })
 }
-openOneLevel(menuTree[0])
+oneLevel.value = router.currentRoute.value.matched.find(item => menuTree.find(e => e === item))
 
 const isMenuCollapse = ref(false)
-
-watch(
-  () => router.currentRoute.value,
-  value => {
-    // 存在redirect，且存在title（（上级菜单menu中显示的情况））
-    // 或
-    // 路径匹配（上级菜单menu中不显示的情况）
-    oneLevel.value = value.matched.find(item => (item.redirect && item.meta.title) || item.path === value.path)
-  }
-)
 
 // 动态引入配置组件（生产环境舍弃）
 const AppSetting = defineAsyncComponent({
