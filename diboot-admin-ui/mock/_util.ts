@@ -28,7 +28,15 @@ class JsonResult {
    * 数据分页
    */
   PAGINATION<T = any>(page: number, pageSize: number, list: T[] = []) {
-    return resultJson(0, '操作成功', pagination(page, pageSize, list), { page, pageSize, total: list.length })
+    page = page ? page : 1
+    pageSize = pageSize ? pageSize : 20
+    return resultJson(0, '操作成功', pagination(page, pageSize, list), {
+      page: {
+        pageIndex: Number(page),
+        pageSize: Number(pageSize),
+        totalCount: list.length
+      }
+    })
   }
 
   /**
