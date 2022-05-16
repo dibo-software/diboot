@@ -21,6 +21,7 @@
     "pinia-plugin-persist": "^1.0.0",
     "qs": "^6.10.3",
     "vue": "^3.2.25",
+    "vue-clipboard3": "^2.0.0",
     "vue-fuse": "^4.1.1",
     "vue-router": "^4.0.14",
     "vuedraggable": "^4.1.0"
