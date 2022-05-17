@@ -23,7 +23,7 @@ const {
   pagination,
   remove,
   batchRemove
-} = useList<Role>({ baseApi: '/role' })
+} = useListDefault<Role>({ baseApi: '/role' })
 
 getList()
 

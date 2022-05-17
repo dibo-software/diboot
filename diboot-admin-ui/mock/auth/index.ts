@@ -1,6 +1,7 @@
 import { MockMethod } from 'vite-plugin-mock'
 import JsonResult from '../_util'
 import { Random } from 'mockjs'
+import * as Element from '@element-plus/icons-vue'
 
 const baseUrl = '/api/auth'
 
@@ -76,13 +77,15 @@ export default [
 
 // 随机按钮权限
 const permission = '@pick(["detail", "create", "update", "delete", "import", "export"])'
+// 随机图标
+const icon = `Element:@pick(${Object.keys(Element)})`
 
 // 授权菜单
 const authMenu = [
   {
     path: '/demo',
     name: 'Demo',
-    meta: { title: 'Demo', componentName: 'Layout' },
+    meta: { title: 'Demo', icon, componentName: 'Layout' },
     'children|20': [
       {
         path: `hello@string('number', 5)`,
@@ -90,6 +93,7 @@ const authMenu = [
         meta: {
           title: 'Hello-@increment',
           componentName: 'Dashboard',
+          icon,
           sort: '@natural',
           keepAlive: false,
           hollow: '@boolean',
@@ -103,7 +107,7 @@ const authMenu = [
     path: '/system',
     name: 'System',
     redirect: '/system/iamResourcePermission',
-    meta: { title: '系统管理', componentName: 'Layout' },
+    meta: { title: '系统管理', icon: 'Element:SetUp', componentName: 'Layout' },
     children: [
       {
         path: 'iamResourcePermission',

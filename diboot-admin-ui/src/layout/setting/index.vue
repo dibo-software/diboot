@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Opportunity } from '@element-plus/icons-vue'
+import { Opportunity, RefreshLeft, CopyDocument } from '@element-plus/icons-vue'
+import useClipboard from 'vue-clipboard3'
 import useAppStore from '@/store/app'
 import { colorPrimary } from '@/utils/theme'
 
@@ -12,6 +13,25 @@ watch(
   () => appStore.colorPrimary,
   value => (colorPrimary.value = value ? value : '#409eff')
 )
+
+const clipboard = useClipboard()
+
+const copyConfig = () => {
+  let configJsonStr = JSON.stringify(
+    appStore,
+    ['layout', 'globalSize', 'enableTabs', 'enableFooter', 'colorPrimary'],
+    2
+  )
+    .replace(/"/g, "'")
+    .replace(/'(.+)': /g, '$1: ')
+  if (appStore.colorPrimary === undefined) {
+    configJsonStr = configJsonStr.replace(/\n}/m, ',\n  colorPrimary: undefined\n}')
+  }
+  clipboard
+    .toClipboard(configJsonStr)
+    .then(() => ElMessage.success('复制成功'))
+    .catch(() => ElMessage.error('写入剪切板失败，请手动配置'))
+}
 </script>
 
 <template>
@@ -22,33 +42,40 @@ watch(
   </div>
   <div class="setting">
     <el-drawer v-model="openSetting" title="布局实时演示" :size="360">
-      <el-alert
-        title="以下配置可实时预览"
-        description="开发者可在 `src/store/app.ts` 中修改默认值。"
-        type="warning"
-        :closable="false"
-      />
-      <el-divider />
-      <el-form :model="appStore">
-        <el-form-item label="开启 Tabs">
-          <el-select v-model="appStore.layout">
-            <el-option label="分栏" value="default" />
-            <el-option label="通栏" value="dock" />
-            <el-option label="经典" value="menu" />
-            <el-option label="顶导航" value="topNav" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="开启 Tabs">
-          <el-switch v-model="appStore.enableTabs" />
-        </el-form-item>
-        <el-form-item label="开启 Footer">
-          <el-switch v-model="appStore.enableFooter" />
-        </el-form-item>
-        <el-form-item label="主题色">
-          <el-color-picker v-model="colorPrimary" @update:model-value="value => (appStore.colorPrimary = value)" />
-        </el-form-item>
-      </el-form>
-      <el-button style="width: 100%" @click="appStore.$reset()">重置</el-button>
+      <el-scrollbar max-height="100%">
+        <el-alert
+          title="以下配置可实时预览"
+          description="开发者可在 `src/store/app.ts` 中修改默认值。"
+          type="warning"
+          :closable="false"
+        />
+        <el-divider />
+        <el-form :model="appStore">
+          <el-form-item label="开启 Tabs">
+            <el-select v-model="appStore.layout">
+              <el-option label="分栏" value="default" />
+              <el-option label="通栏" value="dock" />
+              <el-option label="经典" value="menu" />
+              <el-option label="顶导航" value="topNav" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="开启 Tabs">
+            <el-switch v-model="appStore.enableTabs" />
+          </el-form-item>
+          <el-form-item label="开启 Footer">
+            <el-switch v-model="appStore.enableFooter" />
+          </el-form-item>
+          <el-form-item label="主题色">
+            <el-color-picker v-model="colorPrimary" @update:model-value="value => (appStore.colorPrimary = value)" />
+          </el-form-item>
+        </el-form>
+      </el-scrollbar>
+      <template #footer>
+        <el-space direction="vertical" style="align-items: stretch; width: 100%; margin-bottom: -10px">
+          <el-button type="primary" :icon="CopyDocument" @click="copyConfig"> 一键复制配置 </el-button>
+          <el-button text bg :icon="RefreshLeft" @click="appStore.$reset()"> 一键恢复默认 </el-button>
+        </el-space>
+      </template>
     </el-drawer>
   </div>
 </template>

@@ -1,8 +1,6 @@
 <script setup lang="ts" name="DictionaryList">
-import { BaseModel } from '@/components/hooks/list'
-import useList from '@/components/hooks/list'
-
-interface Dictionary extends BaseModel {
+interface Dictionary {
+  id: string
   type: string
   itemName: string
   itemValue: string

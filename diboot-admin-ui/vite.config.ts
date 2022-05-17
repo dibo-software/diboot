@@ -27,7 +27,8 @@ export default defineConfig(({ command }) => {
           { lodash: [['*', '_']] },
           { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
           { '@/utils/request': ['api', 'baseURL'] },
-          { '@/hooks/list': [['default', 'useList']] }
+          { '@/hooks/list': [['default', 'useList']] },
+          { '@/hooks/list_default': [['default', 'useListDefault']] }
         ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',
