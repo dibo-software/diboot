@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouteLocationNormalized } from 'vue-router'
+import { onBeforeRouteLeave, RouteLocationNormalized } from 'vue-router'
 import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
 import { ElScrollbar } from 'element-plus'
 import Draggable from 'vuedraggable'
@@ -63,9 +63,11 @@ watch(
   },
   { immediate: true }
 )
-onUnmounted(() => {
-  appStore.enableTabs && viewTabsStore.tabList.splice(viewTabsStore.tabList.length - 1)
-})
+onUnmounted(() =>
+  onBeforeRouteLeave(() => {
+    appStore.enableTabs && viewTabsStore.tabList.splice(viewTabsStore.tabList.length - 1)
+  })
+)
 
 // 右键菜单
 const menu = reactive<{ route?: RouteLocationNormalized; locator?: any }>({ route })
