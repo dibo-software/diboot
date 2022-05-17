@@ -6,7 +6,7 @@ import { Fold, Expand } from '@element-plus/icons-vue'
 
 const props = withDefaults(
   defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean; mode?: 'horizontal' | 'vertical'; height?: string }>(),
-  { menuTree: () => [], mode: 'vertical' }
+  { menuTree: () => [], mode: 'vertical', height: undefined }
 )
 
 const emits = defineEmits<{ (e: 'update:collapse', collapse: boolean): void }>()

@@ -5,13 +5,14 @@ import AppMain from './main/index.vue'
 import AppFooter from './footer/index.vue'
 import AppTabs from './tabs/index.vue'
 
+import { Directive } from 'vue'
+import { RouteRecordRaw } from 'vue-router'
 import { Menu } from '@element-plus/icons-vue'
 
 import Logo from '@/assets/logo.png'
 
 import useAppStore from '@/store/app'
 import { getMenuTree } from '@/utils/route'
-import { RouteRecordRaw } from 'vue-router'
 
 const appStore = useAppStore()
 
@@ -33,15 +34,49 @@ const AppSetting = defineAsyncComponent({
   onError: () => null
 })
 
+// 移动端布局
 const isMobile = ref(document.body.clientWidth < 992)
 window.addEventListener('resize', () => (isMobile.value = document.body.clientWidth < 992))
 
 const showMenu = ref(false)
 watch(router.currentRoute, () => (showMenu.value = false))
+
+// 拖拽指令
+const vDrag: Directive<HTMLElement> = {
+  created(el) {
+    el.onmousedown = event => {
+      document.onselectstart = () => false
+      let isClick = true
+      //鼠标按下，计算当前元素距离可视区的距离
+      const elX = event.clientX - el.offsetLeft
+      const elY = event.clientY - el.offsetTop
+      document.onmousemove = e => {
+        //通过事件委托，计算移动的距离
+        const x = e.clientX - elX
+        const y = e.clientY - elY
+        //移动当前元素
+        if (x > 0 && x < document.body.clientWidth - 50) {
+          isClick = false
+          el.style.left = x + 'px'
+        }
+        if (y > 0 && y < document.body.clientHeight - 50) {
+          isClick = false
+          el.style.top = y + 'px'
+        }
+      }
+      document.onmouseup = () => {
+        if (isClick) showMenu.value = true
+        document.onselectstart = null
+        document.onmousemove = null
+        document.onmouseup = null
+      }
+    }
+  }
+}
 </script>
 
 <template>
-  <el-container v-if="isMobile">
+  <el-container v-if="isMobile" style="height: 100vh">
     <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header />
     </el-header>
@@ -55,17 +90,12 @@ watch(router.currentRoute, () => (showMenu.value = false))
       </template>
     </app-tabs>
 
-    <div class="mobile-menu-button" @click="showMenu = true">
+    <div v-drag class="mobile-menu-button">
       <el-icon :size="30" color="var(--el-color-white)">
         <Menu />
       </el-icon>
       <el-drawer v-model="showMenu" direction="ltr" :with-header="false">
-        <template #title>
-          <div />
-        </template>
-        <el-scrollbar>
-          <app-menu :menu-tree="menuTree" height="100vh" />
-        </el-scrollbar>
+        <app-menu :menu-tree="menuTree" height="100vh" />
       </el-drawer>
     </div>
   </el-container>
