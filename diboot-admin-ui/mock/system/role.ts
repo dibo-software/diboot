@@ -1,29 +1,34 @@
 import { MockMethod } from 'vite-plugin-mock'
-import JsonResult from '../_util'
+import { JsonResult, ApiRequest } from '../_util'
 import { Random } from 'mockjs'
+import type { Role } from '@/views/system/role/type'
 
 const baseUrl = '/api/role'
 
 const deleteDataIds: string[] = []
+
+const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
+  const id = String(50 - index)
+  return {
+    id,
+    name: '角色' + id,
+    code: 'role' + id,
+    description: '@csentence',
+    createTime: '@datetime',
+    updateTime: '@datetime'
+  }
+})
 
 export default [
   {
     url: `${baseUrl}/list`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: any) => {
+    response: ({ query }: ApiRequest) => {
       return JsonResult.PAGINATION(
         query.pageIndex,
         query.pageSize,
-        Array.from({ length: 50 })
-          .map((_, index) => ({
-            id: String(index + 1),
-            name: '角色' + (index + 1),
-            code: 'role' + (index + 1),
-            description: '@csentence',
-            createTime: '@datetime',
-            updateTime: '@datetime'
-          }))
+        dataList
           .filter(e => !deleteDataIds.includes(e.id))
           .filter(e => e.name.match(query.name) && e.code.match(query.code))
       )
@@ -32,8 +37,38 @@ export default [
   {
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      return JsonResult.OK(dataList.filter(e => e.id === query.id))
+    }
+  },
+  {
+    url: `${baseUrl}`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: ({ body }: ApiRequest<Role>) => {
+      return JsonResult.OK(!!dataList.unshift(body))
+    }
+  },
+  {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'put',
+    response: ({ body, query }: ApiRequest<Role>) => {
+      return JsonResult.OK(
+        !!dataList.splice(
+          dataList.findIndex(e => e.id === query.id),
+          1,
+          body
+        )
+      )
+    }
+  },
+  {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
     method: 'delete',
-    response: ({ query }: any) => {
+    response: ({ query }: ApiRequest) => {
       deleteDataIds.push(query.id)
       return JsonResult.OK()
     }
@@ -42,7 +77,7 @@ export default [
     url: `${baseUrl}/cancelDeleted`,
     timeout: Random.natural(50, 300),
     method: 'patch',
-    response: ({ body }: any) => {
+    response: ({ body }: ApiRequest<Array<string>>) => {
       deleteDataIds.splice(0, deleteDataIds.length, ...deleteDataIds.filter(e => !body.includes(e)))
       return JsonResult.OK()
     }
@@ -51,9 +86,8 @@ export default [
     url: `${baseUrl}/batchDelete`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: ({ body }: any) => {
+    response: ({ body }: ApiRequest<Array<string>>) => {
       deleteDataIds.push(...body)
-      console.log(deleteDataIds)
       return JsonResult.OK()
     }
   }

@@ -1,5 +1,5 @@
 import { MockMethod } from 'vite-plugin-mock'
-import JsonResult from '../_util'
+import { JsonResult, ApiRequest } from '../_util'
 import { Random } from 'mockjs'
 import * as Element from '@element-plus/icons-vue'
 
@@ -22,7 +22,7 @@ export default [
     url: `${baseUrl}/login`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: ({ body }: any) => {
+    response: ({ body }: ApiRequest) => {
       if (body.username === 'admin' && body.password === '123456') {
         return JsonResult.OK({ token: Random.string('lower', 32, 32) })
       }
@@ -33,7 +33,7 @@ export default [
     url: `${baseUrl}/userInfo`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ headers }: any) => {
+    response: ({ headers }: ApiRequest) => {
       const token = headers.authorization
       if (token && token.length >= 32) {
         const name = Random.cname()

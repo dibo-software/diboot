@@ -7,24 +7,27 @@ const RouterView = defineComponent({
 })
 
 /**
+ * 视图组件
+ */
+export const viewComponents = Object.values(import.meta.globEager('@/views/**/*.{vue,tsx,jsx}'))
+  .map(e => e.default)
+  .filter(e => e.name)
+  .reduce(
+    (components, view) => {
+      components[view.name] = view
+      return components
+    },
+    { Layout }
+  )
+
+/**
  * 构建异步路由
  *
  * @param asyncRoutes
  */
 export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
-  // 加载所有页面
-  const viewComponents = Object.values(import.meta.globEager('@/views/**/*.{vue,tsx,jsx}'))
-    .map(e => e.default)
-    .filter(e => e.name)
-    .reduce(
-      (components, view) => {
-        components[view.name || '_'] = view
-        return components
-      },
-      { Layout }
-    )
   // 获取组件
-  const resolveComponent = (name: any) => {
+  const resolveComponent = (name: string) => {
     if (viewComponents[name]) return viewComponents[name]
     throw new Error(`Unknown component '${name}'. Is it located under 'views' with extension?`)
   }

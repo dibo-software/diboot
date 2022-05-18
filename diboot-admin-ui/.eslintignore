@@ -15,5 +15,3 @@ dist
 .husky
 .local
 .eslintrc.js
-
-/src/mock/*

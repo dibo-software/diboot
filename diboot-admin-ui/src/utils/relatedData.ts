@@ -7,12 +7,12 @@ export interface RelatedDataConfig {
   label?: string // 对象的属性名，查询作为label的属性名称
   value?: string // 对象的属性名，，需要查询作为value的属性名称
   ext?: string // 对象的属性名，需要查询作为ext的属性名称 (扩展值，一般用于特殊情景)
-  condition?: { [label: string]: string | Array<any> | null } // 查询条件
+  condition?: Record<string, string | Array<unknown> | null> // 查询条件
 }
 export interface ILabelValue {
   label: string
-  value: any
-  ext?: any
+  value: string
+  ext?: unknown
 }
 export type LabelValue = { [label: string]: ILabelValue[] }
 /**

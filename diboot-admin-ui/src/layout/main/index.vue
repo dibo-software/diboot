@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import useViewTabsStore from '@/store/viewTabs'
+import { DefineComponent } from 'vue'
 import { RouteLocationNormalized } from 'vue-router'
 import useAppStore from '@/store/app'
+import useViewTabsStore from '@/store/viewTabs'
 
 const appStore = useAppStore()
 // Tabs 高度
@@ -28,7 +29,7 @@ const layoutUsedHeight = computed(
   () => (props.fullScreen ? (props.fullScreen === true ? 0 : tabsHeight.value) : 50 + tabsHeight.value) + 20
 )
 // 为需要已占可视高度的组件bind usedVisibleHeight
-const bindUsedVisibleHeight = (component: any, route: RouteLocationNormalized) => {
+const bindUsedVisibleHeight = (component: DefineComponent, route: RouteLocationNormalized) => {
   if (component.type?.props?.usedVisibleHeight)
     //                                 布局已用高度    +  bounded-padding
     return { usedVisibleHeight: layoutUsedHeight.value + (route.meta.hollow ? 0 : 20) }

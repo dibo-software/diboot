@@ -2,7 +2,7 @@ import { createProdMockServer } from 'vite-plugin-mock/es/createProdMockServer'
 
 const modules = import.meta.globEager('./**/*.ts')
 
-const mockModules: any[] = []
+const mockModules: unknown[] = []
 Object.keys(modules)
   .filter(path => !path.includes('/_')) // Ignore files and directories starting with _
   .forEach(key => mockModules.push(...modules[key].default))
