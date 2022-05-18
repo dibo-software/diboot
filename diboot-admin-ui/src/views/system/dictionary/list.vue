@@ -10,7 +10,9 @@ interface Dictionary {
 }
 
 const { pageLoader, queryParam, dataList } = useList<Dictionary>({
-  baseApi: '/dictionary'
+  options: {
+    baseApi: '/dictionary'
+  }
 })
 const onReset = () => {
   pageLoader.onReset()
@@ -27,7 +29,7 @@ const onReset = () => {
           <el-input v-model="queryParam.itemValue" placeholder="类型编码" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="pageLoader.onSearch()">查询</el-button>
+          <el-button type="primary" @click="pageLoader.onDebounceSearch()">查询</el-button>
           <el-button @click="onReset">重置</el-button>
         </el-form-item>
       </el-form>

@@ -5,10 +5,8 @@ import { reactive } from 'vue'
 
 type HookOptions<T> = {
   pageLoader?: BaseListPageLoader<T>
-  baseApi: string
-  listApi?: string
-  deleteApi?: string
-  exportApi?: string
+  options?: ListOptions<T>
+  baseApi?: string
   autoLoad?: boolean
 }
 
@@ -33,17 +31,17 @@ export interface ListOptions<T> {
   // 导出接口
   exportApi?: string
   // 自定义参数（不被查询表单重置和改变的参数）
-  customQueryParam?: { [key: string]: any }
+  customQueryParam?: Record<string, unknown>
   // 与查询条件绑定的参数（会被查询表单重置和改变的参数）
-  queryParam?: { [key: string]: any }
+  queryParam?: Record<string, unknown>
   // 日期区间选择配置
-  dateRangeQuery?: any[]
+  dateRangeQuery?: Record<string, [string | number | Date, string | number | Date]>
   // 高级搜索 展开/关闭
   advanced?: boolean
   // 列表数据
   list?: T[]
   // 是否将children转化为_children
-  childrenConvert: boolean
+  childrenConvert?: boolean
   // 是否从mixin中自动获取初始的列表数据
   getListFromMixin?: boolean
   // 标记加载状态
@@ -77,7 +75,7 @@ export class BaseListPageLoader<T> {
     // 与查询条件绑定的参数（会被查询表单重置和改变的参数）
     queryParam: {},
     // 日期区间选择配置
-    dateRangeQuery: [],
+    dateRangeQuery: {},
     // 高级搜索 展开/关闭
     advanced: false,
     // 列表数据
@@ -112,6 +110,14 @@ export class BaseListPageLoader<T> {
     if (this.options?.pagination) this.options.pagination.current = 1
     this.getList()
   }
+
+  /**
+   * 防抖搜索（防止重复触发）
+   */
+  public onDebounceSearch = _.debounce(() => {
+    this.onSearch()
+  }, 300)
+
   public toggleLoading() {
     if (this.options) this.options.loading = true
   }
@@ -128,7 +134,6 @@ export class BaseListPageLoader<T> {
       )
       if (res.code === 0) {
         if (this.options) this.options.list = this.listFilter(res.data)
-        console.log('this.options.list', this.options.list)
         if (res.page) {
           if (this.options?.pagination) {
             this.options.pagination.pageSize = res.page.pageSize
@@ -148,7 +153,7 @@ export class BaseListPageLoader<T> {
         message: e as string
       })
     } finally {
-      // this.toggleLoadingData()
+      this.toggleLoading()
       console.log(this.options?.loading)
     }
   }
@@ -201,14 +206,13 @@ export class BaseListPageLoader<T> {
    * 构建区间查询参数
    */
   dateRange2queryParam() {
-    _.forEach(this.options?.dateRangeQuery || [], (v, k) => {
-      if (k && v && v.length === 2) {
-        if (this.options?.queryParam) {
-          this.options.queryParam[`${k}Begin`] = v[0]
-          this.options.queryParam[`${k}End`] = v[1]
-        }
+    const dateRangeQuery = this.options?.dateRangeQuery || {}
+    for (const [key, value] of Object.entries(dateRangeQuery)) {
+      if (this.options != null && this.options.queryParam != null) {
+        this.options.queryParam[`${key}Begin`] = value[0]
+        this.options.queryParam[`${key}End`] = value[1]
       }
-    })
+    }
   }
 }
 
@@ -222,9 +226,18 @@ type Results<T> = {
 
 export default function <T>(options: HookOptions<T>) {
   let { pageLoader, autoLoad } = options
-  const { baseApi } = options
+  const { baseApi, options: loaderOptions } = options
   pageLoader = pageLoader || new BaseListPageLoader<T>()
-  pageLoader.options.baseApi = baseApi
+  // 赋值所有选项参数
+  if (loaderOptions != null) {
+    for (const [key, value] of Object.entries(loaderOptions)) {
+      pageLoader.options[key as keyof ListOptions<any>] = value
+    }
+  }
+  // 赋值自定义参数
+  if (baseApi != null) {
+    pageLoader.options.baseApi = baseApi
+  }
   autoLoad = autoLoad == null ? true : autoLoad
   onMounted(() => {
     if (autoLoad) {
