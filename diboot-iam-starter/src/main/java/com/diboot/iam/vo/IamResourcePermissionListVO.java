@@ -18,7 +18,11 @@ package com.diboot.iam.vo;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.route.RouteMeta;
+import com.diboot.iam.entity.route.RouteRecord;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -39,9 +43,6 @@ public class IamResourcePermissionListVO extends IamResourcePermission {
 
     private static final long serialVersionUID = 6643651522844488124L;
 
-    // display_type字段的关联数据字典
-    public static final String DICT_RESOURCE_PERMISSION_TYPE = "RESOURCE_PERMISSION_TYPE";
-
     // 字段关联：this.parent_id=id
     @BindField(entity = IamResourcePermission.class, field = "displayName", condition = "this.parent_id=id")
     private String parentDisplayName;
@@ -50,10 +51,25 @@ public class IamResourcePermissionListVO extends IamResourcePermission {
     @BindDict(type = DICT_RESOURCE_PERMISSION_TYPE, field = "displayType")
     private String displayTypeLabel;
 
+    // 关联数据字典：RESOURCE_PERMISSION_STATUS
+    @BindDict(type = DICT_RESOURCE_PERMISSION_STATUS, field = "status")
+    private String statusLabel;
+
     // 绑定iamResourcePermissionList
     @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND this.displayType ='PERMISSION'")
     private List<IamResourcePermission> permissionList;
 
     private List<IamResourcePermissionListVO> children;
 
+    private RouteMeta routeMeta;
+
+    public RouteMeta getRouteMeta() {
+        if (V.notEmpty(routeMeta)) {
+            return routeMeta;
+        }
+        if (V.isEmpty(this.getMeta())) {
+            return new RouteMeta();
+        }
+        return JSON.parseObject(this.getMeta(), RouteMeta.class);
+    }
 }

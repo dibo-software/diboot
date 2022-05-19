@@ -43,6 +43,12 @@ import java.util.List;
 public class IamResourcePermission extends BaseEntity {
     private static final long serialVersionUID = -6133621123987747250L;
 
+    // display_type字段的关联数据字典
+    public static final String DICT_RESOURCE_PERMISSION_TYPE = "RESOURCE_PERMISSION_TYPE";
+
+    // status字段的关联数据字典
+    public static final String DICT_RESOURCE_PERMISSION_STATUS = "RESOURCE_PERMISSION_STATUS";
+
     /**
      * 租户ID
      */
@@ -74,9 +80,19 @@ public class IamResourcePermission extends BaseEntity {
     @TableField()
     private String displayName;
 
-    // 前端编码
+    // 权限编码
+    @Length(max=200, message="路由地址长度应小于200")
+    @TableField()
+    private String routePath;
+
+    // 路由重定向地址
+    @Length(max=200, message="路由重定向地址应小于200")
+    @TableField()
+    private String redirectPath;
+
+    // 前端资源编码
     @NotNull(message = "前端资源编码不能为空")
-    @Length(max=100, message="前端资源编码长度应小于100")
+    @Length(max=50, message="前端资源编码长度应小于50")
     @TableField()
     private String resourceCode;
 
@@ -84,6 +100,16 @@ public class IamResourcePermission extends BaseEntity {
     @Length(max=200, message="权限编码长度应小于200")
     @TableField()
     private String permissionCode;
+
+    // meta配置
+    @Length(max=200, message="meta配置应小于300")
+    @TableField()
+    private String meta;
+
+    // 状态
+    @Length(max=10, message="状态长度应小于10")
+    @TableField()
+    private String status;
 
     // 排序号
     @TableField

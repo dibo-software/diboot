@@ -15,7 +15,11 @@
  */
 package com.diboot.iam.dto;
 
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.route.RouteMeta;
+import com.diboot.iam.entity.route.RouteRecord;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -37,4 +41,13 @@ public class IamResourcePermissionDTO extends IamResourcePermission {
 
     // 按钮/权限列表
     private List<IamResourcePermissionDTO> permissionList;
+
+    // meta数据
+    private RouteMeta routeMeta;
+
+    public void setRouteMeta(RouteMeta routeMeta) {
+        this.routeMeta = routeMeta;
+        routeMeta = V.isEmpty(routeMeta) ? new RouteMeta() : routeMeta;
+        this.setMeta(JSON.stringify(routeMeta));
+    }
 }

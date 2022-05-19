@@ -82,6 +82,14 @@ public class Cons extends com.diboot.core.config.Cons {
     }
 
     /**
+     * 字典编码 - 权限状态
+     */
+    public enum DICTCODE_RESOURCE_STATUS{
+        A,
+        I
+    }
+
+    /**
      * 字典编码 - 组织类型
      */
     public enum DICTCODE_ORG_TYPE{

@@ -76,18 +76,22 @@ create index idx_iam_user_role_tenant on iam_user_role (tenant_id);
 -- 前端资源权限表
 create table iam_resource_permission
 (
-  id            bigint  auto_increment comment 'ID' primary key,
-  parent_id     bigint     default 0                 not null comment '父级资源',
-  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
-  app_module  varchar(50)   null comment '应用模块',
-  display_type  varchar(20)                          not null comment '展现类型',
-  display_name  varchar(100)                         not null comment '显示名称',
-  resource_code varchar(100)                        null comment '权限编码',
-  permission_code varchar(200)                      null comment '权限编码',
-  sort_id       bigint                               null comment '排序号',
-  is_deleted     tinyint(1)  default 0                 not null comment '是否删除',
-  create_time    datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time    datetime   default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
+    id               bigint      auto_increment             comment 'ID' primary key,
+    parent_id        bigint      default 0                  not null comment '父级资源',
+    tenant_id        bigint                                 not null default 0 comment '租户ID',
+    app_module       varchar(50)                            null comment '应用模块',
+    display_type     varchar(20)                            not null comment '展现类型',
+    display_name     varchar(100)                           null comment '显示名称',
+    route_path       varchar(200)                           null comment '路由地址',
+    redirect_path    varchar(200)                           null comment '路由重定向地址',
+    resource_code    varchar(100)                            not null comment '前端资源编码',
+    permission_code  varchar(200)                           null comment '接口权限编码',
+    meta             varchar(300)                           null comment 'meta配置',
+    sort_id          bigint                                 null comment '排序号',
+    status           varchar(10)  default 'A'               not null comment '状态',
+    is_deleted       tinyint(1)   default 0                 not null comment '是否删除',
+    create_time      datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time      datetime     default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '资源权限';
 -- 索引
 create index idx_iam_resource_permission on iam_resource_permission (parent_id);
