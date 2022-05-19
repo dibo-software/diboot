@@ -98,6 +98,7 @@ const authMenu = [
           keepAlive: false,
           hollow: '@boolean',
           hideFooter: '@boolean',
+          borderless: '@boolean',
           permissions: [permission, permission, permission]
         }
       }

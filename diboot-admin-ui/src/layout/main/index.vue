@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { DefineComponent } from 'vue'
-import { RouteLocationNormalized } from 'vue-router'
 import useAppStore from '@/store/app'
 import useViewTabsStore from '@/store/viewTabs'
 
@@ -22,14 +21,17 @@ const scrollHeightStyle = computed(() => {
       : 'calc(100vh - 50px)'
   }
 })
-
+const route = useRoute()
 // 布局已用高度
 const layoutUsedHeight = computed(
-  //             是否全屏                                      (全屏包含 Tabs )  (未开启全屏 header + tabs)  padding
-  () => (props.fullScreen ? (props.fullScreen === true ? 0 : tabsHeight.value) : 50 + tabsHeight.value) + 20
+  () =>
+    //       是否全屏                                      (全屏包含 Tabs )  (未开启全屏 header + tabs)
+    (props.fullScreen ? (props.fullScreen === true ? 0 : tabsHeight.value) : 50 + tabsHeight.value) +
+    //   padding
+    (route.meta.borderless ? 0 : 20)
 )
 // 为需要已占可视高度的组件bind usedVisibleHeight
-const bindUsedVisibleHeight = (component: DefineComponent, route: RouteLocationNormalized) => {
+const bindUsedVisibleHeight = (component: DefineComponent) => {
   if (Object.keys(component.type?.props ?? {}).includes('usedVisibleHeight'))
     //                                 布局已用高度    +  bounded-padding
     return { usedVisibleHeight: layoutUsedHeight.value + (route.meta.hollow ? 0 : 20) }
@@ -45,12 +47,12 @@ const viewTabsStore = useViewTabsStore()
 
 <template>
   <el-scrollbar :style="scrollHeightStyle">
-    <router-view v-slot="{ Component, route }">
-      <transition :name="route.meta.transition" mode="out-in">
+    <router-view v-slot="{ Component }">
+      <transition mode="out-in">
         <keep-alive :include="viewTabsStore.cachedViews">
-          <div :key="route.fullPath" class="content">
+          <div :key="route.fullPath" class="content" :style="route.meta.borderless ? {} : { padding: '10px' }">
             <div :class="route.meta.hollow ? 'hollow' : 'bounded'">
-              <component :is="Component" v-bind="bindUsedVisibleHeight(Component, route)" />
+              <component :is="Component" v-bind="bindUsedVisibleHeight(Component)" />
             </div>
             <div v-if="appStore.enableFooter && $slots.footer && !route.meta.hideFooter" ref="footerRef" class="footer">
               <slot name="footer" />
@@ -64,7 +66,6 @@ const viewTabsStore = useViewTabsStore()
 
 <style scoped lang="scss">
 .content {
-  padding: 10px;
   background-color: var(--el-fill-color-light);
 
   .hollow {
