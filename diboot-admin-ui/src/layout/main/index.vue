@@ -30,7 +30,7 @@ const layoutUsedHeight = computed(
 )
 // 为需要已占可视高度的组件bind usedVisibleHeight
 const bindUsedVisibleHeight = (component: DefineComponent, route: RouteLocationNormalized) => {
-  if (component.type?.props?.usedVisibleHeight)
+  if (Object.keys(component.type?.props ?? {}).includes('usedVisibleHeight'))
     //                                 布局已用高度    +  bounded-padding
     return { usedVisibleHeight: layoutUsedHeight.value + (route.meta.hollow ? 0 : 20) }
   else return {}
