@@ -9,7 +9,7 @@ const iconVueFiles = import.meta.globEager('@/assets/icon/**/*.vue')
 /**
  * 构建本地图标
  */
-const Local = Object.keys(iconSvgFiles).reduce((all: any, path: string) => {
+const Local = Object.keys(iconSvgFiles).reduce((all: Record<string, unknown>, path: string) => {
   const name = path.replace(/.*icon\/(.*)\.svg/, '$1')
   all[name] = defineComponent({
     name,
@@ -17,7 +17,7 @@ const Local = Object.keys(iconSvgFiles).reduce((all: any, path: string) => {
   })
   return all
 }, {})
-Object.keys(iconVueFiles).reduce((all: any, path: string) => {
+Object.keys(iconVueFiles).reduce((all: Record<string, unknown>, path: string) => {
   const name = path.replace(/.*icon\/(.*)\.vue/, '$1')
   all[name] = { name, ...iconVueFiles[path].default }
   return all
@@ -26,4 +26,4 @@ Object.keys(iconVueFiles).reduce((all: any, path: string) => {
 /**
  * 导出所有图标资源
  */
-export default { Element, Local } as any
+export default { Element, Local } as Record<string, Record<string, unknown>>

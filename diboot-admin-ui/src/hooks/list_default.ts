@@ -19,7 +19,12 @@ export interface Pagination {
   total: number
 }
 
-export default <T>(option: ListOption<T> & DeleteOption) => {
+/**
+ * 列表操作
+ *
+ * @param option
+ */
+export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
   // 标记加载状态
   const loading = ref(false)
 
@@ -27,7 +32,7 @@ export default <T>(option: ListOption<T> & DeleteOption) => {
 
   const pagination: Partial<Pagination> = reactive({})
 
-  const queryParam: QueryParam<T> = reactive(_.cloneDeep(option.initQueryParam ?? {}))
+  const queryParam: QueryParam<D> = reactive(_.cloneDeep(option.initQueryParam ?? {}))
 
   const dateRangeQuery: Record<string, [string | number | Date, string | number | Date]> = reactive({})
 
@@ -54,7 +59,7 @@ export default <T>(option: ListOption<T> & DeleteOption) => {
   /**
    * 获取数据列表
    */
-  const getList = _.debounce(() => {
+  const getList = () => {
     loading.value = true
     api
       .get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
@@ -72,15 +77,15 @@ export default <T>(option: ListOption<T> & DeleteOption) => {
         })
       })
       .finally(() => (loading.value = false))
-  }, 300)
+  }
 
   /**
    * 搜索，查询第一页
    */
-  const onSearch = () => {
+  const onSearch = _.debounce(() => {
     pagination.current = 1
     getList()
-  }
+  }, 300)
 
   /**
    * 重置筛选条件
@@ -120,6 +125,11 @@ export interface DeleteOption {
   deleteCallback?: () => void
 }
 
+/**
+ * 删除数据
+ *
+ * @param option
+ */
 export const useDelete = (option: DeleteOption) => {
   /**
    * 删除数据
