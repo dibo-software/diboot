@@ -23,6 +23,8 @@ module.exports = {
     NodeJS: 'readonly'
   },
   rules: {
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-this-alias': ['off'],
     'comma-dangle': ['warn', 'only-multiline'],
     'vue/multi-word-component-names': 'off',
     'vue/html-self-closing': ['warn', { html: { void: 'always' } }],

@@ -4,13 +4,54 @@ import { Random } from 'mockjs'
 
 const baseUrl = '/api/dictionary'
 
+const deleteDataIds: string[] = []
+
 export default [
   {
     url: `${baseUrl}/list`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: () => {
-      return JsonResult.OK(dictionaryDataMap.list)
+    response: ({ query }: any) => {
+      return JsonResult.PAGINATION(
+        query.pageIndex,
+        query.pageSize,
+        Array.from({ length: 50 })
+          .map((_, index) => {
+            const i = index % 2
+            const item = dictionaryDataMap.list[i]
+            item.id = String(index + 1)
+            return item
+          })
+          .filter(e => !deleteDataIds.includes(e.id))
+      )
+    }
+  },
+  {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'delete',
+    response: ({ query }: any) => {
+      deleteDataIds.push(query.id)
+      return JsonResult.OK()
+    }
+  },
+  {
+    url: `${baseUrl}/cancelDeleted`,
+    timeout: Random.natural(50, 300),
+    method: 'patch',
+    response: ({ body }: any) => {
+      deleteDataIds.splice(0, deleteDataIds.length, ...deleteDataIds.filter(e => !body.includes(e)))
+      return JsonResult.OK()
+    }
+  },
+  {
+    url: `${baseUrl}/batchDelete`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: ({ body }: any) => {
+      deleteDataIds.push(...body)
+      console.log(deleteDataIds)
+      return JsonResult.OK()
     }
   },
   {

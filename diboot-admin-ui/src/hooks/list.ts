@@ -1,4 +1,4 @@
-import { ElNotification } from 'element-plus'
+import { ElButton, ElNotification } from 'element-plus'
 import { Ref } from 'vue'
 
 import { reactive } from 'vue'
@@ -28,6 +28,10 @@ export interface ListOptions<T> {
   listApi?: string
   // 删除接口
   deleteApiPrefix?: string
+  // 批量删除接口
+  batchRemoveApi?: string
+  // 撤回删除接口(批量)
+  cancelDeletedApi?: string
   // 导出接口
   exportApi?: string
   // 自定义参数（不被查询表单重置和改变的参数）
@@ -48,8 +52,8 @@ export interface ListOptions<T> {
   loading?: boolean
   // 标记导出
   exportLoadingData?: boolean
-  // 是否允许撤回删除
-  allowCanceledDelete?: boolean
+  // 是否允许撤回删除状态
+  allowCancelDeleted?: boolean
   // 是否重新加载
   reload?: boolean
   // 当前激活value
@@ -193,8 +197,9 @@ export class BaseListPageLoader<T> {
    * 查询条件后置处理
    */
   afterBuildQueryParam(queryParam: object): object {
-    return {}
+    return queryParam
   }
+
   clearQueryParam(): void {
     this.options.queryParam = {}
   }
@@ -213,6 +218,92 @@ export class BaseListPageLoader<T> {
         this.options.queryParam[`${key}End`] = value[1]
       }
     }
+  }
+
+  /**
+   * 批量删除数据
+   *
+   * @param ids
+   */
+  public batchRemove(ids: Array<string>) {
+    if (!(ids && ids.length)) {
+      ElMessage.warning('未选择数据')
+      return
+    }
+    let batchRemoveApi = `${this.options.baseApi}/batchDelete`
+    if (this.options.batchRemoveApi) {
+      batchRemoveApi = this.options.batchRemoveApi
+    }
+    ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
+      .then(() => {
+        api
+          .post(batchRemoveApi, ids)
+          .then(() => this.removeSuccessHandler(ids))
+          .catch(err => {
+            ElMessage.error(err.msg || err.message || '删除失败')
+          })
+      })
+      .catch(() => null)
+  }
+
+  /**
+   * 删除成功处理
+   *
+   * @param ids
+   */
+  removeSuccessHandler(ids: Array<string>) {
+    this.afterRemoveSuccess(ids)
+    if (this.options.allowCancelDeleted === false) {
+      ElMessage.success('数据删除成功')
+      return
+    }
+    const _this: BaseListPageLoader<T> = this
+    const cancelDeletedApi = this.options.cancelDeletedApi
+      ? this.options.cancelDeletedApi
+      : `${this.options.baseApi}/cancelDeleted`
+    // 支持撤回的删除成功提示
+    const message = ElMessage.success({
+      type: 'success',
+      message: h('span', null, [
+        h('span', { style: { color: 'var(--el-color-success)' } }, '数据删除成功'),
+        h(
+          ElButton,
+          {
+            bg: true,
+            text: true,
+            type: 'primary',
+            style: { height: '25px', position: 'absolute', right: '13px' },
+            onClick: () => {
+              message.close()
+              api
+                .patch(cancelDeletedApi, ids)
+                .then(() => {
+                  ElMessage.success('撤回成功')
+                  _this.afterCancelDeleted(ids)
+                })
+                .catch(() => ElMessage.error('撤回失败'))
+            }
+          },
+          { default: () => '撤回' }
+        )
+      ])
+    })
+  }
+
+  /**
+   * 删除成功后置处理
+   * @param ids
+   */
+  afterRemoveSuccess(ids: Array<string>) {
+    console.log('afterRemoveSuccess', ids)
+  }
+
+  /**
+   * 取消删除后置处理
+   * @param ids
+   */
+  afterCancelDeleted(ids: Array<string>) {
+    console.log('afterRemoveSuccess', ids)
   }
 }
 
@@ -244,12 +335,14 @@ export default function <T>(options: HookOptions<T>) {
       pageLoader?.onSearch()
     }
   })
-  const { list: dataList, queryParam, loading, pagination } = toRefs(pageLoader.options)
+  const { list: dataList, queryParam, advanced, dateRangeQuery, loading, pagination } = toRefs(pageLoader.options)
   return {
     pageLoader,
     queryParam,
+    dateRangeQuery,
     dataList,
     loading,
+    advanced,
     pagination
   }
 }
