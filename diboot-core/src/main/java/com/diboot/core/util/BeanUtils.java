@@ -188,6 +188,10 @@ public class BeanUtils {
      * @return
      */
     public static String getStringProperty(Object obj, String field){
+        if(obj instanceof Map){
+            Map objMap = (Map)obj;
+            return objMap.containsKey(field)? S.valueOf(objMap.get(field)) : null;
+        }
         Object property = getProperty(obj, field);
         if(property == null){
             return null;
@@ -798,7 +802,6 @@ public class BeanUtils {
      * @return
      */
     public static Class getGenericityClass(Object instance, int index){
-        //TODO 可缓存
         Class hostClass = getTargetClass(instance);
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
