@@ -33,7 +33,7 @@ export function createRouterGuard(router: Router) {
         return to.path === redirect ? { ...to, replace: true } : { path: redirect }
       } catch (e) {
         // 获取数据异常
-        console.error('动态加载授权路由失败', e)
+        console.log('动态加载授权路由失败', e)
       }
     }
 

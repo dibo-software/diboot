@@ -79,20 +79,22 @@ export default [
 const permission = '@pick(["detail", "create", "update", "delete", "import", "export"])'
 // 随机图标
 const icon = `Element:@pick(${Object.keys(Element)})`
+// 避免@转义
+const prefix = '@pick(["@"])/views/'
 
 // 授权菜单
 const authMenu = [
   {
     path: '/demo',
     name: 'Demo',
-    meta: { title: 'Demo', icon, componentName: 'Layout' },
+    meta: { title: 'Demo', icon },
     'children|20': [
       {
         path: `hello@string('number', 5)`,
         name: 'Hello-@increment',
         meta: {
           title: 'Hello-@increment',
-          componentName: 'Dashboard',
+          componentPath: prefix + 'dashboard/index.vue',
           icon,
           sort: '@natural',
           keepAlive: false,
@@ -105,9 +107,9 @@ const authMenu = [
     ]
   },
   {
-    path: '/external',
+    path: 'external',
     name: 'External ',
-    meta: { title: '外部链接', icon: 'Element:Connection', componentName: 'Layout' },
+    meta: { title: '外部链接', icon: 'Element:Connection' },
     children: [
       {
         path: 'vue-js',
@@ -126,17 +128,17 @@ const authMenu = [
     ]
   },
   {
-    path: '/system',
+    path: 'system',
     name: 'System',
     redirect: '/system/iamResourcePermission',
-    meta: { title: '系统管理', icon: 'Element:SetUp', componentName: 'Layout' },
+    meta: { title: '系统管理', icon: 'Element:SetUp' },
     children: [
       {
         path: 'iamResourcePermission',
         name: 'iamResourcePermission-@increment',
         meta: {
           title: '资源权限管理',
-          componentName: 'IamResourcePermissionList',
+          componentPath: prefix + 'system/iamResourcePermission/list.vue',
           sort: '@natural',
           keepAlive: false,
           hollow: '@boolean',
@@ -148,7 +150,7 @@ const authMenu = [
         name: 'Role',
         meta: {
           title: '角色管理',
-          componentName: 'RoleList',
+          componentPath: prefix + 'system/role/list.vue',
           sort: 3
         }
       },
@@ -157,7 +159,7 @@ const authMenu = [
         name: 'Dictionary',
         meta: {
           title: 'Dictionary',
-          componentName: 'DictionaryList',
+          componentPath: prefix + 'system/dictionary/list.vue',
           keepAlive: false
         }
       }

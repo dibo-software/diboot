@@ -1,5 +1,4 @@
 import { Recordable } from 'vite-plugin-mock'
-import Mock from 'mockjs'
 
 // 分页
 export const pagination = <T = unknown>(pageNo: number, pageSize: number, array: T[]): T[] => {
@@ -19,13 +18,12 @@ export interface ApiRequest<B = Recordable, Q = B, H = Recordable> {
   headers: H
 }
 
-const resultJson = (code: number, msg: string, data?: unknown, ext = {}) =>
-  Mock.mock({
-    ...ext,
-    code,
-    data,
-    msg
-  })
+const resultJson = (code: number, msg: string, data?: unknown, ext = {}) => ({
+  ...ext,
+  code,
+  data,
+  msg
+})
 
 /**
  * 通用数据返回
