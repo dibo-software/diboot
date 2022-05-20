@@ -171,6 +171,10 @@ public class BeanUtils {
      * @return
      */
     public static Object getProperty(Object obj, String field){
+        if(obj instanceof Map){
+            Map objMap = (Map)obj;
+            return objMap.get(field);
+        }
         try {
             BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
             return wrapper.getPropertyValue(field);
