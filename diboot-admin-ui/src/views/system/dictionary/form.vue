@@ -1,5 +1,6 @@
-<script setup lang="ts">
+<script setup lang="ts" name="DictionaryForm">
 import { defineEmits } from 'vue'
+import useForm from '@/hooks/form'
 
 interface FormModel {
   id?: string
@@ -9,47 +10,52 @@ interface FormModel {
   children?: FormModel[]
 }
 type Props = {
-  title?: string
   type?: string
+  width?: number | string
 }
 const props = withDefaults(defineProps<Props>(), {
-  title: '数据编辑',
-  type: 'modal'
+  type: 'modal',
+  width: 720
 })
-const emit = defineEmits(['complete'])
+// const emit = defineEmits(['complete'])
 
 const formLabelWidth = '140px'
-const visible = ref(false)
-const form = reactive<FormModel>({
+const initModel = {
   itemName: '',
   itemValue: '',
   description: '',
   children: []
-})
-
-class BaseFormLoader<T> {
-  public options: FormOptions<T>
 }
 
-const open = async (id?: string) => void {}
+const { pageLoader, title, model, visible, loading } = useForm<FormModel>({
+  options: {
+    baseApi: '/dictionary',
+    model: initModel
+  }
+})
+
+const open = async (id?: string) => {
+  await pageLoader.open(id)
+}
+
+defineExpose({
+  open
+})
 </script>
 <template>
-  <el-dialog v-model="visible" :title="title">
-    <el-form :model="form">
-      <el-form-item label="Promotion name" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" />
+  <el-dialog v-model="visible" :width="width" :title="title">
+    <el-form :model="model">
+      <el-form-item label="名称" :label-width="formLabelWidth">
+        <el-input v-model="model.itemName" autocomplete="off" />
       </el-form-item>
-      <el-form-item label="Zones" :label-width="formLabelWidth">
-        <el-select v-model="form.region" placeholder="Please select a zone">
-          <el-option label="Zone No.1" value="shanghai" />
-          <el-option label="Zone No.2" value="beijing" />
-        </el-select>
+      <el-form-item label="名称" :label-width="formLabelWidth">
+        <el-input v-model="model.itemValue" autocomplete="off" />
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="visible = false">Cancel</el-button>
-        <el-button type="primary" @click="visible = false">Confirm</el-button>
+        <el-button @click="visible = false">取消</el-button>
+        <el-button type="primary" @click="visible = false">确认</el-button>
       </span>
     </template>
   </el-dialog>

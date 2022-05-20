@@ -20,9 +20,9 @@ export interface FormOptions<T> {
   // 表单数据
   model?: T
   // 状态数据
-  visible: boolean
-  loading: boolean
-  confirmSubmit: boolean
+  visible?: boolean
+  loading?: boolean
+  confirmSubmit?: boolean
 }
 
 export class BaseFormLoader<T> {
@@ -41,7 +41,7 @@ export class BaseFormLoader<T> {
     confirmSubmit: false
   })
 
-  public async open(id: string) {
+  public async open(id?: string) {
     if (id == null) {
       this.options.visible = true
       return
@@ -68,17 +68,18 @@ export default function <T>(options: HookOptions<T>) {
   // 赋值所有选项参数
   if (loaderOptions != null) {
     for (const [key, value] of Object.entries(loaderOptions)) {
-      // pageLoader.options[key as keyof FormOptions<unknown>] = value
+      pageLoader.options[key as keyof FormOptions<any>] = value
     }
   }
   // 赋值自定义参数
   if (baseApi != null) {
     pageLoader.options.baseApi = baseApi
   }
-  const { model, visible, loading, confirmSubmit } = toRefs(pageLoader.options)
+  const { model, title, visible, loading, confirmSubmit } = toRefs(pageLoader.options)
   return {
     pageLoader,
     model,
+    title,
     visible,
     loading,
     confirmSubmit

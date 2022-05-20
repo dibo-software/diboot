@@ -1,5 +1,6 @@
 <script setup lang="ts" name="DictionaryList">
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import formPage from './form.vue'
 interface Dictionary {
   id: string
   type: string
@@ -33,6 +34,12 @@ const openEdit = (id: any) => {
     type: 'warning'
   })
 }
+
+const form = ref(null)
+const create = () => {
+  ;(form as any).value.open()
+}
+console.log('form', form)
 </script>
 <template>
   <el-form label-width="80px" @submit.prevent>
@@ -74,7 +81,7 @@ const openEdit = (id: any) => {
     </el-row>
   </el-form>
   <el-space>
-    <el-button type="primary">新建</el-button>
+    <el-button type="primary" @click="create">新建</el-button>
     <el-button @click="pageLoader.batchRemove(multipleSelectionIds)">批量删除</el-button>
     <el-button>导入</el-button>
     <el-button>导出</el-button>
@@ -123,4 +130,5 @@ const openEdit = (id: any) => {
     @size-change="pageLoader.getList()"
     @current-change="pageLoader.getList()"
   />
+  <form-page ref="form" />
 </template>
