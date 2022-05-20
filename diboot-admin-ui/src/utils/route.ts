@@ -1,10 +1,5 @@
-import { RouteRecord, RouteRecordName, RouteRecordRaw } from 'vue-router'
+import { RouteRecord, RouteRecordName, RouteRecordRaw, RouterView } from 'vue-router'
 import Layout from '@/layout/index.vue'
-
-const RouterView = defineComponent({
-  name: 'RouteView',
-  render: () => h('router-view')
-})
 
 /**
  * 视图组件
@@ -56,12 +51,31 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           route.component = RouterView
         }
         // 父级目录重定向首个子菜单
-        route.redirect = buildFullPath(route.children[0].path, fullPath)
+        if (!route.redirect) route.redirect = buildFullPath(route.children[0].path, fullPath)
       } else {
         delete route.children
         if (route.meta?.componentName) {
           route.component = resolveComponent(route.meta?.componentName)
-        } else return false
+        } else if (route.meta?.url) {
+          if (route.meta?.iframe) {
+            // iframe
+            route.component = defineComponent({
+              props: { usedVisibleHeight: { type: Number, default: 0 } },
+              setup: props => {
+                const iframeHeight = computed(() => `calc(100vh - ${props.usedVisibleHeight + 4}px)`)
+                return () =>
+                  h('iframe', { src: route.meta?.url, style: { border: 0, width: '100%', height: iframeHeight.value } })
+              }
+            })
+            route.meta = { ...route.meta, hollow: true, hideFooter: true, borderless: true }
+          } else {
+            // 外部链接（打开新窗口；阻止路由）
+            route.beforeEnter = () => {
+              window.open(route.meta?.url)
+              return false
+            }
+          }
+        } else return false // 无法识别的路由阻止添加
       }
       return true
     })

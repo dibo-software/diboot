@@ -6,6 +6,8 @@ declare module 'vue-router' {
     icon?: string
     module?: string
     componentName?: string
+    url?: string
+    iframe?: boolean
     permissions?: Array<string>
     sort?: number
     affixTab?: boolean

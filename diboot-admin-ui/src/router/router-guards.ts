@@ -54,7 +54,7 @@ export function createRouterGuard(router: Router) {
 
   router.afterEach((to, from, failure) => {
     if (isNavigationFailure(failure)) {
-      nProgress.remove()
+      nProgress.done()
       return
     }
     nProgress.done()

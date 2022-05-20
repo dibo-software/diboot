@@ -98,8 +98,30 @@ const authMenu = [
           keepAlive: false,
           hollow: '@boolean',
           hideFooter: '@boolean',
+          borderless: '@boolean',
           permissions: [permission, permission, permission]
         }
+      }
+    ]
+  },
+  {
+    path: '/external',
+    name: 'External ',
+    meta: { title: '外部链接', icon: 'Element:Connection', componentName: 'Layout' },
+    children: [
+      {
+        path: 'vue-js',
+        name: 'VueJs',
+        meta: {
+          title: 'VueJs',
+          url: 'https://staging-cn.vuejs.org',
+          iframe: true
+        }
+      },
+      {
+        path: 'baidu',
+        name: 'BaiDu',
+        meta: { title: '百度', url: 'https://www.baidu.com' }
       }
     ]
   },
