@@ -121,12 +121,12 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         List<IamResourcePermission> oldPermissionList = this.getEntityList(
                 Wrappers.<IamResourcePermission>lambdaQuery()
                         .eq(IamResourcePermission::getParentId, iamResourcePermissionDTO.getId())
-                        .eq(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION)
+                        .eq(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
         );
         if (V.notEmpty(oldPermissionList)){
             LambdaQueryWrapper<IamResourcePermission> deleteWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
                     .eq(IamResourcePermission::getParentId, iamResourcePermissionDTO.getId())
-                    .eq(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION);
+                    .eq(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
             if (V.notEmpty(updatePermissionIdList)) {
                 deleteWrapper.notIn(IamResourcePermission::getId, updatePermissionIdList);
             }
