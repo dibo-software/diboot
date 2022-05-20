@@ -34,6 +34,15 @@ public class RouteMeta implements Serializable {
      */
     private String componentName;
     /**
+     * 外链或iframe地址
+     */
+    private String url;
+
+    /**
+     * 是否是iframe
+     */
+    private Boolean iframe;
+    /**
      * 权限
      */
     private List<String> permissions;
@@ -46,7 +55,7 @@ public class RouteMeta implements Serializable {
      */
     private Boolean affixTab;
     /**
-     * 是否忽略认真
+     * 是否忽略认证
      */
     private Boolean ignoreAuth;
     /**
@@ -54,14 +63,20 @@ public class RouteMeta implements Serializable {
      */
     private Boolean keepAlive;
     /**
-     * 当前路由是否隐藏
+     * 当前路由是否在菜单中隐藏
      */
     private Boolean hidden;
+    /**
+     * 是否显示背景色
+     */
     private Boolean hollow;
     /**
      * 是否隐藏页面底部
      */
     private Boolean hideFooter;
+    /**
+     * 是否显示边框
+     */
     private Boolean borderless;
     /**
      * 是否打开新窗口

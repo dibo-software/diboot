@@ -98,7 +98,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         }
         LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
                 .ne(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
-                .eq(IamResourcePermission::getStatus, Cons.DICTCODE_RESOURCE_STATUS.I.name());
+                .eq(IamResourcePermission::getStatus, Cons.DICTCODE_RESOURCE_STATUS.A.name());
         if (!isAdmin) {
             List<Long> roleIds = roleList.stream().map(IamRole::getId).collect(Collectors.toList());
             // 获取角色对应的菜单权限
@@ -120,7 +120,6 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         List<RouteRecord> routeRecordList = new ArrayList<>();
         buildRouteRecordList(routeRecordList, iamResourcePermissionListVOS);
         return routeRecordList;
-
     }
 
     @Override
@@ -151,30 +150,6 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         if (list == null) {
             list = Collections.emptyList();
         }
-        return list;
-    }
-
-    @Override
-    public List<String> getApiUrlList(String appModule, List<Long> roleIds) {
-        if (V.isEmpty(roleIds)) {
-            return Collections.emptyList();
-        }
-        List<Long> permissionIds = getPermissionIdsByRoleIds(appModule, roleIds);
-        if (V.isEmpty(permissionIds)) {
-            return Collections.emptyList();
-        }
-        // 查询权限
-        List<IamResourcePermission> resourcePermissions = iamResourcePermissionService.getEntityList(
-                Wrappers.<IamResourcePermission>lambdaQuery()
-                        .select(IamResourcePermission::getPermissionCodes)
-                        .in(IamResourcePermission::getId, permissionIds)
-                        .isNotNull(IamResourcePermission::getPermissionCode)
-        );
-        if (resourcePermissions == null) {
-            return Collections.emptyList();
-        }
-        // 转换为string list
-        List<String> list = BeanUtils.collectToList(resourcePermissions, IamResourcePermission::getPermissionCode);
         return list;
     }
 
@@ -300,8 +275,16 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
                         .map(IamResourcePermission::getResourceCode)
                         .collect(Collectors.toList()));
             }
+            // 非菜单的情况下，可能是外链或iframe
+            if (V.notEquals(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name(), resource.getDisplayType())) {
+                routeMeta.setUrl(resource.getRoutePath());
+                resource.setRoutePath(null);
+            }
+            // 设置类型
+            if (V.equals(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.IFRAME.name(), resource.getDisplayType())) {
+                routeMeta.setIframe(true);
+            }
             routeRecord.setName(resource.getResourceCode())
-                    .setType(resource.getDisplayType())
                     .setPath(resource.getRoutePath())
                     .setRedirect(resource.getRedirectPath())
                     .setMeta(routeMeta);

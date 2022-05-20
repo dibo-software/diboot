@@ -23,11 +23,6 @@ public class RouteRecord implements Serializable {
     private String name;
 
     /**
-     * 菜单类型
-     */
-    private String type;
-
-    /**
      * 菜单地址
      */
     private String path;

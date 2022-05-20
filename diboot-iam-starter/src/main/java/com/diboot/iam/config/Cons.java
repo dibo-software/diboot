@@ -112,7 +112,9 @@ public class Cons extends com.diboot.core.config.Cons {
     public enum RESOURCE_PERMISSION_DISPLAY_TYPE{
         MODULE,
         MENU,
-        PERMISSION
+        PERMISSION,
+        IFRAME,
+        OUTSIDE_URL
     }
 
     /**
