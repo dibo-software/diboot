@@ -44,12 +44,14 @@ export class BaseFormLoader<T> {
   public async open(id?: string) {
     if (id == null) {
       this.options.visible = true
+      this.afterOpen(id)
       return
     }
     await this.getFormModel(id)
+    this.afterOpen(id)
   }
 
-  public async afterOpen(id: string) {
+  public async afterOpen(id?: string) {
     console.log('afterOpen id', id)
   }
 

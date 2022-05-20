@@ -257,7 +257,6 @@ export class BaseListPageLoader<T> {
       ElMessage.success('数据删除成功')
       return
     }
-    const _this: BaseListPageLoader<T> = this
     const cancelDeletedApi = this.options.cancelDeletedApi
       ? this.options.cancelDeletedApi
       : `${this.options.baseApi}/cancelDeleted`
@@ -279,7 +278,7 @@ export class BaseListPageLoader<T> {
                 .patch(cancelDeletedApi, ids)
                 .then(() => {
                   ElMessage.success('撤回成功')
-                  _this.afterCancelDeleted(ids)
+                  this.afterCancelDeleted(ids)
                 })
                 .catch(() => ElMessage.error('撤回失败'))
             }
