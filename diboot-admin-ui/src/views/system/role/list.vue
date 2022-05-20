@@ -1,16 +1,8 @@
 <script setup lang="ts" name="RoleList">
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import type { Role } from './type'
 
 defineProps<{ usedVisibleHeight?: number }>()
-
-interface Role {
-  id: string
-  name: string
-  code: string
-  description: string
-  createTime: string
-  updateTime: string
-}
 
 const {
   queryParam,
@@ -23,7 +15,7 @@ const {
   pagination,
   remove,
   batchRemove
-} = useList<Role>({ baseApi: '/role' })
+} = useListDefault<Role>({ baseApi: '/role' })
 
 getList()
 
@@ -40,7 +32,7 @@ const openDetail = (id: string) => {
     type: 'success'
   })
 }
-const openEdit = (id: any) => {
+const openEdit = (id: string) => {
   ElMessage({
     message: 'open:Edit ' + id,
     grouping: true,
@@ -140,7 +132,7 @@ const openEdit = (id: any) => {
     </el-table-column>
   </el-table>
   <el-pagination
-    v-show="pagination.total > 0"
+    v-if="pagination.total"
     v-model:currentPage="pagination.current"
     v-model:page-size="pagination.pageSize"
     style="position: relative; top: 10px; margin-bottom: 10px; justify-content: flex-end"

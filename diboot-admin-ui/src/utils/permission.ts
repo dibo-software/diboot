@@ -11,10 +11,10 @@ import router from '@/router'
  */
 export function checkRole(value: string | Array<string>, not = false, all = false) {
   if (value && value.length) {
-    const roles = useAuthStore().roles
+    const roles = useAuthStore().roles ?? []
     const permissionRoles = value instanceof Array ? value : [value]
-    const findFn = (role: string) => permissionRoles.includes(role)
-    const exist = all ? roles.every(findFn) : roles?.some(findFn)
+    const findFn = (role: string) => roles.includes(role)
+    const exist = all ? permissionRoles.every(findFn) : permissionRoles.some(findFn)
     return not ? !exist : exist
   } else {
     console.error(`need roles!`)
@@ -34,8 +34,8 @@ export function checkPermission(value: string | Array<string>, not = false, all 
   if (value && value.length) {
     const permissions = router.currentRoute.value.meta?.permissions ?? []
     const permissionList = value instanceof Array ? value : [value]
-    const findFn = (permission: string) => permissionList.includes(permission)
-    const exist = all ? permissions.every(findFn) : permissions.some(findFn)
+    const findFn = (permission: string) => permissions.includes(permission)
+    const exist = all ? permissionList.every(findFn) : permissionList.some(findFn)
     return not ? !exist : exist
   } else {
     console.error(`need permissions!`)

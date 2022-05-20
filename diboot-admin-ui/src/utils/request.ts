@@ -64,7 +64,7 @@ service.interceptors.response.use(
         default:
           message = '网络可能出现问题'
       }
-      console.log(message)
+      console.error(message)
     }
     return Promise.reject(error)
   }
@@ -122,39 +122,39 @@ function unpack<T>(request: Promise<AxiosResponse<ApiData<T>>>): Promise<ApiData
 }
 
 const api = {
-  get<T>(url: string, params?: any) {
-    return unpack(service.get<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, { params }))
+  get<T>(url: string, params?: unknown) {
+    return unpack(service.get<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, { params }))
   },
-  post<T>(url: string, data?: any) {
+  post<T>(url: string, data?: unknown) {
     return unpack(
-      service.post<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, JSON.stringify(data), {
+      service.post<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8'
         }
       })
     )
   },
-  put<T>(url: string, data?: any) {
+  put<T>(url: string, data?: unknown) {
     return unpack(
-      service.put<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, JSON.stringify(data), {
+      service.put<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8'
         }
       })
     )
   },
-  patch<T>(url: string, data?: any) {
+  patch<T>(url: string, data?: unknown) {
     return unpack(
-      service.patch<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, JSON.stringify(data), {
+      service.patch<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, JSON.stringify(data), {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8'
         }
       })
     )
   },
-  delete<T>(url: string, params?: any) {
+  delete<T>(url: string, params?: unknown) {
     return unpack(
-      service.delete<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, {
+      service.delete<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, {
         params,
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -171,7 +171,7 @@ const api = {
    * @param formData
    */
   upload<T>(url: string, formData: FormData) {
-    return unpack(service.post<ApiData<T>, AxiosResponse<ApiData<T>>, any>(url, formData))
+    return unpack(service.post<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, formData))
   },
   /**
    * GET下载文件
@@ -179,9 +179,9 @@ const api = {
    * @param url
    * @param params
    */
-  download(url: string, params?: any) {
+  download(url: string, params?: unknown) {
     return unpack(
-      service.get<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, any>(url, {
+      service.get<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, unknown>(url, {
         responseType: 'arraybuffer',
         params,
         headers: {
@@ -197,9 +197,9 @@ const api = {
    * @param url
    * @param data
    */
-  postDownload(url: string, data?: any) {
+  postDownload(url: string, data?: unknown) {
     return unpack(
-      service.post<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, any>(url, JSON.stringify(data), {
+      service.post<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, unknown>(url, JSON.stringify(data), {
         responseType: 'arraybuffer',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',

@@ -1,5 +1,5 @@
 import { MockMethod } from 'vite-plugin-mock'
-import JsonResult from '../_util'
+import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 
 const baseUrl = '/api'
@@ -46,4 +46,4 @@ export default [
       })
     }
   }
-]
+] as MockMethod[]

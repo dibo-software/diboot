@@ -142,7 +142,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
                 EqualsTo equalsTo = new EqualsTo();
                 equalsTo.setLeftExpression(new Column(idCol));
                 if(idValues.get(0) instanceof Long){
-                    equalsTo.setRightExpression(new LongValue((long)idValues.get(0)));
+                    equalsTo.setRightExpression(new LongValue((Long)idValues.get(0)));
                 }
                 else{
                     equalsTo.setRightExpression(new StringValue(S.defaultValueOf(idValues.get(0))));

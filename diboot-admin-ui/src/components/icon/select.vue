@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import IconLibrary from '@/config/iconLibrary'
 
-const getIconList = (key: string): any => Object.values(IconLibrary[key])
+const getIconList = (key: string) =>
+  Object.values(IconLibrary[key] as Record<string, { name: string } & Record<string, unknown>>)
 
 defineProps<{ modelValue?: string }>()
 

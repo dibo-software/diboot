@@ -24,7 +24,7 @@ export default defineStore('auth', {
     }
   },
   actions: {
-    login(account: any) {
+    login(account: unknown) {
       return new Promise((resolve, reject) => {
         api
           .post<{ token: string }>('/auth/login', account)

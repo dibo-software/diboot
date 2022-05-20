@@ -1,4 +1,6 @@
 <script setup lang="ts" name="404">
+import { onBeforeRouteLeave } from 'vue-router'
+
 const router = useRouter()
 // 返回首页
 const goHome = () => {
@@ -20,6 +22,9 @@ function resetTimer() {
 }
 
 resetTimer()
+
+// 离开时销毁计时器
+onBeforeRouteLeave(() => clearTimeout(timer))
 </script>
 
 <template>

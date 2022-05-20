@@ -1,12 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
-import eslintPlugin from 'vite-plugin-eslint/dist'
+import eslintPlugin from 'vite-plugin-eslint'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { viteMockServe } from 'vite-plugin-mock'
-import { resolve } from 'path'
+import { fileURLToPath, URL } from 'url'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -14,8 +14,7 @@ export default defineConfig(({ command }) => {
     plugins: [
       vue(),
       VueSetupExtend(),
-      // eslint 自动修复
-      eslintPlugin({ fix: true }),
+      eslintPlugin(),
       AutoImport({
         // 解析器
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
@@ -27,7 +26,8 @@ export default defineConfig(({ command }) => {
           { lodash: [['*', '_']] },
           { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
           { '@/utils/request': ['api', 'baseURL'] },
-          { '@/hooks/list': [['default', 'useList']] }
+          { '@/hooks/list': [['default', 'useList']] },
+          { '@/hooks/list_default': [['default', 'useListDefault']] }
         ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',
@@ -70,10 +70,10 @@ export default defineConfig(({ command }) => {
       }
     },
     resolve: {
-      alias: [
-        { find: '@', replacement: resolve(__dirname, 'src') },
-        { find: '#', replacement: resolve(__dirname, 'types') }
-      ]
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        '#': fileURLToPath(new URL('./types', import.meta.url))
+      }
     }
   }
 })

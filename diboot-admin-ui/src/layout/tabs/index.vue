@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouteLocationNormalized } from 'vue-router'
+import { onBeforeRouteLeave, RouteLocationNormalized } from 'vue-router'
 import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
 import { ElScrollbar } from 'element-plus'
 import Draggable from 'vuedraggable'
@@ -22,7 +22,7 @@ onMounted(() => refreshButton())
 // tabs 位置
 const tabsPosition = ref(0)
 
-const scroll = ({ scrollLeft }: any) => {
+const scroll = ({ scrollLeft }: { scrollLeft: number }) => {
   tabsPosition.value = scrollLeft
 }
 
@@ -63,27 +63,11 @@ watch(
   },
   { immediate: true }
 )
-onUnmounted(() => {
-  appStore.enableTabs && viewTabsStore.tabList.splice(viewTabsStore.tabList.length - 1)
-})
-
-// 右键菜单
-const menu = reactive<{ route?: RouteLocationNormalized; locator?: any }>({ route })
-const contentMenuTarget = ref()
-const contentMenu = ref()
-
-const rightClick = (event: MouseEvent, route: RouteLocationNormalized) => {
-  contentMenu.value?.handleClose()
-  menu.route = route
-  menu.locator = {
-    position: 'fixed',
-    left: `${event.clientX + 1}px`, // X 轴坐标
-    top: `${event.clientY - 10}px` // Y 轴坐标
-  }
-  setTimeout(() => {
-    contentMenuTarget.value?.click()
-  }, 0)
-}
+onUnmounted(() =>
+  onBeforeRouteLeave(() => {
+    appStore.enableTabs && viewTabsStore.tabList.splice(viewTabsStore.tabList.length - 1)
+  })
+)
 
 // tab 操作
 const closeTab = (tab: RouteLocationNormalized) => {
@@ -146,16 +130,34 @@ const fullScreenTabsView = () => {
         <div ref="tabsRef">
           <draggable :list="viewTabsStore.tabList" animation="300" item-key="fullPath" class="tabs">
             <template #item="{ element }">
-              <el-button
-                :type="$route.name === element.name ? 'primary' : ''"
-                @contextmenu.prevent="event => rightClick(event, element)"
-                @click="$router.push(element.fullPath)"
-              >
-                {{ element.meta.title }}
-                <el-icon v-show="allowClose(element)" :size="18" @click="closeTab(element)">
-                  <Close />
-                </el-icon>
-              </el-button>
+              <el-dropdown trigger="contextmenu">
+                <el-button
+                  :type="$route.name === element.name ? 'primary' : ''"
+                  @click="$router.push(element.fullPath)"
+                >
+                  {{ element.meta.title }}
+                  <el-icon v-show="allowClose(element)" :size="18" @click="closeTab(element)">
+                    <Close />
+                  </el-icon>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item :disabled="findTabIndex(element) === 0" @click="closeLeftTabs(element)">
+                      关闭左侧页签
+                    </el-dropdown-item>
+                    <el-dropdown-item
+                      :disabled="findTabIndex(element) === viewTabsStore.tabList.length - 1"
+                      @click="closeRightTabs(element)"
+                    >
+                      关闭右侧页签
+                    </el-dropdown-item>
+                    <el-dropdown-item :disabled="viewTabsStore.tabList.length === 1" @click="closeOtherTabs(element)">
+                      关闭其他页签
+                    </el-dropdown-item>
+                    <el-dropdown-item divided @click="fullScreenTabView(element)">当前页全屏</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
           </draggable>
         </div>
@@ -194,27 +196,6 @@ const fullScreenTabsView = () => {
       <slot :full-screen="fullScreen" />
     </div>
   </div>
-  <!-- tab 菜单 -->
-  <el-dropdown ref="contentMenu" trigger="click" :style="menu.locator" style="position: fixed">
-    <div ref="contentMenuTarget" />
-    <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item :disabled="findTabIndex(menu.route) === 0" @click="closeLeftTabs(menu.route)">
-          关闭左侧页签
-        </el-dropdown-item>
-        <el-dropdown-item
-          :disabled="findTabIndex(menu.route) === viewTabsStore.tabList.length - 1"
-          @click="closeRightTabs(menu.route)"
-        >
-          关闭右侧页签
-        </el-dropdown-item>
-        <el-dropdown-item :disabled="viewTabsStore.tabList.length === 1" @click="closeOtherTabs(menu.route)">
-          关闭其他页签
-        </el-dropdown-item>
-        <el-dropdown-item divided @click="fullScreenTabView(menu.route)">当前页全屏</el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-  </el-dropdown>
 </template>
 
 <style scoped lang="scss">
@@ -236,6 +217,10 @@ const fullScreenTabsView = () => {
     display: flex;
     margin: 0 10px;
 
+    .el-dropdown {
+      padding-right: 5px;
+    }
+
     .el-button {
       height: 30px;
 
@@ -249,10 +234,6 @@ const fullScreenTabsView = () => {
           background-color: var(--el-color-primary-light-5);
         }
       }
-    }
-
-    .el-button + .el-button {
-      margin-left: 5px;
     }
   }
 
