@@ -111,7 +111,11 @@ public class BindingCacheManager {
                             cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
                             cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
                             uniqueEntitySet.add(entityClass.getName());
+                            log.debug("缓存entity: {} , service: {}", entityClass.getSimpleName(), entry.getKey());
                         }
+                    }
+                    else{
+                        log.warn("从service: {} 中提取 entityClass 失败", entry.getKey());
                     }
                 }
             } else {
