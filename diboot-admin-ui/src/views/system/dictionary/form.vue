@@ -1,5 +1,4 @@
 <script setup lang="ts" name="DictionaryForm">
-import { defineEmits } from 'vue'
 import useForm from '@/hooks/form'
 import { FormInstance, FormRules } from 'element-plus'
 
@@ -15,11 +14,10 @@ type Props = {
   type?: string
   width?: number | string
 }
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   type: 'modal',
   width: 720
 })
-// const emit = defineEmits(['complete'])
 
 const formLabelWidth = '120px'
 const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585', '#c71585'])
@@ -53,7 +51,7 @@ const rules = reactive<FormRules>({
 })
 
 // 使用form的hooks
-const { pageLoader, title, model, visible, loading } = useForm<FormModel>({
+const { pageLoader, title, model, visible } = useForm<FormModel>({
   options: {
     baseApi: '/dictionary',
     model: initModel

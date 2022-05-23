@@ -67,6 +67,8 @@ export const constantRoutes: RouteRecordRaw[] = [
   }
 ]
 
+console.log('开始创建路由')
+
 /**
  * 创建路由
  */
@@ -79,6 +81,7 @@ const createAppRouter = () =>
 
 const router = createAppRouter()
 
+console.log('createRouterGuard')
 // 添加路由守卫等
 createRouterGuard(router)
 
@@ -86,6 +89,7 @@ export default router
 
 // 重置路由
 export const resetRouter = () => {
+  console.log('重置路由')
   router.currentRoute.value.matched = createAppRouter().currentRoute.value.matched
   router.go(0)
 }

@@ -1,5 +1,5 @@
 import { FormInstance } from 'element-plus'
-import { defineEmits, Ref } from 'vue'
+import { defineEmits } from 'vue'
 import { ApiData } from '@/utils/request'
 const emit = defineEmits(['complete'])
 
@@ -29,10 +29,6 @@ export interface FormOptions<T> {
   loading?: boolean
   confirmSubmit?: boolean
 }
-
-const visible = ref(false)
-const loading = ref(false)
-const confirmSubmit = ref(false)
 
 export class BaseFormLoader<T> {
   public options: FormOptions<T> = reactive({

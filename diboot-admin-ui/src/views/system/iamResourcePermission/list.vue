@@ -1,5 +1,5 @@
 <script setup lang="ts" name="IamResourcePermissionList">
-import { useLoadRelatedData } from '@/utils/relatedData'
+// import { useLoadRelatedData } from '@/utils/relatedData'
 // script
 interface ResourcePermission {
   displayName?: string

@@ -1,5 +1,4 @@
 import { ElButton, ElNotification } from 'element-plus'
-import { Ref } from 'vue'
 
 import { reactive } from 'vue'
 
@@ -338,14 +337,6 @@ export class BaseListPageLoader<T> {
   }
 }
 
-type Results<T> = {
-  pageLoader: BaseListPageLoader<T>
-  queryParam: Ref<{ [p: string]: any } | undefined> | undefined
-  dataList: Ref<T[] | undefined> | undefined
-  loading: Ref<boolean | undefined> | undefined
-  pagination: Ref<Pagination | undefined> | undefined
-}
-
 export default function <T>(options: HookOptions<T>) {
   let { pageLoader, autoLoad } = options
   const { baseApi, options: loaderOptions } = options
@@ -353,7 +344,7 @@ export default function <T>(options: HookOptions<T>) {
   // 赋值所有选项参数
   if (loaderOptions != null) {
     for (const [key, value] of Object.entries(loaderOptions)) {
-      pageLoader.options[key as keyof ListOptions<any>] = value
+      pageLoader.options[key as keyof ListOptions<unknown>] = value
     }
   }
   // 赋值自定义参数
