@@ -4,6 +4,10 @@
 //  }
 //}
 
+.el-descriptions__label {
+  color: var(--el-text-color-regular) !important;
+  font-weight: bold;
+}
 
 .list-operation {
   width: 100%;

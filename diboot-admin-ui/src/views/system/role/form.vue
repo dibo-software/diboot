@@ -7,10 +7,13 @@ const baseApi = '/role'
 
 const { loadData, loading, model } = useDetailDefault<Role>(baseApi)
 
+const title = ref('')
+
 const visible = ref(false)
 
 defineExpose({
   open: (id?: string) => {
+    title.value = id ? '更新' : '新建'
     loadData(id)
     visible.value = true
   }
@@ -42,7 +45,7 @@ const rules: FormRules = {
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="创建角色">
+  <el-dialog v-model="visible" :title="title">
     <el-form ref="formRef" v-loading="loading" :model="model" :rules="rules" label-width="80px">
       <el-form-item prop="name" label="名称">
         <el-input v-model="model.name" />
