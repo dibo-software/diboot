@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import PermissionList from './permissionList/index.vue'
+import { Plus } from '@element-plus/icons-vue'
+
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission } from './type'
 import { PermissionGroupType } from './type'
@@ -59,14 +61,11 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
 }
 </script>
 <template>
-  <el-row :gutter="10">
+  <el-row :gutter="5">
     <el-col :span="10" class="config-container">
-      <el-card class="box-card" shadow="never">
-        <el-form ref="ruleFormRef" :model="model" :rules="rules" label-width="120px">
-          <div class="card-header">
-            <span>菜单配置</span>
-            <el-button class="button" text icon="plus" />
-          </div>
+      <el-space wrap :fill="true">
+        <el-form ref="ruleFormRef" :model="model" :rules="rules" label-width="90px">
+          <div class="card-header">菜单配置</div>
           <el-form-item label="上级菜单" prop="parentId">
             <el-input v-model="model.parentId" disabled />
           </el-form-item>
@@ -98,16 +97,16 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
           </el-form-item>
           <el-form-item label="高级配置" />
         </el-form>
-      </el-card>
-      <el-card class="box-card" style="margin-top: 20px" shadow="never">
-        <template #header>
-          <div class="card-header">
-            <span>按钮权限配置</span>
-            <el-button class="button" text icon="Plus" />
-          </div>
-        </template>
-        <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
-      </el-card>
+        <el-card class="box-card" shadow="never">
+          <template #header>
+            <div class="card-header">
+              <span>按钮权限配置</span>
+              <el-button class="button" text :icon="Plus" />
+            </div>
+          </template>
+          <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
+        </el-card>
+      </el-space>
     </el-col>
     <el-col :span="14" class="config-container">
       <permission-list
@@ -127,4 +126,10 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
     <el-button @click="resetForm(ruleFormRef)">重置</el-button>
   </div>
 </template>
-<style scoped></style>
+<style scoped lang="scss">
+.config-container {
+  .el-space {
+    width: 100%;
+  }
+}
+</style>

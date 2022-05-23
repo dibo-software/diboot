@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
-import type { Tree } from './type'
+// import type { Tree } from './type'
 import type { ElTree } from 'element-plus'
+import useTree from './tree'
+import type { Tree } from './tree'
 const searchWord = ref('')
 const treeRef = ref<InstanceType<typeof ElTree>>()
 
@@ -9,6 +11,8 @@ const filterNode = (value: string, data: Partial<Tree>) => {
   if (!value) return true
   return (data as Tree).label.includes(value)
 }
+const { checkChange, selectedIdList, selectedFullList } = useTree()
+
 //监听keyword变化
 watch(searchWord, val => {
   treeRef.value!.filter(val)
@@ -17,7 +21,12 @@ const addMenu = () => {
   console.log('add')
 }
 const delMenu = () => {
-  console.log('del')
+  console.log('del', selectedFullList.value)
+  ElMessage({
+    message: 'delete:node ' + selectedFullList.value.map((item: Tree) => item.label).join('、'),
+    grouping: true,
+    type: 'success'
+  })
 }
 const defaultProps = {
   children: 'children',
@@ -39,20 +48,6 @@ const dataSource = ref<Tree[]>([
       {
         id: 5,
         label: '资源权限'
-      }
-    ]
-  },
-  {
-    id: 2,
-    label: 'Level one 2',
-    children: [
-      {
-        id: 5,
-        label: 'Level two 2-1'
-      },
-      {
-        id: 6,
-        label: 'Level two 2-2'
       }
     ]
   }
@@ -77,6 +72,7 @@ const dataSource = ref<Tree[]>([
         node-key="id"
         default-expand-all
         :expand-on-click-node="false"
+        @check-change="checkChange"
         :filter-node-method="filterNode"
       >
         <template #default="{ node }">
