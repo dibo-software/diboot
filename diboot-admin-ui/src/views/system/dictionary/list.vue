@@ -27,7 +27,7 @@ const openDetail = (id: string) => {
     type: 'success'
   })
 }
-const openEdit = (id: any) => {
+const openEdit = (id: string) => {
   ElMessage({
     message: 'open:Edit ' + id,
     grouping: true,
@@ -39,7 +39,6 @@ const form = ref(null)
 const create = () => {
   ;(form as any).value.open()
 }
-console.log('form', form)
 </script>
 <template>
   <el-form label-width="80px" @submit.prevent>
