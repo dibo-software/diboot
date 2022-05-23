@@ -1,6 +1,8 @@
 <script setup lang="ts" name="RoleList">
-import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import { Search, ArrowDown } from '@element-plus/icons-vue'
 import type { Role } from './type'
+import Detail from './detail.vue'
+import Form from './form.vue'
 
 defineProps<{ usedVisibleHeight?: number }>()
 
@@ -20,29 +22,23 @@ const {
 getList()
 
 // 搜索区折叠
-const advanced = ref(false)
+const searchState = ref(false)
 
 // 选中的数据 Id 集合
 const multipleSelectionIds = ref<string[]>([])
 
-const openDetail = (id: string) => {
-  ElMessage({
-    message: 'open:Detail ' + id,
-    grouping: true,
-    type: 'success'
-  })
+const formRef = ref<InstanceType<typeof Form>>()
+const openForm = (id?: string) => {
+  formRef.value?.open(id)
 }
-const openEdit = (id: string) => {
-  ElMessage({
-    message: 'open:Edit ' + id,
-    grouping: true,
-    type: 'warning'
-  })
+const detailRef = ref<InstanceType<typeof Detail>>()
+const openDetail = (id: string) => {
+  detailRef.value?.open(id)
 }
 </script>
 
 <template>
-  <el-form label-width="80px" @submit.prevent>
+  <el-form v-show="searchState" label-width="80px" @submit.prevent>
     <el-row :gutter="18">
       <el-col :md="8" :sm="24">
         <el-form-item label="名称">
@@ -54,48 +50,42 @@ const openEdit = (id: string) => {
           <el-input v-model="queryParam.code" @keyup.enter="onSearch" />
         </el-form-item>
       </el-col>
-      <template v-if="advanced">
-        <el-col :md="8" :sm="24">
-          <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="dateRangeQuery.createTime"
-              type="daterange"
-              value-format="YYYY-MM-DD"
-              @change="onSearch"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24">
-          <el-form-item label="更新时间">
-            <el-date-picker
-              v-model="queryParam.updateTime"
-              type="date"
-              value-format="YYYY-MM-DD"
-              style="width: 100%"
-              @change="onSearch"
-            />
-          </el-form-item>
-        </el-col>
-      </template>
+      <el-col :md="8" :sm="24">
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="dateRangeQuery.createTime"
+            type="daterange"
+            value-format="YYYY-MM-DD"
+            @change="onSearch"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :md="8" :sm="24">
+        <el-form-item label="更新时间">
+          <el-date-picker
+            v-model="queryParam.updateTime"
+            type="date"
+            value-format="YYYY-MM-DD"
+            style="width: 100%"
+            @change="onSearch"
+          />
+        </el-form-item>
+      </el-col>
       <el-col :md="8" :sm="24" style="margin-left: auto">
         <el-form-item>
           <el-button type="primary" @click="onSearch">搜索</el-button>
           <el-button @click="resetFilter">重置</el-button>
-          <el-button type="primary" text @click="advanced = !advanced">
-            {{ advanced ? '收起' : '展开' }}
-            <el-icon :size="18" style="margin-left: 5px">
-              <component :is="advanced ? ArrowUp : ArrowDown" />
-            </el-icon>
-          </el-button>
         </el-form-item>
       </el-col>
     </el-row>
   </el-form>
-  <el-space>
-    <el-button type="primary">新建</el-button>
+
+  <el-space wrap class="list-operation">
+    <el-button type="primary" @click="openForm()">新建</el-button>
     <el-button @click="batchRemove(multipleSelectionIds)">批量删除</el-button>
-    <el-button>导入</el-button>
-    <el-button>导出</el-button>
+    <el-space>
+      <el-button :icon="Search" circle @click="searchState = !searchState" />
+    </el-space>
   </el-space>
   <el-table
     ref="tableRef"
@@ -122,7 +112,7 @@ const openEdit = (id: string) => {
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="openEdit(row.id)">编辑</el-dropdown-item>
+                <el-dropdown-item @click="openForm(row.id)">编辑</el-dropdown-item>
                 <el-dropdown-item @click="remove(row.id)">删除</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -143,6 +133,9 @@ const openEdit = (id: string) => {
     @size-change="getList()"
     @current-change="getList()"
   />
+
+  <Detail ref="detailRef" />
+  <Form ref="formRef" @complete="getList()" />
 </template>
 
 <style scoped></style>
