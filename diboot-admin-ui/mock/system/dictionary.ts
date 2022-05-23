@@ -155,11 +155,13 @@ export default [
     url: `${baseUrl}/`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: (request: AxiosRequestConfig) => {
+    response: (request) => {
       console.log('request', request)
-      const formModel: FormModel = request.data
-      formModel.id = String(dataList.length + 1)
-      dataList.push(formModel)
+      const formModel: FormModel = request?.body
+      if (formModel) {
+        formModel.id = `${dataList.length + 1}`
+        dataList.push(formModel)
+      }
       return JsonResult.OK(formModel)
     }
   },

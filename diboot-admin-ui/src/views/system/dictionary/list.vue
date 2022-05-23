@@ -34,7 +34,6 @@ const openEdit = (id: string) => {
     type: 'warning'
   })
 }
-
 const form = ref(null)
 const create = () => {
   ;(form as any).value.open()
@@ -129,5 +128,5 @@ const create = () => {
     @size-change="pageLoader.getList()"
     @current-change="pageLoader.getList()"
   />
-  <form-page ref="form" />
+  <form-page ref="form" @complete="pageLoader.onSearch()" />
 </template>

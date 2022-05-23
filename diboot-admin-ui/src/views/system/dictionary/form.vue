@@ -1,6 +1,7 @@
 <script setup lang="ts" name="DictionaryForm">
-import useForm from '@/hooks/form'
+import useForm, {BaseFormLoader} from '@/hooks/form'
 import { FormInstance, FormRules } from 'element-plus'
+import {ApiData} from "@/utils/request";
 
 interface FormModel {
   id?: string
@@ -18,6 +19,8 @@ withDefaults(defineProps<Props>(), {
   type: 'modal',
   width: 720
 })
+
+const emit = defineEmits(['complete'])
 
 const formLabelWidth = '120px'
 const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585', '#c71585'])
@@ -51,7 +54,14 @@ const rules = reactive<FormRules>({
 })
 
 // 使用form的hooks
+class DictFormLoader extends BaseFormLoader<FormModel> {
+  public afterSubmitSuccess(res: ApiData<FormModel>) {
+    emit('complete', res.data)
+    super.afterSubmitSuccess(res)
+  }
+}
 const { pageLoader, title, model, visible } = useForm<FormModel>({
+  pageLoader: new DictFormLoader(),
   options: {
     baseApi: '/dictionary',
     model: initModel
