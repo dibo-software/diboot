@@ -141,8 +141,8 @@ const authMenu = [
           componentPath: prefix + 'system/iamResourcePermission/list.vue',
           sort: '@natural',
           keepAlive: false,
-          hollow: '@boolean',
-          hideFooter: '@boolean'
+          hollow: false,
+          hideFooter: true
         }
       },
       {

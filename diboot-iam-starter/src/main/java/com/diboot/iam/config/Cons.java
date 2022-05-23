@@ -114,7 +114,8 @@ public class Cons extends com.diboot.core.config.Cons {
         MENU,
         PERMISSION,
         IFRAME,
-        OUTSIDE_URL
+        OUTSIDE_URL,
+        CATALOGUE
     }
 
     /**
