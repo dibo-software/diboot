@@ -1,68 +1,11 @@
 import { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
+import { AxiosRequestConfig } from 'axios'
 
 const baseUrl = '/api/dictionary'
 
 const deleteDataIds: string[] = []
-
-export default [
-  {
-    url: `${baseUrl}/list`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: ({ query }: any) => {
-      return JsonResult.PAGINATION(
-        query.pageIndex,
-        query.pageSize,
-        Array.from({ length: 50 })
-          .map((_, index) => {
-            const i = index % 2
-            const item = dictionaryDataMap.list[i]
-            item.id = String(index + 1)
-            return item
-          })
-          .filter(e => !deleteDataIds.includes(e.id))
-      )
-    }
-  },
-  {
-    url: `${baseUrl}/:id`,
-    timeout: Random.natural(50, 300),
-    method: 'delete',
-    response: ({ query }: any) => {
-      deleteDataIds.push(query.id)
-      return JsonResult.OK()
-    }
-  },
-  {
-    url: `${baseUrl}/cancelDeleted`,
-    timeout: Random.natural(50, 300),
-    method: 'patch',
-    response: ({ body }: any) => {
-      deleteDataIds.splice(0, deleteDataIds.length, ...deleteDataIds.filter(e => !body.includes(e)))
-      return JsonResult.OK()
-    }
-  },
-  {
-    url: `${baseUrl}/batchDelete`,
-    timeout: Random.natural(50, 300),
-    method: 'post',
-    response: ({ body }: any) => {
-      deleteDataIds.push(...body)
-      console.log(deleteDataIds)
-      return JsonResult.OK()
-    }
-  },
-  {
-    url: `${baseUrl}/detail`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: () => {
-      return JsonResult.OK(dictionaryDataMap.detail)
-    }
-  }
-] as MockMethod[]
 
 const dictionaryDataMap = {
   list: [
@@ -178,3 +121,92 @@ const dictionaryDataMap = {
     ]
   }
 }
+
+interface FormModel {
+  id?: string
+  itemName: string
+  itemValue: string
+  description?: string
+  color?: string
+  children?: FormModel[]
+}
+
+const dataList = Array.from({ length: 50 }).map((_, index): Record<string, any> => {
+  const i = index % 2
+  const item = dictionaryDataMap.list[i]
+  item.id = String(index + 1)
+  return item
+})
+
+export default [
+  {
+    url: `${baseUrl}/list`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: any) => {
+      return JsonResult.PAGINATION(
+        query.pageIndex,
+        query.pageSize,
+        dataList.filter(e => !deleteDataIds.includes(e.id)).reverse()
+      )
+    }
+  },
+  {
+    url: `${baseUrl}/`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: (request: AxiosRequestConfig) => {
+      console.log('request', request)
+      const formModel: FormModel = request.data
+      formModel.id = String(dataList.length + 1)
+      dataList.push(formModel)
+      return JsonResult.OK(formModel)
+    }
+  },
+  {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'put',
+    response: (formModel: FormModel) => {
+      console.log('formModel', formModel)
+      formModel.id = String(dataList.length + 1)
+      return JsonResult.OK(formModel)
+    }
+  },
+  {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'delete',
+    response: ({ query }: any) => {
+      deleteDataIds.push(query.id)
+      return JsonResult.OK()
+    }
+  },
+  {
+    url: `${baseUrl}/cancelDeleted`,
+    timeout: Random.natural(50, 300),
+    method: 'patch',
+    response: ({ body }: any) => {
+      deleteDataIds.splice(0, deleteDataIds.length, ...deleteDataIds.filter(e => !body.includes(e)))
+      return JsonResult.OK()
+    }
+  },
+  {
+    url: `${baseUrl}/batchDelete`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: ({ body }: any) => {
+      deleteDataIds.push(...body)
+      console.log(deleteDataIds)
+      return JsonResult.OK()
+    }
+  },
+  {
+    url: `${baseUrl}/detail`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: () => {
+      return JsonResult.OK(dictionaryDataMap.detail)
+    }
+  }
+] as MockMethod[]
