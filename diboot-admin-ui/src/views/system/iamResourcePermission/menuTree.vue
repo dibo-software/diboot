@@ -5,9 +5,9 @@ import type { ElTree } from 'element-plus'
 const searchWord = ref('')
 const treeRef = ref<InstanceType<typeof ElTree>>()
 
-const filterNode = (value: string, data: Tree) => {
+const filterNode = (value: string, data: Partial<Tree>) => {
   if (!value) return true
-  return data.label.includes(value)
+  return (data as Tree).label.includes(value)
 }
 //监听keyword变化
 watch(searchWord, val => {
@@ -19,7 +19,10 @@ const addMenu = () => {
 const delMenu = () => {
   console.log('del')
 }
-
+const defaultProps = {
+  children: 'children',
+  label: 'label'
+}
 const dataSource = ref<Tree[]>([
   {
     id: 1,
@@ -68,6 +71,7 @@ const dataSource = ref<Tree[]>([
       <el-tree
         ref="treeRef"
         :data="dataSource"
+        :props="defaultProps"
         draggable
         show-checkbox
         node-key="id"

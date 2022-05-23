@@ -2,30 +2,24 @@
 import PermissionGroup from './PermissionGroup.vue'
 import { useVueFuse } from 'vue-fuse'
 import { defineProps, reactive, withDefaults } from 'vue'
-import type { PermissionGroupType, ApiUri, ApiPermission, SelectOption, FusePermission } from './type'
+import type { PermissionGroupType, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
 type Props = {
   title: string
   configCode: string
   menuResourceCode: string
-  currentPermissionCodes?: string[]
+  currentPermissionCodes: string[]
   originApiList?: Array<PermissionGroupType>
 }
 const props = withDefaults(defineProps<Props>(), {
-  currentPermissionCodes: [],
-  originApiList: []
+  originApiList: () => []
 })
 
-let permissionCodeList = reactive([])
+let permissionCodeList = reactive<string[]>([])
 let searchVal = ref('')
-let searchOptions = reactive<Array<SelectOption>>([])
 
-type Api = {
-  name: string
-  code: string
-}
-const computedFusePermissionDatas: FusePermission = computed((): FusePermission => {
-  const fusePermissionDatas: FusePermission = []
-  props.originApiList.value?.forEach((item: PermissionGroupType) => {
+const computedFusePermissionDatas = computed(() => {
+  const fusePermissionDatas: Array<FusePermission> = []
+  props.originApiList?.forEach((item: PermissionGroupType) => {
     const permissionGroup = `${item.name}（${item.code}）`
     const apiPermissionList = item.apiPermissionList
     if (apiPermissionList && apiPermissionList.length > 0) {
@@ -41,7 +35,7 @@ const computedFusePermissionDatas: FusePermission = computed((): FusePermission 
               permissionGroup,
               permissionCode,
               permissionCodeLabel
-            } as FusePermission)
+            })
           })
         }
       })
@@ -49,19 +43,21 @@ const computedFusePermissionDatas: FusePermission = computed((): FusePermission 
   })
   return fusePermissionDatas
 })
-watch(props.currentPermissionCodes, val => {
-  permissionCodeList.value = val
-})
-watch([props.configCode, props.menuResourceCode], () => {
+watch(
+  () => props.currentPermissionCodes,
+  val => {
+    permissionCodeList = val
+  }
+)
+watch([() => props.configCode, () => props.menuResourceCode], () => {
   goScrollIntoView(getAnchor())
 })
 
 onMounted(() => {
-  permissionCodeList.value = props.currentPermissionCodes
-  initFuse()
+  permissionCodeList = props.currentPermissionCodes
 })
 
-const initFuse = useVueFuse(fusePermissionDatas.value, {
+let { search, results } = useVueFuse<SelectOption>(computedFusePermissionDatas, {
   // 是否按优先级进行排序
   shouldSort: true,
   // 匹配度阈值	0.0表示完全匹配(字符和位置)；1.0将会匹配所有值
@@ -96,9 +92,9 @@ const emits = defineEmits(['changePermissionCodes'])
  */
 const changePermissionCode = (type: string, code: string) => {
   if (type === 'add') {
-    permissionCodeList.value.push(code)
+    permissionCodeList.push(code)
   } else {
-    permissionCodeList.value = permissionCodeList.value.filter(item => item !== code)
+    permissionCodeList = permissionCodeList.filter((item: string) => item !== code)
   }
   emits('changePermissionCodes', permissionCodeList)
 }
@@ -106,42 +102,37 @@ const searchChange = (value: string) => {
   if (value && value.includes('#')) {
     const id = value.split('#')[0]
     goScrollIntoView(id)
-    const idElement: HTMLElement = document.getElementById(id)
+    const idElement: HTMLElement | null = document.getElementById(id)
     idElement?.classList.add('light-high')
     const time = setTimeout(() => {
       idElement?.classList.remove('light-high')
       clearTimeout(time)
     }, 4000)
-  } else {
-    searchOptions.value = []
   }
   searchVal.value = value
 }
-const search = () => {
-  searchOptions.value = value !== '' ? fuse.value?.search(value) : []
-}
+
 const getAnchor = () => {
   let anchor = ''
-  if (permissionCodeList.value && permissionCodeList.value.length > 0) {
-    anchor = permissionCodeList.values[0]
+  if (permissionCodeList && permissionCodeList.length > 0) {
+    anchor = permissionCodeList[0]
   } else {
-    if (props.menuResourceCode.value) {
-      const searchResult: FusePermission[] = fuse.value?.search(props.menuResourceCode)
-      if (searchResult && searchResult.length > 0) {
-        anchor = searchResult[0].permissionCode
+    if (props.menuResourceCode) {
+      search = toRef(props, 'menuResourceCode')
+      if (results.value && results.value.length > 0) {
+        anchor = results.value[0].permissionCode
       }
     }
   }
   return anchor
 }
-const goScrollIntoView = (value: string) => {
-  nextTick(() => {
-    if (value) {
-      document.getElementById(value)?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
-    } else {
-      document.getElementById('permissionListGroups')?.scrollIntoView({ behavior: 'smooth' })
-    }
-  })
+const goScrollIntoView = async (value: string) => {
+  await nextTick()
+  if (value) {
+    document.getElementById(value)?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+  } else {
+    document.getElementById('permissionListGroups')?.scrollIntoView({ behavior: 'smooth' })
+  }
 }
 </script>
 <template>
@@ -154,11 +145,11 @@ const goScrollIntoView = (value: string) => {
         style="width: 100%"
         filterable
         clearable
-        :remote-method="search"
+        :remote-method="(val: string) => (search = val)"
         @change="searchChange"
       >
         <el-option
-          v-for="(options, index) in searchOptions"
+          v-for="(options, index) in results"
           :key="`search_${index}`"
           :label="options.title"
           :value="`${options.permissionCode}#${options.title}`"
@@ -167,14 +158,13 @@ const goScrollIntoView = (value: string) => {
     </div>
     <div class="permission-list-groups">
       <div id="permissionListGroups">
-        <template v-for="(permissionGroup, index) in originApiList">
-          <permission-group
-            :key="`permission_group_${index}`"
-            :permission-code-list="permissionCodeList"
-            :permission-group="permissionGroup"
-            @changePermissionCode="changePermissionCode"
-          />
-        </template>
+        <permission-group
+          v-for="(permissionGroup, index) in originApiList"
+          :key="`permission_group_${index}`"
+          :permission-code-list="permissionCodeList"
+          :permission-group="permissionGroup"
+          @change-permission-code="changePermissionCode"
+        />
       </div>
     </div>
   </el-card>

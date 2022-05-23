@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { defineEmits, defineProps, withDefaults } from 'vue'
-import type { PermissionGroupType } from './type'
+import type { PermissionGroupType } from '../type'
 
 const props = withDefaults(defineProps<{ permissionGroup: PermissionGroupType; permissionCodeList?: string[] }>(), {
   permissionCodeList: () => []
@@ -8,7 +8,7 @@ const props = withDefaults(defineProps<{ permissionGroup: PermissionGroupType; p
 
 const emits = defineEmits(['changePermissionCode'])
 const checkCode = (code: string) =>
-  emits('changePermissionCode', props.permissionCodeList.value.includes(code) ? 'remove' : 'add', code)
+  emits('changePermissionCode', props.permissionCodeList.includes(code) ? 'remove' : 'add', code)
 </script>
 <template>
   <el-descriptions
@@ -19,31 +19,32 @@ const checkCode = (code: string) =>
     size="small"
   >
     <el-descriptions-item
-      :key="`group-item_${index}`"
       v-for="(apiPermission, index) in permissionGroup.apiPermissionList"
+      :key="`group-item_${index}`"
     >
-      <div
-        @click.stop.prevent="() => checkCode(apiPermission.code)"
-        :id="apiPermission.code"
-        class="permission-group-code permission-group-text-overflow"
-        slot="label"
-      >
-        <el-checkbox :value="permissionCodeList.includes(apiPermission.code)">
-          <el-tooltip placement="top">
-            <template slot="content"> {{ apiPermission.code }} （{{ apiPermission.label }}） </template>
-            <span>{{ apiPermission.code }}</span>
-          </el-tooltip>
-        </el-checkbox>
-      </div>
+      <template #label>
+        <div
+          :id="apiPermission.code"
+          class="permission-group-code permission-group-text-overflow"
+          @click.stop.prevent="() => checkCode(apiPermission.code)"
+        >
+          <el-checkbox :value="permissionCodeList.includes(apiPermission.code)">
+            <el-tooltip placement="top">
+              <template #content> {{ apiPermission.code }} （{{ apiPermission.label }}） </template>
+              <span>{{ apiPermission.code }}</span>
+            </el-tooltip>
+          </el-checkbox>
+        </div>
+      </template>
       <template v-if="apiPermission.apiUriList && apiPermission.apiUriList.length > 0">
         <div @click.stop.prevent="() => checkCode(apiPermission.code)">
           <div
+            v-for="(apiUri, idx) in apiPermission.apiUriList"
+            :key="`${apiPermission.code}_api-uri-${idx}`"
             class="permission-group-api permission-group-text-overflow"
-            :key="`${apiPermission.code}_api-uri-${index}`"
-            v-for="(apiUri, index) in apiPermission.apiUriList"
           >
             <el-tooltip placement="top">
-              <template slot="content"> {{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}） </template>
+              <template #content> {{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}） </template>
               <span>{{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}）</span>
             </el-tooltip>
           </div>
@@ -54,7 +55,7 @@ const checkCode = (code: string) =>
 </template>
 <style scoped lang="scss" rel="stylesheet/scss">
 .permission-group {
-  /deep/.el-descriptions__body > table {
+  .el-descriptions__body > table {
     table-layout: fixed;
     .el-descriptions-item__content {
       padding: 0;

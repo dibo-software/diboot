@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
+import PermissionList from './permissionList/index.vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission } from './type'
-const formSize = ref('default')
+import { PermissionGroupType } from './type'
 const ruleFormRef = ref<FormInstance>()
 
 const model = reactive<ResourcePermission>({
@@ -12,10 +13,17 @@ const model = reactive<ResourcePermission>({
   routePath: '',
   redirectPath: '',
   resourceCode: '',
-  permissionCode: [],
+  permissionCodes: [],
   metaConfig: {}
 })
-
+const permissionList = reactive<ResourcePermission[]>([])
+let permissionCodes = reactive<string[]>([])
+const currentPermissionActiveKey = ref(0)
+const currentPermissionTitle = ref('菜单页面接口配置')
+const originApiList = reactive<PermissionGroupType[]>([])
+const currentConfigCode = ref('')
+const currentPermissionCodes = reactive<string[]>([])
+const showPermission = ref(false)
 const rules = reactive<FormRules>({
   displayName: [
     {
@@ -42,22 +50,22 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
+const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
+  if (currentConfigCode.value === 'Menu') {
+    permissionCodes = paramPermissionCodes
+  } else {
+    permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
+  }
+}
 </script>
 <template>
   <el-row :gutter="10">
     <el-col :span="10" class="config-container">
       <el-card class="box-card" shadow="never">
-        <el-form
-          ref="ruleFormRef"
-          :model="model"
-          :rules="rules"
-          label-width="120px"
-          class="demo-ruleForm"
-          :size="formSize"
-        >
+        <el-form ref="ruleFormRef" :model="model" :rules="rules" label-width="120px">
           <div class="card-header">
             <span>菜单配置</span>
-            <el-button class="button" text icon="plus"></el-button>
+            <el-button class="button" text icon="plus" />
           </div>
           <el-form-item label="上级菜单" prop="parentId">
             <el-input v-model="model.parentId" disabled />
@@ -71,40 +79,50 @@ const resetForm = (formEl: FormInstance | undefined) => {
             </el-radio-group>
           </el-form-item>
           <el-form-item label="菜单名称" prop="displayName">
-            <el-input v-model="model.displayName" />
+            <el-input v-model="model.displayName" placeholder="请输入菜单名称" />
           </el-form-item>
           <el-form-item label="菜单编码">
-            <el-input v-model="model.resourceCode" />
+            <el-input v-model="model.resourceCode" placeholder="请输入菜单编码" />
           </el-form-item>
           <el-form-item label="菜单图标">
-            <el-input v-model="model.metaConfig.icon" />
+            <icon-select v-model="model.metaConfig.icon" />
           </el-form-item>
           <el-form-item label="路由地址">
-            <el-input v-model="model.routePath" />
+            <el-input v-model="model.routePath" placeholder="请输入路由地址" />
           </el-form-item>
           <el-form-item label="重定向地址">
-            <el-input v-model="model.redirectPath" />
+            <el-input v-model="model.redirectPath" placeholder="请输入重定向地址" />
           </el-form-item>
           <el-form-item label="组件地址">
-            <el-input v-model="model.metaConfig.componentPath" />
+            <el-input v-model="model.metaConfig.componentPath" placeholder="请输入组件地址" />
           </el-form-item>
-          <el-form-item label="高级配置"> </el-form-item>
+          <el-form-item label="高级配置" />
         </el-form>
       </el-card>
       <el-card class="box-card" style="margin-top: 20px" shadow="never">
         <template #header>
           <div class="card-header">
             <span>按钮权限配置</span>
-            <el-button class="button" text icon="plus"></el-button>
+            <el-button class="button" text icon="Plus" />
           </div>
         </template>
         <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
       </el-card>
     </el-col>
-    <el-col :span="10" class="config-container"> </el-col>
+    <el-col :span="14" class="config-container">
+      <permission-list
+        ref="permissionList"
+        :title="currentPermissionTitle"
+        :current-permission-codes="currentPermissionCodes"
+        :config-code="currentConfigCode"
+        :menu-resource-code="model.resourceCode"
+        :origin-api-list="originApiList"
+        @change-permission-codes="handleChangePermissionCodes"
+      />
+    </el-col>
   </el-row>
 
-  <div style="text-align: center; margin-top: 10px">
+  <div class="is-fixed" style="text-align: center; margin-top: 10px">
     <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
     <el-button @click="resetForm(ruleFormRef)">重置</el-button>
   </div>
