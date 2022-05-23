@@ -1,6 +1,4 @@
-<script setup lang="ts" name="IamResourcePermissionList">
-// import { useLoadRelatedData } from '@/utils/relatedData'
-import { ref } from 'vue'
+<script setup lang="ts">
 import ResourcePermissionForm from './form.vue'
 import MenuTree from './menuTree.vue'
 

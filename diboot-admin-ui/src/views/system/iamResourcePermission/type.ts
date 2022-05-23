@@ -15,5 +15,5 @@ export interface ResourcePermission {
   resourceCode: string
   permissionCode: Array<string>
   metaConfig: RouteMeta
-  sort_id: number
+  sortId?: number
 }

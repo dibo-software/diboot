@@ -6,15 +6,14 @@ const formSize = ref('default')
 const ruleFormRef = ref<FormInstance>()
 
 const model = reactive<ResourcePermission>({
-  parentId: '',
+  parentId: 0,
   displayType: '',
   displayName: '',
   routePath: '',
   redirectPath: '',
   resourceCode: '',
   permissionCode: [],
-  metaConfig: {},
-  sort_id: ''
+  metaConfig: {}
 })
 
 const rules = reactive<FormRules>({
