@@ -45,7 +45,6 @@ declare module '@vue/runtime-core' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     Icon: typeof import('@/components/icon/index.vue')['default']
     IconSelect: typeof import('@/components/icon/select.vue')['default']
-    Loading: typeof import('element-plus/es')['ElLoadingDirective']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

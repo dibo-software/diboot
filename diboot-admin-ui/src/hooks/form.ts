@@ -1,7 +1,6 @@
 import { FormInstance } from 'element-plus'
 import { defineEmits } from 'vue'
 import { ApiData } from '@/utils/request'
-const emit = defineEmits(['complete'])
 
 type HookOptions<T> = {
   pageLoader?: BaseFormLoader<T>
@@ -109,7 +108,8 @@ export class BaseFormLoader<T> {
    * @param res
    */
   public afterSubmitSuccess(res: ApiData<T>) {
-    emit('complete', res?.data)
+    this.options.visible = false
+    console.log('afterSubmitSuccess', res)
   }
 
   public validate(formEl: FormInstance | undefined) {
