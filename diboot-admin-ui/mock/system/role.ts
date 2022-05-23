@@ -39,7 +39,7 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ query }: ApiRequest) => {
-      return JsonResult.OK(dataList.filter(e => e.id === query.id))
+      return JsonResult.OK(dataList.find(e => e.id === query.id))
     }
   },
   {
@@ -47,7 +47,8 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: ApiRequest<Role>) => {
-      return JsonResult.OK(!!dataList.unshift(body))
+      dataList.unshift(body)
+      return JsonResult.OK((body.id = String(dataList.length + 1)))
     }
   },
   {
@@ -55,13 +56,12 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'put',
     response: ({ body, query }: ApiRequest<Role>) => {
-      return JsonResult.OK(
-        !!dataList.splice(
-          dataList.findIndex(e => e.id === query.id),
-          1,
-          body
-        )
+      dataList.splice(
+        dataList.findIndex(e => e.id === query.id),
+        1,
+        body
       )
+      return JsonResult.OK()
     }
   },
   {

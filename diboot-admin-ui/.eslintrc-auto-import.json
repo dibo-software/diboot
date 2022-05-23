@@ -62,6 +62,8 @@
     "useAttrs": "readonly",
     "useCssModule": "readonly",
     "useCssVars": "readonly",
+    "useDetailDefault": "readonly",
+    "useFormDefault": "readonly",
     "useList": "readonly",
     "useListDefault": "readonly",
     "useRoute": "readonly",

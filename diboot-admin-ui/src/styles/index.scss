@@ -3,3 +3,17 @@
 //    --el-dialog-margin-top: 10vh;
 //  }
 //}
+
+.el-descriptions__label {
+  color: var(--el-text-color-regular) !important;
+  font-weight: bold;
+}
+
+.list-operation {
+  width: 100%;
+
+  div:last-child {
+    margin-left: auto;
+    margin-right: 0 !important;
+  }
+}
