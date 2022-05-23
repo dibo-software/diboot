@@ -27,7 +27,9 @@ export default defineConfig(({ command }) => {
           { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
           { '@/utils/request': ['api', 'baseURL'] },
           { '@/hooks/list': [['default', 'useList']] },
-          { '@/hooks/list_default': [['default', 'useListDefault']] }
+          { '@/hooks/list_default': [['default', 'useListDefault']] },
+          { '@/hooks/detail_default': [['default', 'useDetailDefault']] },
+          { '@/hooks/form_default': [['default', 'useFormDefault']] }
         ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',
