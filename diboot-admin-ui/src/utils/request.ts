@@ -87,7 +87,7 @@ function resetPingTimer() {
   }, TOKEN_REFRESH_EXPIRE * 60 * 1000)
 }
 
-interface ApiData<T> {
+export interface ApiData<T> {
   code: number
   msg: string
   data?: T

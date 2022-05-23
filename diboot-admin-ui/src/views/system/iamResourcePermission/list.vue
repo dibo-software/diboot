@@ -1,11 +1,15 @@
 <script setup lang="ts" name="IamResourcePermissionList">
 import { useLoadRelatedData } from '@/utils/relatedData'
 // script
-const queryParams = reactive({})
+interface ResourcePermission {
+  displayName?: string
+  resourceCode?: string
+}
+const queryParams = reactive<ResourcePermission>({})
 const onSubmit = () => {
   console.log(queryParams)
 }
-const relatedData = useLoadRelatedData([{}], '/iamResource')
+// const relatedData = useLoadRelatedData([{}], '/iamResource')
 
 type User = {
   id: number

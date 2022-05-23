@@ -29,17 +29,17 @@ export interface ListOptions<T> {
   // 删除接口
   deleteApiPrefix?: string
   // 批量删除接口
-  batchRemoveApi?: string
+  batchDeleteApi?: string
   // 撤回删除接口(批量)
   cancelDeletedApi?: string
   // 导出接口
   exportApi?: string
   // 自定义参数（不被查询表单重置和改变的参数）
-  customQueryParam?: Record<string, unknown>
+  customQueryParam?: Record<string, string | number | undefined | never>
   // 与查询条件绑定的参数（会被查询表单重置和改变的参数）
-  queryParam?: Record<string, unknown>
+  queryParam?: Record<string, string | number | undefined | never>
   // 日期区间选择配置
-  dateRangeQuery?: Record<string, [string | number | Date, string | number | Date]>
+  dateRangeQuery?: Record<string, [string, string]>
   // 高级搜索 展开/关闭
   advanced?: boolean
   // 列表数据
@@ -225,27 +225,57 @@ export class BaseListPageLoader<T> {
    *
    * @param ids
    */
-  public batchRemove(ids: Array<string>) {
-    if (!(ids && ids.length)) {
-      ElMessage.warning('未选择数据')
-      return
-    }
-    let batchRemoveApi = `${this.options.baseApi}/batchDelete`
-    if (this.options.batchRemoveApi) {
-      batchRemoveApi = this.options.batchRemoveApi
-    }
-    ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
-      .then(() => {
-        api
-          .post(batchRemoveApi, ids)
-          .then(() => this.removeSuccessHandler(ids))
-          .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
-          })
-      })
-      .catch(() => null)
+  public batchRemove(ids: Array<string>): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!(ids && ids.length)) {
+        ElMessage.warning('未选择数据')
+        reject('未选择数据')
+        return
+      }
+      const { baseApi, batchDeleteApi } = this.options
+      const url = batchDeleteApi ? batchDeleteApi : `${baseApi}/batchDelete`
+      ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
+        .then(() => {
+          api
+            .post(url, ids)
+            .then(res => {
+              this.removeSuccessHandler(ids)
+              resolve(res.msg)
+            })
+            .catch(err => {
+              const msg = err.msg || err.message || '删除失败'
+              ElMessage.error(msg)
+              reject(msg)
+            })
+        })
+        .catch(() => {
+          reject('删除取消')
+        })
+    })
   }
-
+  public remove(id: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      ElMessageBox.confirm('确定删除该数据吗？', '删除', { type: 'warning' })
+        .then(() => {
+          const { baseApi, deleteApiPrefix } = this.options
+          const url = deleteApiPrefix ? `${deleteApiPrefix}/${id}` : `${baseApi}/${id}`
+          api
+            .delete(url)
+            .then(res => {
+              this.removeSuccessHandler([id])
+              resolve(res.msg)
+            })
+            .catch(err => {
+              const msg = err.msg || err.message || '删除失败'
+              ElMessage.error(msg)
+              reject(msg)
+            })
+        })
+        .catch(() => {
+          reject('删除取消')
+        })
+    })
+  }
   /**
    * 删除成功处理
    *
@@ -295,6 +325,7 @@ export class BaseListPageLoader<T> {
    */
   afterRemoveSuccess(ids: Array<string>) {
     console.log('afterRemoveSuccess', ids)
+    this.onSearch()
   }
 
   /**
@@ -303,6 +334,7 @@ export class BaseListPageLoader<T> {
    */
   afterCancelDeleted(ids: Array<string>) {
     console.log('afterRemoveSuccess', ids)
+    this.onSearch()
   }
 }
 
