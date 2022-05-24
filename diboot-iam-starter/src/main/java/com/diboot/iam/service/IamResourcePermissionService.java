@@ -19,6 +19,7 @@ package com.diboot.iam.service;
 import com.diboot.iam.dto.IamResourcePermissionDTO;
 import com.diboot.iam.entity.IamResourcePermission;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
+import com.diboot.iam.vo.IamResourcePermissionTreeVO;
 
 import java.util.List;
 
@@ -69,6 +70,14 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      * @return
      */
     List<IamResourcePermission> getAllResourcePermissions(String application);
+
+    /**
+     * 获取前端菜单（不包含按钮权限）
+     *
+     * @param application
+     * @return
+     */
+    List<IamResourcePermissionTreeVO> getMenuResourcePermissions(String application);
 
     /***
      * 对列表进行排序

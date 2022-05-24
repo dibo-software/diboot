@@ -18,6 +18,9 @@ package com.diboot.iam.config;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * IAM数据字典等常量定义
  * @author mazc@dibo.ltd
@@ -117,6 +120,16 @@ public class Cons extends com.diboot.core.config.Cons {
         OUTSIDE_URL,
         CATALOGUE
     }
+
+    /**
+     * 菜单类别列表
+     */
+    public static final List<String> MENU_CATEGORY_LIST = Arrays.asList(
+            RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name(),
+            RESOURCE_PERMISSION_DISPLAY_TYPE.IFRAME.name(),
+            RESOURCE_PERMISSION_DISPLAY_TYPE.OUTSIDE_URL.name(),
+            RESOURCE_PERMISSION_DISPLAY_TYPE.CATALOGUE.name()
+    );
 
     /**
      * 应用

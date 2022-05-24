@@ -30,9 +30,9 @@ public class RouteMeta implements Serializable {
      */
     private String module;
     /**
-     * 组件名称
+     * 组件地址
      */
-    private String componentName;
+    private String componentPath;
     /**
      * 外链或iframe地址
      */
