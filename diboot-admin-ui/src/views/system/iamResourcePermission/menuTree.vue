@@ -17,7 +17,7 @@ getTree()
 <template>
   <el-space :fill="true" wrap class="tree-container">
     <div class="tree-header">
-      <el-button type="primary" :icon="Plus" @click="addTreeNode">添加</el-button>
+      <el-button type="primary" :icon="Plus">添加</el-button>
       <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除</el-button>
     </div>
     <div class="tree-body">

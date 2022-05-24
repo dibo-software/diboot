@@ -73,9 +73,9 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
    * @param value
    * @param data
    */
-  const filterNode = (value: string, data: T) => {
+  const filterNode = (value: string, data: Partial<T>) => {
     if (!value) return true
-    return data[optionsTransformField.label].includes(value)
+    return (data as T)[optionsTransformField.label].includes(value)
   }
 
   /**

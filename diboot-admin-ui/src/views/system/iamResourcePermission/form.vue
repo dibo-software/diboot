@@ -8,7 +8,7 @@ import type { ResourcePermission, PermissionGroupType } from './type'
 const ruleFormRef = ref<FormInstance>()
 
 const model = reactive<ResourcePermission>({
-  parentId: 0,
+  parentId: '0',
   displayType: '',
   displayName: '',
   routePath: '',
