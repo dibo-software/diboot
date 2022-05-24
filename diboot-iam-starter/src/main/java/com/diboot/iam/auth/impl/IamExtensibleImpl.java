@@ -80,7 +80,7 @@ public class IamExtensibleImpl implements IamExtensible {
                 });
             }
             positionDataScope.setAccessibleOrgIds(accessibleOrgIds);
-            return new LabelValue(position.getName(), positionDataScope);
+            return new LabelValue(position.getName(), position.getCode()).setExt(positionDataScope);
         }
         return null;
     }

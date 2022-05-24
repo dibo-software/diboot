@@ -135,7 +135,9 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         Long extensionObjId = null;
         LabelValue extensionObj = currentUser.getExtensionObj();
         if(extensionObj != null){
-            extensionObjId = ((PositionDataScope)extensionObj.getValue()).getPositionId();
+            if(extensionObj.getExt() != null && extensionObj.getExt() instanceof PositionDataScope){
+                extensionObjId = ((PositionDataScope)extensionObj.getExt()).getPositionId();
+            }
         }
         // 获取角色列表
         List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
