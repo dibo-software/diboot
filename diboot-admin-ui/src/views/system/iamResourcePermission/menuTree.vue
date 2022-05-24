@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
-// import type { Tree } from './type'
-import type { ElTree } from 'element-plus'
 import useTree from './tree'
 import type { Tree } from './tree'
-const searchWord = ref('')
-const treeRef = ref<InstanceType<typeof ElTree>>()
 
-const filterNode = (value: string, data: Partial<Tree>) => {
-  if (!value) return true
-  return (data as Tree).label.includes(value)
-}
-const { checkChange, selectedIdList, selectedFullList } = useTree()
+const { checkChange, filterNode, treeRef, searchWord, selectedIdList, selectedFullList } = useTree()
 
 //监听keyword变化
 watch(searchWord, val => {

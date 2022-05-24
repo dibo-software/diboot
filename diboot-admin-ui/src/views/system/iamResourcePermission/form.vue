@@ -4,8 +4,7 @@ import PermissionList from './permissionList/index.vue'
 import { Plus } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
-import type { ResourcePermission } from './type'
-import { PermissionGroupType } from './type'
+import type { ResourcePermission, PermissionGroupType } from './type'
 const ruleFormRef = ref<FormInstance>()
 
 const model = reactive<ResourcePermission>({

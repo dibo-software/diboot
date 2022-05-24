@@ -7,6 +7,7 @@ export interface Tree {
 }
 
 export interface ResourcePermission {
+  id?: number
   parentId: number
   displayType: string
   displayName: string
