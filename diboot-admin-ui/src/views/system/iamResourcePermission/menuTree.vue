@@ -1,55 +1,24 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
 import useTree from './tree'
-import type { Tree } from './tree'
-
-const { checkChange, filterNode, treeRef, searchWord, selectedIdList, selectedFullList } = useTree()
-
-//监听keyword变化
-watch(searchWord, val => {
-  treeRef.value!.filter(val)
-})
-const addMenu = () => {
-  console.log('add')
-}
-const delMenu = () => {
-  console.log('del', selectedFullList.value)
-  ElMessage({
-    message: 'delete:node ' + selectedFullList.value.map((item: Tree) => item.label).join('、'),
-    grouping: true,
-    type: 'success'
-  })
-}
+import type { ResourcePermission } from './type'
 const defaultProps = {
-  children: 'children',
-  label: 'label'
+  label: 'displayName'
 }
-const dataSource = ref<Tree[]>([
-  {
-    id: 1,
-    label: '系统管理',
-    children: [
-      {
-        id: 3,
-        label: '字典管理'
-      },
-      {
-        id: 4,
-        label: '角色管理'
-      },
-      {
-        id: 5,
-        label: '资源权限'
-      }
-    ]
-  }
-])
+const { checkChange, filterNode, getTree, addTreeNode, removeTreeNode, treeRef, searchWord, treeDataList } =
+  useTree<ResourcePermission>({
+    baseApi: '/iam/resourcePermission',
+    treeApi: '/getMenuTreeList',
+    transformField: defaultProps
+  })
+// 初始化tree数据
+getTree()
 </script>
 <template>
   <el-space :fill="true" wrap class="tree-container">
     <div class="tree-header">
-      <el-button type="primary" :icon="Plus" @click="addMenu">添加</el-button>
-      <el-button type="danger" :icon="Delete" @click="delMenu">删除</el-button>
+      <el-button type="primary" :icon="Plus" @click="addTreeNode">添加</el-button>
+      <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除</el-button>
     </div>
     <div class="tree-body">
       <div class="tree-body__search">
@@ -57,7 +26,7 @@ const dataSource = ref<Tree[]>([
       </div>
       <el-tree
         ref="treeRef"
-        :data="dataSource"
+        :data="treeDataList"
         :props="defaultProps"
         draggable
         show-checkbox

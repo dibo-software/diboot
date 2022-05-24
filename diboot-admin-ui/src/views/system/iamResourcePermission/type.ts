@@ -1,14 +1,8 @@
 import { RouteMeta } from 'vue-router'
 
-export interface Tree {
-  id: number
-  label: string
-  children?: Tree[]
-}
-
 export interface ResourcePermission {
-  id?: number
-  parentId: number
+  id?: string
+  parentId: string
   displayType: string
   displayName: string
   routePath: string
@@ -17,6 +11,7 @@ export interface ResourcePermission {
   permissionCodes: Array<string>
   metaConfig: RouteMeta
   sortId?: number
+  children?: ResourcePermission[]
 }
 
 export interface ApiUri {
