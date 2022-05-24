@@ -13,7 +13,7 @@
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>2.6.0</version>
+    <version>3.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -32,7 +32,7 @@
         <okhttp.version>4.9.3</okhttp.version>
         <aspectjweaver.version>1.9.9.1</aspectjweaver.version>
         <commons-io.version>2.11.0</commons-io.version>
-        <diboot.version>2.6.0</diboot.version>
+        <diboot.version>3.0.0</diboot.version>
     </properties>
 
     <dependencies>
