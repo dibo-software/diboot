@@ -1,17 +1,20 @@
 import { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
-import { AxiosRequestConfig } from 'axios'
+import { cloneDeep } from 'lodash'
 
 const baseUrl = '/api/dictionary'
 
 const deleteDataIds: string[] = []
+
+let nextId = 9
 
 const dictionaryDataMap = {
   list: [
     {
       id: '1',
       type: 'GENDER',
+      parentId: '0',
       itemName: '用户性别',
       itemValue: '',
       description: '用户性别数据字典',
@@ -19,6 +22,7 @@ const dictionaryDataMap = {
       children: [
         {
           id: '2',
+          parentId: '1',
           type: 'GENDER',
           itemName: '男',
           itemValue: 'M',
@@ -27,6 +31,7 @@ const dictionaryDataMap = {
         },
         {
           id: '3',
+          parentId: '1',
           type: 'GENDER',
           itemName: '女',
           itemValue: 'F',
@@ -37,6 +42,7 @@ const dictionaryDataMap = {
     },
     {
       id: '4',
+      parentId: '0',
       type: 'ACCOUNT_STATUS',
       itemName: '账号状态',
       itemValue: '',
@@ -45,6 +51,7 @@ const dictionaryDataMap = {
       children: [
         {
           id: '5',
+          parentId: '4',
           type: 'ACCOUNT_STATUS',
           itemName: '有效',
           itemValue: 'A',
@@ -53,6 +60,7 @@ const dictionaryDataMap = {
         },
         {
           id: '6',
+          parentId: '4',
           type: 'ACCOUNT_STATUS',
           itemName: '无效',
           itemValue: 'I',
@@ -61,6 +69,7 @@ const dictionaryDataMap = {
         },
         {
           id: '7',
+          parentId: '4',
           type: 'ACCOUNT_STATUS',
           itemName: '锁定',
           itemValue: 'L',
@@ -69,6 +78,7 @@ const dictionaryDataMap = {
         },
         {
           id: '8',
+          parentId: '4',
           type: 'ACCOUNT_STATUS',
           itemName: '停用',
           itemValue: 'S',
@@ -124,17 +134,26 @@ const dictionaryDataMap = {
 
 interface FormModel {
   id?: string
+  parentId?: string
+  type: string
   itemName: string
-  itemValue: string
+  itemValue?: string
   description?: string
   color?: string
   children?: FormModel[]
 }
 
-const dataList = Array.from({ length: 50 }).map((_, index): Record<string, any> => {
+const dataList = Array.from({ length: 50 }).map((row, index): Record<string, any> => {
   const i = index % 2
-  const item = dictionaryDataMap.list[i]
-  item.id = String(index + 1)
+  const item = cloneDeep(dictionaryDataMap.list[i])
+  item.id = `${++nextId}`
+  const { children } = item
+  if (children && children.length > 0) {
+    children.forEach(row => {
+      row.id = `${++nextId}`
+      row.parentId = item.id
+    })
+  }
   return item
 })
 
@@ -152,14 +171,34 @@ export default [
     }
   },
   {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: any) => {
+      const { id } = query
+      if (!id) {
+        return JsonResult.OK()
+      }
+      const item = dataList.find(item => item.id === id)
+      return JsonResult.OK(item)
+    }
+  },
+  {
     url: `${baseUrl}/`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: (request) => {
-      console.log('request', request)
+    response: request => {
       const formModel: FormModel = request?.body
       if (formModel) {
-        formModel.id = `${dataList.length + 1}`
+        formModel.id = `${++nextId}`
+        formModel.parentId = `0`
+        const { children } = formModel
+        if (children && children.length > 0) {
+          children.forEach(item => {
+            item.id = `${++nextId}`
+            item.parentId = formModel.id
+          })
+        }
         dataList.push(formModel)
       }
       return JsonResult.OK(formModel)
@@ -169,9 +208,22 @@ export default [
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'put',
-    response: (formModel: FormModel) => {
-      console.log('formModel', formModel)
+    response: request => {
+      const formModel: FormModel = request?.body
+      const currentId = request?.query?.id
       formModel.id = String(dataList.length + 1)
+      const { children } = formModel
+      if (children && children.length > 0) {
+        children.forEach(item => {
+          item.id = `${++nextId}`
+          item.parentId = formModel.id
+        })
+      }
+      // 获取当前currentId的序号，使用当前对象替换已有对象
+      const index = dataList.findIndex(item => item.id === currentId)
+      if (index !== -1) {
+        dataList.splice(index, 1, formModel)
+      }
       return JsonResult.OK(formModel)
     }
   },
@@ -201,14 +253,6 @@ export default [
       deleteDataIds.push(...body)
       console.log(deleteDataIds)
       return JsonResult.OK()
-    }
-  },
-  {
-    url: `${baseUrl}/detail`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: () => {
-      return JsonResult.OK(dictionaryDataMap.detail)
     }
   }
 ] as MockMethod[]

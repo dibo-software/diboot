@@ -1,5 +1,4 @@
 import { FormInstance } from 'element-plus'
-import { defineEmits } from 'vue'
 import { ApiData } from '@/utils/request'
 
 type HookOptions<T> = {
@@ -52,9 +51,17 @@ export class BaseFormLoader<T> {
       this.afterOpen(id)
       return
     }
-    await this.getFormModel(id)
-    this.options.title = '数据更新'
-    this.afterOpen(id)
+    try {
+      this.options.visible = true
+      this.options.loading = true
+      this.options.title = '数据更新'
+      await this.getFormModel(id)
+      this.afterOpen(id)
+    } catch (e) {
+      console.log('获取详情数据失败', e)
+    } finally {
+      this.options.loading = false
+    }
   }
 
   public async afterOpen(id?: string) {
