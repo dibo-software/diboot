@@ -63,7 +63,7 @@ public class IamResourcePermissionVO extends IamResourcePermission {
             return Collections.emptyList();
         }
         return childrenList.stream()
-                .filter(item -> Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name().equals(item.getDisplayType()))
+                .filter(item -> Cons.MENU_CATEGORY_LIST.contains(item.getDisplayType()))
                 .collect(Collectors.toList());
     }
 

@@ -1,17 +1,15 @@
 import { ElButton } from 'element-plus'
 
-export interface ListOption<T> {
+export interface ListOption<D> {
   // 请求接口基础路径
   baseApi: string
   // 列表数据接口
   listApi?: string
-  // 自定义参数（不被查询表单重置和改变的参数）
-  initQueryParam?: QueryParam<T>
+  // 初始化参数
+  initQueryParam?: Partial<D>
   // 重建查询条件
-  rebuildQuery?: (query: QueryParam<T>) => QueryParam<T>
+  rebuildQuery?: (query: Partial<D>) => Partial<D>
 }
-
-export type QueryParam<T> = Partial<T> & Record<string, unknown>
 
 export interface Pagination {
   pageSize: number
@@ -32,7 +30,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
 
   const pagination: Partial<Pagination> = reactive({})
 
-  const queryParam: QueryParam<D> = reactive(_.cloneDeep(option.initQueryParam ?? {}))
+  const queryParam: Partial<D> = reactive(_.cloneDeep(option.initQueryParam ?? {}))
 
   const dateRangeQuery: Record<string, [string | number | Date, string | number | Date]> = reactive({})
 
@@ -40,20 +38,20 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
    * 构建查询参数
    */
   const buildQueryParam = () => {
-    // 合并自定义查询
-    const tempQueryParam: QueryParam<unknown> = _.cloneDeep(queryParam)
+    const tempQueryParam: Record<string, unknown> = _.cloneDeep(queryParam)
     // 合并分页参数
     tempQueryParam.pageIndex = pagination.current
     tempQueryParam.pageSize = pagination.pageSize
     // 合并日期范围查询参数
     for (const [key, value] of Object.entries(dateRangeQuery)) {
+      if (!value) continue
       tempQueryParam[`${key}Begin`] = value[0]
       tempQueryParam[`${key}End`] = value[1]
     }
     // TODO 日期格式化
 
     // 改造查询条件（用于列表页扩展）
-    return option.rebuildQuery ? option.rebuildQuery(tempQueryParam) : tempQueryParam
+    return option.rebuildQuery ? option.rebuildQuery(tempQueryParam as Partial<D>) : tempQueryParam
   }
 
   /**
@@ -92,9 +90,10 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
    */
   const resetFilter = () => {
     Object.keys(dateRangeQuery).forEach(key => delete dateRangeQuery[key])
-    Object.keys(queryParam).forEach(key => delete queryParam[key])
-    Object.assign(queryParam, _.cloneDeep(option.initQueryParam ?? {}))
+    Object.keys(queryParam).forEach(key => delete queryParam[key as keyof D])
+    Object.assign(queryParam, option.initQueryParam ?? {})
     onSearch()
+    _.isDate()
   }
 
   // 删除
@@ -184,7 +183,6 @@ export const useDelete = (option: DeleteOption) => {
       ElMessage.success('数据删除成功')
       return
     }
-
     // 支持撤回的删除成功提示
     const message = ElMessage.success({
       type: 'success',
