@@ -1,11 +1,12 @@
 <script setup lang="ts" name="DictionaryList">
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
-import formPage from './form.vue'
+import FormPage from './form.vue'
 interface Dictionary {
   id: string
+  parentId: string
   type: string
   itemName: string
-  itemValue: string
+  itemValue?: string
   description: string
   children: Dictionary[]
   createTime: string
@@ -27,16 +28,14 @@ const openDetail = (id: string) => {
     type: 'success'
   })
 }
-const openEdit = (id: string) => {
-  ElMessage({
-    message: 'open:Edit ' + id,
-    grouping: true,
-    type: 'warning'
-  })
-}
-const form = ref(null)
+const formPage = ref(null)
 const create = () => {
-  ;(form as any).value.open()
+  if (formPage?.value) {
+    ;(formPage as any).value.open()
+  }
+}
+const openEdit = (id: string) => {
+  ;(formPage as any).value.open(id)
 }
 </script>
 <template>
@@ -91,28 +90,38 @@ const create = () => {
     default-expand-all
   >
     <el-table-column prop="itemName" label="类型名称" />
-    <el-table-column prop="itemValue" label="类型编码" />
+    <el-table-column label="类型编码">
+      <template #default="{ row }">
+        <template v-if="row.parentId && row.parentId !== '0'"> {{ row.itemValue }} </template>
+        <template v-else>
+          {{ row.type }}
+        </template>
+      </template>
+    </el-table-column>
     <el-table-column prop="description" label="备注" />
     <el-table-column prop="createTime" label="创建时间" />
     <el-table-column label="操作" width="160">
       <template #default="{ row }">
-        <el-space>
-          <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
-          <el-dropdown>
-            <el-button text bg type="primary" size="small">
-              更多
-              <el-icon :size="16" style="margin-left: 5px">
-                <arrow-down />
-              </el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="openEdit(row.id)">编辑</el-dropdown-item>
-                <el-dropdown-item @click="pageLoader.remove(row.id)">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </el-space>
+        <template v-if="!row.parentId || row.parentId === '0'">
+          <el-space>
+            <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
+            <el-dropdown>
+              <el-button text bg type="primary" size="small">
+                更多
+                <el-icon :size="16" style="margin-left: 5px">
+                  <arrow-down />
+                </el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="openEdit(row.id)">编辑</el-dropdown-item>
+                  <el-dropdown-item @click="pageLoader.remove(row.id)">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-space>
+        </template>
+        <span v-else>-</span>
       </template>
     </el-table-column>
   </el-table>
@@ -128,5 +137,5 @@ const create = () => {
     @size-change="pageLoader.getList()"
     @current-change="pageLoader.getList()"
   />
-  <form-page ref="form" @complete="pageLoader.onSearch()" />
+  <form-page ref="formPage" @complete="pageLoader.onSearch()" />
 </template>

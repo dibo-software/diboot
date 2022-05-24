@@ -1,12 +1,13 @@
 <script setup lang="ts" name="DictionaryForm">
-import useForm, {BaseFormLoader} from '@/hooks/form'
+import useForm, { BaseFormLoader } from '@/hooks/form'
 import { FormInstance, FormRules } from 'element-plus'
-import {ApiData} from "@/utils/request";
+import { ApiData } from '@/utils/request'
 
 interface FormModel {
   id?: string
+  type: string
   itemName: string
-  itemValue: string
+  itemValue?: string
   description?: string
   color?: string
   children?: FormModel[]
@@ -25,11 +26,13 @@ const emit = defineEmits(['complete'])
 const formLabelWidth = '120px'
 const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585', '#c71585'])
 const initModel = {
+  type: '',
   itemName: '',
   itemValue: '',
   description: '',
   children: [
     {
+      type: '',
       itemName: '',
       itemValue: '',
       color: ''
@@ -44,7 +47,7 @@ const rules = reactive<FormRules>({
       trigger: 'change'
     }
   ],
-  itemValue: [
+  type: [
     {
       required: true,
       message: '请输入字典编码',
@@ -55,6 +58,16 @@ const rules = reactive<FormRules>({
 
 // 使用form的hooks
 class DictFormLoader extends BaseFormLoader<FormModel> {
+  public async enhance(values: FormModel): Promise<FormModel> {
+    const { type, children } = values
+    if (children && children.length > 0) {
+      children.forEach(item => {
+        item.type = type
+      })
+    }
+    return super.enhance(values)
+  }
+
   public afterSubmitSuccess(res: ApiData<FormModel>) {
     emit('complete', res.data)
     super.afterSubmitSuccess(res)
@@ -64,7 +77,7 @@ const { pageLoader, title, model, visible } = useForm<FormModel>({
   pageLoader: new DictFormLoader(),
   options: {
     baseApi: '/dictionary',
-    model: initModel
+    model: _.cloneDeep(initModel)
   }
 })
 
@@ -117,8 +130,8 @@ defineExpose({
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="字典编码" prop="itemValue" :label-width="formLabelWidth">
-            <el-input v-model="model.itemValue" autocomplete="off" />
+          <el-form-item label="字典编码" prop="type" :label-width="formLabelWidth">
+            <el-input v-model="model.type" autocomplete="off" />
           </el-form-item>
         </el-col>
       </el-row>
