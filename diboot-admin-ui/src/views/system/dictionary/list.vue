@@ -127,7 +127,6 @@ const openDetail = (id: string) => {
     v-show="pagination.total > 0"
     v-model:currentPage="pagination.current"
     v-model:page-size="pagination.pageSize"
-    style="position: relative; top: 10px; margin-bottom: 10px; justify-content: flex-end"
     :page-sizes="[10, 20, 30, 50, 100]"
     background
     layout="total, sizes, prev, pager, next, jumper"
