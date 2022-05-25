@@ -1,11 +1,17 @@
-export default <T>(baseApi: string) => {
+/**
+ * 获取详情
+ *
+ * @param baseApi
+ * @param init 初始值
+ */
+export default <T>(baseApi: string, init: Partial<T> = {}) => {
   const loading = ref(false)
-  const model = ref<Partial<T>>({})
+  const model = ref<Partial<T>>(init)
   const error = ref()
 
   const loadData = (id?: string) => {
     // 在请求之前重设状态...
-    model.value = {}
+    model.value = init
     error.value = undefined
 
     if (!id) return
@@ -14,7 +20,7 @@ export default <T>(baseApi: string) => {
 
     api
       .get<T>(`${baseApi}/${unref(id)}`)
-      .then(res => (model.value = res.data))
+      .then(res => (model.value = res.data ?? init))
       .catch(err => {
         error.value = err
         ElMessage.error(err.msg ?? err.message ?? '获取详情失败')
