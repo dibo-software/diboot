@@ -1,6 +1,7 @@
 <script setup lang="ts" name="DictionaryList">
 import { ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import FormPage from './form.vue'
+import DetailPage from './detail.vue'
 interface Dictionary {
   id: string
   parentId: string
@@ -21,14 +22,8 @@ const { pageLoader, advanced, queryParam, dateRangeQuery, dataList, pagination }
 })
 // 选中的数据 Id 集合
 const multipleSelectionIds = ref<string[]>([])
-const openDetail = (id: string) => {
-  ElMessage({
-    message: 'open:Detail ' + id,
-    grouping: true,
-    type: 'success'
-  })
-}
 const formPage = ref(null)
+const detailPage = ref(null)
 const create = () => {
   if (formPage?.value) {
     ;(formPage as any).value.open()
@@ -36,6 +31,9 @@ const create = () => {
 }
 const openEdit = (id: string) => {
   ;(formPage as any).value.open(id)
+}
+const openDetail = (id: string) => {
+  ;(detailPage as any).value.open(id)
 }
 </script>
 <template>
@@ -138,4 +136,5 @@ const openEdit = (id: string) => {
     @current-change="pageLoader.getList()"
   />
   <form-page ref="formPage" @complete="pageLoader.onSearch()" />
+  <detail-page ref="detailPage" />
 </template>

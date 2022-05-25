@@ -56,7 +56,7 @@ export class BaseFormLoader<T> {
       this.options.loading = true
       this.options.title = '数据更新'
       await this.getFormModel(id)
-      this.afterOpen(id)
+      await this.afterOpen(id)
     } catch (e) {
       console.log('获取详情数据失败', e)
     } finally {
