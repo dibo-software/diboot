@@ -1,6 +1,6 @@
 import { RouteMeta } from 'vue-router'
 
-export interface ResourcePermission extends Record<string, unknown> {
+export interface ResourcePermission {
   id?: string
   parentId: string
   displayType?: string

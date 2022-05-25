@@ -11,7 +11,7 @@ export interface TreeOption {
   clickNodeCallback?: (id: string) => void
 }
 
-export default <T extends Record<string, unknown>>(option: TreeOption) => {
+export default <T>(option: TreeOption) => {
   const optionsTransformField = {
     id: 'id',
     label: 'label',
@@ -65,10 +65,10 @@ export default <T extends Record<string, unknown>>(option: TreeOption) => {
    */
   const checkChange = (data: T, checked: boolean) => {
     if (checked) {
-      dataState.selectedIdList.push(...[data[optionsTransformField.id] as string])
+      dataState.selectedIdList.push(...[(data as Record<string, unknown>)[optionsTransformField.id] as string])
     } else {
       dataState.selectedIdList = dataState.selectedIdList.filter(
-        (selected: string) => selected !== data[optionsTransformField.id]
+        (selected: string) => selected !== (data as Record<string, unknown>)[optionsTransformField.id]
       )
     }
   }
@@ -78,7 +78,7 @@ export default <T extends Record<string, unknown>>(option: TreeOption) => {
    * @param node 被点击节点
    */
   const nodeClick = (node: T) => {
-    currentNodeKey.value = node[optionsTransformField.id] as string
+    currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.id] as string
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
     clickNodeCallback && clickNodeCallback(currentNodeKey.value)
   }
@@ -89,7 +89,7 @@ export default <T extends Record<string, unknown>>(option: TreeOption) => {
    */
   const filterNode = (value: string, data: Partial<T>) => {
     if (!value) return true
-    return ((data as T)[optionsTransformField.label] as string).includes(value)
+    return ((data as Record<string, unknown>)[optionsTransformField.label] as string).includes(value)
   }
 
   /**
