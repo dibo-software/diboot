@@ -26,12 +26,6 @@ const rules = reactive<FormRules>({
 })
 const model = reactive<ResourcePermission>({
   parentId: '0',
-  displayType: '',
-  displayName: '',
-  routePath: '',
-  redirectPath: '',
-  resourceCode: '',
-  permissionCodes: [],
   metaConfig: {}
 })
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -60,11 +54,7 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
 
 const props = defineProps<{ primaryValue: string }>()
 const empty = ref(true)
-const {
-  loadDataWithPromise,
-  loading,
-  model: mockModel
-} = useDetailDefault<ResourcePermission>('/iam/resourcePermission')
+const { loadDataWithPromise, loading } = useDetailDefault<ResourcePermission>('/iam/resourcePermission')
 watch(
   () => props.primaryValue,
   val => {
