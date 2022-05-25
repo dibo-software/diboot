@@ -3,6 +3,9 @@ import { JsonResult, ApiRequest } from './_util'
 import { Random } from 'mockjs'
 import moment from 'moment'
 
+/**
+ * 选项
+ */
 export interface Option<T> {
   // 请求接口基础路径
   baseApi: string
@@ -16,6 +19,11 @@ export interface Option<T> {
   enablePagination?: boolean
 }
 
+/**
+ * 通用 CRUD
+ *
+ * @param option
+ */
 export default <T>(option: Option<T>) => {
   const baseUrl = '/api' + option.baseApi
   const primaryKey = option.primaryKey || 'id'
@@ -33,29 +41,41 @@ export default <T>(option: Option<T>) => {
         timeout: Random.natural(50, 300),
         method: 'get',
         response: ({ query }: ApiRequest) => {
+          // 过滤逻辑删除数据
           let list = dataList.filter(e => !deleteDataIds.includes(`${e[primaryKey as keyof T]}`))
           const keys = Object.keys(query ?? {})
           for (const key of keys) {
-            if (['pageIndex', 'pageSize', 'orderBy'].includes(key)) continue // 忽略分页排序属性
-            const value = query[key]
-            if (value) {
-              if (/\d{4}-\d{2}-\d{2}/.test(value)) {
-                if (key.endsWith('Begin')) {
-                  list = list.filter(
-                    e => new Date(`${e[key.replace(/Begin$/, '') as keyof T]}`.slice(0, 10)) >= new Date(value)
-                  )
-                } else if (key.endsWith('End')) {
-                  list = list.filter(
-                    e => new Date(`${e[key.replace(/End$/, '') as keyof T]}`.slice(0, 10)) <= new Date(value)
-                  )
-                } else {
-                  list = list.filter(e => `${e[key as keyof T]}`.slice(0, 10) === value)
-                }
-              } else {
-                list = list.filter(e =>
-                  fuzzyMatchKeys.includes(key) ? `${e[key as keyof T]}`.match(value) : e[key as keyof T] === value
-                )
-              }
+            // 忽略分页排序属性
+            if (['pageIndex', 'pageSize', 'orderBy'].includes(key)) continue
+            const queryValue = query[key]
+            // 该属性的查询参数无值时不进行过滤
+            if (queryValue == null || queryValue === '') continue
+            // 判断查询参数是否为日期类型
+            if (/\d{4}-\d{2}-\d{2}/.test(queryValue)) {
+              // 过滤出大与等于指定日期的数据
+              if (key.endsWith('Begin'))
+                list = list.filter(e => `${e[key.replace(/Begin$/, '') as keyof T]}`.slice(0, 10) >= queryValue)
+              // 过滤出小与等于指定日期的数据
+              else if (key.endsWith('End'))
+                list = list.filter(e => `${e[key.replace(/End$/, '') as keyof T]}`.slice(0, 10) <= queryValue)
+              // 过滤出指定日期的数据
+              else list = list.filter(e => `${e[key as keyof T]}`.slice(0, 10) === queryValue)
+            } else {
+              list = list.filter(e => {
+                const itemValue = e[key as keyof T]
+                if (itemValue == null) return false
+                // 指定属性 模糊匹配
+                else if (fuzzyMatchKeys.includes(key)) return `${itemValue}`.match(queryValue)
+                // 属性值与查询参数同时为数组，判断属性值中是否包含查询参数中的某个
+                else if (queryValue instanceof Array && itemValue instanceof Array)
+                  return itemValue.some(e => queryValue.includes(e))
+                // 属性值为数组时，判断查询参数是否被包含
+                else if (itemValue instanceof Array) return itemValue.includes(queryValue)
+                // 查询参数为数组时 判断属性值是否被包含
+                else if (queryValue instanceof Array) return queryValue.includes(itemValue)
+                // 转为字符串进行忽略类型比较
+                else return String(itemValue) === String(queryValue)
+              })
             }
           }
           return option.enablePagination === false
@@ -107,11 +127,11 @@ export default <T>(option: Option<T>) => {
         }
       },
       batchRemove: {
-        url: `${baseUrl}/:id`,
+        url: `${baseUrl}/batchDelete`,
         timeout: Random.natural(50, 300),
-        method: 'delete',
-        response: ({ query }: ApiRequest) => {
-          deleteDataIds.push(query.id)
+        method: 'post',
+        response: ({ body }: ApiRequest<Array<string>>) => {
+          deleteDataIds.push(...body)
           return JsonResult.OK()
         }
       },
