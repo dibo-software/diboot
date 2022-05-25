@@ -113,7 +113,6 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
         :title="currentPermissionTitle"
         :current-permission-codes="currentPermissionCodes"
         :config-code="currentConfigCode"
-        :menu-resource-code="model.resourceCode"
         :origin-api-list="originApiList"
         @change-permission-codes="handleChangePermissionCodes"
       />

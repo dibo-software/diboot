@@ -4,7 +4,7 @@ import { ApiRequest, JsonResult } from '../_util'
 import { MockMethod } from 'vite-plugin-mock'
 const baseUrl = '/api/iam/resourcePermission'
 
-const dbDataList = [
+const dbDataList: ResourcePermission[] = [
   {
     id: '10000',
     createTime: '2022-05-19 01:18:33',
@@ -225,6 +225,17 @@ export default [
     method: 'get',
     response: ({ query }: ApiRequest) => {
       return JsonResult.OK(dbDataList)
+    }
+  },
+  {
+    url: `${baseUrl}/`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: ({ body }: ApiRequest<ResourcePermission>) => {
+      const id = String(dbDataList.length + 1)
+      Object.assign(body, { id: id, displayName: '未命名' + id, displayType: 'MEUN' })
+      dbDataList.unshift(body)
+      return JsonResult.OK(id)
     }
   }
 ] as MockMethod[]
