@@ -162,6 +162,17 @@ const authMenu = [
           componentPath: prefix + 'system/dictionary/list.vue',
           keepAlive: false
         }
+      },
+      {
+        path: 'scheduleJob',
+        name: 'ScheduleJob',
+        meta: {
+          title: '定时任务管理',
+          componentPath: prefix + 'system/scheduleJob/list.vue',
+          keepAlive: false,
+          hollow: true,
+          sort: 6
+        }
       }
     ]
   }
