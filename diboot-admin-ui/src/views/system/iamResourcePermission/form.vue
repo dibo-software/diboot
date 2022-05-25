@@ -24,10 +24,6 @@ const rules = reactive<FormRules>({
     }
   ]
 })
-const model = reactive<ResourcePermission>({
-  parentId: '0',
-  metaConfig: {}
-})
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -54,12 +50,14 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
 
 const props = defineProps<{ primaryValue: string }>()
 const empty = ref(true)
-const { loadDataWithPromise, loading } = useDetailDefault<ResourcePermission>('/iam/resourcePermission')
+const { loadData, loading, model } = useDetailDefault<ResourcePermission>('/iam/resourcePermission', {
+  metaConfig: {}
+})
 watch(
   () => props.primaryValue,
   val => {
     empty.value = false
-    loadDataWithPromise(val).then(value => Object.assign(model, value))
+    loadData(val)
   }
 )
 </script>
