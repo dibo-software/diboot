@@ -80,7 +80,7 @@ export default <T extends Record<string, unknown>>(option: TreeOption) => {
   const nodeClick = (node: T) => {
     currentNodeKey.value = node[optionsTransformField.id] as string
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
-    clickNodeCallback!(currentNodeKey.value)
+    clickNodeCallback && clickNodeCallback(currentNodeKey.value)
   }
   /**
    * 过滤节点
@@ -146,6 +146,7 @@ export default <T extends Record<string, unknown>>(option: TreeOption) => {
     removeTreeNode,
     addTreeNode,
     nodeClick,
+    loading,
     treeDataList,
     selectedIdList,
     searchWord,

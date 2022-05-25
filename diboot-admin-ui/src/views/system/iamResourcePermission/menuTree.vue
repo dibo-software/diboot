@@ -19,7 +19,8 @@ const {
   treeRef,
   searchWord,
   treeDataList,
-  currentNodeKey
+  currentNodeKey,
+  loading
 } = useTree<ResourcePermission>({
   baseApi: '/iam/resourcePermission',
   treeApi: '/getMenuTreeList',
@@ -36,7 +37,8 @@ getTree()
  */
 const addTopNode = () => {
   addTreeNode({
-    parentId: '0'
+    parentId: '0',
+    displayType: 'MENU'
   })
 }
 /**
@@ -50,7 +52,8 @@ const addChildNode = (parentId: string) => {
 }
 </script>
 <template>
-  <el-space :fill="true" wrap class="tree-container">
+  <el-skeleton v-if="loading" :rows="5" animated />
+  <el-space v-else :fill="true" wrap class="tree-container">
     <div class="tree-header">
       <el-button type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
       <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除菜单</el-button>
