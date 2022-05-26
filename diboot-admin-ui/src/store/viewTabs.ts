@@ -29,9 +29,7 @@ export default defineStore({
   getters: {
     // 缓存的视图组件名称列表
     cachedViews(): string[] {
-      return this.tabList
-        .filter(e => e.meta.keepAlive != false && e.meta.componentName)
-        .map(e => e.meta.componentName) as string[]
+      return this.tabList.filter(e => e.meta.keepAlive != false && e.name).map(e => e.name) as string[]
     }
   },
   actions: {

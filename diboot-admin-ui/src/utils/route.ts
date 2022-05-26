@@ -1,17 +1,32 @@
-import { RouteRecord, RouteRecordName, RouteRecordRaw, RouterView, RouteComponent } from 'vue-router'
+import { RouteRecord, RouteRecordName, RouteRecordRaw, RouterView } from 'vue-router'
 import { DefineComponent, Ref, VNode } from 'vue'
 import Layout from '@/layout/index.vue'
 
 // 加载所有组件
 const modules = import.meta.glob('@/views/**/*.{vue,tsx,jsx}')
 
+// 异步组件映射
+export const views = Object.keys(modules).reduce(
+  (pages: Record<string, () => Promise<Record<string, DefineComponent>>>, path) => {
+    pages[path.replace(/\.\.(.*)/, '@$1')] = modules[path]
+    return pages
+  },
+  {}
+)
+
 /**
- * views 组件映射
+ * 构建视图名称路径映射
  */
-export const views = Object.keys(modules).reduce((pages: Record<string, () => Promise<RouteComponent>>, path) => {
-  pages[path.replace(/\.\.(.*)/, '@$1')] = modules[path]
-  return pages
-}, {})
+export const buildViewMap = async () => {
+  const map: Record<string, string> = {}
+  await Promise.all(
+    Object.keys(views).map(async path => {
+      const view = (await views[path]()).default
+      if (view.name) map[view.name] = path
+    })
+  )
+  return map
+}
 
 // 动态渲染组件
 const renderComponent = (callback: (usedVisibleHeight: Ref<number>) => VNode) =>

@@ -147,7 +147,7 @@ const authMenu = [
       },
       {
         path: 'role',
-        name: 'Role',
+        name: 'RoleList',
         meta: {
           title: '角色管理',
           componentPath: prefix + 'system/role/list.vue',
