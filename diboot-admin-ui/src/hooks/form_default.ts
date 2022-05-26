@@ -1,5 +1,4 @@
 import { FormInstance } from 'element-plus'
-import { Ref } from 'vue'
 
 interface FormOption {
   // 主键属性名（默认值：id）

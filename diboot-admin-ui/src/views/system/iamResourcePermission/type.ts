@@ -3,14 +3,14 @@ import { RouteMeta } from 'vue-router'
 export interface ResourcePermission {
   id?: string
   parentId: string
-  displayType: string
-  displayName: string
-  routePath: string
-  redirectPath: string
-  resourceCode: string
-  permissionCodes: Array<string>
-  metaConfig: RouteMeta
-  sortId?: number
+  displayType?: string
+  displayName?: string
+  routePath?: string
+  redirectPath?: string
+  resourceCode?: string
+  permissionCodes?: Array<string>
+  metaConfig?: RouteMeta
+  sortId?: string
   children?: ResourcePermission[]
 }
 

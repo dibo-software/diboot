@@ -7,16 +7,6 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission, PermissionGroupType } from './type'
 const ruleFormRef = ref<FormInstance>()
 
-const model = reactive<ResourcePermission>({
-  parentId: '0',
-  displayType: '',
-  displayName: '',
-  routePath: '',
-  redirectPath: '',
-  resourceCode: '',
-  permissionCodes: [],
-  metaConfig: {}
-})
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
 const currentPermissionActiveKey = ref(0)
@@ -34,7 +24,6 @@ const rules = reactive<FormRules>({
     }
   ]
 })
-
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -58,9 +47,23 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
     permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
   }
 }
+
+const props = defineProps<{ primaryValue: string }>()
+const empty = ref(true)
+const { loadData, loading, model } = useDetailDefault<ResourcePermission>('/iam/resourcePermission', {
+  metaConfig: {}
+})
+watch(
+  () => props.primaryValue,
+  val => {
+    empty.value = false
+    loadData(val)
+  }
+)
 </script>
 <template>
-  <el-row :gutter="5">
+  <el-empty v-if="empty" description="选择左侧菜单后操作" />
+  <el-row v-else :gutter="5">
     <el-col :span="10" class="config-container">
       <el-space wrap :fill="true">
         <el-form ref="ruleFormRef" :model="model" :rules="rules" label-width="90px">
@@ -113,14 +116,12 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
         :title="currentPermissionTitle"
         :current-permission-codes="currentPermissionCodes"
         :config-code="currentConfigCode"
-        :menu-resource-code="model.resourceCode"
         :origin-api-list="originApiList"
         @change-permission-codes="handleChangePermissionCodes"
       />
     </el-col>
   </el-row>
-
-  <div class="is-fixed" style="text-align: center; margin-top: 10px">
+  <div v-if="!empty" class="is-fixed" style="text-align: center; margin-top: 10px">
     <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
     <el-button @click="resetForm(ruleFormRef)">重置</el-button>
   </div>

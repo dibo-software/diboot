@@ -44,9 +44,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     tempQueryParam.pageSize = pagination.pageSize
     // 合并日期范围查询参数
     for (const [key, value] of Object.entries(dateRangeQuery)) {
-      if (!value) continue
-      tempQueryParam[`${key}Begin`] = value[0]
-      tempQueryParam[`${key}End`] = value[1]
+      if (value) [tempQueryParam[`${key}Begin`], tempQueryParam[`${key}End`]] = value
     }
     // TODO 日期格式化
 
@@ -62,7 +60,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     api
       .get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
       .then(res => {
-        dataList.splice(0, dataList.length)
+        dataList.splice(0)
         if (res.data) dataList.push(...(res.data ?? []))
         pagination.pageSize = res.page?.pageSize
         pagination.current = res.page?.pageIndex

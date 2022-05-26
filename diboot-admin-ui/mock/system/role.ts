@@ -3,7 +3,7 @@ import crudTemplate from '../_crudTemplate'
 import type { Role } from '@/views/system/role/type'
 import Mock from 'mockjs'
 
-const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
+export const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
   const id = String(50 - index)
   return Mock.mock({
     id,

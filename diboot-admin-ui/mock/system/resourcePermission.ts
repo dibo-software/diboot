@@ -2,9 +2,10 @@ import type { ResourcePermission } from '@/views/system/iamResourcePermission/ty
 import { Random } from 'mockjs'
 import { ApiRequest, JsonResult } from '../_util'
 import { MockMethod } from 'vite-plugin-mock'
+import crudTemplate from '../_crudTemplate'
 const baseUrl = '/api/iam/resourcePermission'
 
-const dbDataList = [
+const dbDataList: ResourcePermission[] = [
   {
     id: '10000',
     createTime: '2022-05-19 01:18:33',
@@ -218,6 +219,22 @@ const dbDataList = [
     ]
   }
 ]
+const tree2List = (tree: ResourcePermission[]): ResourcePermission[] => {
+  const list: ResourcePermission[] = []
+  for (const resourcePermission of tree) {
+    if (resourcePermission.children && resourcePermission.children.length > 0) {
+      for (const child of tree2List(resourcePermission.children)) {
+        list.push(child)
+      }
+    }
+    // 移除children
+    const temp: ResourcePermission = { parentId: '', metaConfig: { icon: 'Plus' } }
+    Object.assign(temp, resourcePermission)
+    delete temp.children
+    list.push(temp)
+  }
+  return list
+}
 export default [
   {
     url: `${baseUrl}/getMenuTreeList`,
@@ -225,6 +242,26 @@ export default [
     method: 'get',
     response: ({ query }: ApiRequest) => {
       return JsonResult.OK(dbDataList)
+    }
+  },
+  {
+    url: `${baseUrl}/`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: ({ body }: ApiRequest<ResourcePermission>) => {
+      const id = String(dbDataList.length + 1)
+      Object.assign(body, { id: id, displayName: '未命名' + id, displayType: 'MEUN' })
+      dbDataList.unshift(body)
+      return JsonResult.OK(id)
+    }
+  },
+  {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      const list = tree2List(dbDataList)
+      return JsonResult.OK(list.find(item => item.id === query.id))
     }
   }
 ] as MockMethod[]

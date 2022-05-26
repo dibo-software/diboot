@@ -1,5 +1,5 @@
 import type { ElTree } from 'element-plus'
-import { ApiData } from '@/utils/request'
+import { ResourcePermission } from '@/views/system/iamResourcePermission/type'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]
@@ -8,15 +8,17 @@ export interface TreeOption {
   baseApi: string
   treeApi: string
   transformField?: { id?: string; label?: string; children?: string }
+  clickNodeCallback?: (id: string) => void
 }
 
-export default <T extends Record<string, any>>(option: TreeOption) => {
+export default <T>(option: TreeOption) => {
   const optionsTransformField = {
     id: 'id',
     label: 'label',
     children: 'children'
   }
-  Object.assign(optionsTransformField, option.transformField || {})
+  const { baseApi, treeApi, transformField, clickNodeCallback } = option
+  Object.assign(optionsTransformField, transformField || {})
   const dataState: DataType<T> = reactive({
     selectedIdList: [],
     treeDataList: []
@@ -27,6 +29,8 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
   const treeRef = ref<InstanceType<typeof ElTree>>()
 
   const loading = ref(false)
+  // 当前选中的node节点
+  const currentNodeKey = ref('')
 
   //监听keyword变化
   watch(searchWord, val => {
@@ -38,7 +42,7 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
   const getTree = async () => {
     loading.value = true
     try {
-      const result = await api.get<T[]>(`${option.baseApi}${option.treeApi}`)
+      const result = await api.get<T[]>(`${baseApi}${treeApi}`)
       if (result && result.code === 0 && result.data) {
         dataState.treeDataList.push(...(result.data ?? []))
       } else {
@@ -61,12 +65,22 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
    */
   const checkChange = (data: T, checked: boolean) => {
     if (checked) {
-      dataState.selectedIdList.push(...[data[optionsTransformField.id]])
+      dataState.selectedIdList.push(...[(data as Record<string, unknown>)[optionsTransformField.id] as string])
     } else {
       dataState.selectedIdList = dataState.selectedIdList.filter(
-        (selected: string) => selected !== data[optionsTransformField.id]
+        (selected: string) => selected !== (data as Record<string, unknown>)[optionsTransformField.id]
       )
     }
+  }
+
+  /**
+   * 节点点击时触发
+   * @param node 被点击节点
+   */
+  const nodeClick = (node: T) => {
+    currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.id] as string
+    currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
+    clickNodeCallback && clickNodeCallback(currentNodeKey.value)
   }
   /**
    * 过滤节点
@@ -75,7 +89,7 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
    */
   const filterNode = (value: string, data: Partial<T>) => {
     if (!value) return true
-    return (data as T)[optionsTransformField.label].includes(value)
+    return ((data as Record<string, unknown>)[optionsTransformField.label] as string).includes(value)
   }
 
   /**
@@ -84,9 +98,13 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
    */
   const addTreeNode = async (treeNode: T) => {
     try {
-      const result = await api.post<T>(option.baseApi, treeNode)
+      const result = await api.post<string>(`${baseApi}/`, treeNode)
       if (result && result.code === 0) {
+        Object.assign(treeNode, { [optionsTransformField.id]: result.data })
+        dataState.treeDataList = []
         await getTree()
+        console.log(treeNode)
+        nodeClick(treeNode)
       } else {
         throw new Error(result.msg)
       }
@@ -100,18 +118,17 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
    * @param ids
    */
   const removeTreeNode = async () => {
-    console.log(dataState.selectedIdList)
     if (!(dataState.selectedIdList && dataState.selectedIdList.length)) {
       ElMessage.warning('未选择数据')
       return
     }
 
-    ElMessageBox.confirm('确认删除已选节点吗？', '删除树节点', { type: 'warning' })
+    ElMessageBox.confirm('确认删除已选节点吗？', '删除节点', { type: 'warning' })
       .then(() => {
         api
-          .post(`${option.baseApi}/batchDelete`, dataState.selectedIdList)
+          .post(`${baseApi}/batchDelete`, dataState.selectedIdList)
           .then(() => {
-            ElMessage.success('删除树节点成功！')
+            ElMessage.success('删除节点成功！')
             getTree()
           })
           .catch(err => {
@@ -128,9 +145,12 @@ export default <T extends Record<string, any>>(option: TreeOption) => {
     getTree,
     removeTreeNode,
     addTreeNode,
+    nodeClick,
+    loading,
     treeDataList,
     selectedIdList,
     searchWord,
-    treeRef
+    treeRef,
+    currentNodeKey
   }
 }

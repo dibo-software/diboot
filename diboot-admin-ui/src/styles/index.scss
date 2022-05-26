@@ -1,12 +1,33 @@
-//:root {
+:root {
 //  .el-dialog {
 //    --el-dialog-margin-top: 10vh;
 //  }
-//}
+
+  .el-drawer {
+    .el-drawer__header {
+      margin-bottom: 0;
+    }
+  }
+}
 
 .el-descriptions__label {
   color: var(--el-text-color-regular) !important;
   font-weight: bold;
+}
+
+.el-pagination {
+  position: relative;
+  top: 10px;
+  margin-bottom: 10px;
+  justify-content: flex-end;
+}
+
+.el-select, .el-date-editor {
+  width: 100%;
+
+  .el-input__wrapper {
+    width: -webkit-fill-available;
+  }
 }
 
 .list-operation {

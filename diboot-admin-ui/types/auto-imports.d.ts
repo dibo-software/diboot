@@ -67,6 +67,7 @@ declare global {
   const useFormDefault: typeof import('@/hooks/form_default')['default']
   const useList: typeof import('@/hooks/list')['default']
   const useListDefault: typeof import('@/hooks/list_default')['default']
+  const useMoreDefault: typeof import('@/hooks/more_default')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']

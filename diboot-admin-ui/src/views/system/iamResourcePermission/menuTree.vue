@@ -2,29 +2,68 @@
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
 import useTree from './tree'
 import type { ResourcePermission } from './type'
+import { defineEmits } from 'vue'
 const defaultProps = {
   label: 'displayName'
 }
-const { checkChange, filterNode, getTree, addTreeNode, removeTreeNode, treeRef, searchWord, treeDataList } =
-  useTree<ResourcePermission>({
-    baseApi: '/iam/resourcePermission',
-    treeApi: '/getMenuTreeList',
-    transformField: defaultProps
-  })
+const emit = defineEmits<{
+  (e: 'click-node', id: string): void
+}>()
+const {
+  checkChange,
+  filterNode,
+  getTree,
+  addTreeNode,
+  removeTreeNode,
+  nodeClick,
+  treeRef,
+  searchWord,
+  treeDataList,
+  currentNodeKey,
+  loading
+} = useTree<ResourcePermission>({
+  baseApi: '/iam/resourcePermission',
+  treeApi: '/getMenuTreeList',
+  transformField: defaultProps,
+  clickNodeCallback(id) {
+    emit('click-node', id)
+  }
+})
 // 初始化tree数据
 getTree()
+
+/**
+ * 添加顶级菜单
+ */
+const addTopNode = () => {
+  addTreeNode({
+    parentId: '0',
+    displayType: 'MENU'
+  })
+}
+/**
+ * 添加子菜单
+ */
+const addChildNode = (parentId: string) => {
+  // addTreeNode({
+  //   parentId
+  // })
+  console.log(parentId)
+}
 </script>
 <template>
-  <el-space :fill="true" wrap class="tree-container">
+  <el-skeleton v-if="loading" :rows="5" animated />
+  <el-space v-else :fill="true" wrap class="tree-container">
     <div class="tree-header">
-      <el-button type="primary" :icon="Plus">添加</el-button>
-      <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除</el-button>
+      <el-button type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
+      <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除菜单</el-button>
     </div>
     <div class="tree-body">
       <div class="tree-body__search">
         <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
       </div>
       <el-tree
+        class="custom-tree"
         ref="treeRef"
         :data="treeDataList"
         :props="defaultProps"
@@ -32,14 +71,16 @@ getTree()
         show-checkbox
         node-key="id"
         default-expand-all
+        :highlight-current="true"
         :expand-on-click-node="false"
-        @check-change="checkChange"
         :filter-node-method="filterNode"
+        @check-change="checkChange"
+        @node-click="nodeClick"
       >
         <template #default="{ node }">
           <span class="custom-tree-node">
             <span>{{ node.label }}</span>
-            <el-icon class="plus-icon">
+            <el-icon class="plus-icon" @click.stop="addChildNode(node.data.id)">
               <icon name="Plus" />
             </el-icon>
           </span>

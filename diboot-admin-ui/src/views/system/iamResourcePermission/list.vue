@@ -3,14 +3,18 @@ import ResourcePermissionForm from './form.vue'
 import MenuTree from './menuTree.vue'
 // 接收可视高度
 defineProps<{ usedVisibleHeight?: number }>()
+const primaryValue = ref('')
+const clickNode = (id: string) => {
+  primaryValue.value = id
+}
 </script>
 <template>
   <el-container class="menu-permission-container">
     <el-aside class="menu-aside-container">
-      <menu-tree></menu-tree>
+      <menu-tree @click-node="clickNode" />
     </el-aside>
     <el-main class="menu-main-container">
-      <resource-permission-form />
+      <resource-permission-form :primary-value="primaryValue" />
     </el-main>
   </el-container>
 </template>

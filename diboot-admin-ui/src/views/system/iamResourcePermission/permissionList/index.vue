@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import PermissionGroup from './PermissionGroup.vue'
 import { useVueFuse } from 'vue-fuse'
-import { defineProps, reactive, withDefaults } from 'vue'
+import { defineProps, reactive, Ref, withDefaults } from 'vue'
 import type { PermissionGroupType, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
 type Props = {
   title: string
   configCode: string
-  menuResourceCode: string
+  menuResourceCode?: string
   currentPermissionCodes: string[]
   originApiList?: Array<PermissionGroupType>
 }
@@ -118,7 +118,7 @@ const getAnchor = () => {
     anchor = permissionCodeList[0]
   } else {
     if (props.menuResourceCode) {
-      search = toRef(props, 'menuResourceCode')
+      search = toRef(props, 'menuResourceCode') as Ref<string>
       if (results.value && results.value.length > 0) {
         anchor = results.value[0].permissionCode
       }
