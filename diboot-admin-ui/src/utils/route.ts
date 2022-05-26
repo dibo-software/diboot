@@ -1,12 +1,13 @@
 import { RouteRecord, RouteRecordName, RouteRecordRaw, RouterView } from 'vue-router'
-import { DefineComponent, Ref, VNode } from 'vue'
+import { DefineComponent, KeepAlive, Ref, VNode } from 'vue'
+import useViewTabs from '@/store/viewTabs'
 import Layout from '@/layout/index.vue'
 
 // 加载所有组件
 const modules = import.meta.glob('@/views/**/*.{vue,tsx,jsx}')
 
 // 异步组件映射
-export const views = Object.keys(modules).reduce(
+const views = Object.keys(modules).reduce(
   (pages: Record<string, () => Promise<Record<string, DefineComponent>>>, path) => {
     pages[path.replace(/\.\.(.*)/, '@$1')] = modules[path]
     return pages
@@ -29,10 +30,14 @@ export const buildViewMap = async () => {
 }
 
 // 动态渲染组件
-const renderComponent = (callback: (usedVisibleHeight: Ref<number>) => VNode) =>
+const renderComponent = (callback: (usedVisibleHeight: Ref<number>, cachedViews: string[]) => VNode) =>
   defineComponent({
+    name: 'ParentView',
     props: { usedVisibleHeight: { type: Number, default: 0 } },
-    setup: props => () => callback(toRefs(props).usedVisibleHeight)
+    setup: props => {
+      const viewTabs = useViewTabs()
+      return () => callback(toRefs(props).usedVisibleHeight, viewTabs.cachedViews)
+    }
   })
 
 // 路由排序
@@ -73,9 +78,9 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           route.component = Layout
         } else {
           // 视图嵌套
-          route.component = renderComponent(usedVisibleHeight =>
+          route.component = renderComponent((usedVisibleHeight, cachedViews) =>
             h(RouterView, ({ Component }: { Component: DefineComponent }) =>
-              h(Component, { usedVisibleHeight: usedVisibleHeight.value })
+              h(KeepAlive, { include: cachedViews }, h(Component, { usedVisibleHeight: usedVisibleHeight.value }))
             )
           )
         }

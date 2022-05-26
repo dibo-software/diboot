@@ -29,7 +29,10 @@ export default defineStore({
   getters: {
     // 缓存的视图组件名称列表
     cachedViews(): string[] {
-      return this.tabList.filter(e => e.meta.keepAlive != false && e.name).map(e => e.name) as string[]
+      return [
+        ...(this.tabList.filter(e => e.meta.keepAlive != false && e.name).map(e => e.name) as string[]),
+        'ParentView' // 父级视图组件名，用于路由深度嵌套的视图的缓存
+      ]
     }
   },
   actions: {

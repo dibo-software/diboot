@@ -47,20 +47,18 @@ const viewTabsStore = useViewTabsStore()
 
 <template>
   <el-scrollbar :style="scrollHeightStyle">
-    <router-view v-slot="{ Component }">
-      <transition mode="out-in">
-        <keep-alive :include="viewTabsStore.cachedViews">
-          <div :key="route.fullPath" class="content" :style="route.meta.borderless ? {} : { padding: '10px' }">
-            <div :class="route.meta.hollow ? 'hollow' : 'bounded'">
-              <component :is="Component" v-bind="bindUsedVisibleHeight(Component)" />
-            </div>
-            <div v-if="appStore.enableFooter && $slots.footer && !route.meta.hideFooter" ref="footerRef" class="footer">
-              <slot name="footer" />
-            </div>
-          </div>
-        </keep-alive>
-      </transition>
-    </router-view>
+    <div class="content" :style="route.meta.borderless ? {} : { padding: '10px' }">
+      <div :class="route.meta.hollow ? 'hollow' : 'bounded'">
+        <router-view v-slot="{ Component }">
+          <keep-alive :include="viewTabsStore.cachedViews">
+            <component :is="Component" v-bind="bindUsedVisibleHeight(Component)" />
+          </keep-alive>
+        </router-view>
+      </div>
+      <div v-if="appStore.enableFooter && $slots.footer && !route.meta.hideFooter" ref="footerRef" class="footer">
+        <slot name="footer" />
+      </div>
+    </div>
   </el-scrollbar>
 </template>
 
