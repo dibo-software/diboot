@@ -77,9 +77,6 @@ const openDetail = (id: string) => {
   </el-form>
   <el-space>
     <el-button type="primary" @click="create">新建</el-button>
-    <el-button @click="pageLoader.batchRemove(multipleSelectionIds)">批量删除</el-button>
-    <el-button>导入</el-button>
-    <el-button>导出</el-button>
   </el-space>
   <el-table
     :max-height="`calc(100vh - 120px - ${usedVisibleHeight}px)`"
