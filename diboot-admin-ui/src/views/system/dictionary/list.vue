@@ -77,16 +77,33 @@ const openDetail = (id: string) => {
   </el-form>
   <el-space>
     <el-button type="primary" @click="create">新建</el-button>
-    <el-button @click="pageLoader.batchRemove(multipleSelectionIds)">批量删除</el-button>
-    <el-button>导入</el-button>
-    <el-button>导出</el-button>
   </el-space>
   <el-table
     :max-height="`calc(100vh - 120px - ${usedVisibleHeight}px)`"
     :data="dataList"
     row-key="id"
+    :tree-props="{ children: 'children__' }"
     default-expand-all
   >
+    <el-table-column type="expand">
+      <template #default="props">
+        <template v-if="props.row.children && props.row.children.length > 0">
+          <div class="dict-item-wrapper">
+            <el-tag
+              v-for="item in props.row.children"
+              :key="item.itemValue"
+              type="info"
+              effect="dark"
+              class="dict-item"
+              style="border: none"
+              :color="item.color ? item.color : undefined"
+            >
+              {{ item.itemName }}({{ item.itemValue }})
+            </el-tag>
+          </div>
+        </template>
+      </template>
+    </el-table-column>
     <el-table-column prop="itemName" label="类型名称" />
     <el-table-column label="类型编码">
       <template #default="{ row }">
@@ -137,3 +154,12 @@ const openDetail = (id: string) => {
   <form-page ref="formPage" @complete="pageLoader.onSearch()" />
   <detail-page ref="detailPage" />
 </template>
+<style lang="scss">
+.dict-item-wrapper {
+  box-sizing: border-box;
+  padding: 0 50px;
+}
+.dict-item {
+  margin-right: 8px;
+}
+</style>
