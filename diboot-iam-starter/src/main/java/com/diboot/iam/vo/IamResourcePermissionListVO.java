@@ -60,16 +60,4 @@ public class IamResourcePermissionListVO extends IamResourcePermission {
     private List<IamResourcePermission> permissionList;
 
     private List<IamResourcePermissionListVO> children;
-
-    private RouteMeta routeMeta;
-
-    public RouteMeta getRouteMeta() {
-        if (V.notEmpty(routeMeta)) {
-            return routeMeta;
-        }
-        if (V.isEmpty(this.getMeta())) {
-            return new RouteMeta();
-        }
-        return JSON.parseObject(this.getMeta(), RouteMeta.class);
-    }
 }

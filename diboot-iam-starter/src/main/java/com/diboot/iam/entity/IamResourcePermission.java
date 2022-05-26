@@ -20,8 +20,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.iam.entity.route.RouteMeta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -118,6 +120,25 @@ public class IamResourcePermission extends BaseEntity {
     // 更新时间
     @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
+
+    @TableField(exist = false)
+    private RouteMeta routeMeta;
+
+    public RouteMeta getRouteMeta() {
+        if (V.notEmpty(routeMeta)) {
+            return routeMeta;
+        }
+        if (V.isEmpty(this.getMeta())) {
+            return new RouteMeta();
+        }
+        return JSON.parseObject(this.getMeta(), RouteMeta.class);
+    }
+
+    public void setRouteMeta(RouteMeta routeMeta) {
+        this.routeMeta = routeMeta;
+        routeMeta = V.isEmpty(routeMeta) ? new RouteMeta() : routeMeta;
+        this.setMeta(JSON.stringify(routeMeta));
+    }
 
     /***
      * 获取权限码列表

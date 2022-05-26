@@ -48,16 +48,16 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
   }
 }
 
-const props = defineProps<{ primaryValue: string }>()
-const empty = ref(true)
-const { loadData, loading, model } = useDetailDefault<ResourcePermission>('/iam/resourcePermission', {
-  metaConfig: {}
+const props = defineProps<{ formValue: Partial<ResourcePermission> }>()
+const model = ref<Partial<ResourcePermission>>({
+  routeMeta: {}
 })
+const empty = ref(true)
 watch(
-  () => props.primaryValue,
+  () => props.formValue,
   val => {
     empty.value = false
-    loadData(val)
+    model.value = val
   }
 )
 </script>
@@ -69,7 +69,7 @@ watch(
         <el-form ref="ruleFormRef" :model="model" :rules="rules" label-width="90px">
           <div class="card-header">菜单配置</div>
           <el-form-item label="上级菜单" prop="parentId">
-            <el-input v-model="model.parentId" disabled />
+            <el-input :modelValue="model.parentId === '0' ? '顶级菜单' : model.parentDisplayName" disabled />
           </el-form-item>
           <el-form-item label="菜单分类" prop="displayType">
             <el-radio-group v-model="model.displayType">
@@ -86,7 +86,7 @@ watch(
             <el-input v-model="model.resourceCode" placeholder="请输入菜单编码" />
           </el-form-item>
           <el-form-item label="菜单图标">
-            <icon-select v-model="model.metaConfig.icon" />
+            <icon-select v-model="model.routeMeta.icon" />
           </el-form-item>
           <el-form-item label="路由地址">
             <el-input v-model="model.routePath" placeholder="请输入路由地址" />
@@ -95,7 +95,7 @@ watch(
             <el-input v-model="model.redirectPath" placeholder="请输入重定向地址" />
           </el-form-item>
           <el-form-item label="组件地址">
-            <el-input v-model="model.metaConfig.componentPath" placeholder="请输入组件地址" />
+            <el-input v-model="model.routeMeta.componentPath" placeholder="请输入组件地址" />
           </el-form-item>
           <el-form-item label="高级配置" />
         </el-form>

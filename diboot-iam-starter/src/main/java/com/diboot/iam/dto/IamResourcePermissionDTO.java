@@ -41,13 +41,4 @@ public class IamResourcePermissionDTO extends IamResourcePermission {
 
     // 按钮/权限列表
     private List<IamResourcePermissionDTO> permissionList;
-
-    // meta数据
-    private RouteMeta routeMeta;
-
-    public void setRouteMeta(RouteMeta routeMeta) {
-        this.routeMeta = routeMeta;
-        routeMeta = V.isEmpty(routeMeta) ? new RouteMeta() : routeMeta;
-        this.setMeta(JSON.stringify(routeMeta));
-    }
 }

@@ -7,7 +7,7 @@ const defaultProps = {
   label: 'displayName'
 }
 const emit = defineEmits<{
-  (e: 'click-node', id: string): void
+  (e: 'click-node', id: ResourcePermission): void
 }>()
 const {
   checkChange,
@@ -25,8 +25,8 @@ const {
   baseApi: '/iam/resourcePermission',
   treeApi: '/getMenuTreeList',
   transformField: defaultProps,
-  clickNodeCallback(id) {
-    emit('click-node', id)
+  clickNodeCallback(nodeData) {
+    emit('click-node', nodeData)
   }
 })
 // 初始化tree数据

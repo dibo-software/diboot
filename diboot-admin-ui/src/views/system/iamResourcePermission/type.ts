@@ -3,15 +3,17 @@ import { RouteMeta } from 'vue-router'
 export interface ResourcePermission {
   id?: string
   parentId: string
+  parentDisplayName?: string
   displayType?: string
   displayName?: string
   routePath?: string
   redirectPath?: string
   resourceCode?: string
   permissionCodes?: Array<string>
-  metaConfig?: RouteMeta
+  routeMeta?: RouteMeta
   sortId?: string
   children?: ResourcePermission[]
+  permissionList?: ResourcePermission[]
 }
 
 export interface ApiUri {

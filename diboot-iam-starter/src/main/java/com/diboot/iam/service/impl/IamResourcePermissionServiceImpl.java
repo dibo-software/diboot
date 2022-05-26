@@ -21,20 +21,13 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourcePermissionDTO;
-import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamResourcePermission;
-import com.diboot.iam.entity.IamRole;
-import com.diboot.iam.entity.route.RouteRecord;
 import com.diboot.iam.mapper.IamResourcePermissionMapper;
 import com.diboot.iam.service.IamResourcePermissionService;
-import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamResourcePermissionListVO;
-import com.diboot.iam.vo.IamResourcePermissionTreeVO;
-import com.diboot.iam.vo.PositionDataScope;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -193,16 +186,16 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     }
 
     @Override
-    public List<IamResourcePermissionTreeVO> getMenuResourcePermissions(String application) {
+    public List<IamResourcePermissionListVO> getMenuResourcePermissions(String application) {
         LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                    .eq(V.notEmpty(application), IamResourcePermission::getAppModule, application)
+                .eq(V.notEmpty(application), IamResourcePermission::getAppModule, application)
                 .ne(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
         List<IamResourcePermission> menuPermissionList = getEntityList(wrapper);
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
         }
         // 构建树结构
-        List<IamResourcePermissionTreeVO> iamResourcePermissionTreeVOList = RelationsBinder.convertAndBind(menuPermissionList, IamResourcePermissionTreeVO.class);
+        List<IamResourcePermissionListVO> iamResourcePermissionTreeVOList = RelationsBinder.convertAndBind(menuPermissionList, IamResourcePermissionListVO.class);
         return BeanUtils.buildTree(iamResourcePermissionTreeVOList);
     }
 

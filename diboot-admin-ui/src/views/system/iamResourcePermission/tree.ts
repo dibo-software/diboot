@@ -4,14 +4,14 @@ export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]
 }
-export interface TreeOption {
+export interface TreeOption<T> {
   baseApi: string
   treeApi: string
   transformField?: { id?: string; label?: string; children?: string }
-  clickNodeCallback?: (id: string) => void
+  clickNodeCallback?: (node: T) => void
 }
 
-export default <T>(option: TreeOption) => {
+export default <T>(option: TreeOption<T>) => {
   const optionsTransformField = {
     id: 'id',
     label: 'label',
@@ -43,7 +43,8 @@ export default <T>(option: TreeOption) => {
     loading.value = true
     try {
       const result = await api.get<T[]>(`${baseApi}${treeApi}`)
-      if (result && result.code === 0 && result.data) {
+      if (result && result.code === 0) {
+        dataState.treeDataList = []
         dataState.treeDataList.push(...(result.data ?? []))
       } else {
         throw new Error(result.msg)
@@ -80,7 +81,7 @@ export default <T>(option: TreeOption) => {
   const nodeClick = (node: T) => {
     currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.id] as string
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
-    clickNodeCallback && clickNodeCallback(currentNodeKey.value)
+    clickNodeCallback && clickNodeCallback(node)
   }
   /**
    * 过滤节点
