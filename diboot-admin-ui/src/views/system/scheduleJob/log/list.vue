@@ -28,6 +28,8 @@ defineExpose({
       resetFilter()
       queryParam.jobId = id
       onSearch()
+    } else {
+      getList()
     }
     visible.value = true
   }
@@ -66,13 +68,8 @@ const openDetail = (id: string) => {
             </el-form-item>
           </el-col>
           <el-col :md="12" :sm="24">
-            <el-form-item label="执行时间" clearable @change="onSearch">
-              <el-date-picker
-                v-model="dateRangeQuery.startTime"
-                type="daterange"
-                value-format="YYYY-MM-DD"
-                @change="onSearch"
-              />
+            <el-form-item label="执行时间">
+              <date-range v-model="dateRangeQuery.startTime" @change="onSearch" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :sm="24" style="margin-left: auto">
