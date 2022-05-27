@@ -173,6 +173,15 @@ const authMenu = [
           hollow: true,
           sort: 6
         }
+      },
+      {
+        path: 'loginTrace',
+        name: 'LoginTrace',
+        meta: {
+          title: '登录日志管理',
+          componentPath: prefix + 'system/loginTrace/list.vue',
+          sort: 9
+        }
       }
     ]
   }
