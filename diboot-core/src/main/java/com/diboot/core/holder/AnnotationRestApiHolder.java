@@ -32,7 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 注解 RestApi 信息缓存
@@ -79,7 +81,7 @@ public class AnnotationRestApiHolder {
      * @param category
      * @return
      */
-    public static List<RestApi> getRestApiList(String category){
+    public synchronized static List<RestApi> getRestApiList(String category){
         List<RestApi> apiList = getCacheManager()
                 .getCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, category, List.class);
         if(apiList == null && getCacheManager().isUninitializedCache(CACHE_NAME_CATEGORY_TO_APILIST)){
@@ -95,7 +97,7 @@ public class AnnotationRestApiHolder {
      * @param className
      * @return
      */
-    public static RestApiWrapper getRestApiWrapper(String className){
+    public synchronized static RestApiWrapper getRestApiWrapper(String className){
         RestApiWrapper apiWrapper = getCacheManager()
                 .getCacheObj(CACHE_NAME_CLASS_TO_WRAPPER, className, RestApiWrapper.class);
         if(apiWrapper == null && getCacheManager().isUninitializedCache(CACHE_NAME_CLASS_TO_WRAPPER)){
@@ -109,7 +111,7 @@ public class AnnotationRestApiHolder {
     /**
      * 初始化
      */
-    private static void initRestApiCache() {
+    private synchronized static void initRestApiCache() {
         List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
         if(V.isEmpty(controllerList)) {
             return;
@@ -126,15 +128,30 @@ public class AnnotationRestApiHolder {
                 getCacheManager()
                         .putCacheObj(CACHE_NAME_CLASS_TO_WRAPPER, wrapper.getClassName(), wrapper);
                 if(V.notEmpty(wrapper.getChildren())){
+                    Map<String, List<RestApi>> categoryApisMap = new HashMap<>(8);
                     for(RestApi api : wrapper.getChildren()){
-                        List<RestApi> categoryApis = getCacheManager()
-                                .getCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, api.getCategory(), List.class);
+                        List<RestApi> categoryApis = categoryApisMap.get(api.getCategory());
                         if(categoryApis == null){
                             categoryApis = new ArrayList<>();
-                            getCacheManager()
-                                    .putCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, api.getCategory(), categoryApis);
+                            categoryApisMap.put(api.getCategory(), categoryApis);
                         }
                         categoryApis.add(api);
+                    }
+                    for(Map.Entry<String, List<RestApi>> entry : categoryApisMap.entrySet()){
+                        List<RestApi> categoryApis = getCacheManager()
+                                .getCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, entry.getKey(), List.class);
+                        if(categoryApis == null){
+                            categoryApis = entry.getValue();
+                        }
+                        else{
+                            for(RestApi api : entry.getValue()){
+                                if(!categoryApis.contains(api)){
+                                    categoryApis.add(api);
+                                }
+                            }
+                        }
+                        getCacheManager()
+                                .putCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, entry.getKey(), categoryApis);
                     }
                 }
             }

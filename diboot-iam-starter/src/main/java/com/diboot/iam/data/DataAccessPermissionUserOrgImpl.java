@@ -55,7 +55,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         }
         // 获取用户岗位对应的数据权限
         LabelValue extensionObj = currentUser.getExtensionObj();
-        if(extensionObj == null){
+        if(extensionObj == null || extensionObj.getExt() == null){
             // 提取其可访问ids
             if(isOrgFieldName(fieldName)){
                 return buildOrgIdsScope(currentUser);
@@ -69,7 +69,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
             }
         }
         // 处理岗位对应的数据范围权限
-        PositionDataScope positionDataScope = (PositionDataScope)extensionObj.getValue();
+        PositionDataScope positionDataScope = (PositionDataScope)extensionObj.getExt();
         // 可看全部数据，不拦截
         if(Cons.DICTCODE_DATA_PERMISSION_TYPE.ALL.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
             return null;

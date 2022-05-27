@@ -15,11 +15,7 @@
  */
 package com.diboot.iam.dto;
 
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamResourcePermission;
-import com.diboot.iam.entity.route.RouteMeta;
-import com.diboot.iam.entity.route.RouteRecord;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
