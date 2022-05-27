@@ -74,7 +74,7 @@ public class BindingCacheManager {
      */
     private static final String CACHE_NAME_CLASS_NAME2FLDMAP = "CLASS_NAME2FLDMAP";
 
-    private static StaticMemoryCacheManager getCacheManager(){
+    private static synchronized StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
             cacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_ENTITY,
@@ -188,7 +188,7 @@ public class BindingCacheManager {
     public static List<Field> getFields(Class<?> beanClazz){
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), List.class);
         if(fields == null){
-            fields = initClassFields(beanClazz, null);
+            fields = BeanUtils.extractAllFields(beanClazz);
             getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), fields);
         }
         return fields;
@@ -203,7 +203,7 @@ public class BindingCacheManager {
         String key = S.joinWith(Cons.SEPARATOR_COMMA, beanClazz.getName(), annotation.getName());
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
         if(fields == null){
-            fields = initClassFields(beanClazz, annotation);
+            fields = BeanUtils.extractFields(beanClazz, annotation);
             getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, key, fields);
         }
         return fields;
@@ -303,44 +303,6 @@ public class BindingCacheManager {
         PropInfo propInfoCache = new PropInfo(beanClazz);
         getCacheManager().putCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), propInfoCache);
         return propInfoCache;
-    }
-
-    /**
-     * 初始化fields
-     * @param beanClazz
-     * @return
-     */
-    private static List<Field> initClassFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
-        List<Field> fieldList = new ArrayList<>();
-        Set<String> fieldNameSet = new HashSet<>();
-        loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
-        return fieldList;
-    }
-
-    /**
-     * 循环向上查找fields
-     * @param beanClazz
-     * @param annotation
-     * @param fieldList
-     * @param fieldNameSet
-     */
-    private static void loopFindFields(Class<?> beanClazz, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
-        if(beanClazz == null) {
-            return;
-        }
-        Field[] fields = beanClazz.getDeclaredFields();
-        if (V.notEmpty(fields)) {
-            for (Field field : fields) {
-                // 被重写属性，以子类的为准
-                if (!fieldNameSet.add(field.getName())) {
-                    continue;
-                }
-                if (annotation == null || field.getAnnotation(annotation) != null) {
-                    fieldList.add(field);
-                }
-            }
-        }
-        loopFindFields(beanClazz.getSuperclass(), annotation, fieldList, fieldNameSet);
     }
 
 }
