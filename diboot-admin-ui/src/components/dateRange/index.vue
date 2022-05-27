@@ -1,0 +1,94 @@
+<script setup lang="ts">
+import { CircleClose } from '@element-plus/icons-vue'
+
+type ModelValue = [string | undefined, string | undefined]
+
+const props = defineProps<{ modelValue?: ModelValue; startPlaceholder?: string; endPlaceholder?: string }>()
+
+const dateRange: { begin?: string; end?: string } = reactive({})
+
+if (props.modelValue) [dateRange.begin, dateRange.end] = unref(props.modelValue)
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue?: ModelValue): void
+  (e: 'change', modelValue?: ModelValue): void
+}>()
+
+const change = () => {
+  emit('update:modelValue', [dateRange.begin, dateRange.end])
+  emit('change', [dateRange.begin, dateRange.end])
+}
+
+const disabledBeginDate = (date: Date) => {
+  if (dateRange.end) return date > new Date(dateRange.end)
+  return false
+}
+
+const disabledEndDate = (date: Date) => {
+  date.setDate(date.getDate() + 1)
+  if (dateRange.begin) return date < new Date(dateRange.begin)
+  return false
+}
+
+const clearable = () => {
+  dateRange.begin = undefined
+  dateRange.end = undefined
+  change()
+}
+</script>
+
+<template>
+  <div class="date-range">
+    <el-date-picker
+      v-model="dateRange.begin"
+      :placeholder="startPlaceholder"
+      style="width: 50%"
+      value-format="YYYY-MM-DD"
+      :disabled-date="disabledBeginDate"
+      @change="change"
+    />
+    <el-icon :size="20" color="var(--el-text-color-placeholder)" @click="clearable">
+      <CircleClose class="clearable" />
+      <span class="separator">~</span>
+    </el-icon>
+    <el-date-picker
+      v-model="dateRange.end"
+      :placeholder="endPlaceholder"
+      style="width: 50%"
+      value-format="YYYY-MM-DD"
+      :disabled-date="disabledEndDate"
+      @change="change"
+    />
+  </div>
+</template>
+
+<style scoped lang="scss">
+.date-range {
+  display: inline-flex;
+  width: 100%;
+
+  .el-icon {
+    width: 30px;
+    height: inherit;
+    display: inline-flex;
+    justify-content: center;
+
+    .clearable {
+      display: none;
+    }
+    .separator {
+      zoom: 0.8;
+    }
+
+    &:hover {
+      .clearable {
+        display: inline;
+      }
+
+      .separator {
+        display: none;
+      }
+    }
+  }
+}
+</style>
