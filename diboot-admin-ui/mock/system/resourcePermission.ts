@@ -6,6 +6,10 @@ import dbDataList from './_realResourcePermissionData'
 const baseUrl = '/api/iam/resourcePermission'
 
 const deleteDataIds: string[] = []
+/**
+ * tree转化为list
+ * @param tree
+ */
 const tree2List = (tree: ResourcePermission[]): ResourcePermission[] => {
   const list: ResourcePermission[] = []
   for (const resourcePermission of tree) {
@@ -22,25 +26,10 @@ const tree2List = (tree: ResourcePermission[]): ResourcePermission[] => {
   }
   return list
 }
-const buildChildren = (parents: ResourcePermission[], originList: ResourcePermission[]) => {
-  if (!parents || parents.length === 0) {
-    return
-  }
-  const removeIds: string[] = []
-  for (let parent of parents) {
-    parent.children = []
-    for (let resourcePermission of originList) {
-      if (resourcePermission.parentId === parent.id) {
-        removeIds.push(resourcePermission.id as string)
-        parent.children.push(resourcePermission)
-      }
-    }
-    originList = originList.filter(item => !removeIds.includes(item.id as string))
-    if (parent.children && parent.children.length > 0) {
-      buildChildren(parent.children, originList)
-    }
-  }
-}
+/**
+ * list转化为tree
+ * @param originList
+ */
 const list2Tree = (originList: ResourcePermission[]) => {
   const parentTopList: ResourcePermission[] = []
   const removeIds: string[] = []
@@ -55,6 +44,29 @@ const list2Tree = (originList: ResourcePermission[]) => {
   originList = originList.filter(item => !removeIds.includes(item.id as string))
   buildChildren(parentTopList, originList)
   return parentTopList
+}
+/**
+ * list转化为tree 构建子项
+ * @param originList
+ */
+const buildChildren = (parents: ResourcePermission[], originList: ResourcePermission[]) => {
+  if (!parents || parents.length === 0) {
+    return
+  }
+  const removeIds: string[] = []
+  for (const parent of parents) {
+    parent.children = []
+    for (let resourcePermission of originList) {
+      if (resourcePermission.parentId === parent.id) {
+        removeIds.push(resourcePermission.id as string)
+        parent.children.push(resourcePermission)
+      }
+    }
+    originList = originList.filter(item => !removeIds.includes(item.id as string))
+    if (parent.children && parent.children.length > 0) {
+      buildChildren(parent.children, originList)
+    }
+  }
 }
 export default [
   {
@@ -94,7 +106,6 @@ export default [
     method: 'post',
     response: ({ body }: ApiRequest<Array<string>>) => {
       deleteDataIds.push(...body)
-      console.log(deleteDataIds.join(','))
       return JsonResult.OK()
     }
   }

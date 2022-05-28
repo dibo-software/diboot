@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import PermissionList from './permissionList/index.vue'
+import RouteSelect from './routeSelect.vue'
 import { Plus } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission, PermissionGroupType } from './type'
+
 const ruleFormRef = ref<FormInstance>()
 
 const permissionList = reactive<ResourcePermission[]>([])
@@ -79,23 +81,26 @@ watch(
               <el-radio-button label="IFRAME">iframe</el-radio-button>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="菜单图标">
+            <icon-select v-model="model.routeMeta.icon" />
+          </el-form-item>
           <el-form-item label="菜单名称" prop="displayName">
             <el-input v-model="model.displayName" placeholder="请输入菜单名称" />
           </el-form-item>
           <el-form-item label="菜单编码">
-            <el-input v-model="model.resourceCode" placeholder="请输入菜单编码" />
+            <route-select
+              v-model="model.routeMeta.componentName"
+              v-model:component-path="model.routeMeta.componentPath"
+            ></route-select>
           </el-form-item>
-          <el-form-item label="菜单图标">
-            <icon-select v-model="model.routeMeta.icon" />
+          <el-form-item label="组件地址" v-if="model.routeMeta.componentPath">
+            <el-input v-model="model.routeMeta.componentPath" placeholder="请输入组件地址" disabled />
           </el-form-item>
           <el-form-item label="路由地址">
             <el-input v-model="model.routePath" placeholder="请输入路由地址" />
           </el-form-item>
           <el-form-item label="重定向地址">
             <el-input v-model="model.redirectPath" placeholder="请输入重定向地址" />
-          </el-form-item>
-          <el-form-item label="组件地址">
-            <el-input v-model="model.routeMeta.componentPath" placeholder="请输入组件地址" />
           </el-form-item>
           <el-form-item label="高级配置" />
         </el-form>
