@@ -13,31 +13,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.message.channel;
+package com.diboot.message.entity;
 
+import com.diboot.message.annotation.BindVariable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-import com.diboot.message.entity.Message;
+import java.io.Serializable;
 
 /**
- * 通道策略接口
- *
- * <p>
- * 所有发送通道实现该接口，并实现发送方法
- * </p>
+ * 基础变量值
  *
  * @author : uu
  * @version : v1.0
- * @Date 2021/2/18  18:42
+ * @Date 2021/2/25  17:48
  * @Copyright © diboot.com
  */
-public interface ChannelStrategy {
+@Getter
+@Setter
+@Accessors(chain = true)
+public class BaseUserVariables implements Serializable {
+    private static final long serialVersionUID = 6254327279941140819L;
 
     /**
-     * 发送消息， 并更新发送结果
-     *
-     * @param message
-     * @return
-     * @throws Exception
+     * 姓名
      */
-    void send(Message message);
+    @BindVariable(name = "${用户姓名}")
+    private String realName;
+
+    /**
+     * 手机号
+     */
+    @BindVariable(name = "${手机号}")
+    private String phone;
+
 }

@@ -13,45 +13,41 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.message.starter;
+package diboot.message.test.config;
 
 import com.diboot.message.channel.SimpleEmailChannel;
 import com.diboot.message.entity.BaseUserVariables;
 import com.diboot.message.service.MessageService;
 import com.diboot.message.service.impl.MessageServiceImpl;
+import diboot.message.test.channel.SMSChannel;
+import diboot.message.test.variable.MyVariableObj;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
-/**
- * 组件初始化
- *
+/***
+ * Spring配置文件
  * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2020/11/28
- * @Copyright © diboot.com
+ * @date 2019/6/10
  */
-@Configuration
-@EnableConfigurationProperties(MessageProperties.class)
-@ComponentScan(basePackages = {"com.diboot.message"})
-@MapperScan(basePackages = {"com.diboot.message.mapper"})
-public class MessageAutoConfig {
+@TestConfiguration
+@ComponentScan(basePackages={"com.diboot.message"})
+@MapperScan({"com.diboot.message.mapper"})
+public class SpringMvcConfig implements WebMvcConfigurer {
+    private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
 
-    /**
-     * 模版变量服务
-     * @return
-     */
     @Bean
-    @ConditionalOnMissingBean
     public MessageService messageService() {
         return new MessageServiceImpl(
-            Arrays.asList(new SimpleEmailChannel()),
-            Arrays.asList(BaseUserVariables.class)
+                Arrays.asList(new SimpleEmailChannel(), new SMSChannel()),
+                Arrays.asList(BaseUserVariables.class, MyVariableObj.class)
         );
     }
 

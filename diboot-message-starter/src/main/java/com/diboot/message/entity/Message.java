@@ -21,6 +21,7 @@ import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
+import com.diboot.message.config.Cons;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -270,5 +271,13 @@ public class Message extends BaseEntity {
         }
         String attachments = (String) extDataMap.get(ATTACHMENTS);
         return attachments.split(",");
+    }
+
+    /**
+     * 是否有关联模板
+     * @return
+     */
+    public boolean hasTemplate() {
+        return V.notEmpty(this.templateId) || V.notEmpty(this.templateCode);
     }
 }

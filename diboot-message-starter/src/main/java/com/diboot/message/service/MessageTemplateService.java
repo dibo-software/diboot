@@ -36,7 +36,7 @@ public interface MessageTemplateService extends BaseService<MessageTemplate> {
      * @return
      * @throws Exception
      */
-    List<String> getTemplateVariableList() throws Exception;
+    List<String> getTemplateVariableList() ;
 
     /**
      * 检查是否有重复的code
@@ -46,5 +46,5 @@ public interface MessageTemplateService extends BaseService<MessageTemplate> {
      * @return
      * @throws Exception
      */
-    boolean existCode(Long id, String code) throws Exception;
+    boolean existCode(Long id, String code) ;
 }
