@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+package diboot.message.test;/*
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,34 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.message.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
- * 基础变量值
- *
- * @author : uu
- * @version : v1.0
- * @Date 2021/2/25  17:48
- * @Copyright © diboot.com
+ * @author Administrator
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class BaseVariableData implements Serializable {
+@SpringBootApplication
+public class StartupApplication extends SpringBootServletInitializer {
 
-    /**
-     * 姓名
-     */
-    private String realName;
+	public static void main(String[] args) {
+		SpringApplication.run(StartupApplication.class, args);
+	}
 
-    /**
-     * 手机号
-     */
-    private String phone;
 }

@@ -13,27 +13,37 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.message.annotation;
+package com.diboot.message.channel;
 
-import java.lang.annotation.*;
+
+import com.diboot.message.entity.Message;
 
 /**
- * 绑定的变量
+ * 消息通道接口
+ *
+ * <p>
+ * 所有发送通道实现该接口，并实现发送方法
+ * </p>
  *
  * @author : uu
- * @version v1.0
- * @Date 2021/2/18  19:39
+ * @version : v1.0
+ * @Date 2021/2/18  18:42
  * @Copyright © diboot.com
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface TemplateVariable {
+public interface MessageChannel {
 
     /**
-     * 绑定变量名称
-     *
+     * 消息通道类型，如Email
      * @return
      */
-    String name();
+    String type();
+
+    /**
+     * 发送消息， 并更新发送结果
+     *
+     * @param message
+     * @return
+     * @throws Exception
+     */
+    void send(Message message);
 }

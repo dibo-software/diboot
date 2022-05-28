@@ -16,7 +16,6 @@
 package com.diboot.message.service;
 
 import com.diboot.core.service.BaseService;
-import com.diboot.message.entity.BaseVariableData;
 import com.diboot.message.entity.Message;
 
 /**
@@ -29,11 +28,19 @@ import com.diboot.message.entity.Message;
  */
 public interface MessageService extends BaseService<Message> {
     /**
+     * 发送信息（消息模板无变量）
+     *
+     * @param message      {@link Message} 待发送的消息
+     * @return
+     */
+    boolean send(Message message);
+
+    /**
      * 发送信息
      *
      * @param message      {@link Message} 待发送的消息
-     * @param variableData {@link BaseVariableData} 变量替换值
+     * @param variableData {@link Object} 变量替换值
      * @return
      */
-    boolean send(Message message, BaseVariableData variableData);
+    boolean send(Message message, Object variableData);
 }
