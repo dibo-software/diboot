@@ -66,13 +66,13 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         APPLICATION_CONTEXT = applicationContext;
-        log.debug("ApplicationContext已赋值: {}", APPLICATION_CONTEXT.toString());
+        log.debug("ApplicationContext已赋值: {}", APPLICATION_CONTEXT.getDisplayName());
     }
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         APPLICATION_CONTEXT = event.getApplicationContext();
-        log.debug("ApplicationContext已注入: {}", APPLICATION_CONTEXT.toString());
+        log.debug("ApplicationContext已注入: {}", APPLICATION_CONTEXT.getDisplayName());
     }
 
     /***
@@ -182,6 +182,7 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
         if(iService instanceof BaseService){
             return (BaseService)iService;
         }
+        log.warn("Entity的service实现类: {} 非BaseService实现！", entityInfoCache.getService());
         return null;
     }
 

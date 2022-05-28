@@ -51,11 +51,11 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     @Transactional(rollbackFor = Exception.class)
     public void deepCreatePermissionAndChildren(IamResourcePermissionListVO iamResourcePermissionListVO) {
         if (iamResourcePermissionListVO == null) {
-            return;
+            return ;
         }
         IamResourcePermission iamResourcePermission = (IamResourcePermission) iamResourcePermissionListVO;
-        if (!super.createEntity(iamResourcePermission)) {
-            log.warn("新建资源权限失败，displayType=" + iamResourcePermission.getDisplayType());
+        if(!super.createEntity(iamResourcePermission)){
+            log.warn("新建资源权限失败，displayType="+iamResourcePermission.getDisplayType());
             throw new BusinessException(Status.FAIL_OPERATION, "新建资源权限失败");
         }
         List<IamResourcePermissionListVO> children = iamResourcePermissionListVO.getChildren();
@@ -73,13 +73,13 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         // 创建menu
         iamResourcePermissionDTO.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name());
         boolean success = this.createEntity(iamResourcePermissionDTO);
-        if (!success) {
+        if (!success){
             throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
         }
 
         // 批量创建按钮/权限列表
         List<IamResourcePermissionDTO> permissionDTOList = iamResourcePermissionDTO.getPermissionList();
-        if (V.isEmpty(permissionDTOList)) {
+        if (V.isEmpty(permissionDTOList)){
             return;
         }
         List<IamResourcePermission> permissionList = BeanUtils.convertList(permissionDTOList, IamResourcePermission.class);
@@ -95,7 +95,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     @Transactional(rollbackFor = Exception.class)
     public void updateMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO) {
         // 检查是否设置了自身id为parentId，如果设置parentId与自身id相同，将会导致非常严重的潜在隐患
-        if (V.equals(iamResourcePermissionDTO.getId(), iamResourcePermissionDTO.getParentId())) {
+        if (V.equals(iamResourcePermissionDTO.getId(), iamResourcePermissionDTO.getParentId())){
             throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单资源为自身");
         }
         // 更新menu

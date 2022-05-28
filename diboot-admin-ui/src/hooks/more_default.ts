@@ -14,6 +14,7 @@ export interface BindData {
   ext?: string | string[]
   // 排序
   orderBy?: string
+
   // 父级属性（tree 为 true 时，默认为：parentId）
   parent?: string
   // 是否为 Tree 结构数据（默认：false）
@@ -30,24 +31,24 @@ export interface BindData {
  * 异步绑定对象
  */
 export interface AsyncBindData extends BindData {
-  // 远程过滤值
+  // 远程过滤的关键字
   keyword?: string
-  // 禁止加载数据
+  // 禁止加载数据（用于联动的远程过滤）
   disabled?: boolean
 }
 
 /**
- * 绑定控制器
+ * 联动控制器
  */
-export interface BindControl {
+export interface LinkageControl {
   // 受控的属性名
   prop: string
-  // 选项加载器
+  // 选项加载器（指向 asyncBind 的 key）
   loader: string
   // 加载器条件属性
   condition: string
-  // 自动获取加载器数据（默认：true）
-  auto?: boolean
+  // 自动加载数据（默认：true）
+  autoLoad?: boolean
 }
 
 /**
@@ -60,6 +61,7 @@ export interface LabelValue<E = never> {
   label: string
   // 扩展值
   ext?: E
+
   // 对象类型
   type?: string
   // 是否为叶子节点
@@ -74,22 +76,25 @@ export interface LabelValue<E = never> {
  * more 配置选项
  */
 export interface MoreOption {
-  // 自定义获取 more 接口
+  // 自定义获取 more 接口 （接口需返回 <string, LabelValue[]> 类型数据）
   getMoreApi?: string
-  // 字典类型
+  // 字典类型 （more 中的字典类型数据 key 为：[字典类型小驼峰Options]）
   dict?: string | string[]
-  // 绑定对象
+  // 绑定对象（key 将作为从 more 中获取数据的 key）
   bind?: Record<string, BindData>
-  // 异步绑定对象
+  // 异步绑定对象（key 同 bind，value 将作为异步获取数据的 loader）
   asyncBind?: Record<string, AsyncBindData>
-  // 绑定控制器
-  control?: Record<string, BindControl | BindControl[]>
+  // 联动控制器（依赖 asyncBind 加载 more 中数据）
+  linkageControl?: Record<string, LinkageControl | LinkageControl[]>
 }
 
+/**
+ * 选项数据源加载
+ */
 export default (option: MoreOption) => {
-  const asyncBindLoading = ref(false)
-  const { getMoreApi, dict, bind, asyncBind, control } = option
+  const { getMoreApi, dict, bind, asyncBind, linkageControl } = option
 
+  // 数据集合
   const more: Record<string, LabelValue[]> = reactive({})
 
   /**
@@ -97,8 +102,8 @@ export default (option: MoreOption) => {
    */
   const initMore = async () => {
     const reqList: Promise<ApiData<Record<string, LabelValue[]>>>[] = []
-    // 个性化接口
-    if (getMoreApi) reqList.push(api.get(`${getMoreApi}`))
+    // 个性化 more 接口
+    if (getMoreApi) reqList.push(api.get(getMoreApi))
     // 通用获取关联字典的数据
     if ((dict ?? []).length > 0) reqList.push(api.post('/common/bindDict', dict instanceof Array ? dict : [dict]))
     // 通用获取关联绑定的数据
@@ -107,50 +112,10 @@ export default (option: MoreOption) => {
     if (reqList.length > 0) {
       const resList = await Promise.all(reqList)
       resList.forEach(res => {
-        if (res.code !== 0) {
-          ElNotification.error({
-            title: '获取选项数据失败',
-            message: res.msg
-          })
-          return
-        }
-        Object.assign(more, res.data)
+        if (res.code === 0) Object.assign(more, res.data)
+        else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
       })
     }
-  }
-
-  /**
-   * 获取异步绑定加载器
-   *
-   * @param loader 加载器key
-   */
-  const findAsyncBindLoader = (loader: string): AsyncBindData => {
-    if (asyncBind == null) {
-      throw new Error(`No async bind! Please check 'asyncBind'!`)
-    }
-    const moreLoader = asyncBind[loader]
-    if (moreLoader == null) {
-      throw new Error(`Please check 'asyncBind', '${loader}' that does not exist!`)
-    }
-    return moreLoader
-  }
-
-  /**
-   * 远程过滤加载选项
-   *
-   * @param value 输入值
-   * @param loader 加载器类型
-   */
-  const remoteMoreFilter = async (value: string, loader: string) => {
-    if (value == null || (value = value.trim()).length === 0) {
-      more[loader] = []
-      return
-    }
-    asyncBindLoading.value = true
-    const moreLoader = findAsyncBindLoader(loader)
-    moreLoader.keyword = value
-    more[loader] = await loadMore(moreLoader)
-    asyncBindLoading.value = false
   }
 
   /**
@@ -173,16 +138,53 @@ export default (option: MoreOption) => {
   }
 
   /**
-   * 异步加载更多
+   * 获取异步绑定加载器
    *
-   * @param node 当前tree节点
+   * @param loader 加载器key
+   */
+  const findAsyncBindLoader = (loader: string): AsyncBindData => {
+    if (asyncBind == null) {
+      throw new Error(`No async bind! Please check 'asyncBind'!`)
+    }
+    const moreLoader = asyncBind[loader]
+    if (moreLoader == null) {
+      throw new Error(`Please check 'asyncBind', '${loader}' that does not exist!`)
+    }
+    return moreLoader
+  }
+
+  // 异步加载状态（远程过滤）
+  const asyncBindLoading = ref(false)
+
+  /**
+   * 远程过滤加载选项
+   *
+   * @param value 输入值
+   * @param loader 加载器（asyncBind 的 key）
+   */
+  const remoteMoreFilter = async (value: string, loader: string) => {
+    if (value == null || (value = value.trim()).length === 0) {
+      more[loader] = []
+      return
+    }
+    asyncBindLoading.value = true
+    const moreLoader = findAsyncBindLoader(loader)
+    moreLoader.keyword = value
+    more[loader] = await loadMore(moreLoader)
+    asyncBindLoading.value = false
+  }
+
+  /**
+   * 异步加载tree数据
+   *
+   * @param nodeData 当前tree节点数据
    * @param loader 加载器名称
    * @param resolve
    */
-  const lazyLoadMore = async (node: { data: LabelValue }, loader: string, resolve: (options: LabelValue[]) => void) => {
+  const lazyLoadMore = async (nodeData: LabelValue, loader: string, resolve: (options: LabelValue[]) => void) => {
     const moreLoader = findAsyncBindLoader(loader)
-    const dataLsit = (await loadMore(moreLoader, node.data)) ?? []
-    if (dataLsit.length === 0 && moreLoader.next != null) node.data.disabled = true
+    const dataLsit = (await loadMore(moreLoader, nodeData)) ?? []
+    if (dataLsit.length === 0 && moreLoader.next != null) nodeData.disabled = true
     resolve(dataLsit)
   }
 
@@ -194,21 +196,21 @@ export default (option: MoreOption) => {
    * @param form
    */
   const controlRelationOptions = (value: string, controlKey: string, form: Partial<Record<string, unknown>>) => {
-    if (control == null) {
-      throw new Error(`No control! Please check 'control'!`)
+    if (linkageControl == null) {
+      throw new Error(`No control! Please check 'linkageControl'!`)
     }
-    const controlItem = control[controlKey]
+    const controlItem = linkageControl[controlKey]
     if (controlItem == null) {
-      throw new Error(`Please check 'control', '${controlKey}' that does not exist!`)
+      throw new Error(`Please check 'linkageControl', '${controlKey}' that does not exist!`)
     }
     const isNull = value == null || value.length === 0
-    const execute = async ({ prop, loader, condition, auto }: BindControl) => {
+    const execute = async ({ prop, loader, condition, autoLoad }: LinkageControl) => {
       const moreLoader = findAsyncBindLoader(loader)
       moreLoader.disabled = isNull
       if (moreLoader.condition == null) moreLoader.condition = {}
       moreLoader.condition[condition] = value
       form[prop] = undefined
-      if (auto !== false) more[loader] = isNull ? [] : await loadMore(moreLoader)
+      if (autoLoad !== false) more[loader] = isNull ? [] : await loadMore(moreLoader)
     }
     controlItem instanceof Array ? controlItem.forEach(item => execute(item)) : execute(controlItem)
   }

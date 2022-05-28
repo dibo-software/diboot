@@ -20,6 +20,26 @@ export interface Option<T> {
 }
 
 /**
+ * 通用接口
+ */
+export interface Api {
+  // 获取列表（默认启用分页）
+  getList: MockMethod
+  // 获取详情
+  getById: MockMethod
+  // 创建数据
+  create: MockMethod
+  // 更新数据
+  update: MockMethod
+  // 删除数据
+  remove: MockMethod
+  // 批量删除
+  batchRemove: MockMethod
+  // 撤销删除
+  cancelRemove: MockMethod
+}
+
+/**
  * 通用 CRUD
  *
  * @param option
@@ -34,8 +54,7 @@ export default <T>(option: Option<T>) => {
   return {
     baseUrl,
     deleteDataIds,
-    // 通用接口
-    api: <Record<string, MockMethod>>{
+    api: <Readonly<Api>>{
       getList: {
         url: `${baseUrl}/list`,
         timeout: Random.natural(50, 300),
@@ -103,7 +122,7 @@ export default <T>(option: Option<T>) => {
           return JsonResult.OK(id)
         }
       },
-      updata: {
+      update: {
         url: `${baseUrl}/:id`,
         timeout: Random.natural(50, 300),
         method: 'put',

@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>3.0.5</version>
+            <version>${easyexcel.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>

@@ -171,6 +171,10 @@ public class BeanUtils {
      * @return
      */
     public static Object getProperty(Object obj, String field){
+        if(obj instanceof Map){
+            Map objMap = (Map)obj;
+            return objMap.get(field);
+        }
         try {
             BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
             return wrapper.getPropertyValue(field);
@@ -188,6 +192,10 @@ public class BeanUtils {
      * @return
      */
     public static String getStringProperty(Object obj, String field){
+        if(obj instanceof Map){
+            Map objMap = (Map)obj;
+            return objMap.containsKey(field)? S.valueOf(objMap.get(field)) : null;
+        }
         Object property = getProperty(obj, field);
         if(property == null){
             return null;
@@ -744,7 +752,7 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractAllFields(Class clazz){
-        return BindingCacheManager.getFields(clazz);
+        return extractClassFields(clazz, null);
     }
 
     /**
@@ -753,7 +761,7 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractFields(Class<?> clazz, Class<? extends Annotation> annotation){
-        return BindingCacheManager.getFields(clazz, annotation);
+        return extractClassFields(clazz, annotation);
     }
 
     /**
@@ -798,7 +806,6 @@ public class BeanUtils {
      * @return
      */
     public static Class getGenericityClass(Object instance, int index){
-        //TODO 可缓存
         Class hostClass = getTargetClass(instance);
         ResolvableType resolvableType = ResolvableType.forClass(hostClass).getSuperType();
         ResolvableType[] types = resolvableType.getGenerics();
@@ -901,4 +908,43 @@ public class BeanUtils {
             wrapper.setPropertyValue(fieldName, null);
         }
     }
+
+    /**
+     * 初始化fields
+     * @param beanClazz
+     * @return
+     */
+    private static List<Field> extractClassFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+        List<Field> fieldList = new ArrayList<>();
+        Set<String> fieldNameSet = new HashSet<>();
+        loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
+        return fieldList;
+    }
+
+    /**
+     * 循环向上查找fields
+     * @param beanClazz
+     * @param annotation
+     * @param fieldList
+     * @param fieldNameSet
+     */
+    private static void loopFindFields(Class<?> beanClazz, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
+        if(beanClazz == null) {
+            return;
+        }
+        Field[] fields = beanClazz.getDeclaredFields();
+        if (V.notEmpty(fields)) {
+            for (Field field : fields) {
+                // 被重写属性，以子类的为准
+                if (!fieldNameSet.add(field.getName())) {
+                    continue;
+                }
+                if (annotation == null || field.getAnnotation(annotation) != null) {
+                    fieldList.add(field);
+                }
+            }
+        }
+        loopFindFields(beanClazz.getSuperclass(), annotation, fieldList, fieldNameSet);
+    }
+
 }
