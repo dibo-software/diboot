@@ -1,5 +1,5 @@
 import auth from '@/utils/auth'
-import { resetRouter } from '@/router'
+import router, { resetRouter } from '@/router'
 
 export interface IAuthStore {
   realname: string
@@ -58,6 +58,7 @@ export default defineStore('auth', {
         auth.clearToken()
         this.$reset()
         resetRouter()
+        router.push({ name: 'Login', query: { redirect: router.currentRoute.value.path } }).finally()
       }
     }
   }
