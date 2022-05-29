@@ -16,7 +16,6 @@ declare module 'vue-router' {
     keepAlive?: boolean
     hidden?: boolean
     hollow?: boolean
-    hideFooter?: boolean
     borderless?: boolean
     openNewWindow?: boolean
     hideBreadcrumb?: boolean

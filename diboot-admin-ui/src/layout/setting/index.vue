@@ -17,11 +17,7 @@ watch(
 const clipboard = useClipboard()
 
 const copyConfig = () => {
-  let configJsonStr = JSON.stringify(
-    appStore,
-    ['layout', 'globalSize', 'enableTabs', 'enableFooter', 'colorPrimary'],
-    2
-  )
+  let configJsonStr = JSON.stringify(appStore, ['layout', 'globalSize', 'enableTabs', 'colorPrimary'], 2)
     .replace(/"/g, "'")
     .replace(/'(.+)': /g, '$1: ')
   if (appStore.colorPrimary === undefined) {
@@ -61,9 +57,6 @@ const copyConfig = () => {
           </el-form-item>
           <el-form-item label="开启 Tabs">
             <el-switch v-model="appStore.enableTabs" />
-          </el-form-item>
-          <el-form-item label="开启 Footer">
-            <el-switch v-model="appStore.enableFooter" />
           </el-form-item>
           <el-form-item label="主题色">
             <el-color-picker v-model="colorPrimary" @update:model-value="value => (appStore.colorPrimary = value)" />

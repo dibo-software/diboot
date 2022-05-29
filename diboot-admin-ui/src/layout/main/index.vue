@@ -38,10 +38,6 @@ const bindUsedVisibleHeight = (component: DefineComponent) => {
   else return {}
 }
 
-// footer
-const footerRef = ref<HTMLElement>()
-const footerHeight = computed(() => footerRef.value?.offsetHeight ?? 0)
-
 const viewTabsStore = useViewTabsStore()
 </script>
 
@@ -55,9 +51,6 @@ const viewTabsStore = useViewTabsStore()
           </keep-alive>
         </router-view>
       </div>
-      <div v-if="appStore.enableFooter && $slots.footer && !route.meta.hideFooter" ref="footerRef" class="footer">
-        <slot name="footer" />
-      </div>
     </div>
   </el-scrollbar>
 </template>
@@ -67,25 +60,14 @@ const viewTabsStore = useViewTabsStore()
   background-color: var(--el-fill-color-light);
 
   .hollow {
-    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - v-bind('footerHeight + "px"'));
+    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"'));
   }
 
   .bounded {
     padding: 10px 15px;
     background-color: var(--el-bg-color);
-    border-radius: v-bind('footerHeight ? "5px 5px 0 0" : "5px"');
-    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"') - 20px - v-bind('footerHeight + "px"'));
-  }
-
-  .footer {
-    min-height: 50px;
-    color: var(--el-color-info);
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    border-top: 2px dashed var(--el-border-color-lighter);
-    border-radius: 0 0 5px 5px;
-    background-color: var(--el-bg-color);
+    border-radius: 5px;
+    min-height: calc(100vh - 20px - v-bind('layoutUsedHeight + "px"'));
   }
 }
 </style>

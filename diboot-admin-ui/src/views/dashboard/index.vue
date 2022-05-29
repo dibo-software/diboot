@@ -28,6 +28,18 @@ const permissions = ['detail', 'create', 'update', 'delete', 'import', 'export']
   <br />
   权限：
   <el-tag v-for="item in permissions" :key="item" v-has-permission="item">{{ item }}</el-tag>
+
+  <!--  <div class="footer">Diboot © 2015-2022</div>-->
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.footer {
+  min-height: 30px;
+  padding-top: 10px;
+  color: var(--el-color-info);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 2px dashed var(--el-border-color-lighter);
+}
+</style>

@@ -2,7 +2,6 @@
 import AppHeader from './header/index.vue'
 import AppMenu from './memu/index.vue'
 import AppMain from './main/index.vue'
-import AppFooter from './footer/index.vue'
 import AppTabs from './tabs/index.vue'
 
 import { Directive } from 'vue'
@@ -82,11 +81,7 @@ const vDrag: Directive<HTMLElement> = {
     </el-header>
     <app-tabs>
       <template #default="{ fullScreen }">
-        <app-main :full-screen="fullScreen">
-          <template #footer>
-            <app-footer />
-          </template>
-        </app-main>
+        <app-main :full-screen="fullScreen" />
       </template>
     </app-tabs>
 
@@ -139,11 +134,7 @@ const vDrag: Directive<HTMLElement> = {
           </el-header>
           <app-tabs>
             <template #default="{ fullScreen }">
-              <app-main :full-screen="fullScreen">
-                <template #footer>
-                  <app-footer />
-                </template>
-              </app-main>
+              <app-main :full-screen="fullScreen" />
             </template>
           </app-tabs>
         </el-main>
@@ -174,11 +165,7 @@ const vDrag: Directive<HTMLElement> = {
         <el-main style="padding: 0">
           <app-tabs>
             <template #default="{ fullScreen }">
-              <app-main :full-screen="fullScreen">
-                <template #footer>
-                  <app-footer />
-                </template>
-              </app-main>
+              <app-main :full-screen="fullScreen" />
             </template>
           </app-tabs>
         </el-main>
@@ -198,11 +185,7 @@ const vDrag: Directive<HTMLElement> = {
       <el-main style="padding: 0">
         <app-tabs>
           <template #default="{ fullScreen }">
-            <app-main :full-screen="fullScreen">
-              <template #footer>
-                <app-footer />
-              </template>
-            </app-main>
+            <app-main :full-screen="fullScreen" />
           </template>
         </app-tabs>
       </el-main>
@@ -221,11 +204,7 @@ const vDrag: Directive<HTMLElement> = {
         <el-main style="padding: 0">
           <app-tabs>
             <template #default="{ fullScreen }">
-              <app-main :full-screen="fullScreen">
-                <template #footer>
-                  <app-footer />
-                </template>
-              </app-main>
+              <app-main :full-screen="fullScreen" />
             </template>
           </app-tabs>
         </el-main>
