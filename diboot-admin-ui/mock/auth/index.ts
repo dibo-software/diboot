@@ -173,6 +173,15 @@ const authMenu = [
         }
       },
       {
+        path: 'operationLog',
+        name: 'OperationLog',
+        meta: {
+          title: '操作日志管理',
+          componentPath: prefix + 'system/operationLog/list.vue',
+          sort: 8
+        }
+      },
+      {
         path: 'loginTrace',
         name: 'LoginTrace',
         meta: {
