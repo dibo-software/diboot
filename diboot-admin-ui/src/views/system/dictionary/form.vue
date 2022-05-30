@@ -142,6 +142,7 @@ defineExpose({
       <el-form-item label="字典备注" :label-width="formLabelWidth">
         <el-input v-model="model.description" :rows="2" type="textarea" placeholder="请输入备注" />
       </el-form-item>
+      <br />
       <template v-if="model?.children">
         <table class="children-table">
           <thead>
@@ -217,6 +218,7 @@ defineExpose({
   font-weight: 400;
 }
 .children-table {
+  border-spacing: 0;
   width: 100%;
   th {
     padding-bottom: 12px;
@@ -225,10 +227,17 @@ defineExpose({
     text-align: center;
   }
   td > * {
+    margin-top: 2px;
     margin-bottom: 18px;
+    border-top: 2px solid transparent;
   }
   .drag-handle {
     cursor: move;
+  }
+  .sortable-ghost {
+    td {
+      border-top: 2px solid var(--el-color-primary);
+    }
   }
 }
 </style>
