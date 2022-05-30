@@ -16,10 +16,13 @@
 package com.diboot.core.binding.parser;
 
 import com.diboot.core.binding.binder.BaseBinder;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 
@@ -83,12 +86,30 @@ public class ConditionManager extends BaseConditionManager{
                     }
                 }
                 else{
-                    binder.andEQ(annoColumn, express.getRightExpression().toString());
-                    binder.additionalCondition(annoColumn + " = " + express.getRightExpression().toString());
+                    // this.xx = 'abc'
+                    if(isCurrentObjColumn(express.getLeftExpression().toString())){
+                        Object consValue = null;
+                        if(express.getRightExpression() instanceof StringValue) {
+                            consValue = ((StringValue)express.getRightExpression()).getValue();
+                        }
+                        else if(express.getRightExpression() instanceof LongValue) {
+                            consValue = ((LongValue)express.getRightExpression()).getValue();
+                        }
+                        else {
+                            String warnMsg = "不支持的附加条件类型: "+express.getRightExpression().toString();
+                            log.warn(warnMsg);
+                            throw new InvalidUsageException(warnMsg);
+                        }
+                        binder.joinOnAndEQ(annoColumn, consValue);
+                    }
+                    else{
+                        binder.andEQ(annoColumn, express.getRightExpression().toString());
+                        binder.additionalCondition(annoColumn + " = " + express.getRightExpression().toString());
+                    }
                 }
                 continue;
             }
-            if(operator instanceof NotEqualsTo){
+            else if(operator instanceof NotEqualsTo){
                 NotEqualsTo express = (NotEqualsTo)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
@@ -180,8 +201,9 @@ public class ConditionManager extends BaseConditionManager{
                 }
             }
             else{
-                log.warn("不支持的条件: "+operator.toString());
-                continue;
+                String warnMsg = "不支持的条件: "+operator.toString();
+                log.warn(warnMsg);
+                throw new InvalidUsageException(warnMsg);
             }
             binder.additionalCondition(operator.toString().replaceAll("^\\w+\\.", ""));
         }

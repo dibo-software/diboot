@@ -52,6 +52,10 @@ public abstract class BaseBinder<T> {
      */
     protected List<String> annoObjJoinCols;
     /***
+     * VO注解对象中的join on对象附加过滤条件
+     */
+    protected Map<String, Object> annoObjJoinFilterMap;
+    /***
      * DO对象中的关联join on对象列名集合
      */
     protected List<String> refObjJoinCols;
@@ -174,6 +178,29 @@ public abstract class BaseBinder<T> {
         return this;
     }
 
+    /**
+     * join连接条件的附加条件，指定当前VO的取值方法和关联entity的取值方法
+     * @param annoObjectFieldKey 当前VO的取值属性名
+     * @param eqFilterConsVal 常量条件值
+     * @return
+     */
+    public BaseBinder<T> joinOnAndEQ(String annoObjectFieldKey, Object eqFilterConsVal){
+        if(annoObjectFieldKey != null && eqFilterConsVal != null){
+            if(annoObjJoinFilterMap == null){
+                annoObjJoinFilterMap = new HashMap<>();
+            }
+            String fieldName = this.annoObjPropInfo.getFieldByColumn(annoObjectFieldKey);
+            if(fieldName == null && this.annoObjPropInfo.getFieldToColumnMap().containsKey(annoObjectFieldKey)) {
+                fieldName = annoObjectFieldKey;
+            }
+            if(fieldName == null) {
+                throw new InvalidUsageException("字段/列 "+ annoObjectFieldKey +" 不存在");
+            }
+            annoObjJoinFilterMap.put(fieldName, eqFilterConsVal);
+        }
+        return this;
+    }
+
     public BaseBinder<T> andEQ(String fieldName, Object value){
         queryWrapper.eq(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
@@ -283,10 +310,10 @@ public abstract class BaseBinder<T> {
     protected void buildQueryWrapperJoinOn() {
         for (int i = 0; i < annoObjJoinCols.size(); i++) {
             String annoObjJoinOnCol = annoObjJoinCols.get(i);
-            List<?> annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol));
+            List<?> annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol), annoObjJoinFilterMap);
             // 构建查询条件
-            String refObjJoinOnCol = refObjJoinCols.get(i);
             if (V.notEmpty(annoObjectJoinOnList)) {
+                String refObjJoinOnCol = refObjJoinCols.get(i);
                 List<?> unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy) ? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
                         : annoObjectJoinOnList;
                 queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
