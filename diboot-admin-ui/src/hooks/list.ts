@@ -171,6 +171,31 @@ export class BaseListPageLoader<T> {
     }
     return list
   }
+
+  public paginationChanged() {
+    if (this.options?.queryParam) {
+      this.options.queryParam.pageIndex = this.options.pagination?.current || 1
+      this.options.queryParam.pageSize = this.options.pagination?.pageSize || 20
+      this.getList()
+    }
+  }
+
+  /**
+   * 构建排序
+   * @param column
+   * @param prop
+   * @param order
+   */
+  public orderChanged(prop: string, order: string) {
+    if (this.options?.queryParam) {
+      if (prop !== undefined && order !== undefined) {
+        this.options.queryParam.orderBy = `${prop}:${order === 'ascending' ? 'ASC' : 'DESC'}`
+      } else {
+        this.options.queryParam.orderBy = undefined
+      }
+    }
+  }
+
   /**
    * 构建查询参数
    */

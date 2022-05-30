@@ -147,8 +147,8 @@ const openDetail = (id: string) => {
     background
     layout="total, sizes, prev, pager, next, jumper"
     :total="pagination.total"
-    @size-change="pageLoader.getList()"
-    @current-change="pageLoader.getList()"
+    @size-change="pageLoader.paginationChanged()"
+    @current-change="pageLoader.paginationChanged()"
   />
   <form-page ref="formPage" @complete="pageLoader.onSearch()" />
   <detail-page ref="detailPage" />
