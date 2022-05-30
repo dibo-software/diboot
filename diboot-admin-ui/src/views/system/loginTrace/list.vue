@@ -10,10 +10,6 @@ const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSe
   })
 getList()
 
-const { initMore } = useMoreDefault({ bind: { roleOpt: { type: 'Role', label: 'name' } } })
-
-initMore()
-
 const advanced = ref(false)
 </script>
 
@@ -64,20 +60,20 @@ const advanced = ref(false)
     ref="tableRef"
     v-loading="loading"
     :data="dataList"
-    :max-height="`calc(100vh - 150px - ${usedVisibleHeight}px)`"
+    :max-height="`calc(100vh - 96px - ${usedVisibleHeight}px)`"
   >
-    <el-table-column prop="userType" label="用户类型" />
-    <el-table-column prop="userId" label="用户ID" />
-    <el-table-column prop="authAccount" label="用户名" />
-    <el-table-column prop="ipAddress" label="登录IP" />
-    <el-table-column prop="authType" label="登录方式" />
-    <el-table-column prop="success" label="登录状态">
+    <el-table-column prop="userType" label="用户类型" align="center" />
+    <el-table-column prop="userId" label="用户ID" align="right" />
+    <el-table-column prop="authAccount" label="用户名" align="center" />
+    <el-table-column prop="ipAddress" label="登录IP" align="right" />
+    <el-table-column prop="authType" label="登录方式" align="center" />
+    <el-table-column prop="success" label="登录状态" align="center">
       <template #default="{ row }">
         <el-tag v-if="row.success">成功</el-tag>
         <el-tag v-else type="danger">失败</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="createTime" label="登录时间" />
+    <el-table-column prop="createTime" label="登录时间" align="center" />
     <!--    <el-table-column label="操作" width="160">-->
     <!--      <template #default="{ row }">-->
     <!--        <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>-->

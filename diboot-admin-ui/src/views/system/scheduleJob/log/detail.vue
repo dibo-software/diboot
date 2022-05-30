@@ -33,11 +33,11 @@ defineExpose({
       <el-descriptions-item label="创建时间">
         {{ model.createTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="参数" :span="3">
-        <p class="content">{{ model.paramJson }}</p>
+      <el-descriptions-item label="参数" :span="2" class-name="long-text">
+        {{ model.paramJson }}
       </el-descriptions-item>
-      <el-descriptions-item label="执行结果信息" :span="3">
-        <p class="content">{{ model.executeMsg }}</p>
+      <el-descriptions-item label="执行结果信息" :span="2" class-name="long-text">
+        {{ model.executeMsg }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
@@ -46,9 +46,4 @@ defineExpose({
   </el-drawer>
 </template>
 
-<style scoped lang="scss">
-.content {
-  word-wrap: break-word;
-  word-break: break-all;
-}
-</style>
+<style scoped lang="scss"></style>

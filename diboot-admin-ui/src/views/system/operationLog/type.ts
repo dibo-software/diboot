@@ -1,0 +1,29 @@
+export interface OperationLog {
+  id: string
+  // 应用模块
+  appModules?: string
+  // 业务对象
+  businessObj: string
+  // 操作
+  operation: string
+  // 用户类型
+  userType?: string
+  // 用户ID
+  userId?: string
+  // 用户显示名
+  userRealname?: string
+  // 请求uri
+  requestUri: string
+  // 请求method
+  requestMethod: string
+  // 请求参数
+  requestParams?: string
+  // 请求IP
+  requestIp: string
+  // 状态码
+  statusCode: number
+  // 异常信息
+  errorMsg?: string
+  // 操作时间
+  createTime: string
+}
