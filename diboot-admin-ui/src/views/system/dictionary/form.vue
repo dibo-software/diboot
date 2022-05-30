@@ -12,6 +12,7 @@ interface FormModel {
   itemValue?: string
   description?: string
   color?: string
+  sortId?: number
   children?: FormModel[]
 }
 type Props = {
