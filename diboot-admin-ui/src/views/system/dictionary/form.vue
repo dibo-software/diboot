@@ -2,6 +2,8 @@
 import useForm, { BaseFormLoader } from '@/hooks/form'
 import { FormInstance, FormRules } from 'element-plus'
 import { ApiData } from '@/utils/request'
+import draggable from 'vuedraggable'
+import { Sort } from '@element-plus/icons-vue'
 
 interface FormModel {
   id?: string
@@ -97,6 +99,7 @@ const addItem = () => {
 
 // 移除数据字典条目
 const removeItem = (index: number) => {
+  console.log('removeItem', index)
   validateChildren()
   model?.value?.children && model.value.children.splice(index, 1)
 }
@@ -138,57 +141,66 @@ defineExpose({
       <el-form-item label="字典备注" :label-width="formLabelWidth">
         <el-input v-model="model.description" :rows="2" type="textarea" placeholder="请输入备注" />
       </el-form-item>
-      <el-table v-if="model?.children" :data="model.children" style="width: 100%">
-        <el-table-column width="250">
-          <template #header>
-            <span class="required-flag">*</span>
-            条目名称
-          </template>
-          <template #default="scope">
-            <el-form-item
-              :prop="`children.${scope.$index}.itemName`"
-              :rules="{
-                required: true,
-                message: '请输入条目名称',
-                trigger: 'blur'
-              }"
-            >
-              <el-input v-model="scope.row.itemName" placeholder="条目名称" />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column width="250">
-          <template #header>
-            <span class="required-flag">*</span>
-            条目编码
-          </template>
-          <template #default="scope">
-            <el-form-item
-              :prop="`children.${scope.$index}.itemValue`"
-              :rules="{
-                required: true,
-                message: '请输入条目编码',
-                trigger: 'blur'
-              }"
-            >
-              <el-input v-model="scope.row.itemValue" placeholder="条目编码" />
-            </el-form-item>
-          </template>
-        </el-table-column>
-        <el-table-column label="条目颜色" width="100">
-          <template #default="scope">
-            <el-color-picker v-model="scope.row.color" :predefine="predefineColors" />
-          </template>
-        </el-table-column>
-        <el-table-column>
-          <template #header>
-            <el-button size="small" type="primary" @click="addItem">添加</el-button>
-          </template>
-          <template #default="scope">
-            <el-button size="small" type="danger" @click="removeItem(scope.$index)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <template v-if="model?.children">
+        <table class="children-table">
+          <thead>
+            <tr>
+              <th>排序</th>
+              <th><span class="required-flag">*</span> 条目名称</th>
+              <th><span class="required-flag">*</span> 条目编码</th>
+              <th>条目颜色</th>
+              <th>
+                <el-button size="small" type="primary" @click="addItem">添加</el-button>
+              </th>
+            </tr>
+          </thead>
+          <draggable
+            v-model="model.children"
+            tag="tbody"
+            item-key="itemValue"
+            ghost-class="sortable-ghost"
+            handle=".drag-handle"
+          >
+            <template #item="{ element, index }">
+              <tr>
+                <td>
+                  <el-button class="drag-handle" plain :icon="Sort" />
+                </td>
+                <td>
+                  <el-form-item
+                    :prop="`children.${index}.itemName`"
+                    :rules="{
+                      required: true,
+                      message: '请输入条目名称',
+                      trigger: 'blur'
+                    }"
+                  >
+                    <el-input v-model="element.itemName" placeholder="条目名称" />
+                  </el-form-item>
+                </td>
+                <td>
+                  <el-form-item
+                    :prop="`children.${index}.itemValue`"
+                    :rules="{
+                      required: true,
+                      message: '请输入条目编码',
+                      trigger: 'blur'
+                    }"
+                  >
+                    <el-input v-model="element.itemValue" placeholder="条目编码" />
+                  </el-form-item>
+                </td>
+                <td>
+                  <el-color-picker v-model="element.color" :predefine="predefineColors" />
+                </td>
+                <td>
+                  <el-button size="small" type="danger" @click="removeItem(index)">删除</el-button>
+                </td>
+              </tr>
+            </template>
+          </draggable>
+        </table>
+      </template>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
@@ -202,5 +214,20 @@ defineExpose({
 .required-flag {
   color: var(--el-color-danger);
   font-weight: 400;
+}
+.children-table {
+  width: 100%;
+  th {
+    padding-bottom: 12px;
+  }
+  td {
+    text-align: center;
+  }
+  td > * {
+    margin-bottom: 18px;
+  }
+  .drag-handle {
+    cursor: move;
+  }
 }
 </style>

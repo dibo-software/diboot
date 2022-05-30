@@ -83,7 +83,6 @@ const openDetail = (id: string) => {
     :data="dataList"
     row-key="id"
     :tree-props="{ children: 'children__' }"
-    default-expand-all
   >
     <el-table-column type="expand">
       <template #default="props">
