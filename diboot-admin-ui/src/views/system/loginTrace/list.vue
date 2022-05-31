@@ -1,5 +1,5 @@
 <script setup lang="ts" name="LoginTrace">
-import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import type { LoginTrace } from './type'
 
 defineProps<{ usedVisibleHeight?: number }>()
@@ -16,41 +16,28 @@ const advanced = ref(false)
 <template>
   <el-form label-width="80px" @submit.prevent>
     <el-row :gutter="18">
-      <el-col :md="8" :sm="24">
+      <el-col :md="5" :sm="12">
         <el-form-item label="用户名">
           <el-input v-model="queryParam.authAccount" clearable @change="onSearch" />
         </el-form-item>
       </el-col>
-      <el-col :md="8" :sm="24">
-        <el-form-item label="IP地址">
-          <el-input v-model="queryParam.ipAddress" clearable @change="onSearch" />
+      <el-col :md="5" :sm="12">
+        <el-form-item label="登录状态">
+          <el-select v-model="queryParam.success" clearable @change="onSearch">
+            <el-option label="成功" :value="true" />
+            <el-option label="失败" :value="false" />
+          </el-select>
         </el-form-item>
       </el-col>
-      <template v-if="advanced">
-        <el-col :md="8" :sm="24">
-          <el-form-item label="登录状态">
-            <el-select v-model="queryParam.success" clearable @change="onSearch">
-              <el-option label="成功" :value="true" />
-              <el-option label="失败" :value="false" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24">
-          <el-form-item label="登录时间">
-            <date-range v-model="dateRangeQuery.createTime" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-      </template>
-      <el-col :md="8" :sm="24" style="margin-left: auto">
+      <el-col :md="8" :sm="12">
+        <el-form-item label="登录时间">
+          <date-range v-model="dateRangeQuery.createTime" @change="onSearch" />
+        </el-form-item>
+      </el-col>
+      <el-col :md="6" :sm="12" style="margin-left: auto">
         <el-form-item>
-          <el-button type="primary" @click="onSearch">搜索</el-button>
-          <el-button @click="resetFilter">重置</el-button>
-          <el-button type="primary" text @click="advanced = !advanced">
-            {{ advanced ? '收起' : '展开' }}
-            <el-icon :size="18" style="margin-left: 5px">
-              <component :is="advanced ? ArrowUp : ArrowDown" />
-            </el-icon>
-          </el-button>
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" @click="resetFilter" title="重置搜索条件"></el-button>
         </el-form-item>
       </el-col>
     </el-row>
@@ -62,23 +49,18 @@ const advanced = ref(false)
     :data="dataList"
     :max-height="`calc(100vh - 96px - ${usedVisibleHeight}px)`"
   >
-    <el-table-column prop="userType" label="用户类型" align="center" />
-    <el-table-column prop="userId" label="用户ID" align="right" />
-    <el-table-column prop="authAccount" label="用户名" align="center" />
-    <el-table-column prop="ipAddress" label="登录IP" align="right" />
-    <el-table-column prop="authType" label="登录方式" align="center" />
-    <el-table-column prop="success" label="登录状态" align="center">
+    <el-table-column prop="userType" label="用户类型" />
+    <el-table-column prop="userId" label="用户ID" width="160"/>
+    <el-table-column prop="authAccount" label="用户名" />
+    <el-table-column prop="ipAddress" label="登录IP" />
+    <el-table-column prop="authType" label="登录方式" />
+    <el-table-column prop="success" label="登录状态">
       <template #default="{ row }">
         <el-tag v-if="row.success">成功</el-tag>
         <el-tag v-else type="danger">失败</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="createTime" label="登录时间" align="center" />
-    <!--    <el-table-column label="操作" width="160">-->
-    <!--      <template #default="{ row }">-->
-    <!--        <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>-->
-    <!--      </template>-->
-    <!--    </el-table-column>-->
+    <el-table-column prop="createTime" label="登录时间" />
   </el-table>
   <el-pagination
     v-if="pagination.total"

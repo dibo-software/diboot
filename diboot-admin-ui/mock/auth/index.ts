@@ -173,6 +173,16 @@ const authMenu = [
         }
       },
       {
+        path: 'message',
+        name: 'message',
+        meta: {
+          title: '消息记录管理',
+          componentPath: prefix + 'system/message/list.vue',
+          keepAlive: false,
+          sort: 7
+        }
+      },
+      {
         path: 'operationLog',
         name: 'OperationLog',
         meta: {

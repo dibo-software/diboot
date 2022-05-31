@@ -38,6 +38,19 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { value: 'delete', label: '删除' },
     { value: 'export', label: '导出' },
     { value: 'import', label: '导入' }
+  ],
+  // 发送通道
+  MESSAGE_CHANNEL: [
+    { value: 'WEBSOCKET', label: '系统消息' },
+    { value: 'SMS', label: '短信' },
+    { value: 'EMAIL', label: '邮件' }
+  ],
+  // 消息状态
+  MESSAGE_STATUS: [
+    { value: 'PENDING', label: '待发送' },
+    { value: 'FAILED', label: '发送失败' },
+    { value: 'DELIVERY', label: '已送达' },
+    { value: 'READ', label: '已读' }
   ]
 }
 
