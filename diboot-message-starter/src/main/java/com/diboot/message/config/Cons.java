@@ -32,21 +32,16 @@ public class Cons extends com.diboot.core.config.Cons {
         /**
          * 发送中
          */
-        SENDING("发送中"),
+        PENDING("待发送"),
         /**
          * 异常
          */
-        EXCEPTION("发送异常"),
+        FAILED("发送失败"),
         // 如果是短信、邮件则送达表示发送成功
         /**
          * 签收
          */
         DELIVERY("已送达"),
-        // 如果是站内信，那么状态是已读、未读
-        /**
-         * 未读
-         */
-        UNREAD("未读"),
         /**
          * 已读
          */

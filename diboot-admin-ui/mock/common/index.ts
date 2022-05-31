@@ -29,6 +29,19 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { value: 'DO_NOTHING', label: '周期执行' },
     { value: 'FIRE_AND_PROCEED', label: '立即执行一次，并周期执行' },
     { value: 'IGNORE_MISFIRES', label: '超期立即执行，并周期执行' }
+  ],
+  // 发送通道
+  MESSAGE_CHANNEL: [
+    { value: 'WEBSOCKET', label: '系统消息' },
+    { value: 'SMS', label: '短信' },
+    { value: 'EMAIL', label: '邮件' }
+  ],
+  // 消息状态
+  MESSAGE_STATUS: [
+    { value: 'PENDING', label: '待发送' },
+    { value: 'FAILED', label: '发送失败' },
+    { value: 'DELIVERY', label: '已送达' },
+    { value: 'READ', label: '已读' },
   ]
 }
 
