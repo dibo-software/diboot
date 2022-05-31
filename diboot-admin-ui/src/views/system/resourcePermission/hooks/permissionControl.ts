@@ -4,7 +4,7 @@ export default () => {
   // 按钮权限编码（选择/输入）
   const btnResourceCodeSelect = ref(true)
   // 正在配置的标题
-  const configPermissionTitle = ref('')
+  const configPermissionTitle = ref('菜单页面接口配置')
   // 正在配置的ResourceCode，如：ResourcePermission（菜单code）、detail（按钮权限code）、list等
   const configResourceCode = ref<string>('')
   // 正在配置的后端权限码，如：ResourcePermission:read、ResourcePermission:write
@@ -26,14 +26,10 @@ export default () => {
    * @param value 按钮权限编码
    */
   const changeBtnResourceCode = (permission: ResourcePermission, value: string) => {
-    const validOption = resourcePermissionCodeOptions.find(item => {
-      return item.value === value
-    })
-    // 自动补全按钮/权限名称
-    if (validOption) {
-      permission.displayName = validOption.label
-    }
-    // 重新设置接口配置
+    const validOption = resourcePermissionCodeOptions.find(item => item.value === value)
+    // 自动补全按钮权限名称
+    if (validOption) permission.displayName = validOption.label
+    // 触发按钮权限名称更改
     changeBtnPermissionName(permission, permission.displayName || value)
   }
 
@@ -48,7 +44,10 @@ export default () => {
     configPermissionCodes.value = permission.permissionCodes ?? []
   }
 
-  // 切换按钮权限输入/选择
+  /**
+   * 切换按钮权限输入/选择
+   * @param permission 当前正在配置的权限
+   */
   const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
     btnResourceCodeSelect.value = !btnResourceCodeSelect.value
     permission.resourceCode = ''

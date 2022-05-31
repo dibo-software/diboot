@@ -10,10 +10,7 @@ import usePermissionControl from './hooks/permissionControl'
 import type { MenuType } from './hooks/displayControl'
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
-const currentPermissionActiveKey = ref(0)
-const currentPermissionTitle = ref('菜单页面接口配置')
 const originApiList = reactive<PermissionGroupType[]>([])
-const currentConfigCode = ref('')
 const showPermission = ref(false)
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -32,11 +29,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
 }
 const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
-  if (currentConfigCode.value === 'Menu') {
-    permissionCodes = paramPermissionCodes
-  } else {
-    // permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
-  }
+  permissionCodes = paramPermissionCodes
+  // if (currentConfigCode.value === 'Menu') {
+  //   permissionCodes = paramPermissionCodes
+  // } else {
+  //   // permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
+  // }
 }
 // ======> 响应式数据
 const empty = ref(true)
@@ -130,7 +128,7 @@ watch(
 )
 watch(
   () => tabs.value,
-  val => {
+  () => {
     model.value.permissionList = tabs.value
   },
   {
@@ -197,7 +195,7 @@ watch(
               </el-alert>
             </el-form-item>
           </el-form>
-          <div class="btn-config-container" v-if="displayFields.permissionList">
+          <div v-if="displayFields.permissionList" class="btn-config-container">
             <div class="btn-config__header">
               <span>按钮权限配置</span>
               <el-button :icon="Plus" circle type="success" @click="handleAddTab" />
@@ -251,17 +249,17 @@ watch(
                     <el-descriptions-item label="按钮权限名称">
                       <el-input
                         v-model="permission.displayName"
-                        @input="value => changeBtnPermissionName(permission, value)"
                         placeholder="请输入按钮权限名称"
+                        @input="value => changeBtnPermissionName(permission, value)"
                       />
                     </el-descriptions-item>
                     <el-descriptions-item label="按钮权限接口">
                       <div class="permission-tag-container">
                         <template v-if="permission.permissionCodes && permission.permissionCodes.length > 0">
                           <el-tag
-                            v-for="(permissionCode, index) in permission.permissionCodes"
+                            v-for="(permissionCode, idx) in permission.permissionCodes"
+                            :key="`permission_${idx}`"
                             style="margin-bottom: 3px"
-                            :key="`permission_${index}`"
                             type="success"
                             closable
                             >{{ permissionCode }}</el-tag
