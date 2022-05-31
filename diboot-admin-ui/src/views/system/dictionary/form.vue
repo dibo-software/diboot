@@ -237,6 +237,10 @@ defineExpose({
   .sortable-ghost {
     td {
       border-top: 2px solid var(--el-color-primary);
+      background: #efefef;
+      * {
+        visibility: hidden;
+      }
     }
   }
 }
