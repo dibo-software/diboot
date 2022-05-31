@@ -1,11 +1,13 @@
 import { Ref } from 'vue'
 export interface TabsOption<T> {
+  // 添加tab前回调
   beforeAddTab: (tab: T) => void
 }
 export default <T>(option: TabsOption<T>) => {
   const { beforeAddTab } = option
+  // 激活tab
   const activeTab = ref('0')
-
+  // tabs集合
   const tabs = ref<T[]>([]) as Ref<T[]>
 
   /**
@@ -14,6 +16,7 @@ export default <T>(option: TabsOption<T>) => {
    */
   const initTabs = (tabsValue: T[]) => {
     tabs.value = tabsValue
+    activeTab.value = '0'
   }
   /**
    * 添加tab

@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import PermissionList from './permissionList/index.vue'
 import RouteSelect from './modules/RouteSelect.vue'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Refresh } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission, PermissionGroupType } from './type'
 import useDisplayControl from './hooks/displayControl'
+import usePermissionControl from './hooks/permissionControl'
 import type { MenuType } from './hooks/displayControl'
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
@@ -13,7 +14,6 @@ const currentPermissionActiveKey = ref(0)
 const currentPermissionTitle = ref('菜单页面接口配置')
 const originApiList = reactive<PermissionGroupType[]>([])
 const currentConfigCode = ref('')
-const currentPermissionCodes = reactive<string[]>([])
 const showPermission = ref(false)
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -35,10 +35,10 @@ const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
   if (currentConfigCode.value === 'Menu') {
     permissionCodes = paramPermissionCodes
   } else {
-    permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
+    // permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
   }
 }
-// ======> 菜单form相关
+// ======> 响应式数据
 const empty = ref(true)
 
 const formRef = ref<FormInstance>()
@@ -68,9 +68,24 @@ const NEW_PERMISSION_ITEM: ResourcePermission = {
 // 菜单类型切换控制字段
 const { displayFields, changeDisplayType } = useDisplayControl()
 
-const { more, initMore } = useMoreDefault({ dict: 'RESOURCE_PERMISSION_CODE' })
-initMore()
+// 权限相关hooks
+const {
+  btnResourceCodeSelect,
+  configPermissionTitle,
+  configResourceCode,
+  configPermissionCodes,
+  initResourcePermissionCodeOptions,
+  changeBtnResourceCode,
+  changeBtnPermissionName,
+  toggleBtnResourceCodeSelect
+} = usePermissionControl()
 
+const { more, initMore } = useMoreDefault({ dict: 'RESOURCE_PERMISSION_CODE' })
+initMore().then(() => {
+  // 初始化选项
+  initResourcePermissionCodeOptions(more.resourcePermissionCodeOptions)
+})
+// tab hooks => 按钮权限处理
 const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermission>({
   beforeAddTab(tab) {
     // 自动补全编码选项
@@ -91,9 +106,11 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
 const handleChangeDisplayType = (val: string | number | boolean) => {
   changeDisplayType(val as MenuType)
 }
+// 添加按钮权限
 const handleAddTab = () => {
   addTab(_.cloneDeep(NEW_PERMISSION_ITEM))
 }
+
 // compute
 const existPermissionCodes = computed(() => {
   if (!tabs.value) return []
@@ -108,7 +125,16 @@ watch(
     empty.value = false
     model.value = val
     changeDisplayType(val.displayType as MenuType)
-    initTabs([])
+    initTabs(val.permissionList ?? [])
+  }
+)
+watch(
+  () => tabs.value,
+  val => {
+    model.value.permissionList = tabs.value
+  },
+  {
+    deep: true
   }
 )
 </script>
@@ -164,14 +190,14 @@ watch(
               <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
               <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
               <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
-              <el-alert :closable="false">
-                <p>隐藏：隐藏时菜单栏不会显示，但可以地址可以访问；</p>
-                <p>缓存：页面开启keepAlive，缓存当前页面；</p>
-                <p>忽略认证：当前页面不需要权限认证。</p>
+              <el-alert :closable="false" class="custom-alert-tip">
+                隐藏：隐藏时菜单栏不会显示，但可以地址可以访问；<br />
+                缓存：页面开启keepAlive，缓存当前页面；<br />
+                忽略认证：当前页面不需要权限认证。<br />
               </el-alert>
             </el-form-item>
           </el-form>
-          <div class="btn-config-container">
+          <div class="btn-config-container" v-if="displayFields.permissionList">
             <div class="btn-config__header">
               <span>按钮权限配置</span>
               <el-button :icon="Plus" circle type="success" @click="handleAddTab" />
@@ -179,12 +205,74 @@ watch(
             <div class="btn-config__body">
               <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab">
                 <el-tab-pane
-                  v-for="(item, index) in tabs"
+                  v-for="(permission, index) in model.permissionList"
                   :key="`tab_${index}`"
-                  :label="item.displayName"
+                  :label="permission.displayName"
                   :name="`${index}`"
                 >
-                  {{ item.displayName }}
+                  <el-descriptions :column="1">
+                    <el-descriptions-item label="按钮权限编码">
+                      <el-row type="flex" align="middle" :gutter="16">
+                        <el-col :span="16">
+                          <el-select
+                            v-if="btnResourceCodeSelect"
+                            v-model="permission.resourceCode"
+                            filterable
+                            allow-create
+                            placeholder="请选取当前按钮权限编码"
+                            @change="value => changeBtnResourceCode(permission, value)"
+                          >
+                            <el-option
+                              v-for="(item, i) in more.resourcePermissionCodeOptions"
+                              :key="`frontend-code_${i}`"
+                              :label="`${item.label}[${item.value}]`"
+                              :value="item.value"
+                            />
+                          </el-select>
+                          <el-input
+                            v-else
+                            v-model="permission.resourceCode"
+                            placeholder="请输入按钮权限编码"
+                            @input="value => changeBtnResourceCode(permission, value)"
+                          />
+                        </el-col>
+                        <el-col :span="8">
+                          <el-button
+                            type="primary"
+                            :icon="Refresh"
+                            size="small"
+                            @click="toggleBtnResourceCodeSelect(permission)"
+                          >
+                            {{ btnResourceCodeSelect ? '自定义输入' : '从字典选取' }}
+                          </el-button>
+                        </el-col>
+                      </el-row>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="按钮权限名称">
+                      <el-input
+                        v-model="permission.displayName"
+                        @input="value => changeBtnPermissionName(permission, value)"
+                        placeholder="请输入按钮权限名称"
+                      />
+                    </el-descriptions-item>
+                    <el-descriptions-item label="按钮权限接口">
+                      <div class="permission-tag-container">
+                        <template v-if="permission.permissionCodes && permission.permissionCodes.length > 0">
+                          <el-tag
+                            v-for="(permissionCode, index) in permission.permissionCodes"
+                            style="margin-bottom: 3px"
+                            :key="`permission_${index}`"
+                            type="success"
+                            closable
+                            >{{ permissionCode }}</el-tag
+                          >
+                        </template>
+                        <template v-else>
+                          <span style="color: #d3d3d3">请点击右侧"配置按钮"选择权限接口</span>
+                        </template>
+                      </div>
+                    </el-descriptions-item>
+                  </el-descriptions>
                 </el-tab-pane>
               </el-tabs>
             </div>
@@ -194,9 +282,9 @@ watch(
       <el-col :md="24" :lg="14" class="right-container">
         <permission-list
           ref="permissionList"
-          :title="currentPermissionTitle"
-          :current-permission-codes="currentPermissionCodes"
-          :config-code="currentConfigCode"
+          :title="configPermissionTitle"
+          :current-permission-codes="configPermissionCodes"
+          :config-code="configResourceCode"
           :origin-api-list="originApiList"
           @change-permission-codes="handleChangePermissionCodes"
         />
@@ -237,9 +325,13 @@ watch(
 }
 .left-container {
   border-right: 1px solid var(--el-color-info-light-9);
-  padding-right: 5px !important;
+  padding-right: 15px !important;
   .el-space {
     width: 100%;
+  }
+  .custom-alert-tip {
+    padding: 0;
+    width: auto;
   }
 }
 .btn-config-container {
