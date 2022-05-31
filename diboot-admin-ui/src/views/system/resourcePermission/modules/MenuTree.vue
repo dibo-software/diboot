@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
-import useTree from './tree'
-import type { ResourcePermission } from './type'
+import useTree from '../hooks/tree'
+import type { ResourcePermission } from '../type'
 import { defineEmits } from 'vue'
 const defaultProps = {
   label: 'displayName'
@@ -19,7 +19,6 @@ const {
   treeRef,
   searchWord,
   treeDataList,
-  currentNodeKey,
   loading
 } = useTree<ResourcePermission>({
   baseApi: '/iam/resourcePermission',
@@ -63,8 +62,8 @@ const addChildNode = (parentId: string) => {
         <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
       </div>
       <el-tree
-        class="custom-tree"
         ref="treeRef"
+        class="custom-tree"
         :data="treeDataList"
         :props="defaultProps"
         draggable

@@ -29,6 +29,15 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { value: 'DO_NOTHING', label: '周期执行' },
     { value: 'FIRE_AND_PROCEED', label: '立即执行一次，并周期执行' },
     { value: 'IGNORE_MISFIRES', label: '超期立即执行，并周期执行' }
+  ],
+  // 定时任务初始化策略
+  RESOURCE_PERMISSION_CODE: [
+    { value: 'detail', label: '详情' },
+    { value: 'create', label: '新建' },
+    { value: 'update', label: '更新' },
+    { value: 'delete', label: '删除' },
+    { value: 'export', label: '导出' },
+    { value: 'import', label: '导入' }
   ]
 }
 

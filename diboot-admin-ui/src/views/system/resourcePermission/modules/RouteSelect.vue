@@ -16,7 +16,9 @@ buildViewMap().then(res => {
 })
 
 const componentName = ref('')
-defineProps<{ modelValue?: string; routePath?: string }>()
+defineProps<{ modelValue?: string | unknown; routePath?: string | unknown }>()
+
+// 事件定义
 const emits = defineEmits<{
   (e: 'update:modelValue', value?: string): void
   (e: 'update:componentPath', value?: string): void
@@ -28,7 +30,7 @@ const changeComponentName = (val?: string) => {
 }
 </script>
 <template>
-  <el-select v-model="componentName" placeholder="请选择组件" @change="changeComponentName">
+  <el-select v-model="componentName" placeholder="请选择组件" clearable @change="changeComponentName">
     <el-option v-for="item in componentNameOptions" :key="item.value" :label="item.label" :value="item.value" />
   </el-select>
 </template>

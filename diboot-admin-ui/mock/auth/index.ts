@@ -129,15 +129,15 @@ const authMenu = [
   {
     path: 'system',
     name: 'System',
-    redirect: '/system/iamResourcePermission',
+    redirect: '/system/resourcePermission',
     meta: { title: '系统管理', icon: 'Element:SetUp' },
     children: [
       {
-        path: 'iamResourcePermission',
-        name: 'iamResourcePermission-@increment',
+        path: 'resourcePermission',
+        name: 'resourcePermission-@increment',
         meta: {
           title: '资源权限管理',
-          componentPath: prefix + 'system/iamResourcePermission/list.vue',
+          componentPath: prefix + 'system/resourcePermission/list.vue',
           sort: '@natural',
           keepAlive: false,
           hollow: false

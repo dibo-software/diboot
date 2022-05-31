@@ -1,5 +1,4 @@
 import type { ElTree } from 'element-plus'
-import { ResourcePermission } from '@/views/system/iamResourcePermission/type'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]

@@ -1,13 +1,11 @@
-import type { ResourcePermission } from '@/views/system/iamResourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 export default [
   {
     id: '10000',
-    createTime: '2022-05-19 01:18:33',
     parentId: '0',
     displayType: 'MENU',
     displayName: '系统管理',
     resourceCode: 'system',
-    meta: '{}',
     status: 'A',
     updateTime: '2022-05-19 01:18:33',
     routeMeta: {},
@@ -730,12 +728,10 @@ export default [
   },
   {
     id: '10046',
-    createTime: '2022-05-19 01:18:33',
     parentId: '0',
     displayType: 'MENU',
     displayName: '组织机构',
     resourceCode: 'orgStructure',
-    meta: '{}',
     status: 'A',
     updateTime: '2022-05-19 01:18:33',
     routeMeta: {},
