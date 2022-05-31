@@ -70,6 +70,7 @@
     "useRoute": "readonly",
     "useRouter": "readonly",
     "useSlots": "readonly",
+    "useTabs": "readonly",
     "watch": "readonly",
     "watchEffect": "readonly"
   }

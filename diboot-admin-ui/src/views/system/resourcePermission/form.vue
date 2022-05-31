@@ -6,9 +6,7 @@ import { Plus } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission, PermissionGroupType } from './type'
 import useDisplayControl from './hooks/displayControl'
-import { MenuType } from './hooks/displayControl'
-import useTabs from './hooks/tabs'
-
+import type { MenuType } from './hooks/displayControl'
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
 const currentPermissionActiveKey = ref(0)
