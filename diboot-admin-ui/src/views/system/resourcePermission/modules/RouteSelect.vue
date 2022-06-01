@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { buildViewMap } from '@/utils/route'
-import { LabelValue } from '@/hooks/more_default'
 const componentNameOptions = reactive<LabelValue[]>([])
 const viewMap = ref<Record<string, string>>({})
 buildViewMap().then(res => {
