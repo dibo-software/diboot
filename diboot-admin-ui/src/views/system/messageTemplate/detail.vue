@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Message } from './type'
+import type { MessageTemplate } from './type'
 
-const { model, loadData, loading } = useDetailDefault<Message>('/message')
+const { model, loadData, loading } = useDetailDefault<MessageTemplate>('/messageTemplate')
 
 const visible = ref(false)
 
@@ -14,13 +14,10 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="消息通知详情" width="65vw">
+  <el-dialog v-model="visible" title="消息模板详情" width="65vw">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item label="业务类型">
-        {{ model.businessType }}
-      </el-descriptions-item>
-      <el-descriptions-item label="业务标识">
-        <span>{{ model.businessId }}</span>
+      <el-descriptions-item label="业务模块">
+        {{ model.appModule }}
       </el-descriptions-item>
       <el-descriptions-item label="标题">
         {{ model.title }}
@@ -28,17 +25,8 @@ defineExpose({
       <el-descriptions-item label="内容">
         {{ model.content }}
       </el-descriptions-item>
-      <el-descriptions-item label="发送方">
-        <span>{{ model.sender }}</span>
-      </el-descriptions-item>
-      <el-descriptions-item label="接收方">
-        {{ model.receiver }}
-      </el-descriptions-item>
-      <el-descriptions-item label="发送结果">
-        <el-tag>{{ model.result }}</el-tag>
-      </el-descriptions-item>
-      <el-descriptions-item label="定时发送时间">
-        {{ model.scheduleTime }}
+      <el-descriptions-item label="创建人">
+        <span>{{ model.createByName }}</span>
       </el-descriptions-item>
       <el-descriptions-item label="创建时间">
         {{ model.createTime }}

@@ -15,7 +15,7 @@ defineExpose({
 
 <template>
   <el-dialog v-model="visible" title="详情" width="65vw">
-    <el-descriptions v-loading="loading" :column="2">
+    <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item label="用户姓名">
         {{ model.userRealname }}
       </el-descriptions-item>

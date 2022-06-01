@@ -27,7 +27,7 @@ const openDetail = (id: string) => {
 </script>
 
 <template>
-  <el-form label-width="80px" @submit.prevent>
+  <el-form label-width="80px" class="list-search" @submit.prevent>
     <el-row :gutter="18">
       <el-col :md="6" :sm="12">
         <el-form-item label="业务对象">
@@ -60,9 +60,12 @@ const openDetail = (id: string) => {
       <el-col :md="6" :sm="12" style="margin-left: auto">
         <el-form-item>
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-          <el-button :icon="CircleClose" @click="resetFilter" title="重置搜索条件"></el-button>
-          <el-button :icon="advanced ? ArrowUp : ArrowDown" @click="advanced = !advanced" :title="advanced ? '收起' : '展开'">
-          </el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="advanced ? ArrowUp : ArrowDown"
+            :title="advanced ? '收起' : '展开'"
+            @click="advanced = !advanced"
+          />
         </el-form-item>
       </el-col>
     </el-row>
@@ -72,6 +75,7 @@ const openDetail = (id: string) => {
     ref="tableRef"
     v-loading="loading"
     :data="dataList"
+    stripe
     :max-height="`calc(100vh - 96px - ${usedVisibleHeight}px)`"
   >
     <el-table-column prop="userType" label="用户类型" />

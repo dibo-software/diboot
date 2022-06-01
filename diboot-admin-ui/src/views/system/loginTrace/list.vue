@@ -1,5 +1,5 @@
 <script setup lang="ts" name="LoginTrace">
-import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search, CircleClose } from '@element-plus/icons-vue'
 import type { LoginTrace } from './type'
 
 defineProps<{ usedVisibleHeight?: number }>()
@@ -9,12 +9,10 @@ const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSe
     baseApi: '/loginTrace'
   })
 getList()
-
-const advanced = ref(false)
 </script>
 
 <template>
-  <el-form label-width="80px" @submit.prevent>
+  <el-form label-width="80px" class="list-search" @submit.prevent>
     <el-row :gutter="18">
       <el-col :md="5" :sm="12">
         <el-form-item label="用户名">
@@ -37,7 +35,7 @@ const advanced = ref(false)
       <el-col :md="6" :sm="12" style="margin-left: auto">
         <el-form-item>
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-          <el-button :icon="CircleClose" @click="resetFilter" title="重置搜索条件"></el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -47,10 +45,14 @@ const advanced = ref(false)
     ref="tableRef"
     v-loading="loading"
     :data="dataList"
+    stripe
     :max-height="`calc(100vh - 96px - ${usedVisibleHeight}px)`"
   >
-    <el-table-column prop="userType" label="用户类型" />
-    <el-table-column prop="userId" label="用户ID" width="160"/>
+    <el-table-column label="用户标识" width="260">
+      <template #default="{ row }">
+        <span>{{ row.userType }}:{{ row.userId }}</span>
+      </template>
+    </el-table-column>
     <el-table-column prop="authAccount" label="用户名" />
     <el-table-column prop="ipAddress" label="登录IP" />
     <el-table-column prop="authType" label="登录方式" />

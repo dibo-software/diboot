@@ -37,7 +37,7 @@ const openDetail = (id: string) => {
 }
 </script>
 <template>
-  <el-form label-width="80px" @submit.prevent>
+  <el-form label-width="80px" class="list-search" @submit.prevent>
     <el-row :gutter="18">
       <el-col :md="8" :sm="24">
         <el-form-item label="菜单名称">
@@ -79,10 +79,11 @@ const openDetail = (id: string) => {
     <el-button type="primary" @click="create">新建</el-button>
   </el-space>
   <el-table
-    :max-height="`calc(100vh - 120px - ${usedVisibleHeight}px)`"
-    :data="dataList"
     row-key="id"
     :tree-props="{ children: 'children__' }"
+    :data="dataList"
+    stripe
+    :max-height="`calc(100vh - 120px - ${usedVisibleHeight}px)`"
   >
     <el-table-column type="expand">
       <template #default="props">

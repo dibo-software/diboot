@@ -173,13 +173,23 @@ const authMenu = [
         }
       },
       {
+        path: 'messageTemplate',
+        name: 'messageTemplate',
+        meta: {
+          title: '消息模板管理',
+          componentPath: prefix + 'system/messageTemplate/list.vue',
+          keepAlive: false,
+          sort: 7
+        }
+      },
+      {
         path: 'message',
         name: 'message',
         meta: {
           title: '消息记录管理',
           componentPath: prefix + 'system/message/list.vue',
           keepAlive: false,
-          sort: 7
+          sort: 8
         }
       },
       {
@@ -188,7 +198,7 @@ const authMenu = [
         meta: {
           title: '操作日志管理',
           componentPath: prefix + 'system/operationLog/list.vue',
-          sort: 8
+          sort: 9
         }
       },
       {
@@ -197,7 +207,7 @@ const authMenu = [
         meta: {
           title: '登录日志管理',
           componentPath: prefix + 'system/loginTrace/list.vue',
-          sort: 9
+          sort: 10
         }
       }
     ]

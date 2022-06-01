@@ -71,7 +71,7 @@ watch(
         <el-form ref="ruleFormRef" :model="model" :rules="rules" label-width="90px">
           <div class="card-header">菜单配置</div>
           <el-form-item label="上级菜单" prop="parentId">
-            <el-input :modelValue="model.parentId === '0' ? '顶级菜单' : model.parentDisplayName" disabled />
+            <el-input :model-value="model.parentId === '0' ? '顶级菜单' : model.parentDisplayName" disabled />
           </el-form-item>
           <el-form-item label="菜单分类" prop="displayType">
             <el-radio-group v-model="model.displayType">
@@ -91,9 +91,9 @@ watch(
             <route-select
               v-model="model.routeMeta.componentName"
               v-model:component-path="model.routeMeta.componentPath"
-            ></route-select>
+            />
           </el-form-item>
-          <el-form-item label="组件地址" v-if="model.routeMeta.componentPath">
+          <el-form-item v-if="model.routeMeta.componentPath" label="组件地址">
             <el-input v-model="model.routeMeta.componentPath" placeholder="请输入组件地址" disabled />
           </el-form-item>
           <el-form-item label="路由地址">

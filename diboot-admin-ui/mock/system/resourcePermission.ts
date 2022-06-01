@@ -56,7 +56,7 @@ const buildChildren = (parents: ResourcePermission[], originList: ResourcePermis
   const removeIds: string[] = []
   for (const parent of parents) {
     parent.children = []
-    for (let resourcePermission of originList) {
+    for (const resourcePermission of originList) {
       if (resourcePermission.parentId === parent.id) {
         removeIds.push(resourcePermission.id as string)
         parent.children.push(resourcePermission)

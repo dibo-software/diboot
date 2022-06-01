@@ -1,7 +1,7 @@
 export interface OperationLog {
   id: string
   // 应用模块
-  appModules?: string
+  appModule?: string
   // 业务对象
   businessObj: string
   // 操作

@@ -41,7 +41,7 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { value: 'PENDING', label: '待发送' },
     { value: 'FAILED', label: '发送失败' },
     { value: 'DELIVERY', label: '已送达' },
-    { value: 'READ', label: '已读' },
+    { value: 'READ', label: '已读' }
   ]
 }
 

@@ -63,8 +63,8 @@ const addChildNode = (parentId: string) => {
         <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
       </div>
       <el-tree
-        class="custom-tree"
         ref="treeRef"
+        class="custom-tree"
         :data="treeDataList"
         :props="defaultProps"
         draggable

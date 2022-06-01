@@ -1,7 +1,7 @@
 export interface Message {
   id: string
   // 应用模块
-  appModules?: string
+  appModule?: string
   // 模板id
   templateId?: string
   // 业务类型
@@ -27,7 +27,7 @@ export interface Message {
   // 定时
   scheduleTime?: string
   // 创建时间
-  createTime: string,
+  createTime: string
   // 更新时间
   updateTime: string
 }

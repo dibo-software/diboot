@@ -15,7 +15,7 @@ defineExpose({
 
 <template>
   <el-drawer v-model="visible" title="日志详情" size="650px">
-    <el-descriptions v-loading="loading" :column="2">
+    <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item label="开始时间">
         {{ model.startTime }}
       </el-descriptions-item>
