@@ -13,51 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.file.dto;
+package com.diboot.file.vo;
 
+import com.diboot.core.binding.annotation.BindField;
+import com.diboot.file.entity.FileRecord;
+import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 /**
- * 文件上传后的结果
+ * 文件记录 VO
  *
- * @author : uu
- * @version : v1.0
- * @Date 2021/1/11  14:49
+ * @author wind
+ * @version v2.4.0
+ * @date 2021/11/26
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class UploadFileResult implements Serializable {
-
-    private static final long serialVersionUID = -1963273564405503224L;
+public class FileRecordVO extends FileRecord {
 
     /**
-     * 随机id
+     * 创建人姓名
      */
-    private String uuid;
-
-    /**
-     * 原名称
-     */
-    private String originalFilename;
-
-    /**
-     * 文件名称
-     */
-    private String filename;
-
-    /**
-     * 扩展名
-     */
-    private String ext;
-
-    /**
-     * 存储的完整路径
-     */
-    private String storageFullPath;
+    @BindField(entity = IamUser.class, field = "realname", condition = "this.create_by=id")
+    private String createByName;
 
 }

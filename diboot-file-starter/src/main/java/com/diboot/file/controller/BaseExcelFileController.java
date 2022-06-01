@@ -16,21 +16,26 @@
 package com.diboot.file.controller;
 
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.diboot.core.controller.BaseController;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
-import com.diboot.file.entity.UploadFile;
+import com.diboot.file.entity.FileRecord;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.listener.ReadExcelListener;
+import com.diboot.file.service.FileRecordService;
+import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.ExcelHelper;
 import com.diboot.file.util.FileHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +47,13 @@ import java.util.Map;
  * @date 2020/02/20
  */
 @Slf4j
-public abstract class BaseExcelFileController extends BaseFileController {
+public abstract class BaseExcelFileController extends BaseController {
+
+    @Autowired
+    protected FileRecordService fileRecordService;
+
+    @Autowired
+    protected FileStorageService fileStorageService;
 
     /**
      * 获取对应的ExcelDataListener
@@ -52,32 +63,29 @@ public abstract class BaseExcelFileController extends BaseFileController {
     /**
      * excel数据预览
      *
-     * @param file        excel文件
-     * @param entityClass 对应实体class
-     * @param params      请求参数
+     * @param file   excel文件
+     * @param params 请求参数
      * @return
      * @throws Exception
      */
-    public JsonResult<Map<String, Object>> excelPreview(MultipartFile file, Class<?> entityClass, Map<String, Object> params) throws Exception {
+    public JsonResult<Map<String, Object>> excelPreview(MultipartFile file, Map<String, Object> params) throws Exception {
         checkIsExcel(file);
         // 保存文件
-        UploadFile uploadFile = super.saveFile(file, entityClass);
-        uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览数据")).toString());
+        FileRecord fileRecord = fileStorageService.save(file);
+        fileRecord.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览数据")).toString());
 
         ReadExcelListener<?> listener = getExcelDataListener();
-        listener.setUploadFileUuid(uploadFile.getUuid());
+        listener.setImportFileUuid(fileRecord.getUuid());
         listener.setRequestParams(params);
         // 预览
         listener.setPreview(true);
         // 读取excel
-        readExcelFile(file.getInputStream(), uploadFile.getFileType(), listener);
-
-        uploadFile.setDataCount(listener.getTotalCount());
+        readExcelFile(file.getInputStream(), fileRecord.getFileType(), listener);
         // 保存文件上传记录
-        uploadFileService.createEntity(uploadFile);
+        fileRecordService.createEntity(fileRecord);
 
         Map<String, Object> dataMap = new HashMap<>(8);
-        dataMap.put("uuid", uploadFile.getUuid());
+        dataMap.put("uuid", fileRecord.getUuid());
         dataMap.put("tableHead", listener.getTableHead());
         dataMap.put("dataList", listener.getPreviewDataList());
         dataMap.put("totalCount", listener.getTotalCount());
@@ -100,7 +108,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
         if (V.isEmpty(uuid)) {
             throw new BusinessException("未知的预览保存");
         }
-        UploadFile uploadFile = uploadFileService.getEntity(uuid);
+        FileRecord uploadFile = fileRecordService.getEntity(uuid);
         uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览后导入数据")).toString());
         return importData(uploadFile, fileStorageService.getFile(uploadFile.getStoragePath()), params);
     }
@@ -109,19 +117,18 @@ public abstract class BaseExcelFileController extends BaseFileController {
     /**
      * 直接上传excel
      *
-     * @param file        excel文件
-     * @param entityClass 对应实体class
-     * @param params      请求参数
+     * @param file   excel文件
+     * @param params 请求参数
      * @return
      * @throws Exception
      */
-    public JsonResult<Map<String, Object>> uploadExcelFile(MultipartFile file, Class<?> entityClass, Map<String, Object> params) throws Exception {
+    public JsonResult<Map<String, Object>> uploadExcelFile(MultipartFile file, Map<String, Object> params) throws Exception {
         checkIsExcel(file);
         // 保存文件
-        UploadFile uploadFile = super.saveFile(file, entityClass);
-        uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel导入数据")).toString());
-        uploadFileService.createEntity(uploadFile);
-        return importData(uploadFile, file.getInputStream(), params);
+        FileRecord fileStorage = fileStorageService.save(file);
+        fileStorage.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel导入数据")).toString());
+        fileRecordService.createEntity(fileStorage);
+        return importData(fileStorage, file.getInputStream(), params);
     }
 
     /**
@@ -133,40 +140,40 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @return
      * @throws Exception
      */
-    private JsonResult<Map<String, Object>> importData(UploadFile uploadFile, InputStream inputStream,
+    private JsonResult<Map<String, Object>> importData(FileRecord uploadFile, InputStream inputStream,
                                                        Map<String, Object> params) throws Exception {
         ReadExcelListener<?> listener = getExcelDataListener();
-        listener.setUploadFileUuid(uploadFile.getUuid());
+        listener.setImportFileUuid(uploadFile.getUuid());
         listener.setRequestParams(params);
         // 读excel
         readExcelFile(inputStream, uploadFile.getFileType(), listener);
-        uploadFile.setDataCount(listener.getProperCount());
-        uploadFileService.updateEntity(uploadFile);
+        fileRecordService.updateEntity(uploadFile);
 
         String errorDataFilePath = listener.getErrorDataFilePath();
         if (errorDataFilePath == null) {
             return JsonResult.OK();
         }
         String errorDataFileName = uploadFile.getFileName().replaceFirst("\\.\\w+$", "_错误数据.xlsx");
-        UploadFile errorFile;
+        File errDataFile = new File(errorDataFilePath);
+        long fileSize = errDataFile.length();
+        FileRecord errorFile;
         if (FileHelper.isLocalStorage()) {
             String errorDataFileUidName = S.substringAfterLast(errorDataFilePath, "/");
             String errorDataFileUid = S.substringBefore(errorDataFileUidName, ".");
-            errorFile = new UploadFile()
+            errorFile = new FileRecord()
                     .setUuid(errorDataFileUid)
-                    .setFileType("excel")
+                    .setFileType("xlsx")
                     .setFileName(errorDataFileName)
+                    .setFileSize(fileSize)
                     .setStoragePath(errorDataFilePath)
-                    .setAccessUrl(buildAccessUrl(errorDataFileUidName));
+                    .setAccessUrl(fileStorageService.buildAccessUrl(errorDataFileUidName, ""));
         } else {
-            errorFile = super.saveFile(new FileInputStream(errorDataFilePath), errorDataFileName);
+            errorFile = fileStorageService.save(Files.newInputStream(errDataFile.toPath()), errorDataFileName, fileSize);
             FileHelper.deleteFile(errorDataFilePath);
         }
-        errorFile.setDataCount(listener.getErrorCount())
-                .setRelObjType(uploadFile.getRelObjType())
-                .setDescription(uploadFile.getFileName() + " - 错误数据");
+        errorFile.setDescription(uploadFile.getFileName() + " - 错误数据");
         // 创建异常数据记录
-        uploadFileService.createEntity(errorFile);
+        fileRecordService.createEntity(errorFile);
         return JsonResult.OK(new HashMap<String, Object>() {{
             put("totalCount", listener.getTotalCount());
             put("errorUrl", errorFile.getAccessUrl());
@@ -202,7 +209,7 @@ public abstract class BaseExcelFileController extends BaseFileController {
      * @param file
      * @throws Exception
      */
-    private void checkIsExcel(MultipartFile file) {
+    protected void checkIsExcel(MultipartFile file) {
         if (V.isEmpty(file)) {
             throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的excel文件！");
         }

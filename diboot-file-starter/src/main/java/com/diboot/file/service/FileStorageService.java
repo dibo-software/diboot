@@ -15,8 +15,7 @@
  */
 package com.diboot.file.service;
 
-import com.diboot.file.dto.UploadFileResult;
-import com.diboot.file.entity.UploadFile;
+import com.diboot.file.entity.FileRecord;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,23 +31,35 @@ import java.io.InputStream;
 public interface FileStorageService {
 
     /**
+     * 构建访问地址
+     *
+     * @param fileUid 文件UUID
+     * @param ext     文件扩展名
+     * @return 访问地址
+     */
+    default String buildAccessUrl(String fileUid, String ext) {
+        return "/file/" + fileUid + "." + ext;
+    }
+
+    /**
      * 上传文件
      *
      * @param file
      * @return
      * @throws Exception
      */
-    UploadFileResult upload(MultipartFile file) throws Exception;
+    FileRecord save(MultipartFile file) throws Exception;
 
     /**
      * 上传文件
      *
      * @param inputStream
      * @param fileName
+     * @param size
      * @return
      * @throws Exception
      */
-    UploadFileResult upload(InputStream inputStream, String fileName) throws Exception;
+    FileRecord save(InputStream inputStream, String fileName, long size) throws Exception;
 
     /**
      * 获取文件
@@ -67,7 +78,7 @@ public interface FileStorageService {
      * @return
      * @throws Exception
      */
-    void download(UploadFile uploadFile, HttpServletResponse response) throws Exception;
+    void download(FileRecord uploadFile, HttpServletResponse response) throws Exception;
 
     /**
      * 删除文件

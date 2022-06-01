@@ -19,8 +19,7 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.file.dto.UploadFileResult;
-import com.diboot.file.entity.UploadFile;
+import com.diboot.file.entity.FileRecord;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
@@ -28,8 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * 本地存储
@@ -41,48 +41,48 @@ import java.io.InputStream;
 public class LocalFileStorageServiceImpl implements FileStorageService {
 
     @Override
-    public UploadFileResult upload(MultipartFile file) throws Exception {
-        UploadFileResult uploadFileResult = new UploadFileResult();
-        // 文件后缀
+    public FileRecord save(MultipartFile file) throws Exception {
         String fileUid = S.newUuid();
         String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
         String newFileName = fileUid + "." + ext;
         String fileFullPath = FileHelper.saveFile(file, newFileName);
-        uploadFileResult.setOriginalFilename(file.getOriginalFilename())
-                .setExt(ext)
-                .setUuid(fileUid)
-                .setFilename(newFileName)
-                .setStorageFullPath(fileFullPath);
-        return uploadFileResult;
+       return new FileRecord()
+               .setUuid(fileUid)
+               .setFileName(file.getOriginalFilename())
+               .setFileType(ext)
+               .setFileSize(file.getSize())
+               .setStoragePath(fileFullPath)
+               .setAccessUrl(buildAccessUrl(fileUid,ext));
     }
 
     @Override
-    public UploadFileResult upload(InputStream inputStream, String fileName) throws Exception {
-        UploadFileResult uploadFileResult = new UploadFileResult();
+    public FileRecord save(InputStream inputStream, String fileName, long size) throws Exception {
+        long length = new File("").length();
         // 文件后缀
         String fileUid = S.newUuid();
         String ext = FileHelper.getFileExtByName(fileName);
         String newFileName = fileUid + "." + ext;
         String fileFullPath = FileHelper.saveFile(inputStream, newFileName);
-        uploadFileResult.setOriginalFilename(fileName)
-                .setExt(ext)
+        return new FileRecord()
                 .setUuid(fileUid)
-                .setFilename(newFileName)
-                .setStorageFullPath(fileFullPath);
-        return uploadFileResult;
+                .setFileName(fileName)
+                .setFileType(ext)
+                .setFileSize(size)
+                .setStoragePath(fileFullPath)
+                .setAccessUrl(buildAccessUrl(fileUid,ext));
     }
 
     @Override
     public InputStream getFile(String filePath) throws Exception {
         File file = new File(filePath);
         if (file.exists() && file.isFile()) {
-            return new FileInputStream(filePath);
+            return Files.newInputStream(Paths.get(filePath));
         }
         return null;
     }
 
     @Override
-    public void download(UploadFile uploadFile, HttpServletResponse response) throws Exception {
+    public void download(FileRecord uploadFile, HttpServletResponse response) throws Exception {
         if (V.isEmpty(uploadFile)) {
             throw new BusinessException(Status.FAIL_OPERATION, "文件不存在");
         }

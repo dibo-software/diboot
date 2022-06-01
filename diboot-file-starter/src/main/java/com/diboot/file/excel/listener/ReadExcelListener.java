@@ -98,7 +98,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      * 导入文件的uuid
      */
     @Setter
-    protected String uploadFileUuid;
+    protected String importFileUuid;
 
     /**
      * 预览数据

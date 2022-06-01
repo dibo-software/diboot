@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,20 +18,20 @@ package com.diboot.file.dto;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.util.D;
-import com.diboot.file.entity.UploadFile;
+import com.diboot.file.entity.FileRecord;
 import lombok.Getter;
 
 import java.util.Date;
 
 /**
- * 上传文件 DTO
+ * 文件记录 DTO
  *
  * @author wind
- * @version v.2.4.0
- * @date 2021/11/28
+ * @version v3.0.0
+ * @date 2022-05-30
  */
 @Getter
-public class UploadFileDTO extends UploadFile {
+public class FileRecordDTO extends FileRecord {
 
     /**
      * 创建时间-起始
@@ -45,12 +45,12 @@ public class UploadFileDTO extends UploadFile {
     @BindQuery(comparison = Comparison.LT, field = "createTime")
     private Date createTimeEnd;
 
-    public UploadFile setCreatetimeBegin(Date createtimeBegin) {
+    public FileRecord setCreatetimeBegin(Date createtimeBegin) {
         this.createTimeBegin = createtimeBegin;
         return this;
     }
 
-    public UploadFile setCreatetimeEnd(Date createtimeEnd) {
+    public FileRecord setCreatetimeEnd(Date createtimeEnd) {
         this.createTimeEnd = D.nextDay(createtimeEnd);
         return this;
     }

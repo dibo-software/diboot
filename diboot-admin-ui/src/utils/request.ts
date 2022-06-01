@@ -92,6 +92,7 @@ export interface ApiData<T> {
   msg: string
   data?: T
   page?: Pagination
+  filename?: string
 }
 
 interface Pagination {
@@ -178,36 +179,68 @@ const api = {
    *
    * @param url
    * @param params
+   * @param onDownloadProgress
    */
-  download(url: string, params?: unknown) {
-    return unpack(
-      service.get<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, unknown>(url, {
-        responseType: 'arraybuffer',
-        params,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        withCredentials: true
-      })
-    )
+  download(url: string, params?: unknown, onDownloadProgress?: (percentage: number) => void) {
+    return new Promise<ApiData<ArrayBuffer>>((resolve, reject) => {
+      service
+        .get<ArrayBuffer, AxiosResponse<ArrayBuffer>, unknown>(url, {
+          responseType: 'arraybuffer',
+          params,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json;charset=UTF-8'
+          },
+          withCredentials: true,
+          onDownloadProgress: evt => {
+            if (onDownloadProgress) onDownloadProgress((evt.loaded / evt.total) * 100)
+          }
+        })
+        .then(res => {
+          resolve({
+            data: res.data,
+            filename: decodeURI(res.headers.filename),
+            code: parseInt(res.headers['code'] || '0'),
+            msg: decodeURI(res.headers['msg'] || '')
+          })
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   },
   /**
    * POST下载文件（常用于提交json数据下载文件）
    * @param url
    * @param data
+   * @param onDownloadProgress
    */
-  postDownload(url: string, data?: unknown) {
-    return unpack(
-      service.post<ApiData<ArrayBuffer>, AxiosResponse<ApiData<ArrayBuffer>>, unknown>(url, JSON.stringify(data), {
-        responseType: 'arraybuffer',
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        withCredentials: true
-      })
-    )
+  postDownload(url: string, data?: unknown, onDownloadProgress?: (percentage: number) => void) {
+    return new Promise<ApiData<ArrayBuffer>>((resolve, reject) => {
+      service
+        .post<ArrayBuffer, AxiosResponse<ArrayBuffer>, unknown>(url, JSON.stringify(data), {
+          responseType: 'arraybuffer',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json;charset=UTF-8'
+          },
+          withCredentials: true,
+          onDownloadProgress: evt => {
+            if (onDownloadProgress) onDownloadProgress((evt.loaded / evt.total) * 100)
+          }
+        })
+        .then(res => {
+          resolve({
+            data: res.data,
+            filename: decodeURI(res.headers.filename),
+            code: parseInt(res.headers['code'] || '0'),
+            msg: decodeURI(res.headers['msg'] || '')
+          })
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   }
 }
 
