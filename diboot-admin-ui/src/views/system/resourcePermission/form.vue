@@ -78,9 +78,10 @@ const {
   toggleBtnResourceCodeSelect
 } = usePermissionControl()
 
+// more hook
 const { more, initMore } = useMoreDefault({ dict: 'RESOURCE_PERMISSION_CODE' })
 initMore().then(() => {
-  // 初始化选项
+  // 初始化权限选项
   initResourcePermissionCodeOptions(more.resourcePermissionCodeOptions)
 })
 // tab hooks => 按钮权限处理
@@ -179,7 +180,14 @@ watch(
               <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
             </el-form-item>
             <el-form-item label="状态">
-              <el-input v-model="model.status" placeholder="请输入重定向地址" clearable />
+              <el-switch
+                v-model="model.status"
+                active-value="A"
+                inactive-value="I"
+                active-text="有效"
+                inactive-text="无效"
+              >
+              </el-switch>
             </el-form-item>
             <el-form-item label="排序号">
               <el-input-number v-model="model.sortId" placeholder="请输入排序号" clearable />

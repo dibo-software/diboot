@@ -6,6 +6,7 @@ import { ResourcePermission } from '@/views/system/resourcePermission/type'
 defineProps<{ usedVisibleHeight?: number }>()
 const formValue = ref<Partial<ResourcePermission>>({})
 const clickNode = (node: ResourcePermission) => {
+  console.log(node)
   formValue.value = node
 }
 </script>

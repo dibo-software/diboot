@@ -1,4 +1,5 @@
 import type { ElTree } from 'element-plus'
+import { ResourcePermission } from '@/views/system/resourcePermission/type'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]
@@ -9,7 +10,6 @@ export interface TreeOption<T> {
   transformField?: { id?: string; label?: string; children?: string }
   clickNodeCallback?: (node: T) => void
 }
-
 export default <T>(option: TreeOption<T>) => {
   const optionsTransformField = {
     id: 'id',
@@ -78,6 +78,7 @@ export default <T>(option: TreeOption<T>) => {
    * @param node 被点击节点
    */
   const nodeClick = (node: T) => {
+    console.log('----', node)
     currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.id] as string
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
     clickNodeCallback && clickNodeCallback(node)
@@ -103,8 +104,11 @@ export default <T>(option: TreeOption<T>) => {
         Object.assign(treeNode, { [optionsTransformField.id]: result.data })
         dataState.treeDataList = []
         await getTree()
-        console.log(treeNode)
-        nodeClick(treeNode)
+        // 设置当前节点选中
+        treeRef.value!.setCurrentKey(result.data as string)
+        const currentNode = treeRef.value!.getCurrentNode()
+        if (currentNode) nodeClick(currentNode as T)
+        else nodeClick(treeNode)
       } else {
         throw new Error(result.msg)
       }

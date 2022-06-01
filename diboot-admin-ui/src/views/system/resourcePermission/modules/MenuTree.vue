@@ -21,7 +21,7 @@ const {
   treeDataList,
   loading
 } = useTree<ResourcePermission>({
-  baseApi: '/iam/resourcePermission',
+  baseApi: '/resourcePermission',
   treeApi: '/getMenuTreeList',
   transformField: defaultProps,
   clickNodeCallback(nodeData) {
@@ -37,7 +37,9 @@ getTree()
 const addTopNode = () => {
   addTreeNode({
     parentId: '0',
-    displayType: 'MENU'
+    displayType: 'MENU',
+    status: 'A',
+    routeMeta: {}
   })
 }
 /**
