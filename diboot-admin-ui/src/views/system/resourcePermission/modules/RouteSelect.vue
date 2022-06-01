@@ -1,17 +1,8 @@
 <script setup lang="ts">
 import { buildViewMap } from '@/utils/route'
-const componentNameOptions = reactive<LabelValue[]>([])
 const viewMap = ref<Record<string, string>>({})
 buildViewMap().then(res => {
   viewMap.value = res
-  componentNameOptions.push(
-    ...Object.keys(res).map(componentName => {
-      return {
-        label: componentName,
-        value: componentName
-      }
-    })
-  )
 })
 
 const componentName = ref('')
@@ -30,6 +21,6 @@ const changeComponentName = (val?: string) => {
 </script>
 <template>
   <el-select v-model="componentName" placeholder="请选择组件" clearable @change="changeComponentName">
-    <el-option v-for="item in componentNameOptions" :key="item.value" :label="item.label" :value="item.value" />
+    <el-option v-for="item in Object.keys(viewMap)" :key="item" :label="item" :value="item" />
   </el-select>
 </template>
