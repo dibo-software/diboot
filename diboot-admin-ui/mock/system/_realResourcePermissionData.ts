@@ -42,7 +42,16 @@ export default [
             sortId: '6',
             updateTime: '2022-05-19 01:18:33',
             routeMeta: {},
-            permissionCodes: ['Dictionary:read']
+            permissionCodes: [
+              'Dictionary:read',
+              'Dictionary:read',
+              'Dictionary',
+              'Dictionary:read',
+              'Dictionary:read',
+              'Dictionary:read',
+              'Dictionary:read',
+              'Dictionary:read'
+            ]
           },
           {
             id: '10003',

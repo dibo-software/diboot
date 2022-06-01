@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import PermissionList from './permissionList/index.vue'
 import RouteSelect from './modules/RouteSelect.vue'
+import PermissionCodeConfig from './modules/PermissionCodeConfig.vue'
 import { Plus, Refresh } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
@@ -8,6 +9,7 @@ import type { ResourcePermission, PermissionGroupType } from './type'
 import useDisplayControl from './hooks/displayControl'
 import usePermissionControl from './hooks/permissionControl'
 import type { MenuType } from './hooks/displayControl'
+
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
 const originApiList = reactive<PermissionGroupType[]>([])
@@ -144,7 +146,7 @@ watch(
       <el-col :md="24" :lg="10" class="left-container">
         <el-space wrap :fill="true">
           <div class="card-header">{{ model.displayName || '菜单配置' }}</div>
-          <el-form ref="formRef" :model="model" :rules="rules" label-width="80px">
+          <el-form ref="formRef" :model="model" :rules="rules" label-width="90px">
             <el-form-item label="上级目录" prop="parentId">
               <el-input :modelValue="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
             </el-form-item>
@@ -179,6 +181,9 @@ watch(
             <el-form-item v-if="displayFields.redirectPath" label="重定向">
               <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
             </el-form-item>
+            <el-form-item label="菜单权限接口">
+              <permission-code-config type="menu" v-model="model.permissionCodes" />
+            </el-form-item>
             <el-form-item label="状态">
               <el-switch
                 v-model="model.status"
@@ -190,16 +195,16 @@ watch(
               </el-switch>
             </el-form-item>
             <el-form-item label="排序号">
-              <el-input-number v-model="model.sortId" placeholder="请输入排序号" clearable />
+              <el-input-number style="width: 100%" v-model="model.sortId" placeholder="请输入排序号" clearable />
             </el-form-item>
             <el-form-item label="其他配置">
               <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
               <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
               <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
               <el-alert :closable="false" class="custom-alert-tip">
-                隐藏：隐藏时菜单栏不会显示，但可以地址可以访问；<br />
+                隐藏：隐藏时菜单栏不会显示，但地址可以访问；<br />
                 缓存：页面开启keepAlive，缓存当前页面；<br />
-                忽略认证：当前页面不需要权限认证。<br />
+                忽略认证：当前页面访问不需要权限认证。<br />
               </el-alert>
             </el-form-item>
           </el-form>
@@ -262,21 +267,7 @@ watch(
                       />
                     </el-descriptions-item>
                     <el-descriptions-item label="按钮权限接口">
-                      <div class="permission-tag-container">
-                        <template v-if="permission.permissionCodes && permission.permissionCodes.length > 0">
-                          <el-tag
-                            v-for="(permissionCode, idx) in permission.permissionCodes"
-                            :key="`permission_${idx}`"
-                            style="margin-bottom: 3px"
-                            type="success"
-                            closable
-                            >{{ permissionCode }}</el-tag
-                          >
-                        </template>
-                        <template v-else>
-                          <span style="color: #d3d3d3">请点击右侧"配置按钮"选择权限接口</span>
-                        </template>
-                      </div>
+                      <permission-code-config type="permission" v-model="permission.permissionCodes" />
                     </el-descriptions-item>
                   </el-descriptions>
                 </el-tab-pane>
