@@ -1,9 +1,9 @@
-import type { ResourcePermission } from '@/views/system/iamResourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 import Mock, { Random } from 'mockjs'
 import { ApiRequest, JsonResult } from '../_util'
 import { MockMethod } from 'vite-plugin-mock'
 import dbDataList from './_realResourcePermissionData'
-const baseUrl = '/api/iam/resourcePermission'
+const baseUrl = '/api/resourcePermission'
 
 const deleteDataIds: string[] = []
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,18 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.file.mapper;
+package com.diboot.file.service.impl;
 
-import com.diboot.core.mapper.BaseCrudMapper;
-import com.diboot.file.entity.UploadFile;
-import org.apache.ibatis.annotations.Mapper;
+import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.file.entity.FileRecord;
+import com.diboot.file.mapper.FileRecordMapper;
+import com.diboot.file.service.FileRecordService;
+import org.springframework.stereotype.Service;
 
 /**
- * 文件相关Mapper
- * @author Jerry@dibo.ltd
- * @version 2017/4/18
+ * 文件记录 Service 实现
+ *
+ * @author wind
+ * @version v3.0.0
+ * @date 2022-05-30
  */
-@Mapper
-public interface UploadFileMapper extends BaseCrudMapper<UploadFile> {
+@Service
+public class FileRecordServiceImpl extends BaseServiceImpl<FileRecordMapper, FileRecord> implements FileRecordService {
 
 }

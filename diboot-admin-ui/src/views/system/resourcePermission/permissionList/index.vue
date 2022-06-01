@@ -136,7 +136,10 @@ const goScrollIntoView = async (value: string) => {
 }
 </script>
 <template>
-  <el-card :header="title" shadow="never" class="permission-list-container">
+  <div class="permission-list-container">
+    <div>
+      {{ title }}
+    </div>
     <div class="permission-list-header">
       <el-select
         remote
@@ -167,7 +170,7 @@ const goScrollIntoView = async (value: string) => {
         />
       </div>
     </div>
-  </el-card>
+  </div>
 </template>
 
 <style scoped lang="scss" rel="stylesheet/scss">

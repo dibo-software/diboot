@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ResourcePermissionForm from './form.vue'
-import MenuTree from './menuTree.vue'
-import { ResourcePermission } from '@/views/system/iamResourcePermission/type'
+import MenuTree from './modules/MenuTree.vue'
+import { ResourcePermission } from '@/views/system/resourcePermission/type'
 // 接收可视高度
 defineProps<{ usedVisibleHeight?: number }>()
 const formValue = ref<Partial<ResourcePermission>>({})
@@ -28,7 +28,6 @@ const clickNode = (node: ResourcePermission) => {
   padding-right: 5px;
 }
 .menu-main-container {
-  padding: 0;
-  padding-left: 20px;
+  padding: 10px;
 }
 </style>

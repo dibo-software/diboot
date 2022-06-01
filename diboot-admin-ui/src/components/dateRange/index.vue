@@ -7,7 +7,10 @@ const props = defineProps<{ modelValue?: ModelValue; startPlaceholder?: string; 
 
 const dateRange: { begin?: string; end?: string } = reactive({})
 
-if (props.modelValue) [dateRange.begin, dateRange.end] = unref(props.modelValue)
+watch(
+  () => props.modelValue,
+  value => ([dateRange.begin, dateRange.end] = value ? value : [undefined, undefined])
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue?: ModelValue): void

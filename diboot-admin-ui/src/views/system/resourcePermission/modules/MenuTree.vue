@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
-import useTree from './tree'
-import type { ResourcePermission } from './type'
+import useTree from '../hooks/tree'
+import type { ResourcePermission } from '../type'
 import { defineEmits } from 'vue'
 const defaultProps = {
   label: 'displayName'
@@ -14,15 +14,15 @@ const {
   filterNode,
   getTree,
   addTreeNode,
+  setSelectNode,
   removeTreeNode,
   nodeClick,
   treeRef,
   searchWord,
   treeDataList,
-  currentNodeKey,
   loading
 } = useTree<ResourcePermission>({
-  baseApi: '/iam/resourcePermission',
+  baseApi: '/resourcePermission',
   treeApi: '/getMenuTreeList',
   transformField: defaultProps,
   clickNodeCallback(nodeData) {
@@ -30,7 +30,9 @@ const {
   }
 })
 // 初始化tree数据
-getTree()
+getTree().then(() => {
+  setSelectNode()
+})
 
 /**
  * 添加顶级菜单
@@ -38,17 +40,21 @@ getTree()
 const addTopNode = () => {
   addTreeNode({
     parentId: '0',
-    displayType: 'MENU'
+    displayType: 'MENU',
+    status: 'A',
+    routeMeta: {}
   })
 }
 /**
  * 添加子菜单
  */
 const addChildNode = (parentId: string) => {
-  // addTreeNode({
-  //   parentId
-  // })
-  console.log(parentId)
+  addTreeNode({
+    parentId: parentId,
+    displayType: 'MENU',
+    status: 'A',
+    routeMeta: {}
+  })
 }
 </script>
 <template>
@@ -67,6 +73,7 @@ const addChildNode = (parentId: string) => {
         class="custom-tree"
         :data="treeDataList"
         :props="defaultProps"
+        :check-strictly="true"
         draggable
         show-checkbox
         node-key="id"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,86 +19,82 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotNull;
 
 /**
- * file基础父类
- * @author wangyl@dibo.ltd
- * @version v2.0
- * @date 2019/07/18
+ * 文件记录 Entity定义
+ *
+ * @author wind
+ * @version v3.0.0
+ * @date 2022-05-30
+ * Copyright © MyCompany
  */
-@Getter @Setter @Accessors(chain = true)
-public class UploadFile extends BaseEntity {
-    private static final long serialVersionUID = 201L;
+@Getter
+@Setter
+@Accessors(chain = true)
+public class FileRecord extends BaseEntity {
+    private static final long serialVersionUID = -202L;
 
-    // 废弃默认主键
+    @Deprecated
     @TableField(exist = false)
     private Long id;
-    // 声明新主键uuid
+
     @TableId(type = IdType.ASSIGN_UUID)
     private String uuid;
 
     /**
      * 租户ID
      */
-    @JsonIgnore
-    @TableField
     private Long tenantId;
 
     /**
      * 应用模块
      */
-    @TableField
     private String appModule;
 
-    @NotNull(message = "关联对象类不能为空！")
-    @TableField
-    private String relObjType = null;
-    @TableField
-    @NotNull(message = "关联对象ID不能为空！")
-    private String relObjId;
+    /**
+     * MD5标识
+     */
+    private String md5;
 
-    @TableField
-    @NotNull(message = "关联对象属性不能为空！")
-    private String relObjField;
-
-    @TableField
-    @BindQuery(comparison = Comparison.LIKE)
-    @NotNull(message = "文件名不能为空！")
-    @Length(max = 100, message = "文件名长度超出了最大限制！")
+    /**
+     * 文件名称
+     */
     private String fileName;
 
-    @TableField
+    /**
+     * 文件类型
+     */
+    private String fileType;
+
+    /**
+     * 文件大小（Byte）
+     */
+    private Long fileSize;
+
+    /**
+     * 存储路径
+     */
     @JsonIgnore
     private String storagePath;
 
     /**
-     * 访问URL
+     * 访问地址
      */
-    @TableField
     private String accessUrl;
 
-    @TableField
-    private String fileType;
+    /**
+     * 缩略图地址
+     */
+    private String thumbnailUrl;
 
     /**
-     * 文件包含记录数
+     * 备注
      */
-    @TableField
-    @BindQuery(ignore = true)
-    private int dataCount = 0;
-
-    @TableField
-    @Length(max = 100, message = "备注长度超出了最大限制！")
     private String description;
 
     /**

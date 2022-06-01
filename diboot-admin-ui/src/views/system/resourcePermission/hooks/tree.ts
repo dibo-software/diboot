@@ -1,5 +1,5 @@
 import type { ElTree } from 'element-plus'
-import { ResourcePermission } from '@/views/system/iamResourcePermission/type'
+import { ResourcePermission } from '@/views/system/resourcePermission/type'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]
@@ -10,7 +10,6 @@ export interface TreeOption<T> {
   transformField?: { id?: string; label?: string; children?: string }
   clickNodeCallback?: (node: T) => void
 }
-
 export default <T>(option: TreeOption<T>) => {
   const optionsTransformField = {
     id: 'id',
@@ -104,8 +103,11 @@ export default <T>(option: TreeOption<T>) => {
         Object.assign(treeNode, { [optionsTransformField.id]: result.data })
         dataState.treeDataList = []
         await getTree()
-        console.log(treeNode)
-        nodeClick(treeNode)
+        // 设置当前节点选中
+        treeRef.value!.setCurrentKey(result.data as string)
+        const currentNode = treeRef.value!.getCurrentNode()
+        if (currentNode) nodeClick(currentNode as T)
+        else nodeClick(treeNode)
       } else {
         throw new Error(result.msg)
       }
@@ -130,7 +132,7 @@ export default <T>(option: TreeOption<T>) => {
           .post(`${baseApi}/batchDelete`, dataState.selectedIdList)
           .then(() => {
             ElMessage.success('删除节点成功！')
-            getTree()
+            getTree().then(() => setSelectNode())
           })
           .catch(err => {
             ElMessage.error(err.msg || err.message || '删除失败！')
@@ -138,20 +140,38 @@ export default <T>(option: TreeOption<T>) => {
       })
       .catch(() => null)
   }
-
+  /**
+   * 设置选中的节点，指定时设置为指定节点，否则设置为树的第一个节点
+   * @param node
+   */
+  const setSelectNode = (node?: T) => {
+    if (node) {
+      nodeClick(node)
+    } else {
+      if (dataState.treeDataList && dataState.treeDataList.length > 0) {
+        // 设置当前节点选中
+        treeRef.value!.setCurrentKey(
+          (dataState.treeDataList as Record<string, unknown>[])[0][optionsTransformField.id as string] as string
+        )
+        const currentNode = treeRef.value!.getCurrentNode()
+        if (currentNode) nodeClick(currentNode as T)
+      }
+    }
+  }
   const { selectedIdList, treeDataList } = toRefs(dataState)
   return {
+    loading,
+    treeDataList,
+    selectedIdList,
+    searchWord,
+    treeRef,
+    currentNodeKey,
     checkChange,
     filterNode,
     getTree,
     removeTreeNode,
     addTreeNode,
     nodeClick,
-    loading,
-    treeDataList,
-    selectedIdList,
-    searchWord,
-    treeRef,
-    currentNodeKey
+    setSelectNode
   }
 }
