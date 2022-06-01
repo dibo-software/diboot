@@ -43,9 +43,21 @@ public class BaseUserVariables implements Serializable {
     private String realName;
 
     /**
+     * 称呼
+     */
+    @BindVariable(name = "${称呼}")
+    private String title;
+
+    /**
      * 手机号
      */
     @BindVariable(name = "${手机号}")
     private String phone;
+
+    /**
+     * 验证码
+     */
+    @BindVariable(name = "${验证码}")
+    private String verificationCode;
 
 }
