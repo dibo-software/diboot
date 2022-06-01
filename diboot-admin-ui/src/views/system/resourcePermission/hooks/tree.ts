@@ -78,7 +78,6 @@ export default <T>(option: TreeOption<T>) => {
    * @param node 被点击节点
    */
   const nodeClick = (node: T) => {
-    console.log('----', node)
     currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.id] as string
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
     clickNodeCallback && clickNodeCallback(node)
@@ -133,7 +132,7 @@ export default <T>(option: TreeOption<T>) => {
           .post(`${baseApi}/batchDelete`, dataState.selectedIdList)
           .then(() => {
             ElMessage.success('删除节点成功！')
-            getTree()
+            getTree().then(() => setSelectNode())
           })
           .catch(err => {
             ElMessage.error(err.msg || err.message || '删除失败！')
@@ -141,20 +140,38 @@ export default <T>(option: TreeOption<T>) => {
       })
       .catch(() => null)
   }
-
+  /**
+   * 设置选中的节点，指定时设置为指定节点，否则设置为树的第一个节点
+   * @param node
+   */
+  const setSelectNode = (node?: T) => {
+    if (node) {
+      nodeClick(node)
+    } else {
+      if (dataState.treeDataList && dataState.treeDataList.length > 0) {
+        // 设置当前节点选中
+        treeRef.value!.setCurrentKey(
+          (dataState.treeDataList as Record<string, unknown>[])[0][optionsTransformField.id as string] as string
+        )
+        const currentNode = treeRef.value!.getCurrentNode()
+        if (currentNode) nodeClick(currentNode as T)
+      }
+    }
+  }
   const { selectedIdList, treeDataList } = toRefs(dataState)
   return {
+    loading,
+    treeDataList,
+    selectedIdList,
+    searchWord,
+    treeRef,
+    currentNodeKey,
     checkChange,
     filterNode,
     getTree,
     removeTreeNode,
     addTreeNode,
     nodeClick,
-    loading,
-    treeDataList,
-    selectedIdList,
-    searchWord,
-    treeRef,
-    currentNodeKey
+    setSelectNode
   }
 }

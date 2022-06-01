@@ -14,6 +14,7 @@ const {
   filterNode,
   getTree,
   addTreeNode,
+  setSelectNode,
   removeTreeNode,
   nodeClick,
   treeRef,
@@ -29,7 +30,9 @@ const {
   }
 })
 // 初始化tree数据
-getTree()
+getTree().then(() => {
+  setSelectNode()
+})
 
 /**
  * 添加顶级菜单
@@ -46,10 +49,12 @@ const addTopNode = () => {
  * 添加子菜单
  */
 const addChildNode = (parentId: string) => {
-  // addTreeNode({
-  //   parentId
-  // })
-  console.log(parentId)
+  addTreeNode({
+    parentId: parentId,
+    displayType: 'MENU',
+    status: 'A',
+    routeMeta: {}
+  })
 }
 </script>
 <template>
@@ -68,6 +73,7 @@ const addChildNode = (parentId: string) => {
         class="custom-tree"
         :data="treeDataList"
         :props="defaultProps"
+        :check-strictly="true"
         draggable
         show-checkbox
         node-key="id"
