@@ -27,6 +27,7 @@ import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.apache.ibatis.jdbc.SQL;
@@ -55,6 +56,9 @@ public class TestJoinQuery {
 
     @Autowired
     DepartmentService departmentService;
+
+    @Autowired
+    UserService userService;
 
     @Test
     public void testDateCompaire(){
@@ -208,6 +212,21 @@ public class TestJoinQuery {
         dto.setRoleCodes(roleCodes);
         builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 1);
+    }
+
+    /**
+     * 测试有中间表的动态sql join
+     */
+    @Test
+    public void testDynamicSqlQueryWithMiddleTable2() {
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
+        dto.setRoleId(101L);
+        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 1);
+        QueryWrapper<User> queryWrapper = QueryBuilder.toQueryWrapper(dto);
+        List<User> userList = userService.getEntityList(queryWrapper, new Pagination());
+        Assert.assertTrue(userList.size() > 0);
     }
 
     @Test

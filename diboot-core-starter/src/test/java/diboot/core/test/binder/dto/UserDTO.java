@@ -58,4 +58,7 @@ public class UserDTO extends User {
     // LEFT JOIN user_role r3m ON self.id = r3m.user_id
     // LEFT JOIN role r3 ON r3m.role_id = r3.id
 
+    @BindQuery(entity = Role.class, field = "id", condition = "this.id=user_role.user_id AND user_role.role_id=id")
+    private Long roleId;
+
 }
