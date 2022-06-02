@@ -49,6 +49,7 @@ public class FileRecord extends BaseEntity {
     /**
      * 租户ID
      */
+    @JsonIgnore
     private Long tenantId;
 
     /**
