@@ -252,6 +252,20 @@ public class QueryBuilder {
                     log.warn("字段类型错误：IN仅支持List及数组.");
                 }
                 break;
+            case NOT_IN:
+                if (value.getClass().isArray()) {
+                    Object[] valueArray = (Object[]) value;
+                    if (valueArray.length == 1) {
+                        wrapper.ne(columnName, valueArray[0]);
+                    } else if (valueArray.length >= 2) {
+                        wrapper.notIn(columnName, valueArray);
+                    }
+                } else if (value instanceof Collection) {
+                    wrapper.notIn(!((Collection) value).isEmpty(), columnName, (Collection<?>) value);
+                } else {
+                    log.warn("字段类型错误：NOT_IN仅支持List及数组.");
+                }
+                break;
             case CONTAINS:
             case LIKE:
                 wrapper.like(columnName, value);
