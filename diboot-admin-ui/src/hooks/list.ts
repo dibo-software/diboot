@@ -382,10 +382,19 @@ export default function <T>(options: HookOptions<T>) {
       pageLoader?.onSearch()
     }
   })
-  const { list: dataList, queryParam, advanced, dateRangeQuery, loading, pagination } = toRefs(pageLoader.options)
+  const {
+    list: dataList,
+    queryParam,
+    customQueryParam,
+    advanced,
+    dateRangeQuery,
+    loading,
+    pagination
+  } = toRefs(pageLoader.options)
   return {
     pageLoader,
     queryParam,
+    customQueryParam,
     dateRangeQuery,
     dataList,
     loading,
