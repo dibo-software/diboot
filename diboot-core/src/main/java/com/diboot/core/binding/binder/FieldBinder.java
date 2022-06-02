@@ -126,7 +126,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             // 将结果list转换成map
             Map<String, Map<String, Object>> key2DataMap = this.buildMatchKey2ResultMap(mapList);
             // 遍历list并赋值
-            for(Object annoObject : annoObjectList){
+            for(Object annoObject : super.getMatchedAnnoObjectList()){
                 String matchKey = buildMatchKey(annoObject);
                 setFieldValueToTrunkObj(key2DataMap, annoObject, matchKey);
             }
@@ -165,7 +165,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             // 将结果list转换成map
             Map<String, Map<String, Object>> key2DataMap = this.buildMatchKey2ResultMap(mapList);
             // 遍历list并赋值
-            for(Object annoObject : annoObjectList){
+            for(Object annoObject : super.getMatchedAnnoObjectList()){
                 String matchKey = buildMatchKey(annoObject, middleTableResultMap);
                 setFieldValueToTrunkObj(key2DataMap, annoObject, matchKey);
             }

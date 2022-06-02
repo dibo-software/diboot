@@ -16,7 +16,6 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.converter.*;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
@@ -31,11 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.boot.convert.ApplicationConversionService;
-import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -609,47 +605,6 @@ public class BeanUtils {
         List fieldValueList = new ArrayList(objectList.size());
         try{
             for(E object : objectList){
-                Object fieldValue = getProperty(object, getterPropName);
-                // E类型中的提取的字段值不需要进行重复判断，如果一定要查重，那应该使用Set代替List
-                if (fieldValue != null) {
-                    fieldValueList.add(fieldValue);
-                }
-            }
-        }
-        catch (Exception e){
-            log.warn("提取属性值异常, getterPropName="+getterPropName, e);
-        }
-        return fieldValueList;
-    }
-
-    /***
-     * 从list对象列表中提取指定属性值到新的List
-     * @param objectList
-     * @param getterPropName
-     * @param filterConditions 附加过滤条件
-     * @param <E>
-     * @return
-     */
-    public static <E> List collectToList(List<E> objectList, String getterPropName, Map<String, Object> filterConditions) {
-        if(V.isEmpty(objectList)){
-            return Collections.emptyList();
-        }
-        List fieldValueList = V.isEmpty(filterConditions)? new ArrayList(objectList.size()) : new ArrayList();
-        try{
-            for(E object : objectList){
-                if(V.notEmpty(filterConditions)) {
-                    boolean matched = true;
-                    for(Map.Entry<String, Object> entry : filterConditions.entrySet()) {
-                        Object fieldValue = getProperty(object, entry.getKey());
-                        if(!V.fuzzyEqual(fieldValue, entry.getValue())) {
-                            matched = false;
-                            break;
-                        }
-                    }
-                    if(!matched) {
-                        continue;
-                    }
-                }
                 Object fieldValue = getProperty(object, getterPropName);
                 // E类型中的提取的字段值不需要进行重复判断，如果一定要查重，那应该使用Set代替List
                 if (fieldValue != null) {

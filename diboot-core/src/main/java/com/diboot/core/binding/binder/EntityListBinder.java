@@ -85,7 +85,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             if(V.notEmpty(entityList)){
                 valueEntityListMap = this.buildMatchKey2EntityListMap(entityList);
             }
-            ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityListMap, this.splitBy);
+            ResultAssembler.bindPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueEntityListMap, this.splitBy);
         }
         else{
             if(refObjJoinCols.size() > 1){
@@ -157,7 +157,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 valueEntityListMap.put(entry.getKey(), valueList);
             }
             // 绑定结果
-            ResultAssembler.bindEntityPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap, getAnnoObjColumnToFieldMap());
+            ResultAssembler.bindEntityPropValue(annoObjectField, super.getMatchedAnnoObjectList(), middleTable.getTrunkObjColMapping(), valueEntityListMap, getAnnoObjColumnToFieldMap());
         }
     }
 

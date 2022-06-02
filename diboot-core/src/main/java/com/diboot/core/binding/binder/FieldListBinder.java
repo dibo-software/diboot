@@ -91,7 +91,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 valueEntityListMap = this.buildMatchKey2FieldListMap(entityList);
             }
             // 遍历list并赋值
-            ResultAssembler.bindFieldListPropValue(annoObjectList, getAnnoObjJoinFlds(), valueEntityListMap,
+            ResultAssembler.bindFieldListPropValue(super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueEntityListMap,
                     annoObjectSetterPropNameList, referencedGetterFieldNameList, this.splitBy);
         }
         // 通过中间表关联
@@ -159,7 +159,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                 valueEntityListMap.put(entry.getKey(), valueList);
             }
             // 遍历list并赋值
-            bindPropValue(annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityListMap);
+            bindPropValue(super.getMatchedAnnoObjectList(), middleTable.getTrunkObjColMapping(), valueEntityListMap);
         }
     }
 
