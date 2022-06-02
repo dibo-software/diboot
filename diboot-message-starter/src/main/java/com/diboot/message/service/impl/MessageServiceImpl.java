@@ -119,7 +119,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             message.setStatus("SCHEDULE");
         }
         else if(V.isEmpty(message.getStatus())){
-            message.setStatus(Cons.MESSAGE_STATUS.SENDING.name());
+            message.setStatus(Cons.MESSAGE_STATUS.PENDING.name());
         }
         // 创建Message
         boolean success = createEntity(message);
