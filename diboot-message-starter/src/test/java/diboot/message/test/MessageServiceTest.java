@@ -38,7 +38,7 @@ public class MessageServiceTest {
         MyVariableObj myVariableObj = new MyVariableObj();
         myVariableObj.setVcode("876622").setSn("UDYY-9JDF-MNF8-NBS7");
         Message message = new Message();
-        message.setChannel(Cons.MESSAGE_CHANNEL.SMS.name()).setStatus(Cons.MESSAGE_STATUS.SENDING.name());
+        message.setChannel(Cons.MESSAGE_CHANNEL.SMS.name()).setStatus(Cons.MESSAGE_STATUS.PENDING.name());
         message.setBusinessType("A").setBusinessCode("B").setSender("admin").setReceiver("123");
         message.setContent("您的验证码是: ${验证码}，产品序列号是: ${序列号}");
         messageService.send(message, myVariableObj);
