@@ -7,7 +7,7 @@ import type { ResourcePermission } from '../type'
 const treeProps = {
   label: 'displayName'
 }
-const props = defineProps<{ visibleHeight?: number }>()
+const visibleHeight = inject<number>('visibleHeight')
 const emit = defineEmits<{
   (e: 'click-node', resourcePermission: ResourcePermission): void
 }>()
@@ -33,7 +33,7 @@ const {
 })
 const { height, computedFixedHeight } = useScrollbarHeight({
   fixedBoxSelectors: ['.tree-container>.el-space__item:first-child'],
-  visibleHeight: props.visibleHeight ?? 0,
+  visibleHeight,
   extraHeight: 10
 })
 // 初始化tree数据

@@ -13,7 +13,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   originApiList: () => []
 })
-
+const visibleHeight = inject<number>('visibleHeight')
 let permissionCodeList = reactive<string[]>([])
 let searchVal = ref('')
 

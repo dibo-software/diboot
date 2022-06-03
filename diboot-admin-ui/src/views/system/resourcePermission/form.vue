@@ -102,7 +102,8 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
   }
 })
 // ======> props
-const props = defineProps<{ formValue: Partial<ResourcePermission>; visibleHeight?: number }>()
+const props = defineProps<{ formValue: Partial<ResourcePermission> }>()
+const visibleHeight = inject<number>('visibleHeight')
 // ======> 本地方法
 // 切换菜单类型
 const handleChangeDisplayType = (val: string | number | boolean) => {

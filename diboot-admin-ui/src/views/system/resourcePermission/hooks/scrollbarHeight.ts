@@ -7,7 +7,7 @@ export interface ScrollbarOption {
   // 固定盒子的选择器
   fixedBoxSelectors: string[]
   // 已占高度
-  visibleHeight: number
+  visibleHeight?: number
   // 额外的高度，（在固定高度的基础上需要再减去一部分高度）
   extraHeight?: number
 }
@@ -34,9 +34,9 @@ export default (option: ScrollbarOption) => {
     // 窗口高度
     const windowHeight = getWindowHeight()
     // 外部容器高度
-    const containerHeight = windowHeight - visibleHeight
+    const containerHeight = windowHeight - (visibleHeight ?? 0)
     // 滚动容器高度
-    return containerHeight - fixedHeight.value - (extraHeight || 0)
+    return containerHeight - fixedHeight.value - (extraHeight ?? 0)
   })
   // 需要计算高度的页面切换组件大小，需要重新计算高度
   watch(
