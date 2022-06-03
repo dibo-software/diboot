@@ -2,14 +2,13 @@
 import PermissionList from './permissionList/index.vue'
 import RouteSelect from './modules/RouteSelect.vue'
 import PermissionCodeConfig from './modules/PermissionCodeConfig.vue'
-import { Plus, Refresh } from '@element-plus/icons-vue'
+import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission, PermissionGroupType } from './type'
 import useDisplayControl from './hooks/displayControl'
 import usePermissionControl from './hooks/permissionControl'
 import type { MenuType } from './hooks/displayControl'
-
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
 const originApiList = reactive<PermissionGroupType[]>([])
@@ -77,7 +76,8 @@ const {
   initResourcePermissionCodeOptions,
   changeBtnResourceCode,
   changeBtnPermissionName,
-  toggleBtnResourceCodeSelect
+  toggleBtnResourceCodeSelect,
+  clickConfigPermission
 } = usePermissionControl()
 
 // more hook
@@ -101,7 +101,8 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
     }
   }
 })
-
+// ======> props
+const props = defineProps<{ formValue: Partial<ResourcePermission>; visibleHeight?: number }>()
 // ======> 本地方法
 // 切换菜单类型
 const handleChangeDisplayType = (val: string | number | boolean) => {
@@ -111,14 +112,14 @@ const handleChangeDisplayType = (val: string | number | boolean) => {
 const handleAddTab = () => {
   addTab(_.cloneDeep(NEW_PERMISSION_ITEM))
 }
+// 权限配置
 
 // compute
 const existPermissionCodes = computed(() => {
   if (!tabs.value) return []
   return tabs.value.map(item => item.resourceCode as string)
 })
-// props
-const props = defineProps<{ formValue: Partial<ResourcePermission> }>()
+
 // 监听
 watch(
   () => props.formValue,
@@ -182,7 +183,11 @@ watch(
               <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
             </el-form-item>
             <el-form-item label="菜单权限接口">
-              <permission-code-config type="menu" v-model="model.permissionCodes" />
+              <permission-code-config
+                type="menu"
+                v-model="model.permissionCodes"
+                @config="clickConfigPermission('menu', model)"
+              />
             </el-form-item>
             <el-form-item label="状态">
               <el-switch
@@ -197,15 +202,23 @@ watch(
             <el-form-item label="排序号">
               <el-input-number style="width: 100%" v-model="model.sortId" placeholder="请输入排序号" clearable />
             </el-form-item>
-            <el-form-item label="其他配置">
+            <el-form-item>
+              <template #label>
+                <div style="display: flex; align-items: center; justify-content: end">
+                  <span>其他配置</span>
+                  <el-tooltip effect="dark" placement="top-start">
+                    <template #content>
+                      隐藏：隐藏时菜单栏不会显示，但地址可以访问；<br />
+                      缓存：页面开启keepAlive，缓存当前页面；<br />
+                      忽略认证：当前页面访问不需要权限认证。<br />
+                    </template>
+                    <el-icon><InfoFilled /></el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
               <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
               <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
               <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
-              <el-alert :closable="false" class="custom-alert-tip">
-                隐藏：隐藏时菜单栏不会显示，但地址可以访问；<br />
-                缓存：页面开启keepAlive，缓存当前页面；<br />
-                忽略认证：当前页面访问不需要权限认证。<br />
-              </el-alert>
             </el-form-item>
           </el-form>
           <div v-if="displayFields.permissionList" class="btn-config-container">
@@ -267,7 +280,11 @@ watch(
                       />
                     </el-descriptions-item>
                     <el-descriptions-item label="按钮权限接口">
-                      <permission-code-config type="permission" v-model="permission.permissionCodes" />
+                      <permission-code-config
+                        type="permission"
+                        v-model="permission.permissionCodes"
+                        @config="clickConfigPermission('permission', permission)"
+                      />
                     </el-descriptions-item>
                   </el-descriptions>
                 </el-tab-pane>
@@ -278,7 +295,7 @@ watch(
       </el-col>
       <el-col :md="24" :lg="14" class="right-container">
         <permission-list
-          ref="permissionList"
+          ref="permissionListRef"
           :title="configPermissionTitle"
           :current-permission-codes="configPermissionCodes"
           :config-code="configResourceCode"
