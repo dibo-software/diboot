@@ -2,29 +2,26 @@ export interface ControlField {
   selectResourceCode: boolean
   redirectPath: boolean
   permissionList: boolean
+  permissionCodes: boolean
+}
+const defaultTrueConfig: ControlField = {
+  selectResourceCode: true,
+  redirectPath: true,
+  permissionList: true,
+  permissionCodes: true
+}
+const defaultFalseConfig: ControlField = {
+  selectResourceCode: false,
+  redirectPath: false,
+  permissionList: false,
+  permissionCodes: false
 }
 export type MenuType = 'CATALOGUE' | 'MENU' | 'OUTSIDE_URL' | 'IFRAME'
 const displayFieldsMap: { [menu in string]: ControlField } = {
-  CATALOGUE: {
-    selectResourceCode: false,
-    redirectPath: true,
-    permissionList: false
-  },
-  MENU: {
-    selectResourceCode: true,
-    redirectPath: false,
-    permissionList: true
-  },
-  OUTSIDE_URL: {
-    selectResourceCode: false,
-    redirectPath: false,
-    permissionList: false
-  },
-  IFRAME: {
-    selectResourceCode: false,
-    redirectPath: false,
-    permissionList: false
-  }
+  CATALOGUE: Object.assign(defaultFalseConfig, { redirectPath: true }),
+  MENU: Object.assign(defaultTrueConfig, { redirectPath: false }),
+  OUTSIDE_URL: defaultFalseConfig,
+  IFRAME: defaultFalseConfig
 }
 
 export default () => {

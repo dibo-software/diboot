@@ -11,6 +11,7 @@ export default () => {
   const configPermissionCodes = ref<string[]>([])
 
   const resourcePermissionCodeOptions: LabelValue[] = []
+  const permissionListRef = ref(null)
 
   /**
    * 初始化权限编码字典
@@ -54,7 +55,23 @@ export default () => {
     permission.displayName = ''
   }
 
+  /**
+   * 打开配置指定resourceCode权限
+   * @param resourceCode
+   * @param permission
+   */
+  const clickConfigPermission = (resourceCode: string, permission: ResourcePermission) => {
+    console.log(permissionListRef)
+    configResourceCode.value = resourceCode
+    configPermissionCodes.value = permission.permissionCodes ?? []
+    configPermissionTitle.value =
+      resourceCode === 'menu'
+        ? '菜单页面接口配置'
+        : `${permission.displayName || permission.resourceCode} 按钮权限接口配置`
+  }
+
   return {
+    permissionListRef,
     btnResourceCodeSelect,
     configPermissionTitle,
     configResourceCode,
@@ -62,6 +79,7 @@ export default () => {
     initResourcePermissionCodeOptions,
     changeBtnResourceCode,
     changeBtnPermissionName,
-    toggleBtnResourceCodeSelect
+    toggleBtnResourceCodeSelect,
+    clickConfigPermission
   }
 }
