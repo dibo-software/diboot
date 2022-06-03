@@ -14,9 +14,6 @@ export interface ScrollbarOption {
 
 /**
  * 滚动区域计算
- * @param fixedBoxSelector
- * @param visibleHeight
- * @param extraHeight 额外的高度，（在固定高度的基础上需要再减去一部分高度）
  */
 export default (option: ScrollbarOption) => {
   const { fixedBoxSelectors, visibleHeight, extraHeight } = option
@@ -32,13 +29,13 @@ export default (option: ScrollbarOption) => {
     })
     fixedHeight.value = tempHeight
   }
-  // 计算允许的最大高度
+  // 计算滚动容器允许的最大高度
   const height = computed(() => {
     // 窗口高度
     const windowHeight = getWindowHeight()
-    // 树容器高度
+    // 外部容器高度
     const containerHeight = windowHeight - visibleHeight
-    // 树高度
+    // 滚动容器高度
     return containerHeight - fixedHeight.value - (extraHeight || 0)
   })
   // 需要计算高度的页面切换组件大小，需要重新计算高度
