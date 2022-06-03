@@ -87,7 +87,7 @@ const existPermissionCodes = computed(() => {
 const { height, computedFixedHeight } = useScrollbarHeight({
   fixedBoxSelectors: ['.form-space-container>.el-space__item:first-child', '.btn-fixed'],
   visibleHeight,
-  extraHeight: 10
+  extraHeight: 15
 })
 // 菜单类型切换控制字段
 const { displayFields, changeDisplayType } = useDisplayControl()

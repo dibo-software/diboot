@@ -20,7 +20,7 @@ const visibleHeight = inject<number>('visibleHeight')
 const { height, computedFixedHeight } = useScrollbarHeight({
   fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
   visibleHeight,
-  extraHeight: 10
+  extraHeight: 30
 })
 let permissionCodeList = reactive<string[]>([])
 let searchVal = ref('')
