@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import PermissionGroup from './PermissionGroup.vue'
+import useScrollbarHeight from '../hooks/scrollbarHeight'
 import { useVueFuse } from 'vue-fuse'
-import { defineProps, reactive, Ref, withDefaults } from 'vue'
+import { Ref } from 'vue'
 import type { PermissionGroupType, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
 type Props = {
   title: string
@@ -14,6 +15,13 @@ const props = withDefaults(defineProps<Props>(), {
   originApiList: () => []
 })
 const visibleHeight = inject<number>('visibleHeight')
+
+// 滚动高度计算hook
+const { height, computedFixedHeight } = useScrollbarHeight({
+  fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
+  visibleHeight,
+  extraHeight: 10
+})
 let permissionCodeList = reactive<string[]>([])
 let searchVal = ref('')
 
@@ -55,6 +63,7 @@ watch([() => props.configCode, () => props.menuResourceCode], () => {
 
 onMounted(() => {
   permissionCodeList = props.currentPermissionCodes
+  nextTick(computedFixedHeight)
 })
 
 let { search, results } = useVueFuse<SelectOption>(computedFusePermissionDatas, {
@@ -137,10 +146,10 @@ const goScrollIntoView = async (value: string) => {
 </script>
 <template>
   <div class="permission-list-container">
-    <div>
-      {{ title }}
-    </div>
     <div class="permission-list-header">
+      <div>
+        {{ title }}
+      </div>
       <el-select
         remote
         :value="searchVal"
@@ -159,17 +168,22 @@ const goScrollIntoView = async (value: string) => {
         />
       </el-select>
     </div>
-    <div class="permission-list-groups">
-      <div id="permissionListGroups">
-        <permission-group
-          v-for="(permissionGroup, index) in originApiList"
-          :key="`permission_group_${index}`"
-          :permission-code-list="permissionCodeList"
-          :permission-group="permissionGroup"
-          @change-permission-code="changePermissionCode"
-        />
+    <el-scrollbar :height="height">
+      <div class="permission-list-groups">
+        <div id="permissionListGroups">
+          <!--          <permission-group-->
+          <!--            v-for="(permissionGroup, index) in originApiList"-->
+          <!--            :key="`permission_group_${index}`"-->
+          <!--            :permission-code-list="permissionCodeList"-->
+          <!--            :permission-group="permissionGroup"-->
+          <!--            @change-permission-code="changePermissionCode"-->
+          <!--          />-->
+          <div :key="item" v-for="item in 100">
+            {{ item }}
+          </div>
+        </div>
       </div>
-    </div>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -179,9 +193,6 @@ const goScrollIntoView = async (value: string) => {
     margin-bottom: 10px;
   }
   .permission-list-groups {
-    height: calc(70vh - 260px);
-    overflow: hidden;
-    overflow-y: auto;
     &__head {
       margin-bottom: 10px;
       font-weight: bold;
