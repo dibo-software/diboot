@@ -312,23 +312,20 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		} else {
 			selectOld.select(followerColumnName);
 		}
-		List<Map<String, Object>> oldMap;
 
 		IService<R> iService = entityInfo.getService();
 		BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
-		if (iService != null) {
-			oldMap = iService.listMaps(selectOld);
-		} else {
-			oldMap = baseMapper.selectMaps(selectOld);
-		}
-
+		List<R> oldEntityList = (iService != null)? iService.list(selectOld) : baseMapper.selectList(selectOld);
 		// 删除失效关联
 		List<Serializable> delIds = new ArrayList<>();
-		for (Map<String, Object> map : oldMap) {
-			if (V.notEmpty(followerIdList) && followerIdList.remove((Serializable) map.get(followerColumnName))) {
+		for (R entity : oldEntityList) {
+			if (V.notEmpty(followerIdList) && followerIdList.remove(BeanUtils.getProperty(entity, followerFieldName))) {
 				continue;
 			}
-			delIds.add((Serializable) map.get(isExistPk ? entityInfo.getIdColumn() : followerColumnName));
+			Serializable id = (Serializable) BeanUtils.getProperty(entity, isExistPk ? entityInfo.getPropInfo().getIdFieldName() : followerFieldName);
+			if(id != null) {
+				delIds.add(id);
+			}
 		}
 		if (!delIds.isEmpty()) {
 			if (isExistPk) {

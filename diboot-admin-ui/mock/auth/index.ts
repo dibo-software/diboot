@@ -127,6 +127,26 @@ const authMenu = [
     ]
   },
   {
+    path: 'orgUser',
+    name: 'OrgUser ',
+    redirect: '/orgUser/org',
+    meta: { title: '组织架构', icon: 'Element:User' },
+    children: [
+      {
+        path: 'org',
+        name: 'Org',
+        meta: {
+          title: '组织部门',
+          componentPath: prefix + 'orgUser/org/index.vue',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: false,
+          icon: 'Element:Folder'
+        }
+      }
+    ]
+  },
+  {
     path: 'system',
     name: 'System',
     redirect: '/system/resourcePermission',

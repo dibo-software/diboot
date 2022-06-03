@@ -27,7 +27,7 @@ comment on column file_record.file_type is '文件类型';
 comment on column file_record.file_size is '文件大小';
 comment on column file_record.storage_path is '存储路径';
 comment on column file_record.access_url is '访问地址';
-comment on column file_record.preview_url is '缩略图地址';
+comment on column file_record.thumbnail_url is '缩略图地址';
 comment on column file_record.description is '备注';
 comment on column file_record.is_deleted is '删除标记';
 comment on column file_record.create_by is '创建人';
