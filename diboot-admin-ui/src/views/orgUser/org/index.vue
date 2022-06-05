@@ -1,8 +1,9 @@
 <script lang="ts" setup name="orgIndex">
 import orgTree from './orgTree.vue'
 import orgList from './orgList.vue'
+import orgForm from './form.vue'
 import { OrgModel } from './type'
-import OrgTree from '@/views/orgUser/org/hooks/orgTree'
+import OrgTree from '@/views/orgUser/org/orgTree.vue'
 defineProps<{ usedVisibleHeight?: number }>()
 
 const currentNodeId = ref<string>('0')
@@ -20,13 +21,18 @@ const orgTreeRef = ref<InstanceType<typeof orgTree>>()
 const reload = async () => {
   await orgTreeRef.value?.reload()
 }
+// 书结构变更函数
+const orgListRef = ref<InstanceType<typeof orgList>>()
+const treeDataChange = async () => {
+  await orgListRef.value?.onSearch()
+}
 </script>
 <template>
   <el-container :style="{ height: `calc(100vh - ${usedVisibleHeight}px)` }" class="el-container">
     <el-aside class="el-aside" width="240px">
-      <org-tree ref="orgTreeRef" @change-current-node="changeCurrentNode" />
+      <org-tree ref="orgTreeRef" @change-current-node="changeCurrentNode" @data-change="treeDataChange" />
     </el-aside>
-    <el-container class="el-container">
+    <el-container class="list-container">
       <div class="detail-container">
         <el-descriptions v-if="currentNodeInfo !== undefined" class="margin-top" :column="3" border>
           <el-descriptions-item label-class-name="item-label" label-align="right" label="全称">
@@ -41,7 +47,7 @@ const reload = async () => {
         </el-descriptions>
         <el-tabs model-value="orgListTab" class="el-tabs">
           <el-tab-pane :label="tabLabel" name="orgListTab">
-            <org-list :parent-id="currentNodeId" @reload="reload" />
+            <org-list ref="orgListRef" :parent-id="currentNodeId" @reload="reload" />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -53,11 +59,13 @@ const reload = async () => {
   align-items: stretch;
 }
 .el-aside {
+  box-sizing: border-box;
+  padding-right: 10px;
   border-right: 1px solid #eee;
 }
-.el-container {
+.list-container {
   box-sizing: border-box;
-  padding: 0 10px;
+  padding-left: 10px;
 }
 .detail-container {
   width: 100%;

@@ -2,12 +2,20 @@
 import type { OrgModel } from './type'
 import { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'
-import useOrgTree from '@/views/orgUser/org/hooks/orgTree'
+import useTree from '@/views/system/resourcePermission/hooks/tree'
 
 const baseApi = '/org'
 
 const { loadData, loading, model } = useDetailDefault<OrgModel>(baseApi)
-const { data: treeData, loadTree } = useOrgTree({})
+const {
+  getTree,
+  treeDataList,
+  loading: treeLoading
+} = useTree<OrgModel>({
+  baseApi: '/org',
+  treeApi: '/tree',
+  transformField: { label: 'shortName' }
+})
 
 const title = ref('')
 const visible = ref(false)
@@ -29,7 +37,7 @@ const open = async (id?: string) => {
   }
   // 加载表单数据与树结构数据
   await loadData(id)
-  await loadTree()
+  await getTree()
   // 添加顶级菜单时的显示文本
   const firstItem: OrgModel = {
     id: '0',
@@ -43,7 +51,7 @@ const open = async (id?: string) => {
     depth: 0,
     createTime: ''
   }
-  treeData.value?.unshift(firstItem)
+  treeDataList.value?.unshift(firstItem)
   visible.value = true
 }
 
@@ -84,7 +92,7 @@ defineExpose({ open })
             <el-tree-select
               v-model="model.parentId"
               class="tree-selector"
-              :data="treeData"
+              :data="treeDataList"
               :props="{ label: 'shortName', value: 'id' }"
               :default-expand-all="true"
               :check-strictly="true"
