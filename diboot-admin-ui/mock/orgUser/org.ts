@@ -1,26 +1,11 @@
 import { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
-import { Random } from 'mockjs'
+import { mock, Random } from 'mockjs'
 import { list2tree } from '../_treeUtil'
+import { OrgModel } from '../../src/views/orgUser/org/type.ts'
+import crudTemplate from '../_crudTemplate'
 
 const baseUrl = '/api/org'
-
-const deleteDataIds: string[] = []
-
-interface OrgModel {
-  id?: string
-  parentId: string
-  topOrgId: string
-  name: string
-  shortName: string
-  type: string
-  code: string
-  managerId: string
-  depth: number
-  orgComment?: string
-  createTime: string
-  children?: OrgModel[]
-}
 
 const arrList = [
   ['1', '0', '0', '帝博集团', '帝博集团', 'COMP', 'DIBO_GROUP', '0', 1, '', '2022-06-01'],
@@ -33,11 +18,15 @@ const arrList = [
   ['8', '1', '1', '市场部', '市场部', 'DEPT', 'SCB', '0', 3, '', '2022-06-01']
 ]
 
-const nextId = 9
-
 const dataList = initOrgList(arrList)
 
-export default [
+const crud = crudTemplate({
+  baseApi: '/org',
+  dataList,
+  fuzzyMatchKeys: ['name', 'shortName', 'code']
+})
+
+const mockMethods: MockMethod[] = [
   {
     url: `${baseUrl}/tree`,
     timeout: Random.natural(50, 300),
@@ -45,21 +34,11 @@ export default [
     response: ({ query }: any) => {
       return JsonResult.OK(buildOrgTree(dataList))
     }
-  },
-  {
-    url: `${baseUrl}/:id`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: ({ query }: any) => {
-      const { id } = query
-      if (!id) {
-        return JsonResult.OK()
-      }
-      const item = dataList.find(item => item.id === id)
-      return JsonResult.OK(item)
-    }
   }
 ]
+mockMethods.push(...Object.values(crud.api))
+
+export default mockMethods
 
 function initOrgList(arrList): OrgModel[] {
   if (!arrList || arrList.lenght === 0) {

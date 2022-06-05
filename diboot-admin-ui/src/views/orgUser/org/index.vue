@@ -1,16 +1,24 @@
 <script lang="ts" setup name="orgIndex">
 import orgTree from './orgTree.vue'
+import orgList from './orgList.vue'
+import { OrgModel } from './type'
 defineProps<{ usedVisibleHeight?: number }>()
+
+const currentNodeId = ref<string>('0')
+const currentNodeInfo = reactive({ currentNode: {} })
+const changeCurrentNode = (currentNode: OrgModel) => {
+  console.log('changeCurrentNode', currentNode)
+  currentNodeInfo.currentNode = currentNode
+  currentNodeId.value = currentNode.id || '0'
+}
 </script>
 <template>
   <el-container :style="{ height: `calc(100vh - ${usedVisibleHeight}px)` }" class="el-container">
     <el-aside class="el-aside" width="240px">
-      <org-tree />
+      <org-tree @change-current-node="changeCurrentNode" />
     </el-aside>
     <el-container>
-      <el-header>Header</el-header>
-      <el-main>Main</el-main>
-      <el-footer>Footer</el-footer>
+      <org-list :parent-id="currentNodeId" />
     </el-container>
   </el-container>
 </template>

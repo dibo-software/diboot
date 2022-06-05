@@ -1,6 +1,6 @@
 <script lang="ts" setup name="orgTree">
 import { defineEmits } from 'vue'
-import { OrgModel } from '@/views/orgUser/org/ModelTypes'
+import { OrgModel } from '@/views/orgUser/org/type'
 
 const emit = defineEmits(['changeCurrentNode'])
 
