@@ -2,6 +2,7 @@
 import { OrgModel } from '@/views/orgUser/org/type'
 import { Refresh } from '@element-plus/icons-vue'
 import OrgForm from './form.vue'
+import { BaseListPageLoader } from '@/hooks/list'
 
 type Props = {
   parentId?: string
@@ -9,6 +10,17 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   parentId: '0'
 })
+
+const emit = defineEmits(['reload'])
+
+// 自定义列表页pageLoader
+class OrgListPageLoader extends BaseListPageLoader<OrgModel> {
+  public afterRemoveSuccess(ids: Array<string>) {
+    // 发送数据重载事件
+    emit('reload')
+    super.afterRemoveSuccess(ids)
+  }
+}
 const { pageLoader, customQueryParam, dataList, pagination } = useList<OrgModel>({
   options: {
     baseApi: '/org'
@@ -28,8 +40,6 @@ const formRef = ref<InstanceType<typeof OrgForm>>()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }
-
-const emit = defineEmits(['reload'])
 
 const onFormComplete = (id?: string) => {
   if (id) {
@@ -53,9 +63,10 @@ const onFormComplete = (id?: string) => {
       <el-table-column prop="shortName" label="简称" />
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="createTime" label="创建时间" />
-      <el-table-column label="操作" width="70">
+      <el-table-column label="操作" width="140">
         <template #default="{ row }">
           <el-button text bg type="primary" size="small" @click="openForm(row.id)">编辑</el-button>
+          <el-button text bg type="danger" size="small" @click="pageLoader.remove(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

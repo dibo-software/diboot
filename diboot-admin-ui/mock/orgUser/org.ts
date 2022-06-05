@@ -32,7 +32,14 @@ const mockMethods: MockMethod[] = [
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ query }: any) => {
-      return JsonResult.OK(buildOrgTree(dataList))
+      const { deleteDataIds } = crud
+      const validList = dataList.filter(item => {
+        if (!deleteDataIds || deleteDataIds.length === 0) {
+          return true
+        }
+        return !deleteDataIds.includes(item.id)
+      })
+      return JsonResult.OK(buildOrgTree(validList))
     }
   }
 ]

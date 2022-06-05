@@ -6,9 +6,9 @@ import OrgTree from '@/views/orgUser/org/hooks/orgTree'
 defineProps<{ usedVisibleHeight?: number }>()
 
 const currentNodeId = ref<string>('0')
-const currentNodeInfo = reactive({ currentNode: {} })
+const currentNodeInfo = ref<OrgModel | undefined>()
 const changeCurrentNode = (currentNode: OrgModel) => {
-  currentNodeInfo.currentNode = currentNode
+  currentNodeInfo.value = currentNode
   currentNodeId.value = currentNode.id || '0'
 }
 
@@ -27,11 +27,24 @@ const reload = async () => {
       <org-tree ref="orgTreeRef" @change-current-node="changeCurrentNode" />
     </el-aside>
     <el-container class="el-container">
-      <el-tabs model-value="orgListTab" class="el-tabs">
-        <el-tab-pane :label="tabLabel" name="orgListTab">
-          <org-list :parent-id="currentNodeId" @reload="reload" />
-        </el-tab-pane>
-      </el-tabs>
+      <div class="detail-container">
+        <el-descriptions v-if="currentNodeInfo !== undefined" class="margin-top" :column="3" border>
+          <el-descriptions-item label-class-name="item-label" label-align="right" label="全称">
+            {{ currentNodeInfo.name }}
+          </el-descriptions-item>
+          <el-descriptions-item label-class-name="item-label" label-align="right" label="简称">
+            {{ currentNodeInfo.shortName }}
+          </el-descriptions-item>
+          <el-descriptions-item label-class-name="item-label" label-align="right" label="编码">
+            {{ currentNodeInfo.code }}
+          </el-descriptions-item>
+        </el-descriptions>
+        <el-tabs model-value="orgListTab" class="el-tabs">
+          <el-tab-pane :label="tabLabel" name="orgListTab">
+            <org-list :parent-id="currentNodeId" @reload="reload" />
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </el-container>
   </el-container>
 </template>
@@ -45,6 +58,12 @@ const reload = async () => {
 .el-container {
   box-sizing: border-box;
   padding: 0 10px;
+}
+.detail-container {
+  width: 100%;
+  :deep(.item-label) {
+    width: 60px;
+  }
 }
 .el-tabs {
   width: 100%;

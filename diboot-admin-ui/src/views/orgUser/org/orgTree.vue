@@ -11,7 +11,6 @@ const changeCurrentNode = (currentNode: OrgModel) => {
   emit('changeCurrentNode', currentNode)
 }
 const reload = async () => {
-  console.log('tree reload')
   await loadTree()
 }
 loadTree()
