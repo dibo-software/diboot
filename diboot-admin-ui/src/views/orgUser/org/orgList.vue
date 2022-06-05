@@ -1,5 +1,7 @@
 <script setup name="OrgList" lang="ts">
 import { OrgModel } from '@/views/orgUser/org/type'
+import { Refresh } from '@element-plus/icons-vue'
+import OrgForm from './form.vue'
 
 type Props = {
   parentId?: string
@@ -7,7 +9,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   parentId: '0'
 })
-const { pageLoader, customQueryParam, queryParam, dataList, pagination } = useList<OrgModel>({
+const { pageLoader, customQueryParam, dataList, pagination } = useList<OrgModel>({
   options: {
     baseApi: '/org'
   }
@@ -21,14 +23,41 @@ watch(
     pageLoader.onSearch()
   }
 )
+
+const formRef = ref<InstanceType<typeof OrgForm>>()
+const openForm = (id?: string) => {
+  formRef.value?.open(id)
+}
+
+const emit = defineEmits(['reload'])
+
+const onFormComplete = (id?: string) => {
+  if (id) {
+    pageLoader.getList()
+  } else {
+    pageLoader.onSearch()
+  }
+  emit('reload')
+}
 </script>
 <template>
   <div style="width: 100%">
+    <el-space wrap class="list-operation">
+      <el-button type="primary" @click="openForm()">新建</el-button>
+      <el-space>
+        <el-button :icon="Refresh" circle @click="pageLoader.getList()" />
+      </el-space>
+    </el-space>
     <el-table row-key="id" :tree-props="{ children: 'children__' }" :data="dataList" stripe>
       <el-table-column prop="name" label="全称" />
       <el-table-column prop="shortName" label="简称" />
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="createTime" label="创建时间" />
+      <el-table-column label="操作" width="70">
+        <template #default="{ row }">
+          <el-button text bg type="primary" size="small" @click="openForm(row.id)">编辑</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       v-if="pagination.total"
@@ -41,5 +70,6 @@ watch(
       @size-change="pageLoader.getList()"
       @current-change="pageLoader.getList()"
     />
+    <org-form ref="formRef" :parent-id="props.parentId" @complete="onFormComplete" />
   </div>
 </template>
