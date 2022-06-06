@@ -1,7 +1,7 @@
 :root {
-//  .el-dialog {
-//    --el-dialog-margin-top: 10vh;
-//  }
+  //  .el-dialog {
+  //    --el-dialog-margin-top: 10vh;
+  //  }
 
   .el-drawer {
     .el-drawer__header {
@@ -15,13 +15,6 @@
   font-weight: bold;
 }
 
-.el-pagination {
-  position: relative;
-  top: 10px;
-  margin-bottom: 10px;
-  justify-content: flex-end;
-}
-
 .el-select, .el-date-editor {
   width: 100%;
 
@@ -30,20 +23,34 @@
   }
 }
 
-.list-operation {
-  width: 100%;
-  padding: 4px 0px;
-  div:last-child {
-    margin-left: auto;
-    margin-right: 0 !important;
+.table-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .list-search {
+    border-bottom: 1px dashed var(--el-border-color);
+
+    .el-row {
+      margin: 9px 0 -9px !important;
+    }
+  }
+
+  .list-operation {
+    width: calc(100% - 5px * 2);
+    padding: 5px;
+
+    div:last-child {
+      margin-left: auto;
+    }
+  }
+
+  .el-pagination {
+    margin: 5px;
   }
 }
 
-.long-text{
+.long-text {
   word-wrap: break-word;
   word-break: break-all;
-}
-
-.list-search{
-  border-bottom: 1px dashed #E1E1E1;
 }

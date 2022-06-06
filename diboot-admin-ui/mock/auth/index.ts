@@ -98,8 +98,6 @@ const authMenu = [
           icon,
           sort: '@natural',
           keepAlive: false,
-          hollow: '@boolean',
-          borderless: '@boolean',
           permissions: [permission, permission, permission]
         }
       }
@@ -140,7 +138,6 @@ const authMenu = [
           componentPath: prefix + 'orgUser/org/index.vue',
           sort: '@natural',
           keepAlive: false,
-          hollow: false,
           icon: 'Element:Folder'
         }
       },
@@ -152,7 +149,6 @@ const authMenu = [
           componentPath: prefix + 'orgUser/user/index.vue',
           sort: '@natural',
           keepAlive: false,
-          hollow: false,
           icon: 'Element:User'
         }
       }
@@ -170,16 +166,15 @@ const authMenu = [
         meta: {
           title: '资源权限管理',
           componentPath: prefix + 'system/resourcePermission/list.vue',
-          sort: '@natural',
-          keepAlive: false,
-          hollow: false
+          sort: 2,
+          keepAlive: false
         }
       },
       {
         path: 'role',
         name: 'RoleList',
         meta: {
-          title: '角色管理',
+          title: '用户角色管理',
           componentPath: prefix + 'system/role/list.vue',
           sort: 3
         }
@@ -200,7 +195,6 @@ const authMenu = [
           title: '定时任务管理',
           componentPath: prefix + 'system/scheduleJob/list.vue',
           keepAlive: false,
-          hollow: true,
           sort: 6
         }
       },
