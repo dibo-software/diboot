@@ -78,7 +78,7 @@ const checkCode = (code: string) => emits('change', props.permissionCodeList.inc
     transition: 2s;
   }
   &-api {
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--el-border-color);
     padding: 8px 16px;
     &:last-child {
       border-bottom: 0;

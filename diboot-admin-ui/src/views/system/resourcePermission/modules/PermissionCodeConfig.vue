@@ -52,7 +52,7 @@ const openPermissionConfig = () => {
 }
 .permission-tag-container {
   flex: 1;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--el-border-color);
   padding: 5px;
   margin: 0 2px;
   min-height: 32px;

@@ -149,6 +149,7 @@ watch(
     deep: true
   }
 )
+// 更改权限码
 watch(
   configPermissionCodes,
   () => {
@@ -347,9 +348,9 @@ watch(
     left: 0;
     bottom: 0;
     width: 100%;
-    border-top: 1px solid #e9e9e9;
+    border-top: 1px solid var(--el-border-color);
     padding: 10px 16px 0 16px;
-    background: #fff;
+    background: var(--el-bg-color);
     text-align: center;
     z-index: 1;
   }

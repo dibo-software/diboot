@@ -218,7 +218,6 @@ const handleRemoteMethod = (val: string) => {
     &__head {
       margin-bottom: 10px;
       font-weight: bold;
-      background-color: #e3e3e3;
     }
   }
 }
