@@ -7,8 +7,8 @@ export default () => {
   const btnResourceCodeSelect = ref(true)
   // 正在配置的标题
   const configPermissionTitle = ref('菜单页面接口配置')
-  // 正在配置的ResourceCode，如：ResourcePermission（菜单code）、detail（按钮权限code）、list等
-  const configResourceCode = ref<string>('')
+  // 正在配置的ResourceCode，如：ResourcePermission（menu）、detail（按钮权限code）、list等
+  const configResourceCode = ref<string>('menu')
   // 正在配置的后端权限码，如：ResourcePermission:read、ResourcePermission:write
   const configPermissionCodes = ref<string[]>([])
   // 前端按钮权限资源编码
@@ -64,7 +64,6 @@ export default () => {
     configResourceCode.value = permission.resourceCode ?? ''
     configPermissionCodes.value = permission.permissionCodes ?? []
   }
-
   /**
    * 切换按钮权限输入/选择
    * @param permission 当前正在配置的权限

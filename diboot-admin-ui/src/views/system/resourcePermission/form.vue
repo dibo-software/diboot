@@ -150,6 +150,19 @@ watch(
     deep: true
   }
 )
+watch(
+  configPermissionCodes,
+  () => {
+    configResourceCode.value === 'menu'
+      ? (model.value.permissionCodes = configPermissionCodes.value)
+      : model.value.permissionList
+      ? (model.value.permissionList[parseInt(activeTab.value, 10)].permissionCodes = configPermissionCodes.value)
+      : ''
+  },
+  {
+    deep: true
+  }
+)
 </script>
 <template>
   <el-empty v-if="empty" description="选择左侧菜单后操作" />
@@ -309,10 +322,9 @@ watch(
         <permission-list
           ref="permissionListRef"
           :title="configPermissionTitle"
-          :permission-codes="configPermissionCodes"
+          v-model:permission-codes="configPermissionCodes"
           :config-code="configResourceCode"
           :rest-permissions="restPermissions"
-          @change="handleChangePermissionCodes"
         />
       </el-col>
     </el-row>
