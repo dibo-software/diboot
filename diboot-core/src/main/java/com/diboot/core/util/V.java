@@ -45,6 +45,9 @@ public class V {
      */
     private static Validator VALIDATOR = null;
 
+    // region 判空方法
+    /* ================================================== 判空方法 =================================================== */
+
     /**
      * 对象是否为空
      */
@@ -59,6 +62,12 @@ public class V {
             return isEmpty((Map<?, ?>) obj);
         } else if (obj.getClass().isArray()) {
             return Array.getLength(obj) == 0;
+        } else if (obj instanceof Iterator) {
+            return isEmpty((Iterator<?>) obj);
+        } else if (obj instanceof Iterable) {
+            return isEmpty((Iterable<?>) obj);
+        } else if (obj instanceof Enumeration) {
+            return isEmpty((Enumeration<?>) obj);
         }
         return false;
     }
@@ -98,6 +107,18 @@ public class V {
         return obj == null || obj.isEmpty();
     }
 
+    public static <T> boolean isEmpty(Iterator<T> iterator) {
+        return iterator == null || !iterator.hasNext();
+    }
+
+    public static <T> boolean isEmpty(Iterable<T> iterable) {
+        return iterable == null || isEmpty(iterable.iterator());
+    }
+
+    public static <T> boolean isEmpty(Enumeration<T> enumeration) {
+        return enumeration == null || !enumeration.hasMoreElements();
+    }
+
     public static boolean isEmpty(boolean[] array) {
         return array == null || array.length == 0;
     }
@@ -134,42 +155,6 @@ public class V {
         return array == null || array.length == 0;
     }
 
-    public static boolean notEmpty(boolean[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(byte[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(char[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(double[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(float[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(int[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(long[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(short[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(Object[] array) {
-        return array != null && array.length != 0;
-    }
-
     /**
      * 任意元素为空则返回true
      *
@@ -188,14 +173,16 @@ public class V {
         return false;
     }
 
-    /**
-     * 全都不为空则返回true
-     *
-     * @param objs objs
-     * @return true/false
-     */
-    public static boolean isNoneEmpty(Object... objs) {
-        return !isAnyEmpty(objs);
+    public static <T> boolean isAnyEmpty(Collection<T> collection) {
+        if (isEmpty(collection)) {
+            return true;
+        }
+        for (T obj : collection) {
+            if (isEmpty(obj)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -216,6 +203,23 @@ public class V {
         return true;
     }
 
+    public static <T> boolean isAllEmpty(Collection<T> collection) {
+        if (isEmpty(collection)) {
+            return true;
+        }
+        for (T obj : collection) {
+            if (notEmpty(obj)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /* ================================================== end ======================================================= */
+    // endregion
+
+    // region 非空判断方法
+    /* ================================================== 非空判断方法 ================================================ */
+
     /**
      * 对象是否为空
      */
@@ -230,6 +234,12 @@ public class V {
             return notEmpty((Map<?, ?>) obj);
         } else if (obj.getClass().isArray()) {
             return Array.getLength(obj) != 0;
+        } else if (obj instanceof Iterator) {
+            return notEmpty((Iterator<?>) obj);
+        } else if (obj instanceof Iterable) {
+            return notEmpty((Iterable<?>) obj);
+        } else if (obj instanceof Enumeration) {
+            return notEmpty((Enumeration<?>) obj);
         }
         return true;
     }
@@ -269,6 +279,54 @@ public class V {
         return obj != null && !obj.isEmpty();
     }
 
+    public static <T> boolean notEmpty(Iterator<T> iterator) {
+        return iterator != null && iterator.hasNext();
+    }
+
+    public static <T> boolean notEmpty(Iterable<T> iterable) {
+        return iterable != null && notEmpty(iterable.iterator());
+    }
+
+    public static <T> boolean notEmpty(Enumeration<T> enumeration) {
+        return enumeration != null && enumeration.hasMoreElements();
+    }
+
+    public static boolean notEmpty(boolean[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(byte[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(char[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(short[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(int[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(long[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(double[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(float[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(Object[] array) {
+        return array != null && array.length != 0;
+    }
+
     /**
      * 对象不为空且不为0
      */
@@ -282,6 +340,22 @@ public class V {
     public static boolean notEmptyOrZero(Integer intObj) {
         return intObj != null && intObj != 0;
     }
+
+    /**
+     * 全都不为空则返回true
+     *
+     * @param objs objs
+     * @return true/false
+     */
+    public static boolean isNoneEmpty(Object... objs) {
+        return !isAnyEmpty(objs);
+    }
+
+    public static <T> boolean isNoneEmpty(Collection<T> collection) {
+        return !isAnyEmpty(collection);
+    }
+    /* ================================================== end ======================================================= */
+    // endregion
 
     /**
      * 集合中是否包含指定元素
