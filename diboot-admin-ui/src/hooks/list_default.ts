@@ -102,6 +102,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     dateRangeQuery,
     onSearch,
     resetFilter,
+    buildQueryParam,
     getList,
     loading,
     dataList,

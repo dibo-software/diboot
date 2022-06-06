@@ -7,12 +7,12 @@ export interface DataType<T> {
 export interface TreeOption<T> {
   baseApi: string
   treeApi: string
-  transformField?: { id?: string; label?: string; children?: string }
+  transformField?: { value?: string; label?: string; children?: string }
   clickNodeCallback?: (node: T) => void
 }
 export default <T>(option: TreeOption<T>) => {
   const optionsTransformField = {
-    id: 'id',
+    value: 'id',
     label: 'label',
     children: 'children'
   }
@@ -65,10 +65,10 @@ export default <T>(option: TreeOption<T>) => {
    */
   const checkChange = (data: T, checked: boolean) => {
     if (checked) {
-      dataState.selectedIdList.push(...[(data as Record<string, unknown>)[optionsTransformField.id] as string])
+      dataState.selectedIdList.push(...[(data as Record<string, unknown>)[optionsTransformField.value] as string])
     } else {
       dataState.selectedIdList = dataState.selectedIdList.filter(
-        (selected: string) => selected !== (data as Record<string, unknown>)[optionsTransformField.id]
+        (selected: string) => selected !== (data as Record<string, unknown>)[optionsTransformField.value]
       )
     }
   }
@@ -78,7 +78,7 @@ export default <T>(option: TreeOption<T>) => {
    * @param node 被点击节点
    */
   const nodeClick = (node: T) => {
-    currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.id] as string
+    currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.value] as string
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
     clickNodeCallback && clickNodeCallback(node)
   }
@@ -100,7 +100,7 @@ export default <T>(option: TreeOption<T>) => {
     try {
       const result = await api.post<string>(`${baseApi}/`, treeNode)
       if (result && result.code === 0) {
-        Object.assign(treeNode, { [optionsTransformField.id]: result.data })
+        Object.assign(treeNode, { [optionsTransformField.value]: result.data })
         dataState.treeDataList = []
         await getTree()
         // 设置当前节点选中
@@ -151,7 +151,7 @@ export default <T>(option: TreeOption<T>) => {
       if (dataState.treeDataList && dataState.treeDataList.length > 0) {
         // 设置当前节点选中
         treeRef.value!.setCurrentKey(
-          (dataState.treeDataList as Record<string, unknown>[])[0][optionsTransformField.id as string] as string
+          (dataState.treeDataList as Record<string, unknown>[])[0][optionsTransformField.value as string] as string
         )
         const currentNode = treeRef.value!.getCurrentNode()
         if (currentNode) nodeClick(currentNode as T)

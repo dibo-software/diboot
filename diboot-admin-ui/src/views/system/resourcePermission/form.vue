@@ -2,14 +2,14 @@
 import PermissionList from './permissionList/index.vue'
 import RouteSelect from './modules/RouteSelect.vue'
 import PermissionCodeConfig from './modules/PermissionCodeConfig.vue'
-import { Plus, Refresh } from '@element-plus/icons-vue'
+import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
 import type { ResourcePermission, PermissionGroupType } from './type'
 import useDisplayControl from './hooks/displayControl'
 import usePermissionControl from './hooks/permissionControl'
+import useScrollbarHeight from './hooks/scrollbarHeight'
 import type { MenuType } from './hooks/displayControl'
-
 const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
 const originApiList = reactive<PermissionGroupType[]>([])
@@ -25,7 +25,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     }
   })
 }
-
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
@@ -64,7 +63,32 @@ const NEW_PERMISSION_ITEM: ResourcePermission = {
   resourceCode: '',
   permissionCodes: []
 }
+// ======> props
+const props = defineProps<{ formValue: Partial<ResourcePermission> }>()
+const visibleHeight = inject<number>('visibleHeight')
+// ======> 本地方法
+// 切换菜单类型
+const handleChangeDisplayType = (val: string | number | boolean) => {
+  changeDisplayType(val as MenuType)
+}
+// 添加按钮权限
+const handleAddTab = () => {
+  addTab(_.cloneDeep(NEW_PERMISSION_ITEM))
+}
+// 权限配置
+
+// compute
+const existPermissionCodes = computed(() => {
+  if (!tabs.value) return []
+  return tabs.value.map(item => item.resourceCode as string)
+})
 // ======> hook相关
+// 滚动高度计算hook
+const { height, computedFixedHeight } = useScrollbarHeight({
+  fixedBoxSelectors: ['.form-space-container>.el-space__item:first-child', '.btn-fixed'],
+  visibleHeight,
+  extraHeight: 15
+})
 // 菜单类型切换控制字段
 const { displayFields, changeDisplayType } = useDisplayControl()
 
@@ -77,7 +101,8 @@ const {
   initResourcePermissionCodeOptions,
   changeBtnResourceCode,
   changeBtnPermissionName,
-  toggleBtnResourceCodeSelect
+  toggleBtnResourceCodeSelect,
+  clickConfigPermission
 } = usePermissionControl()
 
 // more hook
@@ -102,23 +127,6 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
   }
 })
 
-// ======> 本地方法
-// 切换菜单类型
-const handleChangeDisplayType = (val: string | number | boolean) => {
-  changeDisplayType(val as MenuType)
-}
-// 添加按钮权限
-const handleAddTab = () => {
-  addTab(_.cloneDeep(NEW_PERMISSION_ITEM))
-}
-
-// compute
-const existPermissionCodes = computed(() => {
-  if (!tabs.value) return []
-  return tabs.value.map(item => item.resourceCode as string)
-})
-// props
-const props = defineProps<{ formValue: Partial<ResourcePermission> }>()
 // 监听
 watch(
   () => props.formValue,
@@ -127,6 +135,7 @@ watch(
     model.value = val
     changeDisplayType(val.displayType as MenuType)
     initTabs(val.permissionList ?? [])
+    nextTick(computedFixedHeight)
   }
 )
 watch(
@@ -144,141 +153,159 @@ watch(
   <div v-else class="form-container">
     <el-row :gutter="5" class="context-body">
       <el-col :md="24" :lg="10" class="left-container">
-        <el-space wrap :fill="true">
+        <el-space wrap :fill="true" class="form-space-container">
           <div class="card-header">{{ model.displayName || '菜单配置' }}</div>
-          <el-form ref="formRef" :model="model" :rules="rules" label-width="90px">
-            <el-form-item label="上级目录" prop="parentId">
-              <el-input :modelValue="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
-            </el-form-item>
-            <el-form-item label="分类" prop="displayType">
-              <el-radio-group v-model="model.displayType" @change="handleChangeDisplayType">
-                <el-radio-button label="CATALOGUE">目录</el-radio-button>
-                <el-radio-button label="MENU">菜单</el-radio-button>
-                <el-radio-button label="OUTSIDE_URL">外链</el-radio-button>
-                <el-radio-button label="IFRAME">iframe</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="图标">
-              <icon-select v-model="model.routeMeta.icon" />
-            </el-form-item>
-            <el-form-item label="名称" prop="displayName">
-              <el-input v-model="model.displayName" placeholder="请输入名称" clearable />
-            </el-form-item>
-            <el-form-item label="编码">
-              <route-select
-                v-if="displayFields.selectResourceCode"
-                v-model="model.routeMeta.resourceCode"
-                v-model:component-path="model.routeMeta.componentPath"
-              />
-              <el-input v-else v-model="model.resourceCode" placeholder="请输入编码" clearable />
-            </el-form-item>
-            <el-form-item v-if="model.routeMeta.componentPath && displayFields.selectResourceCode" label="组件地址">
-              <el-input v-model="model.routeMeta.componentPath" disabled />
-            </el-form-item>
-            <el-form-item label="路由地址">
-              <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
-            </el-form-item>
-            <el-form-item v-if="displayFields.redirectPath" label="重定向">
-              <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
-            </el-form-item>
-            <el-form-item label="菜单权限接口">
-              <permission-code-config type="menu" v-model="model.permissionCodes" />
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-switch
-                v-model="model.status"
-                active-value="A"
-                inactive-value="I"
-                active-text="有效"
-                inactive-text="无效"
-              >
-              </el-switch>
-            </el-form-item>
-            <el-form-item label="排序号">
-              <el-input-number style="width: 100%" v-model="model.sortId" placeholder="请输入排序号" clearable />
-            </el-form-item>
-            <el-form-item label="其他配置">
-              <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
-              <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
-              <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
-              <el-alert :closable="false" class="custom-alert-tip">
-                隐藏：隐藏时菜单栏不会显示，但地址可以访问；<br />
-                缓存：页面开启keepAlive，缓存当前页面；<br />
-                忽略认证：当前页面访问不需要权限认证。<br />
-              </el-alert>
-            </el-form-item>
-          </el-form>
-          <div v-if="displayFields.permissionList" class="btn-config-container">
-            <div class="btn-config__header">
-              <span>按钮权限配置</span>
-              <el-button :icon="Plus" circle type="success" @click="handleAddTab" />
-            </div>
-            <div class="btn-config__body">
-              <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab">
-                <el-tab-pane
-                  v-for="(permission, index) in model.permissionList"
-                  :key="`tab_${index}`"
-                  :label="permission.displayName"
-                  :name="`${index}`"
+          <el-scrollbar :height="height">
+            <el-form ref="formRef" :model="model" :rules="rules" label-width="90px">
+              <el-form-item label="上级目录" prop="parentId">
+                <el-input :modelValue="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
+              </el-form-item>
+              <el-form-item label="分类" prop="displayType">
+                <el-radio-group v-model="model.displayType" @change="handleChangeDisplayType">
+                  <el-radio-button label="CATALOGUE">目录</el-radio-button>
+                  <el-radio-button label="MENU">菜单</el-radio-button>
+                  <el-radio-button label="OUTSIDE_URL">外链</el-radio-button>
+                  <el-radio-button label="IFRAME">iframe</el-radio-button>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="图标">
+                <icon-select v-model="model.routeMeta.icon" />
+              </el-form-item>
+              <el-form-item label="名称" prop="displayName">
+                <el-input v-model="model.displayName" placeholder="请输入名称" clearable />
+              </el-form-item>
+              <el-form-item label="编码">
+                <route-select
+                  v-if="displayFields.selectResourceCode"
+                  v-model="model.routeMeta.resourceCode"
+                  v-model:component-path="model.routeMeta.componentPath"
+                />
+                <el-input v-else v-model="model.resourceCode" placeholder="请输入编码" clearable />
+              </el-form-item>
+              <el-form-item v-if="model.routeMeta.componentPath && displayFields.selectResourceCode" label="组件地址">
+                <el-input v-model="model.routeMeta.componentPath" disabled />
+              </el-form-item>
+              <el-form-item label="路由地址">
+                <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
+              </el-form-item>
+              <el-form-item v-if="displayFields.redirectPath" label="重定向">
+                <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
+              </el-form-item>
+              <el-form-item label="菜单权限接口">
+                <permission-code-config
+                  type="menu"
+                  v-model="model.permissionCodes"
+                  @config="clickConfigPermission('menu', model)"
+                />
+              </el-form-item>
+              <el-form-item label="状态">
+                <el-switch
+                  v-model="model.status"
+                  active-value="A"
+                  inactive-value="I"
+                  active-text="有效"
+                  inactive-text="无效"
                 >
-                  <el-descriptions :column="1">
-                    <el-descriptions-item label="按钮权限编码">
-                      <el-row type="flex" align="middle" :gutter="16">
-                        <el-col :span="16">
-                          <el-select
-                            v-if="btnResourceCodeSelect"
-                            v-model="permission.resourceCode"
-                            filterable
-                            allow-create
-                            placeholder="请选取当前按钮权限编码"
-                            @change="value => changeBtnResourceCode(permission, value)"
-                          >
-                            <el-option
-                              v-for="(item, i) in more.resourcePermissionCodeOptions"
-                              :key="`frontend-code_${i}`"
-                              :label="`${item.label}[${item.value}]`"
-                              :value="item.value"
+                </el-switch>
+              </el-form-item>
+              <el-form-item label="排序号">
+                <el-input-number style="width: 100%" v-model="model.sortId" placeholder="请输入排序号" clearable />
+              </el-form-item>
+              <el-form-item>
+                <template #label>
+                  <div style="display: flex; align-items: center; justify-content: end">
+                    <span>其他配置</span>
+                    <el-tooltip effect="dark" placement="top-start">
+                      <template #content>
+                        隐藏：隐藏时菜单栏不会显示，但地址可以访问；<br />
+                        缓存：页面开启keepAlive，缓存当前页面；<br />
+                        忽略认证：当前页面访问不需要权限认证。<br />
+                      </template>
+                      <el-icon><InfoFilled /></el-icon>
+                    </el-tooltip>
+                  </div>
+                </template>
+                <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
+                <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
+                <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
+              </el-form-item>
+            </el-form>
+            <div v-if="displayFields.permissionList" class="btn-config-container">
+              <div class="btn-config__header">
+                <span>按钮权限配置</span>
+                <el-button :icon="Plus" circle type="success" @click="handleAddTab" />
+              </div>
+              <div class="btn-config__body">
+                <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab">
+                  <el-tab-pane
+                    v-for="(permission, index) in model.permissionList"
+                    :key="`tab_${index}`"
+                    :label="permission.displayName"
+                    :name="`${index}`"
+                  >
+                    <el-descriptions :column="1">
+                      <el-descriptions-item label="按钮权限编码">
+                        <el-row type="flex" align="middle" :gutter="16">
+                          <el-col :span="16">
+                            <el-select
+                              v-if="btnResourceCodeSelect"
+                              v-model="permission.resourceCode"
+                              filterable
+                              allow-create
+                              placeholder="请选取当前按钮权限编码"
+                              @change="value => changeBtnResourceCode(permission, value)"
+                            >
+                              <el-option
+                                v-for="(item, i) in more.resourcePermissionCodeOptions"
+                                :key="`frontend-code_${i}`"
+                                :label="`${item.label}[${item.value}]`"
+                                :value="item.value"
+                              />
+                            </el-select>
+                            <el-input
+                              v-else
+                              v-model="permission.resourceCode"
+                              placeholder="请输入按钮权限编码"
+                              @input="value => changeBtnResourceCode(permission, value)"
                             />
-                          </el-select>
-                          <el-input
-                            v-else
-                            v-model="permission.resourceCode"
-                            placeholder="请输入按钮权限编码"
-                            @input="value => changeBtnResourceCode(permission, value)"
-                          />
-                        </el-col>
-                        <el-col :span="8">
-                          <el-button
-                            type="primary"
-                            :icon="Refresh"
-                            size="small"
-                            @click="toggleBtnResourceCodeSelect(permission)"
-                          >
-                            {{ btnResourceCodeSelect ? '自定义输入' : '从字典选取' }}
-                          </el-button>
-                        </el-col>
-                      </el-row>
-                    </el-descriptions-item>
-                    <el-descriptions-item label="按钮权限名称">
-                      <el-input
-                        v-model="permission.displayName"
-                        placeholder="请输入按钮权限名称"
-                        @input="value => changeBtnPermissionName(permission, value)"
-                      />
-                    </el-descriptions-item>
-                    <el-descriptions-item label="按钮权限接口">
-                      <permission-code-config type="permission" v-model="permission.permissionCodes" />
-                    </el-descriptions-item>
-                  </el-descriptions>
-                </el-tab-pane>
-              </el-tabs>
+                          </el-col>
+                          <el-col :span="8">
+                            <el-button
+                              type="primary"
+                              :icon="Refresh"
+                              size="small"
+                              @click="toggleBtnResourceCodeSelect(permission)"
+                            >
+                              {{ btnResourceCodeSelect ? '自定义输入' : '从字典选取' }}
+                            </el-button>
+                          </el-col>
+                        </el-row>
+                      </el-descriptions-item>
+                      <el-descriptions-item label="按钮权限名称">
+                        <el-input
+                          v-model="permission.displayName"
+                          placeholder="请输入按钮权限名称"
+                          @input="value => changeBtnPermissionName(permission, value)"
+                        />
+                      </el-descriptions-item>
+                      <el-descriptions-item label="按钮权限接口">
+                        <permission-code-config
+                          type="permission"
+                          v-model="permission.permissionCodes"
+                          @config="clickConfigPermission('permission', permission)"
+                        />
+                      </el-descriptions-item>
+                    </el-descriptions>
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
             </div>
-          </div>
+          </el-scrollbar>
         </el-space>
       </el-col>
       <el-col :md="24" :lg="14" class="right-container">
         <permission-list
-          ref="permissionList"
+          ref="permissionListRef"
           :title="configPermissionTitle"
           :current-permission-codes="configPermissionCodes"
           :config-code="configResourceCode"
@@ -287,7 +314,7 @@ watch(
         />
       </el-col>
     </el-row>
-    <div v-if="!empty" class="is-fixed">
+    <div v-if="!empty" class="is-fixed btn-fixed">
       <el-button type="primary" @click="submitForm(formRef)">保存</el-button>
       <el-button @click="resetForm(formRef)">重置</el-button>
     </div>
@@ -302,9 +329,6 @@ watch(
   position: relative;
   height: 100%;
   .context-body {
-    padding-bottom: 50px;
-    overflow: hidden;
-    overflow-y: auto;
     width: 100%;
   }
   .is-fixed {

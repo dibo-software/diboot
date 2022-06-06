@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
 import useTree from '../hooks/tree'
+import useScrollbarHeight from '../hooks/scrollbarHeight'
 import type { ResourcePermission } from '../type'
-import { defineEmits } from 'vue'
-const defaultProps = {
+
+const treeProps = {
   label: 'displayName'
 }
+const visibleHeight = inject<number>('visibleHeight')
 const emit = defineEmits<{
-  (e: 'click-node', id: ResourcePermission): void
+  (e: 'click-node', resourcePermission: ResourcePermission): void
 }>()
 const {
   checkChange,
@@ -24,16 +26,21 @@ const {
 } = useTree<ResourcePermission>({
   baseApi: '/resourcePermission',
   treeApi: '/getMenuTreeList',
-  transformField: defaultProps,
+  transformField: treeProps,
   clickNodeCallback(nodeData) {
     emit('click-node', nodeData)
   }
 })
+const { height, computedFixedHeight } = useScrollbarHeight({
+  fixedBoxSelectors: ['.tree-container>.el-space__item:first-child'],
+  visibleHeight,
+  extraHeight: 10
+})
 // 初始化tree数据
 getTree().then(() => {
   setSelectNode()
+  computedFixedHeight()
 })
-
 /**
  * 添加顶级菜单
  */
@@ -61,18 +68,20 @@ const addChildNode = (parentId: string) => {
   <el-skeleton v-if="loading" :rows="5" animated />
   <el-space v-else :fill="true" wrap class="tree-container">
     <div class="tree-header">
-      <el-button type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
-      <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除菜单</el-button>
-    </div>
-    <div class="tree-body">
-      <div class="tree-body__search">
+      <div>
+        <el-button type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
+        <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除菜单</el-button>
+      </div>
+      <div class="tree-header__search">
         <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
       </div>
+    </div>
+    <el-scrollbar :height="height">
       <el-tree
         ref="treeRef"
         class="custom-tree"
         :data="treeDataList"
-        :props="defaultProps"
+        :props="treeProps"
         :check-strictly="true"
         draggable
         show-checkbox
@@ -93,15 +102,15 @@ const addChildNode = (parentId: string) => {
           </span>
         </template>
       </el-tree>
-    </div>
+    </el-scrollbar>
   </el-space>
 </template>
 
 <style scoped lang="scss">
 .tree-container {
-  .tree-body {
+  .tree-header {
     &__search {
-      margin-bottom: 5px;
+      margin-top: 5px;
     }
   }
 }

@@ -143,6 +143,18 @@ const authMenu = [
           hollow: false,
           icon: 'Element:Folder'
         }
+      },
+      {
+        path: 'user',
+        name: 'User',
+        meta: {
+          title: '人员管理',
+          componentPath: prefix + 'orgUser/user/index.vue',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: false,
+          icon: 'Element:User'
+        }
       }
     ]
   },

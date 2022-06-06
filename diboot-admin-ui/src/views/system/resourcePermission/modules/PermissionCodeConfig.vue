@@ -1,20 +1,39 @@
 <script setup lang="ts">
-defineProps<{ modelValue?: string[] | unknown; type: 'permission' | 'menu' }>()
+const props = defineProps<{ modelValue?: string[]; type: 'permission' | 'menu' }>()
 
 // 事件定义
 const emits = defineEmits<{
-  (e: 'update:modelValue', value?: string): void
+  (e: 'update:modelValue', value?: string[]): void
+  (e: 'config'): void
 }>()
-// 更改
+/**
+ * 删除配置的权限
+ * @param val
+ */
 const close = (val?: string) => {
-  emits('update:modelValue', val)
+  emits(
+    'update:modelValue',
+    props.modelValue?.filter((item: string) => item !== val)
+  )
+}
+/**
+ * 配置权限
+ */
+const openPermissionConfig = () => {
+  emits('config')
 }
 </script>
 <template>
   <el-space class="permission-code-space">
     <div class="permission-tag-container">
       <template v-if="modelValue && modelValue.length > 0">
-        <el-tag v-for="(permissionCode, idx) in modelValue" :key="`${type}_${idx}`" type="success" closable>
+        <el-tag
+          v-for="(permissionCode, idx) in modelValue"
+          :key="`${type}_${idx}`"
+          @close="close(permissionCode)"
+          type="success"
+          closable
+        >
           {{ permissionCode }}
         </el-tag>
       </template>
@@ -22,7 +41,7 @@ const close = (val?: string) => {
         <span style="color: #d3d3d3">请点击右侧"配置按钮"选择权限接口</span>
       </template>
     </div>
-    <el-button type="primary">配置</el-button>
+    <el-button type="primary" @click="openPermissionConfig">配置</el-button>
   </el-space>
 </template>
 <style scoped lang="scss">
