@@ -16,8 +16,6 @@ export default () => {
   // 后端权限资源
   const restPermissions: RestPermission[] = reactive([])
 
-  const permissionListRef = ref(null)
-
   /**
    * 初始化权限编码字典
    * @param options
@@ -40,6 +38,17 @@ export default () => {
         ElMessage?.error(res.msg)
       }
     })
+  }
+
+  /**
+   * 初始化响应式数据
+   * @param options
+   */
+  const initReactiveData = (permissionCodes: string[]) => {
+    btnResourceCodeSelect.value = true
+    configPermissionTitle.value = '菜单 页面接口配置'
+    configResourceCode.value = 'menu'
+    configPermissionCodes.value = permissionCodes
   }
   /**
    * 更改按钮权限编码触发
@@ -83,12 +92,11 @@ export default () => {
     configResourceCode.value = isBtnPermission ? permission.resourceCode ?? '' : 'menu'
     configPermissionCodes.value = permission.permissionCodes ?? []
     configPermissionTitle.value = !isBtnPermission
-      ? '菜单页面接口配置'
+      ? '菜单 页面接口配置'
       : `${permission.displayName || permission.resourceCode} 按钮权限接口配置`
   }
 
   return {
-    permissionListRef,
     btnResourceCodeSelect,
     configPermissionTitle,
     configResourceCode,
@@ -96,6 +104,7 @@ export default () => {
     restPermissions,
     initRestPermissions,
     initResourcePermissionCodeOptions,
+    initReactiveData,
     changeBtnResourceCode,
     changeBtnPermissionName,
     toggleBtnResourceCodeSelect,

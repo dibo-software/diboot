@@ -99,6 +99,7 @@ const {
   restPermissions,
   initRestPermissions,
   initResourcePermissionCodeOptions,
+  initReactiveData,
   changeBtnResourceCode,
   changeBtnPermissionName,
   toggleBtnResourceCodeSelect,
@@ -128,16 +129,23 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
     }
   }
 })
-
 // 监听
 // 菜单树切换变更
+const toggle = ref(true)
 watch(
   () => props.formValue,
   val => {
+    console.log(val)
     empty.value = false
     model.value = val
+    // 控制显示字段
     changeDisplayType(val.displayType as MenuType)
+    // 初始化按钮权限tab
     initTabs(val.permissionList ?? [])
+    // 初始化权限响应数据
+    initReactiveData(val.permissionCodes ?? [])
+    // 刷新配置
+    toggle.value = !toggle.value
     nextTick(computedFixedHeight)
   }
 )
@@ -322,9 +330,9 @@ watch(
       </el-col>
       <el-col :md="24" :lg="14" class="right-container">
         <permission-code-list
-          ref="permissionListRef"
           v-model:permission-codes="configPermissionCodes"
           :title="configPermissionTitle"
+          :toggle="toggle"
           :config-code="configResourceCode"
           :menu-resource-code="model.routeMeta.resourceCode"
           :rest-permissions="restPermissions"

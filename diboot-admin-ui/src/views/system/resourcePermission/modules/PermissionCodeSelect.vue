@@ -30,9 +30,9 @@ const openPermissionConfig = () => {
         <el-tag
           v-for="(permissionCode, idx) in modelValue"
           :key="`${type}_${idx}`"
-          @close="close(permissionCode)"
           type="success"
           closable
+          @close="close(permissionCode)"
         >
           {{ permissionCode }}
         </el-tag>

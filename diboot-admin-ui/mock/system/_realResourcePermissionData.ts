@@ -42,16 +42,7 @@ export default [
             sortId: '6',
             updateTime: '2022-05-19 01:18:33',
             routeMeta: {},
-            permissionCodes: [
-              'Dictionary:read',
-              'Dictionary:read',
-              'Dictionary',
-              'Dictionary:read',
-              'Dictionary:read',
-              'Dictionary:read',
-              'Dictionary:read',
-              'Dictionary:read'
-            ]
+            permissionCodes: ['Dictionary:detail']
           },
           {
             id: '10003',
@@ -66,7 +57,7 @@ export default [
             sortId: '5',
             updateTime: '2022-05-19 01:18:33',
             routeMeta: {},
-            permissionCodes: ['Dictionary:write']
+            permissionCodes: ['Dictionary:create']
           },
           {
             id: '10004',
@@ -81,7 +72,7 @@ export default [
             sortId: '4',
             updateTime: '2022-05-19 01:18:33',
             routeMeta: {},
-            permissionCodes: ['Dictionary:write', 'Dictionary:read']
+            permissionCodes: ['Dictionary:detail', 'Dictionary:update']
           },
           {
             id: '10005',
@@ -96,10 +87,10 @@ export default [
             sortId: '3',
             updateTime: '2022-05-19 01:18:33',
             routeMeta: {},
-            permissionCodes: ['Dictionary:write']
+            permissionCodes: ['Dictionary:delete']
           }
         ],
-        permissionCodes: ['Dictionary:read']
+        permissionCodes: ['Dictionary:list']
       },
       {
         id: '10006',

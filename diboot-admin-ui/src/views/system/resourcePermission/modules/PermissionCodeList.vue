@@ -6,11 +6,13 @@ import type { RestPermission, ApiUri, ApiPermission, SelectOption, FusePermissio
 import { getElementAbsoluteLocation } from '@/utils/document'
 type Props = {
   title: string
+  toggle: boolean
   configCode: string
   menuResourceCode?: string | unknown
   permissionCodes: string[]
   restPermissions?: Array<RestPermission>
 }
+// props
 const props = withDefaults(defineProps<Props>(), {
   restPermissions: () => []
 })
@@ -22,12 +24,13 @@ const { height, computedFixedHeight } = useScrollbarHeight({
   fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
   extraHeight: 30
 })
-console.log(height)
+// data
 const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
-let permissionCodeList = reactive<string[]>([])
 const searchVal = ref('')
 const reload = ref(true)
 const reloadKey = ref('reload_true')
+
+// 计算模糊搜索数据
 const computedFusePermissionDatas = computed(() => {
   const fusePermissionDatas: Array<FusePermission> = []
   props.restPermissions?.forEach((item: RestPermission) => {
@@ -54,25 +57,20 @@ const computedFusePermissionDatas = computed(() => {
   })
   return fusePermissionDatas
 })
-watch(
-  () => props.permissionCodes,
-  val => {
-    console.log(permissionCodeList)
-    console.log(props.configCode)
-    permissionCodeList = val
-  },
-  {
-    deep: true
-  }
-)
-watch([() => props.configCode, () => props.menuResourceCode], async () => {
+
+/**
+ * configCode、menuResourceCode、toggle变更触发滚动
+ */
+watch([() => props.configCode, () => props.menuResourceCode, () => props.toggle], async () => {
   goScrollIntoView(await getAnchor(), false)
+  _reload()
 })
 
 onMounted(() => {
   nextTick(computedFixedHeight)
 })
 
+// 模糊搜索
 let { search, results } = useVueFuse<SelectOption>(computedFusePermissionDatas, {
   // 是否按优先级进行排序
   shouldSort: true,
@@ -108,8 +106,8 @@ const emits = defineEmits<{
  */
 const getAnchor = async () => {
   let anchor = ''
-  if (permissionCodeList && permissionCodeList.length > 0) {
-    anchor = permissionCodeList[0]
+  if (props.permissionCodes && props.permissionCodes.length > 0) {
+    anchor = props.permissionCodes[0]
   } else {
     if (props.menuResourceCode) {
       handleRemoteMethod(props.menuResourceCode)
@@ -131,16 +129,11 @@ const handleRemoteMethod = (val: string | unknown) => {
 }
 // 更改权限code
 const handleChangePermissionCode = (code: string) => {
-  if (!permissionCodeList.includes(code)) {
-    permissionCodeList.push(code)
-  } else {
-    const temp = _.clone(permissionCodeList)
-    permissionCodeList.length = 0
-    permissionCodeList.push(...temp.filter((item: string) => item !== code))
-  }
-  reload.value = !reload.value
-  reloadKey.value = `reload_${reload.value}`
-  emits('update:permissionCodes', permissionCodeList)
+  let tempList = _.clone(props.permissionCodes)
+  if (!props.permissionCodes.includes(code)) tempList.push(code)
+  else tempList = tempList.filter((item: string) => item !== code)
+  _reload()
+  emits('update:permissionCodes', tempList)
 }
 /**
  * 搜索数据
@@ -160,14 +153,14 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
     permissionGroupsScrollbarRef.value?.setScrollTop(0)
   }
   // 权限列表容器高度
-  const permissionListGroupsElement = document.getElementById('permissionListGroups')
-  const permissionListGroupsElementLocation = getElementAbsoluteLocation(permissionListGroupsElement)
-  if (!permissionListGroupsElementLocation) return
+  const permissionGroupsElement = document.getElementById('permissionGroups')
+  const permissionGroupsElementLocation = getElementAbsoluteLocation(permissionGroupsElement)
+  if (!permissionGroupsElementLocation) return
   const element: HTMLElement | null = document.getElementById(value as string)
   const searchPermissionLocation = getElementAbsoluteLocation(element)
   if (!searchPermissionLocation) return
   permissionGroupsScrollbarRef.value?.setScrollTop(
-    searchPermissionLocation.absoluteTop - permissionListGroupsElementLocation.absoluteTop - 20
+    searchPermissionLocation.absoluteTop - permissionGroupsElementLocation.absoluteTop - 20
   )
   if (allowHighLight) {
     // 高亮数据
@@ -177,6 +170,11 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
       element?.classList.remove('light-high')
     }, 4000)
   }
+}
+// 刷新
+const _reload = () => {
+  reload.value = !reload.value
+  reloadKey.value = `reload_${reload.value}`
 }
 </script>
 <template>
@@ -203,52 +201,50 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
       </el-select>
     </div>
     <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
-      <div ref="permissionListGroupsRef" class="permission-list-groups">
-        <div id="permissionListGroups" :key="reloadKey">
-          <el-descriptions
-            v-for="(restPermission, index) in restPermissions"
-            :key="`rest-permission_${index}`"
-            class="permission-group"
-            :title="`${restPermission.name}（${restPermission.code}）`"
-            border
-            :column="1"
-            size="small"
+      <div id="permissionGroups" :key="reloadKey" class="permission-groups">
+        <el-descriptions
+          v-for="(restPermission, index) in restPermissions"
+          :key="`rest-permission_${index}`"
+          class="permission-group"
+          :title="`${restPermission.name}（${restPermission.code}）`"
+          border
+          :column="1"
+          size="small"
+        >
+          <el-descriptions-item
+            v-for="(apiPermission, indx) in restPermission.apiPermissionList"
+            :key="`api-permission_${indx}`"
           >
-            <el-descriptions-item
-              v-for="(apiPermission, indx) in restPermission.apiPermissionList"
-              :key="`api-permission_${indx}`"
-            >
-              <template #label>
+            <template #label>
+              <div
+                :id="apiPermission.code"
+                class="permission-group-code permission-group-text-overflow"
+                @click.stop.prevent="() => handleChangePermissionCode(apiPermission.code)"
+              >
+                <el-checkbox :checked="permissionCodes.includes(apiPermission.code)">
+                  <el-tooltip placement="top">
+                    <template #content> {{ apiPermission.code }} （{{ apiPermission.label }}） </template>
+                    <span>{{ apiPermission.code }}</span>
+                  </el-tooltip>
+                </el-checkbox>
+              </div>
+            </template>
+            <template v-if="apiPermission.apiUriList && apiPermission.apiUriList.length > 0">
+              <div @click.stop.prevent="handleChangePermissionCode(apiPermission.code)">
                 <div
-                  :id="apiPermission.code"
-                  class="permission-group-code permission-group-text-overflow"
-                  @click.stop.prevent="() => handleChangePermissionCode(apiPermission.code)"
+                  v-for="(apiUri, idx) in apiPermission.apiUriList"
+                  :key="`${apiPermission.code}_api-uri-${idx}`"
+                  class="permission-group-api permission-group-text-overflow"
                 >
-                  <el-checkbox :checked="permissionCodeList.includes(apiPermission.code)">
-                    <el-tooltip placement="top">
-                      <template #content> {{ apiPermission.code }} （{{ apiPermission.label }}） </template>
-                      <span>{{ apiPermission.code }}</span>
-                    </el-tooltip>
-                  </el-checkbox>
+                  <el-tooltip placement="top">
+                    <template #content> {{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}） </template>
+                    <span>{{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}）</span>
+                  </el-tooltip>
                 </div>
-              </template>
-              <template v-if="apiPermission.apiUriList && apiPermission.apiUriList.length > 0">
-                <div @click.stop.prevent="handleChangePermissionCode(apiPermission.code)">
-                  <div
-                    v-for="(apiUri, idx) in apiPermission.apiUriList"
-                    :key="`${apiPermission.code}_api-uri-${idx}`"
-                    class="permission-group-api permission-group-text-overflow"
-                  >
-                    <el-tooltip placement="top">
-                      <template #content> {{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}） </template>
-                      <span>{{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}）</span>
-                    </el-tooltip>
-                  </div>
-                </div>
-              </template>
-            </el-descriptions-item>
-          </el-descriptions>
-        </div>
+              </div>
+            </template>
+          </el-descriptions-item>
+        </el-descriptions>
       </div>
     </el-scrollbar>
   </div>
@@ -259,7 +255,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
   .permission-list-header {
     margin-bottom: 10px;
   }
-  .permission-list-groups {
+  .permission-groups {
     &__head {
       margin-bottom: 10px;
       font-weight: bold;
