@@ -1,37 +1,39 @@
--- 文件记录
-CREATE TABLE ${SCHEMA}.file_record
-(
-    uuid          VARCHAR(32) NOT NULL primary key,
-    tenant_id     BIGINT DEFAULT 0 NOT NULL,
-    app_module    VARCHAR(50),
-    md5           VARCHAR(32),
-    file_name     VARCHAR(100) NOT NULL,
-    file_type     VARCHAR(20),
-    file_size     BIGINT NOT NULL,
-    storage_path  VARCHAR(200) NOT NULL,
-    access_url    VARCHAR(200),
-    thumbnail_url VARCHAR(200),
-    description   VARCHAR(100),
-    is_deleted    BIT DEFAULT 0 not null,
-    create_by     BIGINT DEFAULT 0,
-    create_time   timestamp DEFAULT CURRENT_TIMESTAMP not null
+-- 上传文件表
+CREATE TABLE ${SCHEMA}.upload_file (
+   uuid VARCHAR(32) NOT NULL,
+   tenant_id          BIGINT           default 0  not null,
+   app_module          VARCHAR(50),
+   rel_obj_type VARCHAR(50),
+   rel_obj_id VARCHAR(32),
+   rel_obj_field VARCHAR(50),
+   file_name VARCHAR(100) NOT NULL,
+   storage_path VARCHAR(200) NOT NULL,
+   access_url VARCHAR(200),
+   file_type VARCHAR(20),
+   data_count INT   DEFAULT 0 not null,
+   description VARCHAR(100),
+   is_deleted BIT   DEFAULT 0 not null,
+   create_by BIGINT   default 0 ,
+   create_time timestamp   default CURRENT_TIMESTAMP not null,
+   constraint PK_upload_file primary key (uuid)
 );
--- 添加备注
-comment on column ${SCHEMA}.file_record.uuid is 'UUID';
-comment on column ${SCHEMA}.file_record.tenant_id is '租户ID';
-comment on column ${SCHEMA}.file_record.app_module is '应用模块';
-comment on column ${SCHEMA}.file_record.md5 is 'MD5标识';
-comment on column ${SCHEMA}.file_record.file_name is '文件名';
-comment on column ${SCHEMA}.file_record.file_type is '文件类型';
-comment on column ${SCHEMA}.file_record.file_size is '文件大小';
-comment on column ${SCHEMA}.file_record.storage_path is '存储路径';
-comment on column ${SCHEMA}.file_record.access_url is '访问地址';
-comment on column ${SCHEMA}.file_record.thumbnail_url is '缩略图地址';
-comment on column ${SCHEMA}.file_record.description is '备注';
-comment on column ${SCHEMA}.file_record.is_deleted is '删除标记';
-comment on column ${SCHEMA}.file_record.create_by is '创建人';
-comment on column ${SCHEMA}.file_record.create_time is '创建时间';
-comment on table ${SCHEMA}.file_record is '文件记录';
+-- 添加备注,
+comment on column ${SCHEMA}.upload_file.uuid is 'UUID';
+comment on column ${SCHEMA}.upload_file.tenant_id is '租户ID';
+comment on column ${SCHEMA}.upload_file.app_module is '应用模块';
+comment on column ${SCHEMA}.upload_file.rel_obj_type is '关联对象类';
+comment on column ${SCHEMA}.upload_file.rel_obj_id is '关联对象ID';
+comment on column ${SCHEMA}.upload_file.rel_obj_field is '关联对象属性名称';
+comment on column ${SCHEMA}.upload_file.file_name is '文件名';
+comment on column ${SCHEMA}.upload_file.storage_path is '存储路径';
+comment on column ${SCHEMA}.upload_file.access_url is '访问地址';
+comment on column ${SCHEMA}.upload_file.file_type is '文件类型';
+comment on column ${SCHEMA}.upload_file.data_count is '数据量';
+comment on column ${SCHEMA}.upload_file.description is '备注';
+comment on column ${SCHEMA}.upload_file.is_deleted is '删除标记';
+comment on column ${SCHEMA}.upload_file.create_by is '创建人';
+comment on column ${SCHEMA}.upload_file.create_time is '创建时间';
+comment on table ${SCHEMA}.upload_file is '上传文件';
 -- 索引
-create index idx_file_record_md5 on ${SCHEMA}.file_record (md5);
-create index idx_file_record_tenant on ${SCHEMA}.file_record (tenant_id);
+create index idx_upload_file on upload_file (rel_obj_type, rel_obj_id, rel_obj_field);
+create index idx_upload_file_tenant on upload_file (tenant_id);
