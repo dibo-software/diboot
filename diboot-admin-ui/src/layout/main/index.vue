@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DefineComponent } from 'vue'
 import useAppStore from '@/store/app'
 import useViewTabsStore from '@/store/viewTabs'
 
@@ -9,65 +8,28 @@ const tabsHeight = computed(() => (appStore.enableTabs ? 36 : 0))
 
 const props = defineProps<{ fullScreen?: boolean | 'Tabs' }>()
 
-// 滚动区域高度 style
-const scrollHeightStyle = computed(() => {
-  return {
-    height: props.fullScreen
-      ? appStore.enableTabs && props.fullScreen === true
-        ? '100vh'
-        : 'calc(100vh - 36px)'
-      : appStore.enableTabs
-      ? 'calc(100vh - 86px)'
-      : 'calc(100vh - 50px)'
-  }
-})
-const route = useRoute()
 // 布局已用高度
-const layoutUsedHeight = computed(
-  () =>
-    //       是否全屏                                      (全屏包含 Tabs )  (未开启全屏 header + tabs)
-    (props.fullScreen ? (props.fullScreen === true ? 0 : tabsHeight.value) : 50 + tabsHeight.value) +
-    //   padding
-    (route.meta.borderless ? 0 : 20)
+const layoutUsedHeight = computed(() =>
+  //       是否全屏                                      (全屏包含 Tabs )  (未开启全屏 header + tabs)
+  props.fullScreen ? (props.fullScreen === true ? 0 : tabsHeight.value) : 50 + tabsHeight.value
 )
-// 为需要已占可视高度的组件bind usedVisibleHeight
-const bindUsedVisibleHeight = (component: DefineComponent) => {
-  if (Object.keys(component.type?.props ?? {}).includes('usedVisibleHeight'))
-    //                                 布局已用高度    +  bounded-padding
-    return { usedVisibleHeight: layoutUsedHeight.value + (route.meta.hollow ? 0 : 20) }
-  else return {}
-}
 
 const viewTabsStore = useViewTabsStore()
 </script>
 
 <template>
-  <el-scrollbar :style="scrollHeightStyle">
-    <div class="content" :style="route.meta.borderless ? {} : { padding: '10px' }">
-      <div :class="route.meta.hollow ? 'hollow' : 'bounded'">
-        <router-view v-slot="{ Component }">
-          <keep-alive :include="viewTabsStore.cachedViews">
-            <component :is="Component" v-bind="bindUsedVisibleHeight(Component)" />
-          </keep-alive>
-        </router-view>
-      </div>
-    </div>
-  </el-scrollbar>
+  <div class="content">
+    <router-view v-slot="{ Component }">
+      <keep-alive :include="viewTabsStore.cachedViews">
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .content {
-  background-color: var(--el-fill-color-light);
-
-  .hollow {
-    min-height: calc(100vh - v-bind('layoutUsedHeight + "px"'));
-  }
-
-  .bounded {
-    padding: 10px 15px;
-    background-color: var(--el-bg-color);
-    border-radius: 5px;
-    min-height: calc(100vh - 20px - v-bind('layoutUsedHeight + "px"'));
-  }
+  height: calc(100vh - v-bind('layoutUsedHeight + "px"'));
+  background-color: var(--el-bg-color);
 }
 </style>

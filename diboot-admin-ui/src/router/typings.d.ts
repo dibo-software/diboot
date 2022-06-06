@@ -13,9 +13,6 @@ declare module 'vue-router' {
     affixTab?: boolean
     ignoreAuth?: boolean
     keepAlive?: boolean
-    hidden?: boolean
-    hollow?: boolean
-    borderless?: boolean
     openNewWindow?: boolean
     hideBreadcrumb?: boolean
   }

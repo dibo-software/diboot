@@ -30,13 +30,12 @@ export const buildViewMap = async () => {
 }
 
 // 动态渲染组件
-const renderComponent = (callback: (usedVisibleHeight: Ref<number>, cachedViews: string[]) => VNode) =>
+const renderComponent = (callback: (cachedViews: string[]) => VNode) =>
   defineComponent({
     name: 'ParentView',
-    props: { usedVisibleHeight: { type: Number, default: 0 } },
-    setup: props => {
+    setup() {
       const viewTabs = useViewTabs()
-      return () => callback(toRefs(props).usedVisibleHeight, viewTabs.cachedViews)
+      return () => callback(viewTabs.cachedViews)
     }
   })
 
@@ -78,9 +77,9 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           route.component = Layout
         } else {
           // 视图嵌套
-          route.component = renderComponent((usedVisibleHeight, cachedViews) =>
+          route.component = renderComponent(cachedViews =>
             h(RouterView, ({ Component }: { Component: DefineComponent }) =>
-              h(KeepAlive, { include: cachedViews }, h(Component, { usedVisibleHeight: usedVisibleHeight.value }))
+              h(KeepAlive, { include: cachedViews }, Component)
             )
           )
         }
@@ -93,11 +92,8 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
         } else if (route.meta?.url) {
           if (route.meta?.iframe) {
             // iframe
-            route.component = renderComponent(usedVisibleHeight =>
-              h('iframe', {
-                src: route.meta?.url,
-                style: { border: 0, width: '100%', height: `calc(100vh - ${usedVisibleHeight.value + 4}px)` }
-              })
+            route.component = renderComponent(() =>
+              h('iframe', { src: route.meta?.url, style: { border: 0, width: '100%', height: `calc(100% - 3px)` } })
             )
             route.meta = { ...route.meta, hollow: true, hideFooter: true, borderless: true }
           } else {

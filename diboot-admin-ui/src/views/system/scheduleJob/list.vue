@@ -33,64 +33,75 @@ const openLog = (id: string) => {
 </script>
 
 <template>
-  <el-row v-loading="loading" :gutter="10">
-    <el-col v-for="item in dataList" :key="item.id" :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
-      <el-card shadow="hover">
-        <el-descriptions :column="1" :title="item.jobName" style="zoom: 0.85">
-          <el-descriptions-item label="执行类">
-            {{ item.jobKey }}
-          </el-descriptions-item>
-          <el-descriptions-item label="定时规则">
-            {{ item.cron }}
-          </el-descriptions-item>
-          <el-descriptions-item label="执行策略">
-            {{ item.initStrategyLabel }}
-          </el-descriptions-item>
-          <el-descriptions-item label="日志状态">
-            <el-tag v-if="item.saveLog"> 启用</el-tag>
+  <el-scrollbar class="content">
+    <el-row v-loading="loading">
+      <el-col v-for="item in dataList" :key="item.id" :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
+        <el-card shadow="hover">
+          <el-descriptions :column="1" :title="item.jobName" style="zoom: 0.85">
+            <el-descriptions-item label="执行类">
+              {{ item.jobKey }}
+            </el-descriptions-item>
+            <el-descriptions-item label="定时规则">
+              {{ item.cron }}
+            </el-descriptions-item>
+            <el-descriptions-item label="执行策略">
+              {{ item.initStrategyLabel }}
+            </el-descriptions-item>
+            <el-descriptions-item label="日志状态">
+              <el-tag v-if="item.saveLog"> 启用</el-tag>
+              <el-tag v-else type="info"> 停用</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+          <div class="bottom">
+            <el-tag v-if="item.jobStatus"> 准备就绪</el-tag>
             <el-tag v-else type="info"> 停用</el-tag>
-          </el-descriptions-item>
-        </el-descriptions>
-        <div class="bottom">
-          <el-tag v-if="item.jobStatus"> 准备就绪</el-tag>
-          <el-tag v-else type="info"> 停用</el-tag>
 
-          <el-popconfirm title="确认立即执行一次吗?" @confirm="executeOnce(item.id)">
-            <template #reference>
-              <el-button circle :icon="CaretRight" type="primary" style="margin-left: auto" />
-            </template>
-          </el-popconfirm>
+            <el-popconfirm title="确认立即执行一次吗?" @confirm="executeOnce(item.id)">
+              <template #reference>
+                <el-button circle :icon="CaretRight" type="primary" style="margin-left: auto" />
+              </template>
+            </el-popconfirm>
 
-          <el-dropdown :hide-on-click="false" style="margin-left: 10px">
-            <el-button circle :icon="More" type="primary" plain />
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="openForm(item.id)">编辑</el-dropdown-item>
-                <el-dropdown-item @click="openLog(item.id)">日志</el-dropdown-item>
-                <el-dropdown-item divided @click="remove(item.id)"> 删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
-      <el-card shadow="hover" class="add" @click="openForm()">
-        <el-icon :size="25">
-          <Plus />
-        </el-icon>
-        <p>添加任务</p>
-      </el-card>
-    </el-col>
-  </el-row>
+            <el-dropdown :hide-on-click="false" style="margin-left: 10px">
+              <el-button circle :icon="More" type="primary" plain />
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="openForm(item.id)">编辑</el-dropdown-item>
+                  <el-dropdown-item @click="openLog(item.id)">日志</el-dropdown-item>
+                  <el-dropdown-item divided @click="remove(item.id)"> 删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
+        <el-card shadow="hover" class="add" @click="openForm()">
+          <el-icon :size="25">
+            <Plus />
+          </el-icon>
+          <p>添加任务</p>
+        </el-card>
+      </el-col>
+    </el-row>
 
-  <Form ref="formRef" @complete="getList" />
-  <log-list ref="logListRef" />
+    <Form ref="formRef" @complete="getList" />
+    <log-list ref="logListRef" />
+  </el-scrollbar>
 </template>
 
 <style scoped lang="scss">
-.el-col {
-  padding-bottom: 10px;
+.content {
+  height: 100%;
+  background-color: var(--el-fill-color-light);
+
+  .el-row {
+    margin: 0 !important;
+
+    .el-col {
+      padding: 6px;
+    }
+  }
 }
 
 .bottom {

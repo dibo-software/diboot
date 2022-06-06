@@ -27,12 +27,12 @@ const toggleState = () => emits('update:collapse', !props.collapse)
     <span v-show="!collapse">
       <slot name="title" />
     </span>
-    <el-scrollbar :height="collapse && $slots.title ? 'calc(100vh - 36px)' : 'calc(100vh - 86px)'">
+    <el-scrollbar :height="collapse && $slots.title ? 'calc(100vh - 39px)' : 'calc(100vh - 89px)'">
       <el-menu
         router
         :default-active="$route.path"
         :collapse="collapse"
-        :style="{ minHeight: collapse && $slots.title ? 'calc(100vh - 36px)' : 'calc(100vh - 86px)' }"
+        :style="{ minHeight: collapse && $slots.title ? 'calc(100vh - 39px)' : 'calc(100vh - 89px)' }"
       >
         <sub-menu :menu-tree="menuTree" />
       </el-menu>
@@ -48,12 +48,13 @@ const toggleState = () => emits('update:collapse', !props.collapse)
 
 <style scoped lang="scss">
 .collapse {
-  height: 35px;
+  height: 39px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border-top: 1px solid var(--el-border-color-lighter);
+  border-right: 1px solid var(--el-border-color-lighter);
 
   &:hover {
     color: var(--el-color-primary);
