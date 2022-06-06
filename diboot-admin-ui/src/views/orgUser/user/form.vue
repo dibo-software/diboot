@@ -4,6 +4,8 @@ import type { UserModel } from './type'
 import { defineEmits } from 'vue'
 import useTree from '@/views/system/resourcePermission/hooks/tree'
 import { OrgModel } from '@/views/orgUser/org/type'
+import popoverListSelector from './popoverListSelector.vue'
+import PopoverListSelector from '@/views/orgUser/user/popoverListSelector.vue'
 
 const baseApi = '/user'
 
@@ -27,6 +29,13 @@ defineExpose({
     title.value = id ? '更新用户信息' : '新建用户'
     visible.value = true
     await loadData(id)
+    // 判定是否属于系统用户
+    if (!id) {
+      model.value.isSysAccount = false
+    } else {
+      model.value.isSysAccount = !!model.value.username
+    }
+    // 加载树结构数据
     await getTree()
   }
 })
@@ -50,6 +59,9 @@ const { confirmSubmit, submit } = useFormDefault({
 })
 
 const rules: FormRules = {
+  orgId: { required: true, message: '不能为空', whitespace: true },
+  username: { required: true, message: '不能为空', whitespace: true },
+  password: { required: true, message: '不能为空', whitespace: true },
   realname: { required: true, message: '不能为空', whitespace: true },
   userNum: { required: true, message: '不能为空', whitespace: true },
   gender: { required: true, message: '不能为空', whitespace: true },
@@ -60,25 +72,49 @@ const rules: FormRules = {
 <template>
   <el-dialog v-model="visible" :title="title">
     <el-form ref="formRef" v-loading="loading" :model="model" :rules="rules" label-width="80px">
-      <el-form-item prop="orgId" label="所属部门">
-        <el-tree-select
-          v-model="model.orgId"
-          class="tree-selector"
-          :data="treeDataList"
-          :props="{ label: 'shortName', value: 'id' }"
-          :default-expand-all="true"
-          :check-strictly="true"
-        />
-      </el-form-item>
+      <el-row :gutter="18">
+        <el-col :md="12" :sm="24">
+          <el-form-item :required="true" prop="isSysAccount" label="用户类型">
+            <el-radio-group v-model="model.isSysAccount">
+              <el-radio-button :label="false">普通用户</el-radio-button>
+              <el-radio-button :label="true">系统用户</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="orgId" label="所属部门">
+            <el-tree-select
+              v-model="model.orgId"
+              class="tree-selector"
+              :data="treeDataList"
+              :props="{ label: 'shortName', value: 'id' }"
+              :default-expand-all="true"
+              :check-strictly="true"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row v-if="model.isSysAccount" :gutter="18">
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="username" label="用户名">
+            <el-input v-model="model.username" placeholder="请输入用户名" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="password" label="密码">
+            <el-input v-model="model.password" placeholder="请输入密码" />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row :gutter="18">
         <el-col :md="12" :sm="24">
           <el-form-item prop="realname" label="姓名">
-            <el-input v-model="model.realname" />
+            <el-input v-model="model.realname" placeholder="请输入姓名" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="userNum" label="编号">
-            <el-input v-model="model.userNum" />
+            <el-input v-model="model.userNum" placeholder="请输入编号" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
@@ -91,17 +127,22 @@ const rules: FormRules = {
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="birthday" label="生日">
-            <el-input v-model="model.birthday" />
+            <el-input v-model="model.birthday" placeholder="请输入编号" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="mobilePhone" label="电话">
-            <el-input v-model="model.mobilePhone" />
+            <el-input v-model="model.mobilePhone" placeholder="请输入电话" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="email" label="邮箱">
-            <el-input v-model="model.email" />
+            <el-input v-model="model.email" placeholder="请输入邮箱" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="roles" label="角色">
+            <popover-list-selector v-model="model.roleIds" :multi="true" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">

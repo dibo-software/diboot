@@ -2,7 +2,7 @@ export interface UserModel {
   id?: string
   orgId: string
   username?: string
-  roleIdList?: string[]
+  roleIds?: string
   isSysAccount?: boolean
   userType?: string
   password?: string
