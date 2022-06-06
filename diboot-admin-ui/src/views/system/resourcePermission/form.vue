@@ -10,8 +10,6 @@ import useDisplayControl from './hooks/displayControl'
 import usePermissionControl from './hooks/permissionControl'
 import useScrollbarHeight from './hooks/scrollbarHeight'
 import type { MenuType } from './hooks/displayControl'
-let permissionCodes = reactive<string[]>([])
-const showPermission = ref(false)
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -27,14 +25,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
-const handleChangePermissionCodes = (paramPermissionCodes: string[]) => {
-  permissionCodes = paramPermissionCodes
-  // if (currentConfigCode.value === 'Menu') {
-  //   permissionCodes = paramPermissionCodes
-  // } else {
-  //   // permissionList[currentPermissionActiveKey.value].permissionCodes = paramPermissionCodes
-  // }
-}
+
 // ======> 响应式数据
 const empty = ref(true)
 
