@@ -7,7 +7,7 @@ import type { ResourcePermission } from '../type'
 const treeProps = {
   label: 'displayName'
 }
-const visibleHeight = inject<number>('visibleHeight')
+const boxHeight = inject<number>('boxHeight', 0)
 const emit = defineEmits<{
   (e: 'click-node', resourcePermission: ResourcePermission): void
 }>()
@@ -32,9 +32,9 @@ const {
   }
 })
 const { height, computedFixedHeight } = useScrollbarHeight({
+  boxHeight,
   fixedBoxSelectors: ['.tree-container>.el-space__item:first-child'],
-  visibleHeight,
-  extraHeight: 10
+  extraHeight: 20
 })
 // 初始化tree数据
 getTree().then(() => {
@@ -108,6 +108,7 @@ const addChildNode = (parentId: string) => {
 
 <style scoped lang="scss">
 .tree-container {
+  padding: 10px 0 10px 5px;
   .tree-header {
     &__search {
       margin-top: 5px;
@@ -119,7 +120,6 @@ const addChildNode = (parentId: string) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-right: 10px;
   font-size: var(--el-font-size-base);
   &:hover {
     .plus-icon {

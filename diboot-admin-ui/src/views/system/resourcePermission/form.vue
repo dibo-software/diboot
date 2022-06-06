@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import PermissionList from './permissionList/index.vue'
 import RouteSelect from './modules/RouteSelect.vue'
 import PermissionCodeSelect from './modules/PermissionCodeSelect.vue'
 import PermissionCodeList from './modules/PermissionCodeList.vue'
@@ -56,7 +55,7 @@ const NEW_PERMISSION_ITEM: ResourcePermission = {
 }
 // ======> props
 const props = defineProps<{ formValue: Partial<ResourcePermission> }>()
-const visibleHeight = inject<number>('visibleHeight')
+const boxHeight = inject<number>('boxHeight', 0)
 // ======> 本地方法
 // 切换菜单类型
 const handleChangeDisplayType = (val: string | number | boolean) => {
@@ -84,9 +83,9 @@ const existPermissionCodes = computed(() => {
 // ======> hook相关
 // 滚动高度计算hook
 const { height, computedFixedHeight } = useScrollbarHeight({
+  boxHeight,
   fixedBoxSelectors: ['.form-space-container>.el-space__item:first-child', '.btn-fixed'],
-  visibleHeight,
-  extraHeight: 15
+  extraHeight: 20
 })
 // 菜单类型切换控制字段
 const { displayFields, changeDisplayType } = useDisplayControl()
@@ -342,7 +341,6 @@ watch(
 .form-container {
   position: relative;
   height: 100%;
-  padding: 0 10px;
   .context-body {
     width: 100%;
   }
@@ -361,8 +359,8 @@ watch(
 }
 
 .left-container {
+  padding: 10px !important;
   border-right: 1px solid var(--el-color-info-light-9);
-  padding-right: 15px !important;
   .el-space {
     width: 100%;
   }
@@ -370,6 +368,9 @@ watch(
     padding: 0;
     width: auto;
   }
+}
+.right-container {
+  padding: 10px !important;
 }
 .btn-config-container {
   width: 100%;

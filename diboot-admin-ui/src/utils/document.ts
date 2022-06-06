@@ -11,7 +11,7 @@ export const getWindowHeight = () =>
  * 获取元素高度
  */
 export const getElementHeight = (selector: string) => {
-  return document.querySelector(selector)?.clientHeight || 0
+  return document.querySelector(selector)?.clientHeight ?? 0
 }
 /**
  * 获取元素绝对位置

@@ -14,18 +14,20 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   restPermissions: () => []
 })
-const visibleHeight = inject<number>('visibleHeight')
+const boxHeight = inject<number>('boxHeight', 0)
 // hooks
 // 滚动高度计算hook
 const { height, computedFixedHeight } = useScrollbarHeight({
+  boxHeight,
   fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
-  visibleHeight,
   extraHeight: 30
 })
+console.log(height)
 const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 let permissionCodeList = reactive<string[]>([])
 const searchVal = ref('')
-const reload = ref(1)
+const reload = ref(true)
+const reloadKey = ref('reload_true')
 const computedFusePermissionDatas = computed(() => {
   const fusePermissionDatas: Array<FusePermission> = []
   props.restPermissions?.forEach((item: RestPermission) => {
@@ -136,7 +138,8 @@ const handleChangePermissionCode = (code: string) => {
     permissionCodeList.length = 0
     permissionCodeList.push(...temp.filter((item: string) => item !== code))
   }
-  reload.value = reload.value++
+  reload.value = !reload.value
+  reloadKey.value = `reload_${reload.value}`
   emits('update:permissionCodes', permissionCodeList)
 }
 /**
@@ -201,7 +204,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
     </div>
     <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
       <div ref="permissionListGroupsRef" class="permission-list-groups">
-        <div id="permissionListGroups" :key="reload">
+        <div id="permissionListGroups" :key="reloadKey">
           <el-descriptions
             v-for="(restPermission, index) in restPermissions"
             :key="`rest-permission_${index}`"

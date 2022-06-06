@@ -2,15 +2,19 @@
 import ResourcePermissionForm from './form.vue'
 import MenuTree from './modules/MenuTree.vue'
 import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import { getElementHeight } from '@/utils/document'
+import { Ref } from 'vue'
 
-// 接收可视高度
-const props = defineProps<{ usedVisibleHeight?: number }>()
 const formValue = ref<Partial<ResourcePermission>>({})
 const clickNode = (node: ResourcePermission) => {
   formValue.value = node
 }
-// 多层组件传递 visibleHeight
-provide<number>('visibleHeight', props.usedVisibleHeight ?? 0)
+const boxHeight = ref(0)
+nextTick(() => {
+  boxHeight.value = getElementHeight('.menu-permission-container')
+})
+// 多层组件传递 boxHeight
+provide<Ref<number>>('boxHeight', boxHeight)
 </script>
 <template>
   <el-container class="menu-permission-container">
@@ -24,7 +28,7 @@ provide<number>('visibleHeight', props.usedVisibleHeight ?? 0)
 </template>
 <style scoped lang="scss">
 .menu-permission-container {
-  height: calc(100vh - v-bind('usedVisibleHeight + "px"'));
+  height: 100%;
 }
 .menu-aside-container {
   border-right: 1px solid var(--el-color-info-light-9);
