@@ -79,13 +79,12 @@ export default () => {
    * @param resourceCode
    * @param permission
    */
-  const clickConfigPermission = (resourceCode: string, permission: ResourcePermission) => {
-    configResourceCode.value = resourceCode
+  const clickConfigPermission = (permission: ResourcePermission, isBtnPermission = true) => {
+    configResourceCode.value = isBtnPermission ? permission.resourceCode ?? '' : 'menu'
     configPermissionCodes.value = permission.permissionCodes ?? []
-    configPermissionTitle.value =
-      resourceCode === 'menu'
-        ? '菜单页面接口配置'
-        : `${permission.displayName || permission.resourceCode} 按钮权限接口配置`
+    configPermissionTitle.value = !isBtnPermission
+      ? '菜单页面接口配置'
+      : `${permission.displayName || permission.resourceCode} 按钮权限接口配置`
   }
 
   return {

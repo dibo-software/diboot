@@ -1,15 +1,13 @@
 <script lang="ts" setup>
-import PermissionGroup from './PermissionGroup.vue'
 import useScrollbarHeight from '../hooks/scrollbarHeight'
 import { useVueFuse } from 'vue-fuse'
-import { Ref } from 'vue'
 import { ElScrollbar } from 'element-plus'
-import type { RestPermission, ResourcePermission, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
+import type { RestPermission, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
 import { getElementAbsoluteLocation } from '@/utils/document'
 type Props = {
   title: string
   configCode: string
-  menuResourceCode?: string
+  menuResourceCode?: string | unknown
   permissionCodes: string[]
   restPermissions?: Array<RestPermission>
 }
@@ -27,6 +25,7 @@ const { height, computedFixedHeight } = useScrollbarHeight({
 const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 let permissionCodeList = reactive<string[]>([])
 const searchVal = ref('')
+const reload = ref(1)
 const computedFusePermissionDatas = computed(() => {
   const fusePermissionDatas: Array<FusePermission> = []
   props.restPermissions?.forEach((item: RestPermission) => {
@@ -56,16 +55,19 @@ const computedFusePermissionDatas = computed(() => {
 watch(
   () => props.permissionCodes,
   val => {
+    console.log(permissionCodeList)
+    console.log(props.configCode)
     permissionCodeList = val
+  },
+  {
+    deep: true
   }
 )
-watch([() => props.configCode, () => props.menuResourceCode], () => {
-  goScrollIntoView(getAnchor())
+watch([() => props.configCode, () => props.menuResourceCode], async () => {
+  goScrollIntoView(await getAnchor(), false)
 })
 
 onMounted(() => {
-  permissionCodeList = props.permissionCodes
-
   nextTick(computedFixedHeight)
 })
 
@@ -100,61 +102,61 @@ const emits = defineEmits<{
   (e: 'update:permissionCodes', permissionCodes: string[]): void
 }>()
 /**
- * 更改权限码（添加或删除）
- * @param type
- * @param code
+ * 获取跳转锚点
  */
-const changePermissionCode = (type: string, code: string) => {
-  if (type === 'add') {
-    permissionCodeList.push(code)
-  } else {
-    permissionCodeList.length = 0
-    permissionCodeList.push(...permissionCodeList.filter((item: string) => item !== code))
-  }
-  emits('update:permissionCodes', permissionCodeList)
-}
-/**
- * 搜索
- * @param value
- */
-const searchChange = (value: string) => {
-  if (value && value.includes('#')) {
-    const id = value.split('#')[0]
-    goScrollIntoView(id)
-    const idElement: HTMLElement | null = document.getElementById(id)
-    idElement?.classList.add('light-high')
-    const time = setTimeout(() => {
-      clearTimeout(time)
-      idElement?.classList.remove('light-high')
-    }, 4000)
-  } else {
-    goScrollIntoView()
-  }
-}
-
-const getAnchor = () => {
+const getAnchor = async () => {
   let anchor = ''
   if (permissionCodeList && permissionCodeList.length > 0) {
     anchor = permissionCodeList[0]
   } else {
     if (props.menuResourceCode) {
-      search = toRef(props, 'menuResourceCode') as Ref<string>
+      handleRemoteMethod(props.menuResourceCode)
+      await nextTick()
       if (results.value && results.value.length > 0) {
         anchor = results.value[0].permissionCode
+        // 清空搜索数据
+        handleRemoteMethod('')
       }
     }
   }
   return anchor
 }
+
+// 本地方法
+// 远程调用方法
+const handleRemoteMethod = (val: string | unknown) => {
+  search.value = val as string
+}
+// 更改权限code
+const handleChangePermissionCode = (code: string) => {
+  if (!permissionCodeList.includes(code)) {
+    permissionCodeList.push(code)
+  } else {
+    const temp = _.clone(permissionCodeList)
+    permissionCodeList.length = 0
+    permissionCodeList.push(...temp.filter((item: string) => item !== code))
+  }
+  reload.value = reload.value++
+  emits('update:permissionCodes', permissionCodeList)
+}
+/**
+ * 搜索数据
+ * @param value
+ */
+const handleSearchChange = (value: string) => {
+  const id = value && value.includes('#') ? value.split('#')[0] : undefined
+  goScrollIntoView(id)
+}
 /**
  * 前往指定搜索的指定view
  * @param value
  */
-const goScrollIntoView = async (value?: string) => {
+const goScrollIntoView = async (value?: string, allowHighLight = true) => {
   await nextTick()
   if (!value) {
     permissionGroupsScrollbarRef.value?.setScrollTop(0)
   }
+  // 权限列表容器高度
   const permissionListGroupsElement = document.getElementById('permissionListGroups')
   const permissionListGroupsElementLocation = getElementAbsoluteLocation(permissionListGroupsElement)
   if (!permissionListGroupsElementLocation) return
@@ -164,10 +166,14 @@ const goScrollIntoView = async (value?: string) => {
   permissionGroupsScrollbarRef.value?.setScrollTop(
     searchPermissionLocation.absoluteTop - permissionListGroupsElementLocation.absoluteTop - 20
   )
-}
-
-const handleRemoteMethod = (val: string) => {
-  search.value = val
+  if (allowHighLight) {
+    // 高亮数据
+    element?.classList.add('light-high')
+    const time = setTimeout(() => {
+      clearTimeout(time)
+      element?.classList.remove('light-high')
+    }, 4000)
+  }
 }
 </script>
 <template>
@@ -177,13 +183,13 @@ const handleRemoteMethod = (val: string) => {
         {{ title }}
       </div>
       <el-select
-        remote
         v-model="searchVal"
+        remote
         placeholder="搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索"
         filterable
         clearable
         :remote-method="handleRemoteMethod"
-        @change="searchChange"
+        @change="handleSearchChange"
       >
         <el-option
           v-for="(options, index) in results"
@@ -195,14 +201,50 @@ const handleRemoteMethod = (val: string) => {
     </div>
     <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
       <div ref="permissionListGroupsRef" class="permission-list-groups">
-        <div id="permissionListGroups">
-          <permission-group
+        <div id="permissionListGroups" :key="reload">
+          <el-descriptions
             v-for="(restPermission, index) in restPermissions"
             :key="`rest-permission_${index}`"
-            :permission-code-list="permissionCodeList"
-            :rest-permission="restPermission"
-            @change="changePermissionCode"
-          />
+            class="permission-group"
+            :title="`${restPermission.name}（${restPermission.code}）`"
+            border
+            :column="1"
+            size="small"
+          >
+            <el-descriptions-item
+              v-for="(apiPermission, indx) in restPermission.apiPermissionList"
+              :key="`api-permission_${indx}`"
+            >
+              <template #label>
+                <div
+                  :id="apiPermission.code"
+                  class="permission-group-code permission-group-text-overflow"
+                  @click.stop.prevent="() => handleChangePermissionCode(apiPermission.code)"
+                >
+                  <el-checkbox :checked="permissionCodeList.includes(apiPermission.code)">
+                    <el-tooltip placement="top">
+                      <template #content> {{ apiPermission.code }} （{{ apiPermission.label }}） </template>
+                      <span>{{ apiPermission.code }}</span>
+                    </el-tooltip>
+                  </el-checkbox>
+                </div>
+              </template>
+              <template v-if="apiPermission.apiUriList && apiPermission.apiUriList.length > 0">
+                <div @click.stop.prevent="handleChangePermissionCode(apiPermission.code)">
+                  <div
+                    v-for="(apiUri, idx) in apiPermission.apiUriList"
+                    :key="`${apiPermission.code}_api-uri-${idx}`"
+                    class="permission-group-api permission-group-text-overflow"
+                  >
+                    <el-tooltip placement="top">
+                      <template #content> {{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}） </template>
+                      <span>{{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}）</span>
+                    </el-tooltip>
+                  </div>
+                </div>
+              </template>
+            </el-descriptions-item>
+          </el-descriptions>
         </div>
       </div>
     </el-scrollbar>
@@ -218,6 +260,38 @@ const handleRemoteMethod = (val: string) => {
     &__head {
       margin-bottom: 10px;
       font-weight: bold;
+    }
+    .permission-group {
+      :deep(.el-descriptions__body) {
+        table {
+          table-layout: fixed;
+        }
+        .el-descriptions-item__content {
+          padding: 0;
+        }
+      }
+      &-text-overflow {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        .ant-checkbox-wrapper {
+          width: 100%;
+        }
+      }
+      .light-high {
+        background-color: var(--el-color-primary);
+        border-radius: 5px;
+        padding: 0 10px;
+        transition: 0.3s;
+      }
+      &-api {
+        border-bottom: 1px solid var(--el-border-color);
+        padding: 8px 16px;
+        &:last-child {
+          border-bottom: 0;
+        }
+      }
     }
   }
 }

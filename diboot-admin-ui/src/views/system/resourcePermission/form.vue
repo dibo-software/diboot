@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import PermissionList from './permissionList/index.vue'
 import RouteSelect from './modules/RouteSelect.vue'
-import PermissionCodeConfig from './modules/PermissionCodeConfig.vue'
+import PermissionCodeSelect from './modules/PermissionCodeSelect.vue'
+import PermissionCodeList from './modules/PermissionCodeList.vue'
 import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
@@ -10,6 +11,7 @@ import useDisplayControl from './hooks/displayControl'
 import usePermissionControl from './hooks/permissionControl'
 import useScrollbarHeight from './hooks/scrollbarHeight'
 import type { MenuType } from './hooks/displayControl'
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -69,7 +71,7 @@ const handleChangeTab = (name: string | number) => {
   if (model.value.permissionList) {
     const permission = model.value.permissionList[parseInt(`${name}`, 10)]
     // 切换按钮权限tab时自动切换权限配置
-    clickConfigPermission(permission.resourceCode as string, permission)
+    clickConfigPermission(permission)
   }
 }
 
@@ -123,6 +125,7 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
         tab.resourceCode = validOption.value
         tab.displayName = validOption.label
       }
+      configResourceCode.value = tab.resourceCode ?? ''
     }
   }
 })
@@ -174,7 +177,7 @@ watch(
           <el-scrollbar :height="height">
             <el-form ref="formRef" :model="model" :rules="rules" label-width="90px">
               <el-form-item label="上级目录" prop="parentId">
-                <el-input :modelValue="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
+                <el-input :model-value="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
               </el-form-item>
               <el-form-item label="分类" prop="displayType">
                 <el-radio-group v-model="model.displayType" @change="handleChangeDisplayType">
@@ -208,10 +211,10 @@ watch(
                 <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
               </el-form-item>
               <el-form-item label="菜单权限接口">
-                <permission-code-config
+                <permission-code-select
                   v-model="model.permissionCodes"
                   type="menu"
-                  @config="clickConfigPermission('menu', model)"
+                  @config="clickConfigPermission(model, false)"
                 />
               </el-form-item>
               <el-form-item label="状态">
@@ -304,10 +307,10 @@ watch(
                         />
                       </el-descriptions-item>
                       <el-descriptions-item label="按钮权限接口">
-                        <permission-code-config
+                        <permission-code-select
                           v-model="permission.permissionCodes"
                           type="permission"
-                          @config="clickConfigPermission('permission', permission)"
+                          @config="clickConfigPermission(permission)"
                         />
                       </el-descriptions-item>
                     </el-descriptions>
@@ -319,11 +322,12 @@ watch(
         </el-space>
       </el-col>
       <el-col :md="24" :lg="14" class="right-container">
-        <permission-list
+        <permission-code-list
           ref="permissionListRef"
-          :title="configPermissionTitle"
           v-model:permission-codes="configPermissionCodes"
+          :title="configPermissionTitle"
           :config-code="configResourceCode"
+          :menu-resource-code="model.routeMeta.resourceCode"
           :rest-permissions="restPermissions"
         />
       </el-col>
