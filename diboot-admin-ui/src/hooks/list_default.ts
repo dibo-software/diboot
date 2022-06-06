@@ -55,24 +55,24 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
   /**
    * 获取数据列表
    */
-  const getList = () => {
+  const getList = async () => {
     loading.value = true
-    api
-      .get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
-      .then(res => {
-        dataList.splice(0)
-        if (res.data) dataList.push(...(res.data ?? []))
-        pagination.pageSize = res.page?.pageSize
-        pagination.current = res.page?.pageIndex
-        pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
+    try {
+      const res = await api.get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
+      dataList.splice(0)
+      if (res.data) dataList.push(...(res.data ?? []))
+      pagination.pageSize = res.page?.pageSize
+      pagination.current = res.page?.pageIndex
+      pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
+    } catch (err) {
+      const errMsg: string = (err as any).msg || (err as any).message || err
+      ElNotification.error({
+        title: '获取列表数据失败',
+        message: errMsg
       })
-      .catch(err => {
-        ElNotification.error({
-          title: '获取列表数据失败',
-          message: err.msg || err.message
-        })
-      })
-      .finally(() => (loading.value = false))
+    } finally {
+      loading.value = false
+    }
   }
 
   /**
