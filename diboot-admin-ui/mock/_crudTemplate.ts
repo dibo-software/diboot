@@ -2,6 +2,7 @@ import { MockMethod } from 'vite-plugin-mock'
 import { JsonResult, ApiRequest } from './_util'
 import { Random } from 'mockjs'
 import moment from 'moment'
+import { dataList } from './system/role'
 
 /**
  * 选项
@@ -100,6 +101,19 @@ export default <T>(option: Option<T>) => {
           return option.enablePagination === false
             ? JsonResult.OK(list)
             : JsonResult.PAGINATION(query.pageIndex, query.pageSize, list)
+        }
+      },
+      listByIds: {
+        url: `${baseUrl}/listByIds`,
+        timeout: Random.natural(50, 300),
+        method: 'get',
+        response: ({ query }: any) => {
+          const { ids } = query
+          const idList = ids.split(',')
+          const validList = dataList.filter(item => {
+            return idList.includes(item[primaryKey])
+          })
+          return JsonResult.OK(validList)
         }
       },
       getById: {
