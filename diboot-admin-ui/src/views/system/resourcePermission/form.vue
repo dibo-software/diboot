@@ -64,9 +64,17 @@ const handleChangeDisplayType = (val: string | number | boolean) => {
 const handleAddTab = () => {
   addTab(_.cloneDeep(NEW_PERMISSION_ITEM))
 }
-// 权限配置
+// 切换tab
+const handleChangeTab = (name: string | number) => {
+  if (model.value.permissionList) {
+    const permission = model.value.permissionList[parseInt(name, 10)]
+    // 切换按钮权限tab时自动切换权限配置
+    clickConfigPermission(permission.resourceCode, permission)
+  }
+}
 
 // compute
+// 计算已经存在的tab权限码
 const existPermissionCodes = computed(() => {
   if (!tabs.value) return []
   return tabs.value.map(item => item.resourceCode as string)
@@ -242,7 +250,7 @@ watch(
                 <el-button :icon="Plus" circle type="success" @click="handleAddTab" />
               </div>
               <div class="btn-config__body">
-                <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab">
+                <el-tabs v-model="activeTab" type="card" closable @tab-remove="removeTab" @tab-change="handleChangeTab">
                   <el-tab-pane
                     v-for="(permission, index) in model.permissionList"
                     :key="`tab_${index}`"

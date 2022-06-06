@@ -80,7 +80,6 @@ export default () => {
    * @param permission
    */
   const clickConfigPermission = (resourceCode: string, permission: ResourcePermission) => {
-    console.log(permissionListRef)
     configResourceCode.value = resourceCode
     configPermissionCodes.value = permission.permissionCodes ?? []
     configPermissionTitle.value =
