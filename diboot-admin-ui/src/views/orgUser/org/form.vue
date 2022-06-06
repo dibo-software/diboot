@@ -35,6 +35,7 @@ const open = async (id?: string) => {
     model.value['parentId'] = props.parentId
     model.value['type'] = 'DEPT'
   }
+  visible.value = true
   // 加载表单数据与树结构数据
   await loadData(id)
   await getTree()
@@ -52,7 +53,6 @@ const open = async (id?: string) => {
     createTime: ''
   }
   treeDataList.value?.unshift(firstItem)
-  visible.value = true
 }
 
 const formRef = ref<FormInstance>()

@@ -55,9 +55,6 @@ const treeDataChange = async () => {
   </el-container>
 </template>
 <style lang="scss" scoped>
-.el-container {
-  align-items: stretch;
-}
 .el-aside {
   box-sizing: border-box;
   padding-right: 10px;

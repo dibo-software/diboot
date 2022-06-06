@@ -49,6 +49,11 @@ const onFormComplete = (id?: string) => {
   }
   emit('reload')
 }
+
+const onSearch = () => {
+  pageLoader.onSearch()
+}
+defineExpose({ onSearch })
 </script>
 <template>
   <div style="width: 100%">
