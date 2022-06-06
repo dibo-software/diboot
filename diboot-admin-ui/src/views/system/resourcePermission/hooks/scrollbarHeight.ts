@@ -43,7 +43,7 @@ export default (option: ScrollbarOption) => {
     () => appStore.globalSize,
     () => {
       nextTick(() => {
-        // 不使用定时器，获取高度不对
+        // 使用定时器，确保高度获取正确
         const timer = setTimeout(() => {
           clearTimeout(timer)
           computedFixedHeight()

@@ -1,4 +1,6 @@
 import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { RestPermission } from '../type'
+
 type LabelValue = { label: string; value: string }
 export default () => {
   // 按钮权限编码（选择/输入）
@@ -9,8 +11,11 @@ export default () => {
   const configResourceCode = ref<string>('')
   // 正在配置的后端权限码，如：ResourcePermission:read、ResourcePermission:write
   const configPermissionCodes = ref<string[]>([])
-
+  // 前端按钮权限资源编码
   const resourcePermissionCodeOptions: LabelValue[] = []
+  // 后端权限资源
+  const restPermissions: RestPermission[] = reactive([])
+
   const permissionListRef = ref(null)
 
   /**
@@ -20,6 +25,21 @@ export default () => {
   const initResourcePermissionCodeOptions = (options: LabelValue[]) => {
     resourcePermissionCodeOptions.length = 0
     resourcePermissionCodeOptions.push(...options)
+  }
+
+  /**
+   * 初始化接口权限
+   * @param options
+   */
+  const initRestPermissions = (restAPi: string) => {
+    restPermissions.length = 0
+    api.get<RestPermission[]>(restAPi).then(res => {
+      if (res.code === 0) {
+        restPermissions.push(...(res.data ?? []))
+      } else {
+        ElMessage?.error(res.msg)
+      }
+    })
   }
   /**
    * 更改按钮权限编码触发
@@ -76,6 +96,8 @@ export default () => {
     configPermissionTitle,
     configResourceCode,
     configPermissionCodes,
+    restPermissions,
+    initRestPermissions,
     initResourcePermissionCodeOptions,
     changeBtnResourceCode,
     changeBtnPermissionName,

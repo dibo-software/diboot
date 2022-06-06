@@ -5,14 +5,12 @@ import PermissionCodeConfig from './modules/PermissionCodeConfig.vue'
 import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 
 import type { FormInstance, FormRules } from 'element-plus'
-import type { ResourcePermission, PermissionGroupType } from './type'
+import type { ResourcePermission } from './type'
 import useDisplayControl from './hooks/displayControl'
 import usePermissionControl from './hooks/permissionControl'
 import useScrollbarHeight from './hooks/scrollbarHeight'
 import type { MenuType } from './hooks/displayControl'
-const permissionList = reactive<ResourcePermission[]>([])
 let permissionCodes = reactive<string[]>([])
-const originApiList = reactive<PermissionGroupType[]>([])
 const showPermission = ref(false)
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -98,13 +96,16 @@ const {
   configPermissionTitle,
   configResourceCode,
   configPermissionCodes,
+  restPermissions,
+  initRestPermissions,
   initResourcePermissionCodeOptions,
   changeBtnResourceCode,
   changeBtnPermissionName,
   toggleBtnResourceCodeSelect,
   clickConfigPermission
 } = usePermissionControl()
-
+// 初始化后台权限
+initRestPermissions('/resourcePermission/apiList')
 // more hook
 const { more, initMore } = useMoreDefault({ dict: 'RESOURCE_PERMISSION_CODE' })
 initMore().then(() => {
@@ -128,6 +129,7 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
 })
 
 // 监听
+// 菜单树切换变更
 watch(
   () => props.formValue,
   val => {
@@ -138,6 +140,7 @@ watch(
     nextTick(computedFixedHeight)
   }
 )
+// 按钮权限tab变更
 watch(
   () => tabs.value,
   () => {
@@ -193,8 +196,8 @@ watch(
               </el-form-item>
               <el-form-item label="菜单权限接口">
                 <permission-code-config
-                  type="menu"
                   v-model="model.permissionCodes"
+                  type="menu"
                   @config="clickConfigPermission('menu', model)"
                 />
               </el-form-item>
@@ -205,11 +208,10 @@ watch(
                   inactive-value="I"
                   active-text="有效"
                   inactive-text="无效"
-                >
-                </el-switch>
+                />
               </el-form-item>
               <el-form-item label="排序号">
-                <el-input-number style="width: 100%" v-model="model.sortId" placeholder="请输入排序号" clearable />
+                <el-input-number v-model="model.sortId" placeholder="请输入排序号" style="width: 100%" clearable />
               </el-form-item>
               <el-form-item>
                 <template #label>
@@ -290,8 +292,8 @@ watch(
                       </el-descriptions-item>
                       <el-descriptions-item label="按钮权限接口">
                         <permission-code-config
-                          type="permission"
                           v-model="permission.permissionCodes"
+                          type="permission"
                           @config="clickConfigPermission('permission', permission)"
                         />
                       </el-descriptions-item>
@@ -307,10 +309,10 @@ watch(
         <permission-list
           ref="permissionListRef"
           :title="configPermissionTitle"
-          :current-permission-codes="configPermissionCodes"
+          :permission-codes="configPermissionCodes"
           :config-code="configResourceCode"
-          :origin-api-list="originApiList"
-          @change-permission-codes="handleChangePermissionCodes"
+          :rest-permissions="restPermissions"
+          @change="handleChangePermissionCodes"
         />
       </el-col>
     </el-row>
@@ -322,12 +324,9 @@ watch(
 </template>
 <style scoped lang="scss">
 .form-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
   height: 100%;
+  padding: 0 10px;
   .context-body {
     width: 100%;
   }
@@ -337,13 +336,14 @@ watch(
     left: 0;
     bottom: 0;
     width: 100%;
-    //border-top: 1px solid #e9e9e9;
+    border-top: 1px solid #e9e9e9;
     padding: 10px 16px 0 16px;
     background: #fff;
     text-align: center;
     z-index: 1;
   }
 }
+
 .left-container {
   border-right: 1px solid var(--el-color-info-light-9);
   padding-right: 15px !important;

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { defineEmits, defineProps, withDefaults } from 'vue'
-import type { PermissionGroupType } from '../type'
+import type { RestPermission } from '../type'
 
-const props = withDefaults(defineProps<{ permissionGroup: PermissionGroupType; permissionCodeList?: string[] }>(), {
+const props = withDefaults(defineProps<{ permissionGroup: RestPermission; permissionCodeList?: string[] }>(), {
   permissionCodeList: () => []
 })
 
@@ -55,8 +55,10 @@ const checkCode = (code: string) =>
 </template>
 <style scoped lang="scss" rel="stylesheet/scss">
 .permission-group {
-  .el-descriptions__body > table {
-    table-layout: fixed;
+  :deep(.el-descriptions__body) {
+    table {
+      table-layout: fixed;
+    }
     .el-descriptions-item__content {
       padding: 0;
     }

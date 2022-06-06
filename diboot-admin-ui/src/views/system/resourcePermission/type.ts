@@ -27,7 +27,7 @@ export interface ApiPermission {
   label: string
   apiUriList: Array<ApiUri>
 }
-export interface PermissionGroupType {
+export interface RestPermission {
   name: string
   code: string
   apiPermissionList: Array<ApiPermission>

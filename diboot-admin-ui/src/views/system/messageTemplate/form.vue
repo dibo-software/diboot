@@ -11,7 +11,7 @@ const title = ref('')
 
 const visible = ref(false)
 
-const templateVariableList = ['${用户姓名}', '${称呼}', '${手机号}', '${验证码}']//ref<Array<string>>()
+const templateVariableList = ['${用户姓名}', '${称呼}', '${手机号}', '${验证码}'] //ref<Array<string>>()
 defineExpose({
   open: (id?: string) => {
     title.value = id ? '更新消息通知模板' : '新建消息通知模板'
@@ -50,10 +50,8 @@ const rules: FormRules = {
  * @param variable
  */
 const appendVariable = (variable?: string) => {
-  if(model.value?.content)
-    model.value.content = model.value?.content + variable
-  else
-    model.value.content = variable
+  if (model.value?.content) model.value.content = model.value?.content + variable
+  else model.value.content = variable
 }
 </script>
 
@@ -75,9 +73,9 @@ const appendVariable = (variable?: string) => {
           <el-tag
             v-for="(item, index) in templateVariableList"
             :key="index"
+            title="添加此变量"
             class="variable-tag"
             @click="appendVariable(item)"
-            title="添加此变量"
           >
             {{ item }}
           </el-tag>

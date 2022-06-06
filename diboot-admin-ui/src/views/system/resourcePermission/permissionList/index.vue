@@ -3,31 +3,41 @@ import PermissionGroup from './PermissionGroup.vue'
 import useScrollbarHeight from '../hooks/scrollbarHeight'
 import { useVueFuse } from 'vue-fuse'
 import { Ref } from 'vue'
-import type { PermissionGroupType, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
+import { ElScrollbar } from 'element-plus'
+import type { RestPermission, ResourcePermission, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
 type Props = {
   title: string
   configCode: string
   menuResourceCode?: string
-  currentPermissionCodes: string[]
-  originApiList?: Array<PermissionGroupType>
+  permissionCodes: string[]
+  restPermissions?: Array<RestPermission>
 }
 const props = withDefaults(defineProps<Props>(), {
-  originApiList: () => []
+  restPermissions: () => []
 })
 const visibleHeight = inject<number>('visibleHeight')
-
+// hooks
 // 滚动高度计算hook
 const { height, computedFixedHeight } = useScrollbarHeight({
   fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
   visibleHeight,
   extraHeight: 30
 })
+const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 let permissionCodeList = reactive<string[]>([])
-let searchVal = ref('')
-
+const searchVal = ref('')
+// watch(
+//   () => props.restPermissions,
+//   val => {
+//     console.log(val)
+//   },
+//   {
+//     deep: true
+//   }
+// )
 const computedFusePermissionDatas = computed(() => {
   const fusePermissionDatas: Array<FusePermission> = []
-  props.originApiList?.forEach((item: PermissionGroupType) => {
+  props.restPermissions?.forEach((item: RestPermission) => {
     const permissionGroup = `${item.name}（${item.code}）`
     const apiPermissionList = item.apiPermissionList
     if (apiPermissionList && apiPermissionList.length > 0) {
@@ -52,7 +62,7 @@ const computedFusePermissionDatas = computed(() => {
   return fusePermissionDatas
 })
 watch(
-  () => props.currentPermissionCodes,
+  () => props.permissionCodes,
   val => {
     permissionCodeList = val
   }
@@ -62,7 +72,8 @@ watch([() => props.configCode, () => props.menuResourceCode], () => {
 })
 
 onMounted(() => {
-  permissionCodeList = props.currentPermissionCodes
+  permissionCodeList = props.permissionCodes
+
   nextTick(computedFixedHeight)
 })
 
@@ -93,7 +104,9 @@ let { search, results } = useVueFuse<SelectOption>(computedFusePermissionDatas, 
     }
   ]
 })
-const emits = defineEmits(['changePermissionCodes'])
+const emits = defineEmits<{
+  (e: 'change', permissionCodes: string[]): void
+}>()
 /**
  * 更改权限码（添加或删除）
  * @param type
@@ -105,8 +118,12 @@ const changePermissionCode = (type: string, code: string) => {
   } else {
     permissionCodeList = permissionCodeList.filter((item: string) => item !== code)
   }
-  emits('changePermissionCodes', permissionCodeList)
+  emits('change', permissionCodeList)
 }
+/**
+ * 搜索
+ * @param value
+ */
 const searchChange = (value: string) => {
   if (value && value.includes('#')) {
     const id = value.split('#')[0]
@@ -114,11 +131,12 @@ const searchChange = (value: string) => {
     const idElement: HTMLElement | null = document.getElementById(id)
     idElement?.classList.add('light-high')
     const time = setTimeout(() => {
-      idElement?.classList.remove('light-high')
       clearTimeout(time)
+      idElement?.classList.remove('light-high')
     }, 4000)
+  } else {
+    goScrollIntoView()
   }
-  searchVal.value = value
 }
 
 const getAnchor = () => {
@@ -135,13 +153,38 @@ const getAnchor = () => {
   }
   return anchor
 }
-const goScrollIntoView = async (value: string) => {
+const goScrollIntoView = async (value?: string) => {
   await nextTick()
+  const parentLocation = computeAbsoluteLocation(document.getElementById('permissionListGroups'))
+  if (!parentLocation) return
   if (value) {
-    document.getElementById(value)?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+    const element: HTMLElement | null = document.getElementById(value)
+    const searchLocation = computeAbsoluteLocation(element)
+    if (!searchLocation) return
+    permissionGroupsScrollbarRef.value?.setScrollTop(searchLocation.absoluteTop - parentLocation.absoluteTop - 20)
   } else {
-    document.getElementById('permissionListGroups')?.scrollIntoView({ behavior: 'smooth' })
+    permissionGroupsScrollbarRef.value?.setScrollTop(0)
   }
+}
+const computeAbsoluteLocation = (
+  element: HTMLElement | null
+): { absoluteTop: number; absoluteLeft: number; offsetWidth: number; offsetHeight: number } | null => {
+  if (!element) {
+    return null
+  }
+
+  let offsetTop = element.offsetTop
+  let offsetLeft = element.offsetLeft
+  const offsetWidth = element.offsetWidth
+  const offsetHeight = element.offsetHeight
+  while ((element = element.offsetParent as HTMLElement)) {
+    offsetTop += element.offsetTop
+    offsetLeft += element.offsetLeft
+  }
+  return { absoluteTop: offsetTop, absoluteLeft: offsetLeft, offsetWidth, offsetHeight }
+}
+const handleRemoteMethod = (val: string) => {
+  search.value = val
 }
 </script>
 <template>
@@ -152,12 +195,11 @@ const goScrollIntoView = async (value: string) => {
       </div>
       <el-select
         remote
-        :value="searchVal"
+        v-model="searchVal"
         placeholder="搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索"
-        style="width: 100%"
         filterable
         clearable
-        :remote-method="(val: string) => (search = val)"
+        :remote-method="handleRemoteMethod"
         @change="searchChange"
       >
         <el-option
@@ -168,19 +210,16 @@ const goScrollIntoView = async (value: string) => {
         />
       </el-select>
     </div>
-    <el-scrollbar :height="height">
-      <div class="permission-list-groups">
+    <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
+      <div ref="permissionListGroupsRef" class="permission-list-groups">
         <div id="permissionListGroups">
-          <!--          <permission-group-->
-          <!--            v-for="(permissionGroup, index) in originApiList"-->
-          <!--            :key="`permission_group_${index}`"-->
-          <!--            :permission-code-list="permissionCodeList"-->
-          <!--            :permission-group="permissionGroup"-->
-          <!--            @change-permission-code="changePermissionCode"-->
-          <!--          />-->
-          <div :key="item" v-for="item in 100">
-            {{ item }}
-          </div>
+          <permission-group
+            v-for="(permissionGroup, index) in restPermissions"
+            :key="`permission_group_${index}`"
+            :permission-code-list="permissionCodeList"
+            :permission-group="permissionGroup"
+            @change-permission-code="changePermissionCode"
+          />
         </div>
       </div>
     </el-scrollbar>
