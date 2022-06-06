@@ -4,7 +4,7 @@
  * @param {string} path
  * @returns {Boolean}
  */
-export const isExternal = (path: string) => /^(https?:|mailto:|tel:)/.test(path)
+export const isExternal = (path: string) => /^(https?:|mailto:|tel:|\/\/)/.test(path)
 
 /**
  * 有效网站
