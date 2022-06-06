@@ -38,7 +38,7 @@ public class FieldBinderVO extends User {
     private static final long serialVersionUID = 3526115343377985725L;
 
     // 字段关联，相同条件的entity+condition将合并为一条SQL查询
-    @BindField(entity= Department.class, field="name", condition="this.department_id=id AND parent_id IS NOT NULL AND this.gender='M'")
+    @BindField(entity= Department.class, field="name", condition="this.department_id=id AND parent_id IS NOT NULL")
     private String deptName;
 
     // 支持级联字段关联，相同条件的entity+condition将合并为一条SQL查询
