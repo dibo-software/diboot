@@ -22,7 +22,7 @@ const boxHeight = inject<number>('boxHeight', 0)
 const { height, computedFixedHeight } = useScrollbarHeight({
   boxHeight,
   fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
-  extraHeight: 30
+  extraHeight: 85
 })
 // data
 const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
@@ -71,7 +71,7 @@ onMounted(() => {
 })
 
 // 模糊搜索
-let { search, results } = useVueFuse<SelectOption>(computedFusePermissionDatas, {
+const { search, results } = useVueFuse<SelectOption>(computedFusePermissionDatas, {
   // 是否按优先级进行排序
   shouldSort: true,
   // 匹配度阈值	0.0表示完全匹配(字符和位置)；1.0将会匹配所有值
@@ -178,28 +178,24 @@ const _reload = () => {
 }
 </script>
 <template>
-  <div class="permission-list-container">
-    <div class="permission-list-header">
-      <div>
-        {{ title }}
-      </div>
-      <el-select
-        v-model="searchVal"
-        remote
-        placeholder="搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索"
-        filterable
-        clearable
-        :remote-method="handleRemoteMethod"
-        @change="handleSearchChange"
-      >
-        <el-option
-          v-for="(options, index) in results"
-          :key="`search_${index}`"
-          :label="options.title"
-          :value="`${options.permissionCode}#${options.title}`"
-        />
-      </el-select>
-    </div>
+  <el-space wrap :fill="true" class="permission-list-container">
+    <span>{{ title }}</span>
+    <el-select
+      v-model="searchVal"
+      remote
+      placeholder="搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索"
+      filterable
+      clearable
+      :remote-method="handleRemoteMethod"
+      @change="handleSearchChange"
+    >
+      <el-option
+        v-for="(options, index) in results"
+        :key="`search_${index}`"
+        :label="options.title"
+        :value="`${options.permissionCode}#${options.title}`"
+      />
+    </el-select>
     <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
       <div id="permissionGroups" :key="reloadKey" class="permission-groups">
         <el-descriptions
@@ -247,14 +243,11 @@ const _reload = () => {
         </el-descriptions>
       </div>
     </el-scrollbar>
-  </div>
+  </el-space>
 </template>
 
 <style scoped lang="scss" rel="stylesheet/scss">
 .permission-list-container {
-  .permission-list-header {
-    margin-bottom: 10px;
-  }
   .permission-groups {
     &__head {
       margin-bottom: 10px;
