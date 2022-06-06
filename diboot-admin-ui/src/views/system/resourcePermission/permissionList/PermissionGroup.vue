@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import { defineEmits, defineProps, withDefaults } from 'vue'
-import type { PermissionGroupType } from '../type'
+import type { RestPermission } from '../type'
 
-const props = withDefaults(defineProps<{ permissionGroup: PermissionGroupType; permissionCodeList?: string[] }>(), {
+const props = withDefaults(defineProps<{ restPermission: RestPermission; permissionCodeList?: string[] }>(), {
   permissionCodeList: () => []
 })
+const emits = defineEmits<{
+  (e: 'change', type: string, code: string): void
+}>()
 
-const emits = defineEmits(['changePermissionCode'])
-const checkCode = (code: string) =>
-  emits('changePermissionCode', props.permissionCodeList.includes(code) ? 'remove' : 'add', code)
+const checkCode = (code: string) => emits('change', props.permissionCodeList.includes(code) ? 'remove' : 'add', code)
 </script>
 <template>
   <el-descriptions
     class="permission-group"
-    :title="`${permissionGroup.name}（${permissionGroup.code}）`"
+    :title="`${restPermission.name}（${restPermission.code}）`"
     border
     :column="1"
     size="small"
   >
     <el-descriptions-item
-      v-for="(apiPermission, index) in permissionGroup.apiPermissionList"
+      v-for="(apiPermission, index) in restPermission.apiPermissionList"
       :key="`group-item_${index}`"
     >
       <template #label>
@@ -55,8 +55,10 @@ const checkCode = (code: string) =>
 </template>
 <style scoped lang="scss" rel="stylesheet/scss">
 .permission-group {
-  .el-descriptions__body > table {
-    table-layout: fixed;
+  :deep(.el-descriptions__body) {
+    table {
+      table-layout: fixed;
+    }
     .el-descriptions-item__content {
       padding: 0;
     }
@@ -76,7 +78,7 @@ const checkCode = (code: string) =>
     transition: 2s;
   }
   &-api {
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--el-border-color);
     padding: 8px 16px;
     &:last-child {
       border-bottom: 0;

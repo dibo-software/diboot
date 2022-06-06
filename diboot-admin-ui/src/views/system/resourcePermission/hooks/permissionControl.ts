@@ -1,16 +1,21 @@
 import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { RestPermission } from '../type'
+
 type LabelValue = { label: string; value: string }
 export default () => {
   // 按钮权限编码（选择/输入）
   const btnResourceCodeSelect = ref(true)
   // 正在配置的标题
   const configPermissionTitle = ref('菜单页面接口配置')
-  // 正在配置的ResourceCode，如：ResourcePermission（菜单code）、detail（按钮权限code）、list等
-  const configResourceCode = ref<string>('')
+  // 正在配置的ResourceCode，如：ResourcePermission（menu）、detail（按钮权限code）、list等
+  const configResourceCode = ref<string>('menu')
   // 正在配置的后端权限码，如：ResourcePermission:read、ResourcePermission:write
   const configPermissionCodes = ref<string[]>([])
-
+  // 前端按钮权限资源编码
   const resourcePermissionCodeOptions: LabelValue[] = []
+  // 后端权限资源
+  const restPermissions: RestPermission[] = reactive([])
+
   const permissionListRef = ref(null)
 
   /**
@@ -20,6 +25,21 @@ export default () => {
   const initResourcePermissionCodeOptions = (options: LabelValue[]) => {
     resourcePermissionCodeOptions.length = 0
     resourcePermissionCodeOptions.push(...options)
+  }
+
+  /**
+   * 初始化接口权限
+   * @param options
+   */
+  const initRestPermissions = (restAPi: string) => {
+    restPermissions.length = 0
+    api.get<RestPermission[]>(restAPi).then(res => {
+      if (res.code === 0) {
+        restPermissions.push(...(res.data ?? []))
+      } else {
+        ElMessage?.error(res.msg)
+      }
+    })
   }
   /**
    * 更改按钮权限编码触发
@@ -44,7 +64,6 @@ export default () => {
     configResourceCode.value = permission.resourceCode ?? ''
     configPermissionCodes.value = permission.permissionCodes ?? []
   }
-
   /**
    * 切换按钮权限输入/选择
    * @param permission 当前正在配置的权限
@@ -61,7 +80,6 @@ export default () => {
    * @param permission
    */
   const clickConfigPermission = (resourceCode: string, permission: ResourcePermission) => {
-    console.log(permissionListRef)
     configResourceCode.value = resourceCode
     configPermissionCodes.value = permission.permissionCodes ?? []
     configPermissionTitle.value =
@@ -76,6 +94,8 @@ export default () => {
     configPermissionTitle,
     configResourceCode,
     configPermissionCodes,
+    restPermissions,
+    initRestPermissions,
     initResourcePermissionCodeOptions,
     changeBtnResourceCode,
     changeBtnPermissionName,

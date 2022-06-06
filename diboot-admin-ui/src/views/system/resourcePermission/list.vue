@@ -31,6 +31,6 @@ provide<number>('visibleHeight', props.usedVisibleHeight ?? 0)
   padding-right: 5px;
 }
 .menu-main-container {
-  padding: 10px;
+  padding: 0;
 }
 </style>

@@ -1,10 +1,10 @@
-import type { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { ResourcePermission, RestPermission } from '@/views/system/resourcePermission/type'
 import Mock, { Random } from 'mockjs'
 import { ApiRequest, JsonResult } from '../_util'
 import { MockMethod } from 'vite-plugin-mock'
 import dbDataList from './_realResourcePermissionData'
+import dbRestPermissionDataList from './_realRestPermissionData'
 const baseUrl = '/api/resourcePermission'
-
 const deleteDataIds: string[] = []
 /**
  * tree转化为list
@@ -89,6 +89,14 @@ export default [
       Object.assign(body, { id: id, displayName: '未命名' + id })
       dbDataList.unshift(body)
       return JsonResult.OK(id)
+    }
+  },
+  {
+    url: `${baseUrl}/apiList`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      return JsonResult.OK(dbRestPermissionDataList)
     }
   },
   {
