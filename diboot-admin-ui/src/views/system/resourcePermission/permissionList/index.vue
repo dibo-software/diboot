@@ -27,15 +27,6 @@ const { height, computedFixedHeight } = useScrollbarHeight({
 const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 let permissionCodeList = reactive<string[]>([])
 const searchVal = ref('')
-// watch(
-//   () => props.restPermissions,
-//   val => {
-//     console.log(val)
-//   },
-//   {
-//     deep: true
-//   }
-// )
 const computedFusePermissionDatas = computed(() => {
   const fusePermissionDatas: Array<FusePermission> = []
   props.restPermissions?.forEach((item: RestPermission) => {

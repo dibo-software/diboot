@@ -67,9 +67,9 @@ const handleAddTab = () => {
 // 切换tab
 const handleChangeTab = (name: string | number) => {
   if (model.value.permissionList) {
-    const permission = model.value.permissionList[parseInt(name, 10)]
+    const permission = model.value.permissionList[parseInt(`${name}`, 10)]
     // 切换按钮权限tab时自动切换权限配置
-    clickConfigPermission(permission.resourceCode, permission)
+    clickConfigPermission(permission.resourceCode as string, permission)
   }
 }
 
