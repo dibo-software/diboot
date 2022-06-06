@@ -172,7 +172,7 @@ public class TestEntityListBinder {
             // 验证通过中间表间接关联的绑定
             if(vo.getManagerId().equals(1001L)){
                 Assert.assertTrue(vo.getManagerPhotos().size() == 1);
-                Assert.assertEquals(2, vo.getManagerPhotoList().size());
+                Assert.assertEquals(1, vo.getManagerPhotoList().size());
             }
             else{
                 Assert.assertTrue(vo.getManagerPhotos().size() == 2);

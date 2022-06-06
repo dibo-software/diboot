@@ -359,6 +359,7 @@ public abstract class BaseBinder<T> {
      * @param queryWrapper
      * @return
      */
+    @Deprecated
     protected List<Map<String, Object>> getMapList(Wrapper queryWrapper) {
         if(referencedService instanceof BaseService){
             return ((BaseService)referencedService).getMapList(queryWrapper);
