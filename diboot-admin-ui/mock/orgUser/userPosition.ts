@@ -1,0 +1,14 @@
+import { MockMethod } from 'vite-plugin-mock'
+import crudTemplate from '../_crudTemplate'
+import type { UserPosition } from '@/views/orgUser/position/type'
+
+export const dataList: UserPosition[] = []
+
+const crud = crudTemplate({
+  baseApi: '/userPosition',
+  dataList,
+  keywordsKeys: ['name', 'code'],
+  fuzzyMatchKeys: ['name', 'code']
+})
+
+export default [...Object.values(crud.api)] as MockMethod[]

@@ -142,6 +142,18 @@ const authMenu = [
         }
       },
       {
+        path: 'position',
+        name: 'Position',
+        meta: {
+          title: '岗位管理',
+          componentPath: prefix + 'orgUser/position/list.vue',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: false,
+          icon: 'Element:Guide'
+        }
+      },
+      {
         path: 'user',
         name: 'User',
         meta: {
@@ -183,7 +195,7 @@ const authMenu = [
         path: 'dictionary',
         name: 'Dictionary',
         meta: {
-          title: 'Dictionary',
+          title: '数据字典管理',
           componentPath: prefix + 'system/dictionary/list.vue',
           keepAlive: false
         }

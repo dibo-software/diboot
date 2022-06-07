@@ -4,15 +4,15 @@ import type { UserModel } from './type'
 import { defineEmits } from 'vue'
 import useTree from '@/views/system/resourcePermission/hooks/tree'
 import { OrgModel } from '@/views/orgUser/org/type'
-import popoverListSelector from './popoverListSelector.vue'
-import PopoverListSelector from '@/views/orgUser/user/popoverListSelector.vue'
+import PopoverListSelector from './popoverListSelector.vue'
+import UserPositionTableForm from '../position/userPositionTableForm.vue'
 
 const baseApi = '/user'
 
 const { loadData, loading, model } = useDetailDefault<UserModel>(baseApi)
 const {
   getTree,
-  treeDataList,
+  treeDataList: orgTree,
   loading: treeLoading
 } = useTree<OrgModel>({
   baseApi: '/org',
@@ -50,8 +50,12 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
+const userPositionTableForm = ref<InstanceType<typeof UserPositionTableForm>>()
 const { confirmSubmit, submit } = useFormDefault({
   baseApi,
+  async afterValidate() {
+    await userPositionTableForm.value?.validate()
+  },
   successCallback(id) {
     emit('complete', id)
     visible.value = false
@@ -70,7 +74,7 @@ const rules: FormRules = {
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title">
+  <el-dialog v-model="visible" :title="title" :width="720">
     <el-form ref="formRef" v-loading="loading" :model="model" :rules="rules" label-width="80px">
       <el-row :gutter="18">
         <el-col :md="12" :sm="24">
@@ -85,8 +89,9 @@ const rules: FormRules = {
           <el-form-item prop="orgId" label="所属部门">
             <el-tree-select
               v-model="model.orgId"
+              placeholder="请选择部门"
               class="tree-selector"
-              :data="treeDataList"
+              :data="orgTree"
               :props="{ label: 'shortName', value: 'id' }"
               :default-expand-all="true"
               :check-strictly="true"
@@ -154,6 +159,12 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
       </el-row>
+      <user-position-table-form
+        ref="userPositionTableForm"
+        :org-tree="orgTree"
+        :user-id="model.id"
+        :org-id="model.orgId"
+      />
     </el-form>
 
     <template #footer>

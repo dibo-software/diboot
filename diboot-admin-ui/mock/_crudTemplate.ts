@@ -12,8 +12,12 @@ export interface Option<T> {
   baseApi: string
   // 数据列表（默认：[]）
   dataList?: Array<T>
+  // 附加数据
+  attachMore?: Record<string, any>
   // 主键属性（默认：id）
   primaryKey?: string
+  // 关键词搜索字段列表
+  keywordsKeys?: Array<string>
   // 模糊查询属性列表（默认：[]）
   fuzzyMatchKeys?: Array<string>
   // 开启分页（默认：true）
@@ -49,6 +53,8 @@ export default <T>(option: Option<T>) => {
   const baseUrl = '/api' + option.baseApi
   const primaryKey = option.primaryKey || 'id'
   const dataList = option.dataList ?? []
+  const attachMore = option.attachMore || {}
+  const keywordsKeys = option.keywordsKeys ?? []
   const fuzzyMatchKeys = option.fuzzyMatchKeys ?? []
   // 删除数据ID列表
   const deleteDataIds: Array<string> = []
@@ -83,7 +89,15 @@ export default <T>(option: Option<T>) => {
             } else {
               list = list.filter(e => {
                 const itemValue = e[key as keyof T]
-                if (itemValue == null) return false
+                if (key === 'keywords') {
+                  for (const wordsKey of keywordsKeys) {
+                    const val = e[wordsKey as keyof T]
+                    if (fuzzyMatchKeys.includes(wordsKey) && `${val}`.match(queryValue)) {
+                      return true
+                    }
+                  }
+                  return false
+                } else if (itemValue == null) return false
                 // 指定属性 模糊匹配
                 else if (fuzzyMatchKeys.includes(key)) return `${itemValue}`.match(queryValue)
                 // 属性值与查询参数同时为数组，判断属性值中是否包含查询参数中的某个
@@ -114,6 +128,14 @@ export default <T>(option: Option<T>) => {
             return idList.includes(item[primaryKey])
           })
           return JsonResult.OK(validList)
+        }
+      },
+      attachMore: {
+        url: `${baseUrl}/attachMore`,
+        timeout: Random.natural(50, 300),
+        method: 'get',
+        response: ({ query }: any) => {
+          return JsonResult.OK(attachMore)
         }
       },
       getById: {

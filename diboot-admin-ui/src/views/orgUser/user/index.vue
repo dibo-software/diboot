@@ -10,11 +10,11 @@ const changeCurrentNode = (currentNode: OrgModel) => {
 }
 
 const tabLabel = computed(() => {
-  return currentNodeId.value === '0' ? '所有部门' : '子部门'
+  return currentNodeId.value === '0' ? '所有人员列表' : '当前人员列表'
 })
 </script>
 <template>
-  <el-container :style="{ height: `calc(100vh - ${usedVisibleHeight}px)` }" class="el-container">
+  <el-container class="el-container">
     <el-aside class="el-aside" width="240px">
       <org-tree ref="orgTreeRef" :readonly="true" @change-current-node="changeCurrentNode" />
     </el-aside>
@@ -28,14 +28,17 @@ const tabLabel = computed(() => {
   </el-container>
 </template>
 <style lang="scss" scoped>
+.el-container {
+  height: 100%;
+}
 .el-aside {
   box-sizing: border-box;
-  padding-right: 10px;
+  padding: 10px;
   border-right: 1px solid #eee;
 }
 .list-container {
   box-sizing: border-box;
-  padding-left: 10px;
+  padding: 0 10px;
 }
 .el-tabs {
   width: 100%;
