@@ -9,6 +9,7 @@ interface FormOption {
   createApi?: string
   // 自定义更新接口
   updateApiPrefix?: string
+  afterValidate?: () => void
   // 成功回调
   successCallback: (primaryKey?: string) => void
 }
@@ -31,9 +32,11 @@ export default (option: FormOption) => {
 
   const submit = async (formEl: FormInstance | undefined, data: Record<string, unknown>) => {
     try {
+      const { primaryKey, baseApi, createApi, updateApiPrefix, afterValidate, successCallback } = option
       await validate(formEl)
-
-      const { primaryKey, baseApi, createApi, updateApiPrefix, successCallback } = option
+      if (afterValidate !== undefined) {
+        await afterValidate()
+      }
       const id: unknown = data[primaryKey ?? 'id']
       let res
       if (id) {

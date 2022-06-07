@@ -11,3 +11,12 @@ export interface Position {
   createTime: string
   updateTime: string
 }
+
+export interface UserPosition {
+  id?: string
+  userId: string
+  positionId: string
+  orgId: string
+  isPrimaryPosition: boolean
+  createTime?: string
+}

@@ -195,7 +195,7 @@ const authMenu = [
         path: 'dictionary',
         name: 'Dictionary',
         meta: {
-          title: 'Dictionary',
+          title: '数据字典管理',
           componentPath: prefix + 'system/dictionary/list.vue',
           keepAlive: false
         }
