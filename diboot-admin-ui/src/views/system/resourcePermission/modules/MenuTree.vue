@@ -12,7 +12,7 @@ const emit = defineEmits<{
   (e: 'click-node', resourcePermission: ResourcePermission): void
 }>()
 const {
-  checkChange,
+  checkStrictlyChange,
   filterNode,
   getTree,
   addTreeNode,
@@ -90,7 +90,7 @@ const addChildNode = (parentId: string) => {
         :highlight-current="true"
         :expand-on-click-node="false"
         :filter-node-method="filterNode"
-        @check-change="checkChange"
+        @check-change="checkStrictlyChange"
         @node-click="nodeClick"
       >
         <template #default="{ node }">

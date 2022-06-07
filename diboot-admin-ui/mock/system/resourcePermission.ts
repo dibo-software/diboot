@@ -4,6 +4,7 @@ import { ApiRequest, JsonResult } from '../_util'
 import { MockMethod } from 'vite-plugin-mock'
 import dbDataList from './_realResourcePermissionData'
 import dbRestPermissionDataList from './_realRestPermissionData'
+import dbRoleResourcePermissionData from './_realRoleResourcePermissionData'
 const baseUrl = '/api/resourcePermission'
 const deleteDataIds: string[] = []
 /**
@@ -69,6 +70,14 @@ const buildChildren = (parents: ResourcePermission[], originList: ResourcePermis
   }
 }
 export default [
+  {
+    url: `${baseUrl}/list`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      return JsonResult.OK(dbRoleResourcePermissionData)
+    }
+  },
   {
     url: `${baseUrl}/getMenuTreeList`,
     timeout: Random.natural(50, 300),

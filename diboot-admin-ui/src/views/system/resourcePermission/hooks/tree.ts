@@ -1,20 +1,60 @@
 import type { ElTree } from 'element-plus'
-import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import Node from 'element-plus/es/components/tree/src/model/node'
+import { tree2List } from '@/utils/list'
+import { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]
 }
+type TransformField = { value?: string; label?: string; children?: string; parentId?: string }
+/**
+ * 收集树节点上所有父节点
+ * @param parentId 父节点
+ * @param dataList 子节点
+ * @param result 存储结果
+ * @param transformField 字段转化
+ */
+const collectDeepParent = <T>(parentId: string, dataList: T[], result: T[], transformField: TransformField) => {
+  if (parentId === '0') return
+
+  const data = (dataList.find(val => collectField<T, string>(val, transformField.value as string) === parentId) ??
+    {}) as Record<string, unknown>
+  if (data) {
+    result.push(data as T)
+  }
+  collectDeepParent((data[transformField.parentId as string] ?? '0') as string, dataList, result, transformField)
+}
+/**
+ * 收集对象中的指定字段
+ * @param data 对象
+ * @param fieldName 对象的属性名
+ * @param defaultValue 属性默认值
+ */
+const collectField = <T, R>(data: T, fieldName: string, defaultValue?: R) => {
+  const val = (data as Record<string, unknown>)[fieldName] as R
+  return defaultValue ? val ?? defaultValue : val
+}
+/**
+ * 收集指定字段列表
+ * @param dataList 对象列表
+ * @param fieldName 对象的名称
+ * @param defaultValue 属性默认值
+ */
+const collectFieldList = <T, R>(dataList: T[], fieldName: string, defaultValue?: R) => {
+  return dataList.map(val => collectField(val, fieldName, defaultValue))
+}
 export interface TreeOption<T> {
   baseApi: string
   treeApi: string
-  transformField?: { value?: string; label?: string; children?: string }
+  transformField?: TransformField
   clickNodeCallback?: (node: T) => void
 }
 export default <T>(option: TreeOption<T>) => {
   const optionsTransformField = {
     value: 'id',
     label: 'label',
-    children: 'children'
+    children: 'children',
+    parentId: 'parentId'
   }
   const { baseApi, treeApi, transformField, clickNodeCallback } = option
   Object.assign(optionsTransformField, transformField || {})
@@ -34,6 +74,10 @@ export default <T>(option: TreeOption<T>) => {
   //监听keyword变化
   watch(searchWord, val => {
     treeRef.value!.filter(val)
+  })
+
+  const dataList = computed(() => {
+    return tree2List<T>(dataState.treeDataList)
   })
   /**
    * 获取树结构
@@ -59,18 +103,62 @@ export default <T>(option: TreeOption<T>) => {
   }
 
   /**
-   * 复选框被点击的时候触发
+   * 复选框被点击的时候触发: 父子不互相关联
    * @param data 被点击节点
    * @param checked 节点是否被选中
    */
-  const checkChange = (data: T, checked: boolean) => {
-    if (checked) {
-      dataState.selectedIdList.push(...[(data as Record<string, unknown>)[optionsTransformField.value] as string])
-    } else {
+  const checkStrictlyChange = (data: T, checked: boolean) => {
+    if (checked) dataState.selectedIdList.push(...[collectField<T, string>(data, optionsTransformField.value)])
+    else
       dataState.selectedIdList = dataState.selectedIdList.filter(
-        (selected: string) => selected !== (data as Record<string, unknown>)[optionsTransformField.value]
+        (selected: string) => selected !== collectField<T, string>(data, optionsTransformField.value)
       )
+  }
+
+  /**
+   * 点击节点复选框之后触发	：详细规则如下
+   * 选择框被勾选==> 当前选择框、子选择框、父/祖父选择框都需要被勾选，
+   * 取消勾选 ==> 当前选择框、子选择框取消勾选，如果是父/祖父选择框下只有这当前选择框这一个子项，父/祖也要取消勾选
+   * @param data 被点击节点
+   * @param checked 节点是否被选中
+   */
+  const checkNode = (currentNode: T, data: { checkedKeys: string[] }) => {
+    const checkedKeys = data.checkedKeys
+    const value = collectField<T, string>(currentNode, optionsTransformField.value)
+    const result: T[] = [currentNode]
+    // 递归查找子项
+    const children = collectField<T, T[]>(currentNode, optionsTransformField.children, [])
+    if (children && children.length > 0) {
+      const childrenData = tree2List(children)
+      result.push(...childrenData)
     }
+    // 递归查找父项
+    const parentId = collectField<T, string>(currentNode, optionsTransformField.value, '0')
+    const parentResult: T[] = []
+    collectDeepParent(parentId, dataList.value, parentResult, optionsTransformField)
+    if (checkedKeys.includes(value)) {
+      result.push(...parentResult)
+      // 获取所有id，且已经选中的数据中不包含的id
+      const values = collectFieldList<T, string>(result, optionsTransformField.value).filter(
+        val => !dataState.selectedIdList.includes(val)
+      )
+      dataState.selectedIdList.push(...values)
+    } else {
+      const values = collectFieldList<T, string>(result, optionsTransformField.value)
+      const parentValues = collectFieldList<T, string>(parentResult, optionsTransformField.value)
+      // 查找父项下的所有子项(包含父项)
+      const childrenResult = tree2List(parentResult) ?? []
+      const mergeValues = [...values, ...parentValues]
+      // 获取抛开当前节点下的所有子项和当前节点下所有父项 的剩余项
+      const remainValues = collectFieldList<T, string>(childrenResult, optionsTransformField.value).filter(
+        val => !mergeValues.includes(val)
+      )
+      // 判断剩余节点是否存在已选中的节点中, 当前节点的父级下有其他子节点，那么只移除当前节点及子节点，如果父级下无其他子节点，那么移除当前节点的父节点和子节点
+      const resultValues = dataState.selectedIdList.some(val => remainValues.includes(val)) ? values : mergeValues
+      dataState.selectedIdList = dataState.selectedIdList.filter((selected: string) => !resultValues.includes(selected))
+    }
+    // 设置选中状态
+    treeRef.value?.setCheckedKeys(dataState.selectedIdList)
   }
 
   /**
@@ -78,7 +166,7 @@ export default <T>(option: TreeOption<T>) => {
    * @param node 被点击节点
    */
   const nodeClick = (node: T) => {
-    currentNodeKey.value = (node as Record<string, unknown>)[optionsTransformField.value] as string
+    currentNodeKey.value = collectField<T, string>(node, optionsTransformField.value)
     currentNodeKey.value && treeRef.value?.setCurrentKey(currentNodeKey.value)
     clickNodeCallback && clickNodeCallback(node)
   }
@@ -89,7 +177,7 @@ export default <T>(option: TreeOption<T>) => {
    */
   const filterNode = (value: string, data: Partial<T>) => {
     if (!value) return true
-    return ((data as Record<string, unknown>)[optionsTransformField.label] as string).includes(value)
+    return collectField<Partial<T>, string>(data, optionsTransformField.label).includes(value)
   }
 
   /**
@@ -158,6 +246,23 @@ export default <T>(option: TreeOption<T>) => {
       }
     }
   }
+  /**
+   * 扁平化树最后一组节点
+   * @param data
+   * @param node
+   */
+  const flatTreeNodeClass = (data: TreeNodeData, node: Node) => {
+    const falseVal = { 'flat-tree-node-container': false }
+    const children = (data[optionsTransformField.children] ?? []) as Record<string, unknown>[]
+    if (!children || children.length === 0) return falseVal
+    // 检查子节点是否是最后一组
+    for (const child of children) {
+      const temp = (child[optionsTransformField.children] ?? []) as Record<string, unknown>[]
+      if (temp && temp.length !== 0) return falseVal
+    }
+    return { 'flat-tree-node-container': true }
+  }
+
   const { selectedIdList, treeDataList } = toRefs(dataState)
   return {
     loading,
@@ -166,12 +271,14 @@ export default <T>(option: TreeOption<T>) => {
     searchWord,
     treeRef,
     currentNodeKey,
-    checkChange,
+    checkStrictlyChange,
+    checkNode,
     filterNode,
     getTree,
     removeTreeNode,
     addTreeNode,
     nodeClick,
-    setSelectNode
+    setSelectNode,
+    flatTreeNodeClass
   }
 }

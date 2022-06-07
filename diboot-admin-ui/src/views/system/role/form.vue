@@ -1,7 +1,8 @@
 <script setup lang="ts" name="RoleForm">
 import { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
-import { defineEmits } from 'vue'
+import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import useTree from '@/views/system/resourcePermission/hooks/tree'
 
 const baseApi = '/role'
 
@@ -42,6 +43,21 @@ const rules: FormRules = {
   name: { required: true, message: '不能为空', whitespace: true },
   code: { required: true, message: '不能为空', whitespace: true }
 }
+// 权限树相关
+const transformField = {
+  label: 'displayName'
+}
+const { treeRef, treeDataList, getTree, checkNode, flatTreeNodeClass, setSelectNode, nodeClick } =
+  useTree<ResourcePermission>({
+    baseApi: '/resourcePermission',
+    treeApi: '/list',
+    transformField
+  })
+const treeProps = {
+  label: 'displayName',
+  class: flatTreeNodeClass
+}
+getTree()
 </script>
 
 <template>
@@ -56,6 +72,22 @@ const rules: FormRules = {
       <el-form-item prop="description" label="备注">
         <el-input v-model="model.description" type="textarea" />
       </el-form-item>
+      <el-form-item prop="description" label="角色授权">
+        <el-scrollbar height="400px">
+          <el-tree
+            ref="treeRef"
+            style="width: 100%"
+            :expand-on-click-node="false"
+            :props="treeProps"
+            :data="treeDataList"
+            show-checkbox
+            check-strictly
+            node-key="id"
+            default-expand-all
+            @check="checkNode"
+          />
+        </el-scrollbar>
+      </el-form-item>
     </el-form>
 
     <template #footer>
@@ -65,4 +97,10 @@ const rules: FormRules = {
   </el-dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.el-tree-node.is-expanded.flat-tree-node-container) > .el-tree-node__children {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+</style>

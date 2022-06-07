@@ -1,3 +1,5 @@
+import { ResourcePermission } from '@/views/system/resourcePermission/type'
+
 /**
  * list 转 tree
  *
@@ -24,4 +26,23 @@ export const list2Tree = <T>(
     return (father as Record<string, unknown>)[parentId] === rootId
   })
   return treeData.length === 0 ? list : treeData
+}
+
+/**
+ * tree转化为list
+ * @param tree
+ */
+export const tree2List = <T>(tree: T[], children = 'children') => {
+  const list: T[] = []
+  const cloneData = _.cloneDeep(tree)
+  for (const node of cloneData) {
+    const nodeChildren = ((node as Record<string, unknown>)[children] ?? []) as T[]
+    if (nodeChildren && nodeChildren.length > 0) {
+      for (const nodeChild of tree2List(nodeChildren)) {
+        list.push(nodeChild)
+      }
+    }
+    list.push(node)
+  }
+  return list
 }
