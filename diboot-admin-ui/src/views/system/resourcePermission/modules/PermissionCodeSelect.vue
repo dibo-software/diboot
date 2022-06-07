@@ -5,6 +5,7 @@ const props = defineProps<{ modelValue?: string[]; type: 'permission' | 'menu' }
 const emits = defineEmits<{
   (e: 'update:modelValue', value?: string[]): void
   (e: 'config'): void
+  (e: 'auto-refresh'): void
 }>()
 /**
  * 删除配置的权限
@@ -15,6 +16,7 @@ const close = (val?: string) => {
     'update:modelValue',
     props.modelValue?.filter((item: string) => item !== val)
   )
+  emits('auto-refresh')
 }
 /**
  * 配置权限

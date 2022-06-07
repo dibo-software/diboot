@@ -17,6 +17,8 @@ export default () => {
   const restPermissions: RestPermission[] = reactive([])
   // loading restPermission
   const loadingRestPermissions = ref(false)
+  // 菜单树切换变更
+  const toggle = ref(true)
   /**
    * 初始化权限编码字典
    * @param options
@@ -102,8 +104,18 @@ export default () => {
       ? '菜单 页面接口配置'
       : `${permission.displayName || permission.resourceCode} 按钮权限接口配置`
   }
+  /**
+   * 打开配置指定resourceCode权限
+   * @param resourceCode
+   * @param permission
+   */
+  const autoRefreshPermissionCode = (permission: ResourcePermission) => {
+    configPermissionCodes.value = permission.permissionCodes ?? []
+    toggle.value = !toggle.value
+  }
 
   return {
+    toggle,
     btnResourceCodeSelect,
     configPermissionTitle,
     configResourceCode,
@@ -116,6 +128,7 @@ export default () => {
     changeBtnResourceCode,
     changeBtnPermissionName,
     toggleBtnResourceCodeSelect,
-    clickConfigPermission
+    clickConfigPermission,
+    autoRefreshPermissionCode
   }
 }

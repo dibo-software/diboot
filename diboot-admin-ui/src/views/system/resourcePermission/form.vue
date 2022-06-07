@@ -98,6 +98,7 @@ const { displayFields, changeDisplayType } = useDisplayControl()
 
 // 权限相关hooks
 const {
+  toggle,
   btnResourceCodeSelect,
   configPermissionTitle,
   configResourceCode,
@@ -110,7 +111,8 @@ const {
   changeBtnResourceCode,
   changeBtnPermissionName,
   toggleBtnResourceCodeSelect,
-  clickConfigPermission
+  clickConfigPermission,
+  autoRefreshPermissionCode
 } = usePermissionControl()
 // 初始化后台权限
 initRestPermissions('/resourcePermission/apiList')
@@ -138,8 +140,7 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
   }
 })
 // 监听
-// 菜单树切换变更
-const toggle = ref(true)
+
 watch(
   () => props.formValue,
   val => {
@@ -229,6 +230,7 @@ watch(
                   v-model="model.permissionCodes"
                   type="menu"
                   @config="clickConfigPermission(model, false)"
+                  @auto-refresh="autoRefreshPermissionCode(model)"
                 />
               </el-form-item>
               <el-form-item label="状态">
@@ -325,6 +327,7 @@ watch(
                           v-model="permission.permissionCodes"
                           type="permission"
                           @config="clickConfigPermission(permission)"
+                          @auto-refresh="autoRefreshPermissionCode(permission)"
                         />
                       </el-descriptions-item>
                     </el-descriptions>
