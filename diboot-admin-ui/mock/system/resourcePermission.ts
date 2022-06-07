@@ -98,8 +98,6 @@ export default [
     response: ({ body }: ApiRequest<ResourcePermission>) => {
       const list = tree2List(dbDataList)
       const index = list.findIndex(item => item.id === body.id)
-      console.log(body)
-
       list.splice(index, 1, body)
       dbDataList.length = 0
 

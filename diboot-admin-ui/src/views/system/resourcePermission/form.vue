@@ -64,7 +64,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       submitLoading.value = true
       api
-        .put(`/resourcePermission/${model.id}`, model.value)
+        .put(`/resourcePermission/${model.value.id}`, model.value)
         .then(res => {
           console.log(res)
         })
