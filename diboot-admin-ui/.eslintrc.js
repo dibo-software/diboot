@@ -1,14 +1,14 @@
 module.exports = {
+  root: true,
   env: {
     browser: true,
     es2021: true,
     node: true,
     'vue/setup-compiler-macros': true
   },
-  parser: 'vue-eslint-parser',
   extends: [
-    'eslint:recommended',
     'plugin:vue/vue3-recommended',
+    'eslint:recommended',
     '@vue/eslint-config-typescript/recommended',
     '@vue/eslint-config-prettier',
     './.eslintrc-auto-import.json'
@@ -20,16 +20,16 @@ module.exports = {
   },
   plugins: ['vue', '@typescript-eslint', 'prettier'],
   globals: {
-    NodeJS: 'readonly'
+    NodeJS: 'readonly',
+    LabelValue: 'readonly',
+    FileRecord: 'readonly',
   },
   rules: {
-    // '@typescript-eslint/no-explicit-any': 0,
-    // '@typescript-eslint/no-this-alias': ['off'],
     'comma-dangle': ['warn', 'only-multiline'],
     'vue/multi-word-component-names': 'off',
     'vue/html-self-closing': ['warn', { html: { void: 'always' } }],
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-console': 'warn',
+    'no-debugger': 'warn',
     'prettier/prettier': 'warn',
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off'

@@ -1,7 +1,8 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_crudTemplate'
 import { Random } from 'mockjs'
-import { ApiRequest, JsonResult } from '../_util'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 import type { ScheduleJob, Job, ScheduleJobLog } from '@/views/system/scheduleJob/type'
 import moment from 'moment'
 

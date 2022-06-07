@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw, RouterView } from 'vue-router'
+import { createRouter, createWebHashHistory, RouterView, type RouteRecordRaw } from 'vue-router'
 import { createRouterGuard } from '@/router/router-guards'
 
 /**

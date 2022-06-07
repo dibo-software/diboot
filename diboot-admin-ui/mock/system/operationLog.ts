@@ -1,4 +1,4 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_crudTemplate'
 import type { OperationLog } from '@/views/system/operationLog/type'
 import { Random } from 'mockjs'

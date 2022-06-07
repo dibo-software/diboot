@@ -1,4 +1,5 @@
-import axios, { AxiosRequestHeaders, AxiosResponse } from 'axios'
+import type { AxiosRequestHeaders, AxiosResponse } from 'axios'
+import axios from 'axios'
 import auth, { AUTH_HEADER_KEY } from './auth'
 import router from '@/router'
 import qs from 'qs'

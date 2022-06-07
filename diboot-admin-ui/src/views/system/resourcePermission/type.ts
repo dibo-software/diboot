@@ -1,4 +1,4 @@
-import { RouteMeta } from 'vue-router'
+import type { RouteMeta } from 'vue-router'
 
 export interface ResourcePermission {
   id?: string

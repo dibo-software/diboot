@@ -18,7 +18,7 @@ const tagMap = {
 
 const advanced = ref(false)
 
-const detailRef = ref<InstanceType<typeof Detail>>()
+const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }

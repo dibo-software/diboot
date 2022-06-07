@@ -1,9 +1,9 @@
 <script setup lang="ts" name="UserList">
 import { Refresh, Search, CircleClose, ArrowDown } from '@element-plus/icons-vue'
-import { UserModel } from './type'
+import type { UserModel } from './type'
 import Detail from './detail.vue'
 import Form from './form.vue'
-import { defineProps, Prop } from 'vue'
+import { defineProps } from 'vue'
 
 type Props = {
   usedVisibleHeight?: number
@@ -29,12 +29,12 @@ getList()
 // 搜索区折叠
 const searchState = ref(false)
 
-const detailRef = ref<InstanceType<typeof Detail>>()
+const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
 
-const formRef = ref<InstanceType<typeof Form>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }

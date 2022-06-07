@@ -1,5 +1,4 @@
-import { ResourcePermission } from '@/views/system/resourcePermission/type'
-import type { RestPermission } from '../type'
+import type { RestPermission, ResourcePermission } from '../type'
 
 type LabelValue = { label: string; value: string }
 export default () => {

@@ -1,4 +1,4 @@
-import { Recordable } from 'vite-plugin-mock'
+import type { Recordable } from 'vite-plugin-mock'
 
 // 分页
 export const pagination = <T = unknown>(pageNo: number, pageSize: number, array: T[]): T[] => {

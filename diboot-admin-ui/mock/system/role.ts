@@ -1,8 +1,7 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_crudTemplate'
 import type { Role } from '@/views/system/role/type'
-import Mock, { Random } from 'mockjs'
-import { JsonResult } from '../_util'
+import Mock from 'mockjs'
 
 export const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
   const id = String(50 - index)

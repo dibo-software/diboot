@@ -1,16 +1,6 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "useDefineForClassFields": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
     "lib": [
       "esnext",
       "dom"
@@ -35,7 +25,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "types/**/*.ts",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "mock/**/*.ts"
   ],
   "references": [
     {

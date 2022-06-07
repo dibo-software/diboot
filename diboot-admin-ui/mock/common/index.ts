@@ -1,10 +1,12 @@
-import { MockMethod } from 'vite-plugin-mock'
-import { JsonResult, ApiRequest } from '../_util'
+import type { MockMethod } from 'vite-plugin-mock'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import objectDataListMap from './_objectDataListMap'
-import { BindData, AsyncBindData } from '@/hooks/more_default'
-import type {} from '#/global'
-import { line2Hump } from '@/utils/str'
+import type { BindData, AsyncBindData } from '@/hooks/more_default'
+
+const line2Hump = (value: string, between = '_') =>
+  value.toLowerCase().replace(RegExp(`${between}\\w`, 'g'), str => str.charAt(1).toUpperCase())
 
 const baseUrl = '/api/common'
 

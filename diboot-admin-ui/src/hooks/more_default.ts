@@ -1,4 +1,4 @@
-import { ApiData } from '@/utils/request'
+import type { ApiData } from '@/utils/request'
 
 /**
  * 绑定对象

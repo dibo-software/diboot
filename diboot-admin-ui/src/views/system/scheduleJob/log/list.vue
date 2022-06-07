@@ -38,18 +38,18 @@ defineExpose({
 const searchState = ref(false)
 
 // 选中的数据 Id 集合
-const multipleSelectionIds = ref<string[]>([])
+const selectedKeys = ref<string[]>([])
 
-const detailRef = ref<InstanceType<typeof Detail>>()
+const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
 </script>
 
 <template>
-  <div class="drawer">
-    <el-drawer v-model="visible" title="日志" size="850px">
-      <el-form v-show="searchState" label-width="80px" @submit.prevent>
+  <el-drawer v-model="visible" title="日志" size="850px">
+    <div class="table-page">
+      <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
         <el-row :gutter="18">
           <el-col :md="12" :sm="24">
             <el-form-item label="执行结果">
@@ -81,7 +81,7 @@ const openDetail = (id: string) => {
         </el-row>
       </el-form>
       <el-space wrap class="list-operation">
-        <el-button @click="batchRemove(multipleSelectionIds)">批量删除</el-button>
+        <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
         <el-space>
           <el-button :icon="Refresh" circle @click="getList()" />
           <el-button :icon="Search" circle @click="searchState = !searchState" />
@@ -91,8 +91,8 @@ const openDetail = (id: string) => {
         ref="tableRef"
         v-loading="loading"
         :data="dataList"
-        :max-height="`calc(100vh - 163px)`"
-        @selection-change="arr => (multipleSelectionIds = arr.map((e: ScheduleJobLog) => e.id))"
+        height="100%"
+        @selection-change="(arr: ScheduleJobLog[]) => (selectedKeys = arr.map(e => e.id))"
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="startTime" label="执行时间" align="center" width="165" />
@@ -117,14 +117,15 @@ const openDetail = (id: string) => {
         v-model:currentPage="pagination.current"
         v-model:page-size="pagination.pageSize"
         :page-sizes="[10, 20, 30, 50, 100]"
+        small
         background
         layout="total, sizes, prev, pager, next, jumper"
         :total="pagination.total"
         @size-change="getList()"
         @current-change="getList()"
       />
-    </el-drawer>
-  </div>
+    </div>
+  </el-drawer>
 
   <Detail ref="detailRef" />
 </template>

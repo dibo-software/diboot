@@ -1,7 +1,7 @@
 <script lang="ts" setup name="orgTree">
 import { defineEmits } from 'vue'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
-import { OrgModel } from '@/views/orgUser/org/type'
+import type { OrgModel } from '@/views/orgUser/org/type'
 import useTree from '@/views/system/resourcePermission/hooks/tree'
 import orgForm from './form.vue'
 
@@ -47,7 +47,7 @@ const changeCurrentNode = (currentNode: OrgModel) => {
 }
 
 // 打开表单
-const formRef = ref<InstanceType<typeof orgForm>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }

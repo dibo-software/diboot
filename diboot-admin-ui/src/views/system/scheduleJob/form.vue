@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { QuestionFilled } from '@element-plus/icons-vue'
 import type { Job, ScheduleJob } from './type'
 

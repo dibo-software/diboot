@@ -1,7 +1,7 @@
 import type { ElTree } from 'element-plus'
-import Node from 'element-plus/es/components/tree/src/model/node'
+import type Node from 'element-plus/es/components/tree/src/model/node'
 import { tree2List } from '@/utils/list'
-import { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
+import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]

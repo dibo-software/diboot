@@ -1,8 +1,8 @@
-import { MockMethod } from 'vite-plugin-mock'
-import { JsonResult, ApiRequest } from './_util'
+import type { MockMethod } from 'vite-plugin-mock'
+import type { ApiRequest } from './_util'
+import { JsonResult } from './_util'
 import { Random } from 'mockjs'
 import moment from 'moment'
-import { dataList } from './system/role'
 
 /**
  * 选项
@@ -30,6 +30,8 @@ export interface Option<T> {
 export interface Api {
   // 获取列表（默认启用分页）
   getList: MockMethod
+  // 根据IDs获取列表
+  listByIds: MockMethod
   // 获取详情
   getById: MockMethod
   // 创建数据
@@ -121,11 +123,11 @@ export default <T>(option: Option<T>) => {
         url: `${baseUrl}/listByIds`,
         timeout: Random.natural(50, 300),
         method: 'get',
-        response: ({ query }: any) => {
+        response: ({ query }: ApiRequest) => {
           const { ids } = query
           const idList = ids.split(',')
           const validList = dataList.filter(item => {
-            return idList.includes(item[primaryKey])
+            return idList.includes(item[primaryKey as keyof typeof item])
           })
           return JsonResult.OK(validList)
         }

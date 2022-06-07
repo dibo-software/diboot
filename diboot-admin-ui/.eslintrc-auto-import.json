@@ -1,5 +1,9 @@
 {
   "globals": {
+    "EffectScope": "readonly",
+    "ElMessage": "readonly",
+    "ElMessageBox": "readonly",
+    "ElNotification": "readonly",
     "_": "readonly",
     "acceptHMRUpdate": "readonly",
     "api": "readonly",
@@ -12,15 +16,13 @@
     "defineComponent": "readonly",
     "defineStore": "readonly",
     "effectScope": "readonly",
-    "EffectScope": "readonly",
-    "ElMessage": "readonly",
-    "ElMessageBox": "readonly",
-    "ElNotification": "readonly",
     "getActivePinia": "readonly",
     "getCurrentInstance": "readonly",
     "getCurrentScope": "readonly",
     "h": "readonly",
     "inject": "readonly",
+    "isProxy": "readonly",
+    "isReactive": "readonly",
     "isReadonly": "readonly",
     "isRef": "readonly",
     "mapActions": "readonly",
@@ -73,6 +75,8 @@
     "useTabs": "readonly",
     "useUploadFile": "readonly",
     "watch": "readonly",
-    "watchEffect": "readonly"
+    "watchEffect": "readonly",
+    "watchPostEffect": "readonly",
+    "watchSyncEffect": "readonly"
   }
 }

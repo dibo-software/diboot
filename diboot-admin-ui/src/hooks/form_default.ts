@@ -1,4 +1,4 @@
-import { FormInstance } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 
 interface FormOption {
   // 主键属性名（默认值：id）

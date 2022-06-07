@@ -2,7 +2,7 @@
 import { Loading, Download } from '@element-plus/icons-vue'
 import { ElCheckbox, ElTableColumn } from 'element-plus'
 import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
-import { PropType, VNode } from 'vue'
+import type { PropType, VNode } from 'vue'
 import type { TableHead } from './type'
 import { fileDownload } from '@/utils/file'
 

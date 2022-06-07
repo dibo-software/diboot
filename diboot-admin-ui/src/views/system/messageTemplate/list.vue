@@ -13,12 +13,12 @@ getList()
 // 搜索区折叠
 const searchState = ref(false)
 
-const detailRef = ref<InstanceType<typeof Detail>>()
+const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
 
-const formRef = ref<InstanceType<typeof Form>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }

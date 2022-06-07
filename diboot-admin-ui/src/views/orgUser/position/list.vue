@@ -21,11 +21,11 @@ const onSearchValChanged = (val: string) => {
   onSearch()
 }
 
-const formRef = ref<InstanceType<typeof Form>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }
-const detailRef = ref<InstanceType<typeof Detail>>()
+const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }

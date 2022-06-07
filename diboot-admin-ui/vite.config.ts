@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
+import checker from 'vite-plugin-checker'
 import eslintPlugin from 'vite-plugin-eslint'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -14,7 +15,8 @@ export default defineConfig(({ command }) => {
     plugins: [
       vue(),
       VueSetupExtend(),
-      eslintPlugin(),
+      checker({ vueTsc: true }),
+      eslintPlugin({ fix: true }),
       AutoImport({
         // 解析器
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
@@ -78,6 +80,12 @@ export default defineConfig(({ command }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '#': fileURLToPath(new URL('./types', import.meta.url))
+      }
+    },
+    server: {
+      host: true,
+      proxy: {
+        '/api': 'http://localhost:8080'
       }
     }
   }

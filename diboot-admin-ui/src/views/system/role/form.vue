@@ -1,7 +1,7 @@
 <script setup lang="ts" name="RoleForm">
-import { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
-import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 import useTree from '@/views/system/resourcePermission/hooks/tree'
 
 const baseApi = '/role'

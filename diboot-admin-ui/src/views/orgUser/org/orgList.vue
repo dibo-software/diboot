@@ -1,5 +1,5 @@
 <script setup name="OrgList" lang="ts">
-import { OrgModel } from '@/views/orgUser/org/type'
+import type { OrgModel } from '@/views/orgUser/org/type'
 import { Refresh } from '@element-plus/icons-vue'
 import OrgForm from './form.vue'
 import { BaseListPageLoader } from '@/hooks/list'
@@ -36,7 +36,7 @@ watch(
   }
 )
 
-const formRef = ref<InstanceType<typeof OrgForm>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }

@@ -1,5 +1,7 @@
-import { RouteRecord, RouteRecordName, RouteRecordRaw, RouterView } from 'vue-router'
-import { DefineComponent, KeepAlive, Ref, VNode } from 'vue'
+import type { RouteRecord, RouteRecordName, RouteRecordRaw } from 'vue-router'
+import type { DefineComponent, VNode } from 'vue'
+import { RouterView } from 'vue-router'
+import { KeepAlive } from 'vue'
 import useViewTabs from '@/store/viewTabs'
 import Layout from '@/layout/index.vue'
 

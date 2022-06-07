@@ -4,8 +4,8 @@ import AppMenu from './memu/index.vue'
 import AppMain from './main/index.vue'
 import AppTabs from './tabs/index.vue'
 
-import { Directive } from 'vue'
-import { RouteRecordRaw } from 'vue-router'
+import type { Directive } from 'vue'
+import type { RouteRecordRaw } from 'vue-router'
 import { Menu } from '@element-plus/icons-vue'
 
 import Logo from '@/assets/logo.png'

@@ -1,7 +1,9 @@
-import { App } from 'vue'
+import type { App } from 'vue'
 import { hasRole, hasPermission } from './permission'
 
-export default (app: App) => {
-  app.directive('hasRole', hasRole)
-  app.directive('hasPermission', hasPermission)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export default ({ directive }: App) => {
+  directive('hasRole', hasRole)
+  directive('hasPermission', hasPermission)
 }

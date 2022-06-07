@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Login">
-import { FormInstance } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 import useAuthStore from '@/store/auth'
 
 const authStore = useAuthStore()

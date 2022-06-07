@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import useScrollbarHeight from '../hooks/scrollbarHeight'
 import { useVueFuse } from 'vue-fuse'
-import { ElScrollbar } from 'element-plus'
+import type { ElScrollbar } from 'element-plus'
 import type { RestPermission, ApiUri, ApiPermission, SelectOption, FusePermission } from '../type'
 import { getElementAbsoluteLocation } from '@/utils/document'
 type Props = {

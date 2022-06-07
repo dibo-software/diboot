@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DictionaryDetail">
-import useForm, { BaseDetailLoader } from '@/hooks/detail'
+import useForm from '@/hooks/detail'
 
 interface DictModel {
   id: string

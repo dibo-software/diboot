@@ -1,7 +1,8 @@
 // 滚动高度计算
 import useAppStore from '@/store/app'
-import { getElementHeight, getWindowHeight } from '@/utils/document'
-import { Ref } from 'vue'
+import { getElementHeight } from '@/utils/document'
+import type { Ref } from 'vue'
+
 const appStore = useAppStore()
 
 export interface ScrollbarOption {

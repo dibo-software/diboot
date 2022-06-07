@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { RouteRecordRaw } from 'vue-router'
 import SubMenu from './subMenu.vue'
-import { RouteRecordRaw } from 'vue-router'
 
 import { Fold, Expand } from '@element-plus/icons-vue'
 

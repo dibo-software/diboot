@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { onBeforeRouteLeave, RouteLocationNormalized } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
+import type { WatchStopHandle } from 'vue'
+import type { ElScrollbar } from 'element-plus'
+import { onBeforeRouteLeave } from 'vue-router'
 import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
-import { ElScrollbar } from 'element-plus'
 import Draggable from 'vuedraggable'
 import useViewTabsStore from '@/store/viewTabs'
 import useAppStore from '@/store/app'
-import { WatchStopHandle } from 'vue'
 
 const appStore = useAppStore()
 

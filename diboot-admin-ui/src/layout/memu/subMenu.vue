@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
 defineProps<{ menuTree: RouteRecordRaw[] }>()
 </script>

@@ -1,5 +1,5 @@
 import type { UploadUserFile } from 'element-plus'
-import { ApiData } from '@/utils/request'
+import type { ApiData } from '@/utils/request'
 import { imageBindSrc } from '@/utils/file'
 
 export default (setValue: (fileUids?: string) => void, getFileList: () => FileRecord[] | undefined) => {

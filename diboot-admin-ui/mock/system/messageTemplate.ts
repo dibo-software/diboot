@@ -1,9 +1,8 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_crudTemplate'
 import type { MessageTemplate } from '@/views/system/messageTemplate/type'
 import { Random } from 'mockjs'
-import { ApiRequest, JsonResult } from '../_util'
-import {Job} from "../../src/views/system/scheduleJob/type";
+import { JsonResult } from '../_util'
 
 const dataList: MessageTemplate[] = Array.from({ length: 100 }).map((_, index) => {
   const id = String(100 - index)

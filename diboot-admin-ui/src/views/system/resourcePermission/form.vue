@@ -184,7 +184,7 @@ watch(
 </script>
 <template>
   <el-empty v-if="empty" description="选择左侧菜单后操作" />
-  <div v-else class="form-container" v-loading="submitLoading">
+  <div v-else v-loading="submitLoading" class="form-container">
     <el-row :gutter="5" class="context-body">
       <el-col :md="24" :lg="10" class="left-container">
         <el-space wrap :fill="true" class="form-space-container">

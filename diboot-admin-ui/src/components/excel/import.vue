@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Loading, Download, Upload, View } from '@element-plus/icons-vue'
-import { ElTableColumn, UploadUserFile } from 'element-plus'
-import { PropType, VNode } from 'vue'
-import { fileDownload } from '@/utils/file'
+import { ElTableColumn } from 'element-plus'
+import type { UploadUserFile } from 'element-plus'
+import type { PropType, VNode } from 'vue'
 import type { TableHead, ExcelPreview, ExcelImport } from './type'
+import { fileDownload } from '@/utils/file'
 
 const props = defineProps<{ excelBaseApi: string; attach?: () => Record<string, unknown>; width?: string }>()
 
@@ -88,7 +89,8 @@ const handleUpload = () => {
 
 // 导出错误数据
 const exportErrorLoading = ref(false)
-const exportErrorData = (url: string) => {
+const exportErrorData = (url?: string) => {
+  if (!url) return
   exportErrorLoading.value = true
   fileDownload(url)?.finally(() => (exportErrorLoading.value = false))
 }
@@ -147,8 +149,8 @@ const TableColumn = defineComponent({
         <el-input v-model="description" placeholder="备注信息" />
       </el-col>
       <el-col :md="10">
-        <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview"> 预览数据 </el-button>
-        <el-button :disabled="uploadDisabled" type="default" :icon="Upload" @click="handleUpload"> 上传数据 </el-button>
+        <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview">预览数据</el-button>
+        <el-button :disabled="uploadDisabled" type="default" :icon="Upload" @click="handleUpload">上传数据</el-button>
       </el-col>
     </el-row>
     <el-row v-if="errMsg">
@@ -166,12 +168,12 @@ const TableColumn = defineComponent({
       <el-divider />
       <el-alert type="success" :closable="false">
         Excel文件解析成功，共有 <strong>{{ data.totalCount }}</strong> 条数据
-        <span v-if="data.errorCount > 0">
-          ；<strong>{{ data.totalCount - data.errorCount }}</strong> 条数据
+        <span v-if="Number(data.errorCount ?? 0) > 0">
+          ；<strong>{{ Number(data.totalCount) - Number(data.errorCount) }}</strong> 条数据
         </span>
         可上传。
       </el-alert>
-      <el-collapse v-if="data.errorCount > 0" value="1">
+      <el-collapse v-if="Number(data.errorCount ?? 0) > 0" value="1">
         <el-collapse-item style="background-color: antiquewhite" name="1">
           <template #title>
             <span style="color: red; zoom: 1.2">{{ `共有 ${data.errorCount} 条数据异常` }}</span>
@@ -181,8 +183,8 @@ const TableColumn = defineComponent({
               :type="data.errorUrl ? 'danger' : ''"
               :icon="exportErrorLoading ? Loading : Download"
               :class="data.errorUrl ? '' : 'shake'"
-              :disabled="data.errorUrl == null"
-              @click.stop="exportErrorData(data.errorUrl)"
+              :disabled="!data.errorUrl"
+              @click.stop="exportErrorData(data?.errorUrl)"
             >
               导出错误数据
             </el-button>
@@ -191,7 +193,7 @@ const TableColumn = defineComponent({
           <div v-for="error in data.errorMsgs" :key="error">
             {{ error }}
           </div>
-          <span v-if="data.errorCount > 20">...</span>
+          <span v-if="Number(data.errorCount ?? 0) > 20">...</span>
         </el-collapse-item>
       </el-collapse>
       <el-table v-if="data.dataList" style="width: 100%" :data="data.dataList" border>

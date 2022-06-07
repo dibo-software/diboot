@@ -1,4 +1,4 @@
-import { RouteLocationNormalized, Router } from 'vue-router'
+import type { RouteLocationNormalized, Router } from 'vue-router'
 
 export type IViewTabsStore = {
   tabList: RouteLocationNormalized[] // 页签

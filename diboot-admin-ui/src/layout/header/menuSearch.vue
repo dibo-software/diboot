@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { RouteRecordRaw } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import { useVueFuse } from 'vue-fuse'
 import { getMenuTree } from '@/utils/route'
-import { RouteRecordRaw } from 'vue-router'
 
 interface MenuNode {
   routeName: string
@@ -83,13 +83,13 @@ const go = (name: string) => {
       </el-icon>
     </el-tooltip>
     <el-dialog v-model="visible" :show-close="false" top="10vh">
-      <template #title>
+      <template #header>
         <el-input
           ref="inputRef"
           v-model="value"
           autofocus
           placeholder="搜索菜单"
-          @update:model-value="v => (search = v)"
+          @update:model-value="(v: string) => (search = v)"
         >
           <template #prefix>
             <el-icon :size="20">

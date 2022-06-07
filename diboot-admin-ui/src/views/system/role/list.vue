@@ -13,13 +13,13 @@ getList()
 const searchState = ref(false)
 
 // 选中的数据 Id 集合
-const multipleSelectionIds = ref<string[]>([])
+const selectedKeys = ref<string[]>([])
 
-const formRef = ref<InstanceType<typeof Form>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }
-const detailRef = ref<InstanceType<typeof Detail>>()
+const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
@@ -50,7 +50,7 @@ const openDetail = (id: string) => {
 
     <el-space wrap class="list-operation">
       <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-button @click="batchRemove(multipleSelectionIds)">批量删除</el-button>
+      <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
       <el-space>
         <el-button :icon="Refresh" circle @click="getList()" />
         <el-button :icon="Search" circle @click="searchState = !searchState" />
@@ -62,7 +62,7 @@ const openDetail = (id: string) => {
       :data="dataList"
       stripe
       height="100%"
-      @selection-change="arr => (multipleSelectionIds = arr.map((e: Role) => e.id))"
+      @selection-change="(arr: Role[]) => (selectedKeys = arr.map(e => e.id))"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="名称" />

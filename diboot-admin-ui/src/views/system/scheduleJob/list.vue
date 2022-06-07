@@ -21,12 +21,12 @@ const executeOnce = (id: string) => {
     })
 }
 
-const formRef = ref<InstanceType<typeof Form>>()
+const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
 }
 
-const logListRef = ref<InstanceType<typeof LogList>>()
+const logListRef = ref()
 const openLog = (id: string) => {
   logListRef.value?.open(id)
 }

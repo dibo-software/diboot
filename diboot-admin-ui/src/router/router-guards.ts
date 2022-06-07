@@ -1,4 +1,5 @@
-import { isNavigationFailure, Router, RouteRecordRaw } from 'vue-router'
+import type { Router, RouteRecordRaw } from 'vue-router'
+import { isNavigationFailure } from 'vue-router'
 import nProgress from 'nprogress'
 import useAuthStore from '@/store/auth'
 import { buildAsyncRoutes } from '@/utils/route'

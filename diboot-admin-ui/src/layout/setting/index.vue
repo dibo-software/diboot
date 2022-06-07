@@ -59,7 +59,10 @@ const copyConfig = () => {
             <el-switch v-model="appStore.enableTabs" />
           </el-form-item>
           <el-form-item label="主题色">
-            <el-color-picker v-model="colorPrimary" @update:model-value="value => (appStore.colorPrimary = value)" />
+            <el-color-picker
+              v-model="colorPrimary"
+              @update:model-value="(value: string) => (appStore.colorPrimary = value)"
+            />
           </el-form-item>
         </el-form>
       </el-scrollbar>

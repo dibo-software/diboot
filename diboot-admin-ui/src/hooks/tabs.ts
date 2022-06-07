@@ -1,4 +1,4 @@
-import { Ref } from 'vue'
+import type { Ref } from 'vue'
 
 export interface TabsOption<T> {
   // 添加tab前回调

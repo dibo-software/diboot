@@ -1,5 +1,6 @@
-import { MockMethod } from 'vite-plugin-mock'
-import { JsonResult, ApiRequest } from '../_util'
+import type { MockMethod } from 'vite-plugin-mock'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import * as Element from '@element-plus/icons-vue'
 

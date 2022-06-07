@@ -35,7 +35,7 @@ const goPersonal = () => {
       <el-icon class="item" :size="22" @click="toggleTheme()">
         <component :is="isDark ? Sunny : Moon" />
       </el-icon>
-      <el-dropdown @command="command => (appStore.globalSize = command)">
+      <el-dropdown @command="(command: 'small' | 'large' | 'default') => (appStore.globalSize = command)">
         <div class="item">
           <el-icon :size="22">
             <icon name="Local:TextFontSize" />
