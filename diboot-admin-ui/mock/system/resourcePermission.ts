@@ -92,6 +92,22 @@ export default [
     }
   },
   {
+    url: `${baseUrl}/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'put',
+    response: ({ body }: ApiRequest<ResourcePermission>) => {
+      const list = tree2List(dbDataList)
+      const index = list.findIndex(item => item.id === body.id)
+      console.log(body)
+
+      list.splice(index, 1, body)
+      dbDataList.length = 0
+
+      dbDataList.push(...list2Tree(list))
+      return JsonResult.OK(true)
+    }
+  },
+  {
     url: `${baseUrl}/apiList`,
     timeout: Random.natural(50, 300),
     method: 'get',

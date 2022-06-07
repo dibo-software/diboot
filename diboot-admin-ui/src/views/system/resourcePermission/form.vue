@@ -11,22 +11,6 @@ import usePermissionControl from './hooks/permissionControl'
 import useScrollbarHeight from './hooks/scrollbarHeight'
 import type { MenuType } from './hooks/displayControl'
 
-const submitForm = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      console.log(model)
-      console.log('submit!')
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
-}
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
-}
-
 // ======> 响应式数据
 const empty = ref(true)
 
@@ -44,6 +28,7 @@ const rules = reactive<FormRules>({
 const model = ref<Partial<ResourcePermission>>({
   routeMeta: {}
 })
+const submitLoading = ref(false)
 // ======> 按钮权限相关
 const NEW_PERMISSION_ITEM: ResourcePermission = {
   id: undefined,
@@ -73,7 +58,28 @@ const handleChangeTab = (name: string | number) => {
     clickConfigPermission(permission)
   }
 }
-
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      submitLoading.value = true
+      api
+        .put(`/resourcePermission/${model.id}`, model.value)
+        .then(res => {
+          console.log(res)
+        })
+        .finally(() => {
+          submitLoading.value = false
+        })
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
 // compute
 // 计算已经存在的tab权限码
 const existPermissionCodes = computed(() => {
@@ -96,6 +102,7 @@ const {
   configPermissionTitle,
   configResourceCode,
   configPermissionCodes,
+  loadingRestPermissions,
   restPermissions,
   initRestPermissions,
   initResourcePermissionCodeOptions,
@@ -126,6 +133,7 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
         tab.displayName = validOption.label
       }
       configResourceCode.value = tab.resourceCode ?? ''
+      configPermissionCodes.value = []
     }
   }
 })
@@ -135,7 +143,6 @@ const toggle = ref(true)
 watch(
   () => props.formValue,
   val => {
-    console.log(val)
     empty.value = false
     model.value = val
     // 控制显示字段
@@ -176,13 +183,13 @@ watch(
 </script>
 <template>
   <el-empty v-if="empty" description="选择左侧菜单后操作" />
-  <div v-else class="form-container">
+  <div v-else class="form-container" v-loading="submitLoading">
     <el-row :gutter="5" class="context-body">
       <el-col :md="24" :lg="10" class="left-container">
         <el-space wrap :fill="true" class="form-space-container">
           <div class="card-header">{{ model.displayName || '菜单配置' }}</div>
           <el-scrollbar :height="height">
-            <el-form ref="formRef" :model="model" :rules="rules" label-width="90px">
+            <el-form ref="formRef" :model="model" :rules="rules" label-width="100px">
               <el-form-item label="上级目录" prop="parentId">
                 <el-input :model-value="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
               </el-form-item>
@@ -329,6 +336,7 @@ watch(
         </el-space>
       </el-col>
       <el-col :md="24" :lg="14" class="right-container">
+        <el-skeleton v-if="loadingRestPermissions" :rows="10" animated />
         <permission-code-list
           v-model:permission-codes="configPermissionCodes"
           :title="configPermissionTitle"
@@ -359,7 +367,7 @@ watch(
     bottom: 0;
     width: 100%;
     border-top: 1px solid var(--el-border-color);
-    padding: 10px 16px 0 16px;
+    padding: 5px 16px;
     background: var(--el-bg-color);
     text-align: center;
     z-index: 1;

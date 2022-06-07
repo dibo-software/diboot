@@ -15,7 +15,8 @@ export default () => {
   const resourcePermissionCodeOptions: LabelValue[] = []
   // 后端权限资源
   const restPermissions: RestPermission[] = reactive([])
-
+  // loading restPermission
+  const loadingRestPermissions = ref(false)
   /**
    * 初始化权限编码字典
    * @param options
@@ -30,14 +31,20 @@ export default () => {
    * @param options
    */
   const initRestPermissions = (restAPi: string) => {
+    loadingRestPermissions.value = true
     restPermissions.length = 0
-    api.get<RestPermission[]>(restAPi).then(res => {
-      if (res.code === 0) {
-        restPermissions.push(...(res.data ?? []))
-      } else {
-        ElMessage?.error(res.msg)
-      }
-    })
+    api
+      .get<RestPermission[]>(restAPi)
+      .then(res => {
+        if (res.code === 0) {
+          restPermissions.push(...(res.data ?? []))
+        } else {
+          ElMessage?.error(res.msg)
+        }
+      })
+      .finally(() => {
+        loadingRestPermissions.value = false
+      })
   }
 
   /**
@@ -102,6 +109,7 @@ export default () => {
     configResourceCode,
     configPermissionCodes,
     restPermissions,
+    loadingRestPermissions,
     initRestPermissions,
     initResourcePermissionCodeOptions,
     initReactiveData,
