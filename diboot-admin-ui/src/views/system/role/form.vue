@@ -97,10 +97,4 @@ getTree()
   </el-dialog>
 </template>
 
-<style scoped>
-:deep(.el-tree-node.is-expanded.flat-tree-node-container) > .el-tree-node__children {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-</style>
+<style scoped></style>

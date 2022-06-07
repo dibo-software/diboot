@@ -1,5 +1,3 @@
-import { ResourcePermission } from '@/views/system/resourcePermission/type'
-
 /**
  * list 转 tree
  *

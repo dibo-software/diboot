@@ -58,3 +58,9 @@
   word-wrap: break-word;
   word-break: break-all;
 }
+// 树节点扁平化
+.el-tree-node.is-expanded.flat-tree-node-container > .el-tree-node__children {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
