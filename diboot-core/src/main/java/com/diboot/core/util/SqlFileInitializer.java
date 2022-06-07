@@ -63,6 +63,9 @@ public class SqlFileInitializer {
         if (DbType.MARIADB.getDb().equalsIgnoreCase(dbType)) {
             dbType = "mysql";
         }
+        else if(DbType.KINGBASE_ES.getDb().equalsIgnoreCase(dbType)) {
+            dbType = DbType.POSTGRE_SQL.getDb();
+        }
         String sqlPath = "META-INF/sql/init-" + module + "-" + dbType + ".sql";
         return sqlPath;
     }
