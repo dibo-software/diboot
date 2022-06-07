@@ -142,6 +142,18 @@ const authMenu = [
         }
       },
       {
+        path: 'position',
+        name: 'Position',
+        meta: {
+          title: '岗位管理',
+          componentPath: prefix + 'orgUser/position/list.vue',
+          sort: '@natural',
+          keepAlive: false,
+          hollow: false,
+          icon: 'Element:Guide'
+        }
+      },
+      {
         path: 'user',
         name: 'User',
         meta: {
