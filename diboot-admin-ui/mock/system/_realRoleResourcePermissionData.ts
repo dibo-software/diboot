@@ -1,4 +1,3 @@
-import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 export default [
   {
     id: '10046',
@@ -1945,4 +1944,4 @@ export default [
       }
     ]
   }
-] as ResourcePermission[]
+]

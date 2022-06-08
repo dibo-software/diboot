@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ResourcePermissionForm from './form.vue'
 import MenuTree from './modules/MenuTree.vue'
-import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 import { getElementHeight } from '@/utils/document'
-import { Ref } from 'vue'
+import type { Ref } from 'vue'
 
 const formValue = ref<Partial<ResourcePermission>>({})
 const clickNode = (node: ResourcePermission) => {

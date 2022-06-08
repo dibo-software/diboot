@@ -3,11 +3,13 @@ import type { MockMethod } from 'vite-plugin-mock'
 import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
 import Mock, { Random } from 'mockjs'
-import dbDataList from './_realResourcePermissionData'
+import realResourcePermissionData from './_realResourcePermissionData'
 import dbRestPermissionDataList from './_realRestPermissionData'
-import dbRoleResourcePermissionData from './_realRoleResourcePermissionData'
+import realRoleResourcePermissionData from './_realRoleResourcePermissionData'
 const baseUrl = '/api/resourcePermission'
 const deleteDataIds: string[] = []
+const dbDataList = realResourcePermissionData as unknown as ResourcePermission[]
+const dbRoleResourcePermissionData = realRoleResourcePermissionData as unknown as ResourcePermission[]
 /**
  * tree转化为list
  * @param tree

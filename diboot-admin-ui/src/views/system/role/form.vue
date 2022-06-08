@@ -9,7 +9,6 @@ const baseApi = '/role'
 const { loadData, loading, model } = useDetailDefault<Role>(baseApi)
 
 const title = ref('')
-
 const visible = ref(false)
 
 defineExpose({
@@ -47,12 +46,11 @@ const rules: FormRules = {
 const transformField = {
   label: 'displayName'
 }
-const { treeRef, treeDataList, getTree, checkNode, flatTreeNodeClass, setSelectNode, nodeClick } =
-  useTree<ResourcePermission>({
-    baseApi: '/resourcePermission',
-    treeApi: '/list',
-    transformField
-  })
+const { treeRef, treeDataList, getTree, checkNode, flatTreeNodeClass } = useTree<ResourcePermission>({
+  baseApi: '/resourcePermission',
+  treeApi: '/list',
+  transformField
+})
 const treeProps = {
   label: 'displayName',
   class: flatTreeNodeClass
