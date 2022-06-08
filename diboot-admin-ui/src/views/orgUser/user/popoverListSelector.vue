@@ -1,7 +1,7 @@
 <script setup lang="ts" name="PopverListSelector">
 import RoleListSelector from '@/views/system/role/listSelector.vue'
 import { ElMessage } from 'element-plus'
-import { Role } from '@/views/system/role/type'
+import type { Role } from '@/views/system/role/type'
 type Props = {
   modelValue: string
   multi?: boolean

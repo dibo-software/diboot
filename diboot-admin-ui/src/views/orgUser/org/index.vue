@@ -1,8 +1,8 @@
 <script lang="ts" setup name="orgIndex">
-import orgTree from './orgTree.vue'
-import orgList from './orgList.vue'
+import type orgTree from './orgTree.vue'
+import type orgList from './orgList.vue'
 import orgForm from './form.vue'
-import { OrgModel } from './type'
+import type { OrgModel } from './type'
 import OrgTree from '@/views/orgUser/org/orgTree.vue'
 defineProps<{ usedVisibleHeight?: number }>()
 

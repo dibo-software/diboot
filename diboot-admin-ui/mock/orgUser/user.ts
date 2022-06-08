@@ -1,12 +1,12 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { mock, Random } from 'mockjs'
-import { UserModel } from '../../src/views/orgUser/user/type.ts'
+import type { UserModel } from '@/views/orgUser/user/type'
 import crudTemplate from '../_crudTemplate'
 
 const baseUrl = '/api/user'
 
-const arrList = [
+const arrList: any[][] = [
   ['1', '1', '松松', '123', '', '123@dibo.ltd', 'F', '女', 'A', '正常', '2022-06-01'],
   ['2', '1', '张三', '124', '18700003333', '124@dibo.ltd', 'M', '男', 'A', '正常', '2022-06-01'],
   ['3', '1', '李四', '125', '18700003334', '125@dibo.ltd', 'M', '男', 'A', '正常', '2022-06-01'],
@@ -25,15 +25,13 @@ const crud = crudTemplate({
 
 export default [...Object.values(crud.api)]
 
-function initUserList(arrList): UserModel[] {
-  if (!arrList || arrList.lenght === 0) {
+function initUserList(arrList: any[][]): UserModel[] {
+  if (!arrList || arrList.length === 0) {
     return []
   }
   return arrList
+    .filter((arr: any[]) => arr.length >= 11)
     .map(arr => {
-      if (arr.length < 11) {
-        return undefined
-      }
       return {
         id: arr[0],
         orgId: arr[1],
@@ -46,7 +44,6 @@ function initUserList(arrList): UserModel[] {
         status: arr[8],
         statusLabel: arr[9],
         createTime: arr[10]
-      }
+      } as UserModel
     })
-    .filter(item => item !== undefined)
 }

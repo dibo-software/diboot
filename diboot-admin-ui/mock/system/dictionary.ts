@@ -1,4 +1,4 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import { cloneDeep } from 'lodash'
@@ -187,7 +187,7 @@ export default [
     url: `${baseUrl}/`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: request => {
+    response: (request: any) => {
       const formModel: FormModel = request?.body
       if (formModel) {
         formModel.id = `${++nextId}`
@@ -208,7 +208,7 @@ export default [
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'put',
-    response: request => {
+    response: (request: any) => {
       const formModel: FormModel = request?.body
       const currentId = request?.query?.id
       formModel.id = String(dataList.length + 1)

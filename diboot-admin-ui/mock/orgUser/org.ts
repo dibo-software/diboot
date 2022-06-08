@@ -1,13 +1,13 @@
-import { MockMethod } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { mock, Random } from 'mockjs'
 import { list2tree } from '../_treeUtil'
-import { OrgModel } from '../../src/views/orgUser/org/type.ts'
+import type { OrgModel } from '@/views/orgUser/org/type'
 import crudTemplate from '../_crudTemplate'
 
 const baseUrl = '/api/org'
 
-const arrList = [
+const arrList: any[][] = [
   ['1', '0', '0', '帝博集团', '帝博集团', 'COMP', 'DIBO_GROUP', '0', 1, '', '2022-06-01'],
   ['2', '1', '1', '苏州帝博', '苏州帝博', 'COMP', 'SUZHOU_DIBO', '0', 2, '', '2022-06-01'],
   ['3', '1', '1', '成都帝博', '成都帝博', 'COMP', 'CHENGDU_DIBO', '0', 2, '', '2022-06-01'],
@@ -33,11 +33,15 @@ const mockMethods: MockMethod[] = [
     method: 'get',
     response: ({ query }: any) => {
       const { deleteDataIds } = crud
-      const validList = dataList.filter(item => {
+      const validList = dataList.filter((item: OrgModel) => {
         if (!deleteDataIds || deleteDataIds.length === 0) {
           return true
         }
-        return !deleteDataIds.includes(item.id)
+        if (item.id) {
+          return !deleteDataIds.includes(item.id)
+        } else {
+          return false
+        }
       })
       return JsonResult.OK(buildOrgTree(validList))
     }
@@ -47,15 +51,13 @@ mockMethods.push(...Object.values(crud.api))
 
 export default mockMethods
 
-function initOrgList(arrList): OrgModel[] {
-  if (!arrList || arrList.lenght === 0) {
+function initOrgList(arrList: any[][]): OrgModel[] {
+  if (!arrList || arrList.length === 0) {
     return []
   }
   return arrList
-    .map(arr => {
-      if (arr.length < 11) {
-        return undefined
-      }
+    .filter((arr: any[]) => arr.length >= 11)
+    .map((arr: any[]) => {
       return {
         id: arr[0],
         parentId: arr[1],
@@ -68,11 +70,10 @@ function initOrgList(arrList): OrgModel[] {
         depth: arr[8],
         orgComment: arr[9],
         createTime: arr[10]
-      }
+      } as OrgModel
     })
-    .filter(item => item !== undefined)
 }
 
-function buildOrgTree(list) {
+function buildOrgTree(list: OrgModel[]) {
   return list2tree(list)
 }

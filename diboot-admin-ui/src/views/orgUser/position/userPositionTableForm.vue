@@ -1,8 +1,8 @@
 <script setup lang="ts" name="UserPositionTableForm">
-import { UserPosition } from './type'
-import { OrgModel } from '../org/type'
+import type { UserPosition } from './type'
+import type { OrgModel } from '../org/type'
 import _ from 'lodash'
-import { FormInstance } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 
 type Props = {
   userId?: string

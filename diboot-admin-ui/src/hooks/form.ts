@@ -1,5 +1,5 @@
-import { FormInstance } from 'element-plus'
-import { ApiData } from '@/utils/request'
+import type { FormInstance } from 'element-plus'
+import type { ApiData } from '@/utils/request'
 
 type HookOptions<T> = {
   pageLoader?: BaseFormLoader<T>

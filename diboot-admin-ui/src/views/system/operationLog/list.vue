@@ -22,6 +22,10 @@ const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
+
+const getTagType = (val: string, map: Record<string, string>) => {
+  return map[val as keyof typeof map]
+}
 </script>
 
 <template>
@@ -77,7 +81,7 @@ const openDetail = (id: string) => {
       <el-table-column prop="operation" label="操作事项" />
       <el-table-column prop="requestMethod" label="请求方式">
         <template #default="{ row }">
-          <el-tag :type="tagMap[row.requestMethod]" effect="plain">{{ row.requestMethod }}</el-tag>
+          <el-tag :type="getTagType(row.requestMethod, tagMap)" effect="plain">{{ row.requestMethod }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="requestUri" label="请求URI" show-overflow-tooltip />

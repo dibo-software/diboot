@@ -1,5 +1,5 @@
 <script setup lang="ts" name="PositionForm">
-import { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import type { Position } from './type'
 import { defineEmits } from 'vue'
 

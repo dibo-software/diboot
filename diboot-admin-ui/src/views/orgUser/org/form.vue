@@ -1,6 +1,6 @@
 <script setup lang="ts" name="OrgForm">
 import type { OrgModel } from './type'
-import { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'
 import useTree from '@/views/system/resourcePermission/hooks/tree'
 
