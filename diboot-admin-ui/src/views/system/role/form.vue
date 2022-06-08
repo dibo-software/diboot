@@ -32,7 +32,7 @@ defineExpose({
     loadData(id).then(() => {
       // 设置选中权限
       if (model.value && model.value.permissionList) {
-        selectedIdList.value = model.value.permissionList.map(item => item.id)
+        selectedIdList.value = model.value.permissionList.map(item => item.id) as string[]
         treeRef.value?.setCheckedKeys(selectedIdList.value)
       }
     })
@@ -67,7 +67,8 @@ const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: s
   checkNode(currentNode, data)
   model.value.permissionList = selectedIdList.value.map(id => {
     return {
-      id
+      id,
+      parentId: '0'
     }
   })
 }

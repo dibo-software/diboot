@@ -1,7 +1,7 @@
 <script setup lang="ts" name="RoleDetail">
 import type { Role } from './type'
 import useTree from '@/views/system/resourcePermission/hooks/tree'
-import { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'
 const { loadData, loading, model } = useDetailDefault<Role>('/role')
 
@@ -35,8 +35,9 @@ const iconMap = {
   IFRAME: Link,
   PERMISSION: Key
 }
-const getIcon = (type: string) => {
-  return iconMap[type]
+
+const getIcon = (val: string) => {
+  return Object.getOwnPropertyDescriptor(iconMap, val)?.value
 }
 </script>
 

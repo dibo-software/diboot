@@ -72,7 +72,7 @@ export default <T>(option: TreeOption<T>) => {
 
   //监听keyword变化
   watch(searchWord, val => {
-    treeRef.value!.filter(val)
+    treeRef.value?.filter(val)
   })
 
   const dataList = computed(() => {
@@ -192,8 +192,8 @@ export default <T>(option: TreeOption<T>) => {
         dataState.treeDataList = []
         await getTree()
         // 设置当前节点选中
-        treeRef.value!.setCurrentKey(result.data as string)
-        const currentNode = treeRef.value!.getCurrentNode()
+        treeRef.value?.setCurrentKey(result.data as string)
+        const currentNode = treeRef.value?.getCurrentNode()
         if (currentNode) nodeClick(currentNode as T)
         else nodeClick(treeNode)
       } else {
@@ -238,10 +238,10 @@ export default <T>(option: TreeOption<T>) => {
     } else {
       if (dataState.treeDataList && dataState.treeDataList.length > 0) {
         // 设置当前节点选中
-        treeRef.value!.setCurrentKey(
+        treeRef.value?.setCurrentKey(
           (dataState.treeDataList as Record<string, unknown>[])[0][optionsTransformField.value as string] as string
         )
-        const currentNode = treeRef.value!.getCurrentNode()
+        const currentNode = treeRef.value?.getCurrentNode()
         if (currentNode) nodeClick(currentNode as T)
       }
     }

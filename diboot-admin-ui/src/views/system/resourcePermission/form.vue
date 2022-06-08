@@ -53,10 +53,14 @@ const handleAddTab = () => {
 // 切换tab
 const handleChangeTab = (name: string | number) => {
   if (model.value.permissionList) {
-    const permission = model.value.permissionList[parseInt(`${name}`, 10)]
+    const permission = model.value.permissionList[parseInt(`${name}`, 10)] as ResourcePermission
     // 切换按钮权限tab时自动切换权限配置
     clickConfigPermission(permission)
   }
+}
+// 菜单配置
+const handleClickMenuConfigPermission = (val: Partial<ResourcePermission>, auto = false) => {
+  auto ? autoRefreshPermissionCode(val as ResourcePermission) : clickConfigPermission(val as ResourcePermission, false)
 }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -234,8 +238,8 @@ watch(
                   v-if="model"
                   v-model="model.permissionCodes"
                   type="menu"
-                  @config="clickConfigPermission(model, false)"
-                  @auto-refresh="autoRefreshPermissionCode(model)"
+                  @config="handleClickMenuConfigPermission(model)"
+                  @auto-refresh="handleClickMenuConfigPermission(model, true)"
                 />
               </el-form-item>
               <el-form-item label="状态">
@@ -346,12 +350,11 @@ watch(
       <el-col :md="24" :lg="14" class="right-container">
         <el-skeleton v-if="loadingRestPermissions" :rows="10" animated />
         <permission-code-list
-          v-if="model?.routeMeta"
           v-model:permission-codes="configPermissionCodes"
           :title="configPermissionTitle"
           :toggle="toggle"
           :config-code="configResourceCode"
-          :menu-resource-code="model.routeMeta.resourceCode"
+          :menu-resource-code="model.routeMeta && model.routeMeta.resourceCode"
           :rest-permissions="restPermissions"
         />
       </el-col>
