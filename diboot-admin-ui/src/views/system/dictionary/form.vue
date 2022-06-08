@@ -1,7 +1,7 @@
 <script setup lang="ts" name="DictionaryForm">
 import useForm, { BaseFormLoader } from '@/hooks/form'
-import { FormInstance, FormRules } from 'element-plus'
-import { ApiData } from '@/utils/request'
+import type { FormInstance, FormRules } from 'element-plus'
+import type { ApiData } from '@/utils/request'
 import draggable from 'vuedraggable'
 import { Sort } from '@element-plus/icons-vue'
 

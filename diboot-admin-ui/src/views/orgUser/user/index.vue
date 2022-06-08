@@ -1,7 +1,7 @@
 <script setup lang="ts" name="OrgUserIndex">
 import orgTree from '../org/orgTree.vue'
 import userList from './list.vue'
-import { OrgModel } from '@/views/orgUser/org/type'
+import type { OrgModel } from '@/views/orgUser/org/type'
 defineProps<{ usedVisibleHeight?: number }>()
 
 const currentNodeId = ref('0')

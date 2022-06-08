@@ -54,7 +54,7 @@ const openDetail = (id: string) => {
       :data="dataList"
       stripe
       height="100%"
-      @selection-change="arr => (selectedKeys = arr.map((e: Position) => e.id))"
+      @selection-change="(arr: Position[]) => (selectedKeys = arr.map((e: Position) => e.id))"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="名称" />

@@ -1,3 +1,14 @@
+//{
+//  "files": [],
+//  "references": [
+//    {
+//      "path": "./tsconfig.config.json"
+//    },
+//    {
+//      "path": "./tsconfig.app.json"
+//    }
+//  ]
+//}
 {
   "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
