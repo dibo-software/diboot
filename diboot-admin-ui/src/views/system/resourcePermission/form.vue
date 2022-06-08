@@ -58,6 +58,7 @@ const handleChangeTab = (name: string | number) => {
     clickConfigPermission(permission)
   }
 }
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -211,13 +212,13 @@ watch(
               <el-form-item label="编码">
                 <route-select
                   v-if="displayFields.selectResourceCode"
-                  v-model="model.routeMeta.resourceCode"
-                  v-model:component-path="model.routeMeta.componentPath"
+                  v-model="model.routeMeta?.resourceCode"
+                  v-model:component-path="model.routeMeta?.componentPath"
                 />
                 <el-input v-else v-model="model.resourceCode" placeholder="请输入编码" clearable />
               </el-form-item>
-              <el-form-item v-if="model.routeMeta.componentPath && displayFields.selectResourceCode" label="组件地址">
-                <el-input v-model="model.routeMeta.componentPath" disabled />
+              <el-form-item v-if="model.routeMeta?.componentPath && displayFields.selectResourceCode" label="组件地址">
+                <el-input v-model="model.routeMeta?.componentPath" disabled />
               </el-form-item>
               <el-form-item label="路由地址">
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
@@ -259,9 +260,9 @@ watch(
                     </el-tooltip>
                   </div>
                 </template>
-                <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
-                <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
-                <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
+                <el-checkbox v-model="model.routeMeta?.hidden" label="隐藏" />
+                <el-checkbox v-model="model.routeMeta?.keepAlive" label="缓存" />
+                <el-checkbox v-model="model.routeMeta?.ignoreAuth" label="忽略认证" />
               </el-form-item>
             </el-form>
             <div v-if="displayFields.permissionList" class="btn-config-container">
@@ -287,7 +288,7 @@ watch(
                               filterable
                               allow-create
                               placeholder="请选取当前按钮权限编码"
-                              @change="value => changeBtnResourceCode(permission, value)"
+                              @change="(value: string) => changeBtnResourceCode(permission, value)"
                             >
                               <el-option
                                 v-for="(item, i) in more.resourcePermissionCodeOptions"
@@ -300,7 +301,7 @@ watch(
                               v-else
                               v-model="permission.resourceCode"
                               placeholder="请输入按钮权限编码"
-                              @input="value => changeBtnResourceCode(permission, value)"
+                              @input="(value: string) => changeBtnResourceCode(permission, value)"
                             />
                           </el-col>
                           <el-col :span="8">
@@ -319,7 +320,7 @@ watch(
                         <el-input
                           v-model="permission.displayName"
                           placeholder="请输入按钮权限名称"
-                          @input="value => changeBtnPermissionName(permission, value)"
+                          @input="(value: string) => changeBtnPermissionName(permission, value)"
                         />
                       </el-descriptions-item>
                       <el-descriptions-item label="按钮权限接口">

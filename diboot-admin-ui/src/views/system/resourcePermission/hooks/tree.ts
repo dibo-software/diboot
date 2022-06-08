@@ -1,5 +1,4 @@
 import type { ElTree } from 'element-plus'
-import type Node from 'element-plus/es/components/tree/src/model/node'
 import { tree2List } from '@/utils/list'
 import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 export interface DataType<T> {
@@ -249,9 +248,8 @@ export default <T>(option: TreeOption<T>) => {
   /**
    * 扁平化树最后一组节点
    * @param data
-   * @param node
    */
-  const flatTreeNodeClass = (data: TreeNodeData, node: Node) => {
+  const flatTreeNodeClass = (data: TreeNodeData) => {
     const falseVal = { 'flat-tree-node-container': false }
     const children = (data[optionsTransformField.children] ?? []) as Record<string, unknown>[]
     if (!children || children.length === 0) return falseVal

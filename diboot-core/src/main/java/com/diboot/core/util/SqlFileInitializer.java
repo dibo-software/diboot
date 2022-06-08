@@ -63,6 +63,9 @@ public class SqlFileInitializer {
         if (DbType.MARIADB.getDb().equalsIgnoreCase(dbType)) {
             dbType = "mysql";
         }
+        else if(DbType.KINGBASE_ES.getDb().equalsIgnoreCase(dbType)) {
+            dbType = DbType.POSTGRE_SQL.getDb();
+        }
         String sqlPath = "META-INF/sql/init-" + module + "-" + dbType + ".sql";
         return sqlPath;
     }
@@ -401,6 +404,38 @@ public class SqlFileInitializer {
         return CURRENT_SCHEMA;
     }
 
+    /**
+     * 获取当前schema，DM默认schema=当前user
+     * @return
+     */
+    public static String getDMCurrentSchema(){
+        if(CURRENT_SCHEMA == null){
+            String jdbcUrl = ContextHelper.getJdbcUrl();
+            if(V.notEmpty(jdbcUrl) && S.contains(jdbcUrl, "schema=")) {
+                CURRENT_SCHEMA = S.substringAfterLast(jdbcUrl, "schema=");
+                if(CURRENT_SCHEMA.contains("&")) {
+                    CURRENT_SCHEMA = S.substringBefore(CURRENT_SCHEMA, "&");
+                }
+                return CURRENT_SCHEMA;
+            }
+            // 先查找配置中是否存在指定
+            String alterSessionSql = environment.getProperty("spring.datasource.hikari.connection-init-sql");
+            if(V.notEmpty(alterSessionSql) && S.containsIgnoreCase(alterSessionSql," current_schema=")){
+                CURRENT_SCHEMA = S.substringAfterLast(alterSessionSql, "=");
+            }
+            if(CURRENT_SCHEMA == null){
+                CURRENT_SCHEMA = environment.getProperty(MYBATIS_PLUS_SCHEMA_CONFIG);
+            }
+            if(CURRENT_SCHEMA == null){
+                // 然后默认为当前用户名大写
+                String username = environment.getProperty("spring.datasource.username");
+                if(username != null){
+                    CURRENT_SCHEMA = username.toUpperCase();
+                }
+            }
+        }
+        return CURRENT_SCHEMA;
+    }
 
     /**
      * 查询SQL返回第一项

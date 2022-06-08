@@ -15,6 +15,7 @@ export interface ResourcePermission {
   status?: string
   children?: ResourcePermission[]
   permissionList?: ResourcePermission[]
+  [key: string]: unknown
 }
 
 export interface ApiUri {
