@@ -16,14 +16,13 @@ const defaultFalseConfig: ControlField = {
   permissionList: false,
   permissionCodes: false
 }
-export type MenuType = 'CATALOGUE' | 'MENU' | 'OUTSIDE_URL' | 'IFRAME'
-const displayFieldsMap: { [menu in string]: ControlField } = {
+const displayFieldsMap = {
   CATALOGUE: Object.assign(defaultFalseConfig, { redirectPath: true }),
   MENU: Object.assign(defaultTrueConfig, { redirectPath: false }),
   OUTSIDE_URL: defaultFalseConfig,
   IFRAME: defaultFalseConfig
 }
-
+export type MenuType = keyof typeof displayFieldsMap
 export default () => {
   // 存储展示的字段
   const displayFields = ref<ControlField>()

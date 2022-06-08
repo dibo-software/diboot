@@ -9,6 +9,7 @@ export const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
     id,
     name: '角色' + id,
     code: 'role' + id,
+    permissionList: [],
     description: '@csentence',
     createTime: '@datetime',
     updateTime: '@datetime'

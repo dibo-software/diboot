@@ -11,10 +11,31 @@ const { loadData, loading, model } = useDetailDefault<Role>(baseApi)
 const title = ref('')
 const visible = ref(false)
 
+// 权限树相关
+const transformField = {
+  label: 'displayName'
+}
+const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } = useTree<ResourcePermission>({
+  baseApi: '/resourcePermission',
+  treeApi: '/list',
+  transformField
+})
+const treeProps = {
+  label: 'displayName',
+  class: flatTreeNodeClass
+}
+getTree()
+
 defineExpose({
   open: (id?: string) => {
     title.value = id ? '更新' : '新建'
-    loadData(id)
+    loadData(id).then(() => {
+      // 设置选中权限
+      if (model.value && model.value.permissionList) {
+        selectedIdList.value = model.value.permissionList.map(item => item.id)
+        treeRef.value?.setCheckedKeys(selectedIdList.value)
+      }
+    })
     visible.value = true
   }
 })
@@ -42,20 +63,14 @@ const rules: FormRules = {
   name: { required: true, message: '不能为空', whitespace: true },
   code: { required: true, message: '不能为空', whitespace: true }
 }
-// 权限树相关
-const transformField = {
-  label: 'displayName'
+const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: string[] }) => {
+  checkNode(currentNode, data)
+  model.value.permissionList = selectedIdList.value.map(id => {
+    return {
+      id
+    }
+  })
 }
-const { treeRef, treeDataList, getTree, checkNode, flatTreeNodeClass } = useTree<ResourcePermission>({
-  baseApi: '/resourcePermission',
-  treeApi: '/list',
-  transformField
-})
-const treeProps = {
-  label: 'displayName',
-  class: flatTreeNodeClass
-}
-getTree()
 </script>
 
 <template>
@@ -70,7 +85,7 @@ getTree()
       <el-form-item prop="description" label="备注">
         <el-input v-model="model.description" type="textarea" />
       </el-form-item>
-      <el-form-item prop="description" label="角色授权">
+      <el-form-item prop="permissionList" label="角色授权">
         <el-scrollbar height="400px">
           <el-tree
             ref="treeRef"
@@ -82,7 +97,7 @@ getTree()
             check-strictly
             node-key="id"
             default-expand-all
-            @check="checkNode"
+            @check="handleCheckNode"
           />
         </el-scrollbar>
       </el-form-item>

@@ -27,11 +27,11 @@ const collectDeepParent = <T>(parentId: string, dataList: T[], result: T[], tran
  * 收集对象中的指定字段
  * @param data 对象
  * @param fieldName 对象的属性名
- * @param defaultValue 属性默认值
+ * @param defaultValue 属性默认值，不设置默认值，表示对象中一定可以获取到非null、非undefined值
  */
 const collectField = <T, R>(data: T, fieldName: string, defaultValue?: R) => {
-  const val = (data as Record<string, unknown>)[fieldName] as R
-  return defaultValue ? val ?? defaultValue : val
+  const val = Object.getOwnPropertyDescriptor(data, fieldName)?.value
+  return defaultValue ? ((val ?? defaultValue) as R) : (val as R)
 }
 /**
  * 收集指定字段列表
@@ -141,7 +141,8 @@ export default <T>(option: TreeOption<T>) => {
       const values = collectFieldList<T, string>(result, optionsTransformField.value).filter(
         val => !dataState.selectedIdList.includes(val)
       )
-      dataState.selectedIdList.push(...values)
+
+      dataState.selectedIdList.push(...new Set(values))
     } else {
       const values = collectFieldList<T, string>(result, optionsTransformField.value)
       const parentValues = collectFieldList<T, string>(parentResult, optionsTransformField.value)

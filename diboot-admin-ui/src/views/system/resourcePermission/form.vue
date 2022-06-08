@@ -212,13 +212,13 @@ watch(
               <el-form-item label="编码">
                 <route-select
                   v-if="displayFields.selectResourceCode"
-                  v-model="model.routeMeta?.resourceCode"
-                  v-model:component-path="model.routeMeta?.componentPath"
+                  v-model="model.routeMeta.resourceCode"
+                  v-model:component-path="model.routeMeta.componentPath"
                 />
                 <el-input v-else v-model="model.resourceCode" placeholder="请输入编码" clearable />
               </el-form-item>
-              <el-form-item v-if="model.routeMeta?.componentPath && displayFields.selectResourceCode" label="组件地址">
-                <el-input v-model="model.routeMeta?.componentPath" disabled />
+              <el-form-item v-if="model.routeMeta.componentPath && displayFields.selectResourceCode" label="组件地址">
+                <el-input v-model="model.routeMeta.componentPath" disabled />
               </el-form-item>
               <el-form-item label="路由地址">
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
@@ -260,9 +260,9 @@ watch(
                     </el-tooltip>
                   </div>
                 </template>
-                <el-checkbox v-model="model.routeMeta?.hidden" label="隐藏" />
-                <el-checkbox v-model="model.routeMeta?.keepAlive" label="缓存" />
-                <el-checkbox v-model="model.routeMeta?.ignoreAuth" label="忽略认证" />
+                <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
+                <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
+                <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
               </el-form-item>
             </el-form>
             <div v-if="displayFields.permissionList" class="btn-config-container">
