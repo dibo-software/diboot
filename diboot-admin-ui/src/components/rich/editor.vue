@@ -83,14 +83,12 @@ const editorConfig: IEditorConfig = {
   MENU_CONF: {
     uploadImage: {
       customUpload: customUpload<(url: string, alt: string, href: string) => void>((file, insertFn) => {
-        if (!file) return
         const url = buildImgSrc(file.accessUrl)
         insertFn(url, file.fileName, url)
       })
     },
     uploadVideo: {
       customUpload: customUpload<(url: string) => void>((file, insertFn) => {
-        if (!file) return
         const url = isExternal(file.accessUrl) ? file.accessUrl : baseURL + file.accessUrl
         insertFn(url)
       })
