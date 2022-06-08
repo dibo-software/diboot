@@ -20,7 +20,7 @@ const locale = reactive(zhCn)
 <style>
 body {
   margin: 0;
-  padding: 0;
+  padding: 0 !important;
   overflow: hidden;
 }
 </style>
