@@ -68,7 +68,8 @@ const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: s
   model.value.permissionList = selectedIdList.value.map(id => {
     return {
       id,
-      parentId: '0'
+      parentId: '0',
+      routeMeta: {}
     }
   })
 }

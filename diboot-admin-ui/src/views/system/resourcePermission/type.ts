@@ -10,7 +10,7 @@ export interface ResourcePermission {
   redirectPath?: string
   resourceCode?: string
   permissionCodes?: Array<string>
-  routeMeta?: RouteMeta
+  routeMeta: Partial<RouteMeta>
   sortId?: number
   status?: string
   children?: ResourcePermission[]
