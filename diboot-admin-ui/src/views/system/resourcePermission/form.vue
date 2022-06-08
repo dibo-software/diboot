@@ -350,6 +350,7 @@ watch(
       <el-col :md="24" :lg="14" class="right-container">
         <el-skeleton v-if="loadingRestPermissions" :rows="10" animated />
         <permission-code-list
+          v-else
           v-model:permission-codes="configPermissionCodes"
           :title="configPermissionTitle"
           :toggle="toggle"
