@@ -217,17 +217,21 @@ watch(
                 />
                 <el-input v-else v-model="model.resourceCode" placeholder="请输入编码" clearable />
               </el-form-item>
-              <el-form-item v-if="model?.routeMeta?.componentPath && displayFields.selectResourceCode" label="组件地址">
+              <el-form-item
+                v-if="model?.routeMeta?.componentPath && displayFields?.selectResourceCode"
+                label="组件地址"
+              >
                 <el-input v-model="model.routeMeta.componentPath" disabled />
               </el-form-item>
               <el-form-item label="路由地址">
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
               </el-form-item>
-              <el-form-item v-if="displayFields.redirectPath" label="重定向">
+              <el-form-item v-if="displayFields?.redirectPath" label="重定向">
                 <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
               </el-form-item>
               <el-form-item label="菜单权限接口">
                 <permission-code-select
+                  v-if="model"
                   v-model="model.permissionCodes"
                   type="menu"
                   @config="clickConfigPermission(model, false)"
@@ -265,7 +269,7 @@ watch(
                 <el-checkbox v-if="model?.routeMeta" v-model="model.routeMeta.ignoreAuth" label="忽略认证" />
               </el-form-item>
             </el-form>
-            <div v-if="displayFields.permissionList" class="btn-config-container">
+            <div v-if="displayFields?.permissionList" class="btn-config-container">
               <div class="btn-config__header">
                 <span>按钮权限配置</span>
                 <el-button :icon="Plus" circle type="success" @click="handleAddTab" />
@@ -342,6 +346,7 @@ watch(
       <el-col :md="24" :lg="14" class="right-container">
         <el-skeleton v-if="loadingRestPermissions" :rows="10" animated />
         <permission-code-list
+          v-if="model?.routeMeta"
           v-model:permission-codes="configPermissionCodes"
           :title="configPermissionTitle"
           :toggle="toggle"
