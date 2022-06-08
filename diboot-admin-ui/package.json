@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.182",
     "@types/mockjs": "^1.0.6",
-    "@types/node": "^17.0.40",
+    "@types/node": "^17.0.41",
     "@types/nprogress": "^0.2.0",
     "@types/qs": "^6.9.7",
     "@vitejs/plugin-vue": "^2.3.3",
@@ -51,6 +51,6 @@
     "vite-plugin-eslint": "^1.6.1",
     "vite-plugin-mock": "^2.9.6",
     "vite-plugin-vue-setup-extend": "^0.4.0",
-    "vue-tsc": "^0.36.1"
+    "vue-tsc": "^0.37.3"
   }
 }

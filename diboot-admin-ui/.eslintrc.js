@@ -22,7 +22,7 @@ module.exports = {
   globals: {
     NodeJS: 'readonly',
     LabelValue: 'readonly',
-    FileRecord: 'readonly',
+    FileRecord: 'readonly'
   },
   rules: {
     'comma-dangle': ['warn', 'only-multiline'],
