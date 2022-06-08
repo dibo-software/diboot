@@ -64,6 +64,8 @@ declare module '@vue/runtime-core' {
     Icon: typeof import('@/components/icon/index.vue')['default']
     IconSelect: typeof import('@/components/icon/select.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
+    RichEditor: typeof import('@/components/rich/editor.vue')['default']
+    RichRead: typeof import('@/components/rich/read.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

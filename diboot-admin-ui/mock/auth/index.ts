@@ -86,20 +86,17 @@ const prefix = '@pick(["@"])/views/'
 // 授权菜单
 const authMenu = [
   {
-    path: '/demo',
-    name: 'Demo',
-    meta: { title: 'Demo', icon },
-    'children|20': [
+    path: '/example',
+    name: 'Example',
+    meta: { title: '组件示例', icon: 'Element:Guide' },
+    children: [
       {
-        path: `hello@string('number', 5)`,
-        name: 'Hello-@increment',
+        path: 'editor',
+        name: 'Editor',
         meta: {
-          title: 'Hello-@increment',
-          componentPath: prefix + 'dashboard/index.vue',
-          icon,
-          sort: '@natural',
-          keepAlive: false,
-          permissions: [permission, permission, permission]
+          title: '富文本编辑器',
+          componentPath: prefix + 'example/index.vue',
+          sort: 1
         }
       }
     ]
