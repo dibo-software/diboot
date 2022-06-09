@@ -26,6 +26,7 @@ const {
 } = useTree<ResourcePermission>({
   baseApi: '/resourcePermission',
   treeApi: '/getMenuTreeList',
+  sortApi: '/sortTree',
   transformField: treeProps,
   clickNodeCallback(nodeData) {
     emit('click-node', nodeData)
@@ -34,7 +35,7 @@ const {
 const { height, computedFixedHeight } = useScrollbarHeight({
   boxHeight,
   fixedBoxSelectors: ['.tree-container>.el-space__item:first-child', '.btn-fixed'],
-  extraHeight: 35
+  extraHeight: 30
 })
 // 初始化tree数据
 getTree().then(() => {
@@ -68,10 +69,8 @@ const addChildNode = (parentId: string) => {
   <div class="tree-container">
     <el-skeleton v-if="loading" :rows="5" animated />
     <el-space v-else :fill="true" wrap>
-      <div class="tree-header">
-        <div class="tree-header__search">
-          <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
-        </div>
+      <div class="tree-search">
+        <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
       </div>
       <el-scrollbar :height="height">
         <el-tree
@@ -86,6 +85,7 @@ const addChildNode = (parentId: string) => {
           :highlight-current="true"
           :expand-on-click-node="false"
           :filter-node-method="filterNode"
+          :allow-drop="allowDrop"
           @check-change="checkStrictlyChange"
           @node-click="nodeClick"
         >
@@ -115,6 +115,9 @@ const addChildNode = (parentId: string) => {
 .tree-container {
   position: relative;
   height: 100%;
+  .tree-search {
+    padding: 5px 5px 0;
+  }
   .is-fixed {
     box-sizing: border-box;
     position: absolute;

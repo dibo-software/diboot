@@ -45,6 +45,7 @@ const collectFieldList = <T, R>(dataList: T[], fieldName: string, defaultValue?:
 export interface TreeOption<T> {
   baseApi: string
   treeApi: string
+  sortApi?: string
   transformField?: TransformField
   clickNodeCallback?: (node: T) => void
 }
@@ -55,7 +56,7 @@ export default <T>(option: TreeOption<T>) => {
     children: 'children',
     parentId: 'parentId'
   }
-  const { baseApi, treeApi, transformField, clickNodeCallback } = option
+  const { baseApi, treeApi, sortApi, transformField, clickNodeCallback } = option
   Object.assign(optionsTransformField, transformField || {})
   const dataState: DataType<T> = reactive({
     selectedIdList: [],
@@ -270,16 +271,51 @@ export default <T>(option: TreeOption<T>) => {
   }
   // 拖拽相关
   /**
-   * 拖拽时判定目标节点能否成为拖动目标位置
-   * @param draggingNode 正在拖拽的节点
+   * 拖拽排序
+   * @param draggingNode
    * @param dropNode
    * @param type
    */
-  const allowDrop = (draggingNode: any, dropNode: any, type: string) => {
-    return type !== 'inner' && draggingNode.data.parentId === dropNode.data.parentId
-  }
-  const nodeDrop = (draggingNode: any) => {
-    console.log(draggingNode)
+  const nodeDrop = async (draggingNode: { data: T }, dropNode: { data: T }, type: string) => {
+    loading.value = true
+    let parentId = ''
+    // 拖拽类型为before/after，当前拖拽父id为目标节点的父id
+    if (type === 'before' || type === 'after') {
+      parentId = collectField<T, string>(dropNode.data, optionsTransformField.parentId)
+    }
+    // 拖拽类型为inner，当前拖拽的父id为目标节点id
+    else {
+      parentId = collectField<T, string>(dropNode.data, optionsTransformField.value)
+    }
+    let submitData: T[] = []
+    // 查找parentId对应对象的所有子项
+    if (parentId === '0') {
+      submitData = dataState.treeDataList
+    } else {
+      const parentData = dataList.value.find(
+        item => collectField<T, string>(item, optionsTransformField.value) === parentId
+      )
+      submitData = parentData
+        ? _.clone(collectField<T, T[]>(parentData, optionsTransformField.children, []))
+        : ([] as T[])
+    }
+    submitData.forEach(item => ((item as Record<string, unknown>)[optionsTransformField.parentId] = parentId))
+    // TODO submitData为 被拖拽的节点所在的同级数据集合，提交至后端自行处理
+    try {
+      const result = await api.put<T[]>(`${baseApi}${sortApi}`, submitData)
+      if (result && result.code === 0) {
+        getTree().then(() => ElMessage?.success('排序成功'))
+      } else {
+        throw new Error(result.msg)
+      }
+    } catch (err: any) {
+      ElNotification.error({
+        title: '获取树列表数据失败',
+        message: err.msg || err.message
+      })
+    } finally {
+      loading.value = false
+    }
   }
 
   const { selectedIdList, treeDataList } = toRefs(dataState)
@@ -299,6 +335,7 @@ export default <T>(option: TreeOption<T>) => {
     addTreeNode,
     nodeClick,
     setSelectNode,
-    flatTreeNodeClass
+    flatTreeNodeClass,
+    nodeDrop
   }
 }

@@ -250,9 +250,6 @@ watch(
                   inactive-text="无效"
                 />
               </el-form-item>
-              <el-form-item label="排序号">
-                <el-input-number v-model="model.sortId" placeholder="请输入排序号" style="width: 100%" clearable />
-              </el-form-item>
               <el-form-item>
                 <template #label>
                   <div style="display: flex; align-items: center; justify-content: end">
