@@ -1,6 +1,5 @@
 <script setup lang="ts" name="RoleDetail">
 import type { Role } from './type'
-import useTree from '@/views/system/resourcePermission/hooks/tree'
 import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'
 const { loadData, loading, model } = useDetailDefault<Role>('/role')

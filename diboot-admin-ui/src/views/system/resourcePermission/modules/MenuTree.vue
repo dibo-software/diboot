@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
-import useTree from '../hooks/tree'
 import useScrollbarHeight from '../hooks/scrollbarHeight'
 import type { ResourcePermission } from '../type'
 

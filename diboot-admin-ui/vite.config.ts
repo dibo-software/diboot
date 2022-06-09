@@ -34,7 +34,8 @@ export default defineConfig(({ command }) => {
           { '@/hooks/form_default': [['default', 'useFormDefault']] },
           { '@/hooks/more_default': [['default', 'useMoreDefault']] },
           { '@/hooks/upload_file': [['default', 'useUploadFile']] },
-          { '@/hooks/tabs': [['default', 'useTabs']] }
+          { '@/hooks/tabs': [['default', 'useTabs']] },
+          { '@/hooks/tree': [['default', 'useTree']] }
         ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',

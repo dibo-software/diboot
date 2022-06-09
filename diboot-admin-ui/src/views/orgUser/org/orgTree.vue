@@ -2,7 +2,7 @@
 import { defineEmits } from 'vue'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import type { OrgModel } from '@/views/orgUser/org/type'
-import useTree from '@/views/system/resourcePermission/hooks/tree'
+import useTree from '@/hooks/tree'
 import orgForm from './form.vue'
 
 type Props = {
