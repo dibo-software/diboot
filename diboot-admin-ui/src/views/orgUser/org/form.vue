@@ -2,7 +2,6 @@
 import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'
-import useTree from '@/hooks/tree'
 
 const baseApi = '/org'
 
