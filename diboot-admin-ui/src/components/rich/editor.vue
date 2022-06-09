@@ -5,34 +5,53 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { buildImgSrc } from '@/utils/file'
 import { isExternal } from '@/utils/validate'
 
-const props = withDefaults(defineProps<{ modelValue?: string; placeholder?: string; mode?: 'default' | 'simple' }>(), {
+interface PropsType {
+  // 模型值
+  modelValue?: string
+  // 编辑器占位符
+  placeholder?: string
+  // 编辑器模式
+  mode?: 'default' | 'simple'
+  // 编辑器是否采用文档形式（title：文档形式且需要标题）
+  doc?: boolean | 'title'
+  // 标题
+  title?: string
+}
+
+const props = withDefaults(defineProps<PropsType>(), {
   modelValue: undefined,
   placeholder: '请输入内容...',
-  mode: 'simple'
+  mode: 'simple',
+  doc: false,
+  title: undefined
 })
 
 // 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef()
+const editorRef = shallowRef<IDomEditor>()
 
+// 创建处理
 const handleCreated = (editor: IDomEditor) => {
+  editorRef.value?.destroy() // 及时销毁编辑器（编辑器形式如果动态切换，应需先销毁原编辑器）
   editorRef.value = editor // 记录 editor 实例，重要！
 }
 
 // 组件销毁时，也及时销毁编辑器
-onBeforeUnmount(() => {
-  const editor = editorRef.value
-  if (editor == null) return
-  editor.destroy()
-})
+onBeforeUnmount(() => editorRef.value?.destroy())
+
+const titleValue = ref<string>(props.title)
+const contentValue = ref<string>(props.modelValue)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void
-  (e: 'change', value: string): void
+  (e: 'update:title', modelValue: string): void
 }>()
 
-const handleChange = (editor: IDomEditor) => {
+const handleChangeValue = (editor: IDomEditor) => {
   emit('update:modelValue', editor.getHtml())
-  emit('change', editor.getHtml())
+}
+
+const handleChangeTitle = () => {
+  emit('update:title', titleValue.value)
 }
 
 // 自定义上传
@@ -52,10 +71,13 @@ function customUpload<InsertFn>(uploadInsert: (file: FileRecord, insertFn: Inser
   }
 }
 
-// 内容 HTML
-const valueHtml = ref<string>(props.modelValue)
-
 const toolbarConfig: Partial<IToolbarConfig> = {}
+// 监听 编辑器形式变化，移除或还原全屏功能（文档形式无法使用全屏）
+watch(
+  () => props.doc,
+  value => (toolbarConfig.excludeKeys = value ? ['fullScreen'] : []),
+  { immediate: true }
+)
 const editorConfig: IEditorConfig = {
   placeholder: props.placeholder,
   scroll: true,
@@ -99,13 +121,34 @@ const editorConfig: IEditorConfig = {
 
 <template>
   <div class="editor">
-    <Toolbar :editor="editorRef" :default-config="toolbarConfig" :mode="mode" />
+    <Toolbar :editor="editorRef" :default-config="toolbarConfig" :mode="mode" class="editor-border" />
+
+    <!-- 文档编辑器 -->
+    <el-scrollbar v-if="doc" class="editor-border" style="background-color: var(--el-bg-color-page)">
+      <div class="editor-container" @click="editorRef.focus">
+        <div v-if="doc === 'title'" class="title-container" @click.stop>
+          <input v-model="titleValue" class="editor-title" placeholder="Page Title..." @change="handleChangeTitle" />
+        </div>
+        <Editor
+          v-model="contentValue"
+          :default-config="editorConfig"
+          :mode="mode"
+          @click.stop
+          @on-created="handleCreated"
+          @on-change="handleChangeValue"
+        />
+      </div>
+    </el-scrollbar>
+
+    <!-- 编辑器 -->
     <Editor
-      v-model="valueHtml"
+      v-else
+      v-model="contentValue"
+      class="editor-content editor-border"
       :default-config="editorConfig"
       :mode="mode"
       @on-created="handleCreated"
-      @on-change="handleChange"
+      @on-change="handleChangeValue"
     />
   </div>
 </template>
@@ -115,14 +158,35 @@ const editorConfig: IEditorConfig = {
   min-height: 300px;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--el-border-color-lighter);
 
-  div:first-child {
+  .editor-border {
     border: 1px solid var(--el-border-color-lighter);
   }
 
-  div:last-child {
+  .editor-content {
     overflow-y: hidden;
+  }
+
+  .editor-container {
+    max-width: 850px;
+    min-height: 1200px;
+    margin: 30px auto 100px auto;
+    padding: 20px 50px 50px 50px;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 12%);
+    background-color: var(--el-bg-color);
+
+    .title-container {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--el-border-color-lighter);
+
+      input {
+        font-size: 32px;
+        border: 0;
+        outline: none;
+        width: 100%;
+        line-height: 1;
+      }
+    }
   }
 }
 </style>
