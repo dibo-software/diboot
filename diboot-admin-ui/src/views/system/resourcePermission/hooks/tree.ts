@@ -229,6 +229,13 @@ export default <T>(option: TreeOption<T>) => {
       .catch(() => null)
   }
   /**
+   * 删除单个节点
+   */
+  const removeSingleTreeNode = async (id: string) => {
+    dataState.selectedIdList.push(id)
+    removeTreeNode()
+  }
+  /**
    * 设置选中的节点，指定时设置为指定节点，否则设置为树的第一个节点
    * @param node
    */
@@ -261,6 +268,19 @@ export default <T>(option: TreeOption<T>) => {
     }
     return { 'flat-tree-node-container': true }
   }
+  // 拖拽相关
+  /**
+   * 拖拽时判定目标节点能否成为拖动目标位置
+   * @param draggingNode 正在拖拽的节点
+   * @param dropNode
+   * @param type
+   */
+  const allowDrop = (draggingNode: any, dropNode: any, type: string) => {
+    return type !== 'inner' && draggingNode.data.parentId === dropNode.data.parentId
+  }
+  const nodeDrop = (draggingNode: any) => {
+    console.log(draggingNode)
+  }
 
   const { selectedIdList, treeDataList } = toRefs(dataState)
   return {
@@ -275,6 +295,7 @@ export default <T>(option: TreeOption<T>) => {
     filterNode,
     getTree,
     removeTreeNode,
+    removeSingleTreeNode,
     addTreeNode,
     nodeClick,
     setSelectNode,

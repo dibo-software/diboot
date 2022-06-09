@@ -31,8 +31,7 @@ provide<Ref<number>>('boxHeight', boxHeight)
   height: 100%;
 }
 .menu-aside-container {
-  border-right: 1px solid var(--el-color-info-light-9);
-  padding-right: 5px;
+  border-right: 1px solid var(--el-border-color-lighter);
 }
 .menu-main-container {
   padding: 0;

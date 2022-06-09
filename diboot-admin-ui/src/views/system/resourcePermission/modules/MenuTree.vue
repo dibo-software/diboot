@@ -17,7 +17,7 @@ const {
   getTree,
   addTreeNode,
   setSelectNode,
-  removeTreeNode,
+  removeSingleTreeNode,
   nodeClick,
   treeRef,
   searchWord,
@@ -33,8 +33,8 @@ const {
 })
 const { height, computedFixedHeight } = useScrollbarHeight({
   boxHeight,
-  fixedBoxSelectors: ['.tree-container>.el-space__item:first-child'],
-  extraHeight: 30
+  fixedBoxSelectors: ['.tree-container>.el-space__item:first-child', '.btn-fixed'],
+  extraHeight: 35
 })
 // 初始化tree数据
 getTree().then(() => {
@@ -65,54 +65,68 @@ const addChildNode = (parentId: string) => {
 }
 </script>
 <template>
-  <el-skeleton v-if="loading" :rows="5" animated />
-  <el-space v-else :fill="true" wrap class="tree-container">
-    <div class="tree-header">
-      <div>
-        <el-button type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
-        <el-button type="danger" :icon="Delete" @click="removeTreeNode">删除菜单</el-button>
+  <div class="tree-container">
+    <el-skeleton v-if="loading" :rows="5" animated />
+    <el-space v-else :fill="true" wrap>
+      <div class="tree-header">
+        <div class="tree-header__search">
+          <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
+        </div>
       </div>
-      <div class="tree-header__search">
-        <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
-      </div>
+      <el-scrollbar :height="height">
+        <el-tree
+          ref="treeRef"
+          class="custom-tree"
+          :data="treeDataList"
+          :props="treeProps"
+          :check-strictly="true"
+          draggable
+          node-key="id"
+          default-expand-all
+          :highlight-current="true"
+          :expand-on-click-node="false"
+          :filter-node-method="filterNode"
+          @check-change="checkStrictlyChange"
+          @node-click="nodeClick"
+        >
+          <template #default="{ node }">
+            <span class="custom-tree-node">
+              <span>{{ node.label }}</span>
+              <span class="icon-container">
+                <el-icon class="plus-icon custom-icon" @click.stop="addChildNode(node.data.id)">
+                  <icon name="Plus" />
+                </el-icon>
+                <el-icon class="delete-icon custom-icon" @click.stop="removeSingleTreeNode(node.data.id)">
+                  <icon name="Delete" />
+                </el-icon>
+              </span>
+            </span>
+          </template>
+        </el-tree>
+      </el-scrollbar>
+    </el-space>
+    <div class="is-fixed btn-fixed">
+      <el-button style="width: 100%" type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
     </div>
-    <el-scrollbar :height="height">
-      <el-tree
-        ref="treeRef"
-        class="custom-tree"
-        :data="treeDataList"
-        :props="treeProps"
-        :check-strictly="true"
-        draggable
-        show-checkbox
-        node-key="id"
-        default-expand-all
-        :highlight-current="true"
-        :expand-on-click-node="false"
-        :filter-node-method="filterNode"
-        @check-change="checkStrictlyChange"
-        @node-click="nodeClick"
-      >
-        <template #default="{ node }">
-          <span class="custom-tree-node">
-            <span>{{ node.label }}</span>
-            <el-icon class="plus-icon" @click.stop="addChildNode(node.data.id)">
-              <icon name="Plus" />
-            </el-icon>
-          </span>
-        </template>
-      </el-tree>
-    </el-scrollbar>
-  </el-space>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .tree-container {
-  padding: 10px 0 10px 5px;
-  .tree-header {
-    &__search {
-      margin-top: 5px;
-    }
+  position: relative;
+  height: 100%;
+  .is-fixed {
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 39px;
+    border-top: 1px solid var(--el-border-color-lighter);
+    padding: 5px 16px;
+    background: var(--el-bg-color);
+    text-align: center;
+    z-index: 1;
   }
 }
 .custom-tree-node {
@@ -121,18 +135,38 @@ const addChildNode = (parentId: string) => {
   justify-content: space-between;
   align-items: center;
   font-size: var(--el-font-size-base);
+  padding-right: 10px;
   &:hover {
-    .plus-icon {
+    .custom-icon {
       display: inline-block;
     }
+    .plus-icon {
+      background-color: var(--el-color-primary);
+    }
+    .delete-icon {
+      background-color: var(--el-color-error);
+    }
+    .custom-icon + .custom-icon {
+      margin-left: 5px;
+    }
   }
-  .plus-icon {
+  .custom-icon {
     display: none;
+    color: white;
     padding: 2px;
     border-radius: 50%;
     &:hover {
-      background-color: #d3d3d3;
       transition: background-color 0.3s;
+    }
+  }
+  .plus-icon {
+    &:hover {
+      background-color: var(--el-color-primary-light-3);
+    }
+  }
+  .delete-icon {
+    &:hover {
+      background-color: var(--el-color-error-light-3);
     }
   }
 }
