@@ -1,6 +1,6 @@
 import type { FormInstance } from 'element-plus'
 
-interface FormOption {
+interface FormOption<T> {
   // 主键属性名（默认值：id）
   primaryKey?: string
   // 基础接口
@@ -9,12 +9,15 @@ interface FormOption {
   createApi?: string
   // 自定义更新接口
   updateApiPrefix?: string
-  afterValidate?: () => void
+  // 校验成功后置处理函数(多用于其他附加校验处理)
+  afterValidate?: () => Promise<void>
+  // 提交前数据增强函数(多用于附加数据添加)
+  enhance?: (values: T) => Promise<T>
   // 成功回调
   successCallback: (primaryKey?: string) => void
 }
 
-export default (option: FormOption) => {
+export default <T>(option: FormOption<T>) => {
   const confirmSubmit = ref(false)
 
   const validate = (formEl: FormInstance | undefined) => {
@@ -30,14 +33,16 @@ export default (option: FormOption) => {
     })
   }
 
-  const submit = async (formEl: FormInstance | undefined, data: Record<string, unknown>) => {
+  const submit = async (formEl: FormInstance | undefined, data: T) => {
     try {
-      const { primaryKey, baseApi, createApi, updateApiPrefix, afterValidate, successCallback } = option
+      const { baseApi, createApi, updateApiPrefix, afterValidate, successCallback } = option
+      let { primaryKey } = option
       await validate(formEl)
       if (afterValidate !== undefined) {
         await afterValidate()
       }
-      const id: unknown = data[primaryKey ?? 'id']
+      primaryKey = primaryKey || 'id'
+      const id: unknown = (data as any)[primaryKey]
       let res
       if (id) {
         res = await api.put<never>(updateApiPrefix ? `${updateApiPrefix}/${id}` : `${baseApi}/${id}`, data)

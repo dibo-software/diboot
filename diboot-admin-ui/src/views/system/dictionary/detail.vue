@@ -1,15 +1,7 @@
 <script setup lang="ts" name="DictionaryDetail">
 import useForm from '@/hooks/detail'
+import type { Dictionary } from '@/views/system/dictionary/type'
 
-interface DictModel {
-  id: string
-  type: string
-  itemName: string
-  itemValue?: string
-  description?: string
-  color?: string
-  children: DictModel[]
-}
 type Props = {
   type?: string
   width?: number | string
@@ -19,7 +11,7 @@ withDefaults(defineProps<Props>(), {
   width: 720
 })
 
-const { pageLoader, title, model, visible, loading } = useForm<DictModel>({
+const { pageLoader, title, model, visible, loading } = useForm<Dictionary>({
   options: {
     baseApi: '/dictionary',
     title: '数据字典详情',

@@ -2,26 +2,23 @@
 import { ArrowDown, Refresh, Search } from '@element-plus/icons-vue'
 import FormPage from './form.vue'
 import DetailPage from './detail.vue'
-interface Dictionary {
-  id: string
-  parentId: string
-  type: string
-  itemName: string
-  itemValue?: string
-  description: string
-  children: Dictionary[]
-  createTime: string
-}
+import type { Dictionary } from '@/views/system/dictionary/type'
 
+interface DictionarySearch extends Dictionary {
+  keywords?: string
+}
 const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSearch, resetFilter, remove } =
-  useListDefault<Dictionary>({
+  useListDefault<Dictionary, DictionarySearch>({
     baseApi: '/dictionary'
   })
 
 getList()
 
-const searchState = ref(false)
-
+const searchVal = ref('')
+const onSearchValChanged = (val: string) => {
+  queryParam.keywords = val
+  onSearch()
+}
 const formPage = ref()
 const detailPage = ref()
 const openForm = (id?: string) => {
@@ -33,36 +30,18 @@ const openDetail = (id: string) => {
 </script>
 <template>
   <div class="table-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :md="8" :sm="24">
-          <el-form-item label="菜单名称">
-            <el-input v-model="queryParam.itemName" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24">
-          <el-form-item label="菜单编码">
-            <el-input v-model="queryParam.itemValue" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24">
-          <el-form-item label="创建时间">
-            <date-range v-model="dateRangeQuery.createTime" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24" style="margin-left: auto">
-          <el-form-item>
-            <el-button type="primary" @click="onSearch">搜索</el-button>
-            <el-button @click="resetFilter">重置</el-button>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
     <el-space wrap class="list-operation">
       <el-button type="primary" @click="openForm()">新建</el-button>
       <el-space>
+        <el-input
+          v-model="searchVal"
+          class="search-input"
+          placeholder="编码/名称"
+          clearable
+          :suffix-icon="Search"
+          @change="onSearchValChanged"
+        />
         <el-button :icon="Refresh" circle @click="getList()" />
-        <el-button :icon="Search" circle @click="searchState = !searchState" />
       </el-space>
     </el-space>
     <el-table
