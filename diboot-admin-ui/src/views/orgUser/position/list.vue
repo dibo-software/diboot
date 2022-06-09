@@ -1,5 +1,5 @@
 <script setup lang="ts" name="PositionList">
-import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
+import { Refresh, Search } from '@element-plus/icons-vue'
 import type { Position } from './type'
 import Detail from './detail.vue'
 import Form from './form.vue'

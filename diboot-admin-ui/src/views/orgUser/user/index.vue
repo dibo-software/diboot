@@ -42,5 +42,15 @@ const tabLabel = computed(() => {
 }
 .el-tabs {
   width: 100%;
+  height: 100%;
+  :deep(.el-tabs__content) {
+    height: calc(100% - 55px);
+    .el-tab-pane {
+      height: 100%;
+    }
+    .tab-wrapper {
+      height: 100%;
+    }
+  }
 }
 </style>

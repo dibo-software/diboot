@@ -15,8 +15,8 @@ export default defineConfig(({ command }) => {
     plugins: [
       vue(),
       VueSetupExtend(),
-      checker({ vueTsc: true }),
-      eslintPlugin({ fix: true }),
+      // checker({ vueTsc: true }),
+      // eslintPlugin({ fix: true }),
       AutoImport({
         // 解析器
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
@@ -81,12 +81,12 @@ export default defineConfig(({ command }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '#': fileURLToPath(new URL('./types', import.meta.url))
       }
-    },
-    server: {
-      host: true,
-      proxy: {
-        '/api': 'http://localhost:8080'
-      }
     }
+    // server: {
+    //   host: true,
+    //   proxy: {
+    //     '/api': 'http://localhost:8080'
+    //   }
+    // }
   }
 })

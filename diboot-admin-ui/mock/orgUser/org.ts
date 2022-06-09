@@ -23,6 +23,7 @@ const dataList = initOrgList(arrList)
 const crud = crudTemplate({
   baseApi: '/org',
   dataList,
+  keywordsKeys: ['name', 'shortName', 'code'],
   fuzzyMatchKeys: ['name', 'shortName', 'code']
 })
 

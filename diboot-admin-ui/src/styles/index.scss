@@ -23,6 +23,12 @@
   }
 }
 
+.full-height-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .table-page {
   height: 100%;
   display: flex;
@@ -37,8 +43,9 @@
   }
 
   .list-operation {
-    width: calc(100% - 5px * 2);
+    width: 100%;
     padding: 5px;
+    box-sizing: border-box;
 
     div:last-child {
       margin-left: auto;

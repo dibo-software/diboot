@@ -20,6 +20,7 @@ const dataList = initUserList(arrList)
 const crud = crudTemplate({
   baseApi: '/user',
   dataList,
+  keywordsKeys: ['realname', 'userNum', 'mobilePhone', 'email'],
   fuzzyMatchKeys: ['realname', 'userNum', 'mobilePhone', 'email']
 })
 
