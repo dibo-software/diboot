@@ -91,11 +91,11 @@ const authMenu = [
     meta: { title: '组件示例', icon: 'Element:Guide' },
     children: [
       {
-        path: 'editor',
-        name: 'Editor',
+        path: 'richText',
+        name: 'RichText',
         meta: {
           title: '富文本编辑器',
-          componentPath: prefix + 'example/index.vue',
+          componentPath: prefix + 'example/richText.vue',
           sort: 1
         }
       }

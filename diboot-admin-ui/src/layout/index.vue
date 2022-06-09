@@ -233,6 +233,27 @@ const vDrag: Directive<HTMLElement> = {
     min-height: 100vh;
     border-right: 1px solid var(--el-border-color-lighter);
 
+    // 分栏一级菜单配色调整 -- start
+    background-color: var(--el-menu-bg-color);
+
+    --el-menu-bg-color: #222b45;
+    --el-menu-text-color: #f3f3f5;
+    --el-menu-hover-color: #394158;
+    --el-menu-active-color: #f3f3f5;
+
+    .el-sub-menu,
+    .el-menu-item {
+      &:hover {
+        background-color: var(--el-menu-hover-color) !important;
+      }
+    }
+
+    .el-sub-menu.is-active,
+    .el-menu-item.is-active {
+      background-color: var(--el-color-primary) !important;
+    }
+    // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）
+
     .one-level-logo {
       width: 70px;
       height: 50px;

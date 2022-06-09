@@ -2,7 +2,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel } from './type'
 import { defineEmits } from 'vue'
-import useTree from '@/views/system/resourcePermission/hooks/tree'
+import useTree from '@/hooks/tree'
 import type { OrgModel } from '@/views/orgUser/org/type'
 import PopoverListSelector from './popoverListSelector.vue'
 import type UserPositionTableForm from '../position/userPositionTableForm.vue'
