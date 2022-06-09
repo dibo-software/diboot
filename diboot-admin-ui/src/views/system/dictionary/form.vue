@@ -1,20 +1,12 @@
 <script setup lang="ts" name="DictionaryForm">
-import useForm, { BaseFormLoader } from '@/hooks/form'
 import type { FormInstance, FormRules } from 'element-plus'
-import type { ApiData } from '@/utils/request'
+import type { api } from '@/utils/request'
 import draggable from 'vuedraggable'
 import { Sort } from '@element-plus/icons-vue'
+import type { Dictionary } from '@/views/system/dictionary/type'
 
-interface FormModel {
-  id?: string
-  type: string
-  itemName: string
-  itemValue?: string
-  description?: string
-  color?: string
-  sortId?: number
-  children?: FormModel[]
-}
+const baseApi = '/dictionary'
+
 type Props = {
   type?: string
   width?: number | string
@@ -25,6 +17,19 @@ withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits(['complete'])
+
+// 加载表单信息
+const { loadData, loading, model } = useDetailDefault<Dictionary>(baseApi)
+const title = ref('')
+const visible = ref(false)
+const open = async (id?: string) => {
+  title.value = id ? '更新' : '新建'
+  visible.value = true
+  await loadData(id)
+  if (!model.value?.children) {
+    model.value.children = []
+  }
+}
 
 const formLabelWidth = '120px'
 const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585', '#c71585'])
@@ -59,9 +64,9 @@ const rules = reactive<FormRules>({
   ]
 })
 
-// 使用form的hooks
-class DictFormLoader extends BaseFormLoader<FormModel> {
-  public async enhance(values: FormModel): Promise<FormModel> {
+const { submit } = useFormDefault({
+  baseApi,
+  async enhance(values: Dictionary): Promise<Dictionary> {
     const { type, children } = values
     if (children && children.length > 0) {
       children.forEach(item => {
@@ -69,28 +74,15 @@ class DictFormLoader extends BaseFormLoader<FormModel> {
       })
     }
     return super.enhance(values)
-  }
-
-  public afterSubmitSuccess(res: ApiData<FormModel>) {
-    emit('complete', res.data)
-    super.afterSubmitSuccess(res)
-  }
-}
-const { pageLoader, title, model, visible } = useForm<FormModel>({
-  pageLoader: new DictFormLoader(),
-  options: {
-    baseApi: '/dictionary',
-    model: _.cloneDeep(initModel)
+  },
+  successCallback(id) {
+    emit('complete', id)
+    visible.value = false
   }
 })
 
 // 构建表单ref
 const formRef = ref<FormInstance>()
-
-// 定义开启表单弹窗函数
-const open = async (id?: string) => {
-  await pageLoader.open(id)
-}
 
 // 添加数据字典条目
 const addItem = () => {
@@ -100,7 +92,6 @@ const addItem = () => {
 
 // 移除数据字典条目
 const removeItem = (index: number) => {
-  console.log('removeItem', index)
   validateChildren()
   model?.value?.children && model.value.children.splice(index, 1)
 }
@@ -119,10 +110,7 @@ const validateChildren = () => {
   }
 }
 
-// 释放系列函数供外部调用
-defineExpose({
-  open
-})
+defineExpose({ open })
 </script>
 <template>
   <el-dialog v-model="visible" :width="width" :title="title">
@@ -207,7 +195,7 @@ defineExpose({
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="pageLoader.onSubmit(formRef)">确认</el-button>
+        <el-button type="primary" @click="submit(formRef, model)">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -225,11 +213,11 @@ defineExpose({
   }
   td {
     text-align: center;
+    border-top: 2px solid transparent;
   }
   td > * {
     margin-top: 2px;
     margin-bottom: 18px;
-    border-top: 2px solid transparent;
   }
   .drag-handle {
     cursor: move;

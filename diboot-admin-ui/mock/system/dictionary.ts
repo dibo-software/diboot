@@ -2,6 +2,8 @@ import type { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import { cloneDeep } from 'lodash'
+import type { Dictionary } from '@/views/system/dictionary/type'
+import crudTemplate from '../_crudTemplate'
 
 const baseUrl = '/api/dictionary'
 
@@ -132,17 +134,6 @@ const dictionaryDataMap = {
   }
 }
 
-interface FormModel {
-  id?: string
-  parentId?: string
-  type: string
-  itemName: string
-  itemValue?: string
-  description?: string
-  color?: string
-  children?: FormModel[]
-}
-
 const dataList = Array.from({ length: 50 }).map((row, index): Record<string, any> => {
   const i = index % 2
   const item = cloneDeep(dictionaryDataMap.list[i])
@@ -157,24 +148,21 @@ const dataList = Array.from({ length: 50 }).map((row, index): Record<string, any
   return item
 })
 
-export default [
-  {
-    url: `${baseUrl}/list`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: ({ query }: any) => {
-      return JsonResult.PAGINATION(
-        query.pageIndex,
-        query.pageSize,
-        dataList.filter(e => !deleteDataIds.includes(e.id)).reverse()
-      )
-    }
-  },
+const crud = crudTemplate({
+  baseApi: '/dictionary',
+  dataList,
+  keywordsKeys: ['type', 'itemName'],
+  fuzzyMatchKeys: ['type', 'itemName']
+})
+
+const mockMethods: MockMethod[] = [
+  crud.api.getList,
   {
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ query }: any) => {
+      console.log('dictionary custom get', query.id)
       const { id } = query
       if (!id) {
         return JsonResult.OK()
@@ -188,7 +176,7 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'post',
     response: (request: any) => {
-      const formModel: FormModel = request?.body
+      const formModel: Dictionary = request?.body
       if (formModel) {
         formModel.id = `${++nextId}`
         formModel.parentId = `0`
@@ -209,7 +197,7 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'put',
     response: (request: any) => {
-      const formModel: FormModel = request?.body
+      const formModel: Dictionary = request?.body
       const currentId = request?.query?.id
       formModel.id = String(dataList.length + 1)
       const { children } = formModel
@@ -256,3 +244,5 @@ export default [
     }
   }
 ] as MockMethod[]
+
+export default mockMethods

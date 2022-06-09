@@ -115,6 +115,7 @@ const openLog = (id: string) => {
 .add {
   height: 100%;
   min-height: 220px;
+  cursor: pointer;
 
   :deep(.el-card__body) {
     display: flex;
