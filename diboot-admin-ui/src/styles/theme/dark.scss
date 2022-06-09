@@ -11,8 +11,8 @@
 // import dark theme
 @use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *;
 
-/* wangEditor 暗色主题 */
 html.dark {
+  /* wangEditor 暗色主题 */
 
   // textarea - css vars
   --w-e-textarea-bg-color: #141414; // #fff;
@@ -33,4 +33,11 @@ html.dark {
   // modal - css vars
   --w-e-modal-button-bg-color: #0a0a0a; // #fafafa;
   --w-e-modal-button-border-color: #363636; // #d9d9d9;
+
+  /* 分栏一级菜单dark配色调整 */
+  .one-level {
+    --el-menu-bg-color: var(--el-bg-color);
+    --el-menu-text-color: var(--el-text-color-primary);
+    --el-menu-hover-color: #2c2c2c;
+  }
 }
