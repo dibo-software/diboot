@@ -229,12 +229,12 @@ watch(
               <el-form-item label="路由地址">
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
               </el-form-item>
+
               <el-form-item v-if="displayFields?.redirectPath" label="重定向">
                 <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
               </el-form-item>
               <el-form-item label="菜单权限接口">
                 <permission-code-select
-                  v-if="model"
                   v-model="model.permissionCodes"
                   type="menu"
                   @config="handleClickMenuConfigPermission(model)"
@@ -378,7 +378,8 @@ watch(
     left: 0;
     bottom: 0;
     width: 100%;
-    border-top: 1px solid var(--el-border-color);
+    height: 39px;
+    border-top: 1px solid var(--el-border-color-lighter);
     padding: 5px 16px;
     background: var(--el-bg-color);
     text-align: center;
@@ -406,8 +407,6 @@ watch(
     display: flex;
     justify-content: space-between;
     padding: 10px 10px 10px 0;
-    &-left {
-    }
   }
 }
 </style>
