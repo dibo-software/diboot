@@ -40,12 +40,20 @@ export const isSmall = ref(false)
 // 动态字体/icon大小
 export const fontSize = useCssVar('--el-font-size-dynamic')
 export const iconSize = useCssVar('--el-icon-size-dynamic')
-export const fontSizeNumber = ref(14)
-export const iconSizeNumber = ref(20)
+// 动态字体/icon数值
+export const fontSizeNumber = computed(() => {
+  return parseInt(fontSize.value.slice(0, -2))
+})
+export const iconSizeNumber = computed(() => {
+  return parseInt(iconSize.value.slice(0, -2))
+})
 
 watch(isSmall, val => {
-  fontSize.value = val ? '12px' : '14px'
-  fontSizeNumber.value = val ? 12 : 14
-  iconSize.value = val ? '18px' : '20px'
-  iconSizeNumber.value = val ? 18 : 20
+  if (val) {
+    fontSize.value = '12px'
+    iconSize.value = '18px'
+  } else {
+    fontSize.value = '14px'
+    iconSize.value = '20px'
+  }
 })
