@@ -15,7 +15,7 @@ defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean }>()
       </template>
       <sub-menu :menu-tree="item.children" />
     </el-sub-menu>
-    <el-tooltip v-else :disabled="!collapse" :content="item.meta?.title" placement="right" :enterable="false">
+    <el-tooltip v-else :disabled="!collapse" :content="item.meta?.title" placement="right" :show-after="200">
       <el-menu-item :index="item.path">
         <el-icon v-if="item.meta?.icon" :size="22">
           <icon :name="item.meta?.icon" />
