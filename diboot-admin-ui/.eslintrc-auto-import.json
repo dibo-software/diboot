@@ -73,7 +73,6 @@
     "useRouter": "readonly",
     "useSlots": "readonly",
     "useTabs": "readonly",
-    "useTree": "readonly",
     "useUploadFile": "readonly",
     "watch": "readonly",
     "watchEffect": "readonly",

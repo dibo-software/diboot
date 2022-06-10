@@ -7,7 +7,7 @@ type Props = {
   parentId?: string
 }
 const props = withDefaults(defineProps<Props>(), {
-  parentId: '0'
+  parentId: ''
 })
 
 const emit = defineEmits(['reload'])
@@ -32,6 +32,7 @@ const onSearchValChanged = (val: string) => {
 watch(
   () => props.parentId,
   val => {
+    console.log('val', val)
     queryParam.parentId = val
     onSearch()
   }
@@ -55,20 +56,22 @@ defineExpose({ onSearch })
 </script>
 <template>
   <div class="table-page">
-    <el-space wrap class="list-operation">
-      <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-space>
-        <el-input
-          v-model="searchVal"
-          class="search-input"
-          placeholder="编码/名称"
-          clearable
-          :suffix-icon="Search"
-          @change="onSearchValChanged"
-        />
-        <el-button :icon="Refresh" circle @click="getList()" />
+    <el-header class="el-header">
+      <el-space wrap class="list-operation">
+        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-space>
+          <el-input
+            v-model="searchVal"
+            class="search-input"
+            placeholder="编码/名称"
+            clearable
+            :suffix-icon="Search"
+            @change="onSearchValChanged"
+          />
+          <el-button :icon="Refresh" circle @click="getList()" />
+        </el-space>
       </el-space>
-    </el-space>
+    </el-header>
     <el-table
       ref="tableRef"
       v-loading="loading"
@@ -89,19 +92,38 @@ defineExpose({ onSearch })
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      v-if="pagination.total"
-      v-model:currentPage="pagination.current"
-      v-model:page-size="pagination.pageSize"
-      :page-sizes="[10, 20, 30, 50, 100]"
-      small
-      background
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pagination.total"
-      @size-change="getList()"
-      @current-change="getList()"
-    />
+    <el-footer v-if="pagination?.total" class="el-footer">
+      <el-pagination
+        v-model:currentPage="pagination.current"
+        v-model:page-size="pagination.pageSize"
+        class="el-pagination"
+        :page-sizes="[10, 20, 30, 50, 100]"
+        small
+        background
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pagination.total"
+        @size-change="getList()"
+        @current-change="getList()"
+      />
+    </el-footer>
     <org-form ref="formRef" :parent-id="props.parentId" @complete="onFormComplete" />
   </div>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-header {
+  height: auto;
+  padding: 15px 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.list-operation {
+  margin-bottom: 0;
+  padding: 0;
+}
+.el-footer {
+  height: auto;
+  padding: 15.5px 10px;
+}
+.el-pagination {
+  margin: 0;
+}
+</style>

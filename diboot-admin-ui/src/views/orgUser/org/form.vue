@@ -2,6 +2,7 @@
 import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'
+import useTreeCrud from '@/hooks/tree_crud'
 
 const baseApi = '/org'
 
@@ -10,7 +11,7 @@ const {
   getTree,
   treeDataList,
   loading: treeLoading
-} = useTree<OrgModel>({
+} = useTreeCrud<OrgModel>({
   baseApi: '/org',
   treeApi: '/tree',
   transformField: { label: 'shortName' }
