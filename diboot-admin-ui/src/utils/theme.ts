@@ -9,6 +9,7 @@ export const toggleTheme = useToggle(isDark)
 const pre = '--el-color-primary'
 // 主题色
 export const colorPrimary = useCssVar(pre)
+
 // 颜色混合(参考 sass @function mix)
 const mix = (color1: string, color2: string, weight: number) => {
   weight = Math.max(Math.min(Number(weight), 1), 0)
@@ -33,3 +34,18 @@ const subColorPrimary = (color: string, isDark: boolean) => {
 watch(colorPrimary, value => subColorPrimary(value, isDark.value))
 // 监听主题变化，随着改变主题色
 watch(isDark, value => nextTick(() => subColorPrimary(colorPrimary.value.trim(), value)))
+
+// 字体主题
+export const isSmall = ref(false)
+// 动态字体/icon大小
+export const fontSize = useCssVar('--el-font-size-dynamic')
+export const iconSize = useCssVar('--el-icon-size-dynamic')
+export const fontSizeNumber = ref(14)
+export const iconSizeNumber = ref(20)
+
+watch(isSmall, val => {
+  fontSize.value = val ? '12px' : '14px'
+  fontSizeNumber.value = val ? 12 : 14
+  iconSize.value = val ? '18px' : '20px'
+  iconSizeNumber.value = val ? 18 : 20
+})

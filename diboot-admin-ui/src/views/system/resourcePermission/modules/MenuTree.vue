@@ -84,7 +84,6 @@ const addChildNode = (parentId: string) => {
           :highlight-current="true"
           :expand-on-click-node="false"
           :filter-node-method="filterNode"
-          :allow-drop="allowDrop"
           @check-change="checkStrictlyChange"
           @node-click="nodeClick"
         >
