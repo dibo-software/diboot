@@ -62,20 +62,21 @@ export default <T>(option: TreeOption<T>) => {
     selectedIdList: [],
     treeDataList: []
   })
-
+  // 搜索值
   const searchWord = ref('')
   // tree实例
   const treeRef = ref<InstanceType<typeof ElTree>>()
-
+  // 树加载loading
   const loading = ref(false)
   // 当前选中的node节点
   const currentNodeKey = ref('')
 
-  //监听keyword变化
+  //监听searchWord变化
   watch(searchWord, val => {
     treeRef.value?.filter(val)
   })
 
+  // 树转list
   const dataList = computed(() => {
     return tree2List<T>(dataState.treeDataList)
   })
@@ -118,14 +119,14 @@ export default <T>(option: TreeOption<T>) => {
   /**
    * 点击节点复选框之后触发	：详细规则如下
    * 选择框被勾选==> 当前选择框、子选择框、父/祖父选择框都需要被勾选，
-   * 取消勾选 ==> 当前选择框、子选择框取消勾选，如果是父/祖父选择框下只有这当前选择框这一个子项，父/祖也要取消勾选
+   * 取消勾选 ==> 当前选择框、子选择框取消勾选，如果是父/祖父选择框下只有这当前选择框这一个子项，父/祖也要取消勾选，否则只取消当前选择框
    * @param data 被点击节点
    * @param checked 节点是否被选中
    */
   const checkNode = (currentNode: T, data: { checkedKeys: string[] }) => {
     const checkedKeys = data.checkedKeys
     const value = collectField<T, string>(currentNode, optionsTransformField.value)
-    const result: T[] = [currentNode]
+    const result = [currentNode]
     // 递归查找子项
     const children = collectField<T, T[]>(currentNode, optionsTransformField.children, [])
     if (children && children.length > 0) {
@@ -215,7 +216,7 @@ export default <T>(option: TreeOption<T>) => {
       return
     }
 
-    ElMessageBox.confirm('确认删除已选节点吗？', '删除节点', { type: 'warning' })
+    ElMessageBox.confirm('确认删除节点吗？', '删除节点', { type: 'warning' })
       .then(() => {
         api
           .post(`${baseApi}/batchDelete`, dataState.selectedIdList)
@@ -272,22 +273,19 @@ export default <T>(option: TreeOption<T>) => {
   // 拖拽相关
   /**
    * 拖拽排序
-   * @param draggingNode
-   * @param dropNode
-   * @param type
+   * @param draggingNode 当前拖拽节点
+   * @param dropNode 拖拽至目标节点
+   * @param type 拖拽类型 before/after/inner
    */
   const nodeDrop = async (draggingNode: { data: T }, dropNode: { data: T }, type: string) => {
     loading.value = true
-    let parentId = ''
-    // 拖拽类型为before/after，当前拖拽父id为目标节点的父id
-    if (type === 'before' || type === 'after') {
-      parentId = collectField<T, string>(dropNode.data, optionsTransformField.parentId)
-    }
-    // 拖拽类型为inner，当前拖拽的父id为目标节点id
-    else {
-      parentId = collectField<T, string>(dropNode.data, optionsTransformField.value)
-    }
-    let submitData: T[] = []
+    const parentId =
+      type !== 'inner'
+        ? // 拖拽类型为before/after，当前拖拽父id为目标节点的父id
+          collectField<T, string>(dropNode.data, optionsTransformField.parentId)
+        : // 拖拽类型为inner，当前拖拽的父id为目标节点id
+          collectField<T, string>(dropNode.data, optionsTransformField.value)
+    let submitData: T[]
     // 查找parentId对应对象的所有子项
     if (parentId === '0') {
       submitData = dataState.treeDataList
