@@ -2,10 +2,9 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel } from './type'
 import { defineEmits } from 'vue'
-import useTree from '@/hooks/tree'
 import type { OrgModel } from '@/views/orgUser/org/type'
 import PopoverListSelector from './popoverListSelector.vue'
-import type UserPositionTableForm from '../position/userPositionTableForm.vue'
+import UserPositionTableForm from '../position/userPositionTableForm.vue'
 
 const baseApi = '/user'
 
@@ -14,7 +13,7 @@ const {
   getTree,
   treeDataList: orgTree,
   loading: treeLoading
-} = useTree<OrgModel>({
+} = useTreeCrud<OrgModel>({
   baseApi: '/org',
   treeApi: '/tree',
   transformField: { label: 'shortName' }
@@ -50,7 +49,7 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const userPositionTableForm = ref<InstanceType<typeof UserPositionTableForm>>()
+const userPositionTableForm = ref()
 const { confirmSubmit, submit } = useFormDefault({
   baseApi,
   async afterValidate() {
@@ -159,14 +158,13 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
       </el-row>
-      <user-position-table-form
-        ref="userPositionTableForm"
-        :org-tree="orgTree"
-        :user-id="model.id"
-        :org-id="model.orgId"
-      />
     </el-form>
-
+    <user-position-table-form
+      ref="userPositionTableForm"
+      :org-tree="orgTree"
+      :user-id="model.id"
+      :org-id="model.orgId"
+    />
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" :loading="confirmSubmit" @click="submit(formRef, model)">提交</el-button>

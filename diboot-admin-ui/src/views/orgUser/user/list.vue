@@ -1,9 +1,8 @@
 <script setup lang="ts" name="UserList">
-import { Refresh, Search, CircleClose, ArrowDown } from '@element-plus/icons-vue'
+import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
 import type { UserModel } from './type'
 import Detail from './detail.vue'
 import Form from './form.vue'
-import { defineProps } from 'vue'
 
 type Props = {
   orgId?: string
@@ -51,29 +50,23 @@ const loadListByOrgId = (orgId: string) => {
 </script>
 <template>
   <div class="table-page">
-    <el-space wrap class="list-operation">
-      <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-space>
-        <el-input
-          v-model="searchVal"
-          class="search-input"
-          placeholder="编码/名称"
-          clearable
-          :suffix-icon="Search"
-          @change="onSearchValChanged"
-        />
-        <el-button :icon="Refresh" circle @click="getList()" />
+    <el-header class="el-header">
+      <el-space wrap class="list-operation">
+        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-space>
+          <el-input
+            v-model="searchVal"
+            class="search-input"
+            placeholder="编码/名称"
+            clearable
+            :suffix-icon="Search"
+            @change="onSearchValChanged"
+          />
+          <el-button :icon="Refresh" circle @click="getList()" />
+        </el-space>
       </el-space>
-    </el-space>
-    <el-table
-      ref="tableRef"
-      v-loading="loading"
-      row-key="id"
-      :tree-props="{ children: 'children__' }"
-      :data="dataList"
-      stripe
-      height="100%"
-    >
+    </el-header>
+    <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
       <el-table-column prop="realname" label="姓名" />
       <el-table-column prop="userNum" label="编号" />
       <el-table-column prop="genderLabel" label="性别" />
@@ -107,6 +100,7 @@ const loadListByOrgId = (orgId: string) => {
       v-model:currentPage="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 20, 30, 50, 100]"
+      small
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"
@@ -117,3 +111,14 @@ const loadListByOrgId = (orgId: string) => {
   <Detail ref="detailRef" />
   <Form ref="formRef" @complete="getList()" />
 </template>
+<style lang="scss" scoped>
+.el-header {
+  height: auto;
+  padding: 15px 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.list-operation {
+  margin-bottom: 0;
+  padding: 0;
+}
+</style>
