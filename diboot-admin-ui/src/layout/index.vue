@@ -7,6 +7,7 @@ import AppTabs from './tabs/index.vue'
 import type { Directive } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { Menu } from '@element-plus/icons-vue'
+import { iconSizeNumber } from '@/utils/theme'
 
 import Logo from '@/assets/logo.png'
 
@@ -111,7 +112,7 @@ const vDrag: Directive<HTMLElement> = {
                 :index="item.path"
                 @click="openOneLevel(item)"
               >
-                <el-icon v-if="item.meta?.icon" :size="30">
+                <el-icon v-if="item.meta?.icon" :size="iconSizeNumber">
                   <icon :name="item.meta?.icon" />
                 </el-icon>
                 <span class="title">{{ item.meta?.title }}</span>
@@ -148,10 +149,10 @@ const vDrag: Directive<HTMLElement> = {
         <template #dock>
           <el-menu style="height: 50px" mode="horizontal" :default-active="oneLevel?.path">
             <el-menu-item v-for="item in menuTree" :key="item.name" :index="item.path" @click="openOneLevel(item)">
-              <el-icon v-if="item.meta?.icon" :size="22">
+              <el-icon v-if="item.meta?.icon" :size="iconSizeNumber">
                 <icon :name="item.meta?.icon" />
               </el-icon>
-              <span>{{ item.meta?.title }}</span>
+              <span class="title">{{ item.meta?.title }}</span>
             </el-menu-item>
           </el-menu>
         </template>
@@ -287,6 +288,7 @@ const vDrag: Directive<HTMLElement> = {
       align-items: center;
       border-bottom: 1px solid var(--el-border-color-lighter);
       border-right: 1px solid var(--el-border-color-lighter);
+      font-size: var(--el-font-size-dynamic);
     }
   }
 }
@@ -326,7 +328,7 @@ const vDrag: Directive<HTMLElement> = {
 
     .title {
       line-height: 24px;
-      font-size: 14px;
+      font-size: var(--el-font-size-dynamic);
     }
   }
 }

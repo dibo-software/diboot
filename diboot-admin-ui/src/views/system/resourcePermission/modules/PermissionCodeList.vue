@@ -21,8 +21,12 @@ const boxHeight = inject<number>('boxHeight', 0)
 // 滚动高度计算hook
 const { height, computedFixedHeight } = useScrollbarHeight({
   boxHeight,
-  fixedBoxSelectors: ['.permission-list-container>.permission-list-header', '.btn-fixed'],
-  extraHeight: 85
+  fixedBoxSelectors: [
+    '.permission-list-container>.el-space__item:first-child',
+    '.permission-list-container>.el-space__item:nth-child(2)',
+    '.btn-fixed'
+  ],
+  extraHeight: 20
 })
 // data
 const permissionGroupsScrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
@@ -179,7 +183,7 @@ const _reload = () => {
 </script>
 <template>
   <el-space wrap :fill="true" class="permission-list-container">
-    <span>{{ title }}</span>
+    <span class="config-title">{{ title }}</span>
     <el-select
       v-model="searchVal"
       remote

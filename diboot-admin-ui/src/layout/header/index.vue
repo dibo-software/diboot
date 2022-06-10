@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
-import { isDark, toggleTheme } from '@/utils/theme'
+import { isDark, isSmall, toggleTheme } from '@/utils/theme'
 import MenuSearch from './menuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
@@ -35,7 +35,9 @@ const goPersonal = () => {
       <el-icon class="item" :size="22" @click="toggleTheme()">
         <component :is="isDark ? Sunny : Moon" />
       </el-icon>
-      <el-dropdown @command="(command: 'small' | 'large' | 'default') => (appStore.globalSize = command)">
+      <el-dropdown
+        @command="(command: 'small' | 'large' | 'default') => {appStore.globalSize = command; isSmall = command === 'small'}"
+      >
         <div class="item">
           <el-icon :size="22">
             <icon name="Local:TextFontSize" />
