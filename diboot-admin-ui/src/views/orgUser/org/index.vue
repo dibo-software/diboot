@@ -29,26 +29,9 @@ const treeDataChange = async () => {
     </el-aside>
     <el-container class="right-container">
       <div class="content-container full-height-container">
-        <!--        <el-descriptions v-if="currentNodeInfo !== undefined" class="detail-wrapper" :column="3" border>-->
-        <!--          <el-descriptions-item label-class-name="item-label" label-align="right" label="全称">-->
-        <!--            {{ currentNodeInfo.name }}-->
-        <!--          </el-descriptions-item>-->
-        <!--          <el-descriptions-item label-class-name="item-label" label-align="right" label="简称">-->
-        <!--            {{ currentNodeInfo.shortName }}-->
-        <!--          </el-descriptions-item>-->
-        <!--          <el-descriptions-item label-class-name="item-label" label-align="right" label="编码">-->
-        <!--            {{ currentNodeInfo.code }}-->
-        <!--          </el-descriptions-item>-->
-        <!--        </el-descriptions>-->
         <div class="el-tabs">
           <org-list ref="orgListRef" :parent-id="currentNodeId" @reload="reload" />
         </div>
-        <!--        <el-tabs model-value="orgListTab" class="el-tabs">-->
-        <!--          <el-tab-pane :label="tabLabel" name="orgListTab">-->
-        <!--            <div class="tab-wrapper">-->
-        <!--            </div>-->
-        <!--          </el-tab-pane>-->
-        <!--        </el-tabs>-->
       </div>
     </el-container>
   </el-container>
