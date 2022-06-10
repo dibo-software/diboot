@@ -95,6 +95,7 @@ const authMenu = [
         name: 'RichText',
         meta: {
           title: '富文本编辑器',
+          icon: 'Element:Edit',
           componentPath: prefix + 'example/richText.vue',
           sort: 1
         }
@@ -111,6 +112,7 @@ const authMenu = [
         name: 'VueJs',
         meta: {
           title: 'VueJs',
+          icon: 'Element:Promotion',
           url: 'https://staging-cn.vuejs.org',
           iframe: true
         }
@@ -118,7 +120,7 @@ const authMenu = [
       {
         path: 'baidu',
         name: 'BaiDu',
-        meta: { title: '百度', url: 'https://www.baidu.com' }
+        meta: { title: '百度', icon: 'Element:Search', url: 'https://www.baidu.com' }
       }
     ]
   },
@@ -175,6 +177,7 @@ const authMenu = [
         name: 'resourcePermission-@increment',
         meta: {
           title: '资源权限管理',
+          icon: 'Element:Menu',
           componentPath: prefix + 'system/resourcePermission/list.vue',
           sort: 2,
           keepAlive: false
@@ -185,6 +188,7 @@ const authMenu = [
         name: 'RoleList',
         meta: {
           title: '用户角色管理',
+          icon: 'Element:User',
           componentPath: prefix + 'system/role/list.vue',
           sort: 3
         }
@@ -194,6 +198,7 @@ const authMenu = [
         name: 'Dictionary',
         meta: {
           title: '数据字典管理',
+          icon: 'Element:Collection',
           componentPath: prefix + 'system/dictionary/list.vue',
           keepAlive: false
         }
@@ -203,6 +208,7 @@ const authMenu = [
         name: 'ScheduleJob',
         meta: {
           title: '定时任务管理',
+          icon: 'Element:AlarmClock',
           componentPath: prefix + 'system/scheduleJob/list.vue',
           keepAlive: false,
           sort: 6
@@ -213,6 +219,7 @@ const authMenu = [
         name: 'messageTemplate',
         meta: {
           title: '消息模板管理',
+          icon: 'Element:ChatSquare',
           componentPath: prefix + 'system/messageTemplate/list.vue',
           keepAlive: false,
           sort: 7
@@ -223,6 +230,7 @@ const authMenu = [
         name: 'message',
         meta: {
           title: '消息记录管理',
+          icon: 'Element:ChatRound',
           componentPath: prefix + 'system/message/list.vue',
           keepAlive: false,
           sort: 8
@@ -233,6 +241,7 @@ const authMenu = [
         name: 'OperationLog',
         meta: {
           title: '操作日志管理',
+          icon: 'Element:Pointer',
           componentPath: prefix + 'system/operationLog/list.vue',
           sort: 9
         }
@@ -242,6 +251,7 @@ const authMenu = [
         name: 'LoginTrace',
         meta: {
           title: '登录日志管理',
+          icon: 'Element:Document',
           componentPath: prefix + 'system/loginTrace/list.vue',
           sort: 10
         }

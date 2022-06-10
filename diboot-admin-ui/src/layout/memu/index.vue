@@ -34,7 +34,7 @@ const toggleState = () => emits('update:collapse', !props.collapse)
         :collapse="collapse"
         :style="{ minHeight: collapse && $slots.title ? 'calc(100vh - 39px)' : 'calc(100vh - 89px)' }"
       >
-        <sub-menu :menu-tree="menuTree" />
+        <sub-menu :menu-tree="menuTree" :collapse="collapse" />
       </el-menu>
     </el-scrollbar>
     <div class="collapse" @click="toggleState()">

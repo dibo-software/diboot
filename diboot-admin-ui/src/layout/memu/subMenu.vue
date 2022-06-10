@@ -2,7 +2,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { iconSizeNumber } from '@/utils/theme'
 
-defineProps<{ menuTree: RouteRecordRaw[] }>()
+defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean }>()
 </script>
 
 <template>
@@ -16,12 +16,14 @@ defineProps<{ menuTree: RouteRecordRaw[] }>()
       </template>
       <sub-menu :menu-tree="item.children" />
     </el-sub-menu>
-    <el-menu-item v-else :index="item.path">
-      <el-icon v-if="item.meta?.icon" :size="iconSizeNumber">
-        <icon :name="item.meta?.icon" />
-      </el-icon>
-      <span class="menu-text">{{ item.meta?.title }}</span>
-    </el-menu-item>
+    <el-tooltip v-else :disabled="!collapse" :content="item.meta?.title" placement="right" :show-after="200">
+      <el-menu-item :index="item.path">
+        <el-icon v-if="item.meta?.icon" :size="iconSizeNumber">
+          <icon :name="item.meta?.icon" />
+        </el-icon>
+        <span class="menu-text">{{ item.meta?.title }}</span>
+      </el-menu-item>
+    </el-tooltip>
   </template>
 </template>
 
