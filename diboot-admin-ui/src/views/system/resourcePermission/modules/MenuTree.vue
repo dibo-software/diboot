@@ -33,7 +33,7 @@ const {
 })
 const { height, computedFixedHeight } = useScrollbarHeight({
   boxHeight,
-  fixedBoxSelectors: ['.tree-container>.el-space__item:first-child', '.btn-fixed'],
+  fixedBoxSelectors: ['.tree-container>.el-space>.el-space__item:first-child', '.btn-fixed'],
   extraHeight: 30
 })
 // 初始化tree数据
