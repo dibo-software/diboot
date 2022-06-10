@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouteRecordRaw } from 'vue-router'
 
-defineProps<{ menuTree: RouteRecordRaw[] }>()
+defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean }>()
 </script>
 
 <template>
@@ -15,12 +15,14 @@ defineProps<{ menuTree: RouteRecordRaw[] }>()
       </template>
       <sub-menu :menu-tree="item.children" />
     </el-sub-menu>
-    <el-menu-item v-else :index="item.path">
-      <el-icon v-if="item.meta?.icon" :size="22">
-        <icon :name="item.meta?.icon" />
-      </el-icon>
-      <span>{{ item.meta?.title }}</span>
-    </el-menu-item>
+    <el-tooltip v-else :disabled="!collapse" :content="item.meta?.title" placement="right" :enterable="false">
+      <el-menu-item :index="item.path">
+        <el-icon v-if="item.meta?.icon" :size="22">
+          <icon :name="item.meta?.icon" />
+        </el-icon>
+        <span>{{ item.meta?.title }}</span>
+      </el-menu-item>
+    </el-tooltip>
   </template>
 </template>
 
