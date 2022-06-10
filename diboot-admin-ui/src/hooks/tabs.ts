@@ -32,7 +32,7 @@ export default <T>(option: TabsOption<T>) => {
    * @param removeIndex
    */
   const removeTab = (removeIndex: string | number) => {
-    const idx = parseInt(removeIndex as string, 10)
+    const idx = parseInt(typeof removeIndex === 'string' ? removeIndex : removeIndex.toString(), 10)
     const currentKey = parseInt(activeTab.value, 10)
     tabs.value.splice(idx, 1)
     activeTab.value = currentKey < idx ? activeTab.value : currentKey > 0 ? `${currentKey - 1}` : '0'

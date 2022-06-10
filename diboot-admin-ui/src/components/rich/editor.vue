@@ -127,7 +127,7 @@ const editorConfig: IEditorConfig = {
     <el-scrollbar v-if="doc" class="editor-border" style="background-color: var(--el-bg-color-page)">
       <div class="editor-container" @click="editorRef.focus">
         <div v-if="doc === 'title'" class="title-container" @click.stop>
-          <input v-model="titleValue" class="editor-title" placeholder="Page Title..." @change="handleChangeTitle" />
+          <input v-model="titleValue" placeholder="Page Title..." @change="handleChangeTitle" />
         </div>
         <Editor
           v-model="contentValue"
@@ -173,18 +173,18 @@ const editorConfig: IEditorConfig = {
     margin: 30px auto 100px auto;
     padding: 20px 50px 50px 50px;
     box-shadow: 0 2px 10px rgb(0 0 0 / 12%);
-    background-color: var(--el-bg-color);
+    background-color: var(--w-e-textarea-bg-color);
 
     .title-container {
       padding: 20px 0;
       border-bottom: 1px solid var(--el-border-color-lighter);
 
       input {
-        font-size: 32px;
+        width: 100%;
         border: 0;
         outline: none;
-        width: 100%;
-        line-height: 1;
+        font-size: 32px;
+        background-color: var(--w-e-textarea-bg-color);
       }
     }
   }
