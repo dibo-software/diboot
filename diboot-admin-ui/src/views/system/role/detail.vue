@@ -17,7 +17,7 @@ defineExpose({
 const transformField = {
   label: 'displayName'
 }
-const { treeRef, treeDataList, getTree, flatTreeNodeClass } = useTree<ResourcePermission>({
+const { treeRef, treeDataList, getTree, flatTreeNodeClass } = useTreeCrud<ResourcePermission>({
   baseApi: '/resourcePermission',
   treeApi: '/list',
   transformField

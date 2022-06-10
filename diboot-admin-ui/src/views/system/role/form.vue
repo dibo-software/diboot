@@ -14,11 +14,12 @@ const visible = ref(false)
 const transformField = {
   label: 'displayName'
 }
-const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } = useTree<ResourcePermission>({
-  baseApi: '/resourcePermission',
-  treeApi: '/list',
-  transformField
-})
+const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } =
+  useTreeCrud<ResourcePermission>({
+    baseApi: '/resourcePermission',
+    treeApi: '/list',
+    transformField
+  })
 const treeProps = {
   label: 'displayName',
   class: flatTreeNodeClass

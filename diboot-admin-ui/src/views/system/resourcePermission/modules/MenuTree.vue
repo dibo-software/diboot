@@ -22,7 +22,7 @@ const {
   searchWord,
   treeDataList,
   loading
-} = useTree<ResourcePermission>({
+} = useTreeCrud<ResourcePermission>({
   baseApi: '/resourcePermission',
   treeApi: '/getMenuTreeList',
   sortApi: '/sortTree',
