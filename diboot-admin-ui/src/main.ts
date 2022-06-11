@@ -19,3 +19,8 @@ pinia.install(app as App)
 directives(app as App)
 
 app.mount('#app')
+
+import moment from 'moment'
+import 'moment/dist/locale/zh-cn'
+
+moment.locale('zh-cn')

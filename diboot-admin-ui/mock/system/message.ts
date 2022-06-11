@@ -2,6 +2,8 @@ import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_crudTemplate'
 import type { Message } from '@/views/system/message/type'
 import { Random } from 'mockjs'
+import { JsonResult } from '../_util'
+import type { ApiRequest } from '../_util'
 
 const dataList: Message[] = Array.from({ length: 100 }).map((_, index) => {
   const id = String(100 - index)
@@ -34,4 +36,24 @@ const crud = crudTemplate({
   dataList
 })
 
-export default [crud.api.getList, crud.api.getById] as MockMethod[]
+export default [
+  crud.api.getList,
+  crud.api.getById,
+  {
+    url: `${crud.baseUrl}/new`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: () => {
+      return JsonResult.OK([])
+    }
+  },
+  {
+    url: `${crud.baseUrl}/read/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'patch',
+    response: ({ query }: ApiRequest) => {
+      query.id
+      return JsonResult.OK()
+    }
+  }
+] as MockMethod[]
