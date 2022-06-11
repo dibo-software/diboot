@@ -31,8 +31,8 @@ const handleClick = (message: MessageInfo) => {
 
 <template>
   <div>
-    <el-badge :value="messageStore.list.length" :hidden="!messageStore.list.length">
-      <el-icon :size="22" @click="messageStore.show = true">
+    <el-badge :value="messageStore.list.length" :hidden="!messageStore.list.length" @click="messageStore.show = true">
+      <el-icon :size="22">
         <Bell />
       </el-icon>
     </el-badge>
@@ -48,7 +48,7 @@ const handleClick = (message: MessageInfo) => {
               </div>
             </template>
             <div class="content">
-              <sapn class="value" v-html="item.content" />
+              <div class="value" v-html="item.content" />
               <div class="end">
                 <span>{{ moment(item.time, 'YYYY-MM-DD HH:mm:ss').fromNow() }}</span>
               </div>
