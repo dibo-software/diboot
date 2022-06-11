@@ -29,23 +29,26 @@ const openDetail = (id: string) => {
 }
 </script>
 <template>
-  <div class="table-page">
-    <el-space wrap class="list-operation">
-      <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-space>
-        <el-input
-          v-model="searchVal"
-          class="search-input"
-          placeholder="编码/名称"
-          clearable
-          :suffix-icon="Search"
-          @change="onSearchValChanged"
-        />
-        <el-button :icon="Refresh" circle @click="getList()" />
+  <div class="list-page">
+    <el-header>
+      <el-space wrap class="list-operation">
+        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-space>
+          <el-input
+            v-model="searchVal"
+            class="search-input"
+            placeholder="编码/名称"
+            clearable
+            :suffix-icon="Search"
+            @change="onSearchValChanged"
+          />
+          <el-button :icon="Refresh" circle @click="getList()" />
+        </el-space>
       </el-space>
-    </el-space>
+    </el-header>
     <el-table
       v-loading="loading"
+      class="list-body"
       row-key="id"
       :tree-props="{ children: 'children__' }"
       :data="dataList"

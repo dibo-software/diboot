@@ -49,8 +49,8 @@ const loadListByOrgId = (orgId: string) => {
 }
 </script>
 <template>
-  <div class="table-page">
-    <el-header class="el-header">
+  <div class="list-page">
+    <el-header>
       <el-space wrap class="list-operation">
         <el-button type="primary" @click="openForm()">新建</el-button>
         <el-space>
@@ -114,8 +114,8 @@ const loadListByOrgId = (orgId: string) => {
 <style lang="scss" scoped>
 .el-header {
   height: auto;
-  padding: 15px 10px;
-  border-bottom: 1px solid #e5e5e5;
+  padding: 10px;
+  border-bottom: 1px solid var(--el-border-color);
 }
 .list-operation {
   margin-bottom: 0;

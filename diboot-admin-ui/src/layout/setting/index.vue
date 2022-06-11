@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Opportunity, RefreshLeft, CopyDocument } from '@element-plus/icons-vue'
+import { Setting, RefreshLeft, CopyDocument } from '@element-plus/icons-vue'
 import useClipboard from 'vue-clipboard3'
 import useAppStore from '@/store/app'
 import { colorPrimary } from '@/utils/theme'
@@ -33,7 +33,7 @@ const copyConfig = () => {
 <template>
   <div class="open-button" @click="openSetting = true">
     <el-icon :size="22">
-      <opportunity />
+      <setting />
     </el-icon>
   </div>
   <div class="setting">

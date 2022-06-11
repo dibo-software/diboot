@@ -20,66 +20,67 @@ initMore()
 </script>
 
 <template>
-  <div class="table-page">
-    <el-form label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :md="6" :sm="12">
-          <el-form-item label="发送通道">
-            <el-select v-model="queryParam.channel" placeholder="请选择发送通道" clearable @change="onSearch">
-              <el-option
-                v-for="item in more.messageChannelOptions || []"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :md="6" :sm="12">
-          <el-form-item label="标题">
-            <el-input v-model="queryParam.title" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="6" :sm="12">
-          <el-form-item label="消息状态">
-            <el-select v-model="queryParam.status" clearable placeholder="请选择消息状态" @change="onSearch">
-              <el-option
-                v-for="item in more.messageStatusOptions || []"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <template v-if="advanced">
+  <div class="list-page">
+    <el-header>
+      <el-form label-width="80px" class="list-search" @submit.prevent>
+        <el-row :gutter="18">
           <el-col :md="6" :sm="12">
-            <el-form-item label="创建时间">
-              <el-date-picker
-                v-model="queryParam.createTime"
-                clearable
-                type="date"
-                value-format="yyyy-MM-dd"
-                @change="onSearch"
+            <el-form-item label="发送通道">
+              <el-select v-model="queryParam.channel" placeholder="请选择发送通道" clearable @change="onSearch">
+                <el-option
+                  v-for="item in more.messageChannelOptions || []"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :sm="12">
+            <el-form-item label="标题">
+              <el-input v-model="queryParam.title" clearable @change="onSearch" />
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :sm="12">
+            <el-form-item label="消息状态">
+              <el-select v-model="queryParam.status" clearable placeholder="请选择消息状态" @change="onSearch">
+                <el-option
+                  v-for="item in more.messageStatusOptions || []"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <template v-if="advanced">
+            <el-col :md="6" :sm="12">
+              <el-form-item label="创建时间">
+                <el-date-picker
+                  v-model="queryParam.createTime"
+                  clearable
+                  type="date"
+                  value-format="yyyy-MM-dd"
+                  @change="onSearch"
+                />
+              </el-form-item>
+            </el-col>
+          </template>
+          <el-col :md="6" :sm="12" style="margin-left: auto">
+            <el-form-item>
+              <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+              <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+              <el-button
+                :icon="advanced ? ArrowUp : ArrowDown"
+                :title="advanced ? '收起' : '展开'"
+                @click="advanced = !advanced"
               />
             </el-form-item>
           </el-col>
-        </template>
-        <el-col :md="6" :sm="12" style="margin-left: auto">
-          <el-form-item>
-            <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-            <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-            <el-button
-              :icon="advanced ? ArrowUp : ArrowDown"
-              :title="advanced ? '收起' : '展开'"
-              @click="advanced = !advanced"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
-    <el-table ref="tableRef" v-loading="loading" :data="dataList" height="100%">
+        </el-row>
+      </el-form>
+    </el-header>
+    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
       <el-table-column prop="businessType" label="业务类型">
         <template #default="{ row }">
           <span>{{ row.businessType }}</span>

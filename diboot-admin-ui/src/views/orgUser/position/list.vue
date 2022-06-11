@@ -32,25 +32,28 @@ const openDetail = (id: string) => {
 </script>
 
 <template>
-  <div class="table-page">
-    <el-space wrap class="list-operation">
-      <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
-      <el-space>
-        <el-input
-          v-model="searchVal"
-          class="search-input"
-          placeholder="编码/名称"
-          clearable
-          :suffix-icon="Search"
-          @change="onSearchValChanged"
-        />
-        <el-button :icon="Refresh" circle @click="getList()" />
+  <div class="list-page">
+    <el-header>
+      <el-space wrap class="list-operation">
+        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
+        <el-space>
+          <el-input
+            v-model="searchVal"
+            class="search-input"
+            placeholder="编码/名称"
+            clearable
+            :suffix-icon="Search"
+            @change="onSearchValChanged"
+          />
+          <el-button :icon="Refresh" circle @click="getList()" />
+        </el-space>
       </el-space>
-    </el-space>
+    </el-header>
     <el-table
       ref="tableRef"
       v-loading="loading"
+      class="list-body"
       :data="dataList"
       stripe
       height="100%"
@@ -102,4 +105,4 @@ const openDetail = (id: string) => {
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

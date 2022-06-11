@@ -26,7 +26,7 @@ const openDetail = (id: string) => {
 </script>
 
 <template>
-  <div class="table-page">
+  <div class="list-page">
     <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
       <el-row :gutter="18">
         <el-col :md="8" :sm="24">
@@ -47,18 +47,20 @@ const openDetail = (id: string) => {
         </el-col>
       </el-row>
     </el-form>
-
-    <el-space wrap class="list-operation">
-      <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
-      <el-space>
-        <el-button :icon="Refresh" circle @click="getList()" />
-        <el-button :icon="Search" circle @click="searchState = !searchState" />
+    <el-header>
+      <el-space wrap class="list-operation">
+        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
+        <el-space>
+          <el-button :icon="Refresh" circle @click="getList()" />
+          <el-button :icon="Search" circle @click="searchState = !searchState" />
+        </el-space>
       </el-space>
-    </el-space>
+    </el-header>
     <el-table
       ref="tableRef"
       v-loading="loading"
+      class="list-body"
       :data="dataList"
       stripe
       height="100%"
