@@ -110,15 +110,15 @@ const authMenu = [
         path: 'vue-js',
         name: 'VueJs',
         meta: {
-          title: 'Iframe嵌套',
-          url: 'https://www.diboot.com',
+          title: 'VueJs',
+          url: 'https://staging-cn.vuejs.org',
           iframe: true
         }
       },
       {
-        path: 'diboot',
-        name: 'diboot',
-        meta: { title: '外链打开', url: 'https://www.diboot.com' }
+        path: 'baidu',
+        name: 'BaiDu',
+        meta: { title: '百度', url: 'https://www.baidu.com' }
       }
     ]
   },
