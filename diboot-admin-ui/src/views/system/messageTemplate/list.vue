@@ -25,7 +25,7 @@ const openForm = (id?: string) => {
 </script>
 
 <template>
-  <div class="table-page">
+  <div class="list-page">
     <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
       <el-row :gutter="18">
         <el-col :md="6" :sm="12">
@@ -57,14 +57,16 @@ const openForm = (id?: string) => {
         </el-col>
       </el-row>
     </el-form>
-    <el-space wrap class="list-operation">
-      <el-button type="primary" @click="openForm()">新建</el-button>
-      <el-space>
-        <el-button :icon="Refresh" circle @click="getList()" />
-        <el-button :icon="Search" circle @click="searchState = !searchState" />
+    <el-header>
+      <el-space wrap class="list-operation">
+        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-space>
+          <el-button :icon="Refresh" circle @click="getList()" />
+          <el-button :icon="Search" circle @click="searchState = !searchState" />
+        </el-space>
       </el-space>
-    </el-space>
-    <el-table ref="tableRef" v-loading="loading" :data="dataList" stripe height="100%">
+    </el-header>
+    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="code" label="模版编码">
         <template #default="{ row }">
           <el-tag type="info">{{ row.code }}</el-tag>

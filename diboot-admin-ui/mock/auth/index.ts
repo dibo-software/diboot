@@ -108,19 +108,19 @@ const authMenu = [
     meta: { title: '外部链接', icon: 'Element:Connection' },
     children: [
       {
-        path: 'vue-js',
-        name: 'VueJs',
+        path: 'diboot-website-iframe',
+        name: 'Diboot-Iframe',
         meta: {
-          title: 'VueJs',
+          title: 'iframe嵌套',
           icon: 'Element:Promotion',
-          url: 'https://staging-cn.vuejs.org',
+          url: 'https://www.diboot.com',
           iframe: true
         }
       },
       {
-        path: 'baidu',
-        name: 'BaiDu',
-        meta: { title: '百度', icon: 'Element:Search', url: 'https://www.baidu.com' }
+        path: 'diboot-website-href',
+        name: 'Diboot-href',
+        meta: { title: '外链打开', icon: 'Element:Promotion', url: 'https://www.diboot.com' }
       }
     ]
   },
@@ -219,7 +219,7 @@ const authMenu = [
         name: 'messageTemplate',
         meta: {
           title: '消息模板管理',
-          icon: 'Element:ChatSquare',
+          icon: 'Element:MessageBox',
           componentPath: prefix + 'system/messageTemplate/list.vue',
           keepAlive: false,
           sort: 7
@@ -230,7 +230,7 @@ const authMenu = [
         name: 'message',
         meta: {
           title: '消息记录管理',
-          icon: 'Element:ChatRound',
+          icon: 'Element:Message',
           componentPath: prefix + 'system/message/list.vue',
           keepAlive: false,
           sort: 8
