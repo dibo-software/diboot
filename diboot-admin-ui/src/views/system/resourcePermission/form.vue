@@ -364,19 +364,17 @@ watch(
 </template>
 <style scoped lang="scss">
 .form-container {
-  position: relative;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   .context-body {
     width: 100%;
+    overflow: hidden;
   }
   .is-fixed {
     box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 39px;
     border-top: 1px solid var(--el-border-color-lighter);
+    height: 39px;
     padding: 5px 16px;
     background: var(--el-bg-color);
     text-align: center;
@@ -404,6 +402,16 @@ watch(
     display: flex;
     justify-content: space-between;
     padding: 10px 10px 10px 0;
+  }
+}
+@media only screen and (min-width: 992px) {
+  .context-body {
+    overflow-y: auto !important;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .context-body {
+    overflow: hidden !important;
   }
 }
 </style>
