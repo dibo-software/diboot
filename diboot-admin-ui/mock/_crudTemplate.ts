@@ -13,7 +13,7 @@ export interface Option<T> {
   // 数据列表（默认：[]）
   dataList?: Array<T>
   // 附加数据
-  attachMore?: Record<string, any>
+  attachMore?: Record<string, LabelValue>
   // 主键属性（默认：id）
   primaryKey?: string
   // 关键词搜索字段列表
@@ -136,7 +136,7 @@ export default <T>(option: Option<T>) => {
         url: `${baseUrl}/attachMore`,
         timeout: Random.natural(50, 300),
         method: 'get',
-        response: ({ query }: any) => {
+        response: () => {
           return JsonResult.OK(attachMore)
         }
       },
@@ -145,7 +145,7 @@ export default <T>(option: Option<T>) => {
         timeout: Random.natural(50, 300),
         method: 'get',
         response: ({ query }: ApiRequest) => {
-          return JsonResult.OK(dataList.find(e => e[primaryKey as keyof T] === query[primaryKey]))
+          return JsonResult.OK(dataList.find(e => e[primaryKey as keyof T] === query.id))
         }
       },
       create: {
