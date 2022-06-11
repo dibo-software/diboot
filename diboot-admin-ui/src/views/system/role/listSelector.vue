@@ -1,7 +1,8 @@
 <script setup lang="ts" name="RoleListSelector">
 import type { Role } from './type'
 import { defineEmits, defineProps } from 'vue'
-import { ElTable } from 'element-plus'
+import useListSelector from '@/hooks/list_selector'
+import type { ElTable } from 'element-plus'
 
 type Props = {
   selectedKeys: string[]
@@ -23,7 +24,11 @@ getList().then(() => {
   setCheckedKeys(dataList)
 })
 
-const keyName = 'id'
+const { rowSelectChangeHandler } = useListSelector<Role>({
+  selectedRows: props.selectedRows,
+  multi: props.multi
+})
+
 const onSelectionChange = (selectedRows: Role[], single: boolean) => {
   rowSelectChange(selectedRows, single, dataList)
 }
@@ -32,31 +37,7 @@ const getSingleRow = (row: Role) => {
 }
 
 const rowSelectChange = (selectedRows: Role[], single: boolean, dataList: Role[]) => {
-  let allSelectedRows = selectedRows || []
-  const selectedKeys = selectedRows.map(item => item[keyName])
-  let allSelectedKeys = selectedKeys
-  if (!single) {
-    const { selectedRows: parentSelectedRows } = props
-    // 合并已存在和当前选中数据列表
-    const existIdList = parentSelectedRows.map(item => item[keyName])
-    const allSelectedKeySet = new Set([...existIdList, ...allSelectedKeys])
-    allSelectedKeys = Array.from(allSelectedKeySet)
-    // 过滤当前页面已存在数据，却不在已选中数据的数据
-    const currentPageKeys = dataList.map(item => item[keyName])
-    allSelectedKeys = allSelectedKeys.filter(key => {
-      return selectedKeys.includes(key) || !currentPageKeys.includes(key)
-    })
-    allSelectedRows = []
-    for (let key of allSelectedKeys) {
-      let row = selectedRows.find(item => item[keyName] === key)
-      if (row === undefined) {
-        row = parentSelectedRows.find(item => item[keyName] === key)
-      }
-      if (row !== undefined) {
-        allSelectedRows.push(row)
-      }
-    }
-  }
+  const { allSelectedKeys, allSelectedRows } = rowSelectChangeHandler(selectedRows, single, dataList)
   emit('update:selectedKeys', allSelectedKeys)
   emit('update:selectedRows', allSelectedRows)
   // 发送选中的数据对象列表
