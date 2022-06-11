@@ -125,7 +125,7 @@ const editorConfig: IEditorConfig = {
 
     <!-- 文档编辑器 -->
     <el-scrollbar v-if="doc" class="editor-border" style="background-color: var(--el-bg-color-page)">
-      <div class="editor-container" @click="editorRef.focus">
+      <div class="editor-container" @click="editorRef?.focus">
         <div v-if="doc === 'title'" class="title-container" @click.stop>
           <input v-model="titleValue" placeholder="Page Title..." @change="handleChangeTitle" />
         </div>
@@ -133,7 +133,7 @@ const editorConfig: IEditorConfig = {
           v-model="contentValue"
           :default-config="editorConfig"
           :mode="mode"
-          @click.stop
+          @click.stop="() => {}"
           @on-created="handleCreated"
           @on-change="handleChangeValue"
         />
