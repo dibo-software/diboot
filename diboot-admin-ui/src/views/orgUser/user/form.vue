@@ -3,6 +3,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel } from './type'
 import { defineEmits } from 'vue'
 import type { OrgModel } from '@/views/orgUser/org/type'
+// import PopoverListSelector from './popoverListSelector.vue'
 import PopoverListSelector from '@/views/system/role/popoverListSelector.vue'
 import UserPositionTableForm from '../position/userPositionTableForm.vue'
 

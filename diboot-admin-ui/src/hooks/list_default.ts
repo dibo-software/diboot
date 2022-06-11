@@ -9,6 +9,8 @@ export interface ListOption<D> {
   initQueryParam?: Partial<D>
   // 重建查询条件
   rebuildQuery?: (query: Partial<D>) => Partial<D>
+  // 列表数据加载成功后执行函数
+  loadSuccess?: () => void
 }
 
 export interface Pagination {
@@ -64,6 +66,9 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
       pagination.pageSize = res.page?.pageSize
       pagination.current = res.page?.pageIndex
       pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
+      if (option.loadSuccess !== undefined) {
+        option.loadSuccess()
+      }
     } catch (err) {
       const errMsg: string = (err as any).msg || (err as any).message || err
       ElNotification.error({

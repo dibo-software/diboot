@@ -17,15 +17,17 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['update:selectedKeys', 'update:selectedRows', 'select'])
 
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
-  useListDefault<Role>({ baseApi: '/role' })
+  useListDefault<Role>({
+    baseApi: '/role',
+    loadSuccess: () => {
+      setCheckedKeys()
+    }
+  })
 
 // 获取列表结束后，自定设置选中行
-getList().then(() => {
-  setCheckedKeys(dataList)
-})
+getList()
 
 const { rowSelectChangeHandler } = useListSelector<Role>({
-  selectedRows: props.selectedRows,
   multi: props.multi
 })
 
@@ -37,7 +39,12 @@ const getSingleRow = (row: Role) => {
 }
 
 const rowSelectChange = (selectedRows: Role[], single: boolean, dataList: Role[]) => {
-  const { allSelectedKeys, allSelectedRows } = rowSelectChangeHandler(selectedRows, single, dataList)
+  const { allSelectedKeys, allSelectedRows } = rowSelectChangeHandler(
+    selectedRows,
+    props.selectedRows,
+    single,
+    dataList
+  )
   emit('update:selectedKeys', allSelectedKeys)
   emit('update:selectedRows', allSelectedRows)
   // 发送选中的数据对象列表
@@ -46,7 +53,7 @@ const rowSelectChange = (selectedRows: Role[], single: boolean, dataList: Role[]
 
 const single = ref('')
 const tableRef = ref<InstanceType<typeof ElTable>>()
-const setCheckedKeys = (dataList: Role[]) => {
+const setCheckedKeys = () => {
   const { multi, selectedKeys } = props
   if (!dataList || !selectedKeys) {
     return false

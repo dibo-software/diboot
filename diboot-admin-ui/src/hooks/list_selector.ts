@@ -1,5 +1,4 @@
 export interface ListSelectorOption<T> {
-  selectedRows: T[]
   keyName?: string
   multi?: boolean
 }
@@ -8,6 +7,7 @@ export default <T>(option: ListSelectorOption<T>) => {
 
   const rowSelectChangeHandler = (
     selectedRows: T[],
+    parentSelectedRows: T[],
     single: boolean,
     dataList: T[]
   ): { allSelectedKeys?: T[keyof T][]; allSelectedRows: T[] } => {
@@ -16,7 +16,6 @@ export default <T>(option: ListSelectorOption<T>) => {
     const selectedKeys = selectedRows.map((item: T) => item[currentKeyName])
     let allSelectedKeys = selectedKeys
     if (!single) {
-      const { selectedRows: parentSelectedRows } = option
       // 合并已存在和当前选中数据列表
       const existIdList = parentSelectedRows.map(item => item[currentKeyName])
       const allSelectedKeySet = new Set([...existIdList, ...allSelectedKeys])

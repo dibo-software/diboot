@@ -1,22 +1,22 @@
 import { ElMessage } from 'element-plus'
-import type { ComputedRef, Ref } from 'vue'
+import type { Ref } from 'vue'
+import type { WritableComputedRef } from 'vue'
 
 export interface PopoverListSelectorOption<T> {
   baseApi: string
   listByIdsApi?: string
-  modelValue: string
   keyName?: string
   multi?: boolean
   labelKey: string
   valueKey: string
-  optionsValue: ComputedRef<string[] | string>
+  optionsValue: WritableComputedRef<string[] | string>
 }
 
 export default <T>(option: PopoverListSelectorOption<T>) => {
   const selectOptions = ref<Record<string, string>[]>([])
   const selectedRows = ref<T[]>([]) as Ref<T[]>
 
-  const { optionsValue, labelKey, valueKey } = option
+  const { baseApi, listByIdsApi, optionsValue, labelKey, valueKey } = option
 
   const selectedKeys = computed<string[]>(() => {
     const { multi } = option
@@ -27,19 +27,22 @@ export default <T>(option: PopoverListSelectorOption<T>) => {
     }
   })
 
-  // 通过监听值的变化，来自动加载用于回显的选项列表数据
-  watch(
-    () => option.modelValue,
-    (val: string) => {
-      if (val && selectOptions.value.length === 0) {
-        // 根据value值来加载需要的回显项
-        loadInitOptions(val)
-      }
-    },
-    {
-      immediate: true
+  const onSelect = (rows: T[]) => {
+    const { multi } = option
+    const labelValueList = rows.map(item => {
+      return {
+        label: `${item[labelKey as keyof T]}`,
+        value: `${item[valueKey as keyof T]}`
+      } as Record<string, string>
+    })
+    selectOptions.value = labelValueList
+    const valList = labelValueList.map(item => item.value)
+    if (!multi) {
+      optionsValue.value = valList.length > 0 ? valList[0] : ''
+    } else {
+      optionsValue.value = valList
     }
-  )
+  }
 
   const loadInitOptions = async (value: string | string[]) => {
     if (!value) {
@@ -52,7 +55,8 @@ export default <T>(option: PopoverListSelectorOption<T>) => {
   }
 
   const loadInitOptionsFromRemote = async (ids: string) => {
-    const res = await api.get<T[]>('/role/listByIds', { ids })
+    const listByIdsUrl = listByIdsApi ? listByIdsApi : `${baseApi}/listByIds`
+    const res = await api.get<T[]>(listByIdsUrl, { ids })
     if (res.code === 0) {
       const { data } = res
       if (data && data.length > 0) {
@@ -68,5 +72,13 @@ export default <T>(option: PopoverListSelectorOption<T>) => {
     } else {
       ElMessage.warning('未加载到选项初始数据')
     }
+  }
+
+  return {
+    selectOptions,
+    selectedRows,
+    selectedKeys,
+    onSelect,
+    loadInitOptions
   }
 }
