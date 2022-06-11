@@ -85,7 +85,7 @@ defineExpose({ reload })
 </script>
 <template>
   <div class="full-height-container">
-    <el-header class="el-header">
+    <el-header>
       <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
     </el-header>
     <div class="tree-container">
@@ -121,8 +121,8 @@ defineExpose({ reload })
 <style lang="scss" scoped>
 .el-header {
   height: auto;
-  padding: 15px 10px;
-  border-bottom: 1px solid #e5e5e5;
+  padding: 10px;
+  border-bottom: 1px solid var(--el-border-color);
 }
 .el-footer {
   padding: 15px 10px;

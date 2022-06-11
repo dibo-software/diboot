@@ -1,7 +1,7 @@
-<script setup lang="ts" name="PopverListSelector">
+<script setup lang="ts" name="RolePopverListSelector">
 import RoleListSelector from '@/views/system/role/listSelector.vue'
-import { ElMessage } from 'element-plus'
 import type { Role } from '@/views/system/role/type'
+import usePopoverListSelector from '@/hooks/popoverListSelector'
 type Props = {
   modelValue: string
   multi?: boolean
@@ -11,9 +11,6 @@ const props = withDefaults(defineProps<Props>(), {
   multi: false
 })
 const emit = defineEmits(['update:modelValue'])
-
-const selectOptions = ref<Record<string, string>[]>([])
-const selectedRows = ref<Role[]>([])
 
 const optionsValue = computed({
   get: function (): string[] | string {
@@ -33,14 +30,15 @@ const optionsValue = computed({
     }
   }
 })
-const selectedKeys = computed<string[]>(() => {
-  const { multi } = props
-  if (multi) {
-    return optionsValue.value as any
-  } else {
-    return [optionsValue.value]
-  }
+
+const { selectOptions, selectedRows, selectedKeys, onSelect, loadInitOptions } = usePopoverListSelector<Role>({
+  baseApi: '/role',
+  multi: props.multi,
+  labelKey: 'name',
+  valueKey: 'id',
+  optionsValue
 })
+
 // 通过监听值的变化，来自动加载用于回显的选项列表数据
 watch(
   () => props.modelValue,
@@ -54,51 +52,6 @@ watch(
     immediate: true
   }
 )
-
-const onSelect = (rows: Role[]) => {
-  const { multi } = props
-  const labelValueList = rows.map(item => {
-    return {
-      label: item.name,
-      value: item.id
-    }
-  })
-  selectOptions.value = labelValueList
-  const valList = labelValueList.map(item => item.value)
-  if (!multi) {
-    optionsValue.value = valList.length > 0 ? valList[0] : ''
-  } else {
-    optionsValue.value = valList
-  }
-}
-const loadInitOptions = async (value: string | string[]) => {
-  if (!value) {
-    return false
-  }
-  let optionsValues = value instanceof Array ? value : [value]
-  optionsValues = [...new Set(optionsValues)]
-  const ids = optionsValues.join(',')
-  await loadInitOptionsFromRemote(ids)
-}
-
-const loadInitOptionsFromRemote = async (ids: string) => {
-  const res = await api.get<Role[]>('/role/listByIds', { ids })
-  if (res.code === 0) {
-    const { data } = res
-    if (data && data.length > 0) {
-      selectedRows.value = data
-      selectOptions.value = data.map(
-        (item: Role) =>
-          ({
-            label: item.name,
-            value: item.id
-          } as Record<string, string>)
-      )
-    }
-  } else {
-    ElMessage.warning('未加载到选项初始数据')
-  }
-}
 </script>
 <template>
   <el-popover :teleported="false" trigger="click" placement="right" :width="580" title="角色选择">

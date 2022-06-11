@@ -16,7 +16,7 @@ export default defineConfig(({ command }) => {
       vue(),
       VueSetupExtend(),
       // checker({ vueTsc: true }),
-      // eslintPlugin({ fix: true }),
+      eslintPlugin({ fix: true }),
       AutoImport({
         // 解析器
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],

@@ -29,52 +29,53 @@ const getTagType = (val: string, map: Record<string, string>) => {
 </script>
 
 <template>
-  <div class="table-page">
-    <el-form label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :md="6" :sm="12">
-          <el-form-item label="业务对象">
-            <el-input v-model="queryParam.businessObj" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="6" :sm="12">
-          <el-form-item label="请求方式">
-            <el-select v-model="queryParam.statusCode" clearable @change="onSearch">
-              <el-option value="GET" />
-              <el-option value="POST" />
-              <el-option value="PUT" />
-              <el-option value="DELETE" />
-              <el-option value="PATCH" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :md="6" :sm="12">
-          <el-form-item label="状态码">
-            <el-input v-model="queryParam.statusCode" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <template v-if="advanced">
+  <div class="list-page">
+    <el-header>
+      <el-form label-width="80px" class="list-search" @submit.prevent>
+        <el-row :gutter="18">
           <el-col :md="6" :sm="12">
-            <el-form-item label="用户类型">
-              <el-input v-model="queryParam.userType" clearable @change="onSearch" />
+            <el-form-item label="业务对象">
+              <el-input v-model="queryParam.businessObj" clearable @change="onSearch" />
             </el-form-item>
           </el-col>
-        </template>
-        <el-col :md="6" :sm="12" style="margin-left: auto">
-          <el-form-item>
-            <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-            <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-            <el-button
-              :icon="advanced ? ArrowUp : ArrowDown"
-              :title="advanced ? '收起' : '展开'"
-              @click="advanced = !advanced"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
-    <el-table ref="tableRef" v-loading="loading" :data="dataList" stripe height="100%">
+          <el-col :md="6" :sm="12">
+            <el-form-item label="请求方式">
+              <el-select v-model="queryParam.statusCode" clearable @change="onSearch">
+                <el-option value="GET" />
+                <el-option value="POST" />
+                <el-option value="PUT" />
+                <el-option value="DELETE" />
+                <el-option value="PATCH" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :md="6" :sm="12">
+            <el-form-item label="状态码">
+              <el-input v-model="queryParam.statusCode" clearable @change="onSearch" />
+            </el-form-item>
+          </el-col>
+          <template v-if="advanced">
+            <el-col :md="6" :sm="12">
+              <el-form-item label="用户类型">
+                <el-input v-model="queryParam.userType" clearable @change="onSearch" />
+              </el-form-item>
+            </el-col>
+          </template>
+          <el-col :md="6" :sm="12" style="margin-left: auto">
+            <el-form-item>
+              <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+              <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+              <el-button
+                :icon="advanced ? ArrowUp : ArrowDown"
+                :title="advanced ? '收起' : '展开'"
+                @click="advanced = !advanced"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-header>
+    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="userType" label="用户类型" />
       <el-table-column prop="userRealname" label="用户姓名" />
       <el-table-column prop="businessObj" label="业务对象" />
