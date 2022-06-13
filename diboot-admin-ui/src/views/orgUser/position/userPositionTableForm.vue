@@ -3,6 +3,7 @@ import type { UserPosition } from './type'
 import type { OrgModel } from '../org/type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
+import positionPopoverListSelector from '@/views/orgUser/position/popoverListSelector.vue'
 
 type Props = {
   userId?: string
@@ -61,7 +62,7 @@ defineExpose({
               trigger: 'blur'
             }"
           >
-            <el-input v-model="scope.row.positionId" placeholder="请选择岗位" />
+            <position-popover-list-selector v-model="scope.row.positionId" :multi="false" />
           </el-form-item>
         </template>
       </el-table-column>

@@ -3,8 +3,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel } from './type'
 import { defineEmits } from 'vue'
 import type { OrgModel } from '@/views/orgUser/org/type'
-// import PopoverListSelector from './popoverListSelector.vue'
-import PopoverListSelector from '@/views/system/role/popoverListSelector.vue'
+import RolePopoverListSelector from '@/views/system/role/popoverListSelector.vue'
 import UserPositionTableForm from '../position/userPositionTableForm.vue'
 
 const baseApi = '/user'
@@ -147,7 +146,7 @@ const rules: FormRules = {
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="roles" label="角色">
-            <popover-list-selector v-model="model.roleIds" :multi="true" />
+            <role-popover-list-selector v-model="model.roleIds" :multi="true" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
