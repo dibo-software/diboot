@@ -197,10 +197,11 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return iamUserNums;
     }
 
-    private void createAccount(IamUserAccountDTO userAccountDTO) {
+    protected void createAccount(IamUserAccountDTO userAccountDTO) {
         // 创建账号信息
         IamAccount iamAccount = new IamAccount();
         iamAccount
+                .setTenantId(userAccountDTO.getTenantId())
                 .setUserType(IamUser.class.getSimpleName())
                 .setUserId(userAccountDTO.getId())
                 .setAuthAccount(userAccountDTO.getUsername())
