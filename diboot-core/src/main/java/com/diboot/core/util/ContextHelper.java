@@ -227,7 +227,11 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
      * @return
      */
     public static String getJdbcUrl() {
-        Environment environment = getApplicationContext().getEnvironment();
+        ApplicationContext applicationContext = getApplicationContext();
+        if (applicationContext == null) {
+            return null;
+        }
+        Environment environment = applicationContext.getEnvironment();
         String jdbcUrl = environment.getProperty("spring.datasource.url");
         if(jdbcUrl == null){
             jdbcUrl = environment.getProperty("spring.datasource.druid.url");

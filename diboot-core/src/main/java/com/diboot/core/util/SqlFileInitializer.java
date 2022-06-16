@@ -207,14 +207,17 @@ public class SqlFileInitializer {
         sqlStatement = clearComments(sqlStatement);
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
-            if(getDbType().equals(DbType.SQL_SERVER.getDb())){
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getSqlServerCurrentSchema());
-            }
-            else if(getDbType().equals(DbType.ORACLE.getDb())){
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getOracleCurrentSchema());
-            }
-            else{
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
+            String dbType = getDbType();
+            if (dbType != null) {
+                if(dbType.equals(DbType.SQL_SERVER.getDb())){
+                    sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getSqlServerCurrentSchema());
+                }
+                else if(dbType.equals(DbType.ORACLE.getDb())){
+                    sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getOracleCurrentSchema());
+                }
+                else{
+                    sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
+                }
             }
         }
         return sqlStatement;
