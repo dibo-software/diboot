@@ -15,7 +15,7 @@ CREATE TABLE ${SCHEMA}.schedule_job (
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null
 );
-comment on column schedule_job.id is 'ID';
+comment on column ${SCHEMA}.schedule_job.id is 'ID';
 comment on column ${SCHEMA}.schedule_job.tenant_id is '租户ID';
 comment on column ${SCHEMA}.schedule_job.job_key is 'job编码';
 comment on column ${SCHEMA}.schedule_job.job_name is 'job名称';
