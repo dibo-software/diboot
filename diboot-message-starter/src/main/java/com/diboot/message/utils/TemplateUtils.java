@@ -77,8 +77,8 @@ public class TemplateUtils {
         // 从缓存中获取变量对应的方法
         List<String> variableValueList = new ArrayList<>();
         List<Field> fields = BeanUtils.extractFields(variableData.getClass(), BindVariable.class);
-        if(V.isEmpty(fields)){
-            log.warn("{} 类中无@BindVariable变量绑定注解，无法替换变量");
+        if (V.isEmpty(fields)) {
+            log.warn("{} 类中无@BindVariable变量绑定注解，无法替换变量", variableData.getClass());
             return templateContent;
         }
         for (String variable : messageTemplateVariables) {
