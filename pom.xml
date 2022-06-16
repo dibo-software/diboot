@@ -29,10 +29,10 @@
     <properties>
         <hibernate-validator.version>6.2.3.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
-        <okhttp.version>4.9.3</okhttp.version>
+        <okhttp.version>4.10.0</okhttp.version>
         <aspectjweaver.version>1.9.9.1</aspectjweaver.version>
         <commons-io.version>2.11.0</commons-io.version>
-        <easyexcel.version>3.1.0</easyexcel.version>
+        <easyexcel.version>3.1.1</easyexcel.version>
         <diboot.version>2.6.0</diboot.version>
     </properties>
 
