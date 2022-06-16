@@ -206,7 +206,10 @@ public class SqlFileInitializer {
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
             String schema = getCurrentSchema();
-            if (V.notEmpty(schema)) {
+            if (V.isEmpty(schema)) {
+                sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
+            }
+            else {
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}", schema);
             }
         }
