@@ -206,7 +206,10 @@ public class SqlFileInitializer {
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
             String schema = getCurrentSchema();
-            if (V.notEmpty(schema)) {
+            if (V.isEmpty(schema)) {
+                sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
+            }
+            else {
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}", schema);
             }
         }
@@ -311,7 +314,7 @@ public class SqlFileInitializer {
      * @param inputSql
      * @return
      */
-    private static String clearComments(String inputSql){
+    public static String clearComments(String inputSql){
         String[] sqlRows = inputSql.split("\\n");
         List<String> cleanSql = new ArrayList();
         for(String row : sqlRows){
