@@ -295,6 +295,17 @@ public class V {
     }
 
     /**
+     * 集合中是否包含指定字符串或其大写字符串
+     *
+     * @param collection 集合
+     * @param target     查找字符串
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static boolean containsIgnoreCase(Collection<String> collection, String target) {
+        return collection != null && (collection.contains(target) || collection.contains(target.toLowerCase()) || collection.contains(target.toUpperCase()));
+    }
+
+    /**
      * 集合中是否不包含指定元素
      *
      * @param collection 集合
@@ -303,6 +314,17 @@ public class V {
      */
     public static <T> boolean notContains(Collection<T> collection, T target) {
         return collection != null && !collection.contains(target);
+    }
+
+    /**
+     * 集合中是否不包含指定字符串或其大写字符串
+     *
+     * @param collection 集合
+     * @param target     查找字符串
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static boolean notContainsIgnoreCase(Collection<String> collection, String target) {
+        return !(containsIgnoreCase(collection, target));
     }
 
     /**

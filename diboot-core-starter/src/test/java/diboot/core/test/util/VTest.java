@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -131,6 +132,14 @@ public class VTest {
         Assert.assertTrue(isValidCol);
         isValidCol = V.isValidSqlParam("self.id:DESC");
         Assert.assertTrue(isValidCol);
+    }
+
+    @Test
+    public void testContains(){
+        List<String> IGNORE_FIELDS = Arrays.asList("id", "is_deleted");
+        Assert.assertTrue(V.contains(IGNORE_FIELDS, "is_deleted"));
+        Assert.assertTrue(V.containsIgnoreCase(IGNORE_FIELDS, "IS_DELETED"));
+        Assert.assertTrue(V.notContainsIgnoreCase(IGNORE_FIELDS, "DELETED"));
     }
 
 }
