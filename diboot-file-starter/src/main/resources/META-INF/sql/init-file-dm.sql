@@ -35,5 +35,5 @@ comment on column ${SCHEMA}.upload_file.create_by is '创建人';
 comment on column ${SCHEMA}.upload_file.create_time is '创建时间';
 comment on table ${SCHEMA}.upload_file is '上传文件';
 -- 索引
-create index idx_upload_file on upload_file (rel_obj_type, rel_obj_id, rel_obj_field);
-create index idx_upload_file_tenant on upload_file (tenant_id);
+create index idx_upload_file on ${SCHEMA}.upload_file (rel_obj_type, rel_obj_id, rel_obj_field);
+create index idx_upload_file_tenant on ${SCHEMA}.upload_file (tenant_id);
