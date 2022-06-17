@@ -206,12 +206,7 @@ public class SqlFileInitializer {
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
             String schema = getCurrentSchema();
-            if (V.isEmpty(schema)) {
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
-            }
-            else {
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}", schema);
-            }
+            sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", schema);
         }
         return sqlStatement;
     }
@@ -355,20 +350,18 @@ public class SqlFileInitializer {
 
     /**
      * 获取当前schema
-     *
      * @return
      */
     public static String getCurrentSchema() {
-        if (CURRENT_SCHEMA == null) {
+        if(CURRENT_SCHEMA == null) {
             DataSource dataSource = ContextHelper.getBean(DataSource.class);
-            try {
-                Connection connection = dataSource.getConnection();
-                CURRENT_SCHEMA = connection.getSchema();
-                connection.close();
-            } catch (Exception e) {
+            try{
+                CURRENT_SCHEMA = dataSource.getConnection().getSchema();
+            }
+            catch (Exception e){
                 log.warn("获取schema异常: {}", e.getMessage());
             }
-            if (CURRENT_SCHEMA == null) {
+            if(CURRENT_SCHEMA == null) {
                 CURRENT_SCHEMA = "";
             }
         }
