@@ -31,4 +31,8 @@ public enum Strategy {
      * 空字符串""参与查询
      */
     INCLUDE_EMPTY,
+    /**
+     * null参与构建isNull
+     */
+    INCLUDE_NULL,
 }

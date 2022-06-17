@@ -246,6 +246,24 @@ public class TestJoinQuery {
         Assert.assertTrue(list.size() > 5);
     }
 
+
+    /**
+     * 测试空值和null
+     */
+    @Test
+    public void testNullEmptyQuery() {
+        Department entity = new Department();
+        entity.setName("测试组");
+        entity.setOrgId(100001L);
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(entity);
+        System.out.println(queryWrapper.getExpression());
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id IS NULL"));
+
+        entity.setParentId(10001L);
+        queryWrapper = QueryBuilder.toQueryWrapper(entity);
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id = #{"));
+    }
+
     @Test
     public void test(){
         String sql = buildCheckDeletedColSql("test");
