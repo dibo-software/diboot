@@ -356,7 +356,9 @@ public class SqlFileInitializer {
         if(CURRENT_SCHEMA == null) {
             DataSource dataSource = ContextHelper.getBean(DataSource.class);
             try{
-                CURRENT_SCHEMA = dataSource.getConnection().getSchema();
+                Connection connection = dataSource.getConnection();
+                CURRENT_SCHEMA = connection.getSchema();
+                connection.close();
             }
             catch (Exception e){
                 log.warn("获取schema异常: {}", e.getMessage());
