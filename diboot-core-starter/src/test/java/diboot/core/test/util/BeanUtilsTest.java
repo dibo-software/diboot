@@ -18,13 +18,16 @@ package diboot.core.test.util;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
 import com.diboot.core.vo.DictionaryVO;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.TestRegion;
 import diboot.core.test.binder.entity.TestUploadFile;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.config.SpringMvcConfig;
@@ -227,7 +230,7 @@ public class BeanUtilsTest {
         Assert.assertEquals(list.get(0).getChildren().size(), 5);
 
         list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
-        list = BeanUtils.buildTree(list, 0, "parentId", "children");
+        list = BeanUtils.buildTree(list, 0, Cons.FieldName.id.name());
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getChildren().size(), 5);
 
@@ -245,6 +248,55 @@ public class BeanUtilsTest {
             Assert.assertTrue(e.getMessage().contains("请检查"));
         }
     }
+
+    @Test
+    public void testBuildTreeWithUUID(){
+        // 准备节点数据
+        List<TestRegion> regionList = new ArrayList<>();
+        TestRegion province1 = new TestRegion().setUuid(S.newUuid()).setName("江苏省").setLevel(1).setCode("JS");
+        regionList.add(province1);
+        TestRegion province2 = new TestRegion().setUuid(S.newUuid()).setName("浙江省").setLevel(1).setCode("ZJ");
+        regionList.add(province2);
+
+        TestRegion city1 = new TestRegion().setUuid(S.newUuid()).setName("南京市").setLevel(2).setCode("NJ").setParentId(province1.getUuid());
+        regionList.add(city1);
+        TestRegion city2 = new TestRegion().setUuid(S.newUuid()).setName("苏州市").setLevel(2).setCode("SZ").setParentId(province1.getUuid());
+        regionList.add(city2);
+        TestRegion city3 = new TestRegion().setUuid(S.newUuid()).setName("杭州市").setLevel(2).setCode("HZ").setParentId(province2.getUuid());
+        regionList.add(city3);
+
+        TestRegion area1 = new TestRegion().setUuid(S.newUuid()).setName("建邺区").setLevel(3).setCode("JY").setParentId(city1.getUuid());
+        regionList.add(area1);
+        TestRegion area2 = new TestRegion().setUuid(S.newUuid()).setName("工业园区").setLevel(3).setCode("SIP").setParentId(city2.getUuid());
+        regionList.add(area2);
+        TestRegion area3 = new TestRegion().setUuid(S.newUuid()).setName("姑苏区").setLevel(3).setCode("GS").setParentId(city2.getUuid());
+        regionList.add(area3);
+
+        // 构建树形结构
+        List<TestRegion> list = BeanUtils.buildTree(regionList, null, "uuid");
+        //BeanUtils.buildTree(regionList, null, "uuid", Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
+
+        // 检测结果
+        Assert.assertEquals(list.size(), 2);
+        for(TestRegion region : list) {
+            if(region.getCode().equals("JS")) {
+                Assert.assertEquals(region.getChildren().size(), 2);
+                for(TestRegion city : region.getChildren()) {
+                    if(city.getCode().equals("NJ")) {
+                        Assert.assertEquals(city.getChildren().size(), 1);
+                    }
+                    else{
+                        Assert.assertEquals(city.getChildren().size(), 2);
+                    }
+                }
+            }
+            else {
+                Assert.assertEquals(region.getChildren().size(), 1);
+                Assert.assertNull(region.getChildren().get(0).getChildren());
+            }
+        }
+    }
+
 
     @Test
     public void testSetProperty(){
