@@ -920,6 +920,45 @@ public class BeanUtils {
     }
 
     /**
+     * 转换集合中的string类型id值为指定类型
+     * @param values
+     * @param fieldType
+     * @return
+     */
+    public static Collection convertIdValuesToType(Collection<?> values, Class fieldType) {
+        if(V.isEmpty(values)) {
+            return values;
+        }
+        if(V.equals(values.iterator().next().getClass(), fieldType)) {
+            return values;
+        }
+        Collection formatValues = new ArrayList(values.size());
+        for(Object value : values) {
+            formatValues.add(convertIdValueToType(value, fieldType));
+        }
+        return formatValues;
+    }
+
+    /**
+     * 转换string类型id值为指定类型
+     * @param value
+     * @param fieldType
+     * @return
+     */
+    public static Object convertIdValueToType(Object value, Class fieldType) {
+        if(V.isEmpty(value)) {
+            return null;
+        }
+        if(Long.class.equals(fieldType)) {
+            return Long.parseLong(S.valueOf(value));
+        }
+        if(Integer.class.equals(fieldType)) {
+            return Integer.parseInt(S.valueOf(value));
+        }
+        return value;
+    }
+
+    /**
      * 初始化fields
      * @param beanClazz
      * @return
