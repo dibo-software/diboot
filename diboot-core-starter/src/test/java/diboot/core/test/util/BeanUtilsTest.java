@@ -24,6 +24,7 @@ import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
@@ -297,7 +298,6 @@ public class BeanUtilsTest {
         }
     }
 
-
     @Test
     public void testSetProperty(){
         TestUploadFile object = new TestUploadFile();
@@ -338,6 +338,17 @@ public class BeanUtilsTest {
         long takes2 = (end - begin);
         System.out.println(takes1 + " ms , after: " + takes2 + " ms") ;
         Assert.assertTrue(takes2 < takes1);
+    }
+
+    @Test
+    public void testConvertType() {
+        Collection<String> list = new ArrayList<>();
+        list.add("123");
+        list.add("234");
+
+        Collection list2 = BeanUtils.convertIdValuesToType(list, Long.class);
+        Assert.assertTrue(list2.size() == 2);
+        Assert.assertTrue(V.equals(list2.iterator().next(), 123l));
     }
 
 }
