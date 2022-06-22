@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.service.impl;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
@@ -32,6 +31,7 @@ import com.diboot.iam.entity.SystemConfig;
 import com.diboot.iam.mapper.SystemConfigMapper;
 import com.diboot.iam.service.SystemConfigService;
 import com.diboot.iam.vo.SystemConfigVO;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
@@ -56,9 +56,11 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
     @Autowired(required = false)
     private List<SystemConfigInjection> configInjections;
 
-    private final List<LabelValue> configTypeList = new ArrayList<>();
-    private final Map<String, List<Enum<? extends SystemConfigType>>> configItemListMap = new HashMap<>();
-    private final Map<String, SystemConfigTest<?>> configTypeTestMap = new HashMap<>();
+    @Getter
+    private final List<LabelValue> typeList = new ArrayList<>();
+    @Getter
+    private final Map<String, List<Enum<? extends SystemConfigType>>> configItemsMap = new HashMap<>();
+    private final Map<String, SystemConfigTest<?>> configTestMap = new HashMap<>();
     private final Map<String, Class<?>> configTestDataClassMap = new HashMap<>();
 
     @PostConstruct
@@ -79,13 +81,13 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
                 String type = configType.getSimpleName();
                 LabelValue labelValue = new LabelValue(((SystemConfigType) enumConstants[0]).typeLabel(), type);
                 if (SystemConfigTest.class.isAssignableFrom(configType)) {
-                    configTypeTestMap.put(type, (SystemConfigTest<?>) enumConstants[0]);
+                    configTestMap.put(type, (SystemConfigTest<?>) enumConstants[0]);
                     Class<?> testDataClass = findTestDataClass(ResolvableType.forClass(configType));
                     configTestDataClassMap.put(type, testDataClass);
                     labelValue.setExt(BeanUtils.extractAllFields(testDataClass).stream().map(Field::getName).collect(Collectors.toSet()));
                 }
-                configTypeList.add(labelValue);
-                configItemListMap.put(type, Arrays.asList(enumConstants));
+                typeList.add(labelValue);
+                configItemsMap.put(type, Arrays.asList(enumConstants));
             }
         }
     }
@@ -109,19 +111,14 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
     }
 
     @Override
-    public List<LabelValue> getTypeList() {
-        return configTypeList;
-    }
-
-    @Override
     public List<SystemConfigVO> getConfigByType(String type) {
-        if (!configItemListMap.containsKey(type)) {
+        if (!configItemsMap.containsKey(type)) {
             return Collections.emptyList();
         }
         LambdaQueryWrapper<SystemConfig> queryWrapper = Wrappers.<SystemConfig>lambdaQuery().eq(SystemConfig::getType, type);
         Map<String, SystemConfigVO> configInfoMap = this.getViewObjectList(queryWrapper, null, SystemConfigVO.class)
                 .stream().collect(Collectors.toMap(SystemConfig::getProp, e -> e));
-        return configItemListMap.get(type).stream().map(item -> {
+        return configItemsMap.get(type).stream().map(item -> {
             SystemConfigType configProp = (SystemConfigType) item;
             Object defaultValue = configProp.buildDefaultValue();
             return configInfoMap.getOrDefault(item.name(), new SystemConfigVO() {{
@@ -140,7 +137,7 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
 
     @Override
     public void configTest(String type, Map<String, Object> data) {
-        SystemConfigTest systemConfigTest = configTypeTestMap.get(type);
+        SystemConfigTest systemConfigTest = configTestMap.get(type);
         if (systemConfigTest == null) {
             throw new BusinessException("系统配置`" + type + "`未实现测试方法");
         }
