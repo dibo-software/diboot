@@ -17,6 +17,7 @@ package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.LabelValue;
+import com.diboot.iam.config.SystemConfigType;
 import com.diboot.iam.entity.SystemConfig;
 import com.diboot.iam.vo.SystemConfigVO;
 
@@ -38,6 +39,13 @@ public interface SystemConfigService extends BaseService<SystemConfig> {
      * @return 配置类型列表
      */
     List<LabelValue> getTypeList();
+
+    /**
+     * 获取配置元素类型映射
+     *
+     * @return 全部配置元素类型映射
+     */
+    Map<String, List<Enum<? extends SystemConfigType>>> getConfigItemsMap();
 
     /**
      * 根据类型获取配置
