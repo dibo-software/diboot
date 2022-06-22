@@ -34,9 +34,4 @@ public class SchedulerProperties {
      */
     private boolean initSql = true;
 
-    /**
-     * 是否启用（开发环境可禁用）
-     */
-    private boolean enable = true;
-
 }

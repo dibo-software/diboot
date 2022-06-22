@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "diboot.component.scheduler", name = "enable", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.quartz", name = "job-store-type", havingValue = "MEMORY", matchIfMissing = true)
 public class SchedulerJobInitializer implements ApplicationRunner {
 
     @Autowired
