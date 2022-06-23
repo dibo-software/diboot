@@ -15,8 +15,11 @@
  */
 package com.diboot.iam.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.diboot.core.vo.Pagination;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.vo.IamUserVO;
 
 import java.util.List;
 
@@ -71,5 +74,15 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @return
      */
     List<Long> getUserIdsByManagerId(Long managerId);
+
+    /**
+     * 获取用户VO列表
+     *
+     * @param queryWrapper
+     * @param pagination
+     * @param orgId
+     * @return
+     */
+    List<IamUserVO> getUserViewList(LambdaQueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId);
 
 }
