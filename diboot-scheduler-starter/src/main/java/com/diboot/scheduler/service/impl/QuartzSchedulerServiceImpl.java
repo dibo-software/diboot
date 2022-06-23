@@ -24,7 +24,6 @@ import com.diboot.core.vo.Status;
 import com.diboot.scheduler.annotation.CollectThisJob;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.service.QuartzSchedulerService;
-import com.diboot.scheduler.starter.SchedulerProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -42,8 +41,6 @@ import java.util.*;
  */
 @Slf4j
 public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
-    @Autowired
-    private SchedulerProperties schedulerProperties;
 
     /**
      * 任务初始化策略
@@ -65,10 +62,6 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
 
     @PostConstruct
     public void startScheduler() {
-        if (schedulerProperties.isEnable() == false) {
-            log.info("定时任务组件已暂停，如需启用设置:diboot.component.scheduler.enable=true");
-            return;
-        }
         try {
             scheduler.start();
         } catch (SchedulerException e) {

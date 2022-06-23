@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,25 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.scheduler.starter;
+package com.diboot.iam.service;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.diboot.iam.entity.IamUserPosition;
 
 /**
- * 定时任务相关的配置参数
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2020/11/28
+ * 用户岗位关联相关Service
+ *
+ * @author wind
+ * @version v2.6.0
+ * @date 2022-06-23
  */
-@Getter @Setter
-@ConfigurationProperties(prefix = "diboot.component.scheduler")
-public class SchedulerProperties {
-
-    /**
-     * 是否初始化SQL
-     */
-    private boolean initSql = true;
+public interface IamUserPositionService extends BaseIamService<IamUserPosition> {
 
 }
