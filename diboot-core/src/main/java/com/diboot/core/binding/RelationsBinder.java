@@ -163,6 +163,15 @@ public class RelationsBinder {
                 binderFutures.add(bindFieldFuture);
             }
         }
+        // 绑定count子项计数
+        List<FieldAnnotation> countAnnoList = bindAnnotationGroup.getBindCountAnnotations();
+        if(countAnnoList != null){
+            for(FieldAnnotation anno : countAnnoList){
+                // 绑定关联对象count计数
+                CompletableFuture<Boolean> bindCountFuture = parallelBindingManager.doBindingCount(voList, anno);
+                binderFutures.add(bindCountFuture);
+            }
+        }
         // 执行绑定
         CompletableFuture.allOf(binderFutures.toArray(new CompletableFuture[0])).join();
         // 深度绑定
