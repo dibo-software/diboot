@@ -24,7 +24,6 @@ import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.service.BaseService;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -37,7 +36,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
+import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -231,8 +232,20 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
         if (applicationContext == null) {
             return null;
         }
+        String jdbcUrl = null;
+        try{
+            DataSource dataSource = applicationContext.getBean(DataSource.class);
+            Connection connection = dataSource.getConnection();
+            jdbcUrl = connection.getMetaData().getURL();
+            connection.close();
+            return jdbcUrl;
+        }
+        catch (Exception e){
+            log.warn("获取JDBC URL异常: {}", e.getMessage());
+        }
+        // 候补识别方式，暂时保留
         Environment environment = applicationContext.getEnvironment();
-        String jdbcUrl = environment.getProperty("spring.datasource.url");
+        jdbcUrl = environment.getProperty("spring.datasource.url");
         if(jdbcUrl == null){
             jdbcUrl = environment.getProperty("spring.datasource.druid.url");
         }
@@ -271,12 +284,6 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
             DATABASE_TYPE = dbType.getDb();
             if(DATABASE_TYPE.startsWith(DbType.SQL_SERVER.getDb())){
                 DATABASE_TYPE = DbType.SQL_SERVER.getDb();
-            }
-        }
-        else{
-            SqlSessionFactory sqlSessionFactory = getBean(SqlSessionFactory.class);
-            if(sqlSessionFactory != null){
-                DATABASE_TYPE = sqlSessionFactory.getConfiguration().getDatabaseId();
             }
         }
         if(DATABASE_TYPE == null){
