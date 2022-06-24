@@ -20,8 +20,14 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import diboot.core.test.StartupApplication;
+import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -35,6 +41,9 @@ import java.util.List;
  * @version 1.0
  * @date 2019/06/02
  */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
+@SpringBootTest(classes = {StartupApplication.class})
 public class VTest {
 
     @Test
@@ -95,7 +104,7 @@ public class VTest {
         Assert.assertTrue(V.equals(field.getType().getName(), "java.util.Date"));
 
         Dictionary dictionary = BeanUtils.cloneBean(new Dictionary());
-        Dictionary dictionary1 = JSON.parseObject("{}", Dictionary.class);
+        Dictionary dictionary1 = JSON.parseObject("{\"parentId\":0}", Dictionary.class);
         Assert.assertTrue(V.equals(dictionary.getClass(), dictionary1.getClass()));
 
         field = BeanUtils.extractField(Dictionary.class, "isDeletable");

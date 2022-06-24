@@ -318,11 +318,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		List<R> oldEntityList = (iService != null)? iService.list(selectOld) : baseMapper.selectList(selectOld);
 		// 删除失效关联
 		List<Serializable> delIds = new ArrayList<>();
+		List<Serializable> removeFollowerIds = new ArrayList<>();
 		for (R entity : oldEntityList) {
-			if (V.notEmpty(followerIdList) && followerIdList.remove(BeanUtils.getProperty(entity, followerFieldName))) {
+			Serializable followerId = (Serializable)BeanUtils.getProperty(entity, followerFieldName);
+			if (V.notEmpty(followerIdList) && followerIdList.contains(followerId)) {
+				removeFollowerIds.add(followerId);
 				continue;
 			}
-			Serializable id = (Serializable) BeanUtils.getProperty(entity, isExistPk ? entityInfo.getPropInfo().getIdFieldName() : followerFieldName);
+			Serializable id = isExistPk? (Serializable)BeanUtils.getProperty(entity, entityInfo.getPropInfo().getIdFieldName()) : followerId;
 			if(id != null) {
 				delIds.add(id);
 			}
@@ -347,12 +350,17 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				}
 			}
 		}
-
         // 新增关联
         if (V.notEmpty(followerIdList)) {
-            List<R> n2nRelations = new ArrayList<>(followerIdList.size());
+			List<Serializable> newFollowIds = new ArrayList();
+			for(Serializable id : followerIdList) {
+				if(!removeFollowerIds.contains(id)) {
+					newFollowIds.add(id);
+				}
+			}
+            List<R> n2nRelations = new ArrayList<>(newFollowIds.size());
             try {
-                for (Serializable followerId : followerIdList) {
+                for (Serializable followerId : newFollowIds) {
                     R relation = middleTableClass.newInstance();
 					BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(relation);
 					beanWrapper.setPropertyValue(driverFieldName, driverId);
@@ -702,8 +710,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		Map<ID, String> idNameMap = new HashMap<>(mapList.size());
 		for(Map<String, Object> map : mapList){
-			ID key = (ID)map.get(entityInfo.getIdColumn());
-			String value = S.valueOf(map.get(columnName));
+			ID key = (ID)MapUtils.getIgnoreCase(map, entityInfo.getIdColumn());
+			String value = S.valueOf(MapUtils.getIgnoreCase(map, columnName));
 			idNameMap.put(key, value);
 		}
 		return idNameMap;

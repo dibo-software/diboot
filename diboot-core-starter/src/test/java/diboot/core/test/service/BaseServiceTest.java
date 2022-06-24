@@ -301,13 +301,6 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void testContextHelper(){
-        String database = ContextHelper.getDatabaseType();
-        System.out.println(database);
-        Assert.assertTrue(database.equals("mysql") || database.equals("oracle"));
-    }
-
-    @Test
     public void testGetValuesOfField(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
@@ -451,13 +444,16 @@ public class BaseServiceTest {
                 .select("sum(id) as count");
         Map<String, Object> map = dictionaryService.getMap(queryWrapper);
         Assert.assertTrue(map!=null);
-        Assert.assertTrue(map.get("count") != null);
+        Assert.assertTrue(MapUtils.getIgnoreCase(map, "count") != null);
     }
 
     @Test
     public void tesExecuteMultipleUpdateSqls(){
         List<String> sqls = new ArrayList<>();
         Long dictId = 20000l;
+        if(ContextHelper.getDatabaseType().equals("dm")) {
+            sqls.add("SET IDENTITY_INSERT dictionary ON");
+        }
         sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
         sqls.add("DELETE FROM dictionary WHERE id=20000 AND is_deleted=1");
         boolean success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);

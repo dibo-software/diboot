@@ -40,11 +40,13 @@ public class SimpleSplitVO extends Department {
 
     // ，拆分的id值绑定
     @BindEntityList(entity = User.class, condition="this.`character`=id", splitBy= Cons.SEPARATOR_COMMA)
+    //@BindEntityList(entity = User.class, condition="this.character=id", splitBy= Cons.SEPARATOR_COMMA)
     private List<User> managers;
 
 
     // ，拆分的id值绑定
     @BindFieldList(entity = User.class, field = "username", condition="this.`character`=id", splitBy= Cons.SEPARATOR_COMMA)
+    //@BindFieldList(entity = User.class, field = "username", condition="this.character=id", splitBy= Cons.SEPARATOR_COMMA)
     private List<String> managerNames;
 
 }

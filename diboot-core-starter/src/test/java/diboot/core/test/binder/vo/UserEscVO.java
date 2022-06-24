@@ -40,8 +40,10 @@ public class UserEscVO extends User {
     private String deptCharacter;
 
     @BindField(entity = Department.class, field="name", condition="this.`character`=`character`")
+    //@BindField(entity = Department.class, field="name", condition="this.character=character")
     private String deptName;
 
     @BindField(entity = Organization.class, field="name", condition="this.`character`=department.`character` AND department.org_id=id")
+    //@BindField(entity = Organization.class, field="name", condition="this.character=department.character AND department.org_id=id")
     private String orgName;
 }

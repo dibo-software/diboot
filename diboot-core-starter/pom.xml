@@ -56,5 +56,13 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>com.dm</groupId>
+            <artifactId>DmJdbcDriver18</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/DmJdbcDriver18.jar</systemPath>
+        </dependency>-->
     </dependencies>
 </project>

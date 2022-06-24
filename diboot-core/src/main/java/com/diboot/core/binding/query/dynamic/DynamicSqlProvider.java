@@ -17,6 +17,7 @@ package com.diboot.core.binding.query.dynamic;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.parser.ParserCache;
@@ -72,7 +73,7 @@ public class DynamicSqlProvider {
                 SELECT_DISTINCT("self.*");
             }
             else{
-                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect()));
+                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), page));
             }
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
@@ -121,7 +122,7 @@ public class DynamicSqlProvider {
                     if(isDeletedCol != null && QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
-                    if(segments.getOrderBy() != null){
+                    if(segments.getOrderBy() != null && !segments.getOrderBy().isEmpty()){
                         String orderBySql = segments.getOrderBy().getSqlSegment();
                         int beginIndex = S.indexOfIgnoreCase(orderBySql,"ORDER BY ");
                         if(beginIndex >= 0){
@@ -139,15 +140,24 @@ public class DynamicSqlProvider {
      * @param sqlSelect
      * @return
      */
-    private String formatSqlSelect(String sqlSelect){
+    private String formatSqlSelect(String sqlSelect, Page<?> page){
         String[] columns = S.split(sqlSelect);
+        Set<String> columnSets = new HashSet<>();
         StringBuilder sb = new StringBuilder();
         for(int i=0; i<columns.length; i++){
             String column = S.removeDuplicateBlank(columns[i]).trim();
             if(i>0){
                 sb.append(Cons.SEPARATOR_COMMA);
             }
-            sb.append("self."+column);
+            sb.append("self.").append(column);
+            columnSets.add("self."+column);
+        }
+        if(page != null && page.getOrders() != null) {
+            for(OrderItem orderItem : page.getOrders()){
+                if(!columnSets.contains(orderItem.getColumn())){
+                    sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS _").append(S.replace(orderItem.getColumn(), ".", "_"));
+                }
+            }
         }
         return sb.toString();
     }
