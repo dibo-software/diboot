@@ -32,6 +32,7 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.CcCityInfo;
@@ -195,9 +196,20 @@ public class BaseServiceTest {
 
         IPage<Dictionary> dictionaryPage = dictionaryService.page(dp, queryWrapper);
 
-        PagingJsonResult pagingJsonResult = new PagingJsonResult(dictionaryPage);
+        PagingJsonResult pagingJsonResult = new JsonResult().data(dictionaryPage.getRecords()).bindPagination(new Pagination());
         Assert.assertTrue(V.notEmpty(pagingJsonResult));
         Assert.assertTrue(pagingJsonResult.getPage().getOrderBy().equals("id:DESC"));
+
+        PagingJsonResult<List<Dictionary>> pagingJsonResult2 = new PagingJsonResult(dictionaryPage);
+        String jsonStr = JSON.stringify(pagingJsonResult2);
+        System.out.println(jsonStr);
+        Assert.assertTrue(pagingJsonResult2.getPage().getOrderBy().equals("id:DESC"));
+
+        PagingJsonResult<List<Dictionary>> pagingJsonResult3 = JSON.parseObject(jsonStr,
+                new TypeReference<PagingJsonResult<List<Dictionary>>>() {}
+        );
+        Assert.assertTrue(pagingJsonResult3.getPage() != null);
+        Assert.assertTrue(pagingJsonResult3.getData() != null);
     }
 
     /**
