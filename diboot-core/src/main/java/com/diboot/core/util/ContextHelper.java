@@ -24,7 +24,6 @@ import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.service.BaseService;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -285,12 +284,6 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
             DATABASE_TYPE = dbType.getDb();
             if(DATABASE_TYPE.startsWith(DbType.SQL_SERVER.getDb())){
                 DATABASE_TYPE = DbType.SQL_SERVER.getDb();
-            }
-        }
-        else{
-            SqlSessionFactory sqlSessionFactory = getBean(SqlSessionFactory.class);
-            if(sqlSessionFactory != null){
-                DATABASE_TYPE = sqlSessionFactory.getConfiguration().getDatabaseId();
             }
         }
         if(DATABASE_TYPE == null){

@@ -40,8 +40,6 @@ import java.util.stream.Collectors;
 public class SqlFileInitializer {
     private static final Logger log = LoggerFactory.getLogger(SqlFileInitializer.class);
 
-    // 数据字典SQL
-    private static final String MYBATIS_PLUS_SCHEMA_CONFIG = "mybatis-plus.global-config.db-config.schema";
     private static String CURRENT_SCHEMA = null;
     private static Environment environment;
 
@@ -316,7 +314,7 @@ public class SqlFileInitializer {
      * @param inputSql
      * @return
      */
-    private static String clearComments(String inputSql){
+    public static String clearComments(String inputSql){
         String[] sqlRows = inputSql.split("\\n");
         List<String> cleanSql = new ArrayList();
         for(String row : sqlRows){
@@ -364,7 +362,9 @@ public class SqlFileInitializer {
         if (CURRENT_SCHEMA == null) {
             DataSource dataSource = ContextHelper.getBean(DataSource.class);
             try {
-                CURRENT_SCHEMA = dataSource.getConnection().getSchema();
+                Connection connection = dataSource.getConnection();
+                CURRENT_SCHEMA = connection.getSchema();
+                connection.close();
             } catch (Exception e) {
                 log.warn("获取schema异常: {}", e.getMessage());
             }
