@@ -37,7 +37,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ContextLoader;
 
+import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -227,8 +229,24 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
      * @return
      */
     public static String getJdbcUrl() {
-        Environment environment = getApplicationContext().getEnvironment();
-        String jdbcUrl = environment.getProperty("spring.datasource.url");
+        ApplicationContext applicationContext = getApplicationContext();
+        if (applicationContext == null) {
+            return null;
+        }
+        String jdbcUrl = null;
+        try{
+            DataSource dataSource = applicationContext.getBean(DataSource.class);
+            Connection connection = dataSource.getConnection();
+            jdbcUrl = connection.getMetaData().getURL();
+            connection.close();
+            return jdbcUrl;
+        }
+        catch (Exception e){
+            log.warn("获取JDBC URL异常: {}", e.getMessage());
+        }
+        // 候补识别方式，暂时保留
+        Environment environment = applicationContext.getEnvironment();
+        jdbcUrl = environment.getProperty("spring.datasource.url");
         if(jdbcUrl == null){
             jdbcUrl = environment.getProperty("spring.datasource.druid.url");
         }

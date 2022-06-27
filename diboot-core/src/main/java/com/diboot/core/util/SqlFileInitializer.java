@@ -22,13 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
+import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -207,14 +207,12 @@ public class SqlFileInitializer {
         sqlStatement = clearComments(sqlStatement);
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
-            if(getDbType().equals(DbType.SQL_SERVER.getDb())){
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getSqlServerCurrentSchema());
-            }
-            else if(getDbType().equals(DbType.ORACLE.getDb())){
-                sqlStatement = S.replace(sqlStatement, "${SCHEMA}", getOracleCurrentSchema());
-            }
-            else{
+            String schema = getCurrentSchema();
+            if (V.isEmpty(schema)) {
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
+            }
+            else {
+                sqlStatement = S.replace(sqlStatement, "${SCHEMA}", schema);
             }
         }
         return sqlStatement;
@@ -357,105 +355,24 @@ public class SqlFileInitializer {
         return inputSql;
     }
 
-    //SQL Server查询当前schema
-    public static final String SQL_DEFAULT_SCHEMA = "SELECT DISTINCT default_schema_name FROM sys.database_principals where default_schema_name is not null AND name!='guest'";
     /**
-     * 查询SqlServer当前schema
+     * 获取当前schema
+     *
      * @return
      */
-    public static String getSqlServerCurrentSchema(){
-        if(CURRENT_SCHEMA == null){
-            Object firstValue = queryFirstValue(SQL_DEFAULT_SCHEMA, "default_schema_name");
-            if(firstValue != null){
-                CURRENT_SCHEMA = (String)firstValue;
+    public static String getCurrentSchema() {
+        if (CURRENT_SCHEMA == null) {
+            DataSource dataSource = ContextHelper.getBean(DataSource.class);
+            try {
+                CURRENT_SCHEMA = dataSource.getConnection().getSchema();
+            } catch (Exception e) {
+                log.warn("获取schema异常: {}", e.getMessage());
             }
-            if(CURRENT_SCHEMA == null){
-                CURRENT_SCHEMA = environment.getProperty(MYBATIS_PLUS_SCHEMA_CONFIG);
-            }
-            // dbo schema兜底
-            if(CURRENT_SCHEMA == null){
-                CURRENT_SCHEMA = "dbo";
+            if (CURRENT_SCHEMA == null) {
+                CURRENT_SCHEMA = "";
             }
         }
         return CURRENT_SCHEMA;
-    }
-    /**
-     * 获取当前schema，oracle默认schema=当前user
-     * @return
-     */
-    public static String getOracleCurrentSchema(){
-        if(CURRENT_SCHEMA == null){
-            // 先查找配置中是否存在指定
-            String alterSessionSql = environment.getProperty("spring.datasource.hikari.connection-init-sql");
-            if(V.notEmpty(alterSessionSql) && S.containsIgnoreCase(alterSessionSql," current_schema=")){
-                CURRENT_SCHEMA = S.substringAfterLast(alterSessionSql, "=");
-            }
-            if(CURRENT_SCHEMA == null){
-                CURRENT_SCHEMA = environment.getProperty(MYBATIS_PLUS_SCHEMA_CONFIG);
-            }
-            if(CURRENT_SCHEMA == null){
-                // 然后默认为当前用户名大写
-                String username = environment.getProperty("spring.datasource.username");
-                if(username != null){
-                    CURRENT_SCHEMA = username.toUpperCase();
-                }
-            }
-        }
-        return CURRENT_SCHEMA;
-    }
-
-    /**
-     * 获取当前schema，DM默认schema=当前user
-     * @return
-     */
-    public static String getDMCurrentSchema(){
-        if(CURRENT_SCHEMA == null){
-            String jdbcUrl = ContextHelper.getJdbcUrl();
-            if(V.notEmpty(jdbcUrl) && S.contains(jdbcUrl, "schema=")) {
-                CURRENT_SCHEMA = S.substringAfterLast(jdbcUrl, "schema=");
-                if(CURRENT_SCHEMA.contains("&")) {
-                    CURRENT_SCHEMA = S.substringBefore(CURRENT_SCHEMA, "&");
-                }
-                return CURRENT_SCHEMA;
-            }
-            // 先查找配置中是否存在指定
-            String alterSessionSql = environment.getProperty("spring.datasource.hikari.connection-init-sql");
-            if(V.notEmpty(alterSessionSql) && S.containsIgnoreCase(alterSessionSql," current_schema=")){
-                CURRENT_SCHEMA = S.substringAfterLast(alterSessionSql, "=");
-            }
-            if(CURRENT_SCHEMA == null){
-                CURRENT_SCHEMA = environment.getProperty(MYBATIS_PLUS_SCHEMA_CONFIG);
-            }
-            if(CURRENT_SCHEMA == null){
-                // 然后默认为当前用户名大写
-                String username = environment.getProperty("spring.datasource.username");
-                if(username != null){
-                    CURRENT_SCHEMA = username.toUpperCase();
-                }
-            }
-        }
-        return CURRENT_SCHEMA;
-    }
-
-    /**
-     * 查询SQL返回第一项
-     * @return
-     */
-    public static Object queryFirstValue(String sql, String key){
-        try{
-            List<Map<String, Object>> mapList = SqlExecutor.executeQuery(sql, null);
-            if(V.notEmpty(mapList)){
-                for (Map<String, Object> mapElement : mapList){
-                    if(mapElement.get(key) != null){
-                        return mapElement.get(key);
-                    }
-                }
-            }
-        }
-        catch(Exception e){
-            log.error("获取SqlServer默认Schema异常: {}", e.getMessage());
-        }
-        return null;
     }
 
     /**
