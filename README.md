@@ -1,6 +1,6 @@
 > 用上diboot，告别常规SQL和CRUD，写的更少，性能更好！
 
-> 新用户指南: [手把手来体验](https://www.diboot.com/guide/beginner/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17P4y1p7L4) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
+> 新用户指南: [手把手来体验](https://www.diboot.com/guide/beginner/bootstrap.html) 、[看视频了解 Diboot](https://www.bilibili.com/video/BV17P4y1p7L4) 、[了解Diboot如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <hr>
@@ -37,9 +37,9 @@
 ### 2、IAM 身份认证基础组件 及 配套VUE前端框架（diboot-antd-admin、diboot-element-admin）
 
 * 开箱即用的RBAC角色权限模型与预置组织人员岗位模型
-* 基于JWT的认证授权，支持申请token、刷新token、无状态认证
-* 简化的BindPermission注解，支持兼容shiro的简化权限绑定与自动鉴权
-* 自动提取需要验证的后端接口, 借助前端功能方便绑定前后端菜单按钮权限
+* 基于无状态token的认证授权，支持刷新token
+* 简化的BindPermission注解，支持兼容shiro的简化权限配置与自动鉴权
+* 自动提取需要鉴权的后端接口, 借助前端功能方便配置菜单按钮权限
 * 无缝适配redis，引入redis依赖即可启用shiro的redis缓存
 * 支持基于注解的数据权限实现、简化的Log注解记录操作日志等
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
@@ -75,7 +75,7 @@
 * 功能强大（数据结构与代码同步、前后端代码一键生成、前端面板组件编排）
 * 配置灵活（可按需配置生成代码路径及启用`Lombok`、`Swagger`等）
 * 代码标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
-* 支持多库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
+* 支持多库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL、达梦、人大金仓）
 
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/introduce.html).
 
@@ -87,7 +87,7 @@
 ## 技术交流
 如遇diboot相关技术问题，欢迎加群交流：
 
-* **VIP技术支持QQ群**（捐助/付费用户尊享）: [931266830]()
+* **VIP技术支持QQ群**（付费用户尊享）: [931266830]()
 
 * 技术交流QQ群: [731690096]()
 
