@@ -494,10 +494,9 @@ public class BeanUtils {
             for(T child : children) {
                 Object nodeId = getProperty(child, idFieldName);
                 List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList, idFieldName, parentIdFieldName, childrenFieldName);
-                if(childNodeChildren == null) {
-                    childNodeChildren = new ArrayList<>();
+                if(childNodeChildren != null) {
+                    setProperty(child, childrenFieldName, childNodeChildren);
                 }
-                setProperty(child, childrenFieldName, childNodeChildren);
             }
         }
         return children;
