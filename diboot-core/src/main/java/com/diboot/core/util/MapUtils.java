@@ -37,7 +37,10 @@ public class MapUtils {
         if(map.containsKey(key)) {
             return map.get(key);
         }
-        return map.get(key.toUpperCase());
+        if(map.containsKey(key.toUpperCase())) {
+            return map.get(key.toUpperCase());
+        }
+        return map.get(key.toLowerCase());
     }
 
 }

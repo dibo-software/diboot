@@ -445,6 +445,7 @@ public class BaseServiceTest {
         Map<String, Object> map = dictionaryService.getMap(queryWrapper);
         Assert.assertTrue(map!=null);
         Assert.assertTrue(MapUtils.getIgnoreCase(map, "count") != null);
+        Assert.assertTrue(MapUtils.getIgnoreCase(map, "COUNT") != null);
     }
 
     @Test
