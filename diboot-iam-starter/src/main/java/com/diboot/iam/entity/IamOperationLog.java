@@ -126,8 +126,8 @@ public class IamOperationLog extends BaseEntity {
     private String errorMsg;
 
     public IamOperationLog setRequestParams(String requestParams){
-        if(V.notEmpty(requestParams) && requestParams.length() > 1000){
-            requestParams = S.cut(requestParams, 1000);
+        if(V.notEmpty(requestParams) && requestParams.length() > 980){
+            requestParams = S.cut(requestParams, 980);
         }
         this.requestParams = requestParams;
         return this;

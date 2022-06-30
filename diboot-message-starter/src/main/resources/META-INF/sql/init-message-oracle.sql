@@ -6,7 +6,6 @@ CREATE TABLE ${SCHEMA}.message_template (
      code VARCHAR2(20) NOT NULL,
      title VARCHAR2(100) NOT NULL,
      content VARCHAR2(500) NOT NULL,
-     variables varchar(200),
      ext_data VARCHAR2(500),
      is_deleted   NUMBER(1) DEFAULT 0    not null,
      create_time  timestamp default CURRENT_TIMESTAMP   not null,
@@ -21,7 +20,6 @@ comment on column ${SCHEMA}.message_template.app_module is '应用模块';
 comment on column ${SCHEMA}.message_template.code is '模版编码';
 comment on column ${SCHEMA}.message_template.title is '模版标题';
 comment on column ${SCHEMA}.message_template.content is '模版内容';
-comment on column ${SCHEMA}.message_template.variables is '模版变量';
 comment on column ${SCHEMA}.message_template.ext_data is '扩展数据';
 comment on column ${SCHEMA}.message_template.create_by is '创建人';
 comment on column ${SCHEMA}.message_template.update_time is '更新时间';

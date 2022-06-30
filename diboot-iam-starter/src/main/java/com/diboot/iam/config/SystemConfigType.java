@@ -20,6 +20,7 @@ import com.diboot.core.util.PropertiesUtils;
 import com.diboot.core.util.S;
 import com.diboot.iam.service.SystemConfigService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -159,7 +160,7 @@ public interface SystemConfigType {
      * @return 指定类型配置值映射
      */
     static <E extends Enum<? extends SystemConfigType>> Values<E> values(Class<E> typeClass) {
-        return new Values<E>(ContextHelper.getBean(SystemConfigService.class).getConfigMapByType(typeClass.getSimpleName()));
+        return new Values<>(typeClass);
     }
 
     /**
@@ -169,12 +170,17 @@ public interface SystemConfigType {
      */
     class Values<E extends Enum<? extends SystemConfigType>> {
         /**
+         * 类型 Class
+         */
+        private final String type;
+        /**
          * 值映射
          */
         private final Map<String, String> valueMap;
 
-        private Values(Map<String, String> valueMap) {
-            this.valueMap = valueMap;
+        private Values(Class<E> typeClass) {
+            this.type = S.substringBefore(S.substringAfterLast(typeClass.getName(), "."), "$");
+            this.valueMap = ContextHelper.getBean(SystemConfigService.class).getConfigMapByType(type);
         }
 
         /**
@@ -228,6 +234,17 @@ public interface SystemConfigType {
         public <T extends Enum<T>> T getEnum(Class<T> clazz, E prop) {
             String value = get(prop);
             return S.isBlank(value) ? null : Enum.valueOf(clazz, value.trim());
+        }
+
+        /**
+         * 获取配置 Map
+         *
+         * @return 属性值映射
+         */
+        public Map<String, String> getMap() {
+            ContextHelper.getBean(SystemConfigService.class).getConfigItemsMap()
+                    .getOrDefault(type, Collections.emptyList()).forEach(e -> get((E) e));
+            return valueMap;
         }
 
     }

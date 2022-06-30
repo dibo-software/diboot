@@ -43,7 +43,7 @@ import java.util.Date;
  * @Copyright © diboot.com
  */
 @Slf4j
-public class SimpleEmailChannel implements ChannelStrategy {
+public class SimpleEmailChannel implements MessageChannel {
 
     @Autowired(required = false)
     private JavaMailSender javaMailSender;
@@ -52,11 +52,16 @@ public class SimpleEmailChannel implements ChannelStrategy {
     private MessageService messageService;
 
     @Override
+    public String type() {
+        return Cons.MESSAGE_CHANNEL.EMAIL.name();
+    }
+
+    @Override
     @Async
     public void send(Message message) {
         log.debug("[开始发送邮件]：邮件内容：{}", JSON.stringify(message));
         String result = "success";
-        String status = Cons.MESSAGE_STATUS.DELIVERY.getItemValue();
+        String status = Cons.MESSAGE_STATUS.DELIVERY.name();
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             //发送有附件邮件
@@ -91,7 +96,7 @@ public class SimpleEmailChannel implements ChannelStrategy {
         } catch (Exception e) {
             log.error("[发送邮件失败]：信息为： {} , 异常", message, e);
             result = e.getMessage();
-            status = Cons.MESSAGE_STATUS.EXCEPTION.getItemValue();
+            status = Cons.MESSAGE_STATUS.FAILED.name();
         }
         // 更新结果
         messageService.updateEntity(

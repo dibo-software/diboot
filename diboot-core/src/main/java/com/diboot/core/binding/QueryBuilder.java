@@ -199,14 +199,17 @@ public class QueryBuilder {
                             Class<?> clazz = getClass.apply(query);
                             String fieldName = getFieldName.apply(query, entry.getKey());
                             if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
-                                buildQuery(queryWrapper.or(), Comparison.EQ, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                                buildQuery(queryWrapper.or(), bindQuery, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
                                 continue;
                             }
                         }
-                        buildQuery(queryWrapper.or(), bindQuery.comparison(), columnName, value);
+                        buildQuery(queryWrapper.or(), bindQuery, columnName, value);
                     }
                 });
             } else {
+                if(query == null && V.isEmpty(value)) {
+                    continue;
+                }
                 if (ignoreEmpty.test(value, query)) {
                     continue;
                 }
@@ -215,11 +218,11 @@ public class QueryBuilder {
                     Class<?> clazz = getClass.apply(query);
                     String fieldName = getFieldName.apply(query, entry.getKey());
                     if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
-                        buildQuery(wrapper, Comparison.EQ, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                        buildQuery(wrapper, query, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
                         continue;
                     }
                 }
-                buildQuery(wrapper, query != null ? query.comparison() : Comparison.EQ, columnName, value);
+                buildQuery(wrapper, query, columnName, value);
             }
         }
         return wrapper;
@@ -229,14 +232,20 @@ public class QueryBuilder {
      * 建立条件
      *
      * @param wrapper    条件包装器
-     * @param comparison 比较类型
+     * @param bindQuery 注解
      * @param columnName 列名
      * @param value      值
      */
-    private static void buildQuery(QueryWrapper<?> wrapper, Comparison comparison, String columnName, Object value) {
+    private static void buildQuery(QueryWrapper<?> wrapper, BindQuery bindQuery, String columnName, Object value) {
+        Comparison comparison = bindQuery != null ? bindQuery.comparison() : Comparison.EQ;
         switch (comparison) {
             case EQ:
-                wrapper.eq(columnName, value);
+                if(value == null && bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL)) {
+                    wrapper.isNull(columnName);
+                }
+                else{
+                    wrapper.eq(columnName, value);
+                }
                 break;
             case IN:
                 if (value.getClass().isArray()) {
@@ -250,6 +259,20 @@ public class QueryBuilder {
                     wrapper.in(!((Collection) value).isEmpty(), columnName, (Collection<?>) value);
                 } else {
                     log.warn("字段类型错误：IN仅支持List及数组.");
+                }
+                break;
+            case NOT_IN:
+                if (value.getClass().isArray()) {
+                    Object[] valueArray = (Object[]) value;
+                    if (valueArray.length == 1) {
+                        wrapper.ne(columnName, valueArray[0]);
+                    } else if (valueArray.length >= 2) {
+                        wrapper.notIn(columnName, valueArray);
+                    }
+                } else if (value instanceof Collection) {
+                    wrapper.notIn(!((Collection) value).isEmpty(), columnName, (Collection<?>) value);
+                } else {
+                    log.warn("字段类型错误：NOT_IN仅支持List及数组.");
                 }
                 break;
             case CONTAINS:
@@ -360,7 +383,8 @@ public class QueryBuilder {
             if (field.isAnnotationPresent(TableLogic.class) && V.equals(false, value)) {
                 continue;
             }
-            if (value != null) {
+            BindQuery bindQuery = field.getAnnotation(BindQuery.class);
+            if (value != null || (bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL))) {
                 resultMap.put(fieldName, new FieldAndValue(field, value));
             }
         }

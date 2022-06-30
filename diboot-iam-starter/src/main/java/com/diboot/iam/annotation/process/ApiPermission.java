@@ -15,50 +15,58 @@
  */
 package com.diboot.iam.annotation.process;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.ApiUri;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 * 权限 Entity定义
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
+ * @author JerryMa
+ * @version v2.6.0
+ * @date 2022/4/21
+ * Copyright © diboot.com
 */
 @Getter @Setter @Accessors(chain = true)
 public class ApiPermission implements Serializable {
-    private static final long serialVersionUID = -1234249053749049729L;
+    private static final long serialVersionUID = -17224355139977969L;
 
-    // 类别
-    @JsonIgnore
-    private String className;
+    public ApiPermission(String code){
+        this.code = code;
+    }
+    /**
+     * 权限编码
+     */
+    private String code;
+    /**
+     * 接口地址定义
+     */
+    private List<ApiUri> apiUriList;
 
-    // 类别标题
-    @JsonIgnore
-    private String classTitle;
-
-    // 接口名称
-    private String apiName;
+    public List<ApiUri> getApiUriList(){
+        if(apiUriList == null){
+            apiUriList = new ArrayList<>();
+        }
+        return apiUriList;
+    }
 
     /**
-     * 接口Method
+     * 权限码的备注
+     * @return
      */
-    private String apiMethod;
-
-    // 接口URI
-    private String apiUri;
-
-    // ID标识
-    private String value;
-
-    // 权限许可编码
-    @JsonIgnore
-    private String permissionCode;
-
-    public String buildUniqueKey(){
-        return className + "," + apiMethod + "," + apiUri + "," + permissionCode;
+    public String getLabel(){
+        if(V.isEmpty(apiUriList)){
+            return null;
+        }
+        List<String> labels = BeanUtils.collectToList(apiUriList, ApiUri::getLabel);
+        return S.join(labels);
     }
+
 }

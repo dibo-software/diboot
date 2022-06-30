@@ -21,6 +21,7 @@ import com.diboot.core.binding.annotation.BindField;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.entity.IamUserPosition;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -51,4 +52,7 @@ public class IamUserVO extends IamUser {
     // 字段关联：this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'
     @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'")
     private List<IamRole> roleList;
+
+    @BindEntityList(entity = IamUserPosition.class, condition = "this.id = user_id AND user_type = 'IamUser'")
+    private List<IamUserPosition> userPositionList;
 }

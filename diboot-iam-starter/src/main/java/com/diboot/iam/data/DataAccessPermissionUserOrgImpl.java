@@ -15,14 +15,13 @@
  */
 package com.diboot.iam.data;
 
-import com.diboot.core.config.Cons;
 import com.diboot.core.data.access.DataAccessInterface;
-import com.diboot.core.util.V;
+import com.diboot.core.vo.LabelValue;
+import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
-import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.util.IamSecurityUtils;
+import com.diboot.iam.vo.PositionDataScope;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,11 +38,8 @@ import java.util.List;
 @Slf4j
 public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
 
-    @Autowired
-    private IamOrgService iamOrgService;
-
     @Override
-    public List<Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
+    public List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
         // 获取当前登录用户
         IamUser currentUser = null;
         try {
@@ -54,23 +50,116 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
             return Collections.emptyList();
         }
         if (currentUser == null) {
+            log.warn("无法获取当前用户");
             return Collections.emptyList();
         }
-        // 提取其可访问ids
-        List<Serializable> accessibleIds = new ArrayList<>();
-        if(Cons.FieldName.orgId.name().equals(fieldName)){
-            //添加当前部门ID
-            Long currentOrgId = currentUser.getOrgId();
-            accessibleIds.add(currentOrgId);
-            List<Long> childOrgIds = iamOrgService.getChildOrgIds(currentOrgId);
-            if(V.notEmpty(childOrgIds)){
-                accessibleIds.addAll(childOrgIds);
+        // 获取用户岗位对应的数据权限
+        LabelValue extensionObj = currentUser.getExtensionObj();
+        if(extensionObj == null || extensionObj.getExt() == null){
+            // 提取其可访问ids
+            if(isOrgFieldName(fieldName)){
+                return buildOrgIdsScope(currentUser);
+            }
+            else if(isUserFieldName(fieldName)){
+                return buildUserIdsScope(currentUser);
+            }
+            else{
+                log.warn("数据权限未能识别该字段类型: {}", fieldName);
+                return Collections.emptyList();
             }
         }
-        else if(Cons.FieldName.userId.name().equals(fieldName)){
-            accessibleIds.add(currentUser.getId());
+        // 处理岗位对应的数据范围权限
+        PositionDataScope positionDataScope = (PositionDataScope)extensionObj.getExt();
+        // 可看全部数据，不拦截
+        if(Cons.DICTCODE_DATA_PERMISSION_TYPE.ALL.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
+            return null;
         }
-        // ... 其他类型字段
+        // 本人数据
+        else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
+            if(isUserFieldName(fieldName)){
+                return buildUserIdsScope(currentUser);
+            }
+            else{// 忽略无关字段
+                return null;
+            }
+        }
+        // 按user过滤，本人及下属
+        else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
+            if(isUserFieldName(fieldName)){
+                return positionDataScope.getAccessibleUserIds();
+            }
+            else{// 忽略无关字段
+                return null;
+            }
+        }
+        // 按部门过滤，本部门
+        else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
+            if(isOrgFieldName(fieldName)){
+                List<Long> accessibleIds = new ArrayList<>(1);
+                accessibleIds.add(positionDataScope.getOrgId());
+                return accessibleIds;
+            }
+            else{// 忽略无关字段
+                return null;
+            }
+        }
+        // 按部门过滤，本部门及下属部门
+        else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
+            if(isOrgFieldName(fieldName)){
+                return positionDataScope.getAccessibleOrgIds();
+            }
+            else{// 忽略无关字段
+                return null;
+            }
+        }
+        else{
+            log.warn("未知的数据权限类型: {}", positionDataScope.getDataPermissionType());
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * 未配置数据权限时的默认可见自己的
+     * @param currentUser
+     * @return
+     */
+    protected List<? extends Serializable> buildUserIdsScope(IamUser currentUser){
+        List<Serializable> accessibleIds = new ArrayList<>(1);
+        accessibleIds.add(currentUser.getId());
         return accessibleIds;
     }
+
+    /**
+     * 未配置数据权限时的默认本部门
+     * @param currentUser
+     * @return
+     */
+    protected List<? extends Serializable> buildOrgIdsScope(IamUser currentUser){
+        List<Serializable> accessibleIds = new ArrayList<>();
+        accessibleIds.add(currentUser.getOrgId());
+        /*List<Long> childOrgIds = ContextHelper.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
+        if(V.notEmpty(childOrgIds)){
+            accessibleIds.addAll(childOrgIds);
+        }*/
+        return accessibleIds;
+    }
+
+    /**
+     * 是否为可支持的用户字段
+     * @param fieldName
+     * @return
+     */
+    protected boolean isUserFieldName(String fieldName){
+        return (Cons.FieldName.userId.name().equals(fieldName) || Cons.FieldName.createBy.name().equals(fieldName));
+    }
+
+    /**
+     * 是否为可支持的部门字段
+     * @param fieldName
+     * @return
+     */
+    protected boolean isOrgFieldName(String fieldName){
+        return Cons.FieldName.orgId.name().equals(fieldName);
+    }
+
 }

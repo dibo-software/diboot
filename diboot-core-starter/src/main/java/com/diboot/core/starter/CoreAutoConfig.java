@@ -17,11 +17,11 @@ package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.diboot.core.converter.*;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.encrypt.ProtectInterceptor;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.D;
-import com.diboot.core.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -43,6 +43,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -172,7 +174,11 @@ public class CoreAutoConfig implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new DateConverter());
+        registry.addConverter(new Date2LocalDateConverter());
+        registry.addConverter(new Date2LocalDateTimeConverter());
+        registry.addConverter(new String2DateConverter());
+        registry.addConverter(new String2BooleanConverter());
+        registry.addConverter(new Timestamp2LocalDateTimeConverter());
     }
 
 }

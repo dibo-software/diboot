@@ -83,6 +83,7 @@ create table ${SCHEMA}.iam_role
     description VARCHAR2(100)   null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   null,
+    update_time timestamp   default CURRENT_TIMESTAMP null,
     constraint PK_iam_role primary key (id)
 );
 comment on column ${SCHEMA}.iam_role.id is 'ID';
@@ -133,7 +134,7 @@ create table ${SCHEMA}.iam_resource_permission
     display_type VARCHAR2(20) not null,
     display_name VARCHAR2(100) not null,
     resource_code VARCHAR2(100)   null,
-    api_set VARCHAR2(3000)   null,
+    permission_code VARCHAR2(200)   null,
     sort_id NUMBER(20)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
@@ -147,7 +148,7 @@ comment on column ${SCHEMA}.iam_resource_permission.parent_id is '父资源ID';
 comment on column ${SCHEMA}.iam_resource_permission.display_type is '展现类型';
 comment on column ${SCHEMA}.iam_resource_permission.display_name is '显示名称';
 comment on column ${SCHEMA}.iam_resource_permission.resource_code is '前端编码';
-comment on column ${SCHEMA}.iam_resource_permission.api_set is '接口列表';
+comment on column ${SCHEMA}.iam_resource_permission.permission_code is '权限码';
 comment on column ${SCHEMA}.iam_resource_permission.sort_id is '排序号';
 comment on column ${SCHEMA}.iam_resource_permission.is_deleted is '是否删除';
 comment on column ${SCHEMA}.iam_resource_permission.create_time is '创建时间';

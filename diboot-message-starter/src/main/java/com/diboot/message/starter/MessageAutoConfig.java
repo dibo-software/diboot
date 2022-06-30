@@ -15,16 +15,18 @@
  */
 package com.diboot.message.starter;
 
-import com.diboot.message.channel.ChannelStrategy;
 import com.diboot.message.channel.SimpleEmailChannel;
-import com.diboot.message.service.TemplateVariableService;
-import com.diboot.message.service.impl.SystemTemplateVariableServiceImpl;
+import com.diboot.message.entity.BaseUserVariables;
+import com.diboot.message.service.MessageService;
+import com.diboot.message.service.impl.MessageServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
 
 /**
  * 组件初始化
@@ -46,17 +48,11 @@ public class MessageAutoConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public TemplateVariableService templateVariableService() {
-        return new SystemTemplateVariableServiceImpl();
+    public MessageService messageService() {
+        return new MessageServiceImpl(
+            Arrays.asList(new SimpleEmailChannel()),
+            Arrays.asList(BaseUserVariables.class)
+        );
     }
 
-    /**
-     * 简单邮箱发送通道
-     * @return
-     */
-    @Bean("EMAIL")
-    @ConditionalOnMissingBean(name = "EMAIL")
-    public ChannelStrategy simpleEmailChannel() {
-        return new SimpleEmailChannel();
-    }
 }

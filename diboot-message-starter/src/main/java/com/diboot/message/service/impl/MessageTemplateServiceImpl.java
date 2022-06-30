@@ -19,8 +19,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import com.diboot.message.annotation.BindVariable;
 import com.diboot.message.entity.MessageTemplate;
 import com.diboot.message.mapper.MessageTemplateMapper;
 import com.diboot.message.service.MessageTemplateService;
@@ -28,6 +30,8 @@ import com.diboot.message.utils.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,13 +45,35 @@ import java.util.List;
 @Slf4j
 public class MessageTemplateServiceImpl extends BaseServiceImpl<MessageTemplateMapper, MessageTemplate> implements MessageTemplateService {
 
-    @Override
-    public List<String> getTemplateVariableList() throws Exception{
-        return TemplateUtils.loadTemplateVariableList();
+    /**
+     * 模板变量列表
+     */
+    private static List<String> templateVariableList = new ArrayList<>();
+
+    public static void extractVariablesFrom(List<Class<?>> variableObjectClasses) {
+        if(variableObjectClasses != null) {
+            for(Class<?> objClass : variableObjectClasses) {
+                List<Field> fields = BeanUtils.extractFields(objClass, BindVariable.class);
+                if(V.isEmpty(fields)){
+                    continue;
+                }
+                fields.forEach( fld -> {
+                    BindVariable bindVariable = fld.getAnnotation(BindVariable.class);
+                    if(!templateVariableList.contains(bindVariable.name())) {
+                        templateVariableList.add(bindVariable.name());
+                    }
+                });
+            }
+        }
     }
 
     @Override
-    public boolean existCode(Long id, String code) throws Exception {
+    public List<String> getTemplateVariableList() {
+        return templateVariableList;
+    }
+
+    @Override
+    public boolean existCode(Long id, String code) {
         if (V.isEmpty(code)) {
             return false;
         }

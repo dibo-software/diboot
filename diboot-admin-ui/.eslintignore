@@ -1,0 +1,17 @@
+node_modules
+public
+dist
+
+/bin
+/docs
+
+.vscode
+.idea
+
+*.sh
+*.md
+*.woff
+*.ttf
+.husky
+.local
+.eslintrc.js

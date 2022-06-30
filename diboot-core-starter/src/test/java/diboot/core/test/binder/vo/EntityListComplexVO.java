@@ -15,6 +15,7 @@
  */
 package diboot.core.test.binder.vo;
 
+import com.diboot.core.binding.annotation.BindCount;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindFieldList;
 import diboot.core.test.binder.entity.Role;
@@ -43,6 +44,9 @@ public class EntityListComplexVO extends User {
     // 支持通过中间表的多-多Entity实体关联
     @BindEntityList(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id AND user_role.user_id>1")
     private List<Role> roleList;
+
+    @BindCount(entity = Role.class, condition="this.id=user_role.user_id AND user_role.role_id=id")
+    private Integer roleCount;
 
     // 支持通过中间表的多-多Entity的单个属性集
     @BindFieldList(entity = Role.class, field = "code", condition="this.id=user_role.user_id AND user_role.role_id=id")

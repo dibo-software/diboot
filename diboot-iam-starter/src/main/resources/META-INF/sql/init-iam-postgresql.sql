@@ -130,7 +130,7 @@ create table iam_resource_permission
   display_type varchar(20) not null,
   display_name varchar(100) not null,
   resource_code varchar(100)   null,
-  api_set varchar(3000)   null,
+  permission_code varchar(200)   null,
   sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
@@ -144,7 +144,7 @@ comment on column iam_resource_permission.parent_id is '父资源ID';
 comment on column iam_resource_permission.display_type is '展现类型';
 comment on column iam_resource_permission.display_name is '显示名称';
 comment on column iam_resource_permission.resource_code is '前端编码';
-comment on column iam_resource_permission.api_set is '接口列表';
+comment on column iam_resource_permission.permission_code is '权限码';
 comment on column iam_resource_permission.sort_id is '排序号';
 comment on column iam_resource_permission.is_deleted is '是否删除';
 comment on column iam_resource_permission.create_time is '创建时间';

@@ -27,6 +27,7 @@ import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.apache.ibatis.jdbc.SQL;
@@ -55,6 +56,9 @@ public class TestJoinQuery {
 
     @Autowired
     DepartmentService departmentService;
+
+    @Autowired
+    UserService userService;
 
     @Test
     public void testDateCompaire(){
@@ -210,6 +214,21 @@ public class TestJoinQuery {
         Assert.assertTrue(builderResultList.size() == 1);
     }
 
+    /**
+     * 测试有中间表的动态sql join
+     */
+    @Test
+    public void testDynamicSqlQueryWithMiddleTable2() {
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
+        dto.setRoleId(101L);
+        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 1);
+        QueryWrapper<User> queryWrapper = QueryBuilder.toQueryWrapper(dto);
+        List<User> userList = userService.getEntityList(queryWrapper, new Pagination());
+        Assert.assertTrue(userList.size() > 0);
+    }
+
     @Test
     public void testBindQueryGroup(){
         DepartmentDTO departmentDTO = new DepartmentDTO();
@@ -225,6 +244,24 @@ public class TestJoinQuery {
         departmentDTO.setSearch("").setOrgName("苏州");
         list = QueryBuilder.toDynamicJoinQueryWrapper(departmentDTO).queryList(Department.class);
         Assert.assertTrue(list.size() > 5);
+    }
+
+
+    /**
+     * 测试空值和null
+     */
+    @Test
+    public void testNullEmptyQuery() {
+        Department entity = new Department();
+        entity.setName("测试组");
+        entity.setOrgId(100001L);
+        QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(entity);
+        System.out.println(queryWrapper.getExpression());
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id IS NULL"));
+
+        entity.setParentId(10001L);
+        queryWrapper = QueryBuilder.toQueryWrapper(entity);
+        Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id = #{"));
     }
 
     @Test

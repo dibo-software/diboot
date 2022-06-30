@@ -20,10 +20,16 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.PagingJsonResult;
+import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +41,9 @@ import java.util.List;
  * @version 1.0
  * @date 2021/01/22
  */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
+@SpringBootTest(classes = {StartupApplication.class})
 public class JsonTest {
 
     @Test
@@ -50,7 +59,6 @@ public class JsonTest {
         User user2 = JSON.toJavaObject(jsonStr, User.class);
         Assert.assertTrue("1988-09-12".equals(D.convert2DateString(user2.getBirthdate())));
     }
-
 
     @Test
     public void testJsonConvert(){

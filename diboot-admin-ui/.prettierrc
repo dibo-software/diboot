@@ -1,0 +1,20 @@
+# 配置文档：https://prettier.io/docs/en/options.html
+
+# 声明结尾使用分号(默认true)
+semi: false
+# 每行代码长度（默认80）
+printWidth: 120
+# 每个tab相当于多少个空格（默认2）
+tabWidth: 2
+# 是否使用tab进行缩进（默认false）
+useTabs: false
+# 使用单引号（默认false）
+singleQuote: true
+# 对象字面量的大括号间使用空格（默认true）
+bracketSpacing: true
+# 包括单箭头函数参数周围的括号（默认always）
+arrowParens: 'avoid'
+# 尾部跟随逗号（默认 es5）
+trailingComma: 'none'
+# 自动换行（默认 preserve）
+proseWrap: 'never'

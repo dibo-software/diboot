@@ -6,7 +6,6 @@ CREATE TABLE message_template (
      code VARCHAR(20) NOT NULL,
      title VARCHAR(100) NOT NULL,
      content VARCHAR(500) NOT NULL,
-     variables varchar(200),
      ext_data VARCHAR(500),
      is_deleted   tinyint not null DEFAULT 0,
      create_by bigint DEFAULT 0 NOT NULL,
@@ -21,7 +20,6 @@ execute sp_addextendedproperty 'MS_Description', N'应用模块', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'模版编码', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'code';
 execute sp_addextendedproperty 'MS_Description', N'模版标题', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'title';
 execute sp_addextendedproperty 'MS_Description', N'模版内容', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'content';
-execute sp_addextendedproperty 'MS_Description', N'模版变量', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'variables';
 execute sp_addextendedproperty 'MS_Description', N'扩展数据', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'ext_data';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建人', 'SCHEMA', '${SCHEMA}', 'table', message_template, 'column', 'create_by';

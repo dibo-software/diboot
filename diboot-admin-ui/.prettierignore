@@ -1,0 +1,9 @@
+/node_modules/**
+/public/*
+/dist/*
+
+.local
+.output.js
+
+**/*.svg
+**/*.sh

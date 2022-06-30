@@ -121,7 +121,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             }
             if(V.notEmpty(entityList)){
                 Map<String, Object> valueEntityMap = this.buildMatchKey2EntityMap(entityList);
-                ResultAssembler.bindPropValue(annoObjectField, annoObjectList, getAnnoObjJoinFlds(), valueEntityMap, null);
+                ResultAssembler.bindPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueEntityMap, null);
             }
         }
         // 通过中间表关联Entity
@@ -174,7 +174,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
                 }
             }
             // 绑定结果
-            ResultAssembler.bindEntityPropValue(annoObjectField, annoObjectList, middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
+            ResultAssembler.bindEntityPropValue(annoObjectField, super.getMatchedAnnoObjectList(), middleTable.getTrunkObjColMapping(), valueEntityMap, getAnnoObjColumnToFieldMap());
         }
     }
 

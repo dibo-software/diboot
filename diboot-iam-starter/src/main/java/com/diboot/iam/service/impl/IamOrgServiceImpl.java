@@ -82,6 +82,9 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
 
     @Override
     public List<Long> getChildOrgIds(Long rootOrgId) {
+        if(rootOrgId == null){
+            return Collections.emptyList();
+        }
         List<IamOrgVO> childOrgs = getOrgTree(rootOrgId);
         if(V.notEmpty(childOrgs)){
             List<Long> childOrgIds = new ArrayList<>();
@@ -170,6 +173,14 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
             }
         }
         return scopeIds;
+    }
+
+    @Override
+    public List<Long> getOrgIdsByManagerId(Long managerId) {
+        LambdaQueryWrapper<IamOrg> queryWrapper = new LambdaQueryWrapper<IamOrg>()
+                .eq(IamOrg::getManagerId, managerId);
+        List<Long> orgIdList = getValuesOfField(queryWrapper, IamOrg::getId);
+        return orgIdList;
     }
 
     /**

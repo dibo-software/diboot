@@ -38,6 +38,11 @@ public abstract class AuthCredential implements Serializable {
     private static final long serialVersionUID = -4721950772621829194L;
 
     /**
+     * 唯一标识
+     */
+    private String traceId;
+
+    /**
      * 用户类型的Class
      */
     private Class<? extends BaseLoginUser> userTypeClass = IamUser.class;

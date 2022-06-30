@@ -186,6 +186,18 @@ public class Pagination implements Serializable {
         return this.orderBy = Cons.FieldName.createTime.name() + ":" + Cons.ORDER_DESC;
     }
 
+    /**
+     * 是否为分页参数
+     * @param paramName
+     * @return
+     */
+    public static boolean isPaginationParam(String paramName){
+        return "pageIndex".equals(paramName)
+                || "pageSize".equals(paramName)
+                || "orderBy".equals(paramName)
+                || "totalCount".equals(paramName);
+    }
+
     private PropInfo getEntityPropInfo(){
         if (this.entityClass != null) {
             return BindingCacheManager.getPropInfoByClass(this.entityClass);

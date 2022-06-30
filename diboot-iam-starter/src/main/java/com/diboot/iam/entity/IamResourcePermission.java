@@ -80,10 +80,10 @@ public class IamResourcePermission extends BaseEntity {
     @TableField()
     private String resourceCode;
 
-    // 接口列表
-    @Length(max=5000, message="接口列表长度应小于5000")
+    // 权限编码
+    @Length(max=200, message="权限编码长度应小于200")
     @TableField()
-    private String apiSet;
+    private String permissionCode;
 
     // 排序号
     @TableField
@@ -93,27 +93,26 @@ public class IamResourcePermission extends BaseEntity {
     @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
-
     /***
-     * 获取接口列表
+     * 获取权限码列表
      * @return
      */
-    public String[] getApiSetList() {
-        if (V.isEmpty(this.getApiSet())){
+    public String[] getPermissionCodes() {
+        if (V.isEmpty(permissionCode)){
             return null;
         }
-        return S.split(this.getApiSet(), ",");
+        return S.split(permissionCode);
     }
 
     /***
-     * 设置接口列表
-     * @param apiSetList
+     * 设置权限码列表
+     * @param permissionCodes
      */
-    public void setApiSetList(List<String> apiSetList) {
-        if (V.isEmpty(apiSetList)){
-            this.setApiSet(null);
+    public void setPermissionCodes(List<String> permissionCodes) {
+        if (V.isEmpty(permissionCodes)){
+            this.setPermissionCode(null);
         }
-        this.setApiSet(S.join(apiSetList, ","));
+        this.setPermissionCode(S.join(permissionCodes));
     }
 
 }

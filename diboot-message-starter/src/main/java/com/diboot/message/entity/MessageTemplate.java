@@ -84,13 +84,6 @@ public class MessageTemplate extends BaseEntity {
     private String content;
 
     /**
-     * 模版变量
-     */
-    @Length(max = 200, message = "模版变量长度应小于200")
-    @TableField()
-    private String variables;
-
-    /**
      * 扩展数据
      */
     @TableField()

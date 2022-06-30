@@ -51,6 +51,7 @@ import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -311,23 +312,23 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		} else {
 			selectOld.select(followerColumnName);
 		}
-		List<Map<String, Object>> oldMap;
 
 		IService<R> iService = entityInfo.getService();
 		BaseMapper<R> baseMapper = entityInfo.getBaseMapper();
-		if (iService != null) {
-			oldMap = iService.listMaps(selectOld);
-		} else {
-			oldMap = baseMapper.selectMaps(selectOld);
-		}
-
+		List<R> oldEntityList = (iService != null)? iService.list(selectOld) : baseMapper.selectList(selectOld);
 		// 删除失效关联
 		List<Serializable> delIds = new ArrayList<>();
-		for (Map<String, Object> map : oldMap) {
-			if (V.notEmpty(followerIdList) && followerIdList.remove((Serializable) map.get(followerColumnName))) {
+		List<Serializable> removeFollowerIds = new ArrayList<>();
+		for (R entity : oldEntityList) {
+			Serializable followerId = (Serializable)BeanUtils.getProperty(entity, followerFieldName);
+			if (V.notEmpty(followerIdList) && followerIdList.contains(followerId)) {
+				removeFollowerIds.add(followerId);
 				continue;
 			}
-			delIds.add((Serializable) map.get(isExistPk ? entityInfo.getIdColumn() : followerColumnName));
+			Serializable id = isExistPk? (Serializable)BeanUtils.getProperty(entity, entityInfo.getPropInfo().getIdFieldName()) : followerId;
+			if(id != null) {
+				delIds.add(id);
+			}
 		}
 		if (!delIds.isEmpty()) {
 			if (isExistPk) {
@@ -349,15 +350,21 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				}
 			}
 		}
-
         // 新增关联
         if (V.notEmpty(followerIdList)) {
-            List<R> n2nRelations = new ArrayList<>(followerIdList.size());
+			List<Serializable> newFollowIds = new ArrayList();
+			for(Serializable id : followerIdList) {
+				if(!removeFollowerIds.contains(id)) {
+					newFollowIds.add(id);
+				}
+			}
+            List<R> n2nRelations = new ArrayList<>(newFollowIds.size());
             try {
-                for (Serializable followerId : followerIdList) {
+                for (Serializable followerId : newFollowIds) {
                     R relation = middleTableClass.newInstance();
-                    BeanUtils.setProperty(relation, driverFieldName, driverId);
-                    BeanUtils.setProperty(relation, followerFieldName, followerId);
+					BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(relation);
+					beanWrapper.setPropertyValue(driverFieldName, driverId);
+					beanWrapper.setPropertyValue(followerFieldName, followerId);
                     if (setConsumer != null) {
                         setConsumer.accept(relation);
                     }
@@ -703,8 +710,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		Map<ID, String> idNameMap = new HashMap<>(mapList.size());
 		for(Map<String, Object> map : mapList){
-			ID key = (ID)map.get(entityInfo.getIdColumn());
-			String value = S.valueOf(map.get(columnName));
+			ID key = (ID)MapUtils.getIgnoreCase(map, entityInfo.getIdColumn());
+			String value = S.valueOf(MapUtils.getIgnoreCase(map, columnName));
 			idNameMap.put(key, value);
 		}
 		return idNameMap;
