@@ -22,19 +22,19 @@ import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
-import com.diboot.message.channel.ChannelStrategy;
-import com.diboot.message.entity.BaseVariableData;
+import com.diboot.message.channel.MessageChannel;
+import com.diboot.message.config.Cons;
 import com.diboot.message.entity.Message;
 import com.diboot.message.entity.MessageTemplate;
 import com.diboot.message.mapper.MessageMapper;
 import com.diboot.message.service.MessageService;
-import com.diboot.message.service.MessageTemplateService;
-import com.diboot.message.service.TemplateVariableService;
+import com.diboot.message.utils.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,66 +45,81 @@ import java.util.Map;
  * @Date 2021/2/25  09:39
  * @Copyright © diboot.com
  */
-@Service
 @Slf4j
 public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> implements MessageService {
 
-    /**
-     * 模版策略
-     */
+    @Lazy
     @Autowired
-    private TemplateVariableService templateVariableService;
+    private MessageTemplateServiceImpl messageTemplateService;
 
     /**
      * 发送通道
      */
-    @Autowired
-    @Lazy
-    private Map<String, ChannelStrategy> channelStrategyMap;
+    private Map<String, MessageChannel> typeToChannelMap = new HashMap<>();
 
-    @Autowired
-    private MessageTemplateService messageTemplateService;
+    public MessageServiceImpl(List<MessageChannel> messageChannels, List<Class<?>> variableObjectClasses) {
+        if(messageChannels != null) {
+            for(MessageChannel channel : messageChannels) {
+                typeToChannelMap.put(channel.type(), channel);
+            }
+        }
+        MessageTemplateServiceImpl.extractVariablesFrom(variableObjectClasses);
+    }
 
     @Override
-    public boolean send(Message message, BaseVariableData variableData) {
+    public boolean send(Message message) {
+        return send(message, null);
+    }
+
+    @Override
+    public boolean send(Message message, Object variableData) {
         // 获取发送通道
-        ChannelStrategy channelStrategy = channelStrategyMap.get(message.getChannel());
-        if (V.isEmpty(channelStrategy)) {
+        MessageChannel channel = typeToChannelMap.get(message.getChannel());
+        if (V.isEmpty(channel)) {
             log.error("[获取发送通道失败]，当前发送通道为：{}", message.getChannel());
             throw new InvalidUsageException("获取发送通道失败! " + message.getChannel());
         }
-        // 是否根据模板构建邮件内容
-        LambdaQueryWrapper<MessageTemplate> queryWrapper = Wrappers.<MessageTemplate>lambdaQuery()
-                .eq(V.notEmpty(message.getTemplateId()), MessageTemplate::getId, message.getTemplateId())
-                .eq(V.notEmpty(message.getTemplateCode()), MessageTemplate::getCode, message.getTemplateCode());
-        if (queryWrapper.nonEmptyOfNormal()) {
-            MessageTemplate messageTemplate = messageTemplateService.getSingleEntity(queryWrapper);
-            if (V.isEmpty(messageTemplate)) {
-                if (V.isEmpty(message.getTemplateCode())) {
-                    log.error("[获取模版失败] 模版id为：{}", message.getTemplateId());
-                } else if (V.isEmpty(message.getTemplateId())) {
-                    log.error("[获取模版失败] 模版code为：{}", message.getTemplateCode());
-                } else {
-                    log.error("[获取模版失败] 模版id为：{} ，模版code为：{}", message.getTemplateId(), message.getTemplateCode());
+        String content = message.getContent();
+        if(message.hasTemplate()) {
+            // 是否根据模板构建邮件内容
+            LambdaQueryWrapper<MessageTemplate> queryWrapper = Wrappers.<MessageTemplate>lambdaQuery()
+                    .eq(V.notEmpty(message.getTemplateId()), MessageTemplate::getId, message.getTemplateId())
+                    .eq(V.notEmpty(message.getTemplateCode()), MessageTemplate::getCode, message.getTemplateCode());
+            if (queryWrapper.nonEmptyOfNormal()) {
+                MessageTemplate messageTemplate = messageTemplateService.getSingleEntity(queryWrapper);
+                if (V.isEmpty(messageTemplate)) {
+                    if (V.isEmpty(message.getTemplateCode())) {
+                        log.error("[获取模版失败] 模版id为：{}", message.getTemplateId());
+                    } else if (V.isEmpty(message.getTemplateId())) {
+                        log.error("[获取模版失败] 模版code为：{}", message.getTemplateCode());
+                    } else {
+                        log.error("[获取模版失败] 模版id为：{} ，模版code为：{}", message.getTemplateId(), message.getTemplateCode());
+                    }
+                    throw new BusinessException(Status.FAIL_OPERATION, "获取模版失败!");
                 }
-                throw new BusinessException(Status.FAIL_OPERATION, "获取模版失败!");
+                message.setTemplateId(messageTemplate.getId());
+                content = messageTemplate.getContent();
             }
-            message.setTemplateId(messageTemplate.getId());
+        }
+        if(V.notEmpty(content)){
             try {
                 // 设置模版内容
-                String content = templateVariableService.parseTemplate2Content(messageTemplate.getContent(), variableData);
+                content = TemplateUtils.parseTemplateContent(content, variableData);
                 message.setContent(content);
             } catch (Exception e) {
                 log.error("[消息解析失败]，消息体为：{}", message);
                 throw new BusinessException(Status.FAIL_OPERATION, "消息解析失败!");
             }
         }
-        if (V.isEmpty(message.getContent())) {
+        else {
             throw new BusinessException("消息内容不能为 null");
         }
         // 设置定时发送，则等待定时任务发送
         if (V.notEmpty(message.getScheduleTime())) {
             message.setStatus("SCHEDULE");
+        }
+        else if(V.isEmpty(message.getStatus())){
+            message.setStatus(Cons.MESSAGE_STATUS.PENDING.name());
         }
         // 创建Message
         boolean success = createEntity(message);
@@ -117,7 +132,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw new BusinessException(Status.FAIL_OPERATION, "消息发送失败！");
         }
         // 异步发送消息
-        channelStrategy.send(message);
+        channel.send(message);
         return true;
     }
 

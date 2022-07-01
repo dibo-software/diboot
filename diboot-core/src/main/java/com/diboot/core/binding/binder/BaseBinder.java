@@ -23,8 +23,10 @@ import com.diboot.core.binding.binder.remote.RemoteBindDTO;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.binding.helper.WrapperHelper;
+import com.diboot.core.binding.parser.FieldComparison;
 import com.diboot.core.binding.parser.MiddleTable;
 import com.diboot.core.binding.parser.PropInfo;
+import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
@@ -51,6 +53,10 @@ public abstract class BaseBinder<T> {
      * VO注解对象中的join on对象列名集合
      */
     protected List<String> annoObjJoinCols;
+    /***
+     * VO注解对象中的join on对象附加过滤条件
+     */
+    protected List<FieldComparison> annoObjJoinFieldComparisons;
     /***
      * DO对象中的关联join on对象列名集合
      */
@@ -174,6 +180,29 @@ public abstract class BaseBinder<T> {
         return this;
     }
 
+    /**
+     * join连接条件的附加条件，指定当前VO的取值方法和关联entity的取值方法
+     * @param annoObjectFieldKey 当前VO的取值属性名
+     * @param eqFilterConsVal 常量条件值
+     * @return
+     */
+    public BaseBinder<T> joinOnFieldComparison(String annoObjectFieldKey, Comparison comparison, Object eqFilterConsVal){
+        if(annoObjectFieldKey != null && eqFilterConsVal != null){
+            if(annoObjJoinFieldComparisons == null){
+                annoObjJoinFieldComparisons = new ArrayList<>(4);
+            }
+            String fieldName = this.annoObjPropInfo.getFieldByColumn(annoObjectFieldKey);
+            if(fieldName == null && this.annoObjPropInfo.getFieldToColumnMap().containsKey(annoObjectFieldKey)) {
+                fieldName = annoObjectFieldKey;
+            }
+            if(fieldName == null) {
+                throw new InvalidUsageException("字段/列 "+ annoObjectFieldKey +" 不存在");
+            }
+            annoObjJoinFieldComparisons.add(new FieldComparison(fieldName, comparison, eqFilterConsVal));
+        }
+        return this;
+    }
+
     public BaseBinder<T> andEQ(String fieldName, Object value){
         queryWrapper.eq(toRefObjColumn(fieldName), formatValue(fieldName, value));
         return this;
@@ -283,10 +312,10 @@ public abstract class BaseBinder<T> {
     protected void buildQueryWrapperJoinOn() {
         for (int i = 0; i < annoObjJoinCols.size(); i++) {
             String annoObjJoinOnCol = annoObjJoinCols.get(i);
-            List<?> annoObjectJoinOnList = BeanUtils.collectToList(annoObjectList, toAnnoObjField(annoObjJoinOnCol));
+            List<?> annoObjectJoinOnList = BeanUtils.collectToList(getMatchedAnnoObjectList(), toAnnoObjField(annoObjJoinOnCol));
             // 构建查询条件
-            String refObjJoinOnCol = refObjJoinCols.get(i);
             if (V.notEmpty(annoObjectJoinOnList)) {
+                String refObjJoinOnCol = refObjJoinCols.get(i);
                 List<?> unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy) ? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
                         : annoObjectJoinOnList;
                 queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
@@ -295,6 +324,14 @@ public abstract class BaseBinder<T> {
                 }
             }
         }
+    }
+
+    /**
+     * 获取匹配的
+     * @return
+     */
+    protected List<?> getMatchedAnnoObjectList() {
+        return filterObjectList(annoObjectList, annoObjJoinFieldComparisons);
     }
 
     /**
@@ -322,6 +359,7 @@ public abstract class BaseBinder<T> {
      * @param queryWrapper
      * @return
      */
+    @Deprecated
     protected List<Map<String, Object>> getMapList(Wrapper queryWrapper) {
         if(referencedService instanceof BaseService){
             return ((BaseService)referencedService).getMapList(queryWrapper);
@@ -511,6 +549,84 @@ public abstract class BaseBinder<T> {
             }
         }
         return value;
+    }
+
+    /***
+     * 筛选list
+     * @param objectList
+     * @param filterConditions 附加过滤条件
+     * @param <E>
+     * @return
+     */
+    private <E> List filterObjectList(List<E> objectList, List<FieldComparison> filterConditions) {
+        if(V.isEmpty(objectList)){
+            return Collections.emptyList();
+        }
+        if(V.isEmpty(filterConditions)) {
+            return objectList;
+        }
+        List<E> newObjectList = new ArrayList<>();
+        for(E object : objectList){
+            boolean matched = true;
+            for(FieldComparison fieldCompare : filterConditions) {
+                Object fieldValue = BeanUtils.getProperty(object, fieldCompare.getFieldName());
+                if(Comparison.EQ.name().equals(fieldCompare.getComparison().name())){
+                    if(!V.fuzzyEqual(fieldValue, fieldCompare.getValue())) {
+                        matched = false;
+                        break;
+                    }
+                }
+                else if(Comparison.NOT_EQ.name().equals(fieldCompare.getComparison().name())) {
+                    if(V.fuzzyEqual(fieldValue, fieldCompare.getValue())) {
+                        matched = false;
+                        break;
+                    }
+                }
+                else if(Comparison.CONTAINS.name().equals(fieldCompare.getComparison().name())){
+                    if(!S.valueOf(fieldValue).contains((String)fieldCompare.getValue())) {
+                        matched = false;
+                        break;
+                    }
+                }
+                else if(Comparison.IN.name().equals(fieldCompare.getComparison().name())) {
+                    List inValues = (List)fieldCompare.getValue();
+                    boolean in = false;
+                    for(Object value : inValues) {
+                        if(V.fuzzyEqual(fieldValue, value)) {
+                            in = true;
+                            break;
+                        }
+                    }
+                    if(!in) {
+                        matched = false;
+                        break;
+                    }
+                }
+                else if(Comparison.NOT_IN.name().equals(fieldCompare.getComparison().name())) {
+                    List notInValues = (List)fieldCompare.getValue();
+                    boolean notIn = true;
+                    for(Object value : notInValues) {
+                        if(V.fuzzyEqual(fieldValue, value)) {
+                            notIn = false;
+                            break;
+                        }
+                    }
+                    if(!notIn) {
+                        matched = false;
+                        break;
+                    }
+                }
+                else{
+                    log.warn("暂不支持此类型对比: {}", fieldCompare.getComparison().name());
+                }
+            }
+            if(!matched) {
+                log.debug("{} 不匹配 {}， 忽略收集该字段", object, filterConditions);
+                continue;
+            }
+            newObjectList.add(object);
+        }
+        return newObjectList;
     }
 
 }

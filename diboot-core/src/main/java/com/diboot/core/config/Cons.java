@@ -47,6 +47,10 @@ public class Cons {
      */
     public final static  String SEPARATOR_OR = "|";
     /**
+     * 分号分隔符
+     */
+    public final static  String SEPARATOR_SEMICOLON = ";";
+    /**
      * 排序 - 降序标记
      */
     public static final String ORDER_DESC = "DESC";

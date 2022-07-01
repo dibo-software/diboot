@@ -17,7 +17,7 @@ export default {
 			// 与查询条件绑定的参数（会被查询表单重置和改变的参数）
 			queryParam: {},
 			// //下拉刷新的状态
-			triggered: false, 
+			triggered: false,
 			// load状态
 			status: 'loadmore',
 			loadText: {
@@ -29,7 +29,8 @@ export default {
 			page: {
 				pageIndex: 1,
 				pageSize: 20,
-				totalCount: 0
+				totalCount: 0,
+				totalPage: 0
 			},
 			// 激活的Index
 			activeIndex: -100,
@@ -54,12 +55,14 @@ export default {
 			// 是否允许访问详情
 			allowGoDetail: true,
 			// 状态栏高度
-			diStatusBarHeight: 0
+			diStatusBarHeight: 0,
+			// 阻止重复发送
+			keyMap: {}
 		}
 	},
 	onLoad() {
 		this.diStatusBarHeight = uni.getSystemInfoSync().statusBarHeight
-		
+
 	},
 	onShow() {
 		this.activeIndex = -100
@@ -85,7 +88,7 @@ export default {
 				url:`./detail?id=${id}`
 			})
 		},
-		/* 
+		/*
 		 * 编辑
 		 */
 		handleUpdate(id) {
@@ -113,10 +116,12 @@ export default {
 				console.log(e)
 				this.showToast('网络异常！')
 			} finally {
+				this.page.pageIndex = 1
+				this.setQueryParamPage()
 				this.getList(true)
 				this.handleCancelDel()
 			}
-			
+
 		},
 		/**
 		 * 取消删除
@@ -146,14 +151,25 @@ export default {
 			if (this.triggered) return
 			this.triggered = true
 			this.page.pageIndex = 1
+			this.setQueryParamPage()
 			this.getList(true)
 		},
 		/**
 		 * 触底加载
 		 */
 		handleOnreachBottom() {
+			// 将当前pageIndex制作成下标，并查看缓存中是否存在指定下标的值
+			const key = `_${this.page.pageIndex}`
+			const value = this.keyMap[key]
+			// 如果value存在，表示缓存有值，那么阻止请求
+			if(value) {
+				return
+			}
+			// value不存在，表示第一次请求,设置占位
+			this.keyMap[key] = 'temp'
 			this.status = 'nomore'
-			if (this.page.pageIndex < this.page.totalCount / this.page.pageSize) {
+			if (this.page.pageIndex <= this.page.totalPage) {
+				this.setQueryParamPage()
 				this.getList()
 			}
 		},
@@ -161,16 +177,27 @@ export default {
 		 * 获取数据列表
 		 */
 		async getList(replace = false) {
-			this.status = 'loading'
-			const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, this.queryParam)
-			if (res.code === 0) {
-				this.list = replace ? res.data : this.list.concat(res.data)
-				this.page = res.page
-				this.page.pageIndex++
-			} else {
-				this.showToast(res.msg)
+			try{
+				this.status = 'loading'
+				const res = await dibootApi.get(this.listApi ? `${this.baseApi}/${this.listApi}` : `${this.baseApi}/list`, this.queryParam)
+				if (res.code === 0) {
+					this.list = replace ? res.data : this.list.concat(res.data)
+					this.page = res.page
+					this.page.pageIndex++
+					console.log(this.page)
+				} else {
+					this.showToast(res.msg)
+				}
+			}catch(e){
+				//TODO handle the exception
+			} finally {
+				this.triggered = false
+				this.status = (this.list || []).length == this.page.totalCount ? 'nomore' : 'loadmore'
 			}
-			this.triggered = false
+
+		},
+		setQueryParamPage() {
+			this.queryParam.pageIndex = this.page.pageIndex
 		},
 		/**
 		 * 展示提示
@@ -179,7 +206,7 @@ export default {
 		 */
 		showToast(title, icon = 'error') {
 			uni.showToast({
-			    title,
+				title,
 				icon
 			});
 		}

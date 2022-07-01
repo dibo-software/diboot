@@ -55,6 +55,10 @@ public class BindAnnotationGroup {
      */
     private Map<String, List<FieldAnnotation>> bindFieldListGroupMap;
     /**
+     * count计数关联注解
+     */
+    private List<FieldAnnotation> bindCountAnnotations;
+    /**
      * 深度绑定实体
      */
     private List<FieldAnnotation> deepBindEntityAnnotations;
@@ -97,7 +101,11 @@ public class BindAnnotationGroup {
             } else if (annotation instanceof BindFieldList) {
                 BindFieldList bindField = (BindFieldList) annotation;
                 key = bindField.entity().getName() + ":" + bindField.condition() + ":" + bindField.orderBy();
-            } else if (annotation instanceof BindEntity) {
+            } else if (annotation instanceof BindCount) {
+                BindCount bindCount = (BindCount) annotation;
+                key = bindCount.entity().getName() + ":" + bindCount.condition();
+            }
+            else if (annotation instanceof BindEntity) {
                 BindEntity bindEntity = (BindEntity) annotation;
                 key = bindEntity.entity().getName();
             } else if (annotation instanceof BindEntityList) {
@@ -153,6 +161,12 @@ public class BindAnnotationGroup {
             List<FieldAnnotation> list = bindFieldListGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
             list.add(fieldAnnotation);
         }
+        else if(annotation instanceof BindCount){
+            if(bindCountAnnotations == null){
+                bindCountAnnotations = new ArrayList<>(4);
+            }
+            bindCountAnnotations.add(fieldAnnotation);
+        }
     }
 
     public List<FieldAnnotation> getBindDictAnnotations() {
@@ -175,6 +189,10 @@ public class BindAnnotationGroup {
         return bindFieldListGroupMap;
     }
 
+    public List<FieldAnnotation> getBindCountAnnotations() {
+        return bindCountAnnotations;
+    }
+
     public List<FieldAnnotation> getDeepBindEntityAnnotations() {
         return deepBindEntityAnnotations;
     }
@@ -184,7 +202,7 @@ public class BindAnnotationGroup {
     }
 
     public boolean isEmpty() {
-        return V.isAllEmpty(bindDictAnnotations, bindFieldGroupMap, bindEntityAnnotations, bindEntityListAnnotations, bindFieldListGroupMap);
+        return V.isAllEmpty(bindDictAnnotations, bindFieldGroupMap, bindEntityAnnotations, bindEntityListAnnotations, bindFieldListGroupMap, bindCountAnnotations);
     }
 
     /**

@@ -51,6 +51,10 @@ public class PropInfo implements Serializable {
      */
     private final Map<String, String> columnToFieldMap = new HashMap<>();
     /**
+     * 列-字段类型的映射
+     */
+    private final Map<String, Class> columnToFieldTypeMap = new HashMap<>();
+    /**
      * 自动更新字段列表
      */
     private final List<String> fillUpdateFieldList = new ArrayList<>();
@@ -110,6 +114,7 @@ public class PropInfo implements Serializable {
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){
                     this.columnToFieldMap.put(columnName, fldName);
+                    this.columnToFieldTypeMap.put(columnName, fld.getType());
                     this.columns.add(columnName);
                 }
             }
@@ -149,6 +154,17 @@ public class PropInfo implements Serializable {
             return null;
         }
         return this.columnToFieldMap.get(idColumn);
+    }
+
+    /**
+     * 根据列名获取字段类型
+     * @return
+     */
+    public Class<?> getFieldTypeByColumn(String columnName){
+        if(V.isEmpty(this.columnToFieldTypeMap)){
+            return null;
+        }
+        return this.columnToFieldTypeMap.get(columnName);
     }
 
 }

@@ -26,6 +26,7 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
@@ -87,7 +88,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             mpBoundSql.sql(newSql);
             // 打印修改后的SQL
             if (log.isTraceEnabled() && V.notEquals(originSql, newSql)) {
-                log.trace("DataAccess Inteceptor SQL : {}", newSql);
+                log.trace("DataAccess Interceptor SQL : {}", newSql);
             }
         } else {
             noCheckpointCache.add(ms.getId());
@@ -127,7 +128,7 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             if (checkImpl == null) {
                 throw new InvalidUsageException("无法从上下文中获取数据权限的接口实现：DataAccessInterface");
             }
-            List<Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
+            List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
             if (idValues == null) {
                 return null;
             }
@@ -140,10 +141,21 @@ public class DataAccessControlInterceptor implements InnerInterceptor {
             } else if (idValues.size() == 1) {
                 EqualsTo equalsTo = new EqualsTo();
                 equalsTo.setLeftExpression(new Column(idCol));
-                equalsTo.setRightExpression(new StringValue(S.defaultValueOf(idValues.get(0))));
+                if(idValues.get(0) instanceof Long){
+                    equalsTo.setRightExpression(new LongValue((Long)idValues.get(0)));
+                }
+                else{
+                    equalsTo.setRightExpression(new StringValue(S.defaultValueOf(idValues.get(0))));
+                }
                 return equalsTo;
             } else {
-                String conditionExpr = idCol + " IN ('" + S.join(idValues, "', '") + "')";
+                String conditionExpr = idCol + " IN ";
+                if(idValues.get(0) instanceof Long){
+                    conditionExpr += "(" + S.join(idValues, ", ") + ")";
+                }
+                else{
+                    conditionExpr += "('" + S.join(idValues, "', '") + "')";
+                }
                 try {
                     return CCJSqlParserUtil.parseCondExpression(conditionExpr);
                 } catch (JSQLParserException e) {

@@ -20,7 +20,7 @@ import com.diboot.core.util.S;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.jwt.BaseJwtRealm;
+import com.diboot.iam.shiro.IamAuthorizingRealm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -69,6 +69,8 @@ public class IamSecurityUtils extends SecurityUtils {
     public static void logout(){
         Subject subject = getSubject();
         if(subject.isAuthenticated() || subject.getPrincipals() != null){
+            // 缓存当前token与用户信息
+            //TokenCacheHelper.removeAccessToken(accessToken);
             subject.logout();
         }
     }
@@ -92,6 +94,19 @@ public class IamSecurityUtils extends SecurityUtils {
                 log.info("强制退出用户: {}", userTypeAndId);
             }
         }
+    }
+
+    /**
+     * 基于 accessToken 退出 注销指定用户
+     */
+    public static void logoutByToken(String accessToken){
+        IamSecurityUtils.logout();
+        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
+        if(cacheManager != null && cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
+            cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(accessToken);
+        }
+        TokenUtils.removeAccessTokens(accessToken);
+        log.debug("token 已过期注销: {}", accessToken);
     }
 
     /**
@@ -120,9 +135,9 @@ public class IamSecurityUtils extends SecurityUtils {
      */
     public static void clearAuthorizationCache(String username){
         RealmSecurityManager rsm = (RealmSecurityManager) IamSecurityUtils.getSecurityManager();
-        BaseJwtRealm baseJwtRealm = (BaseJwtRealm)rsm.getRealms().iterator().next();
-        if(baseJwtRealm != null){
-            Cache<Object, AuthorizationInfo> cache = baseJwtRealm.getAuthorizationCache();
+        IamAuthorizingRealm authorizingRealm = (IamAuthorizingRealm)rsm.getRealms().iterator().next();
+        if(authorizingRealm != null){
+            Cache<Object, AuthorizationInfo> cache = authorizingRealm.getAuthorizationCache();
             if(cache != null) {
                 cache.remove(username);
                 log.debug("已清空账号 {} 的权限缓存，以便新权限生效.", username);
@@ -135,9 +150,9 @@ public class IamSecurityUtils extends SecurityUtils {
      */
     public static void clearAllAuthorizationCache(){
         RealmSecurityManager rsm = (RealmSecurityManager) IamSecurityUtils.getSecurityManager();
-        BaseJwtRealm baseJwtRealm = (BaseJwtRealm)rsm.getRealms().iterator().next();
-        if(baseJwtRealm != null){
-            Cache<Object, AuthorizationInfo> cache = baseJwtRealm.getAuthorizationCache();
+        IamAuthorizingRealm authorizingRealm = (IamAuthorizingRealm)rsm.getRealms().iterator().next();
+        if(authorizingRealm != null){
+            Cache<Object, AuthorizationInfo> cache = authorizingRealm.getAuthorizationCache();
             if(cache != null) {
                 cache.clear();
                 log.debug("已清空全部登录用户的权限缓存，以便新权限生效.");

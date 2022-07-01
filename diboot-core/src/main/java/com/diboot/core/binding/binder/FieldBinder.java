@@ -22,6 +22,7 @@ import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -104,30 +105,30 @@ public class FieldBinder<T> extends BaseBinder<T> {
         }
         // 直接关联
         if(middleTable == null){
-            List<Map<String, Object>> mapList = null;
             this.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
             // 查询条件为空时不进行查询
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
             }
+            List<T> entityList = null;
             if(V.isEmpty(this.module)){
-                // 本地查询获取匹配结果的mapList
-                mapList = getMapList(queryWrapper);
+                // 本地查询获取匹配结果的entityList
+                entityList = getEntityList(queryWrapper);
             }
             else{
                 // 远程调用获取
-                mapList = RemoteBindingManager.fetchMapList(module, remoteBindDTO);
+                entityList = RemoteBindingManager.fetchEntityList(module, remoteBindDTO, referencedEntityClass);
             }
-            if(V.isEmpty(mapList)){
+            if(V.isEmpty(entityList)){
                 return;
             }
-            // 将结果list转换成map
-            Map<String, Map<String, Object>> key2DataMap = this.buildMatchKey2ResultMap(mapList);
+            // 将结果list转换成entityMap
+            Map<String, T> key2EntityMap = this.buildMatchKey2EntityMap(entityList);
             // 遍历list并赋值
-            for(Object annoObject : annoObjectList){
+            for(Object annoObject : super.getMatchedAnnoObjectList()){
                 String matchKey = buildMatchKey(annoObject);
-                setFieldValueToTrunkObj(key2DataMap, annoObject, matchKey);
+                setFieldValueToTrunkObj(key2EntityMap, annoObject, matchKey);
             }
         }
         else{
@@ -147,26 +148,26 @@ public class FieldBinder<T> extends BaseBinder<T> {
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
             // 获取匹配结果的mapList
-            List<Map<String, Object>> mapList = null;
+            List<T> entityList = null;
             if(V.isEmpty(this.module)){
-                // 本地查询获取匹配结果的mapList
                 queryWrapper.in(refObjJoinOnCol, refObjValues);
-                mapList = getMapList(queryWrapper);
+                // 本地查询获取匹配结果的entityList
+                entityList = getEntityList(queryWrapper);
             }
             else{
                 // 远程调用获取
                 remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(refObjValues);
-                mapList = RemoteBindingManager.fetchMapList(module, remoteBindDTO);
+                entityList = RemoteBindingManager.fetchEntityList(module, remoteBindDTO, referencedEntityClass);
             }
-            if(V.isEmpty(mapList)){
+            if(V.isEmpty(entityList)){
                 return;
             }
-            // 将结果list转换成map
-            Map<String, Map<String, Object>> key2DataMap = this.buildMatchKey2ResultMap(mapList);
+            // 将结果list转换成entityMap
+            Map<String, T> key2EntityMap = this.buildMatchKey2EntityMap(entityList);
             // 遍历list并赋值
-            for(Object annoObject : annoObjectList){
+            for(Object annoObject : super.getMatchedAnnoObjectList()){
                 String matchKey = buildMatchKey(annoObject, middleTableResultMap);
-                setFieldValueToTrunkObj(key2DataMap, annoObject, matchKey);
+                setFieldValueToTrunkObj(key2EntityMap, annoObject, matchKey);
             }
         }
 
@@ -174,36 +175,37 @@ public class FieldBinder<T> extends BaseBinder<T> {
 
     /**
      * 设置字段值
-     * @param key2DataMap
+     * @param key2EntityMap
      * @param annoObject
      * @param matchKey
      */
-    private void setFieldValueToTrunkObj(Map<String, Map<String, Object>> key2DataMap, Object annoObject, String matchKey) {
-        Map<String, Object> relationMap = key2DataMap.get(matchKey);
-        if (relationMap != null) {
+    private void setFieldValueToTrunkObj(Map<String, T> key2EntityMap, Object annoObject, String matchKey) {
+        T relationEntity = key2EntityMap.get(matchKey);
+        if (relationEntity != null) {
+            BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(annoObject);
             for (int i = 0; i < annoObjectSetterPropNameList.size(); i++) {
-                Object valObj = getValueIgnoreKeyCase(relationMap, toRefObjColumn(referencedGetterFieldNameList.get(i)));
-                BeanUtils.setProperty(annoObject, annoObjectSetterPropNameList.get(i), valObj);
+                Object valObj = BeanUtils.getProperty(relationEntity, referencedGetterFieldNameList.get(i));
+                beanWrapper.setPropertyValue(annoObjectSetterPropNameList.get(i), valObj);
             }
         }
     }
 
     /**
-     * 构建匹配key-map目标的map
-     * @param mapList
+     * 构建匹配key-entity目标的map
+     * @param entityList
      * @return
      */
-    protected Map<String, Map<String, Object>> buildMatchKey2ResultMap(List<Map<String, Object>> mapList){
-        Map<String, Map<String, Object>> key2TargetMap = new HashMap<>(mapList.size());
-        for(Map<String, Object> map : mapList){
+    protected Map<String, T> buildMatchKey2EntityMap(List<T> entityList){
+        Map<String, T> key2TargetMap = new HashMap<>(entityList.size());
+        for(T entity : entityList){
             List<String> joinOnValues = new ArrayList<>(refObjJoinCols.size());
             for(String refObjJoinOnCol : refObjJoinCols){
-                Object valObj = getValueIgnoreKeyCase(map, refObjJoinOnCol);
+                Object valObj = BeanUtils.getProperty(entity, toRefObjField(refObjJoinOnCol));
                 joinOnValues.add(S.valueOf(valObj));
             }
             String matchKey = S.join(joinOnValues);
             if(matchKey != null){
-                key2TargetMap.put(matchKey, map);
+                key2TargetMap.put(matchKey, entity);
             }
         }
         return key2TargetMap;
@@ -242,7 +244,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             String fieldValue = BeanUtils.getStringProperty(annoObject, getterField);
             // 通过中间结果Map转换得到OrgId
             if(V.notEmpty(middleTableResultMap)){
-                Object value = middleTableResultMap.get(fieldValue);
+                Object value = getValueIgnoreKeyCase(middleTableResultMap, fieldValue);
                 fieldValue = String.valueOf(value);
             }
             if(appendComma){

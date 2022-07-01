@@ -385,7 +385,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                                 BeanUtils.setProperty(data, setFieldName, 0);
                             }
                         } else if (excelBindField.empty().equals(EmptyStrategy.WARN)) {
-                            data.addComment(entry.getKey(), name + " 值不存在");
+                            data.addComment(entry.getKey(), "关联值不存在");
                         } else if (excelBindField.empty().equals(EmptyStrategy.IGNORE) && valueNotNull) {
                             log.warn("非空字段 {} 不应设置 EmptyStrategy.IGNORE.", entry.getKey());
                         }
@@ -396,7 +396,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         }
                     } else {
                         if (excelBindField.duplicate().equals(DuplicateStrategy.WARN)) {
-                            data.addComment(entry.getKey(), name + " 匹配到多个值");
+                            data.addComment(entry.getKey(), "匹配到多个关联值");
                         } else if (excelBindField.duplicate().equals(DuplicateStrategy.FIRST)) {
                             // 非预览时 赋值
                             if (!preview) {
@@ -417,7 +417,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         }
                         // 非空才报错
                         if (valueNotNull && V.isEmpty(valList)) {
-                            data.addComment(entry.getKey(), name + " 无匹配字典");
+                            data.addComment(entry.getKey(), "无匹配字典");
                             continue;
                         }
                     }

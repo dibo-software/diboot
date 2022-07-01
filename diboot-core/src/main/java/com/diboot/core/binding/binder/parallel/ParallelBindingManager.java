@@ -134,6 +134,22 @@ public class ParallelBindingManager {
         return doBinding(binder, annotation.condition());
     }
 
+    /***
+     * 绑定count计数
+     * @param voList
+     * @param fieldAnnotation
+     */
+    @Async
+    public CompletableFuture<Boolean> doBindingCount(List voList, FieldAnnotation fieldAnnotation) {
+        BindCount annotation = (BindCount) fieldAnnotation.getAnnotation();
+        // 绑定关联对象entity
+        CountBinder binder = new CountBinder(annotation, voList);
+        // 构建binder
+        binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
+        // 解析条件并且执行绑定
+        return doBinding(binder, annotation.condition());
+    }
+
     /**
      * 绑定表关联数据
      * @param binder

@@ -97,22 +97,43 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         // 查询权限
         List<IamResourcePermission> resourcePermissions = iamResourcePermissionService.getEntityList(
                 Wrappers.<IamResourcePermission>lambdaQuery()
-                        .select(IamResourcePermission::getApiSet)
+                        .select(IamResourcePermission::getPermissionCodes)
                         .in(IamResourcePermission::getId, permissionIds)
-                        .isNotNull(IamResourcePermission::getApiSet)
+                        .isNotNull(IamResourcePermission::getPermissionCode)
         );
         if(resourcePermissions == null){
             return Collections.emptyList();
         }
         // 转换为string list
-        List<String> list = BeanUtils.collectToList(resourcePermissions, IamResourcePermission::getApiSet);
+        List<String> list = BeanUtils.collectToList(resourcePermissions, IamResourcePermission::getPermissionCode);
         return list;
+    }
+
+    @Override
+    public List<String> getPermissionCodeList(String appModule, List<Long> roleIds) {
+        if (V.isEmpty(roleIds)) {
+            return Collections.emptyList();
+        }
+        List<Long> permissionIds = getPermissionIdsByRoleIds(appModule, roleIds);
+        if (V.isEmpty(permissionIds)) {
+            return Collections.emptyList();
+        }
+        // 查询权限
+        LambdaQueryWrapper<IamResourcePermission> queryWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
+                .select(IamResourcePermission::getPermissionCode)
+                .in(IamResourcePermission::getId, permissionIds)
+                .isNotNull(IamResourcePermission::getPermissionCode);
+        // 仅查询PermissionCode字段
+        List<String> resourcePermissions = iamResourcePermissionService.getValuesOfField(
+                queryWrapper, IamResourcePermission::getPermissionCode
+        );
+        return resourcePermissions;
     }
 
     @Override
     public List<ResourceRoleVO> getAllResourceRoleVOList() {
         LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .isNotNull(IamResourcePermission::getApiSet);
+                .isNotNull(IamResourcePermission::getPermissionCode);
         List<IamResourcePermission> list = iamResourcePermissionService.getEntityList(wrapper);
         if(list == null){
             list = Collections.emptyList();

@@ -24,6 +24,7 @@ import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.ApiUri;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,7 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 注解 RestApi 信息缓存
@@ -78,7 +81,7 @@ public class AnnotationRestApiHolder {
      * @param category
      * @return
      */
-    public static List<RestApi> getRestApiList(String category){
+    public synchronized static List<RestApi> getRestApiList(String category){
         List<RestApi> apiList = getCacheManager()
                 .getCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, category, List.class);
         if(apiList == null && getCacheManager().isUninitializedCache(CACHE_NAME_CATEGORY_TO_APILIST)){
@@ -94,7 +97,7 @@ public class AnnotationRestApiHolder {
      * @param className
      * @return
      */
-    public static RestApiWrapper getRestApiWrapper(String className){
+    public synchronized static RestApiWrapper getRestApiWrapper(String className){
         RestApiWrapper apiWrapper = getCacheManager()
                 .getCacheObj(CACHE_NAME_CLASS_TO_WRAPPER, className, RestApiWrapper.class);
         if(apiWrapper == null && getCacheManager().isUninitializedCache(CACHE_NAME_CLASS_TO_WRAPPER)){
@@ -108,7 +111,7 @@ public class AnnotationRestApiHolder {
     /**
      * 初始化
      */
-    private static void initRestApiCache() {
+    private synchronized static void initRestApiCache() {
         List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
         if(V.isEmpty(controllerList)) {
             return;
@@ -125,15 +128,30 @@ public class AnnotationRestApiHolder {
                 getCacheManager()
                         .putCacheObj(CACHE_NAME_CLASS_TO_WRAPPER, wrapper.getClassName(), wrapper);
                 if(V.notEmpty(wrapper.getChildren())){
+                    Map<String, List<RestApi>> categoryApisMap = new HashMap<>(8);
                     for(RestApi api : wrapper.getChildren()){
-                        List<RestApi> categoryApis = getCacheManager()
-                                .getCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, api.getCategory(), List.class);
+                        List<RestApi> categoryApis = categoryApisMap.get(api.getCategory());
                         if(categoryApis == null){
                             categoryApis = new ArrayList<>();
-                            getCacheManager()
-                                    .putCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, api.getCategory(), categoryApis);
+                            categoryApisMap.put(api.getCategory(), categoryApis);
                         }
                         categoryApis.add(api);
+                    }
+                    for(Map.Entry<String, List<RestApi>> entry : categoryApisMap.entrySet()){
+                        List<RestApi> categoryApis = getCacheManager()
+                                .getCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, entry.getKey(), List.class);
+                        if(categoryApis == null){
+                            categoryApis = entry.getValue();
+                        }
+                        else{
+                            for(RestApi api : entry.getValue()){
+                                if(!categoryApis.contains(api)){
+                                    categoryApis.add(api);
+                                }
+                            }
+                        }
+                        getCacheManager()
+                                .putCacheObj(CACHE_NAME_CATEGORY_TO_APILIST, entry.getKey(), categoryApis);
                     }
                 }
             }
@@ -161,12 +179,12 @@ public class AnnotationRestApiHolder {
                 // 处理Annotation注解
                 CollectThisApi restApiAnno = AnnotationUtils.getAnnotation(method, CollectThisApi.class);
                 // 提取方法上的注解url
-                String[] methodAndUrl = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
-                if(methodAndUrl[0] == null || methodAndUrl[1] == null){
+                ApiUri apiUri = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
+                if(apiUri.isEmpty()){
                     continue;
                 }
                 // 提取请求url-注解的关系
-                buildRestApi(wrapper, urlPrefix, methodAndUrl, restApiAnno);
+                buildRestApi(wrapper, urlPrefix, apiUri, restApiAnno);
             }
         }
     }
@@ -175,10 +193,10 @@ public class AnnotationRestApiHolder {
      * 构建restApiList
      * @param wrapper
      * @param urlPrefix
-     * @param methodAndUrl
+     * @param apiUri
      */
-    private static void buildRestApi(RestApiWrapper wrapper, String urlPrefix, String[] methodAndUrl, CollectThisApi annotation){
-        String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
+    private static void buildRestApi(RestApiWrapper wrapper, String urlPrefix, ApiUri apiUri, CollectThisApi annotation){
+        String requestMethod = apiUri.getMethod(), url = apiUri.getUri();
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
                 if(V.notEmpty(urlPrefix)){

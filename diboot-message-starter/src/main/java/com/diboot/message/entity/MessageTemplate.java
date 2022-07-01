@@ -16,15 +16,12 @@
 package com.diboot.message.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -85,13 +82,6 @@ public class MessageTemplate extends BaseEntity {
     @NotNull(message = "模版内容不能为空")
     @TableField()
     private String content;
-
-    /**
-     * 模版变量
-     */
-    @Length(max = 200, message = "模版变量长度应小于200")
-    @TableField()
-    private String variables;
 
     /**
      * 扩展数据

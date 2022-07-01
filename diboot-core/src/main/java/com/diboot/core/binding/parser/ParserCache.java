@@ -22,11 +22,8 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.data.annotation.ProtectField;
-import com.diboot.core.data.encrypt.IEncryptStrategy;
-import com.diboot.core.data.mask.IMaskStrategy;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.NonNull;
@@ -60,23 +57,15 @@ public class ParserCache {
      */
     private static final Map<String, List<AnnoJoiner>> dtoClassBindQueryCacheMap = new ConcurrentHashMap<>();
     /**
-     * 加密字段缓存
+     * 保护字段缓存
      */
-    private static final Map<String, Map<String, IEncryptStrategy>> FIELD_ENCRYPTOR_MAP = new ConcurrentHashMap<>();
-    /**
-     * 加密器对象缓存
-     */
-    private static final Map<String, IEncryptStrategy> ENCRYPTOR_MAP = new ConcurrentHashMap<>();
-    /**
-     * 脱敏策略对象缓存
-     */
-    private static final Map<String, IMaskStrategy> MASK_STRATEGY_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, List<String>> PROTECT_FIELD_MAP = new ConcurrentHashMap<>();
 
     /**
      * 用于查询注解是否是Bind相关注解
      */
     private static final Set<Class<?>> BIND_ANNOTATION_SET = new HashSet<>(Arrays.asList(
-            BindDict.class, BindField.class, BindFieldList.class, BindEntity.class, BindEntityList.class
+            BindDict.class, BindField.class, BindFieldList.class, BindEntity.class, BindEntityList.class, BindCount.class
     ));
 
     /**
@@ -276,67 +265,23 @@ public class ParserCache {
     }
 
     /**
-     * 获取加密器对象
-     *
-     * @param clazz 加密器类型
-     * @return 加密器对象
-     */
-    @NonNull
-    public static IEncryptStrategy getEncryptor(@NonNull Class<? extends IEncryptStrategy> clazz) {
-        return ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
-            IEncryptStrategy encryptor = ContextHelper.getBean(clazz);
-            if (encryptor == null) {
-                try {
-                    encryptor = clazz.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    log.error("{} 初始化失败", clazz, e);
-                }
-            }
-            return Objects.requireNonNull(encryptor);
-        });
-    }
-
-    /**
-     * 获取该类保护字段加密器Map
+     * 获取该类保护字段属性名列表
      *
      * @param clazz 类型
-     * @return 非null，Map<字段名，加密器>
+     * @return 属性名列表
      */
     @NonNull
-    public static Map<String, IEncryptStrategy> getFieldEncryptorMap(@NonNull Class<?> clazz) {
-        return FIELD_ENCRYPTOR_MAP.computeIfAbsent(clazz.getName(), k -> {
-            Map<String, IEncryptStrategy> fieldEncryptorMap = new HashMap<>(4);
+    public static List<String> getProtectFieldList(@NonNull Class<?> clazz) {
+        return PROTECT_FIELD_MAP.computeIfAbsent(clazz.getName(), k -> {
+            List<String> protectFieldList = new ArrayList<>(4);
             for (Field field : BeanUtils.extractFields(clazz, ProtectField.class)) {
                 if (!field.getType().isAssignableFrom(String.class)) {
                     log.error("`@ProtectField` 仅支持 String 类型字段。");
                     continue;
                 }
-                ProtectField protect = field.getAnnotation(ProtectField.class);
-                IEncryptStrategy encryptor = getEncryptor(protect.encryptor());
-                fieldEncryptorMap.put(field.getName(), encryptor);
+                protectFieldList.add(field.getName());
             }
-            return fieldEncryptorMap.isEmpty() ? Collections.emptyMap() : fieldEncryptorMap;
-        });
-    }
-
-    /**
-     * 获取脱敏策略对象
-     *
-     * @param clazz 脱敏策略类型
-     * @return 脱敏策略对象
-     */
-    @NonNull
-    public static IMaskStrategy getMaskStrategy(@NonNull Class<? extends IMaskStrategy> clazz) {
-        return MASK_STRATEGY_MAP.computeIfAbsent(clazz.getName(), k -> {
-            IMaskStrategy maskStrategy = ContextHelper.getBean(clazz);
-            if (maskStrategy == null) {
-                try {
-                    maskStrategy = clazz.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    log.error("{} 初始化失败", clazz, e);
-                }
-            }
-            return Objects.requireNonNull(maskStrategy);
+            return protectFieldList.isEmpty() ? Collections.emptyList() : protectFieldList;
         });
     }
 }

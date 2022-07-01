@@ -52,13 +52,13 @@ public abstract class BaseLoginUser extends BaseEntity {
      * 附加对象，用于岗位等扩展
       */
     @TableField(exist = false)
-    private LabelValue extentionObj;
+    private LabelValue extensionObj;
 
-    public LabelValue getExtentionObj(){
-        return this.extentionObj;
+    public LabelValue getExtensionObj(){
+        return this.extensionObj;
     }
-    public void setExtentionObj(LabelValue extentionObj){
-        this.extentionObj = extentionObj;
+    public void setExtensionObj(LabelValue extensionObj){
+        this.extensionObj = extensionObj;
     }
 
     public String getAuthToken(){

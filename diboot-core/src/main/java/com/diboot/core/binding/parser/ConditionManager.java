@@ -16,14 +16,19 @@
 package com.diboot.core.binding.parser;
 
 import com.diboot.core.binding.binder.BaseBinder;
+import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -83,19 +88,33 @@ public class ConditionManager extends BaseConditionManager{
                     }
                 }
                 else{
-                    binder.andEQ(annoColumn, express.getRightExpression().toString());
-                    binder.additionalCondition(annoColumn + " = " + express.getRightExpression().toString());
+                    // this.xx = 'abc'
+                    if(isCurrentObjColumn(express.getLeftExpression().toString())){
+                        Object consValue = extractConsValue(express.getRightExpression());
+                        binder.joinOnFieldComparison(annoColumn, Comparison.EQ, consValue);
+                    }
+                    else{
+                        binder.andEQ(annoColumn, express.getRightExpression().toString());
+                        binder.additionalCondition(annoColumn + " = " + express.getRightExpression().toString());
+                    }
                 }
                 continue;
             }
-            if(operator instanceof NotEqualsTo){
+            else if(operator instanceof NotEqualsTo){
                 NotEqualsTo express = (NotEqualsTo)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.getRightExpression() instanceof Column){
                     binder.andApply(annoColumn + " != " + express.getRightExpression().toString());
                 }
                 else{
-                    binder.andNE(annoColumn, express.getRightExpression().toString());
+                    // this.xx != 'abc'
+                    if(isCurrentObjColumn(express.getLeftExpression().toString())){
+                        Object consValue = extractConsValue(express.getRightExpression());
+                        binder.joinOnFieldComparison(annoColumn, Comparison.NOT_EQ, consValue);
+                    }
+                    else {
+                        binder.andNE(annoColumn, express.getRightExpression().toString());
+                    }
                 }
             }
             else if(operator instanceof GreaterThan){
@@ -152,10 +171,24 @@ public class ConditionManager extends BaseConditionManager{
                 InExpression express = (InExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 if(express.isNot() == false){
-                    binder.andApply(annoColumn + " IN " + express.getRightItemsList().toString());
+                    // this.xx in ('abc')
+                    if(isCurrentObjColumn(express.getLeftExpression().toString())){
+                        List<Object> consValues = extractConsValues(express.getRightItemsList());
+                        binder.joinOnFieldComparison(annoColumn, Comparison.IN, consValues);
+                    }
+                    else {
+                        binder.andApply(annoColumn + " IN " + express.getRightItemsList().toString());
+                    }
                 }
                 else{
-                    binder.andApply(annoColumn + " NOT IN " + express.getRightItemsList().toString());
+                    // this.xx not in ('abc')
+                    if(isCurrentObjColumn(express.getLeftExpression().toString())){
+                        List<Object> consValues = extractConsValues(express.getRightItemsList());
+                        binder.joinOnFieldComparison(annoColumn, Comparison.NOT_IN, consValues);
+                    }
+                    else {
+                        binder.andApply(annoColumn + " NOT IN " + express.getRightItemsList().toString());
+                    }
                 }
             }
             else if(operator instanceof Between){
@@ -173,15 +206,24 @@ public class ConditionManager extends BaseConditionManager{
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 String value = express.getRightExpression().toString();
                 if(express.isNot() == false){
-                    binder.andLike(annoColumn, value);
+                    // this.xx != 'abc'
+                    if(isCurrentObjColumn(express.getLeftExpression().toString())){
+                        StringValue valueObj = (StringValue) express.getRightExpression();
+                        String consValue = S.replace(valueObj.getValue(), "%", "");
+                        binder.joinOnFieldComparison(annoColumn, Comparison.CONTAINS, consValue);
+                    }
+                    else {
+                        binder.andLike(annoColumn, value);
+                    }
                 }
                 else{
                     binder.andNotLike(annoColumn, value);
                 }
             }
             else{
-                log.warn("不支持的条件: "+operator.toString());
-                continue;
+                String warnMsg = "不支持的条件: "+operator.toString();
+                log.warn(warnMsg);
+                throw new InvalidUsageException(warnMsg);
             }
             binder.additionalCondition(operator.toString().replaceAll("^\\w+\\.", ""));
         }
@@ -324,6 +366,45 @@ public class ConditionManager extends BaseConditionManager{
             annoColumn = S.substringAfter(annoColumn, ".");
         }
         return annoColumn;
+    }
+
+    /**
+     * 提取常量
+     * @param expression
+     * @return
+     */
+    private static Object extractConsValue(Expression expression) {
+        Object consValue = null;
+        if(expression instanceof StringValue) {
+            consValue = ((StringValue)expression).getValue();
+        }
+        else if(expression instanceof LongValue) {
+            consValue = ((LongValue)expression).getValue();
+        }
+        else {
+            String warnMsg = "不支持的附加条件类型: " + expression.toString();
+            log.warn(warnMsg);
+            throw new InvalidUsageException(warnMsg);
+        }
+        return consValue;
+    }
+
+    /**
+     * 提取常量值
+     * @param itemsList
+     * @return
+     */
+    private static List<Object> extractConsValues(ItemsList itemsList) {
+        if(itemsList instanceof ExpressionList) {
+            List<Expression> expressions = ((ExpressionList)itemsList).getExpressions();
+            List list = new ArrayList();
+            for(Expression expression : expressions){
+                list.add(extractConsValue(expression));
+            }
+            return list;
+        }
+        log.warn("不支持的附加条件写法: {}", itemsList.toString());
+        return Collections.emptyList();
     }
 
 }

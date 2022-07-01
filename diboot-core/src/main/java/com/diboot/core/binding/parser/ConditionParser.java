@@ -351,6 +351,14 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
 
     @Override
+    public void visit(IsDistinctExpression isDistinctExpression) {
+    }
+
+    @Override
+    public void visit(GeometryDistance geometryDistance) {
+    }
+
+    @Override
     public void visit(BitwiseRightShift aThis) {
     }
     @Override

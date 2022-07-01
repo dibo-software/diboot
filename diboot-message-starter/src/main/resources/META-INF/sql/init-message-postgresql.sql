@@ -6,7 +6,6 @@ CREATE TABLE message_template (
      code VARCHAR(20) NOT NULL,
      title VARCHAR(100) NOT NULL,
      content VARCHAR(500) NOT NULL,
-     variables varchar(200),
      ext_data VARCHAR(500),
      is_deleted   BOOLEAN default FALSE   not null,
      create_by bigint DEFAULT 0 NOT NULL,
@@ -20,7 +19,6 @@ comment on column message_template.app_module is '应用模块';
 comment on column message_template.code is '模版编码';
 comment on column message_template.title is '模版标题';
 comment on column message_template.content is '模版内容';
-comment on column message_template.variables is '模版变量';
 comment on column message_template.ext_data is '扩展数据';
 comment on column message_template.is_deleted is '是否删除';
 comment on column message_template.create_by is '创建人';

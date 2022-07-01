@@ -24,7 +24,10 @@ import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.*;
+import com.diboot.iam.entity.BaseLoginUser;
+import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamRole;
+import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
@@ -77,7 +80,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     }
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, Long userId, Long extentionObjId) {
+    public List<IamRole> getUserRoleList(String userType, Long userId, Long extensionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
@@ -93,7 +96,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
                 .in(IamRole::getId, roleIds));
         // 加载扩展角色
         if(getIamExtensible() != null){
-            List<IamRole> extRoles = getIamExtensible().getExtentionRoles(userType, userId, extentionObjId);
+            List<IamRole> extRoles = getIamExtensible().getExtensionRoles(userType, userId, extensionObjId);
             if(V.notEmpty(extRoles)){
                 roles.addAll(extRoles);
                 roles = BeanUtils.distinctByKey(roles, IamRole::getId);

@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.cache.StaticMemoryCacheManager;
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -41,6 +42,7 @@ import java.util.*;
  * @version v2.2.1
  * @date 2021/04/17
  */
+@SuppressWarnings({"JavaDoc","rawtypes", "unchecked"})
 @Slf4j
 public class BindingCacheManager {
     /**
@@ -72,7 +74,7 @@ public class BindingCacheManager {
      */
     private static final String CACHE_NAME_CLASS_NAME2FLDMAP = "CLASS_NAME2FLDMAP";
 
-    private static StaticMemoryCacheManager getCacheManager(){
+    private static synchronized StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
             cacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_ENTITY,
@@ -90,7 +92,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static EntityInfoCache getEntityInfoByTable(String tableName){
+    public static synchronized EntityInfoCache getEntityInfoByTable(String tableName){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_TABLE_ENTITY, tableName, EntityInfoCache.class);
     }
@@ -100,7 +102,7 @@ public class BindingCacheManager {
      * @param entityClazz
      * @return
      */
-    public static EntityInfoCache getEntityInfoByClass(Class<?> entityClazz){
+    public static synchronized EntityInfoCache getEntityInfoByClass(Class<?> entityClazz){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClazz.getName(), EntityInfoCache.class);
     }
@@ -110,7 +112,7 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static PropInfo getPropInfoByClass(Class<?> beanClazz){
+    public static synchronized PropInfo getPropInfoByClass(Class<?> beanClazz){
         PropInfo propInfo = getCacheManager().getCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), PropInfo.class);
         if(propInfo == null){
             propInfo = initPropInfoCache(beanClazz);
@@ -123,7 +125,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static PropInfo getPropInfoByTable(String tableName){
+    public static synchronized PropInfo getPropInfoByTable(String tableName){
         Class<?> entityClass = getEntityClassByTable(tableName);
         if(entityClass != null){
             return getPropInfoByClass(entityClass);
@@ -136,7 +138,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static Class<?> getEntityClassByTable(String tableName){
+    public static synchronized Class<?> getEntityClassByTable(String tableName){
         EntityInfoCache entityInfoCache = getEntityInfoByTable(tableName);
         return entityInfoCache != null? entityInfoCache.getEntityClass() : null;
     }
@@ -147,7 +149,7 @@ public class BindingCacheManager {
      * @param classSimpleName
      * @return
      */
-    public static Class<?> getEntityClassBySimpleName(String classSimpleName){
+    public static synchronized Class<?> getEntityClassBySimpleName(String classSimpleName){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_ENTITYNAME_CLASS, classSimpleName, Class.class);
     }
@@ -157,7 +159,7 @@ public class BindingCacheManager {
      * @param table
      * @return
      */
-    public static BaseMapper getMapperByTable(String table){
+    public static synchronized BaseMapper getMapperByTable(String table){
         EntityInfoCache entityInfoCache = getEntityInfoByTable(table);
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
@@ -170,7 +172,7 @@ public class BindingCacheManager {
      * @param entityClazz
      * @return
      */
-    public static BaseMapper getMapperByClass(Class<?> entityClazz){
+    public static synchronized BaseMapper getMapperByClass(Class<?> entityClazz){
         EntityInfoCache entityInfoCache = getEntityInfoByClass(entityClazz);
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
@@ -183,10 +185,10 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static List<Field> getFields(Class<?> beanClazz){
+    public static synchronized List<Field> getFields(Class<?> beanClazz){
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), List.class);
         if(fields == null){
-            fields = initClassFields(beanClazz, null);
+            fields = BeanUtils.extractAllFields(beanClazz);
             getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), fields);
         }
         return fields;
@@ -197,11 +199,11 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
-        String key = S.join(beanClazz.getName(), annotation.getName());
+    public static synchronized List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+        String key = S.joinWith(Cons.SEPARATOR_COMMA, beanClazz.getName(), annotation.getName());
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
         if(fields == null){
-            fields = initClassFields(beanClazz, annotation);
+            fields = BeanUtils.extractFields(beanClazz, annotation);
             getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, key, fields);
         }
         return fields;
@@ -225,31 +227,29 @@ public class BindingCacheManager {
     /**
      * 初始化
      */
-    private static void initEntityInfoCache(){
+    private static void initEntityInfoCache() {
         StaticMemoryCacheManager cacheManager = getCacheManager();
-        if(cacheManager.isUninitializedCache(CACHE_NAME_CLASS_ENTITY) == false){
+        if (cacheManager.isUninitializedCache(CACHE_NAME_CLASS_ENTITY) == false) {
             return;
         }
         // 初始化有service的entity缓存
         Map<String, IService> serviceMap = ContextHelper.getApplicationContext().getBeansOfType(IService.class);
         Set<String> uniqueEntitySet = new HashSet<>();
-        if(V.notEmpty(serviceMap)){
-            for(Map.Entry<String, IService> entry : serviceMap.entrySet()){
+        if (V.notEmpty(serviceMap)) {
+            for (Map.Entry<String, IService> entry : serviceMap.entrySet()) {
                 Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
-                if(entityClass != null){
+                if (entityClass != null) {
                     IService entityIService = entry.getValue();
-                    if(uniqueEntitySet.contains(entityClass.getName())){
-                        if(entityIService.getClass().getAnnotation(Primary.class) != null){
+                    if (uniqueEntitySet.contains(entityClass.getName())) {
+                        if (entityIService.getClass().getAnnotation(Primary.class) != null) {
                             EntityInfoCache entityInfoCache = cacheManager.getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), EntityInfoCache.class);
-                            if(entityInfoCache != null){
+                            if (entityInfoCache != null) {
                                 entityInfoCache.setService(entry.getKey());
                             }
-                        }
-                        else{
+                        } else {
                             log.warn("Entity: {} 存在多个service实现类，可能导致调用实例与预期不一致!", entityClass.getName());
                         }
-                    }
-                    else{
+                    } else {
                         EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, entry.getKey());
                         cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
                         cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
@@ -258,36 +258,36 @@ public class BindingCacheManager {
                     }
                 }
             }
-        }
-        else{
+        } else {
             log.debug("未获取到任何有效@Service.");
         }
         // 初始化没有service的table-mapper缓存
         SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
-        Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
-        if(V.notEmpty(mappers)){
-            for(Class<?> mapperClass : mappers){
-                Type[] types = mapperClass.getGenericInterfaces();
-                try{
-                    if(types != null && types.length > 0 && types[0] != null){
-                        ParameterizedType genericType = (ParameterizedType) types[0];
-                        Type[] superTypes = genericType.getActualTypeArguments();
-                        if(superTypes != null && superTypes.length > 0 && superTypes[0] != null){
-                            String entityClassName = superTypes[0].getTypeName();
-                            if(!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1){
-                                Class<?> entityClass = Class.forName(entityClassName);
-                                EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null);
-                                entityInfoCache.setBaseMapper((Class<? extends BaseMapper>) mapperClass);
-                                cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
-                                cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
-                                cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
-                                uniqueEntitySet.add(entityClass.getName());
+        if (sqlSessionFactory != null) {
+            Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
+            if (V.notEmpty(mappers)) {
+                for (Class<?> mapperClass : mappers) {
+                    Type[] types = mapperClass.getGenericInterfaces();
+                    try {
+                        if (types.length > 0 && types[0] != null) {
+                            ParameterizedType genericType = (ParameterizedType) types[0];
+                            Type[] superTypes = genericType.getActualTypeArguments();
+                            if (superTypes != null && superTypes.length > 0 && superTypes[0] != null) {
+                                String entityClassName = superTypes[0].getTypeName();
+                                if (!uniqueEntitySet.contains(entityClassName) && entityClassName.length() > 1) {
+                                    Class<?> entityClass = Class.forName(entityClassName);
+                                    EntityInfoCache entityInfoCache = new EntityInfoCache(entityClass, null);
+                                    entityInfoCache.setBaseMapper((Class<? extends BaseMapper>) mapperClass);
+                                    cacheManager.putCacheObj(CACHE_NAME_CLASS_ENTITY, entityClass.getName(), entityInfoCache);
+                                    cacheManager.putCacheObj(CACHE_NAME_TABLE_ENTITY, entityInfoCache.getTableName(), entityInfoCache);
+                                    cacheManager.putCacheObj(CACHE_NAME_ENTITYNAME_CLASS, entityClass.getSimpleName(), entityClass);
+                                    uniqueEntitySet.add(entityClass.getName());
+                                }
                             }
                         }
+                    } catch (Exception e) {
+                        log.warn("解析mapper异常", e);
                     }
-                }
-                catch (Exception e){
-                    log.warn("解析mapper异常", e);
                 }
             }
         }
@@ -303,42 +303,6 @@ public class BindingCacheManager {
         PropInfo propInfoCache = new PropInfo(beanClazz);
         getCacheManager().putCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), propInfoCache);
         return propInfoCache;
-    }
-
-    /**
-     * 初始化fields
-     * @param beanClazz
-     * @return
-     */
-    private static List<Field> initClassFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
-        List<Field> fieldList = new ArrayList<>();
-        Set<String> fieldNameSet = new HashSet<>();
-        loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
-        return fieldList;
-    }
-
-    /**
-     * 循环向上查找fields
-     * @param beanClazz
-     * @param annotation
-     * @param fieldList
-     * @param fieldNameSet
-     */
-    private static void loopFindFields(Class<?> beanClazz, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
-        if(beanClazz == null) {
-            return;
-        }
-        Field[] fields = beanClazz.getDeclaredFields();
-        if(V.notEmpty(fields)){ //被重写属性，以子类override的为准
-            Arrays.stream(fields).forEach((field)->{
-                if(!fieldNameSet.contains(field.getName()) &&
-                        (annotation == null || field.getAnnotation(annotation) != null)){
-                    fieldList.add(field);
-                    fieldNameSet.add(field.getName());
-                }
-            });
-        }
-        loopFindFields(beanClazz.getSuperclass(), annotation, fieldList, fieldNameSet);
     }
 
 }

@@ -15,9 +15,10 @@
  */
 package com.diboot.core.binding.binder.remote;
 
-import com.diboot.core.util.*;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FeignClientBuilder;
 
@@ -46,27 +47,6 @@ public class RemoteBindingManager {
     private static FeignClientBuilder feignClientBuilder;
 
     /**
-     * 从远程接口抓取 Map List
-     * @param module
-     * @param remoteBindDTO
-     * @return
-     */
-    public static List<Map<String, Object>> fetchMapList(String module, RemoteBindDTO remoteBindDTO){
-        remoteBindDTO.setResultType("Map");
-        RemoteBindingProvider bindingProvider = getRemoteBindingProvider(module);
-        JsonResult<String> jsonResult = bindingProvider.loadBindingData(remoteBindDTO);
-        if(jsonResult.isOK()){
-            log.debug("获取到绑定数据: {}", jsonResult.getData());
-            List<Map<String, Object>> mapList = JSON.parseObject(jsonResult.getData(), new TypeReference<List<Map<String, Object>>>(){});
-            return mapList;
-        }
-        else{
-            log.warn("获取绑定数据失败: {}", jsonResult.getMsg());
-            return Collections.EMPTY_LIST;
-        }
-    }
-
-    /**
      * 从远程接口抓取 Entity List
      * @param module
      * @param remoteBindDTO
@@ -78,7 +58,7 @@ public class RemoteBindingManager {
         remoteBindDTO.setResultType("Entity");
         RemoteBindingProvider bindingProvider = getRemoteBindingProvider(module);
         JsonResult<String> jsonResult = bindingProvider.loadBindingData(remoteBindDTO);
-        if(jsonResult.isOK()){
+        if(V.equals(jsonResult.getCode(), 0)){
             log.debug("获取到绑定数据: {}", jsonResult.getData());
             List<T> entityList = JSON.parseArray(jsonResult.getData(), entityClass);
             return entityList;

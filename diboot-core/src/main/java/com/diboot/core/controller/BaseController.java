@@ -62,17 +62,6 @@ public class BaseController {
 	protected DictionaryService dictionaryService;
 
 	/***
-	 * 构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件)
-	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
-	 * @see #buildQueryWrapperByDTO #buildQueryWrapperByQueryParams
-	 * @return
-	 */
-	@Deprecated
-    protected <DTO> QueryWrapper<DTO> buildQueryWrapper(DTO entityOrDto) throws Exception{
-		return buildQueryWrapperByQueryParams(entityOrDto);
-	}
-
-	/***
 	 * 根据DTO构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return

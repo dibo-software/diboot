@@ -45,6 +45,9 @@ public class V {
      */
     private static Validator VALIDATOR = null;
 
+    // region 判空方法
+    /* ================================================== 判空方法 =================================================== */
+
     /**
      * 对象是否为空
      */
@@ -59,6 +62,12 @@ public class V {
             return isEmpty((Map<?, ?>) obj);
         } else if (obj.getClass().isArray()) {
             return Array.getLength(obj) == 0;
+        } else if (obj instanceof Iterator) {
+            return isEmpty((Iterator<?>) obj);
+        } else if (obj instanceof Iterable) {
+            return isEmpty((Iterable<?>) obj);
+        } else if (obj instanceof Enumeration) {
+            return isEmpty((Enumeration<?>) obj);
         }
         return false;
     }
@@ -98,6 +107,18 @@ public class V {
         return obj == null || obj.isEmpty();
     }
 
+    public static <T> boolean isEmpty(Iterator<T> iterator) {
+        return iterator == null || !iterator.hasNext();
+    }
+
+    public static <T> boolean isEmpty(Iterable<T> iterable) {
+        return iterable == null || isEmpty(iterable.iterator());
+    }
+
+    public static <T> boolean isEmpty(Enumeration<T> enumeration) {
+        return enumeration == null || !enumeration.hasMoreElements();
+    }
+
     public static boolean isEmpty(boolean[] array) {
         return array == null || array.length == 0;
     }
@@ -134,42 +155,6 @@ public class V {
         return array == null || array.length == 0;
     }
 
-    public static boolean notEmpty(boolean[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(byte[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(char[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(double[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(float[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(int[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(long[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(short[] array) {
-        return array != null && array.length != 0;
-    }
-
-    public static boolean notEmpty(Object[] array) {
-        return array != null && array.length != 0;
-    }
-
     /**
      * 任意元素为空则返回true
      *
@@ -188,14 +173,16 @@ public class V {
         return false;
     }
 
-    /**
-     * 全都不为空则返回true
-     *
-     * @param objs objs
-     * @return true/false
-     */
-    public static boolean isNoneEmpty(Object... objs) {
-        return !isAnyEmpty(objs);
+    public static <T> boolean isAnyEmpty(Collection<T> collection) {
+        if (isEmpty(collection)) {
+            return true;
+        }
+        for (T obj : collection) {
+            if (isEmpty(obj)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -216,6 +203,23 @@ public class V {
         return true;
     }
 
+    public static <T> boolean isAllEmpty(Collection<T> collection) {
+        if (isEmpty(collection)) {
+            return true;
+        }
+        for (T obj : collection) {
+            if (notEmpty(obj)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    /* ================================================== end ======================================================= */
+    // endregion
+
+    // region 非空判断方法
+    /* ================================================== 非空判断方法 ================================================ */
+
     /**
      * 对象是否为空
      */
@@ -230,6 +234,12 @@ public class V {
             return notEmpty((Map<?, ?>) obj);
         } else if (obj.getClass().isArray()) {
             return Array.getLength(obj) != 0;
+        } else if (obj instanceof Iterator) {
+            return notEmpty((Iterator<?>) obj);
+        } else if (obj instanceof Iterable) {
+            return notEmpty((Iterable<?>) obj);
+        } else if (obj instanceof Enumeration) {
+            return notEmpty((Enumeration<?>) obj);
         }
         return true;
     }
@@ -269,6 +279,54 @@ public class V {
         return obj != null && !obj.isEmpty();
     }
 
+    public static <T> boolean notEmpty(Iterator<T> iterator) {
+        return iterator != null && iterator.hasNext();
+    }
+
+    public static <T> boolean notEmpty(Iterable<T> iterable) {
+        return iterable != null && notEmpty(iterable.iterator());
+    }
+
+    public static <T> boolean notEmpty(Enumeration<T> enumeration) {
+        return enumeration != null && enumeration.hasMoreElements();
+    }
+
+    public static boolean notEmpty(boolean[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(byte[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(char[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(short[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(int[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(long[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(double[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(float[] array) {
+        return array != null && array.length != 0;
+    }
+
+    public static boolean notEmpty(Object[] array) {
+        return array != null && array.length != 0;
+    }
+
     /**
      * 对象不为空且不为0
      */
@@ -284,6 +342,22 @@ public class V {
     }
 
     /**
+     * 全都不为空则返回true
+     *
+     * @param objs objs
+     * @return true/false
+     */
+    public static boolean isNoneEmpty(Object... objs) {
+        return !isAnyEmpty(objs);
+    }
+
+    public static <T> boolean isNoneEmpty(Collection<T> collection) {
+        return !isAnyEmpty(collection);
+    }
+    /* ================================================== end ======================================================= */
+    // endregion
+
+    /**
      * 集合中是否包含指定元素
      *
      * @param collection 集合
@@ -295,6 +369,17 @@ public class V {
     }
 
     /**
+     * 集合中是否包含指定字符串或其大写字符串
+     *
+     * @param collection 集合
+     * @param target     查找字符串
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static boolean containsIgnoreCase(Collection<String> collection, String target) {
+        return collection != null && (collection.contains(target) || collection.contains(target.toLowerCase()) || collection.contains(target.toUpperCase()));
+    }
+
+    /**
      * 集合中是否不包含指定元素
      *
      * @param collection 集合
@@ -303,6 +388,17 @@ public class V {
      */
     public static <T> boolean notContains(Collection<T> collection, T target) {
         return collection != null && !collection.contains(target);
+    }
+
+    /**
+     * 集合中是否不包含指定字符串或其大写字符串
+     *
+     * @param collection 集合
+     * @param target     查找字符串
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static boolean notContainsIgnoreCase(Collection<String> collection, String target) {
+        return !(containsIgnoreCase(collection, target));
     }
 
     /**
@@ -400,6 +496,17 @@ public class V {
         }
         value = S.trim(value).toLowerCase();
         return TRUE_SET.contains(value);
+    }
+
+    /**
+     * 是否是false
+     * <p>不要再写"xxx == false"了</p>
+     *
+     * @param expression bool表达式
+     * @return 入参为false时返回true
+     */
+    public static boolean isFalse(boolean expression) {
+        return !expression;
     }
 
     /**
@@ -506,12 +613,22 @@ public class V {
                 // size相等，且一个为空集合
                 return true;
             }
-            // 已经确定两个集合的数量相等，如果相同位置的值不相等，则必定不相等
-            // 避免使用某些集合容器低效率的contains方法
-            Iterator<?> sourceIterator = sourceList.iterator();
-            Iterator<?> targetIterator = targetList.iterator();
-            while (sourceIterator.hasNext()) {
-                if (!equals(sourceIterator.next(), targetIterator.next())) {
+            if (source instanceof Set) {
+                //noinspection SuspiciousMethodCalls
+                return ((Set<?>) source).containsAll(targetList);
+            }
+
+            // copy from org.apache.commons.collections4.CollectionUtils.isEqualCollection()
+            // 分别统计 Collection中 元素对应的数量
+            CardinalityHelper<Object> helper = new CardinalityHelper<>(sourceList, targetList);
+            // 如果 两个Collection的统计结果 不一致
+            if (helper.cardinalityA.size() != helper.cardinalityB.size()) {
+                return false;
+            }
+            // 遍历统计结果
+            for (final Object obj : helper.cardinalityA.keySet()) {
+                // 相同元素 在两个Collection中的数量却不等
+                if (helper.freqA(obj) != helper.freqB(obj)) {
                     return false;
                 }
             }
@@ -523,13 +640,8 @@ public class V {
             } else if (sourceMap.isEmpty()) {
                 return true;
             }
-            Iterator<? extends Map.Entry<?, ?>> sourceIterator = sourceMap.entrySet().iterator();
-            Iterator<? extends Map.Entry<?, ?>> targetIterator = targetMap.entrySet().iterator();
-            while (sourceIterator.hasNext()) {
-                Map.Entry<?, ?> sourceEntry = sourceIterator.next();
-                Map.Entry<?, ?> targetEntry = targetIterator.next();
-                if (!equals(sourceEntry.getKey(), targetEntry.getKey())
-                        || !equals(sourceEntry.getValue(), targetEntry.getValue())) {
+            for (Map.Entry<?, ?> entry : sourceMap.entrySet()) {
+                if (!equals(entry.getValue(), targetMap.get(entry.getKey()))) {
                     return false;
                 }
             }
@@ -630,6 +742,106 @@ public class V {
             allErrors.add(err.getMessage());
         }
         return S.join(allErrors);
+    }
+
+    /**
+     * Helper class to easily access cardinality properties of two collections.
+     *
+     * @param <O> the element type
+     */
+    private static class CardinalityHelper<O> {
+
+        /**
+         * Contains the cardinality for each object in collection A.
+         */
+        final Map<O, Integer> cardinalityA;
+
+        /**
+         * Contains the cardinality for each object in collection B.
+         */
+        final Map<O, Integer> cardinalityB;
+
+        /**
+         * Create a new CardinalityHelper for two collections.
+         *
+         * @param a the first collection
+         * @param b the second collection
+         */
+        CardinalityHelper(final Iterable<? extends O> a, final Iterable<? extends O> b) {
+            cardinalityA = getCardinalityMap(a);
+            cardinalityB = getCardinalityMap(b);
+        }
+
+        /**
+         * Returns a {@link Map} mapping each unique element in the given
+         * {@link Collection} to an {@link Integer} representing the number
+         * of occurrences of that element in the {@link Collection}.
+         * <p>
+         * Only those elements present in the collection will appear as
+         * keys in the map.
+         * </p>
+         *
+         * @param <O>  the type of object in the returned {@link Map}. This is a super type of &lt;I&gt;.
+         * @param coll the collection to get the cardinality map for, must not be null
+         * @return the populated cardinality map
+         * @throws NullPointerException if coll is null
+         */
+        public static <O> Map<O, Integer> getCardinalityMap(final Iterable<? extends O> coll) {
+            Objects.requireNonNull(coll, "coll");
+            final Map<O, Integer> count = new HashMap<>();
+            for (final O obj : coll) {
+                count.merge(obj, 1, Integer::sum);
+            }
+            return count;
+        }
+
+        /**
+         * Returns the maximum frequency of an object.
+         *
+         * @param obj the object
+         * @return the maximum frequency of the object
+         */
+        public final int max(final Object obj) {
+            return Math.max(freqA(obj), freqB(obj));
+        }
+
+        /**
+         * Returns the minimum frequency of an object.
+         *
+         * @param obj the object
+         * @return the minimum frequency of the object
+         */
+        public final int min(final Object obj) {
+            return Math.min(freqA(obj), freqB(obj));
+        }
+
+        /**
+         * Returns the frequency of this object in collection A.
+         *
+         * @param obj the object
+         * @return the frequency of the object in collection A
+         */
+        public int freqA(final Object obj) {
+            return getFreq(obj, cardinalityA);
+        }
+
+        /**
+         * Returns the frequency of this object in collection B.
+         *
+         * @param obj the object
+         * @return the frequency of the object in collection B
+         */
+        public int freqB(final Object obj) {
+            return getFreq(obj, cardinalityB);
+        }
+
+        private int getFreq(final Object obj, final Map<?, Integer> freqMap) {
+            final Integer count = freqMap.get(obj);
+            if (count != null) {
+                return count;
+            }
+            return 0;
+        }
     }
 
 }

@@ -18,17 +18,19 @@ package com.diboot.core.binding.binder.remote;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.WrapperHelper;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 远程绑定查询执行器
@@ -59,17 +61,20 @@ public class RemoteBindQueryExecutor {
         if(inConditionValues == null){
             return JsonResult.OK();
         }
+        if (inConditionValues.isEmpty()) {
+            return JsonResult.OK(Collections.emptyList());
+        }
+        // 关联主键列名
+        String refJoinCol = remoteBindDTO.getRefJoinCol();
+        PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+        Class idFieldType = propInfo.getFieldTypeByColumn(refJoinCol);
+        Collection<?> formatInValues = BeanUtils.convertIdValuesToType(inConditionValues, idFieldType);
         // 构建queryWrpper
         QueryWrapper<?> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(entityClass);
         queryWrapper.select(remoteBindDTO.getSelectColumns());
         // 构建查询条件
-        String refJoinCol = remoteBindDTO.getRefJoinCol();
-        if (inConditionValues.isEmpty()) {
-            return JsonResult.OK(Collections.emptyList());
-        } else {
-            queryWrapper.in(refJoinCol, inConditionValues);
-        }
+        queryWrapper.in(refJoinCol, formatInValues);
         queryWrapper.and(V.notEmpty(remoteBindDTO.getAdditionalConditions()), e -> remoteBindDTO.getAdditionalConditions().forEach(e::apply));
         // 排序
         WrapperHelper.buildOrderBy(queryWrapper, remoteBindDTO.getOrderBy(), e -> e);

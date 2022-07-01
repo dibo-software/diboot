@@ -130,7 +130,7 @@ create table iam_resource_permission
   display_type varchar(20) not null,
   display_name varchar(100) not null,
   resource_code varchar(100)   null,
-  api_set varchar(3000)   null,
+  permission_code varchar(200)   null,
   sort_id bigint    null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
@@ -144,7 +144,7 @@ comment on column iam_resource_permission.parent_id is '父资源ID';
 comment on column iam_resource_permission.display_type is '展现类型';
 comment on column iam_resource_permission.display_name is '显示名称';
 comment on column iam_resource_permission.resource_code is '前端编码';
-comment on column iam_resource_permission.api_set is '接口列表';
+comment on column iam_resource_permission.permission_code is '权限码';
 comment on column iam_resource_permission.sort_id is '排序号';
 comment on column iam_resource_permission.is_deleted is '是否删除';
 comment on column iam_resource_permission.create_time is '创建时间';
@@ -342,3 +342,31 @@ comment on column iam_user_position.update_time is '更新时间';
 comment on table iam_user_position is '用户岗位关联';
 create index idx_iam_user_position on iam_user_position (user_type, user_id);
 create index idx_iam_user_position_pos on iam_user_position (position_id);
+
+-- 系统配置表
+create table system_config
+(
+    id          bigserial   not null,
+    tenant_id   bigint      not null default 0,
+    type        VARCHAR(50) not null,
+    prop        VARCHAR(50) not null,
+    value       VARCHAR(255),
+    is_deleted  BOOLEAN     not null default FALSE,
+    create_time timestamp   not null default CURRENT_TIMESTAMP,
+    update_time timestamp   null default CURRENT_TIMESTAMP,
+    constraint PK_system_config primary key (id)
+);
+-- 添加备注
+comment on column system_config.id is 'ID';
+comment on column system_config.tenant_id is '租户ID';
+comment on column system_config.type is '类型';
+comment on column system_config.prop is '属性';
+comment on column system_config.value is '属性值';
+comment on column system_config.is_deleted is '删除标记';
+comment on column system_config.create_time is '创建时间';
+comment on column system_config.update_time is '更新时间';
+
+comment on table system_config is '系统配置';
+-- 创建索引
+create index idx_system_config on system_config (type, prop);
+create index idx_system_config_tenant on system_config (tenant_id);

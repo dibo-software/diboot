@@ -134,11 +134,11 @@ create table ${SCHEMA}.iam_resource_permission
     display_type varchar(20) not null,
     display_name varchar(100) not null,
     resource_code varchar(100)   null,
-    api_set varchar(3000)   null,
+    permission_code varchar(200)   null,
     sort_id bigint   null,
     is_deleted tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
-    update_time datetime null,
+    update_time datetime default CURRENT_TIMESTAMP null,
     constraint PK_iam_resource_permission primary key (id)
 );
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'id';
@@ -148,7 +148,7 @@ execute sp_addextendedproperty 'MS_Description', N'父资源ID', 'SCHEMA', '${SC
 execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_type';
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
 execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'resource_code';
-execute sp_addextendedproperty 'MS_Description', N'接口列表', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'api_set';
+execute sp_addextendedproperty 'MS_Description', N'权限码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'permission_code';
 execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'create_time';
@@ -356,3 +356,31 @@ execute sp_addextendedproperty 'MS_Description', N'用户岗位关联', 'SCHEMA'
 -- 创建索引
 create nonclustered index idx_iam_user_position on iam_user_position (user_type, user_id);
 create nonclustered index idx_iam_user_position_pos on iam_user_position (position_id);
+
+-- 系统配置表
+create table ${SCHEMA}.system_config
+(
+    id          bigint identity,
+    tenant_id   bigint       not null default 0,
+    type        varchar(50)  not null,
+    prop        varchar(50)  not null,
+    value       varchar(255) null,
+    is_deleted  tinyint      not null default 0,
+    create_time datetime     not null default CURRENT_TIMESTAMP,
+    update_time datetime     null default CURRENT_TIMESTAMP,
+    constraint PK_system_config primary key (id)
+);
+-- 添加备注
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'type';
+execute sp_addextendedproperty 'MS_Description', N'属性','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'prop';
+execute sp_addextendedproperty 'MS_Description', N'属性值','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'value';
+execute sp_addextendedproperty 'MS_Description', N'删除标记','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建时间','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'更新时间','SCHEMA', '${SCHEMA}', 'table', system_config, 'column', 'update_time';
+
+execute sp_addextendedproperty 'MS_Description', N'系统配置','SCHEMA', '${SCHEMA}', 'table', system_config, null, null;
+-- 创建索引
+create nonclustered index idx_system_config on ${SCHEMA}.system_config(type, prop);
+create nonclustered index idx_system_config_tenant on ${SCHEMA}.system_config(tenant_id);

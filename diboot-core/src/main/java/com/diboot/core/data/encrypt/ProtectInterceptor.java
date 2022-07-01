@@ -17,6 +17,9 @@ package com.diboot.core.data.encrypt;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.data.ProtectFieldHandler;
+import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
@@ -32,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 /**
  * 数据保护拦截器
@@ -66,16 +68,16 @@ public class ProtectInterceptor implements Interceptor {
                         set.add(value.hashCode());
                         if (value instanceof List) {
                             for (Object obj : (List<?>) value) {
-                                if (!encryptor(config, obj, IEncryptStrategy::encrypt)) {
+                                if (!encryptor(config, obj, true)) {
                                     break;
                                 }
                             }
                         } else {
-                            encryptor(config, value, IEncryptStrategy::encrypt);
+                            encryptor(config, value, true);
                         }
                     }
                 } else {
-                    encryptor(config, entity, IEncryptStrategy::encrypt);
+                    encryptor(config, entity, true);
                 }
             }
             return invocation.proceed();
@@ -89,7 +91,7 @@ public class ProtectInterceptor implements Interceptor {
             }
             Configuration config = ((MappedStatement) field.get(resultSetHandler)).getConfiguration();
             for (Object obj : list) {
-                if (!encryptor(config, obj, IEncryptStrategy::decrypt)) {
+                if (!encryptor(config, obj, false)) {
                     break;
                 }
             }
@@ -110,15 +112,22 @@ public class ProtectInterceptor implements Interceptor {
      * @param fun    函数
      * @return 是否进行了处理
      */
-    private boolean encryptor(Configuration config, Object entity, BiFunction<IEncryptStrategy, String, String> fun) {
-        Map<String, IEncryptStrategy> fieldEncryptorMap = ParserCache.getFieldEncryptorMap(entity.getClass());
-        if (!fieldEncryptorMap.isEmpty()) {
+    private boolean encryptor(Configuration config, Object entity, boolean isEncrypt) {
+        Class<?> clazz = entity.getClass();
+        List<String> protectFieldList = ParserCache.getProtectFieldList(clazz);
+        if (!protectFieldList.isEmpty()) {
             MetaObject metaObject = config.newMetaObject(entity);
-            fieldEncryptorMap.forEach((k, v) -> {
-                String value = S.valueOf(metaObject.getValue(k));
-                metaObject.setValue(k, value == null ? null : fun.apply(v, value));
+            ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
+            if (protectFieldHandler == null) {
+                throw new InvalidUsageException("未注入 ProtectFieldHandler 实现");
+            }
+            protectFieldList.forEach(fieldName -> {
+                String value = S.valueOf(metaObject.getValue(fieldName));
+                if (value != null) {
+                    metaObject.setValue(fieldName, isEncrypt ? protectFieldHandler.encrypt(clazz, fieldName, value) : protectFieldHandler.decrypt(clazz, fieldName, value));
+                }
             });
         }
-        return !fieldEncryptorMap.isEmpty();
+        return !protectFieldList.isEmpty();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,9 +15,13 @@
  */
 package com.diboot.iam.annotation.process;
 
-import com.diboot.core.util.*;
+import com.diboot.core.util.AnnotationUtils;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.ApiUri;
 import com.diboot.iam.annotation.BindPermission;
-import com.diboot.iam.auth.IamCustomize;
+import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -26,16 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * 注解提取器
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/12/23
+ * 权限码注解提取器
+ * @author JerryMa
+ * @version v2.6.0
+ * @date 2022/4/21
+ * Copyright © diboot.com
  */
 @Slf4j
 public class ApiPermissionExtractor {
@@ -78,31 +80,13 @@ public class ApiPermissionExtractor {
         }
         for (Object obj : controllerList) {
             Class controllerClass = BeanUtils.getTargetClass(obj);
-            String title = null;
-            // 提取类信息
-            String codePrefix = null;
-            // 注解
-            BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
-            if(bindPermission != null){
-                // 当前资源权限
-                codePrefix = bindPermission.code();
-                if(V.isEmpty(codePrefix)){
-                    Class<?> entityClazz = BeanUtils.getGenericityClass(controllerClass, 0);
-                    if(entityClazz != null){
-                        codePrefix = entityClazz.getSimpleName();
-                    }
-                    else{
-                        log.warn("无法获取{}相关的Entity，请指定注解BindPermission.code参数！", controllerClass.getName());
-                    }
-                }
-                title = bindPermission.name();
+            if(UNIQUE_KEY_SET.contains(controllerClass.getName())){
+               continue;
             }
-            else{
-                title = S.substringBeforeLast(controllerClass.getSimpleName(), "Controller");
-            }
-            ApiPermissionWrapper wrapper = new ApiPermissionWrapper(controllerClass.getSimpleName(), title);
-            buildApiPermissionsInClass(wrapper, controllerClass, codePrefix);
-            if(V.notEmpty(wrapper.getChildren())){
+            UNIQUE_KEY_SET.add(controllerClass.getName());
+            ApiPermissionWrapper wrapper = IamCacheManager.getPermissionCodeWrapper(controllerClass);
+            buildApiPermissionsInClass(wrapper, controllerClass);
+            if(wrapper.notEmpty()){
                 API_PERMISSION_CACHE.add(wrapper);
             }
         }
@@ -112,104 +96,77 @@ public class ApiPermissionExtractor {
      * 构建controller中的Api权限
      * @param wrapper
      * @param controllerClass
-     * @param codePrefix
      */
-    private static void buildApiPermissionsInClass(ApiPermissionWrapper wrapper, Class controllerClass, String codePrefix) {
+    private static void buildApiPermissionsInClass(ApiPermissionWrapper wrapper, Class controllerClass) {
+        List<Method> annoMethods = AnnotationUtils.extractAnnotationMethods(controllerClass, BindPermission.class);
+        if(V.isEmpty(annoMethods)){
+            return;
+        }
         String urlPrefix = "";
         RequestMapping requestMapping = AnnotationUtils.findAnnotation(controllerClass, RequestMapping.class);
         if(requestMapping != null){
             urlPrefix = AnnotationUtils.getNotEmptyStr(requestMapping.value(), requestMapping.path());
         }
-        List<Method> annoMethods = AnnotationUtils.extractAnnotationMethods(controllerClass, BindPermission.class);
-        if(V.notEmpty(annoMethods)){
-            List<ApiPermission> apiPermissions = new ArrayList<>();
-            for(Method method : annoMethods){
-                // 忽略私有方法
-                if(Modifier.isPrivate(method.getModifiers())){
-                    continue;
-                }
-                // 处理BindPermission注解
-                BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
-                String[] permissionCodes = getExtPermissionCodes(method);
-                if(bindPermission == null && permissionCodes == null){
-                    continue;
-                }
-                // 提取方法上的注解url
-                String[] methodAndUrl = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
-                if(methodAndUrl[0] == null || methodAndUrl[1] == null){
-                    continue;
-                }
-                if(bindPermission != null){
-                    String permissionCode = (codePrefix != null)? codePrefix+":"+bindPermission.code() : bindPermission.code();
-                    if (":".equals(permissionCode)) {
-                        continue;
-                    }
-                    // 提取请求url-permission code的关系
-                    buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, bindPermission.name());
-                }
-                // 处理RequirePermissions注解
-                else if(V.notEmpty(permissionCodes)){
-                    for(String permissionCode : permissionCodes){
-                        // 提取请求url-permission code的关系
-                        buildApiPermission(apiPermissions, controllerClass, urlPrefix, wrapper.getClassTitle(), permissionCode, methodAndUrl, null);
-                    }
-                }
+        List<ApiPermission> apiPermissions = new ArrayList<>();
+        Map<String, ApiPermission> tempCode2ObjMap = new HashMap<>();
+        for(Method method : annoMethods){
+            // 忽略私有方法
+            if(Modifier.isPrivate(method.getModifiers())){
+                continue;
             }
-            // 添加至wrapper
-            if(apiPermissions.size() > 0){
-                wrapper.setChildren(apiPermissions);
+            // 处理BindPermission注解
+            BindPermission bindPermission = AnnotationUtils.getAnnotation(method, BindPermission.class);
+            if(bindPermission == null){
+                continue;
             }
+            // 提取方法上的注解url
+            ApiUri apiUriCombo = AnnotationUtils.extractRequestMethodAndMappingUrl(method);
+            if(apiUriCombo.isEmpty()){
+                continue;
+            }
+            if(bindPermission != null){
+                if(V.isEmpty(bindPermission.code())){
+                    log.warn("忽略无效的权限配置(未指定code): {}.{}", controllerClass.getSimpleName(), method.getName());
+                    continue;
+                }
+                String name = bindPermission.name();
+                String code = (wrapper.getCode() != null)? wrapper.getCode()+":"+bindPermission.code() : bindPermission.code();
+                ApiPermission apiPermission = tempCode2ObjMap.get(code);
+                if(apiPermission == null){
+                    apiPermission = new ApiPermission(code);
+                    tempCode2ObjMap.put(code, apiPermission);
+                    apiPermissions.add(apiPermission);
+                }
+                apiUriCombo.setLabel(name);
+                // 提取请求url-permission code的关系
+                buildApiPermission(apiPermission, urlPrefix, apiUriCombo);
+            }
+        }
+        // 添加至wrapper
+        if(apiPermissions.size() > 0){
+            wrapper.setApiPermissionList(apiPermissions);
         }
     }
 
     /**
      * 构建ApiPermission
-     * @param apiPermissions
-     * @param controllerClass
+     * @param apiPermission
      * @param urlPrefix
-     * @param title
-     * @param permissionCode
-     * @param methodAndUrl
-     * @param apiName
+     * @param apiUriCombo
      */
-    private static void buildApiPermission(List<ApiPermission> apiPermissions, Class controllerClass, String urlPrefix, String title,
-                                    String permissionCode, String[] methodAndUrl, String apiName){
-        String requestMethod = methodAndUrl[0], url = methodAndUrl[1];
+    private static void buildApiPermission(ApiPermission apiPermission, String urlPrefix, ApiUri apiUriCombo){
+        String requestMethod = apiUriCombo.getMethod(), url = apiUriCombo.getUri();
+        List<ApiUri> apiUriList = apiPermission.getApiUriList();
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
+                String uri = u;
                 if(V.notEmpty(urlPrefix)){
-                    for(String path : urlPrefix.split(Cons.SEPARATOR_COMMA)){
-                        ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
-                        apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(path + u).setPermissionCode(permissionCode).setValue(m + ":" + path + u);
-                        if(!UNIQUE_KEY_SET.contains(apiPermission.buildUniqueKey())){
-                            apiPermissions.add(apiPermission);
-                            UNIQUE_KEY_SET.add(apiPermission.buildUniqueKey());
-                        }
-                    }
+                    uri = urlPrefix + u;
                 }
-                else{
-                    ApiPermission apiPermission = new ApiPermission().setClassName(controllerClass.getName()).setClassTitle(title);
-                    apiPermission.setApiMethod(m).setApiName(apiName).setApiUri(u).setPermissionCode(permissionCode).setValue(m + ":" + u);
-                    if(!UNIQUE_KEY_SET.contains(apiPermission.buildUniqueKey())){
-                        apiPermissions.add(apiPermission);
-                        UNIQUE_KEY_SET.add(apiPermission.buildUniqueKey());
-                    }
-                }
+                ApiUri apiUri = new ApiUri(m, uri, apiUriCombo.getLabel());
+                apiUriList.add(apiUri);
             }
         }
-    }
-
-    /**
-     * 获取扩展的待检查的权限码
-     * @param method
-     * @return
-     */
-    private static String[] getExtPermissionCodes(Method method){
-        IamCustomize iamCustomize = ContextHelper.getBean(IamCustomize.class);
-        if(iamCustomize != null){
-            return iamCustomize.getOrignPermissionCodes(method);
-        }
-        return null;
     }
 
 }

@@ -121,14 +121,24 @@ public class BaseConfig {
 		return batchSize;
 	}
 
-	private static String ACTIVE_FLAG_VALUE = null;
+	private static Object ACTIVE_FLAG_VALUE = null;
 	/**
 	 * 获取有效记录的标记值，如 0
 	 * @return
 	 */
-	public static String getActiveFlagValue(){
+	public static Object getActiveFlagValue(){
 		if(ACTIVE_FLAG_VALUE == null){
-			ACTIVE_FLAG_VALUE = getProperty("mybatis-plus.global-config.db-config.logic-not-delete-value", "0");
+			String activeFlagValue = getProperty("mybatis-plus.global-config.db-config.logic-not-delete-value", "0");
+			switch (activeFlagValue) {
+				case "false":
+					ACTIVE_FLAG_VALUE = false;
+					break;
+				case "0":
+					ACTIVE_FLAG_VALUE = 0;
+					break;
+				default:
+					ACTIVE_FLAG_VALUE = activeFlagValue;
+			}
 		}
 		return ACTIVE_FLAG_VALUE;
 	}

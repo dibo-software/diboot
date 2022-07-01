@@ -6,7 +6,6 @@ CREATE TABLE `message_template` (
   `code` varchar(20) NOT NULL COMMENT '模版编码',
   `title` varchar(100) NOT NULL COMMENT '模版标题',
   `content` varchar(500) NOT NULL COMMENT '模版内容',
-  `variables` varchar(200) DEFAULT NULL COMMENT '模版变量',
   `ext_data` varchar(500) DEFAULT NULL COMMENT '扩展数据',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_by` bigint DEFAULT '0' COMMENT '创建人',

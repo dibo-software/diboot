@@ -1,7 +1,6 @@
 package com.diboot.core.dto;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.S;

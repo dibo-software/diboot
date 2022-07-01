@@ -20,7 +20,8 @@ import com.diboot.core.entity.Dictionary;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * V校验工具类测试
@@ -41,14 +42,16 @@ public class CacheTest {
         Assert.assertTrue(dictionaryMapCache.get("G").getType().equals("GENDER"));
         boolean isExpired = cacheManager.isExpired(CACHE_TMPL, "version");
         Assert.assertFalse(isExpired);
-        /*try{
+        try{
             Thread.sleep(60*1000);
         }
         catch (Exception e){
             e.printStackTrace();
         }
+        dictionaryMapCache = cacheManager.getCacheObj(CACHE_TMPL, "version", Map.class);
+        Assert.assertTrue(dictionaryMapCache == null);
         isExpired = cacheManager.isExpired(CACHE_TMPL, "version");
-        Assert.assertTrue(isExpired);*/
+        Assert.assertTrue(isExpired);
     }
 
 }

@@ -25,11 +25,16 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.DynamicQueryMapper;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -42,8 +47,6 @@ import java.util.*;
  */
 @Slf4j
 public class JoinsBinder {
-
-    private static final boolean ENABLE_DATA_PROTECT = PropertiesUtils.getBoolean("diboot.core.enable-data-protect");
 
     /**
      * 关联查询一条数据
@@ -135,6 +138,7 @@ public class JoinsBinder {
         if(mapList.size() > BaseConfig.getBatchSize()){
             log.warn("{} 动态Join查询记录数过大( {} 条), 建议优化", dynamicJoinWrapper.getDtoClass().getSimpleName(), mapList.size());
         }
+        ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
         // 转换查询结果
         List<E> entityList = new ArrayList<>();
         for(Map<String, Object> colValueMap : mapList){
@@ -161,10 +165,13 @@ public class JoinsBinder {
             try{
                 E entityInst = entityClazz.newInstance();
                 BeanUtils.bindProperties(entityInst, fieldValueMap);
-                if (ENABLE_DATA_PROTECT) {
-                    ParserCache.getFieldEncryptorMap(entityClazz).forEach((k, v) -> {
-                        String value = BeanUtils.getStringProperty(entityInst, k);
-                        BeanUtils.setProperty(entityInst, k, value == null ? null : v.decrypt(value));
+                if (protectFieldHandler != null) {
+                    BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(entityInst);
+                    ParserCache.getProtectFieldList(entityClazz).forEach(fieldName -> {
+                        String value = BeanUtils.getStringProperty(entityInst, fieldName);
+                        if (value != null) {
+                            beanWrapper.setPropertyValue(fieldName, protectFieldHandler.decrypt(entityClazz,fieldName,value));
+                        }
                     });
                 }
                 entityList.add(entityInst);

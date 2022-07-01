@@ -20,23 +20,24 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
-import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserMapper;
-import com.diboot.iam.service.IamAccountService;
-import com.diboot.iam.service.IamUserRoleService;
-import com.diboot.iam.service.IamUserService;
+import com.diboot.iam.service.*;
 import com.diboot.iam.util.IamSecurityUtils;
+import com.diboot.iam.vo.IamUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 * 系统用户相关Service实现
@@ -54,6 +55,12 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired
     private IamAccountService iamAccountService;
+
+    @Autowired
+    private IamOrgService iamOrgService;
+
+    @Autowired
+    private IamUserPositionService iamUserPositionService;
 
     @Autowired(required = false)
     private IamCustomize iamCustomize;
@@ -162,6 +169,52 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return exists(wrapper);
     }
 
+    @Override
+    public List<Long> getUserIdsByManagerId(Long managerId) {
+        if(managerId == null){
+            return null;
+        }
+        List<Long> orgIds = iamOrgService.getOrgIdsByManagerId(managerId);
+        if(V.isEmpty(orgIds)){
+            return Collections.emptyList();
+        }
+        List<Long> iamUserIds = getValuesOfField(
+                Wrappers.<IamUser>lambdaQuery().in(IamUser::getOrgId, orgIds),
+                IamUser::getId
+        );
+        return iamUserIds;
+    }
+
+    @Override
+    public List<IamUserVO> getUserViewList(LambdaQueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId) {
+        List<Long> orgIds = new ArrayList<>();
+        // 获取当前部门及所有下属部门的人员列表
+        if (V.notEmpty(orgId) && V.notEquals(orgId, 0L)) {
+            orgIds.add(orgId);
+            // 获取所有下级部门列表
+            orgIds.addAll(iamOrgService.getChildOrgIds(orgId));
+            queryWrapper.in(IamUser::getOrgId, orgIds);
+            // 相应部门下岗位相关用户
+            LambdaQueryWrapper<IamUserPosition> queryUserIds = Wrappers.<IamUserPosition>lambdaQuery()
+                    .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
+                    .in(IamUserPosition::getOrgId, orgIds);
+            List<Long> userIds = iamUserPositionService.getValuesOfField(queryUserIds, IamUserPosition::getUserId);
+            queryWrapper.or().in(V.notEmpty(userIds), IamUser::getId, userIds);
+        }
+        // 查询指定页的数据
+        List<IamUserVO> voList = getViewObjectList(queryWrapper, pagination, IamUserVO.class);
+        if (V.isEmpty(orgIds)) {
+            return voList;
+        }
+        for (IamUserVO user : voList) {
+            List<IamUserPosition> userPositionList = user.getUserPositionList();
+            if (V.notEmpty(userPositionList)) {
+                user.setUserPositionList(userPositionList.stream().filter(p -> orgIds.contains(p.getOrgId())).collect(Collectors.toList()));
+            }
+        }
+        return voList;
+    }
+
     /***
      * 检查重复用户编号
      * @param userNumList
@@ -178,15 +231,16 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return iamUserNums;
     }
 
-    private void createAccount(IamUserAccountDTO userAccountDTO) {
+    protected void createAccount(IamUserAccountDTO userAccountDTO) {
         // 创建账号信息
         IamAccount iamAccount = new IamAccount();
         iamAccount
+                .setTenantId(userAccountDTO.getTenantId())
                 .setUserType(IamUser.class.getSimpleName())
                 .setUserId(userAccountDTO.getId())
                 .setAuthAccount(userAccountDTO.getUsername())
                 .setAuthSecret(userAccountDTO.getPassword())
-                .setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name())
+                .setAuthType(userAccountDTO.getAuthType())
                 .setStatus(userAccountDTO.getStatus());
         // 保存账号
         iamAccountService.createEntity(iamAccount);

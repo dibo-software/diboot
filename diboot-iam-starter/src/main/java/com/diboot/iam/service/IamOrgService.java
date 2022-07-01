@@ -63,4 +63,11 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      */
     List<Long> getParentOrgIds(Long orgId, boolean includeThis);
 
+    /**
+     * 获取某负责人负责的相关部门ids
+     * @param managerId 负责人id
+     * @return
+     */
+    List<Long> getOrgIdsByManagerId(Long managerId);
+
 }

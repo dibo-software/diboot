@@ -32,41 +32,28 @@ public class Cons extends com.diboot.core.config.Cons {
         /**
          * 发送中
          */
-        SENDING("发送中", "SENDING"),
+        PENDING("待发送"),
         /**
          * 异常
          */
-        EXCEPTION("发送异常", "EXCEPTION"),
+        FAILED("发送失败"),
         // 如果是短信、邮件则送达表示发送成功
         /**
          * 签收
          */
-        DELIVERY("已送达", "DELIVERY"),
-        // 如果是站内信，那么状态是已读、未读
-        /**
-         * 未读
-         */
-        UNREAD("未读", "UNREAD"),
+        DELIVERY("已送达"),
         /**
          * 已读
          */
-        READ("已读", "READ");
+        READ("已读");
 
-        private String itemName;
-
-        private String itemValue;
-
-        MESSAGE_STATUS(String itemName, String itemValue) {
-            this.itemName = itemName;
-            this.itemValue = itemValue;
+        private String label;
+        MESSAGE_STATUS(String label){
+            this.label = label;
         }
 
-        public String getItemName() {
-            return itemName;
-        }
-
-        public String getItemValue() {
-            return itemValue;
+        public String label(){
+            return label;
         }
     }
 
@@ -74,25 +61,18 @@ public class Cons extends com.diboot.core.config.Cons {
      * 消息发送通道
      */
     public enum MESSAGE_CHANNEL {
-        WEBSOCKET("站内信", "WEBSOCKET"),
-        TEXT_MESSAGE("短信", "TEXT_MESSAGE"),
-        EMAIL("邮件", "EMAIL");
+        SMS("短信"),
+        SYS_MSG("系统消息"),
+        WEBSOCKET("站内信"),
+        EMAIL("邮件");
 
-        private String itemName;
-
-        private String itemValue;
-
-        MESSAGE_CHANNEL(String itemName, String itemValue) {
-            this.itemName = itemName;
-            this.itemValue = itemValue;
+        private String label;
+        MESSAGE_CHANNEL(String label){
+            this.label = label;
         }
 
-        public String getItemName() {
-            return itemName;
-        }
-
-        public String getItemValue() {
-            return itemValue;
+        public String label(){
+            return label;
         }
     }
 

@@ -18,6 +18,7 @@ package diboot.core.test.binder.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.data.access.DataAccessCheckpoint;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
@@ -36,6 +37,7 @@ import lombok.experimental.Accessors;
 public class Department extends BaseEntity {
     private static final long serialVersionUID = -4849732665419794547L;
 
+    @BindQuery(comparison = Comparison.EQ, strategy = Strategy.INCLUDE_NULL)
     @TableField
     private Long parentId;
 
@@ -43,7 +45,7 @@ public class Department extends BaseEntity {
     @DataAccessCheckpoint()
     private Long orgId;
 
-    @BindQuery(comparison = Comparison.CONTAINS)
+    @BindQuery(comparison = Comparison.STARTSWITH)
     @TableField
     private String name;
 

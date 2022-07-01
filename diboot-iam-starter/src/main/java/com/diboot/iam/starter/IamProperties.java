@@ -40,17 +40,18 @@ public class IamProperties {
     /**
      * jwt header key
      */
-    private String jwtHeaderKey = "authtoken";
-
-    /**
-     * jwt 签名key
-     */
-    private String jwtSignkey = "Diboot";
+    private String tokenHeaderKey = "authtoken";
 
     /**
      * jwt token过期分钟数
      */
+    @Deprecated
     private int jwtTokenExpiresMinutes = 60;
+
+    /**
+     * token过期分钟数
+     */
+    private int tokenExpiresMinutes = 60;
 
     /**
      * 匿名的url，以,逗号分隔
@@ -64,10 +65,6 @@ public class IamProperties {
      * 是否开启权限检查（开发环境可关闭方便调试）
      */
     private boolean enablePermissionCheck = true;
-    /**
-     * 是否开启无状态 Jwt 身份验证过滤器
-     */
-    private boolean enableStatelessSession = false;
     /**
      * oauth2 客户端配置
      */

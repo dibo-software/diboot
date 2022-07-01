@@ -18,6 +18,7 @@ package com.diboot.core.data.copy;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanWrapper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ public class AcceptAnnoCopier {
         if(V.isEmpty(acceptAnnos)){
             return;
         }
+        BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(target);
         for(String[] annoDef : acceptAnnos){
             boolean override = !"0".equals(annoDef[IDX_OVERRIDE]);
             if(!override){
@@ -82,7 +84,7 @@ public class AcceptAnnoCopier {
             if(sourceField != null){
                 Object sourceValue = BeanUtils.getProperty(source, annoDef[IDX_SOURCE_FIELD]);
                 if(sourceValue != null){
-                    BeanUtils.setProperty(target, annoDef[IDX_TARGET_FIELD], sourceValue);
+                    beanWrapper.setPropertyValue(annoDef[IDX_TARGET_FIELD], sourceValue);
                 }
             }
         }
