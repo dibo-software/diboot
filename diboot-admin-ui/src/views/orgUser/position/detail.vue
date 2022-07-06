@@ -1,7 +1,7 @@
 <script setup lang="ts" name="PositionDetail">
 import type { Position } from './type'
 
-const { loadData, loading, model } = useDetailDefault<Position>('/position')
+const { loadData, loading, model } = useDetail<Position>('/position')
 
 const visible = ref(false)
 

@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['update:selectedKeys', 'update:selectedRows', 'select'])
 
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
-  useListDefault<Position>({
+  useList<Position>({
     baseApi: '/position',
     loadSuccess: () => {
       setCheckedKeys()

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Message } from './type'
 
-const { model, loadData, loading } = useDetailDefault<Message>('/message')
+const { model, loadData, loading } = useDetail<Message>('/message')
 
 const visible = ref(false)
 

@@ -29,10 +29,9 @@ export default defineConfig(({ command }) => {
           { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
           { '@/utils/request': ['api', 'baseURL'] },
           { '@/hooks/list': [['default', 'useList']] },
-          { '@/hooks/list_default': [['default', 'useListDefault']] },
-          { '@/hooks/detail_default': [['default', 'useDetailDefault']] },
-          { '@/hooks/form_default': [['default', 'useFormDefault']] },
-          { '@/hooks/more_default': [['default', 'useMoreDefault']] },
+          { '@/hooks/detail': [['default', 'useDetail']] },
+          { '@/hooks/form': [['default', 'useForm']] },
+          { '@/hooks/more': [['default', 'useMore']] },
           { '@/hooks/upload_file': [['default', 'useUploadFile']] },
           { '@/hooks/tabs': [['default', 'useTabs']] },
           { '@/hooks/tree_crud': [['default', 'useTreeCrud']] }

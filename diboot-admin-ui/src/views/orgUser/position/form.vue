@@ -5,7 +5,7 @@ import { defineEmits } from 'vue'
 
 const baseApi = '/position'
 
-const { loadData, loading, model } = useDetailDefault<Position>(baseApi)
+const { loadData, loading, model } = useDetail<Position>(baseApi)
 const title = ref('')
 const visible = ref(false)
 defineExpose({
@@ -37,7 +37,7 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const { confirmSubmit, submit } = useFormDefault({
+const { confirmSubmit, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)

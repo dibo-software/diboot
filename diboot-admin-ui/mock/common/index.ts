@@ -3,7 +3,7 @@ import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import objectDataListMap from './_objectDataListMap'
-import type { BindData, AsyncBindData } from '@/hooks/more_default'
+import type { BindData, AsyncBindData } from '@/hooks/more'
 
 const line2Hump = (value: string, between = '_') =>
   value.toLowerCase().replace(RegExp(`${between}\\w`, 'g'), str => str.charAt(1).toUpperCase())

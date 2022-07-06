@@ -3,7 +3,7 @@ import { Search, CircleClose } from '@element-plus/icons-vue'
 import type { LoginTrace } from './type'
 
 const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSearch, resetFilter } =
-  useListDefault<LoginTrace>({
+  useList<LoginTrace>({
     baseApi: '/loginTrace'
   })
 getList()

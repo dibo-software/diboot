@@ -8,7 +8,7 @@ import UserPositionTableForm from '../position/userPositionTableForm.vue'
 
 const baseApi = '/user'
 
-const { loadData, loading, model } = useDetailDefault<UserModel>(baseApi)
+const { loadData, loading, model } = useDetail<UserModel>(baseApi)
 const {
   getTree,
   treeDataList: orgTree,
@@ -50,7 +50,7 @@ const emit = defineEmits<{
 }>()
 
 const userPositionTableForm = ref()
-const { confirmSubmit, submit } = useFormDefault({
+const { confirmSubmit, submit } = useForm({
   baseApi,
   async afterValidate() {
     await userPositionTableForm.value?.validate()

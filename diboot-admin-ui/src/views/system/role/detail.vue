@@ -2,7 +2,7 @@
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'
-const { loadData, loading, model } = useDetailDefault<Role>('/role')
+const { loadData, loading, model } = useDetail<Role>('/role')
 
 const visible = ref(false)
 

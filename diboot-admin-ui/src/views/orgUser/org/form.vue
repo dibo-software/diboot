@@ -5,7 +5,7 @@ import { defineEmits, defineProps } from 'vue'
 
 const baseApi = '/org'
 
-const { loadData, loading, model } = useDetailDefault<OrgModel>(baseApi)
+const { loadData, loading, model } = useDetail<OrgModel>(baseApi)
 const {
   getTree,
   treeDataList,
@@ -64,7 +64,7 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const { confirmSubmit, submit } = useFormDefault({
+const { confirmSubmit, submit } = useForm({
   baseApi,
   successCallback(id) {
     console.log('successCallback id', id)

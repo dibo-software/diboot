@@ -4,10 +4,9 @@ import type { MessageTemplate } from './type'
 import Detail from '@/views/system/messageTemplate/detail.vue'
 import Form from './form.vue'
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove } =
-  useListDefault<MessageTemplate>({
-    baseApi: '/messageTemplate'
-  })
+const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove } = useList<MessageTemplate>({
+  baseApi: '/messageTemplate'
+})
 getList()
 
 // 搜索区折叠

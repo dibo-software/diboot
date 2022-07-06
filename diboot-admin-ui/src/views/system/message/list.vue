@@ -3,7 +3,7 @@ import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue
 import type { Message } from './type'
 import Detail from '@/views/system/message/detail.vue'
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useListDefault<Message>({
+const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<Message>({
   baseApi: '/message'
 })
 getList()
@@ -15,7 +15,7 @@ const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
 
-const { more, initMore } = useMoreDefault({ dict: ['MESSAGE_CHANNEL', 'MESSAGE_STATUS'] })
+const { more, initMore } = useMore({ dict: ['MESSAGE_CHANNEL', 'MESSAGE_STATUS'] })
 initMore()
 </script>
 

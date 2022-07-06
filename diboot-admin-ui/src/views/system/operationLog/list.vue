@@ -3,7 +3,7 @@ import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue
 import type { OperationLog } from './type'
 import Detail from '@/views/system/operationLog/detail.vue'
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useListDefault<OperationLog>({
+const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<OperationLog>({
   baseApi: '/operationLog'
 })
 getList()

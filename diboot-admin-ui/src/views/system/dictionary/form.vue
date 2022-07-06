@@ -19,7 +19,7 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['complete'])
 
 // 加载表单信息
-const { loadData, loading, model } = useDetailDefault<Dictionary>(baseApi)
+const { loadData, loading, model } = useDetail<Dictionary>(baseApi)
 const title = ref('')
 const visible = ref(false)
 const open = async (id?: string) => {
@@ -64,7 +64,7 @@ const rules = reactive<FormRules>({
   ]
 })
 
-const { submit } = useFormDefault({
+const { submit } = useForm({
   baseApi,
   async enhance(values: Dictionary): Promise<Dictionary> {
     const { type, children } = values

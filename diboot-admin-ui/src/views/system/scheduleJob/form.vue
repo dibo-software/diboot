@@ -5,7 +5,7 @@ import type { Job, ScheduleJob } from './type'
 
 const baseApi = '/scheduleJob'
 
-const { loadData, loading, model } = useDetailDefault<ScheduleJob>(baseApi)
+const { loadData, loading, model } = useDetail<ScheduleJob>(baseApi)
 
 const title = ref('')
 
@@ -13,7 +13,7 @@ const visible = ref(false)
 
 const jobList = ref<Array<Job>>()
 
-const { more, initMore } = useMoreDefault({ dict: 'INIT_STRATEGY' })
+const { more, initMore } = useMore({ dict: 'INIT_STRATEGY' })
 initMore()
 
 defineExpose({
@@ -43,7 +43,7 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const { confirmSubmit, submit } = useFormDefault({
+const { confirmSubmit, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)

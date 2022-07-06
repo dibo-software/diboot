@@ -16,7 +16,7 @@ const {
   pagination,
   remove,
   batchRemove
-} = useListDefault<ScheduleJobLog>({
+} = useList<ScheduleJobLog>({
   baseApi: '/scheduleJob/log'
 })
 

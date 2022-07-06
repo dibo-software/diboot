@@ -124,7 +124,7 @@ const {
 // 初始化后台权限
 initRestPermissions('/resourcePermission/apiList')
 // more hook
-const { more, initMore } = useMoreDefault({ dict: 'RESOURCE_PERMISSION_CODE' })
+const { more, initMore } = useMore({ dict: 'RESOURCE_PERMISSION_CODE' })
 initMore().then(() => {
   // 初始化权限选项
   initResourcePermissionCodeOptions(more.resourcePermissionCodeOptions)

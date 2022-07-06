@@ -20,7 +20,7 @@ watch(
 interface UserSearch extends UserModel {
   keywords?: string
 }
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove } = useListDefault<
+const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove } = useList<
   UserModel,
   UserSearch
 >({

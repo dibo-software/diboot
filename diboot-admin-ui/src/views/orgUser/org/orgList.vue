@@ -15,13 +15,15 @@ const emit = defineEmits(['reload'])
 interface OrgSearch extends OrgModel {
   keywords?: string
 }
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
-  useListDefault<OrgModel, OrgSearch>({
-    baseApi: '/org',
-    deleteCallback() {
-      emit('reload')
-    }
-  })
+const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } = useList<
+  OrgModel,
+  OrgSearch
+>({
+  baseApi: '/org',
+  deleteCallback() {
+    emit('reload')
+  }
+})
 getList()
 const searchVal = ref('')
 const onSearchValChanged = (val: string) => {

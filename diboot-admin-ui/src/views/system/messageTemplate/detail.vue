@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageTemplate } from './type'
 
-const { model, loadData, loading } = useDetailDefault<MessageTemplate>('/messageTemplate')
+const { model, loadData, loading } = useDetail<MessageTemplate>('/messageTemplate')
 
 const visible = ref(false)
 

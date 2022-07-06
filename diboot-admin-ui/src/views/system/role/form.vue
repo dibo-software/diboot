@@ -5,7 +5,7 @@ import type { ResourcePermission } from '@/views/system/resourcePermission/type'
 
 const baseApi = '/role'
 
-const { loadData, loading, model } = useDetailDefault<Role>(baseApi)
+const { loadData, loading, model } = useDetail<Role>(baseApi)
 
 const title = ref('')
 const visible = ref(false)
@@ -51,7 +51,7 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const { confirmSubmit, submit } = useFormDefault({
+const { confirmSubmit, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)

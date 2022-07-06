@@ -1,7 +1,7 @@
 <script setup lang="ts" name="RoleDetail">
 import type { ScheduleJobLog } from '../type'
 
-const { loadData, loading, model } = useDetailDefault<ScheduleJobLog>('/scheduleJob/log')
+const { loadData, loading, model } = useDetail<ScheduleJobLog>('/scheduleJob/log')
 
 const visible = ref(false)
 

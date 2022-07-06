@@ -6,7 +6,7 @@ import LogList from './log/list.vue'
 
 const baseApi = '/scheduleJob'
 
-const { getList, loading, dataList, remove } = useListDefault<ScheduleJob>({ baseApi })
+const { getList, loading, dataList, remove } = useList<ScheduleJob>({ baseApi })
 
 getList()
 
