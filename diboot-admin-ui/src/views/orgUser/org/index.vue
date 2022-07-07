@@ -42,7 +42,7 @@ const treeDataChange = async () => {
 }
 .el-aside {
   box-sizing: border-box;
-  border-right: 1px solid #eee;
+  border-right: solid 1px var(--el-menu-border-color);
 }
 .right-container {
   box-sizing: border-box;

@@ -126,7 +126,7 @@ defineExpose({ reload })
 }
 .el-footer {
   padding: 15px 10px;
-  border-top: 1px solid #e5e5e5;
+  border-top: solid 1px var(--el-menu-border-color);
 }
 .tree-container {
   height: 100%;

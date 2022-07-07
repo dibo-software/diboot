@@ -97,6 +97,9 @@ export default (option: MoreOption) => {
     }
   }
 
+  // 异步加载状态
+  const asyncBindLoading = ref(false)
+
   /**
    * 加载 More
    *
@@ -107,10 +110,12 @@ export default (option: MoreOption) => {
     if (moreLoader.disabled) {
       return []
     }
+    asyncBindLoading.value = true
     const res = await api.get<LabelValue[]>(
       `/common/bindData/${nodeData?.value ?? ''}/${nodeData?.type ?? ''}`,
       moreLoader
     )
+    asyncBindLoading.value = false
     if (res.code === 0) return res.data ?? []
     else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
     return []
@@ -132,9 +137,6 @@ export default (option: MoreOption) => {
     return moreLoader
   }
 
-  // 异步加载状态（远程过滤）
-  const asyncBindLoading = ref(false)
-
   /**
    * 远程过滤加载选项
    *
@@ -146,11 +148,9 @@ export default (option: MoreOption) => {
       more[loader] = []
       return
     }
-    asyncBindLoading.value = true
     const moreLoader = findAsyncBindLoader(loader)
     moreLoader.keyword = value
     more[loader] = await loadMore(moreLoader)
-    asyncBindLoading.value = false
   }
 
   /**
@@ -168,13 +168,13 @@ export default (option: MoreOption) => {
   }
 
   /**
-   * 控制相关选项的获取
+   * 处理联动
    *
    * @param value 选项值
    * @param controlKey
-   * @param form
+   * @param form 表单（当需要重置被控值时）
    */
-  const controlRelationOptions = (value: string, controlKey: string, form: Partial<Record<string, unknown>>) => {
+  const handleLinkage = (value: string, controlKey: string, form: Record<string, unknown>) => {
     if (linkageControl == null) {
       throw new Error(`No control! Please check 'linkageControl'!`)
     }
@@ -188,11 +188,11 @@ export default (option: MoreOption) => {
       moreLoader.disabled = isNull
       if (moreLoader.condition == null) moreLoader.condition = {}
       moreLoader.condition[condition] = value
-      form[prop] = undefined
-      if (autoLoad !== false) more[loader] = isNull ? [] : await loadMore(moreLoader)
+      if (form) form[prop] = undefined
+      more[loader] = autoLoad === false || isNull ? [] : await loadMore(moreLoader)
     }
     controlItem instanceof Array ? controlItem.forEach(item => execute(item)) : execute(controlItem)
   }
 
-  return { asyncBindLoading, more, initMore, remoteMoreFilter, lazyLoadMore, controlRelationOptions }
+  return { more, initMore, asyncBindLoading, remoteMoreFilter, lazyLoadMore, handleLinkage }
 }

@@ -26,7 +26,7 @@ const changeCurrentNode = (currentNode: OrgModel) => {
 }
 .el-aside {
   box-sizing: border-box;
-  border-right: 1px solid #eee;
+  border-right: solid 1px var(--el-menu-border-color);
 }
 .list-container {
   width: 100%;
