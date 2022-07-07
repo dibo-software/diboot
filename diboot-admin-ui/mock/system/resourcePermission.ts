@@ -5,6 +5,7 @@ import { JsonResult } from '../_util'
 import Mock, { Random } from 'mockjs'
 import realResourcePermissionData from './_realResourcePermissionData'
 import dbRestPermissionDataList from './_realRestPermissionData'
+import dbCloudRestPermissionDataList from './_realCloudRestPermissionData'
 import realRoleResourcePermissionData from './_realRoleResourcePermissionData'
 const baseUrl = '/api/resourcePermission'
 const deleteDataIds: string[] = []
@@ -123,6 +124,14 @@ export default [
     method: 'get',
     response: ({ query }: ApiRequest) => {
       return JsonResult.OK(dbRestPermissionDataList)
+    }
+  },
+  {
+    url: `${baseUrl}/moduleApiList`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      return JsonResult.OK(dbCloudRestPermissionDataList)
     }
   },
   {

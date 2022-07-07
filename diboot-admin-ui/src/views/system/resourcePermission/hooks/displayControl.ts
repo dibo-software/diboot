@@ -3,18 +3,21 @@ export interface ControlField {
   redirectPath: boolean
   permissionList: boolean
   permissionCodes: boolean
+  appModule: boolean
 }
 const defaultTrueConfig: ControlField = {
   selectResourceCode: true,
   redirectPath: true,
   permissionList: true,
-  permissionCodes: true
+  permissionCodes: true,
+  appModule: true
 }
 const defaultFalseConfig: ControlField = {
   selectResourceCode: false,
   redirectPath: false,
   permissionList: false,
-  permissionCodes: false
+  permissionCodes: false,
+  appModule: false
 }
 const displayFieldsMap = {
   CATALOGUE: Object.assign(defaultFalseConfig, { redirectPath: true }),

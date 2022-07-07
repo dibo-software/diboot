@@ -3,6 +3,7 @@ import type { RouteMeta } from 'vue-router'
 export interface ResourcePermission {
   id?: string
   parentId: string
+  appModule?: string
   parentDisplayName?: string
   displayType?: string
   displayName?: string

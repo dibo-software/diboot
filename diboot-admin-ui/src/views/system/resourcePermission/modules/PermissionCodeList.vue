@@ -7,6 +7,7 @@ import { getElementAbsoluteLocation } from '@/utils/document'
 type Props = {
   title: string
   toggle: boolean
+  menuType: string
   configCode: string
   menuResourceCode?: string | unknown
   permissionCodes: string[]
@@ -182,7 +183,8 @@ const _reload = () => {
 }
 </script>
 <template>
-  <el-space wrap :fill="true" class="permission-list-container">
+  <el-alert v-if="menuType !== 'MENU'" title="菜单分类 可配置权限接口" type="warning" :closable="false" />
+  <el-space v-else wrap :fill="true" class="permission-list-container">
     <span class="config-title">{{ title }}</span>
     <el-select
       v-model="searchVal"
@@ -200,6 +202,7 @@ const _reload = () => {
         :value="`${options.permissionCode}#${options.title}`"
       />
     </el-select>
+    <el-alert title="选择 应用模块 后配置权限" type="success" />
     <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
       <div id="permissionGroups" :key="reloadKey" class="permission-groups">
         <el-descriptions
@@ -252,6 +255,7 @@ const _reload = () => {
 
 <style scoped lang="scss" rel="stylesheet/scss">
 .permission-list-container {
+  width: 100%;
   .permission-groups {
     &__head {
       margin-bottom: 10px;

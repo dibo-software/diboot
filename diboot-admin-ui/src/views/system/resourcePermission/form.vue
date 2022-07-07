@@ -47,6 +47,10 @@ const boxHeight = inject<number>('boxHeight', 0)
 // 切换菜单类型
 const handleChangeDisplayType = (val: string | number | boolean) => {
   changeDisplayType(val as MenuType)
+  // 切换模块
+  changeModule(val === 'MENU' ? model.value.appModule ?? '' : '')
+  // 权限码回到菜单设置
+  autoRefreshPermissionCode(model.value)
 }
 // 添加按钮权限
 const handleAddTab = () => {
@@ -91,7 +95,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 // 计算已经存在的tab权限码
 const existPermissionCodes = computed(() => {
   if (!tabs.value) return []
-  return tabs.value.map(item => item.resourceCode as string)
+  return tabs.value.filter(item => !!item.resourceCode).map(item => item.resourceCode as string)
 })
 // ======> hook相关
 // 滚动高度计算hook
@@ -112,9 +116,12 @@ const {
   configPermissionCodes,
   loadingRestPermissions,
   restPermissions,
+  moduleList,
   initRestPermissions,
+  initModuleRestPermissions,
   initResourcePermissionCodeOptions,
   initReactiveData,
+  changeModule,
   changeBtnResourceCode,
   changeBtnPermissionName,
   toggleBtnResourceCodeSelect,
@@ -122,7 +129,7 @@ const {
   autoRefreshPermissionCode
 } = usePermissionControl()
 // 初始化后台权限
-initRestPermissions('/resourcePermission/apiList')
+initModuleRestPermissions('/resourcePermission/moduleApiList')
 // more hook
 const { more, initMore } = useMore({ dict: 'RESOURCE_PERMISSION_CODE' })
 initMore().then(() => {
@@ -161,7 +168,9 @@ watch(
     initReactiveData(val.permissionCodes ?? [])
     // 刷新配置
     toggle.value = !toggle.value
-    nextTick(computedFixedHeight)
+    nextTick(() => {
+      computedFixedHeight()
+    })
   }
 )
 // 按钮权限tab变更
@@ -169,6 +178,17 @@ watch(
   () => tabs.value,
   () => {
     model.value.permissionList = tabs.value
+  },
+  {
+    deep: true
+  }
+)
+// 按钮权限tab变更
+watch(
+  () => model.value.appModule,
+  val => {
+    changeModule(val ?? '')
+    autoRefreshPermissionCode(model.value)
   },
   {
     deep: true
@@ -209,6 +229,11 @@ watch(
                   <el-radio-button label="IFRAME">iframe</el-radio-button>
                 </el-radio-group>
               </el-form-item>
+              <el-form-item v-if="displayFields?.appModule" label="应用模块">
+                <el-select v-model="model.appModule" placeholder="应用模块" clearable>
+                  <el-option v-for="item in moduleList" :key="item" :label="item" :value="item" />
+                </el-select>
+              </el-form-item>
               <el-form-item label="图标">
                 <icon-select v-model="model.routeMeta.icon" />
               </el-form-item>
@@ -229,11 +254,10 @@ watch(
               <el-form-item label="路由地址">
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
               </el-form-item>
-
               <el-form-item v-if="displayFields?.redirectPath" label="重定向">
                 <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
               </el-form-item>
-              <el-form-item label="菜单权限接口">
+              <el-form-item v-if="displayFields?.permissionCodes" label="菜单权限接口">
                 <permission-code-select
                   v-model="model.permissionCodes"
                   type="menu"
@@ -348,6 +372,7 @@ watch(
         <permission-code-list
           v-else
           v-model:permission-codes="configPermissionCodes"
+          :menu-type="model.displayType"
           :title="configPermissionTitle"
           :toggle="toggle"
           :config-code="configResourceCode"
