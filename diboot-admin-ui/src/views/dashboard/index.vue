@@ -267,7 +267,7 @@ const pieChart: EChartsOption = {
 </script>
 
 <template>
-  <div style="height: calc(100% - 20px); margin: 10px; display: flex">
+  <div style="height: calc(100% - 20px); padding: 10px; display: flex">
     <div style="width: calc(100% - 400px)">
       <el-card style="height: 49%" :body-style="{ height: 'calc(100% - 30px)' }">
         <Chart :option="stackedAreaChart" />

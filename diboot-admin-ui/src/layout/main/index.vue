@@ -18,13 +18,15 @@ const viewTabsStore = useViewTabsStore()
 </script>
 
 <template>
-  <div class="content">
-    <router-view v-slot="{ Component }">
-      <keep-alive :include="viewTabsStore.cachedViews">
-        <component :is="Component" />
-      </keep-alive>
-    </router-view>
-  </div>
+  <el-scrollbar>
+    <div class="content">
+      <router-view v-slot="{ Component }">
+        <keep-alive :include="viewTabsStore.cachedViews">
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </div>
+  </el-scrollbar>
 </template>
 
 <style scoped lang="scss">
