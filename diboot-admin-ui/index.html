@@ -7,7 +7,49 @@
     <title>Diboot Admin UI - beta</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <style>
+          .first-loading-wrapper {
+              height: 100vh;
+              width: 100vw;
+              position: relative;
+          }
+          .first-loading {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-280px, -90px);
+              font-size: 64px;
+              font-weight: bold;
+              color: #90cf5b;
+              letter-spacing: 5px;
+          }
+          .first-loading::after {
+              content: "Diboot admin ui";
+              position: absolute;
+              left: 0;
+              top: 0;
+              color: #FFF;
+              text-shadow: 0 0 2px #90cf5b, 0 0 1px #90cf5b, 0 0 1px #90cf5b;
+              overflow: hidden;
+              animation: loadingDiboot 3s linear infinite;
+              -webkit-animation: loadingDiboot 3s linear infinite;
+          }
+          @keyframes loadingDiboot {
+              0% {
+                  height: 100%;
+              }
+              100% {
+                  height: 0%;
+              }
+          }
+      </style>
+      <div class="first-loading-wrapper">
+        <div class="first-loading">
+          Diboot admin ui
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
