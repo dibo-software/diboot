@@ -118,7 +118,6 @@ const openForm = (id?: string) => {
       @size-change="getList()"
       @current-change="getList()"
     />
-
     <Detail ref="detailRef" />
     <Form ref="formRef" @complete="getList()" />
   </div>

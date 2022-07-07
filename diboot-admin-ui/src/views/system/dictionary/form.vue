@@ -147,7 +147,7 @@ defineExpose({ open })
           <draggable
             v-model="model.children"
             tag="tbody"
-            item-key="itemValue"
+            item-key="index"
             ghost-class="sortable-ghost"
             handle=".drag-handle"
           >
