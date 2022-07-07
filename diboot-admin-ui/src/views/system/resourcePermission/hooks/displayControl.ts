@@ -1,3 +1,6 @@
+/**
+ * 控制字段显示
+ */
 export interface ControlField {
   selectResourceCode: boolean
   redirectPath: boolean
@@ -5,13 +8,7 @@ export interface ControlField {
   permissionCodes: boolean
   appModule: boolean
 }
-const defaultTrueConfig: ControlField = {
-  selectResourceCode: true,
-  redirectPath: true,
-  permissionList: true,
-  permissionCodes: true,
-  appModule: true
-}
+// 默认配置
 const defaultFalseConfig: ControlField = {
   selectResourceCode: false,
   redirectPath: false,
@@ -20,8 +17,14 @@ const defaultFalseConfig: ControlField = {
   appModule: false
 }
 const displayFieldsMap = {
-  CATALOGUE: Object.assign(defaultFalseConfig, { redirectPath: true }),
-  MENU: Object.assign(defaultTrueConfig, { redirectPath: false }),
+  CATALOGUE: Object.assign(_.clone(defaultFalseConfig), { redirectPath: true }),
+  MENU: {
+    selectResourceCode: true,
+    redirectPath: false,
+    permissionList: true,
+    permissionCodes: true,
+    appModule: true
+  },
   OUTSIDE_URL: defaultFalseConfig,
   IFRAME: defaultFalseConfig
 }
