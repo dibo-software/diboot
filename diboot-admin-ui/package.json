@@ -16,7 +16,7 @@
     "@wangeditor/editor": "^5.1.1",
     "@wangeditor/editor-for-vue": "^5.1.11",
     "axios": "^0.27.2",
-    "element-plus": "^2.2.4",
+    "element-plus": "^2.2.8",
     "fuse.js": "^6.6.2",
     "lodash": "^4.17.21",
     "mockjs": "^1.1.0",
