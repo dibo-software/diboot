@@ -38,7 +38,8 @@ const handleClick = (message: MessageInfo) => {
     </el-badge>
 
     <el-drawer v-model="messageStore.show" title="新消息">
-      <el-scrollbar>
+      <el-empty v-if="messageStore.list.length === 0" description="暂无消息" />
+      <el-scrollbar v-else>
         <TransitionGroup name="fade">
           <el-card v-for="item in messageStore.list" :key="item.id" shadow="hover" @click="handleClick(item)">
             <template #header>
