@@ -66,6 +66,7 @@ public class WxAuthServiceImpl extends BaseAuthServiceImpl {
         // 设置登陆的
         token.setAuthAccount(wxMpCredential.getAuthAccount());
         token.setRememberMe(wxMpCredential.isRememberMe());
+        token.setExpiresInMinutes(getExpiresInMinutes());
         // 生成token
         return token.generateAuthtoken();
     }

@@ -107,6 +107,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
         token.setAuthAccount(credential.getAuthAccount());
         token.setTenantId(credential.getTenantId());
         token.setRememberMe(credential.isRememberMe());
+        token.setExpiresInMinutes(getExpiresInMinutes());
         // 生成token
         return token.generateAuthtoken();
     }
