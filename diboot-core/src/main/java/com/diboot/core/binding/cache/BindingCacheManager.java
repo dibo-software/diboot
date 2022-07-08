@@ -92,7 +92,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static EntityInfoCache getEntityInfoByTable(String tableName){
+    public static synchronized EntityInfoCache getEntityInfoByTable(String tableName){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_TABLE_ENTITY, tableName, EntityInfoCache.class);
     }
@@ -102,7 +102,7 @@ public class BindingCacheManager {
      * @param entityClazz
      * @return
      */
-    public static EntityInfoCache getEntityInfoByClass(Class<?> entityClazz){
+    public static synchronized EntityInfoCache getEntityInfoByClass(Class<?> entityClazz){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClazz.getName(), EntityInfoCache.class);
     }
@@ -112,7 +112,7 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static PropInfo getPropInfoByClass(Class<?> beanClazz){
+    public static synchronized PropInfo getPropInfoByClass(Class<?> beanClazz){
         PropInfo propInfo = getCacheManager().getCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), PropInfo.class);
         if(propInfo == null){
             propInfo = initPropInfoCache(beanClazz);
@@ -125,7 +125,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static PropInfo getPropInfoByTable(String tableName){
+    public static synchronized PropInfo getPropInfoByTable(String tableName){
         Class<?> entityClass = getEntityClassByTable(tableName);
         if(entityClass != null){
             return getPropInfoByClass(entityClass);
@@ -138,7 +138,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static Class<?> getEntityClassByTable(String tableName){
+    public static synchronized Class<?> getEntityClassByTable(String tableName){
         EntityInfoCache entityInfoCache = getEntityInfoByTable(tableName);
         return entityInfoCache != null? entityInfoCache.getEntityClass() : null;
     }
@@ -149,7 +149,7 @@ public class BindingCacheManager {
      * @param classSimpleName
      * @return
      */
-    public static Class<?> getEntityClassBySimpleName(String classSimpleName){
+    public static synchronized Class<?> getEntityClassBySimpleName(String classSimpleName){
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_ENTITYNAME_CLASS, classSimpleName, Class.class);
     }
@@ -159,7 +159,7 @@ public class BindingCacheManager {
      * @param table
      * @return
      */
-    public static BaseMapper getMapperByTable(String table){
+    public static synchronized BaseMapper getMapperByTable(String table){
         EntityInfoCache entityInfoCache = getEntityInfoByTable(table);
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
@@ -172,7 +172,7 @@ public class BindingCacheManager {
      * @param entityClazz
      * @return
      */
-    public static BaseMapper getMapperByClass(Class<?> entityClazz){
+    public static synchronized BaseMapper getMapperByClass(Class<?> entityClazz){
         EntityInfoCache entityInfoCache = getEntityInfoByClass(entityClazz);
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
@@ -185,7 +185,7 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static List<Field> getFields(Class<?> beanClazz){
+    public static synchronized List<Field> getFields(Class<?> beanClazz){
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), List.class);
         if(fields == null){
             fields = BeanUtils.extractAllFields(beanClazz);
@@ -199,7 +199,7 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+    public static synchronized List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
         String key = S.joinWith(Cons.SEPARATOR_COMMA, beanClazz.getName(), annotation.getName());
         List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
         if(fields == null){

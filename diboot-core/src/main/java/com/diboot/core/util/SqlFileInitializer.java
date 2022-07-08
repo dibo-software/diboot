@@ -355,20 +355,20 @@ public class SqlFileInitializer {
 
     /**
      * 获取当前schema
-     *
      * @return
      */
     public static String getCurrentSchema() {
-        if (CURRENT_SCHEMA == null) {
+        if(CURRENT_SCHEMA == null) {
             DataSource dataSource = ContextHelper.getBean(DataSource.class);
-            try {
+            try{
                 Connection connection = dataSource.getConnection();
                 CURRENT_SCHEMA = connection.getSchema();
                 connection.close();
-            } catch (Exception e) {
+            }
+            catch (Exception e){
                 log.warn("获取schema异常: {}", e.getMessage());
             }
-            if (CURRENT_SCHEMA == null) {
+            if(CURRENT_SCHEMA == null) {
                 CURRENT_SCHEMA = "";
             }
         }

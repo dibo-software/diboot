@@ -410,26 +410,39 @@ public class BeanUtils {
     }
 
     /***
-     * 构建指定根节点的上下级关联的树形结构（上级parentId、子节点children）
+     * 构建指定根节点的上下级关联的树形结构（主键id，上级属性parentId、子节点属性children）
      * @param allNodes 所有节点对象
      * @param rootNodeId 跟节点ID
      * @param <T>
      * @return
      */
     public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId){
-        return buildTree(allNodes, rootNodeId, Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
+        return buildTree(allNodes, rootNodeId, Cons.FieldName.id.name(), Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
     }
 
     /***
-     * 构建指定根节点的上下级关联的树形结构（上级parentId、子节点children）
+     * 构建指定根节点的上下级关联的树形结构（主键指定，上级属性parentId、子节点属性children）
      * @param allNodes 所有节点对象
      * @param rootNodeId 根节点ID
+     * @param idFieldName 主键属性名
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String idFieldName){
+        return buildTree(allNodes, rootNodeId, idFieldName, Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
+    }
+
+    /***
+     * 构建指定根节点的上下级关联的树形结构（指定主键属性，上级属性、子节点属性名）
+     * @param allNodes 所有节点对象
+     * @param rootNodeId 根节点ID
+     * @param idFieldName 主键属性名
      * @param parentIdFieldName 父节点属性名
      * @param childrenFieldName 子节点集合属性名
      * @param <T>
      * @return
      */
-    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String parentIdFieldName, String childrenFieldName){
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String idFieldName, String parentIdFieldName, String childrenFieldName){
         if(V.isEmpty(allNodes)){
             return null;
         }
@@ -440,7 +453,7 @@ public class BeanUtils {
             if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
                 topLevelModels.add(node);
             }
-            Object nodeId = getProperty(node, Cons.FieldName.id.name());
+            Object nodeId = getProperty(node, idFieldName);
             if(V.equals(nodeId, parentId)){
                 throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName()+":"+nodeId);
             }
@@ -450,8 +463,8 @@ public class BeanUtils {
         }
         // 遍历第一级节点，并挂载 children 子节点
         for(T node : allNodes) {
-            Object nodeId = getProperty(node, Cons.FieldName.id.name());
-            List<T> children = buildTreeChildren(nodeId, allNodes, parentIdFieldName, childrenFieldName);
+            Object nodeId = getProperty(node, idFieldName);
+            List<T> children = buildTreeChildren(nodeId, allNodes, idFieldName, parentIdFieldName, childrenFieldName);
             setProperty(node, childrenFieldName, children);
         }
         return topLevelModels;
@@ -461,11 +474,12 @@ public class BeanUtils {
      * 递归构建树节点的子节点
      * @param parentId
      * @param nodeList
+     * @param idFieldName
      * @param parentIdFieldName 父节点属性名
      * @param childrenFieldName 子节点集合属性名
      * @return
      */
-    public static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String parentIdFieldName, String childrenFieldName) {
+    public static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String idFieldName, String parentIdFieldName, String childrenFieldName) {
         List<T> children = null;
         for(T node : nodeList) {
             Object nodeParentId = getProperty(node, parentIdFieldName);
@@ -478,8 +492,8 @@ public class BeanUtils {
         }
         if(children != null){
             for(T child : children) {
-                Object nodeId = getProperty(child, Cons.FieldName.id.name());
-                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList, parentIdFieldName, childrenFieldName);
+                Object nodeId = getProperty(child, idFieldName);
+                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList, idFieldName, parentIdFieldName, childrenFieldName);
                 if(childNodeChildren == null) {
                     childNodeChildren = new ArrayList<>();
                 }
@@ -903,6 +917,45 @@ public class BeanUtils {
         for (String fieldName : fieldNameList) {
             wrapper.setPropertyValue(fieldName, null);
         }
+    }
+
+    /**
+     * 转换集合中的string类型id值为指定类型
+     * @param values
+     * @param fieldType
+     * @return
+     */
+    public static Collection convertIdValuesToType(Collection<?> values, Class fieldType) {
+        if(V.isEmpty(values)) {
+            return values;
+        }
+        if(V.equals(values.iterator().next().getClass(), fieldType)) {
+            return values;
+        }
+        Collection formatValues = new ArrayList(values.size());
+        for(Object value : values) {
+            formatValues.add(convertIdValueToType(value, fieldType));
+        }
+        return formatValues;
+    }
+
+    /**
+     * 转换string类型id值为指定类型
+     * @param value
+     * @param fieldType
+     * @return
+     */
+    public static Object convertIdValueToType(Object value, Class fieldType) {
+        if(V.isEmpty(value)) {
+            return null;
+        }
+        if(Long.class.equals(fieldType)) {
+            return Long.parseLong(S.valueOf(value));
+        }
+        if(Integer.class.equals(fieldType)) {
+            return Integer.parseInt(S.valueOf(value));
+        }
+        return value;
     }
 
     /**
