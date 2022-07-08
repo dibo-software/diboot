@@ -91,6 +91,7 @@ public class IamSecurityUtils extends SecurityUtils {
             BaseLoginUser user = (BaseLoginUser) principalCollection.getPrimaryPrincipal();
             if (userTypeAndId.equals(user.getUserTypeAndId())) {
                 cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(authInfo.getCredentials());
+                TokenUtils.removeAccessTokens(principalCollection.toString());
                 log.info("强制退出用户: {}", userTypeAndId);
             }
         }
