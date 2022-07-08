@@ -25,6 +25,7 @@ import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.entity.Dictionary;
@@ -32,6 +33,7 @@ import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
@@ -319,6 +321,22 @@ public class BaseServiceTest {
         String val = dictionaryService.getValueOfField(Dictionary::getId, 2L, Dictionary::getItemValue);
         Assert.assertTrue("M".equals(val));
         System.out.println(val);
+
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
+        dto.setUsername("张三");
+        // builder直接查询，不分页 3条结果
+        ExtQueryWrapper queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto);
+        List<String> values = userService.getValuesOfField(queryWrapper, User::getUsername);
+        Assert.assertTrue(values.size() == 1);
+        dto.setUsername(null);
+
+        dto.setDeptId(10002L);
+        dto.setDeptName("研发组");
+        dto.setOrgName("苏州帝博");
+        queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto);
+        List<String> values2 = userService.getValuesOfField(queryWrapper, User::getUsername);
+        Assert.assertTrue(values2.size() == 2);
     }
 
     @Test
