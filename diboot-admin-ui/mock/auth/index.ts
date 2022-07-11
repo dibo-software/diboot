@@ -99,6 +99,16 @@ const authMenu = [
           componentPath: prefix + 'example/richText.vue',
           sort: 1
         }
+      },
+      {
+        path: 'markdown',
+        name: 'Markdown',
+        meta: {
+          title: 'Markdown编辑器',
+          icon: 'Element:Edit',
+          componentPath: prefix + 'example/markdown.vue',
+          sort: 2
+        }
       }
     ]
   },
