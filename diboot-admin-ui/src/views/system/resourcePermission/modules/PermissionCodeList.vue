@@ -9,9 +9,10 @@ type Props = {
   toggle: boolean
   menuType: string
   configCode: string
-  menuResourceCode?: string | unknown
+  menuResourceCode?: string
   permissionCodes: string[]
   restPermissions?: Array<RestPermission>
+  tips?: boolean
 }
 // props
 const props = withDefaults(defineProps<Props>(), {
@@ -202,7 +203,7 @@ const _reload = () => {
         :value="`${options.permissionCode}#${options.title}`"
       />
     </el-select>
-    <el-alert title="选择 应用模块 后配置权限" type="success" />
+    <el-alert v-if="tips" title="选择 应用模块 后配置权限" type="success" :closable="false" />
     <el-scrollbar ref="permissionGroupsScrollbarRef" :height="height">
       <div id="permissionGroups" :key="reloadKey" class="permission-groups">
         <el-descriptions
@@ -225,7 +226,7 @@ const _reload = () => {
                 @click.stop.prevent="() => handleChangePermissionCode(apiPermission.code)"
               >
                 <el-checkbox :checked="permissionCodes.includes(apiPermission.code)">
-                  <el-tooltip placement="top">
+                  <el-tooltip placement="top" :show-after="200">
                     <template #content> {{ apiPermission.code }} （{{ apiPermission.label }}） </template>
                     <span>{{ apiPermission.code }}</span>
                   </el-tooltip>
@@ -239,7 +240,7 @@ const _reload = () => {
                   :key="`${apiPermission.code}_api-uri-${idx}`"
                   class="permission-group-api permission-group-text-overflow"
                 >
-                  <el-tooltip placement="top">
+                  <el-tooltip placement="top" :show-after="200">
                     <template #content> {{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}） </template>
                     <span>{{ apiUri.method }}:{{ apiUri.uri }}（{{ apiUri.label }}）</span>
                   </el-tooltip>

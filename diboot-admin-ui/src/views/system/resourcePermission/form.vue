@@ -378,6 +378,7 @@ watch(
           :config-code="configResourceCode"
           :menu-resource-code="model.routeMeta && model.routeMeta.resourceCode"
           :rest-permissions="restPermissions"
+          :tips="displayFields?.appModule && moduleList.length && !model.appModule"
         />
       </el-col>
     </el-row>
