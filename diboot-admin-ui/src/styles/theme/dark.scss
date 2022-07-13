@@ -38,6 +38,8 @@ html.dark {
   .one-level {
     --el-menu-bg-color: var(--el-bg-color);
     --el-menu-text-color: var(--el-text-color-primary);
-    --el-menu-hover-color: #2c2c2c;
+    --el-menu-active-color: var(--el-color-primary);
+
+    background: var(--el-menu-bg-color);
   }
 }

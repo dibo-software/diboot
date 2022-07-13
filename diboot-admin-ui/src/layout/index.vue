@@ -235,11 +235,12 @@ const vDrag: Directive<HTMLElement> = {
     border-right: 1px solid var(--el-border-color-lighter);
 
     // 分栏一级菜单配色调整 -- start
-    background-color: var(--el-menu-bg-color);
+    background-color: #1fc8db;
+    background-image: linear-gradient(315deg, #5cedad 0%, #23d0ef 50%, #2cb5e8 100%);
 
-    --el-menu-bg-color: #222b45;
+    --el-menu-bg-color: rgba(0, 0, 0, 0);
     --el-menu-text-color: #f3f3f5;
-    --el-menu-hover-color: #394158;
+    --el-menu-hover-color: rgba(120, 120, 120, 0.1);
     --el-menu-active-color: #f3f3f5;
 
     .el-sub-menu,
@@ -251,7 +252,7 @@ const vDrag: Directive<HTMLElement> = {
 
     .el-sub-menu.is-active,
     .el-menu-item.is-active {
-      background-color: var(--el-color-primary) !important;
+      background-color: rgba(120, 120, 120, 0.2) !important;
     }
     // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）
 
