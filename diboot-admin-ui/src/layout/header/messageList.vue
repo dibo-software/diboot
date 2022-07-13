@@ -8,7 +8,7 @@ const messageStore = useMessageStore()
 
 // 自动获取新消息
 messageStore.loadNewMessages()
-setTimeout(() => messageStore.loadNewMessages(), 5 * 60 * 1_000)
+setInterval(() => messageStore.loadNewMessages(), 5 * 60 * 1_000)
 
 // 抽屉关闭时改变消息状态
 watch(
