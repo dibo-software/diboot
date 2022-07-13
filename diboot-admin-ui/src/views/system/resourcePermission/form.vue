@@ -20,7 +20,14 @@ const rules = reactive<FormRules>({
   displayName: [
     {
       required: true,
-      message: '请输入菜单名称',
+      message: '菜单名称不能为空',
+      trigger: 'blur'
+    }
+  ],
+  routePath: [
+    {
+      required: true,
+      message: '路由地址不能为空',
       trigger: 'blur'
     }
   ]
@@ -225,13 +232,7 @@ watch(
                   <el-radio-button label="CATALOGUE">目录</el-radio-button>
                   <el-radio-button label="MENU">菜单</el-radio-button>
                   <el-radio-button label="OUTSIDE_URL">外链</el-radio-button>
-                  <el-radio-button label="IFRAME">iframe</el-radio-button>
                 </el-radio-group>
-              </el-form-item>
-              <el-form-item v-if="displayFields?.appModule" label="应用模块">
-                <el-select v-model="model.appModule" placeholder="应用模块" clearable>
-                  <el-option v-for="item in moduleList" :key="item" :label="item" :value="item" />
-                </el-select>
               </el-form-item>
               <el-form-item label="图标">
                 <icon-select v-model="model.routeMeta.icon" />
@@ -239,22 +240,44 @@ watch(
               <el-form-item label="名称" prop="displayName">
                 <el-input v-model="model.displayName" placeholder="请输入名称" clearable />
               </el-form-item>
-              <el-form-item label="编码">
+              <el-form-item label="路由名称" prop="resourceCode">
                 <route-select
-                  v-if="displayFields?.selectResourceCode && model.routeMeta"
-                  v-model="model.routeMeta.resourceCode"
+                  v-show="displayFields?.selectResourceCode && model.routeMeta"
+                  v-model="model.resourceCode"
                   v-model:component-path="model.routeMeta.componentPath"
                 />
-                <el-input v-else v-model="model.resourceCode" placeholder="请输入编码" clearable />
+                <el-input
+                  v-show="!(displayFields?.selectResourceCode && model.routeMeta)"
+                  v-model="model.resourceCode"
+                  placeholder="请输入路由名称"
+                  clearable
+                />
               </el-form-item>
               <el-form-item v-if="model.routeMeta.componentPath && displayFields?.selectResourceCode" label="组件地址">
                 <el-input v-model="model.routeMeta.componentPath" disabled />
               </el-form-item>
-              <el-form-item label="路由地址">
+              <el-form-item label="路由地址" prop="routePath">
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
+              </el-form-item>
+              <el-form-item
+                v-if="model.displayType === 'OUTSIDE_URL'"
+                label="外链"
+                prop="routeMeta.url"
+                :rules="{ required: true, message: '路由地址不能为空', trigger: 'blur' }"
+              >
+                <el-input v-model="model.routeMeta.url" placeholder="外部链接" clearable>
+                  <template #suffix>
+                    <el-checkbox v-model="model.routeMeta.iframe" label="iframe" />
+                  </template>
+                </el-input>
               </el-form-item>
               <el-form-item v-if="displayFields?.redirectPath" label="重定向">
                 <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
+              </el-form-item>
+              <el-form-item v-if="displayFields?.appModule && moduleList.length" label="应用模块">
+                <el-select v-model="model.appModule" placeholder="应用模块" clearable>
+                  <el-option v-for="item in moduleList" :key="item" :label="item" :value="item" />
+                </el-select>
               </el-form-item>
               <el-form-item v-if="displayFields?.permissionCodes" label="菜单权限接口">
                 <permission-code-select
