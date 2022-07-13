@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import { buildViewMap } from '@/utils/route'
+
+const loading = ref(true)
+
 const viewMap = ref<Record<string, string>>({})
 buildViewMap().then(res => {
   viewMap.value = res
+  loading.value = false
 })
 
-const componentName = ref('')
-defineProps<{ modelValue?: string | unknown; routePath?: string | unknown }>()
+const componentName = ref<string>()
+const props = defineProps<{ modelValue?: string; componentPath?: string }>()
+watch(
+  () => props.modelValue,
+  value => (componentName.value = value),
+  { immediate: true }
+)
 
 // 事件定义
 const emits = defineEmits<{
@@ -19,8 +28,16 @@ const changeComponentName = (val?: string) => {
   emits('update:componentPath', val ? viewMap.value[val] : '')
 }
 </script>
+
 <template>
-  <el-select v-model="componentName" placeholder="请选择组件" clearable @change="changeComponentName">
+  <el-select
+    v-model="componentName"
+    placeholder="请选择组件"
+    clearable
+    filterable
+    :loading="loading"
+    @change="changeComponentName"
+  >
     <el-option v-for="item in Object.keys(viewMap)" :key="item" :label="item" :value="item" />
   </el-select>
 </template>
