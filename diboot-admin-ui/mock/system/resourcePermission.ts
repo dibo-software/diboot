@@ -124,14 +124,7 @@ export default [
     method: 'get',
     response: ({ query }: ApiRequest) => {
       return JsonResult.OK(dbRestPermissionDataList)
-    }
-  },
-  {
-    url: `${baseUrl}/moduleApiList`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: ({ query }: ApiRequest) => {
-      return JsonResult.OK(dbCloudRestPermissionDataList)
+      // return JsonResult.OK(dbCloudRestPermissionDataList)
     }
   },
   {

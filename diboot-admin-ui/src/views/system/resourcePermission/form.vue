@@ -118,7 +118,6 @@ const {
   restPermissions,
   moduleList,
   initRestPermissions,
-  initModuleRestPermissions,
   initResourcePermissionCodeOptions,
   initReactiveData,
   changeModule,
@@ -129,7 +128,7 @@ const {
   autoRefreshPermissionCode
 } = usePermissionControl()
 // 初始化后台权限
-initModuleRestPermissions('/resourcePermission/moduleApiList')
+initRestPermissions('/resourcePermission/apiList')
 // more hook
 const { more, initMore } = useMore({ dict: 'RESOURCE_PERMISSION_CODE' })
 initMore().then(() => {

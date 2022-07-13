@@ -37,34 +37,19 @@ export default () => {
 
   /**
    * 初始化接口权限
-   * @param options
+   * @param restApi
    */
-  const initRestPermissions = (restAPi: string) => {
+  const initRestPermissions = (restApi: string) => {
     loadingRestPermissions.value = true
     restPermissions.length = 0
     api
-      .get<RestPermission[]>(restAPi)
+      .get<RestPermission[] | Record<string, RestPermission[]>>(restApi)
       .then(res => {
-        if (res.code === 0) restPermissions.push(...(res.data ?? []))
-        else ElMessage?.error(res.msg)
+        if (Array.isArray(res.data)) restPermissions.push(...(res.data ?? []))
+        else moduleRestPermissionMap.value = res.data ?? {}
       })
-      .finally(() => {
-        loadingRestPermissions.value = false
-      })
-  }
-
-  /**
-   * 初始化带模块的接口权限，返回moduleRestPermissionMap
-   * @param options
-   */
-  const initModuleRestPermissions = (restAPi: string) => {
-    loadingRestPermissions.value = true
-    api
-      .get<Record<string, RestPermission[]>>(restAPi)
-      .then(res => {
-        if (res.code === 0) {
-          moduleRestPermissionMap.value = res.data ?? {}
-        } else ElMessage?.error(res.msg)
+      .catch(err => {
+        ElMessage.error(err.msg)
       })
       .finally(() => {
         loadingRestPermissions.value = false
@@ -86,6 +71,7 @@ export default () => {
    * @param module
    */
   const changeModule = (module: string) => {
+    if (!module) return
     restPermissions.length = 0
     restPermissions.push(...(moduleRestPermissionMap.value[module] ?? []))
   }
@@ -155,7 +141,6 @@ export default () => {
     moduleList,
     loadingRestPermissions,
     initRestPermissions,
-    initModuleRestPermissions,
     initResourcePermissionCodeOptions,
     initReactiveData,
     changeModule,
