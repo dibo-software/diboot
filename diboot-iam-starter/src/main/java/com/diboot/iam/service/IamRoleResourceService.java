@@ -36,11 +36,10 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
     /***
      * 获取用户的路由信息
      *
-     * @param appModule
      * @return
      * @throws Exception
      */
-    List<RouteRecord> getRouteRecords(String appModule) throws Exception;
+    List<RouteRecord> getRouteRecords();
 
     /**
      * 获取指定角色对应的权限集（转换为树形结构VO）
