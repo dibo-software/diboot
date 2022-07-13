@@ -39,9 +39,11 @@ export default [
       if (token && token.length >= 32) {
         const name = Random.cname()
         return JsonResult.OK({
-          realname: name,
-          email: Random.email(),
-          avatar: Random.image('50x50', Random.color(), Random.color(), name[0]),
+          info: {
+            realname: name,
+            email: Random.email(),
+            avatar: Random.image('50x50', Random.color(), Random.color(), name[0])
+          },
           roles: [Random.pick(['admin', 'develop', 'test'])]
         })
       }
@@ -67,7 +69,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/menu`,
+    url: `${baseUrl}/routeRecord`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: () => {

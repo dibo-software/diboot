@@ -24,7 +24,7 @@ export function createRouterGuard(router: Router) {
         await userStore.getInfo()
 
         // 加载异步路由
-        const res = await api.get<Array<RouteRecordRaw>>('/auth/menu')
+        const res = await api.get<Array<RouteRecordRaw>>('/auth/routeRecord')
         if (res.data?.length) {
           buildAsyncRoutes(res.data).forEach(e => router.addRoute(e))
         }
