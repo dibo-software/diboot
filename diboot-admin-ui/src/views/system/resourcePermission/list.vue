@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="ResourcePermission">
 import ResourcePermissionForm from './form.vue'
 import MenuTree from './modules/MenuTree.vue'
 import type { ResourcePermission } from '@/views/system/resourcePermission/type'

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="ScheduleJob">
 import { Plus, More, CaretRight } from '@element-plus/icons-vue'
 import type { ScheduleJob } from './type'
 import Form from './form.vue'
