@@ -52,7 +52,7 @@ public class IamResourcePermissionListVO extends IamResourcePermission {
     private String statusLabel;
 
     // 绑定iamResourcePermissionList
-    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND this.displayType ='PERMISSION'")
+    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND display_type ='PERMISSION'")
     private List<IamResourcePermission> permissionList;
 
     private List<IamResourcePermissionListVO> children;
