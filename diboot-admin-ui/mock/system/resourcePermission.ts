@@ -83,7 +83,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/getMenuTreeList`,
+    url: `${baseUrl}/menuTree`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ query }: ApiRequest) => {

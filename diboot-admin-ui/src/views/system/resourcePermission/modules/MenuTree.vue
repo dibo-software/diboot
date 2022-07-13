@@ -24,7 +24,7 @@ const {
   loading
 } = useTreeCrud<ResourcePermission>({
   baseApi: '/resourcePermission',
-  treeApi: '/getMenuTreeList',
+  treeApi: '/menuTree',
   sortApi: '/sortTree',
   transformField: treeProps,
   clickNodeCallback(nodeData) {
