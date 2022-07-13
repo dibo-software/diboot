@@ -16,7 +16,8 @@ const service = axios.create({
 // 添加请求拦截器
 service.interceptors.request.use(config => {
   // 让每个请求携带自定义 token 请根据实际情况自行修改
-  if (auth.getToken()) (config.headers as AxiosRequestHeaders)[AUTH_HEADER_KEY] = 'Bearer ' + auth.getToken()
+  const token = auth.getToken()
+  if (token) (config.headers as AxiosRequestHeaders)[AUTH_HEADER_KEY] = token
 
   // 只针对get方式进行序列化
   if (config.method === 'get') config.paramsSerializer = params => qs.stringify(params, { arrayFormat: 'repeat' })

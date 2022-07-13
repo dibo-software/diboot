@@ -7,25 +7,25 @@ import * as Element from '@element-plus/icons-vue'
 const baseUrl = '/api/auth'
 
 export default [
-  {
-    url: `${baseUrl}/captcha`,
-    timeout: Random.natural(50, 100),
-    method: 'get',
-    // response: () => Random.dataImage('200x100', 'Diboot')
-    rawResponse: (req, res) => {
-      res.setHeader('Content-Type', 'image/gif')
-      res.setHeader('Pragma', 'No-cache')
-      res.setHeader('Cache-Control', 'no-cache')
-      res.write(Random.dataImage('200x100', 'Diboot'))
-    }
-  },
+  // {
+  //   url: `${baseUrl}/captcha`,
+  //   timeout: Random.natural(50, 100),
+  //   method: 'get',
+  //   // response: () => Random.dataImage('130x48', 'Diboot')
+  //   rawResponse: (req, res) => {
+  //     res.setHeader('Content-Type', 'image/gif')
+  //     res.setHeader('Pragma', 'No-cache')
+  //     res.setHeader('Cache-Control', 'no-cache')
+  //     res.write(Random.dataImage('130x48', 'Diboot'))
+  //   }
+  // },
   {
     url: `${baseUrl}/login`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: ApiRequest) => {
       if (body.username === 'admin' && body.password === '123456') {
-        return JsonResult.OK({ token: Random.string('lower', 32, 32) })
+        return JsonResult.OK(Random.string('lower', 32, 32))
       }
       return JsonResult.FAIL_OPERATION('用户名或密码错误')
     }
@@ -61,8 +61,8 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'get',
     rawResponse: (req, res) => {
-      const token = req.headers.authorization
-      if (token && token.length >= 32) res.setHeader('Authorization', Random.string('lower', 32, 32))
+      const token = req.headers.authtoken
+      if (token && token.length >= 32) res.setHeader('authtoken', Random.string('lower', 32, 32))
       res.end()
     }
   },

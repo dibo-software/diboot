@@ -27,10 +27,10 @@ export default defineStore('auth', {
     login(account: unknown) {
       return new Promise((resolve, reject) => {
         api
-          .post<{ token: string }>('/auth/login', account)
+          .post<string>('/auth/login', account)
           .then(res => {
             if (res.data) {
-              auth.setToken(res.data.token)
+              auth.setToken(res.data)
               resolve(res.data)
             }
           })
