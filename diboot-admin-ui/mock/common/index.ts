@@ -54,6 +54,20 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { value: 'FAILED', label: '发送失败' },
     { value: 'DELIVERY', label: '已送达' },
     { value: 'READ', label: '已读' }
+  ],
+  DATA_PERMISSION_TYPE: [
+    { label: '本人', value: 'SELF' },
+    { label: '本人及下属', value: 'SELF_AND_SUB' },
+    { label: '本部门', value: 'DEPT' },
+    { label: '本部门及下属部门', value: 'DEPT_AND_SUB' },
+    { label: '全部', value: 'ALL' }
+  ],
+  POSITION_GRADE_OPTIONS: [
+    { label: '初级', value: 'E1' },
+    { label: '中级', value: 'E2' },
+    { label: '高级', value: 'E3' },
+    { label: '专家', value: 'E4' },
+    { label: '公司领导', value: 'M4' }
   ]
 }
 

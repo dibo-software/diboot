@@ -36,14 +36,9 @@ export const dataList: Position[] = arrList
     } as Position
   })
 
-const moreJsonStr = `{"code":0,"msg":"操作成功","data":{"dataPermissionTypeOptions":[{"label":"本人","value":"SELF"},{"label":"本人及下属","value":"SELF_AND_SUB"},{"label":"本部门","value":"DEPT"},{"label":"本部门及下属部门","value":"DEPT_AND_SUB"},{"label":"全部","value":"ALL"}],"positionGradeOptions":[{"label":"初级","value":"E1"},{"label":"中级","value":"E2"},{"label":"高级","value":"E3"},{"label":"专家","value":"E4"},{"label":"公司领导","value":"M4"}]},"ok":true}`
-const moreJson = JSON.parse(moreJsonStr)
-const attachMore = moreJson.data
-
 const crud = crudTemplate({
   baseApi: '/position',
   dataList,
-  attachMore,
   keywordsKeys: ['name', 'code'],
   fuzzyMatchKeys: ['name', 'code']
 })

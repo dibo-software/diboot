@@ -6,25 +6,17 @@ import { defineEmits } from 'vue'
 const baseApi = '/position'
 
 const { loadData, loading, model } = useDetail<Position>(baseApi)
+const { more, initMore } = useMore({ dict: ['DATA_PERMISSION_TYPE', 'POSITION_GRADE'] })
 const title = ref('')
 const visible = ref(false)
 defineExpose({
   open: (id?: string) => {
     title.value = id ? '更新' : '新建'
     loadData(id)
-    loadAttachMore()
+    initMore()
     visible.value = true
   }
 })
-
-// 加载附加信息
-const more = ref<Record<string, any>>({})
-const loadAttachMore = async () => {
-  const res = await api.get<Record<string, any>>('/position/attachMore')
-  if (res.code === 0 && res.data) {
-    more.value = res.data
-  }
-}
 
 // 表单
 const formRef = ref<FormInstance>()
@@ -46,8 +38,7 @@ const { confirmSubmit, submit } = useForm({
 })
 
 const onGradeValueChanged = (val: string) => {
-  console.log('val', val)
-  const grade = more.value.positionGradeOptions.find((item: any) => item.value === val)
+  const grade = more.positionGradeOptions.find((item: any) => item.value === val)
   if (grade !== undefined) {
     model.value.gradeName = grade.label
   }
