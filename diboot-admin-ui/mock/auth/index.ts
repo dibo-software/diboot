@@ -35,7 +35,7 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ headers }: ApiRequest) => {
-      const token = headers.authorization
+      const token = headers.authtoken
       if (token && token.length >= 32) {
         const name = Random.cname()
         return JsonResult.OK({
