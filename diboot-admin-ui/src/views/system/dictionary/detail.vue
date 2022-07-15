@@ -1,39 +1,21 @@
 <script setup lang="ts" name="DictionaryDetail">
-import useForm from '@/hooks/detail'
 import type { Dictionary } from '@/views/system/dictionary/type'
 
-type Props = {
-  type?: string
-  width?: number | string
-}
-withDefaults(defineProps<Props>(), {
-  type: 'modal',
-  width: 720
-})
+const visible = ref(false)
 
-const { pageLoader, title, model, visible, loading } = useForm<Dictionary>({
-  options: {
-    baseApi: '/dictionary',
-    title: '数据字典详情',
-    model: {
-      id: '',
-      type: '',
-      itemName: '',
-      children: []
-    }
-  }
-})
+const { loadData, loading, model } = useDetail<Dictionary>('/dictionary')
 
 const open = async (id: string) => {
-  pageLoader.open(id)
+  loadData(id)
+  visible.value = true
 }
 defineExpose({
   open
 })
 </script>
 <template>
-  <el-dialog v-model="visible" :width="width" :title="title">
-    <el-descriptions v-if="model" class="margin-top" :column="2" border>
+  <el-dialog v-model="visible" :width="650" title="详情">
+    <el-descriptions v-if="model" v-loading="loading" class="margin-top" :column="2" border>
       <el-descriptions-item label="字典名称"> {{ model.itemName }} </el-descriptions-item>
       <el-descriptions-item label="字典编码"> {{ model.type }} </el-descriptions-item>
       <el-descriptions-item :span="2" label="字典备注"> {{ model.description }} </el-descriptions-item>
@@ -59,7 +41,7 @@ defineExpose({
     </el-table>
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="pageLoader.close()">关闭</el-button>
+        <el-button type="primary" @click="visible = false">关闭</el-button>
       </span>
     </template>
   </el-dialog>
