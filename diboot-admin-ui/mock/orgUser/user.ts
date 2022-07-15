@@ -1,7 +1,7 @@
 import type { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { mock, Random } from 'mockjs'
-import type { UserModel } from '@/views/orgUser/user/type'
+import type { UserModel } from '@/views/orgStructure/user/type'
 import crudTemplate from '../_crudTemplate'
 
 const baseUrl = '/api/user'

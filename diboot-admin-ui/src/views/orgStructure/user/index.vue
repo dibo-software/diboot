@@ -1,7 +1,7 @@
-<script setup lang="ts" name="OrgUserIndex">
-import orgTree from '@/views/orgUser/org/orgTree.vue'
-import userList from '@/views/orgUser/user/list.vue'
-import type { OrgModel } from '@/views/orgUser/org/type'
+<script setup lang="ts" name="UserIndex">
+import OrgTree from '@/views/orgStructure/org/orgTree.vue'
+import UserList from './list.vue'
+import type { OrgModel } from '@/views/orgStructure/org/type'
 
 const currentNodeId = ref('')
 const changeCurrentNode = (currentNode: OrgModel) => {

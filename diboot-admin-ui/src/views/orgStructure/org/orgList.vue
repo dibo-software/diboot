@@ -1,5 +1,5 @@
 <script setup name="OrgList" lang="ts">
-import type { OrgModel } from '@/views/orgUser/org/type'
+import type { OrgModel } from '@/views/orgStructure/org/type'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import OrgForm from './form.vue'
 

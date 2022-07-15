@@ -1,7 +1,7 @@
 <script lang="ts" setup name="orgTree">
 import { defineEmits } from 'vue'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
-import type { OrgModel } from '@/views/orgUser/org/type'
+import type { OrgModel } from '@/views/orgStructure/org/type'
 import orgForm from './form.vue'
 
 type Props = {

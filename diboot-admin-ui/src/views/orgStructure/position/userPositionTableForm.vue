@@ -3,7 +3,7 @@ import type { UserPosition } from './type'
 import type { OrgModel } from '../org/type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
-import positionPopoverListSelector from '@/views/orgUser/position/popoverListSelector.vue'
+import positionPopoverListSelector from '@/views/orgStructure/position/popoverListSelector.vue'
 
 type Props = {
   userId?: string

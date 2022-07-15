@@ -2,7 +2,7 @@ import type { MockMethod } from 'vite-plugin-mock'
 import { JsonResult } from '../_util'
 import { mock, Random } from 'mockjs'
 import { list2tree } from '../_treeUtil'
-import type { OrgModel } from '@/views/orgUser/org/type'
+import type { OrgModel } from '@/views/orgStructure/org/type'
 import crudTemplate from '../_crudTemplate'
 
 const baseUrl = '/api/org'

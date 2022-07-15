@@ -139,7 +139,7 @@ const authMenu = [
   {
     path: 'orgUser',
     name: 'OrgUser ',
-    redirect: '/orgUser/org',
+    redirect: '/orgStructure/org',
     meta: { title: '组织架构', icon: 'Element:User' },
     children: [
       {
@@ -147,7 +147,7 @@ const authMenu = [
         name: 'Org',
         meta: {
           title: '组织部门',
-          componentPath: prefix + 'orgUser/org/index.vue',
+          componentPath: prefix + 'orgStructure/org/index.vue',
           sort: '@natural',
           keepAlive: false,
           icon: 'Element:Folder'
@@ -158,7 +158,7 @@ const authMenu = [
         name: 'Position',
         meta: {
           title: '岗位管理',
-          componentPath: prefix + 'orgUser/position/list.vue',
+          componentPath: prefix + 'orgStructure/position/list.vue',
           sort: '@natural',
           keepAlive: false,
           hollow: false,
@@ -170,7 +170,7 @@ const authMenu = [
         name: 'User',
         meta: {
           title: '人员管理',
-          componentPath: prefix + 'orgUser/user/index.vue',
+          componentPath: prefix + 'orgStructure/user/index.vue',
           sort: '@natural',
           keepAlive: false,
           icon: 'Element:User'
@@ -184,6 +184,17 @@ const authMenu = [
     redirect: '/system/resourcePermission',
     meta: { title: '系统管理', icon: 'Element:SetUp' },
     children: [
+      {
+        path: 'dictionary',
+        name: 'Dictionary',
+        meta: {
+          title: '数据字典管理',
+          icon: 'Element:Collection',
+          componentPath: prefix + 'system/dictionary/list.vue',
+          sort: 1,
+          keepAlive: false
+        }
+      },
       {
         path: 'resourcePermission',
         name: 'resourcePermission-@increment',
@@ -206,16 +217,6 @@ const authMenu = [
         }
       },
       {
-        path: 'dictionary',
-        name: 'Dictionary',
-        meta: {
-          title: '数据字典管理',
-          icon: 'Element:Collection',
-          componentPath: prefix + 'system/dictionary/list.vue',
-          keepAlive: false
-        }
-      },
-      {
         path: 'scheduleJob',
         name: 'ScheduleJob',
         meta: {
@@ -223,7 +224,7 @@ const authMenu = [
           icon: 'Element:AlarmClock',
           componentPath: prefix + 'system/scheduleJob/list.vue',
           keepAlive: false,
-          sort: 6
+          sort: 4
         }
       },
       {
@@ -234,7 +235,7 @@ const authMenu = [
           icon: 'Element:MessageBox',
           componentPath: prefix + 'system/messageTemplate/list.vue',
           keepAlive: false,
-          sort: 7
+          sort: 5
         }
       },
       {
@@ -245,7 +246,7 @@ const authMenu = [
           icon: 'Element:Message',
           componentPath: prefix + 'system/message/list.vue',
           keepAlive: false,
-          sort: 8
+          sort: 6
         }
       },
       {

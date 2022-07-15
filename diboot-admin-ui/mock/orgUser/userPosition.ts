@@ -1,6 +1,6 @@
 import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_crudTemplate'
-import type { UserPosition } from '@/views/orgUser/position/type'
+import type { UserPosition } from '@/views/orgStructure/position/type'
 
 export const dataList: UserPosition[] = []
 

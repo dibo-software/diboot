@@ -1,9 +1,7 @@
-<script lang="ts" setup name="orgIndex">
-import orgTree from './orgTree.vue'
-import orgList from './orgList.vue'
-import orgForm from './form.vue'
+<script lang="ts" setup name="Index">
+import OrgTree from './orgTree.vue'
+import OrgList from './orgList.vue'
 import type { OrgModel } from './type'
-import OrgTree from '@/views/orgUser/org/orgTree.vue'
 
 const currentNodeId = ref<string>('0')
 const currentNodeInfo = ref<OrgModel | undefined>()
