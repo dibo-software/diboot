@@ -15,6 +15,8 @@
  */
 package com.diboot.core.cache;
 
+import java.util.concurrent.Callable;
+
 /**
  * 缓存manager父类
  * @author JerryMa
@@ -31,6 +33,17 @@ public interface BaseCacheManager {
      * @return
      */
     <T> T getCacheObj(String cacheName, Object objKey, Class<T> tClass);
+
+    /**
+     * 获取缓存对象, 如果找不到, 则生成初始值, 放入缓存, 并返回
+     *
+     * @param cacheName    cache名称
+     * @param objKey       查找的key
+     * @param initSupplier 初始值提供者
+     * @param <T>          缓存对象类型
+     * @return 缓存对象
+     */
+    <T> T getCacheObj(String cacheName, Object objKey, Callable<T> initSupplier);
 
     /**
      * 获取缓存对象

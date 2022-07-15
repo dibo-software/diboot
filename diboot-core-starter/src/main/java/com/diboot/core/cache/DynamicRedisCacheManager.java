@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;
 
+import java.util.concurrent.Callable;
+
 /**
  * 动态数据Redis缓存
  * @author JerryMa
@@ -42,6 +44,12 @@ public class DynamicRedisCacheManager implements BaseCacheManager{
     }
 
     @Override
+    public <T> T getCacheObj(String cacheName, Object objKey, Callable<T> initSupplier) {
+        Cache cache = redisCacheManager.getCache(cacheName);
+        return cache != null ? cache.get(objKey, initSupplier) : null;
+    }
+
+    @Override
     public String getCacheString(String cacheName, Object objKey) {
         return getCacheObj(cacheName, objKey, String.class);
     }
@@ -52,6 +60,7 @@ public class DynamicRedisCacheManager implements BaseCacheManager{
         cache.put(objKey, obj);
     }
 
+    @Override
     public void putCacheObj(String cacheName, Object objKey, Object obj, int expireMinutes) {
         // 暂不支持redis按cache设置不同过期时间
         this.putCacheObj(cacheName, objKey, obj);
