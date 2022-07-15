@@ -26,6 +26,8 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.util.init.BeanInitUtils;
+import com.diboot.core.util.init.BeanInitializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.context.annotation.Primary;
@@ -45,10 +47,6 @@ import java.util.*;
 @SuppressWarnings({"JavaDoc","rawtypes", "unchecked"})
 @Slf4j
 public class BindingCacheManager {
-    /**
-     * 实体相关定义缓存管理器
-     */
-    private static StaticMemoryCacheManager cacheManager;
     /**
      * 类-EntityInfo缓存key
      */
@@ -74,17 +72,21 @@ public class BindingCacheManager {
      */
     private static final String CACHE_NAME_CLASS_NAME2FLDMAP = "CLASS_NAME2FLDMAP";
 
-    private static synchronized StaticMemoryCacheManager getCacheManager(){
-        if(cacheManager == null){
-            cacheManager = new StaticMemoryCacheManager(
+    /**
+     * CacheManager 初始化器
+     */
+    private static final BeanInitializer<StaticMemoryCacheManager> CACHE_MANAGER_INITIALIZER = BeanInitUtils.lazyInit(() ->
+            new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_ENTITY,
                     CACHE_NAME_TABLE_ENTITY,
                     CACHE_NAME_CLASS_PROP,
                     CACHE_NAME_ENTITYNAME_CLASS,
                     CACHE_NAME_CLASS_FIELDS,
-                    CACHE_NAME_CLASS_NAME2FLDMAP);
-        }
-        return cacheManager;
+                    CACHE_NAME_CLASS_NAME2FLDMAP)
+    );
+
+    private static StaticMemoryCacheManager getCacheManager() {
+        return CACHE_MANAGER_INITIALIZER.get();
     }
 
     /**
@@ -92,7 +94,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static synchronized EntityInfoCache getEntityInfoByTable(String tableName){
+    public static EntityInfoCache getEntityInfoByTable(String tableName) {
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_TABLE_ENTITY, tableName, EntityInfoCache.class);
     }
@@ -102,7 +104,7 @@ public class BindingCacheManager {
      * @param entityClazz
      * @return
      */
-    public static synchronized EntityInfoCache getEntityInfoByClass(Class<?> entityClazz){
+    public static EntityInfoCache getEntityInfoByClass(Class<?> entityClazz) {
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_CLASS_ENTITY, entityClazz.getName(), EntityInfoCache.class);
     }
@@ -112,12 +114,8 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static synchronized PropInfo getPropInfoByClass(Class<?> beanClazz){
-        PropInfo propInfo = getCacheManager().getCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), PropInfo.class);
-        if(propInfo == null){
-            propInfo = initPropInfoCache(beanClazz);
-        }
-        return propInfo;
+    public static PropInfo getPropInfoByClass(Class<?> beanClazz) {
+        return getCacheManager().getCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), () -> new PropInfo(beanClazz));
     }
 
     /**
@@ -125,7 +123,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static synchronized PropInfo getPropInfoByTable(String tableName){
+    public static PropInfo getPropInfoByTable(String tableName) {
         Class<?> entityClass = getEntityClassByTable(tableName);
         if(entityClass != null){
             return getPropInfoByClass(entityClass);
@@ -138,7 +136,7 @@ public class BindingCacheManager {
      * @param tableName
      * @return
      */
-    public static synchronized Class<?> getEntityClassByTable(String tableName){
+    public static Class<?> getEntityClassByTable(String tableName) {
         EntityInfoCache entityInfoCache = getEntityInfoByTable(tableName);
         return entityInfoCache != null? entityInfoCache.getEntityClass() : null;
     }
@@ -149,7 +147,7 @@ public class BindingCacheManager {
      * @param classSimpleName
      * @return
      */
-    public static synchronized Class<?> getEntityClassBySimpleName(String classSimpleName){
+    public static Class<?> getEntityClassBySimpleName(String classSimpleName) {
         initEntityInfoCache();
         return getCacheManager().getCacheObj(CACHE_NAME_ENTITYNAME_CLASS, classSimpleName, Class.class);
     }
@@ -159,7 +157,7 @@ public class BindingCacheManager {
      * @param table
      * @return
      */
-    public static synchronized BaseMapper getMapperByTable(String table){
+    public static BaseMapper getMapperByTable(String table) {
         EntityInfoCache entityInfoCache = getEntityInfoByTable(table);
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
@@ -172,7 +170,7 @@ public class BindingCacheManager {
      * @param entityClazz
      * @return
      */
-    public static synchronized BaseMapper getMapperByClass(Class<?> entityClazz){
+    public static BaseMapper getMapperByClass(Class<?> entityClazz) {
         EntityInfoCache entityInfoCache = getEntityInfoByClass(entityClazz);
         if(entityInfoCache != null){
             return entityInfoCache.getBaseMapper();
@@ -185,13 +183,8 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static synchronized List<Field> getFields(Class<?> beanClazz){
-        List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), List.class);
-        if(fields == null){
-            fields = BeanUtils.extractAllFields(beanClazz);
-            getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), fields);
-        }
-        return fields;
+    public static List<Field> getFields(Class<?> beanClazz) {
+        return getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), () -> BeanUtils.extractAllFields(beanClazz));
     }
 
     /**
@@ -199,14 +192,9 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static synchronized List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+    public static List<Field> getFields(Class<?> beanClazz, Class<? extends Annotation> annotation) {
         String key = S.joinWith(Cons.SEPARATOR_COMMA, beanClazz.getName(), annotation.getName());
-        List<Field> fields = getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, List.class);
-        if(fields == null){
-            fields = BeanUtils.extractFields(beanClazz, annotation);
-            getCacheManager().putCacheObj(CACHE_NAME_CLASS_FIELDS, key, fields);
-        }
-        return fields;
+        return getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, key, () -> BeanUtils.extractFields(beanClazz, annotation));
     }
 
     /**
@@ -214,24 +202,17 @@ public class BindingCacheManager {
      * @param beanClazz
      * @return
      */
-    public static Map<String, Field> getFieldsMap(Class<?> beanClazz){
-        Map<String, Field> fieldsMap = getCacheManager().getCacheObj(CACHE_NAME_CLASS_NAME2FLDMAP, beanClazz.getName(), Map.class);
-        if(fieldsMap == null){
-            List<Field> fields = getFields(beanClazz);
-            fieldsMap = BeanUtils.convertToStringKeyObjectMap(fields, "name");
-            getCacheManager().putCacheObj(CACHE_NAME_CLASS_NAME2FLDMAP, beanClazz.getName(), fieldsMap);
-        }
-        return fieldsMap;
+    public static Map<String, Field> getFieldsMap(Class<?> beanClazz) {
+        return getCacheManager().getCacheObj(CACHE_NAME_CLASS_NAME2FLDMAP, beanClazz.getName(),
+                () -> BeanUtils.convertToStringKeyObjectMap(getFields(beanClazz), "name")
+        );
     }
 
     /**
-     * 初始化
+     * entity相关信息初始化器, 不返回有意义的值, 仅仅为了线程安全地初始化缓存
      */
-    private static void initEntityInfoCache() {
+    private static final BeanInitializer<Void> ENTITY_INFO_CACHE_INITIALIZER = BeanInitUtils.lazyInit(() -> {
         StaticMemoryCacheManager cacheManager = getCacheManager();
-        if (cacheManager.isUninitializedCache(CACHE_NAME_CLASS_ENTITY) == false) {
-            return;
-        }
         // 初始化有service的entity缓存
         Map<String, IService> serviceMap = ContextHelper.getApplicationContext().getBeansOfType(IService.class);
         Set<String> uniqueEntitySet = new HashSet<>();
@@ -291,18 +272,15 @@ public class BindingCacheManager {
                 }
             }
         }
-        uniqueEntitySet = null;
-    }
+        return null;
+    });
 
     /**
-     * 初始化bean的属性缓存
-     * @param beanClazz
-     * @return
+     * 初始化
      */
-    private static PropInfo initPropInfoCache(Class<?> beanClazz) {
-        PropInfo propInfoCache = new PropInfo(beanClazz);
-        getCacheManager().putCacheObj(CACHE_NAME_CLASS_PROP, beanClazz.getName(), propInfoCache);
-        return propInfoCache;
+    private static void initEntityInfoCache() {
+        // 初始化entity相关的缓存
+        ENTITY_INFO_CACHE_INITIALIZER.get();
     }
 
 }
