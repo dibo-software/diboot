@@ -15,7 +15,12 @@
  */
 package com.diboot.scheduler.starter;
 
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.SqlFileInitializer;
+import com.diboot.core.vo.DictionaryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -54,7 +59,28 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
                 log.info("diboot-scheduler 初始化SQL ...");
                 // 执行初始化SQL
                 SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "scheduler");
+                // 插入相关数据：Dict等
+                insertInitData();
                 log.info("diboot-scheduler 初始化SQL完成.");
+            }
+        }
+    }
+
+    /**
+     * 插入初始化数据
+     */
+    private void insertInitData() {
+        // 插入iam组件所需的数据字典
+        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+        if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MESSAGE_CHANNEL")){
+            // 插入iam组件所需的数据字典
+            final String[] DICT_INIT_DATA = {
+                    "{\"type\":\"INIT_STRATEGY\",\"itemName\":\"定时任务初始化策略\",\"description\":\"定时任务初始化策略定义\",\"isEditable\":true,\"children\":[{\"itemName\":\"周期执行\",\"itemValue\":\"DO_NOTHING\",\"sortId\":1},{\"itemName\":\"立即执行一次，并周期执行\",\"itemValue\":\"EFIRE_AND_PROCEED2\",\"sortId\":2},{\"itemName\":\"超期立即执行，并周期执行\",\"itemValue\":\"IGNORE_MISFIRES\",\"sortId\":3}]}"
+            };
+            // 插入数据字典
+            for (String dictJson : DICT_INIT_DATA) {
+                DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
+                dictionaryService.createDictAndChildren(dictVo);
             }
         }
     }
