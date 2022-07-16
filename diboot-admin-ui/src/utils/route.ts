@@ -92,16 +92,16 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
         if (route.meta?.componentPath) {
           route.component = resolveComponent(route.meta?.componentPath)
         } else if (route.meta?.url) {
+          const url = route.meta?.url
           if (route.meta?.iframe) {
             // iframe
             route.component = renderComponent(() =>
-              h('iframe', { src: route.meta?.url, style: { border: 0, width: '100%', height: `calc(100% - 3px)` } })
+              h('iframe', { src: url, style: { border: 0, width: '100%', height: `calc(100% - 4px)` } })
             )
-            route.meta = { ...route.meta, hollow: true, hideFooter: true, borderless: true }
           } else {
             // 外部链接（打开新窗口；阻止路由）
             route.beforeEnter = () => {
-              window.open(route.meta?.url)
+              window.open(url)
               return false
             }
           }

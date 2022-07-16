@@ -21,8 +21,12 @@ const menuTree = getMenuTree()
 const router = useRouter()
 const oneLevel = ref<RouteRecordRaw>()
 const openOneLevel = (menu: RouteRecordRaw) => {
+  const oldOneLevel = oneLevel.value
   oneLevel.value = menu
-  if (router.currentRoute.value.name !== menu.name) router.push({ name: menu.name })
+  if (router.currentRoute.value.name !== menu.name)
+    router.push(menu.path).then(navigationFailure => {
+      if (navigationFailure) oneLevel.value = oldOneLevel
+    })
 }
 oneLevel.value = router.currentRoute.value.matched.find(item => menuTree.find(e => e === item))
 
