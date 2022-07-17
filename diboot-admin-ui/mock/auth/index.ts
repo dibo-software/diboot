@@ -250,6 +250,17 @@ const authMenu = [
         }
       },
       {
+        path: 'config',
+        name: 'SystemConfig',
+        meta: {
+          title: '系统配置管理',
+          icon: 'Element:Setting',
+          componentPath: prefix + 'system/config/index.vue',
+          keepAlive: false,
+          sort: 8
+        }
+      },
+      {
         path: 'operationLog',
         name: 'OperationLog',
         meta: {
