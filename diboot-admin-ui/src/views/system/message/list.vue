@@ -113,7 +113,9 @@ initRelatedData()
       <el-table-column prop="createTime" label="创建时间" width="180" />
       <el-table-column label="操作" width="70">
         <template #default="{ row }">
-          <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
+          <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
+            详情
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

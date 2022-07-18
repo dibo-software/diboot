@@ -90,11 +90,19 @@ const addChildNode = (parentId: string) => {
           <template #default="{ node }">
             <span class="custom-tree-node">
               <span>{{ node.label }}</span>
-              <span class="icon-container">
-                <el-icon class="plus-icon custom-icon" @click.stop="addChildNode(node.data.id)">
+              <span v-has-permission="['create', 'delete']" class="icon-container">
+                <el-icon
+                  v-has-permission="'create'"
+                  class="plus-icon custom-icon"
+                  @click.stop="addChildNode(node.data.id)"
+                >
                   <icon name="Plus" />
                 </el-icon>
-                <el-icon class="delete-icon custom-icon" @click.stop="removeSingleTreeNode(node.data.id)">
+                <el-icon
+                  v-has-permission="'delete'"
+                  class="delete-icon custom-icon"
+                  @click.stop="removeSingleTreeNode(node.data.id)"
+                >
                   <icon name="Delete" />
                 </el-icon>
               </span>
@@ -103,7 +111,7 @@ const addChildNode = (parentId: string) => {
         </el-tree>
       </el-scrollbar>
     </el-space>
-    <div class="is-fixed btn-fixed">
+    <div v-has-permission="'create'" class="is-fixed btn-fixed">
       <el-button style="width: 100%" type="primary" :icon="Plus" @click="addTopNode">添加顶级菜单</el-button>
     </div>
   </div>

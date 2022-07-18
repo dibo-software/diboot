@@ -82,7 +82,7 @@ const openDetail = (id: string) => {
       </el-form>
       <el-header>
         <el-space wrap class="list-operation">
-          <el-button @click="batchRemove(selectedKeys)">批量删除</el-button>
+          <el-button v-has-permission="'logDelete'" @click="batchRemove(selectedKeys)">批量删除</el-button>
           <el-space>
             <el-button :icon="Refresh" circle @click="getList()" />
             <el-button :icon="Search" circle @click="searchState = !searchState" />
@@ -110,7 +110,9 @@ const openDetail = (id: string) => {
         <el-table-column label="操作" align="center" width="130">
           <template #default="{ row }">
             <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
-            <el-button text bg type="primary" size="small" @click="remove(row.id)">删除</el-button>
+            <el-button v-has-permission="'logDelete'" text bg type="primary" size="small" @click="remove(row.id)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

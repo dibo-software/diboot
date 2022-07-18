@@ -137,7 +137,7 @@ const authMenu = [
     ]
   },
   {
-    path: 'orgUser',
+    path: 'orgStructure',
     name: 'OrgUser ',
     redirect: '/orgStructure/org',
     meta: { title: '组织架构', icon: 'Element:User' },
@@ -150,7 +150,8 @@ const authMenu = [
           componentPath: prefix + 'orgStructure/org/index.vue',
           sort: '@natural',
           keepAlive: false,
-          icon: 'Element:Folder'
+          icon: 'Element:Folder',
+          permissions: ['detail', 'create', 'update', 'delete', 'sort']
         }
       },
       {
@@ -162,7 +163,8 @@ const authMenu = [
           sort: '@natural',
           keepAlive: false,
           hollow: false,
-          icon: 'Element:Guide'
+          icon: 'Element:Guide',
+          permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {
@@ -173,7 +175,8 @@ const authMenu = [
           componentPath: prefix + 'orgStructure/user/index.vue',
           sort: '@natural',
           keepAlive: false,
-          icon: 'Element:User'
+          icon: 'Element:User',
+          permissions: ['detail', 'create', 'update', 'delete', 'import', 'export', 'position', 'addPosition']
         }
       }
     ]
@@ -192,7 +195,8 @@ const authMenu = [
           icon: 'Element:Collection',
           componentPath: prefix + 'system/dictionary/list.vue',
           sort: 1,
-          keepAlive: false
+          keepAlive: false,
+          permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {
@@ -203,7 +207,8 @@ const authMenu = [
           icon: 'Element:Menu',
           componentPath: prefix + 'system/resourcePermission/list.vue',
           sort: 2,
-          keepAlive: false
+          keepAlive: false,
+          permissions: ['create', 'update', 'delete']
         }
       },
       {
@@ -213,7 +218,8 @@ const authMenu = [
           title: '用户角色管理',
           icon: 'Element:User',
           componentPath: prefix + 'system/role/list.vue',
-          sort: 3
+          sort: 3,
+          permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {
@@ -224,7 +230,8 @@ const authMenu = [
           icon: 'Element:AlarmClock',
           componentPath: prefix + 'system/scheduleJob/list.vue',
           keepAlive: false,
-          sort: 4
+          sort: 4,
+          permissions: ['create', 'update', 'delete', 'executeOnce', 'logList', 'logDelete']
         }
       },
       {
@@ -235,7 +242,8 @@ const authMenu = [
           icon: 'Element:MessageBox',
           componentPath: prefix + 'system/messageTemplate/list.vue',
           keepAlive: false,
-          sort: 5
+          sort: 5,
+          permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {
@@ -246,7 +254,8 @@ const authMenu = [
           icon: 'Element:Message',
           componentPath: prefix + 'system/message/list.vue',
           keepAlive: false,
-          sort: 6
+          sort: 6,
+          permissions: ['detail', 'delete']
         }
       },
       {
@@ -257,7 +266,8 @@ const authMenu = [
           icon: 'Element:FolderOpened',
           componentPath: prefix + 'system/fileRecord/list.vue',
           keepAlive: false,
-          sort: 8
+          sort: 8,
+          permissions: ['detail', 'update']
         }
       },
       {
@@ -268,7 +278,8 @@ const authMenu = [
           icon: 'Element:Setting',
           componentPath: prefix + 'system/config/index.vue',
           keepAlive: false,
-          sort: 8
+          sort: 8,
+          permissions: ['update']
         }
       },
       {
@@ -278,7 +289,8 @@ const authMenu = [
           title: '操作日志管理',
           icon: 'Element:Pointer',
           componentPath: prefix + 'system/operationLog/list.vue',
-          sort: 9
+          sort: 9,
+          permissions: ['detail']
         }
       },
       {

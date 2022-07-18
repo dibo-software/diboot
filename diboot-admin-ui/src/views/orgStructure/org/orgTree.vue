@@ -104,15 +104,21 @@ defineExpose({ reload })
         <template #default="{ node, data }">
           <span class="tree-node">
             <span class="label">{{ node.label }}</span>
-            <span v-if="!readonly" class="btn-wrapper">
-              <el-button type="text" :icon="Edit" @click="edit(data)" />
-              <el-button class="btn-delete" type="text" :icon="Delete" @click="remove(data)" />
+            <span v-if="!readonly" v-has-permission="['update', 'delete']" class="btn-wrapper">
+              <el-button v-has-permission="'update'" type="text" :icon="Edit" @click="edit(data)" />
+              <el-button
+                v-has-permission="'delete'"
+                class="btn-delete"
+                type="text"
+                :icon="Delete"
+                @click="remove(data)"
+              />
             </span>
           </span>
         </template>
       </el-tree>
     </div>
-    <el-footer v-if="!readonly" class="el-footer">
+    <el-footer v-if="!readonly" v-has-permission="'create'" class="el-footer">
       <el-button type="primary" :icon="Plus" class="btn-block" @click="add()">添加顶层部门</el-button>
     </el-footer>
   </div>

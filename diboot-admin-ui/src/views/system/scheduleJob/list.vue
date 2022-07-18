@@ -56,26 +56,34 @@ const openLog = (id: string) => {
             <el-tag v-if="item.jobStatus"> 准备就绪</el-tag>
             <el-tag v-else type="info"> 停用</el-tag>
 
-            <el-popconfirm title="确认立即执行一次吗?" @confirm="executeOnce(item.id)">
-              <template #reference>
-                <el-button circle :icon="CaretRight" type="primary" style="margin-left: auto" />
-              </template>
-            </el-popconfirm>
+            <div style="margin-left: auto">
+              <el-popconfirm title="确认立即执行一次吗?" @confirm="executeOnce(item.id)">
+                <template #reference>
+                  <el-button v-has-permission="'executeOnce'" circle :icon="CaretRight" type="primary" />
+                </template>
+              </el-popconfirm>
 
-            <el-dropdown :hide-on-click="false" style="margin-left: 10px">
-              <el-button circle :icon="More" type="primary" plain />
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="openForm(item.id)">编辑</el-dropdown-item>
-                  <el-dropdown-item @click="openLog(item.id)">日志</el-dropdown-item>
-                  <el-dropdown-item divided @click="remove(item.id)"> 删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+              <el-dropdown
+                v-has-permission="['update', 'delete', 'logList']"
+                :hide-on-click="false"
+                style="margin-left: 10px"
+              >
+                <el-button circle :icon="More" type="primary" plain />
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-has-permission="'update'" @click="openForm(item.id)">编辑</el-dropdown-item>
+                    <el-dropdown-item v-has-permission="'logList'" @click="openLog(item.id)">日志</el-dropdown-item>
+                    <el-dropdown-item v-has-permission="'delete'" divided @click="remove(item.id)">
+                      删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
+      <el-col v-has-permission="'create'" :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
         <el-card shadow="hover" class="add" @click="openForm()">
           <el-icon :size="25">
             <Plus />

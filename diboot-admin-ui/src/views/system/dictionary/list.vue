@@ -34,7 +34,7 @@ const openDetail = (id: string) => {
   <div class="list-page">
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-button v-has-permission="'create'" type="primary" @click="openForm()">新建</el-button>
         <el-space>
           <el-input
             v-model="searchVal"
@@ -91,8 +91,10 @@ const openDetail = (id: string) => {
         <template #default="{ row }">
           <template v-if="!row.parentId || row.parentId === '0'">
             <el-space>
-              <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
-              <el-dropdown>
+              <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
+                详情
+              </el-button>
+              <el-dropdown v-has-permission="['update', 'delete']">
                 <el-button text bg type="primary" size="small">
                   更多
                   <el-icon :size="16" style="margin-left: 5px">
@@ -101,8 +103,8 @@ const openDetail = (id: string) => {
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="openForm(row.id)">编辑</el-dropdown-item>
-                    <el-dropdown-item @click="remove(row.id)">删除</el-dropdown-item>
+                    <el-dropdown-item v-has-permission="'update'" @click="openForm(row.id)">编辑</el-dropdown-item>
+                    <el-dropdown-item v-has-permission="'delete'" @click="remove(row.id)">删除</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>

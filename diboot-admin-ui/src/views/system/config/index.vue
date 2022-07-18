@@ -9,7 +9,7 @@ const type = ref('')
 const typeList = ref<SystemConfigType[]>([])
 const configList = ref<SystemConfig<string | boolean>[]>([])
 
-const editable = true //checkPermission('update')
+const editable = checkPermission('update')
 
 api.get<SystemConfigType[]>(`${baseApi}/typeList`).then(res => {
   if (res.data) typeList.value = res.data

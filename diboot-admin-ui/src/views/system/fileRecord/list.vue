@@ -100,8 +100,12 @@ const batchDownload = () => {
       <el-table-column label="操作" width="160">
         <template #default="{ row }">
           <el-space>
-            <el-button text bg type="primary" size="small" @click="openDetail(row.uuid)">详情</el-button>
-            <el-button text bg type="primary" size="small" @click="openForm(row.uuid)">编辑备注</el-button>
+            <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.uuid)"
+              >详情</el-button
+            >
+            <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.uuid)"
+              >编辑备注</el-button
+            >
           </el-space>
         </template>
       </el-table-column>

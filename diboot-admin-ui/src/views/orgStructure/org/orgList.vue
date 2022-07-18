@@ -60,7 +60,7 @@ defineExpose({ onSearch })
   <div class="list-page">
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button type="primary" @click="openForm()">新建</el-button>
+        <el-button v-has-permission="'create'" type="primary" @click="openForm()">新建</el-button>
         <el-space>
           <el-input
             v-model="searchVal"
@@ -89,8 +89,12 @@ defineExpose({ onSearch })
       <el-table-column prop="createTime" label="创建时间" />
       <el-table-column label="操作" width="140">
         <template #default="{ row }">
-          <el-button text bg type="primary" size="small" @click="openForm(row.id)">编辑</el-button>
-          <el-button text bg type="danger" size="small" @click="remove(row.id)">删除</el-button>
+          <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)"
+            >编辑</el-button
+          >
+          <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
