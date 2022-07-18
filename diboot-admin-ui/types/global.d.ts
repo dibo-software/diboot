@@ -23,9 +23,9 @@ declare global {
   interface FileRecord {
     uuid: string
     // 应用模块
-    appModule: string
+    appModule?: string
     // MD5标识
-    md5: string
+    md5?: string
     // 文件名称
     fileName: string
     // 文件类型
@@ -37,7 +37,7 @@ declare global {
     // 缩略图地址
     thumbnailUrl?: string
     // 备注
-    description: string
+    description?: string
     // 创建人
     createByName: string
     // 创建时间

@@ -250,6 +250,17 @@ const authMenu = [
         }
       },
       {
+        path: 'fileRecord',
+        name: 'FileRecord',
+        meta: {
+          title: '文件记录管理',
+          icon: 'Element:FolderOpened',
+          componentPath: prefix + 'system/fileRecord/list.vue',
+          keepAlive: false,
+          sort: 8
+        }
+      },
+      {
         path: 'config',
         name: 'SystemConfig',
         meta: {
