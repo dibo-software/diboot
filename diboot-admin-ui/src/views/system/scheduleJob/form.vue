@@ -13,8 +13,8 @@ const visible = ref(false)
 
 const jobList = ref<Array<Job>>()
 
-const { more, initMore } = useMore({ dict: 'INIT_STRATEGY' })
-initMore()
+const { relatedData, initRelatedData } = useOption({ dict: 'INIT_STRATEGY' })
+initRelatedData()
 
 defineExpose({
   open: (id?: string) => {
@@ -26,7 +26,7 @@ defineExpose({
       title.value = '新建'
       model.value.jobStatus = true
       model.value.saveLog = true
-      if (more.initStrategyOptions) model.value.initStrategy = more.initStrategyOptions[0].value
+      if (relatedData.initStrategyOptions) model.value.initStrategy = relatedData.initStrategyOptions[0].value
     }
     visible.value = true
   }
@@ -102,7 +102,7 @@ const jobChange = (jobKey: string) => {
       <el-form-item prop="initStrategy" label="初始化策略">
         <el-select v-model="model.initStrategy">
           <el-option
-            v-for="(item, index) in more.initStrategyOptions"
+            v-for="(item, index) in relatedData.initStrategyOptions"
             :key="index"
             :value="item.value"
             :label="item.label"

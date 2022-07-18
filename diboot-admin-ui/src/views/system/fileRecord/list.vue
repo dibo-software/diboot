@@ -13,8 +13,8 @@ getList()
 // 搜索区折叠
 const searchState = ref(false)
 
-const { more, asyncBindLoading, remoteMoreFilter } = useMore({
-  asyncBind: { userOptions: { type: 'IamUser', label: 'realname' } }
+const { relatedData, asyncLoading, remoteRelatedDataFilter } = useOption({
+  asyncLoad: { userOptions: { type: 'IamUser', label: 'realname' } }
 })
 
 // 选中的数据 Id 集合
@@ -51,12 +51,17 @@ const batchDownload = () => {
               v-model="queryParam.createBy"
               remote
               filterable
-              :loading="asyncBindLoading"
-              :remote-method="value => remoteMoreFilter(value, 'userOptions')"
+              :loading="asyncLoading"
+              :remote-method="value => remoteRelatedDataFilter(value, 'userOptions')"
               clearable
               @change="onSearch"
             >
-              <el-option v-for="item in more.userOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-option
+                v-for="item in relatedData.userOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
         </el-col>

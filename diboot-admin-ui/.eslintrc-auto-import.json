@@ -67,7 +67,7 @@
     "useDetail": "readonly",
     "useForm": "readonly",
     "useList": "readonly",
-    "useMore": "readonly",
+    "useOption": "readonly",
     "useRoute": "readonly",
     "useRouter": "readonly",
     "useSlots": "readonly",

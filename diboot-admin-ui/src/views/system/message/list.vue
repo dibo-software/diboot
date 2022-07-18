@@ -15,8 +15,8 @@ const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
 
-const { more, initMore } = useMore({ dict: ['MESSAGE_CHANNEL', 'MESSAGE_STATUS'] })
-initMore()
+const { relatedData, initRelatedData } = useOption({ dict: ['MESSAGE_CHANNEL', 'MESSAGE_STATUS'] })
+initRelatedData()
 </script>
 
 <template>
@@ -28,7 +28,7 @@ initMore()
             <el-form-item label="发送通道">
               <el-select v-model="queryParam.channel" placeholder="请选择发送通道" clearable @change="onSearch">
                 <el-option
-                  v-for="item in more.messageChannelOptions || []"
+                  v-for="item in relatedData.messageChannelOptions || []"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"
@@ -45,7 +45,7 @@ initMore()
             <el-form-item label="消息状态">
               <el-select v-model="queryParam.status" clearable placeholder="请选择消息状态" @change="onSearch">
                 <el-option
-                  v-for="item in more.messageStatusOptions || []"
+                  v-for="item in relatedData.messageStatusOptions || []"
                   :key="item.value"
                   :value="item.value"
                   :label="item.label"

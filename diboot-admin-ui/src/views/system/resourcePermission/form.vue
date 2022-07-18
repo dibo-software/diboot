@@ -136,18 +136,18 @@ const {
 } = usePermissionControl()
 // 初始化后台权限
 initRestPermissions('/resourcePermission/apiList')
-// more hook
-const { more, initMore } = useMore({ dict: 'RESOURCE_PERMISSION_CODE' })
-initMore().then(() => {
+// option hook
+const { relatedData, initRelatedData } = useOption({ dict: 'RESOURCE_PERMISSION_CODE' })
+initRelatedData().then(() => {
   // 初始化权限选项
-  initResourcePermissionCodeOptions(more.resourcePermissionCodeOptions)
+  initResourcePermissionCodeOptions(relatedData.resourcePermissionCodeOptions)
 })
 // tab hooks => 按钮权限处理
 const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermission>({
   beforeAddTab(tab) {
     // 自动补全编码选项
-    if (more && more.resourcePermissionCodeOptions) {
-      const validOption = more.resourcePermissionCodeOptions.find(item => {
+    if (relatedData && relatedData.resourcePermissionCodeOptions) {
+      const validOption = relatedData.resourcePermissionCodeOptions.find(item => {
         return !existPermissionCodes.value.includes(item.value)
       })
       if (validOption) {
@@ -341,7 +341,7 @@ watch(
                               @change="(value: string) => changeBtnResourceCode(permission, value)"
                             >
                               <el-option
-                                v-for="(item, i) in more.resourcePermissionCodeOptions"
+                                v-for="(item, i) in relatedData.resourcePermissionCodeOptions"
                                 :key="`frontend-code_${i}`"
                                 :label="`${item.label}[${item.value}]`"
                                 :value="item.value"

@@ -3,7 +3,7 @@ import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import objectDataListMap from './_objectDataListMap'
-import type { BindData, AsyncBindData } from '@/hooks/more'
+import type { RelatedData, AsyncRelatedData } from '@/hooks/option'
 
 const line2Hump = (value: string, between = '_') =>
   value.toLowerCase().replace(RegExp(`${between}\\w`, 'g'), str => str.charAt(1).toUpperCase())
@@ -71,10 +71,29 @@ const dictList: Record<string, LabelValue<string>[]> = {
   ]
 }
 
+const remoteRelatedDataFilter: MockMethod = {
+  url: `${baseUrl}/loadRelatedData`,
+  timeout: Random.natural(50, 300),
+  method: 'get',
+  response: ({ query }: ApiRequest<AsyncRelatedData & { parentValue?: string; parentType?: string }>) => {
+    const labelValueList = objectDataListMap[query.type]
+      ?.filter(e => (query.keyword ? `${e[query.label]}`.match(query.keyword) : true))
+      .map(
+        item =>
+          ({
+            value: item[query.value || 'id'],
+            label: item[query.label],
+            ext: buildExtData(item, query.ext)
+          } as LabelValue<Record<string, unknown>>)
+      )
+    return JsonResult.OK(labelValueList)
+  }
+}
+
 export default [
   // 绑定字典接口
   {
-    url: `${baseUrl}/bindDict`,
+    url: `${baseUrl}/loadRelatedDict`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: ApiRequest<string[]>) => {
@@ -85,10 +104,10 @@ export default [
   },
   // 绑定数据接口
   {
-    url: `${baseUrl}/bindData`,
+    url: `${baseUrl}/loadRelatedData`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: ({ body }: ApiRequest<Record<string, BindData>>) => {
+    response: ({ body }: ApiRequest<Record<string, RelatedData>>) => {
       const more: Record<string, LabelValue[]> = {}
       Object.keys(body).forEach(type => {
         const bindData = body[type]
@@ -105,22 +124,13 @@ export default [
     }
   },
   // 绑定数据过滤接口
+  remoteRelatedDataFilter,
   {
-    url: `${baseUrl}/bindData/{parentValue}/{parentType}`,
-    timeout: Random.natural(50, 300),
-    method: 'get',
-    response: ({ query }: ApiRequest<AsyncBindData>) => {
-      const labelValueList = objectDataListMap[query.type]
-        .filter(e => (query.keyword ? `${e[query.label]}`.match(query.keyword) : true))
-        .map(
-          item =>
-            ({
-              value: item[query.value || 'id'],
-              label: item[query.label],
-              ext: buildExtData(item, query.ext)
-            } as LabelValue<Record<string, unknown>>)
-        )
-      return JsonResult.OK(labelValueList)
-    }
+    ...remoteRelatedDataFilter,
+    url: `${baseUrl}/loadRelatedData/:parentValue`
+  },
+  {
+    ...remoteRelatedDataFilter,
+    url: `${baseUrl}/loadRelatedData/:parentValue/:parentType`
   }
 ] as MockMethod[]

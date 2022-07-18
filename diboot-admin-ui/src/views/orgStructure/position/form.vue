@@ -6,14 +6,14 @@ import { defineEmits } from 'vue'
 const baseApi = '/position'
 
 const { loadData, loading, model } = useDetail<Position>(baseApi)
-const { more, initMore } = useMore({ dict: ['DATA_PERMISSION_TYPE', 'POSITION_GRADE'] })
+const { relatedData, initRelatedData } = useOption({ dict: ['DATA_PERMISSION_TYPE', 'POSITION_GRADE'] })
 const title = ref('')
 const visible = ref(false)
 defineExpose({
   open: (id?: string) => {
     title.value = id ? '更新' : '新建'
     loadData(id)
-    initMore()
+    initRelatedData()
     visible.value = true
   }
 })
@@ -38,7 +38,7 @@ const { confirmSubmit, submit } = useForm({
 })
 
 const onGradeValueChanged = (val: string) => {
-  const grade = more.positionGradeOptions.find((item: any) => item.value === val)
+  const grade = relatedData.positionGradeOptions.find((item: any) => item.value === val)
   if (grade !== undefined) {
     model.value.gradeName = grade.label
   }
@@ -61,9 +61,9 @@ const rules: FormRules = {
       </el-form-item>
       <el-form-item prop="gradeValue" label="职级">
         <el-select v-model="model.gradeValue" placeholder="请选择职级" @change="onGradeValueChanged">
-          <template v-if="more.positionGradeOptions">
+          <template v-if="relatedData.positionGradeOptions">
             <el-option
-              v-for="item in more.positionGradeOptions"
+              v-for="item in relatedData.positionGradeOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -76,9 +76,9 @@ const rules: FormRules = {
       </el-form-item>
       <el-form-item prop="dataPermissionType" label="数据权限">
         <el-select v-model="model.dataPermissionType" placeholder="请选择数据权限">
-          <template v-if="more.dataPermissionTypeOptions">
+          <template v-if="relatedData.dataPermissionTypeOptions">
             <el-option
-              v-for="item in more.dataPermissionTypeOptions"
+              v-for="item in relatedData.dataPermissionTypeOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"

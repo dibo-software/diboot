@@ -3,7 +3,7 @@ import type { ApiData } from '@/utils/request'
 /**
  * 绑定对象
  */
-export interface BindData {
+export interface RelatedData {
   // 对象类型（类名）
   type: string
   // 绑定属性（默认对象主键）
@@ -22,7 +22,7 @@ export interface BindData {
   // 懒加载（默认：true ；为 false 时会同步加载下一级，且当为树时会加载整个树）
   lazyChild?: boolean
   // 下一级
-  next?: BindData
+  next?: RelatedData
   // 附加条件
   condition?: Record<string, boolean | string | number | (string | number)[] | null>
 }
@@ -30,7 +30,7 @@ export interface BindData {
 /**
  * 异步绑定对象
  */
-export interface AsyncBindData extends BindData {
+export interface AsyncRelatedData extends RelatedData {
   // 远程过滤的关键字
   keyword?: string
   // 禁止加载数据（用于联动的远程过滤）
@@ -52,70 +52,68 @@ export interface LinkageControl {
 }
 
 /**
- * more 配置选项
+ * RelatedData 配置选项
  */
-export interface MoreOption {
-  // 自定义获取 more 接口 （接口需返回 <string, LabelValue[]> 类型数据）
-  getMoreApi?: string
-  // 字典类型 （more 中的字典类型数据 key 为：[字典类型小驼峰Options]）
+export interface RelatedDataOption {
+  // 字典类型 （RelatedData 中的字典类型数据 key 为：[字典类型小驼峰Options]）
   dict?: string | string[]
-  // 绑定对象（key 将作为从 more 中获取数据的 key）
-  bind?: Record<string, BindData>
+  // 绑定对象（key 将作为从 RelatedData 中获取数据的 key）
+  load?: Record<string, RelatedData>
   // 异步绑定对象（key 同 bind，value 将作为异步获取数据的 loader）
-  asyncBind?: Record<string, AsyncBindData>
-  // 联动控制器（依赖 asyncBind 加载 more 中数据）
+  asyncLoad?: Record<string, AsyncRelatedData>
+  // 联动控制器（依赖 asyncBind 加载 RelatedData 中数据）
   linkageControl?: Record<string, LinkageControl | LinkageControl[]>
 }
 
 /**
  * 选项数据源加载
  */
-export default (option: MoreOption) => {
-  const { getMoreApi, dict, bind, asyncBind, linkageControl } = option
+export default (option: RelatedDataOption) => {
+  const { dict, load, asyncLoad, linkageControl } = option
 
   // 数据集合
-  const more: Record<string, LabelValue[]> = reactive({})
+  const relatedData: Record<string, LabelValue[]> = reactive({})
 
   /**
-   * 初始化 more
+   * 初始化 RelatedData
    */
-  const initMore = async () => {
+  const initRelatedData = async () => {
     const reqList: Promise<ApiData<Record<string, LabelValue[]>>>[] = []
-    // 个性化 more 接口
-    if (getMoreApi) reqList.push(api.get(getMoreApi))
     // 通用获取关联字典的数据
-    if ((dict ?? []).length > 0) reqList.push(api.post('/common/bindDict', dict instanceof Array ? dict : [dict]))
+    if ((dict ?? []).length > 0)
+      reqList.push(api.post('/common/loadRelatedDict', dict instanceof Array ? dict : [dict]))
     // 通用获取关联绑定的数据
-    if (Object.keys(bind ?? []).length > 0) reqList.push(api.post('/common/bindData', bind))
+    if (Object.keys(load ?? []).length > 0) reqList.push(api.post('/common/loadRelatedData', load))
 
     if (reqList.length > 0) {
       const resList = await Promise.all(reqList)
       resList.forEach(res => {
-        if (res.code === 0) Object.assign(more, res.data)
+        if (res.code === 0) Object.assign(relatedData, res.data)
         else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
       })
     }
   }
 
   // 异步加载状态
-  const asyncBindLoading = ref(false)
+  const asyncLoading = ref(false)
 
   /**
-   * 加载 More
+   * 加载 RelatedData
    *
-   * @param moreLoader 加载器
+   * @param relatedDataLoader 加载器
    * @param nodeData 节点数据（可空）
    */
-  const loadMore = async (moreLoader: AsyncBindData, nodeData?: LabelValue) => {
-    if (moreLoader.disabled) {
+  const loadRelatedData = async (relatedDataLoader: AsyncRelatedData, nodeData?: LabelValue) => {
+    if (relatedDataLoader.disabled) {
       return []
     }
-    asyncBindLoading.value = true
+    asyncLoading.value = true
+    const build = (item?: string) => (item ? `/${item}` : '')
     const res = await api.get<LabelValue[]>(
-      `/common/bindData/${nodeData?.value ?? ''}/${nodeData?.type ?? ''}`,
-      moreLoader
+      `/common/loadRelatedData${build(nodeData?.value)}${build(nodeData?.type)}`,
+      relatedDataLoader
     )
-    asyncBindLoading.value = false
+    asyncLoading.value = false
     if (res.code === 0) return res.data ?? []
     else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
     return []
@@ -126,15 +124,15 @@ export default (option: MoreOption) => {
    *
    * @param loader 加载器key
    */
-  const findAsyncBindLoader = (loader: string): AsyncBindData => {
-    if (asyncBind == null) {
+  const findAsyncLoader = (loader: string): AsyncRelatedData => {
+    if (asyncLoad == null) {
       throw new Error(`No async bind! Please check 'asyncBind'!`)
     }
-    const moreLoader = asyncBind[loader]
-    if (moreLoader == null) {
+    const relatedDataLoader = asyncLoad[loader]
+    if (relatedDataLoader == null) {
       throw new Error(`Please check 'asyncBind', '${loader}' that does not exist!`)
     }
-    return moreLoader
+    return relatedDataLoader
   }
 
   /**
@@ -143,14 +141,14 @@ export default (option: MoreOption) => {
    * @param value 输入值
    * @param loader 加载器（asyncBind 的 key）
    */
-  const remoteMoreFilter = async (value: string, loader: string) => {
+  const remoteRelatedDataFilter = async (value: string, loader: string) => {
     if (value == null || (value = value.trim()).length === 0) {
-      more[loader] = []
+      relatedData[loader] = []
       return
     }
-    const moreLoader = findAsyncBindLoader(loader)
-    moreLoader.keyword = value
-    more[loader] = await loadMore(moreLoader)
+    const relatedDataLoader = findAsyncLoader(loader)
+    relatedDataLoader.keyword = value
+    relatedData[loader] = await loadRelatedData(relatedDataLoader)
   }
 
   /**
@@ -160,10 +158,14 @@ export default (option: MoreOption) => {
    * @param loader 加载器名称
    * @param resolve
    */
-  const lazyLoadMore = async (nodeData: LabelValue, loader: string, resolve: (options: LabelValue[]) => void) => {
-    const moreLoader = findAsyncBindLoader(loader)
-    const dataLsit = (await loadMore(moreLoader, nodeData)) ?? []
-    if (dataLsit.length === 0 && moreLoader.next != null) nodeData.disabled = true
+  const lazyLoadRelatedData = async (
+    nodeData: LabelValue,
+    loader: string,
+    resolve: (options: LabelValue[]) => void
+  ) => {
+    const relatedDataLoader = findAsyncLoader(loader)
+    const dataLsit = (await loadRelatedData(relatedDataLoader, nodeData)) ?? []
+    if (dataLsit.length === 0 && relatedDataLoader.next != null) nodeData.disabled = true
     resolve(dataLsit)
   }
 
@@ -184,15 +186,22 @@ export default (option: MoreOption) => {
     }
     const isNull = value == null || value.length === 0
     const execute = async ({ prop, loader, condition, autoLoad }: LinkageControl) => {
-      const moreLoader = findAsyncBindLoader(loader)
-      moreLoader.disabled = isNull
-      if (moreLoader.condition == null) moreLoader.condition = {}
-      moreLoader.condition[condition] = value
+      const relatedDataLoader = findAsyncLoader(loader)
+      relatedDataLoader.disabled = isNull
+      if (relatedDataLoader.condition == null) relatedDataLoader.condition = {}
+      relatedDataLoader.condition[condition] = value
       if (form) form[prop] = undefined
-      more[loader] = autoLoad === false || isNull ? [] : await loadMore(moreLoader)
+      relatedData[loader] = autoLoad === false || isNull ? [] : await loadRelatedData(relatedDataLoader)
     }
     controlItem instanceof Array ? controlItem.forEach(item => execute(item)) : execute(controlItem)
   }
 
-  return { more, initMore, asyncBindLoading, remoteMoreFilter, lazyLoadMore, handleLinkage }
+  return {
+    relatedData,
+    initRelatedData,
+    asyncLoading,
+    remoteRelatedDataFilter,
+    lazyLoadRelatedData,
+    handleLinkage
+  }
 }
