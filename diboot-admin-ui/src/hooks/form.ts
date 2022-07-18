@@ -1,6 +1,6 @@
 import type { FormInstance } from 'element-plus'
 
-interface FormOption<T> {
+interface FormOption {
   // 主键属性名（默认值：id）
   primaryKey?: string
   // 基础接口
@@ -9,15 +9,13 @@ interface FormOption<T> {
   createApi?: string
   // 自定义更新接口
   updateApiPrefix?: string
-  // 校验成功后置处理函数(多用于其他附加校验处理)
-  afterValidate?: () => Promise<void>
-  // 提交前数据增强函数(多用于附加数据添加)
-  enhance?: (values: T) => Promise<T>
+  // 校验成功后置处理函数
+  afterValidate?: () => Promise<void> | void
   // 成功回调
   successCallback: (primaryKey?: string) => void
 }
 
-export default <T>(option: FormOption<T>) => {
+export default (option: FormOption) => {
   const confirmSubmit = ref(false)
 
   const validate = (formEl: FormInstance | undefined) => {
@@ -33,16 +31,13 @@ export default <T>(option: FormOption<T>) => {
     })
   }
 
-  const submit = async (formEl: FormInstance | undefined, data: T) => {
+  const submit = async (formEl: FormInstance | undefined, data: Record<string, unknown>) => {
+    const { baseApi, primaryKey = 'id', createApi, updateApiPrefix, afterValidate, successCallback } = option
     try {
-      const { baseApi, createApi, updateApiPrefix, afterValidate, successCallback } = option
-      let { primaryKey } = option
+      confirmSubmit.value = true
       await validate(formEl)
-      if (afterValidate !== undefined) {
-        await afterValidate()
-      }
-      primaryKey = primaryKey || 'id'
-      const id: unknown = (data as any)[primaryKey]
+      if (afterValidate) await afterValidate()
+      const id = data[primaryKey]
       let res
       if (id) {
         res = await api.put<never>(updateApiPrefix ? `${updateApiPrefix}/${id}` : `${baseApi}/${id}`, data)
@@ -52,7 +47,7 @@ export default <T>(option: FormOption<T>) => {
       ElMessage.success(res.msg)
       successCallback(res.data)
     } catch (e: any) {
-      ElMessage.error(e.msg || e.message || e.length ? e : '提交失败')
+      ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
     } finally {
       confirmSubmit.value = false
     }
