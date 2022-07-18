@@ -22,19 +22,23 @@ export const imageBindSrc = (file: FileRecord) => {
     previewSrcList: [accessUrl]
   }
 }
+
 /**
  * 下载文件
  *
  * @param url
  * @param params
+ * @param onDownloadProgress
  */
-export const fileDownload = (url: string, params?: unknown) => {
+export const fileDownload = (url: string, params?: unknown, onDownloadProgress?: (percentage: number) => void) => {
   if (isExternal(url))
     window.location.href = url + (/\?/.test(url) ? '&' : '?') + qs.stringify(params, { arrayFormat: 'repeat' })
   else {
     return new Promise<void>((resolve, reject) => {
-      api
-        .download(url, params)
+      ;(Array.isArray(params)
+        ? api.postDownload(url, params, onDownloadProgress)
+        : api.download(url, params, onDownloadProgress)
+      )
         .then(res => {
           if (res.data) {
             const blob = new Blob([res.data])
