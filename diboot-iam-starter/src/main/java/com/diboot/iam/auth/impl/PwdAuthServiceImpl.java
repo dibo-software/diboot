@@ -62,7 +62,8 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
         IamAccount latestAccount = super.getAccount(iamAuthToken);
         // 如果需要密码校验，那么无状态的时候不需要验证
-        if (iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false){
+        if (latestAccount == null ||
+                (iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false)){
             throw new AuthenticationException("用户名或密码错误! account="+iamAuthToken.getAuthAccount());
         }
         return latestAccount;
