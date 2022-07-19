@@ -47,7 +47,9 @@ getTree().then(() => {
 const addTopNode = () => {
   addTreeNode({
     parentId: '0',
-    displayType: 'MENU',
+    displayType: 'CATALOGUE',
+    displayName: '新建',
+    resourceCode: '',
     status: 'A',
     routeMeta: {}
   })
@@ -59,6 +61,8 @@ const addChildNode = (parentId: string) => {
   addTreeNode({
     parentId: parentId,
     displayType: 'MENU',
+    displayName: '新建',
+    resourceCode: '',
     status: 'A',
     routeMeta: {}
   })
