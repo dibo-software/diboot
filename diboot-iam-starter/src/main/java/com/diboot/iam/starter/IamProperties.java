@@ -43,12 +43,6 @@ public class IamProperties {
     private String tokenHeaderKey = "authtoken";
 
     /**
-     * jwt token过期分钟数
-     */
-    @Deprecated
-    private int jwtTokenExpiresMinutes = 60;
-
-    /**
      * token过期分钟数
      */
     private int tokenExpiresMinutes = 60;
