@@ -101,7 +101,6 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     Object.keys(queryParam).forEach(key => delete queryParam[key as keyof D])
     Object.assign(queryParam, option.initQueryParam ?? {})
     onSearch()
-    _.isDate()
   }
 
   // 删除
