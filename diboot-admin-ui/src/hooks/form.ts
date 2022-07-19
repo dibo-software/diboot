@@ -16,9 +16,15 @@ interface FormOption {
 }
 
 export default (option: FormOption) => {
-  const confirmSubmit = ref(false)
+  // 提交表单状态
+  const submitting = ref(false)
 
-  const validate = (formEl: FormInstance | undefined) => {
+  /**
+   * 表单校验
+   *
+   * @param formEl
+   */
+  const validate = (formEl?: FormInstance) => {
     if (!formEl) return
     return new Promise((resolve, reject) => {
       formEl.validate((valid, fields) => {
@@ -31,10 +37,16 @@ export default (option: FormOption) => {
     })
   }
 
-  const submit = async (formEl: FormInstance | undefined, data: Record<string, unknown>) => {
+  /**
+   * 提交数据
+   *
+   * @param data
+   * @param formEl
+   */
+  const submit = async (data: Record<string, unknown>, formEl?: FormInstance) => {
     const { baseApi, primaryKey = 'id', createApi, updateApiPrefix, afterValidate, successCallback } = option
     try {
-      confirmSubmit.value = true
+      submitting.value = true
       await validate(formEl)
       if (afterValidate) await afterValidate()
       const id = data[primaryKey]
@@ -49,12 +61,12 @@ export default (option: FormOption) => {
     } catch (e: any) {
       ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
     } finally {
-      confirmSubmit.value = false
+      submitting.value = false
     }
   }
 
   return {
-    confirmSubmit,
+    submitting,
     submit
   }
 }

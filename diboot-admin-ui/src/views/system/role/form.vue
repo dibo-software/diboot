@@ -51,7 +51,7 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const { confirmSubmit, submit } = useForm({
+const { submitting, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)
@@ -107,7 +107,7 @@ const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: s
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="confirmSubmit" @click="submit(formRef, model)">提交</el-button>
+      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">提交</el-button>
     </template>
   </el-dialog>
 </template>

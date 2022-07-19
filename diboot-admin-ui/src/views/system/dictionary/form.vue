@@ -66,14 +66,13 @@ const rules = reactive<FormRules>({
 
 const { submit } = useForm({
   baseApi,
-  async enhance(values: Dictionary): Promise<Dictionary> {
-    const { type, children } = values
+  async afterValidate() {
+    const { type, children } = model.value
     if (children && children.length > 0) {
       children.forEach(item => {
         item.type = type
       })
     }
-    return super.enhance(values)
   },
   successCallback(id) {
     emit('complete', id)
@@ -195,7 +194,7 @@ defineExpose({ open })
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="submit(formRef, model)">确认</el-button>
+        <el-button type="primary" @click="submit(model, formRef)">确认</el-button>
       </span>
     </template>
   </el-dialog>

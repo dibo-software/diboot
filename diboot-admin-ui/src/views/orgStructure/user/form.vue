@@ -50,7 +50,7 @@ const emit = defineEmits<{
 }>()
 
 const userPositionTableForm = ref()
-const { confirmSubmit, submit } = useForm({
+const { submitting, submit } = useForm({
   baseApi,
   async afterValidate() {
     await userPositionTableForm.value?.validate()
@@ -167,7 +167,7 @@ const rules: FormRules = {
     />
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="confirmSubmit" @click="submit(formRef, model)">提交</el-button>
+      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">提交</el-button>
     </template>
   </el-dialog>
 </template>
