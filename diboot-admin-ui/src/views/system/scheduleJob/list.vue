@@ -71,9 +71,13 @@ const openLog = (id: string) => {
                 <el-button circle :icon="More" type="primary" plain />
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-has-permission="'update'" @click="openForm(item.id)">编辑</el-dropdown-item>
-                    <el-dropdown-item v-has-permission="'logList'" @click="openLog(item.id)">日志</el-dropdown-item>
-                    <el-dropdown-item v-has-permission="'delete'" divided @click="remove(item.id)">
+                    <el-dropdown-item v-if="checkPermission('update')" @click="openForm(item.id)">
+                      编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="checkPermission('logList')" @click="openLog(item.id)">
+                      日志
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="checkPermission('delete')" divided @click="remove(item.id)">
                       删除
                     </el-dropdown-item>
                   </el-dropdown-menu>

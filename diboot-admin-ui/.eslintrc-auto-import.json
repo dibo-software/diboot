@@ -8,6 +8,8 @@
     "acceptHMRUpdate": "readonly",
     "api": "readonly",
     "baseURL": "readonly",
+    "checkPermission": "readonly",
+    "checkRole": "readonly",
     "computed": "readonly",
     "createApp": "readonly",
     "createPinia": "readonly",

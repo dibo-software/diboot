@@ -99,8 +99,8 @@ const openForm = (id?: string) => {
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-has-permission="'update'" @click="openForm(row.id)">编辑</el-dropdown-item>
-                  <el-dropdown-item v-has-permission="'delete'" @click="remove(row.id)">删除</el-dropdown-item>
+                  <el-dropdown-item v-if="checkPermission('update')" @click="openForm(row.id)">编辑</el-dropdown-item>
+                  <el-dropdown-item v-if="checkPermission('delete')" @click="remove(row.id)">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

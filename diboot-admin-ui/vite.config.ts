@@ -18,6 +18,7 @@ export default defineConfig(({ command }) => {
       // checker({ vueTsc: true }),
       eslintPlugin({ fix: true }),
       AutoImport({
+        vueTemplate: true,
         // 解析器
         resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
         // 自动导入Api
@@ -34,7 +35,8 @@ export default defineConfig(({ command }) => {
           { '@/hooks/option': [['default', 'useOption']] },
           { '@/hooks/upload_file': [['default', 'useUploadFile']] },
           { '@/hooks/tabs': [['default', 'useTabs']] },
-          { '@/hooks/tree_crud': [['default', 'useTreeCrud']] }
+          { '@/hooks/tree_crud': [['default', 'useTreeCrud']] },
+          { '@/utils/permission': ['checkPermission', 'checkRole'] }
         ],
         // 为true时在项目根目录自动创建
         dts: 'types/auto-imports.d.ts',
