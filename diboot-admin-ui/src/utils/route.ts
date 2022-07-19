@@ -50,12 +50,6 @@ const routeSort = (e1: RouteRecordRaw, e2: RouteRecordRaw) => (e1.meta?.sort ?? 
  * @param asyncRoutes
  */
 export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
-  // 获取组件
-  const resolveComponent = (path: string) => {
-    if (views[path]) return views[path]
-    throw new Error(`Unknown page ${path}. Is it located under 'src/views' ?`)
-  }
-
   // 构建完整路径
   const buildFullPath = (path: string, parentPath = '/') =>
     /^\//.exec(path) ? path : `${parentPath === '/' ? '' : parentPath}/${path}`
@@ -90,7 +84,13 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
       } else {
         delete route.children
         if (route.meta?.componentPath) {
-          route.component = resolveComponent(route.meta?.componentPath)
+          const componentPath = route.meta?.componentPath
+          const component = views[componentPath]
+          if (component) route.component = component
+          else {
+            console.error(`Unknown page ${componentPath}. Is it located under 'src/views' ?`)
+            return false // 未找到组件，不添加路由
+          }
         } else if (route.meta?.url) {
           const url = route.meta?.url
           if (route.meta?.iframe) {
@@ -111,7 +111,8 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
         if (level == 1) {
           route.children = [_.cloneDeep(route)]
           route.component = Layout
-          route.meta = undefined // 丢弃 meta
+          route.name = undefined
+          route.meta = undefined
         }
       }
       return true
