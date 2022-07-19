@@ -71,7 +71,7 @@ public class IamRedisAutoConfig {
      @ConditionalOnMissingBean(CacheManager.class)
      public CacheManager shiroCacheManager(RedisTemplate<String, Object> redisTemplate) {
          log.info("初始化shiro缓存: ShiroRedisCacheManager");
-        return new ShiroRedisCacheManager(redisTemplate, iamProperties.getJwtTokenExpiresMinutes());
+        return new ShiroRedisCacheManager(redisTemplate, iamProperties.getTokenExpiresMinutes());
      }
 
     /**
