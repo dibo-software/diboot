@@ -12,7 +12,7 @@ export interface ResourcePermission {
   resourceCode?: string
   permissionCodes?: Array<string>
   routeMeta: Partial<RouteMeta>
-  sortId?: number
+  sortId?: string
   status?: string
   children?: ResourcePermission[]
   permissionList?: ResourcePermission[]

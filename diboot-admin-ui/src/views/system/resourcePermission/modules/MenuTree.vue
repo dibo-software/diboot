@@ -50,6 +50,7 @@ const addTopNode = () => {
     displayType: 'CATALOGUE',
     displayName: '新建',
     resourceCode: '',
+    sortId: '0',
     status: 'A',
     routeMeta: {}
   })
@@ -63,10 +64,13 @@ const addChildNode = (parentId: string) => {
     displayType: 'MENU',
     displayName: '新建',
     resourceCode: '',
+    sortId: '0',
     status: 'A',
     routeMeta: {}
   })
 }
+
+const { nodeDrag } = useSort<Required<ResourcePermission>>({ sortApi: '/resourcePermission/sort', callback: getTree })
 </script>
 <template>
   <div class="tree-container">
@@ -90,6 +94,7 @@ const addChildNode = (parentId: string) => {
           :filter-node-method="filterNode"
           @check-change="checkStrictlyChange"
           @node-click="nodeClick"
+          @node-drop="nodeDrag"
         >
           <template #default="{ node }">
             <span class="custom-tree-node">
@@ -125,9 +130,11 @@ const addChildNode = (parentId: string) => {
 .tree-container {
   position: relative;
   height: 100%;
+
   .tree-search {
     padding: 5px 5px 0;
   }
+
   .is-fixed {
     box-sizing: border-box;
     position: absolute;
@@ -142,6 +149,7 @@ const addChildNode = (parentId: string) => {
     z-index: 1;
   }
 }
+
 .custom-tree-node {
   width: 100%;
   display: flex;
@@ -149,34 +157,42 @@ const addChildNode = (parentId: string) => {
   align-items: center;
   font-size: var(--el-font-size-base);
   padding-right: 10px;
+
   &:hover {
     .custom-icon {
       display: inline-block;
     }
+
     .plus-icon {
       background-color: var(--el-color-primary);
     }
+
     .delete-icon {
       background-color: var(--el-color-error);
     }
+
     .custom-icon + .custom-icon {
       margin-left: 5px;
     }
   }
+
   .custom-icon {
     display: none;
     color: white;
     padding: 2px;
     border-radius: 50%;
+
     &:hover {
       transition: background-color 0.3s;
     }
   }
+
   .plus-icon {
     &:hover {
       background-color: var(--el-color-primary-light-3);
     }
   }
+
   .delete-icon {
     &:hover {
       background-color: var(--el-color-error-light-3);
