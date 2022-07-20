@@ -33,6 +33,7 @@ export default defineConfig(({ command }) => {
           { '@/hooks/detail': [['default', 'useDetail']] },
           { '@/hooks/form': [['default', 'useForm']] },
           { '@/hooks/option': [['default', 'useOption']] },
+          { '@/hooks/sort': [['default', 'useSort']] },
           { '@/hooks/upload_file': [['default', 'useUploadFile']] },
           { '@/hooks/tabs': [['default', 'useTabs']] },
           { '@/hooks/tree_crud': [['default', 'useTreeCrud']] },
