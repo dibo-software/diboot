@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -37,9 +38,11 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.dto.SortParamDTO;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.BaseCrudMapper;
@@ -55,8 +58,11 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /***
@@ -736,6 +742,100 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 自动转换为VO并绑定关联对象
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
 		return voList;
+	}
+
+	@Override
+	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField) {
+		return sort(sortParam, sortField, null);
+	}
+
+	@Override
+	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField) {
+		Serializable id = sortParam.getId();
+		Serializable newParentId = sortParam.getNewParentId();
+		Long newSortId = sortParam.getNewSortId();
+		Long oldSortId = sortParam.getOldSortId();
+
+		boolean isTree = parentIdField != null;
+		if (isTree && newParentId == null) {
+			throw new BusinessException("Tree 结构数据排序需指定 newParentId");
+		}
+		// tree 数据层级变化（层级变化 oldSortId 应为 null）
+		boolean levelChange = oldSortId == null;
+		if (!isTree && levelChange) {
+			// 非 tree 结构数据，无层级变化，必须指定 oldSortId
+			throw new BusinessException("未指定 oldSortId");
+		}
+		// 上移（层级变化同为上移）
+		boolean moveUp = levelChange || oldSortId > newSortId;
+		// 排序起始值
+		AtomicLong start = new AtomicLong(moveUp ? newSortId : oldSortId);
+		long end = !moveUp ? newSortId : (levelChange ? Long.MAX_VALUE : oldSortId);
+
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		String idColumn = propInfo.getIdColumn();
+		String idFieldName = propInfo.getIdFieldName();
+
+		LambdaQueryWrapper<T> query = Wrappers.<T>query().select(idColumn).lambda();
+		query.orderByAsc(sortField).eq(isTree, parentIdField, newParentId);
+		if (levelChange) {
+			query.ge(sortField, start.get());
+		} else {
+			query.between(sortField, start.get(), end);
+		}
+		boolean exchange = false;
+		List<Object> ids = new ArrayList<>();
+		for (Map<String, Object> map : getMapList(query)) {
+			Object key = map.get(idColumn);
+			if (V.fuzzyEqual(key, id)){
+				exchange = true;
+			} else {
+				ids.add(key);
+			}
+		}
+		// 起始值小于1时重置排序，从1开始
+		if (start.get() <= 0) {
+			start.set(1);
+		}
+		// 越界
+		boolean crossBorder = end - start.get() + (levelChange ? 0 : 1) < ids.size();
+
+		SerializedLambda sortFieldLambda = BeanUtils.getSerializedLambda(sortField);
+		String sortFieldName = PropertyNamer.methodToProperty(sortFieldLambda.getImplMethodName());
+
+		List<T> collect = new ArrayList<>();
+		Function<Object,T> addEntity = idValue ->{
+			T entity = null;
+			try {
+				entity = entityClass.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+			BeanUtils.setProperty(entity, idFieldName, idValue);
+			BeanUtils.setProperty(entity, sortFieldName, start.getAndIncrement());
+			collect.add(entity);
+			return entity;
+		};
+		if (levelChange) {
+			SerializedLambda parentIdFieldLambda = BeanUtils.getSerializedLambda(parentIdField);
+			String parentIdFieldName = PropertyNamer.methodToProperty(parentIdFieldLambda.getImplMethodName());
+			BeanUtils.setProperty(addEntity.apply(id), parentIdFieldName, newParentId);
+		} else if (!exchange) {
+			log.warn("无效排序（非层级变化，且无有效位置交换）");
+			return false;
+		} else if (moveUp) {
+			addEntity.apply(id);
+		}
+		ids.forEach(addEntity::apply);
+		if (!moveUp) {
+			addEntity.apply(id);
+		}
+		if (crossBorder) {
+			LambdaQueryWrapper<T> queryWrapper = Wrappers.<T>query().select(idColumn).lambda();
+			queryWrapper.orderByAsc(sortField).eq(isTree, parentIdField, newParentId).gt(sortField, end);
+			getMapList(queryWrapper).stream().map(map -> map.get(idColumn)).forEach(addEntity::apply);
+		}
+		return updateEntities(collect);
 	}
 
 	/***

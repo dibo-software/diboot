@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.diboot.core.dto.SortParamDTO;
 import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.LabelValue;
@@ -357,5 +358,23 @@ public interface BaseService<T> {
      * @throws Exception
      */
     <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass);
+
+    /**
+     * list 排序
+     *
+     * @param sortParam 排序参数
+     * @param sortField 排序字段
+     * @return 排序结果；是否成功
+     */
+    boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField);
+
+    /**
+     * tree 排序
+     *
+     * @param sortField     排序字段
+     * @param parentIdField 父级ID字段
+     * @return 排序结果；是否成功
+     */
+    boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField);
 
 }
