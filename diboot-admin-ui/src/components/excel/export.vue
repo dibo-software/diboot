@@ -96,7 +96,7 @@ function formatter(row: TableHead, column: TableColumnCtx<TableHead>) {
 }
 
 // 复选框组变化
-const handleCheckedCitiesChange = (value: string[]) => {
+const handleCheckedCitiesChange = (value: (string | number | boolean)[]) => {
   const checkedCount = value.length
   checkAll.value = checkedCount === allList.value.length
   isIndeterminate.value = checkedCount > 0 && checkedCount < allList.value.length

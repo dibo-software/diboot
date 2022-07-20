@@ -24,7 +24,9 @@ defineExpose({
       </el-descriptions-item>
       <el-descriptions-item label="文件大小"> {{ model.fileSize }}（Byte） </el-descriptions-item>
       <el-descriptions-item label="访问地址">
-        <el-link type="primary" @click="fileDownload(model.accessUrl)">{{ model.accessUrl }}</el-link>
+        <el-link type="primary" @click="model.accessUrl && fileDownload(model.accessUrl)">
+          {{ model.accessUrl }}
+        </el-link>
       </el-descriptions-item>
       <el-descriptions-item label="备注" :span="2">
         {{ model.description }}

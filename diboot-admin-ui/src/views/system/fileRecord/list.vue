@@ -4,7 +4,10 @@ import { Refresh, Search } from '@element-plus/icons-vue'
 import Detail from './detail.vue'
 import Form from './form.vue'
 
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination } = useList<FileRecord>({
+const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination } = useList<
+  FileRecord,
+  FileRecord & { createBy: string }
+>({
   baseApi: '/fileRecord'
 })
 
@@ -52,7 +55,7 @@ const batchDownload = () => {
               remote
               filterable
               :loading="asyncLoading"
-              :remote-method="value => remoteRelatedDataFilter(value, 'userOptions')"
+              :remote-method="(value: string) => remoteRelatedDataFilter(value, 'userOptions')"
               clearable
               @change="onSearch"
             >

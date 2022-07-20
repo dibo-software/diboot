@@ -7,7 +7,7 @@ import type { SystemConfigType, SystemConfig } from './type'
 const baseApi = '/systemConfig'
 const type = ref('')
 const typeList = ref<SystemConfigType[]>([])
-const configList = ref<SystemConfig<string | boolean>[]>([])
+const configList = ref<SystemConfig[]>([])
 
 const editable = checkPermission('update')
 
@@ -24,9 +24,6 @@ api.get<SystemConfigType[]>(`${baseApi}/typeList`).then(res => {
 const getConfigData = () => {
   api.get<SystemConfig[]>(`${baseApi}/${type.value}`).then(res => {
     if (res.data) configList.value = res.data
-    configList.value.forEach(e => {
-      if (typeof e.defaultValue === 'boolean') e.value = e.value === 'true'
-    })
   })
 }
 
@@ -74,7 +71,7 @@ const deleteConfig = (prop = '') => {
   })
 }
 
-const configTest = (data: Record<string, string>) => {
+const configTest = (data?: Record<string, string>) => {
   api
     .post(`${baseApi}/${type.value}`, data)
     .then(() => ElMessage.success('测试通过'))
@@ -107,7 +104,13 @@ const configTest = (data: Record<string, string>) => {
               </th>
               <td>
                 <span v-if="typeof config.defaultValue === 'boolean'" style="margin-left: 10px">
-                  <el-switch v-if="editable" v-model="config.value" @change="update(config)" />
+                  <el-switch
+                    v-if="editable"
+                    v-model="config.value"
+                    active-value="true"
+                    inactive-value="false"
+                    @change="update(config)"
+                  />
                   <el-tag v-else :type="config.value ? 'success' : 'info'">
                     {{ config.value }}
                   </el-tag>

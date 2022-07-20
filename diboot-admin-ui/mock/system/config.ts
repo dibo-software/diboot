@@ -2,11 +2,11 @@ import type { MockMethod } from 'vite-plugin-mock'
 import { Random } from 'mockjs'
 import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
-import type { SystemConfigType, SystemConfig } from '@/views/system/config/type'
+import type { SystemConfig } from '@/views/system/config/type'
 
 const baseUrl = '/api/systemConfig'
 
-const typeList: SystemConfigType[] = [
+const typeList: LabelValue<string[]>[] = [
   {
     label: '邮箱配置',
     value: 'EmailConfig',

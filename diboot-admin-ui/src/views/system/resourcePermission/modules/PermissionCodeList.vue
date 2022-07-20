@@ -9,7 +9,7 @@ type Props = {
   toggle: boolean
   menuType: string
   configCode: string
-  menuResourceCode?: string
+  menuResourceCode?: string | unknown
   permissionCodes: string[]
   restPermissions?: Array<RestPermission>
   tips?: boolean
