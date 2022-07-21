@@ -160,7 +160,7 @@ public class IamAutoConfig {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 设置过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
-        filters.put("jwt", shiroFilter());
+        filters.put("accessControlFilter", shiroFilter());
         shiroFilterFactoryBean.setFilters(filters);
         //Shiro securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -192,9 +192,10 @@ public class IamAutoConfig {
         }
         filterChainMap.put("/login", "authc");
         if (V.notEmpty(anonUrls) && anonUrls.contains("/**") && !iamProperties.isEnablePermissionCheck()) {
+            log.info("权限检查已停用，该配置仅用于开发环境 !");
             filterChainMap.put("/**", "anon");
         } else {
-            filterChainMap.put("/**", "jwt");
+            filterChainMap.put("/**", "accessControlFilter");
         }
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinitions(filterChainMap);

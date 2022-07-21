@@ -38,7 +38,7 @@ public class IamProperties {
     private String application;
 
     /**
-     * jwt header key
+     * token header key
      */
     private String tokenHeaderKey = "authtoken";
 

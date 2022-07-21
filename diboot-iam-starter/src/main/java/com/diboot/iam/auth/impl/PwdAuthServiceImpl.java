@@ -72,14 +72,14 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     /**
      * 用户名密码是否一致
      * @param account
-     * @param jwtToken
+     * @param authToken
      * @return
      */
-    private static boolean isPasswordMatched(IamAccount account, IamAuthToken jwtToken){
+    private static boolean isPasswordMatched(IamAccount account, IamAuthToken authToken){
         //加密后比较
-        String encryptedStr = IamSecurityUtils.encryptPwd(jwtToken.getAuthSecret(), account.getSecretSalt());
+        String encryptedStr = IamSecurityUtils.encryptPwd(authToken.getAuthSecret(), account.getSecretSalt());
         // 暂时兼容RC2版本，后期移除
-        String oldEncryptedStr = Encryptor.encrypt(jwtToken.getAuthSecret(), account.getSecretSalt());
+        String oldEncryptedStr = Encryptor.encrypt(authToken.getAuthSecret(), account.getSecretSalt());
         return encryptedStr.equals(account.getAuthSecret()) || oldEncryptedStr.equals(account.getAuthSecret());
     }
 

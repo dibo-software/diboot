@@ -56,7 +56,7 @@ public class WxAuthServiceImpl extends BaseAuthServiceImpl {
     }
 
     /**
-     * 初始化JwtAuthToken实例
+     * 初始化AuthToken实例
      * @param credential
      * @return
      */
