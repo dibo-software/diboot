@@ -107,7 +107,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
     }
 
     /**
-     * 初始化JwtAuthToken实例
+     * 初始化AuthToken实例
      * @param credential
      * @return
      */
