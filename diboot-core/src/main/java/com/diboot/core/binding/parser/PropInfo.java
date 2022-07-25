@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -102,13 +103,13 @@ public class PropInfo implements Serializable {
                 else{
                     TableLogic tableLogic = fld.getAnnotation(TableLogic.class);
                     if(tableLogic != null){
-                        if (V.notEmpty(tableLogic.value())){
-                            columnName = tableLogic.value();
-                        }
-                        else if(columnName == null){
+                        if(columnName == null){
                             columnName = S.toSnakeCase(fldName);
                         }
                         this.deletedColumn = columnName;
+                        if (V.notEmpty(tableLogic.value())){
+                            BaseConfig.setActiveFlagValue(tableLogic.value());
+                        }
                     }
                 }
                 this.fieldToColumnMap.put(fldName, columnName);
