@@ -132,4 +132,10 @@ public class BaseConfig {
 		}
 		return ACTIVE_FLAG_VALUE;
 	}
+
+	public static void setActiveFlagValue(String value) {
+		if(getActiveFlagValue() == null) {
+			ACTIVE_FLAG_VALUE = value;
+		}
+	}
 }
