@@ -35,6 +35,10 @@ public class Cons {
      */
     public static final String SEPARATOR_UNDERSCORE = "_";
     /**
+     * 横杠分隔符 -
+     */
+    public static final String SEPARATOR_CROSSBAR = "-";
+    /**
      * 冒号分隔符
      */
     public final static  String SEPARATOR_COLON = ":";
