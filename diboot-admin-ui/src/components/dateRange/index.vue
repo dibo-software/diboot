@@ -3,7 +3,14 @@ import { CircleClose } from '@element-plus/icons-vue'
 
 type ModelValue = [string | undefined, string | undefined]
 
-const props = defineProps<{ modelValue?: ModelValue; startPlaceholder?: string; endPlaceholder?: string }>()
+const props = defineProps<{
+  modelValue?: ModelValue
+  startPlaceholder?: string
+  endPlaceholder?: string
+  type?: 'datetimerange' | 'daterange'
+}>()
+
+const isDate = (props.type ?? 'daterange') === 'daterange'
 
 const dateRange: { begin?: string; end?: string } = reactive({})
 
@@ -46,7 +53,8 @@ const clearable = () => {
       v-model="dateRange.begin"
       :placeholder="startPlaceholder"
       style="width: 50%"
-      value-format="YYYY-MM-DD"
+      :type="isDate ? 'date' : 'datetime'"
+      :value-format="isDate ? 'YYYY-MM-DD' : 'YYYY-MM-DD hh:mm:ss'"
       :disabled-date="disabledBeginDate"
       @change="change"
     />
@@ -58,7 +66,8 @@ const clearable = () => {
       v-model="dateRange.end"
       :placeholder="endPlaceholder"
       style="width: 50%"
-      value-format="YYYY-MM-DD"
+      :type="isDate ? 'date' : 'datetime'"
+      :value-format="isDate ? 'YYYY-MM-DD' : 'YYYY-MM-DD hh:mm:ss'"
       :disabled-date="disabledEndDate"
       @change="change"
     />
