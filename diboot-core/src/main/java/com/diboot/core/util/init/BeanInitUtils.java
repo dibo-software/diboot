@@ -1,3 +1,4 @@
+
 package com.diboot.core.util.init;
 
 import com.diboot.core.util.ContextHelper;
@@ -25,7 +26,7 @@ public class BeanInitUtils {
      * @return 懒加载初始器
      */
     public static <T> BeanInitializer<T> lazyInit(Supplier<T> supplier) {
-        return new MyLazyInitializer<T>() {
+        return new LazyBeanInitializer<T>() {
             @Override
             protected T initialize() {
                 return supplier.get();
@@ -42,7 +43,7 @@ public class BeanInitUtils {
      * @return 懒加载初始器
      */
     public static <T> BeanInitializer<T> lazyInit(Class<T> beanClass) {
-        return new MyLazyInitializer<T>() {
+        return new LazyBeanInitializer<T>() {
             @Override
             protected T initialize() {
                 return Objects.requireNonNull(ContextHelper.getBean(beanClass), () -> "找不到class对应的bean: " + beanClass.getName());
@@ -56,7 +57,7 @@ public class BeanInitUtils {
      *
      * @param <T> 封装的数据对象类型
      */
-    private static abstract class MyLazyInitializer<T> implements BeanInitializer<T> {
+    private static abstract class LazyBeanInitializer<T> implements BeanInitializer<T> {
         /**
          * 标记未初始化的 默认值
          */
