@@ -176,7 +176,7 @@ export default (option: RelatedDataOption) => {
    * @param controlKey
    * @param form 表单（当需要重置被控值时）
    */
-  const handleLinkage = (value: string, controlKey: string, form: Record<string, unknown>) => {
+  const handleLinkage = (value: string, controlKey: string, form?: Record<string, unknown>) => {
     if (linkageControl == null) {
       throw new Error(`No control! Please check 'linkageControl'!`)
     }
@@ -193,7 +193,7 @@ export default (option: RelatedDataOption) => {
       if (form) form[prop] = undefined
       relatedData[loader] = autoLoad === false || isNull ? [] : await loadRelatedData(relatedDataLoader)
     }
-    controlItem instanceof Array ? controlItem.forEach(item => execute(item)) : execute(controlItem)
+    Array.isArray(controlItem) ? controlItem.forEach(item => execute(item)) : execute(controlItem)
   }
 
   return {

@@ -58,8 +58,10 @@ export default (option: FormOption) => {
       }
       ElMessage.success(res.msg)
       successCallback(res.data)
+      return true
     } catch (e: any) {
       ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
+      return false
     } finally {
       submitting.value = false
     }
