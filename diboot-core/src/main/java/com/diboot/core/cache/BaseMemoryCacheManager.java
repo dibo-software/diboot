@@ -20,6 +20,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 
+import java.util.concurrent.Callable;
+
 /**
  * 缓存manager父类
  * @author JerryMa
@@ -36,6 +38,7 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
      * @param <T>
      * @return
      */
+    @Override
     public <T> T getCacheObj(String cacheName, Object objKey, Class<T> tClass){
         Cache cache = getCache(cacheName);
         T value = cache != null? cache.get(objKey, tClass) : null;
@@ -46,10 +49,30 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
     }
 
     /**
+     * 获取缓存对象, 如果找不到, 则生成初始值, 放入缓存, 并返回
+     *
+     * @param cacheName    cache名称
+     * @param objKey       查找的key
+     * @param initSupplier 初始值提供者
+     * @param <T>          缓存对象类型
+     * @return 缓存对象
+     */
+    @Override
+    public <T> T getCacheObj(String cacheName, Object objKey, Callable<T> initSupplier) {
+        Cache cache = getCache(cacheName);
+        T value = cache != null ? cache.get(objKey, initSupplier) : null;
+        if (log.isTraceEnabled()) {
+            log.trace("从缓存读取: {}.{} = {}", cacheName, objKey, value);
+        }
+        return value;
+    }
+
+    /**
      * 获取缓存对象
      * @param objKey
      * @return
      */
+    @Override
     public String getCacheString(String cacheName, Object objKey){
         return getCacheObj(cacheName, objKey, String.class);
     }
@@ -60,6 +83,7 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
      * @param objKey
      * @param obj
      */
+    @Override
     public void putCacheObj(String cacheName, Object objKey, Object obj){
         Cache cache = getCache(cacheName);
         cache.put(objKey, obj);
@@ -74,6 +98,7 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
      * @param cacheName
      * @param objKey
      */
+    @Override
     public void removeCacheObj(String cacheName, Object objKey){
         Cache cache = getCache(cacheName);
         cache.evict(objKey);
@@ -88,6 +113,7 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
      * @param cacheName
      * @return
      */
+    @Override
     public boolean isUninitializedCache(String cacheName){
         ConcurrentMapCache cache = (ConcurrentMapCache)getCache(cacheName);
         return cache.getNativeCache().isEmpty();
