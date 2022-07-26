@@ -384,7 +384,22 @@ public class QueryBuilder {
                 continue;
             }
             BindQuery bindQuery = field.getAnnotation(BindQuery.class);
-            if (value != null || (bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL))) {
+            Strategy strategy = Strategy.IGNORE_EMPTY;
+            if(bindQuery != null) {
+                strategy = bindQuery.strategy();
+            }
+            boolean collectThisField = false;
+            // INCLUDE_NULL策略，包含null也收集
+            if(strategy.equals(Strategy.INCLUDE_NULL)) {
+                collectThisField = true;
+            }
+            else if(strategy.equals(Strategy.IGNORE_EMPTY) && V.notEmpty(value)) {
+                collectThisField = true;
+            }
+            else if(strategy.equals(Strategy.INCLUDE_EMPTY) && value != null) {
+                collectThisField = true;
+            }
+            if (collectThisField) {
                 resultMap.put(fieldName, new FieldAndValue(field, value));
             }
         }
