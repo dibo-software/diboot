@@ -230,6 +230,23 @@ public class TestJoinQuery {
     }
 
     @Test
+    public void testIgnoreEmptyDynamicSqlQuery(){
+        // 初始化DTO，测试不涉及关联的情况
+        DepartmentDTO dto = new DepartmentDTO();
+        // builder直接查询，不分页 3条结果
+        List<Department> builderResultList = departmentService.getEntityList(QueryBuilder.toQueryWrapper(dto));
+        Assert.assertTrue(builderResultList.size() == 6);
+
+        dto.setName("");
+        builderResultList = departmentService.getEntityList(QueryBuilder.toQueryWrapper(dto));
+        Assert.assertTrue(builderResultList.size() == 6);
+
+        dto.setOrgName("");
+        builderResultList = departmentService.getEntityList(QueryBuilder.toQueryWrapper(dto));
+        Assert.assertTrue(builderResultList.size() == 6);
+    }
+
+    @Test
     public void testBindQueryGroup(){
         DepartmentDTO departmentDTO = new DepartmentDTO();
         departmentDTO.setSearch("帝博");
