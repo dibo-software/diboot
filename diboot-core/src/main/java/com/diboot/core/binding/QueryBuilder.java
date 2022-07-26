@@ -384,10 +384,7 @@ public class QueryBuilder {
                 continue;
             }
             BindQuery bindQuery = field.getAnnotation(BindQuery.class);
-            Strategy strategy = Strategy.IGNORE_EMPTY;
-            if(bindQuery != null) {
-                strategy = bindQuery.strategy();
-            }
+            Strategy strategy = bindQuery != null? bindQuery.strategy() : Strategy.IGNORE_EMPTY;
             boolean collectThisField = false;
             // INCLUDE_NULL策略，包含null也收集
             if(strategy.equals(Strategy.INCLUDE_NULL)) {
