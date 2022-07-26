@@ -48,7 +48,13 @@ public class JsonTest {
 
     @Test
     public void testJsonDateConvert(){
-        User user = new User();
+        String json = "{\"id\":123,\"birthdate\":\"1988-09-12\", \"localDatetime\":\"1998-09-12 12:12:20\"}";
+        User user = JSON.toJavaObject(json, User.class);
+        Assert.assertTrue(user.getId() != null);
+        Assert.assertTrue(user.getBirthdate() != null);
+        Assert.assertTrue(user.getLocalDatetime() != null);
+
+        user = new User();
         user.setId(123L);
         user.setUsername("zhangs").setCreateTime(new Date());
         user.setBirthdate(D.convert2Date("1988-09-12 12:34"));

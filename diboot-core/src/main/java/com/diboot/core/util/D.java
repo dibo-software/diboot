@@ -446,6 +446,18 @@ public class D extends DateUtils{
 		if(V.isEmpty(dateString)){
 			return null;
 		}
+		dateString = formatDateString(dateString);
+		return convert2FormatDate(dateString, FORMAT_DATETIME_Y4MDHMS);
+	}
+
+
+	/**
+	 * 格式化日期字符串
+	 */
+	public static String formatDateString(String dateString){
+		if(V.isEmpty(dateString)){
+			return null;
+		}
 		// 清洗
 		if(dateString.contains("月")){
 			dateString = dateString.replaceAll("年", "-").replaceAll("月", "-").replaceAll("日", "").replaceAll("号", "");
@@ -468,7 +480,7 @@ public class D extends DateUtils{
 		}
 		parts[0] = S.join(ymd, "-");
 		if(parts.length == 1){
-			return D.convert2FormatDate(parts[0], D.FORMAT_DATE_Y4MD);
+			return parts[0];
 		}
 		// 18:20:30:103
 		String[] hmsArray = new String[3];
@@ -496,7 +508,7 @@ public class D extends DateUtils{
 			hmsArray[2] = "00";
 		}
 		parts[1] = S.join(hmsArray, ":");
-		return convert2FormatDate(S.join(parts, " "), FORMAT_DATETIME_Y4MDHMS);
+		return S.join(parts, " ");
 	}
 
 }

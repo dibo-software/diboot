@@ -18,19 +18,21 @@ package com.diboot.core.converter;
 import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
- * String - date 转换器
+ * String - LocalDate 转换器
  * @author JerryMa
- * @version v2.6.0
- * @date 2022/5/11
+ * @version v2.7.0
+ * @date 2022/7/26
  * Copyright © diboot.com
  */
-public class String2DateConverter implements Converter<String, Date> {
+public class String2LocalDateConverter implements Converter<String, LocalDate> {
 
     @Override
-    public Date convert(String dateString) {
-        return D.fuzzyConvert(dateString);
+    public LocalDate convert(String dateString) {
+        dateString = D.formatDateString(dateString);
+        return LocalDate.parse(dateString);
     }
+
 }
