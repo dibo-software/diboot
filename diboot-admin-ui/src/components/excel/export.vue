@@ -110,60 +110,56 @@ const confirm = () => {
 </script>
 
 <template>
-  <!-- 可选列导出 -->
-  <el-dropdown
-    v-if="tableHeadUrl || options"
-    split-button
-    type="default"
-    @click="exportData()"
-    @command="handleCommand"
-  >
-    <el-icon>
-      <component :is="exportLoadingData ? Loading : Download" />
-    </el-icon>
-    导出
-    <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item v-if="tableHeadUrl" command="select">选择列导出</el-dropdown-item>
-        <el-dropdown-item v-for="(value, key, index) in options" :key="index" :divided="index === 0" :command="value">
-          {{ key }}
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-  </el-dropdown>
+  <span>
+    <!-- 可选列导出 -->
+    <el-dropdown v-if="tableHeadUrl || options" split-button @click="exportData()" @command="handleCommand">
+      <el-icon>
+        <component :is="exportLoadingData ? Loading : Download" />
+      </el-icon>
+      导出
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item v-if="tableHeadUrl" command="select">选择列导出</el-dropdown-item>
+          <el-dropdown-item v-for="(value, key, index) in options" :key="index" :divided="index === 0" :command="value">
+            {{ key }}
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
 
-  <!-- 固定模板导出 -->
-  <el-button v-else :icon="exportLoadingData ? Loading : Download" type="default" @click="exportData()">导出</el-button>
+    <!-- 固定模板导出 -->
+    <el-button v-else :icon="exportLoadingData ? Loading : Download" type="default" @click="exportData()">
+      导出
+    </el-button>
 
-  <!-- 导出列选择 -->
-  <el-dialog v-model="dialogVisible" :width="width">
-    <template #header>
-      选择导出列
-      <el-checkbox
-        v-model="checkAll"
-        :indeterminate="isIndeterminate"
-        style="margin-left: 25px"
-        @change="handleCheckAllChange"
-      >
-        全选
-      </el-checkbox>
-    </template>
-    <el-checkbox-group v-model="checkedList" @change="handleCheckedCitiesChange">
-      <el-table v-loading="tableLoading" border :data="[{}]" style="width: 100%">
-        <table-column v-for="(item, index) in tableHeader" :key="index" :column="item" />
-      </el-table>
-    </el-checkbox-group>
-    <template #footer>
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="confirm">确 定</el-button>
-    </template>
-  </el-dialog>
+    <!-- 导出列选择 -->
+    <el-dialog v-model="dialogVisible" :width="width">
+      <template #header>
+        选择导出列
+        <el-checkbox
+          v-model="checkAll"
+          :indeterminate="isIndeterminate"
+          style="margin-left: 25px"
+          @change="handleCheckAllChange"
+        >
+          全选
+        </el-checkbox>
+      </template>
+      <el-checkbox-group v-model="checkedList" @change="handleCheckedCitiesChange">
+        <el-table v-loading="tableLoading" border :data="[{}]" style="width: 100%">
+          <table-column v-for="(item, index) in tableHeader" :key="index" :column="item" />
+        </el-table>
+      </el-checkbox-group>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirm">确 定</el-button>
+      </template>
+    </el-dialog>
+  </span>
 </template>
 
 <style scoped lang="scss">
 .el-dropdown {
-  margin: 0 12px;
-
   :deep(.el-button-group) {
     .el-button:first-child {
       border-top-right-radius: 0;
