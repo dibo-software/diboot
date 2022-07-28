@@ -42,14 +42,15 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
    */
   const buildQueryParam = () => {
     const tempQueryParam: Record<string, unknown> = _.cloneDeep(queryParam)
-    // 合并分页参数
+    // 合并分页、排序参数
     tempQueryParam.pageIndex = pagination.current
     tempQueryParam.pageSize = pagination.pageSize
     const orderBy = pagination.orderBy ?? {}
-    tempQueryParam.orderBy = Object.keys(orderBy)
+    const order = Object.keys(orderBy)
       .filter(key => orderBy[key])
       .map(key => key + ':' + orderBy[key])
       .join()
+    if (order) tempQueryParam.orderBy = order
     // 合并日期范围查询参数
     for (const [key, value] of Object.entries(dateRangeQuery)) {
       if (value) [tempQueryParam[`${key}Begin`], tempQueryParam[`${key}End`]] = value
