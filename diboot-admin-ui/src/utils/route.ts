@@ -1,7 +1,7 @@
 import type { RouteRecord, RouteRecordName, RouteRecordRaw } from 'vue-router'
 import type { DefineComponent, VNode } from 'vue'
 import { RouterView } from 'vue-router'
-import { KeepAlive } from 'vue'
+import { KeepAlive, h } from 'vue'
 import useViewTabs from '@/store/viewTabs'
 import Layout from '@/layout/index.vue'
 
@@ -32,9 +32,9 @@ export const buildViewMap = async () => {
 }
 
 // 动态渲染组件
-const renderComponent = (callback: (cachedViews: string[]) => VNode) =>
+const renderComponent = (name: string, callback: (cachedViews: string[]) => VNode) =>
   defineComponent({
-    name: 'ParentView',
+    name,
     setup() {
       const viewTabs = useViewTabs()
       return () => callback(viewTabs.cachedViews)
@@ -73,7 +73,7 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           route.component = Layout
         } else {
           // 视图嵌套
-          route.component = renderComponent(cachedViews =>
+          route.component = renderComponent('ParentView', cachedViews =>
             h(RouterView, ({ Component }: { Component: DefineComponent }) =>
               h(KeepAlive, { include: cachedViews }, Component)
             )
@@ -95,7 +95,7 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           const url = route.meta?.url
           if (route.meta?.iframe) {
             // iframe
-            route.component = renderComponent(() =>
+            route.component = renderComponent((route.name ?? '').toString(), () =>
               h('iframe', { src: url, style: { border: 0, width: '100%', height: `calc(100% - 4px)` } })
             )
           } else {
