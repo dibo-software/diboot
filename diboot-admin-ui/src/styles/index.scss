@@ -12,6 +12,10 @@
   }
 }
 
+.hide {
+  display: none;
+}
+
 .el-descriptions__label {
   color: var(--el-text-color-regular) !important;
   font-weight: bold;
@@ -32,6 +36,7 @@
 }
 
 .list-page {
+  flex: 1;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -54,7 +59,7 @@
     width: 100%;
     box-sizing: border-box;
 
-    div:last-child {
+    > div:last-child {
       margin-left: auto;
     }
 
