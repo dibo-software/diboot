@@ -84,88 +84,89 @@ declare global {
   const watchSyncEffect: typeof import('vue')['watchSyncEffect']
 }
 // for vue template auto import
-declare module 'vue' {
+import { UnwrapRef } from 'vue'
+declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    EffectScope: typeof import('vue')['EffectScope']
-    ElMessage: typeof import('element-plus')['ElMessage']
-    ElMessageBox: typeof import('element-plus')['ElMessageBox']
-    ElNotification: typeof import('element-plus')['ElNotification']
-    _: typeof import('lodash')
-    acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
-    api: typeof import('@/utils/request')['api']
-    baseURL: typeof import('@/utils/request')['baseURL']
-    checkPermission: typeof import('@/utils/permission')['checkPermission']
-    checkRole: typeof import('@/utils/permission')['checkRole']
-    computed: typeof import('vue')['computed']
-    createApp: typeof import('vue')['createApp']
-    createPinia: typeof import('pinia')['createPinia']
-    customRef: typeof import('vue')['customRef']
-    defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
-    defineComponent: typeof import('vue')['defineComponent']
-    defineStore: typeof import('pinia')['defineStore']
-    effectScope: typeof import('vue')['effectScope']
-    getActivePinia: typeof import('pinia')['getActivePinia']
-    getCurrentInstance: typeof import('vue')['getCurrentInstance']
-    getCurrentScope: typeof import('vue')['getCurrentScope']
-    h: typeof import('vue')['h']
-    inject: typeof import('vue')['inject']
-    isProxy: typeof import('vue')['isProxy']
-    isReactive: typeof import('vue')['isReactive']
-    isReadonly: typeof import('vue')['isReadonly']
-    isRef: typeof import('vue')['isRef']
-    mapActions: typeof import('pinia')['mapActions']
-    mapGetters: typeof import('pinia')['mapGetters']
-    mapState: typeof import('pinia')['mapState']
-    mapStores: typeof import('pinia')['mapStores']
-    mapWritableState: typeof import('pinia')['mapWritableState']
-    markRaw: typeof import('vue')['markRaw']
-    nextTick: typeof import('vue')['nextTick']
-    onActivated: typeof import('vue')['onActivated']
-    onBeforeMount: typeof import('vue')['onBeforeMount']
-    onBeforeUnmount: typeof import('vue')['onBeforeUnmount']
-    onBeforeUpdate: typeof import('vue')['onBeforeUpdate']
-    onDeactivated: typeof import('vue')['onDeactivated']
-    onErrorCaptured: typeof import('vue')['onErrorCaptured']
-    onMounted: typeof import('vue')['onMounted']
-    onRenderTracked: typeof import('vue')['onRenderTracked']
-    onRenderTriggered: typeof import('vue')['onRenderTriggered']
-    onScopeDispose: typeof import('vue')['onScopeDispose']
-    onServerPrefetch: typeof import('vue')['onServerPrefetch']
-    onUnmounted: typeof import('vue')['onUnmounted']
-    onUpdated: typeof import('vue')['onUpdated']
-    provide: typeof import('vue')['provide']
-    reactive: typeof import('vue')['reactive']
-    readonly: typeof import('vue')['readonly']
-    ref: typeof import('vue')['ref']
-    resolveComponent: typeof import('vue')['resolveComponent']
-    setActivePinia: typeof import('pinia')['setActivePinia']
-    setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
-    shallowReactive: typeof import('vue')['shallowReactive']
-    shallowReadonly: typeof import('vue')['shallowReadonly']
-    shallowRef: typeof import('vue')['shallowRef']
-    storeToRefs: typeof import('pinia')['storeToRefs']
-    toRaw: typeof import('vue')['toRaw']
-    toRef: typeof import('vue')['toRef']
-    toRefs: typeof import('vue')['toRefs']
-    triggerRef: typeof import('vue')['triggerRef']
-    unref: typeof import('vue')['unref']
-    useAttrs: typeof import('vue')['useAttrs']
-    useCssModule: typeof import('vue')['useCssModule']
-    useCssVars: typeof import('vue')['useCssVars']
-    useDetail: typeof import('@/hooks/detail')['default']
-    useForm: typeof import('@/hooks/form')['default']
-    useList: typeof import('@/hooks/list')['default']
-    useOption: typeof import('@/hooks/option')['default']
-    useRoute: typeof import('vue-router')['useRoute']
-    useRouter: typeof import('vue-router')['useRouter']
-    useSlots: typeof import('vue')['useSlots']
-    useSort: typeof import('@/hooks/sort')['default']
-    useTabs: typeof import('@/hooks/tabs')['default']
-    useTreeCrud: typeof import('@/hooks/tree_crud')['default']
-    useUploadFile: typeof import('@/hooks/upload_file')['default']
-    watch: typeof import('vue')['watch']
-    watchEffect: typeof import('vue')['watchEffect']
-    watchPostEffect: typeof import('vue')['watchPostEffect']
-    watchSyncEffect: typeof import('vue')['watchSyncEffect']
+    readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly ElMessage: UnwrapRef<typeof import('element-plus')['ElMessage']>
+    readonly ElMessageBox: UnwrapRef<typeof import('element-plus')['ElMessageBox']>
+    readonly ElNotification: UnwrapRef<typeof import('element-plus')['ElNotification']>
+    readonly _: UnwrapRef<typeof import('lodash')>
+    readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly api: UnwrapRef<typeof import('@/utils/request')['api']>
+    readonly baseURL: UnwrapRef<typeof import('@/utils/request')['baseURL']>
+    readonly checkPermission: UnwrapRef<typeof import('@/utils/permission')['checkPermission']>
+    readonly checkRole: UnwrapRef<typeof import('@/utils/permission')['checkRole']>
+    readonly computed: UnwrapRef<typeof import('vue')['computed']>
+    readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
+    readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
+    readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
+    readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
+    readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
+    readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
+    readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
+    readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
+    readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly inject: UnwrapRef<typeof import('vue')['inject']>
+    readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
+    readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
+    readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
+    readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
+    readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
+    readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
+    readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
+    readonly mapStores: UnwrapRef<typeof import('pinia')['mapStores']>
+    readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
+    readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
+    readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
+    readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
+    readonly onBeforeUnmount: UnwrapRef<typeof import('vue')['onBeforeUnmount']>
+    readonly onBeforeUpdate: UnwrapRef<typeof import('vue')['onBeforeUpdate']>
+    readonly onDeactivated: UnwrapRef<typeof import('vue')['onDeactivated']>
+    readonly onErrorCaptured: UnwrapRef<typeof import('vue')['onErrorCaptured']>
+    readonly onMounted: UnwrapRef<typeof import('vue')['onMounted']>
+    readonly onRenderTracked: UnwrapRef<typeof import('vue')['onRenderTracked']>
+    readonly onRenderTriggered: UnwrapRef<typeof import('vue')['onRenderTriggered']>
+    readonly onScopeDispose: UnwrapRef<typeof import('vue')['onScopeDispose']>
+    readonly onServerPrefetch: UnwrapRef<typeof import('vue')['onServerPrefetch']>
+    readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
+    readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
+    readonly provide: UnwrapRef<typeof import('vue')['provide']>
+    readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
+    readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
+    readonly ref: UnwrapRef<typeof import('vue')['ref']>
+    readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
+    readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
+    readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
+    readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
+    readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
+    readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
+    readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
+    readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
+    readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
+    readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
+    readonly unref: UnwrapRef<typeof import('vue')['unref']>
+    readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
+    readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
+    readonly useDetail: UnwrapRef<typeof import('@/hooks/detail')['default']>
+    readonly useForm: UnwrapRef<typeof import('@/hooks/form')['default']>
+    readonly useList: UnwrapRef<typeof import('@/hooks/list')['default']>
+    readonly useOption: UnwrapRef<typeof import('@/hooks/option')['default']>
+    readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
+    readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
+    readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
+    readonly useSort: UnwrapRef<typeof import('@/hooks/sort')['default']>
+    readonly useTabs: UnwrapRef<typeof import('@/hooks/tabs')['default']>
+    readonly useTreeCrud: UnwrapRef<typeof import('@/hooks/tree_crud')['default']>
+    readonly useUploadFile: UnwrapRef<typeof import('@/hooks/upload_file')['default']>
+    readonly watch: UnwrapRef<typeof import('vue')['watch']>
+    readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
+    readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
+    readonly watchSyncEffect: UnwrapRef<typeof import('vue')['watchSyncEffect']>
   }
 }

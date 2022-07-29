@@ -55,7 +55,7 @@ onMounted(() => {
         const res = JSON.parse(responseText)
         const fileRecords: FileRecord[] = res.data.fileRecords
         const succMap: Record<string, string> = {}
-        for (let fileRecord of fileRecords) {
+        for (const fileRecord of fileRecords) {
           succMap[fileRecord.fileName] = baseURL + fileRecord.accessUrl
         }
         res.data.succMap = succMap

@@ -3,8 +3,11 @@ import * as Element from '@element-plus/icons-vue'
 /**
  * 加载 @/assets/icon 目录下所有图标（svg|vue）
  */
-const iconSvgFiles = import.meta.glob('@/assets/icon/**/*.svg', { as: 'raw' })
-const iconVueFiles = import.meta.globEager('@/assets/icon/**/*.vue')
+const iconSvgFiles = import.meta.glob('@/assets/icon/**/*.svg', { as: 'raw', eager: true })
+const iconVueFiles = import.meta.glob<Record<string, unknown>>('@/assets/icon/**/*.vue', {
+  import: 'default',
+  eager: true
+})
 
 /**
  * 构建本地图标
@@ -19,7 +22,7 @@ const Local = Object.keys(iconSvgFiles).reduce((all: Record<string, unknown>, pa
 }, {})
 Object.keys(iconVueFiles).reduce((all: Record<string, unknown>, path: string) => {
   const name = path.replace(/.*icon\/(.*)\.vue/, '$1')
-  all[name] = { name, ...iconVueFiles[path].default }
+  all[name] = { name, ...iconVueFiles[path] }
   return all
 }, Local)
 

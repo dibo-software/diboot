@@ -6,12 +6,12 @@ import useViewTabs from '@/store/viewTabs'
 import Layout from '@/layout/index.vue'
 
 // 加载所有组件
-const modules = import.meta.glob('@/views/**/*.{vue,tsx,jsx}')
+const modules = import.meta.glob<Record<string, DefineComponent>>('@/views/**/*.{vue,tsx,jsx}')
 
 // 异步组件映射
 const views = Object.keys(modules).reduce(
   (pages: Record<string, () => Promise<Record<string, DefineComponent>>>, path) => {
-    pages[path.replace(/\.\.(.*)/, '@$1')] = modules[path]
+    pages[path.replace(/\/src(.*)/, '@$1')] = modules[path]
     return pages
   },
   {}

@@ -29,7 +29,7 @@ const scroll = ({ scrollLeft }: { scrollLeft: number }) => {
 
 // 手动滚动 Tabs 列表
 const operateScroll = (right = true) => {
-  let deviation = (tabsRef.value?.clientWidth ?? 500) * 0.8
+  const deviation = (tabsRef.value?.clientWidth ?? 500) * 0.8
   tabsScrollRef.value?.scrollTo({ left: tabsPosition.value + (right ? deviation : -deviation), behavior: 'smooth' })
 }
 

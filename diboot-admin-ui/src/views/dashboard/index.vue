@@ -146,7 +146,7 @@ const dynamicChart = {
   animationEasingUpdate: 'linear'
 }
 const run = () => {
-  for (var i = 0; i < data.length; ++i) {
+  for (let i = 0; i < data.length; ++i) {
     if (Math.random() > 0.9) {
       data[i] += Math.round(Math.random() * 2000)
     } else {
