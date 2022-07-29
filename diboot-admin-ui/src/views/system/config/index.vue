@@ -77,10 +77,11 @@ const configTest = (data?: Record<string, string>) => {
     .then(() => ElMessage.success('测试通过'))
     .catch(err => ElNotification.error({ title: '测试失败', message: err.msg }))
 }
+api.post('http://localhost:8080/api/anon/loadByIds', '123')
 </script>
 
 <template>
-  <div style="margin: 10px">
+  <div style="padding: 10px">
     <el-empty v-if="!type" description="无系统配置项" />
     <el-button
       v-if="type && editable"
