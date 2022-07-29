@@ -58,6 +58,8 @@
     "vite-plugin-checker": "^0.4.9",
     "vite-plugin-eslint": "^1.7.0",
     "vite-plugin-mock": "^2.9.6",
+    "vite-plugin-optimize-persist": "^0.1.2",
+    "vite-plugin-package-config": "^0.1.1",
     "vite-plugin-vue-setup-extend": "^0.4.0",
     "vue-tsc": "^0.39.2"
   }
