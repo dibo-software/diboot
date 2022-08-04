@@ -32,7 +32,11 @@ public class EnhancedConversionService extends DefaultConversionService {
         super();
         addConverter(new Date2LocalDateConverter());
         addConverter(new Date2LocalDateTimeConverter());
+        addConverter(new SqlDate2LocalDateConverter());
+        addConverter(new SqlDate2LocalDateTimeConverter());
         addConverter(new String2DateConverter());
+        addConverter(new String2LocalDateConverter());
+        addConverter(new String2LocalDateTimeConverter());
         addConverter(new String2BooleanConverter());
         addConverter(new Timestamp2LocalDateTimeConverter());
     }
