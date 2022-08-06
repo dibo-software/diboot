@@ -149,7 +149,7 @@ public class BeanUtils {
         if (V.isAnyEmpty(model, propMap)) {
             return;
         }
-        BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(model);
+        BeanWrapper beanWrapper = getBeanWrapper(model);
         for(Map.Entry<String, Object> entry : propMap.entrySet()){
             try{
                 beanWrapper.setPropertyValue(entry.getKey(), entry.getValue());

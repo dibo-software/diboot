@@ -176,6 +176,8 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new Date2LocalDateConverter());
         registry.addConverter(new Date2LocalDateTimeConverter());
+        registry.addConverter(new LocalDate2DateConverter());
+        registry.addConverter(new LocalDateTime2DateConverter());
         registry.addConverter(new SqlDate2LocalDateConverter());
         registry.addConverter(new SqlDate2LocalDateTimeConverter());
         registry.addConverter(new String2DateConverter());
