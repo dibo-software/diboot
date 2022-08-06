@@ -32,6 +32,8 @@ public class EnhancedConversionService extends DefaultConversionService {
         super();
         addConverter(new Date2LocalDateConverter());
         addConverter(new Date2LocalDateTimeConverter());
+        addConverter(new LocalDate2DateConverter());
+        addConverter(new LocalDateTime2DateConverter());
         addConverter(new SqlDate2LocalDateConverter());
         addConverter(new SqlDate2LocalDateTimeConverter());
         addConverter(new String2DateConverter());
