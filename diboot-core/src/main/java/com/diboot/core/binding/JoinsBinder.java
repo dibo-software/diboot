@@ -23,6 +23,7 @@ import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
+import com.diboot.core.binding.query.dynamic.DynamicSqlProvider;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.data.ProtectFieldHandler;
@@ -145,6 +146,10 @@ public class JoinsBinder {
             Map<String, Object> fieldValueMap = new HashMap<>();
             // 格式化map
             for(Map.Entry<String, Object> entry : colValueMap.entrySet()){
+                if(entry.getKey().startsWith(DynamicSqlProvider.PLACEHOLDER_COLUMN_FLAG)) {
+                    log.debug("忽略查询占位字段 {}", entry.getKey());
+                    continue;
+                }
                 String fieldName = S.toLowerCaseCamel(entry.getKey());
                 // 如果是布尔类型，检查entity中的定义是Boolean/boolean
                 if(entry.getValue() instanceof Boolean && S.startsWithIgnoreCase(entry.getKey(),"is_")){

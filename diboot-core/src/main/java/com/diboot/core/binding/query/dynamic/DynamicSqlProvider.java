@@ -17,6 +17,7 @@ package com.diboot.core.binding.query.dynamic;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.parser.ParserCache;
@@ -39,6 +40,11 @@ import java.util.Set;
  */
 @Slf4j
 public class DynamicSqlProvider {
+
+    /**
+     * select中的占位列前缀标识
+     */
+    public static final String PLACEHOLDER_COLUMN_FLAG = "__";
 
     /**
      * 构建动态SQL
@@ -68,12 +74,7 @@ public class DynamicSqlProvider {
     private <DTO> String buildDynamicSql(Page<?> page, QueryWrapper<DTO> ew){
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
-            if(V.isEmpty(ew.getSqlSelect())){
-                SELECT_DISTINCT("self.*");
-            }
-            else{
-                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect()));
-            }
+            SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), page));
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
             List<AnnoJoiner> annoJoinerList = wrapper.getAnnoJoiners();
@@ -121,7 +122,7 @@ public class DynamicSqlProvider {
                     if(isDeletedCol != null && QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
-                    if(segments.getOrderBy() != null){
+                    if(segments.getOrderBy() != null && !segments.getOrderBy().isEmpty()){
                         String orderBySql = segments.getOrderBy().getSqlSegment();
                         int beginIndex = S.indexOfIgnoreCase(orderBySql,"ORDER BY ");
                         if(beginIndex >= 0){
@@ -139,15 +140,31 @@ public class DynamicSqlProvider {
      * @param sqlSelect
      * @return
      */
-    private String formatSqlSelect(String sqlSelect){
-        String[] columns = S.split(sqlSelect);
+    private String formatSqlSelect(String sqlSelect, Page<?> page){
+        Set<String> columnSets = new HashSet<>();
         StringBuilder sb = new StringBuilder();
-        for(int i=0; i<columns.length; i++){
-            String column = S.removeDuplicateBlank(columns[i]).trim();
-            if(i>0){
-                sb.append(Cons.SEPARATOR_COMMA);
+        if(V.isEmpty(sqlSelect)){
+            sb.append("self.*");
+        }
+        else {
+            String[] columns = S.split(sqlSelect);
+            for(int i=0; i<columns.length; i++){
+                String column = S.removeDuplicateBlank(columns[i]).trim();
+                if(i>0){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append("self.").append(column);
+                columnSets.add("self."+column);
             }
-            sb.append("self."+column);
+        }
+        if(page != null && page.orders() != null) {
+            for(OrderItem orderItem : page.orders()){
+                if((V.isEmpty(sqlSelect) && !S.startsWith(orderItem.getColumn(), "self."))
+                    || !columnSets.contains(orderItem.getColumn())
+                ){
+                    sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS ").append(PLACEHOLDER_COLUMN_FLAG).append(S.replace(orderItem.getColumn(), ".", "_"));
+                }
+            }
         }
         return sb.toString();
     }
