@@ -74,10 +74,10 @@ public class RelatedDataDTO implements Serializable {
     private boolean tree;
 
     /**
-     * <h3>异步加载</h3>
+     * <h3>异步加载子节点</h3>
      * 推荐异步加载，默认为true；为false时会同步加载下一级，且当为树时会加载整个树
      */
-    private boolean lazy = true;
+    private boolean lazyChild = true;
 
     /**
      * <h3>下一层</h3>

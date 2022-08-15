@@ -272,8 +272,7 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	private List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, String parentValue, String keyword) {
-		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getValue(), relatedDataDTO.getLabel(),
-				relatedDataDTO.getExt(), parentValue, keyword);
+		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getValue(), relatedDataDTO.getLabel(), relatedDataDTO.getExt());
 		if (!relatedDataSecurityCheck(relatedDataDTO)) {
 			log.warn("relatedData安全检查不通过: {}", JSON.stringify(relatedDataDTO));
 			return Collections.emptyList();
@@ -336,7 +335,7 @@ public class BaseController {
 				item.setType(type);
 				item.setLeaf(leaf);
 				// 非异步加载
-				if (!Boolean.TRUE.equals(leaf) && !relatedDataDTO.isLazy()) {
+				if (!Boolean.TRUE.equals(leaf) && !relatedDataDTO.isLazyChild()) {
 					List<LabelValue> children = loadRelatedData(relatedDataDTO, keyword, S.valueOf(item.getValue()), type);
 					item.setChildren(children.isEmpty() ? null : children);
 					item.setDisabled(children.isEmpty() && relatedDataDTO.getNext() != null ? true : null);
