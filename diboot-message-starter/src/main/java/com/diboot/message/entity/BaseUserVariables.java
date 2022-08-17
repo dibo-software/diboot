@@ -43,9 +43,9 @@ public class BaseUserVariables implements Serializable {
     private String realName;
 
     /**
-     * 称呼
+     * 标题
      */
-    @BindVariable(name = "${称呼}")
+    @BindVariable(name = "${标题}")
     private String title;
 
     /**
