@@ -15,10 +15,12 @@
  */
 package diboot.core.test.query;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.JoinsBinder;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
@@ -85,6 +87,10 @@ public class TestJoinQuery {
         queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
         list = Binder.joinQueryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() > 0);
+
+        LambdaQueryWrapper<DepartmentDTO> lambdaQueryWrapper = QueryBuilder.toLambdaQueryWrapper(departmentDTO);
+        list = departmentService.getEntityList(lambdaQueryWrapper);
+        Assert.assertTrue(list.size() > 1);
     }
 
     @Test
@@ -112,12 +118,21 @@ public class TestJoinQuery {
 
         list = Binder.joinQueryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() == 1);
+
+        LambdaQueryWrapper<Department> lambdaQueryWrapper = QueryBuilder.toLambdaQueryWrapper(entity);
+        list = departmentService.getEntityList(lambdaQueryWrapper);
+        Assert.assertTrue(list.size() > 0);
     }
 
     @Test
     public void testDynamicSqlQuery(){
         // 初始化DTO，测试不涉及关联的情况
         DepartmentDTO dto = new DepartmentDTO();
+        //dto.setOrgName("");
+        ExtQueryWrapper query = QueryBuilder.toDynamicJoinQueryWrapper(dto);
+        List<Department> departmentList = query.queryList(Department.class);
+        Assert.assertTrue(departmentList.size() > 3);
+
         dto.setParentId(10001L);
 
         // 验证 转换后的wrapper可以直接查询
@@ -132,12 +147,9 @@ public class TestJoinQuery {
         List<Department> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
         Assert.assertTrue(builderResultList.size() == 3);
 
-        // 初始化DTO
-        dto = new DepartmentDTO();
         dto.setParentId(10001L);
-        dto.setParentName("产品部");
-        //boolean类型
         dto.setOrgName("苏州帝博");
+        dto.setParentName("产品部");
 
         // 验证直接查询指定字段
         List<String> fields = Arrays.asList("parentId", "parentName", "orgName");
@@ -156,6 +168,7 @@ public class TestJoinQuery {
         // 不分页 3条结果
         List<Department> list = JoinsBinder.queryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() == 3);
+
         // 不分页，直接用wrapper查
         list = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
         Assert.assertTrue(list.size() == 3);
