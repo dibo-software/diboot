@@ -190,7 +190,7 @@ public class QueryBuilder {
         // 转换
         LinkedHashMap<String, FieldAndValue> fieldValuesMap = extractNotNullValues(dto, fields, pagination);
         if (V.isEmpty(fieldValuesMap)) {
-            return new QueryWrapper<>();
+            return new ExtQueryWrapper<>();
         }
         // 只解析有值的
         fields = fieldValuesMap.keySet();
