@@ -36,7 +36,7 @@ public class Organization extends BaseEntity {
     @TableField
     private Long parentId;
 
-    @TableField
+    //@TableField
     private String name;
 
     @TableField
