@@ -131,6 +131,15 @@ public class DynamicSqlProvider {
                         }
                     }
                 }
+                // 存在联表且无where条件，
+                else if(V.notEmpty(annoJoinerList)){
+                    // 动态为主表添加is_deleted=0
+                    String isDeletedCol = ParserCache.getDeletedColumn(wrapper.getEntityTable());
+                    String isDeletedSection = "self."+ isDeletedCol;
+                    if(isDeletedCol != null && QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false){
+                        WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
+                    }
+                }
             }
         }}.toString();
     }

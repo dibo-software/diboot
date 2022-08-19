@@ -48,7 +48,7 @@ public class DepartmentDTO implements Serializable {
     private String name;
 
     // 绑定join查询
-    @BindQuery(comparison = Comparison.STARTSWITH, strategy = Strategy.IGNORE_EMPTY, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    @BindQuery(comparison = Comparison.STARTSWITH, strategy = Strategy.INCLUDE_NULL, entity = Organization.class, field = "name", condition = "this.org_id=id")
     private String orgName;
 
     // 绑定join查询
