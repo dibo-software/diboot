@@ -65,6 +65,15 @@ public class PropInfo implements Serializable {
      * @param beanClass
      */
     public PropInfo(Class<?> beanClass) {
+        this(beanClass, true);
+    }
+
+    /**
+     * 初始化
+     * @param beanClass
+     * @param isEntityClass 是否为entity实体类（数据库表对应实体）
+     */
+    public PropInfo(Class<?> beanClass, boolean isEntityClass) {
         List<Field> fields = BeanUtils.extractAllFields(beanClass);
         if(V.notEmpty(fields)){
             for(Field fld : fields){
@@ -111,6 +120,10 @@ public class PropInfo implements Serializable {
                             BaseConfig.setActiveFlagValue(tableLogic.value());
                         }
                     }
+                }
+                // 实体类基于默认规则提取列名
+                if(columnName == null && isEntityClass) {
+                    columnName = S.toSnakeCase(fldName);
                 }
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){
