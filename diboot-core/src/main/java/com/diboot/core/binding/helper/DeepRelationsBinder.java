@@ -47,7 +47,7 @@ public class DeepRelationsBinder {
             for(FieldAnnotation anno : deepBindEntityAnnoList){
                 String entityFieldName = anno.getFieldName();
                 List entityList = BeanUtils.collectToList(voList, entityFieldName);
-                RelationsBinder.bind(entityList, false);
+                RelationsBinder.bind(entityList, true);
             }
         }
         if(V.notEmpty(deepBindEntitiesAnnoList)){
@@ -60,7 +60,7 @@ public class DeepRelationsBinder {
                         allEntityList.addAll(entityList);
                     }
                 }
-                RelationsBinder.bind(allEntityList, false);
+                RelationsBinder.bind(allEntityList, true);
             }
         }
     }

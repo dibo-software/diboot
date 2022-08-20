@@ -179,6 +179,16 @@ public class RelationsBinder {
             List<FieldAnnotation> deepBindEntityAnnoList = bindAnnotationGroup.getDeepBindEntityAnnotations();
             List<FieldAnnotation> deepBindEntitiesAnnoList = bindAnnotationGroup.getDeepBindEntityListAnnotations();
             if(deepBindEntityAnnoList != null || deepBindEntitiesAnnoList != null){
+                if(V.notEmpty(deepBindEntityAnnoList)){
+                    FieldAnnotation firstAnnotation = deepBindEntityAnnoList.get(0);
+                    log.debug("执行深度绑定: {}({}) for field {}", firstAnnotation.getAnnotation().annotationType().getSimpleName(),
+                            firstAnnotation.getFieldClass().getSimpleName(), firstAnnotation.getFieldName());
+                }
+                if(deepBindEntitiesAnnoList != null) {
+                    FieldAnnotation firstAnnotation = deepBindEntitiesAnnoList.get(0);
+                    log.debug("执行深度绑定: {}({}) for field {}", firstAnnotation.getAnnotation().annotationType().getSimpleName(),
+                            firstAnnotation.getFieldClass().getSimpleName(), firstAnnotation.getFieldName());
+                }
                 DeepRelationsBinder.deepBind(voList, deepBindEntityAnnoList, deepBindEntitiesAnnoList);
             }
         }
