@@ -87,6 +87,18 @@ public class S extends StringUtils{
 		return joinedStr.split(SEPARATOR);
 	}
 
+	private static final String[] SEARCH_LIST = {"[", "]", "\"", "\'"};
+	private static final String[] REPLACE_LIST = {"", "", "", ""};
+
+	/**
+	 * 清除非常量标识符： json标识 []"'等
+	 * @param inputJsonStr
+	 * @return
+	 */
+	public static String clearNonConst(String inputJsonStr) {
+		return S.replaceEach(inputJsonStr, SEARCH_LIST, REPLACE_LIST);
+	}
+
 	/***
 	 * 转换为String数组（避免转型异常）
 	 * @param stringList

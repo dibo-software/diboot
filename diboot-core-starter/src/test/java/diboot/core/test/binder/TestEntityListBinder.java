@@ -20,6 +20,7 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import diboot.core.test.StartupApplication;
@@ -141,14 +142,16 @@ public class TestEntityListBinder {
         for(SimpleSplitVO vo : voList){
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getManagers()));
-            System.out.println(JSON.stringify(vo));
+            //System.out.println(JSON.stringify(vo));
             if(vo.getCharacter().contains(",")){
-                String[] valueArr = vo.getCharacter().split(",");
+                String[] valueArr = S.clearNonConst(vo.getCharacter()).split(",");
                 if(valueArr[0].equals(valueArr[1])){
                     Assert.assertTrue(vo.getManagers().size() == 1);
+                    //Assert.assertTrue(vo.getManagersByJson().size() == 1);
                 }
                 else{
                     Assert.assertTrue(vo.getManagers().size() > 1);
+                    //Assert.assertTrue(vo.getManagersByJson().size() > 1);
                 }
             }
             else{

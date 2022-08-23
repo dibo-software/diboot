@@ -26,6 +26,8 @@ create table department
     org_id bigint not null comment '单位ID',
     name varchar(50) not null comment '名称',
     extdata varchar(100) null comment '扩展字段',
+    extjsonarr JSON null comment '扩展Json数组',
+    extjsonobj JSON null comment '扩展json对象',
     `character` varchar(100) null comment '关键字',
     is_deleted tinyint(1) default 0 not null comment '已删除',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
@@ -155,7 +157,7 @@ CREATE TABLE `demo_test_join` (
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
 
 -- 初始化样例数据
-INSERT INTO department (id, parent_id, org_id, name, `character`) VALUES (10001, 0, 100001, '产品部', 'WW'), (10002, 10001, 100001, '研发组', '1001'), (10003, 10001, 100001, '测试组', '1001,1002'),
+INSERT INTO department (id, parent_id, org_id, name, `character`) VALUES (10001, 0, 100001, '产品部', 'WW'), (10002, 10001, 100001, '研发组', '1001'), (10003, 10001, 100001, '测试组', '[1001,1002]'),
                                                                          (10004, 10001, 100001, '市场部', '1001,1002'), (10005, 10003, 100001, '自动化测试', null), (10006, 10003, 100001, '功能测试', null);
 INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
 INSERT INTO organization (id, parent_id, name, telphone, manager_id) VALUES (100001, 0, '苏州帝博', '0512-62988949', 1001), (100002, 0, '成都帝博', '028-62988949', 1002);

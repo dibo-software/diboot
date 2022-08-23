@@ -21,6 +21,7 @@ import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                     if(obj == null){
                         continue;
                     }
-                    String valStr = String.valueOf(obj);
+                    String valStr = S.clearNonConst(String.valueOf(obj));
                     List<T> ent = entityMap.get(valStr);
                     if(ent != null){
                         for (T item : ent) {
