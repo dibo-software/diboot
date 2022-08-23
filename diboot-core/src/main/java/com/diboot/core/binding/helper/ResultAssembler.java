@@ -58,7 +58,7 @@ public class ResultAssembler {
                     sb.append(fieldValue);
                 }
                 // 查找匹配Key
-                String matchKey = sb.toString();
+                String matchKey = S.clearNonConst(sb.toString());
                 if(valueMatchMap.containsKey(matchKey)){
                     // 赋值
                     beanWrapper.setPropertyValue(setterFieldName, valueMatchMap.get(matchKey));
@@ -166,7 +166,7 @@ public class ResultAssembler {
                     sb.append(val);
                 }
                 // 查找匹配Key
-                String matchKey = sb.toString();
+                String matchKey = S.clearNonConst(sb.toString());
                 List entityList = valueMatchMap.get(matchKey);
                 if(entityList == null && V.notEmpty(splitBy) && matchKey.contains(splitBy)){
                     String[] keys = matchKey.split(splitBy);
@@ -323,9 +323,9 @@ public class ResultAssembler {
         List newValueList = new ArrayList();
         valueList.forEach( value -> {
             if(value != null){
-                String valueStr = S.valueOf(value);
+                String valueStr = S.clearNonConst(S.valueOf(value));
                 if(valueStr.contains(splitBy)){
-                    for(String oneVal :valueStr.split(splitBy)){
+                    for(String oneVal : valueStr.split(splitBy)){
                         if(!newValueList.contains(oneVal)){
                             newValueList.add(oneVal);
                         }
