@@ -147,11 +147,11 @@ public class TestEntityListBinder {
                 String[] valueArr = S.clearNonConst(vo.getCharacter()).split(",");
                 if(valueArr[0].equals(valueArr[1])){
                     Assert.assertTrue(vo.getManagers().size() == 1);
-                    //Assert.assertTrue(vo.getManagersByJson().size() == 1);
+                    Assert.assertTrue(vo.getManagersByJson().size() == 1);
                 }
                 else{
                     Assert.assertTrue(vo.getManagers().size() > 1);
-                    //Assert.assertTrue(vo.getManagersByJson().size() > 1);
+                    Assert.assertTrue(vo.getManagersByJson().size() > 1);
                 }
             }
             else{
@@ -175,10 +175,11 @@ public class TestEntityListBinder {
             // 验证通过中间表间接关联的绑定
             if(vo.getManagerId().equals(1001L)){
                 Assert.assertTrue(vo.getManagerPhotos().size() == 1);
-                Assert.assertEquals(1, vo.getManagerPhotoList().size());
+                Assert.assertEquals(2, vo.getManagerPhotoList().size());
             }
             else{
                 Assert.assertTrue(vo.getManagerPhotos().size() == 2);
+                Assert.assertTrue(V.isEmpty(vo.getManagerPhotoList()));
             }
             System.out.println(JSON.stringify(vo));
         }

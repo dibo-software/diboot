@@ -317,8 +317,7 @@ public abstract class BaseBinder<T> {
             // 构建查询条件
             if (V.notEmpty(annoObjectJoinOnList)) {
                 String refObjJoinOnCol = refObjJoinCols.get(i);
-                List<?> unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy) ? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
-                        : annoObjectJoinOnList.stream().distinct().collect(Collectors.toList());
+                List<?> unpackAnnoObjectJoinOnList = ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy);
                 queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
                 if (remoteBindDTO != null) {
                     remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(unpackAnnoObjectJoinOnList);

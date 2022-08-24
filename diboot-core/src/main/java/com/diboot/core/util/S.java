@@ -114,10 +114,20 @@ public class S extends StringUtils{
 	 * @return
 	 */
 	public static List<String> splitToList(String joinedStr){
+		return splitToList(joinedStr, SEPARATOR);
+	}
+
+
+	/***
+	 * 按,拆分字符串并转换为 List<String>
+	 * @param joinedStr
+	 * @return
+	 */
+	public static List<String> splitToList(String joinedStr, String separator){
 		if(joinedStr == null){
 			return null;
 		}
-		return Arrays.asList(joinedStr.split(SEPARATOR));
+		return Arrays.asList(joinedStr.split(separator));
 	}
 
 	/***
@@ -317,6 +327,9 @@ public class S extends StringUtils{
 	public static String valueOf(Object o) {
     	if (o == null){
     		return null;
+		}
+		if(o instanceof String) {
+			return (String)o;
 		}
 		return String.valueOf(o);
 	}
