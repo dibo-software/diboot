@@ -132,15 +132,16 @@ const fullScreenTabsView = () => {
           <draggable :list="viewTabsStore.tabList" animation="300" item-key="fullPath" class="tabs">
             <template #item="{ element }">
               <el-dropdown trigger="contextmenu">
-                <el-button
-                  :type="$route.name === element.name ? 'primary' : ''"
+                <div
+                  class="tab"
+                  :class="{ 'is-active': $route.name === element.name }"
                   @click="$router.push(element.fullPath)"
                 >
                   {{ element.meta.title }}
-                  <el-icon v-show="allowClose(element)" :size="18" @click="closeTab(element)">
+                  <el-icon v-show="allowClose(element)" :size="15" @click.stop="closeTab(element)">
                     <Close />
                   </el-icon>
-                </el-button>
+                </div>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item :disabled="findTabIndex(element) === 0" @click="closeLeftTabs(element)">
@@ -192,7 +193,9 @@ const fullScreenTabsView = () => {
     </div>
     <div :class="fullScreen === true ? 'fullScreen' : ''">
       <div v-show="fullScreen === true" class="fullScreen-close" title="关闭全屏" @click="fullScreenTabView()">
-        <el-icon :size="20"><close-bold /></el-icon>
+        <el-icon :size="20">
+          <close-bold />
+        </el-icon>
       </div>
       <slot :full-screen="fullScreen" />
     </div>
@@ -202,7 +205,7 @@ const fullScreenTabsView = () => {
 <style scoped lang="scss">
 .tabs-hull {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   border-bottom: 1px solid var(--el-border-color-lighter);
   background-color: var(--el-bg-color);
 
@@ -217,17 +220,52 @@ const fullScreenTabsView = () => {
   .tabs {
     display: flex;
     margin: 0 10px;
+    font-size: 13px;
+    width: max-content;
 
-    .el-dropdown {
-      padding-right: 5px;
-    }
+    --tab-radius: 8px;
+    --tab-radius-reverse: calc(var(--tab-radius) * 1.5);
+    --tab-text-color: var(--el-text-color-secondary);
+    --tab-bg-color: #0000;
 
-    .el-button {
+    .tab {
       height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      cursor: pointer;
+
+      color: var(--tab-text-color);
+      background-color: var(--tab-bg-color);
+      border-top-left-radius: var(--tab-radius);
+      border-top-right-radius: var(--tab-radius);
+
+      &:before,
+      &:after {
+        content: '';
+        position: absolute;
+        width: var(--tab-radius-reverse);
+        height: calc(var(--tab-radius-reverse) * 4 / 5);
+        bottom: 0;
+      }
+
+      &:before {
+        left: calc(0px - var(--tab-radius-reverse));
+        background: radial-gradient(circle at 0% 0%, transparent var(--tab-radius-reverse), var(--tab-bg-color) 0);
+      }
+
+      &:after {
+        right: calc(5px - var(--tab-radius-reverse));
+        background: radial-gradient(circle at 100% 0%, transparent var(--tab-radius-reverse), var(--tab-bg-color) 0);
+      }
+
+      &:hover {
+        --tab-bg-color: var(--el-color-primary-light-9);
+      }
 
       .el-icon {
         border-radius: 100%;
-        position: relative;
+        margin-right: 6px;
         right: -6px;
 
         &:hover {
@@ -235,6 +273,15 @@ const fullScreenTabsView = () => {
           background-color: var(--el-color-primary-light-5);
         }
       }
+    }
+
+    .is-active {
+      --tab-text-color: var(--el-color-primary);
+      --tab-bg-color: var(--el-color-primary-light-9);
+    }
+
+    .el-dropdown {
+      padding-right: 5px;
     }
   }
 
