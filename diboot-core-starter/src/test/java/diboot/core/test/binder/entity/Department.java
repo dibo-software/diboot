@@ -62,7 +62,7 @@ public class Department extends BaseEntity {
      * JSON数组
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<String> extjsonarr;
+    private List<Long> extjsonarr;
 
     /**
      * JSON对象

@@ -146,9 +146,11 @@ public class TestFieldListBinder {
                 String[] valueArr = S.clearNonConst(vo.getCharacter()).split(",");
                 if(valueArr[0].equals(valueArr[1])){
                     Assert.assertTrue(vo.getManagerNames().size() == 1);
+                    Assert.assertTrue(vo.getManagerNamesByJson().size() == 1);
                 }
                 else{
                     Assert.assertTrue(vo.getManagerNames().size() > 1);
+                    Assert.assertTrue(vo.getManagerNamesByJson().size() > 1);
                 }
             }
             else{

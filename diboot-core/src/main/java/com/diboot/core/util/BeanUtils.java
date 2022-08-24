@@ -188,10 +188,6 @@ public class BeanUtils {
      * @return
      */
     public static String getStringProperty(Object obj, String field){
-        if(obj instanceof Map){
-            Map objMap = (Map)obj;
-            return objMap.containsKey(field)? S.valueOf(objMap.get(field)) : null;
-        }
         Object property = getProperty(obj, field);
         if(property == null){
             return null;
@@ -622,7 +618,11 @@ public class BeanUtils {
                 Object fieldValue = getProperty(object, getterPropName);
                 // E类型中的提取的字段值不需要进行重复判断，如果一定要查重，那应该使用Set代替List
                 if (fieldValue != null) {
-                    fieldValueList.add(fieldValue);
+                    if (fieldValue instanceof Collection) {
+                        fieldValueList.addAll((Collection) fieldValue);
+                    } else {
+                        fieldValueList.add(fieldValue);
+                    }
                 }
             }
         }

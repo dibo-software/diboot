@@ -42,13 +42,16 @@ public class SimpleSplitVO extends Department {
     @BindEntityList(entity = User.class, condition="this.`character`=id", splitBy= Cons.SEPARATOR_COMMA)
     private List<User> managers;
 
-
     // ，拆分的id值绑定
     @BindFieldList(entity = User.class, field = "username", condition="this.`character`=id", splitBy= Cons.SEPARATOR_COMMA)
     private List<String> managerNames;
 
-    // ，拆分的id值绑定
+    // JsonArray的id值绑定
     @BindEntityList(entity = User.class, condition="this.extjsonarr=id")
     private List<User> managersByJson;
+
+    // JSONArray的id值绑定
+    @BindFieldList(entity = User.class, field = "username", condition="this.extjsonarr=id")
+    private List<String> managerNamesByJson;
 
 }
