@@ -84,6 +84,9 @@ public class ServiceAdaptor {
             return (List<E>)baseService.getEntityList(queryWrapper, pagination);
         }
         else{
+            if(queryWrapper.getEntityClass() == null) {
+                queryWrapper.setEntityClass(entityClass);
+            }
             if(pagination != null){
                 IPage<E> page = convertToIPage(pagination, entityClass);
                 page = iService.page(page, queryWrapper);

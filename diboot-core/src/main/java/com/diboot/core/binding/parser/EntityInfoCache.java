@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -53,7 +54,7 @@ public class EntityInfoCache implements Serializable {
         this.propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
         // 初始化tableName
         TableName tableNameAnno = AnnotationUtils.findAnnotation(entityClass, TableName.class);
-        if(tableNameAnno != null){
+        if(tableNameAnno != null && V.notEmpty(tableNameAnno.value())){
             this.tableName = tableNameAnno.value();
         }
         else{

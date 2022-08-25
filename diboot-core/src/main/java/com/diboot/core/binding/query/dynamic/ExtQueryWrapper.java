@@ -33,19 +33,22 @@ import java.util.List;
  * @version v2.0
  * @date 2020/04/16
  */
-public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
+public class ExtQueryWrapper<T> extends QueryWrapper<T> {
     /**
      * 主实体class
      */
     @Getter @Setter
-    private Class<E> mainEntityClass;
+    private Class<T> mainEntityClass;
 
     /**
      * 获取entity表名
      * @return
      */
     public String getEntityTable(){
-        return ParserCache.getEntityTableName(getMainEntityClass());
+        if(this.mainEntityClass == null) {
+            this.mainEntityClass = getEntityClass();
+        }
+        return ParserCache.getEntityTableName(this.mainEntityClass);
     }
 
     /**
@@ -53,9 +56,9 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
      * @param entityClazz
      * @return
      */
-    public E queryOne(Class<E> entityClazz){
+    public T queryOne(Class<T> entityClazz){
         this.mainEntityClass = entityClazz;
-        IService<E> iService = ContextHelper.getIServiceByEntity(this.mainEntityClass);
+        IService<T> iService = ContextHelper.getIServiceByEntity(this.mainEntityClass);
         if(iService != null){
             return ServiceAdaptor.getSingleEntity(iService, this);
         }
@@ -69,7 +72,7 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
      * @param entityClazz
      * @return
      */
-    public List<E> queryList(Class<E> entityClazz){
+    public List<T> queryList(Class<T> entityClazz){
         this.mainEntityClass = entityClazz;
         IService iService = ContextHelper.getIServiceByEntity(entityClazz);
         if(iService != null){
@@ -85,7 +88,7 @@ public class ExtQueryWrapper<DTO,E> extends QueryWrapper<DTO> {
      * @param entityClazz
      * @return
      */
-    public List queryList(Class<E> entityClazz, Pagination pagination){
+    public List queryList(Class<T> entityClazz, Pagination pagination){
         this.mainEntityClass = entityClazz;
         IService iService = ContextHelper.getIServiceByEntity(entityClazz);
         if(iService != null){
