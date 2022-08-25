@@ -521,6 +521,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
 			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
 		}
+		else if(queryWrapper instanceof QueryWrapper) {
+			QueryWrapper mpQueryWrapper = ((QueryWrapper)queryWrapper);
+			if(mpQueryWrapper.getEntityClass() == null) {
+				mpQueryWrapper.setEntityClass(entityClass);
+			}
+		}
+		else if(queryWrapper instanceof LambdaQueryWrapper) {
+			LambdaQueryWrapper mpQueryWrapper = ((LambdaQueryWrapper)queryWrapper);
+			if(mpQueryWrapper.getEntityClass() == null) {
+				mpQueryWrapper.setEntityClass(entityClass);
+			}
+		}
 		// 否则，调用MP默认实现
 		if(pagination != null){
 			IPage<T> page = convertToIPage(queryWrapper, pagination);

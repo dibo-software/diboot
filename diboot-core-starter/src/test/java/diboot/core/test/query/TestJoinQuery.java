@@ -88,8 +88,9 @@ public class TestJoinQuery {
         list = Binder.joinQueryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() > 0);
 
-        LambdaQueryWrapper<DepartmentDTO> lambdaQueryWrapper = QueryBuilder.toLambdaQueryWrapper(departmentDTO);
-        list = departmentService.getEntityList(lambdaQueryWrapper);
+        departmentDTO.setJsonArrayStr("1001");
+        queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
+        list = departmentService.getEntityList(queryWrapper);
         Assert.assertTrue(list.size() > 1);
     }
 
@@ -118,10 +119,6 @@ public class TestJoinQuery {
 
         list = Binder.joinQueryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() == 1);
-
-        LambdaQueryWrapper<Department> lambdaQueryWrapper = QueryBuilder.toLambdaQueryWrapper(entity);
-        list = departmentService.getEntityList(lambdaQueryWrapper);
-        Assert.assertTrue(list.size() > 0);
     }
 
     @Test
