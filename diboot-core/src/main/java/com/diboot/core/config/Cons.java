@@ -71,7 +71,7 @@ public class Cons {
      */
     public static final String COLUMN_CREATE_TIME = "create_time";
     /***
-     * 默认字段名定义
+     * 常用字段名定义
      */
     public enum FieldName{
         /**
@@ -118,6 +118,56 @@ public class Cons {
          * 用户id
          */
         userId
+    }
+
+    /***
+     * 常用列名定义
+     */
+    public enum ColumnName{
+        /**
+         * 主键属性名
+         */
+        id,
+        /**
+         * 租户ID
+         */
+        tenant_id,
+        /**
+         * 默认的上级ID属性名
+         */
+        parent_id,
+        /**
+         * 子节点属性名
+         */
+        children,
+        /**
+         * 逻辑删除标记字段
+         */
+        is_deleted,
+        /**
+         * 创建时间字段
+         */
+        create_time,
+        /**
+         * 更新时间
+         */
+        update_time,
+        /**
+         * 创建人
+         */
+        create_by,
+        /**
+         * 更新人
+         */
+        update_by,
+        /**
+         * 组织id
+         */
+        org_id,
+        /**
+         * 用户id
+         */
+        user_id
     }
 
     /**
