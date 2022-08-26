@@ -52,6 +52,7 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_SLASH_Y4MD = "yyyy/MM/dd";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHM = "yyyy/MM/dd HH:mm";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHMS = "yyyy/MM/dd HH:mm:ss";
+	public static final String FORMAT_DATETIME_Y4MD_T_HMS = "yyyy-MM-ddTHH:mm:ss";
 	/**
 	 * 星期（中文）
 	 */
