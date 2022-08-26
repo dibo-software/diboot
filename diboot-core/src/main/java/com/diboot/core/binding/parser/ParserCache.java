@@ -139,7 +139,7 @@ public class ParserCache {
         }
         else{
             TableName tableNameAnno = AnnotationUtils.findAnnotation(entityClass, TableName.class);
-            if(tableNameAnno != null){
+            if(tableNameAnno != null && V.notEmpty(tableNameAnno.value())){
                 return tableNameAnno.value();
             }
             else{
