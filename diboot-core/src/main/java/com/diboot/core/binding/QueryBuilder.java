@@ -18,12 +18,9 @@ package com.diboot.core.binding;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.diboot.core.binding.parser.ParserCache;
-import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.Strategy;
@@ -152,34 +149,6 @@ public class QueryBuilder {
     }
 
     /**
-     * Entity或者DTO对象转换为LambdaQueryWrapper
-     * @param dto
-     * @return
-     */
-    public static <DTO> LambdaQueryWrapper<DTO> toLambdaQueryWrapper(DTO dto){
-        return (LambdaQueryWrapper<DTO>) toQueryWrapper(dto, null, null).lambda();
-    }
-
-    /**
-     * Entity或者DTO对象转换为LambdaQueryWrapper
-     * @param dto
-     * @return
-     */
-    public static <DTO> LambdaQueryWrapper<DTO> toLambdaQueryWrapper(DTO dto, Pagination pagination){
-        return (LambdaQueryWrapper<DTO>) toQueryWrapper(dto, pagination).lambda();
-    }
-
-    /**
-     * Entity或者DTO对象转换为LambdaQueryWrapper
-     * @param dto
-     * @param fields 指定参与转换的属性值
-     * @return
-     */
-    public static <DTO> LambdaQueryWrapper<DTO> toLambdaQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination){
-        return (LambdaQueryWrapper<DTO>) toQueryWrapper(dto, fields, pagination).lambda();
-    }
-
-    /**
      * 转换具体实现
      *
      * @param dto
@@ -190,7 +159,7 @@ public class QueryBuilder {
         // 转换
         LinkedHashMap<String, FieldAndValue> fieldValuesMap = extractNotNullValues(dto, fields, pagination);
         if (V.isEmpty(fieldValuesMap)) {
-            return new ExtQueryWrapper<>();
+            return new QueryWrapper<>();
         }
         // 只解析有值的
         fields = fieldValuesMap.keySet();
