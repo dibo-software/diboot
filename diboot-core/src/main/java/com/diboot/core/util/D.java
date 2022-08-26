@@ -465,7 +465,7 @@ public class D extends DateUtils{
 		else{
 			dateString = dateString.replaceAll("/", "-").replaceAll("\\.", "-");
 		}
-		String[] parts = dateString.split(" ");
+		String[] parts = (dateString.contains("T") && !dateString.contains(" "))? dateString.split("T") : dateString.split(" ");
 		String[] ymd = parts[0].split("-");
 		if(ymd.length >= 3){
 			if(ymd[0].length() == 2){
