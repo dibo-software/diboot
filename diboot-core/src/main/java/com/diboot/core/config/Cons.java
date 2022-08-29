@@ -171,6 +171,35 @@ public class Cons {
     }
 
     /**
+     * 分页相关参数
+     */
+    public enum PaginationParam {
+        /**
+         * 查询中排序参数名
+         */
+        orderBy,
+        /**
+         * 当前页数参数名
+         */
+        pageIndex,
+        /**
+         * 每页记录数参数名
+         */
+        pageSize,
+        /**
+         * 总数
+         */
+        totalCount;
+
+        public static boolean isPaginationParam(String param) {
+            return orderBy.name().equals(param)
+                    || pageIndex.name().equals(param)
+                    || pageSize.name().equals(param)
+                    || totalCount.name().equals(param);
+        }
+    }
+
+    /**
      * 字典Entity相关属性名定义
      */
     public static final String FIELD_ITEM_NAME = "itemName";
