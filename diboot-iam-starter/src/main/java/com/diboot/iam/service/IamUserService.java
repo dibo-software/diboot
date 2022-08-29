@@ -16,6 +16,7 @@
 package com.diboot.iam.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.vo.Pagination;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamUser;
@@ -83,6 +84,6 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @param orgId
      * @return
      */
-    List<IamUserVO> getUserViewList(LambdaQueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId);
+    List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId);
 
 }
