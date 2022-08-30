@@ -19,8 +19,6 @@ import com.diboot.core.util.D;
 import com.diboot.core.util.S;
 import com.diboot.file.config.Cons;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,33 +128,13 @@ public class ImageHelper {
 	}
 
 	/**
-	 * 压缩图片
-	 * @param imgUrl
-	 * @return
-	 */
-	public static String generateThumbnail(String imgUrl, int width, int height){
-		String file = imgUrl.substring(imgUrl.indexOf("/img/"));
-		String imageFileDirectory = FileHelper.getFileStorageDirectory() + file;
-		try {
-			// 压缩图片
-			String targetFile = imgUrl.replace(".", "_tn.");
-			Thumbnails.of(imageFileDirectory).size(width, height).outputQuality(0.7f).toFile(FileHelper.getFileStorageDirectory() + targetFile);
-			return targetFile;
-		}
-		catch (IOException e1) {
-			log.error("压缩图片异常(image=" + imageFileDirectory + "): ", e1);
-		}
-		return imgUrl;
-	}
-
-	/**
 	 * 将Base64转换为图片
 	 * @param base64Str
 	 * @param fullFilePath
 	 * @return
 	 * @throws IOException
 	 */
-	private static boolean convertBase64ToImage(String base64Str, String fullFilePath){
+	public static boolean convertBase64ToImage(String base64Str, String fullFilePath){
 		if(base64Str == null){
 			return false;
 		}
@@ -177,32 +155,5 @@ public class ImageHelper {
 			return false;
 		}
 	}
-	
-	/**
-	 * 生成缩略图
-	 * @return
-	 * @throws Exception
-	 */
-	public static String generateThumbnail(String sourcePath, String targetPath, int width, int height) throws Exception{
-		// 创建文件
-		File file = new File(sourcePath);
-		if(!file.exists()){
-			boolean result = file.mkdir();
-			if(!result){
-				log.warn("创建文件夹 {} 失败", sourcePath);
-			}
-		}
-		// 生成缩略图
-		Thumbnails.of(sourcePath).size(width, height).toFile(targetPath);
-		return targetPath;
-	}
-	
-	/**
-	 * 给图片添加水印
-	 * @param filePath
-	 */
-	private static void addWatermark(String filePath, String watermark) throws Exception{
-		Thumbnails.of(filePath).watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(watermark)), 0.8f).toFile(filePath);
-    }
 
 }
