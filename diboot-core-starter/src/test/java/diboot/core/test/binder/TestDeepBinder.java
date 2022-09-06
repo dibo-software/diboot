@@ -95,7 +95,7 @@ public class TestDeepBinder {
                 Assert.assertTrue(vo.getChildren().get(0).getOrganizationVO() != null);
             }
             else if(vo.getId().equals(10005L)){
-                Assert.assertTrue(vo.getChildren() == null);
+                Assert.assertTrue(V.isEmpty(vo.getChildren()));
             }
             System.out.println(JSON.stringify(vo));
         }

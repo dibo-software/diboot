@@ -157,10 +157,10 @@ CREATE TABLE `demo_test_join` (
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
 
 -- 初始化样例数据
-INSERT INTO department (id, parent_id, org_id, name, `character`, extjsonarr)
-VALUES (10001, 0, 100001, '产品部', 'WW', null), (10002, 10001, 100001, '研发组', '1001', null),
-       (10003, 10001, 100001, '测试组', '[1001,1002]', '[1001,1002]'), (10004, 10001, 100001, '市场部', '1001,1002', '[1001,1002]'),
-       (10005, 10003, 100001, '自动化测试', null, null), (10006, 10003, 100001, '功能测试', null, null);
+INSERT INTO department (id, parent_id, org_id, name, `character`, extjsonobj, extjsonarr)
+VALUES (10001, 0, 100001, '产品部', 'WW', null, null), (10002, 10001, 100001, '研发组', '1001', null, null),
+       (10003, 10001, 100001, '测试组', '[1001,1002]', '{"id": 1001, "name": "TEST"}', '[1001,1002]'), (10004, 10001, 100001, '市场部', '1001,1002', '{"id": 1001, "name": "TEST"}', '[1001,1002]'),
+       (10005, 10003, 100001, '自动化测试', null, null, null), (10006, 10003, 100001, '功能测试', null, null, null);
 INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
 INSERT INTO organization (id, parent_id, name, telphone, manager_id) VALUES (100001, 0, '苏州帝博', '0512-62988949', 1001), (100002, 0, '成都帝博', '028-62988949', 1002);
 INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');

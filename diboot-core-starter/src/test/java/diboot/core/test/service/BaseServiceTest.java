@@ -555,9 +555,9 @@ public class BaseServiceTest {
         Assert.assertTrue(mapList != null);
         System.out.println(mapList);
 
-        List<Department> objList = jdbcTemplate.queryForList("SELECT * FROM department", Department.class);
+        List<Long> objList = jdbcTemplate.queryForList("SELECT id FROM department", Long.class);
         Assert.assertTrue(objList != null);
-        Assert.assertTrue(objList.get(0).getCreateTime() != null);
+        Assert.assertTrue(objList.get(0) != null);
 
         jdbcTemplate.execute("UPDATE department SET name='A' WHERE id=0");
     }
