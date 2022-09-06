@@ -80,7 +80,4 @@ public class DepartmentDTO implements Serializable {
         return D.nextDay(createTime);
     }
 
-    @BindQuery
-    private String jsonArrayStr;
-
 }
