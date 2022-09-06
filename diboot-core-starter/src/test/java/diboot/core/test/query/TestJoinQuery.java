@@ -88,10 +88,6 @@ public class TestJoinQuery {
         list = Binder.joinQueryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() > 0);
 
-        departmentDTO.setJsonArrayStr("1001");
-        queryWrapper = QueryBuilder.toQueryWrapper(departmentDTO);
-        list = departmentService.getEntityList(queryWrapper);
-        Assert.assertTrue(list.size() > 1);
     }
 
     @Test
