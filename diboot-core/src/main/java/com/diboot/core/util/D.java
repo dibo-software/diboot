@@ -448,9 +448,11 @@ public class D extends DateUtils{
 			return null;
 		}
 		dateString = formatDateString(dateString);
+		if(!dateString.contains(" ")) {
+			return convert2FormatDate(dateString, FORMAT_DATE_Y4MD);
+		}
 		return convert2FormatDate(dateString, FORMAT_DATETIME_Y4MDHMS);
 	}
-
 
 	/**
 	 * 格式化日期字符串
