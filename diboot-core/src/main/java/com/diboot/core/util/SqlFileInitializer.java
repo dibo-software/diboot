@@ -21,6 +21,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.TransactionStatus;
 
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
@@ -87,16 +91,6 @@ public class SqlFileInitializer {
     public static boolean checkSqlExecutable(String sqlStatement){
         sqlStatement = buildPureSqlStatement(sqlStatement);
         return SqlExecutor.validateQuery(sqlStatement);
-    }
-
-    /**
-     * 检查SQL文件是否已经执行过
-     * @param sqlStatement
-     * @return
-     */
-    @Deprecated
-    public static boolean checkIsTableExists(String sqlStatement){
-        return checkSqlExecutable(sqlStatement);
     }
 
     /***
