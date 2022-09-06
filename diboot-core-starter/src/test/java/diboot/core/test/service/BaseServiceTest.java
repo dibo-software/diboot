@@ -562,4 +562,16 @@ public class BaseServiceTest {
         jdbcTemplate.execute("UPDATE department SET name='A' WHERE id=0");
     }
 
+    @Test
+    public void testJson() {
+        List<Department> departments = departmentService.getEntityList(null);
+        Assert.assertTrue(departments != null);
+        for(Department dept : departments) {
+            if(V.notEmpty(dept.getCharacter()) && dept.getCharacter().contains(",")){
+                Assert.assertTrue(dept.getExtjsonarr().size() == S.split(dept.getCharacter()).length);
+                Assert.assertTrue(dept.getExtjsonobj() != null);
+            }
+        }
+    }
+
 }
