@@ -56,7 +56,7 @@ public class IamResourcePermission extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 应用模块
@@ -67,7 +67,7 @@ public class IamResourcePermission extends BaseEntity {
     // 父级菜单
     @NotNull(message = "父级资源不能为空")
     @TableField()
-    private Long parentId;
+    private String parentId;
 
     // 展现类型
     @NotNull(message = "展现类型不能为空")

@@ -1,9 +1,9 @@
 -- 用户表
 create table ${SCHEMA}.iam_user
 (
-   id bigint not null,
-   tenant_id            bigint        not null default 0,
-   org_id bigint not null default 0,
+   id varchar(32) not null,
+   tenant_id  varchar(32) not null default '0',
+   org_id varchar(32) not null default 0,
    user_num varchar(20) not null,
    realname varchar(50) not null,
    gender varchar(10) not null,
@@ -42,10 +42,10 @@ create nonclustered index idx_iam_user_tenant on iam_user(tenant_id);
 -- 账号表
 create table ${SCHEMA}.iam_account
 (
-    id bigint not null,
-    tenant_id            bigint        not null default 0,
+    id varchar(32) not null,
+    tenant_id  varchar(32) not null default '0',
     user_type varchar(100) default 'IamUser' not null,
-    user_id bigint not null,
+    user_id varchar(32) not null,
     auth_type varchar(20) default 'PWD' not null,
     auth_account varchar(100) not null,
     auth_secret varchar(100) null,
@@ -76,8 +76,8 @@ create nonclustered index idx_iam_account_tenant on iam_account(tenant_id);
 -- 角色表
 create table ${SCHEMA}.iam_role
 (
-    id bigint not null,
-    tenant_id            bigint        not null default 0,
+    id varchar(32) not null,
+    tenant_id  varchar(32) not null default '0',
     name varchar(50) not null,
     code varchar(50) not null,
     description varchar(100) null,
@@ -101,11 +101,11 @@ create nonclustered index idx_iam_role_tenant on iam_role(tenant_id);
 -- 用户角色表
 create table ${SCHEMA}.iam_user_role
 (
-    id bigint identity,
-    tenant_id            bigint        not null default 0,
+    id varchar(32) not null,
+    tenant_id  varchar(32) not null default '0',
     user_type varchar(100) default 'IamUser' not null,
-    user_id bigint not null,
-    role_id bigint not null,
+    user_id varchar(32) not null,
+    role_id varchar(32) not null,
     is_deleted tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
     update_time datetime null default CURRENT_TIMESTAMP,
@@ -127,10 +127,10 @@ create nonclustered index idx_iam_user_role_tenant on iam_user_role(tenant_id);
 -- 资源权限表
 create table ${SCHEMA}.iam_resource_permission
 (
-    id bigint identity,
-    tenant_id            bigint        not null default 0,
-    app_module          varchar(50),
-    parent_id bigint default 0   not null,
+    id varchar(32) not null,
+    tenant_id  varchar(32) not null default '0',
+    app_module varchar(50),
+    parent_id varchar(32) default 0   not null,
     display_type varchar(20) not null,
     display_name varchar(100) not null,
     resource_code varchar(100)   null,
@@ -162,11 +162,11 @@ create nonclustered index idx_resource_permission_tenant on iam_resource_permiss
 -- 角色-权限
 create table ${SCHEMA}.iam_role_resource
 (
-    id bigint identity ,
-    tenant_id            bigint        not null default 0,
-    role_id bigint not null ,
-    resource_id bigint not null ,
-    is_deleted tinyint default 0 not null ,
+    id varchar(32) not null ,
+    tenant_id  varchar(32) not null default '0',
+    role_id varchar(32) not null,
+    resource_id varchar(32) not null,
+    is_deleted tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
     constraint PK_iam_role_resource primary key (id)
 );
@@ -184,14 +184,14 @@ create nonclustered index idx_iam_role_resource_tenant on iam_role_resource(tena
 -- 登录日志表
 create table ${SCHEMA}.iam_login_trace
 (
-    id bigint identity ,
-    tenant_id            bigint        not null default 0,
-    user_type varchar(100) default 'IamUser' not null ,
-    user_id bigint not null ,
-    auth_type varchar(20) default 'PWD' not null ,
-    auth_account varchar(100) not null ,
-    ip_address varchar(50) null ,
-    user_agent varchar(200) null ,
+    id varchar(32) not null ,
+    tenant_id  varchar(32) not null default '0',
+    user_type varchar(100) default 'IamUser' not null,
+    user_id varchar(32) not null,
+    auth_type varchar(20) default 'PWD' not null,
+    auth_account varchar(100) not null,
+    ip_address varchar(50) null,
+    user_agent varchar(200) null,
     is_success tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
     constraint PK_iam_login_trace primary key (id)
@@ -215,13 +215,13 @@ create nonclustered index idx_iam_login_trace_tenant on iam_login_trace(tenant_i
 -- 操作日志表
 create table ${SCHEMA}.iam_operation_log
 (
-   id bigint identity ,
-   tenant_id            bigint        not null default 0,
-   app_module          varchar(50),
+   id  varchar(32) not null,
+   tenant_id  varchar(32) not null default '0',
+   app_module   varchar(50),
    business_obj varchar(100)  not null,
    operation   varchar(100)  not null,
    user_type varchar(100) default 'IamUser' not null ,
-   user_id bigint not null ,
+   user_id varchar(32) not null ,
    user_realname    varchar(100)  null,
    request_uri    varchar(500)                  not null,
    request_method varchar(20)                   not null,
@@ -256,19 +256,19 @@ create nonclustered index idx_iam_operation_log_tenant on iam_operation_log(tena
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.iam_org (
-    id bigint not null,
-    tenant_id          bigint           default 0  not null,
-    parent_id bigint DEFAULT 0 NOT NULL,
-    top_org_id bigint DEFAULT 0 NOT NULL,
+    id varchar(32) not null,
+    tenant_id varchar(32) default '0' not null,
+    parent_id varchar(32) DEFAULT 0 NOT NULL,
+    top_org_id varchar(32) DEFAULT 0 NOT NULL,
     name varchar(100) NOT NULL,
     short_name varchar(50) NOT NULL,
     type        varchar(100) DEFAULT 'DEPT' NOT NULL,
     code        varchar(50)  NOT NULL,
-    manager_id  bigint   DEFAULT 0 NOT NULL,
+    manager_id varchar(32)  DEFAULT '0' NOT NULL,
     depth smallint DEFAULT 1 NOT NULL,
     sort_id bigint DEFAULT 1 NOT NULL,
     status      varchar(10)  DEFAULT 'A' NOT NULL,
-    org_comment varchar(255)   null,
+    org_comment varchar(255) null,
     is_deleted tinyint DEFAULT 0    not null,
     create_time datetime default CURRENT_TIMESTAMP   not null,
     update_time datetime null default CURRENT_TIMESTAMP,
@@ -298,8 +298,8 @@ create nonclustered index idx_iam_org_tenant on iam_org (tenant_id);
 -- 岗位
 create table ${SCHEMA}.iam_position
 (
-    id bigint not null,
-    tenant_id          bigint           default 0  not null,
+    id varchar(32) not null,
+    tenant_id varchar(32) default '0' not null,
     name                 varchar(100)                          not null,
     code                 varchar(50)                           not null,
     is_virtual           tinyint  default 0                 not null,
@@ -330,13 +330,13 @@ create nonclustered index idx_iam_position_tenant on iam_position (tenant_id);
 -- 用户岗位
 create table iam_user_position
 (
-    id bigint identity,
-    tenant_id          bigint           default 0  not null,
-    user_type           varchar(100) default 'IamUser'         not null,
-    user_id             bigint                                  not null,
-    org_id              bigint        default 0                 not null,
-    position_id         bigint                             not null,
-    is_primary_position tinyint   default 1                 not null,
+    id  varchar(32) not null,
+    tenant_id varchar(32) default '0' not null,
+    user_type           varchar(100) default 'IamUser' not null,
+    user_id             varchar(32)  not null,
+    org_id              varchar(32)  not null,
+    position_id         varchar(32) not null,
+    is_primary_position tinyint   default 1 not null,
     is_deleted tinyint DEFAULT 0    not null,
     create_time datetime default CURRENT_TIMESTAMP   not null,
     update_time datetime default CURRENT_TIMESTAMP null,
@@ -360,8 +360,8 @@ create nonclustered index idx_iam_user_position_pos on iam_user_position (positi
 -- 系统配置表
 create table ${SCHEMA}.system_config
 (
-    id          bigint identity,
-    tenant_id   bigint       not null default 0,
+    id          varchar(32)  not null,
+    tenant_id   varchar(32)  not null default '0',
     type        varchar(50)  not null,
     prop        varchar(50)  not null,
     value       varchar(255) null,

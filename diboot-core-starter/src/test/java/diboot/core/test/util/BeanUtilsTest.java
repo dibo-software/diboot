@@ -124,7 +124,7 @@ public class BeanUtilsTest {
     @Test
     public void testGetProperty(){
         Dictionary dictionary1 = new Dictionary();
-        dictionary1.setId(1001L);
+        dictionary1.setId("1001");
 
         // getProperty
         Object id = BeanUtils.getProperty(dictionary1, "id");
@@ -138,7 +138,7 @@ public class BeanUtilsTest {
         List<Dictionary> dictionaryList = new ArrayList<>();
         for(long id=1001; id<1005; id++){
             Dictionary dictionary1 = new Dictionary();
-            dictionary1.setId(id);
+            dictionary1.setId(S.valueOf(id));
             dictionaryList.add(dictionary1);
         }
         List<Long> metaIdList = BeanUtils.collectToList(dictionaryList, Dictionary::getId);
@@ -156,7 +156,7 @@ public class BeanUtilsTest {
         List<Dictionary> dictionaryList = new ArrayList<>();
         for(long id=1001; id<1005; id++){
             Dictionary dictionary1 = new Dictionary();
-            dictionary1.setId(id);
+            dictionary1.setId(S.valueOf(id));
             dictionaryList.add(dictionary1);
         }
         Map<String, String> map = new HashMap<>();
@@ -194,12 +194,12 @@ public class BeanUtilsTest {
         List<Dictionary> dictionaryList = new ArrayList<>();
         for(long id=1001; id<=1005; id++){
             Dictionary dictionary1 = new Dictionary();
-            dictionary1.setId(id);
+            dictionary1.setId(S.valueOf(id));
             dictionaryList.add(dictionary1);
         }
         for(long id=1003; id<=1007; id++){
             Dictionary dictionary1 = new Dictionary();
-            dictionary1.setId(id);
+            dictionary1.setId(S.valueOf(id));
             dictionaryList.add(dictionary1);
         }
         List<Dictionary> dictionaryList2 = BeanUtils.distinctByKey(dictionaryList, Dictionary::getId);
@@ -212,13 +212,13 @@ public class BeanUtilsTest {
         List<Dictionary> dictionaryList = new ArrayList<>();
         for(long id=1001; id<=1005; id++){
             Dictionary dictionary1 = new Dictionary();
-            dictionary1.setId(id);
-            dictionary1.setParentId(1L);
+            dictionary1.setId(S.valueOf(id));
+            dictionary1.setParentId(S.valueOf(1L));
             dictionaryList.add(dictionary1);
         }
         Dictionary parent = new Dictionary();
-        parent.setId(1L);
-        parent.setParentId(0L);
+        parent.setId("1");
+        parent.setParentId(null);
         dictionaryList.add(parent);
 
         // 正常数据
@@ -234,8 +234,8 @@ public class BeanUtilsTest {
 
         // 异常数据告警
         Dictionary dict2 = new Dictionary();
-        dict2.setId(1L);
-        dict2.setParentId(1L);
+        dict2.setId("1");
+        dict2.setParentId("1");
         dictionaryList.add(dict2);
         list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
         try{

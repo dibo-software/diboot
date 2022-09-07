@@ -113,7 +113,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         List<IamResourcePermissionDTO> createPermissionDTOList = permissionList.stream()
                 .filter(p -> V.isEmpty(p.getId()))
                 .collect(Collectors.toList());
-        List<Long> updatePermissionIdList = updatePermissionList.stream()
+        List<String> updatePermissionIdList = updatePermissionList.stream()
                 .map(IamResourcePermission::getId)
                 .collect(Collectors.toList());
         // 批量删除不存在的按钮/权限列表
@@ -152,8 +152,8 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteMenuAndPermissions(Long id) {
-        if (V.isEmpty(id) || id == 0L) {
+    public void deleteMenuAndPermissions(String id) {
+        if (V.isEmpty(id)) {
             throw new BusinessException(Status.FAIL_OPERATION, "参数错误");
         }
         // 删除该菜单
@@ -166,7 +166,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
             this.deleteEntities(subWrapper);
         }
         // 递归删除下级子菜单的子菜单以及按钮/权限列表
-        List<Long> subMenuIdList = subList.stream()
+        List<String> subMenuIdList = subList.stream()
                 .filter(item -> Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name().equals(item.getDisplayType()))
                 .map(IamResourcePermission::getId)
                 .collect(Collectors.toList());
@@ -207,7 +207,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         List<Long> sortIdList = new ArrayList();
         // 先将所有序号重新设置为自身当前id
         for (IamResourcePermission item : permissionList) {
-            item.setSortId(item.getId());
+            item.setSortId(Long.parseLong(item.getId()));
             sortIdList.add(item.getSortId());
         }
         // 将序号列表倒序排序
@@ -230,7 +230,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteMenuAndPermissions(List<Long> idList) {
+    public void deleteMenuAndPermissions(List<String> idList) {
         if (V.isEmpty(idList)) {
             throw new BusinessException(Status.FAIL_OPERATION, "id列表不能为空");
         }
@@ -246,7 +246,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
             this.deleteEntities(subWrapper);
         }
         // 筛选出是菜单的选项，递归删除
-        List<Long> subMenuIdList = subList.stream()
+        List<String> subMenuIdList = subList.stream()
                 .filter(item -> Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name().equals(item.getDisplayType()))
                 .map(IamResourcePermission::getId)
                 .collect(Collectors.toList());
@@ -265,7 +265,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
             return false;
         }
         Map<String, IamResourcePermission> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResourcePermission::getId));
-        List<Long> deleteIdList = new ArrayList<>();
+        List<String> deleteIdList = new ArrayList<>();
         for (IamResourcePermission item : list) {
             if (!hasTopRootNode(idObjectMap, item, null)) {
                 deleteIdList.add(item.getId());
@@ -283,7 +283,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
             return;
         }
         Map<String, IamResourcePermission> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResourcePermission::getId));
-        List<Long> deleteIdList = new ArrayList<>();
+        List<String> deleteIdList = new ArrayList<>();
         for (IamResourcePermission item : list) {
             if (!hasTopRootNode(idObjectMap, item, null)) {
                 deleteIdList.add(item.getId());
@@ -306,12 +306,12 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
      * @param item
      * @return
      */
-    private boolean hasTopRootNode(Map<String, IamResourcePermission> idObjectMap, IamResourcePermission item, List<Long> existIdList) {
+    private boolean hasTopRootNode(Map<String, IamResourcePermission> idObjectMap, IamResourcePermission item, List<String> existIdList) {
         if (V.equals(item.getParentId(), 0L)) {
             return true;
         }
         if (existIdList == null) {
-            existIdList = new ArrayList<Long>();
+            existIdList = new ArrayList<>();
         }
         if (existIdList.contains(item.getId())) {
             return false;

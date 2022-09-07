@@ -45,30 +45,24 @@ public class IamOrg extends BaseEntity {
     /**
      * 组织树的虚拟根节点 ID
      */
-    public static final Long VIRTUAL_ROOT_ID = 0L;
-
-    /**
-     * 更改id为雪花
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    public static final String VIRTUAL_ROOT_ID = "0";
 
     /**
      * 租户ID
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 上级ID
     @TableField()
-    private Long parentId;
+    private String parentId;
 
     /**
      * 企业ID
      */
     @TableField()
-    private Long topOrgId;
+    private String topOrgId;
 
     // 名称
     @NotNull(message = "名称不能为空")
@@ -95,7 +89,7 @@ public class IamOrg extends BaseEntity {
     private String code;
 
     @TableField()
-    private Long managerId;
+    private String managerId;
 
     // 深度层级
     @TableField()

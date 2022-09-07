@@ -41,14 +41,14 @@ public class Dictionary extends BaseExtEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     /***
      * 上级ID
      */
-    @NotNull(message = "上级ID不能为空，如无请设为0")
+    @NotNull(message = "上级ID不能为空")
     @TableField
-    private Long parentId = 0L;
+    private String parentId;
 
     /**
      * 应用模块

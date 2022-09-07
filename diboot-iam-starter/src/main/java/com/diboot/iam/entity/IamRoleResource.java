@@ -36,7 +36,7 @@ public class IamRoleResource extends BaseEntity {
 
     public IamRoleResource(){
     }
-    public IamRoleResource(Long roleId, Long resourceId){
+    public IamRoleResource(String roleId, String resourceId){
         this.roleId = roleId;
         this.resourceId = resourceId;
     }
@@ -46,16 +46,16 @@ public class IamRoleResource extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 角色ID
     @NotNull(message = "角色ID不能为空")
     @TableField()
-    private Long roleId;
+    private String roleId;
 
     // 权限ID
     @NotNull(message = "资源ID不能为空")
     @TableField()
-    private Long resourceId;
+    private String resourceId;
 
 }

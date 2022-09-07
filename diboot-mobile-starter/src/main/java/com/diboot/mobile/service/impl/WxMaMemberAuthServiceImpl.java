@@ -81,7 +81,7 @@ public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
         }
         // 创建微信用户基本信息
         IamMember wxMember = maInfo2IamMemberEntity(wxInfoDTO)
-                .setUserId(0L).setOrgId(0L)
+                .setUserId("0").setOrgId("0")
                 .setUserType(IamMember.class.getSimpleName());
         boolean success = iamMemberService.createEntity(wxMember);
         if (!success) {
@@ -119,7 +119,7 @@ public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
      * @param iamMember
      * @return
      */
-    protected IamAccount createIamAccountEntity(IamMember iamMember, Long userId, Class<? extends BaseLoginUser> userCls) {
+    protected IamAccount createIamAccountEntity(IamMember iamMember, String userId, Class<? extends BaseLoginUser> userCls) {
         return new IamAccount().setAuthAccount(iamMember.getOpenid())
                 .setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name())
                 .setUserId(userId).setUserType(userCls.getSimpleName())

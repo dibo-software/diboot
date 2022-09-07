@@ -16,8 +16,12 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,29 +32,12 @@ import java.util.Map;
  * @version v2.0
  * @date 2018/12/27
  */
-@Deprecated
+@Getter @Setter @Accessors(chain = true)
 public abstract class BaseExtEntity extends BaseEntity {
     private static final long serialVersionUID = 10204L;
 
-    @TableField
-    private String extdata; //扩展数据
-
-    @TableField(exist = false)
-    private Map<String, Object> extdataMap;
-
-    public String getExtdata() {
-        if(V.isEmpty(this.extdataMap)){
-            return null;
-        }
-        return JSON.toJSONString(this.extdataMap);
-    }
-
-    public BaseExtEntity setExtdata(String extdata) {
-        if(V.notEmpty(extdata)){
-            this.extdataMap = JSON.toLinkedHashMap(extdata);
-        }
-        return this;
-    }
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private Map<String, Object> extension;
 
     /***
      * 从extdata JSON中提取扩展属性值
@@ -58,10 +45,10 @@ public abstract class BaseExtEntity extends BaseEntity {
      * @return
      */
     public Object getFromExt(String extAttrName){
-        if(this.extdataMap == null){
+        if(this.extension == null){
             return null;
         }
-        return this.extdataMap.get(extAttrName);
+        return this.extension.get(extAttrName);
     }
 
     /***
@@ -73,10 +60,10 @@ public abstract class BaseExtEntity extends BaseEntity {
         if(extAttrName == null && extAttrValue == null){
             return this;
         }
-        if(this.extdataMap == null){
-            this.extdataMap = new LinkedHashMap<>();
+        if(this.extension == null){
+            this.extension = new LinkedHashMap<>();
         }
-        this.extdataMap.put(extAttrName, extAttrValue);
+        this.extension.put(extAttrName, extAttrValue);
         return this;
     }
 

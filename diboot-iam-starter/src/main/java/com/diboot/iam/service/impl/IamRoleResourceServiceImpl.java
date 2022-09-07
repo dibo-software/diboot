@@ -80,7 +80,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         // 获取当前用户的角色
         LabelValue extensionObj = currentUser.getExtensionObj();
         // 根据用户类型与用户id获取roleList
-        Long extensionObjId = null;
+        String extensionObjId = null;
         if (extensionObj != null) {
             extensionObjId = ((PositionDataScope) extensionObj.getValue()).getPositionId();
         }
@@ -100,9 +100,9 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
                 .ne(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
                 .eq(IamResourcePermission::getStatus, Cons.DICTCODE_RESOURCE_STATUS.A.name());
         if (!isAdmin) {
-            List<Long> roleIds = roleList.stream().map(IamRole::getId).collect(Collectors.toList());
+            List<String> roleIds = roleList.stream().map(IamRole::getId).collect(Collectors.toList());
             // 获取角色对应的菜单权限
-            List<Long> permissionIds = getPermissionIdsByRoleIds(roleIds);
+            List<String> permissionIds = getPermissionIdsByRoleIds(roleIds);
             if (V.isEmpty(permissionIds)) {
                 return Collections.emptyList();
             }
@@ -123,25 +123,25 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     }
 
     @Override
-    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, Long roleId) {
-        List<Long> roleIdList = new ArrayList<>();
+    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, String roleId) {
+        List<String> roleIdList = new ArrayList<>();
         roleIdList.add(roleId);
         return getPermissionVOList(appModule, roleIdList);
     }
 
     @Override
-    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<Long> roleIds) {
+    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<String> roleIds) {
         List<IamResourcePermission> list = getPermissionList(appModule, roleIds);
         List<IamResourcePermissionVO> voList = BeanUtils.convertList(list, IamResourcePermissionVO.class);
         return BeanUtils.buildTree(voList);
     }
 
     @Override
-    public List<IamResourcePermission> getPermissionList(String appModule, List<Long> roleIds) {
+    public List<IamResourcePermission> getPermissionList(String appModule, List<String> roleIds) {
         if (V.isEmpty(roleIds)) {
             return Collections.emptyList();
         }
-        List<Long> permissionIds = getPermissionIdsByRoleIds(roleIds);
+        List<String> permissionIds = getPermissionIdsByRoleIds(roleIds);
         if (V.isEmpty(permissionIds)) {
             return Collections.emptyList();
         }
@@ -150,8 +150,8 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     }
 
     @Override
-    public List<String> getPermissionCodeList(String appModule, List<Long> roleIds) {
-        List<Long> permissionIds = getPermissionIdsByRoleIds(roleIds);
+    public List<String> getPermissionCodeList(String appModule, List<String> roleIds) {
+        List<String> permissionIds = getPermissionIdsByRoleIds(roleIds);
         if (V.isEmpty(permissionIds)) {
             return Collections.emptyList();
         }
@@ -180,13 +180,13 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createRoleResourceRelations(Long roleId, List<Long> resourceIdList) {
+    public boolean createRoleResourceRelations(String roleId, List<String> resourceIdList) {
         if (V.isEmpty(resourceIdList)) {
             return true;
         }
         // 批量创建
         List<IamRoleResource> roleResourceList = new ArrayList<>();
-        for (Long resourceId : resourceIdList) {
+        for (String resourceId : resourceIdList) {
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
         boolean success = createEntities(roleResourceList);
@@ -196,7 +196,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateRoleResourceRelations(Long roleId, List<Long> resourceIdList) {
+    public boolean updateRoleResourceRelations(String roleId, List<String> resourceIdList) {
         if (resourceIdList == null) {
             return true;
         }
@@ -210,7 +210,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             return true;
         }
         List<IamRoleResource> roleResourceList = new ArrayList<>();
-        for (Long resourceId : resourceIdList) {
+        for (String resourceId : resourceIdList) {
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
         boolean success = createEntities(roleResourceList);
@@ -234,7 +234,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
      * @param roleIds
      * @return
      */
-    private List<Long> getPermissionIdsByRoleIds(List<Long> roleIds) {
+    private List<String> getPermissionIdsByRoleIds(List<String> roleIds) {
         if (V.isEmpty(roleIds)) {
             return Collections.emptyList();
         }

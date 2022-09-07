@@ -35,7 +35,7 @@ public class IamUserRole extends BaseEntity {
     private static final long serialVersionUID = 7716603553049083815L;
 
     public IamUserRole(){}
-    public IamUserRole(String userType, Long userId, Long roleId){
+    public IamUserRole(String userType, String userId, String roleId){
         this.userType = userType;
         this.userId = userId;
         this.roleId = roleId;
@@ -46,7 +46,7 @@ public class IamUserRole extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 用户类型
     @NotNull(message = "用户类型不能为空")
@@ -56,11 +56,11 @@ public class IamUserRole extends BaseEntity {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private Long userId;
+    private String userId;
 
     // 角色ID
     @NotNull(message = "角色ID不能为空")
     @TableField()
-    private Long roleId;
+    private String roleId;
 
 }

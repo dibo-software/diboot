@@ -54,13 +54,13 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      * 删除菜单及其包含的所有子菜单以及按钮/权限列表
      * @param id
      */
-    void deleteMenuAndPermissions(Long id);
+    void deleteMenuAndPermissions(String id);
 
     /***
      * 删除指定id的权限及其包含的所有子菜单以及按钮/权限列表
      * @param idList
      */
-    void deleteMenuAndPermissions(List<Long> idList);
+    void deleteMenuAndPermissions(List<String> idList);
 
     /**
      * 获取所有前端权限定义

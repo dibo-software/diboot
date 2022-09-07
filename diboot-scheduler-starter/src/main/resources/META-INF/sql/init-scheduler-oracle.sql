@@ -1,7 +1,7 @@
 -- 定时任务表
 CREATE TABLE ${SCHEMA}.schedule_job (
-  id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
-  tenant_id          NUMBER(20)           default 0  not null,
+  id varchar(32) NOT NULL,
+  tenant_id varchar(32) default '0' not null,
   job_key    VARCHAR2(100)          not null,
   job_name       VARCHAR2(100)          not null,
   cron       VARCHAR2(50),
@@ -36,8 +36,8 @@ create index idx_schedule_job_tenant on ${SCHEMA}.schedule_job (tenant_id);
 
 -- 定时任务日志表
 CREATE TABLE ${SCHEMA}.schedule_job_log (
- id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
- tenant_id          NUMBER(20)           default 0  not null,
+ id varchar(32) NOT NULL,
+ tenant_id varchar(32) default '0' not null,
  job_id    VARCHAR2(100)          not null,
  job_name       VARCHAR2(100)          not null,
  cron       VARCHAR2(50),

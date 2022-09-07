@@ -1,7 +1,7 @@
 -- 消息模版表
 CREATE TABLE message_template (
-     id bigserial not null,
-     tenant_id          bigint           default 0  not null,
+     id  varchar(32) not null,
+     tenant_id varchar(32) default '0' not null,
      app_module         VARCHAR(50),
      code VARCHAR(20) NOT NULL,
      title VARCHAR(100) NOT NULL,
@@ -31,10 +31,10 @@ create index idx_msg_tmpl_code ON message_template(code);
 
 -- 消息表
 CREATE TABLE message (
-  id bigserial not null,
-  tenant_id          bigint           default 0  not null,
+  id  varchar(32) not null,
+  tenant_id varchar(32) default '0' not null,
   app_module         VARCHAR(50),
-  template_id        bigint,
+  template_id        varchar(32) NULL,
   business_type       VARCHAR(100)          not null,
   business_code       VARCHAR(50) default 0  not null,
   sender VARCHAR(100)  not null,

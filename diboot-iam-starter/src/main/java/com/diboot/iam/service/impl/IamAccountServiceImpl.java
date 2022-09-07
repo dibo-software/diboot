@@ -100,7 +100,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
     }
 
     @Override
-    public String getAuthAccount(String userType, Long userId) {
+    public String getAuthAccount(String userType, String userId) {
         LambdaQueryWrapper<IamAccount> queryWrapper = new QueryWrapper<IamAccount>().lambda()
                 .select(IamAccount::getAuthAccount)
                 .eq(IamAccount::getUserType, userType)

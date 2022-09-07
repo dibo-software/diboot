@@ -57,7 +57,7 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
      * @param userId
      * @return
      */
-    String getAuthAccount(String userType, Long userId);
+    String getAuthAccount(String userType, String userId);
 
     /**
      * 账号是否已存在

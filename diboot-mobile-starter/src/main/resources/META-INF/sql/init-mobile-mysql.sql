@@ -1,9 +1,9 @@
 -- 移动端成员表
 CREATE TABLE `iam_member` (
-    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户id',
-    `org_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '组织',
-    `user_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
+    `id` varchar(32) NOT NULL COMMENT 'ID',
+    `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户id',
+    `org_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '组织',
+    `user_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '用户id',
     `user_type` varchar(100) NOT NULL DEFAULT 'IamUser' COMMENT '用户类型',
     `openid` varchar(32) NOT NULL COMMENT 'openid',
     `nickname` varchar(100) COMMENT '昵称',
@@ -20,7 +20,7 @@ CREATE TABLE `iam_member` (
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
-) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COMMENT='移动端用户';
+) DEFAULT CHARSET=utf8mb4 COMMENT='移动端用户';
 -- 索引
 create index idx_member_tenant on iam_member (tenant_id);
 create index idx_member_orgid on iam_member (org_id);

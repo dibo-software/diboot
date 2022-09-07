@@ -46,7 +46,7 @@ import java.util.Map;
 public class IamExtensibleImpl implements IamExtensible {
 
     @Override
-    public LabelValue getUserExtensionObj(String userType, Long userId, Map<String, Object> extObj) {
+    public LabelValue getUserExtensionObj(String userType, String userId, Map<String, Object> extObj) {
         if(!IamUser.class.getSimpleName().equals(userType)){
             log.warn("扩展的用户类型: {} 需自行实现附加扩展对象逻辑", userType);
             return null;
@@ -54,13 +54,13 @@ public class IamExtensibleImpl implements IamExtensible {
         IamPositionService iamPositionService = ContextHelper.getBean(IamPositionService.class);
         IamUserPosition userPosition = iamPositionService.getUserPrimaryPosition(userType, userId);
         if(userPosition != null){
-            Long orgId = userPosition.getOrgId();
+            String orgId = userPosition.getOrgId();
             IamPosition position = iamPositionService.getEntity(userPosition.getPositionId());
             PositionDataScope positionDataScope = new PositionDataScope(userId, position.getDataPermissionType(), userId, orgId);
-            List<Long> accessibleUserIds = new ArrayList<>(), accessibleOrgIds = new ArrayList<>();
+            List<String> accessibleUserIds = new ArrayList<>(), accessibleOrgIds = new ArrayList<>();
             // 本人及下属的用户ids
             accessibleUserIds.add(userId);
-            List<Long> userIds = ContextHelper.getBean(IamUserService.class).getUserIdsByManagerId(userId);
+            List<String> userIds = ContextHelper.getBean(IamUserService.class).getUserIdsByManagerId(userId);
             if(V.notEmpty(userIds)){
                 userIds.forEach(uid -> {
                     if(!accessibleUserIds.contains(uid)){
@@ -71,7 +71,7 @@ public class IamExtensibleImpl implements IamExtensible {
             positionDataScope.setAccessibleUserIds(accessibleUserIds);
             // 本部门及下属部门的ids
             accessibleOrgIds.add(orgId);
-            List<Long> childOrgIds = ContextHelper.getBean(IamOrgService.class).getChildOrgIds(orgId);
+            List<String> childOrgIds = ContextHelper.getBean(IamOrgService.class).getChildOrgIds(orgId);
             if(V.notEmpty(childOrgIds)){
                 childOrgIds.forEach(oid -> {
                     if(!accessibleOrgIds.contains(oid)){
@@ -86,7 +86,7 @@ public class IamExtensibleImpl implements IamExtensible {
     }
 
     @Override
-    public List<IamRole> getExtensionRoles(String userType, Long userId, Long extensionObjId) {
+    public List<IamRole> getExtensionRoles(String userType, String userId, String extensionObjId) {
         return null;
     }
 }

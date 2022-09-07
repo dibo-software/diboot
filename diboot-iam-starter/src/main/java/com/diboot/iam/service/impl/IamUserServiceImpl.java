@@ -124,7 +124,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteUserAndAccount(Long id) {
+    public boolean deleteUserAndAccount(String id) {
         if (exists(IamUser::getId, id) == false){
             throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
         }
@@ -158,7 +158,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     @Override
-    public boolean isUserNumExists(Long id, String userNum) {
+    public boolean isUserNumExists(String id, String userNum) {
         if(V.isEmpty(userNum)){
             return true;
         }
@@ -172,15 +172,15 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     @Override
-    public List<Long> getUserIdsByManagerId(Long managerId) {
+    public List<String> getUserIdsByManagerId(String managerId) {
         if(managerId == null){
             return null;
         }
-        List<Long> orgIds = iamOrgService.getOrgIdsByManagerId(managerId);
+        List<String> orgIds = iamOrgService.getOrgIdsByManagerId(managerId);
         if(V.isEmpty(orgIds)){
             return Collections.emptyList();
         }
-        List<Long> iamUserIds = getValuesOfField(
+        List<String> iamUserIds = getValuesOfField(
                 Wrappers.<IamUser>lambdaQuery().in(IamUser::getOrgId, orgIds),
                 IamUser::getId
         );
@@ -188,10 +188,10 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     @Override
-    public List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId) {
-        List<Long> orgIds = new ArrayList<>();
+    public List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, String orgId) {
+        List<String> orgIds = new ArrayList<>();
         // 获取当前部门及所有下属部门的人员列表
-        if (V.notEmpty(orgId) && V.notEquals(orgId, 0L)) {
+        if (V.notEmpty(orgId) && orgId != null) {
             orgIds.add(orgId);
             // 获取所有下级部门列表
             orgIds.addAll(iamOrgService.getChildOrgIds(orgId));
@@ -200,7 +200,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             LambdaQueryWrapper<IamUserPosition> queryUserIds = Wrappers.<IamUserPosition>lambdaQuery()
                     .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
                     .in(IamUserPosition::getOrgId, orgIds);
-            List<Long> userIds = iamUserPositionService.getValuesOfField(queryUserIds, IamUserPosition::getUserId);
+            List<String> userIds = iamUserPositionService.getValuesOfField(queryUserIds, IamUserPosition::getUserId);
             queryWrapper.or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds);
         }
         // 查询指定页的数据
@@ -251,7 +251,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         iamUserRoleService.createUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
     }
 
-    private void deleteAccount(Long userId) {
+    private void deleteAccount(String userId) {
         if (V.equals(userId, IamSecurityUtils.getCurrentUserId())) {
             throw new BusinessException("不可删除自己的账号");
         }

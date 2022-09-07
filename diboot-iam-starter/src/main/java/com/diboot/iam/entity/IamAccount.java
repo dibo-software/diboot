@@ -41,17 +41,11 @@ public class IamAccount extends BaseEntity {
     private static final long serialVersionUID = -6825516429612507644L;
 
     /**
-     * 更改id为雪花
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    /**
      * 租户ID
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 用户类型
     @NotNull(message = "用户类型不能为空")
@@ -62,7 +56,7 @@ public class IamAccount extends BaseEntity {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private Long userId;
+    private String userId;
 
     // 认证方式
     @NotNull(message = "认证方式不能为空")

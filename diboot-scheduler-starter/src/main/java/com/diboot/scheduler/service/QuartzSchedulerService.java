@@ -56,14 +56,14 @@ public interface QuartzSchedulerService {
      * @param jobId
      * @param cron
      */
-    void updateJobCron(Long jobId, String cron);
+    void updateJobCron(String jobId, String cron);
 
     /**
      * 删除job
      *
      * @param jobId
      */
-    void deleteJob(Long jobId);
+    void deleteJob(String jobId);
 
 
     /**
@@ -72,28 +72,28 @@ public interface QuartzSchedulerService {
      * @param jobId
      * @return
      */
-    boolean existJob(Long jobId);
+    boolean existJob(String jobId);
 
     /**
      * 立即执行job
      *
      * @param jobId
      */
-    void runJob(Long jobId);
+    void runJob(String jobId);
 
     /**
      * 暂停job
      *
      * @param jobId
      */
-    void pauseJob(Long jobId);
+    void pauseJob(String jobId);
 
     /**
      * 恢复job
      *
      * @param jobId
      */
-    void resumeJob(Long jobId);
+    void resumeJob(String jobId);
 
     /**
      * 获取当前系统中的所有定时任务

@@ -1,9 +1,9 @@
 -- 字典表
 create table ${SCHEMA}.dictionary (
-    id                 BIGINT identity ( 10000,1) primary key,
-    parent_id          BIGINT           default 0  not null,
-    tenant_id          BIGINT           default 0  not null,
-    app_module          VARCHAR(150),
+    id                 varchar(32) NOT NULL primary key,
+    parent_id          varchar(32) NULL,
+    tenant_id          varchar(32) NOT NULL DEFAULT '0',
+    app_module         VARCHAR(150),
     type               VARCHAR(150)          not null,
     item_name          VARCHAR(300)         not null,
     item_value         VARCHAR(300),

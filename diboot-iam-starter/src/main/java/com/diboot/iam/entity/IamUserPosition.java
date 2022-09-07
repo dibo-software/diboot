@@ -44,7 +44,7 @@ public class IamUserPosition extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 用户类型
     @NotNull(message = "用户类型不能为空")
@@ -55,17 +55,17 @@ public class IamUserPosition extends BaseEntity {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private Long userId;
+    private String userId;
 
     // 组织ID
     @NotNull(message = "组织ID不能为空")
     @TableField()
-    private Long orgId;
+    private String orgId;
 
     // 岗位ID
     @NotNull(message = "岗位ID不能为空")
     @TableField()
-    private Long positionId;
+    private String positionId;
 
     // 是否主岗
     @TableField()

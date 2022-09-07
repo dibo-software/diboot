@@ -48,17 +48,11 @@ public class IamRole extends BaseEntity {
     }
 
     /**
-     * 更改id为雪花
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    /**
      * 租户ID
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 名称
     @NotNull(message = "名称不能为空")

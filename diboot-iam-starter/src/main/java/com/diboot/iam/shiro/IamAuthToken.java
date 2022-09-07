@@ -70,7 +70,7 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
     /**
      * 租户id
      */
-    private Long tenantId = 0L;
+    private String tenantId;
 
     /**
      * 是否校验密码
@@ -98,7 +98,7 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
 
     public IamAuthToken(String userInfoStr){
         String[] fields = S.split(userInfoStr, Cons.SEPARATOR_COMMA);
-        this.tenantId = Long.parseLong(fields[0]);
+        this.tenantId = fields[0];
         this.authAccount = fields[1];
         if(IamUser.class.getSimpleName().equals(fields[2]) != true){
             try {

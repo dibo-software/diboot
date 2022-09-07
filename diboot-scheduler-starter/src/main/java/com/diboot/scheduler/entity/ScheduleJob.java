@@ -48,7 +48,7 @@ public class ScheduleJob extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * job key

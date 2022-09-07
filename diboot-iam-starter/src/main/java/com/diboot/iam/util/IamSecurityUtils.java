@@ -114,7 +114,7 @@ public class IamSecurityUtils extends SecurityUtils {
      * 获取用户 "ID" 的值
      * @return
      */
-    public static Long getCurrentUserId(){
+    public static String getCurrentUserId(){
         BaseLoginUser user = getCurrentUser();
         return user != null? user.getId() : null;
     }

@@ -43,7 +43,7 @@ public class SystemConfig extends BaseEntity {
      * 租户ID
      */
     @TableField()
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 类型

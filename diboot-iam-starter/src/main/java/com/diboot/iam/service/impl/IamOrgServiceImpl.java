@@ -63,14 +63,14 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
      */
     private void enhanceIamOrg(IamOrg iamOrg){
         // 设置层级及公司ID
-        if (iamOrg.getParentId() != null && V.notEquals(iamOrg.getParentId(), 0L)) {
+        if (iamOrg.getParentId() != null && iamOrg.getParentId() != null) {
             IamOrg parentOrg = getEntity(iamOrg.getParentId());
             if (parentOrg != null) {
                 // 设置层级
                 int parentLevel = parentOrg.getDepth().intValue();
                 iamOrg.setDepth(parentLevel + 1);
                 // 设置公司ID
-                if (V.equals(parentOrg.getParentId(), 0L) || V.isEmpty(parentOrg.getParentId())) {
+                if (parentOrg.getParentId() == null || V.isEmpty(parentOrg.getParentId())) {
                     iamOrg.setTopOrgId(parentOrg.getId());
                 }
                 else {
@@ -81,13 +81,13 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     }
 
     @Override
-    public List<Long> getChildOrgIds(Long rootOrgId) {
+    public List<String> getChildOrgIds(String rootOrgId) {
         if(rootOrgId == null){
             return Collections.emptyList();
         }
         List<IamOrgVO> childOrgs = getOrgTree(rootOrgId);
         if(V.notEmpty(childOrgs)){
-            List<Long> childOrgIds = new ArrayList<>();
+            List<String> childOrgIds = new ArrayList<>();
             extractIds(childOrgs, childOrgIds);
             return childOrgIds;
         }
@@ -95,7 +95,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     }
 
     @Override
-    public List<IamOrgVO> getOrgTree(Long rootOrgId) {
+    public List<IamOrgVO> getOrgTree(String rootOrgId) {
         QueryWrapper<IamOrg> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().orderByDesc(IamOrg::getSortId, IamOrg::getId);
         List<IamOrg> orgList = getEntityList(queryWrapper);
@@ -114,7 +114,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
         List<Long> sortIdList = new ArrayList();
         // 先将所有序号重新设置为自身当前id
         for (IamOrg item : orgList) {
-            item.setSortId(item.getId());
+            item.setSortId(Long.parseLong(item.getId())); //TODO 优化
             sortIdList.add(item.getSortId());
         }
         // 将序号列表倒序排序
@@ -136,16 +136,16 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     }
 
     @Override
-    public List<Long> getParentOrgIds(Long orgId) {
+    public List<String> getParentOrgIds(String orgId) {
         return getParentOrgIds(orgId, true);
     }
 
     @Override
-    public List<Long> getParentOrgIds(Long orgId, boolean includeThis) {
+    public List<String> getParentOrgIds(String orgId, boolean includeThis) {
         if(orgId == null){
             return Collections.emptyList();
         }
-        List<Long> scopeIds = new ArrayList<>();
+        List<String> scopeIds = new ArrayList<>();
         if(includeThis){
             scopeIds.add(orgId);
         }
@@ -164,7 +164,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
                                 IamOrg::getId);
                         String parentOrgIdStr = S.valueOf(org.getParentId());
                         while (orgId2ParentIdMap.containsKey(parentOrgIdStr)) {
-                            Long parentOrgId = orgId2ParentIdMap.get(parentOrgIdStr).getParentId();
+                            String parentOrgId = orgId2ParentIdMap.get(parentOrgIdStr).getParentId();
                             scopeIds.add(parentOrgId);
                             parentOrgIdStr = S.valueOf(parentOrgId);
                         }
@@ -176,10 +176,10 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     }
 
     @Override
-    public List<Long> getOrgIdsByManagerId(Long managerId) {
+    public List<String> getOrgIdsByManagerId(String managerId) {
         LambdaQueryWrapper<IamOrg> queryWrapper = new LambdaQueryWrapper<IamOrg>()
                 .eq(IamOrg::getManagerId, managerId);
-        List<Long> orgIdList = getValuesOfField(queryWrapper, IamOrg::getId);
+        List<String> orgIdList = getValuesOfField(queryWrapper, IamOrg::getId);
         return orgIdList;
     }
 
@@ -187,7 +187,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
      * 提取id
      * @param orgs
      */
-    private void extractIds(List<IamOrgVO> orgs, List<Long> resultIds){
+    private void extractIds(List<IamOrgVO> orgs, List<String> resultIds){
         if(V.isEmpty(orgs)){
             return;
         }

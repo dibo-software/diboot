@@ -50,7 +50,7 @@ public class MessageTemplate extends BaseEntity {
      * 租户id
      */
     @TableField()
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 应用模块

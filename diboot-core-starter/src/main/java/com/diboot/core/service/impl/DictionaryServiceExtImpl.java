@@ -54,9 +54,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public List<LabelValue> getLabelValueList(String type) {
         // 构建查询条件
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtdata)
+                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
-                .gt(Dictionary::getParentId, 0)
+                .isNotNull(Dictionary::getParentId)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
         return getLabelValueList(queryDictionary);
@@ -131,7 +131,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         queryWrapper.lambda().eq(Dictionary::getParentId, dictVO.getId());
         List<Dictionary> oldDictList = super.getEntityList(queryWrapper);
         List<Dictionary> newDictList = dictVO.getChildren();
-        Set<Long> dictItemIds = new HashSet<>();
+        Set<String> dictItemIds = new HashSet<>();
         this.buildSortId(newDictList);
         if(V.notEmpty(newDictList)){
             for(Dictionary dict : newDictList){

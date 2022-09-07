@@ -1,8 +1,8 @@
 -- 字典表
 CREATE TABLE `dictionary` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
-  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `id` varchar(32) NOT NULL COMMENT 'ID',
+  `parent_id` varchar(32) NULL COMMENT '父ID',
+  `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   `app_module`  varchar(50)   null comment '应用模块',
   `type` varchar(50) NOT NULL COMMENT '字典类型',
   `item_name` varchar(100) NOT NULL COMMENT '显示名',
@@ -15,7 +15,7 @@ CREATE TABLE `dictionary` (
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '数据字典';
+) DEFAULT CHARSET=utf8 COMMENT '数据字典';
 -- 创建索引
 create index idx_directory on dictionary(type, item_value);
 create index idx_directory_tenant on dictionary(tenant_id);

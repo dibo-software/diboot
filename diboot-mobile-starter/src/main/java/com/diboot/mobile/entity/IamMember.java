@@ -58,13 +58,13 @@ public class IamMember extends BaseLoginUser {
      */
     @TableField()
     @JsonIgnore
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 默认绑定IamUser
      */
     @TableField()
-    private Long userId;
+    private String userId;
 
     /**
      * 默认绑定用户类型
@@ -77,7 +77,7 @@ public class IamMember extends BaseLoginUser {
      * 组织
      */
     @TableField()
-    private Long orgId;
+    private String orgId;
 
     /**
      * openid

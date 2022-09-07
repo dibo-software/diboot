@@ -1,7 +1,7 @@
 -- 定时任务表
 CREATE TABLE ${SCHEMA}.schedule_job (
-  id BIGINT identity ( 100000,1) primary key,
-  tenant_id          BIGINT           default 0  not null,
+  id varchar(32) not null primary key,
+  tenant_id varchar(32) default '0' not null,
   job_key    VARCHAR(100)          not null,
   job_name       VARCHAR(200)          not null,
   cron       VARCHAR(50),
@@ -35,8 +35,8 @@ create index idx_schedule_job_tenant on ${SCHEMA}.schedule_job (tenant_id);
 
 -- 定时任务日志表
 CREATE TABLE ${SCHEMA}.schedule_job_log (
- id BIGINT identity ( 100000,1) primary key,
- tenant_id          BIGINT           default 0  not null,
+ id varchar(32) not null primary key,
+ tenant_id varchar(32) default '0' not null,
  job_id    VARCHAR(100)          not null,
  job_name       VARCHAR(100)          not null,
  cron       VARCHAR(50),

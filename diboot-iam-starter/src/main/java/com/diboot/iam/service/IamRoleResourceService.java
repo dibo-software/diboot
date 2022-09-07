@@ -48,7 +48,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleId
      * @return
      */
-    List<IamResourcePermissionVO> getPermissionVOList(String appModule, Long roleId);
+    List<IamResourcePermissionVO> getPermissionVOList(String appModule, String roleId);
 
     /**
      * 获取指定角色集合对应的权限VO集合（转换为树形结构VO）
@@ -57,7 +57,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleIds
      * @return
      */
-    List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<Long> roleIds);
+    List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<String> roleIds);
 
     /**
      * 获取指定角色集合对应的权限集
@@ -66,7 +66,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleIds
      * @return
      */
-    List<IamResourcePermission> getPermissionList(String appModule, List<Long> roleIds);
+    List<IamResourcePermission> getPermissionList(String appModule, List<String> roleIds);
 
     /**
      * 获取指定角色集合对应的权限码集合
@@ -75,7 +75,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleIds
      * @return
      */
-    List<String> getPermissionCodeList(String appModule, List<Long> roleIds);
+    List<String> getPermissionCodeList(String appModule, List<String> roleIds);
 
     /**
      * 获取资源角色VO集合
@@ -91,7 +91,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param resourceIdList
      * @return
      */
-    boolean createRoleResourceRelations(Long roleId, List<Long> resourceIdList);
+    boolean createRoleResourceRelations(String roleId, List<String> resourceIdList);
 
     /***
      * 批量更新角色与资源集的关系
@@ -99,7 +99,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param resourceIdList
      * @return
      */
-    boolean updateRoleResourceRelations(Long roleId, List<Long> resourceIdList);
+    boolean updateRoleResourceRelations(String roleId, List<String> resourceIdList);
 
     /**
      * 获取RoleService实例

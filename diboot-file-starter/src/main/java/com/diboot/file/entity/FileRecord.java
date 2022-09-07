@@ -39,18 +39,24 @@ import lombok.experimental.Accessors;
 public class FileRecord extends BaseEntity {
     private static final long serialVersionUID = -202L;
 
-    @Deprecated
-    @TableField(exist = false)
-    private Long id;
+    public FileRecord(){
+    }
 
+    public FileRecord(String id) {
+        this.setId(id);
+    }
+
+    /**
+     * 主键类型为String型UUID
+     */
     @TableId(type = IdType.ASSIGN_UUID)
-    private String uuid;
+    private String id;
 
     /**
      * 租户ID
      */
     @JsonIgnore
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 应用模块

@@ -1,8 +1,8 @@
 -- 文件记录
 CREATE TABLE ${SCHEMA}.file_record
 (
-    uuid          VARCHAR2(32) NOT NULL,
-    tenant_id     NUMBER(20) DEFAULT 0 NOT NULL,
+    id          VARCHAR2(32) NOT NULL,
+    tenant_id   VARCHAR2(32) DEFAULT '0' NOT NULL,
     app_module    VARCHAR2(50),
     md5           VARCHAR2(32),
     file_name     VARCHAR2(100) NOT NULL,
@@ -13,12 +13,12 @@ CREATE TABLE ${SCHEMA}.file_record
     thumbnail_url VARCHAR2(200),
     description   VARCHAR2(100),
     is_deleted    NUMBER(1) DEFAULT 0 not null,
-    create_by     NUMBER(20) DEFAULT 0,
+    create_by     varchar2(32)  NOT NULL DEFAULT '0',
     create_time   timestamp DEFAULT CURRENT_TIMESTAMP not null,
-    constraint PK_file_record primary key (uuid)
+    constraint PK_file_record primary key (id)
 );
 -- 添加备注
-comment on column ${SCHEMA}.file_record.uuid is 'UUID';
+comment on column ${SCHEMA}.file_record.id is 'ID';
 comment on column ${SCHEMA}.file_record.tenant_id is '租户ID';
 comment on column ${SCHEMA}.file_record.app_module is '应用模块';
 comment on column ${SCHEMA}.file_record.md5 is 'MD5标识';

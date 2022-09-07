@@ -1,14 +1,14 @@
 -- 消息模版表
 CREATE TABLE message_template (
-     id bigint identity,
-     tenant_id          bigint           default 0  not null,
+     id varchar(32) not null,
+     tenant_id varchar(32) default '0' not null,
      app_module         VARCHAR(50),
      code VARCHAR(20) NOT NULL,
      title VARCHAR(100) NOT NULL,
      content VARCHAR(500) NOT NULL,
      ext_data VARCHAR(500),
      is_deleted   tinyint not null DEFAULT 0,
-     create_by bigint DEFAULT 0 NOT NULL,
+     create_by varchar(32) NOT NULL DEFAULT '0' NOT NULL,
      create_time  datetime default CURRENT_TIMESTAMP   not null,
      update_time  datetime default CURRENT_TIMESTAMP  null,
      constraint PK_message_template primary key (id)
@@ -33,10 +33,10 @@ create nonclustered index idx_msg_tmpl_code ON message_template(code);
 
 -- 消息表
 CREATE TABLE message (
-  id bigint identity,
-  tenant_id          bigint           default 0  not null,
+  id varchar(32) not null,
+  tenant_id varchar(32) default '0' not null,
   app_module         VARCHAR(50),
-  template_id        bigint,
+  template_id        varchar(32) NULL,
   business_type       VARCHAR(100)          not null,
   business_code       VARCHAR(50) default 0  not null,
   sender VARCHAR(100)  not null,

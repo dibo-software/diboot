@@ -118,8 +118,8 @@ public class IamPluginInitializer implements ApplicationRunner {
         IamOrgService iamOrgService = ContextHelper.getBean(IamOrgService.class);
         if(iamOrgService != null && iamOrgService.getEntityListCount(null) == 0){
             IamOrg iamOrg = new IamOrg();
-            iamOrg.setCode("ROOT").setDepth(1).setTopOrgId(1L).setName("我的公司").setShortName("我的公司")
-                    .setType(Cons.DICTCODE_ORG_TYPE.COMP.name()).setOrgComment("初始根节点，请按需修改").setId(1L);
+            iamOrg.setCode("ROOT").setDepth(1).setTopOrgId("1").setName("我的公司").setShortName("我的公司")
+                    .setType(Cons.DICTCODE_ORG_TYPE.COMP.name()).setOrgComment("初始根节点，请按需修改").setId("1");
             iamOrgService.createEntity(iamOrg);
         }
 
@@ -131,7 +131,7 @@ public class IamPluginInitializer implements ApplicationRunner {
             iamRoleService.createEntity(iamRole);
 
             IamUser iamUser = new IamUser();
-            iamUser.setOrgId(0L).setRealname("DIBOOT").setUserNum("0000").setGender("M").setMobilePhone("10000000000");
+            iamUser.setOrgId("0").setRealname("DIBOOT").setUserNum("0000").setGender("M").setMobilePhone("10000000000");
             ContextHelper.getBean(IamUserService.class).createEntity(iamUser);
 
             // 插入对象

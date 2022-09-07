@@ -39,23 +39,18 @@ import java.util.Date;
 @Getter @Setter @Accessors(chain = true)
 public class IamUser extends BaseLoginUser {
     private static final long serialVersionUID = -8462352695775599715L;
-    /**
-     * 更改id为雪花
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
 
     /**
      * 租户ID
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 组织ID
     @NotNull(message = "组织ID不能为空")
     @TableField()
-    private Long orgId;
+    private String orgId;
 
     @NotNull(message = "用户编号不能为空")
     @Length(max=20, message="用户编号长度应小于50")

@@ -49,7 +49,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
     private IamUserPositionMapper iamUserPositionMapper;
 
     @Override
-    public List<IamUserPosition> getUserPositionListByUser(String userType, Long userId) {
+    public List<IamUserPosition> getUserPositionListByUser(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId).orderByDesc(IamUserPosition::getIsPrimaryPosition);
@@ -58,7 +58,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
     }
 
     @Override
-    public IamUserPosition getUserPrimaryPosition(String userType, Long userId) {
+    public IamUserPosition getUserPrimaryPosition(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId)
@@ -74,7 +74,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
     }
 
     @Override
-    public List<IamPosition> getPositionListByUser(String userType, Long userId) {
+    public List<IamPosition> getPositionListByUser(String userType, String userId) {
         // 根据user与position的关联获取positionId列表
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .select(IamUserPosition::getPositionId)
@@ -87,7 +87,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateUserPositionRelations(String userType, Long userId, List<IamUserPosition> userPositionList) {
+    public boolean updateUserPositionRelations(String userType, String userId, List<IamUserPosition> userPositionList) {
         if (V.isEmpty(userType) || V.isEmpty(userId)) {
             throw new BusinessException(Status.FAIL_OPERATION, "参数错误");
         }

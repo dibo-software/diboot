@@ -36,7 +36,7 @@ import java.util.List;
 @Getter @Setter
 public class MulColJoinVO {
 
-    private Long dictId;
+    private String dictId;
     private String dictType;
 
     private Long orgPid;

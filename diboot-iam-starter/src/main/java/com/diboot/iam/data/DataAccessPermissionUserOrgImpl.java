@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -95,9 +96,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         // 按部门过滤，本部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
             if(isOrgFieldName(fieldName)){
-                List<Long> accessibleIds = new ArrayList<>(1);
-                accessibleIds.add(positionDataScope.getOrgId());
-                return accessibleIds;
+                return Arrays.asList(positionDataScope.getOrgId());
             }
             else{// 忽略无关字段
                 return null;

@@ -1,9 +1,9 @@
 -- 用户表
 create table ${SCHEMA}.iam_user
 (
-    id NUMBER(20) not null,
-    tenant_id          NUMBER(20)           default 0  not null,
-    org_id NUMBER(20)   default 0 not null,
+    id VARCHAR2(32) not null,
+    tenant_id VARCHAR2(32) default '0' not null,
+    org_id VARCHAR2(32)   default '0' not null,
     user_num VARCHAR2(20)   not null,
     realname VARCHAR2(50)   not null,
     gender VARCHAR2(10)   not null,
@@ -42,10 +42,10 @@ create index idx_iam_user_tenant on ${SCHEMA}.iam_user (tenant_id);
 -- 账号表
 create table ${SCHEMA}.iam_account
 (
-    id NUMBER(20) not null,
-    tenant_id          NUMBER(20)           default 0  not null,
+    id VARCHAR2(32) not null,
+    tenant_id VARCHAR2(32) default '0' not null,
     user_type VARCHAR2(100) default 'IamUser'   not null,
-    user_id NUMBER(20)   not null,
+    user_id VARCHAR2(32)   not null,
     auth_type VARCHAR2(20) default 'PWD'   not null,
     auth_account VARCHAR2(100)   not null,
     auth_secret VARCHAR2(100)   null,
@@ -76,8 +76,8 @@ create index idx_iam_account_tenant on ${SCHEMA}.iam_account (tenant_id);
 -- 角色表
 create table ${SCHEMA}.iam_role
 (
-    id NUMBER(20) not null,
-    tenant_id          NUMBER(20)           default 0  not null,
+    id VARCHAR2(32) not null,
+    tenant_id VARCHAR2(32) default '0' not null,
     name VARCHAR2(50)   not null,
     code VARCHAR2(50)   not null,
     description VARCHAR2(100)   null,
@@ -101,11 +101,11 @@ create index idx_iam_role_tenant on ${SCHEMA}.iam_role (tenant_id);
 -- 用户角色表
 create table ${SCHEMA}.iam_user_role
 (
-    id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
-    tenant_id          NUMBER(20)           default 0  not null,
+    id VARCHAR2(32) NOT NULL,
+    tenant_id VARCHAR2(32) default '0' not null,
     user_type VARCHAR2(100) default 'IamUser' not null,
-    user_id NUMBER(20) not null,
-    role_id int not null,
+    user_id VARCHAR2(32) not null,
+    role_id VARCHAR2(32) not null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp   default CURRENT_TIMESTAMP null,
@@ -127,15 +127,15 @@ create index idx_iam_user_role_tenant on ${SCHEMA}.iam_user_role (tenant_id);
 -- 资源权限表
 create table ${SCHEMA}.iam_resource_permission
 (
-    id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
-    app_module          VARCHAR2(50),
-    tenant_id          NUMBER(20)           default 0  not null,
-    parent_id NUMBER(20) default 0   not null,
+    id VARCHAR2(32) NOT NULL,
+    app_module VARCHAR2(50),
+    tenant_id VARCHAR2(32) default '0' not null,
+    parent_id VARCHAR2(32) default 0   not null,
     display_type VARCHAR2(20) not null,
     display_name VARCHAR2(100) not null,
     resource_code VARCHAR2(100)   null,
     permission_code VARCHAR2(200)   null,
-    sort_id NUMBER(20)  null,
+    sort_id VARCHAR2(32)  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP  null,
@@ -162,10 +162,10 @@ create index idx_resource_permission_tenant on ${SCHEMA}.iam_resource_permission
 -- 角色-权限
 create table ${SCHEMA}.iam_role_resource
 (
-    id NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
-    tenant_id          NUMBER(20)           default 0  not null,
-    role_id int    not null,
-    resource_id int    not null,
+    id VARCHAR2(32) NOT NULL,
+    tenant_id VARCHAR2(32) default '0' not null,
+    role_id VARCHAR2(32)  not null,
+    resource_id VARCHAR2(32)  not null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     constraint PK_iam_role_resource primary key (id)
@@ -184,10 +184,10 @@ create index idx_iam_role_resource_tenant on ${SCHEMA}.iam_role_resource (tenant
 -- 登录日志表
 create table ${SCHEMA}.iam_login_trace
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder) ,
-    tenant_id          NUMBER(20)           default 0  not null,
+    id VARCHAR2(32) NOT NULL,
+    tenant_id VARCHAR2(32) default '0' not null,
     user_type VARCHAR2(100) default 'IamUser'    not null,
-    user_id NUMBER(20)    not null,
+    user_id VARCHAR2(32)    not null,
     auth_type VARCHAR2(20) default 'PWD'    not null,
     auth_account VARCHAR2(100)    not null,
     ip_address VARCHAR2(50)    null,
@@ -215,13 +215,13 @@ create index idx_iam_login_trace_tenant on ${SCHEMA}.iam_login_trace (tenant_id)
 -- 操作日志表
 create table ${SCHEMA}.iam_operation_log
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
-    tenant_id          NUMBER(20)           default 0  not null,
-    app_module          VARCHAR2(50),
+    id VARCHAR2(32) NOT NULL,
+    tenant_id VARCHAR2(32) default '0' not null,
+    app_module   VARCHAR2(50),
     business_obj VARCHAR2(100)  not null,
     operation   VARCHAR2(100)  not null,
     user_type VARCHAR2(100) DEFAULT 'IamUser'    not null,
-    user_id NUMBER(20)    not null,
+    user_id VARCHAR2(32)    not null,
     user_realname    VARCHAR2(100)  null,
     request_uri    VARCHAR2(500)                  not null,
     request_method VARCHAR2(20)                   not null,
@@ -256,15 +256,15 @@ create index idx_iam_operation_log_tenant on ${SCHEMA}.iam_operation_log (tenant
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.iam_org (
-   id NUMBER(20) not null,
-   tenant_id          NUMBER(20)           default 0  not null,
-   parent_id NUMBER(20) DEFAULT 0 NOT NULL,
-   top_org_id NUMBER(20) DEFAULT 0 NOT NULL,
+   id VARCHAR2(32) not null,
+   tenant_id VARCHAR2(32) default '0' not null,
+   parent_id VARCHAR2(32) DEFAULT '0' NOT NULL,
+   top_org_id VARCHAR2(32) DEFAULT '0' NOT NULL,
    name VARCHAR2(100) NOT NULL,
    short_name VARCHAR2(50) NOT NULL,
    type        VARCHAR2(100) DEFAULT 'DEPT' NOT NULL,
    code        VARCHAR2(50)  NOT NULL,
-   manager_id  NUMBER(20)   DEFAULT 0 NOT NULL,
+   manager_id  VARCHAR2(32) DEFAULT '0' NOT NULL,
    depth NUMBER(6) DEFAULT 1 NOT NULL,
    sort_id NUMBER(20) DEFAULT 1 NOT NULL,
    status      VARCHAR2(10)  DEFAULT 'A' NOT NULL,
@@ -297,8 +297,8 @@ create index idx_iam_org_tenant on ${SCHEMA}.iam_org (tenant_id);
 -- 岗位
 create table ${SCHEMA}.iam_position
 (
-    id NUMBER(20) not null,
-    tenant_id          NUMBER(20)           default 0  not null,
+    id VARCHAR2(32) not null,
+    tenant_id VARCHAR2(32) default '0' not null,
     name                 VARCHAR2(100)                          not null,
     code                 VARCHAR2(50)                           not null,
     is_virtual           NUMBER(1)  default 0                 not null,
@@ -328,13 +328,13 @@ create index idx_iam_position_tenant on ${SCHEMA}.iam_position (tenant_id);
 -- 用户岗位
 create table ${SCHEMA}.iam_user_position
 (
-    id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
-    tenant_id          NUMBER(20)           default 0  not null,
-    user_type           VARCHAR2(100) default 'IamUser'         not null,
-    user_id             NUMBER(20)                                  not null,
-    org_id              NUMBER(20)        default 0                 not null,
-    position_id         NUMBER(20)                             not null,
-    is_primary_position NUMBER(1)   default 1                 not null,
+    id VARCHAR2(32) NOT NULL,
+    tenant_id VARCHAR2(32) default '0' not null,
+    user_type           VARCHAR2(100) default 'IamUser' not null,
+    user_id             VARCHAR2(32)  not null,
+    org_id              VARCHAR2(32)  not null,
+    position_id         VARCHAR2(32)  not null,
+    is_primary_position NUMBER(1)   default 1 not null,
     is_deleted NUMBER(1) DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP null,
@@ -357,8 +357,8 @@ create index idx_iam_user_position_pos on ${SCHEMA}.iam_user_position (position_
 -- 系统配置表
 create table ${SCHEMA}.system_config
 (
-    id NUMBER (20) generated as identity ( start with 10000 nocycle noorder),
-    tenant_id NUMBER (20) default 0 not null,
+    id VARCHAR2(32) NOT NULL,
+    tenant_id VARCHAR2(32) default 0 not null,
     type VARCHAR2 (50) not null,
     prop VARCHAR2 (50) not null,
     value VARCHAR2 (255),

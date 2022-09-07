@@ -100,7 +100,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
         // 账户不存在，表示首次进入，那么需要存储信息
         WxOAuth2UserInfo userInfo = wxMpService.getOAuth2Service().getUserInfo(accessToken, null);
         IamMember iamMember = mpInfo2IamMemberEntity(userInfo)
-                .setUserId(0L).setOrgId(0L)
+                .setUserId("0").setOrgId("0")
                 .setUserType(IamMember.class.getSimpleName());
         iamMemberService.createEntity(iamMember);
         // 创建iam_account账号
@@ -129,7 +129,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
      * @param iamMember
      * @return
      */
-    protected IamAccount createIamAccountEntity(IamMember iamMember, Long userId, Class<? extends BaseLoginUser> userCls) {
+    protected IamAccount createIamAccountEntity(IamMember iamMember, String userId, Class<? extends BaseLoginUser> userCls) {
         return new IamAccount().setAuthAccount(iamMember.getOpenid())
                 .setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name())
                 .setUserId(userId)

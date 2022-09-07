@@ -42,7 +42,7 @@ public class IamOperationLog extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 应用模块
@@ -75,7 +75,7 @@ public class IamOperationLog extends BaseEntity {
      * 用户ID
      */
     @TableField()
-    private Long userId;
+    private String userId;
 
     /**
      * 用户显示名

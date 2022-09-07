@@ -1,9 +1,9 @@
 -- 移动端用户表
 CREATE TABLE iam_member (
-  id bigserial not null,
-  tenant_id bigint default 0  not null,
-  org_id bigint default 0 not null,
-  user_id bigint default 0 not null,
+  id  varchar(32) not null,
+  tenant_id varchar(32) default '0'  not null,
+  org_id varchar(32) default '0' not null,
+  user_id varchar(32) default '0' not null,
   user_type VARCHAR(100) NOT NULL DEFAULT 'IamUser',
   openid VARCHAR(50) NOT NULL,
   nickname VARCHAR(100),

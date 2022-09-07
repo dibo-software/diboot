@@ -30,9 +30,9 @@ public abstract class AbstractEntity<T extends Serializable> implements Serializ
     private static final long serialVersionUID = 10202L;
 
     /**
-     * 默认主键字段id，类型为Long型自增，转json时转换为String
+     * 默认主键字段id，类型为String型雪花id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private T id;
 
     public AbstractEntity setId(T id){

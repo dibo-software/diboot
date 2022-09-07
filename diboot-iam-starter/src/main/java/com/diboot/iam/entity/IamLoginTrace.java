@@ -42,7 +42,7 @@ public class IamLoginTrace extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     // 用户类型
     @NotNull(message = "用户类型不能为空")
@@ -53,7 +53,7 @@ public class IamLoginTrace extends BaseEntity {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private Long userId = 0L;
+    private String userId;
 
     // 认证方式
     @NotNull(message = "认证方式不能为空")

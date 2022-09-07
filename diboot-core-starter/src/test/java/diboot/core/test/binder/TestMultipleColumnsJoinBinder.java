@@ -53,8 +53,8 @@ public class TestMultipleColumnsJoinBinder {
     public void testBinder(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
-        queryWrapper.gt("parent_id", 0);
-        List<Long> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
+        queryWrapper.isNotNull("parent_id");
+        List<String> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
         // 加载测试数据
         List<MulColJoinVO> voList = new ArrayList<>();
         MulColJoinVO vo1 = new MulColJoinVO();

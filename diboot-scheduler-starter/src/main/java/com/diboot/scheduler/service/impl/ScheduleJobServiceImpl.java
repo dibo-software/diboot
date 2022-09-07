@@ -86,12 +86,12 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
 
     @Override
     public boolean deleteEntity(Serializable jobId) {
-        quartzSchedulerService.deleteJob((Long) jobId);
+        quartzSchedulerService.deleteJob((String) jobId);
         return super.deleteEntity(jobId);
     }
 
     @Override
-    public boolean executeOnceJob(Long jobId) {
+    public boolean executeOnceJob(String jobId) {
         // 如果已经存在job，那么直接恢复，否则添加job
         if (!quartzSchedulerService.existJob(jobId)) {
             ScheduleJob entity = this.getEntity(jobId);
@@ -107,7 +107,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
     }
 
     @Override
-    public boolean changeScheduleJobStatus(Long jobId, String jobStatus) {
+    public boolean changeScheduleJobStatus(String jobId, String jobStatus) {
         boolean success = this.update(
                 Wrappers.<ScheduleJob>lambdaUpdate()
                         .set(ScheduleJob::getJobStatus, jobStatus)

@@ -1,7 +1,7 @@
 -- 定时任务表
 CREATE TABLE schedule_job (
-  id bigserial not null,
-  tenant_id          bigint           default 0  not null,
+  id  varchar(32) not null,
+  tenant_id varchar(32) default '0' not null,
   job_key    VARCHAR(100)          not null,
   job_name       VARCHAR(100)          not null,
   cron       VARCHAR(50),
@@ -35,8 +35,8 @@ create index idx_schedule_job_tenant on schedule_job (tenant_id);
 
 -- 定时任务日志表
 CREATE TABLE schedule_job_log (
-  id bigserial not null,
-  tenant_id          bigint           default 0  not null,
+  id  varchar(32) not null,
+  tenant_id varchar(32) default '0' not null,
   job_id    VARCHAR(100)          not null,
   job_name       VARCHAR(100)          not null,
   cron       VARCHAR(50),

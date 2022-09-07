@@ -1,8 +1,8 @@
 -- 定时任务表
 create table schedule_job
 (
-  id         bigint auto_increment COMMENT 'ID' primary key,
-  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  id        varchar(32) NOT NULL COMMENT 'ID' primary key,
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   job_key    varchar(100)          not null comment 'job编码',
   job_name       varchar(100)          not null comment 'job名称',
   cron       varchar(50)           comment '定时表达式',
@@ -16,15 +16,15 @@ create table schedule_job
   create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
   update_time  datetime   null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
-AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务';
+DEFAULT CHARSET=utf8 COMMENT '定时任务';
 -- 创建索引
 create index idx_schedule_job_tenant on schedule_job (tenant_id);
 
 -- 定时任务日志表
 create table schedule_job_log
 (
-  id         bigint auto_increment COMMENT 'ID' primary key,
-  tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  id        varchar(32) NOT NULL COMMENT 'ID' primary key,
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   job_id    varchar(100)          not null comment 'job ID',
   job_name  varchar(100)          not null comment 'job名称',
   cron       varchar(50)           comment '定时表达式',
@@ -38,7 +38,7 @@ create table schedule_job_log
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
   create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间'
 )
-  AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '定时任务日志';
+  DEFAULT CHARSET=utf8 COMMENT '定时任务日志';
 -- 创建索引
 create index idx_sch_job_log_1 on schedule_job_log (job_id);
 create index idx_sch_job_log_tenant on schedule_job_log (tenant_id);

@@ -75,7 +75,7 @@ public abstract class BaseExcelFileController extends BaseController {
         fileRecord.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览数据")).toString());
 
         ReadExcelListener<?> listener = getExcelDataListener();
-        listener.setImportFileUuid(fileRecord.getUuid());
+        listener.setImportFileUuid(fileRecord.getId());
         listener.setRequestParams(params);
         // 预览
         listener.setPreview(true);
@@ -85,7 +85,7 @@ public abstract class BaseExcelFileController extends BaseController {
         fileRecordService.createEntity(fileRecord);
 
         Map<String, Object> dataMap = new HashMap<>(8);
-        dataMap.put("uuid", fileRecord.getUuid());
+        dataMap.put("uuid", fileRecord.getId());
         dataMap.put("tableHead", listener.getTableHead());
         dataMap.put("dataList", listener.getPreviewDataList());
         dataMap.put("totalCount", listener.getTotalCount());
@@ -143,7 +143,7 @@ public abstract class BaseExcelFileController extends BaseController {
     private JsonResult<Map<String, Object>> importData(FileRecord uploadFile, InputStream inputStream,
                                                        Map<String, Object> params) throws Exception {
         ReadExcelListener<?> listener = getExcelDataListener();
-        listener.setImportFileUuid(uploadFile.getUuid());
+        listener.setImportFileUuid(uploadFile.getId());
         listener.setRequestParams(params);
         // 读excel
         readExcelFile(inputStream, uploadFile.getFileType(), listener);
@@ -160,8 +160,7 @@ public abstract class BaseExcelFileController extends BaseController {
         if (FileHelper.isLocalStorage()) {
             String errorDataFileUidName = S.substringAfterLast(errorDataFilePath, "/");
             String errorDataFileUid = S.substringBefore(errorDataFileUidName, ".");
-            errorFile = new FileRecord()
-                    .setUuid(errorDataFileUid)
+            errorFile = new FileRecord(errorDataFileUid)
                     .setFileType("xlsx")
                     .setFileName(errorDataFileName)
                     .setFileSize(fileSize)

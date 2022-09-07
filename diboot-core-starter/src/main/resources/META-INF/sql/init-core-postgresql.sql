@@ -1,8 +1,8 @@
 -- 字典表
 create table dictionary (
-     id                   bigserial not null,
-     parent_id            bigint        not null,
-     tenant_id            bigint        not null default 0,
+     id                   VARCHAR(32) not null,
+     parent_id            VARCHAR(32)   null,
+     tenant_id            VARCHAR(32)   not null default '0',
      app_module          VARCHAR(50),
      type                 VARCHAR(50)   not null,
      item_name            VARCHAR(100)  not null,

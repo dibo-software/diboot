@@ -1,7 +1,7 @@
 -- create schema diboot_example collate utf8_general_ci;
 -- 建表
 CREATE TABLE `dictionary` (
-    `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `id` bigint unsigned NOT NULL  COMMENT 'ID',
     `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
     `app_module`  varchar(50)   null comment '应用模块',
@@ -16,14 +16,14 @@ CREATE TABLE `dictionary` (
     `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`)
-) AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 COMMENT '数据字典';
+) DEFAULT CHARSET=utf8 COMMENT '数据字典';
 
 
 create table department
 (
-    id bigint unsigned not null comment 'ID' primary key,
-    parent_id bigint default 0 not null comment '上级部门ID',
-    org_id bigint not null comment '单位ID',
+    id varchar(32) unsigned not null comment 'ID' primary key,
+    parent_id varchar(32) default 0 not null comment '上级部门ID',
+    org_id varchar(32) not null comment '单位ID',
     name varchar(50) not null comment '名称',
     extdata varchar(100) null comment '扩展字段',
     extjsonarr JSON null comment '扩展Json数组',
@@ -36,12 +36,12 @@ create table department
 
 create table organization
 (
-    id int auto_increment comment 'ID'
+    id int  comment 'ID'
         primary key,
     parent_id int default 0 not null comment '上级单位ID',
     name varchar(100) not null comment '名称',
     telphone varchar(20) null comment '电话',
-    manager_id bigint not null comment '负责人id',
+    manager_id varchar(32) not null comment '负责人id',
     is_deleted tinyint(1) default 0 not null comment '是否有效',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 )
@@ -49,7 +49,7 @@ create table organization
 
 create table role
 (
-    id int auto_increment comment 'ID' primary key,
+    id int  comment 'ID' primary key,
     name varchar(20) null,
     code varchar(20) null,
     is_deleted tinyint(1) default 0 null,
@@ -58,7 +58,7 @@ create table role
 
 create table user
 (
-    id int auto_increment comment 'ID' primary key,
+    id int  comment 'ID' primary key,
     department_id int default 0 not null,
     username varchar(20) null,
     gender varchar(20) null,
@@ -79,7 +79,7 @@ create table user_role
 
 create table cc_city_info
 (
-    id          int auto_increment primary key,
+    id          int  primary key,
     parent_id   int          null,
     region_id   int          not null,
     region_name varchar(100) null
@@ -127,7 +127,7 @@ CREATE TABLE test_upload_file (
 -- playground.demo_test definition
 
 CREATE TABLE `demo_test` (
-                             `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' primary key,
+                             `id` bigint unsigned NOT NULL  COMMENT 'ID' primary key,
                              `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
                              `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
                              `age` bigint NOT NULL COMMENT '年龄',
@@ -148,7 +148,7 @@ CREATE TABLE `demo_test` (
 -- playground.demo_test_join definition
 
 CREATE TABLE `demo_test_join` (
-                                  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID' primary key,
+                                  `id` bigint unsigned NOT NULL  COMMENT 'ID' primary key,
                                   `demo_test_id` bigint DEFAULT NULL COMMENT 'Demo测试',
                                   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
                                   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',

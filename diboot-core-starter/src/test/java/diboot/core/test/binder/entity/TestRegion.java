@@ -41,7 +41,7 @@ public class TestRegion extends BaseEntity {
 
     // 废弃默认主键
     @TableField(exist = false)
-    private Long id;
+    private String id;
     // 声明新主键uuid
     @TableId(type = IdType.ASSIGN_UUID)
     private String uuid;

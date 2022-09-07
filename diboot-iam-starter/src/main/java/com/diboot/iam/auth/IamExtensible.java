@@ -36,7 +36,7 @@ public interface IamExtensible {
      * @param extObj 登录扩展信息
      * @return
      */
-    LabelValue getUserExtensionObj(String userType, Long userId, Map<String, Object> extObj);
+    LabelValue getUserExtensionObj(String userType, String userId, Map<String, Object> extObj);
 
     /**
      * 获取可扩展的角色
@@ -45,6 +45,6 @@ public interface IamExtensible {
      * @param extensionObjId 岗位等当前扩展对象id
      * @return
      */
-    List<IamRole> getExtensionRoles(String userType, Long userId, Long extensionObjId);
+    List<IamRole> getExtensionRoles(String userType, String userId, String extensionObjId);
 
 }

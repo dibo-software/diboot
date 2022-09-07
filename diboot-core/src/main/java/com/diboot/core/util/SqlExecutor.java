@@ -111,6 +111,10 @@ public class SqlExecutor {
         if(jdbcTemplate != null) {
             try {
                 log.debug("==> {}", sqlStatement);
+                if(V.isEmpty(params)) {
+                    jdbcTemplate.execute(sqlStatement);
+                    return true;
+                }
                 return jdbcTemplate.update(sqlStatement, params) >= 0;
             }
             catch (Exception e) {

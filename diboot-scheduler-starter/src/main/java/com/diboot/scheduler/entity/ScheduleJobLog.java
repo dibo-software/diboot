@@ -47,7 +47,7 @@ public class ScheduleJobLog extends BaseEntity {
      */
     @JsonIgnore
     @TableField
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 任务id

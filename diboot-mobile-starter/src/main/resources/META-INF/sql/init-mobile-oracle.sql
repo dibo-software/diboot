@@ -1,9 +1,9 @@
 -- 移动端用户表
 CREATE TABLE ${SCHEMA}.iam_member (
-  id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
-  tenant_id NUMBER(20) default 0  not null,
-  org_id NUMBER(20)  default 0 not null,
-  user_id NUMBER(20) default 0 not null,
+  id varchar(32) NOT NULL,
+  tenant_id varchar(32) default '0'  not null,
+  org_id varchar(32)  default '0' not null,
+  user_id varchar(32) default '0' not null,
   user_type VARCHAR2(100) NOT NULL DEFAULT 'IamUser',
   openid VARCHAR2(50) NOT NULL,
   nickname VARCHAR2(100),

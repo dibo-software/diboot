@@ -1,9 +1,9 @@
 -- 用户表
 create table ${SCHEMA}.iam_user
 (
-    id BIGINT not null primary key,
-    tenant_id          BIGINT           default 0  not null,
-    org_id BIGINT   default 0 not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
+    org_id varchar(32)   default '0' not null,
     user_num VARCHAR(50)   not null,
     realname VARCHAR(50)   not null,
     gender VARCHAR(20)   not null,
@@ -41,10 +41,10 @@ create index idx_iam_user_tenant on ${SCHEMA}.iam_user (tenant_id);
 -- 账号表
 create table ${SCHEMA}.iam_account
 (
-    id BIGINT not null primary key,
-    tenant_id          BIGINT           default 0  not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
     user_type VARCHAR(100) default 'IamUser'   not null,
-    user_id BIGINT   not null,
+    user_id varchar(32)   not null,
     auth_type VARCHAR(50) default 'PWD'   not null,
     auth_account VARCHAR(200)   not null,
     auth_secret VARCHAR(100)   null,
@@ -74,8 +74,8 @@ create index idx_iam_account_tenant on ${SCHEMA}.iam_account (tenant_id);
 -- 角色表
 create table ${SCHEMA}.iam_role
 (
-    id BIGINT not null primary key,
-    tenant_id          BIGINT           default 0  not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
     name VARCHAR(100)   not null,
     code VARCHAR(100)   not null,
     description VARCHAR(300)   null,
@@ -97,11 +97,11 @@ create index idx_iam_role_tenant on ${SCHEMA}.iam_role (tenant_id);
 -- 用户角色表
 create table ${SCHEMA}.iam_user_role
 (
-    id BIGINT identity ( 10000,1) primary key,
-    tenant_id          BIGINT           default 0  not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
     user_type VARCHAR(100) default 'IamUser' not null,
-    user_id BIGINT not null,
-    role_id BIGINT not null,
+    user_id varchar(32) not null,
+    role_id varchar(32) not null,
     is_deleted BIT DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp   default CURRENT_TIMESTAMP null
@@ -122,15 +122,15 @@ create index idx_iam_user_role_tenant on ${SCHEMA}.iam_user_role (tenant_id);
 -- 资源权限表
 create table ${SCHEMA}.iam_resource_permission
 (
-    id BIGINT identity ( 10000,1) primary key,
-    app_module          VARCHAR(50),
-    tenant_id          BIGINT           default 0  not null,
-    parent_id BIGINT default 0   not null,
+    id varchar(32) not null primary key,
+    app_module VARCHAR(50),
+    tenant_id varchar(32) default '0' not null,
+    parent_id varchar(32) default '0' not null,
     display_type VARCHAR(60) not null,
     display_name VARCHAR(100) not null,
     resource_code VARCHAR(100)   null,
     permission_code VARCHAR(300)   null,
-    sort_id BIGINT  null,
+    sort_id bigint  null,
     is_deleted BIT DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP  null
@@ -156,10 +156,10 @@ create index idx_resource_permission_tenant on ${SCHEMA}.iam_resource_permission
 -- 角色-权限
 create table ${SCHEMA}.iam_role_resource
 (
-    id BIGINT identity ( 10000,1) primary key,
-    tenant_id          BIGINT           default 0  not null,
-    role_id int    not null,
-    resource_id int    not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
+    role_id varchar(32)  not null,
+    resource_id varchar(32)  not null,
     is_deleted BIT DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null
 );
@@ -177,10 +177,10 @@ create index idx_iam_role_resource_tenant on ${SCHEMA}.iam_role_resource (tenant
 -- 登录日志表
 create table ${SCHEMA}.iam_login_trace
 (
-    id BIGINT identity ( 10000,1) primary key,
-    tenant_id          BIGINT           default 0  not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
     user_type VARCHAR(100) default 'IamUser'    not null,
-    user_id BIGINT    not null,
+    user_id varchar(32)    not null,
     auth_type VARCHAR(60) default 'PWD'    not null,
     auth_account VARCHAR(100)    not null,
     ip_address VARCHAR(100)    null,
@@ -207,13 +207,13 @@ create index idx_iam_login_trace_tenant on ${SCHEMA}.iam_login_trace (tenant_id)
 -- 操作日志表
 create table ${SCHEMA}.iam_operation_log
 (
-    id BIGINT identity ( 10000,1) primary key,
-    tenant_id          BIGINT           default 0  not null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
     app_module          VARCHAR(50),
     business_obj VARCHAR(100)  not null,
     operation   VARCHAR(100)  not null,
     user_type VARCHAR(100) DEFAULT 'IamUser'    not null,
-    user_id BIGINT    not null,
+    user_id varchar(32)    not null,
     user_realname    VARCHAR(100)  null,
     request_uri    VARCHAR(500)                  not null,
     request_method VARCHAR(20)                   not null,
@@ -247,17 +247,17 @@ create index idx_iam_operation_log_tenant on ${SCHEMA}.iam_operation_log (tenant
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.iam_org (
-   id BIGINT not null primary key,
-   tenant_id          BIGINT           default 0  not null,
-   parent_id BIGINT DEFAULT 0 NOT NULL,
-   top_org_id BIGINT DEFAULT 0 NOT NULL,
+   id varchar(32) not null primary key,
+   tenant_id varchar(32) default '0' not null,
+   parent_id varchar(32) DEFAULT '0' NOT NULL,
+   top_org_id varchar(32) DEFAULT '0' NOT NULL,
    name VARCHAR(100) NOT NULL,
    short_name VARCHAR(100) NOT NULL,
    type        VARCHAR(100) DEFAULT 'DEPT' NOT NULL,
    code        VARCHAR(50)  NOT NULL,
-   manager_id  BIGINT   DEFAULT 0 NOT NULL,
+   manager_id varchar(32)  DEFAULT '0' NOT NULL,
    depth NUMBER(6) DEFAULT 1 NOT NULL,
-   sort_id BIGINT DEFAULT 1 NOT NULL,
+   sort_id bigint DEFAULT 1 NOT NULL,
    status      VARCHAR(10)  DEFAULT 'A' NOT NULL,
    org_comment VARCHAR(500)   null,
    is_deleted BIT DEFAULT 0    not null,
@@ -287,14 +287,14 @@ create index idx_iam_org_tenant on ${SCHEMA}.iam_org (tenant_id);
 -- 岗位
 create table ${SCHEMA}.iam_position
 (
-    id BIGINT not null primary key,
-    tenant_id          BIGINT           default 0  not null,
-    name                 VARCHAR(100)                          not null,
-    code                 VARCHAR(50)                           not null,
-    is_virtual           BIT  default 0                 not null,
-    grade_name           VARCHAR(50)                           null,
-    grade_value          VARCHAR(50) default '0'               null,
-    data_permission_type VARCHAR(50) default 'SELF'            null,
+    id varchar(32) not null primary key,
+    tenant_id varchar(32) default '0' not null,
+    name                 VARCHAR(100) not null,
+    code                 VARCHAR(50) not null,
+    is_virtual           BIT  default 0 not null,
+    grade_name           VARCHAR(50) null,
+    grade_value          VARCHAR(50) default '0' null,
+    data_permission_type VARCHAR(50) default 'SELF' null,
     is_deleted BIT DEFAULT 0    not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp   default CURRENT_TIMESTAMP null
@@ -317,15 +317,15 @@ create index idx_iam_position_tenant on ${SCHEMA}.iam_position (tenant_id);
 -- 用户岗位
 create table ${SCHEMA}.iam_user_position
 (
-    id BIGINT identity ( 100000,1 ) primary key,
-    tenant_id          BIGINT           default 0  not null,
-    user_type           VARCHAR(100) default 'IamUser'         not null,
-    user_id             BIGINT                                  not null,
-    org_id              BIGINT        default 0                 not null,
-    position_id         BIGINT                             not null,
-    is_primary_position BIT   default 1                 not null,
-    is_deleted BIT DEFAULT 0    not null,
-    create_time timestamp default CURRENT_TIMESTAMP   not null,
+    id varchar(32)  primary key,
+    tenant_id varchar(32) default '0' not null,
+    user_type           VARCHAR(100) default 'IamUser' not null,
+    user_id             varchar(32)  not null,
+    org_id              varchar(32)  default 0 not null,
+    position_id         varchar(32)  not null,
+    is_primary_position BIT default 1 not null,
+    is_deleted BIT DEFAULT 0 not null,
+    create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP null
 );
 comment on column ${SCHEMA}.iam_user_position.id is 'ID';
@@ -345,8 +345,8 @@ create index idx_iam_user_position_pos on ${SCHEMA}.iam_user_position (position_
 -- 系统配置表
 create table ${SCHEMA}.system_config
 (
-    id BIGINT identity ( 100000,1 ) primary key,
-    tenant_id NUMBER (20) default 0 not null,
+    id varchar(32)  primary key,
+    tenant_id varchar(32) default '0' not null,
     type VARCHAR (100) not null,
     prop VARCHAR (100) not null,
     value VARCHAR (500),

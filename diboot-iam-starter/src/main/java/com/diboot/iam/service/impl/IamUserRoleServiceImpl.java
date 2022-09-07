@@ -72,15 +72,15 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     /**
      * 超级管理员的角色ID
      */
-    private static Long ROLE_ID_SUPER_ADMIN = null;
+    private static String ROLE_ID_SUPER_ADMIN = null;
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, Long userId) {
+    public List<IamRole> getUserRoleList(String userType, String userId) {
         return getUserRoleList(userType, userId, null);
     }
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, Long userId, Long extensionObjId) {
+    public List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
@@ -107,7 +107,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public boolean createEntity(IamUserRole entity){
-        Long superAdminRoleId = getSuperAdminRoleId();
+        String superAdminRoleId = getSuperAdminRoleId();
         if(superAdminRoleId != null && superAdminRoleId.equals(entity.getRoleId())){
             checkSuperAdminIdentity();
         }
@@ -125,11 +125,10 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         if (V.isEmpty(entityList)) {
             return true;
         }
-
-        Long superAdminRoleId = getSuperAdminRoleId();
+        String superAdminRoleId = getSuperAdminRoleId();
         boolean hasSuperAdmin = false;
         String userType = null;
-        Long userId = null;
+        String userId = null;
         for(Object entity : entityList){
             IamUserRole iamUserRole = (IamUserRole)entity;
             if(superAdminRoleId != null && superAdminRoleId.equals(iamUserRole.getRoleId())){
@@ -153,11 +152,11 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createUserRoleRelations(String userType, Long userId, List<Long> roleIds) {
+    public boolean createUserRoleRelations(String userType, String userId, List<Long> roleIds) {
         if (V.isEmpty(roleIds)) {
             return true;
         }
-        Long superAdminRoleId = getSuperAdminRoleId();
+        String superAdminRoleId = getSuperAdminRoleId();
         // 给用户赋予了超级管理员，需确保当前用户为超级管理员权限
         if (superAdminRoleId != null && roleIds.contains(superAdminRoleId)) {
             checkSuperAdminIdentity();
@@ -168,11 +167,11 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateUserRoleRelations(String userType, Long userId, List<Long> roleIds) {
+    public boolean updateUserRoleRelations(String userType, String userId, List<Long> roleIds) {
         if (V.isEmpty(roleIds)) {
             return true;
         }
-        Long superAdminRoleId = getSuperAdminRoleId();
+        String superAdminRoleId = getSuperAdminRoleId();
         // 给用户赋予了超级管理员，需确保当前用户为超级管理员权限
         if (superAdminRoleId != null && (
                 roleIds.contains(superAdminRoleId) || this.exists(Wrappers.<IamUserRole>lambdaQuery()
@@ -191,8 +190,8 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     }
 
     @Override
-    public boolean deleteUserRoleRelations(String userType, Long userId) {
-        Long superAdminRoleId = getSuperAdminRoleId();
+    public boolean deleteUserRoleRelations(String userType, String userId) {
+        String superAdminRoleId = getSuperAdminRoleId();
         // 删除超级管理员，需确保当前用户为超级管理员权限
         if (superAdminRoleId != null &&  this.exists(Wrappers.<IamUserRole>lambdaQuery()
                         .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
@@ -249,7 +248,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
      * 获取超级管理员角色ID
      * @return
      */
-    private Long getSuperAdminRoleId(){
+    private String getSuperAdminRoleId(){
         if(ROLE_ID_SUPER_ADMIN == null){
             LambdaQueryWrapper<IamRole> queryWrapper = new LambdaQueryWrapper<IamRole>()
                     .select(IamRole::getId)
@@ -276,7 +275,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
      * @param userType
      * @param userId
      */
-    private void clearUserAuthCache(String userType, Long userId){
+    private void clearUserAuthCache(String userType, String userId){
         String username = iamAccountService.getAuthAccount(userType, userId);
         if(V.notEmpty(username)){
             iamCustomize.clearAuthorizationCache(username);

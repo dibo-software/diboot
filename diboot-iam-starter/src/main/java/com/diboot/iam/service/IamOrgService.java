@@ -33,14 +33,14 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      * @param rootOrgId
      * @return
      */
-    List<Long> getChildOrgIds(Long rootOrgId);
+    List<String> getChildOrgIds(String rootOrgId);
 
     /**
      * 获取指定根下的全部节点的组织树
      * @param rootOrgId
      * @return
      */
-    List<IamOrgVO> getOrgTree(Long rootOrgId);
+    List<IamOrgVO> getOrgTree(String rootOrgId);
 
     /***
      * 对部门列表进行排序
@@ -53,7 +53,7 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      * @param orgId
      * @return
      */
-    List<Long> getParentOrgIds(Long orgId);
+    List<String> getParentOrgIds(String orgId);
 
     /**
      * 获取当前部门节点所有上级部门id集合
@@ -61,13 +61,13 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      * @param includeThis 是否包含orgId
      * @return
      */
-    List<Long> getParentOrgIds(Long orgId, boolean includeThis);
+    List<String> getParentOrgIds(String orgId, boolean includeThis);
 
     /**
      * 获取某负责人负责的相关部门ids
      * @param managerId 负责人id
      * @return
      */
-    List<Long> getOrgIdsByManagerId(Long managerId);
+    List<String> getOrgIdsByManagerId(String managerId);
 
 }

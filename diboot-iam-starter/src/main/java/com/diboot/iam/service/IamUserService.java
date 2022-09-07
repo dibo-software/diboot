@@ -52,7 +52,7 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @return
      * @throws Exception
      */
-    boolean deleteUserAndAccount(Long id) throws Exception;
+    boolean deleteUserAndAccount(String id) throws Exception;
 
     /**
      * 过滤重复的员工号
@@ -67,14 +67,14 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @param userNum
      * @return
      */
-    boolean isUserNumExists(Long id, String userNum);
+    boolean isUserNumExists(String id, String userNum);
 
     /**
      * 获取指定管理者的下属人员
      * @param managerId
      * @return
      */
-    List<Long> getUserIdsByManagerId(Long managerId);
+    List<String> getUserIdsByManagerId(String managerId);
 
     /**
      * 获取用户VO列表
@@ -84,6 +84,6 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @param orgId
      * @return
      */
-    List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId);
+    List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, String orgId);
 
 }

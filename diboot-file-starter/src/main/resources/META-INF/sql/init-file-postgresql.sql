@@ -1,8 +1,8 @@
 -- 文件记录
 CREATE TABLE file_record
 (
-    uuid          varchar(32)  NOT NULL,
-    tenant_id     bigint       NOT NULL DEFAULT 0,
+    id          varchar(32)  NOT NULL,
+    tenant_id     varchar(32)       NOT NULL DEFAULT '0',
     app_module    varchar(50),
     md5           varchar(32),
     file_name     varchar(100) NOT NULL,
@@ -13,12 +13,12 @@ CREATE TABLE file_record
     thumbnail_url varchar(200),
     description   varchar(100),
     is_deleted    BOOLEAN      NOT NULL DEFAULT FALSE,
-    create_by     bigint                DEFAULT 0,
+    create_by     varchar(32)  NOT NULL DEFAULT '0',
     create_time   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     constraint PK_file_record primary key (uuid)
 );
 -- 添加备注
-comment on column file_record.uuid is 'UUID';
+comment on column file_record.id is 'ID';
 comment on column file_record.tenant_id is '租户ID';
 comment on column file_record.app_module is '应用模块';
 comment on column file_record.md5 is 'MD5标识';

@@ -94,7 +94,7 @@ public class BaseServiceTest {
         Assert.assertTrue(pageList.size() > 0 && pageList.size() <= BaseConfig.getPageSize());
 
         // 查询单个记录
-        Long id = dictionaryList.get(0).getId();
+        String id = dictionaryList.get(0).getId();
         Dictionary first = dictionaryService.getEntity(id);
         Assert.assertTrue(first != null);
 
@@ -131,7 +131,7 @@ public class BaseServiceTest {
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
-        dictionary.setParentId(0L);
+        dictionary.setParentId(null);
         dictionaryService.createEntity(dictionary);
         Assert.assertTrue(dictionary.getPrimaryKeyVal() != null);
         // 查询是否创建成功
@@ -156,7 +156,7 @@ public class BaseServiceTest {
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
-        dictionary.setParentId(0L);
+        dictionary.setParentId(null);
         boolean success = dictionaryService.createEntity(dictionary);
         Assert.assertTrue(success);
 
@@ -229,7 +229,7 @@ public class BaseServiceTest {
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
-        dictionary.setParentId(0L);
+        dictionary.setParentId(null);
         // 子项
         List<Dictionary> dictionaryList = new ArrayList<>();
         String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
@@ -323,7 +323,7 @@ public class BaseServiceTest {
     public void testGetValuesOfField(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
-        List<Long> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
+        List<String> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
         Assert.assertTrue(ids.size() > 0);
 
         LambdaQueryWrapper<Dictionary> wrapper = new QueryWrapper<Dictionary>().lambda()
@@ -399,7 +399,7 @@ public class BaseServiceTest {
     @Test
     public void testDictVo(){
         Dictionary dict = new Dictionary();
-        dict.setParentId(0L);
+        dict.setParentId(null);
         dict.setType("GENDER");
 
         QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
@@ -429,7 +429,7 @@ public class BaseServiceTest {
     @Test
     @Transactional
     public void testCreateUpdateN2NRelations(){
-        Long userId = 10001L;
+        String userId = S.valueOf(10001L);
         LambdaQueryWrapper<UserRole> queryWrapper = new QueryWrapper<UserRole>().lambda().eq(UserRole::getUserId, userId);
 
         // 新增
@@ -522,12 +522,14 @@ public class BaseServiceTest {
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
         Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
-        if(dictionary.getExtdata() == null){
-            dictionary.setExtdata("{\"createByName\":\"张三\"}");
+        if(dictionary.getExtension() == null){
+            Map<String, Object> map = new HashMap<>();
+            map.put("createByName", "zhangs");
+            dictionary.setExtension(map);
             dictionaryService.updateEntity(dictionary);
             dictionary = dictionaryService.getSingleEntity(queryWrapper);
         }
-        Assert.assertTrue(dictionary.getExtdata() != null);
+        Assert.assertTrue(dictionary.getExtension() != null);
         Assert.assertTrue(dictionary.getFromExt("createByName").equals("张三"));
     }
 

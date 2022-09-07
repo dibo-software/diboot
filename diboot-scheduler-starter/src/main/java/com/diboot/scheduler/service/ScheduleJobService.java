@@ -37,7 +37,7 @@ public interface ScheduleJobService extends BaseService<ScheduleJob> {
      * @param jobId
      * @return
      */
-    boolean executeOnceJob(Long jobId);
+    boolean executeOnceJob(String jobId);
 
     /**
      * 对${@link ScheduleJob}进行操作 【启用/停用】
@@ -48,7 +48,7 @@ public interface ScheduleJobService extends BaseService<ScheduleJob> {
      * @param action
      * @return
      */
-    boolean changeScheduleJobStatus(Long jobId, String action);
+    boolean changeScheduleJobStatus(String jobId, String action);
 
     /**
      * 获取所有被{@link CollectThisJob}注解的job

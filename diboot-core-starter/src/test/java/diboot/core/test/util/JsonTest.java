@@ -55,7 +55,7 @@ public class JsonTest {
         Assert.assertTrue(user.getLocalDatetime() != null);
 
         user = new User();
-        user.setId(123L);
+        user.setId("123");
         user.setUsername("zhangs").setCreateTime(new Date());
         user.setBirthdate(D.convert2Date("1988-09-12 12:34"));
         user.setCreateTime(new Date());
@@ -70,7 +70,7 @@ public class JsonTest {
     public void testJsonConvert(){
         Role role = new Role();
         role.setCreateTime(new Date());
-        role.setId(1L);
+        role.setId("1");
         role.setCode("ADMIN").setName("管理员");
 
         String jsonStr = JSON.stringify(role);
@@ -82,7 +82,7 @@ public class JsonTest {
     @Test
     public void testJsonResult(){
         User user = new User();
-        user.setId(123L);
+        user.setId("123");
         user.setUsername("zhangs").setCreateTime(new Date());
         user.setBirthdate(D.convert2Date("1988-09-12 12:34"));
         List<User> userList = new ArrayList<>();

@@ -61,7 +61,7 @@ public abstract class AuthCredential implements Serializable {
     /**
      * 租户id
      */
-    private Long tenantId = 0L;
+    private String tenantId;
 
     /**
      * 扩展属性

@@ -36,13 +36,13 @@ public class UserRole extends BaseEntity {
     private static final long serialVersionUID = 3030761344045195972L;
 
     @TableField(exist = false)
-    private Long id;
+    private String id;
 
     @TableField
     private String userType = "SysUser";
 
     @TableField
-    private Long userId;
+    private String userId;
 
     @TableField
     private Long roleId;

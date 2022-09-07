@@ -39,17 +39,17 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public abstract class BaseEntity extends AbstractEntity<Long> {
+public abstract class BaseEntity extends AbstractEntity<String> {
     private static final long serialVersionUID = 10203L;
 
     @Override
-    public BaseEntity setId(Long id){
+    public BaseEntity setId(String id){
         super.setId(id);
         return this;
     }
 
     @Override
-    public Long getId(){
+    public String getId(){
         return super.getId();
     }
 

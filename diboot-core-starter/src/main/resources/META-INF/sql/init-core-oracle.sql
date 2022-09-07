@@ -1,9 +1,9 @@
 -- 字典表
 create table ${SCHEMA}.dictionary (
-    id                 NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
-    parent_id          NUMBER(20)           default 0  not null,
-    tenant_id          NUMBER(20)           default 0  not null,
-    app_module          VARCHAR2(50),
+    id                 VARCHAR2(32) NOT NULL,
+    parent_id          VARCHAR2(32)          null,
+    tenant_id          VARCHAR2(32)          default '0'  not null,
+    app_module         VARCHAR2(50),
     type               VARCHAR2(50)          not null,
     item_name          VARCHAR2(100)         not null,
     item_value         VARCHAR2(100),

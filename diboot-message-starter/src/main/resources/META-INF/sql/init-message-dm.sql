@@ -1,7 +1,7 @@
 -- 消息模版表
 CREATE TABLE ${SCHEMA}.message_template (
-     id                 BIGINT identity ( 100000,1 ) primary key,
-     tenant_id          BIGINT           default 0  not null,
+     id  varchar(32) not null primary key,
+     tenant_id varchar(32) default '0' not null,
      app_module         VARCHAR(50),
      code VARCHAR(50) NOT NULL,
      title VARCHAR(200) NOT NULL,
@@ -31,12 +31,12 @@ create index idx_msg_tmpl_code ON ${SCHEMA}.message_template(code);
 
 -- 消息表
 CREATE TABLE ${SCHEMA}.message (
-  id BIGINT identity ( 100000,1 ) primary key,
-  tenant_id          BIGINT           default 0  not null,
-  app_module         VARCHAR(100),
-  template_id        BIGINT,
-  business_type       VARCHAR(100)          not null,
-  business_code       VARCHAR(100) default 0  not null,
+  id varchar(32) not null primary key,
+  tenant_id varchar(32) default '0' not null,
+  app_module  VARCHAR(100),
+  template_id varchar(32),
+  business_type VARCHAR(100) not null,
+  business_code VARCHAR(100) default 0  not null,
   sender VARCHAR(200)  not null,
   receiver VARCHAR(200) not null,
   title VARCHAR(200) NOT NULL,

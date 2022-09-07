@@ -1,7 +1,7 @@
 -- 消息模版表
 CREATE TABLE ${SCHEMA}.message_template (
-     id                 NUMBER(20) generated as identity ( start with 10000 nocycle noorder),
-     tenant_id          NUMBER(20)           default 0  not null,
+     id  varchar(32) NOT NULL,
+     tenant_id varchar(32) default '0' not null,
      app_module         VARCHAR2(50),
      code VARCHAR2(20) NOT NULL,
      title VARCHAR2(100) NOT NULL,
@@ -32,8 +32,8 @@ create index idx_msg_tmpl_code ON ${SCHEMA}.message_template(code);
 
 -- 消息表
 CREATE TABLE ${SCHEMA}.message (
-  id NUMBER(20) generated as identity ( start with 100000 nocycle noorder),
-  tenant_id          NUMBER(20)           default 0  not null,
+  id varchar(32) NOT NULL,
+  tenant_id varchar(32) default '0' not null,
   app_module         VARCHAR2(50),
   template_id        NUMBER(20),
   business_type       VARCHAR2(100)          not null,

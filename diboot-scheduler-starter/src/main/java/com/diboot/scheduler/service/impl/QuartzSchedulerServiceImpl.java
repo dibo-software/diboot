@@ -220,7 +220,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
      * @param jobId
      */
     @Override
-    public void runJob(Long jobId) {
+    public void runJob(String jobId) {
         try {
             scheduler.triggerJob(JobKey.jobKey(jobId.toString()));
         } catch (SchedulerException e) {
@@ -234,7 +234,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
      * @param jobId
      */
     @Override
-    public void pauseJob(Long jobId) {
+    public void pauseJob(String jobId) {
         try {
             scheduler.pauseJob(JobKey.jobKey(jobId.toString()));
         } catch (Exception e) {
@@ -248,7 +248,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
      * @param jobId
      */
     @Override
-    public void resumeJob(Long jobId) {
+    public void resumeJob(String jobId) {
         try {
             scheduler.resumeJob(JobKey.jobKey(jobId.toString()));
         } catch (SchedulerException e) {
@@ -262,7 +262,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
      * @param jobId
      */
     @Override
-    public void deleteJob(Long jobId) {
+    public void deleteJob(String jobId) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
             scheduler.pauseTrigger(triggerKey);
@@ -280,7 +280,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
      * @param cron  定时表达式
      */
     @Override
-    public void updateJobCron(Long jobId, String cron) {
+    public void updateJobCron(String jobId, String cron) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
             Trigger trigger = scheduler.getTrigger(triggerKey);
@@ -301,7 +301,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
      * @return
      */
     @Override
-    public boolean existJob(Long jobId) {
+    public boolean existJob(String jobId) {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         try {
             Trigger trigger = scheduler.getTrigger(triggerKey);

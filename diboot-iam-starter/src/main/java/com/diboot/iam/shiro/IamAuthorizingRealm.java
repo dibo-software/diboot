@@ -132,7 +132,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         BaseLoginUser currentUser = (BaseLoginUser) principals.getPrimaryPrincipal();
         // 根据用户类型与用户id获取roleList
-        Long extensionObjId = null;
+        String extensionObjId = null;
         LabelValue extensionObj = currentUser.getExtensionObj();
         if(extensionObj != null){
             if(extensionObj.getExt() != null && extensionObj.getExt() instanceof PositionDataScope){
@@ -147,7 +147,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         }
         // 整理所有角色许可列表
         Set<String> allRoleCodes = new HashSet<>();
-        List<Long> roleIds = new ArrayList<>();
+        List<String> roleIds = new ArrayList<>(roleList.size());
         roleList.stream().forEach(role->{
             // 添加当前角色到角色列表中
             allRoleCodes.add(role.getCode());

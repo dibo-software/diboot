@@ -38,7 +38,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param userId
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, Long userId);
+    List<IamRole> getUserRoleList(String userType, String userId);
 
     /**
      * 获取用户所有的全部角色
@@ -47,7 +47,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param extensionObjId 岗位等扩展对象id
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, Long userId, Long extensionObjId);
+    List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId);
 
     /**
      * 批量创建用户-角色的关系
@@ -56,7 +56,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param roleIds
      * @return
      */
-    boolean createUserRoleRelations(String userType, Long userId, List<Long> roleIds);
+    boolean createUserRoleRelations(String userType, String userId, List<Long> roleIds);
 
     /***
      * 批量更新用户-角色的关系
@@ -65,7 +65,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param roleIds
      * @return
      */
-    boolean updateUserRoleRelations(String userType, Long userId, List<Long> roleIds);
+    boolean updateUserRoleRelations(String userType, String userId, List<Long> roleIds);
 
     /**
      * 批量删除用户-角色的关系
@@ -74,7 +74,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param userId
      * @return
      */
-    boolean deleteUserRoleRelations(String userType, Long userId);
+    boolean deleteUserRoleRelations(String userType, String userId);
 
     /***
      * 获取用户的所有角色列表（包括扩展的关联角色）

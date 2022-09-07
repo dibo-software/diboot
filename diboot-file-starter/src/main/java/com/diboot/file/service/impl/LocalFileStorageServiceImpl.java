@@ -46,8 +46,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
         String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
         String newFileName = fileUid + "." + ext;
         String fileFullPath = FileHelper.saveFile(file, newFileName);
-       return new FileRecord()
-               .setUuid(fileUid)
+       return new FileRecord(fileUid)
                .setFileName(file.getOriginalFilename())
                .setFileType(ext)
                .setFileSize(file.getSize())
@@ -63,8 +62,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
         String ext = FileHelper.getFileExtByName(fileName);
         String newFileName = fileUid + "." + ext;
         String fileFullPath = FileHelper.saveFile(inputStream, newFileName);
-        return new FileRecord()
-                .setUuid(fileUid)
+        return new FileRecord(fileUid)
                 .setFileName(fileName)
                 .setFileType(ext)
                 .setFileSize(size)
