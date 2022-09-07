@@ -46,7 +46,7 @@
 			}
 		},
 		onShow() {
-			if(uni.getStorageSync("authtoken")) {
+			if(uni.getStorageSync("Authorization")) {
 				uni.switchTab({
 						url: '/pages/home/home'
 				})

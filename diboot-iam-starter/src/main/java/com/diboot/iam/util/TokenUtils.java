@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 public class TokenUtils {
     private static final Logger log = LoggerFactory.getLogger(TokenUtils.class);
 
-    private static final String AUTH_HEADER = getConfigValue("diboot.iam.token-header-key", "authtoken");
+    private static final String AUTH_HEADER = getConfigValue("diboot.iam.token-header-key", "Authorization");
     public static final int EXPIRES_IN_MINUTES = getConfigIntValue("diboot.iam.token-expires-minutes", 60);
 
     /***

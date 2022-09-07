@@ -64,7 +64,7 @@ export default [
     method: 'get',
     rawResponse: (req, res) => {
       const token = req.headers.authtoken
-      if (token && token.length >= 32) res.setHeader('authtoken', Random.string('lower', 32, 32))
+      if (token && token.length >= 32) res.setHeader('Authorization', Random.string('lower', 32, 32))
       res.end()
     }
   },

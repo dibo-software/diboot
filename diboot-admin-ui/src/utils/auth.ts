@@ -1,6 +1,6 @@
 const TOKEN_KEY = 'token'
 
-export const AUTH_HEADER_KEY = 'authtoken'
+export const AUTH_HEADER_KEY = 'Authorization'
 
 export default {
   getToken(): string | null {

@@ -89,7 +89,7 @@ export default class MiniLogin extends Member {
 			const loginForm =  {authAccount: saveRes.data.openid, authType: 'WX_MP'}
 			const loginRes = await dibootApi.post('/wx-ma/auth/login', loginForm)
 			if(loginRes.code === 0) {
-				uni.setStorageSync("authtoken", loginRes.data)
+				uni.setStorageSync("Authorization", loginRes.data)
 				this.$tip ? this.$tip.show({ title: '登录成功', type: 'success' }) : uni.showToast({ title: '登录成功', icon: 'success' })
 				uni.hideLoading()
 				// 跳转到首页

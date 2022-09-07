@@ -14,7 +14,7 @@ export default class PwdLogin extends Member {
 				uni.showLoading({title: '登陆中'})
 				const res = await dibootApi.post('/h5/auth/login', form)
 				if(res.code === 0) {
-					uni.setStorageSync("authtoken", res.data)
+					uni.setStorageSync("Authorization", res.data)
 					this.getMemberInfo()
 					let tipMsg = { title: '登录成功', type: 'success' }
 					this.$tip ? this.$tip.show(tipMsg) : uni.showToast(tipMsg)

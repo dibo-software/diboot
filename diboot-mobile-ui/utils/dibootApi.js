@@ -7,7 +7,7 @@ import Request from '@/utils/luch-request/index.js'
 import constant from '@/utils/constant.js'
 
 // token在Header中的key
-const JWT_HEADER_KEY = 'authtoken'
+const JWT_HEADER_KEY = 'Authorization'
 const JWT_REFRESH_TOKEN_KEY = 'refreshtoken'
 const REDIRECT = 'redirect'
 const service = new Request({

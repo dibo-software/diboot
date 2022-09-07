@@ -14,7 +14,7 @@ export default class MpLogin extends Member {
 	 * 微信公众号登陆
 	 */
 	redirect(bindWp = false) {
-		let authtoken = uni.getStorageSync("authtoken")
+		let authtoken = uni.getStorageSync("Authorization")
 		let redirect = uni.getStorageSync("redirect")
 		if(bindWp) {
 			// 获取是否绑定标记
@@ -57,7 +57,7 @@ export default class MpLogin extends Member {
 					}
 				})
 				if(res.code === 0) {
-					uni.setStorageSync("authtoken", res.data)
+					uni.setStorageSync("Authorization", res.data)
 					uni.removeStorageSync("redirect")
 					let tipMsg = { title: '登录成功', type: 'success' }
 					this.$tip ? this.$tip.show(tipMsg) : uni.showToast(tipMsg)

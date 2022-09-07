@@ -1,7 +1,7 @@
 <script>
 	export default {
 		onShow: function() {
-			if(uni.getStorageSync("authtoken")) {
+			if(uni.getStorageSync("Authorization")) {
 				let bindWpTag = uni.getStorageSync("bindWpTag")				
 				// 如果是发起绑定
 				if(bindWpTag) {

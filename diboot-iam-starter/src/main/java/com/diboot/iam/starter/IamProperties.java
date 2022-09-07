@@ -40,7 +40,7 @@ public class IamProperties {
     /**
      * token header key
      */
-    private String tokenHeaderKey = "authtoken";
+    private String tokenHeaderKey = "Authorization";
 
     /**
      * token过期分钟数
