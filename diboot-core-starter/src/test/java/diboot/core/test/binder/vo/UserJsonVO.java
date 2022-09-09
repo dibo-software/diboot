@@ -15,35 +15,35 @@
  */
 package diboot.core.test.binder.vo;
 
-import com.diboot.core.binding.annotation.BindEntity;
+import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.annotation.BindFieldList;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
+ * <Description>
+ *
  * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/1/30
+ * @version v2.7.0
+ * @date 2022/09/09
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class EntityBinderVO extends User {
-    private static final long serialVersionUID = 3526115343377985725L;
+public class UserJsonVO extends User {
+    private static final long serialVersionUID = 3526115343377985709L;
 
-    // 实体关联，支持附加条件
-    @BindEntity(entity= Department.class, condition="this.department_id=id AND name like '发'") // AND is_deleted=1
-    private Department department;
+    // 字段关联，附加更多条件
+    @BindFieldList(entity= Department.class, field="name", condition="this.id=extjsonarr")
+    private List<String> deptNames;
 
-    // 通过中间表关联Entity
-    @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0") // AND ...
-    private OrganizationVO organizationVO;
-
-    // 实体关联
-    @BindEntity(entity= Department.class, condition="this.department_id=id") // AND is_deleted=1
-    private Department department2;
+    // 字段关联，附加更多条件
+    @BindEntityList(entity= Department.class, condition="this.id=extjsonarr")
+    private List<Department> departments;
 
 }
