@@ -197,7 +197,7 @@ create index idx_iam_position_tenant on iam_position (tenant_id);
 -- 用户岗位
 create table iam_user_position
 (
-  id                  int auto_increment comment 'ID' primary key,
+  id                  bigint auto_increment comment 'ID' primary key,
   tenant_id bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   user_type           varchar(100) default 'IamUser'         not null comment '用户类型',
   user_id             bigint                                 not null comment '用户ID',
@@ -215,8 +215,8 @@ create index idx_iam_user_position_2 on iam_user_position (org_id, position_id);
 -- 系统配置表
 CREATE TABLE `system_config`
 (
-    `id`          bigint(20) UNSIGNED             NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    `tenant_id`   bigint(20)                      NOT NULL DEFAULT 0 COMMENT '租户ID',
+    `id`          bigint UNSIGNED             NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `tenant_id`   bigint                      NOT NULL DEFAULT 0 COMMENT '租户ID',
     `type`        varchar(50) CHARACTER SET utf8  NOT NULL COMMENT '类型',
     `prop`        varchar(50) CHARACTER SET utf8  NOT NULL COMMENT '属性',
     `value`       varchar(255) CHARACTER SET utf8 NULL     DEFAULT NULL COMMENT '属性值',
