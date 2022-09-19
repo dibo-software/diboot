@@ -592,6 +592,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			Pagination pagination = new Pagination();
+			pagination.setPageIndex(1).setPageSize(limitCount);
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+		}
 		Page<T> page = new Page<>(1, limitCount);
 		page.setSearchCount(false);
 		page = super.page(page, queryWrapper);
@@ -600,6 +606,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public T getSingleEntity(Wrapper queryWrapper) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			return (T)Binder.joinQueryOne((DynamicJoinQueryWrapper)queryWrapper, entityClass);
+		}
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		if(V.notEmpty(entityList)){
 			return entityList.get(0);
