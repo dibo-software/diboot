@@ -265,7 +265,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/css/style.components.scss";
+@import "../../libs/css/style.components";
 @import '../../iconfont.css';
 
 .u-icon {

@@ -1,4 +1,4 @@
-import timeFormat from '../../libs/function/timeFormat.js';
+import timeFormat from './timeFormat.js';
 
 /**
  * 时间戳转为多久之前
