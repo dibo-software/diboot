@@ -27,8 +27,10 @@ import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.StrIdTest;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.StrIdTestService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -61,6 +63,9 @@ public class TestJoinQuery {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    StrIdTestService strIdTestService;
 
     @Test
     public void testDateCompaire(){
@@ -318,6 +323,17 @@ public class TestJoinQuery {
         Assert.assertTrue(sql.contains("SELECT is_deleted"));
         Assert.assertTrue(sql.contains("FROM test"));
         Assert.assertTrue(sql.contains("LIMIT 1"));
+    }
+
+    @Test
+    public void testStringIdBuildQuery(){
+        StrIdTest strIdTest = new StrIdTest();
+        strIdTest.setId("123");
+        strIdTest.setType("A");
+        QueryWrapper<StrIdTest> queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(strIdTest);
+        String sql = queryWrapper.getExpression().getSqlSegment();
+        System.out.println(sql);
+        Assert.assertTrue(sql.contains("ID_ ="));
     }
 
     /**
