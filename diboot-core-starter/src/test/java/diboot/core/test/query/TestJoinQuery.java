@@ -161,6 +161,8 @@ public class TestJoinQuery {
         // 不分页 3条结果
         List<Department> list = JoinsBinder.queryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() == 3);
+        Department departmentFirst = departmentService.getSingleEntity(queryWrapper);
+        Assert.assertTrue(departmentFirst.getId().equals(list.get(0).getId()));
 
         // 不分页，直接用wrapper查
         list = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
@@ -187,6 +189,8 @@ public class TestJoinQuery {
         // 第二页 1条结果
         list = Binder.joinQueryList(queryWrapper, Department.class, pagination);
         Assert.assertTrue(list.size() == 1);
+
+
     }
 
     /**
