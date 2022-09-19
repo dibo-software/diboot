@@ -163,8 +163,7 @@ const api = {
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json;charset=UTF-8'
-        },
-        withCredentials: true
+        }
       })
     )
   },
@@ -194,18 +193,23 @@ const api = {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json;charset=UTF-8'
           },
-          withCredentials: true,
           onDownloadProgress: evt => {
             if (onDownloadProgress) onDownloadProgress((evt.loaded / evt.total) * 100)
           }
         })
         .then(res => {
-          resolve({
-            data: res.data,
-            filename: decodeURI(res.headers.filename),
-            code: parseInt(res.headers['code'] || '0'),
-            msg: decodeURI(res.headers['msg'] || '')
-          })
+          if (res.headers.filename) {
+            resolve({
+              data: res.data,
+              filename: decodeURI(res.headers.filename),
+              code: parseInt(res.headers['code'] || '0'),
+              msg: decodeURI(res.headers['msg'] || '')
+            })
+          } else {
+            const decoder = new TextDecoder('utf-8')
+            const result = JSON.parse(decoder.decode(new Uint8Array(res.data)))
+            reject(result)
+          }
         })
         .catch(err => {
           reject(err)
@@ -227,18 +231,23 @@ const api = {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json;charset=UTF-8'
           },
-          withCredentials: true,
           onDownloadProgress: evt => {
             if (onDownloadProgress) onDownloadProgress((evt.loaded / evt.total) * 100)
           }
         })
         .then(res => {
-          resolve({
-            data: res.data,
-            filename: decodeURI(res.headers.filename),
-            code: parseInt(res.headers['code'] || '0'),
-            msg: decodeURI(res.headers['msg'] || '')
-          })
+          if (res.headers.filename) {
+            resolve({
+              data: res.data,
+              filename: decodeURI(res.headers.filename),
+              code: parseInt(res.headers['code'] || '0'),
+              msg: decodeURI(res.headers['msg'] || '')
+            })
+          } else {
+            const decoder = new TextDecoder('utf-8')
+            const result = JSON.parse(decoder.decode(new Uint8Array(res.data)))
+            reject(result)
+          }
         })
         .catch(err => {
           reject(err)
