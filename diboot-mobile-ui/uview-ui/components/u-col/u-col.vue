@@ -94,7 +94,7 @@
 </script>
 
 <style lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 
 	.u-col {
 		/* #ifdef MP-WEIXIN || MP-QQ || MP-TOUTIAO */

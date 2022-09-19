@@ -70,11 +70,11 @@ export default {
 				return {}
 			}
 		},
-		//适配diboot
-		adapterDiboot: {
-			type: Boolean,
-			default: true
-		}
+    //适配diboot
+    adapterDiboot: {
+      type: Boolean,
+      default: true
+    }
 	},
 	provide() {
 		return {
@@ -108,47 +108,47 @@ export default {
 				let valid = true; // 默认通过
 				let count = 0; // 用于标记是否检查完毕
 				let errorArr = []; // 存放错误信息
-				this.fields.map(field => {
-					if(!this.adapterDiboot) {
-						// 调用每一个u-form-item实例的validation的校验方法
-						field.validation('', error => {
-							// 如果任意一个u-form-item校验不通过，就意味着整个表单不通过
-							if (error) {
-								valid = false;
-								errorArr.push(error);
-							}
-							// 当历遍了所有的u-form-item时，调用promise的then方法
-							if (++count === this.fields.length) {
-								resolve(valid); // 进入promise的then方法
-								// 判断是否设置了toast的提示方式，只提示最前面的表单域的第一个错误信息
-								if(this.errorType.indexOf('none') === -1 && this.errorType.indexOf('toast') >= 0 && errorArr.length) {
-									this.$u.toast(errorArr[0]);
-								}
-								// 调用回调方法
-								if (typeof callback == 'function') callback(valid);
-							}
-						});
-					} else {
-						// 调用每一个u-form-item实例的validationDiboot的校验方法
-						field.prop && field.validationDiboot('', this.model[field.prop], error => {
-							// 如果任意一个u-form-item校验不通过，就意味着整个表单不通过
-							if (error) {
-								valid = false;
-								errorArr.push(error);
-							}
-							// 当历遍了所有的u-form-item时，调用promise的then方法
-							if (++count === this.fields.length) {
-								resolve(valid); // 进入promise的then方法
-								// 判断是否设置了toast的提示方式，只提示最前面的表单域的第一个错误信息
-								if(this.errorType.indexOf('none') === -1 && this.errorType.indexOf('toast') >= 0 && errorArr.length) {
-									this.$u.toast(errorArr[0]);
-								}
-								// 调用回调方法
-								if (typeof callback == 'function') callback(valid);
-							}
-						});
-					}
-				});
+        this.fields.map(field => {
+          if(!this.adapterDiboot) {
+            // 调用每一个u-form-item实例的validation的校验方法
+            field.validation('', error => {
+              // 如果任意一个u-form-item校验不通过，就意味着整个表单不通过
+              if (error) {
+                valid = false;
+                errorArr.push(error);
+              }
+              // 当历遍了所有的u-form-item时，调用promise的then方法
+              if (++count === this.fields.length) {
+                resolve(valid); // 进入promise的then方法
+                // 判断是否设置了toast的提示方式，只提示最前面的表单域的第一个错误信息
+                if(this.errorType.indexOf('none') === -1 && this.errorType.indexOf('toast') >= 0 && errorArr.length) {
+                  this.$u.toast(errorArr[0]);
+                }
+                // 调用回调方法
+                if (typeof callback == 'function') callback(valid);
+              }
+            });
+          } else {
+            // 调用每一个u-form-item实例的validationDiboot的校验方法
+            field.prop && field.validationDiboot('', this.model[field.prop], error => {
+              // 如果任意一个u-form-item校验不通过，就意味着整个表单不通过
+              if (error) {
+                valid = false;
+                errorArr.push(error);
+              }
+              // 当历遍了所有的u-form-item时，调用promise的then方法
+              if (++count === this.fields.length) {
+                resolve(valid); // 进入promise的then方法
+                // 判断是否设置了toast的提示方式，只提示最前面的表单域的第一个错误信息
+                if(this.errorType.indexOf('none') === -1 && this.errorType.indexOf('toast') >= 0 && errorArr.length) {
+                  this.$u.toast(errorArr[0]);
+                }
+                // 调用回调方法
+                if (typeof callback == 'function') callback(valid);
+              }
+            });
+          }
+        });
 			});
 		}
 	}
@@ -156,5 +156,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/css/style.components.scss";
+@import "../../libs/css/style.components";
 </style>

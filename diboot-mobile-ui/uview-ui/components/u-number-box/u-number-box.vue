@@ -10,7 +10,7 @@
 		</view>
 		<input :disabled="disabledInput || disabled" :cursor-spacing="getCursorSpacing" :class="{ 'u-input-disabled': disabled }"
 		    v-model="inputVal" class="u-number-input" @blur="onBlur" @focus="onFocus"
-		    :type="positiveInteger?'number':'digit'" :style="{
+		    type="digit" :style="{
 				color: color,
 				fontSize: size + 'rpx',
 				background: bgColor,
@@ -318,7 +318,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 
 	.u-numberbox {
 		display: inline-flex;

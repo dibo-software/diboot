@@ -288,6 +288,10 @@
 			},
 			init() {
 				let now = new Date();
+				let minDate = new Date(this.minDate);
+				let maxDate = new Date(this.maxDate);
+				if (now < minDate) now = minDate;
+				if (now > maxDate) now = maxDate;
 				this.year = now.getFullYear();
 				this.month = now.getMonth() + 1;
 				this.day = now.getDate();
@@ -487,7 +491,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 	
 	.u-calendar {
 		color: $u-content-color;
