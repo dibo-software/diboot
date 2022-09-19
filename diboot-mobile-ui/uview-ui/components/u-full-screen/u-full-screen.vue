@@ -37,7 +37,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 	
 	.u-full-content {
 		background-color: #00C777;

@@ -108,7 +108,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../libs/css/style.components.scss';
+@import '../../libs/css/style.components';
 
 $u-steps-item-number-width: 44rpx;
 $u-steps-item-dot-width: 20rpx;

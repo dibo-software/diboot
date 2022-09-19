@@ -337,7 +337,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/css/style.components.scss";
+@import "../../libs/css/style.components";
 
 .u-drawer {
 	/* #ifndef APP-NVUE */
