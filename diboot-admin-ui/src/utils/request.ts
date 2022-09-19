@@ -29,7 +29,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     // 检查是否携带有新的token
-    const newToken = response.headers[AUTH_HEADER_KEY]
+    const newToken = response.headers[AUTH_HEADER_KEY.toLowerCase()]
     if (newToken) auth.setToken(newToken)
 
     // 如果请求成功，则重置心跳定时器
