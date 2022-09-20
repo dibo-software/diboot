@@ -14,13 +14,13 @@ const {
   checkStrictlyChange,
   filterNode,
   getTree,
-  addTreeNode,
   setSelectNode,
   removeSingleTreeNode,
   nodeClick,
   treeRef,
   searchWord,
   treeDataList,
+  dataList,
   loading
 } = useTreeCrud<ResourcePermission>({
   baseApi: '/resourcePermission',
@@ -41,6 +41,13 @@ getTree().then(() => {
   setSelectNode()
   computedFixedHeight()
 })
+
+const nullValue = ref<string>()
+const addTreeNode = (data: ResourcePermission) => {
+  treeRef.value?.setCurrentKey(nullValue.value as string)
+  emit('click-node', data)
+}
+
 /**
  * 添加顶级菜单
  */
@@ -58,9 +65,10 @@ const addTopNode = () => {
 /**
  * 添加子菜单
  */
-const addChildNode = (parentId: string) => {
+const addChildNode = (parent: ResourcePermission) => {
   addTreeNode({
-    parentId: parentId,
+    parentId: parent.id as string,
+    parentDisplayName: parent.displayName,
     displayType: 'MENU',
     displayName: '新建',
     resourceCode: '',
@@ -69,6 +77,14 @@ const addChildNode = (parentId: string) => {
     routeMeta: {}
   })
 }
+
+defineExpose({
+  refresh: async (id: string) => {
+    await getTree()
+    treeRef.value?.setCurrentKey(id)
+    emit('click-node', dataList.value.find(e => e.id === id) as ResourcePermission)
+  }
+})
 
 const { nodeDrag } = useSort<Required<ResourcePermission>>({ sortApi: '/resourcePermission/sort', callback: getTree })
 </script>
@@ -103,7 +119,7 @@ const { nodeDrag } = useSort<Required<ResourcePermission>>({ sortApi: '/resource
                 <el-icon
                   v-has-permission="'create'"
                   class="plus-icon custom-icon"
-                  @click.stop="addChildNode(node.data.id)"
+                  @click.stop="addChildNode(node.data)"
                 >
                   <icon name="Plus" />
                 </el-icon>

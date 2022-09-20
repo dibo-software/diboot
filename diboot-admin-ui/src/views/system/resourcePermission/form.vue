@@ -76,19 +76,30 @@ const handleClickMenuConfigPermission = (val: Partial<ResourcePermission>, auto 
   auto ? autoRefreshPermissionCode(val as ResourcePermission) : clickConfigPermission(val as ResourcePermission, false)
 }
 
+const emit = defineEmits<{
+  (e: 'complete', id: string): void
+}>()
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
       submitLoading.value = true
-      api
-        .put(`/resourcePermission/${model.value.id}`, model.value)
-        .then(res => {
-          console.log(res)
-        })
-        .finally(() => {
-          submitLoading.value = false
-        })
+      try {
+        let res
+        if (model.value.id) {
+          res = await api.put<{ id: string }>(`/resourcePermission/${model.value.id}`, model.value)
+        } else {
+          res = await api.post(`/resourcePermission/`, model.value)
+        }
+        ElMessage.success('操作成功')
+        const data = res.data as { id: string } | undefined
+        emit('complete', data?.id || (model.value.id as string))
+      } catch (e: any) {
+        ElMessage.error(e.msg || e.message || '操作失败')
+      } finally {
+        submitLoading.value = false
+      }
     } else {
       console.log('error submit!', fields)
     }
@@ -306,7 +317,9 @@ watch(
                         缓存：页面开启keepAlive，缓存当前页面；<br />
                         忽略认证：当前页面访问不需要权限认证。<br />
                       </template>
-                      <el-icon><InfoFilled /></el-icon>
+                      <el-icon>
+                        <InfoFilled />
+                      </el-icon>
                     </el-tooltip>
                   </div>
                 </template>
@@ -415,10 +428,12 @@ watch(
   height: 100%;
   display: flex;
   flex-direction: column;
+
   .context-body {
     width: 100%;
     overflow: hidden;
   }
+
   .is-fixed {
     box-sizing: border-box;
     border-top: 1px solid var(--el-border-color-lighter);
@@ -433,30 +448,37 @@ watch(
 .left-container {
   padding: 10px !important;
   border-right: 1px solid var(--el-color-info-light-9);
+
   .el-space {
     width: 100%;
   }
+
   .custom-alert-tip {
     padding: 0;
     width: auto;
   }
 }
+
 .right-container {
   padding: 10px !important;
 }
+
 .btn-config-container {
   width: 100%;
+
   .btn-config__header {
     display: flex;
     justify-content: space-between;
     padding: 10px 10px 10px 0;
   }
 }
+
 @media only screen and (min-width: 992px) {
   .context-body {
     overflow-y: auto !important;
   }
 }
+
 @media only screen and (min-width: 1200px) {
   .context-body {
     overflow: hidden !important;

@@ -19,10 +19,10 @@ provide<Ref<number>>('boxHeight', boxHeight)
 <template>
   <el-container class="menu-permission-container">
     <el-aside class="menu-aside-container">
-      <menu-tree @click-node="clickNode" />
+      <menu-tree ref="menuTreeRef" @click-node="clickNode" />
     </el-aside>
     <el-main class="menu-main-container">
-      <resource-permission-form :form-value="formValue" />
+      <resource-permission-form :form-value="formValue" @complete="(id: string) => $refs.menuTreeRef.refresh(id)" />
     </el-main>
   </el-container>
 </template>

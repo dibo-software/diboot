@@ -319,6 +319,7 @@ export default <T>(option: TreeOption<T>) => {
   const { selectedIdList, treeDataList } = toRefs(dataState)
   return {
     loading,
+    dataList,
     treeDataList,
     selectedIdList,
     searchWord,

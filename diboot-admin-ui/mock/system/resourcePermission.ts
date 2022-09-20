@@ -99,9 +99,9 @@ export default [
     response: ({ body }: ApiRequest<ResourcePermission>) => {
       const mock = Mock.mock({ id: '@id' })
       const id = mock.id
-      Object.assign(body, { id: id, displayName: '未命名' + id })
+      Object.assign(body, { id: id })
       dbDataList.unshift(body)
-      return JsonResult.OK(id)
+      return JsonResult.OK({ id })
     }
   },
   {
