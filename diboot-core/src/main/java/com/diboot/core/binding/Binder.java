@@ -35,7 +35,7 @@ public class Binder {
      * @return
      * @throws Exception
      */
-    public static <DTO,E> E joinQueryOne(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz){
+    public static <DTO,T> T joinQueryOne(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz){
         return JoinsBinder.queryOne(queryWrapper, entityClazz);
     }
 
@@ -46,7 +46,7 @@ public class Binder {
      * @return
      * @throws Exception
      */
-    public static <DTO,E> List<E> joinQueryList(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz){
+    public static <DTO,T> List<T> joinQueryList(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz){
         return JoinsBinder.queryList(queryWrapper, entityClazz);
     }
 
@@ -58,7 +58,7 @@ public class Binder {
      * @return
      * @throws Exception
      */
-    public static <DTO,E> List<E> joinQueryList(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz, Pagination pagination){
+    public static <DTO,T> List<T> joinQueryList(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz, Pagination pagination){
         return JoinsBinder.queryList(queryWrapper, entityClazz, pagination);
     }
 
@@ -69,7 +69,7 @@ public class Binder {
      * @param <VO>
      * @return
      */
-    public static <E, VO> VO convertAndBindRelations(E entity, Class<VO> voClass){
+    public static <T, VO> VO convertAndBindRelations(T entity, Class<VO> voClass){
         return RelationsBinder.convertAndBind(entity, voClass);
     }
 
@@ -81,7 +81,7 @@ public class Binder {
      * @param <VO>
      * @return
      */
-    public static <E, VO> List<VO> convertAndBindRelations(List<E> entityList, Class<VO> voClass){
+    public static <T, VO> List<VO> convertAndBindRelations(List<T> entityList, Class<VO> voClass){
         return RelationsBinder.convertAndBind(entityList, voClass);
     }
 

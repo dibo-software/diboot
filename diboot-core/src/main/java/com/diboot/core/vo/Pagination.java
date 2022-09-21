@@ -71,6 +71,7 @@ public class Pagination implements Serializable {
      */
     private String orderBy = DEFAULT_ORDER_BY;
 
+    @JsonIgnore
     private Class<?> entityClass;
 
     public Pagination() {

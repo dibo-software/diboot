@@ -156,12 +156,32 @@ CREATE TABLE `demo_test_join` (
                                   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
 
+create table customer
+(
+    id bigint unsigned not null comment 'ID' primary key,
+    realname varchar(50) not null comment '名称',
+    cellphone varchar(50) not null comment '电话',
+    extjsonarr JSON null comment '扩展json对象',
+    is_deleted tinyint(1) default 0 not null comment '已删除',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+)
+    comment '客户' charset=utf8mb4;
+
+INSERT INTO customer (id, realname, cellphone, extjsonarr)
+VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');
+
 -- 初始化样例数据
 INSERT INTO department (id, parent_id, org_id, name, `character`, extjsonobj, extjsonarr)
 VALUES (10001, 0, 100001, '产品部', 'WW', null, null), (10002, 10001, 100001, '研发组', '1001', null, null),
        (10003, 10001, 100001, '测试组', '[1001,1002]', '{"id": 1001, "name": "TEST"}', '[1001,1002]'), (10004, 10001, 100001, '市场部', '1001,1002', '{"id": 1001, "name": "TEST"}', '[1001,1002]'),
        (10005, 10003, 100001, '自动化测试', null, null, null), (10006, 10003, 100001, '功能测试', null, null, null);
 INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
+INSERT INTO dictionary
+(id, parent_id, tenant_id, app_module, `type`, item_name, item_value, description, extdata, sort_id, is_editable, is_deletable)
+VALUES(10050, 0, 0, NULL, 'MESSAGE_CHANNEL', '发送通道', NULL, 'message发送通道', NULL, 99, 1, 1),
+      (10051, 10050, 0, NULL, 'MESSAGE_CHANNEL', '站内信', 'WEBSOCKET', NULL, NULL, 0, 1, 1),
+      (10052, 10050, 0, NULL, 'MESSAGE_CHANNEL', '短信', 'TEXT_MESSAGE', NULL, NULL, 1, 1, 1),
+      (10053, 10050, 0, NULL, 'MESSAGE_CHANNEL', '邮件', 'EMAIL', NULL, NULL, 2, 1, 1);
 INSERT INTO organization (id, parent_id, name, telphone, manager_id) VALUES (100001, 0, '苏州帝博', '0512-62988949', 1001), (100002, 0, '成都帝博', '028-62988949', 1002);
 INSERT INTO role (id, name, code) VALUES (101, '管理员', 'ADMIN'), (102, '操作员', 'OPERATOR');
 INSERT INTO user (id, department_id, username, gender, `character`) VALUES (1001, 10002, '张三', 'M', 'test123456'), (1002, 10002, '李四', 'F', 'test123456,test234567'), (1003, 10001, '王五', 'M', 'WW');

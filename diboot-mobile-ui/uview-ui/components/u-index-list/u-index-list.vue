@@ -266,7 +266,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 	
 	.u-index-bar {
 		position: relative

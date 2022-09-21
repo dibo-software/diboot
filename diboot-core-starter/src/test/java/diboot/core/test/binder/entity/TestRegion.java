@@ -19,14 +19,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**

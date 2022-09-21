@@ -15,7 +15,6 @@
  */
 package diboot.core.test.query;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.JoinsBinder;
@@ -27,8 +26,10 @@ import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.StrIdTest;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.StrIdTestService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -61,6 +62,9 @@ public class TestJoinQuery {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    StrIdTestService strIdTestService;
 
     @Test
     public void testDateCompaire(){
@@ -161,6 +165,8 @@ public class TestJoinQuery {
         // 不分页 3条结果
         List<Department> list = JoinsBinder.queryList(queryWrapper, Department.class);
         Assert.assertTrue(list.size() == 3);
+        Department departmentFirst = departmentService.getSingleEntity(queryWrapper);
+        Assert.assertTrue(departmentFirst.getId().equals(list.get(0).getId()));
 
         // 不分页，直接用wrapper查
         list = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(Department.class);
@@ -187,6 +193,8 @@ public class TestJoinQuery {
         // 第二页 1条结果
         list = Binder.joinQueryList(queryWrapper, Department.class, pagination);
         Assert.assertTrue(list.size() == 1);
+
+
     }
 
     /**
@@ -314,6 +322,17 @@ public class TestJoinQuery {
         Assert.assertTrue(sql.contains("SELECT is_deleted"));
         Assert.assertTrue(sql.contains("FROM test"));
         Assert.assertTrue(sql.contains("LIMIT 1"));
+    }
+
+    @Test
+    public void testStringIdBuildQuery(){
+        StrIdTest strIdTest = new StrIdTest();
+        strIdTest.setId("123");
+        strIdTest.setType("A");
+        QueryWrapper<StrIdTest> queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(strIdTest);
+        String sql = queryWrapper.getExpression().getSqlSegment();
+        System.out.println(sql);
+        Assert.assertTrue(sql.contains("ID_ ="));
     }
 
     /**
