@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.vo.LabelValue;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 可登录用户Base类定义
@@ -44,7 +43,6 @@ public abstract class BaseLoginUser extends BaseEntity {
     /**
      * 附加对象，当前auth-token
      */
-    @JsonIgnore
     @TableField(exist = false)
     private String authToken;
 
