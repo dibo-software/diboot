@@ -20,7 +20,6 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.DemoTest;
-import diboot.core.test.binder.service.DemoTestService;
 import diboot.core.test.binder.service.impl.DemoTestServiceImpl;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;

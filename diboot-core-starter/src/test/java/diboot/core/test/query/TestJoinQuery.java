@@ -15,7 +15,6 @@
  */
 package diboot.core.test.query;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.JoinsBinder;
