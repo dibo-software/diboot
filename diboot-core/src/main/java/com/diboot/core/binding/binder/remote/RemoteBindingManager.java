@@ -73,7 +73,7 @@ public class RemoteBindingManager {
      * 获取实例
      * @return
      */
-    private static RemoteBindingProvider getRemoteBindingProvider(String module){
+    private synchronized static RemoteBindingProvider getRemoteBindingProvider(String module){
         if(MODULE_PROVIDER_MAP == null){
             MODULE_PROVIDER_MAP = new ConcurrentHashMap<>();
         }
