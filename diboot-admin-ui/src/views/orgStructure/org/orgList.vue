@@ -89,12 +89,12 @@ defineExpose({ onSearch })
       <el-table-column prop="createTime" label="创建时间" />
       <el-table-column label="操作" width="140">
         <template #default="{ row }">
-          <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)"
-            >编辑</el-button
-          >
-          <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)"
-            >删除</el-button
-          >
+          <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
+            {{ $t('operation.update') }}
+          </el-button>
+          <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)">
+            {{ $t('operation.delete') }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

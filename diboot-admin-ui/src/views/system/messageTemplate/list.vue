@@ -58,7 +58,9 @@ const openForm = (id?: string) => {
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">新建</el-button>
+        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+          {{ $t('operation.create') }}
+        </el-button>
         <el-space>
           <el-button :icon="Refresh" circle @click="getList()" />
           <el-button :icon="Search" circle @click="searchState = !searchState" />
@@ -88,19 +90,23 @@ const openForm = (id?: string) => {
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
-              详情
+              {{ $t('operation.detail') }}
             </el-button>
             <el-dropdown v-has-permission="['update', 'delete']">
               <el-button text bg type="primary" size="small">
-                更多
+                {{ $t('operation.more') }}
                 <el-icon :size="16" style="margin-left: 5px">
                   <arrow-down />
                 </el-icon>
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="checkPermission('update')" @click="openForm(row.id)">编辑</el-dropdown-item>
-                  <el-dropdown-item v-if="checkPermission('delete')" @click="remove(row.id)">删除</el-dropdown-item>
+                  <el-dropdown-item v-if="checkPermission('update')" @click="openForm(row.id)">
+                    {{ $t('operation.update') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="checkPermission('delete')" @click="remove(row.id)">
+                    {{ $t('operation.delete') }}
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

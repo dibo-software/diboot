@@ -72,13 +72,13 @@ const openLog = (id: string) => {
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item v-if="checkPermission('update')" @click="openForm(item.id)">
-                      编辑
+                      {{ $t('operation.update') }}
                     </el-dropdown-item>
                     <el-dropdown-item v-if="checkPermission('logList')" @click="openLog(item.id)">
                       日志
                     </el-dropdown-item>
                     <el-dropdown-item v-if="checkPermission('delete')" divided @click="remove(item.id)">
-                      删除
+                      {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -92,7 +92,7 @@ const openLog = (id: string) => {
           <el-icon :size="25">
             <Plus />
           </el-icon>
-          <p>添加任务</p>
+          <p>{{ $t('operation.create') }}</p>
         </el-card>
       </el-col>
     </el-row>

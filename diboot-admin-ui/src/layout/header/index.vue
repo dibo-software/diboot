@@ -36,6 +36,25 @@ const goPersonal = () => {
       <el-icon class="item" :size="22" @click="toggleTheme()">
         <component :is="isDark ? Sunny : Moon" />
       </el-icon>
+      <el-dropdown @command="(command: string) => $i18n.locale = command">
+        <div class="item">
+          <el-icon :size="22">
+            <icon name="Local:Language" />
+          </el-icon>
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="item in $i18n.availableLocales"
+              :key="item"
+              :command="item"
+              :disabled="$i18n.locale === item"
+            >
+              {{ $t('language', null, { locale: item }) }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <message-list class="item" />
       <el-dropdown
         @command="(command: 'small' | 'large' | 'default') => {appStore.globalSize = command; isSmall = command === 'small'}"

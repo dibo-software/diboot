@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+import * as locales from 'element-plus/lib/locale/index'
 import { colorPrimary, isSmall } from '@/utils/theme'
 import useAppStore from './store/app'
+import { useI18n } from 'vue-i18n'
+import moment from 'moment'
+import 'moment/dist/locale/zh-tw'
+import 'moment/dist/locale/zh-cn'
 
 const appStore = useAppStore()
 
@@ -11,7 +15,21 @@ onMounted(() => {
   isSmall.value = appStore.globalSize === 'small'
 })
 
-const locale = reactive(zhCn)
+const i18n = useI18n()
+
+const locale = ref()
+
+watch(
+  i18n.locale,
+  value => {
+    const localeLowerCase = value.toLowerCase()
+    locale.value = Object.values(locales).find(e => e.name === localeLowerCase)
+    moment.locale(localeLowerCase)
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
