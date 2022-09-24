@@ -189,19 +189,28 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         List<Dictionary> entityList = super.getEntityList(queryWrapper);
         Map<String, String> map = entityList.stream().collect(Collectors.toMap(Dictionary::getItemValue, Dictionary::getItemName));
         for (Object item : voList) {
-            String value = BeanUtils.getStringProperty(item, getFieldName);
+            Object value = BeanUtils.getProperty(item, getFieldName);
             if (V.isEmpty(value)) {
                 continue;
             }
-            String label = map.get(value);
-            if (label == null && value.contains(S.SEPARATOR)) {
-                ArrayList<String> labelList = new ArrayList<>();
-                for (String key : value.split(S.SEPARATOR)) {
-                    labelList.add(map.get(key));
+            Object label = map.get(value);
+            if (label == null) {
+                if(value instanceof String && ((String)value).contains(S.SEPARATOR)) {
+                    List<String> labelList = new ArrayList<>();
+                    for (String key : ((String)value).split(S.SEPARATOR)) {
+                        labelList.add(map.get(key));
+                    }
+                    label = S.join(labelList);
                 }
-                label = S.join(labelList);
+                else if(value instanceof Collection) {
+                    List<String> labelList = new ArrayList<>();
+                    for (Object key : (Collection)value) {
+                        labelList.add(map.get((String)key));
+                    }
+                    label = labelList;
+                }
             }
-            if (S.isNotEmpty(label)) {
+            if (V.notEmpty(label)) {
                 BeanUtils.setProperty(item, setFieldName, label);
             }
         }

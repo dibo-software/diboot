@@ -124,23 +124,21 @@ public class ApiPermissionExtractor {
             if(apiUriCombo.isEmpty()){
                 continue;
             }
-            if(bindPermission != null){
-                if(V.isEmpty(bindPermission.code())){
-                    log.warn("忽略无效的权限配置(未指定code): {}.{}", controllerClass.getSimpleName(), method.getName());
-                    continue;
-                }
-                String name = bindPermission.name();
-                String code = (wrapper.getCode() != null)? wrapper.getCode()+":"+bindPermission.code() : bindPermission.code();
-                ApiPermission apiPermission = tempCode2ObjMap.get(code);
-                if(apiPermission == null){
-                    apiPermission = new ApiPermission(code);
-                    tempCode2ObjMap.put(code, apiPermission);
-                    apiPermissions.add(apiPermission);
-                }
-                apiUriCombo.setLabel(name);
-                // 提取请求url-permission code的关系
-                buildApiPermission(apiPermission, urlPrefix, apiUriCombo);
+            if(V.isEmpty(bindPermission.code())){
+                log.warn("忽略无效的权限配置(未指定code): {}.{}", controllerClass.getSimpleName(), method.getName());
+                continue;
             }
+            String name = bindPermission.name();
+            String code = (wrapper.getCode() != null)? wrapper.getCode()+":"+bindPermission.code() : bindPermission.code();
+            ApiPermission apiPermission = tempCode2ObjMap.get(code);
+            if(apiPermission == null){
+                apiPermission = new ApiPermission(code);
+                tempCode2ObjMap.put(code, apiPermission);
+                apiPermissions.add(apiPermission);
+            }
+            apiUriCombo.setLabel(name);
+            // 提取请求url-permission code的关系
+            buildApiPermission(apiPermission, urlPrefix, apiUriCombo);
         }
         // 添加至wrapper
         if(apiPermissions.size() > 0){

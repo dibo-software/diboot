@@ -180,7 +180,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 
 	@keyframes breathe {
 		0% {

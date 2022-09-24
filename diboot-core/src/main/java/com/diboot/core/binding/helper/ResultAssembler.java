@@ -223,13 +223,11 @@ public class ResultAssembler {
                         entityList = matchedValues;
                     }
                 }
-                if(entityList != null){
-                    // 赋值
-                    BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
-                    for(int i = 0; i< annoObjSetterPropNameList.size(); i++){
-                        List valObjList = BeanUtils.collectToList(entityList, refGetterFieldNameList.get(i));
-                        beanWrapper.setPropertyValue(annoObjSetterPropNameList.get(i), valObjList);
-                    }
+                // 赋值
+                BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
+                for(int i = 0; i< annoObjSetterPropNameList.size(); i++){
+                    List valObjList = BeanUtils.collectToList(entityList, refGetterFieldNameList.get(i));
+                    beanWrapper.setPropertyValue(annoObjSetterPropNameList.get(i), valObjList);
                 }
             }
         }

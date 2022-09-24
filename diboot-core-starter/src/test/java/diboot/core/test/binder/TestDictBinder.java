@@ -22,7 +22,9 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.service.CustomerService;
 import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.vo.CustomerVO;
 import diboot.core.test.binder.vo.UserVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,6 +51,9 @@ public class TestDictBinder {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    CustomerService customerService;
 
     @Test
     public void testBinder(){
@@ -70,6 +76,17 @@ public class TestDictBinder {
         // 验证直接关联和通过中间表间接关联的绑定
         Assert.assertNotNull(singleVO.getGenderLabel());
         System.out.println(JSON.stringify(singleVO));
+    }
+
+    @Test
+    @Transactional
+    public void testDictList() {
+        List<CustomerVO> customers = customerService.getViewObjectList(null, null, CustomerVO.class);
+        for(CustomerVO customerVO : customers) {
+            if(V.notEmpty(customerVO.getExtjsonarr())){
+                Assert.assertTrue(customerVO.getChannelLabels().size() == customerVO.getExtjsonarr().size());
+            }
+        }
     }
 
 }

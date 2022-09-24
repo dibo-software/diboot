@@ -80,7 +80,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 	
 	.u-grid-item {
 		box-sizing: border-box;

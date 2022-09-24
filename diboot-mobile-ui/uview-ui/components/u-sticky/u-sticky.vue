@@ -149,7 +149,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 	
 	.u-sticky {
 		z-index: 9999999999;

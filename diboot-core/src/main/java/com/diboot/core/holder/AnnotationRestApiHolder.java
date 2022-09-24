@@ -59,7 +59,7 @@ public class AnnotationRestApiHolder {
      */
     private static final String CACHE_NAME_CATEGORY_TO_APILIST = "CATEGORY_TO_API_LIST";
 
-    private static StaticMemoryCacheManager getCacheManager(){
+    private synchronized static StaticMemoryCacheManager getCacheManager(){
         if(cacheManager == null){
             cacheManager = new StaticMemoryCacheManager(
                     CACHE_NAME_CLASS_TO_WRAPPER,

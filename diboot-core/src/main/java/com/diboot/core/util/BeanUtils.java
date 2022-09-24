@@ -16,6 +16,7 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.config.Cons;
 import com.diboot.core.converter.*;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
@@ -796,6 +797,9 @@ public class BeanUtils {
         String columnName = null;
         if (field.isAnnotationPresent(TableField.class)) {
             columnName = field.getAnnotation(TableField.class).value();
+        }
+        else if(field.isAnnotationPresent(TableId.class)) {
+            columnName = field.getAnnotation(TableId.class).value();
         }
         return S.getIfEmpty(columnName, () -> S.toSnakeCase(field.getName()));
     }

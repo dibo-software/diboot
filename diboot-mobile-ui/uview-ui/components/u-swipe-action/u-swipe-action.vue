@@ -15,10 +15,6 @@
 			>
 				<view
 					class="u-swipe-content"
-					:style="{
-						width: contentAreaWidth + 'px'
-					}"
-					
 					@tap.stop="contentClick"
 				>
 					<slot></slot>
@@ -109,7 +105,6 @@ export default {
 			movableAreaWidth: 0, // 滑动区域
 			elId: this.$u.guid(), // id，用于通知另外组件关闭时的识别
 			showBtn: false, // 刚开始渲染视图时不显示右边的按钮，避免视图闪动
-			contentAreaWidth: 0// 内容区域
 		};
 	},
 	computed: {
@@ -205,7 +200,6 @@ export default {
 		getActionRect() {
 			this.$uGetRect('.u-swipe-action').then(res => {
 				this.movableAreaWidth = res.width;
-				this.contentAreaWidth = res.width;
 				// 等视图更新完后，再显示右边的可滑动按钮，防止这些按钮会"闪一下"
 				this.$nextTick(() => {
 					this.showBtn = true;
@@ -226,7 +220,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/css/style.components.scss";
+@import "../../libs/css/style.components";
 	
 .u-swipe-action {
 	width: auto;

@@ -46,7 +46,7 @@ public class Encryptor {
 	 * 加密Cipher缓存
  	 */
 	private static Map<String, Cipher> encryptorMap = null;
-	private static Map<String, Cipher> getEncryptorMap(){
+	private synchronized static Map<String, Cipher> getEncryptorMap(){
 		if(encryptorMap == null){
 			encryptorMap = new ConcurrentHashMap<>();
 		}
@@ -57,7 +57,7 @@ public class Encryptor {
 	 * 解密Cipher缓存
 	 */
 	private static Map<String, Cipher> decryptorMap = null;
-	private static Map<String, Cipher> getDecryptorMap(){
+	private synchronized static Map<String, Cipher> getDecryptorMap(){
 		if(decryptorMap == null){
 			decryptorMap = new ConcurrentHashMap<>();
 		}
