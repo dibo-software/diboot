@@ -76,7 +76,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
         LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
                 .select(IamAccount::getAuthAccount, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
-                .eq(IamAccount::getTenantId, iamAuthToken.getTenantId())
+                .eq(V.notEmpty(iamAuthToken.getTenantId()) ,IamAccount::getTenantId, iamAuthToken.getTenantId())
                 .eq(IamAccount::getAuthAccount, iamAuthToken.getAuthAccount())
                 .orderByDesc(IamAccount::getId);
         return queryWrapper;

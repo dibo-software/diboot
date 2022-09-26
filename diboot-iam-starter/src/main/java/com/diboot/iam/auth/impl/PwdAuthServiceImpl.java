@@ -18,6 +18,7 @@ package com.diboot.iam.auth.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.util.Encryptor;
+import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.shiro.IamAuthToken;
@@ -53,7 +54,7 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(IamAccount::getAuthType, iamAuthToken.getAuthType())
                 .eq(IamAccount::getAuthAccount, iamAuthToken.getAuthAccount())
-                .eq(IamAccount::getTenantId, iamAuthToken.getTenantId())
+                .eq(V.notEmpty(iamAuthToken.getTenantId()) ,IamAccount::getTenantId, iamAuthToken.getTenantId())
                 .orderByDesc(IamAccount::getId);
         return queryWrapper;
     }
