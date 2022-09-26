@@ -34,6 +34,10 @@ public class RouteMeta implements Serializable {
      */
     private String componentPath;
     /**
+     * 路由重定向地址
+     */
+    private String redirectPath;
+    /**
      * 外链或iframe地址
      */
     private String url;

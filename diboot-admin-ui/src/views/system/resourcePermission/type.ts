@@ -8,10 +8,9 @@ export interface ResourcePermission {
   displayType?: string
   displayName?: string
   routePath?: string
-  redirectPath?: string
   resourceCode?: string
   permissionCodes?: Array<string>
-  routeMeta: Partial<RouteMeta>
+  routeMeta: Partial<RouteMeta & { redirectPath: string }>
   sortId?: string
   status?: string
   children?: ResourcePermission[]

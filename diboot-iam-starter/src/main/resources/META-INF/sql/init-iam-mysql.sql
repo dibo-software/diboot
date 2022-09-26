@@ -83,7 +83,6 @@ create table iam_resource_permission
     display_type     varchar(20)  not null comment '展现类型',
     display_name     varchar(100) null comment '显示名称',
     route_path       varchar(200) null comment '路由地址',
-    redirect_path    varchar(200) null comment '路由重定向地址',
     resource_code    varchar(100)  not null comment '前端资源编码',
     permission_code  varchar(200) null comment '接口权限编码',
     meta             varchar(300) null comment 'meta配置',

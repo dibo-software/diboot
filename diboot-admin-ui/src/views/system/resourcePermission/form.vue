@@ -283,7 +283,7 @@ watch(
                 </el-input>
               </el-form-item>
               <el-form-item v-if="displayFields?.redirectPath" label="重定向">
-                <el-input v-model="model.redirectPath" placeholder="请输入重定向" clearable />
+                <el-input v-model="model.routeMeta.redirectPath" placeholder="请输入重定向" clearable />
               </el-form-item>
               <el-form-item v-if="displayFields?.appModule && moduleList.length" label="应用模块">
                 <el-select v-model="model.appModule" placeholder="应用模块" clearable>

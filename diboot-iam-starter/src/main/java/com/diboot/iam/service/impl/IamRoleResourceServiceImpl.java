@@ -263,7 +263,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             }
             routeRecord.setName(resource.getResourceCode())
                     .setPath(resource.getRoutePath())
-                    .setRedirect(resource.getRedirectPath())
+                    .setRedirect(routeMeta.getRedirectPath())
                     .setMeta(routeMeta);
             if (V.notEmpty(resource.getChildren())) {
                 List<RouteRecord> routeRecordChildren = new ArrayList<>();

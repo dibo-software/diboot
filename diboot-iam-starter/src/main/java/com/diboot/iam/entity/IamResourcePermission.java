@@ -87,11 +87,6 @@ public class IamResourcePermission extends BaseEntity {
     @TableField()
     private String routePath;
 
-    // 路由重定向地址
-    @Length(max=200, message="路由重定向地址应小于200")
-    @TableField()
-    private String redirectPath;
-
     // 前端资源编码
     @NotNull(message = "前端资源编码不能为空")
     @Length(max=50, message="前端资源编码长度应小于50")
