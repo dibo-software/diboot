@@ -8,7 +8,7 @@ create table ${SCHEMA}.dictionary (
     item_name          VARCHAR2(100)         not null,
     item_value         VARCHAR2(100),
     description        VARCHAR2(100),
-    extdata            VARCHAR2(200),
+    extension          VARCHAR2(200),
     sort_id            SMALLINT           default 99  not null,
     is_deletable       NUMBER(1)          default 1  not null,
     is_editable        NUMBER(1)          default 1  not null,
@@ -25,7 +25,7 @@ comment on column ${SCHEMA}.dictionary.type is '字典类型';
 comment on column ${SCHEMA}.dictionary.item_name is '显示名';
 comment on column ${SCHEMA}.dictionary.item_value is '存储值';
 comment on column ${SCHEMA}.dictionary.description is '备注';
-comment on column ${SCHEMA}.dictionary.extdata is '扩展JSON';
+comment on column ${SCHEMA}.dictionary.extension is '扩展JSON';
 comment on column ${SCHEMA}.dictionary.sort_id is '排序号';
 comment on column ${SCHEMA}.dictionary.is_editable is '是否可改';
 comment on column ${SCHEMA}.dictionary.is_deletable is '是否可删';

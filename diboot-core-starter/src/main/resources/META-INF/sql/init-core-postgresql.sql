@@ -8,7 +8,7 @@ create table dictionary (
      item_name            VARCHAR(100)  not null,
      item_value           VARCHAR(100)  null,
      description          VARCHAR(100)  null,
-     extdata              VARCHAR(200)  null,
+     extension            VARCHAR(200)  null,
      sort_id              SMALLINT      not null default 99,
      is_deletable         BOOLEAN       not null default TRUE,
      is_editable          BOOLEAN       not null default TRUE,
@@ -25,7 +25,7 @@ comment on column dictionary.type is '字典类型';
 comment on column dictionary.item_name is '显示名';
 comment on column dictionary.item_value is '存储值';
 comment on column dictionary.description is '描述说明';
-comment on column dictionary.extdata is '扩展JSON';
+comment on column dictionary.extension is '扩展JSON';
 comment on column dictionary.sort_id is '排序号';
 comment on column dictionary.is_editable is '是否可改';
 comment on column dictionary.is_deletable is '是否可删';

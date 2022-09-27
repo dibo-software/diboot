@@ -8,7 +8,7 @@ CREATE TABLE `dictionary` (
   `item_name` varchar(100) NOT NULL COMMENT '显示名',
   `item_value` varchar(100) DEFAULT NULL COMMENT '存储值',
   `description` varchar(100) DEFAULT NULL COMMENT '描述说明',
-  `extdata` varchar(200) DEFAULT NULL COMMENT '扩展JSON',
+  `extension` varchar(200) DEFAULT NULL COMMENT '扩展JSON',
   `sort_id` smallint NOT NULL DEFAULT '99' COMMENT '排序号',
   `is_editable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可改',
   `is_deletable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可删',

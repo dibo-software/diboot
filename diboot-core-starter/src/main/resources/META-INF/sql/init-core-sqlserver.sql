@@ -8,7 +8,7 @@ create table ${SCHEMA}.dictionary (
    item_name            varchar(100)         not null,
    item_value           varchar(100)         null,
    description          varchar(100)         null,
-   extdata              varchar(200)         null,
+   extension            varchar(200)         null,
    sort_id              smallint             not null default 99,
    is_deletable        tinyint             not null default 1,
    is_editable          tinyint             not null default 1,
@@ -25,7 +25,7 @@ execute sp_addextendedproperty 'MS_Description', N'字典类型','SCHEMA', '${SC
 execute sp_addextendedproperty 'MS_Description', N'显示名','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_name';
 execute sp_addextendedproperty 'MS_Description', N'存储值','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_value';
 execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'description';
-execute sp_addextendedproperty 'MS_Description', N'扩展JSON','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'extdata';
+execute sp_addextendedproperty 'MS_Description', N'扩展JSON','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'extension';
 execute sp_addextendedproperty 'MS_Description', N'排序号','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否可删除','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'is_deletable';
 execute sp_addextendedproperty 'MS_Description', N'是否可编辑','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'is_editable';
