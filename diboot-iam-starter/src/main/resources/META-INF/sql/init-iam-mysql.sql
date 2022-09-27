@@ -77,7 +77,7 @@ create index idx_iam_user_role_tenant on iam_user_role (tenant_id);
 create table iam_resource_permission
 (
     id               varchar(32) NOT NULL comment 'ID' primary key,
-    parent_id        varchar(32) NULL     comment '父级资源',
+    parent_id        varchar(32) NULL     default '0' comment '父级资源',
     tenant_id        varchar(32) not null default '0' comment '租户ID',
     app_module       varchar(50)  null comment '应用模块',
     display_type     varchar(20)  not null comment '展现类型',

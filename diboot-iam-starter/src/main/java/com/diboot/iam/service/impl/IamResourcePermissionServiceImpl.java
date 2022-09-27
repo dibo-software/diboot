@@ -71,7 +71,6 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     @Transactional(rollbackFor = Exception.class)
     public void createMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO) {
         // 创建menu
-        iamResourcePermissionDTO.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name());
         boolean success = this.createEntity(iamResourcePermissionDTO);
         if (!success){
             throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
@@ -307,7 +306,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
      * @return
      */
     private boolean hasTopRootNode(Map<String, IamResourcePermission> idObjectMap, IamResourcePermission item, List<String> existIdList) {
-        if (V.equals(item.getParentId(), 0L)) {
+        if (V.equals(item.getParentId(), "0")) {
             return true;
         }
         if (existIdList == null) {

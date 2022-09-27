@@ -88,13 +88,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       try {
         let res
         if (model.value.id) {
-          res = await api.put<{ id: string }>(`/resourcePermission/${model.value.id}`, model.value)
+          res = await api.put<string>(`/resourcePermission/${model.value.id}`, model.value)
         } else {
           res = await api.post(`/resourcePermission/`, model.value)
         }
         ElMessage.success('操作成功')
-        const data = res.data as { id: string } | undefined
-        emit('complete', data?.id || (model.value.id as string))
+        emit('complete', (res.data as string) || (model.value.id as string))
       } catch (e: any) {
         ElMessage.error(e.msg || e.message || '操作失败')
       } finally {
@@ -175,6 +174,10 @@ const { activeTab, tabs, initTabs, removeTab, addTab } = useTabs<ResourcePermiss
 watch(
   () => props.formValue,
   val => {
+    if (!val) {
+      empty.value = true
+      return
+    }
     empty.value = false
     model.value = val as ResourcePermission
     // 控制显示字段

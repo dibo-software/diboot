@@ -101,7 +101,7 @@ export default [
       const id = mock.id
       Object.assign(body, { id: id })
       dbDataList.unshift(body)
-      return JsonResult.OK({ id })
+      return JsonResult.OK(id)
     }
   },
   {
