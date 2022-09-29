@@ -71,6 +71,7 @@ public class Pagination implements Serializable {
      */
     private String orderBy = DEFAULT_ORDER_BY;
 
+    @JsonIgnore
     private Class<?> entityClass;
 
     public Pagination() {
@@ -192,10 +193,7 @@ public class Pagination implements Serializable {
      * @return
      */
     public static boolean isPaginationParam(String paramName){
-        return "pageIndex".equals(paramName)
-                || "pageSize".equals(paramName)
-                || "orderBy".equals(paramName)
-                || "totalCount".equals(paramName);
+        return Cons.PaginationParam.isPaginationParam(paramName);
     }
 
     private PropInfo getEntityPropInfo(){

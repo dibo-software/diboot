@@ -52,6 +52,7 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_SLASH_Y4MD = "yyyy/MM/dd";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHM = "yyyy/MM/dd HH:mm";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHMS = "yyyy/MM/dd HH:mm:ss";
+	public static final String FORMAT_DATETIME_Y4MD_T_HMS = "yyyy-MM-ddTHH:mm:ss";
 	/**
 	 * 星期（中文）
 	 */
@@ -446,6 +447,20 @@ public class D extends DateUtils{
 		if(V.isEmpty(dateString)){
 			return null;
 		}
+		dateString = formatDateString(dateString);
+		if(!dateString.contains(" ")) {
+			return convert2FormatDate(dateString, FORMAT_DATE_Y4MD);
+		}
+		return convert2FormatDate(dateString, FORMAT_DATETIME_Y4MDHMS);
+	}
+
+	/**
+	 * 格式化日期字符串
+	 */
+	public static String formatDateString(String dateString){
+		if(V.isEmpty(dateString)){
+			return null;
+		}
 		// 清洗
 		if(dateString.contains("月")){
 			dateString = dateString.replaceAll("年", "-").replaceAll("月", "-").replaceAll("日", "").replaceAll("号", "");
@@ -453,7 +468,7 @@ public class D extends DateUtils{
 		else{
 			dateString = dateString.replaceAll("/", "-").replaceAll("\\.", "-");
 		}
-		String[] parts = dateString.split(" ");
+		String[] parts = (dateString.contains("T") && !dateString.contains(" "))? dateString.split("T") : dateString.split(" ");
 		String[] ymd = parts[0].split("-");
 		if(ymd.length >= 3){
 			if(ymd[0].length() == 2){
@@ -468,7 +483,7 @@ public class D extends DateUtils{
 		}
 		parts[0] = S.join(ymd, "-");
 		if(parts.length == 1){
-			return D.convert2FormatDate(parts[0], D.FORMAT_DATE_Y4MD);
+			return parts[0];
 		}
 		// 18:20:30:103
 		String[] hmsArray = new String[3];
@@ -496,7 +511,7 @@ public class D extends DateUtils{
 			hmsArray[2] = "00";
 		}
 		parts[1] = S.join(hmsArray, ":");
-		return convert2FormatDate(S.join(parts, " "), FORMAT_DATETIME_Y4MDHMS);
+		return S.join(parts, " ");
 	}
 
 }

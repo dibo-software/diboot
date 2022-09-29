@@ -16,7 +16,6 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.data.copy.Accept;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
@@ -50,10 +49,10 @@ public class User extends BaseEntity {
     @TableField
     private String gender;
 
-    //@JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
+    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     private Date birthdate;
 
-    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
+    @JsonFormat(pattern = D.FORMAT_DATETIME_Y4MDHMS)
     private LocalDateTime localDatetime;
 
     @TableField("`character`")

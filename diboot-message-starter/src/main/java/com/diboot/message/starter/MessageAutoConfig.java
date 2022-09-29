@@ -16,6 +16,7 @@
 package com.diboot.message.starter;
 
 import com.diboot.message.channel.SimpleEmailChannel;
+import com.diboot.message.channel.SystemMessageChannel;
 import com.diboot.message.entity.BaseUserVariables;
 import com.diboot.message.service.MessageService;
 import com.diboot.message.service.impl.MessageServiceImpl;
@@ -50,7 +51,7 @@ public class MessageAutoConfig {
     @ConditionalOnMissingBean
     public MessageService messageService() {
         return new MessageServiceImpl(
-            Arrays.asList(new SimpleEmailChannel()),
+            Arrays.asList(new SimpleEmailChannel(), new SystemMessageChannel()),
             Arrays.asList(BaseUserVariables.class)
         );
     }

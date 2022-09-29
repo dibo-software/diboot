@@ -21,14 +21,12 @@ import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Entity集合绑定实现
@@ -145,19 +143,32 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                     if(obj == null){
                         continue;
                     }
-                    String valStr = String.valueOf(obj);
-                    List<T> ent = entityMap.get(valStr);
-                    if(ent != null){
-                        for (T item : ent) {
-                            valueList.add(cloneOrConvertBean(item));
-                        }
-                    }
-                    else if(V.notEmpty(splitBy) && valStr.contains(splitBy)){
-                        for(String key : valStr.split(splitBy)){
-                            ent = entityMap.get(key);
+                    // 兼容JsonArray
+                    if(obj instanceof Collection) {
+                        for(Object key : (Collection)obj){
+                            List<T> ent = entityMap.get(S.valueOf(key));
                             if(ent != null){
                                 for (T item : ent) {
                                     valueList.add(cloneOrConvertBean(item));
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        String valStr = S.clearNonConst(String.valueOf(obj));
+                        List<T> ent = entityMap.get(valStr);
+                        if(ent != null){
+                            for (T item : ent) {
+                                valueList.add(cloneOrConvertBean(item));
+                            }
+                        }
+                        else if(V.notEmpty(splitBy) && valStr.contains(splitBy)){
+                            for(String key : valStr.split(splitBy)){
+                                ent = entityMap.get(key);
+                                if(ent != null){
+                                    for (T item : ent) {
+                                        valueList.add(cloneOrConvertBean(item));
+                                    }
                                 }
                             }
                         }

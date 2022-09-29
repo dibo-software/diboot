@@ -63,20 +63,20 @@ public class ExcelBindAnnoHandler {
                 BindDict bindDict = field.getAnnotation(BindDict.class);
                 if(excelBindDict != null){
                     if(field2AnnoMap == null){
-                        field2AnnoMap = new HashMap<>(8);
+                        field2AnnoMap = new LinkedHashMap<>(8);
                     }
                     field2AnnoMap.put(field.getName(), excelBindDict);
                 }
                 else if(bindDict != null) {
                     if(field2AnnoMap == null){
-                        field2AnnoMap = new HashMap<>(8);
+                        field2AnnoMap = new LinkedHashMap<>(8);
                     }
                     field2AnnoMap.put(field.getName(), bindDict);
                 }
                 ExcelBindField bindField = field.getAnnotation(ExcelBindField.class);
                 if(bindField != null){
                     if(field2AnnoMap == null){
-                        field2AnnoMap = new HashMap<>(8);
+                        field2AnnoMap = new LinkedHashMap<>(8);
                     }
                     field2AnnoMap.put(field.getName(), bindField);
                 }

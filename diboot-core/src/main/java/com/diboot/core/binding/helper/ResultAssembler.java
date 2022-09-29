@@ -45,29 +45,44 @@ public class ResultAssembler {
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        StringBuilder sb = new StringBuilder();
         try{
             for(E object : fromList){
+                List matchKeys = null;
                 BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
-                sb.setLength(0);
                 for(int i=0; i<getterFields.length; i++){
-                    String fieldValue = BeanUtils.getStringProperty(object, getterFields[i]);
-                    if(i > 0){
-                        sb.append(Cons.SEPARATOR_COMMA);
+                    Object fieldValueObj = BeanUtils.getProperty(object, getterFields[i]);
+                    if(fieldValueObj == null) {
+                        continue;
                     }
-                    sb.append(fieldValue);
+                    if(fieldValueObj instanceof Collection) {
+                        if(matchKeys == null) {
+                            matchKeys = new ArrayList();
+                        }
+                        matchKeys.addAll((Collection) fieldValueObj);
+                    }
+                    else {
+                        if(matchKeys == null) {
+                            matchKeys = new ArrayList(getterFields.length);
+                        }
+                        matchKeys.add(S.clearNonConst(S.valueOf(fieldValueObj)));
+                    }
+                }
+                if(matchKeys == null) {
+                    continue;
                 }
                 // 查找匹配Key
-                String matchKey = sb.toString();
+                String matchKey = S.join(matchKeys);
                 if(valueMatchMap.containsKey(matchKey)){
                     // 赋值
                     beanWrapper.setPropertyValue(setterFieldName, valueMatchMap.get(matchKey));
                 }
-                else if(V.notEmpty(splitBy) && getterFields.length == 1 && matchKey.contains(splitBy)){
-                    String[] keys = matchKey.split(splitBy);
-                    List matchedValues = new ArrayList(keys.length);
-                    for(String key : keys){
-                        Object value = valueMatchMap.get(key);
+                else {
+                    if(matchKeys.size() == 1 && V.notEmpty(splitBy) && getterFields.length == 1 && matchKey.contains(splitBy)) {
+                        matchKeys = S.splitToList(matchKey, splitBy);
+                    }
+                    List matchedValues = new ArrayList(matchKeys.size());
+                    for(Object key : matchKeys){
+                        Object value = valueMatchMap.get(S.valueOf(key));
                         if(value != null){
                             if(value instanceof Collection){
                                 Collection valueList = (Collection)value;
@@ -88,7 +103,6 @@ public class ResultAssembler {
                     beanWrapper.setPropertyValue(setterFieldName, matchedValues);
                 }
             }
-            sb.setLength(0);
         }
         catch (Exception e){
             log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
@@ -154,25 +168,41 @@ public class ResultAssembler {
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
         }
-        StringBuilder sb = new StringBuilder();
         try{
             for(E object : fromList){
-                sb.setLength(0);
+                List matchKeys = null;
                 for(int i=0; i<getterFields.length; i++){
-                    String val = BeanUtils.getStringProperty(object, getterFields[i]);
-                    if(i>0){
-                        sb.append(Cons.SEPARATOR_COMMA);
+                    Object fieldValueObj = BeanUtils.getProperty(object, getterFields[i]);
+                    if(fieldValueObj == null) {
+                        continue;
                     }
-                    sb.append(val);
+                    if(fieldValueObj instanceof Collection) {
+                        if(matchKeys == null) {
+                            matchKeys = new ArrayList();
+                        }
+                        matchKeys.addAll((Collection) fieldValueObj);
+                    }
+                    else {
+                        if(matchKeys == null) {
+                            matchKeys = new ArrayList(getterFields.length);
+                        }
+                        matchKeys.add(S.clearNonConst(S.valueOf(fieldValueObj)));
+                    }
+                }
+                // 无有效值，跳过
+                if(matchKeys == null) {
+                    continue;
                 }
                 // 查找匹配Key
-                String matchKey = sb.toString();
+                String matchKey = S.join(matchKeys);
                 List entityList = valueMatchMap.get(matchKey);
-                if(entityList == null && V.notEmpty(splitBy) && matchKey.contains(splitBy)){
-                    String[] keys = matchKey.split(splitBy);
-                    List matchedValues = new ArrayList(keys.length);
-                    for(String key : keys){
-                        Object value = valueMatchMap.get(key);
+                if(entityList == null){
+                    if (matchKeys.size() == 1 && V.notEmpty(splitBy) && matchKey.contains(splitBy)) {
+                        matchKeys = S.splitToList(matchKey, splitBy);
+                    }
+                    List matchedValues = new ArrayList(matchKeys.size());
+                    for(Object key : matchKeys){
+                        Object value = valueMatchMap.get(S.valueOf(key));
                         if(value != null){
                             if(value instanceof Collection){
                                 Collection valueList = (Collection)value;
@@ -193,16 +223,13 @@ public class ResultAssembler {
                         entityList = matchedValues;
                     }
                 }
-                if(entityList != null){
-                    // 赋值
-                    BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
-                    for(int i = 0; i< annoObjSetterPropNameList.size(); i++){
-                        List valObjList = BeanUtils.collectToList(entityList, refGetterFieldNameList.get(i));
-                        beanWrapper.setPropertyValue(annoObjSetterPropNameList.get(i), valObjList);
-                    }
+                // 赋值
+                BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
+                for(int i = 0; i< annoObjSetterPropNameList.size(); i++){
+                    List valObjList = BeanUtils.collectToList(entityList, refGetterFieldNameList.get(i));
+                    beanWrapper.setPropertyValue(annoObjSetterPropNameList.get(i), valObjList);
                 }
             }
-            sb.setLength(0);
         }
         catch (Exception e){
             log.warn("设置属性值异常", e);
@@ -323,16 +350,26 @@ public class ResultAssembler {
         List newValueList = new ArrayList();
         valueList.forEach( value -> {
             if(value != null){
-                String valueStr = S.valueOf(value);
-                if(valueStr.contains(splitBy)){
-                    for(String oneVal :valueStr.split(splitBy)){
+                if(value instanceof Collection) {
+                    for(Object key : (Collection)value){
+                        String oneVal = S.valueOf(key);
                         if(!newValueList.contains(oneVal)){
                             newValueList.add(oneVal);
                         }
                     }
                 }
-                else if(!newValueList.contains(valueStr)){
-                    newValueList.add(valueStr);
+                else {
+                    String valueStr = S.clearNonConst(S.valueOf(value));
+                    if(V.notEmpty(splitBy) && valueStr.contains(splitBy)){
+                        for(String oneVal : valueStr.split(splitBy)){
+                            if(!newValueList.contains(oneVal)){
+                                newValueList.add(oneVal);
+                            }
+                        }
+                    }
+                    else if(!newValueList.contains(valueStr)){
+                        newValueList.add(valueStr);
+                    }
                 }
             }
         });

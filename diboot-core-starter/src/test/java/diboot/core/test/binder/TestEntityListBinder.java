@@ -20,6 +20,7 @@ import com.diboot.core.binding.Binder;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import diboot.core.test.StartupApplication;
@@ -141,14 +142,16 @@ public class TestEntityListBinder {
         for(SimpleSplitVO vo : voList){
             // 验证通过中间表间接关联的绑定
             Assert.assertTrue(V.notEmpty(vo.getManagers()));
-            System.out.println(JSON.stringify(vo));
+            //System.out.println(JSON.stringify(vo));
             if(vo.getCharacter().contains(",")){
-                String[] valueArr = vo.getCharacter().split(",");
+                String[] valueArr = S.clearNonConst(vo.getCharacter()).split(",");
                 if(valueArr[0].equals(valueArr[1])){
                     Assert.assertTrue(vo.getManagers().size() == 1);
+                    Assert.assertTrue(vo.getManagersByJson().size() == 1);
                 }
                 else{
                     Assert.assertTrue(vo.getManagers().size() > 1);
+                    Assert.assertTrue(vo.getManagersByJson().size() > 1);
                 }
             }
             else{
@@ -172,10 +175,11 @@ public class TestEntityListBinder {
             // 验证通过中间表间接关联的绑定
             if(vo.getManagerId().equals(1001L)){
                 Assert.assertTrue(vo.getManagerPhotos().size() == 1);
-                Assert.assertEquals(1, vo.getManagerPhotoList().size());
+                Assert.assertEquals(2, vo.getManagerPhotoList().size());
             }
             else{
                 Assert.assertTrue(vo.getManagerPhotos().size() == 2);
+                Assert.assertTrue(V.isEmpty(vo.getManagerPhotoList()));
             }
             System.out.println(JSON.stringify(vo));
         }

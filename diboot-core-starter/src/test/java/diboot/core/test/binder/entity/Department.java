@@ -16,6 +16,8 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.Strategy;
@@ -24,6 +26,9 @@ import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Department
@@ -34,6 +39,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName(autoResultMap = true)
 public class Department extends BaseEntity {
     private static final long serialVersionUID = -4849732665419794547L;
 
@@ -51,4 +57,17 @@ public class Department extends BaseEntity {
 
     @TableField("`character`")
     private String character;
+
+    /**
+     * JSON数组
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<Long> extjsonarr;
+
+    /**
+     * JSON对象
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private LinkedHashMap<String, Object> extjsonobj;
+
 }

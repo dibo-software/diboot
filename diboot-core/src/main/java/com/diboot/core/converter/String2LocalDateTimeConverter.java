@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,27 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.util;
+package com.diboot.core.converter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
- * Spring表单自动绑定到Java属性时的日期格式转换<br>
- * @see com.diboot.core.converter.String2DateConverter
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/01/01
+ * String - LocalDateTime 转换器
+ * @author JerryMa
+ * @version v2.7.0
+ * @date 2022/7/26
+ * Copyright © diboot.com
  */
-@Deprecated
-public class DateConverter implements Converter<String, Date> {
-    private static final Logger log = LoggerFactory.getLogger(DateConverter.class);
+public class String2LocalDateTimeConverter implements Converter<String, LocalDateTime> {
 
     @Override
-    public Date convert(String dateString) {
-        return D.fuzzyConvert(dateString);
+    public LocalDateTime convert(String dateString) {
+        dateString = D.formatDateString(dateString);
+        return LocalDateTime.parse(dateString);
     }
+
 }

@@ -15,8 +15,9 @@
  */
 package diboot.core.test.binder.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.binder.dto.DepartmentDTO;
 import diboot.core.test.binder.entity.Department;
@@ -35,7 +36,12 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Department> implements DepartmentService {
+public class DepartmentServiceImpl extends BaseServiceImpl<DepartmentMapper, Department> implements DepartmentService {
+
+    @Override
+    public List<Department> list(Wrapper queryWrapper) {
+        return getEntityList(queryWrapper);
+    }
 
     @Override
     public List<Department> getDepartmentSqlList(QueryWrapper<DepartmentDTO> queryWrapper, Pagination pagination) {

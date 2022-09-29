@@ -15,9 +15,8 @@
  */
 package diboot.core.test.service;
 
-import com.diboot.core.converter.*;
+import com.diboot.core.converter.EnhancedConversionService;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Component;
 
 /**

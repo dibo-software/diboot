@@ -57,7 +57,7 @@ public abstract class BaseFileController extends BaseController {
     /**
      * 合法的文件后缀
      */
-    protected static List<String> VALID_FILE_EXTS = Arrays.asList(
+    protected static final List<String> VALID_FILE_EXTS = Arrays.asList(
             "gif","ico","jpeg","jpg","png","tif","bmp","gif","webp",
             "csv", "xls","xlsx","xlsm","doc","docx","dot","ppt","pptx","pdf","css","dtd","txt","md",
             "mp3","mp4","wav","avi","wma","wsdl","xml","xsd","xsl","rar","zip","7z");

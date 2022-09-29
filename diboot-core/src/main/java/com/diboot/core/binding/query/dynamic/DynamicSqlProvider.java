@@ -42,6 +42,11 @@ import java.util.Set;
 public class DynamicSqlProvider {
 
     /**
+     * select中的占位列前缀标识
+     */
+    public static final String PLACEHOLDER_COLUMN_FLAG = "__";
+
+    /**
      * 构建动态SQL
      * @param ew
      * @return
@@ -69,12 +74,7 @@ public class DynamicSqlProvider {
     private <DTO> String buildDynamicSql(Page<?> page, QueryWrapper<DTO> ew){
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
-            if(V.isEmpty(ew.getSqlSelect())){
-                SELECT_DISTINCT("self.*");
-            }
-            else{
-                SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), page));
-            }
+            SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), page));
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
             List<AnnoJoiner> annoJoinerList = wrapper.getAnnoJoiners();
@@ -131,6 +131,15 @@ public class DynamicSqlProvider {
                         }
                     }
                 }
+                // 存在联表且无where条件，
+                else if(V.notEmpty(annoJoinerList)){
+                    // 动态为主表添加is_deleted=0
+                    String isDeletedCol = ParserCache.getDeletedColumn(wrapper.getEntityTable());
+                    String isDeletedSection = "self."+ isDeletedCol;
+                    if(isDeletedCol != null && QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false){
+                        WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
+                    }
+                }
             }
         }}.toString();
     }
@@ -141,21 +150,28 @@ public class DynamicSqlProvider {
      * @return
      */
     private String formatSqlSelect(String sqlSelect, Page<?> page){
-        String[] columns = S.split(sqlSelect);
         Set<String> columnSets = new HashSet<>();
         StringBuilder sb = new StringBuilder();
-        for(int i=0; i<columns.length; i++){
-            String column = S.removeDuplicateBlank(columns[i]).trim();
-            if(i>0){
-                sb.append(Cons.SEPARATOR_COMMA);
-            }
-            sb.append("self.").append(column);
-            columnSets.add("self."+column);
+        if(V.isEmpty(sqlSelect)){
+            sb.append("self.*");
         }
-        if(page != null && page.getOrders() != null) {
-            for(OrderItem orderItem : page.getOrders()){
-                if(!columnSets.contains(orderItem.getColumn())){
-                    sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS _").append(S.replace(orderItem.getColumn(), ".", "_"));
+        else {
+            String[] columns = S.split(sqlSelect);
+            for(int i=0; i<columns.length; i++){
+                String column = S.removeDuplicateBlank(columns[i]).trim();
+                if(i>0){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append("self.").append(column);
+                columnSets.add("self."+column);
+            }
+        }
+        if(page != null && page.orders() != null) {
+            for(OrderItem orderItem : page.orders()){
+                if((V.isEmpty(sqlSelect) && !S.startsWith(orderItem.getColumn(), "self."))
+                    || !columnSets.contains(orderItem.getColumn())
+                ){
+                    sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS ").append(PLACEHOLDER_COLUMN_FLAG).append(S.replace(orderItem.getColumn(), ".", "_"));
                 }
             }
         }

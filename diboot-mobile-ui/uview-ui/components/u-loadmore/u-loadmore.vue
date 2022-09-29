@@ -158,7 +158,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 	
 	/* #ifdef MP */
 	// 在mp.scss中，赋予了u-line为flex: 1，这里需要一个明确的长度，所以重置掉它

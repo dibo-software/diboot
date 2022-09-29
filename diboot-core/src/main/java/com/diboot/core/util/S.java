@@ -87,6 +87,18 @@ public class S extends StringUtils{
 		return joinedStr.split(SEPARATOR);
 	}
 
+	private static final String[] SEARCH_LIST = {"[", "]", "\"", "\'"};
+	private static final String[] REPLACE_LIST = {"", "", "", ""};
+
+	/**
+	 * 清除非常量标识符： json标识 []"'等
+	 * @param inputJsonStr
+	 * @return
+	 */
+	public static String clearNonConst(String inputJsonStr) {
+		return S.replaceEach(inputJsonStr, SEARCH_LIST, REPLACE_LIST);
+	}
+
 	/***
 	 * 转换为String数组（避免转型异常）
 	 * @param stringList
@@ -102,10 +114,20 @@ public class S extends StringUtils{
 	 * @return
 	 */
 	public static List<String> splitToList(String joinedStr){
+		return splitToList(joinedStr, SEPARATOR);
+	}
+
+
+	/***
+	 * 按,拆分字符串并转换为 List<String>
+	 * @param joinedStr
+	 * @return
+	 */
+	public static List<String> splitToList(String joinedStr, String separator){
 		if(joinedStr == null){
 			return null;
 		}
-		return Arrays.asList(joinedStr.split(SEPARATOR));
+		return Arrays.asList(joinedStr.split(separator));
 	}
 
 	/***
@@ -305,6 +327,9 @@ public class S extends StringUtils{
 	public static String valueOf(Object o) {
     	if (o == null){
     		return null;
+		}
+		if(o instanceof String) {
+			return (String)o;
 		}
 		return String.valueOf(o);
 	}

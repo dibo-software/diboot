@@ -17,11 +17,7 @@ package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.binding.annotation.BindFieldList;
-import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.Comparison;
-import com.diboot.core.binding.query.Strategy;
 import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.Role;
 import diboot.core.test.binder.entity.User;
 import lombok.Getter;

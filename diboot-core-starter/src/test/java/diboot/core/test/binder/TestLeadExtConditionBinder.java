@@ -22,7 +22,6 @@ import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.FieldBinderVO;
 import diboot.core.test.binder.vo.UserExtVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;

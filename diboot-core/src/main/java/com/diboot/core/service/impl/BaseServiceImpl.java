@@ -521,6 +521,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
 			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
 		}
+		else if(queryWrapper instanceof QueryWrapper) {
+			QueryWrapper mpQueryWrapper = ((QueryWrapper)queryWrapper);
+			if(mpQueryWrapper.getEntityClass() == null) {
+				mpQueryWrapper.setEntityClass(entityClass);
+			}
+		}
+		else if(queryWrapper instanceof LambdaQueryWrapper) {
+			LambdaQueryWrapper mpQueryWrapper = ((LambdaQueryWrapper)queryWrapper);
+			if(mpQueryWrapper.getEntityClass() == null) {
+				mpQueryWrapper.setEntityClass(entityClass);
+			}
+		}
 		// 否则，调用MP默认实现
 		if(pagination != null){
 			IPage<T> page = convertToIPage(queryWrapper, pagination);
@@ -553,17 +565,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
 		LambdaQueryWrapper query = null;
+		List<T> entityList = null;
 		// 优化SQL，只查询当前字段
 		if(queryWrapper instanceof QueryWrapper){
-				query = ((QueryWrapper)queryWrapper).lambda();
+			query = ((QueryWrapper)queryWrapper).lambda();
 		}
 		else if(queryWrapper instanceof LambdaQueryWrapper){
-				query = ((LambdaQueryWrapper) queryWrapper);
+			query = ((LambdaQueryWrapper) queryWrapper);
 		}
 		else {
 			throw new InvalidUsageException("不支持的Wrapper类型：" + (queryWrapper == null ? "null" : queryWrapper.getClass()));
 		}
-		List<T> entityList = getEntityList(query.select(getterFn));
+		// 如果是动态join，则调用JoinsBinder
+		query.select(getterFn);
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, entityClass, null);
+		}
+		else{
+			entityList = getEntityList(query);
+		}
 		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
@@ -572,6 +592,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			Pagination pagination = new Pagination();
+			pagination.setPageIndex(1).setPageSize(limitCount);
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+		}
 		Page<T> page = new Page<>(1, limitCount);
 		page.setSearchCount(false);
 		page = super.page(page, queryWrapper);
@@ -580,6 +606,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public T getSingleEntity(Wrapper queryWrapper) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			return (T)Binder.joinQueryOne((DynamicJoinQueryWrapper)queryWrapper, entityClass);
+		}
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		if(V.notEmpty(entityList)){
 			return entityList.get(0);
