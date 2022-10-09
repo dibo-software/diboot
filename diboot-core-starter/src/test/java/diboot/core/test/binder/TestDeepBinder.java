@@ -23,6 +23,7 @@ import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.vo.DeepBindVO;
+import diboot.core.test.binder.vo.DepartmentVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -81,8 +82,12 @@ public class TestDeepBinder {
             if(vo.getId().equals(10001L)){
                 Assert.assertTrue(vo.getChildren().size() == 3);
                 // 验证深度绑定
-                Assert.assertTrue(vo.getChildren().get(0).getOrganizationVO() != null);
-                Assert.assertTrue(vo.getChildren().get(1).getOrganizationVO() != null);
+                List<DepartmentVO> children = vo.getChildren();
+                Assert.assertTrue(children.get(0).getOrganizationVO() != null);
+                Assert.assertTrue(children.get(1).getOrganizationVO() != null);
+                // 测试第4层
+                Assert.assertTrue(children.get(0).getOrganizationVO().getManagerGenderLabel() != null);
+                Assert.assertTrue(children.get(1).getOrganizationVO().getManagerGenderLabel() != null);
             }
             else if(vo.getId().equals(10003L)){
                 Assert.assertTrue(vo.getChildren().size() == 2);
@@ -90,7 +95,7 @@ public class TestDeepBinder {
                 Assert.assertTrue(vo.getChildren().get(0).getOrganizationVO() != null);
             }
             else if(vo.getId().equals(10005L)){
-                Assert.assertTrue(vo.getChildren() == null);
+                Assert.assertTrue(V.isEmpty(vo.getChildren()));
             }
             System.out.println(JSON.stringify(vo));
         }

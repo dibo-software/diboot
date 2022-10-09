@@ -183,7 +183,7 @@ public class JsonResult<T> implements Serializable {
      * @param pagination
      */
     @SuppressWarnings("unchecked")
-    public JsonResult<T> bindPagination(Pagination pagination){
+    public PagingJsonResult<T> bindPagination(Pagination pagination){
         return new PagingJsonResult(this, pagination);
     }
 

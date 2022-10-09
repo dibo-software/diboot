@@ -25,19 +25,20 @@ import com.diboot.core.binding.QueryBuilder;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.entity.CcCityInfo;
-import diboot.core.test.binder.entity.Department;
-import diboot.core.test.binder.entity.User;
-import diboot.core.test.binder.entity.UserRole;
+import diboot.core.test.binder.dto.UserDTO;
+import diboot.core.test.binder.entity.*;
 import diboot.core.test.binder.service.CcCityInfoService;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.OrganizationService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.SimpleDictionaryVO;
 import diboot.core.test.config.SpringMvcConfig;
@@ -46,6 +47,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +73,12 @@ public class BaseServiceTest {
 
     @Autowired
     DepartmentService departmentService;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    OrganizationService organizationService;
 
     @Test
     public void testGet(){
@@ -193,9 +201,20 @@ public class BaseServiceTest {
 
         IPage<Dictionary> dictionaryPage = dictionaryService.page(dp, queryWrapper);
 
-        PagingJsonResult pagingJsonResult = new PagingJsonResult(dictionaryPage);
+        PagingJsonResult pagingJsonResult = new JsonResult().data(dictionaryPage.getRecords()).bindPagination(new Pagination());
         Assert.assertTrue(V.notEmpty(pagingJsonResult));
         Assert.assertTrue(pagingJsonResult.getPage().getOrderBy().equals("id:DESC"));
+
+        PagingJsonResult<List<Dictionary>> pagingJsonResult2 = new PagingJsonResult(dictionaryPage);
+        String jsonStr = JSON.stringify(pagingJsonResult2);
+        System.out.println(jsonStr);
+        Assert.assertTrue(pagingJsonResult2.getPage().getOrderBy().equals("id:DESC"));
+
+        PagingJsonResult<List<Dictionary>> pagingJsonResult3 = JSON.parseObject(jsonStr,
+                new TypeReference<PagingJsonResult<List<Dictionary>>>() {}
+        );
+        Assert.assertTrue(pagingJsonResult3.getPage() != null);
+        Assert.assertTrue(pagingJsonResult3.getData() != null);
     }
 
     /**
@@ -319,6 +338,22 @@ public class BaseServiceTest {
         String val = dictionaryService.getValueOfField(Dictionary::getId, 2L, Dictionary::getItemValue);
         Assert.assertTrue("M".equals(val));
         System.out.println(val);
+
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
+        dto.setUsername("张三");
+        // builder直接查询，不分页 3条结果
+        ExtQueryWrapper queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto);
+        List<String> values = userService.getValuesOfField(queryWrapper, User::getUsername);
+        Assert.assertTrue(values.size() == 1);
+        dto.setUsername(null);
+
+        dto.setDeptId(10002L);
+        dto.setDeptName("研发组");
+        dto.setOrgName("苏州帝博");
+        queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto);
+        List<String> values2 = userService.getValuesOfField(queryWrapper, User::getUsername);
+        Assert.assertTrue(values2.size() == 2);
     }
 
     @Test
@@ -353,6 +388,12 @@ public class BaseServiceTest {
         pagination.setPageIndex(2);
         voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
         Assert.assertTrue(voList.size() == 1);
+
+        // 测试 ORDER BY name
+        pagination = new Pagination();
+        pagination.setOrderBy("name:DESC");
+        List<Organization> organizations = organizationService.getEntityList(null, pagination);
+        Assert.assertTrue(organizations != null && organizations.get(0).getName().contains("苏州帝博"));
     }
 
     @Test
@@ -506,6 +547,31 @@ public class BaseServiceTest {
     public void testDelete(){
         CcCityInfo cityInfo = ContextHelper.getBean(CcCityInfoService.class).list().get(0);
         //ContextHelper.getBean(CcCityInfoService.class).removeById(cityInfo.getId());
+    }
+
+    @Test
+    public void testJdbcTemplate(){
+        List<Map<String, Object>> mapList = jdbcTemplate.queryForList("SELECT * FROM department");
+        Assert.assertTrue(mapList != null);
+        System.out.println(mapList);
+
+        List<Long> objList = jdbcTemplate.queryForList("SELECT id FROM department", Long.class);
+        Assert.assertTrue(objList != null);
+        Assert.assertTrue(objList.get(0) != null);
+
+        jdbcTemplate.execute("UPDATE department SET name='A' WHERE id=0");
+    }
+
+    @Test
+    public void testJson() {
+        List<Department> departments = departmentService.getEntityList(null);
+        Assert.assertTrue(departments != null);
+        for(Department dept : departments) {
+            if(V.notEmpty(dept.getCharacter()) && dept.getCharacter().contains(",")){
+                Assert.assertTrue(dept.getExtjsonarr().size() == S.split(dept.getCharacter()).length);
+                Assert.assertTrue(dept.getExtjsonobj() != null);
+            }
+        }
     }
 
 }

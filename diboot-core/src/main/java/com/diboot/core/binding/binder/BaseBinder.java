@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 关系绑定Binder父类
@@ -316,8 +317,7 @@ public abstract class BaseBinder<T> {
             // 构建查询条件
             if (V.notEmpty(annoObjectJoinOnList)) {
                 String refObjJoinOnCol = refObjJoinCols.get(i);
-                List<?> unpackAnnoObjectJoinOnList = V.notEmpty(this.splitBy) ? ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy)
-                        : annoObjectJoinOnList;
+                List<?> unpackAnnoObjectJoinOnList = ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy);
                 queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
                 if (remoteBindDTO != null) {
                     remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(unpackAnnoObjectJoinOnList);

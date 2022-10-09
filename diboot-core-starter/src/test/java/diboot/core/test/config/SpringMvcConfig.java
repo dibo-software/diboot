@@ -22,9 +22,7 @@ import com.diboot.core.handler.DataAccessControlInterceptor;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -43,7 +41,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -54,7 +51,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 /***
@@ -145,6 +141,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
         registry.addConverter(new Date2LocalDateConverter());
         registry.addConverter(new Date2LocalDateTimeConverter());
         registry.addConverter(new String2DateConverter());
+        registry.addConverter(new String2LocalDateConverter());
+        registry.addConverter(new String2LocalDateTimeConverter());
         registry.addConverter(new String2BooleanConverter());
         registry.addConverter(new Timestamp2LocalDateTimeConverter());
     }

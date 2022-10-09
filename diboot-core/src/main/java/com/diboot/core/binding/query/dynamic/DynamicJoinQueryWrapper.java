@@ -29,7 +29,7 @@ import java.util.List;
  * @version v2.0
  * @date 2020/04/16
  */
-public class DynamicJoinQueryWrapper<DTO,E> extends ExtQueryWrapper<DTO,E> {
+public class DynamicJoinQueryWrapper<DTO,T> extends ExtQueryWrapper<T> {
     public DynamicJoinQueryWrapper(Class<DTO> dtoClass, Collection<String> fields){
         this.dtoClass = dtoClass;
         this.fields = fields;
@@ -58,7 +58,7 @@ public class DynamicJoinQueryWrapper<DTO,E> extends ExtQueryWrapper<DTO,E> {
      * @return
      */
     @Override
-    public E queryOne(Class<E> entityClazz){
+    public T queryOne(Class<T> entityClazz){
         return JoinsBinder.queryOne(this, entityClazz);
     }
 
@@ -68,7 +68,7 @@ public class DynamicJoinQueryWrapper<DTO,E> extends ExtQueryWrapper<DTO,E> {
      * @return
      */
     @Override
-    public List<E> queryList(Class<E> entityClazz){
+    public List<T> queryList(Class<T> entityClazz){
         return JoinsBinder.queryList(this, entityClazz);
     }
 
@@ -78,7 +78,7 @@ public class DynamicJoinQueryWrapper<DTO,E> extends ExtQueryWrapper<DTO,E> {
      * @return
      */
     @Override
-    public List<E> queryList(Class<E> entityClazz, Pagination pagination){
+    public List<T> queryList(Class<T> entityClazz, Pagination pagination){
         return JoinsBinder.queryList(this, entityClazz, pagination);
     }
 

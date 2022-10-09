@@ -54,7 +54,7 @@ public interface AuthService {
     /**
      * 申请Token
      * @param credential 登录凭证
-     * @return token JWT Token
+     * @return token Token
      */
     String applyToken(AuthCredential credential);
 

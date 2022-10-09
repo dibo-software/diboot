@@ -18,7 +18,6 @@ package com.diboot.core.binding;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.diboot.core.binding.parser.ParserCache;
@@ -34,6 +33,7 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,18 @@ public class QueryBuilder {
      * @return
      */
     public static <DTO> QueryWrapper toQueryWrapper(DTO dto){
-        return dtoToWrapper(dto, null);
+        return dtoToWrapper(dto, null, null);
+    }
+
+    /**
+     * Entity或者DTO对象转换为QueryWrapper
+     * @param dto
+     * @param pagination 分页
+     * @param <DTO>
+     * @return
+     */
+    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Pagination pagination){
+        return dtoToWrapper(dto, null, pagination);
     }
 
     /**
@@ -76,7 +87,19 @@ public class QueryBuilder {
      * @return
      */
     public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Collection<String> fields){
-        return dtoToWrapper(dto, fields);
+        return dtoToWrapper(dto, fields, null);
+    }
+
+    /**
+     * Entity或者DTO对象转换为QueryWrapper
+     * @param dto
+     * @param fields 指定参与转换的属性值
+     * @param pagination 分页
+     * @param <DTO>
+     * @return
+     */
+    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination){
+        return dtoToWrapper(dto, fields, pagination);
     }
 
     /**
@@ -86,7 +109,28 @@ public class QueryBuilder {
      * @return
      */
     public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto){
-        return toDynamicJoinQueryWrapper(dto, null);
+        return toDynamicJoinQueryWrapper(dto, null, null);
+    }
+
+    /**
+     * Entity或者DTO对象转换为QueryWrapper
+     * @param dto
+     * @param pagination 分页
+     * @param <DTO>
+     * @return
+     */
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Pagination pagination){
+        return toDynamicJoinQueryWrapper(dto, null, pagination);
+    }
+
+    /**
+     * Entity或者DTO对象转换为QueryWrapper
+     * @param dto
+     * @param <DTO>
+     * @return
+     */
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields){
+        return toDynamicJoinQueryWrapper(dto, fields, null);
     }
 
     /**
@@ -96,31 +140,12 @@ public class QueryBuilder {
      * @param <DTO>
      * @return
      */
-    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields){
-        QueryWrapper queryWrapper = dtoToWrapper(dto, fields);
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination){
+        QueryWrapper queryWrapper = dtoToWrapper(dto, fields, pagination);
         if(!(queryWrapper instanceof DynamicJoinQueryWrapper)){
             return (ExtQueryWrapper)queryWrapper;
         }
         return (DynamicJoinQueryWrapper)queryWrapper;
-    }
-
-    /**
-     * Entity或者DTO对象转换为LambdaQueryWrapper
-     * @param dto
-     * @return
-     */
-    public static <DTO> LambdaQueryWrapper<DTO> toLambdaQueryWrapper(DTO dto){
-        return (LambdaQueryWrapper<DTO>) toQueryWrapper(dto).lambda();
-    }
-
-    /**
-     * Entity或者DTO对象转换为LambdaQueryWrapper
-     * @param dto
-     * @param fields 指定参与转换的属性值
-     * @return
-     */
-    public static <DTO> LambdaQueryWrapper<DTO> toLambdaQueryWrapper(DTO dto, Collection<String> fields){
-        return (LambdaQueryWrapper<DTO>) toQueryWrapper(dto, fields).lambda();
     }
 
     /**
@@ -129,10 +154,10 @@ public class QueryBuilder {
      * @param dto
      * @return
      */
-    private static <DTO> QueryWrapper<?> dtoToWrapper(DTO dto, Collection<String> fields) {
+    private static <DTO> QueryWrapper<?> dtoToWrapper(DTO dto, Collection<String> fields, Pagination pagination) {
         QueryWrapper<?> wrapper;
         // 转换
-        LinkedHashMap<String, FieldAndValue> fieldValuesMap = extractNotNullValues(dto, fields);
+        LinkedHashMap<String, FieldAndValue> fieldValuesMap = extractNotNullValues(dto, fields, pagination);
         if (V.isEmpty(fieldValuesMap)) {
             return new QueryWrapper<>();
         }
@@ -238,14 +263,15 @@ public class QueryBuilder {
      */
     private static void buildQuery(QueryWrapper<?> wrapper, BindQuery bindQuery, String columnName, Object value) {
         Comparison comparison = bindQuery != null ? bindQuery.comparison() : Comparison.EQ;
+        if(value == null) {
+            if(bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL) && comparison.equals(Comparison.EQ)) {
+                wrapper.isNull(columnName);
+            }
+            return;
+        }
         switch (comparison) {
             case EQ:
-                if(value == null && bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL)) {
-                    wrapper.isNull(columnName);
-                }
-                else{
-                    wrapper.eq(columnName, value);
-                }
+                wrapper.eq(columnName, value);
                 break;
             case IN:
                 if (value.getClass().isArray()) {
@@ -339,10 +365,11 @@ public class QueryBuilder {
      * @param <DTO>
      * @return
      */
-    private static <DTO> LinkedHashMap<String, FieldAndValue> extractNotNullValues(DTO dto, Collection<String> fields){
+    private static <DTO> LinkedHashMap<String, FieldAndValue> extractNotNullValues(DTO dto, Collection<String> fields, Pagination pagination){
         Class<?> dtoClass = dto.getClass();
         // 转换
         List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
+        List<String> extractOrderFieldNames = extractOrderFieldNames(pagination);
         // 结果map：<字段名,字段对象和值>
         LinkedHashMap<String, FieldAndValue> resultMap = new LinkedHashMap<>(declaredFields.size());
         for (Field field : declaredFields) {
@@ -384,7 +411,22 @@ public class QueryBuilder {
                 continue;
             }
             BindQuery bindQuery = field.getAnnotation(BindQuery.class);
-            if (value != null || (bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL))) {
+            Strategy strategy = bindQuery != null? bindQuery.strategy() : Strategy.IGNORE_EMPTY;
+            boolean collectThisField = false;
+            // INCLUDE_NULL策略，包含null也收集
+            if(strategy.equals(Strategy.INCLUDE_NULL)) {
+                collectThisField = true;
+            }
+            else if(strategy.equals(Strategy.IGNORE_EMPTY) && V.notEmpty(value)) {
+                collectThisField = true;
+            }
+            else if(strategy.equals(Strategy.INCLUDE_EMPTY) && value != null) {
+                collectThisField = true;
+            }
+            else if(extractOrderFieldNames.contains(fieldName)) {
+                collectThisField = true;
+            }
+            if (collectThisField) {
                 resultMap.put(fieldName, new FieldAndValue(field, value));
             }
         }
@@ -428,4 +470,27 @@ public class QueryBuilder {
         }
         return false;
     }
+
+    /**
+     * 是否为排序字段
+     * @param pagination
+     * @return
+     */
+    private static List<String> extractOrderFieldNames(Pagination pagination) {
+        if (pagination == null || V.isEmpty(pagination.getOrderBy())) {
+            return Collections.emptyList();
+        }
+        // 解析排序
+        // orderBy=shortName:DESC,age:ASC,birthdate
+        String[] orderByFields = S.split(pagination.getOrderBy());
+        List<String> orderFields = new ArrayList<>(orderByFields.length);
+        for (String field : orderByFields) {
+            if (field.contains(":")) {
+                field = S.substringBefore(field, ":");
+            }
+            orderFields.add(field);
+        }
+        return orderFields;
+    }
+
 }

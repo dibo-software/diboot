@@ -18,6 +18,7 @@ package diboot.core.test.binder.dto;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.util.D;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
@@ -43,11 +44,11 @@ public class DepartmentDTO implements Serializable {
 
     private Long parentId;
 
-    @BindQuery(comparison = Comparison.CONTAINS)
+    @BindQuery(comparison = Comparison.LIKE, strategy = Strategy.IGNORE_EMPTY)
     private String name;
 
     // 绑定join查询
-    @BindQuery(comparison = Comparison.STARTSWITH, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    @BindQuery(comparison = Comparison.STARTSWITH, strategy = Strategy.INCLUDE_NULL, entity = Organization.class, field = "name", condition = "this.org_id=id")
     private String orgName;
 
     // 绑定join查询

@@ -345,7 +345,7 @@ public class SqlFileInitializer {
             return inputSql;
         }
         if(inputSql.contains("/*") && inputSql.contains("*/")){
-            inputSql = inputSql.substring(0, inputSql.lastIndexOf("/*")) + inputSql.substring(inputSql.indexOf("*/")+2, inputSql.length());
+            inputSql = inputSql.substring(0, inputSql.indexOf("/*")) + inputSql.substring(inputSql.indexOf("*/")+2);
         }
         if(inputSql.contains("/*") && inputSql.contains("*/")){
             return removeMultipleLineComments(inputSql);

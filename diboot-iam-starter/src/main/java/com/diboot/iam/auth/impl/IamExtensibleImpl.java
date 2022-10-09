@@ -56,7 +56,7 @@ public class IamExtensibleImpl implements IamExtensible {
         if(userPosition != null){
             Long orgId = userPosition.getOrgId();
             IamPosition position = iamPositionService.getEntity(userPosition.getPositionId());
-            PositionDataScope positionDataScope = new PositionDataScope(userId, position.getDataPermissionType(), userId, orgId);
+            PositionDataScope positionDataScope = new PositionDataScope(position.getId(), position.getDataPermissionType(), userId, orgId);
             List<Long> accessibleUserIds = new ArrayList<>(), accessibleOrgIds = new ArrayList<>();
             // 本人及下属的用户ids
             accessibleUserIds.add(userId);

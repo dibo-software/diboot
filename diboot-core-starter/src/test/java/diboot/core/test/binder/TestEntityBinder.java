@@ -67,6 +67,9 @@ public class TestEntityBinder {
             Assert.assertNotNull(vo.getOrganizationVO());
             System.out.println(JSON.stringify(vo.getOrganizationVO()));
             System.out.println(JSON.stringify(vo));
+            if(vo.getId().equals(1004L)){
+                Assert.assertNotNull(vo.getDepartment().getExtjsonarr());
+            }
         }
         // 单个entity接口测试
         EntityBinderVO singleVO = BeanUtils.convert(userList.get(0), EntityBinderVO.class);
@@ -78,6 +81,24 @@ public class TestEntityBinder {
         Assert.assertNotNull(singleVO.getOrganizationVO());
         System.out.println(JSON.stringify(singleVO.getOrganizationVO()));
         System.out.println(JSON.stringify(singleVO));
+    }
+
+    @Test
+    public void testBindEntityJsonArray(){
+        // 加载测试数据
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, 1001L, 1004L);
+        List<User> userList = userService.getEntityList(queryWrapper);
+        // 自动绑定
+        List<EntityBinderVO> voList = Binder.convertAndBindRelations(userList, EntityBinderVO.class);
+        for(EntityBinderVO vo : voList){
+            // 验证直接关联和通过中间表间接关联的绑定
+            Assert.assertEquals(vo.getDepartmentId(), vo.getDepartment2().getId());
+            Assert.assertNotNull(vo.getDepartment2().getOrgId());
+            if(vo.getId().equals(1004L)){
+                Assert.assertNotNull(vo.getDepartment2().getExtjsonarr());
+            }
+        }
     }
 
 }

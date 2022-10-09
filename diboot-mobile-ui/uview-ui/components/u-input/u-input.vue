@@ -50,6 +50,7 @@
 			:selection-end="uSelectionEnd"
 			:selection-start="uSelectionStart"
 			:show-confirm-bar="showConfirmbar"
+			:adjust-position="adjustPosition"
 			@focus="onFocus"
 			@blur="handleBlur"
 			@input="handleInput"
@@ -214,12 +215,16 @@ export default {
 			type:Boolean,
 			default:true
 		},
-		//适配diboot
-		adapterDiboot: {
+		// 弹出键盘时是否自动调节高度，uni-app默认值是true
+		adjustPosition: {
 			type: Boolean,
 			default: true
-		}
-
+		},
+    //适配diboot
+    adapterDiboot: {
+      type: Boolean,
+      default: true
+    }
 	},
 	data() {
 		return {
@@ -306,11 +311,12 @@ export default {
 		handleBlur(event) {
 			// 最开始使用的是监听图标@touchstart事件，自从hx2.8.4后，此方法在微信小程序出错
 			// 这里改为监听点击事件，手点击清除图标时，同时也发生了@blur事件，导致图标消失而无法点击，这里做一个延时
+			let value = event.detail.value;
 			setTimeout(() => {
 				this.focused = false;
 			}, 100)
 			// vue 原生的方法 return 出去
-			this.$emit('blur', event.detail.value);
+			this.$emit('blur', value);
 			setTimeout(() => {
 				// 头条小程序由于自身bug，导致中文下，每按下一个键(尚未完成输入)，都会触发一次@input，导致错误，这里进行判断处理
 				// #ifdef MP-TOUTIAO
@@ -318,7 +324,7 @@ export default {
 				this.lastValue = value;
 				// #endif
 				// 将当前的值发送到 u-form-item 进行校验
-				this.dispatch('u-form-item', 'on-form-blur', event.detail.value);
+				this.dispatch('u-form-item', 'on-form-blur', value);
 			}, 40)
 		},
 		onFormItemError(status) {
@@ -332,11 +338,11 @@ export default {
 			this.$emit('confirm', e.detail.value);
 		},
 		onClear(event) {
-			this.adapterDiboot ? this.handleInput({
-				detail: {
-					value: ''
-				}
-			}) : this.$emit('input', '')
+      this.adapterDiboot ? this.handleInput({
+        detail: {
+          value: ''
+        }
+      }) : this.$emit('input', '')
 		},
 		inputClick() {
 			this.$emit('click');
@@ -346,7 +352,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../libs/css/style.components.scss";
+@import "../../libs/css/style.components";
 
 .u-input {
 	position: relative;

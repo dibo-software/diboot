@@ -62,7 +62,8 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
         IamAccount latestAccount = super.getAccount(iamAuthToken);
         // 如果需要密码校验，那么无状态的时候不需要验证
-        if (iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false){
+        if (latestAccount == null ||
+                (iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false)){
             throw new AuthenticationException("用户名或密码错误! account="+iamAuthToken.getAuthAccount());
         }
         return latestAccount;
@@ -71,14 +72,14 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     /**
      * 用户名密码是否一致
      * @param account
-     * @param jwtToken
+     * @param authToken
      * @return
      */
-    private static boolean isPasswordMatched(IamAccount account, IamAuthToken jwtToken){
+    private static boolean isPasswordMatched(IamAccount account, IamAuthToken authToken){
         //加密后比较
-        String encryptedStr = IamSecurityUtils.encryptPwd(jwtToken.getAuthSecret(), account.getSecretSalt());
+        String encryptedStr = IamSecurityUtils.encryptPwd(authToken.getAuthSecret(), account.getSecretSalt());
         // 暂时兼容RC2版本，后期移除
-        String oldEncryptedStr = Encryptor.encrypt(jwtToken.getAuthSecret(), account.getSecretSalt());
+        String oldEncryptedStr = Encryptor.encrypt(authToken.getAuthSecret(), account.getSecretSalt());
         return encryptedStr.equals(account.getAuthSecret()) || oldEncryptedStr.equals(account.getAuthSecret());
     }
 

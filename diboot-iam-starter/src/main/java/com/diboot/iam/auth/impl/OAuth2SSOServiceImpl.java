@@ -77,7 +77,6 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
                 .select(IamAccount::getAuthAccount, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(IamAccount::getTenantId, iamAuthToken.getTenantId())
-                //.eq(IamAccount::getAuthType, jwtToken.getAuthType()) SSO只检查用户名，支持任意类型账号
                 .eq(IamAccount::getAuthAccount, iamAuthToken.getAuthAccount())
                 .orderByDesc(IamAccount::getId);
         return queryWrapper;
@@ -95,7 +94,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
     }
 
     /**
-     * 初始化JwtAuthToken实例
+     * 初始化AuthToken实例
      *
      * @param credential
      * @return
@@ -107,6 +106,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
         token.setAuthAccount(credential.getAuthAccount());
         token.setTenantId(credential.getTenantId());
         token.setRememberMe(credential.isRememberMe());
+        token.setExpiresInMinutes(getExpiresInMinutes());
         // 生成token
         return token.generateAuthtoken();
     }

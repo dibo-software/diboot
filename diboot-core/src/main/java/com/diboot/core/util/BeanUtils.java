@@ -16,6 +16,7 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.config.Cons;
 import com.diboot.core.converter.*;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
@@ -149,7 +150,7 @@ public class BeanUtils {
         if (V.isAnyEmpty(model, propMap)) {
             return;
         }
-        BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(model);
+        BeanWrapper beanWrapper = getBeanWrapper(model);
         for(Map.Entry<String, Object> entry : propMap.entrySet()){
             try{
                 beanWrapper.setPropertyValue(entry.getKey(), entry.getValue());
@@ -188,10 +189,6 @@ public class BeanUtils {
      * @return
      */
     public static String getStringProperty(Object obj, String field){
-        if(obj instanceof Map){
-            Map objMap = (Map)obj;
-            return objMap.containsKey(field)? S.valueOf(objMap.get(field)) : null;
-        }
         Object property = getProperty(obj, field);
         if(property == null){
             return null;
@@ -621,7 +618,11 @@ public class BeanUtils {
                 Object fieldValue = getProperty(object, getterPropName);
                 // E类型中的提取的字段值不需要进行重复判断，如果一定要查重，那应该使用Set代替List
                 if (fieldValue != null) {
-                    fieldValueList.add(fieldValue);
+                    if (fieldValue instanceof Collection) {
+                        fieldValueList.addAll((Collection) fieldValue);
+                    } else {
+                        fieldValueList.add(fieldValue);
+                    }
                 }
             }
         }
@@ -795,6 +796,9 @@ public class BeanUtils {
         String columnName = null;
         if (field.isAnnotationPresent(TableField.class)) {
             columnName = field.getAnnotation(TableField.class).value();
+        }
+        else if(field.isAnnotationPresent(TableId.class)) {
+            columnName = field.getAnnotation(TableId.class).value();
         }
         return S.getIfEmpty(columnName, () -> S.toSnakeCase(field.getName()));
     }

@@ -593,8 +593,9 @@ public class V {
             return true;
         } else if (source == null || target == null) {
             return false;
-        } else if (source.getClass() != target.getClass()) {
-            // 根据equals设计原则，类型不一致，直接false
+        }
+        else if (source.getClass() != target.getClass() && !(source instanceof Map && target instanceof Map)) {
+            // 根据equals设计原则，类型不一致，直接false（仅允许HashMap、LinkedHashMap的差异）
             // 避免子类与父类、子类与子类比较时可能出现的问题
             log.warn("source和target类型不匹配：" + source.getClass() + " 和 " + target.getClass());
             return false;
@@ -693,7 +694,7 @@ public class V {
         } else if (target instanceof Date && source instanceof String) {
             return D.getDateTime((Date) target).equals(source) || D.getDate((Date) target).equals(source);
         } else {
-            return String.valueOf(source).equals(String.valueOf(target));
+            return S.valueOf(source).equals(S.valueOf(target));
         }
     }
 

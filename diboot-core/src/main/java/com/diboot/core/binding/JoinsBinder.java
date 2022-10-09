@@ -23,6 +23,7 @@ import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
+import com.diboot.core.binding.query.dynamic.DynamicSqlProvider;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.data.ProtectFieldHandler;
@@ -55,8 +56,8 @@ public class JoinsBinder {
      * @return
      * @throws Exception
      */
-    public static <DTO,E> E queryOne(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz){
-        List<E> list = executeJoinQuery(queryWrapper, entityClazz, null, true);
+    public static <DTO,T> T queryOne(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz){
+        List<T> list = executeJoinQuery(queryWrapper, entityClazz, null, true);
         if(V.notEmpty(list)){
             return list.get(0);
         }
@@ -70,7 +71,7 @@ public class JoinsBinder {
      * @return
      * @throws Exception
      */
-    public static <DTO,E> List<E> queryList(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz){
+    public static <DTO,T> List<T> queryList(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz){
         return queryList(queryWrapper, entityClazz, null);
     }
 
@@ -82,7 +83,7 @@ public class JoinsBinder {
      * @return
      * @throws Exception
      */
-    public static <DTO,E> List<E> queryList(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz, Pagination pagination){
+    public static <DTO,T> List<T> queryList(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz, Pagination pagination){
         return executeJoinQuery(queryWrapper, entityClazz, pagination, false);
     }
 
@@ -94,7 +95,7 @@ public class JoinsBinder {
      * @return
      * @throws Exception
      */
-    private static <DTO,E> List<E> executeJoinQuery(QueryWrapper<DTO> queryWrapper, Class<E> entityClazz, Pagination pagination, boolean limit1){
+    private static <DTO,T> List<T> executeJoinQuery(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz, Pagination pagination, boolean limit1){
         // 非动态查询，走BaseService
         if(queryWrapper instanceof DynamicJoinQueryWrapper == false){
             IService iService = ContextHelper.getIServiceByEntity(entityClazz);
@@ -140,11 +141,15 @@ public class JoinsBinder {
         }
         ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
         // 转换查询结果
-        List<E> entityList = new ArrayList<>();
+        List<T> entityList = new ArrayList<>();
         for(Map<String, Object> colValueMap : mapList){
             Map<String, Object> fieldValueMap = new HashMap<>();
             // 格式化map
             for(Map.Entry<String, Object> entry : colValueMap.entrySet()){
+                if(entry.getKey().startsWith(DynamicSqlProvider.PLACEHOLDER_COLUMN_FLAG)) {
+                    log.debug("忽略查询占位字段 {}", entry.getKey());
+                    continue;
+                }
                 String fieldName = S.toLowerCaseCamel(entry.getKey());
                 // 如果是布尔类型，检查entity中的定义是Boolean/boolean
                 if(entry.getValue() instanceof Boolean && S.startsWithIgnoreCase(entry.getKey(),"is_")){
@@ -163,7 +168,7 @@ public class JoinsBinder {
             }
             // 绑定map到entity
             try{
-                E entityInst = entityClazz.newInstance();
+                T entityInst = entityClazz.newInstance();
                 BeanUtils.bindProperties(entityInst, fieldValueMap);
                 if (protectFieldHandler != null) {
                     BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(entityInst);
@@ -188,7 +193,7 @@ public class JoinsBinder {
      * @param queryWrapper
      * @param pagination
      */
-    private static <E> void formatOrderBy(DynamicJoinQueryWrapper queryWrapper, Class<E> entityClazz, Pagination pagination){
+    private static <T> void formatOrderBy(DynamicJoinQueryWrapper queryWrapper, Class<T> entityClazz, Pagination pagination){
         // 如果是默认id排序，检查是否有id字段
         if(pagination.isDefaultOrderBy()){
             // 优化排序

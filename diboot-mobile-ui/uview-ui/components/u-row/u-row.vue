@@ -64,7 +64,7 @@
 </script>
 
 <style lang="scss">
-	@import "../../libs/css/style.components.scss";
+	@import "../../libs/css/style.components";
 
 	.u-row {
 		// 由于微信小程序编译后奇怪的页面结构，只能使用float布局实现，flex无法实现

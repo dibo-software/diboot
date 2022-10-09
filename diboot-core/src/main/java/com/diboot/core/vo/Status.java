@@ -76,6 +76,14 @@ public enum Status {
      * 认证不通过（用户名密码错误等认证失败场景）
      */
     FAIL_AUTHENTICATION(4009, "认证不通过"),
+    /**
+     * 租户无效
+     */
+    FAIL_INVALID_TENANT(4011,"无效的租户"),
+    /**
+     * 账号无效
+     */
+    FAIL_INVALID_ACCOUNT(4012,"无效的账号"),
 
     /***
      * 系统异常

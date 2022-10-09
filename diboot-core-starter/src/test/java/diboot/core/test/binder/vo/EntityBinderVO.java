@@ -34,12 +34,16 @@ import lombok.experimental.Accessors;
 public class EntityBinderVO extends User {
     private static final long serialVersionUID = 3526115343377985725L;
 
-    // 字段关联，相同条件的entity+condition将合并为一条SQL查询
+    // 实体关联，支持附加条件
     @BindEntity(entity= Department.class, condition="this.department_id=id AND name like '发'") // AND is_deleted=1
     private Department department;
 
     // 通过中间表关联Entity
     @BindEntity(entity = Organization.class, condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0") // AND ...
     private OrganizationVO organizationVO;
+
+    // 实体关联
+    @BindEntity(entity= Department.class, condition="this.department_id=id") // AND is_deleted=1
+    private Department department2;
 
 }

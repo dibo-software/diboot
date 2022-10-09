@@ -29,7 +29,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/01/01
  */
-public class PagingJsonResult extends JsonResult{
+public class PagingJsonResult<T> extends JsonResult<T> {
     private static final long serialVersionUID = 1002L;
 
     /***
@@ -40,10 +40,14 @@ public class PagingJsonResult extends JsonResult{
     public PagingJsonResult(){
     }
 
+    public PagingJsonResult(T data){
+        this.data(data);
+    }
+
     /**
      * 默认成功，无返回数据
       */
-    public PagingJsonResult(JsonResult jsonResult, Pagination pagination){
+    public PagingJsonResult(JsonResult<T> jsonResult, Pagination pagination){
         super(jsonResult.getCode(), jsonResult.getMsg(), jsonResult.getData());
         this.page = pagination;
     }
@@ -51,9 +55,9 @@ public class PagingJsonResult extends JsonResult{
     /**
      * 基于IPage<T>转换为PagingJsonResult
      * @param iPage
-     * @param <T>
+     * @param
      */
-    public <T> PagingJsonResult(IPage<T> iPage){
+    public PagingJsonResult(IPage<?> iPage){
         Pagination pagination = new Pagination();
         pagination.setPageIndex((int)iPage.getCurrent());
         pagination.setPageSize((int)iPage.getSize());
@@ -71,7 +75,8 @@ public class PagingJsonResult extends JsonResult{
             pagination.setOrderBy(S.join(orderByList));
         }
         this.page = pagination;
-        this.data(iPage.getRecords());
+        T data = (T)iPage.getRecords();
+        this.data(data);
     }
 
     public PagingJsonResult setPage(Pagination pagination){

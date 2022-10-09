@@ -15,7 +15,6 @@
  */
 package com.diboot.core.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
@@ -35,6 +34,7 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
+import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +71,16 @@ public class BaseController {
 	}
 
 	/***
+	 * 根据DTO构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
+	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
+	 * @param pagination 分页，如按关联表中的字段排序时需传入pagination
+	 * @return
+	 */
+	protected <DTO> QueryWrapper<DTO> buildQueryWrapperByDTO(DTO entityOrDto, Pagination pagination) throws Exception{
+		return QueryBuilder.toQueryWrapper(entityOrDto, pagination);
+	}
+
+	/***
 	 * 根据请求参数构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
@@ -80,32 +90,13 @@ public class BaseController {
 	}
 
 	/***
-	 * 构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件)
+	 * 根据请求参数构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
-	 * @see #buildLambdaQueryWrapperByDTO #buildLambdaQueryWrapperByQueryParams
+	 * @param pagination 分页，如按关联表中的字段排序时需传入pagination
 	 * @return
 	 */
-	@Deprecated
-    protected <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapper(DTO entityOrDto) throws Exception{
-		return buildLambdaQueryWrapperByQueryParams(entityOrDto);
-	}
-
-	/***
-	 * 根据DTO构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
-	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
-	 * @return
-	 */
-    protected <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapperByDTO(DTO entityOrDto) throws Exception{
-		return QueryBuilder.toLambdaQueryWrapper(entityOrDto);
-	}
-
-	/***
-	 * 根据请求参数构建查询LambdaQueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
-	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
-	 * @return
-	 */
-    protected <DTO> LambdaQueryWrapper<DTO> buildLambdaQueryWrapperByQueryParams(DTO entityOrDto) throws Exception{
-		return QueryBuilder.toLambdaQueryWrapper(entityOrDto, extractQueryParams());
+	protected <DTO> QueryWrapper<DTO> buildQueryWrapperByQueryParams(DTO entityOrDto, Pagination pagination) throws Exception{
+		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams(), pagination);
 	}
 
 	/***

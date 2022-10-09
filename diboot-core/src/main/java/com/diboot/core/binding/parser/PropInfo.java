@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -64,6 +65,15 @@ public class PropInfo implements Serializable {
      * @param beanClass
      */
     public PropInfo(Class<?> beanClass) {
+        this(beanClass, true);
+    }
+
+    /**
+     * 初始化
+     * @param beanClass
+     * @param isEntityClass 是否为entity实体类（数据库表对应实体）
+     */
+    public PropInfo(Class<?> beanClass, boolean isEntityClass) {
         List<Field> fields = BeanUtils.extractAllFields(beanClass);
         if(V.notEmpty(fields)){
             for(Field fld : fields){
@@ -102,14 +112,18 @@ public class PropInfo implements Serializable {
                 else{
                     TableLogic tableLogic = fld.getAnnotation(TableLogic.class);
                     if(tableLogic != null){
-                        if (V.notEmpty(tableLogic.value())){
-                            columnName = tableLogic.value();
-                        }
-                        else if(columnName == null){
+                        if(columnName == null){
                             columnName = S.toSnakeCase(fldName);
                         }
                         this.deletedColumn = columnName;
+                        if (V.notEmpty(tableLogic.value())){
+                            BaseConfig.setActiveFlagValue(tableLogic.value());
+                        }
                     }
+                }
+                // 实体类基于默认规则提取列名
+                if(columnName == null && isEntityClass) {
+                    columnName = S.toSnakeCase(fldName);
                 }
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){

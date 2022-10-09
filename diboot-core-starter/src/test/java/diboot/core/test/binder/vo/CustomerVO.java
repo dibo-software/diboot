@@ -13,21 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.jwt;
+package diboot.core.test.binder.vo;
 
-import com.diboot.iam.shiro.IamAuthToken;
+import com.diboot.core.binding.annotation.BindDict;
+import diboot.core.test.binder.entity.Customer;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
- * @author Yangzhao
+ * <Description>
+ *
+ * @author mazc@dibo.ltd
  * @version v2.0
- * @date 2019/6/6
+ * @date 2019/06/22
  */
-@Deprecated
-@Getter @Setter
-@Slf4j
-public class BaseJwtAuthToken extends IamAuthToken {
-    private static final long serialVersionUID = -3455501467921544790L;
+@Getter
+@Setter
+@Accessors(chain = true)
+public class CustomerVO extends Customer {
+
+    @BindDict(type = "MESSAGE_CHANNEL", field = "extjsonarr")
+    private List<String> channelLabels;
+
 }

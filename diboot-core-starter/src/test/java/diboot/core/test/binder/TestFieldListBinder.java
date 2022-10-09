@@ -18,6 +18,7 @@ package diboot.core.test.binder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.DemoTest;
@@ -142,12 +143,14 @@ public class TestFieldListBinder {
             Assert.assertTrue(V.notEmpty(vo.getManagerNames()));
             System.out.println(JSON.stringify(vo));
             if(vo.getCharacter().contains(",")){
-                String[] valueArr = vo.getCharacter().split(",");
+                String[] valueArr = S.clearNonConst(vo.getCharacter()).split(",");
                 if(valueArr[0].equals(valueArr[1])){
                     Assert.assertTrue(vo.getManagerNames().size() == 1);
+                    Assert.assertTrue(vo.getManagerNamesByJson().size() == 1);
                 }
                 else{
                     Assert.assertTrue(vo.getManagerNames().size() > 1);
+                    Assert.assertTrue(vo.getManagerNamesByJson().size() > 1);
                 }
             }
             else{

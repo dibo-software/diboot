@@ -89,7 +89,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/css/style.components.scss";
+@import "../../libs/css/style.components";
 
 .u-grid {
 	width: 100%;

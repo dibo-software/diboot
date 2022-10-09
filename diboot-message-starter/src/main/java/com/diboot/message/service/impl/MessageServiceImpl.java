@@ -28,6 +28,7 @@ import com.diboot.message.entity.Message;
 import com.diboot.message.entity.MessageTemplate;
 import com.diboot.message.mapper.MessageMapper;
 import com.diboot.message.service.MessageService;
+import com.diboot.message.service.MessageTemplateService;
 import com.diboot.message.utils.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
 
     @Lazy
     @Autowired
-    private MessageTemplateServiceImpl messageTemplateService;
+    private MessageTemplateService messageTemplateService;
 
     /**
      * 发送通道

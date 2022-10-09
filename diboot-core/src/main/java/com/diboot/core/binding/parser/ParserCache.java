@@ -74,10 +74,9 @@ public class ParserCache {
      * @return
      */
     public static BindAnnotationGroup getBindAnnotationGroup(Class<?> voClass){
-        BindAnnotationGroup group = allVoBindAnnotationCacheMap.get(voClass);
-        if(group == null){
+        return allVoBindAnnotationCacheMap.computeIfAbsent(voClass, k -> {
             // 获取注解并缓存
-            group = new BindAnnotationGroup();
+            BindAnnotationGroup group = new BindAnnotationGroup();
             // 获取当前VO的所有字段
             List<Field> fields = BeanUtils.extractAllFields(voClass);
             if(V.notEmpty(fields)){
@@ -108,10 +107,9 @@ public class ParserCache {
                     }
                 }
             }
-            allVoBindAnnotationCacheMap.put(voClass, group);
-        }
-        // 返回归类后的注解对象
-        return group;
+            // 返回归类后的注解对象
+            return group;
+        });
     }
 
     /**
@@ -139,7 +137,7 @@ public class ParserCache {
         }
         else{
             TableName tableNameAnno = AnnotationUtils.findAnnotation(entityClass, TableName.class);
-            if(tableNameAnno != null){
+            if(tableNameAnno != null && V.notEmpty(tableNameAnno.value())){
                 return tableNameAnno.value();
             }
             else{

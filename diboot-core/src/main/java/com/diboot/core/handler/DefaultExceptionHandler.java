@@ -60,6 +60,7 @@ public class DefaultExceptionHandler {
             map.put("code", Status.FAIL_VALIDATION.code());
             String validateErrorMsg = V.getBindingError(br);
             map.put("msg", validateErrorMsg);
+            map.put("ok", false);
             log.warn("数据校验失败, {}: {}", br.getObjectName(), validateErrorMsg);
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
@@ -92,6 +93,7 @@ public class DefaultExceptionHandler {
             map.put("code", status.value());
             String msg = buildMsg(status, e);
             map.put("msg", msg);
+            map.put("ok", false);
         }
         log.warn("请求处理异常", e);
         return new ResponseEntity<>(map, HttpStatus.OK);
