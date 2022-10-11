@@ -83,6 +83,10 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      */
     protected <VO> JsonResult<List<VO>> getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
         QueryWrapper<E> queryWrapper = super.buildQueryWrapperByQueryParams(entity);
+        // 设置默认排序
+        if(pagination != null && V.isEmpty(pagination.getOrderBy())) {
+            pagination.setOrderBy(Pagination.ORDER_BY_ID_DESC);
+        }
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
         // 返回结果

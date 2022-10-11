@@ -62,14 +62,18 @@ public class Pagination implements Serializable {
      */
     private long totalCount = 0;
     /**
-     * 默认排序
+     * 默认排序 - ID降序
      */
-    private static final String DEFAULT_ORDER_BY = Cons.FieldName.id.name() + ":" + Cons.ORDER_DESC;
+    public static final String ORDER_BY_ID_DESC = Cons.FieldName.id.name() + ":" + Cons.ORDER_DESC;
+    /**
+     * 默认排序 - 创建时间降序
+     */
+    public static final String ORDER_BY_CREATE_TIME_DESC = Cons.FieldName.createTime.name() + ":" + Cons.ORDER_DESC;
 
     /**
      * 排序
      */
-    private String orderBy = DEFAULT_ORDER_BY;
+    private String orderBy;
 
     @JsonIgnore
     private Class<?> entityClass;
@@ -110,21 +114,9 @@ public class Pagination implements Serializable {
     /**
      * 清空默认排序
      */
-    public void clearDefaultOrder() {
+    public void clearOrder() {
         // 是否为默认排序
-        if (isDefaultOrderBy()) {
-            orderBy = null;
-        }
-    }
-
-    /**
-     * 是否为默认排序
-     *
-     * @return
-     */
-    @JsonIgnore
-    public boolean isDefaultOrderBy() {
-        return V.equals(orderBy, DEFAULT_ORDER_BY);
+        orderBy = null;
     }
 
     /**
@@ -176,15 +168,6 @@ public class Pagination implements Serializable {
             page.addOrder(orderItemList);
         }
         return page;
-    }
-
-    /**
-     * 当id不是主键的时候，默认使用创建时间排序
-     *
-     * @return
-     */
-    public String setDefaultCreateTimeOrderBy() {
-        return this.orderBy = Cons.FieldName.createTime.name() + ":" + Cons.ORDER_DESC;
     }
 
     /**
