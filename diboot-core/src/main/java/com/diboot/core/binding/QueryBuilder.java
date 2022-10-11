@@ -195,7 +195,7 @@ public class QueryBuilder {
         // 获取Class类型
         Function<BindQuery, Class<?>> getClass = bindQuery -> bindQuery == null || bindQuery.entity() == NullType.class ? dto.getClass() : bindQuery.entity();
         // 获取属性名类型
-        BiFunction<BindQuery, String, String> getFieldName = (bindQuery, defFieldName) -> bindQuery == null || S.isEmpty(bindQuery.field()) ? defFieldName : bindQuery.field();
+        BiFunction<BindQuery, String, String> getFieldName = (bindQuery, defFieldName) -> bindQuery == null || S.isEmpty(bindQuery.column()) ? defFieldName : bindQuery.column();
         // 保护字段处理器
         ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
         // 构建QueryWrapper

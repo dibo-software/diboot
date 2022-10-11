@@ -39,7 +39,7 @@ public @interface BindQuery {
     /**
      * 数据库字段，默认为空，自动根据驼峰转下划线
      */
-    String field() default "";
+    String column() default "";
 
     /**
      * 绑定的Entity类

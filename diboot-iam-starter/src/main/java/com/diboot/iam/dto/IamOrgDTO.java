@@ -33,6 +33,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class IamOrgDTO extends IamOrg {
 
-    @BindQuery(comparison = Comparison.LIKE, field = "name")
+    @BindQuery(comparison = Comparison.LIKE, column = "name")
     private String name;
 }

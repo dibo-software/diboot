@@ -38,27 +38,27 @@ import java.util.List;
 public class UserDTO extends User {
 
     // 字段关联
-    @BindQuery(entity= Department.class, field = "name", condition="this.department_id=id") // AND parent_id >= 0
+    @BindQuery(entity= Department.class, column = "name", condition="this.department_id=id") // AND parent_id >= 0
     private String deptName;
 
     // 字段关联
-    @BindQuery(entity= Department.class, field = "id", condition="this.department_id=id") // AND parent_id >= 0
+    @BindQuery(entity= Department.class, column = "id", condition="this.department_id=id") // AND parent_id >= 0
     private Long deptId;
 
     // 通过中间表关联Entity
-    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name",
+    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, column = "name",
             condition = "this.department_id=department.id AND department.org_id=id AND parent_id=0", strategy = Strategy.INCLUDE_EMPTY)
     private String orgName;
     // LEFT JOIN department r2m ON self.department_id = r2m.id
     // LEFT JOIN organization r1 ON r2m.org_id=r2.id
 
-    @BindQuery(comparison = Comparison.IN, entity = Role.class, field = "code", condition = "this.id=user_role.user_id AND user_role.role_id=id")
+    @BindQuery(comparison = Comparison.IN, entity = Role.class, column = "code", condition = "this.id=user_role.user_id AND user_role.role_id=id")
     private List<String> roleCodes;
     //private String[] roleCodes;
     // LEFT JOIN user_role r3m ON self.id = r3m.user_id
     // LEFT JOIN role r3 ON r3m.role_id = r3.id
 
-    @BindQuery(entity = Role.class, field = "id", condition = "this.id=user_role.user_id AND user_role.role_id=id")
+    @BindQuery(entity = Role.class, column = "id", condition = "this.id=user_role.user_id AND user_role.role_id=id")
     private Long roleId;
 
 }
