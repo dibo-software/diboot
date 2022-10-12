@@ -117,7 +117,11 @@ public class Cons {
         /**
          * 用户id
          */
-        userId
+        userId,
+        /**
+         * 父ids路径
+         */
+        parentIdsPath
     }
 
     /***
@@ -167,7 +171,11 @@ public class Cons {
         /**
          * 用户id
          */
-        user_id
+        user_id,
+        /**
+         * 父ids路径
+         */
+        parent_ids_path
     }
 
     /**

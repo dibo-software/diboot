@@ -232,26 +232,6 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     }
 
     /***
-     * 根据id撤回删除
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    public JsonResult<?> cancelDeletedEntity(Serializable id) throws Exception {
-        boolean success = getService().cancelDeletedById(id);
-        E entity;
-        if (success) {
-            entity = getService().getEntity(id);
-            this.afterDeletedCanceled(entity);
-            log.info("撤回删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
-            return JsonResult.OK("撤回成功");
-        } else {
-            log.warn("撤回删除操作未成功，{}:{}", getEntityClass().getSimpleName(), id);
-            return failOperation("撤回失败");
-        }
-    }
-
-    /***
      * 根据id批量删除资源对象，用于子类重写的方法
      * @param ids
      * @return

@@ -16,6 +16,7 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,6 +26,8 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 数据字典实体
@@ -33,7 +36,7 @@ import javax.validation.constraints.NotNull;
  * @date 2018/12/27
  */
 @Getter @Setter @Accessors(chain = true)
-public class Dictionary extends BaseExtEntity {
+public class Dictionary extends BaseEntity {
     private static final long serialVersionUID = 11301L;
 
     /**
@@ -104,5 +107,39 @@ public class Dictionary extends BaseExtEntity {
      */
     @TableField("is_editable")
     private Boolean isEditable;
+
+    /**
+     * 扩展字段
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private Map<String, Object> extension;
+
+    /***
+     * 从extdata JSON中提取扩展属性值
+     * @param extAttrName
+     * @return
+     */
+    public Object getFromExt(String extAttrName){
+        if(this.extension == null){
+            return null;
+        }
+        return this.extension.get(extAttrName);
+    }
+
+    /***
+     * 添加扩展属性和值到extdata JSON中
+     * @param extAttrName
+     * @param extAttrValue
+     */
+    public Dictionary addIntoExt(String extAttrName, Object extAttrValue){
+        if(extAttrName == null && extAttrValue == null){
+            return this;
+        }
+        if(this.extension == null){
+            this.extension = new LinkedHashMap<>();
+        }
+        this.extension.put(extAttrName, extAttrValue);
+        return this;
+    }
 
 }

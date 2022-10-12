@@ -36,10 +36,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.*;
-import diboot.core.test.binder.service.CcCityInfoService;
-import diboot.core.test.binder.service.DepartmentService;
-import diboot.core.test.binder.service.OrganizationService;
-import diboot.core.test.binder.service.UserService;
+import diboot.core.test.binder.service.*;
+import diboot.core.test.binder.vo.RegionVO;
 import diboot.core.test.binder.vo.SimpleDictionaryVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -79,6 +77,9 @@ public class BaseServiceTest {
 
     @Autowired
     OrganizationService organizationService;
+
+    @Autowired
+    RegionService regionService;
 
     @Test
     public void testGet(){
@@ -572,6 +573,23 @@ public class BaseServiceTest {
             if(V.notEmpty(dept.getCharacter()) && dept.getCharacter().contains(",")){
                 Assert.assertTrue(dept.getExtjsonarr().size() == S.split(dept.getCharacter()).length);
                 Assert.assertTrue(dept.getExtjsonobj() != null);
+            }
+        }
+    }
+
+    @Test
+    public void test() {
+        List<RegionVO> tree = regionService.getViewObjectTree("0", RegionVO.class);
+        Assert.assertTrue(tree != null);
+        for(RegionVO vo : tree) {
+            if(vo.getId().equals("800")) {
+                Assert.assertTrue(vo.getChildren().size() > 1);
+            }
+        }
+        tree = regionService.getViewObjectTree("800", RegionVO.class);
+        for(RegionVO vo : tree) {
+            if(vo.getId().equals("839")) {
+                Assert.assertTrue(vo.getChildren().size() > 1);
             }
         }
     }
