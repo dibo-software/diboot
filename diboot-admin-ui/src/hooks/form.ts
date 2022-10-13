@@ -67,8 +67,33 @@ export default (option: FormOption) => {
     }
   }
 
+  /**
+   * 批量提交数据
+   *
+   * @param data
+   * @param formEl
+   */
+  const submitPost = async (data: unknown, formEl?: FormInstance) => {
+    const { baseApi, primaryKey = 'id', createApi, updateApiPrefix, afterValidate, successCallback } = option
+    try {
+      submitting.value = true
+      await validate(formEl)
+      if (afterValidate) await afterValidate()
+      const res = await api.post<string>(baseApi, data)
+      ElMessage.success(res.msg)
+      successCallback(res.data)
+      return true
+    } catch (e: any) {
+      ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
+      return false
+    } finally {
+      submitting.value = false
+    }
+  }
+
   return {
     submitting,
-    submit
+    submit,
+    submitPost
   }
 }
