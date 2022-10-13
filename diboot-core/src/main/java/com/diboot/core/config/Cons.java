@@ -67,9 +67,10 @@ public class Cons {
      */
     public static final String COLUMN_IS_DELETED = "is_deleted";
     /**
-     * 创建时间列名
+     * 默认树形结构根id
      */
-    public static final String COLUMN_CREATE_TIME = "create_time";
+    public static final String TREE_ROOT_ID = "0";
+
     /***
      * 常用字段名定义
      */

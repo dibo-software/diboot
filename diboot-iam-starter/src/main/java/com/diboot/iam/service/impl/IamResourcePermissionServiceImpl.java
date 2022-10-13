@@ -195,7 +195,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         }
         // 构建树结构
         List<IamResourcePermissionListVO> iamResourcePermissionTreeVOList = RelationsBinder.convertAndBind(menuPermissionList, IamResourcePermissionListVO.class);
-        return BeanUtils.buildTree(iamResourcePermissionTreeVOList);
+        return BeanUtils.buildTree(iamResourcePermissionTreeVOList, Cons.TREE_ROOT_ID);
     }
 
     @Override
