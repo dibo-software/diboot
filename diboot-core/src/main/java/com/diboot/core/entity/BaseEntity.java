@@ -19,8 +19,6 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.Cons;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -76,19 +74,4 @@ public abstract class BaseEntity extends AbstractEntity<String> {
         return JSON.toMap(jsonStr);
     }
 
-    /**
-     * 获取主键值
-     * @return
-     */
-    @JsonIgnore
-    public Object getPrimaryKeyVal(){
-        String pk = ContextHelper.getIdFieldName(this.getClass());
-        if(pk == null){
-            return null;
-        }
-        if(Cons.FieldName.id.name().equals(pk)){
-            return getId();
-        }
-        return BeanUtils.getProperty(this, pk);
-    }
 }

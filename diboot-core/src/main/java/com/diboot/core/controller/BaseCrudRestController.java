@@ -33,9 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /***
  * CRUD增删改查通用RestController-父类
@@ -156,9 +154,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         if (success) {
             // 执行创建成功后的操作
             this.afterCreated(entity);
-            // 组装返回结果
-            Map<String, Object> data = buildPKDataMap(entity);
-            return JsonResult.OK(data);
+            // 返回ID
+            return JsonResult.OK(entity.getPrimaryKeyVal());
         } else {
             log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
             // 组装返回结果
@@ -258,21 +255,6 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             log.warn("删除操作未成功，{}:{}", getEntityClass().getSimpleName(), S.join(ids));
             return failOperation();
         }
-    }
-
-    /**
-     * 构建主键的返回值Data
-     *
-     * @param entity
-     * @return
-     */
-    private Map<String, Object> buildPKDataMap(E entity) {
-        // 组装返回结果
-        Map<String, Object> data = new HashMap<>(2);
-        String pk = ContextHelper.getIdFieldName(getEntityClass());
-        Object pkValue = (Cons.FieldName.id.name().equals(pk)) ? entity.getId() : BeanUtils.getProperty(entity, pk);
-        data.put(pk, pkValue);
-        return data;
     }
 
     //============= 封装部分快速构造返回结果的方法 =================

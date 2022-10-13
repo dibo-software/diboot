@@ -17,6 +17,10 @@ package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.diboot.core.config.Cons;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 
@@ -35,13 +39,29 @@ public abstract class AbstractEntity<T extends Serializable> implements Serializ
     @TableId(type = IdType.ASSIGN_ID)
     private T id;
 
-    public AbstractEntity setId(T id){
+    public AbstractEntity<T> setId(T id){
         this.id = id;
         return this;
     }
 
     public T getId(){
         return this.id;
+    }
+
+    /**
+     * 获取主键值
+     * @return
+     */
+    @JsonIgnore
+    public Object getPrimaryKeyVal(){
+        String pk = ContextHelper.getIdFieldName(this.getClass());
+        if(pk == null){
+            return null;
+        }
+        if(Cons.FieldName.id.name().equals(pk)){
+            return getId();
+        }
+        return BeanUtils.getProperty(this, pk);
     }
 
     /**
