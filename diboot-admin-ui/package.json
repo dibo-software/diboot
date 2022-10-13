@@ -22,7 +22,6 @@
     "fuse.js": "^6.6.2",
     "lodash": "^4.17.21",
     "mockjs": "^1.1.0",
-    "moment": "^2.29.4",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.17",
     "pinia-plugin-persist": "^1.0.0",

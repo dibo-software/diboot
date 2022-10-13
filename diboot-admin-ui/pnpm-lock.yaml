@@ -24,7 +24,6 @@ specifiers:
   fuse.js: ^6.6.2
   lodash: ^4.17.21
   mockjs: ^1.1.0
-  moment: ^2.29.4
   nprogress: ^0.2.0
   pinia: ^2.0.17
   pinia-plugin-persist: ^1.0.0
@@ -64,7 +63,6 @@ dependencies:
   fuse.js: 6.6.2
   lodash: 4.17.21
   mockjs: 1.1.0
-  moment: 2.29.4
   nprogress: 0.2.0
   pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
   pinia-plugin-persist: 1.0.0_pinia@2.0.17+vue@3.2.37
@@ -2268,10 +2266,6 @@ packages:
     hasBin: true
     dependencies:
       commander: 9.4.0
-
-  /moment/2.29.4:
-    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
-    dev: false
 
   /ms/2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}

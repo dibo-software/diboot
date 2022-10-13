@@ -3,9 +3,6 @@ import * as locales from 'element-plus/lib/locale/index'
 import { colorPrimary, isSmall } from '@/utils/theme'
 import useAppStore from './store/app'
 import { useI18n } from 'vue-i18n'
-import moment from 'moment'
-import 'moment/dist/locale/zh-tw'
-import 'moment/dist/locale/zh-cn'
 
 const appStore = useAppStore()
 
@@ -22,9 +19,15 @@ const locale = ref()
 watch(
   i18n.locale,
   value => {
-    const localeLowerCase = value.toLowerCase()
+    let localeLowerCase = value.toLowerCase()
     locale.value = Object.values(locales).find(e => e.name === localeLowerCase)
-    moment.locale(localeLowerCase)
+    if (locale.value == null && localeLowerCase.includes('-')) {
+      localeLowerCase = localeLowerCase.split('-')[0]
+      locale.value = Object.values(locales).find(e => e.name === localeLowerCase)
+    }
+    if (locale.value == null) {
+      locale.value = Object.values(locales).find(e => e.name === i18n.fallbackLocale.value)
+    }
   },
   {
     immediate: true

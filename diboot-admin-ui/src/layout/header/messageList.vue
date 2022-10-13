@@ -2,7 +2,6 @@
 import { Bell } from '@element-plus/icons-vue'
 import useMessageStore from '@/store/message'
 import type { MessageInfo } from '@/store/message'
-import moment from 'moment'
 
 const messageStore = useMessageStore()
 
@@ -51,7 +50,7 @@ const handleClick = (message: MessageInfo) => {
             <div class="content">
               <div class="value" v-html="item.content" />
               <div class="end">
-                <span>{{ moment(item.time, 'YYYY-MM-DD HH:mm:ss').fromNow() }}</span>
+                <span>{{ item.time }}</span>
               </div>
             </div>
           </el-card>

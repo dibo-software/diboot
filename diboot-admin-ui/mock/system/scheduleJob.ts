@@ -4,7 +4,6 @@ import { Random } from 'mockjs'
 import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
 import type { ScheduleJob, Job, ScheduleJobLog } from '@/views/system/scheduleJob/type'
-import moment from 'moment'
 
 const jobList: ScheduleJob[] = [
   {
@@ -58,10 +57,10 @@ export default [
     method: 'put',
     response: ({ query }: ApiRequest) => {
       const natural = Random.natural(1_000, 30_000)
-      const startTime = moment().format('yyyy-MM-DD HH:mm:ss')
+      const startTime = Random.now('yyyy-MM-DD HH:mm:ss')
       setTimeout(() => {
         const scheduleJob = jobList.find(e => e.id === query.id) as ScheduleJob
-        const endTime = moment().format('yyyy-MM-DD HH:mm:ss')
+        const endTime = Random.now('yyyy-MM-DD HH:mm:ss')
         jobLogList.push({
           id: String(jobLogList.length + 1),
           jobId: query.id,

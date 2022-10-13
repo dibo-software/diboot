@@ -2,7 +2,6 @@ import type { MockMethod } from 'vite-plugin-mock'
 import type { ApiRequest } from './_util'
 import { JsonResult } from './_util'
 import { Random } from 'mockjs'
-import moment from 'moment'
 
 /**
  * 选项
@@ -154,7 +153,7 @@ export default <T>(option: Option<T>) => {
         method: 'post',
         response: ({ body }: ApiRequest<T>) => {
           const id = String(dataList.length + 1)
-          const now = moment().format('yyyy-MM-DD HH:mm:ss')
+          const now = Random.now('yyyy-MM-DD HH:mm:ss')
           Object.assign(body, { [primaryKey]: id, createTime: now, updateTime: now })
           dataList.unshift(body)
           return JsonResult.OK(id)
@@ -165,7 +164,7 @@ export default <T>(option: Option<T>) => {
         timeout: Random.natural(50, 300),
         method: 'put',
         response: ({ body, query }: ApiRequest<T>) => {
-          Object.assign(body, { updateTime: moment().format('yyyy-MM-DD HH:mm:ss') })
+          Object.assign(body, { updateTime: Random.now('yyyy-MM-DD HH:mm:ss') })
           dataList.splice(
             dataList.findIndex(e => e[primaryKey as keyof T] === query[primaryKey as keyof T]),
             1,
