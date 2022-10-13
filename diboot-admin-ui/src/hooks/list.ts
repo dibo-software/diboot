@@ -144,8 +144,6 @@ export interface DeleteOption {
   baseApi: string
   // 删除数据接口前缀
   deleteApiPrefix?: string
-  // 是否允许撤回删除 (默认允许)
-  allowCanceledDelete?: boolean
   // 删除回调
   deleteCallback?: () => void
 }
@@ -166,7 +164,7 @@ export const useDelete = (option: DeleteOption) => {
       .then(() => {
         api
           .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)
-          .then(() => removeSuccessHandler([id]))
+          .then(() => removeSuccessHandler())
           .catch(err => {
             ElMessage.error(err.msg || err.message || '删除失败')
           })
@@ -189,7 +187,7 @@ export const useDelete = (option: DeleteOption) => {
       .then(() => {
         api
           .post(`${option.baseApi}/batchDelete`, ids)
-          .then(() => removeSuccessHandler(ids))
+          .then(() => removeSuccessHandler())
           .catch(err => {
             ElMessage.error(err.msg || err.message || '删除失败')
           })
@@ -199,43 +197,10 @@ export const useDelete = (option: DeleteOption) => {
 
   /**
    * 删除成功处理
-   *
-   * @param ids
    */
-  const removeSuccessHandler = (ids: Array<string>) => {
+  const removeSuccessHandler = () => {
     if (option.deleteCallback) option.deleteCallback()
-
-    if (option.allowCanceledDelete === false) {
-      ElMessage.success('数据删除成功')
-      return
-    }
-    // 支持撤回的删除成功提示
-    const message = ElMessage.success({
-      type: 'success',
-      message: h('span', null, [
-        h('span', { style: { color: 'var(--el-color-success)' } }, '数据删除成功'),
-        h(
-          ElButton,
-          {
-            bg: true,
-            text: true,
-            type: 'primary',
-            style: { height: '25px', position: 'absolute', right: '13px' },
-            onClick: () => {
-              message.close()
-              api
-                .patch(`${option.baseApi}/cancelDeleted`, ids)
-                .then(() => {
-                  ElMessage.success('撤回成功')
-                  if (option.deleteCallback) option.deleteCallback()
-                })
-                .catch(() => ElMessage.error('撤回失败'))
-            }
-          },
-          { default: () => '撤回' }
-        )
-      ])
-    })
+    ElMessage.success('数据删除成功')
   }
 
   return { remove, batchRemove }
