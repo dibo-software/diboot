@@ -36,3 +36,26 @@ comment on table ${SCHEMA}.dictionary is '数据字典';
 -- 创建索引
 create index idx_directory on ${SCHEMA}.dictionary (type, item_value);
 create index idx_directory_tenant on ${SCHEMA}.dictionary(tenant_id);
+
+-- 国际化表
+create table ${SCHEMA}.i18n_config
+(
+    id          varchar(32)                           not null primary key,
+    type        VARCHAR(20) default 'CUSTOM'          not null,
+    language    VARCHAR(20)                           not null,
+    code        VARCHAR(200)                          not null,
+    content     VARCHAR(1000)                         not null,
+    is_deleted  BIT         default 0                 not null,
+    create_time DATETIME    default CURRENT_TIMESTAMP not null
+);
+-- 添加备注
+comment on column ${SCHEMA}.i18n_config.id is 'ID';
+comment on column ${SCHEMA}.i18n_config.type is '类型';
+comment on column ${SCHEMA}.i18n_config.language is '语言';
+comment on column ${SCHEMA}.i18n_config.code is '资源标识';
+comment on column ${SCHEMA}.i18n_config.content is '内容';
+comment on column ${SCHEMA}.i18n_config.is_deleted is '删除标记';
+comment on column ${SCHEMA}.i18n_config.create_time is '创建时间';
+comment on table ${SCHEMA}.i18n_config is '国际化配置';
+-- 创建索引
+create index idx_i18n_config on ${SCHEMA}.i18n_config (code, language);

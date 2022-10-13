@@ -65,7 +65,7 @@ public class ParserCache {
      * 用于查询注解是否是Bind相关注解
      */
     private static final Set<Class<?>> BIND_ANNOTATION_SET = new HashSet<>(Arrays.asList(
-            BindDict.class, BindField.class, BindFieldList.class, BindEntity.class, BindEntityList.class, BindCount.class
+            BindDict.class, BindField.class, BindFieldList.class, BindEntity.class, BindEntityList.class, BindCount.class, BindI18n.class
     ));
 
     /**

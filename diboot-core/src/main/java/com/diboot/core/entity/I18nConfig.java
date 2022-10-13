@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,37 +13,53 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.starter;
+package com.diboot.core.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.experimental.Accessors;
+
+import javax.validation.constraints.NotNull;
 
 /**
- * diboot-core配置文件类
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/08/06
+ * 国际化配置
+ *
+ * @author wind
+ * @version v3.0.0
+ * @date 2022-10-12
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "diboot.core")
-public class CoreProperties {
+@Accessors(chain = true)
+public class I18nConfig extends BaseEntity {
+
+    private static final long serialVersionUID = 11501L;
+
     /**
-     * 每页记录数量
+     * type字段的关联字典
      */
-    private int pageSize = 20;
+    public static final String DICT_I18N_TYPE = "I18N_TYPE";
+
     /**
-     * 每批次数量
+     * 类型
      */
-    private int batchSize = 1000;
+    private String type;
+
     /**
-     * 是否开启国际化
+     * 语言
      */
-    private boolean i18n = false;
+    @NotNull
+    private String language;
+
     /**
-     * 是否初始化，默认true自动安装SQL
+     * 资源标识
      */
-    private boolean initSql = true;
+    @NotNull
+    private String code;
+    /**
+     * 内容
+     */
+    @NotNull
+    private String content;
 
 }

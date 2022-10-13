@@ -21,6 +21,7 @@ import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.DictionaryServiceExtProvider;
+import com.diboot.core.service.I18nConfigService;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,9 @@ public class ParallelBindingManager {
 
     @Autowired(required = false)
     private DictionaryServiceExtProvider dictionaryServiceExtProvider;
+
+    @Autowired(required = false)
+    private I18nConfigService i18nConfigService;
 
     /**
      * 绑定字典
@@ -148,6 +152,25 @@ public class ParallelBindingManager {
         binder.set(fieldAnnotation.getFieldName(), fieldAnnotation.getFieldClass());
         // 解析条件并且执行绑定
         return doBinding(binder, annotation.condition());
+    }
+
+    /**
+     * 绑定国际化
+     *
+     * @param voList
+     * @param fieldAnnotation
+     */
+    @Async
+    public CompletableFuture<Boolean> doBindingI18n(List voList, FieldAnnotation fieldAnnotation) {
+        if (i18nConfigService != null) {
+            BindI18n annotation = (BindI18n) fieldAnnotation.getAnnotation();
+            String i18nCodeField = annotation.value();
+            // 国际化绑定接口化
+            i18nConfigService.bindI18nContent(voList, i18nCodeField, fieldAnnotation.getFieldName());
+        } else {
+            throw new InvalidUsageException("I18nConfigService未实现，无法使用I18n注解！");
+        }
+        return CompletableFuture.completedFuture(true);
     }
 
     /**

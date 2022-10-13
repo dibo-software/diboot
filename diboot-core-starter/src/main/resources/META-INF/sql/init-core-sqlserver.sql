@@ -36,3 +36,27 @@ execute sp_addextendedproperty 'MS_Description', N'数据字典','SCHEMA', '${SC
 -- 创建索引
 create nonclustered index idx_directory on ${SCHEMA}.dictionary(type, item_value);
 create nonclustered index idx_directory_tenant on ${SCHEMA}.dictionary(tenant_id);
+
+-- 国际化表
+create table ${SCHEMA}.i18n_config
+(
+    id          varchar(32)   not null,
+    type        varchar(20)   not null default 'CUSTOM',
+    language    varchar(20)   not null,
+    code        varchar(200)  not null,
+    content     varchar(1000) not null,
+    is_deleted  tinyint       not null default 0,
+    create_time datetime      not null default CURRENT_TIMESTAMP,
+    constraint PK_dictionary primary key (id)
+);
+-- 添加备注
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', i18n_config, 'column', 'type';
+execute sp_addextendedproperty 'MS_Description', N'语言','SCHEMA', '${SCHEMA}', 'table', i18n_config, 'column', 'language';
+execute sp_addextendedproperty 'MS_Description', N'资源标识','SCHEMA', '${SCHEMA}', 'table', i18n_config, 'column', 'code';
+execute sp_addextendedproperty 'MS_Description', N'内容','SCHEMA', '${SCHEMA}', 'table', i18n_config, 'column', 'content';
+execute sp_addextendedproperty 'MS_Description', N'删除标记','SCHEMA', '${SCHEMA}', 'table', i18n_config, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建时间','SCHEMA', '${SCHEMA}', 'table', i18n_config, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'国际化配置','SCHEMA', '${SCHEMA}', 'table', i18n_config, null, null;
+-- 创建索引
+create nonclustered index ${SCHEMA}.idx_i18n_config on i18n_config(code, language)

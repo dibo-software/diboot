@@ -25,6 +25,7 @@ import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.ArrayList;
@@ -112,6 +113,7 @@ public class RelationsBinder {
             return;
         }
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        LocaleContextHolder.setLocaleContext(LocaleContextHolder.getLocaleContext(),true);
         ParallelBindingManager parallelBindingManager = ContextHelper.getBean(ParallelBindingManager.class);
         // 不可能出现的错误，但是编译器需要
         assert parallelBindingManager != null;
@@ -169,6 +171,15 @@ public class RelationsBinder {
             for(FieldAnnotation anno : countAnnoList){
                 // 绑定关联对象count计数
                 CompletableFuture<Boolean> bindCountFuture = parallelBindingManager.doBindingCount(voList, anno);
+                binderFutures.add(bindCountFuture);
+            }
+        }
+        // 绑定国际化翻译
+        List<FieldAnnotation> i18nAnnoList = bindAnnotationGroup.getBindI18nAnnotations();
+        if(i18nAnnoList != null){
+            for(FieldAnnotation anno : i18nAnnoList){
+                // 绑定关联对象count计数
+                CompletableFuture<Boolean> bindCountFuture = parallelBindingManager.doBindingI18n(voList, anno);
                 binderFutures.add(bindCountFuture);
             }
         }

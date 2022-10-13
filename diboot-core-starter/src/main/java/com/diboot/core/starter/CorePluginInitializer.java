@@ -15,7 +15,12 @@
  */
 package com.diboot.core.starter;
 
+import com.diboot.core.entity.Dictionary;
+import com.diboot.core.service.DictionaryService;
+import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.SqlFileInitializer;
+import com.diboot.core.vo.DictionaryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -51,7 +56,28 @@ public class CorePluginInitializer implements ApplicationRunner {
             String initDetectSql = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
             if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
                 SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "core");
+                // 插入相关数据：Dict等
+                insertInitData();
                 log.info("diboot-core 初始化SQL完成.");
+            }
+        }
+    }
+
+    /**
+     * 插入初始化数据
+     */
+    private void insertInitData() {
+        // 插入iam组件所需的数据字典
+        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+        if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "I18N_TYPE")){
+            // 插入iam组件所需的数据字典
+            final String[] DICT_INIT_DATA = {
+                    "{\"type\":\"I18N_TYPE\",\"itemName\":\"国际化配置类型\",\"description\":\"国际化配置分类\",\"isEditable\":false,\"children\":[{\"itemName\":\"系统\",\"itemValue\":\"SYSTEM\",\"sortId\":1},{\"itemName\":\"自定义\",\"itemValue\":\"CUSTOM\",\"sortId\":2}]}"
+            };
+            // 插入数据字典
+            for (String dictJson : DICT_INIT_DATA) {
+                DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
+                dictionaryService.createDictAndChildren(dictVo);
             }
         }
     }

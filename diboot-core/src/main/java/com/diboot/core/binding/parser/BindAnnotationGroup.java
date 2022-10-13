@@ -59,6 +59,10 @@ public class BindAnnotationGroup {
      */
     private List<FieldAnnotation> bindCountAnnotations;
     /**
+     * 国际化计数关联注解
+     */
+    private List<FieldAnnotation> bindI18nAnnotations;
+    /**
      * 深度绑定实体
      */
     private List<FieldAnnotation> deepBindEntityAnnotations;
@@ -166,6 +170,11 @@ public class BindAnnotationGroup {
                 bindCountAnnotations = new ArrayList<>(4);
             }
             bindCountAnnotations.add(fieldAnnotation);
+        }else if(annotation instanceof BindI18n){
+            if(bindI18nAnnotations == null){
+                bindI18nAnnotations = new ArrayList<>(4);
+            }
+            bindI18nAnnotations.add(fieldAnnotation);
         }
     }
 
@@ -191,6 +200,10 @@ public class BindAnnotationGroup {
 
     public List<FieldAnnotation> getBindCountAnnotations() {
         return bindCountAnnotations;
+    }
+
+    public List<FieldAnnotation> getBindI18nAnnotations() {
+        return bindI18nAnnotations;
     }
 
     public List<FieldAnnotation> getDeepBindEntityAnnotations() {

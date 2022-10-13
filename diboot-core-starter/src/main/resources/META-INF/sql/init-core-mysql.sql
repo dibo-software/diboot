@@ -19,3 +19,18 @@ CREATE TABLE `dictionary` (
 -- 创建索引
 create index idx_directory on dictionary(type, item_value);
 create index idx_directory_tenant on dictionary(tenant_id);
+
+-- 国际化表
+create table i18n_config
+(
+    id          varchar(32)                           not null comment 'ID',
+    type        varchar(20) default 'CUSTOM'          not null comment '类型',
+    language    varchar(20)                           not null comment '语言',
+    code        varchar(200)                          not null comment '资源标识',
+    content     varchar(1000)                         not null comment '内容',
+    is_deleted  int         default 0                 not null comment '逻辑删除',
+    create_time timestamp   default CURRENT_TIMESTAMP not null comment '创建时间',
+    PRIMARY KEY (`id`)
+) comment '国际化配置';
+-- 创建索引
+create index idx_i18n_config on i18n_config (code, language);
