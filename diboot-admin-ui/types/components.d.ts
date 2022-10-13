@@ -66,6 +66,7 @@ declare module '@vue/runtime-core' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ExcelExport: typeof import('@/components/excel/export.vue')['default']
     ExcelImport: typeof import('@/components/excel/import.vue')['default']
+    I18nSelector: typeof import('@/components/i18n/selector.vue')['default']
     Icon: typeof import('@/components/icon/index.vue')['default']
     IconSelect: typeof import('@/components/icon/select.vue')['default']
     MdEditor: typeof import('@/components/md/editor.vue')['default']

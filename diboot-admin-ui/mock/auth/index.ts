@@ -302,6 +302,18 @@ const authMenu = [
           componentPath: prefix + 'system/loginTrace/list.vue',
           sort: 10
         }
+      },
+      {
+        path: 'i18n-config',
+        name: 'I18nConfig',
+        meta: {
+          title: '国际化管理',
+          icon: 'Element:Setting',
+          componentPath: prefix + 'system/i18nConfig/list.vue',
+          keepAlive: false,
+          sort: 11,
+          permissions: ['update']
+        }
       }
     ]
   }
