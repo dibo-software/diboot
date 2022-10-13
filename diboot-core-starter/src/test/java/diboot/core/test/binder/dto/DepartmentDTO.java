@@ -48,27 +48,27 @@ public class DepartmentDTO implements Serializable {
     private String name;
 
     // 绑定join查询
-    @BindQuery(comparison = Comparison.STARTSWITH, strategy = Strategy.INCLUDE_NULL, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    @BindQuery(comparison = Comparison.STARTSWITH, strategy = Strategy.INCLUDE_NULL, entity = Organization.class, column = "name", condition = "this.org_id=id")
     private String orgName;
 
     // 绑定join查询
-    @BindQuery(entity = Department.class, field = "name", condition = "this.parent_id=id")
+    @BindQuery(entity = Department.class, column = "name", condition = "this.parent_id=id")
     private String parentName;
 
     // 多绑定or连接
-    @BindQuery(comparison = Comparison.CONTAINS, field = "name")
-    @BindQuery(comparison = Comparison.STARTSWITH, field = "`character`")
-    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, field = "name", condition = "this.org_id=id")
+    @BindQuery(comparison = Comparison.CONTAINS, column = "name")
+    @BindQuery(comparison = Comparison.STARTSWITH, column = "`character`")
+    @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, column = "name", condition = "this.org_id=id")
     private String search;
 
     // 查询单个日期
-    @BindQuery(comparison = Comparison.GE, field = "createTime")
+    @BindQuery(comparison = Comparison.GE, column = "createTime")
     private Date createTime;
 
-    @BindQuery(comparison = Comparison.LT, field = "createTime")
+    @BindQuery(comparison = Comparison.LT, column = "createTime")
     private Date createTimeEnd;
 
-    @BindQuery(field = "parent_id", comparison = Comparison.IN)
+    @BindQuery(column = "parent_id", comparison = Comparison.IN)
     private List<Long> parentIds;
 
     @BindQuery(comparison = Comparison.LIKE)

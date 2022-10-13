@@ -352,23 +352,29 @@ public class ResultAssembler {
             if(value != null){
                 if(value instanceof Collection) {
                     for(Object key : (Collection)value){
-                        String oneVal = S.valueOf(key);
-                        if(!newValueList.contains(oneVal)){
-                            newValueList.add(oneVal);
+                        if(!newValueList.contains(key)){
+                            newValueList.add(key);
                         }
                     }
                 }
                 else {
-                    String valueStr = S.clearNonConst(S.valueOf(value));
-                    if(V.notEmpty(splitBy) && valueStr.contains(splitBy)){
-                        for(String oneVal : valueStr.split(splitBy)){
-                            if(!newValueList.contains(oneVal)){
-                                newValueList.add(oneVal);
+                    if(V.notEmpty(splitBy)){
+                        String valueStr = S.clearNonConst(S.valueOf(value));
+                        if(valueStr.contains(splitBy)) {
+                            for(String oneVal : valueStr.split(splitBy)){
+                                if(!newValueList.contains(oneVal)){
+                                    newValueList.add(oneVal);
+                                }
+                            }
+                        }
+                        else {
+                            if(!newValueList.contains(value)){
+                                newValueList.add(value);
                             }
                         }
                     }
-                    else if(!newValueList.contains(valueStr)){
-                        newValueList.add(valueStr);
+                    else if(!newValueList.contains(value)){
+                        newValueList.add(value);
                     }
                 }
             }

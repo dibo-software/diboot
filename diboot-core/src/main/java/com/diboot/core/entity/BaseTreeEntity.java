@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,33 +13,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.message.dto;
+package com.diboot.core.entity;
 
-import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.Comparison;
-import com.diboot.message.entity.Message;
-import com.diboot.message.entity.MessageTemplate;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * 消息 DTO定义
- * @author : uu
- * @version : v2.0
- * @Date 2021/2/25  09:39
- * @Copyright © diboot.com
+ * 树形结构实体父类
+ * @author mazc@dibo.ltd
+ * @version v3.0
+ * @date 2022/10/12
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class MessageDTO extends Message {
-
-    private static final long serialVersionUID = 9013608670040655788L;
+public class BaseTreeEntity extends BaseEntity {
 
     /**
-     * 关联字段 MessageTemplate.title
+     * 父级ID
      */
-    @BindQuery(comparison = Comparison.LIKE, entity = MessageTemplate.class, column = "title", condition = "this.template_id=id")
-    private String messageTemplateTitle;
+    @TableField
+    private String parentId;
+
+    /**
+     * 父级ID的全路径
+     */
+    @TableField
+    private String parentIdsPath;
+
 }

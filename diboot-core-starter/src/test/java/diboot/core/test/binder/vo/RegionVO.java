@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,26 +13,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.dto;
+package diboot.core.test.binder.vo;
 
-import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.Comparison;
-import com.diboot.iam.entity.IamOrg;
+import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.annotation.BindField;
+import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Region;
+import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
- * 组织DTO
+ * <Description>
+ *
  * @author mazc@dibo.ltd
- * @version v2.2
- * @date 2020/12/1
+ * @version v2.0
+ * @date 2019/06/22
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class IamOrgDTO extends IamOrg {
+public class RegionVO extends Region {
+    private static final long serialVersionUID = -3104096813401488797L;
 
-    @BindQuery(comparison = Comparison.LIKE, column = "name")
-    private String name;
+    @BindEntityList(entity = Region.class, condition = "this.id=parent_id") // AND ...
+    private List<Region> children;
+
 }

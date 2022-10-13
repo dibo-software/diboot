@@ -43,6 +43,7 @@ import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.dto.SortParamDTO;
+import com.diboot.core.entity.BaseTreeEntity;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.BaseCrudMapper;
@@ -478,15 +479,15 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean deleteEntity(Serializable id) {
+		// 树结构，仅允许叶子节点进行删除操作
+		if(BaseTreeEntity.class.isAssignableFrom(getEntityClass())) {
+			QueryWrapper<T> wrapper = new QueryWrapper<T>().eq(Cons.ColumnName.parent_id.name(), id);
+			if(exists(wrapper)) {
+				throw new BusinessException(Status.FAIL_VALIDATION, "当前节点下存在下级节点，不允许被删除！");
+			}
+		}
 		return super.removeById(id);
 	}
-
-    @Override
-    public boolean cancelDeletedById(Serializable id) {
-		EntityInfoCache info = BindingCacheManager.getEntityInfoByClass(super.getEntityClass());
-		String tableName = info.getTableName();
-        return this.getMapper().cancelDeletedById(tableName, id) > 0;
-    }
 
     @Override
 	public boolean deleteEntities(Wrapper queryWrapper){
@@ -764,6 +765,38 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 自动转换为VO并绑定关联对象
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
 		return voList;
+	}
+
+	@Override
+	public <VO> List<VO> getViewObjectTree(String rootNodeId, Class<VO> voClass) {
+		// 父类
+		if(!BaseTreeEntity.class.isAssignableFrom(getEntityClass())) {
+			throw new InvalidUsageException("Entity " + getEntityClass().getSimpleName() + " 非树形结构！");
+		}
+		String parentIdsPath;
+		T entity = getEntity(rootNodeId);
+		if(entity != null) {
+			parentIdsPath = ((BaseTreeEntity)entity).getParentIdsPath();
+		}
+		else {
+			parentIdsPath = rootNodeId;
+		}
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
+						.likeRight(Cons.ColumnName.parent_ids_path.name(), parentIdsPath);
+		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		// 排序
+		//queryWrapper.orderByAsc(Cons.ColumnName.id.name());
+		List<T> entityList = getEntityList(queryWrapper, null);
+		if(V.notEmpty(entityList)) {
+			entityList = entityList.stream().filter(ent -> {
+				String pidsPath = ((BaseTreeEntity)ent).getParentIdsPath();
+				String left = S.substringAfter(pidsPath, parentIdsPath);
+				return V.isEmpty(left) || left.startsWith(Cons.SEPARATOR_COMMA);
+			}).collect(Collectors.toList());
+		}
+		// 自动转换为VO并绑定关联对象
+		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
+		return BeanUtils.buildTree(voList, rootNodeId);
 	}
 
 	@Override

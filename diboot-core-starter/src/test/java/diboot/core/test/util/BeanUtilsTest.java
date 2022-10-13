@@ -223,7 +223,7 @@ public class BeanUtilsTest {
 
         // 正常数据
         List<DictionaryVO> list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
-        list = BeanUtils.buildTree(list);
+        list = BeanUtils.buildTree(list, Cons.TREE_ROOT_ID);
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getChildren().size(), 5);
 
@@ -239,7 +239,7 @@ public class BeanUtilsTest {
         dictionaryList.add(dict2);
         list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
         try{
-            list = BeanUtils.buildTree(list);
+            list = BeanUtils.buildTree(list, Cons.TREE_ROOT_ID);
             Assert.assertTrue(false);
         }
         catch (Exception e){

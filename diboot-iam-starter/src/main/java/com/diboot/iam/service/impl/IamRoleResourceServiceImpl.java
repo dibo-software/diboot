@@ -115,7 +115,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         }
         // 绑定菜单下按钮权限
         List<IamResourcePermissionListVO> iamResourcePermissionListVOS = RelationsBinder.convertAndBind(menuPermissionList, IamResourcePermissionListVO.class);
-        iamResourcePermissionListVOS = BeanUtils.buildTree(iamResourcePermissionListVOS);
+        iamResourcePermissionListVOS = BeanUtils.buildTree(iamResourcePermissionListVOS, Cons.TREE_ROOT_ID);
         // 构建路由菜单
         List<RouteRecord> routeRecordList = new ArrayList<>();
         buildRouteRecordList(routeRecordList, iamResourcePermissionListVOS);
@@ -133,7 +133,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     public List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<String> roleIds) {
         List<IamResourcePermission> list = getPermissionList(appModule, roleIds);
         List<IamResourcePermissionVO> voList = BeanUtils.convertList(list, IamResourcePermissionVO.class);
-        return BeanUtils.buildTree(voList);
+        return BeanUtils.buildTree(voList, Cons.TREE_ROOT_ID);
     }
 
     @Override

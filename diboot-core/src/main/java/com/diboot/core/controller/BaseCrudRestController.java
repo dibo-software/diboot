@@ -83,6 +83,10 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      */
     protected <VO> JsonResult<List<VO>> getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
         QueryWrapper<E> queryWrapper = super.buildQueryWrapperByQueryParams(entity);
+        // 设置默认排序
+        if(pagination != null && V.isEmpty(pagination.getOrderBy())) {
+            pagination.setOrderBy(Pagination.ORDER_BY_ID_DESC);
+        }
         // 查询当前页的数据
         List<VO> voList = getService().getViewObjectList(queryWrapper, pagination, voClass);
         // 返回结果
@@ -224,26 +228,6 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         } else {
             log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
             return failOperation();
-        }
-    }
-
-    /***
-     * 根据id撤回删除
-     * @param id
-     * @return
-     * @throws Exception
-     */
-    public JsonResult<?> cancelDeletedEntity(Serializable id) throws Exception {
-        boolean success = getService().cancelDeletedById(id);
-        E entity;
-        if (success) {
-            entity = getService().getEntity(id);
-            this.afterDeletedCanceled(entity);
-            log.info("撤回删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
-            return JsonResult.OK("撤回成功");
-        } else {
-            log.warn("撤回删除操作未成功，{}:{}", getEntityClass().getSimpleName(), id);
-            return failOperation("撤回失败");
         }
     }
 

@@ -45,7 +45,7 @@ public class IamPosition extends BaseEntity {
     /**
      * 全局通用的OrgId
      */
-    public static final Long GENERAL_ORG_ID = 0L;
+    public static final String GENERAL_ORG_ID = "0";
 
     /***
      * 最新岗位ID的KEY

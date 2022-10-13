@@ -13,20 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.util;
+package diboot.core.test.binder.service.impl;
 
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import com.diboot.core.service.impl.BaseServiceImpl;
+import diboot.core.test.binder.entity.Region;
+import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.mapper.RegionMapper;
+import diboot.core.test.binder.mapper.UserMapper;
+import diboot.core.test.binder.service.RegionService;
+import diboot.core.test.binder.service.UserService;
+import org.springframework.stereotype.Service;
 
 /**
- * Spring上下文帮助类
+ * 行政区划相关Service
  * @author mazc@dibo.ltd
- * @version 2.0
- * @date 2019/01/01
+ * @version 2018/12/23
  */
-@Deprecated
-@Component
-@Lazy(false)
-public class ContextHelper extends ContextHolder {
+@Service
+public class RegionServiceImpl extends BaseServiceImpl<RegionMapper, Region> implements RegionService {
 
 }

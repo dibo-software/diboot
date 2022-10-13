@@ -211,13 +211,6 @@ public interface BaseService<T> {
     boolean deleteEntity(Serializable id);
 
     /**
-     * 根据主键撤销删除
-     * @param id
-     * @return
-     */
-    boolean cancelDeletedById(Serializable id);
-
-    /**
      * 按条件删除实体
      * @param queryWrapper
      * @return
@@ -358,6 +351,15 @@ public interface BaseService<T> {
      * @throws Exception
      */
     <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass);
+
+    /**
+     * 根据查询条件获取vo树形结构
+     * @param rootNodeId
+     * @param voClass
+     * @return
+     * @throws Exception
+     */
+    <VO> List<VO> getViewObjectTree(String rootNodeId, Class<VO> voClass);
 
     /**
      * list 排序

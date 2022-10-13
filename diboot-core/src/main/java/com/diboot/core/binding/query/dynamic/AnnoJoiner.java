@@ -43,8 +43,8 @@ public class AnnoJoiner implements Serializable {
         this.fieldName = field.getName();
         this.comparison = query.comparison();
         // 列名
-        if (V.notEmpty(query.field())) {
-            this.columnName = S.toSnakeCase(query.field());
+        if (V.notEmpty(query.column())) {
+            this.columnName = query.column();
         }
         else if (field.isAnnotationPresent(TableField.class)) {
             this.columnName = field.getAnnotation(TableField.class).value();

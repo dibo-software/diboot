@@ -394,18 +394,6 @@ public class BeanUtils {
         }
     }
 
-
-
-    /***
-     * 构建上下级关联的树形结构的model（上级parentId、子节点children），根节点=0
-     * @param allNodes 所有节点对象
-     * @param <T>
-     * @return
-     */
-    public static <T> List<T> buildTree(List<T> allNodes){
-        return buildTree(allNodes, 0L);
-    }
-
     /***
      * 构建指定根节点的上下级关联的树形结构（主键id，上级属性parentId、子节点属性children）
      * @param allNodes 所有节点对象

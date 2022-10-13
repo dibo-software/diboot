@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,26 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.dto;
+package diboot.core.test.binder.mapper;
 
-import com.diboot.core.binding.query.BindQuery;
-import com.diboot.core.binding.query.Comparison;
-import com.diboot.iam.entity.IamOrg;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import com.diboot.core.mapper.BaseCrudMapper;
+import diboot.core.test.binder.entity.Region;
+import diboot.core.test.binder.entity.Role;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 组织DTO
+ * 行政区划Mapper
  * @author mazc@dibo.ltd
- * @version v2.2
- * @date 2020/12/1
+ * @version 2018/12/22
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class IamOrgDTO extends IamOrg {
+@Mapper
+public interface RegionMapper extends BaseCrudMapper<Region> {
 
-    @BindQuery(comparison = Comparison.LIKE, column = "name")
-    private String name;
 }
+

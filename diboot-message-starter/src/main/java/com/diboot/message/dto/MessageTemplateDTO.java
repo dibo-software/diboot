@@ -43,13 +43,13 @@ public class MessageTemplateDTO extends MessageTemplate {
     /**
      * 创建时间-起始
      */
-    @BindQuery(comparison = Comparison.GE, field = "createTime")
+    @BindQuery(comparison = Comparison.GE, column = "createTime")
     private Date createTime;
 
     /**
      * 创建时间-截止
      */
-    @BindQuery(comparison = Comparison.LT, field = "createTime")
+    @BindQuery(comparison = Comparison.LT, column = "createTime")
     private Date createTimeEnd;
 
     @Override()

@@ -102,7 +102,6 @@ public class ServiceAdaptor {
         }
     }
 
-
     /**
      * 转换为IPage
      * @param pagination 分页
@@ -111,20 +110,6 @@ public class ServiceAdaptor {
     public static <E> Page<E> convertToIPage(Pagination pagination, Class<?> entityClass) {
         if(pagination == null){
             return null;
-        }
-        // 如果是默认id排序
-        if(pagination.isDefaultOrderBy()){
-            // 优化排序
-            String pk = ContextHelper.getIdFieldName(entityClass);
-            // 主键非有序id字段，需要清空默认排序以免报错
-            if(!Cons.FieldName.id.name().equals(pk)){
-                pagination.clearDefaultOrder();
-                //设置时间排序
-                EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
-                if(entityInfoCache.containsColumn(Cons.COLUMN_CREATE_TIME)){
-                    pagination.setDefaultCreateTimeOrderBy();
-                }
-            }
         }
         return pagination.setEntityClass(entityClass).toPage();
     }
