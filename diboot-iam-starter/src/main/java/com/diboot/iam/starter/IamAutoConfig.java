@@ -182,7 +182,7 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/login", "anon");
         filterChainMap.put("/auth/token", "anon");
         filterChainMap.put("/auth/2step-code", "anon");
-        filterChainMap.put("/uploadFile/download/*/image", "anon");
+        filterChainMap.put("/file/*/image", "anon");
 
         Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
