@@ -1,5 +1,5 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import crudTemplate from '../_crudTemplate'
+import crudTemplate from '../_util/crud-template'
 import type { Role } from '@/views/system/role/type'
 import Mock from 'mockjs'
 

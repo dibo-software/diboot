@@ -1,7 +1,7 @@
 <script setup lang="ts" name="Message">
 import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import type { Message } from './type'
-import Detail from '@/views/system/message/detail.vue'
+import Detail from '@/views/system/message/Detail.vue'
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<Message>({
   baseApi: '/message'

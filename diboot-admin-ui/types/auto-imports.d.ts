@@ -67,17 +67,17 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
-  const useDetail: typeof import('@/hooks/detail')['default']
-  const useForm: typeof import('@/hooks/form')['default']
-  const useList: typeof import('@/hooks/list')['default']
-  const useOption: typeof import('@/hooks/option')['default']
+  const useDetail: typeof import('@/hooks/use-detail')['default']
+  const useForm: typeof import('@/hooks/use-form')['default']
+  const useList: typeof import('@/hooks/use-list')['default']
+  const useOption: typeof import('@/hooks/use-option')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
-  const useSort: typeof import('@/hooks/sort')['default']
-  const useTabs: typeof import('@/hooks/tabs')['default']
-  const useTreeCrud: typeof import('@/hooks/tree_crud')['default']
-  const useUploadFile: typeof import('@/hooks/upload_file')['default']
+  const useSort: typeof import('@/hooks/use-sort')['default']
+  const useTabs: typeof import('@/hooks/use-tabs')['default']
+  const useTreeCrud: typeof import('@/hooks/use-tree-crud')['default']
+  const useUploadFile: typeof import('@/hooks/use-upload-file')['default']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
   const watchPostEffect: typeof import('vue')['watchPostEffect']
@@ -153,17 +153,17 @@ declare module '@vue/runtime-core' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useDetail: UnwrapRef<typeof import('@/hooks/detail')['default']>
-    readonly useForm: UnwrapRef<typeof import('@/hooks/form')['default']>
-    readonly useList: UnwrapRef<typeof import('@/hooks/list')['default']>
-    readonly useOption: UnwrapRef<typeof import('@/hooks/option')['default']>
+    readonly useDetail: UnwrapRef<typeof import('@/hooks/use-detail')['default']>
+    readonly useForm: UnwrapRef<typeof import('@/hooks/use-form')['default']>
+    readonly useList: UnwrapRef<typeof import('@/hooks/use-list')['default']>
+    readonly useOption: UnwrapRef<typeof import('@/hooks/use-option')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
-    readonly useSort: UnwrapRef<typeof import('@/hooks/sort')['default']>
-    readonly useTabs: UnwrapRef<typeof import('@/hooks/tabs')['default']>
-    readonly useTreeCrud: UnwrapRef<typeof import('@/hooks/tree_crud')['default']>
-    readonly useUploadFile: UnwrapRef<typeof import('@/hooks/upload_file')['default']>
+    readonly useSort: UnwrapRef<typeof import('@/hooks/use-sort')['default']>
+    readonly useTabs: UnwrapRef<typeof import('@/hooks/use-tabs')['default']>
+    readonly useTreeCrud: UnwrapRef<typeof import('@/hooks/use-tree-crud')['default']>
+    readonly useUploadFile: UnwrapRef<typeof import('@/hooks/use-upload-file')['default']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

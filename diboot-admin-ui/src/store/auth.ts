@@ -41,7 +41,7 @@ export default defineStore('auth', {
     },
     getInfo: async function () {
       try {
-        const res = await api.get<{ info: IUserInfo; roles: Array<string> }>('/auth/userInfo')
+        const res = await api.get<{ info: IUserInfo; roles: Array<string> }>('/auth/user-info')
         this.info = res.data?.info
         this.avatar = `${this.info?.avatar}`
         this.realname = `${this.info?.realname}`

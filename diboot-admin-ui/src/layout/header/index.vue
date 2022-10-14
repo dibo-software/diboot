@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall, toggleTheme } from '@/utils/theme'
-import MessageList from './messageList.vue'
-import MenuSearch from './menuSearch.vue'
+import MessageList from './MessageList.vue'
+import MenuSearch from './MenuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'

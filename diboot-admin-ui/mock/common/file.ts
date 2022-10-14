@@ -14,7 +14,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/batchUpload`,
+    url: `${baseUrl}/batch-uload`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: () => {
@@ -22,7 +22,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/fetchUpload`,
+    url: `${baseUrl}/fetch-upload`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: () => {
@@ -30,7 +30,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/:fileUuid`,
+    url: `${baseUrl}/:fileId`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: () => {
@@ -46,7 +46,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/:fileUuid/image`,
+    url: `${baseUrl}/:fileId/image`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: () => {

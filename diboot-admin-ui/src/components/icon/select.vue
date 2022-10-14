@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconLibrary from '@/config/iconLibrary'
+import IconLibrary from '@/config/icon-library'
 
 const getIconList = (key: string) =>
   Object.values(IconLibrary[key] as Record<string, { name: string } & Record<string, unknown>>)

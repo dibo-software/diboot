@@ -33,14 +33,14 @@ export default defineConfig(({ command }) => {
           { lodash: [['*', '_']] },
           { 'element-plus': ['ElMessage', 'ElMessageBox', 'ElNotification'] },
           { '@/utils/request': ['api', 'baseURL'] },
-          { '@/hooks/list': [['default', 'useList']] },
-          { '@/hooks/detail': [['default', 'useDetail']] },
-          { '@/hooks/form': [['default', 'useForm']] },
-          { '@/hooks/option': [['default', 'useOption']] },
-          { '@/hooks/sort': [['default', 'useSort']] },
-          { '@/hooks/upload_file': [['default', 'useUploadFile']] },
-          { '@/hooks/tabs': [['default', 'useTabs']] },
-          { '@/hooks/tree_crud': [['default', 'useTreeCrud']] },
+          { '@/hooks/use-list': [['default', 'useList']] },
+          { '@/hooks/use-detail': [['default', 'useDetail']] },
+          { '@/hooks/use-form': [['default', 'useForm']] },
+          { '@/hooks/use-option': [['default', 'useOption']] },
+          { '@/hooks/use-sort': [['default', 'useSort']] },
+          { '@/hooks/use-upload-file': [['default', 'useUploadFile']] },
+          { '@/hooks/use-tabs': [['default', 'useTabs']] },
+          { '@/hooks/use-tree-crud': [['default', 'useTreeCrud']] },
           { '@/utils/permission': ['checkPermission', 'checkRole'] }
         ],
         // 为true时在项目根目录自动创建
@@ -69,8 +69,8 @@ export default defineConfig(({ command }) => {
         prodEnabled: command !== 'serve',
         // 注入代码(用于生产需要mock)
         injectCode: `
-        import { setupProdMockServer } from '../mock/_prodServer';
-        
+        import { setupProdMockServer } from '../mock/server-config/_prod';
+
         setupProdMockServer();
         `
       })

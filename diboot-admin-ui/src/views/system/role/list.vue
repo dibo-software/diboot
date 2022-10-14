@@ -1,8 +1,8 @@
 <script setup lang="ts" name="RoleList">
 import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
 import type { Role } from './type'
-import Detail from './detail.vue'
-import Form from './form.vue'
+import Detail from './Detail.vue'
+import Form from './Form.vue'
 
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
   useList<Role>({ baseApi: '/role' })

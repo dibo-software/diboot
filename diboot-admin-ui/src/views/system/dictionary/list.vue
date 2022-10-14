@@ -1,7 +1,7 @@
 <script setup lang="ts" name="DictionaryList">
 import { ArrowDown, Refresh, Search } from '@element-plus/icons-vue'
-import FormPage from './form.vue'
-import DetailPage from './detail.vue'
+import FormPage from './Form.vue'
+import DetailPage from './Detail.vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
 
 interface DictionarySearch extends Dictionary {

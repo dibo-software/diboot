@@ -1,7 +1,7 @@
 <script setup lang="ts" name="RoleListSelector">
 import type { Role } from './type'
 import { defineEmits, defineProps } from 'vue'
-import useListSelector from '@/hooks/list_selector'
+import useListSelector from '@/hooks/use-list-selector'
 import type { ElTable } from 'element-plus'
 
 type Props = {

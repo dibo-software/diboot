@@ -23,7 +23,7 @@ const props = defineProps<{
 const exportLoadingData = ref(false)
 const dialogVisible = ref(false)
 const tableLoading = ref(false)
-const tableHeader = ref<TableHead[]>()
+const tableHeadList = ref<TableHead[]>()
 
 // 导出指定列的数据（columns为空或空数组时导出所有列）
 const exportData = (columns?: string[]) => {
@@ -40,12 +40,12 @@ const handleCommand = (columns?: string[]) => {
     exportData(columns)
   } else {
     dialogVisible.value = true
-    if (!tableHeader.value && props.tableHeadUrl) {
+    if (!tableHeadList.value && props.tableHeadUrl) {
       tableLoading.value = true
       api
         .get<TableHead[]>(props.tableHeadUrl)
         .then(res => {
-          tableHeader.value = res.data
+          tableHeadList.value = res.data
           tableLoading.value = false
         })
         .catch(res => {
@@ -147,7 +147,7 @@ const confirm = () => {
       </template>
       <el-checkbox-group v-model="checkedList" @change="handleCheckedCitiesChange">
         <el-table v-loading="tableLoading" border :data="[{}]" style="width: 100%">
-          <table-column v-for="(item, index) in tableHeader" :key="index" :column="item" />
+          <table-column v-for="(item, index) in tableHeadList" :key="index" :column="item" />
         </el-table>
       </el-checkbox-group>
       <template #footer>

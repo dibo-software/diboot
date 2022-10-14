@@ -3,7 +3,7 @@ import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import { cloneDeep } from 'lodash'
 import type { Dictionary } from '@/views/system/dictionary/type'
-import crudTemplate from '../_crudTemplate'
+import crudTemplate from '../_util/crud-template'
 
 const baseUrl = '/api/dictionary'
 
@@ -225,7 +225,7 @@ const mockMethods: MockMethod[] = [
     }
   },
   {
-    url: `${baseUrl}/batchDelete`,
+    url: `${baseUrl}/batch-delete`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: any) => {

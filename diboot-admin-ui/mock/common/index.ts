@@ -2,8 +2,8 @@ import type { MockMethod } from 'vite-plugin-mock'
 import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
-import objectDataListMap from './_objectDataListMap'
-import type { RelatedData, AsyncRelatedData } from '@/hooks/option'
+import objectDataListMap from './_data/object-data-list-map'
+import type { RelatedData, AsyncRelatedData } from '@/hooks/use-option'
 
 const line2Hump = (value: string, between = '_') =>
   value.toLowerCase().replace(RegExp(`${between}\\w`, 'g'), str => str.charAt(1).toUpperCase())
@@ -72,7 +72,7 @@ const dictList: Record<string, LabelValue<string>[]> = {
 }
 
 const remoteRelatedDataFilter: MockMethod = {
-  url: `${baseUrl}/loadRelatedData`,
+  url: `${baseUrl}/load-related-data`,
   timeout: Random.natural(50, 300),
   method: 'get',
   response: ({ query }: ApiRequest<AsyncRelatedData & { parentValue?: string; parentType?: string }>) => {
@@ -93,7 +93,7 @@ const remoteRelatedDataFilter: MockMethod = {
 export default [
   // 绑定字典接口
   {
-    url: `${baseUrl}/loadRelatedDict`,
+    url: `${baseUrl}/load-related-dict`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: ApiRequest<string[]>) => {
@@ -104,7 +104,7 @@ export default [
   },
   // 绑定数据接口
   {
-    url: `${baseUrl}/loadRelatedData`,
+    url: `${baseUrl}/load-related-data`,
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: ApiRequest<Record<string, RelatedData>>) => {
@@ -127,10 +127,10 @@ export default [
   remoteRelatedDataFilter,
   {
     ...remoteRelatedDataFilter,
-    url: `${baseUrl}/loadRelatedData/:parentValue`
+    url: `${baseUrl}/load-related-data/:parentValue`
   },
   {
     ...remoteRelatedDataFilter,
-    url: `${baseUrl}/loadRelatedData/:parentValue/:parentType`
+    url: `${baseUrl}/load-related-data/:parentValue/:parentType`
   }
 ] as MockMethod[]

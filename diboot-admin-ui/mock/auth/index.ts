@@ -31,7 +31,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/userInfo`,
+    url: `${baseUrl}/user-info`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ headers }: ApiRequest) => {
@@ -69,7 +69,7 @@ export default [
     }
   },
   {
-    url: `${baseUrl}/routeRecord`,
+    url: `${baseUrl}/route`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: () => {
@@ -93,12 +93,12 @@ const authMenu = [
     meta: { title: '组件示例', icon: 'Element:Guide' },
     children: [
       {
-        path: 'richText',
+        path: 'rich-text',
         name: 'RichText',
         meta: {
           title: '富文本编辑器',
           icon: 'Element:Edit',
-          componentPath: prefix + 'example/richText.vue',
+          componentPath: prefix + 'example/RichText.vue',
           sort: 1
         }
       },
@@ -108,7 +108,7 @@ const authMenu = [
         meta: {
           title: 'Markdown编辑器',
           icon: 'Element:Edit',
-          componentPath: prefix + 'example/markdown.vue',
+          componentPath: prefix + 'example/Markdown.vue',
           sort: 2
         }
       }
@@ -137,9 +137,9 @@ const authMenu = [
     ]
   },
   {
-    path: 'orgStructure',
+    path: 'org-structure',
     name: 'OrgUser ',
-    redirect: '/orgStructure/org',
+    redirect: '/org-structure/org',
     meta: { title: '组织架构', icon: 'Element:User' },
     children: [
       {
@@ -147,7 +147,7 @@ const authMenu = [
         name: 'Org',
         meta: {
           title: '组织部门',
-          componentPath: prefix + 'orgStructure/org/index.vue',
+          componentPath: prefix + 'org-structure/org/index.vue',
           sort: '@natural',
           keepAlive: false,
           icon: 'Element:Folder',
@@ -159,7 +159,7 @@ const authMenu = [
         name: 'Position',
         meta: {
           title: '岗位管理',
-          componentPath: prefix + 'orgStructure/position/list.vue',
+          componentPath: prefix + 'org-structure/position/List.vue',
           sort: '@natural',
           keepAlive: false,
           hollow: false,
@@ -172,7 +172,7 @@ const authMenu = [
         name: 'User',
         meta: {
           title: '人员管理',
-          componentPath: prefix + 'orgStructure/user/index.vue',
+          componentPath: prefix + 'org-structure/user/index.vue',
           sort: '@natural',
           keepAlive: false,
           icon: 'Element:User',
@@ -184,7 +184,7 @@ const authMenu = [
   {
     path: 'system',
     name: 'System',
-    redirect: '/system/resourcePermission',
+    redirect: '/system/resource-permission',
     meta: { title: '系统管理', icon: 'Element:SetUp' },
     children: [
       {
@@ -193,19 +193,19 @@ const authMenu = [
         meta: {
           title: '数据字典管理',
           icon: 'Element:Collection',
-          componentPath: prefix + 'system/dictionary/list.vue',
+          componentPath: prefix + 'system/dictionary/List.vue',
           sort: 1,
           keepAlive: false,
           permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {
-        path: 'resourcePermission',
-        name: 'resourcePermission-@increment',
+        path: 'resource-permission',
+        name: 'ResourcePermission',
         meta: {
           title: '资源权限管理',
           icon: 'Element:Menu',
-          componentPath: prefix + 'system/resourcePermission/list.vue',
+          componentPath: prefix + 'system/resource-permission/List.vue',
           sort: 2,
           keepAlive: false,
           permissions: ['create', 'update', 'delete']
@@ -217,30 +217,30 @@ const authMenu = [
         meta: {
           title: '用户角色管理',
           icon: 'Element:User',
-          componentPath: prefix + 'system/role/list.vue',
+          componentPath: prefix + 'system/role/List.vue',
           sort: 3,
           permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {
-        path: 'scheduleJob',
+        path: 'schedule-job',
         name: 'ScheduleJob',
         meta: {
           title: '定时任务管理',
           icon: 'Element:AlarmClock',
-          componentPath: prefix + 'system/scheduleJob/list.vue',
+          componentPath: prefix + 'system/schedule-job/List.vue',
           keepAlive: false,
           sort: 4,
           permissions: ['create', 'update', 'delete', 'executeOnce', 'logList', 'logDelete']
         }
       },
       {
-        path: 'messageTemplate',
+        path: 'message-template',
         name: 'messageTemplate',
         meta: {
           title: '消息模板管理',
           icon: 'Element:MessageBox',
-          componentPath: prefix + 'system/messageTemplate/list.vue',
+          componentPath: prefix + 'system/message-template/List.vue',
           keepAlive: false,
           sort: 5,
           permissions: ['detail', 'create', 'update', 'delete']
@@ -252,19 +252,19 @@ const authMenu = [
         meta: {
           title: '消息记录管理',
           icon: 'Element:Message',
-          componentPath: prefix + 'system/message/list.vue',
+          componentPath: prefix + 'system/message/List.vue',
           keepAlive: false,
           sort: 6,
           permissions: ['detail', 'delete']
         }
       },
       {
-        path: 'fileRecord',
+        path: 'file-record',
         name: 'FileRecord',
         meta: {
           title: '文件记录管理',
           icon: 'Element:FolderOpened',
-          componentPath: prefix + 'system/fileRecord/list.vue',
+          componentPath: prefix + 'system/file-record/List.vue',
           keepAlive: false,
           sort: 8,
           permissions: ['detail', 'update']
@@ -283,23 +283,23 @@ const authMenu = [
         }
       },
       {
-        path: 'operationLog',
+        path: 'operation-log',
         name: 'OperationLog',
         meta: {
           title: '操作日志管理',
           icon: 'Element:Pointer',
-          componentPath: prefix + 'system/operationLog/list.vue',
+          componentPath: prefix + 'system/operation-log/List.vue',
           sort: 9,
           permissions: ['detail']
         }
       },
       {
-        path: 'loginTrace',
+        path: 'login-trace',
         name: 'LoginTrace',
         meta: {
           title: '登录日志管理',
           icon: 'Element:Document',
-          componentPath: prefix + 'system/loginTrace/list.vue',
+          componentPath: prefix + 'system/login-trace/List.vue',
           sort: 10
         }
       },
@@ -309,7 +309,7 @@ const authMenu = [
         meta: {
           title: '国际化管理',
           icon: 'Element:Setting',
-          componentPath: prefix + 'system/i18nConfig/list.vue',
+          componentPath: prefix + 'system/i18n-config/List.vue',
           keepAlive: false,
           sort: 11,
           permissions: ['update']

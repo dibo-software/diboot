@@ -1,5 +1,5 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import crudTemplate from '../_crudTemplate'
+import crudTemplate from '../_util/crud-template'
 import type { Message } from '@/views/system/message/type'
 import { Random } from 'mockjs'
 import { JsonResult } from '../_util'
@@ -40,7 +40,7 @@ export default [
   crud.api.getList,
   crud.api.getById,
   {
-    url: `${crud.baseUrl}/new`,
+    url: `${crud.baseUrl}/own`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: () => {
@@ -48,11 +48,11 @@ export default [
     }
   },
   {
-    url: `${crud.baseUrl}/read/:id`,
+    url: `${crud.baseUrl}/read`,
     timeout: Random.natural(50, 300),
     method: 'patch',
-    response: ({ query }: ApiRequest) => {
-      query.id
+    response: ({ body }: ApiRequest<string[]>) => {
+      const ids = body
       return JsonResult.OK()
     }
   }

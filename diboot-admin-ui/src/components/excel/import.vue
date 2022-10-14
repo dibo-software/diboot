@@ -14,7 +14,7 @@ const visible = ref(false)
 const downloadLoading = ref(false)
 const downloadExample = () => {
   downloadLoading.value = true
-  fileDownload(`${props.excelBaseApi}/downloadExample`)?.finally(() => (downloadLoading.value = false))
+  fileDownload(`${props.excelBaseApi}/download-example`)?.finally(() => (downloadLoading.value = false))
 }
 
 const uploadDisabled = ref(true)
@@ -80,7 +80,7 @@ const handleUpload = () => {
   const formData = new FormData()
   if (data.value && data.value.uuid) {
     formData.append('uuid', data.value.uuid)
-    sendRequest(`${props.excelBaseApi}/previewSave`, formData)
+    sendRequest(`${props.excelBaseApi}/preview-save`, formData)
   } else {
     formData.append('file', fileList[0].raw as Blob)
     sendRequest(`${props.excelBaseApi}/upload`, formData)

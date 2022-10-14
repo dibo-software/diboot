@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import I18nList from '@/views/system/i18nConfig/list.vue'
-import type { I18nConfig } from '@/views/system/i18nConfig/type'
+import I18nList from '@/views/system/i18n-config/List.vue'
+import type { I18nConfig } from '@/views/system/i18n-config/type'
 import type { Ref } from 'vue'
 
 const props = defineProps<{ modelValue?: string; showContent?: boolean }>()
@@ -16,9 +16,11 @@ watch(
   value,
   code => {
     if (code) {
-      api.get<I18nConfig[]>(`/i18n-config/${code}`).then(res => {
-        dataList.value = res.data ?? []
-      })
+      if (dataList.value?.length === 0) {
+        api.get<I18nConfig[]>(`/i18n-config/${code}`).then(res => {
+          dataList.value = res.data ?? []
+        })
+      }
     } else {
       dataList.value = []
     }

@@ -1,4 +1,4 @@
-import type { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resource-permission/type'
 
 export interface Role {
   id: string

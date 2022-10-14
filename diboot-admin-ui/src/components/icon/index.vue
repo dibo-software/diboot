@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconLibrary from '@/config/iconLibrary'
+import IconLibrary from '@/config/icon-library'
 /**
  * 图标名称 [库别名（不填默认为Element）]:[(路径)图标名]
  */

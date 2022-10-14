@@ -4,7 +4,7 @@ import type { ApiRequest } from '../_util'
 import { JsonResult } from '../_util'
 import type { SystemConfig } from '@/views/system/config/type'
 
-const baseUrl = '/api/systemConfig'
+const baseUrl = '/api/system-config'
 
 const typeList: LabelValue<string[]>[] = [
   {
@@ -45,7 +45,7 @@ const configItemsMap: Record<string, SystemConfig[]> = {
 export default [
   // 获取配置类型列表
   {
-    url: `${baseUrl}/typeList`,
+    url: `${baseUrl}/type-list`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: () => {

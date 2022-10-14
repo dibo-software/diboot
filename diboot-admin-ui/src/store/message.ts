@@ -31,7 +31,7 @@ export default defineStore('message', {
   },
   actions: {
     async loadNewMessages() {
-      const { data } = await api.get<MessageInfo[]>('/message/new')
+      const { data } = await api.get<MessageInfo[]>('/message/own')
       if (data) {
         data.map(e => (e.new = true))
         this.list.unshift(...data)
@@ -41,7 +41,7 @@ export default defineStore('message', {
       this.list.unshift(message)
     },
     remove(id: string) {
-      api.patch(`/message/read/${id}`).finally(() => ({}))
+      api.patch(`/message/read`, [id]).finally(() => ({}))
       const index = this.list.findIndex(e => e.id === id)
       return index >= 0 ? !!this.list.splice(index, 1) : false
     }

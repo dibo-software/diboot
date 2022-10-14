@@ -41,8 +41,8 @@ onMounted(() => {
       emit('update:modelValue', value)
     },
     upload: {
-      url: baseURL + '/file/batchUpload',
-      // linkToImgUrl: baseURL + '/file/fetchUpload',
+      url: baseURL + '/file/batch-upload',
+      // linkToImgUrl: baseURL + '/file/fetch-upload',
       setHeaders: () => ({ [AUTH_HEADER_KEY]: 'Bearer ' + auth.getToken() }),
       fieldName: 'files',
       filename(name) {

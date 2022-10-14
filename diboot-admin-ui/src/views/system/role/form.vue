@@ -1,7 +1,7 @@
 <script setup lang="ts" name="RoleForm">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
-import type { ResourcePermission } from '@/views/system/resourcePermission/type'
+import type { ResourcePermission } from '@/views/system/resource-permission/type'
 
 const baseApi = '/role'
 
@@ -16,7 +16,7 @@ const transformField = {
 }
 const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } =
   useTreeCrud<ResourcePermission>({
-    baseApi: '/resourcePermission',
+    baseApi: '/resource-permission',
     treeApi: '/list',
     transformField
   })

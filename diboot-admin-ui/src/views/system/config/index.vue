@@ -4,14 +4,14 @@ import { checkPermission } from '@/utils/permission'
 import { CircleCheck, CircleClose } from '@element-plus/icons-vue'
 import type { SystemConfigType, SystemConfig } from './type'
 
-const baseApi = '/systemConfig'
+const baseApi = '/system-config'
 const type = ref('')
 const typeList = ref<SystemConfigType[]>([])
 const configList = ref<SystemConfig[]>([])
 
 const editable = checkPermission('update')
 
-api.get<SystemConfigType[]>(`${baseApi}/typeList`).then(res => {
+api.get<SystemConfigType[]>(`${baseApi}/type-list`).then(res => {
   if (res.data) typeList.value = res.data
   if (typeList.value && typeList.value.length > 0) {
     type.value = typeList.value[0]?.value
