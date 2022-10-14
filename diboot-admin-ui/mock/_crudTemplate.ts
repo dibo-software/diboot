@@ -41,8 +41,6 @@ export interface Api {
   remove: MockMethod
   // 批量删除
   batchRemove: MockMethod
-  // 撤销删除
-  cancelRemove: MockMethod
 }
 
 /**
@@ -188,15 +186,6 @@ export default <T>(option: Option<T>) => {
         method: 'post',
         response: ({ body }: ApiRequest<Array<string>>) => {
           deleteDataIds.push(...body)
-          return JsonResult.OK()
-        }
-      },
-      cancelRemove: {
-        url: `${baseUrl}/cancelDeleted`,
-        timeout: Random.natural(50, 300),
-        method: 'patch',
-        response: ({ body }: ApiRequest<Array<string>>) => {
-          deleteDataIds.splice(0, deleteDataIds.length, ...deleteDataIds.filter(e => !body.includes(e)))
           return JsonResult.OK()
         }
       }

@@ -225,15 +225,6 @@ const mockMethods: MockMethod[] = [
     }
   },
   {
-    url: `${baseUrl}/cancelDeleted`,
-    timeout: Random.natural(50, 300),
-    method: 'patch',
-    response: ({ body }: any) => {
-      deleteDataIds.splice(0, deleteDataIds.length, ...deleteDataIds.filter(e => !body.includes(e)))
-      return JsonResult.OK()
-    }
-  },
-  {
     url: `${baseUrl}/batchDelete`,
     timeout: Random.natural(50, 300),
     method: 'post',
