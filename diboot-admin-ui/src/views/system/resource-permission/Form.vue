@@ -252,7 +252,11 @@ watch(
                 <icon-select v-model="model.routeMeta.icon" />
               </el-form-item>
               <el-form-item label="菜单名称" prop="displayName">
-                <el-input v-model="model.displayName" placeholder="请输入菜单名称" clearable />
+                <el-input v-model="model.displayName" placeholder="请输入菜单名称" clearable>
+                  <template #append>
+                    <i18n-selector v-model="model.displayNameI18n" />
+                  </template>
+                </el-input>
               </el-form-item>
               <el-form-item label="路由名称" prop="resourceCode">
                 <route-select

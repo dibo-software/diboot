@@ -4,6 +4,7 @@ import { mock, Random } from 'mockjs'
 import { list2Tree } from '@/utils/list'
 import type { OrgModel } from '@/views/org-structure/org/type'
 import crudTemplate from '../_util/crud-template'
+import _ from 'lodash'
 
 const baseUrl = '/api/org'
 

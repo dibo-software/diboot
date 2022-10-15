@@ -7,6 +7,7 @@ export interface ResourcePermission {
   parentDisplayName?: string
   displayType?: string
   displayName?: string
+  displayNameI18n?: string
   routePath?: string
   resourceCode?: string
   permissionCodes?: Array<string>
