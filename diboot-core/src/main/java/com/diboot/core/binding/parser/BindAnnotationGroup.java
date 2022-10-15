@@ -215,7 +215,7 @@ public class BindAnnotationGroup {
     }
 
     public boolean isEmpty() {
-        return V.isAllEmpty(bindDictAnnotations, bindFieldGroupMap, bindEntityAnnotations, bindEntityListAnnotations, bindFieldListGroupMap, bindCountAnnotations);
+        return V.isAllEmpty(bindDictAnnotations, bindFieldGroupMap, bindEntityAnnotations, bindEntityListAnnotations, bindFieldListGroupMap, bindCountAnnotations, bindI18nAnnotations);
     }
 
     /**
