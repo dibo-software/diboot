@@ -40,6 +40,8 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -948,6 +950,45 @@ public class BeanUtils {
             return Integer.parseInt(S.valueOf(value));
         }
         return value;
+    }
+
+    /**
+     * 获取字段的真实类型（集合取泛型参数）
+     * @param clazz
+     * @param fieldName
+     * @return
+     */
+    public static Class<?> getFieldActualType(Class<?> clazz, String fieldName) {
+        Field field;
+        try {
+            field = clazz.getDeclaredField(fieldName);
+        }
+        catch (NoSuchFieldException e) {
+            log.warn("class {} 中无字段 {}", clazz.getName(), fieldName);
+            return null;
+        }
+        return getFieldActualType(field);
+    }
+
+    /**
+     * 获取字段的真实类型（集合取泛型参数）
+     * @param field
+     * @return
+     */
+    public static Class<?> getFieldActualType(Field field) {
+        Type genericType = field.getGenericType();
+        if(genericType instanceof Class) {
+            return (Class) genericType;
+        }
+        // 得到泛型里的class类型对象
+        else if (genericType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) genericType;
+            return (Class<?>)pt.getActualTypeArguments()[0];
+        }
+        else{
+            log.warn("非预期的GenericType : {}", genericType.getTypeName());
+            return null;
+        }
     }
 
     /**

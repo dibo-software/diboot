@@ -36,6 +36,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -183,35 +186,63 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         if(V.isEmpty(voList)){
             return;
         }
-        LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .select(Dictionary::getItemValue, Dictionary::getItemName)
-                .eq(Dictionary::getType, type).gt(Dictionary::getParentId, 0);
-        List<Dictionary> entityList = super.getEntityList(queryWrapper);
-        Map<String, String> map = entityList.stream().collect(Collectors.toMap(Dictionary::getItemValue, Dictionary::getItemName));
+        List<LabelValue> entityList = getLabelValueList(type);
+        Map<String, LabelValue> map = BeanUtils.convertToStringKeyObjectMap(entityList, LabelValue::getValue);
+        Class<?> fieldType = BeanUtils.getFieldActualType(voList.get(0).getClass(), setFieldName);
         for (Object item : voList) {
             Object value = BeanUtils.getProperty(item, getFieldName);
             if (V.isEmpty(value)) {
                 continue;
             }
-            Object label = map.get(value);
-            if (label == null) {
-                if(value instanceof String && ((String)value).contains(S.SEPARATOR)) {
-                    List<String> labelList = new ArrayList<>();
-                    for (String key : ((String)value).split(S.SEPARATOR)) {
-                        labelList.add(map.get(key));
-                    }
-                    label = S.join(labelList);
+            LabelValue matchedItem = map.get(value);
+            if (matchedItem != null) {
+                if(fieldType.equals(LabelValue.class)) {
+                    BeanUtils.setProperty(item, setFieldName, matchedItem);
                 }
-                else if(value instanceof Collection) {
-                    List<String> labelList = new ArrayList<>();
-                    for (Object key : (Collection)value) {
-                        labelList.add(map.get((String)key));
+                else {
+                    BeanUtils.setProperty(item, setFieldName, matchedItem.getLabel());
+                }
+                continue;
+            }
+            // 直接匹配无结果
+            if((value instanceof String && ((String)value).contains(S.SEPARATOR))) {
+                List labelList = new ArrayList<>();
+                for (String key : ((String)value).split(S.SEPARATOR)) {
+                    LabelValue labelValue = map.get(key);
+                    if(labelValue == null) {
+                        continue;
                     }
-                    label = labelList;
+                    if(fieldType.equals(LabelValue.class)) {
+                        labelList.add(labelValue);
+                    }
+                    else {
+                        labelList.add(labelValue.getLabel());
+                    }
+                }
+                if(V.notEmpty(labelList)) {
+                    if(fieldType.equals(LabelValue.class)) {
+                        BeanUtils.setProperty(item, setFieldName, labelList);
+                    }
+                    else {
+                        BeanUtils.setProperty(item, setFieldName, S.join(labelList));
+                    }
                 }
             }
-            if (V.notEmpty(label)) {
-                BeanUtils.setProperty(item, setFieldName, label);
+            else if(value instanceof Collection) {
+                List labelList = new ArrayList<>();
+                for (Object key : (Collection)value) {
+                    LabelValue labelValue = map.get((String)key);
+                    if(labelValue == null) {
+                        continue;
+                    }
+                    if(fieldType.equals(LabelValue.class)) {
+                        labelList.add(labelValue);
+                    }
+                    else {
+                        labelList.add(labelValue.getLabel());
+                    }
+                }
+                BeanUtils.setProperty(item, setFieldName, labelList);
             }
         }
     }
