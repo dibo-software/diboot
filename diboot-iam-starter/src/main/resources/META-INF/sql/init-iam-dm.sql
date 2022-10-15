@@ -128,6 +128,7 @@ create table ${SCHEMA}.iam_resource_permission
     parent_id varchar(32) default '0' not null,
     display_type VARCHAR(60) not null,
     display_name VARCHAR(100) not null,
+    display_name_i18n VARCHAR(200) null,
     resource_code VARCHAR(100)   null,
     permission_code VARCHAR(300)   null,
     sort_id bigint  null,
@@ -141,6 +142,7 @@ comment on column ${SCHEMA}.iam_resource_permission.app_module is '应用模块'
 comment on column ${SCHEMA}.iam_resource_permission.parent_id is '父资源ID';
 comment on column ${SCHEMA}.iam_resource_permission.display_type is '展现类型';
 comment on column ${SCHEMA}.iam_resource_permission.display_name is '显示名称';
+comment on column ${SCHEMA}.iam_resource_permission.display_name is '显示名称国际化资源标识';
 comment on column ${SCHEMA}.iam_resource_permission.resource_code is '前端编码';
 comment on column ${SCHEMA}.iam_resource_permission.permission_code is '权限码';
 comment on column ${SCHEMA}.iam_resource_permission.sort_id is '排序号';

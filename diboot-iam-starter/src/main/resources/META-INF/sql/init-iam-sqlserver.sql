@@ -133,6 +133,7 @@ create table ${SCHEMA}.iam_resource_permission
     parent_id varchar(32) default 0   not null,
     display_type varchar(20) not null,
     display_name varchar(100) not null,
+    display_name_i18n varchar(200) null,
     resource_code varchar(100)   null,
     permission_code varchar(200)   null,
     sort_id bigint   null,
@@ -147,6 +148,7 @@ execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SC
 execute sp_addextendedproperty 'MS_Description', N'父资源ID', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'parent_id';
 execute sp_addextendedproperty 'MS_Description', N'展现类型', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_type';
 execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
+execute sp_addextendedproperty 'MS_Description', N'显示名称国际化资源标识', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'display_name';
 execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'resource_code';
 execute sp_addextendedproperty 'MS_Description', N'权限码', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'permission_code';
 execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', iam_resource_permission, 'column', 'sort_id';

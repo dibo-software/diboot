@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -79,8 +80,13 @@ public class IamResourcePermission extends BaseEntity {
     @NotNull(message = "显示名称不能为空")
     @Length(max=100, message="显示名称长度应小于100")
     @BindQuery(comparison = Comparison.LIKE)
-    @TableField()
+    @BindI18n("displayNameI18n")
     private String displayName;
+
+    /**
+     * 显示名称国际化资源标识
+     */
+    private String displayNameI18n;
 
     // 权限编码
     @Length(max=200, message="路由地址长度应小于200")

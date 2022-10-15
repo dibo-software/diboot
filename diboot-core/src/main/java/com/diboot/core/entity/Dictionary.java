@@ -17,6 +17,7 @@ package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,7 +50,6 @@ public class Dictionary extends BaseEntity {
     /***
      * 上级ID
      */
-    @NotNull(message = "上级ID不能为空")
     @TableField
     private String parentId;
 
@@ -73,8 +73,13 @@ public class Dictionary extends BaseEntity {
     @NotNull(message = "数据字典项名称不能为空！")
     @Length(max = 100, message = "数据字典项名称长度超长！")
     @BindQuery(comparison = Comparison.LIKE)
-    @TableField
+    @BindI18n("itemNameI18n")
     private String itemName;
+
+    /**
+     * 数据字典项的显示名称国际化资源标识
+     */
+    private String itemNameI18n;
 
     /***
      * 数据字典项的存储值（编码）

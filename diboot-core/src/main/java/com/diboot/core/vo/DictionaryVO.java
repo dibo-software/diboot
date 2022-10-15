@@ -31,7 +31,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class DictionaryVO extends Dictionary {
 
-    @BindEntityList(entity= Dictionary.class, condition="this.type=type AND this.id=parent_id", orderBy = "sort_id:ASC")
+    @BindEntityList(entity= Dictionary.class, condition="this.type=type AND this.id=parent_id", orderBy = "sort_id:ASC", deepBind = true)
     private List<Dictionary> children;
 
 }

@@ -6,6 +6,7 @@ create table ${SCHEMA}.dictionary (
     app_module         VARCHAR2(50),
     type               VARCHAR2(50)          not null,
     item_name          VARCHAR2(100)         not null,
+    item_name_i18n     VARCHAR2(200),
     item_value         VARCHAR2(100),
     description        VARCHAR2(100),
     extension          VARCHAR2(200),
@@ -23,6 +24,7 @@ comment on column ${SCHEMA}.dictionary.tenant_id is '租户ID';
 comment on column ${SCHEMA}.dictionary.app_module is '应用模块';
 comment on column ${SCHEMA}.dictionary.type is '字典类型';
 comment on column ${SCHEMA}.dictionary.item_name is '显示名';
+comment on column ${SCHEMA}.dictionary.item_name is '国际化资源标识';
 comment on column ${SCHEMA}.dictionary.item_value is '存储值';
 comment on column ${SCHEMA}.dictionary.description is '备注';
 comment on column ${SCHEMA}.dictionary.extension is '扩展JSON';

@@ -2,10 +2,11 @@
 create table ${SCHEMA}.dictionary (
    id                   varchar(32)         not null,
    parent_id            varchar(32)         null,
-   tenant_id            varchar(32)         not null default 0,
-   app_module          varchar(50),
+   tenant_id            varchar(32)         not null default '0',
+   app_module           varchar(50),
    type                 varchar(50)          not null,
    item_name            varchar(100)         not null,
+   item_name_i18n       varchar(200)         null,
    item_value           varchar(100)         null,
    description          varchar(100)         null,
    extension            varchar(200)         null,
@@ -23,6 +24,7 @@ execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA
 execute sp_addextendedproperty 'MS_Description', N'应用模块','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'app_module';
 execute sp_addextendedproperty 'MS_Description', N'字典类型','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'type';
 execute sp_addextendedproperty 'MS_Description', N'显示名','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_name';
+execute sp_addextendedproperty 'MS_Description', N'显示名国际化资源标识','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_name';
 execute sp_addextendedproperty 'MS_Description', N'存储值','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'item_value';
 execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'description';
 execute sp_addextendedproperty 'MS_Description', N'扩展JSON','SCHEMA', '${SCHEMA}', 'table', dictionary, 'column', 'extension';

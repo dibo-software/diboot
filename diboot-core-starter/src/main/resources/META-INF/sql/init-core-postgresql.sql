@@ -3,9 +3,10 @@ create table dictionary (
      id                   VARCHAR(32) not null,
      parent_id            VARCHAR(32)   null,
      tenant_id            VARCHAR(32)   not null default '0',
-     app_module          VARCHAR(50),
+     app_module           VARCHAR(50),
      type                 VARCHAR(50)   not null,
      item_name            VARCHAR(100)  not null,
+     item_name_18n        VARCHAR(200),
      item_value           VARCHAR(100)  null,
      description          VARCHAR(100)  null,
      extension            VARCHAR(200)  null,
@@ -23,6 +24,7 @@ comment on column dictionary.tenant_id is '租户ID';
 comment on column dictionary.app_module is '应用模块';
 comment on column dictionary.type is '字典类型';
 comment on column dictionary.item_name is '显示名';
+comment on column dictionary.item_name is '显示名国际化资源标识';
 comment on column dictionary.item_value is '存储值';
 comment on column dictionary.description is '描述说明';
 comment on column dictionary.extension is '扩展JSON';

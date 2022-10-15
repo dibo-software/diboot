@@ -6,6 +6,7 @@ CREATE TABLE `dictionary` (
   `app_module`  varchar(50)   null comment '应用模块',
   `type` varchar(50) NOT NULL COMMENT '字典类型',
   `item_name` varchar(100) NOT NULL COMMENT '显示名',
+  `item_name_i18n` varchar(200) NULL COMMENT '显示名国际化资源标识',
   `item_value` varchar(100) DEFAULT NULL COMMENT '存储值',
   `description` varchar(100) DEFAULT NULL COMMENT '描述说明',
   `extension` varchar(200) DEFAULT NULL COMMENT '扩展JSON',
