@@ -80,7 +80,7 @@ public class TestFieldBinder {
             Assert.assertNotNull(vo.getOrgParentId());
             // 验证枚举值已绑定
             Assert.assertNotNull(vo.getGenderLabel());
-
+            Assert.assertNotNull(vo.getGenderLabelValue());
             System.out.println(JSON.stringify(vo));
         }
     }

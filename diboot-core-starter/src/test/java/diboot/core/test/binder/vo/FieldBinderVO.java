@@ -17,6 +17,7 @@ package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.vo.LabelValue;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import diboot.core.test.binder.entity.User;
@@ -51,4 +52,6 @@ public class FieldBinderVO extends User {
     @BindDict(type="GENDER", field = "gender")
     private String genderLabel;
 
+    @BindDict(type="GENDER", field = "gender")
+    private LabelValue genderLabelValue;
 }
