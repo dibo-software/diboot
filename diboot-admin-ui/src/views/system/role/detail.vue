@@ -2,7 +2,7 @@
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resource-permission/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'
-const { loadData, loading, model } = useDetail<Role>('/role')
+const { loadData, loading, model } = useDetail<Role>('/iam/role')
 
 const visible = ref(false)
 
@@ -18,7 +18,7 @@ const transformField = {
   label: 'displayName'
 }
 const { treeRef, treeDataList, getTree, flatTreeNodeClass } = useTreeCrud<ResourcePermission>({
-  baseApi: '/resource-permission',
+  baseApi: '/iam/resource-permission',
   treeApi: '/list',
   transformField
 })

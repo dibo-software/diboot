@@ -37,7 +37,7 @@ export const dataList: Position[] = arrList
   })
 
 const crud = crudTemplate({
-  baseApi: '/position',
+  baseApi: '/iam/position',
   dataList,
   keywordsKeys: ['name', 'code'],
   fuzzyMatchKeys: ['name', 'code']

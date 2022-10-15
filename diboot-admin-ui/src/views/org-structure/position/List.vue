@@ -10,7 +10,7 @@ interface PositionSearch extends Position {
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } = useList<
   Position,
   PositionSearch
->({ baseApi: '/position' })
+>({ baseApi: '/iam/position' })
 
 getList()
 

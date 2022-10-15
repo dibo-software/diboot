@@ -24,7 +24,7 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilte
   UserModel,
   UserSearch
 >({
-  baseApi: '/user'
+  baseApi: '/iam/user'
 })
 getList()
 const searchVal = ref('')

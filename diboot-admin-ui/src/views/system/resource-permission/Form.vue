@@ -145,7 +145,7 @@ const {
   autoRefreshPermissionCode
 } = usePermissionControl()
 // 初始化后台权限
-initRestPermissions('/resource-permission/api-list')
+initRestPermissions('/iam/resource-permission/api-list')
 // option hook
 const { relatedData, initRelatedData } = useOption({ dict: 'RESOURCE_PERMISSION_CODE' })
 initRelatedData().then(() => {

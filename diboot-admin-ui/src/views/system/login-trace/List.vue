@@ -4,7 +4,7 @@ import type { LoginTrace } from './type'
 
 const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSearch, resetFilter } =
   useList<LoginTrace>({
-    baseApi: '/login-trace'
+    baseApi: '/iam/login-trace'
   })
 getList()
 </script>

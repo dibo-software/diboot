@@ -5,7 +5,7 @@ import Detail from './Detail.vue'
 import Form from './Form.vue'
 
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
-  useList<Role>({ baseApi: '/role' })
+  useList<Role>({ baseApi: '/iam/role' })
 
 getList()
 

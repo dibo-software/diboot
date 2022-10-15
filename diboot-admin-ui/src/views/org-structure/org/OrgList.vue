@@ -19,7 +19,7 @@ const { queryParam, onSearch, resetFilter, getList, loading, dataList, paginatio
   OrgModel,
   OrgSearch
 >({
-  baseApi: '/org',
+  baseApi: '/iam/org',
   deleteCallback() {
     emit('reload')
   }

@@ -19,7 +19,7 @@ const dataList: LoginTrace[] = Array.from({ length: 100 }).map((_, index) => {
 })
 
 const crud = crudTemplate({
-  baseApi: '/login-trace',
+  baseApi: '/iam/login-trace',
   dataList: dataList,
   fuzzyMatchKeys: ['authAccount']
 })

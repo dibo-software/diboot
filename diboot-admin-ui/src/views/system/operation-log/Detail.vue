@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { OperationLog } from './type'
 
-const { model, loadData, loading } = useDetail<OperationLog>('/operation-log')
+const { model, loadData, loading } = useDetail<OperationLog>('/iam/operation-log')
 
 const visible = ref(false)
 

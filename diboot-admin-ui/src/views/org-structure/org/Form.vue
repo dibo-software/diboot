@@ -3,7 +3,7 @@ import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'
 
-const baseApi = '/org'
+const baseApi = '/iam/org'
 
 const { loadData, loading, model } = useDetail<OrgModel>(baseApi)
 const {
@@ -11,7 +11,7 @@ const {
   treeDataList,
   loading: treeLoading
 } = useTreeCrud<OrgModel>({
-  baseApi: '/org',
+  baseApi: '/iam/org',
   treeApi: '/tree',
   transformField: { label: 'shortName' }
 })

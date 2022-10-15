@@ -17,7 +17,7 @@ export const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
 })
 
 const crud = crudTemplate({
-  baseApi: '/role',
+  baseApi: '/iam/role',
   dataList,
   fuzzyMatchKeys: ['name', 'code']
 })

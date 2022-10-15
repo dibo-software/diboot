@@ -14,7 +14,7 @@ const emit = defineEmits(['changeCurrentNode', 'dataChange'])
 
 const { filterNode, getTree, addTreeNode, nodeClick, treeRef, searchWord, treeDataList, loading } =
   useTreeCrud<OrgModel>({
-    baseApi: '/org',
+    baseApi: '/iam/org',
     treeApi: '/tree',
     transformField: { label: 'shortName', value: 'id' }
   })

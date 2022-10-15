@@ -1,7 +1,7 @@
 <script setup lang="ts" name="UserDetail">
 import type { UserModel } from './type'
 
-const { model, loadData, loading } = useDetail<UserModel>('/user')
+const { model, loadData, loading } = useDetail<UserModel>('/iam/user')
 
 const visible = ref(false)
 

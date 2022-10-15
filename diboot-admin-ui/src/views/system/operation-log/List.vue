@@ -4,7 +4,7 @@ import type { OperationLog } from './type'
 import Detail from '@/views/system/operation-log/Detail.vue'
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<OperationLog>({
-  baseApi: '/operation-log'
+  baseApi: '/iam/operation-log'
 })
 getList()
 

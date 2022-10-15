@@ -18,7 +18,7 @@ const emit = defineEmits(['update:selectedKeys', 'update:selectedRows', 'select'
 
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
   useList<Role>({
-    baseApi: '/role',
+    baseApi: '/iam/role',
     loadSuccess: () => {
       setCheckedKeys()
     }

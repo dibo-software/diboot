@@ -3,7 +3,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resource-permission/type'
 
-const baseApi = '/role'
+const baseApi = '/iam/role'
 
 const { loadData, loading, model } = useDetail<Role>(baseApi)
 
@@ -16,7 +16,7 @@ const transformField = {
 }
 const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } =
   useTreeCrud<ResourcePermission>({
-    baseApi: '/resource-permission',
+    baseApi: '/iam/resource-permission',
     treeApi: '/list',
     transformField
   })

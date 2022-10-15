@@ -3,7 +3,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { Position } from './type'
 import { defineEmits } from 'vue'
 
-const baseApi = '/position'
+const baseApi = '/iam/position'
 
 const { loadData, loading, model } = useDetail<Position>(baseApi)
 const { relatedData, initRelatedData } = useOption({ dict: ['DATA_PERMISSION_TYPE', 'POSITION_GRADE'] })

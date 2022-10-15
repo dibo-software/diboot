@@ -32,7 +32,7 @@ const optionsValue = computed({
 })
 
 const { selectOptions, selectedRows, selectedKeys, onSelect, loadInitOptions } = usePopoverListSelector<Role>({
-  baseApi: '/role',
+  baseApi: '/iam/role',
   multi: props.multi,
   labelKey: 'name',
   valueKey: 'id',

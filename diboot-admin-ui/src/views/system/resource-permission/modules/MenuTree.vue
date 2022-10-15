@@ -23,7 +23,7 @@ const {
   dataList,
   loading
 } = useTreeCrud<ResourcePermission>({
-  baseApi: '/resource-permission',
+  baseApi: '/iam/resource-permission',
   treeApi: '/menu-tree',
   transformField: treeProps,
   clickNodeCallback(nodeData) {
@@ -85,7 +85,10 @@ defineExpose({
   }
 })
 
-const { nodeDrag } = useSort<Required<ResourcePermission>>({ sortApi: '/resource-permission/sort', callback: getTree })
+const { nodeDrag } = useSort<Required<ResourcePermission>>({
+  sortApi: '/iam/resource-permission/sort',
+  callback: getTree
+})
 </script>
 <template>
   <div class="tree-container">

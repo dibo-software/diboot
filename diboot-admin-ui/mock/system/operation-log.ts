@@ -32,7 +32,7 @@ const dataList: OperationLog[] = Array.from({ length: 100 }).map((_, index) => {
 })
 
 const crud = crudTemplate({
-  baseApi: '/operation-log',
+  baseApi: '/iam/operation-log',
   dataList
 })
 

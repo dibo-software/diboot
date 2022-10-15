@@ -6,7 +6,7 @@ import type { OrgModel } from '@/views/org-structure/org/type'
 import RolePopoverListSelector from '@/views/system/role/PopoverListSelector.vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
 
-const baseApi = '/user'
+const baseApi = '/iam/user'
 
 const { loadData, loading, model } = useDetail<UserModel>(baseApi)
 const {
@@ -14,7 +14,7 @@ const {
   treeDataList: orgTree,
   loading: treeLoading
 } = useTreeCrud<OrgModel>({
-  baseApi: '/org',
+  baseApi: '/iam/org',
   treeApi: '/tree',
   transformField: { label: 'shortName' }
 })
