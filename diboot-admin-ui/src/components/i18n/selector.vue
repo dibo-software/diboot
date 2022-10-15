@@ -8,18 +8,30 @@ const emits = defineEmits<{
   (e: 'update:modelValue', code?: string): void
 }>()
 const value = ref(props.modelValue)
+
+watch(
+  () => props.modelValue,
+  code => (value.value = code)
+)
+
 const visible = ref(false)
 
 const dataList: Ref<I18nConfig[] | undefined> = ref([])
+const loading = ref(false)
 
 watch(
   value,
   code => {
     if (code) {
       if (dataList.value?.length === 0) {
-        api.get<I18nConfig[]>(`/i18n-config/${code}`).then(res => {
-          dataList.value = res.data ?? []
-        })
+        loading.value = true
+        dataList.value = []
+        api
+          .get<I18nConfig[]>(`/i18n-config/${code}`)
+          .then(res => {
+            dataList.value = res.data ?? []
+          })
+          .finally(() => (loading.value = false))
       }
     } else {
       dataList.value = []
@@ -32,7 +44,7 @@ watch(
 </script>
 
 <template>
-  <sapn>
+  <span>
     <el-popover :title="`语言标识：${value}`" width="auto" trigger="hover" :disabled="!value">
       <template #reference>
         <span style="cursor: pointer" @click="visible = true">
@@ -48,26 +60,26 @@ watch(
           </span>
         </span>
       </template>
-      <el-descriptions :column="1" size="small">
+      <el-descriptions v-loading="loading" :column="1" size="small">
         <el-descriptions-item
-          v-for="locale in $i18n.availableLocales.map(e => e.replaceAll('-', '_'))"
+          v-for="locale in $i18n.availableLocales"
           :key="locale"
           :label="$t('language', null, { locale })"
         >
-          {{ dataList.find(e => e.language === locale)?.content }}
+          {{ dataList?.find(e => e.language === locale.replaceAll('-', '_'))?.content }}
         </el-descriptions-item>
       </el-descriptions>
     </el-popover>
     <el-dialog v-model="visible" top="10vh">
       <template #header>
         <div style="display: flex; justify-content: space-between; margin-right: 30px">
-          <sapn class="el-dialog__title">国际化配置</sapn>
+          <span class="el-dialog__title">国际化配置</span>
           <el-button v-show="modelValue" text type="danger" size="small" @click="value = undefined">取消选择</el-button>
         </div>
       </template>
       <i18n-list v-model="value" select class="i18n-list" @change="list => (dataList = list)" />
     </el-dialog>
-  </sapn>
+  </span>
 </template>
 
 <style scoped lang="scss">

@@ -68,9 +68,9 @@ const singleRow = (row: Array<I18nConfig>) => {
     </el-form>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
-      <el-table-column v-if="select" fixed width="30">
+      <el-table-column v-if="select" fixed width="36px">
         <template #default="{ row }">
-          <el-radio v-model="single" :label="row[0].code" @change="singleRow(row)" />
+          <el-radio v-model="single" :label="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>
         </template>
       </el-table-column>
       <el-table-column prop="code" label="资源标识" fixed show-overflow-tooltip min-width="180px">
