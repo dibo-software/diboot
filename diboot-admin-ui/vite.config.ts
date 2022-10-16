@@ -1,6 +1,4 @@
 import { defineConfig } from 'vite'
-import OptimizationPersist from 'vite-plugin-optimize-persist'
-import PkgConfig from 'vite-plugin-package-config'
 import vue from '@vitejs/plugin-vue'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 // import checker from 'vite-plugin-checker'
@@ -15,8 +13,6 @@ import { fileURLToPath, URL } from 'url'
 export default defineConfig(({ command }) => {
   return {
     plugins: [
-      PkgConfig(),
-      OptimizationPersist(),
       vue(),
       VueSetupExtend(),
       // checker({ vueTsc: true }),

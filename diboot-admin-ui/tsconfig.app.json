@@ -1,10 +1,8 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
+  "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "composite": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [

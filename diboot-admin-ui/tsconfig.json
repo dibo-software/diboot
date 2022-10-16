@@ -1,47 +1,14 @@
-//{
-//  "files": [],
-//  "references": [
-//    {
-//      "path": "./tsconfig.config.json"
-//    },
-//    {
-//      "path": "./tsconfig.app.json"
-//    }
-//  ]
-//}
 {
-  "extends": "@vue/tsconfig/tsconfig.json",
-  "compilerOptions": {
-    "lib": [
-      "esnext",
-      "dom"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "#/*": [
-        "types/*"
-      ]
-    },
-    "types": [
-      "vite/client",
-      "element-plus/global"
-    ]
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "types/**/*.ts",
-    "types/**/*.d.ts",
-    "mock/**/*.ts"
-  ],
+  "files": [],
   "references": [
     {
-      "path": "./tsconfig.node.json"
+      "path": "./tsconfig.config.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
     }
   ]
 }
