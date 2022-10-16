@@ -7,7 +7,7 @@ import realResourcePermissionData from './_data/real-resource-permission-data'
 import dbRestPermissionDataList from './_data/real-rest-permission-data'
 import dbCloudRestPermissionDataList from './_data/real-cloud-rest-permission-data'
 import realRoleResourcePermissionData from './_data/real-role-resource-permission-data'
-const baseUrl = '/api/resource-permission'
+const baseUrl = '/api/iam/resource-permission'
 const deleteDataIds: string[] = []
 const dbDataList = realResourcePermissionData as unknown as ResourcePermission[]
 const dbRoleResourcePermissionData = realRoleResourcePermissionData as unknown as ResourcePermission[]
