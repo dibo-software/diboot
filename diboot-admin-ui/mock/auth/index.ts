@@ -41,8 +41,7 @@ export default [
         return JsonResult.OK({
           info: {
             realname: name,
-            email: Random.email(),
-            avatar: Random.image('50x50', Random.color(), Random.color(), name[0])
+            email: Random.email()
           },
           roles: [Random.pick(['admin', 'develop', 'test'])]
         })
