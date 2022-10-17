@@ -243,22 +243,34 @@ public class BeanUtils {
         if(value == null){
             return null;
         }
-        Class<?> type = field.getType();
-        if (value.getClass().equals(type)) {
+        return convertValueToFieldType(value, field.getType());
+    }
+
+    /**
+     * 转换为field对应的类型
+     * @param value
+     * @param fieldType
+     * @return
+     */
+    public static Object convertValueToFieldType(Object value, Class<?> fieldType){
+        if(value == null){
+            return null;
+        }
+        if (value.getClass().equals(fieldType)) {
             return value;
         }
         String valueStr = S.valueOf(value);
-        if (fieldConverterMap.containsKey(type)) {
-            return fieldConverterMap.get(type).apply(valueStr);
-        } else if (LocalDate.class.equals(type) || LocalDateTime.class.equals(type)) {
+        if (fieldConverterMap.containsKey(fieldType)) {
+            return fieldConverterMap.get(fieldType).apply(valueStr);
+        } else if (LocalDate.class.equals(fieldType) || LocalDateTime.class.equals(fieldType)) {
             Date dateVal = (value instanceof Date) ? (Date) value : D.fuzzyConvert(valueStr);
             if (dateVal == null) {
                 return null;
             }
             ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
-            return LocalDateTime.class.equals(type) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
-        } else if (Serializable.class.isAssignableFrom(type)) {
-            return JSON.parseObject(valueStr, type);
+            return LocalDateTime.class.equals(fieldType) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
+        } else if (Serializable.class.isAssignableFrom(fieldType)) {
+            return JSON.parseObject(valueStr, fieldType);
         }
         return value;
     }
