@@ -58,6 +58,11 @@
         </dependency>
         <!--
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5</version>
+        </dependency>
+        <dependency>
             <groupId>com.dm</groupId>
             <artifactId>DmJdbcDriver18</artifactId>
             <version>1.8</version>

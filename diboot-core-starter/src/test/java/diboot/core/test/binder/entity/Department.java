@@ -56,6 +56,7 @@ public class Department extends BaseEntity {
     private String name;
 
     @TableField("`character`")
+    //@TableField
     private String character;
 
     /**
