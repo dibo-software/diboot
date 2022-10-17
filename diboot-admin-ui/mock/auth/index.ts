@@ -184,7 +184,6 @@ const authMenu = [
   {
     path: 'system',
     name: 'System',
-    redirect: '/system/resource-permission',
     meta: { title: '系统管理', icon: 'Element:SetUp' },
     children: [
       {
