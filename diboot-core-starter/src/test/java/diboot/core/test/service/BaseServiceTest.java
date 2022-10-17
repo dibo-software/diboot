@@ -498,7 +498,7 @@ public class BaseServiceTest {
             sqls.add("SET IDENTITY_INSERT dictionary ON");
         }
         sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
-        sqls.add("DELETE FROM dictionary WHERE id=20000 AND is_deleted=1");
+        sqls.add("DELETE FROM dictionary WHERE id=20000 AND is_deleted!="+BaseConfig.getActiveFlagValue());
         boolean success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
         Assert.assertTrue(success);
         Dictionary dict = dictionaryService.getEntity(dictId);

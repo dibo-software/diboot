@@ -73,6 +73,7 @@ public class DepartmentDTO implements Serializable {
 
     @BindQuery(comparison = Comparison.LIKE)
     @TableField("`character`")
+    //@TableField
     private String character;
 
     public Date getCreateTimeEnd(){

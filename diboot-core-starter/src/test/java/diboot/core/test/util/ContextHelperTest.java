@@ -43,7 +43,7 @@ public class ContextHelperTest {
     @Test
     public void testDatabaseType(){
         String dbType = ContextHelper.getDatabaseType();
-        Assert.assertTrue(dbType.equals("mysql") || dbType.equals("dm"));
+        Assert.assertTrue(dbType.equals("mysql") || dbType.equals("dm") || dbType.equals("postgresql"));
 
         BaseService baseService = ContextHelper.getBaseServiceByEntity(DemoTest.class);
         Assert.assertTrue(BeanUtils.getTargetClass(baseService).getName().equals(DemoTestServiceImpl.class.getName()));
