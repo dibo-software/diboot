@@ -62,6 +62,7 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -801,11 +802,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField) {
-		return sort(sortParam, sortField, null);
+		return sort(sortParam, sortField, null, null);
 	}
 
 	@Override
-	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField) {
+	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField) {
 		Serializable id = sortParam.getId();
 		Serializable newParentId = sortParam.getNewParentId();
 		Long newSortId = sortParam.getNewSortId();
@@ -813,7 +814,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 		boolean isTree = parentIdField != null;
 		if (isTree && newParentId == null) {
-			throw new BusinessException("Tree 结构数据排序需指定 newParentId");
+			throw new BusinessException("Tree 结构数据排序需指定 newParentId ，parentId 不应为 null");
 		}
 		// tree 数据层级变化（层级变化 oldSortId 应为 null）
 		boolean levelChange = oldSortId == null;
@@ -874,7 +875,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if (levelChange) {
 			SerializedLambda parentIdFieldLambda = BeanUtils.getSerializedLambda(parentIdField);
 			String parentIdFieldName = PropertyNamer.methodToProperty(parentIdFieldLambda.getImplMethodName());
-			BeanUtils.setProperty(addEntity.apply(id), parentIdFieldName, newParentId);
+			T entity = addEntity.apply(id);
+			BeanUtils.setProperty(entity, parentIdFieldName, newParentId);
+			if (parentIdsField != null) {
+				T parentEntity = getEntity(newParentId);
+				SerializedLambda parentIdsFieldLambda = BeanUtils.getSerializedLambda(parentIdsField);
+				String parentIdsFieldName = PropertyNamer.methodToProperty(parentIdsFieldLambda.getImplMethodName());
+				BiFunction<String, Serializable, String> buildPids = (pids, idValue) -> V.isEmpty(pids) ? S.valueOf(idValue) : pids + "," + idValue;
+				String parentIds = buildPids.apply(parentEntity == null ? null : parentIdsField.apply(parentEntity), newParentId);
+				BeanUtils.setProperty(entity, parentIdsFieldName, parentIds);
+				// 更新子孙节点的 parentIds
+				QueryWrapper<T> queryWrapper = Wrappers.<T>query().select(idColumn, propInfo.getColumnByField(parentIdsFieldName))
+						.likeRight(parentIdsFieldName, buildPids.apply(parentIdsField.apply(getEntity(id)), id));
+				List<T> entityList = getEntityList(queryWrapper);
+				if (V.notEmpty(entityList)) {
+					Map<Serializable, List<T>> pid2entityMap = entityList.stream().collect(Collectors.groupingBy(parentIdField));
+					updateParentIds(idFieldName, pid2entityMap, id, buildPids.apply(parentIds, id), parentIdsFieldName);
+					collect.addAll(entityList);
+				}
+			}
 		} else if (!exchange) {
 			log.warn("无效排序（非层级变化，且无有效位置交换）");
 			return false;
@@ -891,6 +910,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			getMapList(queryWrapper).stream().map(map -> map.get(idColumn)).forEach(addEntity::apply);
 		}
 		return updateEntities(collect);
+	}
+
+	/**
+	 * 递归更新子孙节点的 parentIds
+	 *
+	 * @param idFieldName
+	 * @param pid2entityMap
+	 * @param pid
+	 * @param parentIds
+	 * @param parentIdsFieldName
+	 */
+	private void updateParentIds(String idFieldName, Map<Serializable, List<T>> pid2entityMap, Serializable pid, String parentIds, String parentIdsFieldName) {
+		for (T item : pid2entityMap.get(pid)) {
+			BeanUtils.setProperty(item, parentIdsFieldName, parentIds);
+			Serializable idValue = (Serializable)BeanUtils.getProperty(item, idFieldName);
+			if (pid2entityMap.containsKey(idValue)) {
+				updateParentIds(idFieldName, pid2entityMap, idValue, parentIds + "," + idValue, parentIdsFieldName);
+			}
+		}
 	}
 
 	/***

@@ -32,14 +32,14 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SortParamDTO implements Serializable {
+public class SortParamDTO<ID extends Serializable> implements Serializable {
     private static final long serialVersionUID = 30303L;
 
     /**
      * 操作对象ID
      */
     @NotNull(message = "id 不能为空")
-    private Serializable id;
+    private ID id;
 
     /**
      * 新序号
@@ -57,6 +57,6 @@ public class SortParamDTO implements Serializable {
      * <p>
      * Tree 结构数据：应指定 parentIdField，及传递 newParentId；当跨层级时无需传递 oldSortId
      */
-    private Serializable newParentId;
+    private ID newParentId;
 
 }

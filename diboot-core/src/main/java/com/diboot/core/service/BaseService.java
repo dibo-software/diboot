@@ -373,10 +373,11 @@ public interface BaseService<T> {
     /**
      * tree 排序
      *
-     * @param sortField     排序字段
-     * @param parentIdField 父级ID字段
+     * @param sortField      排序字段
+     * @param parentIdField  父级ID字段
+     * @param parentIdsField 父级IDs字段（记录层级关系的字段）
      * @return 排序结果；是否成功
      */
-    boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField);
+    boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField);
 
 }
