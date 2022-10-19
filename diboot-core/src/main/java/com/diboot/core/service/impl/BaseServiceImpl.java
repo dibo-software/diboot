@@ -62,6 +62,7 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -769,18 +770,20 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public <VO> List<VO> getViewObjectTree(String rootNodeId, Class<VO> voClass) {
+	public <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass) {
 		// 父类
 		if(!BaseTreeEntity.class.isAssignableFrom(getEntityClass())) {
 			throw new InvalidUsageException("Entity " + getEntityClass().getSimpleName() + " 非树形结构！");
 		}
-		String parentIdsPath;
-		T entity = getEntity(rootNodeId);
-		if(entity != null) {
-			parentIdsPath = ((BaseTreeEntity)entity).getParentIdsPath();
+		AtomicReference<String> parentIdsPath = new AtomicReference<>();
+		if(V.notEmpty(rootNodeId)) {
+			T entity = getEntity(rootNodeId);
+			if (entity != null) {
+				parentIdsPath.set(((BaseTreeEntity)entity).getParentIdsPath());
+			}
 		}
-		else {
-			parentIdsPath = rootNodeId;
+		if (parentIdsPath.get() == null) {
+			parentIdsPath.set(S.valueOf(rootNodeId));
 		}
 		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
 						.likeRight(Cons.ColumnName.parent_ids_path.name(), parentIdsPath);
@@ -791,7 +794,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.notEmpty(entityList)) {
 			entityList = entityList.stream().filter(ent -> {
 				String pidsPath = ((BaseTreeEntity)ent).getParentIdsPath();
-				String left = S.substringAfter(pidsPath, parentIdsPath);
+				String left = S.substringAfter(pidsPath, parentIdsPath.get());
 				return V.isEmpty(left) || left.startsWith(Cons.SEPARATOR_COMMA);
 			}).collect(Collectors.toList());
 		}

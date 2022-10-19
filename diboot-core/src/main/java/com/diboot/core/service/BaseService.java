@@ -359,7 +359,7 @@ public interface BaseService<T> {
      * @return
      * @throws Exception
      */
-    <VO> List<VO> getViewObjectTree(String rootNodeId, Class<VO> voClass);
+    <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass);
 
     /**
      * list 排序
