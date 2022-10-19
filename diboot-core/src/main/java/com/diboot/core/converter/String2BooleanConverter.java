@@ -30,6 +30,6 @@ public class String2BooleanConverter implements Converter<String, Boolean> {
 
     @Override
     public Boolean convert(String source) {
-        return V.isTrue(source);
+        return V.notEmpty(source)? V.isTrue(source) : null;
     }
 }
