@@ -86,6 +86,7 @@ public class BindPermissionAspect {
             throw new PermissionException(Status.FAIL_INVALID_TOKEN, e);
         }
         catch (Exception e){
+            log.warn("用户无 {} 的访问权限", permissionCode);
             throw new PermissionException(Status.FAIL_NO_PERMISSION, e);
         }
     }
