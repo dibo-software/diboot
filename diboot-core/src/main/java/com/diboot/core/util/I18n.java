@@ -11,10 +11,6 @@ public class I18n {
 
     private static MessageSource messageSource;
 
-    public static String message(String code) {
-        return message(code, null);
-    }
-
     public static String message(String code, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();
         if(messageSource == null) {
