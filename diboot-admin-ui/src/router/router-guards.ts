@@ -12,7 +12,7 @@ import auth from '@/utils/auth'
 export function createRouterGuard(router: Router) {
   router.beforeEach(async (to, from) => {
     nProgress.start()
-    // 未登录
+
     if (auth.getToken()) {
       const userStore = useAuthStore()
       // 已加载完基本数据

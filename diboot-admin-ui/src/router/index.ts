@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouterView, type RouteRecordRaw } from 'vue-router'
 import { createRouterGuard } from '@/router/router-guards'
+import auth from '@/utils/auth'
 
 /**
  * constantRoutes
@@ -42,7 +43,9 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'ErrorPage',
     meta: { hidden: true, ignoreAuth: true },
     redirect: to => {
-      return { name: '404', query: { path: to.path }, replace: true }
+      return auth.getToken()
+        ? { name: '404', query: { path: to.path }, replace: true }
+        : { name: 'Login', query: { redirect: to.path }, replace: true }
     }
   },
   {
