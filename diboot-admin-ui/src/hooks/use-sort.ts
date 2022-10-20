@@ -33,11 +33,6 @@ export default <T extends { id: string; parentId?: string; sortId: string | numb
   const nodeDrag = (node: { data: T }, dragNode: { data: T }, dropPosition: 'before' | 'inner' | 'after') => {
     const data = node.data
     const dragData = dragNode.data
-    console.log(node)
-    console.log(dragNode)
-    console.log(data)
-    console.log(dragData)
-    console.log(dropPosition)
     const id = data.id
     let newParentId
     let newSortId
