@@ -167,6 +167,19 @@ create table customer
 )
     comment '客户' charset=utf8mb4;
 
+-- playground.region definition
+CREATE TABLE `region` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(20) NOT NULL COMMENT '名称',
+  `code` varchar(20) NOT NULL COMMENT '编码',
+  `parent_id` bigint NOT NULL COMMENT '父级',
+  `level` smallint NOT NULL DEFAULT '0' COMMENT '层级',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='行政区划';
+
 INSERT INTO customer (id, realname, cellphone, extjsonarr)
 VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');
 
