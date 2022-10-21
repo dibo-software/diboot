@@ -445,28 +445,43 @@ public class BeanUtils {
         if(V.isEmpty(allNodes)){
             return null;
         }
+        Map<Object, List<T>> parentId2ListMap = new HashMap<>();
         // 提取所有的top level对象
-        List<T> topLevelModels = new ArrayList();
-        for(T node : allNodes){
+        for (T node : allNodes) {
             Object parentId = getProperty(node, parentIdFieldName);
-            if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
-                topLevelModels.add(node);
-            }
             Object nodeId = getProperty(node, idFieldName);
             if(V.equals(nodeId, parentId)){
                 throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName()+":"+nodeId);
             }
+            parentId2ListMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(node);
         }
-        if(V.isEmpty(topLevelModels)){
+        List<T> topLevelModels = parentId2ListMap.get(rootNodeId);
+        if (V.isEmpty(topLevelModels)) {
             return Collections.emptyList();
         }
-        // 遍历第一级节点，并挂载 children 子节点
-        for(T node : allNodes) {
-            Object nodeId = getProperty(node, idFieldName);
-            List<T> children = buildTreeChildren(nodeId, allNodes, idFieldName, parentIdFieldName, childrenFieldName);
-            setProperty(node, childrenFieldName, children);
-        }
+        buildTreeChildren(topLevelModels, parentId2ListMap, idFieldName, childrenFieldName);
         return topLevelModels;
+    }
+
+    /**
+     * 递归构建树节点的子节点
+     *
+     * @param topLevelModels
+     * @param parentId2ListMap
+     * @param idFieldName
+     * @param childrenFieldName
+     * @param <T>
+     */
+    public static <T> void buildTreeChildren(List<T> topLevelModels, Map<Object, List<T>> parentId2ListMap, String idFieldName, String childrenFieldName) {
+        for (T item : topLevelModels) {
+            Object nodeId = getProperty(item, idFieldName);
+            if (!parentId2ListMap.containsKey(nodeId)) {
+                continue;
+            }
+            List<T> children = parentId2ListMap.get(nodeId);
+            setProperty(item, childrenFieldName, children);
+            buildTreeChildren(children, parentId2ListMap, idFieldName, childrenFieldName);
+        }
     }
 
     /**
