@@ -146,7 +146,7 @@ public class JoinsBinder {
             Map<String, Object> fieldValueMap = new HashMap<>();
             // 格式化map
             for(Map.Entry<String, Object> entry : colValueMap.entrySet()){
-                if(entry.getKey().startsWith(DynamicSqlProvider.PLACEHOLDER_COLUMN_FLAG)) {
+                if(entry.getKey().endsWith(DynamicSqlProvider.PLACEHOLDER_COLUMN_FLAG)) {
                     log.debug("忽略查询占位字段 {}", entry.getKey());
                     continue;
                 }

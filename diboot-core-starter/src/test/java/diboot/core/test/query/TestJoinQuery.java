@@ -249,19 +249,27 @@ public class TestJoinQuery {
         // 初始化DTO，测试不涉及关联的情况
         DepartmentDTO dto = new DepartmentDTO();
         dto.setParentId(10001L);
-        dto.setOrgName("苏州");
 
         // 分页
         Pagination pagination = new Pagination();
         pagination.setPageSize(2);
         pagination.setPageIndex(1);
-        // 测试排序
-        pagination.setOrderBy("orgName:DESC,parentName");
+        pagination.setOrderBy("parentId:DESC");
 
+        // 测试排序
         // 验证 转换后的wrapper可以直接查询
         QueryWrapper<DepartmentDTO> queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto, pagination);
         // 第二页 1条结果
         List<Department> departments = departmentService.getEntityList(queryWrapper, pagination);
+        Assert.assertTrue(departments.size() == pagination.getPageSize());
+
+        dto.setOrgName("苏州");
+        pagination.setOrderBy("orgName:DESC,parentName");
+
+        // 验证 转换后的wrapper可以直接查询
+        queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto, pagination);
+        // 第二页 1条结果
+        departments = departmentService.getEntityList(queryWrapper, pagination);
         Assert.assertTrue(departments.size() == pagination.getPageSize());
     }
 
