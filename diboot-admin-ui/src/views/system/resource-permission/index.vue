@@ -1,0 +1,31 @@
+<script setup lang="ts" name="ResourcePermission">
+import ResourceTree from './Tree.vue'
+import ResourceForm from './Form.vue'
+import type { ResourcePermission } from './type'
+
+const formValue = ref<ResourcePermission>()
+const clickNode = (node: ResourcePermission) => {
+  formValue.value = node
+}
+</script>
+
+<template>
+  <div style="height: 100%; display: flex">
+    <resource-tree ref="menuTreeRef" style="width: 300px" @click-node="clickNode" />
+    <resource-form :form-value="formValue" style="flex: 1" @complete="(id: string) => $refs.menuTreeRef.refresh(id)" />
+  </div>
+</template>
+
+<style scoped lang="scss">
+.menu-permission-container {
+  height: 100%;
+
+  .menu-aside-container {
+    border-right: 1px solid var(--el-border-color-lighter);
+  }
+
+  .menu-main-container {
+    padding: 0;
+  }
+}
+</style>

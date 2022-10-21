@@ -203,7 +203,7 @@ const authMenu = [
         meta: {
           title: '资源权限管理',
           icon: 'Element:Menu',
-          componentPath: prefix + 'system/resource-permission/List.vue',
+          componentPath: prefix + 'system/resource-permission/index.vue',
           sort: 2,
           keepAlive: false,
           permissions: ['create', 'update', 'delete']
