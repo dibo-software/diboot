@@ -160,11 +160,14 @@ export const useDelete = (option: DeleteOption) => {
    * @param id
    */
   const remove = (id: string) => {
-    ElMessageBox.confirm('确认删除该数据吗？', '删除', { type: 'warning' })
+    return ElMessageBox.confirm('确认删除该数据吗？', '删除', { type: 'warning' })
       .then(() => {
-        api
+        return api
           .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)
-          .then(() => removeSuccessHandler())
+          .then(() => {
+            removeSuccessHandler()
+            return true
+          })
           .catch(err => {
             ElMessage.error(err.msg || err.message || '删除失败')
           })
@@ -180,14 +183,17 @@ export const useDelete = (option: DeleteOption) => {
   const batchRemove = (ids: Array<string>) => {
     if (!(ids && ids.length)) {
       ElMessage.warning('未选择数据')
-      return
+      return Promise.resolve()
     }
 
-    ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
+    return ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
       .then(() => {
-        api
+        return api
           .post(`${option.baseApi}/batch-delete`, ids)
-          .then(() => removeSuccessHandler())
+          .then(() => {
+            removeSuccessHandler()
+            return true
+          })
           .catch(err => {
             ElMessage.error(err.msg || err.message || '删除失败')
           })
