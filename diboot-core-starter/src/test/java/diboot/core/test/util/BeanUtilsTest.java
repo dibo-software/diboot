@@ -307,7 +307,7 @@ public class BeanUtilsTest {
     public void testBuildTreePerformance() {
         List<Region> regions = regionService.getEntityList(null);
         long begin = System.currentTimeMillis();
-        List<Region> topLevel = BeanUtils.buildTree(regions);
+        List<Region> topLevel = BeanUtils.buildTree(regions, Cons.TREE_ROOT_ID);
         Assert.assertTrue(topLevel.size() > 30 && topLevel.size() < 40);
         long end = System.currentTimeMillis();
         System.out.println( (end - begin) + "ms");
