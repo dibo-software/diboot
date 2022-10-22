@@ -81,21 +81,9 @@ initRelatedData()
       </el-form>
     </el-header>
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
-      <el-table-column prop="businessType" label="业务类型">
-        <template #default="{ row }">
-          <span>{{ row.businessType }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="sender" label="发送方">
-        <template #default="{ row }">
-          <span>{{ row.sender }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="receiver" label="接收方">
-        <template #default="{ row }">
-          <span>{{ row.receiver }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column prop="businessType" label="业务类型" />
+      <el-table-column prop="sender" label="发送方" />
+      <el-table-column prop="receiver" label="接收方" />
       <el-table-column prop="channelLabel" label="发送通道">
         <template #default="{ row }">
           <el-tag type="info">{{ row.channelLabel }}</el-tag>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall, toggleTheme } from '@/utils/theme'
-import MessageList from './MessageList.vue'
+import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
@@ -55,7 +55,7 @@ const goPersonal = () => {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <message-list class="item" />
+      <message-bell class="item" />
       <el-dropdown
         @command="(command: 'small' | 'large' | 'default') => {appStore.globalSize = command; isSmall = command === 'small'}"
       >
