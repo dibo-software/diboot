@@ -49,7 +49,14 @@ const changeComponentName = (val?: string) => {
         <el-icon v-if="viewMapLoading">
           <Loading />
         </el-icon>
-        <el-tooltip v-else-if="viewMap[componentName] !== componentPath" content="组件不存在，请重新选择!">
+        <el-tooltip
+          v-else-if="viewMap[componentName] !== componentPath"
+          :content="
+            Object.values(viewMap).includes(componentPath)
+              ? '组件名称变更，以免页面缓存不生效，请重新选择！'
+              : '组件不存在，将无法加载菜单，请重新选择！'
+          "
+        >
           <el-icon color="var(--el-color-error)">
             <Warning />
           </el-icon>
