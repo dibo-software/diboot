@@ -1,4 +1,4 @@
-<script lang="ts" setup name="orgTree">
+<script lang="ts" setup>
 import { defineEmits } from 'vue'
 import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import type { OrgModel } from '@/views/org-structure/org/type'

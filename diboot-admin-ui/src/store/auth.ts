@@ -57,7 +57,7 @@ export default defineStore('auth', {
         auth.clearToken()
         this.$reset()
         resetRouter()
-        router.push({ name: 'Login', query: { redirect: router.currentRoute.value.path } }).finally()
+        router.push({ name: 'Login' }).finally()
       }
     }
   }

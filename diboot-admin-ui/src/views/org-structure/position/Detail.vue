@@ -1,4 +1,4 @@
-<script setup lang="ts" name="PositionDetail">
+<script setup lang="ts">
 import type { Position } from './type'
 
 const { loadData, loading, model } = useDetail<Position>('/iam/position')

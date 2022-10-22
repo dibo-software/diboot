@@ -1,4 +1,4 @@
-<script setup lang="ts" name="404">
+<script setup lang="ts">
 import { onBeforeRouteLeave } from 'vue-router'
 
 const router = useRouter()

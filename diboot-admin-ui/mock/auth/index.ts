@@ -137,7 +137,7 @@ const authMenu = [
   },
   {
     path: 'org-structure',
-    name: 'OrgUser ',
+    name: 'OrgStructure ',
     redirect: '/org-structure/org',
     meta: { title: '组织架构', icon: 'Element:User' },
     children: [
@@ -203,7 +203,7 @@ const authMenu = [
         meta: {
           title: '资源权限管理',
           icon: 'Element:Menu',
-          componentPath: prefix + 'system/resource-permission/List.vue',
+          componentPath: prefix + 'system/resource-permission/index.vue',
           sort: 2,
           keepAlive: false,
           permissions: ['create', 'update', 'delete']
@@ -211,7 +211,7 @@ const authMenu = [
       },
       {
         path: 'role',
-        name: 'RoleList',
+        name: 'Role',
         meta: {
           title: '用户角色管理',
           icon: 'Element:User',
@@ -234,7 +234,7 @@ const authMenu = [
       },
       {
         path: 'message-template',
-        name: 'messageTemplate',
+        name: 'MessageTemplate',
         meta: {
           title: '消息模板管理',
           icon: 'Element:MessageBox',
@@ -246,7 +246,7 @@ const authMenu = [
       },
       {
         path: 'message',
-        name: 'message',
+        name: 'Message',
         meta: {
           title: '消息记录管理',
           icon: 'Element:Message',

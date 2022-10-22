@@ -1,4 +1,4 @@
-<script setup lang="ts" name="UserIndex">
+<script setup lang="ts" name="User">
 import OrgTree from '@/views/org-structure/org/OrgTree.vue'
 import UserList from './List.vue'
 import type { OrgModel } from '@/views/org-structure/org/type'

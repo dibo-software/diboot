@@ -40,8 +40,6 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -482,39 +480,6 @@ public class BeanUtils {
             setProperty(item, childrenFieldName, children);
             buildTreeChildren(children, parentId2ListMap, idFieldName, childrenFieldName);
         }
-    }
-
-    /**
-     * 递归构建树节点的子节点
-     * @param parentId
-     * @param nodeList
-     * @param idFieldName
-     * @param parentIdFieldName 父节点属性名
-     * @param childrenFieldName 子节点集合属性名
-     * @return
-     */
-    public static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String idFieldName, String parentIdFieldName, String childrenFieldName) {
-        List<T> children = null;
-        for(T node : nodeList) {
-            Object nodeParentId = getProperty(node, parentIdFieldName);
-            if(nodeParentId != null && V.equals(nodeParentId, parentId)) {
-                if(children == null){
-                    children = new ArrayList<>();
-                }
-                children.add(node);
-            }
-        }
-        if(children != null){
-            for(T child : children) {
-                Object nodeId = getProperty(child, idFieldName);
-                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList, idFieldName, parentIdFieldName, childrenFieldName);
-                if(childNodeChildren == null) {
-                    childNodeChildren = new ArrayList<>();
-                }
-                setProperty(child, childrenFieldName, childNodeChildren);
-            }
-        }
-        return children;
     }
 
     /***

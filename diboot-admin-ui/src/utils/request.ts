@@ -38,7 +38,7 @@ service.interceptors.response.use(
     // 如果返回的自定义状态码为 4001， 则token过期，需要清理掉token并跳转至登录页面重新登录
     if (response.data && response.data.code === 4001) {
       auth.clearToken()
-      router.push({ name: 'Login' }).finally()
+      router.push({ name: 'Login', query: { redirect: router.currentRoute.value.path } }).finally()
       throw new Error('登录过期，请重新登录')
     }
 

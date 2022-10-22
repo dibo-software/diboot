@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RoleListSelector">
+<script setup lang="ts">
 import type { Role } from './type'
 import { defineEmits, defineProps } from 'vue'
 import useListSelector from '@/hooks/use-list-selector'

@@ -1,4 +1,4 @@
-<script setup lang="ts" name="PositionPopverListSelector">
+<script setup lang="ts">
 import PositionListSelector from './ListSelector.vue'
 import type { Position } from './type'
 import usePopoverListSelector from '@/hooks/use-popover-list-selector'

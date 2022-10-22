@@ -57,7 +57,7 @@ export default (option: FormOption) => {
         res = await api.post<string>(createApi ? createApi : baseApi, data)
       }
       ElMessage.success(res.msg)
-      successCallback(res.data)
+      successCallback(res.data ?? (id as string))
       return true
     } catch (e: any) {
       ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
@@ -74,7 +74,7 @@ export default (option: FormOption) => {
    * @param formEl
    */
   const submitPost = async (data: unknown, formEl?: FormInstance) => {
-    const { baseApi, primaryKey = 'id', createApi, updateApiPrefix, afterValidate, successCallback } = option
+    const { baseApi, afterValidate, successCallback } = option
     try {
       submitting.value = true
       await validate(formEl)

@@ -1,6 +1,5 @@
 <script setup lang="ts" name="SystemConfig">
 import type { Directive } from 'vue'
-import { checkPermission } from '@/utils/permission'
 import { CircleCheck, CircleClose } from '@element-plus/icons-vue'
 import type { SystemConfigType, SystemConfig } from './type'
 

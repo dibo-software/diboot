@@ -18,9 +18,8 @@ export default defineConfig(({ command }) => {
       // checker({ vueTsc: true }),
       eslintPlugin({ fix: true }),
       AutoImport({
-        vueTemplate: true,
         // 解析器
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
+        resolvers: [ElementPlusResolver()],
         // 自动导入Api
         imports: [
           'vue',
@@ -46,7 +45,7 @@ export default defineConfig(({ command }) => {
       }),
       Components({
         // 解析器
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
+        resolvers: [ElementPlusResolver()],
         // 自动加载的组件目录，默认值为 ['src/components']
         dirs: ['src/components'],
         // 组件名称包含目录，防止同名组件冲突
