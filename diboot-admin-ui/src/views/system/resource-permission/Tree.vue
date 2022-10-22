@@ -94,6 +94,8 @@ const { nodeDrag } = useSort<Required<ResourcePermission>>({
     setTreeCurrentKey(currentKey)
   }
 })
+
+const createPermission = checkPermission('create')
 </script>
 <template>
   <div class="tree-container">
@@ -102,7 +104,7 @@ const { nodeDrag } = useSort<Required<ResourcePermission>>({
       <div class="tree-search">
         <el-input v-model="searchWord" placeholder="请输入内容过滤" clearable :prefix-icon="Search" />
       </div>
-      <el-scrollbar :height="checkPermission('create') ? 'calc(100vh - 175px)' : 'calc(100vh - 139px)'">
+      <el-scrollbar :height="createPermission ? 'calc(100vh - 175px)' : 'calc(100vh - 139px)'">
         <el-tree
           ref="treeRef"
           :data="dataList"

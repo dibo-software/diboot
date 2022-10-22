@@ -30,6 +30,10 @@ const logListRef = ref()
 const openLog = (id: string) => {
   logListRef.value?.open(id)
 }
+
+const updatePermission = checkPermission('update')
+const deletePermission = checkPermission('delete')
+const logListPermission = checkPermission('logList')
 </script>
 
 <template>
@@ -71,13 +75,11 @@ const openLog = (id: string) => {
                 <el-button circle :icon="More" type="primary" plain />
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="checkPermission('update')" @click="openForm(item.id)">
+                    <el-dropdown-item v-if="updatePermission" @click="openForm(item.id)">
                       {{ $t('operation.update') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="checkPermission('logList')" @click="openLog(item.id)">
-                      日志
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="checkPermission('delete')" divided @click="remove(item.id)">
+                    <el-dropdown-item v-if="logListPermission" @click="openLog(item.id)"> 日志 </el-dropdown-item>
+                    <el-dropdown-item v-if="deletePermission" divided @click="remove(item.id)">
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>

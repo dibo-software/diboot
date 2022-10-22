@@ -29,6 +29,9 @@ const openForm = (id?: string) => {
 const openDetail = (id: string) => {
   detailPage.value?.open(id)
 }
+
+const updatePermission = checkPermission('update')
+const deletePermission = checkPermission('delete')
 </script>
 <template>
   <div class="list-page">
@@ -105,10 +108,10 @@ const openDetail = (id: string) => {
                 </el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="checkPermission('update')" @click="openForm(row.id)">
+                    <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                       {{ $t('operation.update') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="checkPermission('delete')" @click="remove(row.id)">
+                    <el-dropdown-item v-if="deletePermission" @click="remove(row.id)">
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
