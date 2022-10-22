@@ -22,11 +22,13 @@ watch(
 const emits = defineEmits<{
   (e: 'update:modelValue', value?: string): void
   (e: 'update:componentPath', value?: string): void
+  (e: 'change', value?: string): void
 }>()
 // 更改组件 和 资源路径
 const changeComponentName = (val?: string) => {
   emits('update:modelValue', val)
   emits('update:componentPath', val ? viewMap.value[val] : '')
+  emits('change', val)
 }
 </script>
 

@@ -5,12 +5,15 @@ import type { ResourcePermission } from './type'
 import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 import RouteSelect from './components/RouteSelect.vue'
 import PermissionSelect from './components/PermissionSelect.vue'
+import { checkValue } from '@/utils/validate-form'
 
 // 监听客户端宽度
 const clientWidth = ref(window.innerWidth)
 const erd = elementResizeDetectorMaker()
 erd.listenTo(document.body, () => (clientWidth.value = document.body.clientWidth))
 onBeforeUnmount(() => erd.uninstall(document.body))
+
+const baseApi = '/iam/resource-permission'
 
 const props = defineProps<{ formValue: ResourcePermission }>()
 
@@ -28,6 +31,8 @@ const formRef = ref<FormInstance>()
 
 const resetForm = () => {
   model.value = _.clone(props.formValue)
+  configResource.value = model.value
+  formRef.value?.clearValidate()
 }
 
 const emit = defineEmits<{
@@ -35,11 +40,13 @@ const emit = defineEmits<{
 }>()
 
 const { submitting, submit } = useForm({
-  baseApi: '/iam/resource-permission',
+  baseApi,
   successCallback(id) {
     emit('complete', id)
   }
 })
+
+const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
 
 // 权限
 const moduleList = ref<string[]>([])
@@ -153,11 +160,19 @@ const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
               >
                 <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
               </el-form-item>
-              <el-form-item label="路由名称" prop="resourceCode" :rules="{ required: true, message: '不能为空' }">
+              <el-form-item
+                label="路由名称"
+                prop="resourceCode"
+                :rules="[
+                  { required: true, message: '不能为空', trigger: 'blur' },
+                  { validator: checkCodeDuplicate, trigger: 'blur' }
+                ]"
+              >
                 <route-select
                   v-show="model.displayType === 'MENU'"
                   v-model="model.resourceCode"
                   v-model:component-path="model.routeMeta.componentPath"
+                  @change="formRef.validateField('resourceCode')"
                 />
                 <el-input
                   v-show="model.displayType !== 'MENU'"
