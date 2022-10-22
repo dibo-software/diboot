@@ -70,6 +70,16 @@ public class SqlExecutor {
         }
     }
 
+    /**
+     * 执行无参查询SQL
+     * @param sqlStatement
+     * @return
+     * @throws Exception
+     */
+    public static List<Map<String,Object>> executeQuery(String sqlStatement) throws Exception{
+        return executeQuery(sqlStatement, null);
+    }
+
     /***
      * 执行Select语句，如: SELECT user_id,role_id FROM user_role WHERE user_id IN (?,?,?,?)
      * 查询结果如: [{"user_id":1001,"role_id":101},{"user_id":1001,"role_id":102},{"user_id":1003,"role_id":102},{"user_id":1003,"role_id":103}]
@@ -84,6 +94,9 @@ public class SqlExecutor {
         if(jdbcTemplate != null) {
             try {
                 log.debug("==> {}", sqlStatement);
+                if(V.isEmpty(params)) {
+                    return jdbcTemplate.queryForList(sqlStatement);
+                }
                 return jdbcTemplate.queryForList(sqlStatement, params);
             }
             catch (Exception e) {
