@@ -1,7 +1,3 @@
-<script setup lang="ts" name="500">
-console.log('500')
-</script>
-
 <template>
   <div class="content">
     <h1>500</h1>

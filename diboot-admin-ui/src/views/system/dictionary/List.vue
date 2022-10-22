@@ -1,4 +1,4 @@
-<script setup lang="ts" name="DictionaryList">
+<script setup lang="ts" name="Dictionary">
 import { ArrowDown, Refresh, Search } from '@element-plus/icons-vue'
 import FormPage from './Form.vue'
 import DetailPage from './Detail.vue'

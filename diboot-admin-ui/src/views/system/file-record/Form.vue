@@ -1,4 +1,4 @@
-<script setup lang="ts" name="MessageTemplateForm">
+<script setup lang="ts">
 import type { FormInstance } from 'element-plus'
 import { defineEmits } from 'vue'
 

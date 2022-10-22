@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RoleForm">
+<script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resource-permission/type'

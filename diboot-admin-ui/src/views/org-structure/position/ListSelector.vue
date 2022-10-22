@@ -1,4 +1,4 @@
-<script setup lang="ts" name="PositionListSelector">
+<script setup lang="ts">
 import type { Position } from './type'
 import { defineEmits, defineProps } from 'vue'
 import useListSelector from '@/hooks/use-list-selector'

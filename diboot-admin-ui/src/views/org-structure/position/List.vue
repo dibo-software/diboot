@@ -1,4 +1,4 @@
-<script setup lang="ts" name="PositionList">
+<script setup lang="ts" name="Position">
 import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
 import type { Position } from './type'
 import Detail from './Detail.vue'

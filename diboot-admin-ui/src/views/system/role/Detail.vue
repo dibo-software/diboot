@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RoleDetail">
+<script setup lang="ts">
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resource-permission/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'

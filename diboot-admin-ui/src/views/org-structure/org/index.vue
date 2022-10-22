@@ -1,4 +1,4 @@
-<script lang="ts" setup name="OrgIndex">
+<script lang="ts" setup name="Org">
 import OrgTree from './OrgTree.vue'
 import OrgList from './OrgList.vue'
 import type { OrgModel } from './type'

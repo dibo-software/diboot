@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RoleDetail">
+<script setup lang="ts">
 import type { ScheduleJobLog } from '../type'
 
 const { loadData, loading, model } = useDetail<ScheduleJobLog>('/schedule-job/log')

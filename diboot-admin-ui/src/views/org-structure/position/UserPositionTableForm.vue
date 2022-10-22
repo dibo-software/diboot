@@ -1,4 +1,4 @@
-<script setup lang="ts" name="UserPositionTableForm">
+<script setup lang="ts">
 import type { UserPosition } from './type'
 import type { OrgModel } from '../org/type'
 import _ from 'lodash'

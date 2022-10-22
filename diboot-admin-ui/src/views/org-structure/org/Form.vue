@@ -1,4 +1,4 @@
-<script setup lang="ts" name="OrgForm">
+<script setup lang="ts">
 import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'

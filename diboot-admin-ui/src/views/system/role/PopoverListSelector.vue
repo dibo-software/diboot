@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RolePopverListSelector">
+<script setup lang="ts">
 import RoleListSelector from '@/views/system/role/ListSelector.vue'
 import type { Role } from '@/views/system/role/type'
 import usePopoverListSelector from '@/hooks/use-popover-list-selector'

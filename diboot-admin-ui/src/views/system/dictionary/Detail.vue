@@ -1,4 +1,4 @@
-<script setup lang="ts" name="DictionaryDetail">
+<script setup lang="ts">
 import type { Dictionary } from '@/views/system/dictionary/type'
 
 const visible = ref(false)

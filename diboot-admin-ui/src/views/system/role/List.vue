@@ -1,4 +1,4 @@
-<script setup lang="ts" name="RoleList">
+<script setup lang="ts" name="Role">
 import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
 import type { Role } from './type'
 import Detail from './Detail.vue'

@@ -1,4 +1,4 @@
-<script setup lang="ts" name="UserDetail">
+<script setup lang="ts">
 import type { UserModel } from './type'
 
 const { model, loadData, loading } = useDetail<UserModel>('/iam/user')

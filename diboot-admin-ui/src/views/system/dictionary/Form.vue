@@ -1,4 +1,4 @@
-<script setup lang="ts" name="DictionaryForm">
+<script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { api } from '@/utils/request'
 import draggable from 'vuedraggable'
