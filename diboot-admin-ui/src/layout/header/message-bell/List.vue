@@ -50,12 +50,6 @@ const loadData = (reset = false) => {
 
 loadData()
 
-const refresh = () => {
-  queryParam.value.pageIndex = 1
-  loadData(true)
-  resetRefreshTimer()
-}
-
 // Message 自动刷新的时间间隔（分钟）
 const MESSAGE_REFRESH_EXPIRE = 5
 // 自动刷新计时器
@@ -68,9 +62,16 @@ function resetRefreshTimer() {
   clearTimeout(refreshTimer)
   refreshTimer = setTimeout(() => {
     refresh()
-    resetRefreshTimer()
   }, MESSAGE_REFRESH_EXPIRE * 60 * 1000)
 }
+
+const refresh = () => {
+  queryParam.value.pageIndex = 1
+  loadData(true)
+  resetRefreshTimer()
+}
+
+defineExpose({ refresh })
 
 const nextPage = () => {
   if (total.value === dataList.value.length) return
