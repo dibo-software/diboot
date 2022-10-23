@@ -28,7 +28,14 @@ const openOneLevel = (menu: RouteRecordRaw) => {
       if (navigationFailure) oneLevel.value = oldOneLevel
     })
 }
-oneLevel.value = router.currentRoute.value.matched.find(item => menuTree.find(e => e === item))
+
+watch(
+  () => router.currentRoute.value.matched.find(item => menuTree.includes(item)),
+  value => {
+    if (value) oneLevel.value = value
+  },
+  { immediate: true }
+)
 
 const isMenuCollapse = ref(false)
 
