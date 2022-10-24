@@ -189,6 +189,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         List<LabelValue> entityList = getLabelValueList(type);
         Map<String, LabelValue> map = BeanUtils.convertToStringKeyObjectMap(entityList, LabelValue::getValue);
         Class<?> fieldType = BeanUtils.getFieldActualType(voList.get(0).getClass(), setFieldName);
+        boolean isLabelValueClass = LabelValue.class.equals(fieldType);
         for (Object item : voList) {
             Object value = BeanUtils.getProperty(item, getFieldName);
             if (V.isEmpty(value)) {
@@ -196,7 +197,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             }
             LabelValue matchedItem = map.get(value);
             if (matchedItem != null) {
-                if(fieldType.equals(LabelValue.class)) {
+                if (isLabelValueClass) {
                     BeanUtils.setProperty(item, setFieldName, matchedItem);
                 }
                 else {
@@ -212,7 +213,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     if(labelValue == null) {
                         continue;
                     }
-                    if(fieldType.equals(LabelValue.class)) {
+                    if(isLabelValueClass) {
                         labelList.add(labelValue);
                     }
                     else {
@@ -220,7 +221,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     }
                 }
                 if(V.notEmpty(labelList)) {
-                    if(fieldType.equals(LabelValue.class)) {
+                    if(isLabelValueClass) {
                         BeanUtils.setProperty(item, setFieldName, labelList);
                     }
                     else {
@@ -235,7 +236,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     if(labelValue == null) {
                         continue;
                     }
-                    if(fieldType.equals(LabelValue.class)) {
+                    if(isLabelValueClass) {
                         labelList.add(labelValue);
                     }
                     else {
