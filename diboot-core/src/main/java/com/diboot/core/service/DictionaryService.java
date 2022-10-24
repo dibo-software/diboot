@@ -19,6 +19,7 @@ import com.diboot.core.entity.Dictionary;
 import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.LabelValue;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -55,6 +56,6 @@ public interface DictionaryService extends BaseService<Dictionary>{
      * @param id
      * @return
      */
-    boolean deleteDictAndChildren(Long id);
+    boolean deleteDictAndChildren(Serializable id);
 
 }

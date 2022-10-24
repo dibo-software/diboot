@@ -36,11 +36,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 数据字典相关service实现
@@ -171,14 +168,10 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     }
 
     @Override
-    public boolean deleteDictAndChildren(Long id) {
-        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper();
-        queryWrapper.lambda()
-                .eq(Dictionary::getId, id)
-                .or()
-                .eq(Dictionary::getParentId, id);
-        deleteEntities(queryWrapper);
-        return true;
+    public boolean deleteDictAndChildren(Serializable id) {
+        LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(Dictionary::getId, id).or().eq(Dictionary::getParentId, id);
+        return deleteEntities(queryWrapper);
     }
 
     @Override
