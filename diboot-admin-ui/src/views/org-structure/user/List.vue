@@ -77,8 +77,8 @@ const deletePermission = checkPermission('delete')
       <el-table-column prop="genderLabel" label="性别" />
       <el-table-column prop="mobilePhone" label="电话" />
       <el-table-column prop="email" label="邮箱" />
-      <el-table-column prop="createTime" label="创建时间" />
-      <el-table-column label="操作" width="160">
+      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">

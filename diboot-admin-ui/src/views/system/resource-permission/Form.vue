@@ -339,8 +339,8 @@ const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
       </el-row>
     </el-scrollbar>
     <div class="form-button">
-      <el-button type="primary" @click="submit(model, formRef)">保存</el-button>
-      <el-button @click="resetForm()">重置</el-button>
+      <el-button size="default" type="primary" @click="submit(model, formRef)">保存</el-button>
+      <el-button size="default" @click="resetForm()">重置</el-button>
     </div>
   </div>
 </template>

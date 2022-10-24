@@ -92,8 +92,8 @@ const getTagType = (val: string, map: Record<string, string>) => {
           <el-tag v-else type="danger">{{ row.statusCode }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="180" />
-      <el-table-column label="操作" width="70">
+      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column label="操作" width="70" fixed="right">
         <template #default="{ row }">
           <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
         </template>

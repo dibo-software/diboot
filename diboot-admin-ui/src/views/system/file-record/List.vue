@@ -99,8 +99,8 @@ const batchDownload = () => {
       <el-table-column prop="fileType" label="文件类型" />
       <el-table-column prop="fileSize" label="文件大小（Byte）" />
       <el-table-column prop="createByName" label="创建者" />
-      <el-table-column prop="createTime" label="创建时间" />
-      <el-table-column label="操作" width="160">
+      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.uuid)"

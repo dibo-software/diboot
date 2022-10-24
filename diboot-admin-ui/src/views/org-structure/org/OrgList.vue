@@ -3,38 +3,26 @@ import type { OrgModel } from '@/views/org-structure/org/type'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
-type Props = {
-  parentId?: string
-}
-const props = withDefaults(defineProps<Props>(), {
-  parentId: ''
-})
+const props = withDefaults(defineProps<{ parentId?: string }>(), { parentId: '0' })
 
-const emit = defineEmits(['reload'])
+const emit = defineEmits<{
+  (e: 'reload'): void
+}>()
 
 interface OrgSearch extends OrgModel {
   keywords?: string
 }
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } = useList<
-  OrgModel,
-  OrgSearch
->({
+const { queryParam, onSearch, getList, loading, dataList, pagination, remove } = useList<OrgModel, OrgSearch>({
   baseApi: '/iam/org',
   deleteCallback() {
     emit('reload')
   }
 })
 getList()
-const searchVal = ref('')
-const onSearchValChanged = (val: string) => {
-  queryParam.keywords = val
-  onSearch()
-}
 
 watch(
   () => props.parentId,
   val => {
-    console.log('val', val)
     queryParam.parentId = val
     onSearch()
   }
@@ -45,17 +33,12 @@ const openForm = (id?: string) => {
   formRef.value?.open(id)
 }
 
-const onFormComplete = (id?: string) => {
-  if (id) {
-    getList()
-  } else {
-    onSearch()
-  }
+const onFormComplete = () => {
+  getList()
   emit('reload')
 }
-
-defineExpose({ onSearch })
 </script>
+
 <template>
   <div class="list-page">
     <el-header>
@@ -63,12 +46,12 @@ defineExpose({ onSearch })
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">新建</el-button>
         <el-space>
           <el-input
-            v-model="searchVal"
+            v-model="queryParam.keywords"
             class="search-input"
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearchValChanged"
+            @change="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>
@@ -86,8 +69,8 @@ defineExpose({ onSearch })
       <el-table-column prop="name" label="全称" />
       <el-table-column prop="shortName" label="简称" />
       <el-table-column prop="code" label="编码" />
-      <el-table-column prop="createTime" label="创建时间" />
-      <el-table-column label="操作" width="140">
+      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column label="操作" width="140" fixed="right">
         <template #default="{ row }">
           <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
             {{ $t('operation.update') }}
@@ -98,33 +81,19 @@ defineExpose({ onSearch })
         </template>
       </el-table-column>
     </el-table>
-    <el-footer v-if="pagination?.total" class="el-footer">
-      <el-pagination
-        v-model:currentPage="pagination.current"
-        v-model:page-size="pagination.pageSize"
-        class="el-pagination"
-        :page-sizes="[10, 20, 30, 50, 100]"
-        small
-        background
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pagination.total"
-        @size-change="getList()"
-        @current-change="getList()"
-      />
-    </el-footer>
+
+    <el-pagination
+      v-if="pagination.total"
+      v-model:currentPage="pagination.current"
+      v-model:page-size="pagination.pageSize"
+      :page-sizes="[10, 20, 30, 50, 100]"
+      small
+      background
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="pagination.total"
+      @size-change="getList()"
+      @current-change="getList()"
+    />
     <org-form ref="formRef" :parent-id="props.parentId" @complete="onFormComplete" />
   </div>
 </template>
-<style lang="scss" scoped>
-.list-operation {
-  margin-bottom: 0;
-  padding: 0;
-}
-.el-footer {
-  height: auto;
-  padding: 15.5px 10px;
-}
-.el-pagination {
-  margin: 0;
-}
-</style>

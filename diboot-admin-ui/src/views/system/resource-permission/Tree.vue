@@ -2,7 +2,7 @@
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
 import type { ElTreeInstanceType } from 'element-plus'
 import type { ResourcePermission } from './type'
-import { WatchStopHandle } from 'vue'
+import type { WatchStopHandle } from 'vue'
 
 const baseApi = '/iam/resource-permission'
 
@@ -67,6 +67,7 @@ const filterNode = (value: string, data: Partial<ResourcePermission>) => !value 
  * 添加子菜单
  */
 const addChildNode = (parent?: ResourcePermission) => {
+  treeRef.value?.setCurrentKey()
   clickNode({
     parentId: parent?.id ?? '0',
     parentDisplayName: parent?.displayName,
@@ -145,7 +146,9 @@ const createPermission = checkPermission('create')
       </el-scrollbar>
     </el-space>
     <div v-has-permission="'create'" class="is-fixed">
-      <el-button style="width: 100%" type="primary" :icon="Plus" @click="addChildNode()">添加顶级菜单</el-button>
+      <el-button style="width: 100%" type="primary" :icon="Plus" size="default" @click="addChildNode()">
+        添加顶级菜单
+      </el-button>
     </div>
   </div>
 </template>
@@ -167,10 +170,11 @@ const createPermission = checkPermission('create')
     bottom: 0;
     width: 100%;
     height: 39px;
-    border-top: 1px solid var(--el-border-color-lighter);
-    padding: 5px 16px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
     background: var(--el-bg-color);
-    text-align: center;
+    border-top: 1px solid var(--el-border-color-lighter);
   }
 
   .el-tree :deep(.el-tree-node__label) {
@@ -179,8 +183,8 @@ const createPermission = checkPermission('create')
     .custom-tree-node {
       width: 100%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       font-size: var(--el-font-size-base);
 
       .el-icon {
