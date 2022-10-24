@@ -206,7 +206,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
         />
       </el-select>
       <el-alert
-        v-if="moduleList.length > 0 && !module"
+        v-if="moduleList.length > 0 && !appModule"
         title="选择 应用模块 后配置权限"
         type="success"
         :closable="false"

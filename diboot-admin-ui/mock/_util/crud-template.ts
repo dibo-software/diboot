@@ -48,7 +48,7 @@ export interface Api {
  *
  * @param option
  */
-export default <T>(option: Option<T>) => {
+export default <T extends {}>(option: Option<T>) => {
   const baseUrl = '/api' + option.baseApi
   const primaryKey = option.primaryKey || 'id'
   const dataList = option.dataList ?? []

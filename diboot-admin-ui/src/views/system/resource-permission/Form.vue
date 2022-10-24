@@ -15,7 +15,7 @@ onBeforeUnmount(() => erd.uninstall(document.body))
 
 const baseApi = '/iam/resource-permission'
 
-const props = defineProps<{ formValue: ResourcePermission }>()
+const props = defineProps<{ formValue?: ResourcePermission }>()
 
 const model = ref<ResourcePermission>()
 
@@ -23,7 +23,7 @@ watch(
   () => props.formValue,
   value => {
     model.value = _.clone(value)
-    configResource.value = model.value
+    configResource.value = model.value ?? {}
   }
 )
 
@@ -31,18 +31,18 @@ const formRef = ref<FormInstance>()
 
 const resetForm = () => {
   model.value = _.clone(props.formValue)
-  configResource.value = model.value
+  configResource.value = model.value ?? {}
   formRef.value?.clearValidate()
 }
 
 const emit = defineEmits<{
-  (e: 'complete', id?: string): void
+  (e: 'complete', id: string): void
 }>()
 
 const { submitting, submit } = useForm({
   baseApi,
   successCallback(id) {
-    emit('complete', id)
+    emit('complete', id as string)
   }
 })
 
@@ -55,7 +55,8 @@ const permissionSelectRef = ref<InstanceType<typeof PermissionSelect>>()
 
 watch(configResource, () => permissionSelectRef.value?.relocation())
 
-const openPermissionConfig = (permission: ResourcePermission) => {
+const openPermissionConfig = (permission?: ResourcePermission) => {
+  if (!permission) return
   permission.permissionCodes ? permission.permissionCodes : (permission.permissionCodes = [])
   configResource.value = permission
 }
@@ -172,7 +173,7 @@ const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
                   v-show="model.displayType === 'MENU'"
                   v-model="model.resourceCode"
                   v-model:component-path="model.routeMeta.componentPath"
-                  @change="formRef.validateField('resourceCode')"
+                  @change="formRef?.validateField('resourceCode')"
                 />
                 <el-input
                   v-show="model.displayType !== 'MENU'"
@@ -338,8 +339,8 @@ const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
         </el-col>
       </el-row>
     </el-scrollbar>
-    <div class="form-button">
-      <el-button size="default" type="primary" @click="submit(model, formRef)">保存</el-button>
+    <div v-show="model" class="form-button">
+      <el-button size="default" type="primary" @click="model && submit(model, formRef)">保存</el-button>
       <el-button size="default" @click="resetForm()">重置</el-button>
     </div>
   </div>

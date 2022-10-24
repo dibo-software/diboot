@@ -3,8 +3,8 @@ import OrgTree from '@/views/org-structure/org/OrgTree.vue'
 import UserList from './List.vue'
 
 const currentNodeId = ref('')
-const changeCurrentNode = (currentNodeKey: string) => {
-  currentNodeId.value = currentNodeKey || ''
+const changeCurrentNode = (currentNodeKey?: string) => {
+  currentNodeId.value = currentNodeKey ?? ''
 }
 </script>
 <template>

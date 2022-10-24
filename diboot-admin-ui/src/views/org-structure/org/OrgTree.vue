@@ -2,7 +2,7 @@
 import { Search } from '@element-plus/icons-vue'
 import type { OrgModel } from '@/views/org-structure/org/type'
 import type { ElTreeInstanceType } from 'element-plus'
-import { WatchStopHandle } from 'vue'
+import type { WatchStopHandle } from 'vue'
 
 const baseApi = '/iam/org'
 

@@ -20,7 +20,7 @@ defineExpose({
         {{ model.businessType }}
       </el-descriptions-item>
       <el-descriptions-item label="业务标识">
-        <span>{{ model.businessId }}</span>
+        <span>{{ model.businessCode }}</span>
       </el-descriptions-item>
       <el-descriptions-item label="标题">
         {{ model.title }}
