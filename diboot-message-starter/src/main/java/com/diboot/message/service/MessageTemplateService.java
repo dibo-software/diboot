@@ -38,13 +38,4 @@ public interface MessageTemplateService extends BaseService<MessageTemplate> {
      */
     List<String> getTemplateVariableList() ;
 
-    /**
-     * 检查是否有重复的code
-     *
-     * @param id
-     * @param code
-     * @return
-     * @throws Exception
-     */
-    boolean existCode(Long id, String code) ;
 }
