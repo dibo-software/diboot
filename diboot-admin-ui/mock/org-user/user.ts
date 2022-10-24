@@ -1,10 +1,7 @@
-import type { MockMethod } from 'vite-plugin-mock'
-import { JsonResult } from '../_util'
-import { mock, Random } from 'mockjs'
+import { type ApiRequest, JsonResult } from '../_util'
+import { Random } from 'mockjs'
 import type { UserModel } from '@/views/org-structure/user/type'
 import crudTemplate from '../_util/crud-template'
-
-const baseUrl = '/api/user'
 
 const arrList: any[][] = [
   ['1', '1', '松松', '123', '', '123@dibo.ltd', 'F', '女', 'A', '正常', '2022-06-01'],
@@ -24,7 +21,29 @@ const crud = crudTemplate({
   fuzzyMatchKeys: ['realname', 'userNum', 'mobilePhone', 'email']
 })
 
-export default [...Object.values(crud.api)]
+export default [
+  ...Object.values(crud.api),
+  {
+    url: `${crud.baseUrl}/check-username-duplicate`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      const id = query.id
+      const isExistence = dataList.filter(item => item.id !== id).some(item => item.username === query.username)
+      return isExistence ? JsonResult.FAIL_VALIDATION('该用户名已存在') : JsonResult.OK()
+    }
+  },
+  {
+    url: `${crud.baseUrl}/check-user-num-duplicate`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      const id = query.id
+      const isExistence = dataList.filter(item => item.id !== id).some(item => item.userNum === query.userNum)
+      return isExistence ? JsonResult.FAIL_VALIDATION('该用户编码已存在') : JsonResult.OK()
+    }
+  }
+]
 
 function initUserList(arrList: any[][]): UserModel[] {
   if (!arrList || arrList.length === 0) {

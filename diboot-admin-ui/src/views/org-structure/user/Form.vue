@@ -5,6 +5,7 @@ import { defineEmits } from 'vue'
 import type { OrgModel } from '@/views/org-structure/org/type'
 import RolePopoverListSelector from '@/views/system/role/PopoverListSelector.vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/user'
 
@@ -61,12 +62,21 @@ const { submitting, submit } = useForm({
   }
 })
 
+const checkUsernameDuplicate = checkValue(`${baseApi}/check-username-duplicate`, 'username', () => model.value?.id)
+const checkUserNumDuplicate = checkValue(`${baseApi}/check-user-num-duplicate`, 'userNum', () => model.value?.id)
+
 const rules: FormRules = {
   orgId: { required: true, message: '不能为空', whitespace: true },
-  username: { required: true, message: '不能为空', whitespace: true },
+  username: [
+    { required: true, message: '不能为空', whitespace: true },
+    { validator: checkUsernameDuplicate, trigger: 'blur' }
+  ],
   password: { required: true, message: '不能为空', whitespace: true },
   realname: { required: true, message: '不能为空', whitespace: true },
-  userNum: { required: true, message: '不能为空', whitespace: true },
+  userNum: [
+    { required: true, message: '不能为空', whitespace: true },
+    { validator: checkUserNumDuplicate, trigger: 'blur' }
+  ],
   gender: { required: true, message: '不能为空', whitespace: true },
   status: { required: true, message: '不能为空', whitespace: true }
 }

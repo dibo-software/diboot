@@ -2,6 +2,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Position } from './type'
 import { defineEmits } from 'vue'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/position'
 
@@ -38,15 +39,20 @@ const { submitting, submit } = useForm({
 })
 
 const onGradeValueChanged = (val: string) => {
-  const grade = relatedData.positionGradeOptions.find((item: any) => item.value === val)
+  const grade = relatedData.positionGradeOptions.find((item: LabelValue) => item.value === val)
   if (grade !== undefined) {
     model.value.gradeName = grade.label
   }
 }
 
+const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
+
 const rules: FormRules = {
   name: { required: true, message: '不能为空', whitespace: true },
-  code: { required: true, message: '不能为空', whitespace: true }
+  code: [
+    { required: true, message: '不能为空', whitespace: true },
+    { validator: checkCodeDuplicate, trigger: 'blur' }
+  ]
 }
 </script>
 
@@ -61,14 +67,12 @@ const rules: FormRules = {
       </el-form-item>
       <el-form-item prop="gradeValue" label="职级">
         <el-select v-model="model.gradeValue" placeholder="请选择职级" @change="onGradeValueChanged">
-          <template v-if="relatedData.positionGradeOptions">
-            <el-option
-              v-for="item in relatedData.positionGradeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </template>
+          <el-option
+            v-for="item in relatedData.positionGradeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item prop="gradeName" label="职级头衔">
@@ -76,14 +80,12 @@ const rules: FormRules = {
       </el-form-item>
       <el-form-item prop="dataPermissionType" label="数据权限">
         <el-select v-model="model.dataPermissionType" placeholder="请选择数据权限">
-          <template v-if="relatedData.dataPermissionTypeOptions">
-            <el-option
-              v-for="item in relatedData.dataPermissionTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </template>
+          <el-option
+            v-for="item in relatedData.dataPermissionTypeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item prop="isVirtual" label="虚拟岗位">

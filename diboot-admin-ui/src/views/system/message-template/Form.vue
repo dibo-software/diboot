@@ -2,6 +2,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { MessageTemplate } from './type'
 import { defineEmits } from 'vue'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/message-template'
 
@@ -11,14 +12,14 @@ const title = ref('')
 
 const visible = ref(false)
 
-const templateVariableList = ['${用户姓名}', '${称呼}', '${手机号}', '${验证码}'] //ref<Array<string>>()
+const templateVariableList = ref<Array<string>>()
 defineExpose({
   open: (id?: string) => {
     title.value = id ? '更新消息通知模板' : '新建消息通知模板'
     loadData(id)
     visible.value = true
-    //if (!templateVariableList.value)
-    //  api.get<Array<string>>(`${baseApi}/variable-list`).then(res => (templateVariableList.value = res.data))
+    if (!templateVariableList.value)
+      api.get<Array<string>>(`${baseApi}/variable-list`).then(res => (templateVariableList.value = res.data))
   }
 })
 // 表单
@@ -40,9 +41,14 @@ const { submitting, submit } = useForm({
   }
 })
 
+const checkTempCodeDuplicate = checkValue(`${baseApi}/check-temp-code-duplicate`, 'code', () => model.value?.id)
+
 const rules: FormRules = {
   title: { required: true, message: '不能为空', whitespace: true },
-  code: { required: true, message: '不能为空', whitespace: true },
+  code: [
+    { required: true, message: '不能为空', whitespace: true },
+    { validator: checkTempCodeDuplicate, trigger: 'blur' }
+  ],
   content: { required: true, message: '不能为空', whitespace: true }
 }
 /**
