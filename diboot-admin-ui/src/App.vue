@@ -43,6 +43,7 @@ watch(
 
 <style>
 body {
+  width: 100% !important;
   margin: 0;
   padding: 0 !important;
   overflow: hidden;
