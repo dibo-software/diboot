@@ -50,7 +50,8 @@ const open = async (id?: string) => {
     code: 'NONE',
     managerId: '',
     depth: 0,
-    createTime: ''
+    createTime: '',
+    updateTime: ''
   }
   treeDataList.value?.unshift(firstItem)
 }
