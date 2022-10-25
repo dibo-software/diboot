@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import useAppStore from '@/store/app'
-import useViewTabsStore from '@/store/viewTabs'
+import useViewTabsStore from '@/store/view-tabs'
 
 const appStore = useAppStore()
 // Tabs 高度

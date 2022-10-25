@@ -2,7 +2,7 @@ import type { RouteRecord, RouteRecordName, RouteRecordRaw } from 'vue-router'
 import type { DefineComponent, VNode } from 'vue'
 import { RouterView } from 'vue-router'
 import { KeepAlive, h } from 'vue'
-import useViewTabs from '@/store/viewTabs'
+import useViewTabs from '@/store/view-tabs'
 import Layout from '@/layout/index.vue'
 
 // 加载所有组件

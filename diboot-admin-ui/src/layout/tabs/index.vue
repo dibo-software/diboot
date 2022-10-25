@@ -5,7 +5,7 @@ import type { ElScrollbar } from 'element-plus'
 import { onBeforeRouteLeave } from 'vue-router'
 import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
 import Draggable from 'vuedraggable'
-import useViewTabsStore from '@/store/viewTabs'
+import useViewTabsStore from '@/store/view-tabs'
 import useAppStore from '@/store/app'
 
 const appStore = useAppStore()
