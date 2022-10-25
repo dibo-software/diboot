@@ -14,6 +14,7 @@ export interface Position {
 
 export interface UserPosition {
   id?: string
+  userType?: string
   userId: string
   positionId: string
   orgId: string

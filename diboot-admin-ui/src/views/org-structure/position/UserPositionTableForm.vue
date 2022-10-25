@@ -3,15 +3,32 @@ import type { UserPosition } from './type'
 import type { OrgModel } from '../org/type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
-import positionPopoverListSelector from '@/views/org-structure/position/PopoverListSelector.vue'
+import PositionPopoverListSelector from '@/views/org-structure/position/PopoverListSelector.vue'
+import { defineEmits } from 'vue'
 
 type Props = {
   userId?: string
   orgId?: string
   orgTree: OrgModel[]
+  modelValue?: UserPosition[]
 }
 const props = defineProps<Props>()
 const dataList = ref<UserPosition[]>([])
+
+watch(
+  () => props.modelValue,
+  value => {
+    if (value && value.length) dataList.value = value
+    else dataList.value = []
+  },
+  { immediate: true }
+)
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: UserPosition[]): void
+}>()
+
+watch(dataList, value => emit('update:modelValue', value), { deep: true })
 
 const initModel = {
   userId: props.userId || '',

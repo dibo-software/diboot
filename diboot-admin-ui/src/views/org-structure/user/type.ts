@@ -1,13 +1,12 @@
 import type { Role } from '@/views/system/role/type'
+import type { Position } from '@/views/org-structure/position/type'
 
 export interface UserModel {
   id?: string
   orgId: string
   username?: string
   roleList?: Role[]
-  isSysAccount?: boolean
-  hidePassword?: boolean
-  userType?: string
+  positionList?: Position[]
   password?: string
   realname: string
   userNum: string

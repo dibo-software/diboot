@@ -6,10 +6,19 @@ import type { OrgModel } from '@/views/org-structure/org/type'
 import RolePopoverListSelector from '@/views/system/role/PopoverListSelector.vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
 import { checkValue } from '@/utils/validate-form'
+import type { UserPosition } from '@/views/org-structure/position/type'
 
 const baseApi = '/iam/user'
 
-const { loadData, loading, model } = useDetail<UserModel & { roleIdList?: string[] }>(baseApi)
+const { loadData, loading, model } = useDetail<
+  UserModel & {
+    roleIdList?: string[]
+    userPositionList?: UserPosition[]
+    isSysAccount?: boolean
+    hidePassword?: boolean
+  }
+>(baseApi, { roleIdList: [] })
+
 const {
   getTree,
   treeDataList: orgTree,
@@ -184,6 +193,7 @@ const rules: FormRules = {
     </el-form>
     <user-position-table-form
       ref="userPositionTableForm"
+      v-model="model.userPositionList"
       :org-tree="orgTree"
       :user-id="model.id"
       :org-id="model.orgId"

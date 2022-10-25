@@ -34,6 +34,16 @@ defineExpose({
       <el-descriptions-item label="状态">
         {{ model.statusLabel }}
       </el-descriptions-item>
+      <el-descriptions-item label="角色">
+        <el-tag v-for="item in model.roleList" :key="item.id" effect="plain">
+          {{ item.name }}
+        </el-tag>
+      </el-descriptions-item>
+      <el-descriptions-item label="岗位">
+        <el-tag v-for="item in model.positionList" :key="item.id" type="success" effect="plain">
+          {{ item.name }}
+        </el-tag>
+      </el-descriptions-item>
       <el-descriptions-item label="创建时间">
         {{ model.createTime }}
       </el-descriptions-item>
