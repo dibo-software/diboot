@@ -56,7 +56,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param roleIds
      * @return
      */
-    boolean createUserRoleRelations(String userType, String userId, List<Long> roleIds);
+    boolean createUserRoleRelations(String userType, String userId, List<String> roleIds);
 
     /***
      * 批量更新用户-角色的关系
@@ -65,7 +65,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param roleIds
      * @return
      */
-    boolean updateUserRoleRelations(String userType, String userId, List<Long> roleIds);
+    boolean updateUserRoleRelations(String userType, String userId, List<String> roleIds);
 
     /**
      * 批量删除用户-角色的关系

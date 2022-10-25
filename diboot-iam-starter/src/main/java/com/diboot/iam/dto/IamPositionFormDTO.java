@@ -35,6 +35,6 @@ public class IamPositionFormDTO extends IamPosition {
 
     private static final long serialVersionUID = -2721951760052373607L;
 
-    private List<Long> roleIds;
+    private List<String> roleIds;
 
 }

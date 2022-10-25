@@ -81,7 +81,7 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
                 .eq(IamUserPosition::getUserType, userType)
                 .eq(IamUserPosition::getUserId, userId).orderByDesc(IamUserPosition::getIsPrimaryPosition);
         List<IamUserPosition> userPositionList = iamUserPositionMapper.selectList(queryWrapper);
-        List<Long> positionIds = BeanUtils.collectToList(userPositionList, IamUserPosition::getPositionId);
+        List<String> positionIds = BeanUtils.collectToList(userPositionList, IamUserPosition::getPositionId);
         return V.isEmpty(positionIds) ? Collections.emptyList() : this.getEntityListByIds(positionIds);
     }
 

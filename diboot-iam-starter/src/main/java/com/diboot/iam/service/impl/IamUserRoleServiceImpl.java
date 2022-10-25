@@ -89,7 +89,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         if(V.isEmpty(userRoleList)){
             return Collections.emptyList();
         }
-        List<Long> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
+        List<String> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
         // 查询当前角色
         List<IamRole> roles = iamRoleService.getEntityList(Wrappers.<IamRole>lambdaQuery()
                 .select(IamRole::getId, IamRole::getName, IamRole::getCode)
@@ -152,7 +152,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createUserRoleRelations(String userType, String userId, List<Long> roleIds) {
+    public boolean createUserRoleRelations(String userType, String userId, List<String> roleIds) {
         if (V.isEmpty(roleIds)) {
             return true;
         }
@@ -167,7 +167,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateUserRoleRelations(String userType, String userId, List<Long> roleIds) {
+    public boolean updateUserRoleRelations(String userType, String userId, List<String> roleIds) {
         if (V.isEmpty(roleIds)) {
             return true;
         }

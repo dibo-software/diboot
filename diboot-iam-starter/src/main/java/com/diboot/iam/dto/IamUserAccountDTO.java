@@ -41,5 +41,5 @@ public class IamUserAccountDTO extends IamUser {
 
     private String password;
 
-    private List<Long> roleIdList;
+    private List<String> roleIdList;
 }
