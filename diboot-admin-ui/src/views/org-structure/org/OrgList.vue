@@ -69,7 +69,7 @@ const onFormComplete = () => {
       <el-table-column prop="name" label="全称" />
       <el-table-column prop="shortName" label="简称" />
       <el-table-column prop="code" label="编码" />
-      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column prop="updateTime" label="更新时间" width="165" />
       <el-table-column label="操作" width="140" fixed="right">
         <template #default="{ row }">
           <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">

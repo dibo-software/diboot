@@ -15,7 +15,7 @@ const reload = async () => {
 <template>
   <el-container class="el-container">
     <el-aside class="el-aside" width="240px">
-      <org-tree ref="orgTreeRef" @click-node="changeCurrentNode" />
+      <org-tree ref="orgTreeRef" draggable @click-node="changeCurrentNode" />
     </el-aside>
     <el-container class="right-container">
       <div class="content-container full-height-container">

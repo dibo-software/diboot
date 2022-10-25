@@ -6,9 +6,11 @@ export interface OrgModel {
   shortName: string
   type: string
   code: string
+  sortId?: string
   managerId: string
   depth: number
   orgComment?: string
   createTime: string
+  updateTime: string
   children?: OrgModel[]
 }
