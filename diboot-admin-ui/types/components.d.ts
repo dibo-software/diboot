@@ -8,7 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Chart: typeof import('@/components/chart/index.vue')['default']
-    Daterange: typeof import('@/components/date-range/index.vue')['default']
+    DateRange: typeof import('@/components/date-range/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
