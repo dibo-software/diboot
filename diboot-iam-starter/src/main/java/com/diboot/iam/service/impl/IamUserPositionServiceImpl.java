@@ -15,11 +15,19 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserPositionMapper;
 import com.diboot.iam.service.IamUserPositionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 用户岗位关联相关Service实现
@@ -32,4 +40,61 @@ import org.springframework.stereotype.Service;
 @Service
 public class IamUserPositionServiceImpl extends BaseIamServiceImpl<IamUserPositionMapper, IamUserPosition> implements IamUserPositionService {
 
+
+    @Override
+    public List<IamUserPosition> getUserPositionListByUser(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .orderByDesc(IamUserPosition::getIsPrimaryPosition);
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public IamUserPosition getUserPrimaryPosition(String userType, String userId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId)
+                .eq(IamUserPosition::getIsPrimaryPosition, true);
+        List<IamUserPosition> userPositionList = baseMapper.selectList(queryWrapper);
+        if(V.isEmpty(userPositionList)){
+            return null;
+        }
+        if(userPositionList.size() > 1){
+            log.warn("用户 {}:{} 主岗多于1个，当前以第一个为准", userType, userId);
+        }
+        return userPositionList.get(0);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateUserPositionRelations(String userType, String userId, List<IamUserPosition> userPositionList) {
+        if (V.isEmpty(userType) || V.isEmpty(userId)) {
+            throw new BusinessException(Status.FAIL_OPERATION, "参数错误");
+        }
+        // 校验用户ID是否存在
+        if (V.notEmpty(userPositionList)) {
+            for (IamUserPosition userPosition : userPositionList) {
+                userPosition.setUserType(userType);
+                userPosition.setUserId(userId);
+            }
+        }
+        // 删除所有旧关联数据
+        LambdaQueryWrapper deleteWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .eq(IamUserPosition::getUserType, userType)
+                .eq(IamUserPosition::getUserId, userId);
+        long count = baseMapper.selectCount(deleteWrapper);
+        if (count > 0) {
+            baseMapper.delete(deleteWrapper);
+        }
+        // 批量设置新的岗位列表
+        if (V.isEmpty(userPositionList)) {
+            return true;
+        }
+        for (IamUserPosition userPosition : userPositionList) {
+            userPosition.setId(null);
+            baseMapper.insert(userPosition);
+        }
+        return true;
+    }
 }

@@ -16,7 +16,6 @@
 package com.diboot.iam.service;
 
 import com.diboot.iam.entity.IamPosition;
-import com.diboot.iam.entity.IamUserPosition;
 
 import java.util.List;
 
@@ -28,22 +27,6 @@ import java.util.List;
 */
 public interface IamPositionService extends BaseIamService<IamPosition> {
 
-    /**
-     * 获取当前用户的任职岗位列表
-     * @param userType
-     * @param userId
-     * @return
-     */
-    List<IamUserPosition> getUserPositionListByUser(String userType, String userId);
-
-    /**
-     * 获取用户的第一主岗
-     * @param userType
-     * @param userId
-     * @return
-     */
-    IamUserPosition getUserPrimaryPosition(String userType, String userId);
-
     /***
      * 通过用户ID获取用户的所有任职岗位集合
      * @param userType
@@ -51,14 +34,5 @@ public interface IamPositionService extends BaseIamService<IamPosition> {
      * @return
      */
     List<IamPosition> getPositionListByUser(String userType, String userId);
-
-    /***
-     * 批量更新用户-岗位的关联关系
-     * @param userType
-     * @param userId
-     * @param userPositionList
-     * @return
-     */
-    boolean updateUserPositionRelations(String userType, String userId, List<IamUserPosition> userPositionList);
 
 }

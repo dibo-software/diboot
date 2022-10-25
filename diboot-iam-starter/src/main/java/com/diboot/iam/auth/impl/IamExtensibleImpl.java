@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.auth.impl;
 
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.auth.IamExtensible;
@@ -25,6 +25,7 @@ import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.service.IamPositionService;
+import com.diboot.iam.service.IamUserPositionService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.vo.PositionDataScope;
 import lombok.extern.slf4j.Slf4j;
@@ -51,16 +52,16 @@ public class IamExtensibleImpl implements IamExtensible {
             log.warn("扩展的用户类型: {} 需自行实现附加扩展对象逻辑", userType);
             return null;
         }
-        IamPositionService iamPositionService = ContextHelper.getBean(IamPositionService.class);
+        IamUserPositionService iamPositionService = ContextHolder.getBean(IamUserPositionService.class);
         IamUserPosition userPosition = iamPositionService.getUserPrimaryPosition(userType, userId);
         if(userPosition != null){
             String orgId = userPosition.getOrgId();
-            IamPosition position = iamPositionService.getEntity(userPosition.getPositionId());
+            IamPosition position = ContextHolder.getBean(IamPositionService.class).getEntity(userPosition.getPositionId());
             PositionDataScope positionDataScope = new PositionDataScope(userId, position.getDataPermissionType(), userId, orgId);
             List<String> accessibleUserIds = new ArrayList<>(), accessibleOrgIds = new ArrayList<>();
             // 本人及下属的用户ids
             accessibleUserIds.add(userId);
-            List<String> userIds = ContextHelper.getBean(IamUserService.class).getUserIdsByManagerId(userId);
+            List<String> userIds = ContextHolder.getBean(IamUserService.class).getUserIdsByManagerId(userId);
             if(V.notEmpty(userIds)){
                 userIds.forEach(uid -> {
                     if(!accessibleUserIds.contains(uid)){
@@ -71,7 +72,7 @@ public class IamExtensibleImpl implements IamExtensible {
             positionDataScope.setAccessibleUserIds(accessibleUserIds);
             // 本部门及下属部门的ids
             accessibleOrgIds.add(orgId);
-            List<String> childOrgIds = ContextHelper.getBean(IamOrgService.class).getChildOrgIds(orgId);
+            List<String> childOrgIds = ContextHolder.getBean(IamOrgService.class).getChildOrgIds(orgId);
             if(V.notEmpty(childOrgIds)){
                 childOrgIds.forEach(oid -> {
                     if(!accessibleOrgIds.contains(oid)){

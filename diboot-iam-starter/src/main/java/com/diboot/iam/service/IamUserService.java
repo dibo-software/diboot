@@ -15,10 +15,9 @@
  */
 package com.diboot.iam.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.vo.Pagination;
-import com.diboot.iam.dto.IamUserAccountDTO;
+import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.vo.IamUserVO;
 
@@ -32,19 +31,21 @@ import java.util.List;
 */
 public interface IamUserService extends BaseIamService<IamUser> {
 
-    /***
-     * 添加用户和账号
+    /**
+     * 添加用户及相关信息
+     *
      * @param userAccountDTO
      * @return
      */
-    boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
+    boolean createUserRelatedInfo(IamUserFormDTO userAccountDTO) throws Exception;
 
-    /***
-     * 更新用户和账号
+    /**
+     * 更新用户及相关信息
+     *
      * @param userAccountDTO
      * @return
      */
-    boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
+    boolean updateUserRelatedInfo(IamUserFormDTO userAccountDTO) throws Exception;
 
     /***
      * 删除用户和账号

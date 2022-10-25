@@ -25,7 +25,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
-import com.diboot.iam.dto.IamUserAccountDTO;
+import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
@@ -70,54 +70,60 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createUserAndAccount(IamUserAccountDTO userAccountDTO) {
+    public boolean createUserRelatedInfo(IamUserFormDTO userFormDTO) {
         // 创建用户信息
-        this.createEntity(userAccountDTO);
+        this.createEntity(userFormDTO);
         // 如果提交的有账号信息，则新建账号信息
-        if (V.notEmpty(userAccountDTO.getUsername())) {
+        if (V.notEmpty(userFormDTO.getUsername())) {
             // 新建account账号
-            this.createAccount(userAccountDTO);
+            this.createAccount(userFormDTO);
+        }
+        if (V.notEmpty(userFormDTO.getUserPositionList())) {
+            iamUserPositionService.updateUserPositionRelations(IamUser.class.getSimpleName(), userFormDTO.getId(), userFormDTO.getUserPositionList());
         }
         return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) {
+    public boolean updateUserRelatedInfo(IamUserFormDTO userFormDTO) {
         // 更新用户信息
-        this.updateEntity(userAccountDTO);
+        this.updateEntity(userFormDTO);
 
         IamAccount iamAccount = iamAccountService.getSingleEntity(
                 Wrappers.<IamAccount>lambdaQuery()
                         .eq(IamAccount::getUserType, IamUser.class.getSimpleName())
-                        .eq(IamAccount::getUserId, userAccountDTO.getId())
+                        .eq(IamAccount::getUserId, userFormDTO.getId())
         );
 
         if (iamAccount == null) {
-            if (V.isEmpty(userAccountDTO.getUsername())){
+            if (V.isEmpty(userFormDTO.getUsername())){
                 return true;
             } else {
                 // 新建account账号
-                this.createAccount(userAccountDTO);
+                this.createAccount(userFormDTO);
             }
         } else {
-            if (V.isEmpty(userAccountDTO.getUsername())) {
+            if (V.isEmpty(userFormDTO.getUsername())) {
                 // 删除账号
-                this.deleteAccount(userAccountDTO.getId());
+                this.deleteAccount(userFormDTO.getId());
             } else {
                 // 更新账号
-                iamAccount.setAuthAccount(userAccountDTO.getUsername())
-                        .setStatus(userAccountDTO.getStatus());
+                iamAccount.setAuthAccount(userFormDTO.getUsername())
+                        .setStatus(userFormDTO.getStatus());
                 // 设置密码
-                if (V.notEmpty(userAccountDTO.getPassword())){
-                    iamAccount.setAuthSecret(userAccountDTO.getPassword());
+                if (V.notEmpty(userFormDTO.getPassword())){
+                    iamAccount.setAuthSecret(userFormDTO.getPassword());
                     iamCustomize.encryptPwd(iamAccount);
                 }
                 iamAccountService.updateEntity(iamAccount);
 
                 // 批量更新角色关联关系
-                iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
+                iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userFormDTO.getRoleIdList());
             }
+        }
+        if (userFormDTO.getUserPositionList() != null) {
+            iamUserPositionService.updateUserPositionRelations(IamUser.class.getSimpleName(), userFormDTO.getId(), userFormDTO.getUserPositionList());
         }
         return true;
     }
@@ -233,7 +239,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return iamUserNums;
     }
 
-    protected void createAccount(IamUserAccountDTO userAccountDTO) {
+    protected void createAccount(IamUserFormDTO userAccountDTO) {
         // 创建账号信息
         IamAccount iamAccount = new IamAccount();
         iamAccount
