@@ -114,10 +114,8 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
         LambdaQueryWrapper<IamAccount> queryWrapper = new QueryWrapper<IamAccount>().lambda()
                 .eq(IamAccount::getAuthAccount, iamAccount.getAuthAccount())
                 .eq(IamAccount::getAuthType, iamAccount.getAuthType())
-                .eq(IamAccount::getUserType, iamAccount.getUserType());
-        if(iamAccount.getId() != null){
-            queryWrapper.ne(IamAccount::getUserId, iamAccount.getUserId());
-        }
+                .eq(IamAccount::getUserType, iamAccount.getUserType())
+                .ne(V.notEmpty(iamAccount.getUserId()), IamAccount::getUserId, iamAccount.getUserId());
         return exists(queryWrapper);
     }
 
