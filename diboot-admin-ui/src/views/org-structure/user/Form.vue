@@ -9,7 +9,7 @@ import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/user'
 
-const { loadData, loading, model } = useDetail<UserModel>(baseApi)
+const { loadData, loading, model } = useDetail<UserModel & { roleIdList?: string[] }>(baseApi)
 const {
   getTree,
   treeDataList: orgTree,
@@ -38,6 +38,7 @@ defineExpose({
     title.value = id ? '更新用户信息' : '新建用户'
     visible.value = true
     await loadData(id)
+    if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
     model.value.username = await loadUsername(id)
     // 判定是否属于系统用户
     model.value.isSysAccount = !!model.value.username
@@ -167,8 +168,8 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="roles" label="角色">
-            <role-popover-list-selector v-model="model.roleIds" :multi="true" />
+          <el-form-item prop="roleIdList" label="角色">
+            <role-popover-list-selector v-model="model.roleIdList" :multi="true" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">

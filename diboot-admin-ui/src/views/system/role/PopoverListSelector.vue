@@ -3,31 +3,22 @@ import RoleListSelector from '@/views/system/role/ListSelector.vue'
 import type { Role } from '@/views/system/role/type'
 import usePopoverListSelector from '@/hooks/use-popover-list-selector'
 type Props = {
-  modelValue: string
+  modelValue: string | string[]
   multi?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   multi: false
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{ (e: 'update:modelValue', value: string | string[]): void }>()
 
 const optionsValue = computed({
   get: function (): string[] | string {
     const { multi, modelValue } = props
-    if (multi) {
-      return modelValue ? modelValue.split(',') : []
-    } else {
-      return modelValue || ''
-    }
+    return modelValue ?? (multi ? [] : '')
   },
   set: function (v: string[] | string) {
-    const { multi } = props
-    if (multi) {
-      emit('update:modelValue', (v as string[]).join(','))
-    } else {
-      emit('update:modelValue', v)
-    }
+    emit('update:modelValue', v)
   }
 })
 
@@ -42,15 +33,13 @@ const { selectOptions, selectedRows, selectedKeys, onSelect, loadInitOptions } =
 // 通过监听值的变化，来自动加载用于回显的选项列表数据
 watch(
   () => props.modelValue,
-  (val: string) => {
+  (val: string | string[]) => {
     if (val && selectOptions.value.length === 0) {
       // 根据value值来加载需要的回显项
       loadInitOptions(val)
     }
   },
-  {
-    immediate: true
-  }
+  { immediate: true }
 )
 </script>
 <template>

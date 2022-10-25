@@ -1,8 +1,10 @@
+import type { Role } from '@/views/system/role/type'
+
 export interface UserModel {
   id?: string
   orgId: string
   username?: string
-  roleIds?: string
+  roleList?: Role[]
   isSysAccount?: boolean
   hidePassword?: boolean
   userType?: string
