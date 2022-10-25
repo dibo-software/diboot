@@ -18,11 +18,9 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.core.vo.Status;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.mapper.IamOrgMapper;
 import com.diboot.iam.service.IamOrgService;
@@ -30,8 +28,10 @@ import com.diboot.iam.vo.IamOrgVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
 * 组织机构相关Service实现
@@ -97,42 +97,13 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     @Override
     public List<IamOrgVO> getOrgTree(String rootOrgId) {
         QueryWrapper<IamOrg> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().orderByDesc(IamOrg::getSortId, IamOrg::getId);
+        queryWrapper.lambda().orderByAsc(IamOrg::getSortId);
         List<IamOrg> orgList = getEntityList(queryWrapper);
         if (V.isEmpty(orgList)) {
             return Collections.emptyList();
         }
         List<IamOrgVO> orgVOList = BeanUtils.convertList(orgList, IamOrgVO.class);
         return BeanUtils.buildTree(orgVOList, rootOrgId);
-    }
-
-    @Override
-    public void sortList(List<IamOrg> orgList) {
-        if (V.isEmpty(orgList)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "排序列表不能为空");
-        }
-        List<Long> sortIdList = new ArrayList();
-        // 先将所有序号重新设置为自身当前id
-        for (IamOrg item : orgList) {
-            item.setSortId(Long.parseLong(item.getId())); //TODO 优化
-            sortIdList.add(item.getSortId());
-        }
-        // 将序号列表倒序排序
-        sortIdList = sortIdList.stream()
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-        // 整理需要更新的列表
-        List<IamOrg> updateList = new ArrayList<>();
-        for (int i=0; i<orgList.size(); i++) {
-            IamOrg item = orgList.get(i);
-            IamOrg updateItem = new IamOrg();
-            updateItem.setId(item.getId());
-            updateItem.setSortId(sortIdList.get(i));
-            updateList.add(updateItem);
-        }
-        if (updateList.size() > 0) {
-            super.updateBatchById(updateList);
-        }
     }
 
     @Override

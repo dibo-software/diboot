@@ -42,12 +42,6 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      */
     List<IamOrgVO> getOrgTree(String rootOrgId);
 
-    /***
-     * 对部门列表进行排序
-     * @param orgList
-     */
-    void sortList(List<IamOrg> orgList);
-
     /**
      * 获取当前部门节点所有上级部门id集合
      * @param orgId

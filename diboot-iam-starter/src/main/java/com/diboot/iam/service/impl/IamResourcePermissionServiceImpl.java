@@ -199,35 +199,6 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
     }
 
     @Override
-    public void sortList(List<IamResourcePermission> permissionList) {
-        if (V.isEmpty(permissionList)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "排序列表不能为空");
-        }
-        List<Long> sortIdList = new ArrayList();
-        // 先将所有序号重新设置为自身当前id
-        for (IamResourcePermission item : permissionList) {
-            item.setSortId(Long.parseLong(item.getId()));
-            sortIdList.add(item.getSortId());
-        }
-        // 将序号列表倒序排序
-        sortIdList = sortIdList.stream()
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-        // 整理需要更新的列表
-        List<IamResourcePermission> updateList = new ArrayList<>();
-        for (int i = 0; i < permissionList.size(); i++) {
-            IamResourcePermission item = permissionList.get(i);
-            IamResourcePermission updateItem = new IamResourcePermission();
-            updateItem.setId(item.getId());
-            updateItem.setSortId(sortIdList.get(i));
-            updateList.add(updateItem);
-        }
-        if (updateList.size() > 0) {
-            super.updateBatchById(updateList);
-        }
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteMenuAndPermissions(List<String> idList) {
         if (V.isEmpty(idList)) {

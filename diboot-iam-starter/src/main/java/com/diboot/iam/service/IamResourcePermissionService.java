@@ -78,10 +78,4 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      */
     List<IamResourcePermissionListVO> getMenuResourcePermissions(String application);
 
-    /***
-     * 对列表进行排序
-     * @param permissionList
-     */
-    void sortList(List<IamResourcePermission> permissionList);
-
 }
