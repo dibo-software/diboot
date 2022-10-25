@@ -13,28 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.converter;
+package com.diboot.core.converter.annotation;
 
-import com.diboot.core.converter.annotation.CollectThisConvertor;
-import com.diboot.core.util.D;
-import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.lang.annotation.*;
 
 /**
- * String - LocalDate 转换器
+ * 收集类型转换注解
  * @author JerryMa
- * @version v2.7.0
- * @date 2022/7/26
+ * @version v3.0.0
+ * @date 2022/10/25
  * Copyright © diboot.com
  */
-@CollectThisConvertor
-public class String2LocalDateConverter implements Converter<String, LocalDate> {
-
-    @Override
-    public LocalDate convert(String dateString) {
-        dateString = D.formatDateString(dateString);
-        return LocalDate.parse(dateString);
-    }
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+@Documented
+public @interface CollectThisConvertor {
 
 }

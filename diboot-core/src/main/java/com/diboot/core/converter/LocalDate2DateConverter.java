@@ -15,6 +15,7 @@
  */
 package com.diboot.core.converter;
 
+import com.diboot.core.converter.annotation.CollectThisConvertor;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.Instant;
@@ -29,6 +30,7 @@ import java.util.Date;
  * @date 2022/5/11
  * Copyright © diboot.com
  */
+@CollectThisConvertor
 public class LocalDate2DateConverter implements Converter<LocalDate, Date> {
 
     @Override

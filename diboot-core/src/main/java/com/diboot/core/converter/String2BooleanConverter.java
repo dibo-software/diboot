@@ -15,6 +15,7 @@
  */
 package com.diboot.core.converter;
 
+import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
  * @date 2022/5/11
  * Copyright © diboot.com
  */
+@CollectThisConvertor
 public class String2BooleanConverter implements Converter<String, Boolean> {
 
     @Override
