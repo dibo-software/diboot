@@ -4,6 +4,7 @@ export interface UserModel {
   username?: string
   roleIds?: string
   isSysAccount?: boolean
+  hidePassword?: boolean
   userType?: string
   password?: string
   realname: string

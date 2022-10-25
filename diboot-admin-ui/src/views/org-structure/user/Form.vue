@@ -24,17 +24,24 @@ const title = ref('')
 
 const visible = ref(false)
 
+const loadUsername = async (id?: string) => {
+  if (id != null) {
+    const res = await api.get<string>(`${baseApi}/username/${id}`)
+    if (res.code === 0 && res.data) {
+      return res.data
+    }
+  }
+}
+
 defineExpose({
   open: async (id?: string) => {
     title.value = id ? '更新用户信息' : '新建用户'
     visible.value = true
     await loadData(id)
+    model.value.username = await loadUsername(id)
     // 判定是否属于系统用户
-    if (!id) {
-      model.value.isSysAccount = false
-    } else {
-      model.value.isSysAccount = !!model.value.username
-    }
+    model.value.isSysAccount = !!model.value.username
+    if (model.value.isSysAccount) model.value.hidePassword = true
     // 加载树结构数据
     await getTree()
   }
@@ -71,7 +78,6 @@ const rules: FormRules = {
     { required: true, message: '不能为空', whitespace: true },
     { validator: checkUsernameDuplicate, trigger: 'blur' }
   ],
-  password: { required: true, message: '不能为空', whitespace: true },
   realname: { required: true, message: '不能为空', whitespace: true },
   userNum: [
     { required: true, message: '不能为空', whitespace: true },
@@ -115,8 +121,14 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="password" label="密码">
-            <el-input v-model="model.password" placeholder="请输入密码" />
+          <el-form-item
+            prop="password"
+            label="密码"
+            :rules="model.hidePassword ? [] : { required: true, message: '不能为空', whitespace: true }"
+            @click="model.hidePassword = false"
+          >
+            <el-button v-if="model.hidePassword">修改密码</el-button>
+            <el-input v-else v-model="model.password" placeholder="请输入密码" />
           </el-form-item>
         </el-col>
       </el-row>
