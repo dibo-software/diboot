@@ -45,18 +45,17 @@ export default <T>(option: PopoverListSelectorOption<T>) => {
   }
 
   const loadInitOptions = async (value: string | string[]) => {
-    if (!value) {
+    if (!value || !value.length) {
       return false
     }
     let optionsValues = value instanceof Array ? value : [value]
     optionsValues = [...new Set(optionsValues)]
-    const ids = optionsValues.join(',')
-    await loadInitOptionsFromRemote(ids)
+    await loadInitOptionsFromRemote(optionsValues)
   }
 
-  const loadInitOptionsFromRemote = async (ids: string) => {
-    const listByIdsUrl = listByIdsApi ? listByIdsApi : `${baseApi}/listByIds`
-    const res = await api.get<T[]>(listByIdsUrl, { ids })
+  const loadInitOptionsFromRemote = async (ids: string[]) => {
+    const listByIdsUrl = listByIdsApi ? listByIdsApi : `${baseApi}/ids`
+    const res = await api.post<T[]>(listByIdsUrl, ids)
     if (res.code === 0) {
       const { data } = res
       if (data && data.length > 0) {

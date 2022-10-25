@@ -117,14 +117,13 @@ export default <T extends {}>(option: Option<T>) => {
         }
       },
       listByIds: {
-        url: `${baseUrl}/listByIds`,
+        url: `${baseUrl}/ids`,
         timeout: Random.natural(50, 300),
-        method: 'get',
-        response: ({ query }: ApiRequest) => {
-          const { ids } = query
-          const idList = ids.split(',')
+        method: 'post',
+        response: ({ body }: ApiRequest<string[]>) => {
+          if (!body || body.length) return JsonResult.OK()
           const validList = dataList.filter(item => {
-            return idList.includes(item[primaryKey as keyof typeof item])
+            return body.includes(item[primaryKey as keyof typeof item] as string)
           })
           return JsonResult.OK(validList)
         }
