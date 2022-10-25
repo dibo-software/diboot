@@ -33,6 +33,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
@@ -202,10 +203,22 @@ public class BeanUtils {
      * 设置属性值
      * @param obj
      */
+    private static ConversionService conversionService;
+    private static Map<String, BeanWrapper> beanWrapperCacheMap = new ConcurrentHashMap<>();
     public static BeanWrapper getBeanWrapper(Object obj) {
-        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
-        if(wrapper.getConversionService() == null){
-            ConversionService conversionService = ContextHelper.getBean(EnhancedConversionService.class);
+        BeanWrapper wrapper = beanWrapperCacheMap.get(obj.getClass().getName());
+        if(wrapper == null) {
+            wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+            if(conversionService == null) {
+                conversionService = ContextHolder.getBean(DefaultConversionService.class);
+                if(conversionService == null) {
+                    conversionService = new EnhancedConversionService();
+                    log.debug("new ConversionService instance: {}", EnhancedConversionService.class.getName());
+                }
+                else {
+                    log.debug("get ConversionService instance: {} by getBean", conversionService.getClass().getName());
+                }
+            }
             wrapper.setConversionService(conversionService);
         }
         return wrapper;
