@@ -1,17 +1,16 @@
 <script setup lang="ts" name="User">
 import OrgTree from '@/views/org-structure/org/OrgTree.vue'
 import UserList from './List.vue'
-import type { OrgModel } from '@/views/org-structure/org/type'
 
 const currentNodeId = ref('')
-const changeCurrentNode = (currentNode: OrgModel) => {
-  currentNodeId.value = currentNode.id || ''
+const changeCurrentNode = (currentNodeKey?: string) => {
+  currentNodeId.value = currentNodeKey ?? ''
 }
 </script>
 <template>
   <el-container class="el-container">
     <el-aside class="el-aside" width="240px">
-      <org-tree ref="orgTreeRef" :readonly="true" @change-current-node="changeCurrentNode" />
+      <org-tree ref="orgTreeRef" @click-node="changeCurrentNode" />
     </el-aside>
     <el-container>
       <div class="list-container">

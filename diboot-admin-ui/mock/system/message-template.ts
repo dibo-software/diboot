@@ -2,7 +2,7 @@ import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_util/crud-template'
 import type { MessageTemplate } from '@/views/system/message-template/type'
 import { Random } from 'mockjs'
-import { JsonResult } from '../_util'
+import { type ApiRequest, JsonResult } from '../_util'
 
 const dataList: MessageTemplate[] = Array.from({ length: 100 }).map((_, index) => {
   const id = String(100 - index)
@@ -35,6 +35,16 @@ export default [
     method: 'get',
     response: () => {
       return JsonResult.OK(['${用户姓名}', '${称呼}', '${手机号}', '${验证码}'] as string[])
+    }
+  },
+  {
+    url: `${crud.baseUrl}/check-temp-code-duplicate`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      const id = query.id
+      const isExistence = dataList.filter(item => item.id !== id).some(item => item.code === query.code)
+      return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
     }
   }
 ] as MockMethod[]

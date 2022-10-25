@@ -32,7 +32,7 @@ const editorRef = shallowRef<IDomEditor>()
 // 创建处理
 const handleCreated = (editor: IDomEditor) => {
   editorRef.value?.destroy() // 及时销毁编辑器（编辑器形式如果动态切换，应需先销毁原编辑器）
-  editorRef.value = Editor // 记录 editor 实例，重要！
+  editorRef.value = editor // 记录 editor 实例，重要！
 }
 
 // 组件销毁时，也及时销毁编辑器

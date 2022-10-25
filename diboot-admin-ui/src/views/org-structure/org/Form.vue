@@ -2,6 +2,7 @@
 import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { defineEmits, defineProps } from 'vue'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/org'
 
@@ -73,10 +74,15 @@ const { submitting, submit } = useForm({
   }
 })
 
+const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
+
 const rules: FormRules = {
   name: { required: true, message: '不能为空', whitespace: true },
   shortName: { required: true, message: '不能为空', whitespace: true },
-  code: { required: true, message: '不能为空', whitespace: true }
+  code: [
+    { required: true, message: '不能为空', whitespace: true },
+    { validator: checkCodeDuplicate, trigger: 'blur' }
+  ]
 }
 
 defineExpose({ open })

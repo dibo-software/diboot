@@ -966,11 +966,8 @@ public class BeanUtils {
      * @return
      */
     public static Class<?> getFieldActualType(Class<?> clazz, String fieldName) {
-        Field field;
-        try {
-            field = clazz.getDeclaredField(fieldName);
-        }
-        catch (NoSuchFieldException e) {
+        Field field = extractField(clazz, fieldName);
+        if (field == null) {
             log.warn("class {} 中无字段 {}", clazz.getName(), fieldName);
             return null;
         }

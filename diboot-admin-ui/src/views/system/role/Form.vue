@@ -2,6 +2,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resource-permission/type'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/role'
 
@@ -59,9 +60,14 @@ const { submitting, submit } = useForm({
   }
 })
 
+const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
+
 const rules: FormRules = {
   name: { required: true, message: '不能为空', whitespace: true },
-  code: { required: true, message: '不能为空', whitespace: true }
+  code: [
+    { required: true, message: '不能为空', whitespace: true },
+    { validator: checkCodeDuplicate, trigger: 'blur' }
+  ]
 }
 const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: string[] }) => {
   checkNode(currentNode, data)

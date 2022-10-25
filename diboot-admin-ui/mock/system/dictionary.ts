@@ -1,5 +1,5 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { JsonResult } from '../_util'
+import { type ApiRequest, JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import { cloneDeep } from 'lodash'
 import type { Dictionary } from '@/views/system/dictionary/type'
@@ -232,6 +232,16 @@ const mockMethods: MockMethod[] = [
       deleteDataIds.push(...body)
       console.log(deleteDataIds)
       return JsonResult.OK()
+    }
+  },
+  {
+    url: `${crud.baseUrl}/check-type-duplicate`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      const id = query.id
+      const isExistence = dataList.filter(item => item.id !== id).some(item => item.type === query.type)
+      return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
     }
   }
 ] as MockMethod[]

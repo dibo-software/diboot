@@ -56,7 +56,7 @@ watch(
             <icon name="Local:Language" />
           </el-icon>
           <span v-if="showContent">
-            {{ dataList.find(e => e.language === $i18n.locale.replaceAll('-', '_'))?.content }}
+            {{ dataList?.find(e => e.language === $i18n.locale.replace(/-/g, '_'))?.content }}
           </span>
         </span>
       </template>
@@ -64,9 +64,9 @@ watch(
         <el-descriptions-item
           v-for="locale in $i18n.availableLocales"
           :key="locale"
-          :label="$t('language', null, { locale })"
+          :label="$t('language', {}, { locale })"
         >
-          {{ dataList?.find(e => e.language === locale.replaceAll('-', '_'))?.content }}
+          {{ dataList?.find(e => e.language === locale.replace(/-/g, '_'))?.content }}
         </el-descriptions-item>
       </el-descriptions>
     </el-popover>

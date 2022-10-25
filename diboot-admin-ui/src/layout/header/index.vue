@@ -50,7 +50,7 @@ const goPersonal = () => {
               :command="item"
               :disabled="$i18n.locale === item"
             >
-              {{ $t('language', null, { locale: item }) }}
+              {{ $t('language', {}, { locale: item }) }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>

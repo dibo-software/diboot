@@ -20,7 +20,8 @@ service.interceptors.request.use(config => {
   if (token) (config.headers as AxiosRequestHeaders)[AUTH_HEADER_KEY] = token
 
   // 只针对get方式进行序列化
-  if (config.method === 'get') config.paramsSerializer = params => qs.stringify(params, { arrayFormat: 'repeat' })
+  if (config.method === 'get')
+    config.paramsSerializer = { serialize: params => qs.stringify(params, { arrayFormat: 'repeat' }) }
 
   return config
 })
@@ -194,7 +195,7 @@ const api = {
             'Content-Type': 'application/json;charset=UTF-8'
           },
           onDownloadProgress: evt => {
-            if (onDownloadProgress) onDownloadProgress((evt.loaded / evt.total) * 100)
+            if (onDownloadProgress) onDownloadProgress(evt.total ? (evt.loaded / evt.total) * 100 : 0)
           }
         })
         .then(res => {
@@ -232,7 +233,7 @@ const api = {
             'Content-Type': 'application/json;charset=UTF-8'
           },
           onDownloadProgress: evt => {
-            if (onDownloadProgress) onDownloadProgress((evt.loaded / evt.total) * 100)
+            if (onDownloadProgress) onDownloadProgress(evt.total ? (evt.loaded / evt.total) * 100 : 0)
           }
         })
         .then(res => {

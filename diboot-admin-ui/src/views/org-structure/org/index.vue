@@ -1,34 +1,26 @@
 <script lang="ts" setup name="Org">
 import OrgTree from './OrgTree.vue'
 import OrgList from './OrgList.vue'
-import type { OrgModel } from './type'
 
 const currentNodeId = ref<string>('0')
-const currentNodeInfo = ref<OrgModel | undefined>()
-const changeCurrentNode = (currentNode: OrgModel) => {
-  currentNodeInfo.value = currentNode
-  currentNodeId.value = currentNode.id || ''
+const changeCurrentNode = (currentNodeKey?: string) => {
+  currentNodeId.value = currentNodeKey || '0'
 }
 // 重新加载树结构
 const orgTreeRef = ref()
 const reload = async () => {
   await orgTreeRef.value?.reload()
 }
-// 书结构变更函数
-const orgListRef = ref()
-const treeDataChange = async () => {
-  await orgListRef.value?.onSearch()
-}
 </script>
 <template>
   <el-container class="el-container">
     <el-aside class="el-aside" width="240px">
-      <org-tree ref="orgTreeRef" @change-current-node="changeCurrentNode" @data-change="treeDataChange" />
+      <org-tree ref="orgTreeRef" @click-node="changeCurrentNode" />
     </el-aside>
     <el-container class="right-container">
       <div class="content-container full-height-container">
         <div class="el-tabs">
-          <org-list ref="orgListRef" :parent-id="currentNodeId" @reload="reload" />
+          <org-list :parent-id="currentNodeId" @reload="reload" />
         </div>
       </div>
     </el-container>

@@ -98,8 +98,8 @@ initRelatedData()
           <el-tag v-else type="info">{{ row.statusLabel }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="180" />
-      <el-table-column label="操作" width="70">
+      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column label="操作" width="70" fixed="right">
         <template #default="{ row }">
           <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
             {{ $t('operation.detail') }}

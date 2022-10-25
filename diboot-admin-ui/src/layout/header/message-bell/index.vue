@@ -6,6 +6,9 @@ const visible = ref(false)
 const activeKey = ref('unreadMessage')
 const countMap: Record<string, number> = reactive({ unreadMessage: 0 })
 const total = computed(() => Object.values(countMap).reduce((prev, next) => prev + next, 0))
+
+const unreadMessage = ref()
+const allMessages = ref()
 </script>
 
 <template>
@@ -29,17 +32,12 @@ const total = computed(() => Object.values(countMap).reduce((prev, next) => prev
             ref="unreadMessage"
             :unread="true"
             @close="visible = false"
-            @reset="$refs.allMessages && $refs.allMessages.refresh()"
+            @reset="allMessages?.refresh()"
             @total="value => (countMap.unreadMessage = value)"
           />
         </el-tab-pane>
         <el-tab-pane name="allMessages" label="全部消息" lazy>
-          <message-list
-            ref="allMessages"
-            :unread="false"
-            @reset="$refs.unreadMessage && $refs.unreadMessage.refresh()"
-            @close="visible = false"
-          />
+          <message-list ref="allMessages" :unread="false" @reset="unreadMessage?.refresh()" @close="visible = false" />
         </el-tab-pane>
       </el-tabs>
     </el-popover>

@@ -11,7 +11,7 @@ pagination.orderBy = { code: 'ASC' }
 getList()
 
 const formRef = ref()
-const openForm = (code: string) => {
+const openForm = (code?: string) => {
   formRef.value?.open(code)
 }
 
@@ -84,15 +84,15 @@ const singleRow = (row: Array<I18nConfig>) => {
         </template>
       </el-table-column>
       <el-table-column
-        v-for="locale in $i18n.availableLocales.map(e => e.replaceAll('-', '_'))"
+        v-for="locale in $i18n.availableLocales.map(e => e.replace(/-/g, '_'))"
         :key="locale"
         :prop="locale"
-        :label="$t('language', null, { locale: locale.replaceAll('_', '-') })"
+        :label="$t('language', {}, { locale: locale.replace(/_/g, '-') })"
         show-overflow-tooltip
         min-width="180px"
       >
         <template #default="{ row }">
-          <span>{{ row.find(e => e.language === locale)?.content }}</span>
+          <span>{{ row.find((e: I18nConfig) => e.language === locale)?.content }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -108,13 +108,13 @@ const singleRow = (row: Array<I18nConfig>) => {
             {{ $t('operation.update') }}
           </el-button>
           <el-button
-            v-if="!row.some(e => e.type === 'SYSTEM')"
+            v-if="!row.some((e: I18nConfig) => e.type === 'SYSTEM')"
             v-has-permission="'delete'"
             text
             bg
             type="danger"
             size="small"
-            @click="batchRemove(row.map(e => e.id))"
+            @click="batchRemove(row.map((e: I18nConfig) => e.id))"
           >
             {{ $t('operation.delete') }}
           </el-button>

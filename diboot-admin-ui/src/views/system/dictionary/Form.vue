@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import type { api } from '@/utils/request'
-import draggable from 'vuedraggable'
+import Draggable from 'vuedraggable'
 import { Sort } from '@element-plus/icons-vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/dictionary'
 
@@ -47,24 +47,18 @@ const initModel = {
     }
   ]
 }
+
+const checkTypeDuplicate = checkValue(`${baseApi}/check-type-duplicate`, 'type', () => model.value?.id)
+
 const rules = reactive<FormRules>({
-  itemName: [
-    {
-      required: true,
-      message: '请输入字典名称',
-      trigger: 'change'
-    }
-  ],
+  itemName: [{ required: true, message: '请输入字典名称', trigger: 'change' }],
   type: [
-    {
-      required: true,
-      message: '请输入字典编码',
-      trigger: 'change'
-    }
+    { required: true, message: '请输入字典编码', trigger: 'change' },
+    { validator: checkTypeDuplicate, trigger: 'blur' }
   ]
 })
 
-const { submit } = useForm({
+const { submit, submitting } = useForm({
   baseApi,
   async afterValidate() {
     const { type, children } = model.value
@@ -113,7 +107,7 @@ defineExpose({ open })
 </script>
 <template>
   <el-dialog v-model="visible" :width="width" :title="title">
-    <el-form v-if="model" ref="formRef" :model="model" :rules="rules" label-position="top">
+    <el-form v-if="model" ref="formRef" v-loading="loading" :model="model" :rules="rules" label-position="top">
       <el-row :gutter="16">
         <el-col :span="12">
           <el-form-item label="字典名称" prop="itemName" :label-width="formLabelWidth">
@@ -198,7 +192,7 @@ defineExpose({ open })
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="submit(model, formRef)">确认</el-button>
+        <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">确认</el-button>
       </span>
     </template>
   </el-dialog>

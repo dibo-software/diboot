@@ -110,7 +110,7 @@ const setCheckedKeys = () => {
     </el-table-column>
     <el-table-column prop="name" label="名称" />
     <el-table-column prop="code" label="编码" />
-    <el-table-column prop="createTime" label="创建时间" />
+    <el-table-column prop="createTime" label="创建时间" width="165" />
   </el-table>
   <el-pagination
     v-if="pagination.total"

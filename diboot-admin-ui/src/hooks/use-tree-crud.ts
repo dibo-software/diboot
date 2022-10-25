@@ -190,7 +190,7 @@ export default <T>(option: TreeOption<T>) => {
     try {
       const result = await api.post<string>(`${baseApi}/`, treeNode)
       if (result && result.code === 0) {
-        Object.assign(treeNode, { [optionsTransformField.value]: result.data })
+        Object.assign(treeNode as Record<string, unknown>, { [optionsTransformField.value]: result.data })
         dataState.treeDataList = []
         await getTree()
         // 设置当前节点选中

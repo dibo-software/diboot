@@ -1,5 +1,5 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { JsonResult } from '../_util'
+import { type ApiRequest, JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import { list2Tree } from '../_util/list'
 import type { OrgModel } from '@/views/org-structure/org/type'
@@ -45,6 +45,16 @@ const mockMethods: MockMethod[] = [
         }
       })
       return JsonResult.OK(buildOrgTree(validList))
+    }
+  },
+  {
+    url: `${crud.baseUrl}/check-code-duplicate`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      const id = query.id
+      const isExistence = dataList.filter(item => item.id !== id).some(item => item.code === query.code)
+      return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
     }
   }
 ]

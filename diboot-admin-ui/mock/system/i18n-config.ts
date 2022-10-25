@@ -104,5 +104,14 @@ export default [
       return JsonResult.OK()
     }
   },
+  {
+    url: `${crud.baseUrl}/check-code-duplicate/:code`,
+    timeout: Random.natural(50, 300),
+    method: 'post',
+    response: ({ query, body }: ApiRequest<string[], I18nConfig>) => {
+      const isExistence = dataList.filter(item => !body.includes(item.id)).some(item => item.code === query.code)
+      return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
+    }
+  },
   crud.api.batchRemove
 ] as MockMethod[]

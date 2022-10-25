@@ -1,170 +1,91 @@
 <script lang="ts" setup>
-import { defineEmits } from 'vue'
-import { Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import type { OrgModel } from '@/views/org-structure/org/type'
-import orgForm from './Form.vue'
+import type { ElTreeInstanceType } from 'element-plus'
+import type { WatchStopHandle } from 'vue'
 
-type Props = {
-  readonly?: boolean
-}
-const props = withDefaults(defineProps<Props>(), {
-  readonly: false
+const baseApi = '/iam/org'
+
+// tree实例
+const treeRef = ref<ElTreeInstanceType>()
+
+const { getList, dataList, loading } = useList<OrgModel>({
+  baseApi,
+  listApi: `${baseApi}/tree`
 })
-const emit = defineEmits(['changeCurrentNode', 'dataChange'])
 
-const { filterNode, getTree, addTreeNode, nodeClick, treeRef, searchWord, treeDataList, loading } =
-  useTreeCrud<OrgModel>({
-    baseApi: '/iam/org',
-    treeApi: '/tree',
-    transformField: { label: 'shortName', value: 'id' }
-  })
+getList()
 
-const currentNodeId = ref('')
-const changeCurrentNode = (currentNode: OrgModel) => {
-  currentNodeId.value = currentNode?.id || ''
-  emit('changeCurrentNode', currentNode)
-}
+// 搜索值
+const searchWord = ref('')
+//监听searchWord变化
+watch(searchWord, val => {
+  treeRef.value?.filter(val)
+})
+const filterNode = (value: string, data: Partial<OrgModel>) => !value || data.shortName?.includes(value)
 
-// 打开表单
-const formRef = ref()
-const openForm = (id?: string) => {
-  formRef.value?.open(id)
-}
-const add = () => {
-  openForm()
-}
+const emit = defineEmits<{
+  (e: 'clickNode', currentKey?: string): void
+}>()
 
-const edit = (data: OrgModel) => {
-  openForm(data.id)
-}
-
-const loadTreeWithNullNode = async () => {
-  await getTree()
-  if (treeDataList.value) {
-    treeDataList.value.unshift({
-      id: '',
-      parentId: '',
-      topOrgId: '',
-      name: '所有部门',
-      shortName: '所有部门',
-      type: '',
-      code: 'ALL',
-      managerId: '',
-      depth: 1,
-      createTime: ''
-    })
+const currentKey = ref()
+const clickNode = (data: OrgModel) => {
+  if (currentKey.value === data.id) {
+    treeRef.value?.setCurrentKey()
+    emit('clickNode', (currentKey.value = undefined))
+  } else {
+    emit('clickNode', (currentKey.value = data.id))
   }
 }
-// 移除树节点
-const remove = async (data: OrgModel) => {
-  ElMessageBox.confirm('确认删除已选节点吗？', '删除节点', { type: 'warning' })
-    .then(() => {
-      api
-        .post(`/org/batch-delete`, [data.id])
-        .then(() => {
-          ElMessage.success('删除节点成功！')
-          loadTreeWithNullNode()
-          emit('dataChange')
-        })
-        .catch(err => {
-          ElMessage.error(err.msg || err.message || '删除失败！')
-        })
-    })
-    .catch(() => null)
-}
-const reload = async () => {
-  await loadTreeWithNullNode()
+
+const setTreeCurrentKey = (key: string) => {
+  const watchTreeRef: WatchStopHandle = watch(
+    treeRef,
+    value => {
+      if (value) {
+        value.setCurrentKey(key)
+        watchTreeRef()
+      }
+    },
+    { immediate: true }
+  )
 }
 
-const formComplete = async () => {
-  emit('dataChange')
-  await loadTreeWithNullNode()
-}
-loadTreeWithNullNode()
-defineExpose({ reload })
+defineExpose({
+  reload: async () => {
+    await getList()
+    setTreeCurrentKey(currentKey.value)
+  }
+})
 </script>
+
 <template>
   <div class="full-height-container">
     <el-header>
       <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
     </el-header>
-    <div class="tree-container">
+    <el-scrollbar>
       <el-tree
         ref="treeRef"
+        v-loading="loading"
         node-key="id"
         :default-expand-all="true"
         :highlight-current="true"
         :expand-on-click-node="false"
         :props="{ label: 'shortName' }"
-        :data="treeDataList"
+        :data="dataList"
         :check-strictly="true"
         :filter-node-method="filterNode"
-        @current-change="changeCurrentNode"
-      >
-        <template #default="{ node, data }">
-          <span class="tree-node">
-            <span class="label">{{ node.label }}</span>
-            <span v-if="!readonly" v-has-permission="['update', 'delete']" class="btn-wrapper">
-              <el-button v-has-permission="'update'" type="text" :icon="Edit" @click="edit(data)" />
-              <el-button
-                v-has-permission="'delete'"
-                class="btn-delete"
-                type="text"
-                :icon="Delete"
-                @click="remove(data)"
-              />
-            </span>
-          </span>
-        </template>
-      </el-tree>
-    </div>
-    <el-footer v-if="!readonly" v-has-permission="'create'" class="el-footer">
-      <el-button type="primary" :icon="Plus" class="btn-block" @click="add()">添加顶层部门</el-button>
-    </el-footer>
+        @node-click="clickNode"
+      />
+    </el-scrollbar>
   </div>
-  <org-form ref="formRef" :parent-id="currentNodeId" @complete="formComplete" />
 </template>
+
 <style lang="scss" scoped>
 .el-header {
   height: auto;
   padding: 10px;
   border-bottom: 1px solid var(--el-border-color);
-}
-.el-footer {
-  padding: 15px 10px;
-  border-top: solid 1px var(--el-menu-border-color);
-}
-.tree-container {
-  height: 100%;
-  .tree-node {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: space-between;
-    .label {
-      font-size: 14px;
-      font-weight: normal;
-    }
-    .btn-wrapper {
-      display: none;
-      box-sizing: border-box;
-      padding-right: 5px;
-    }
-    .btn-delete {
-      margin-left: 6px;
-      color: var(--el-color-danger);
-    }
-  }
-  :deep(.el-tree-node__content) {
-    height: 36px;
-  }
-  :deep(.el-tree-node__content:hover) {
-    .btn-wrapper {
-      display: inline-block;
-    }
-  }
-}
-.btn-block {
-  width: 100%;
 }
 </style>

@@ -107,7 +107,7 @@ const openDetail = (id: string) => {
             <el-tag v-else type="danger">失败</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="130">
+        <el-table-column label="操作" align="center" width="130" fixed="right">
           <template #default="{ row }">
             <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
             <el-button v-has-permission="'logDelete'" text bg type="primary" size="small" @click="remove(row.id)">
