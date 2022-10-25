@@ -2,7 +2,9 @@
 import type { Role } from './type'
 import type { ResourcePermission } from '@/views/system/resource-permission/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'
-const { loadData, loading, model } = useDetail<Role>('/iam/role')
+import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
+
+const { loadData, loading, model } = useDetail<Role & { permissionVOList?: ResourcePermission[] }>('/iam/role')
 
 const visible = ref(false)
 
@@ -13,20 +15,27 @@ defineExpose({
   }
 })
 
-// 权限树相关
-const transformField = {
-  label: 'displayName'
+/**
+ * 扁平化树最后一组节点
+ * @param data
+ */
+const flatTreeNodeClass = (data: TreeNodeData) => {
+  const falseVal = { 'flat-tree-node-container': false }
+  const children = (data.children ?? []) as Record<string, unknown>[]
+  if (!children || children.length === 0) return falseVal
+  // 检查子节点是否是最后一组
+  for (const child of children) {
+    const temp = (child.children ?? []) as Record<string, unknown>[]
+    if (temp && temp.length !== 0) return falseVal
+  }
+  return { 'flat-tree-node-container': true }
 }
-const { treeRef, treeDataList, getTree, flatTreeNodeClass } = useTreeCrud<ResourcePermission>({
-  baseApi: '/iam/resource-permission',
-  treeApi: '/list',
-  transformField
-})
+
 const treeProps = {
   label: 'displayName',
   class: flatTreeNodeClass
 }
-getTree()
+
 const iconMap = {
   CATALOGUE: Folder,
   MENU: Menu,
@@ -41,7 +50,7 @@ const getIcon = (val: string) => {
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="详情" width="65vw">
+  <el-dialog v-model="visible" title="详情" width="65vw" top="10vh">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item label="名称">
         {{ model.name }}
@@ -53,13 +62,12 @@ const getIcon = (val: string) => {
         {{ model.description }}
       </el-descriptions-item>
       <el-descriptions-item label="授权权限" :span="2">
-        <el-scrollbar height="400px">
+        <el-scrollbar height="calc(80vh - 300px)">
           <el-tree
-            ref="treeRef"
             style="width: 100%"
             :expand-on-click-node="false"
             :props="treeProps"
-            :data="treeDataList"
+            :data="model.permissionVOList"
             node-key="id"
             default-expand-all
           >

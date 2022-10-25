@@ -6,7 +6,7 @@ import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/role'
 
-const { loadData, loading, model } = useDetail<Role>(baseApi)
+const { loadData, loading, model } = useDetail<Role & { permissionIdList?: string[] }>(baseApi)
 
 const title = ref('')
 const visible = ref(false)
@@ -32,10 +32,8 @@ defineExpose({
     title.value = id ? '更新' : '新建'
     loadData(id).then(() => {
       // 设置选中权限
-      if (model.value && model.value.permissionList) {
-        selectedIdList.value = model.value.permissionList.map(item => item.id) as string[]
-        treeRef.value?.setCheckedKeys(selectedIdList.value)
-      }
+      selectedIdList.value = (model.value.permissionList?.map(item => item.id) as string[]) ?? []
+      treeRef.value?.setCheckedKeys(selectedIdList.value)
     })
     visible.value = true
   }
@@ -71,18 +69,12 @@ const rules: FormRules = {
 }
 const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: string[] }) => {
   checkNode(currentNode, data)
-  model.value.permissionList = selectedIdList.value.map(id => {
-    return {
-      id,
-      parentId: '0',
-      routeMeta: {}
-    }
-  })
+  model.value.permissionIdList = selectedIdList.value
 }
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title">
+  <el-dialog v-model="visible" :title="title" top="10vh">
     <el-form ref="formRef" v-loading="loading" :model="model" :rules="rules" label-width="80px">
       <el-form-item prop="name" label="名称">
         <el-input v-model="model.name" />
@@ -94,7 +86,7 @@ const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: s
         <el-input v-model="model.description" type="textarea" />
       </el-form-item>
       <el-form-item prop="permissionList" label="角色授权">
-        <el-scrollbar height="400px">
+        <el-scrollbar height="calc(80vh - 350px)">
           <el-tree
             ref="treeRef"
             style="width: 100%"
