@@ -64,7 +64,7 @@ public class BusinessException extends RuntimeException {
     /**
      * 自定义状态码和内容提示
      */
-    public BusinessException(Status status, String msg, String... args) {
+    public BusinessException(Status status, String msg, Object... args) {
         super(status.label() + ": "+ S.format(msg, args));
         this.status = status;
     }
@@ -80,7 +80,7 @@ public class BusinessException extends RuntimeException {
     /**
      * 自定义内容提示
      */
-    public BusinessException(String msg, String... args) {
+    public BusinessException(String msg, Object... args) {
         super(S.format(msg, args));
         this.status = Status.FAIL_OPERATION;
     }
@@ -88,7 +88,7 @@ public class BusinessException extends RuntimeException {
     /**
      * 自定义内容提示
      */
-    public BusinessException(Status status, Throwable ex, String msg, String... args) {
+    public BusinessException(Status status, Throwable ex, String msg, Object... args) {
         super(status.label() + ": "+ S.format(msg, args), ex);
         this.status = status;
     }
@@ -96,7 +96,7 @@ public class BusinessException extends RuntimeException {
     /**
      * 自定义内容提示
      */
-    public BusinessException(int code, Throwable ex, String msg, String... args) {
+    public BusinessException(int code, Throwable ex, String msg, Object... args) {
         super(S.format(msg, args), ex);
         this.code = code;
     }

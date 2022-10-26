@@ -35,7 +35,7 @@ public class InvalidUsageException extends RuntimeException {
      *
      * @param msg
      */
-    public InvalidUsageException(String msg, String... args) {
+    public InvalidUsageException(String msg, Object... args) {
         super(S.format(msg, args));
     }
 
@@ -44,7 +44,7 @@ public class InvalidUsageException extends RuntimeException {
      *
      * @param msg
      */
-    public InvalidUsageException(Throwable ex, String msg, String... args) {
+    public InvalidUsageException(Throwable ex, String msg, Object... args) {
         super(S.format(msg, args), ex);
     }
 

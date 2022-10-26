@@ -39,11 +39,11 @@ public class PermissionException extends BusinessException {
         this(Status.FAIL_NO_PERMISSION, ex);
     }
 
-    public PermissionException(String msg, String... args) {
+    public PermissionException(String msg, Object... args) {
         super(Status.FAIL_NO_PERMISSION, S.format(msg, args));
     }
 
-    public PermissionException(Throwable ex, String msg, String... args) {
+    public PermissionException(Throwable ex, String msg, Object... args) {
         super(Status.FAIL_NO_PERMISSION, ex, S.format(msg, args));
     }
 
