@@ -261,13 +261,13 @@ CREATE TABLE ${SCHEMA}.iam_org (
    id VARCHAR2(32) not null,
    tenant_id VARCHAR2(32) default '0' not null,
    parent_id VARCHAR2(32) DEFAULT '0' NOT NULL,
-   top_org_id VARCHAR2(32) DEFAULT '0' NOT NULL,
+   parent_ids_path  VARCHAR2(500) NULL,
+   root_org_id VARCHAR2(32) DEFAULT '0' NOT NULL,
    name VARCHAR2(100) NOT NULL,
    short_name VARCHAR2(50) NOT NULL,
    type        VARCHAR2(100) DEFAULT 'DEPT' NOT NULL,
    code        VARCHAR2(50)  NOT NULL,
    manager_id  VARCHAR2(32) DEFAULT '0' NOT NULL,
-   depth NUMBER(6) DEFAULT 1 NOT NULL,
    sort_id NUMBER(20) DEFAULT 1 NOT NULL,
    status      VARCHAR2(10)  DEFAULT 'A' NOT NULL,
    org_comment VARCHAR2(255)   null,
@@ -279,13 +279,13 @@ CREATE TABLE ${SCHEMA}.iam_org (
 comment on column ${SCHEMA}.iam_org.id is 'ID';
 comment on column ${SCHEMA}.iam_org.tenant_id is '租户ID';
 comment on column ${SCHEMA}.iam_org.parent_id is '上级ID';
-comment on column ${SCHEMA}.iam_org.top_org_id is '企业ID';
+comment on column ${SCHEMA}.iam_org.parent_ids_path  is '上级ID路径';
+comment on column ${SCHEMA}.iam_org.root_org_id is '企业ID';
 comment on column ${SCHEMA}.iam_org.name is '名称';
 comment on column ${SCHEMA}.iam_org.short_name is '简称';
 comment on column ${SCHEMA}.iam_org.type is '类型';
 comment on column ${SCHEMA}.iam_org.code is '编码';
 comment on column ${SCHEMA}.iam_org.manager_id is '负责人';
-comment on column ${SCHEMA}.iam_org.depth is '层级';
 comment on column ${SCHEMA}.iam_org.sort_id is '排序号';
 comment on column ${SCHEMA}.iam_org.status is '状态';
 comment on column ${SCHEMA}.iam_org.org_comment is '备注';
@@ -295,6 +295,7 @@ comment on column ${SCHEMA}.iam_org.update_time is '更新时间';
 comment on table ${SCHEMA}.iam_org is '部门';
 create index idx_iam_org on ${SCHEMA}.iam_org (parent_id);
 create index idx_iam_org_tenant on ${SCHEMA}.iam_org (tenant_id);
+create index idx_iam_org_parent_path on iam_org (parent_ids_path);
 
 -- 岗位
 create table ${SCHEMA}.iam_position

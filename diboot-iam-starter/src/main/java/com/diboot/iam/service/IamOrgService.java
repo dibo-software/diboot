@@ -50,14 +50,6 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
     List<String> getParentOrgIds(String orgId);
 
     /**
-     * 获取当前部门节点所有上级部门id集合
-     * @param orgId
-     * @param includeThis 是否包含orgId
-     * @return
-     */
-    List<String> getParentOrgIds(String orgId, boolean includeThis);
-
-    /**
      * 获取某负责人负责的相关部门ids
      * @param managerId 负责人id
      * @return

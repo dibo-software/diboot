@@ -252,14 +252,14 @@ create index idx_iam_operation_log_tenant on iam_operation_log(tenant_id);
 CREATE TABLE iam_org (
     id varchar(32) not null primary key,
     tenant_id varchar(32) default '0' not null,
-    parent_id varchar(32) DEFAULT 0 NOT NULL,
-    top_org_id varchar(32) DEFAULT 0 NOT NULL,
+    parent_id varchar(32) DEFAULT '0' NOT NULL,
+    parent_ids_path varchar(32) NULL,
+    root_org_id varchar(32) DEFAULT '0' NOT NULL,
     name varchar(100) NOT NULL,
     short_name varchar(50) NOT NULL,
     type        varchar(100) DEFAULT 'DEPT' NOT NULL,
     code        varchar(50)  NOT NULL,
     manager_id varchar(32)  DEFAULT '0' NOT NULL,
-    depth smallint DEFAULT 1 NOT NULL,
     sort_id bigint DEFAULT 1 NOT NULL,
     status      varchar(10)  DEFAULT 'A' NOT NULL,
     org_comment varchar(255)   null,
@@ -270,13 +270,13 @@ CREATE TABLE iam_org (
 comment on column iam_org.id is 'ID';
 comment on column iam_org.tenant_id is '租户ID';
 comment on column iam_org.parent_id is '上级ID';
-comment on column iam_org.top_org_id is '企业ID';
+comment on column iam_org.parent_ids_path  is '上级ID路径';
+comment on column iam_org.root_org_id is '企业ID';
 comment on column iam_org.name is '名称';
 comment on column iam_org.short_name is '简称';
 comment on column iam_org.type is '类型';
 comment on column iam_org.code is '编码';
 comment on column iam_org.manager_id is '负责人';
-comment on column iam_org.depth is '层级';
 comment on column iam_org.sort_id is '排序号';
 comment on column iam_org.status is '状态';
 comment on column iam_org.org_comment is '备注';
@@ -286,6 +286,7 @@ comment on column iam_org.update_time is '更新时间';
 comment on table iam_org is '部门';
 create index idx_iam_org on iam_org (parent_id);
 create index idx_iam_org_tenant on iam_org (tenant_id);
+create index idx_iam_org_parent_path on iam_org (parent_ids_path);
 
 -- 岗位
 create table iam_position

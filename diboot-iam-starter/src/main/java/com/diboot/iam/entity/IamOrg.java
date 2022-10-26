@@ -16,9 +16,7 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -54,15 +52,23 @@ public class IamOrg extends BaseEntity {
     @TableField
     private String tenantId;
 
-    // 上级ID
+    /**
+     * 上级ID
+     */
     @TableField()
     private String parentId;
+
+    /**
+     * 上级ID路径
+     */
+    @TableField()
+    private String parentIdsPath;
 
     /**
      * 企业ID
      */
     @TableField()
-    private String topOrgId;
+    private String rootOrgId;
 
     // 名称
     @NotNull(message = "名称不能为空")
@@ -90,10 +96,6 @@ public class IamOrg extends BaseEntity {
 
     @TableField()
     private String managerId;
-
-    // 深度层级
-    @TableField()
-    private Integer depth;
 
     // 排序号
     @TableField()

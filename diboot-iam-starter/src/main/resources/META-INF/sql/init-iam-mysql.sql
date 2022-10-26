@@ -158,26 +158,27 @@ create index idx_iam_operation_log_tenant on iam_operation_log (tenant_id);
 -- 组织表
 create table iam_org
 (
-  id          varchar(32) NOT NULL comment 'ID' primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
-  parent_id   varchar(32) NOT NULL default '0' comment '上级ID',
-  top_org_id  varchar(32) NOT NULL default '0' comment '企业ID',
-  name        varchar(100) not null comment '名称',
-  short_name  varchar(50)  not null comment '短名称',
-  type        varchar(100) default 'DEPT' not null comment '组织类别',
-  code        varchar(50)  not null comment '编码',
-  manager_id  varchar(32)  null comment '负责人ID',
-  depth       smallint(6)  default 1 not null comment '层级',
-  sort_id     bigint       null comment '排序号',
-  status      varchar(10)  default 'A' not null comment '状态',
-  org_comment varchar(200) COMMENT '备注',
-  is_deleted  tinyint(1)   default 0 not null comment '是否删除',
-  create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
-  update_time datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
+    id              varchar(32)  NOT NULL comment 'ID' primary key,
+    tenant_id       varchar(32)  NOT NULL DEFAULT 0 COMMENT '租户ID',
+    parent_id       varchar(32)  NOT NULL default '0' comment '上级ID',
+    parent_ids_path varchar(500) comment '上级ID路径',
+    root_org_id     varchar(32)  NOT NULL default '0' comment '企业ID',
+    name            varchar(100) not null comment '名称',
+    short_name      varchar(50)  not null comment '短名称',
+    type            varchar(100)          default 'DEPT' not null comment '组织类别',
+    code            varchar(50)  not null comment '编码',
+    manager_id      varchar(32) null comment '负责人ID',
+    sort_id         bigint null comment '排序号',
+    status          varchar(10)           default 'A' not null comment '状态',
+    org_comment     varchar(200) COMMENT '备注',
+    is_deleted      tinyint(1) default 0 not null comment '是否删除',
+    create_time     datetime              default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time     datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
   comment '组织';
 create index idx_iam_org on iam_org (parent_id);
 create index idx_iam_org_tenant on iam_org (tenant_id);
+create index idx_iam_org_parent_path on iam_org (parent_ids_path);
 
 -- 岗位
 create table iam_position

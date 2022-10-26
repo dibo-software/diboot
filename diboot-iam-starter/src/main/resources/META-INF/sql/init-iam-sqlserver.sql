@@ -260,14 +260,14 @@ create nonclustered index idx_iam_operation_log_tenant on iam_operation_log(tena
 CREATE TABLE ${SCHEMA}.iam_org (
     id varchar(32) not null,
     tenant_id varchar(32) default '0' not null,
-    parent_id varchar(32) DEFAULT 0 NOT NULL,
-    top_org_id varchar(32) DEFAULT 0 NOT NULL,
+    parent_id varchar(32) DEFAULT '0' NOT NULL,
+    parent_ids_path varchar(32) NULL,
+    root_org_id varchar(32) DEFAULT '0' NOT NULL,
     name varchar(100) NOT NULL,
     short_name varchar(50) NOT NULL,
     type        varchar(100) DEFAULT 'DEPT' NOT NULL,
     code        varchar(50)  NOT NULL,
     manager_id varchar(32)  DEFAULT '0' NOT NULL,
-    depth smallint DEFAULT 1 NOT NULL,
     sort_id bigint DEFAULT 1 NOT NULL,
     status      varchar(10)  DEFAULT 'A' NOT NULL,
     org_comment varchar(255) null,
@@ -279,13 +279,13 @@ CREATE TABLE ${SCHEMA}.iam_org (
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'tenant_id';
 execute sp_addextendedproperty 'MS_Description', N'上级ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'parent_id';
-execute sp_addextendedproperty 'MS_Description', N'企业ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'top_org_id';
+execute sp_addextendedproperty 'MS_Description', N'上级ID路径','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'parent_ids_path';
+execute sp_addextendedproperty 'MS_Description', N'企业ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'root_org_id';
 execute sp_addextendedproperty 'MS_Description', N'名称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'name';
 execute sp_addextendedproperty 'MS_Description', N'简称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'short_name';
 execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'type';
 execute sp_addextendedproperty 'MS_Description', N'编码','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'code';
 execute sp_addextendedproperty 'MS_Description', N'负责人','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'manager_id';
-execute sp_addextendedproperty 'MS_Description', N'层级','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'depth';
 execute sp_addextendedproperty 'MS_Description', N'排序号','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'状态','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'status';
 execute sp_addextendedproperty 'MS_Description', N'备注','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'org_comment';
@@ -296,6 +296,7 @@ execute sp_addextendedproperty 'MS_Description', N'部门', 'SCHEMA', '${SCHEMA}
 -- 创建索引
 create nonclustered index idx_iam_org on iam_org (parent_id);
 create nonclustered index idx_iam_org_tenant on iam_org (tenant_id);
+create nonclustered index idx_iam_org_parent_path on iam_org (parent_ids_path);
 
 -- 岗位
 create table ${SCHEMA}.iam_position
