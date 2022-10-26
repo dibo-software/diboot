@@ -15,6 +15,9 @@
  */
 package com.diboot.core.exception;
 
+import com.diboot.core.util.S;
+import com.diboot.core.vo.Status;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +35,8 @@ public class InvalidUsageException extends RuntimeException {
      *
      * @param msg
      */
-    public InvalidUsageException(String msg) {
-        super(msg);
+    public InvalidUsageException(String msg, String... args) {
+        super(S.format(msg, args));
     }
 
     /**
@@ -41,8 +44,8 @@ public class InvalidUsageException extends RuntimeException {
      *
      * @param msg
      */
-    public InvalidUsageException(String msg, Throwable ex) {
-        super(msg, ex);
+    public InvalidUsageException(Throwable ex, String msg, String... args) {
+        super(S.format(msg, args), ex);
     }
 
     /**
