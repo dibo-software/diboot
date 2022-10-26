@@ -6,8 +6,6 @@ import type { WatchStopHandle } from 'vue'
 
 const baseApi = '/iam/org'
 
-defineProps<{ draggable?: boolean }>()
-
 // tree实例
 const treeRef = ref<ElTreeInstanceType>()
 
@@ -59,15 +57,6 @@ defineExpose({
     setTreeCurrentKey(currentKey.value)
   }
 })
-
-const { nodeDrag } = useSort<Required<OrgModel>>({
-  sortApi: `${baseApi}/sort`,
-  callback: async () => {
-    const currentKey = treeRef.value?.getCurrentKey()
-    await getList()
-    setTreeCurrentKey(currentKey)
-  }
-})
 </script>
 
 <template>
@@ -80,7 +69,6 @@ const { nodeDrag } = useSort<Required<OrgModel>>({
         ref="treeRef"
         v-loading="loading"
         node-key="id"
-        :draggable="draggable"
         :default-expand-all="true"
         :highlight-current="true"
         :expand-on-click-node="false"
@@ -89,7 +77,6 @@ const { nodeDrag } = useSort<Required<OrgModel>>({
         :check-strictly="true"
         :filter-node-method="filterNode"
         @node-click="clickNode"
-        @node-drop="nodeDrag"
       />
     </el-scrollbar>
   </div>
