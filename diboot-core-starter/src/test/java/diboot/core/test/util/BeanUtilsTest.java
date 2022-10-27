@@ -21,15 +21,18 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
-import diboot.core.test.binder.entity.Region;
 import diboot.core.test.binder.entity.TestRegion;
 import diboot.core.test.binder.entity.TestUploadFile;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.RegionService;
+import diboot.core.test.binder.vo.RegionVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -305,9 +308,10 @@ public class BeanUtilsTest {
      */
     @Test
     public void testBuildTreePerformance() {
-        List<Region> regions = regionService.getEntityList(null);
+        List<RegionVO> regions = regionService.getViewObjectList(null, null, RegionVO.class);
         long begin = System.currentTimeMillis();
-        List<Region> topLevel = BeanUtils.buildTree(regions, Cons.TREE_ROOT_ID);
+        // List<RegionVO> topLevel = BeanUtils.buildTree(regions);
+        List<RegionVO> topLevel = BeanUtils.buildTree(regions, RegionVO::getId, RegionVO::getParentId, RegionVO::setChildren);
         Assert.assertTrue(topLevel.size() > 30 && topLevel.size() < 40);
         long end = System.currentTimeMillis();
         System.out.println( (end - begin) + "ms");

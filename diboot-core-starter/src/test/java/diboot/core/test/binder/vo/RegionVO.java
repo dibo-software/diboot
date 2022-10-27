@@ -15,12 +15,7 @@
  */
 package diboot.core.test.binder.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
-import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Region;
-import diboot.core.test.binder.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -40,7 +35,6 @@ import java.util.List;
 public class RegionVO extends Region {
     private static final long serialVersionUID = -3104096813401488797L;
 
-    @BindEntityList(entity = Region.class, condition = "this.id=parent_id") // AND ...
-    private List<Region> children;
+    private List<RegionVO> children;
 
 }

@@ -18,7 +18,7 @@ package com.diboot.core.util;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.config.Cons;
-import com.diboot.core.converter.*;
+import com.diboot.core.converter.EnhancedConversionService;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.exception.BusinessException;
@@ -50,6 +50,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -421,80 +422,179 @@ public class BeanUtils {
         }
     }
 
-    /***
+    /**
      * 构建指定根节点的上下级关联的树形结构（主键id，上级属性parentId、子节点属性children）
+     *
      * @param allNodes 所有节点对象
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> buildTree(List<T> allNodes) {
+        return buildTree(allNodes, null);
+    }
+
+    /**
+     * 构建指定根节点的上下级关联的树形结构（主键id，上级属性parentId、子节点属性children）
+     *
+     * @param allNodes   所有节点对象
      * @param rootNodeId 跟节点ID
      * @param <T>
      * @return
      */
-    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId){
-        return buildTree(allNodes, rootNodeId, Cons.FieldName.id.name(), Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId) {
+        return buildTree(allNodes, rootNodeId, Cons.FieldName.id.name());
     }
 
-    /***
+    /**
      * 构建指定根节点的上下级关联的树形结构（主键指定，上级属性parentId、子节点属性children）
-     * @param allNodes 所有节点对象
-     * @param rootNodeId 根节点ID
+     *
+     * @param allNodes    所有节点对象
+     * @param rootNodeId  根节点ID
      * @param idFieldName 主键属性名
      * @param <T>
      * @return
      */
-    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String idFieldName){
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String idFieldName) {
         return buildTree(allNodes, rootNodeId, idFieldName, Cons.FieldName.parentId.name(), Cons.FieldName.children.name());
     }
 
-    /***
+    /**
      * 构建指定根节点的上下级关联的树形结构（指定主键属性，上级属性、子节点属性名）
-     * @param allNodes 所有节点对象
-     * @param rootNodeId 根节点ID
-     * @param idFieldName 主键属性名
+     *
+     * @param allNodes          所有节点对象
+     * @param rootNodeId        根节点ID
+     * @param idFieldName       主键属性名
      * @param parentIdFieldName 父节点属性名
      * @param childrenFieldName 子节点集合属性名
      * @param <T>
      * @return
      */
-    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String idFieldName, String parentIdFieldName, String childrenFieldName){
-        if(V.isEmpty(allNodes)){
-            return null;
+    public static <T> List<T> buildTree(List<T> allNodes, Object rootNodeId, String idFieldName, String parentIdFieldName, String childrenFieldName) {
+        if (V.isEmpty(allNodes)) {
+            return Collections.emptyList();
         }
         Map<Object, List<T>> parentId2ListMap = new HashMap<>();
         // 提取所有的top level对象
         for (T node : allNodes) {
             Object parentId = getProperty(node, parentIdFieldName);
             Object nodeId = getProperty(node, idFieldName);
-            if(V.equals(nodeId, parentId)){
-                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName()+":"+nodeId);
+            if (V.equals(nodeId, parentId)) {
+                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName() + ":" + nodeId);
             }
             parentId2ListMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(node);
         }
-        List<T> topLevelModels = parentId2ListMap.get(rootNodeId);
-        if (V.isEmpty(topLevelModels)) {
+        if (parentId2ListMap.containsKey(rootNodeId)) {
+            return buildTree(parentId2ListMap.remove(rootNodeId), parentId2ListMap, idFieldName, childrenFieldName);
+        } else if (rootNodeId != null) {
             return Collections.emptyList();
         }
-        buildTreeChildren(topLevelModels, parentId2ListMap, idFieldName, childrenFieldName);
-        return topLevelModels;
+        for (Object parentId : new HashSet<>(parentId2ListMap.keySet())) {
+            if (parentId2ListMap.containsKey(parentId)) {
+                buildTree(parentId2ListMap.get(parentId), parentId2ListMap, idFieldName, childrenFieldName);
+            }
+        }
+        if (parentId2ListMap.size() == 1) {
+            return parentId2ListMap.values().iterator().next();
+        }
+        throw new BusinessException("buildTree根节点ParentId不唯一");
     }
 
     /**
-     * 递归构建树节点的子节点
+     * 构建tree结构数据
      *
-     * @param topLevelModels
-     * @param parentId2ListMap
-     * @param idFieldName
-     * @param childrenFieldName
-     * @param <T>
+     * @param nodes             顶级节点数据列表
+     * @param parentId2ListMap  父ID与子元素列表映射
+     * @param idFieldName       ID属性名
+     * @param childrenFieldName children属性名
+     * @param <T>               节点类型
+     * @return 构建Tree结构完成的数据列表
      */
-    public static <T> void buildTreeChildren(List<T> topLevelModels, Map<Object, List<T>> parentId2ListMap, String idFieldName, String childrenFieldName) {
-        for (T item : topLevelModels) {
-            Object nodeId = getProperty(item, idFieldName);
-            if (!parentId2ListMap.containsKey(nodeId)) {
-                continue;
+    public static <T> List<T> buildTree(List<T> nodes, Map<Object, List<T>> parentId2ListMap, String idFieldName, String childrenFieldName) {
+        for (T item : nodes) {
+            Object id = getProperty(item, idFieldName);
+            if (parentId2ListMap.containsKey(id)) {
+                setProperty(item, childrenFieldName, buildTree(parentId2ListMap.remove(id), parentId2ListMap, idFieldName, childrenFieldName));
             }
-            List<T> children = parentId2ListMap.get(nodeId);
-            setProperty(item, childrenFieldName, children);
-            buildTreeChildren(children, parentId2ListMap, idFieldName, childrenFieldName);
         }
+        return nodes;
+    }
+
+    /**
+     * 构建tree结构数据
+     * （可不指定根节点ID，但需保证根节点ParentId唯一）
+     *
+     * @param allNodes    数据列表
+     * @param getId       获取ID方法
+     * @param getParentId 获取ParentId方法
+     * @param setChildren 设置Children方法
+     * @param <T>         节点类型
+     * @return Tree结构数据
+     */
+    public static <T> List<T> buildTree(List<T> allNodes, Function<T, Object> getId,
+                                        Function<T, Object> getParentId, BiConsumer<T, List<T>> setChildren) {
+        return buildTree(allNodes, null, getId, getParentId, setChildren);
+    }
+
+    /**
+     * 构建tree结构数据
+     *
+     * @param allNodes    数据列表
+     * @param rootNodeId  顶级节点Id
+     * @param getId       获取ID方法
+     * @param getParentId 获取ParentId方法
+     * @param setChildren 设置Children方法
+     * @param <T>         节点类型
+     * @return Tree结构数据
+     */
+    public static <T> List<T> buildTree(List<T> allNodes, Serializable rootNodeId, Function<T, Object> getId,
+                                        Function<T, Object> getParentId, BiConsumer<T, List<T>> setChildren) {
+        if (V.isEmpty(allNodes)) {
+            return Collections.emptyList();
+        }
+        Map<Object, List<T>> parentId2ListMap = new HashMap<>();
+        for (T node : allNodes) {
+            Object nodeId = getId.apply(node);
+            Object parentId = getParentId.apply(node);
+            if (V.equals(nodeId, parentId)) {
+                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName() + ":" + nodeId);
+            }
+            parentId2ListMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(node);
+        }
+        if (parentId2ListMap.containsKey(rootNodeId)) {
+            return buildTree(parentId2ListMap.remove(rootNodeId), parentId2ListMap, getId, setChildren);
+        } else if (rootNodeId != null) {
+            return Collections.emptyList();
+        }
+        for (Object parentId : new HashSet<>(parentId2ListMap.keySet())) {
+            if (parentId2ListMap.containsKey(parentId)) {
+                buildTree(parentId2ListMap.get(parentId), parentId2ListMap, getId, setChildren);
+            }
+        }
+        if (parentId2ListMap.size() == 1) {
+            return parentId2ListMap.values().iterator().next();
+        }
+        throw new BusinessException("buildTree根节点ParentId不唯一");
+    }
+
+    /**
+     * 构建tree结构数据
+     *
+     * @param nodes            顶级节点数据列表
+     * @param parentId2ListMap 父ID与子元素列表映射
+     * @param getId            获取ID方法
+     * @param setChildren      设置Children方法
+     * @param <T>              节点类型
+     * @return 构建Tree结构完成的数据列表
+     */
+    public static <T> List<T> buildTree(List<T> nodes, Map<Object, List<T>> parentId2ListMap,
+                                        Function<T, Object> getId, BiConsumer<T, List<T>> setChildren) {
+        for (T item : nodes) {
+            Object id = getId.apply(item);
+            if (parentId2ListMap.containsKey(id)) {
+                setChildren.accept(item, buildTree(parentId2ListMap.remove(id), parentId2ListMap, getId, setChildren));
+            }
+        }
+        return nodes;
     }
 
     /***
