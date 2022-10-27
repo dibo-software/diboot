@@ -668,14 +668,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<LabelValue> getLabelValueList(Wrapper queryWrapper) {
 		String sqlSelect = queryWrapper.getSqlSelect();
-		// 最多支持3个属性：label, value, ext
-		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) > 2){
+		// 最少2个属性：label, value , (ext , parentId)
+		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) < 1){
 			log.error("调用错误: getLabelValueList必须用select依次指定返回的Label,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 			return Collections.emptyList();
 		}
 		// 获取mapList
 		List<Map<String, Object>> mapList = super.listMaps(queryWrapper);
-		if(mapList == null){
+		if(V.isEmpty(mapList)){
 			return Collections.emptyList();
 		}
 		else if(mapList.size() > BaseConfig.getBatchSize()){
@@ -683,33 +683,37 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		// 转换为LabelValue
 		String[] selectArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
-		// 是否有ext字段
-		boolean hasExt = selectArray.length > 2;
+		String label = selectArray[0];
+		String value = selectArray[1];
+		String ext = selectArray.length > 2 ? selectArray[2] : null;
 		List<LabelValue> labelValueList = new ArrayList<>(mapList.size());
 		for(Map<String, Object> map : mapList){
 			// 如果key和value的的值都为null的时候map也为空，则不处理此项
 			if (V.isEmpty(map)) {
 				continue;
 			}
-			String label = selectArray[0], value = selectArray[1], ext;
+			LabelValue labelValue = new LabelValue();
 			// 兼容oracle大写
+			// 设置label
 			if (map.containsKey(label) || map.containsKey(label = label.toUpperCase())) {
-				LabelValue labelValue = new LabelValue();
-				// 设置label
 				labelValue.setLabel(S.valueOf(map.get(label)));
-				// 设置value
-				if (map.containsKey(value) || map.containsKey(value = value.toUpperCase())) {
-					labelValue.setValue(map.get(value));
-				}
-				// 设置ext
-				if (hasExt) {
-					ext = selectArray[2];
-					if (map.containsKey(ext) || map.containsKey(ext = ext.toUpperCase())) {
-						labelValue.setExt(map.get(ext));
-					}
-				}
-				labelValueList.add(labelValue);
 			}
+			// 设置value
+			if (map.containsKey(value) || map.containsKey(value = value.toUpperCase())) {
+				labelValue.setValue(map.get(value));
+			}
+			// 设置ext
+			if (ext != null && (map.containsKey(ext) || map.containsKey(ext = ext.toUpperCase()))) {
+				labelValue.setExt(map.get(ext));
+			} else {
+				ext = null;
+			}
+			// 设置 parentId
+			labelValue.setParentId(map.get(Cons.FieldName.parentId.name()));
+			labelValueList.add(labelValue);
+		}
+		if (mapList.get(0).containsKey(Cons.FieldName.parentId.name())) {
+			return BeanUtils.buildTree(labelValueList, LabelValue::getValue, LabelValue::getParentId, LabelValue::setChildren);
 		}
 		return labelValueList;
 	}

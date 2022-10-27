@@ -27,7 +27,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.dto.RelatedDataDTO;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -38,8 +38,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /***
  * Controller的父类
@@ -208,75 +211,29 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO) {
-		if (!relatedDataDTO.isTree()) {
-			relatedDataDTO.setParent(null);
-		}
-		return loadRelatedData(relatedDataDTO, null, null, null);
-	}
-
-	/**
-	 * 获取RelatedData指定层级的数据集合
-	 * <p>
-	 * 用于异步加树形数据
-	 *
-	 * @param relatedDataDTO
-	 * @param keyword       模糊搜索关键字
-	 * @param parentValue   父级值
-	 * @param parentType    父级类型
-	 * @return labelValue集合
-	 */
-	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, String keyword,
-											   String parentValue, String parentType) {
-		if (V.notEmpty(parentType)) {
-			relatedDataDTO = findRelatedDataByType(relatedDataDTO, parentType);
-			if (relatedDataDTO != null && !relatedDataDTO.isTree()) {
-				relatedDataDTO = relatedDataDTO.getNext().setTree(false);
-			}
-		}
-		if (relatedDataDTO == null) {
-			return Collections.emptyList();
-		}
-		List<LabelValue> labelValueList = loadRelatedData(relatedDataDTO, parentValue, keyword);
-		if (relatedDataDTO.isTree() && relatedDataDTO.getNext() != null) {
-			labelValueList.addAll(loadRelatedData(relatedDataDTO.getNext().setTree(false), parentValue, keyword));
-		}
-		return labelValueList;
-	}
-
-	/**
-	 * 根据type查找 RelatedDataDTO
-	 *
-	 * @param relatedData
-	 * @param type        类型
-	 * @return RelatedDataDTO
-	 */
-	private RelatedDataDTO findRelatedDataByType(RelatedDataDTO relatedData, String type) {
-		return relatedData.getType().equals(type) ? relatedData
-				: (relatedData.getNext() == null ? null : findRelatedDataByType(relatedData.getNext(), type));
+		return loadRelatedData(relatedDataDTO, null, null);
 	}
 
 	/**
 	 * 通用的RelatedData获取数据
 	 *
-	 * @param relatedDataDTO  相应的relatedDataDTO
-	 * @param parentValue 父级值
+	 * @param relatedDataDTO 相应的relatedDataDTO
+	 * @param parentId       父级值
+	 * @param keyword       搜索关键词
 	 * @return labelValue集合
 	 */
-	private List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, String parentValue, String keyword) {
+	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, String parentId, String keyword) {
 		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getValue(), relatedDataDTO.getLabel(), relatedDataDTO.getExt());
 		if (!relatedDataSecurityCheck(relatedDataDTO)) {
 			log.warn("relatedData安全检查不通过: {}", JSON.stringify(relatedDataDTO));
 			return Collections.emptyList();
-		}
-		if (V.notEmpty(parentValue) && !relatedDataDTO.isTree() && V.isEmpty(relatedDataDTO.getParent())) {
-			throw new BusinessException("relatedData跨表级联中的 " + relatedDataDTO.getType() + " 未指定关联父级属性 parent: ?");
 		}
 		String entityClassName = relatedDataDTO.getTypeClassName();
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
 			throw new BusinessException("relatedData: " + relatedDataDTO.getType() + " 不存在");
 		}
-		BaseService<?> baseService = ContextHelper.getBaseServiceByEntity(entityClass);
+		BaseService<?> baseService = ContextHolder.getBaseServiceByEntity(entityClass);
 		if (baseService == null) {
 			throw new BusinessException("relatedData: " + relatedDataDTO.getType() + " 的Service不存在 ");
 		}
@@ -294,46 +251,73 @@ public class BaseController {
 		};
 		String label = field2column.apply(S.defaultIfBlank(relatedDataDTO.getLabel(), "label"));
 		String value = S.defaultString(field2column.apply(relatedDataDTO.getValue()), propInfoCache.getIdColumn());
-		String ext = field2column.apply(relatedDataDTO.getExt());
-
+		List<String> columns = new ArrayList<>();
+		columns.add(label);
+		columns.add(value);
+		if (V.notEmpty(relatedDataDTO.getExt())) {
+			columns.add(field2column.apply(relatedDataDTO.getExt()));
+		}
 		// 构建查询条件
-		QueryWrapper<?> queryWrapper = Wrappers.query()
-				.select(V.isEmpty(ext) ? new String[]{label, value} : new String[]{label, value, ext})
-				.like(V.notEmpty(keyword), label, keyword);
+		QueryWrapper<?> queryWrapper = Wrappers.query();
 		// 构建排序
         WrapperHelper.buildOrderBy(queryWrapper, relatedDataDTO.getOrderBy(), field2column);
 		// 父级限制
-		String parentColumn = field2column.apply(S.defaultIfBlank(relatedDataDTO.getParent(), relatedDataDTO.isTree() ? "parentId" : null));
-		if (V.notEmpty(parentColumn)) {
-			if (V.notEmpty(parentValue)) {
-				queryWrapper.eq(parentColumn, parentValue);
+		if (V.notEmpty(relatedDataDTO.getParent())) {
+			String parentColumn = field2column.apply(relatedDataDTO.getParent());
+			Class<?> parentFieldType = propInfoCache.getFieldTypeByColumn(parentColumn);
+			Function<String, Serializable> parentIdTypeConversion = pid -> parentFieldType == Long.class ? Long.valueOf(pid) : pid;
+			if (V.notEmpty(parentId)) {
+				// 加载其节点相应下一层节点列表
+				queryWrapper.eq(parentColumn, parentIdTypeConversion.apply(parentId));
+			} else if (V.isNoneEmpty(keyword, relatedDataDTO.getParentPath())) {
+				// tree 模糊搜索（未指定或无parentPath属性及不支持tree搜索）
+				String parentPathColumn = field2column.apply(relatedDataDTO.getParentPath());
+				List<Map<String, Object>> mapList = baseService.getMapList(Wrappers.query().select(value, parentPathColumn).like(label, keyword));
+				if (V.isEmpty(mapList)) {
+					return Collections.emptyList();
+				}
+				queryWrapper.in(value, new HashSet<Serializable>() {{
+					addAll(mapList.stream().peek(map -> add(parentIdTypeConversion.apply(S.valueOf(map.remove(value)))))
+							.map(map -> S.split(S.valueOf(map.get(parentPathColumn)))).flatMap(Stream::of)
+							.filter(V::notEmpty).map(parentIdTypeConversion).collect(Collectors.toList()));
+				}});
+				columns.add(S.joinWith(" as ", parentColumn, Cons.FieldName.parentId.name()));
+			} else if (relatedDataDTO.isLazyChild()) {
+				// 懒加载tree的根节点列表
+				Serializable treeRootId = getTreeRootId(entityClass, parentFieldType);
+				if (treeRootId == null) {
+					queryWrapper.isNull(parentColumn);
+				} else {
+					queryWrapper.eq(parentColumn, treeRootId);
+				}
 			} else {
-				queryWrapper.and(e -> e.isNull(parentColumn).or().eq(parentColumn, 0));
+				// 加载整个Tree结构数据
+				columns.add(S.joinWith(" as ", parentColumn, Cons.FieldName.parentId.name()));
 			}
+		} else {
+			// list 模糊搜索
+			queryWrapper.like(V.notEmpty(keyword), label, keyword);
 		}
 		// 构建附加条件
 		buildRelatedDataCondition(relatedDataDTO, queryWrapper, field2column);
 		// 获取数据并做相应填充
-		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper);
+		List<LabelValue> labelValueList = baseService.getLabelValueList(queryWrapper.select(columns.toArray(new String[]{})));
 		if (V.isEmpty(keyword) && labelValueList.size() > BaseConfig.getBatchSize()) {
 			log.warn("relatedData: {} 数据量超过 {} 条, 建议采用远程搜索接口过滤数据", entityClassName, BaseConfig.getBatchSize());
 		}
-		if (V.notEmpty(parentColumn) || relatedDataDTO.getNext() != null) {
-			Boolean leaf = !relatedDataDTO.isTree() && relatedDataDTO.getNext() == null ? true : null;
-			// 第一层tree与最后一层无需返回type
-			String type = relatedDataDTO.isTree() || Boolean.TRUE.equals(leaf) ? null : relatedDataDTO.getType();
-			labelValueList.forEach(item -> {
-				item.setType(type);
-				item.setLeaf(leaf);
-				// 非异步加载
-				if (!Boolean.TRUE.equals(leaf) && !relatedDataDTO.isLazyChild()) {
-					List<LabelValue> children = loadRelatedData(relatedDataDTO, keyword, S.valueOf(item.getValue()), type);
-					item.setChildren(children.isEmpty() ? null : children);
-					item.setDisabled(children.isEmpty() && relatedDataDTO.getNext() != null ? true : null);
-				}
-			});
-		}
 		return labelValueList;
+	}
+
+	/**
+	 * 获取Tree结构数据根节点parentId
+	 * （便于子类重写）
+	 *
+	 * @param entityClass     实体类型
+	 * @param parentFieldType parentId属性类型
+	 * @return 根节点parentId
+	 */
+	protected Serializable getTreeRootId(Class<?> entityClass, Class<?> parentFieldType) {
+		return parentFieldType == Long.class ? 0L : Cons.TREE_ROOT_ID;
 	}
 
     /**

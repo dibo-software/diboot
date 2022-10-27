@@ -62,27 +62,22 @@ public class RelatedDataDTO implements Serializable {
     private String orderBy;
 
     /**
-     * <h3>父级关联属性</h3>
-     * 存储关联数据的属性
+     * <h3>用于Tree构数据</h3>
+     * 父节点ID属性；如：parentId
      */
     private String parent;
 
     /**
-     * <h3>是否构建树</h3>
-     * 仅且第一层生效
+     * <h3>用于Tree构数据远程过滤</h3>
+     * 所有父节点ID拼接属性，便于搜索时向上查找父节点
      */
-    private boolean tree;
+    private String parentPath;
 
     /**
      * <h3>异步加载子节点</h3>
-     * 推荐异步加载，默认为true；为false时会同步加载下一级，且当为树时会加载整个树
+     * 推荐异步加载，默认为true；为false时会加载整个树
      */
     private boolean lazyChild = true;
-
-    /**
-     * <h3>下一层</h3>
-     */
-    private RelatedDataDTO next;
 
     @JsonIgnore
     public String getTypeClassName(){
