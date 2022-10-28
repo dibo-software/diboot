@@ -47,7 +47,7 @@ const emit = defineEmits<{
 }>()
 
 const handleChangeValue = (editor: IDomEditor) => {
-  emit('update:modelValue', Editor.getHtml())
+  emit('update:modelValue', editor.getHtml())
 }
 
 const handleChangeTitle = () => {
