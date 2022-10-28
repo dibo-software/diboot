@@ -87,7 +87,7 @@ defineExpose({
   }
 })
 
-const { nodeDrag } = useSort<Required<ResourcePermission>>({
+const { nodeDrag } = useSort({
   sortApi: `${baseApi}/sort`,
   callback: async () => {
     const currentKey = treeRef.value?.getCurrentKey()

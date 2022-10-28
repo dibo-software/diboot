@@ -1,9 +1,15 @@
 interface SortOption {
   sortApi: string
   callback?: () => void
+  // 默认 id
+  idKey?: string
+  // 默认 parentId
+  parentIdKey?: string
+  // 默认 sortId
+  sortIdKey?: string
 }
 
-export default <T extends { id: string; parentId?: string; sortId: string | number }>(option: SortOption) => {
+export default ({ sortApi, callback, idKey = 'id', parentIdKey = 'parentId', sortIdKey = 'sortId' }: SortOption) => {
   /**
    * 排序请求
    *
@@ -16,11 +22,11 @@ export default <T extends { id: string; parentId?: string; sortId: string | numb
     )
   ) => {
     api
-      .patch(option.sortApi, param)
+      .patch(sortApi, param)
       .catch(err => {
         ElMessage.error(err.msg || err.message || '排序失败')
       })
-      .finally(option.callback)
+      .finally(callback)
   }
 
   /**
@@ -30,27 +36,31 @@ export default <T extends { id: string; parentId?: string; sortId: string | numb
    * @param dragNode 目标节点
    * @param dropPosition 相对位置
    */
-  const nodeDrag = (node: { data: T }, dragNode: { data: T }, dropPosition: 'before' | 'inner' | 'after') => {
+  const nodeDrag = (
+    node: { data: Record<string, string | unknown> },
+    dragNode: { data: Record<string, string> },
+    dropPosition: 'before' | 'inner' | 'after'
+  ) => {
     const data = node.data
     const dragData = dragNode.data
-    const id = data.id
+    const id = data[idKey] as string
     let newParentId
     let newSortId
-    let oldSortId
+    let oldSortId: string | undefined
     switch (dropPosition) {
       case 'inner':
-        newParentId = dragData.id
-        newSortId = 1
+        newParentId = dragData[idKey]
+        newSortId = '1'
         break
       case 'after':
-        newParentId = dragData.parentId
-        newSortId = (BigInt(dragData.sortId) + BigInt(1)).toString()
-        oldSortId = data.parentId === dragData.parentId ? data.sortId : undefined
+        newParentId = dragData[parentIdKey]
+        newSortId = (BigInt(dragData[sortIdKey]) + BigInt(1)).toString()
+        oldSortId = data[parentIdKey] === dragData[parentIdKey] ? (data[sortIdKey] as string) : undefined
         break
       case 'before':
-        newParentId = dragData.parentId
-        newSortId = dragData.sortId
-        oldSortId = data.parentId === dragData.parentId ? data.sortId : undefined
+        newParentId = dragData[parentIdKey]
+        newSortId = dragData[sortIdKey]
+        oldSortId = data[parentIdKey] === dragData[parentIdKey] ? (data[sortIdKey] as string) : undefined
         break
       default:
         return
@@ -64,8 +74,8 @@ export default <T extends { id: string; parentId?: string; sortId: string | numb
    * @param item 拖动元素
    * @param newSortId 新序号（目标元素序号）
    */
-  const itemDrag = (item: T, newSortId: string | number) =>
-    sortRequest({ id: item.id, newSortId, oldSortId: item.sortId })
+  const itemDrag = (item: Record<string, string | unknown>, newSortId: string | number) =>
+    sortRequest({ id: item.id as string, newSortId, oldSortId: item[sortIdKey] as string | number })
 
   return {
     nodeDrag,
