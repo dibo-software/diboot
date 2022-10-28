@@ -21,8 +21,8 @@
   font-weight: bold;
 }
 
-.el-select, .el-date-editor {
-  width: 100%;
+.el-select, .el-date-editor, .el-input-number {
+  width: 100% !important;
 
   .el-input__wrapper {
     width: -webkit-fill-available;
