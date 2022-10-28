@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { UserPosition } from './type'
-import type { OrgModel } from '../org/type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
 import PositionPopoverListSelector from '@/views/org-structure/position/PopoverListSelector.vue'
@@ -9,7 +8,7 @@ import { defineEmits } from 'vue'
 type Props = {
   userId?: string
   orgId?: string
-  orgTree: OrgModel[]
+  orgTree: LabelValue[]
   modelValue?: UserPosition[]
 }
 const props = defineProps<Props>()
@@ -102,7 +101,6 @@ defineExpose({
               placeholder="请选择部门"
               class="tree-selector"
               :data="orgTree"
-              :props="{ label: 'shortName', value: 'id' }"
               :default-expand-all="true"
               :check-strictly="true"
             />

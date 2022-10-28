@@ -2,7 +2,6 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel } from './type'
 import { defineEmits } from 'vue'
-import type { OrgModel } from '@/views/org-structure/org/type'
 import RolePopoverListSelector from '@/views/system/role/PopoverListSelector.vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
 import { checkValue } from '@/utils/validate-form'
@@ -19,14 +18,16 @@ const { loadData, loading, model } = useDetail<
   }
 >(baseApi, { roleIdList: [] })
 
-const {
-  getTree,
-  treeDataList: orgTree,
-  loading: treeLoading
-} = useTreeCrud<OrgModel>({
-  baseApi: '/iam/org',
-  treeApi: '/tree',
-  transformField: { label: 'shortName' }
+const { initRelatedData, relatedData } = useOption({
+  dict: 'GENDER',
+  load: {
+    orgTree: {
+      type: 'IamOrg',
+      label: 'shortName',
+      parent: 'parentId',
+      lazyChild: false
+    }
+  }
 })
 
 const title = ref('')
@@ -53,7 +54,7 @@ defineExpose({
     model.value.isSysAccount = !!model.value.username
     if (model.value.isSysAccount) model.value.hidePassword = true
     // 加载树结构数据
-    await getTree()
+    await initRelatedData()
   }
 })
 // 表单
@@ -116,8 +117,7 @@ const rules: FormRules = {
               v-model="model.orgId"
               placeholder="请选择部门"
               class="tree-selector"
-              :data="orgTree"
-              :props="{ label: 'shortName', value: 'id' }"
+              :data="relatedData.orgTree"
               :default-expand-all="true"
               :check-strictly="true"
             />
@@ -156,8 +156,12 @@ const rules: FormRules = {
         <el-col :md="12" :sm="24">
           <el-form-item prop="gender" label="性别">
             <el-select v-model="model.gender">
-              <el-option key="M" label="男" value="M" />
-              <el-option key="F" label="女" value="F" />
+              <el-option
+                v-for="item in relatedData.genderOptions"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -194,7 +198,7 @@ const rules: FormRules = {
     <user-position-table-form
       ref="userPositionTableForm"
       v-model="model.userPositionList"
-      :org-tree="orgTree"
+      :org-tree="relatedData.genderOptions"
       :user-id="model.id"
       :org-id="model.orgId"
     />
