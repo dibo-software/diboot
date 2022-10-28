@@ -2,7 +2,6 @@
 import { Search } from '@element-plus/icons-vue'
 import type { OrgModel } from '@/views/org-structure/org/type'
 import type { ElTreeInstanceType } from 'element-plus'
-import type { WatchStopHandle } from 'vue'
 
 const baseApi = '/iam/org'
 
@@ -38,23 +37,10 @@ const clickNode = (data: OrgModel) => {
   }
 }
 
-const setTreeCurrentKey = (key: string) => {
-  const watchTreeRef: WatchStopHandle = watch(
-    treeRef,
-    value => {
-      if (value) {
-        value.setCurrentKey(key)
-        watchTreeRef()
-      }
-    },
-    { immediate: true }
-  )
-}
-
 defineExpose({
   reload: async () => {
     await getList()
-    setTreeCurrentKey(currentKey.value)
+    treeRef.value?.setCurrentKey(currentKey.value)
   }
 })
 </script>

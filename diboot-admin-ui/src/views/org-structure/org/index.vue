@@ -2,9 +2,9 @@
 import OrgTree from './OrgTree.vue'
 import OrgList from './OrgList.vue'
 
-const currentNodeId = ref<string>('0')
+const currentNodeId = ref<string>()
 const changeCurrentNode = (currentNodeKey?: string) => {
-  currentNodeId.value = currentNodeKey || '0'
+  currentNodeId.value = currentNodeKey
 }
 // 重新加载树结构
 const orgTreeRef = ref()

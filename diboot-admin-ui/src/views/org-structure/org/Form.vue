@@ -7,53 +7,35 @@ import { checkValue } from '@/utils/validate-form'
 const baseApi = '/iam/org'
 
 const { loadData, loading, model } = useDetail<OrgModel>(baseApi)
-const {
-  getTree,
-  treeDataList,
-  loading: treeLoading
-} = useTreeCrud<OrgModel>({
-  baseApi: '/iam/org',
-  treeApi: '/tree',
-  transformField: { label: 'shortName' }
+
+const { initRelatedData, relatedData } = useOption({
+  load: {
+    orgTree: {
+      type: 'IamOrg',
+      label: 'shortName',
+      parent: 'parentId',
+      lazyChild: false
+    }
+  }
 })
 
 const title = ref('')
 const visible = ref(false)
 
-// 定义当前父节点入参
-type Props = {
-  parentId?: string
-}
-const props = withDefaults(defineProps<Props>(), {
-  parentId: '0'
-})
+const props = defineProps<{ parentId?: string; siblingsNumber?: number }>()
 
 const open = async (id?: string) => {
   title.value = id ? '更新' : '新建'
   // 当新建模式时，设置系列初始值
   if (!id) {
-    model.value['parentId'] = props.parentId
-    model.value['type'] = 'DEPT'
+    model.value.parentId = props.parentId === '0' ? '' : props.parentId
+    model.value.type = 'DEPT'
+    model.value.sortId = props.siblingsNumber ? `${props.siblingsNumber}` : '1'
   }
   visible.value = true
   // 加载表单数据与树结构数据
   await loadData(id)
-  await getTree()
-  // 添加顶级菜单时的显示文本
-  const firstItem: OrgModel = {
-    id: '0',
-    parentId: '0',
-    topOrgId: '0',
-    name: '-无-',
-    shortName: '-无-',
-    type: 'COMP',
-    code: 'NONE',
-    managerId: '',
-    depth: 0,
-    createTime: '',
-    updateTime: ''
-  }
-  treeDataList.value?.unshift(firstItem)
+  await initRelatedData()
 }
 
 const formRef = ref<FormInstance>()
@@ -69,7 +51,6 @@ const emit = defineEmits<{
 const { submitting, submit } = useForm({
   baseApi,
   successCallback(id) {
-    console.log('successCallback id', id)
     emit('complete', id)
     visible.value = false
   }
@@ -78,6 +59,7 @@ const { submitting, submit } = useForm({
 const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
 
 const rules: FormRules = {
+  parentId: { required: true, message: '不能为空', whitespace: true },
   name: { required: true, message: '不能为空', whitespace: true },
   shortName: { required: true, message: '不能为空', whitespace: true },
   code: [
@@ -98,8 +80,7 @@ defineExpose({ open })
             <el-tree-select
               v-model="model.parentId"
               class="tree-selector"
-              :data="treeDataList"
-              :props="{ label: 'shortName', value: 'id' }"
+              :data="relatedData.orgTree"
               :default-expand-all="true"
               :check-strictly="true"
             />
@@ -126,6 +107,36 @@ defineExpose({ open })
               <el-option key="COMP" label="公司" value="COMP" />
               <el-option key="DEPT" label="部门" value="DEPT" />
             </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="managerId" label="负责人">
+            <di-list-selector
+              v-model="model.managerId"
+              :tree="{ type: 'IamOrg', label: 'shortName', parent: 'parentId', parentPath: 'parentIdsPath' }"
+              :list="{
+                baseApi: '/iam/user',
+                relatedKey: 'orgId',
+                searchProps: [
+                  { prop: 'realname', label: '姓名', type: 'input' },
+                  { prop: 'userNum', label: '编号', type: 'input' },
+                  { prop: 'gender', label: '性别', type: 'select', loader: 'GENDER' }
+                ],
+                columns: [
+                  { prop: 'realname', label: '姓名' },
+                  { prop: 'userNum', label: '编号' },
+                  { prop: 'genderLabel', label: '性别' },
+                  { prop: 'email', label: '邮箱' }
+                ]
+              }"
+              data-type="IamUser"
+              placeholder="选择负责人"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="sortId" label="排序">
+            <el-input v-model="model.sortId" :min="1" type="number" />
           </el-form-item>
         </el-col>
       </el-row>

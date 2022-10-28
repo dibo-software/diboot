@@ -3,7 +3,7 @@ import type { OrgModel } from '@/views/org-structure/org/type'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
-const props = withDefaults(defineProps<{ parentId?: string }>(), { parentId: '0' })
+const props = defineProps<{ parentId?: string }>()
 
 const emit = defineEmits<{
   (e: 'reload'): void
@@ -18,15 +18,17 @@ const { queryParam, onSearch, getList, loading, dataList, pagination, remove } =
     emit('reload')
   }
 })
-getList()
 
 watch(
   () => props.parentId,
   val => {
     queryParam.parentId = val
     onSearch()
-  }
+  },
+  { immediate: true }
 )
+
+getList()
 
 const formRef = ref()
 const openForm = (id?: string) => {
@@ -94,6 +96,11 @@ const onFormComplete = () => {
       @size-change="getList()"
       @current-change="getList()"
     />
-    <org-form ref="formRef" :parent-id="props.parentId" @complete="onFormComplete" />
+    <org-form
+      ref="formRef"
+      :parent-id="props.parentId"
+      :siblings-number="pagination.total"
+      @complete="onFormComplete"
+    />
   </div>
 </template>
