@@ -28,6 +28,7 @@ public class RelatedDataDTO implements Serializable {
 
     /**
      * <h3>需要查询的目标对象类型</h3>
+     * 其value自动取该对象ID值
      */
     @NotNull(message = "类型不能为空！")
     private String type;
@@ -37,12 +38,6 @@ public class RelatedDataDTO implements Serializable {
      */
     @NotNull(message = "label不能为空！")
     private String label;
-
-    /**
-     * <h3>需要查询的value字段</h3>
-     * 默认为主键字段
-     */
-    private String value;
 
     /**
      * <h3>需要查询的ext字段</h3>

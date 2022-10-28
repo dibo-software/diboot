@@ -223,7 +223,8 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, String parentId, String keyword) {
-		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getValue(), relatedDataDTO.getLabel(), relatedDataDTO.getExt());
+		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getLabel(), relatedDataDTO.getExt(),
+				relatedDataDTO.getOrderBy(), relatedDataDTO.getParent(), relatedDataDTO.getParentPath());
 		if (!relatedDataSecurityCheck(relatedDataDTO)) {
 			log.warn("relatedData安全检查不通过: {}", JSON.stringify(relatedDataDTO));
 			return Collections.emptyList();
@@ -250,10 +251,10 @@ public class BaseController {
 			return null;
 		};
 		String label = field2column.apply(S.defaultIfBlank(relatedDataDTO.getLabel(), "label"));
-		String value = S.defaultString(field2column.apply(relatedDataDTO.getValue()), propInfoCache.getIdColumn());
+		String idColumn = propInfoCache.getIdColumn();
 		List<String> columns = new ArrayList<>();
 		columns.add(label);
-		columns.add(value);
+		columns.add(idColumn);
 		if (V.notEmpty(relatedDataDTO.getExt())) {
 			columns.add(field2column.apply(relatedDataDTO.getExt()));
 		}
@@ -272,12 +273,12 @@ public class BaseController {
 			} else if (V.isNoneEmpty(keyword, relatedDataDTO.getParentPath())) {
 				// tree 模糊搜索（未指定或无parentPath属性及不支持tree搜索）
 				String parentPathColumn = field2column.apply(relatedDataDTO.getParentPath());
-				List<Map<String, Object>> mapList = baseService.getMapList(Wrappers.query().select(value, parentPathColumn).like(label, keyword));
+				List<Map<String, Object>> mapList = baseService.getMapList(Wrappers.query().select(idColumn, parentPathColumn).like(label, keyword));
 				if (V.isEmpty(mapList)) {
 					return Collections.emptyList();
 				}
-				queryWrapper.in(value, new HashSet<Serializable>() {{
-					addAll(mapList.stream().peek(map -> add(parentIdTypeConversion.apply(S.valueOf(map.remove(value)))))
+				queryWrapper.in(idColumn, new HashSet<Serializable>() {{
+					addAll(mapList.stream().peek(map -> add(parentIdTypeConversion.apply(S.valueOf(map.remove(idColumn)))))
 							.map(map -> S.split(S.valueOf(map.get(parentPathColumn)))).flatMap(Stream::of)
 							.filter(V::notEmpty).map(parentIdTypeConversion).collect(Collectors.toList()));
 				}});
