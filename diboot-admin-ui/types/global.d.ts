@@ -7,12 +7,8 @@ declare global {
     // 扩展值
     ext?: E
 
-    // 对象类型
-    type?: string
-    // 是否为叶子节点
-    leaf?: boolean
-    // 是否禁用
-    disabled?: boolean
+    // tree构建数据的parentId值（整tree获取或远程搜索tree节点时有值）
+    parentId?: string
     // 子节点集合
     children?: LabelValue<E>
   }

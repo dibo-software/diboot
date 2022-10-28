@@ -81,7 +81,7 @@ const remoteRelatedDataFilter: MockMethod = {
       .map(
         item =>
           ({
-            value: item[query.value || 'id'],
+            value: item.id,
             label: item[query.label],
             ext: buildExtData(item, query.ext)
           } as LabelValue<Record<string, unknown>>)
@@ -114,7 +114,7 @@ export default [
         more[type] = objectDataListMap[bindData.type].map(
           item =>
             ({
-              value: item[bindData.value || 'id'],
+              value: item.id,
               label: item[bindData.label],
               ext: buildExtData(item, bindData.ext)
             } as LabelValue<Record<string, unknown>>)

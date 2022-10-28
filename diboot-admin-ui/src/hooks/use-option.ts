@@ -6,23 +6,19 @@ import type { ApiData } from '@/utils/request'
 export interface RelatedData {
   // 对象类型（类名）
   type: string
-  // 绑定属性（默认对象主键）
-  value?: string
   // 显示属性
   label: string
   // 扩展数据
-  ext?: string | string[]
+  ext?: string
   // 排序
   orderBy?: string
 
-  // 父级属性（tree 为 true 时，默认为：parentId）
+  // 父级ID存储属性（用于Tree结构数据；如：parentId）
   parent?: string
-  // 是否为 Tree 结构数据（默认：false）
-  tree?: boolean
+  // 父级ID路径存储属性（用于Tree结构数据远程过滤向上查找父节点；如：parentIdsPath）
+  parentPath?: string
   // 懒加载（默认：true ；为 false 时会同步加载下一级，且当为树时会加载整个树）
   lazyChild?: boolean
-  // 下一级
-  next?: RelatedData
   // 附加条件
   condition?: Record<string, boolean | string | number | (string | number)[] | null>
 }
@@ -55,6 +51,8 @@ export interface LinkageControl {
  * RelatedData 配置选项
  */
 export interface RelatedDataOption {
+  // 请求接口基础路径（默认：/common）
+  baseApi?: string
   // 字典类型 （RelatedData 中的字典类型数据 key 为：[字典类型小驼峰Options]）
   dict?: string | string[]
   // 绑定对象（key 将作为从 RelatedData 中获取数据的 key）
@@ -68,22 +66,30 @@ export interface RelatedDataOption {
 /**
  * 选项数据源加载
  */
-export default (option: RelatedDataOption) => {
-  const { dict, load, asyncLoad, linkageControl } = option
-
+export default ({
+  baseApi = inject<string>('related-data-base-api', '/common'),
+  dict,
+  load,
+  asyncLoad,
+  linkageControl
+}: RelatedDataOption) => {
   // 数据集合
   const relatedData: Record<string, LabelValue[]> = reactive({})
+
+  // 初始化加载状态
+  const initLoading = ref(false)
 
   /**
    * 初始化 RelatedData
    */
   const initRelatedData = async () => {
+    initLoading.value = true
     const reqList: Promise<ApiData<Record<string, LabelValue[]>>>[] = []
     // 通用获取关联字典的数据
     if ((dict ?? []).length > 0)
       reqList.push(api.post('/common/load-related-dict', dict instanceof Array ? dict : [dict]))
     // 通用获取关联绑定的数据
-    if (Object.keys(load ?? []).length > 0) reqList.push(api.post('/common/load-related-data', load))
+    if (Object.keys(load ?? []).length > 0) reqList.push(api.post(`${baseApi}/load-related-data`, load))
 
     if (reqList.length > 0) {
       const resList = await Promise.all(reqList)
@@ -92,6 +98,7 @@ export default (option: RelatedDataOption) => {
         else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
       })
     }
+    initLoading.value = false
   }
 
   // 异步加载状态
@@ -101,16 +108,15 @@ export default (option: RelatedDataOption) => {
    * 加载 RelatedData
    *
    * @param relatedDataLoader 加载器
-   * @param nodeData 节点数据（可空）
+   * @param parentId 父节点ID
    */
-  const loadRelatedData = async (relatedDataLoader: AsyncRelatedData, nodeData?: LabelValue) => {
+  const loadRelatedData = async (relatedDataLoader: AsyncRelatedData, parentId?: string) => {
     if (relatedDataLoader.disabled) {
       return []
     }
     asyncLoading.value = true
-    const build = (item?: string) => (item ? `/${item}` : '')
     const res = await api.get<LabelValue[]>(
-      `/common/load-related-data${build(nodeData?.value)}${build(nodeData?.type)}`,
+      `${baseApi}/load-related-data${parentId ? `/${parentId}` : ''}`,
       relatedDataLoader
     )
     asyncLoading.value = false
@@ -146,7 +152,7 @@ export default (option: RelatedDataOption) => {
       relatedData[loader] = []
       return
     }
-    const relatedDataLoader = findAsyncLoader(loader)
+    const relatedDataLoader = _.cloneDeep(findAsyncLoader(loader))
     relatedDataLoader.keyword = value
     relatedData[loader] = await loadRelatedData(relatedDataLoader)
   }
@@ -154,20 +160,11 @@ export default (option: RelatedDataOption) => {
   /**
    * 异步加载tree数据
    *
-   * @param nodeData 当前tree节点数据
    * @param loader 加载器名称
-   * @param resolve
+   * @param parentId 当前tree节点数据ID，用于加载子节点列表
    */
-  const lazyLoadRelatedData = async (
-    nodeData: LabelValue,
-    loader: string,
-    resolve: (options: LabelValue[]) => void
-  ) => {
-    const relatedDataLoader = findAsyncLoader(loader)
-    const dataLsit = (await loadRelatedData(relatedDataLoader, nodeData)) ?? []
-    if (dataLsit.length === 0 && relatedDataLoader.next != null) nodeData.disabled = true
-    resolve(dataLsit)
-  }
+  const lazyLoadRelatedData = async (loader: string, parentId?: string) =>
+    (await loadRelatedData(findAsyncLoader(loader), parentId)) ?? []
 
   /**
    * 处理联动
@@ -198,6 +195,7 @@ export default (option: RelatedDataOption) => {
 
   return {
     relatedData,
+    initLoading,
     initRelatedData,
     asyncLoading,
     remoteRelatedDataFilter,
