@@ -1,8 +1,8 @@
-export interface ListSelectorOption<T> {
+export interface ListSelectorOption {
   keyName?: string
   multi?: boolean
 }
-export default <T>(option: ListSelectorOption<T>) => {
+export default <T>(option: ListSelectorOption) => {
   const keyName = option.keyName || 'id'
 
   const rowSelectChangeHandler = (

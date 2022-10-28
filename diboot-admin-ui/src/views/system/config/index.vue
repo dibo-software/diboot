@@ -51,7 +51,7 @@ const update = (data: SystemConfig) => {
   }
   api
     .post(`${baseApi}`, data)
-    .then(res => ElMessage.success('修改成功'))
+    .then(() => ElMessage.success('修改成功'))
     .catch(() => ElMessage.error('修改失败，稍后重试！'))
     .finally(getConfigData)
 }
@@ -64,7 +64,7 @@ const deleteConfig = (prop = '') => {
   ).then(() => {
     api
       .delete(`${baseApi}/${type.value}/${prop}`)
-      .then(res => ElMessage.success('重置成功'))
+      .then(() => ElMessage.success('重置成功'))
       .catch(() => ElMessage.error('重置失败，稍后重试！'))
       .finally(getConfigData)
   })

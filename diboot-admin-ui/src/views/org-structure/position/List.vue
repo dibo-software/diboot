@@ -7,7 +7,7 @@ interface PositionSearch extends Position {
   keywords?: string
 }
 
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } = useList<
+const { queryParam, onSearch, getList, loading, dataList, pagination, remove, batchRemove } = useList<
   Position,
   PositionSearch
 >({ baseApi: '/iam/position' })

@@ -16,13 +16,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const emit = defineEmits(['update:selectedKeys', 'update:selectedRows', 'select'])
 
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
-  useList<Position>({
-    baseApi: '/iam/position',
-    loadSuccess: () => {
-      setCheckedKeys()
-    }
-  })
+const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination } = useList<Position>({
+  baseApi: '/iam/position',
+  loadSuccess: () => {
+    setCheckedKeys()
+  }
+})
 
 // 获取列表结束后，自定设置选中行
 getList()

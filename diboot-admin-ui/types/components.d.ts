@@ -72,6 +72,7 @@ declare module '@vue/runtime-core' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     ExcelExport: typeof import('@/components/excel/Export.vue')['default']
     ExcelImport: typeof import('@/components/excel/Import.vue')['default']
     I18nSelector: typeof import('@/components/i18n/Selector.vue')['default']

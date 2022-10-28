@@ -2,7 +2,7 @@ import { ElMessage } from 'element-plus'
 import type { Ref } from 'vue'
 import type { WritableComputedRef } from 'vue'
 
-export interface PopoverListSelectorOption<T> {
+export interface PopoverListSelectorOption {
   baseApi: string
   listByIdsApi?: string
   keyName?: string
@@ -12,7 +12,7 @@ export interface PopoverListSelectorOption<T> {
   optionsValue: WritableComputedRef<string[] | string>
 }
 
-export default <T>(option: PopoverListSelectorOption<T>) => {
+export default <T>(option: PopoverListSelectorOption) => {
   const selectOptions = ref<Record<string, string>[]>([])
   const selectedRows = ref<T[]>([]) as Ref<T[]>
 

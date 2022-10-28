@@ -73,7 +73,7 @@ const appendVariable = (variable?: string) => {
       <el-form-item prop="appModule" label="业务模块">
         <el-input v-model="model.appModule" />
       </el-form-item>
-      <el-space fill>
+      <el-space fill style="width: 100%">
         <el-alert type="info" show-icon :closable="false">
           可选变量：
           <el-tag

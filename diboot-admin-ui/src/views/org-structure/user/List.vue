@@ -20,10 +20,7 @@ watch(
 interface UserSearch extends UserModel {
   keywords?: string
 }
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove } = useList<
-  UserModel,
-  UserSearch
->({
+const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<UserModel, UserSearch>({
   baseApi: '/iam/user'
 })
 getList()

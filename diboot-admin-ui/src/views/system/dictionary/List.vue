@@ -7,10 +7,7 @@ import type { Dictionary } from '@/views/system/dictionary/type'
 interface DictionarySearch extends Dictionary {
   keywords?: string
 }
-const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSearch, resetFilter, remove } = useList<
-  Dictionary,
-  DictionarySearch
->({
+const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<Dictionary, DictionarySearch>({
   baseApi: '/dictionary'
 })
 
