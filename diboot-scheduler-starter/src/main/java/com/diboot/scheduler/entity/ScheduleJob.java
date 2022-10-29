@@ -111,7 +111,7 @@ public class ScheduleJob extends BaseEntity {
      * 创建人
      */
     @TableField(fill = FieldFill.INSERT)
-    private Long createBy;
+    private String createBy;
 
     /**
      * 更新时间
