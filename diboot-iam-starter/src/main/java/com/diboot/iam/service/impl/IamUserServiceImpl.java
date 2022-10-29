@@ -77,9 +77,11 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         if (V.notEmpty(userFormDTO.getUsername())) {
             // 新建account账号
             this.createAccount(userFormDTO);
+            // 批量创建角色关联关系
+            iamUserRoleService.createUserRoleRelations(userFormDTO.getUserType(), userFormDTO.getId(), userFormDTO.getRoleIdList());
         }
         if (V.notEmpty(userFormDTO.getUserPositionList())) {
-            iamUserPositionService.updateUserPositionRelations(IamUser.class.getSimpleName(), userFormDTO.getId(), userFormDTO.getUserPositionList());
+            iamUserPositionService.updateUserPositionRelations(userFormDTO.getUserType(), userFormDTO.getId(), userFormDTO.getUserPositionList());
         }
         return true;
     }
@@ -89,6 +91,10 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     public boolean updateUserRelatedInfo(IamUserFormDTO userFormDTO) {
         // 更新用户信息
         this.updateEntity(userFormDTO);
+
+        if (userFormDTO.getUserPositionList() != null) {
+            iamUserPositionService.updateUserPositionRelations(userFormDTO.getUserType(), userFormDTO.getId(), userFormDTO.getUserPositionList());
+        }
 
         IamAccount iamAccount = iamAccountService.getSingleEntity(
                 Wrappers.<IamAccount>lambdaQuery()
@@ -102,11 +108,15 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             } else {
                 // 新建account账号
                 this.createAccount(userFormDTO);
+                // 批量创建角色关联关系
+                iamUserRoleService.createUserRoleRelations(userFormDTO.getUserType(), userFormDTO.getId(), userFormDTO.getRoleIdList());
             }
         } else {
             if (V.isEmpty(userFormDTO.getUsername())) {
                 // 删除账号
                 this.deleteAccount(userFormDTO.getId());
+                // 删除角色关联关系
+                iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), Collections.emptyList());
             } else {
                 // 更新账号
                 iamAccount.setAuthAccount(userFormDTO.getUsername())
@@ -117,13 +127,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                     iamCustomize.encryptPwd(iamAccount);
                 }
                 iamAccountService.updateEntity(iamAccount);
-
                 // 批量更新角色关联关系
                 iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userFormDTO.getRoleIdList());
             }
-        }
-        if (userFormDTO.getUserPositionList() != null) {
-            iamUserPositionService.updateUserPositionRelations(IamUser.class.getSimpleName(), userFormDTO.getId(), userFormDTO.getUserPositionList());
         }
         return true;
     }
@@ -239,22 +245,18 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return iamUserNums;
     }
 
-    protected void createAccount(IamUserFormDTO userAccountDTO) {
+    protected void createAccount(IamUserFormDTO userFormDTO) {
         // 创建账号信息
-        IamAccount iamAccount = new IamAccount();
-        iamAccount
-                .setTenantId(userAccountDTO.getTenantId())
+        IamAccount iamAccount = new IamAccount()
+                .setTenantId(userFormDTO.getTenantId())
                 .setUserType(IamUser.class.getSimpleName())
-                .setUserId(userAccountDTO.getId())
-                .setAuthAccount(userAccountDTO.getUsername())
-                .setAuthSecret(userAccountDTO.getPassword())
-                .setAuthType(userAccountDTO.getAuthType())
-                .setStatus(userAccountDTO.getStatus());
+                .setUserId(userFormDTO.getId())
+                .setAuthAccount(userFormDTO.getUsername())
+                .setAuthSecret(userFormDTO.getPassword())
+                .setAuthType(userFormDTO.getAuthType())
+                .setStatus(userFormDTO.getStatus());
         // 保存账号
         iamAccountService.createEntity(iamAccount);
-
-        // 批量创建角色关联关系
-        iamUserRoleService.createUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), userAccountDTO.getRoleIdList());
     }
 
     private void deleteAccount(String userId) {

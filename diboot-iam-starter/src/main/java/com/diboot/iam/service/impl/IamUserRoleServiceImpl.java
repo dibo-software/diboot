@@ -168,7 +168,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateUserRoleRelations(String userType, String userId, List<String> roleIds) {
-        if (V.isEmpty(roleIds)) {
+        if (roleIds == null) {
             return true;
         }
         String superAdminRoleId = getSuperAdminRoleId();
