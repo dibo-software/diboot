@@ -18,7 +18,7 @@ const transformField = {
 const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } =
   useTreeCrud<ResourcePermission>({
     baseApi: '/iam/resource-permission',
-    treeApi: '/list',
+    treeApi: '',
     transformField
   })
 const treeProps = {

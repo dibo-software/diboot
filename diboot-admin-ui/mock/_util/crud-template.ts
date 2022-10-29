@@ -62,7 +62,7 @@ export default <T extends {}>(option: Option<T>) => {
     deleteDataIds,
     api: <Readonly<Api>>{
       getList: {
-        url: `${baseUrl}/list`,
+        url: `${baseUrl}`,
         timeout: Random.natural(50, 300),
         method: 'get',
         response: ({ query }: ApiRequest) => {

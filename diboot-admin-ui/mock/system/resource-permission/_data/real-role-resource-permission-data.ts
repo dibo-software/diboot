@@ -636,7 +636,6 @@ export default [
         displayType: 'MENU',
         displayName: '数据字典管理',
         routePath: '/directory',
-        redirectPath: '/directory/list',
         resourceCode: 'Dictionary',
         permissionCode: 'Dictionary:read',
         meta: '{"keepAlive":true}',

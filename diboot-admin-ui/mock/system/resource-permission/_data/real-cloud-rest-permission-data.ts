@@ -11,7 +11,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/child/list',
+              uri: '/child',
               label: '查看列表'
             }
           ],
@@ -33,7 +33,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/child/',
+              uri: '/child',
               label: '创建'
             }
           ],
@@ -74,7 +74,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/dictionary/list',
+              uri: '/dictionary',
               label: '查看列表'
             }
           ],
@@ -96,7 +96,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/dictionary/',
+              uri: '/dictionary',
               label: '创建'
             }
           ],
@@ -135,7 +135,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/message/list',
+              uri: '/message',
               label: '查看列表'
             }
           ],
@@ -163,7 +163,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/message-template/list',
+              uri: '/message-template',
               label: '查看列表'
             }
           ],
@@ -185,7 +185,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/message-template/',
+              uri: '/message-template',
               label: '创建'
             }
           ],
@@ -224,7 +224,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/parent/list',
+              uri: '/parent',
               label: '查看列表'
             }
           ],
@@ -246,7 +246,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/parent/',
+              uri: '/parent',
               label: '创建'
             }
           ],
@@ -285,7 +285,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/schedule-job/list',
+              uri: '/schedule-job',
               label: '查看列表'
             }
           ],
@@ -296,7 +296,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/schedule-job/',
+              uri: '/schedule-job',
               label: '创建'
             }
           ],
@@ -345,7 +345,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/schedule-job/log/list',
+              uri: '/schedule-job/log',
               label: '定时日志列表'
             }
           ],
@@ -449,7 +449,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/file-record/list',
+              uri: '/file-record',
               label: '查看列表'
             }
           ],
@@ -488,7 +488,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/login-trace/list',
+              uri: '/iam/login-trace',
               label: '查看列表'
             }
           ],
@@ -505,7 +505,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/operation-log/list',
+              uri: '/iam/operation-log',
               label: '查看列表'
             }
           ],
@@ -544,7 +544,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/iam/org/',
+              uri: '/iam/org',
               label: '创建'
             }
           ],
@@ -577,7 +577,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/org/list',
+              uri: '/iam/org',
               label: '查看列表'
             }
           ],
@@ -638,7 +638,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/position/list',
+              uri: '/iam/position',
               label: '查看列表'
             }
           ],
@@ -667,22 +667,11 @@ export default {
           label: '查看详情'
         },
         {
-          code: 'IamPosition:listByUserInfo',
-          apiUriList: [
-            {
-              method: 'GET',
-              uri: '/iam/position/list-user-positions/{userType}/{userId}',
-              label: '根据用户信息获取岗位列表'
-            }
-          ],
-          label: '根据用户信息获取岗位列表'
-        },
-        {
           code: 'IamPosition:create',
           apiUriList: [
             {
               method: 'POST',
-              uri: '/iam/position/',
+              uri: '/iam/position',
               label: '创建'
             }
           ],
@@ -715,7 +704,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/resource-permission/list',
+              uri: '/iam/resource-permission',
               label: '查看列表'
             },
             {
@@ -742,7 +731,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/iam/resource-permission/',
+              uri: '/iam/resource-permission',
               label: '创建'
             }
           ],
@@ -786,7 +775,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/role/list',
+              uri: '/iam/role',
               label: '查看列表'
             }
           ],
@@ -808,7 +797,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/iam/role/',
+              uri: '/iam/role',
               label: '创建'
             }
           ],
@@ -847,7 +836,7 @@ export default {
           apiUriList: [
             {
               method: 'GET',
-              uri: '/iam/user/list',
+              uri: '/iam/user',
               label: '查看列表'
             }
           ],
@@ -869,7 +858,7 @@ export default {
           apiUriList: [
             {
               method: 'POST',
-              uri: '/iam/user/',
+              uri: '/iam/user',
               label: '创建'
             }
           ],

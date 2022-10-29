@@ -77,7 +77,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
 
     return new Promise<void>((resolve, reject) => {
       api
-        .get<Array<T>>(option.listApi ? option.listApi : `${option.baseApi}/list`, buildQueryParam())
+        .get<Array<T>>(option.listApi ? option.listApi : option.baseApi, buildQueryParam())
         .then(res => {
           dataList.splice(0)
           if (res.data) dataList.push(...(res.data ?? []))

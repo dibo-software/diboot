@@ -63,7 +63,7 @@ const crud = crudTemplate({
 
 export default [
   {
-    url: `${crud.baseUrl}/list`,
+    url: `${crud.baseUrl}`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ query }: ApiRequest) => {

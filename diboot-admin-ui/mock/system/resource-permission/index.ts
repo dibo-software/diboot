@@ -75,7 +75,7 @@ const buildChildren = (parents: ResourcePermission[], originList: ResourcePermis
 }
 export default [
   {
-    url: `${baseUrl}/list`,
+    url: `${baseUrl}`,
     timeout: Random.natural(50, 300),
     method: 'get',
     response: ({ query }: ApiRequest) => {
