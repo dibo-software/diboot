@@ -17,7 +17,6 @@ CREATE TABLE iam_member (
   status VARCHAR(20) NOT NULL DEFAULT 'NORMAL',
   description VARCHAR(200),
   is_deleted   BOOLEAN default FALSE   not null,
-  create_by bigint DEFAULT 0 NOT NULL,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null
 );

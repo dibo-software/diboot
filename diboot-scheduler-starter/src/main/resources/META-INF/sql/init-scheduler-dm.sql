@@ -11,7 +11,7 @@ CREATE TABLE ${SCHEMA}.schedule_job (
   save_log   BIT DEFAULT 1    not null,
   job_comment      VARCHAR(500),
   is_deleted   BIT DEFAULT 0    not null,
-  create_by BIGINT DEFAULT 0 NOT NULL,
+  create_by VARCHAR(32) NOT NULL DEFAULT '0' NOT NULL,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null
 );

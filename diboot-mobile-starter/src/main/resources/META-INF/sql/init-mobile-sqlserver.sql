@@ -17,7 +17,6 @@ CREATE TABLE iam_member (
     status VARCHAR(20) NOT NULL DEFAULT 'NORMAL',
     description VARCHAR(200),
     is_deleted   tinyint not null DEFAULT 0,
-    create_by bigint DEFAULT 0 NOT NULL,
     create_time  datetime default CURRENT_TIMESTAMP   not null,
     update_time  datetime default CURRENT_TIMESTAMP  null,
     constraint PK_iam_member primary key (id)
@@ -39,7 +38,6 @@ execute sp_addextendedproperty 'MS_Description', N'性别', 'SCHEMA', '${SCHEMA}
 execute sp_addextendedproperty 'MS_Description', N'状态', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'status';
 execute sp_addextendedproperty 'MS_Description', N'备注', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'description';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'is_deleted';
-execute sp_addextendedproperty 'MS_Description', N'创建人', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'create_by';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', iam_member, 'column', 'update_time';
 execute sp_addextendedproperty 'MS_Description', N'移动端用户', 'SCHEMA', '${SCHEMA}', 'table', iam_member, null, null;

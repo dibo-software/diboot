@@ -11,7 +11,7 @@ CREATE TABLE ${SCHEMA}.schedule_job (
   save_log   NUMBER(1) DEFAULT 1    not null,
   job_comment      VARCHAR2(200),
   is_deleted   NUMBER(1) DEFAULT 0    not null,
-  create_by NUMBER(20) DEFAULT 0 NOT NULL,
+  create_by VARCHAR2(32) DEFAULT '0' not null,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null,
   constraint PK_schedule_job primary key (id)

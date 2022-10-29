@@ -11,7 +11,7 @@ CREATE TABLE schedule_job (
   save_log     tinyint not null DEFAULT 1,
   job_comment      VARCHAR(200),
   is_deleted   tinyint not null DEFAULT 0,
-  create_by bigint DEFAULT 0 NOT NULL,
+  create_by varchar(32) DEFAULT '0' NOT NULL,
   create_time  datetime default CURRENT_TIMESTAMP  not null,
   update_time  datetime default CURRENT_TIMESTAMP  null,
   constraint PK_schedule_job primary key (id)

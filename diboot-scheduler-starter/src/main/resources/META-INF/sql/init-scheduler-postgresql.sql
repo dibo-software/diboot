@@ -11,7 +11,7 @@ CREATE TABLE schedule_job (
   save_log     BOOLEAN default TRUE    not null,
   job_comment      VARCHAR(200),
   is_deleted   BOOLEAN default FALSE   not null,
-  create_by bigint DEFAULT 0 NOT NULL,
+  create_by varchar(32) DEFAULT '0' NOT NULL,
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null
 );
