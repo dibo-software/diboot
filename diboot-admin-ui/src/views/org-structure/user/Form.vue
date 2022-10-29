@@ -2,7 +2,6 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel } from './type'
 import { defineEmits } from 'vue'
-import RolePopoverListSelector from '@/views/system/role/PopoverListSelector.vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
 import { checkValue } from '@/utils/validate-form'
 import type { UserPosition } from '@/views/org-structure/position/type'
@@ -34,7 +33,19 @@ const title = ref('')
 
 const visible = ref(false)
 
+const oldUsername = ref<string>()
+
+const switchType = (type: boolean) => {
+  if (type) {
+    model.value.username = oldUsername.value
+    return
+  }
+  oldUsername.value = model.value.username
+  model.value.username = undefined
+}
+
 const loadUsername = async (id?: string) => {
+  oldUsername.value = undefined
   if (id != null) {
     const res = await api.get<string>(`${baseApi}/username/${id}`)
     if (res.code === 0 && res.data) {
@@ -105,7 +116,7 @@ const rules: FormRules = {
       <el-row :gutter="18">
         <el-col :md="12" :sm="24">
           <el-form-item :required="true" prop="isSysAccount" label="用户类型">
-            <el-radio-group v-model="model.isSysAccount">
+            <el-radio-group v-model="model.isSysAccount" @change="switchType">
               <el-radio-button :label="false">普通用户</el-radio-button>
               <el-radio-button :label="true">系统用户</el-radio-button>
             </el-radio-group>
@@ -181,11 +192,6 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="roleIdList" label="角色">
-            <role-popover-list-selector v-model="model.roleIdList" :multi="true" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
           <el-form-item prop="status" label="状态">
             <el-select v-model="model.status">
               <el-option key="A" label="正常" value="A" />
@@ -193,12 +199,34 @@ const rules: FormRules = {
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col v-if="model.isSysAccount" :md="12" :sm="24">
+          <el-form-item prop="roleIdList" label="角色">
+            <di-list-selector
+              v-model="model.roleIdList"
+              multiple
+              :list="{
+                baseApi: '/iam/role',
+                searchProps: [
+                  { prop: 'name', label: '名称', type: 'input' },
+                  { prop: 'code', label: '编码', type: 'input' }
+                ],
+                columns: [
+                  { prop: 'name', label: '姓名' },
+                  { prop: 'code', label: '编号' },
+                  { prop: 'createTime', label: '创建时间' }
+                ]
+              }"
+              data-type="IamRole"
+              placeholder="选择角色"
+            />
+          </el-form-item>
+        </el-col>
       </el-row>
     </el-form>
     <user-position-table-form
       ref="userPositionTableForm"
       v-model="model.userPositionList"
-      :org-tree="relatedData.genderOptions"
+      :org-tree="relatedData.orgTree"
       :user-id="model.id"
       :org-id="model.orgId"
     />

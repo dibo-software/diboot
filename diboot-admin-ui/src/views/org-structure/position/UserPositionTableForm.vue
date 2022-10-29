@@ -2,13 +2,12 @@
 import type { UserPosition } from './type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
-import PositionPopoverListSelector from '@/views/org-structure/position/PopoverListSelector.vue'
 import { defineEmits } from 'vue'
 
 type Props = {
   userId?: string
   orgId?: string
-  orgTree: LabelValue[]
+  orgTree?: LabelValue[]
   modelValue?: UserPosition[]
 }
 const props = defineProps<Props>()
@@ -18,7 +17,7 @@ watch(
   () => props.modelValue,
   value => {
     if (value && value.length) dataList.value = value
-    else dataList.value = []
+    else dataList.value.length = 0
   },
   { immediate: true }
 )
@@ -78,7 +77,25 @@ defineExpose({
               trigger: 'blur'
             }"
           >
-            <position-popover-list-selector v-model="scope.row.positionId" :multi="false" />
+            <di-list-selector
+              v-model="scope.row.positionId"
+              :list="{
+                baseApi: '/iam/position',
+                searchProps: [
+                  { prop: 'name', label: '名称', type: 'input' },
+                  { prop: 'code', label: '编码', type: 'input' }
+                ],
+                columns: [
+                  { prop: 'name', label: '姓名' },
+                  { prop: 'code', label: '编号' },
+                  { prop: 'gradeValue', label: '职级' },
+                  { prop: 'gradeName', label: '职级头衔' },
+                  { prop: 'createTime', label: '创建时间' }
+                ]
+              }"
+              data-type="IamPosition"
+              placeholder="选择角色"
+            />
           </el-form-item>
         </template>
       </el-table-column>
