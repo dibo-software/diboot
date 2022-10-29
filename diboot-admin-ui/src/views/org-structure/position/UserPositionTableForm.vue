@@ -94,7 +94,7 @@ defineExpose({
                 ]
               }"
               data-type="IamPosition"
-              placeholder="选择角色"
+              placeholder="选择岗位"
             />
           </el-form-item>
         </template>
