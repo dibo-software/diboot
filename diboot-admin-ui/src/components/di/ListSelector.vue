@@ -49,19 +49,6 @@ watch(
   { immediate: true }
 )
 
-if (props.modelValue) {
-  const { initRelatedData, relatedData } = useOption({
-    load: {
-      selected: {
-        type: props.dataType,
-        label: dataLabel,
-        condition: { [props.list.primaryKey || 'id']: props.modelValue }
-      }
-    }
-  })
-  initRelatedData().then(() => (selectedRows.value = relatedData.selected))
-}
-
 watch(
   selectedRows,
   value => {
