@@ -1,5 +1,6 @@
 <script setup lang="ts" name="DiListSelector">
 import type { Input, ListConfig, ListSelector, TreeConfig } from '@/components/di/type'
+import type { RelatedData } from '@/hooks/use-option'
 
 type ModelValue = string | string[]
 
@@ -26,6 +27,28 @@ provide('selected-rows', selectedRows)
 const dataLabel = props.dataLabel ?? (props.list.columns[0] ?? { prop: 'label' })?.prop
 provide('data-label', dataLabel)
 
+const selected: RelatedData = reactive({ type: props.dataType, label: dataLabel })
+
+const { initRelatedData, relatedData } = useOption({ load: { selected } })
+
+watch(
+  () => props.modelValue,
+  value => {
+    if (value && value.length) {
+      nextTick(() => {
+        const ids = selectedRows.value.map(e => e.value).sort()
+        if (ids.toString() !== (Array.isArray(value) ? value : [value]).sort().toString()) {
+          selected.condition = { [props.list.primaryKey || 'id']: value }
+          initRelatedData().then(() => (selectedRows.value = relatedData.selected))
+        }
+      })
+    } else {
+      selectedRows.value.length = 0
+    }
+  },
+  { immediate: true }
+)
+
 if (props.modelValue) {
   const { initRelatedData, relatedData } = useOption({
     load: {
@@ -43,7 +66,7 @@ watch(
   selectedRows,
   value => {
     if (!value?.length) {
-      selectedKeys.value = undefined
+      selectedKeys.value = props.multiple ? [] : undefined
     } else if (props.multiple) {
       selectedKeys.value = value.map(e => `${e.value}`)
     } else {
@@ -100,17 +123,13 @@ const clickNode = (id?: string) => (parent.value = id)
     <el-option v-for="item in selectedRows" :key="item.value" :value="item.value" :label="item.label" />
   </el-select>
 
-  <el-dialog v-model="visible" top="3vh" :width="props.tree ? '75%' : ''">
+  <el-dialog v-model="visible" top="3vh" :width="props.tree ? '75%' : ''" append-to-body>
     <template #header>
       <div style="display: flex">
         <strong style="margin: 0 8px; zoom: 1.1">选择</strong>
         <el-space
           wrap
-          :style="
-            tree
-              ? { width: 'calc(100% - 330px)', marginLeft: '260px' }
-              : { width: 'calc(100% - 39px)', marginLeft: '8px' }
-          "
+          :style="tree ? { width: 'calc(100% - 320px)', marginLeft: '260px' } : { width: 'calc(100% - 60px)' }"
         >
           <el-tag v-for="(item, index) in selectedRows" :key="index" closable @close="removeTag(item.value)">
             {{ item.label }}
