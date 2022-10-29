@@ -185,7 +185,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
-            throw new BusinessException(Status.FAIL_OPERATION, "添加定时任务异常", e);
+            throw new BusinessException(Status.FAIL_OPERATION, e, "添加定时任务异常");
         }
     }
 
@@ -209,7 +209,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
-            throw new BusinessException(Status.FAIL_OPERATION, "添加定时任务异常", e);
+            throw new BusinessException(Status.FAIL_OPERATION, e, "添加定时任务异常");
         }
     }
 
