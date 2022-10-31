@@ -11,11 +11,11 @@ export interface UserModel {
   realname: string
   userNum: string
   gender: string
-  genderLabel?: string
+  genderLabel?: LabelValue<{ color?: string }>
   birthday?: string
   mobilePhone?: string
   email?: string
   status: string
-  statusLabel?: string
+  statusLabel?: LabelValue<{ color?: string }>
   createTime?: string
 }

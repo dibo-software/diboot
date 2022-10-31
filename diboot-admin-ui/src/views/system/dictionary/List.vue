@@ -70,7 +70,7 @@ const deletePermission = checkPermission('delete')
                 effect="dark"
                 class="dict-item"
                 style="border: none"
-                :color="item.color ? item.color : undefined"
+                :color="item.extension?.color"
               >
                 {{ item.itemName }}({{ item.itemValue }})
               </el-tag>

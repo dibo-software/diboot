@@ -33,20 +33,6 @@ const open = async (id?: string) => {
 
 const formLabelWidth = '120px'
 const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced1', '#1e90ff', '#c71585', '#c71585'])
-const initModel = {
-  type: '',
-  itemName: '',
-  itemValue: '',
-  description: '',
-  children: [
-    {
-      type: '',
-      itemName: '',
-      itemValue: '',
-      color: ''
-    }
-  ]
-}
 
 const checkTypeDuplicate = checkValue(`${baseApi}/check-type-duplicate`, 'type', () => model.value?.id)
 
@@ -80,7 +66,7 @@ const formRef = ref<FormInstance>()
 // 添加数据字典条目
 const addItem = () => {
   validateChildren()
-  model?.value?.children && model.value.children.push(_.cloneDeep(initModel))
+  model?.value?.children && model.value.children.push({ itemName: '', itemValue: '' })
 }
 
 // 移除数据字典条目
@@ -175,7 +161,10 @@ defineExpose({ open })
                   </el-form-item>
                 </td>
                 <td>
-                  <el-color-picker v-model="element.color" :predefine="predefineColors" />
+                  <el-color-picker
+                    v-model="(element.extension ? element.extension : (element.extension = {})).color"
+                    :predefine="predefineColors"
+                  />
                 </td>
                 <td>
                   <i18n-selector v-model="element.itemNameI18n" style="position: relative; top: -8px" />

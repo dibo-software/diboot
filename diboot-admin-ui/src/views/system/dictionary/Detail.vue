@@ -32,8 +32,8 @@ defineExpose({
       </el-table-column>
       <el-table-column label="条目颜色" width="100">
         <template #default="scope">
-          <template v-if="scope.row.color">
-            <span class="color-block" :style="{ background: scope.row.color }" />
+          <template v-if="scope.row.extension?.color">
+            <span class="color-block" :style="{ background: scope.row.extension?.color }" />
           </template>
           <template v-else> - </template>
         </template>

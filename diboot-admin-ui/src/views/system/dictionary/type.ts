@@ -6,6 +6,7 @@ export interface Dictionary {
   itemNameI18n?: string
   itemValue?: string
   description?: string
-  color?: string
+  extension?: Record<string, unknown>
+  createTime?: string
   children?: Dictionary[]
 }

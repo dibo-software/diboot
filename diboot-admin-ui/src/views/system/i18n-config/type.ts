@@ -3,7 +3,7 @@ export interface I18nConfig {
   // 类型
   type: string
   // 类型显示值
-  typeLabel?: string
+  typeLabel?: LabelValue<{ color?: string }>
   // 语言
   language: string
   //消息代码

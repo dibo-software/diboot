@@ -23,7 +23,9 @@ defineExpose({
         {{ model.userNum }}
       </el-descriptions-item>
       <el-descriptions-item label="性别">
-        {{ model.genderLabel }}
+        <el-tag :color="model.genderLabel?.ext?.color" effect="dark" type="info">
+          {{ model.genderLabel?.label }}
+        </el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="电话">
         {{ model.mobilePhone }}
@@ -32,7 +34,9 @@ defineExpose({
         {{ model.email }}
       </el-descriptions-item>
       <el-descriptions-item label="状态">
-        {{ model.statusLabel }}
+        <el-tag :color="model.statusLabel?.ext?.color" effect="dark" type="info">
+          {{ model.statusLabel?.label }}
+        </el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="角色">
         <el-tag v-for="item in model.roleList" :key="item.id" effect="plain">
