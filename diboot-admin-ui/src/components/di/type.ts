@@ -40,27 +40,6 @@ export interface TableColumn {
   showOverflowTooltip?: boolean
 }
 
-// 表单页配置
-export interface FormConfig {
-  labelWidth?: string // 默认 80px
-  propList: FormItem[]
-}
-
-// 详情页配置
-export interface DetailConfig {
-  column?: number // 默认3
-  propList: DetailProp[]
-}
-
-export interface DetailProp {
-  span?: number // 默认 1
-  prop: string
-  label: string
-  dict?: boolean // 是否为关联字典字段
-  files?: string // VO中关联文件记录列表属性名
-  iamge?: boolean // 关联文件是否为图片
-}
-
 // 输入类型
 export interface Input {
   span?: number

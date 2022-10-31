@@ -6,8 +6,6 @@ import type { FormItem, ListConfig, ListOperation, TableColumn } from '@/compone
 interface ListProps extends ListConfig {
   // 左树父级ID
   parent?: string
-  // 是否多选（用于对象选择器）
-  multiple?: boolean
 
   // vue语法限制导致只能在当前文件中再次定义
   // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
@@ -21,13 +19,6 @@ interface ListProps extends ListConfig {
 }
 
 const props = defineProps<ListProps>()
-
-const isMultiple =
-  props.multiple != null
-    ? props.multiple
-    : !!props.operation?.batchRemove && checkPermission('delete')
-    ? true
-    : undefined
 
 const { initRelatedData, relatedData, asyncLoading, remoteRelatedDataFilter, lazyLoadRelatedData } = useOption(
   buildOptionProps(props?.searchProps)
@@ -90,6 +81,11 @@ defineExpose({
 
 const updatePermission = checkPermission('update')
 const deletePermission = checkPermission('delete')
+
+const multiple = inject<boolean | undefined>(
+  'multiple',
+  deletePermission && props.operation?.batchRemove ? true : undefined
+)
 </script>
 
 <template>
@@ -154,7 +150,7 @@ const deletePermission = checkPermission('delete')
       :loading="loading"
       :columns="columns"
       :data-list="dataList"
-      :multiple="isMultiple"
+      :multiple="multiple"
       :primary-key="primaryKey"
       @selected-keys="(v:string[]) => (selectedKeys = v)"
       @order="orderBy"

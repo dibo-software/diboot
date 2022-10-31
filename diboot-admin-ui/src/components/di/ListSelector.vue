@@ -21,6 +21,8 @@ interface ListSelectorProps extends Omit<ListSelector, keyof Omit<Input, 'placeh
 
 const props = defineProps<ListSelectorProps>()
 
+provide('multiple', !!props.multiple)
+
 const selectedKeys = ref<string | string[] | undefined>(props.modelValue)
 const selectedRows = ref<LabelValue[]>([])
 provide('selected-rows', selectedRows)
@@ -127,7 +129,7 @@ const clickNode = (id?: string) => (parent.value = id)
     <div class="body-container">
       <di-tree v-if="tree" v-bind="tree" @click-node="clickNode" />
 
-      <di-list v-bind="list" :multiple="multiple" :parent="parent" />
+      <di-list v-bind="list" :operation="undefined" :parent="parent" />
     </div>
   </el-dialog>
 </template>
