@@ -15,7 +15,7 @@ export interface Pagination {
   pageSize: number
   current: number
   total: number
-  orderBy?: Record<string, 'ASC' | 'DESC' | undefined>
+  orderBy?: string
 }
 
 /**
@@ -43,12 +43,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     // 合并分页、排序参数
     tempQueryParam.pageIndex = pagination.current
     tempQueryParam.pageSize = pagination.pageSize
-    const orderBy = pagination.orderBy ?? {}
-    const order = Object.keys(orderBy)
-      .filter(key => orderBy[key])
-      .map(key => key + ':' + orderBy[key])
-      .join()
-    if (order) tempQueryParam.orderBy = order
+    tempQueryParam.orderBy = pagination.orderBy
     // 合并日期范围查询参数
     for (const [key, value] of Object.entries(dateRangeQuery)) {
       if (value) [tempQueryParam[`${key}Begin`], tempQueryParam[`${key}End`]] = value
@@ -57,16 +52,6 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
 
     // 改造查询条件（用于列表页扩展）
     return option.rebuildQuery ? option.rebuildQuery(tempQueryParam as Partial<D>) : tempQueryParam
-  }
-
-  // 解构排序
-  const deconstructOrderBy = (order?: string) => {
-    if (!order) return
-    return order.split(',').reduce((orderBy: Record<string, 'ASC' | 'DESC'>, item) => {
-      const keyValue = item.split(':')
-      orderBy[keyValue[0]] = 'DESC' === (keyValue[1] ?? '').toUpperCase() ? 'DESC' : 'ASC'
-      return orderBy
-    }, {})
   }
 
   /**
@@ -84,7 +69,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
           pagination.pageSize = res.page?.pageSize
           pagination.current = res.page?.pageIndex
           pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
-          pagination.orderBy = deconstructOrderBy(res.page?.orderBy)
+          pagination.orderBy = res.page?.orderBy
           if (option.loadSuccess !== undefined) {
             option.loadSuccess()
           }

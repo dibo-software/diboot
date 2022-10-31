@@ -60,10 +60,8 @@ const searchState = ref(false)
 
 // 排序
 const orderBy = (prop: string, order?: 'ASC' | 'DESC') => {
-  const orderBy = pagination.orderBy ?? (pagination.orderBy = {})
-  if (order) orderBy[prop] = order
-  else delete orderBy[prop]
-  getList()
+  pagination.orderBy = order ? `${prop}:${order}` : undefined
+  onSearch()
 }
 
 // 选中的数据 Id 集合
