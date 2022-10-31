@@ -7,7 +7,7 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilte
   I18nConfig[],
   I18nConfig
 >({ baseApi: '/i18n-config' })
-pagination.orderBy = { code: 'ASC' }
+pagination.orderBy = 'code:ASC'
 getList()
 
 const formRef = ref()
