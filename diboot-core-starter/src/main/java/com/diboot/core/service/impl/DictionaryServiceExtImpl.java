@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据字典相关service实现
@@ -59,7 +60,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .isNotNull(Dictionary::getParentId)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
-        return getLabelValueList(queryDictionary);
+        return getEntityList(queryDictionary).stream()
+                .map(e -> new LabelValue(e.getItemName(), e.getItemValue()).setExt(e.getExtension()))
+                .collect(Collectors.toList());
     }
 
     @Override
