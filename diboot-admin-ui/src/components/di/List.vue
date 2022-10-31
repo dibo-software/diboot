@@ -41,9 +41,18 @@ initRelatedData()
  */
 const getRelatedData = buildGetRelatedData(relatedData)
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove, batchRemove } = useList<
-  Record<string, unknown>
->({ baseApi: props.baseApi })
+const {
+  queryParam,
+  dateRangeQuery,
+  loading,
+  dataList,
+  pagination,
+  getList,
+  onSearch,
+  resetFilter,
+  remove,
+  batchRemove
+} = useList<Record<string, unknown>>({ baseApi: props.baseApi })
 getList()
 
 // 监听左树节点变化
@@ -89,6 +98,13 @@ const deletePermission = checkPermission('delete')
       <el-row :gutter="18">
         <el-col v-for="item in searchProps" :key="item.prop" :md="searchSpan ?? 8" :sm="24">
           <di-input
+            v-if="['daterange', 'datetimerange'].includes(item.type)"
+            v-model="dateRangeQuery[item.prop]"
+            :config="item"
+            @change="onSearch"
+          />
+          <di-input
+            v-else
             v-model="queryParam[item.prop]"
             :config="item"
             :related-datas="getRelatedData(item)"
