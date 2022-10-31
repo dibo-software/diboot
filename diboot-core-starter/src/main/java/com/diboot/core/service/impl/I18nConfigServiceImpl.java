@@ -49,7 +49,7 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
 
     @Override
     public Collection<List<I18nConfigVO>> getI18nList(I18nConfig entity, Pagination pagination) {
-        LambdaQueryWrapper<I18nConfig> queryWrapper = Wrappers.lambdaQuery();
+        LambdaQueryWrapper<I18nConfig> queryWrapper = Wrappers.<I18nConfig>lambdaQuery().select(I18nConfig::getCode);
         queryWrapper.eq(V.notEmpty(entity.getType()), I18nConfig::getType, entity.getType());
         queryWrapper.like(V.notEmpty(entity.getCode()), I18nConfig::getCode, entity.getCode());
         queryWrapper.like(V.notEmpty(entity.getContent()), I18nConfig::getContent, entity.getContent());
