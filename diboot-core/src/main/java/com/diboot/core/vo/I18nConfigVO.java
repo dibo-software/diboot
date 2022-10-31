@@ -34,5 +34,5 @@ import lombok.experimental.Accessors;
 public class I18nConfigVO extends I18nConfig {
 
     @BindDict(field = "type", type = DICT_I18N_TYPE)
-    private String typeLabel;
+    private LabelValue typeLabel;
 }

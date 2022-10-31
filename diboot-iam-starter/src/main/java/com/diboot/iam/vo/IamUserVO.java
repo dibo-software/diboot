@@ -18,6 +18,7 @@ package com.diboot.iam.vo;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
@@ -44,10 +45,10 @@ public class IamUserVO extends IamUser {
     private String orgShortName;
 
     @BindDict(type="GENDER", field = "gender")
-    private String genderLabel;
+    private LabelValue genderLabel;
 
     @BindDict(type="USER_STATUS", field = "status")
-    private String statusLabel;
+    private LabelValue statusLabel;
 
     // 字段关联：this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'
     @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'")
