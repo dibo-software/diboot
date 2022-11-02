@@ -16,12 +16,14 @@
 package com.diboot.iam.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.vo.IamUserVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * 系统用户相关Service
@@ -76,6 +78,13 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @return
      */
     List<String> getUserIdsByManagerId(String managerId);
+
+    /**
+     * 获取id值-选项的映射Map
+     * @param ids
+     * @return
+     */
+    Map<String, LabelValue> getLabelValueMap(List<String> ids);
 
     /**
      * 获取用户VO列表

@@ -15,10 +15,12 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.vo.IamOrgVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * 组织机构相关Service
@@ -55,5 +57,12 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      * @return
      */
     List<String> getOrgIdsByManagerId(String managerId);
+
+    /**
+     * 获取id值-选项的映射Map
+     * @param ids
+     * @return
+     */
+    Map<String, LabelValue> getLabelValueMap(List<String> ids);
 
 }

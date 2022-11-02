@@ -16,13 +16,16 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamOrg;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.mapper.IamOrgMapper;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.vo.IamOrgVO;
@@ -31,6 +34,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
 * 组织机构相关Service实现
@@ -129,6 +134,17 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
         LambdaQueryWrapper<IamOrg> queryWrapper = new LambdaQueryWrapper<IamOrg>()
                 .eq(IamOrg::getManagerId, managerId);
         return getValuesOfField(queryWrapper, IamOrg::getId);
+    }
+
+    @Override
+    public Map<String, LabelValue> getLabelValueMap(List<String> ids) {
+        LambdaQueryWrapper<IamOrg> queryWrapper = new QueryWrapper<IamOrg>().lambda()
+                .select(IamOrg::getName, IamOrg::getId, IamOrg::getCode)
+                .in(IamOrg::getId, ids);
+        // 返回构建条件
+        return getEntityList(queryWrapper).stream().collect(
+                Collectors.toMap(ent -> ent.getId(),
+                        ent -> new LabelValue(ent.getName(), ent.getId()).setExt(ent.getCode())));
     }
 
 }

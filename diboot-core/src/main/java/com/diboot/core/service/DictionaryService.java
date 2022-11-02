@@ -21,6 +21,7 @@ import com.diboot.core.vo.LabelValue;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 数据字典Service
@@ -36,6 +37,13 @@ public interface DictionaryService extends BaseService<Dictionary>{
      * @return
      */
     List<LabelValue> getLabelValueList(String type);
+
+    /**
+     * 获取存储值-选项的映射Map
+     * @param type
+     * @return
+     */
+    Map<String, LabelValue> getLabelValueMap(String type);
 
     /**
      * 添加字典定义及其子项

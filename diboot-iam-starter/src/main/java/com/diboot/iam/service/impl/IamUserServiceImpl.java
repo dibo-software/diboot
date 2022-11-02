@@ -20,8 +20,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
@@ -197,6 +199,17 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 IamUser::getId
         );
         return iamUserIds;
+    }
+
+    @Override
+    public Map<String, LabelValue> getLabelValueMap(List<String> ids) {
+        LambdaQueryWrapper<IamUser> queryWrapper = new QueryWrapper<IamUser>().lambda()
+                .select(IamUser::getRealname, IamUser::getId, IamUser::getUserNum)
+                .in(IamUser::getId, ids);
+        // 返回构建条件
+        return getEntityList(queryWrapper).stream().collect(
+                Collectors.toMap(ent -> ent.getId(),
+                        ent -> new LabelValue(ent.getRealname(), ent.getId()).setExt(ent.getUserNum())));
     }
 
     @Override

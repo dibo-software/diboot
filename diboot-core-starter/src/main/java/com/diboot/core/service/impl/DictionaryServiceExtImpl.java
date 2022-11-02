@@ -66,6 +66,19 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     }
 
     @Override
+    public Map<String, LabelValue> getLabelValueMap(String type) {
+        // 构建查询条件
+        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
+                .eq(Dictionary::getType, type)
+                .isNotNull(Dictionary::getParentId);
+        // 返回构建条件
+        return getEntityList(queryDictionary).stream().collect(
+                Collectors.toMap(dict -> dict.getItemValue(),
+                                dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
+    }
+
+    @Override
     public boolean existsDictType(String dictType) {
         return exists(Dictionary::getType, dictType);
     }
