@@ -289,7 +289,7 @@ public class JsonResult<T> implements Serializable {
     /***
      * 服务不可用
      */
-    public static <T> JsonResult<T> FAIL_FAIL_REQUEST_TIMEOUT(String msg){
+    public static <T> JsonResult<T> FAIL_REQUEST_TIMEOUT(String msg){
         return new JsonResult<T>(Status.FAIL_REQUEST_TIMEOUT).msg(msg);
     }
     /***
