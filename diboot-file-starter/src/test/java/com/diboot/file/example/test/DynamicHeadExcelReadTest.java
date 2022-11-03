@@ -37,7 +37,7 @@ public class DynamicHeadExcelReadTest extends ExcelWriteTest {
         // 定义listener
         DynamicHeadExcelListener listener = new DynamicHeadExcelListener(){
             @Override
-            protected void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList) {
+            protected void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList, Map<String, Object> requestParams) {
                 //throw new BusinessException(Status.FAIL_VALIDATION, "测试");
                 //保存数据
             }

@@ -17,6 +17,7 @@ package com.diboot.file.excel.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -32,6 +33,11 @@ import java.util.Map;
 public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map<Integer, String>> {
     // 表头
     Map<Integer, String> headMap = null;
+    /**
+     * 注入request
+     */
+    @Setter
+    private Map<String, Object> requestParams;
     // 全部数据
     private List<Map<Integer, String>> dataList = new ArrayList<>();
 
@@ -42,7 +48,9 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        saveData(this.headMap, this.dataList);
+        // 自定义校验
+        additionalValidate(dataList, requestParams);
+        saveData(this.headMap, this.dataList, requestParams);
     }
 
     /**
@@ -72,8 +80,15 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
     }
 
     /**
+     * <h3>自定义数据检验方式</h3>
+     * 例：数据重复性校验等，添加校验批注信息
+     */
+    protected void additionalValidate(List<Map<Integer, String>> dataList, Map<String, Object> requestParams) {
+    }
+
+    /**
      * 保存数据
      */
-    protected abstract void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList);
+    protected abstract void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList, Map<String, Object> requestParams);
 
 }
