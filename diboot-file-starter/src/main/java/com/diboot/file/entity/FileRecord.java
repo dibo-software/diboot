@@ -108,6 +108,6 @@ public class FileRecord extends BaseEntity {
      * 创建人
      */
     @TableField(fill = FieldFill.INSERT)
-    private Long createBy;
+    private String createBy;
 
 }

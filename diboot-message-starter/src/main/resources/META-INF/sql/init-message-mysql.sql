@@ -8,7 +8,7 @@ CREATE TABLE `message_template` (
   `content` varchar(500) NOT NULL COMMENT '模版内容',
   `ext_data` varchar(500) DEFAULT NULL COMMENT '扩展数据',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  `create_by` bigint DEFAULT '0' COMMENT '创建人',
+  `create_by` varchar(32) default '0' comment '创建人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8 COMMENT '消息模版';
