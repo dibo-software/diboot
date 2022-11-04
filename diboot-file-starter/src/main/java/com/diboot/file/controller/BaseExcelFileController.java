@@ -85,7 +85,7 @@ public abstract class BaseExcelFileController extends BaseController {
         fileRecordService.createEntity(fileRecord);
 
         Map<String, Object> dataMap = new HashMap<>(8);
-        dataMap.put("uuid", fileRecord.getId());
+        dataMap.put("id", fileRecord.getId());
         dataMap.put("tableHead", listener.getTableHead());
         dataMap.put("dataList", listener.getPreviewDataList());
         dataMap.put("totalCount", listener.getTotalCount());
@@ -104,7 +104,7 @@ public abstract class BaseExcelFileController extends BaseController {
      * @throws Exception
      */
     public JsonResult<Map<String, Object>> excelPreviewSave(Map<String, Object> params) throws Exception {
-        String uuid = params.get("uuid").toString();
+        String uuid = params.get("id").toString();
         if (V.isEmpty(uuid)) {
             throw new BusinessException("未知的预览保存");
         }
