@@ -28,9 +28,11 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.Region;
 import diboot.core.test.binder.entity.TestRegion;
 import diboot.core.test.binder.entity.TestUploadFile;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.service.RegionService;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,6 +62,9 @@ public class BeanUtilsTest {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private RegionService regionService;
 
     @Test
     public void testFields(){
@@ -231,7 +236,7 @@ public class BeanUtilsTest {
         Assert.assertEquals(list.get(0).getChildren().size(), 5);
 
         list = BeanUtils.convertList(dictionaryList, DictionaryVO.class);
-        list = BeanUtils.buildTree(list, 0, Cons.FieldName.id.name());
+        list = BeanUtils.buildTree(list, 0l, Cons.FieldName.id.name());
         Assert.assertEquals(list.size(), 1);
         Assert.assertEquals(list.get(0).getChildren().size(), 5);
 
@@ -296,6 +301,19 @@ public class BeanUtilsTest {
                 Assert.assertNull(region.getChildren().get(0).getChildren());
             }
         }
+    }
+
+    /**
+     * 测试buildTree性能
+     */
+    @Test
+    public void testBuildTreePerformance() {
+        List<Region> regions = regionService.getEntityList(null);
+        long begin = System.currentTimeMillis();
+        List<Region> topLevel = BeanUtils.buildTree(regions);
+        Assert.assertTrue(topLevel.size() > 30 && topLevel.size() < 40);
+        long end = System.currentTimeMillis();
+        System.out.println( (end - begin) + "ms");
     }
 
     @Test

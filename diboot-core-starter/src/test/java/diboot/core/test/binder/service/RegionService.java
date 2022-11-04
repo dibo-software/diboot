@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,23 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.converter;
+package diboot.core.test.binder.service;
 
-import com.diboot.core.util.V;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
+import com.diboot.core.service.BaseService;
+import diboot.core.test.binder.entity.Region;
 
 /**
- * String - boolean 转换器
- * @author JerryMa
- * @version v2.6.0
- * @date 2022/5/11
- * Copyright © diboot.com
+ * region相关Service
+ * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2019/1/5
  */
-public class String2BooleanConverter implements Converter<String, Boolean> {
+public interface RegionService extends BaseService<Region> {
 
-    @Override
-    public Boolean convert(String source) {
-        return V.notEmpty(source)? V.isTrue(source) : null;
-    }
 }

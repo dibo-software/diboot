@@ -112,7 +112,8 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             if(V.notEmpty(this.splitBy)){
-                entityIdList = ResultAssembler.unpackValueList(entityIdList, this.splitBy);
+                Class<?> fieldType = refObjPropInfo.getFieldTypeByColumn(refObjJoinCols.get(0));
+                entityIdList = ResultAssembler.unpackValueList(entityIdList, this.splitBy, fieldType);
             }
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);

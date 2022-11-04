@@ -346,33 +346,46 @@ public class ResultAssembler {
      * @param splitBy
      * @return
      */
-    public static List unpackValueList(List valueList, String splitBy) {
+    public static List unpackValueList(List valueList, String splitBy, Class<?> fieldType) {
+        if(V.isEmpty(valueList)) {
+            return valueList;
+        }
         List newValueList = new ArrayList();
-        valueList.forEach( value -> {
-            if(value != null){
-                if(value instanceof Collection) {
-                    for(Object key : (Collection)value){
-                        String oneVal = S.valueOf(key);
-                        if(!newValueList.contains(oneVal)){
-                            newValueList.add(oneVal);
-                        }
-                    }
-                }
-                else {
-                    String valueStr = S.clearNonConst(S.valueOf(value));
-                    if(V.notEmpty(splitBy) && valueStr.contains(splitBy)){
-                        for(String oneVal : valueStr.split(splitBy)){
-                            if(!newValueList.contains(oneVal)){
-                                newValueList.add(oneVal);
-                            }
-                        }
-                    }
-                    else if(!newValueList.contains(valueStr)){
-                        newValueList.add(valueStr);
+        for(Object value : valueList) {
+            if(value == null) {
+                continue;
+            }
+            if(value instanceof Collection) {
+                for(Object key : (Collection)value){
+                    if(!newValueList.contains(key)){
+                        newValueList.add(key);
                     }
                 }
             }
-        });
+            else {
+                if(V.notEmpty(splitBy)){
+                    boolean isSameType = fieldType == null || fieldType.equals(String.class);
+                    String valueStr = S.clearNonConst(S.valueOf(value));
+                    if(valueStr.contains(splitBy)) {
+                        for(String oneVal : valueStr.split(splitBy)){
+                            Object oneValueObj = isSameType? oneVal : BeanUtils.convertValueToFieldType(oneVal, fieldType);
+                            if(!newValueList.contains(oneValueObj)){
+                                newValueList.add(oneValueObj);
+                            }
+                        }
+                    }
+                    else {
+                        Object oneValueObj = isSameType? value : BeanUtils.convertValueToFieldType(value, fieldType);
+                        if(!newValueList.contains(oneValueObj)){
+                            newValueList.add(oneValueObj);
+                        }
+                    }
+                }
+                else if(!newValueList.contains(value)){
+                    newValueList.add(value);
+                }
+            }
+        }
         return newValueList;
     }
 

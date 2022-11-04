@@ -21,6 +21,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.cache.IamCacheManager;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.starter.IamProperties;
 import com.diboot.iam.util.IamSecurityUtils;
@@ -86,6 +87,9 @@ public class BindPermissionAspect {
             throw new PermissionException(Status.FAIL_INVALID_TOKEN, e);
         }
         catch (Exception e){
+            BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
+            String loginUser = currentUser != null? currentUser.getDisplayName() : null;
+            log.warn("用户 {} 无 {} 的访问权限", loginUser, permissionCode);
             throw new PermissionException(Status.FAIL_NO_PERMISSION, e);
         }
     }
