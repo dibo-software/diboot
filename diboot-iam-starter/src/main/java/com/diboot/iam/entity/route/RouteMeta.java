@@ -26,6 +26,10 @@ public class RouteMeta implements Serializable {
      */
     private String icon;
     /**
+     * 模型
+     */
+    private String model;
+    /**
      * 模块
      */
     private String module;
