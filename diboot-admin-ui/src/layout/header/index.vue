@@ -2,7 +2,7 @@
 import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall, toggleTheme } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
-import MenuSearch from './MenuSearch.vue'
+import MenuSearch from './menuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
@@ -57,7 +57,7 @@ const goPersonal = () => {
       </el-dropdown>
       <message-bell class="item" />
       <el-dropdown
-        @command="(command: 'small' | 'large' | 'default') => {appStore.globalSize = command; isSmall = command === 'small'}"
+        @command="(command: 'small' | 'large' | 'default') => { appStore.globalSize = command; isSmall = command === 'small' }"
       >
         <div class="item">
           <el-icon :size="22">
@@ -76,7 +76,9 @@ const goPersonal = () => {
         <span class="item">
           <el-avatar :size="36" :icon="UserFilled" :src="authStore.avatar" />
           <span style="margin: 0 8px">{{ authStore.realname }}</span>
-          <el-icon><arrow-down /></el-icon>
+          <el-icon>
+            <arrow-down />
+          </el-icon>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
