@@ -15,6 +15,7 @@ interface OrgSearch extends OrgModel {
 const { queryParam, onSearch, getList, loading, dataList, pagination, remove } = useList<OrgModel, OrgSearch>({
   baseApi: '/iam/org',
   deleteCallback() {
+    getList()
     emit('reload')
   }
 })
