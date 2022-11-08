@@ -74,7 +74,7 @@ const deletePermission = checkPermission('delete')
       <el-table-column prop="gradeValue" label="职级" />
       <el-table-column prop="gradeName" label="职级头衔" />
       <el-table-column prop="dataPermissionTypeLabel" label="数据权限" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column label="操作" width="180" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
