@@ -50,7 +50,9 @@ const inputRef = ref()
 
 const open = () => {
   visible.value = true
-  inputRef.value?.focus()
+  setTimeout(() => {
+    inputRef.value?.focus()
+  }, 0)
 }
 // 监听全局快捷键 （ctrl + k）
 onMounted(() => {
