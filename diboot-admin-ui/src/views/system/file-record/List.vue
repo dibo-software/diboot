@@ -95,20 +95,20 @@ const batchDownload = () => {
       @selection-change="(arr: FileRecord[]) => (selectedKeys = arr.map(e => e.uuid))"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column prop="fileName" label="文件名称" />
-      <el-table-column prop="fileType" label="文件类型" />
-      <el-table-column prop="fileSize" label="文件大小（Byte）" />
-      <el-table-column prop="createByName" label="创建者" />
-      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column prop="fileName" label="文件名称" show-overflow-tooltip />
+      <el-table-column prop="fileType" label="文件类型" width="140" />
+      <el-table-column prop="fileSize" label="文件大小（Byte）" width="140" />
+      <el-table-column prop="createByName" label="创建者" width="140" />
+      <el-table-column prop="createTime" label="创建时间" width="185" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.uuid)"
-              >详情</el-button
-            >
+              >详情
+            </el-button>
             <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.uuid)"
-              >编辑备注</el-button
-            >
+              >编辑备注
+            </el-button>
           </el-space>
         </template>
       </el-table-column>

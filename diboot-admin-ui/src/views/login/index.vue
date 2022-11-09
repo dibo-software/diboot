@@ -3,7 +3,7 @@ import type { FormInstance } from 'element-plus'
 import useAuthStore from '@/store/auth'
 
 const authStore = useAuthStore()
-
+const loading = ref(false)
 const formRef = ref<FormInstance>()
 const form = reactive({ username: 'admin', password: '123456', captcha: '', traceId: '' })
 const rules = {
@@ -34,15 +34,19 @@ const redirect = () => {
 
 const submitForm = async () => {
   await formRef.value?.validate(valid => {
-    if (valid)
+    if (valid) {
+      loading.value = true
       authStore
         .login(form)
         .then(() => {
           redirect()
+          loading.value = false
         })
         .catch(() => {
           refreshTraceId()
+          loading.value = false
         })
+    }
   })
 }
 </script>
@@ -82,7 +86,7 @@ const submitForm = async () => {
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button style="width: 100%" type="primary" @click="submitForm">登 陆</el-button>
+          <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">登 陆</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -112,14 +116,17 @@ const submitForm = async () => {
       background-size: 130vmax 130vmax, 80vmax 80vmax, 90vmax 90vmax, 110vmax 110vmax, 90vmax 90vmax;
       background-position: -80vmax - 80vmax, 60vmax -30vmax, 10vmax 10vmax, -30vmax -10vmax, 50vmax 50vmax;
     }
+
     25% {
       background-size: 100vmax 100vmax, 90vmax 90vmax, 100vmax 100vmax, 90vmax 90vmax, 60vmax 60vmax;
       background-position: -60vmax -90vmax, 50vmax -40vmax, 0vmax -20vmax, -40vmax -20vmax, 40vmax 60vmax;
     }
+
     50% {
       background-size: 80vmax 80vmax, 110vmax 110vmax, 80vmax 80vmax, 60vmax 60vmax, 80vmax 80vmax;
       background-position: -50vmax -70vmax, 40vmax -30vmax, 10vmax 0vmax, 20vmax 10vmax, 30vmax 70vmax;
     }
+
     75% {
       background-size: 90vmax 90vmax, 90vmax 90vmax, 100vmax 100vmax, 90vmax 90vmax, 70vmax 70vmax;
       background-position: -50vmax - 40vmax, 50vmax - 30vmax, 20vmax 0vmax, -10vmax 19vmax, 40vmax 60vmax;

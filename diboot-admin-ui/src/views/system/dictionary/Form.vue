@@ -160,7 +160,7 @@ defineExpose({ open })
                     <el-input v-model="element.itemValue" placeholder="条目编码" />
                   </el-form-item>
                 </td>
-                <td>
+                <td class="color-picker-td">
                   <el-color-picker
                     v-model="(element.extension ? element.extension : (element.extension = {})).color"
                     :predefine="predefineColors"
@@ -186,32 +186,44 @@ defineExpose({ open })
     </template>
   </el-dialog>
 </template>
-<style lang="scss">
+<style scoped lang="scss">
 .required-flag {
   color: var(--el-color-danger);
   font-weight: 400;
 }
+
 .children-table {
   border-spacing: 0;
   width: 100%;
+
   th {
     padding-bottom: 12px;
   }
+
   td {
     text-align: center;
     border-top: 2px solid transparent;
   }
+
   td > * {
     margin-top: 2px;
     margin-bottom: 18px;
   }
+
+  .color-picker-td {
+    padding-top: 2px;
+    padding-bottom: 18px;
+  }
+
   .drag-handle {
     cursor: move;
   }
+
   .sortable-ghost {
     td {
       border-top: 2px solid var(--el-color-primary);
       background: #efefef;
+
       * {
         visibility: hidden;
       }
