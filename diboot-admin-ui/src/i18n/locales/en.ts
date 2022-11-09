@@ -3,7 +3,7 @@ import type { Locale } from './zhCN'
 const en: Locale = {
   language: 'English',
   operation: {
-    create: 'New add',
+    create: 'Create',
     detail: 'Detail',
     update: 'Update',
     delete: 'Delete',
