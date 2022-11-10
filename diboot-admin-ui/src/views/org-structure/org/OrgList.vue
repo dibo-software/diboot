@@ -54,7 +54,7 @@ const onFormComplete = () => {
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearch"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>

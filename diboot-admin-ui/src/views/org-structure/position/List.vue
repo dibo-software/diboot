@@ -17,12 +17,6 @@ getList()
 // 选中的数据 Id 集合
 const selectedKeys = ref<string[]>([])
 
-const searchVal = ref('')
-const onSearchValChanged = (val: string) => {
-  queryParam.keywords = val
-  onSearch()
-}
-
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
@@ -48,12 +42,12 @@ const deletePermission = checkPermission('delete')
         </el-button>
         <el-space>
           <el-input
-            v-model="searchVal"
+            v-model="queryParam.keywords"
             class="search-input"
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearchValChanged"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>

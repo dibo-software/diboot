@@ -21,11 +21,6 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, remove } =
 
 getList()
 
-const searchVal = ref('')
-const onSearchValChanged = (val: string) => {
-  queryParam.keywords = val
-  onSearch()
-}
 const formPage = ref()
 const detailPage = ref()
 const table = ref()
@@ -55,12 +50,12 @@ function rowClick(row: DictionaryTableExpand) {
         </el-button>
         <el-space>
           <el-input
-            v-model="searchVal"
+            v-model="queryParam.keywords"
             class="search-input"
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearchValChanged"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>
