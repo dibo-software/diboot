@@ -72,7 +72,10 @@ defineExpose({
 const formRef = ref<FormInstance>()
 
 watch(visible, value => {
-  if (!value) formRef.value?.resetFields()
+  if (!value) {
+    formRef.value?.resetFields()
+    userPositionTableForm.value?.clearDataList()
+  }
 })
 
 const emit = defineEmits<{

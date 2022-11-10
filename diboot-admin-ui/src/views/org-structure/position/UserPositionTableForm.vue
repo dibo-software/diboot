@@ -42,6 +42,10 @@ const addItem = () => {
 const removeItem = (index: number) => {
   dataList.value.splice(index, 1)
 }
+// 清空数据字典
+const clearDataList = () => {
+  dataList.value.splice(0)
+}
 // 表单校验
 const formRef = ref<FormInstance>()
 const validate = () => {
@@ -57,7 +61,8 @@ const validate = () => {
   })
 }
 defineExpose({
-  validate
+  validate,
+  clearDataList
 })
 </script>
 <template>
@@ -148,8 +153,10 @@ defineExpose({
     color: var(--el-color-danger);
     font-weight: 400;
   }
+
   :deep(.el-form-item) {
     margin-bottom: 0;
+
     &.is-error {
       margin-bottom: 18px;
     }
