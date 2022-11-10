@@ -29,8 +29,6 @@ watch(
   { immediate: true }
 )
 
-getList()
-
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
