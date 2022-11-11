@@ -63,6 +63,13 @@ const { submit, submitting } = useForm({
 // 构建表单ref
 const formRef = ref<FormInstance>()
 
+watch(visible, value => {
+  if (!value) {
+    formRef.value?.resetFields()
+    model.value.children = []
+  }
+})
+
 // 添加数据字典条目
 const addItem = () => {
   validateChildren()
