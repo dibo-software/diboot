@@ -75,9 +75,6 @@ const rules: FormRules = {
           />
         </el-select>
       </el-form-item>
-      <el-form-item prop="gradeName" label="职级头衔">
-        <el-input v-model="model.gradeName" placeholder="请输入职级头衔" />
-      </el-form-item>
       <el-form-item prop="dataPermissionType" label="数据权限">
         <el-select v-model="model.dataPermissionType" placeholder="请选择数据权限">
           <el-option
