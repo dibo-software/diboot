@@ -264,7 +264,6 @@ CREATE TABLE ${SCHEMA}.iam_org (
     parent_ids_path varchar(32) NULL,
     root_org_id varchar(32) DEFAULT '0' NOT NULL,
     name varchar(100) NOT NULL,
-    short_name varchar(50) NOT NULL,
     type        varchar(100) DEFAULT 'DEPT' NOT NULL,
     code        varchar(50)  NOT NULL,
     manager_id varchar(32)  DEFAULT '0' NOT NULL,
@@ -282,7 +281,6 @@ execute sp_addextendedproperty 'MS_Description', N'上级ID','SCHEMA', '${SCHEMA
 execute sp_addextendedproperty 'MS_Description', N'上级ID路径','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'parent_ids_path';
 execute sp_addextendedproperty 'MS_Description', N'企业ID','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'root_org_id';
 execute sp_addextendedproperty 'MS_Description', N'名称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'name';
-execute sp_addextendedproperty 'MS_Description', N'简称','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'short_name';
 execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'type';
 execute sp_addextendedproperty 'MS_Description', N'编码','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'code';
 execute sp_addextendedproperty 'MS_Description', N'负责人','SCHEMA', '${SCHEMA}', 'table', iam_org, 'column', 'manager_id';

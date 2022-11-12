@@ -264,7 +264,6 @@ CREATE TABLE ${SCHEMA}.iam_org (
    parent_ids_path  VARCHAR2(500) NULL,
    root_org_id VARCHAR2(32) DEFAULT '0' NOT NULL,
    name VARCHAR2(100) NOT NULL,
-   short_name VARCHAR2(50) NOT NULL,
    type        VARCHAR2(100) DEFAULT 'DEPT' NOT NULL,
    code        VARCHAR2(50)  NOT NULL,
    manager_id  VARCHAR2(32) DEFAULT '0' NOT NULL,
@@ -282,7 +281,6 @@ comment on column ${SCHEMA}.iam_org.parent_id is '上级ID';
 comment on column ${SCHEMA}.iam_org.parent_ids_path  is '上级ID路径';
 comment on column ${SCHEMA}.iam_org.root_org_id is '企业ID';
 comment on column ${SCHEMA}.iam_org.name is '名称';
-comment on column ${SCHEMA}.iam_org.short_name is '简称';
 comment on column ${SCHEMA}.iam_org.type is '类型';
 comment on column ${SCHEMA}.iam_org.code is '编码';
 comment on column ${SCHEMA}.iam_org.manager_id is '负责人';

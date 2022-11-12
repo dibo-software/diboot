@@ -92,13 +92,8 @@ defineExpose({ open })
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="name" label="全称">
+          <el-form-item prop="name" label="名称">
             <el-input v-model="model.name" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="shortName" label="简称">
-            <el-input v-model="model.shortName" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">

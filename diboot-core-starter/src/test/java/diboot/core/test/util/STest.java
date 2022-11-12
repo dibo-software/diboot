@@ -19,6 +19,8 @@ import com.diboot.core.util.S;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.UUID;
+
 /**
  * S工具类测试
  * @author mazc@dibo.ltd

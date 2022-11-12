@@ -256,7 +256,6 @@ CREATE TABLE iam_org (
     parent_ids_path varchar(32) NULL,
     root_org_id varchar(32) DEFAULT '0' NOT NULL,
     name varchar(100) NOT NULL,
-    short_name varchar(50) NOT NULL,
     type        varchar(100) DEFAULT 'DEPT' NOT NULL,
     code        varchar(50)  NOT NULL,
     manager_id varchar(32)  DEFAULT '0' NOT NULL,
@@ -273,7 +272,6 @@ comment on column iam_org.parent_id is '上级ID';
 comment on column iam_org.parent_ids_path  is '上级ID路径';
 comment on column iam_org.root_org_id is '企业ID';
 comment on column iam_org.name is '名称';
-comment on column iam_org.short_name is '简称';
 comment on column iam_org.type is '类型';
 comment on column iam_org.code is '编码';
 comment on column iam_org.manager_id is '负责人';

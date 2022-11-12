@@ -69,8 +69,7 @@ const onFormComplete = () => {
       stripe
       height="100%"
     >
-      <el-table-column prop="name" label="全称" />
-      <el-table-column prop="shortName" label="简称" />
+      <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="updateTime" label="更新时间" width="185" />
       <el-table-column label="操作" width="160" fixed="right">

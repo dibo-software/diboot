@@ -76,12 +76,6 @@ public class IamOrg extends BaseEntity {
     @TableField()
     private String name;
 
-    // 短名称
-    @NotNull(message = "短名称不能为空")
-    @Length(max = 50, message = "短名称长度应小于50")
-    @TableField()
-    private String shortName;
-
     // 权限类别
     @NotNull(message = "组织类别不能为空")
     @Length(max = 100, message = "组织类别长度应小于100")
