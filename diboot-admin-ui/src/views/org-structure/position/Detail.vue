@@ -23,13 +23,13 @@ defineExpose({
         {{ model.code }}
       </el-descriptions-item>
       <el-descriptions-item label="职级">
-        {{ model.gradeValue }}
-      </el-descriptions-item>
-      <el-descriptions-item label="职级头衔">
         {{ model.gradeName }}
       </el-descriptions-item>
       <el-descriptions-item label="数据权限">
         {{ model.dataPermissionTypeLabel }}
+      </el-descriptions-item>
+      <el-descriptions-item label="虚拟岗位">
+        {{ model.isVirtual ? '是' : '否' }}
       </el-descriptions-item>
       <el-descriptions-item label="创建时间">
         {{ model.createTime }}

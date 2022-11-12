@@ -17,12 +17,6 @@ getList()
 // 选中的数据 Id 集合
 const selectedKeys = ref<string[]>([])
 
-const searchVal = ref('')
-const onSearchValChanged = (val: string) => {
-  queryParam.keywords = val
-  onSearch()
-}
-
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
@@ -48,12 +42,12 @@ const deletePermission = checkPermission('delete')
         </el-button>
         <el-space>
           <el-input
-            v-model="searchVal"
+            v-model="queryParam.keywords"
             class="search-input"
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearchValChanged"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>
@@ -71,8 +65,7 @@ const deletePermission = checkPermission('delete')
       <el-table-column type="selection" width="55" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="编码" />
-      <el-table-column prop="gradeValue" label="职级" />
-      <el-table-column prop="gradeName" label="职级头衔" />
+      <el-table-column prop="gradeName" label="职级" />
       <el-table-column prop="dataPermissionTypeLabel" label="数据权限" />
       <el-table-column label="操作" width="180" fixed="right">
         <template #default="{ row }">

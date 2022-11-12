@@ -72,7 +72,10 @@ defineExpose({
 const formRef = ref<FormInstance>()
 
 watch(visible, value => {
-  if (!value) formRef.value?.resetFields()
+  if (!value) {
+    formRef.value?.resetFields()
+    userPositionTableForm.value?.clearDataList()
+  }
 })
 
 const emit = defineEmits<{
@@ -106,7 +109,13 @@ const rules: FormRules = {
     { validator: checkUserNumDuplicate, trigger: 'blur' }
   ],
   gender: { required: true, message: '不能为空', whitespace: true },
-  status: { required: true, message: '不能为空', whitespace: true }
+  status: { required: true, message: '不能为空', whitespace: true },
+  email: {
+    type: 'email',
+    message: '请输入正确的邮箱地址',
+    trigger: ['blur', 'change']
+  },
+  mobilePhone: { pattern: /^1[0-9][0-9]\d{8}$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }
 }
 </script>
 

@@ -7,19 +7,23 @@ import type { Dictionary } from '@/views/system/dictionary/type'
 interface DictionarySearch extends Dictionary {
   keywords?: string
 }
-const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<Dictionary, DictionarySearch>({
+
+type DictionaryTableExpand = Dictionary & {
+  isExpand?: boolean | undefined
+}
+
+const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<
+  DictionaryTableExpand,
+  DictionarySearch
+>({
   baseApi: '/dictionary'
 })
 
 getList()
 
-const searchVal = ref('')
-const onSearchValChanged = (val: string) => {
-  queryParam.keywords = val
-  onSearch()
-}
 const formPage = ref()
 const detailPage = ref()
+const table = ref()
 const openForm = (id?: string) => {
   formPage.value?.open(id)
 }
@@ -29,6 +33,13 @@ const openDetail = (id: string) => {
 
 const updatePermission = checkPermission('update')
 const deletePermission = checkPermission('delete')
+
+function rowClick(row: DictionaryTableExpand) {
+  const index: number = dataList.findIndex(v => v.id === row.id)
+  const { isExpand } = dataList[index]
+  dataList[index].isExpand = !isExpand
+  table.value?.toggleRowExpansion(row, !isExpand)
+}
 </script>
 <template>
   <div class="list-page">
@@ -39,18 +50,19 @@ const deletePermission = checkPermission('delete')
         </el-button>
         <el-space>
           <el-input
-            v-model="searchVal"
+            v-model="queryParam.keywords"
             class="search-input"
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearchValChanged"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>
       </el-space>
     </el-header>
     <el-table
+      ref="table"
       v-loading="loading"
       class="list-body"
       row-key="id"
@@ -58,6 +70,7 @@ const deletePermission = checkPermission('delete')
       :data="dataList"
       stripe
       height="100%"
+      @row-click="rowClick"
     >
       <el-table-column type="expand">
         <template #default="props">
@@ -88,12 +101,19 @@ const deletePermission = checkPermission('delete')
         </template>
       </el-table-column>
       <el-table-column prop="description" label="备注" />
-      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column prop="createTime" label="创建时间" width="185" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <template v-if="!row.parentId || row.parentId === '0'">
             <el-space>
-              <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
+              <el-button
+                v-has-permission="'detail'"
+                text
+                bg
+                type="primary"
+                size="small"
+                @click.stop="openDetail(row.id)"
+              >
                 {{ $t('operation.detail') }}
               </el-button>
               <el-dropdown v-has-permission="['update', 'delete']">
@@ -142,6 +162,7 @@ const deletePermission = checkPermission('delete')
   box-sizing: border-box;
   padding: 0 50px;
 }
+
 .dict-item {
   margin-right: 8px;
 }

@@ -29,8 +29,6 @@ watch(
   { immediate: true }
 )
 
-getList()
-
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
@@ -54,7 +52,7 @@ const onFormComplete = () => {
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearch"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>

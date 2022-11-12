@@ -24,11 +24,6 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, remove } =
   baseApi: '/iam/user'
 })
 getList()
-const searchVal = ref('')
-const onSearchValChanged = (val: string) => {
-  queryParam.keywords = val
-  onSearch()
-}
 
 const detailRef = ref()
 const openDetail = (id: string) => {
@@ -57,12 +52,12 @@ const deletePermission = checkPermission('delete')
         </el-button>
         <el-space>
           <el-input
-            v-model="searchVal"
+            v-model="queryParam.keywords"
             class="search-input"
             placeholder="编码/名称"
             clearable
             :suffix-icon="Search"
-            @change="onSearchValChanged"
+            @keyup.enter="onSearch"
           />
           <el-button :icon="Refresh" circle @click="getList()" />
         </el-space>
@@ -131,6 +126,7 @@ const deletePermission = checkPermission('delete')
   padding: 10px;
   border-bottom: 1px solid var(--el-border-color);
 }
+
 .list-operation {
   margin-bottom: 0;
   padding: 0;
