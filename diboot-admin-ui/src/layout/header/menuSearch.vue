@@ -54,6 +54,12 @@ const open = () => {
     inputRef.value?.focus()
   }, 0)
 }
+
+// 关闭搜索菜单后清空搜索列表
+watch(visible, val => {
+  !val && results.value.splice(0)
+})
+
 // 监听全局快捷键 （ctrl + k）
 onMounted(() => {
   let keyList: string[] = []
