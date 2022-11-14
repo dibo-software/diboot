@@ -34,6 +34,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.file.config.Cons;
 import com.diboot.file.excel.BaseExcelModel;
+import com.diboot.file.excel.TableHead;
 import com.diboot.file.excel.annotation.DuplicateStrategy;
 import com.diboot.file.excel.annotation.EmptyStrategy;
 import com.diboot.file.excel.annotation.ExcelBindDict;
@@ -446,8 +447,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      *
      * @return 表头映射
      */
-    public List<ExcelHelper.TableHead> getTableHead() {
-        return ExcelHelper.buildTableHead(headNameMap, fieldNameMap);
+    public List<TableHead> getTableHeads() {
+        return ExcelHelper.buildTableHeads(headNameMap, fieldNameMap);
     }
 
     /**

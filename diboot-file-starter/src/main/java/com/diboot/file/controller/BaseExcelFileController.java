@@ -86,7 +86,7 @@ public abstract class BaseExcelFileController extends BaseController {
 
         Map<String, Object> dataMap = new HashMap<>(8);
         dataMap.put("id", fileRecord.getId());
-        dataMap.put("tableHead", listener.getTableHead());
+        dataMap.put("tableHeads", listener.getTableHeads());
         dataMap.put("dataList", listener.getPreviewDataList());
         dataMap.put("totalCount", listener.getTotalCount());
         if (listener.getErrorCount() > 0) {

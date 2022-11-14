@@ -20,6 +20,7 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.Head;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.read.metadata.property.ExcelReadHeadProperty;
+import com.diboot.file.excel.TableHead;
 import com.diboot.file.util.ExcelHelper;
 import lombok.Getter;
 import lombok.Setter;
@@ -141,8 +142,8 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
      *
      * @return 表头映射
      */
-    public List<ExcelHelper.TableHead> getTableHead() {
-        return ExcelHelper.buildTableHead(headNameMap, fieldNameMap);
+    public List<TableHead> getTableHeads() {
+        return ExcelHelper.buildTableHeads(headNameMap, fieldNameMap);
     }
 
     /**
