@@ -31,8 +31,7 @@ export const imageBindSrc = (file: FileRecord) => {
  * @param onDownloadProgress
  */
 export const fileDownload = (url: string, params?: unknown, onDownloadProgress?: (percentage: number) => void) => {
-  if (isExternal(url))
-    window.location.href = url + (/\?/.test(url) ? '&' : '?') + qs.stringify(params, { arrayFormat: 'repeat' })
+  if (isExternal(url)) window.open(url + (/\?/.test(url) ? '&' : '?') + qs.stringify(params, { arrayFormat: 'repeat' }))
   else {
     return new Promise<void>((resolve, reject) => {
       ;(Array.isArray(params)
