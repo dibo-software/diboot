@@ -130,7 +130,7 @@ public class Pagination implements Serializable {
         // 解析排序
         if (V.notEmpty(this.orderBy)) {
             orderItemList = new ArrayList<>();
-            // orderBy=shortName:DESC,age:ASC,birthdate
+            // orderBy=name:DESC,age:ASC,birthdate
             String[] orderByFields = S.split(this.orderBy);
             for (String field : orderByFields) {
                 V.securityCheck(field);

@@ -17,9 +17,7 @@ package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
-import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.vo.LabelValue;
-import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
@@ -40,9 +38,6 @@ import java.util.List;
 @Accessors(chain = true)
 public class IamUserVO extends IamUser {
     private static final long serialVersionUID = 7571698765478647277L;
-
-    @BindField(entity = IamOrg.class, field = "shortName", condition = "this.org_id=id")
-    private String orgShortName;
 
     @BindDict(type="GENDER", field = "gender")
     private LabelValue genderLabel;

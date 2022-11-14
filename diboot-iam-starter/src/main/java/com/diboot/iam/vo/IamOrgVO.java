@@ -53,10 +53,6 @@ public class IamOrgVO extends IamOrg  {
     @BindField(entity = IamOrg.class, field = "name", condition = "this.parent_id=id")
     private String parentName;
 
-    // 字段关联：this.parent_id=id
-    @BindField(entity = IamOrg.class, field = "shortName", condition = "this.parent_id=id")
-    private String parentShortName;
-
     @BindEntityList(entity = IamOrg.class, condition = "this.id=parent_id")
     private List<IamOrgVO> children;
 

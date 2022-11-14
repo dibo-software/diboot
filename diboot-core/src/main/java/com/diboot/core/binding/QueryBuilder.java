@@ -481,7 +481,7 @@ public class QueryBuilder {
             return Collections.emptyList();
         }
         // 解析排序
-        // orderBy=shortName:DESC,age:ASC,birthdate
+        // orderBy=name:DESC,age:ASC,birthdate
         String[] orderByFields = S.split(pagination.getOrderBy());
         List<String> orderFields = new ArrayList<>(orderByFields.length);
         for (String field : orderByFields) {

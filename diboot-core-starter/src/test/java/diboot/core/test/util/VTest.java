@@ -126,7 +126,7 @@ public class VTest {
         Assert.assertTrue(isValidCol);
         isValidCol = V.isValidSqlParam("/SELECT*/(test)");
         Assert.assertFalse(isValidCol);
-        isValidCol = V.isValidSqlParam("shortName:DESC");
+        isValidCol = V.isValidSqlParam("name:DESC");
         Assert.assertTrue(isValidCol);
         isValidCol = V.isValidSqlParam("birth_date");
         Assert.assertTrue(isValidCol);

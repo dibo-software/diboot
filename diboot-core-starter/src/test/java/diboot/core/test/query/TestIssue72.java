@@ -46,7 +46,7 @@ public class TestIssue72 {
 
         // 前端传入total 缓存，本次不计算。
         // pagination.setTotalCount(100);
-        // 默认asc, pagination.setOrderBy("orderBy=shortName:DESC,age:ASC,birthdate");
+        // 默认asc, pagination.setOrderBy("orderBy=name:DESC,age:ASC,birthdate");
         pagination.setOrderBy("purchase_form_plan_id");
 
         // ### SQL: SELECT purchase_form_plan_id, goods_id FROM tbl_purchase_rel_plan_goods WHERE deleted = 0 AND (purchase_form_plan_id IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) AND tenant_id = 1
