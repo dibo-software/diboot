@@ -13,7 +13,7 @@ const allMessages = ref()
 
 <template>
   <div>
-    <el-popover v-model="visible" width="auto">
+    <el-popover v-model="visible" width="auto" :show-after="200">
       <template #reference>
         <el-badge :value="total" :hidden="!total" @click="visible = true">
           <el-icon :size="22">

@@ -45,7 +45,7 @@ watch(
 
 <template>
   <span>
-    <el-popover :title="`语言标识：${value}`" width="auto" trigger="hover" :disabled="!value">
+    <el-popover :title="`语言标识：${value}`" width="auto" trigger="hover" :disabled="!value" :show-after="150">
       <template #reference>
         <span style="cursor: pointer" @click="visible = true">
           <el-icon
