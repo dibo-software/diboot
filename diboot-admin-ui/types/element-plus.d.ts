@@ -6,7 +6,7 @@ declare module 'element-plus' {
   type ElTreeInstanceType = InstanceType<typeof ElTree>
 
   interface UploadFile {
-    uuid?: string
+    id?: string
     accessUrl?: string
   }
 }

@@ -17,7 +17,7 @@ declare global {
    * 文件记录
    */
   interface FileRecord {
-    uuid: string
+    id: string
     // 应用模块
     appModule?: string
     // MD5标识

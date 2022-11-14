@@ -27,7 +27,6 @@ const emit = defineEmits<{
 
 const { submitting, submit } = useForm({
   baseApi,
-  primaryKey: 'uuid',
   successCallback(id) {
     emit('complete', id)
     visible.value = false

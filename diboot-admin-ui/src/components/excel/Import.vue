@@ -78,8 +78,8 @@ const handlePreview = () => {
 // 上传数据
 const handleUpload = () => {
   const formData = new FormData()
-  if (data.value && data.value.uuid) {
-    formData.append('uuid', data.value.uuid)
+  if (data.value && data.value.id) {
+    formData.append('id', data.value.id)
     sendRequest(`${props.excelBaseApi}/preview-save`, formData)
   } else {
     formData.append('file', fileList[0].raw as Blob)

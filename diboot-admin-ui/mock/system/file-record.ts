@@ -3,7 +3,7 @@ import crudTemplate from '../_util/crud-template'
 
 export const dataList: FileRecord[] = [
   {
-    uuid: '037d8cbdd45f4cfa9844942eeb95504c',
+    id: '037d8cbdd45f4cfa9844942eeb95504c',
     fileName: 'logo.png',
     fileType: 'png',
     fileSize: '1908530',
@@ -15,7 +15,6 @@ export const dataList: FileRecord[] = [
 
 const crud = crudTemplate({
   baseApi: '/file-record',
-  primaryKey: 'uuid',
   dataList,
   fuzzyMatchKeys: ['fileName']
 })

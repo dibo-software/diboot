@@ -5,7 +5,7 @@ export interface TableHead {
 }
 
 export interface ExcelPreview {
-  uuid: string
+  id: string
   tableHead: TableHead[]
   dataList: Record<string, unknown>[]
   totalCount: string

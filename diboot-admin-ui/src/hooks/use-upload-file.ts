@@ -2,7 +2,7 @@ import type { UploadRequestOptions, UploadUserFile } from 'element-plus'
 import type { ApiData } from '@/utils/request'
 import { imageBindSrc } from '@/utils/file'
 
-export default (setValue: (fileUids?: string) => void, getFileList: () => FileRecord[] | undefined) => {
+export default (setValue: (fileIds?: string) => void, getFileList: () => FileRecord[] | undefined) => {
   const uploadFileList: UploadUserFile[] = reactive([])
 
   watch(getFileList, value => {
@@ -10,7 +10,7 @@ export default (setValue: (fileUids?: string) => void, getFileList: () => FileRe
     if (value)
       uploadFileList.push(
         ...value.map(e => ({
-          uuid: e.uuid,
+          id: e.id,
           url: imageBindSrc(e).src,
           name: e.fileName,
           accessUrl: e.accessUrl
@@ -18,18 +18,18 @@ export default (setValue: (fileUids?: string) => void, getFileList: () => FileRe
       )
   })
 
-  const getFileUids = () => {
-    return uploadFileList.map(e => String(e.uuid)).join()
+  const getFileIds = () => {
+    return uploadFileList.map(e => String(e.id)).join()
   }
 
   const onSuccess = (response: ApiData<FileRecord>, uploadFile: UploadUserFile) => {
     const data = response.data
     if (data) {
-      uploadFile.uuid = data.uuid
+      uploadFile.id = data.id
       uploadFile.url = imageBindSrc(data).src
       uploadFile.accessUrl = data.accessUrl
     }
-    setValue(getFileUids())
+    setValue(getFileIds())
   }
 
   const httpRequest = async (options: UploadRequestOptions) => {
@@ -46,6 +46,6 @@ export default (setValue: (fileUids?: string) => void, getFileList: () => FileRe
     httpRequest,
     fileList: uploadFileList,
     onSuccess,
-    onRemove: () => setValue(getFileUids())
+    onRemove: () => setValue(getFileIds())
   }
 }

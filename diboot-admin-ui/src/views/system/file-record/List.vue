@@ -92,7 +92,7 @@ const batchDownload = () => {
       :data="dataList"
       stripe
       height="100%"
-      @selection-change="(arr: FileRecord[]) => (selectedKeys = arr.map(e => e.uuid))"
+      @selection-change="(arr: FileRecord[]) => (selectedKeys = arr.map(e => e.id))"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="fileName" label="文件名称" show-overflow-tooltip />
@@ -103,10 +103,10 @@ const batchDownload = () => {
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
-            <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.uuid)"
+            <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)"
               >详情
             </el-button>
-            <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.uuid)"
+            <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)"
               >编辑备注
             </el-button>
           </el-space>
