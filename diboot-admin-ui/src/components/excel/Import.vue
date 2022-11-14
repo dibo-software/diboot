@@ -202,7 +202,7 @@ const TableColumn = defineComponent({
           </el-collapse-item>
         </el-collapse>
         <el-table v-if="data.dataList" style="width: 100%" :data="data.dataList" border>
-          <table-column v-for="(item, index) in data.tableHead" :key="index" :column="item" />
+          <table-column v-for="(item, index) in data.tableHeads" :key="index" :column="item" />
         </el-table>
       </div>
     </el-drawer>

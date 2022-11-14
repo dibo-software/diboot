@@ -6,7 +6,7 @@ export interface TableHead {
 
 export interface ExcelPreview {
   id: string
-  tableHead: TableHead[]
+  tableHeads: TableHead[]
   dataList: Record<string, unknown>[]
   totalCount: string
   errorCount?: string
