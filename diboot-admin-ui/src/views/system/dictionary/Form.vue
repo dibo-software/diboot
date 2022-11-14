@@ -18,6 +18,9 @@ withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['complete'])
 
+// 新建完是否清空表单继续填写
+const isContinueAdd = ref(false)
+
 // 加载表单信息
 const { loadData, loading, model } = useDetail<Dictionary>(baseApi)
 const title = ref('')
@@ -56,7 +59,8 @@ const { submit, submitting } = useForm({
   },
   successCallback(id) {
     emit('complete', id)
-    visible.value = false
+    visible.value = isContinueAdd.value
+    isContinueAdd.value && resetFormContent()
   }
 })
 
@@ -65,10 +69,21 @@ const formRef = ref<FormInstance>()
 
 watch(visible, value => {
   if (!value) {
-    formRef.value?.resetFields()
-    model.value.children = []
+    resetFormContent()
   }
 })
+
+// 清空表单所有内容
+const resetFormContent = () => {
+  formRef.value?.resetFields()
+  model.value.children = []
+}
+
+// 保存之前判断是否确认并继续添加
+const beforeSubmit = (value: boolean) => {
+  isContinueAdd.value = value
+  submit(model.value, formRef.value)
+}
 
 // 添加数据字典条目
 const addItem = () => {
@@ -188,7 +203,10 @@ defineExpose({ open })
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">确认</el-button>
+        <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
+          >确认并继续添加
+        </el-button>
+        <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">确认</el-button>
       </span>
     </template>
   </el-dialog>
