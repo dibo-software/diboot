@@ -21,7 +21,7 @@ const searchWord = ref('')
 watch(searchWord, val => {
   treeRef.value?.filter(val)
 })
-const filterNode = (value: string, data: Partial<OrgModel>) => !value || data.shortName?.includes(value)
+const filterNode = (value: string, data: Partial<OrgModel>) => !value || data.name?.includes(value)
 
 const emit = defineEmits<{
   (e: 'clickNode', currentKey?: string): void
@@ -58,7 +58,7 @@ defineExpose({
         :default-expand-all="true"
         :highlight-current="true"
         :expand-on-click-node="false"
-        :props="{ label: 'shortName' }"
+        :props="{ label: 'name' }"
         :data="dataList"
         :check-strictly="true"
         :filter-node-method="filterNode"

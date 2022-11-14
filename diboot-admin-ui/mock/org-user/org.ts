@@ -8,14 +8,14 @@ import crudTemplate from '../_util/crud-template'
 const baseUrl = '/api/org'
 
 const arrList: any[][] = [
-  ['1', '0', '0', '帝博集团', '帝博集团', 'COMP', 'DIBO_GROUP', '0', 1, '', '2022-06-01'],
-  ['2', '1', '1', '苏州帝博', '苏州帝博', 'COMP', 'SUZHOU_DIBO', '0', 2, '', '2022-06-01'],
-  ['3', '1', '1', '成都帝博', '成都帝博', 'COMP', 'CHENGDU_DIBO', '0', 2, '', '2022-06-01'],
-  ['4', '2', '2', '总经理办公室', '总经办', 'DEPT', 'ZJB', '0', 3, '', '2022-06-01'],
-  ['5', '1', '1', '财务部', '财务部', 'DEPT', 'CWB', '0', 3, '', '2022-06-01'],
-  ['6', '1', '1', 'HR', 'HR', 'DEPT', 'HR', '0', 3, '', '2022-06-01'],
-  ['7', '1', '1', '研发事业部', '研发部', 'DEPT', 'XMSYB', '0', 3, '', '2022-06-01'],
-  ['8', '1', '1', '市场部', '市场部', 'DEPT', 'SCB', '0', 3, '', '2022-06-01']
+  ['1', '0', '0', '帝博集团', 'COMP', 'DIBO_GROUP', '0', 1, '', '2022-06-01'],
+  ['2', '1', '1', '苏州帝博', 'COMP', 'SUZHOU_DIBO', '0', 2, '', '2022-06-01'],
+  ['3', '1', '1', '成都帝博', 'COMP', 'CHENGDU_DIBO', '0', 2, '', '2022-06-01'],
+  ['4', '2', '2', '总经理办公室', 'DEPT', 'ZJB', '0', 3, '', '2022-06-01'],
+  ['5', '1', '1', '财务部', 'DEPT', 'CWB', '0', 3, '', '2022-06-01'],
+  ['6', '1', '1', 'HR', 'DEPT', 'HR', '0', 3, '', '2022-06-01'],
+  ['7', '1', '1', '研发事业部', 'DEPT', 'XMSYB', '0', 3, '', '2022-06-01'],
+  ['8', '1', '1', '市场部', 'DEPT', 'SCB', '0', 3, '', '2022-06-01']
 ]
 
 const dataList = initOrgList(arrList)
@@ -23,8 +23,8 @@ const dataList = initOrgList(arrList)
 const crud = crudTemplate({
   baseApi: '/iam/org',
   dataList,
-  keywordsKeys: ['name', 'shortName', 'code'],
-  fuzzyMatchKeys: ['name', 'shortName', 'code']
+  keywordsKeys: ['name', 'code'],
+  fuzzyMatchKeys: ['name', 'code']
 })
 
 const mockMethods: MockMethod[] = [
@@ -74,13 +74,12 @@ function initOrgList(arrList: any[][]): OrgModel[] {
         parentId: arr[1],
         topOrgId: arr[2],
         name: arr[3],
-        shortName: arr[4],
-        type: arr[5],
-        code: arr[6],
-        managerId: arr[7],
-        depth: arr[8],
-        orgComment: arr[9],
-        createTime: arr[10]
+        type: arr[4],
+        code: arr[5],
+        managerId: arr[6],
+        depth: arr[7],
+        orgComment: arr[8],
+        createTime: arr[9]
       } as OrgModel
     })
 }

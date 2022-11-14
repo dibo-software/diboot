@@ -22,7 +22,7 @@ const { initRelatedData, relatedData } = useOption({
   load: {
     orgTree: {
       type: 'IamOrg',
-      label: 'shortName',
+      label: 'name',
       parent: 'parentId',
       lazyChild: false
     }

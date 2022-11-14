@@ -12,7 +12,7 @@ const { initRelatedData, relatedData } = useOption({
   load: {
     orgTree: {
       type: 'IamOrg',
-      label: 'shortName',
+      label: 'name',
       parent: 'parentId',
       lazyChild: false
     }
@@ -61,7 +61,6 @@ const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code',
 const rules: FormRules = {
   parentId: { required: true, message: '不能为空', whitespace: true },
   name: { required: true, message: '不能为空', whitespace: true },
-  shortName: { required: true, message: '不能为空', whitespace: true },
   code: [
     { required: true, message: '不能为空', whitespace: true },
     { validator: checkCodeDuplicate, trigger: 'blur' }
@@ -108,7 +107,7 @@ defineExpose({ open })
           <el-form-item prop="managerId" label="负责人">
             <di-list-selector
               v-model="model.managerId"
-              :tree="{ type: 'IamOrg', label: 'shortName', parent: 'parentId', parentPath: 'parentIdsPath' }"
+              :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
               :list="{
                 baseApi: '/iam/user',
                 relatedKey: 'orgId',

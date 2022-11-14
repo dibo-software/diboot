@@ -3,7 +3,6 @@ export interface OrgModel {
   parentId: string
   topOrgId: string
   name: string
-  shortName: string
   type: string
   code: string
   sortId?: string
