@@ -28,11 +28,14 @@ export function checkRole(value: string | Array<string>, not = false, all = fals
  * @param {string | Array} value 校验值
  * @param {boolean} not 取反
  * @param {boolean} all 全部
+ * @param {string} routeName 路由名称(可选，默认当前路由)
  * @returns {Boolean}
  */
-export function checkPermission(value: string | Array<string>, not = false, all = false) {
+export function checkPermission(value: string | Array<string>, not = false, all = false, routeName?: string) {
   if (value && value.length) {
-    const permissions = router.currentRoute.value.meta?.permissions ?? []
+    const permissions = routeName
+      ? router.getRoutes().find(e => e.name === routeName)?.meta?.permissions ?? []
+      : router.currentRoute.value.meta?.permissions ?? []
     const permissionList = value instanceof Array ? value : [value]
     const findFn = (permission: string) => permissions.includes(permission)
     const exist = all ? permissionList.every(findFn) : permissionList.some(findFn)
