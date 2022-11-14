@@ -210,7 +210,7 @@ const rules: FormRules = {
         </el-col>
         <el-col v-if="model.isSysAccount" :md="12" :sm="24">
           <el-form-item prop="roleIdList" label="角色">
-            <di-list-selector
+            <di-selector
               v-model="model.roleIdList"
               multiple
               :list="{

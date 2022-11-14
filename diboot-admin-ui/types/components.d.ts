@@ -11,7 +11,7 @@ declare module '@vue/runtime-core' {
     DateRange: typeof import('@/components/date-range/index.vue')['default']
     DiInput: typeof import('@/components/di/Input.vue')['default']
     DiList: typeof import('@/components/di/List.vue')['default']
-    DiListSelector: typeof import('@/components/di/ListSelector.vue')['default']
+    DiSelector: typeof import('@/components/di/Selector.vue')['default']
     DiTable: typeof import('@/components/di/Table.vue')['default']
     DiTree: typeof import('@/components/di/Tree.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']

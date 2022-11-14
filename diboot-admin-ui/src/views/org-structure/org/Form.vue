@@ -105,7 +105,7 @@ defineExpose({ open })
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="managerId" label="负责人">
-            <di-list-selector
+            <di-selector
               v-model="model.managerId"
               :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
               :list="{

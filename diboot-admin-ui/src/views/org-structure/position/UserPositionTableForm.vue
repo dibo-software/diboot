@@ -82,7 +82,7 @@ defineExpose({
               trigger: 'blur'
             }"
           >
-            <di-list-selector
+            <di-selector
               v-model="scope.row.positionId"
               :list="{
                 baseApi: '/iam/position',
