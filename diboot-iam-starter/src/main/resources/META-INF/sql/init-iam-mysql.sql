@@ -1,5 +1,5 @@
 -- 用户表
-create table iam_user
+create table dbt_iam_user
 (
   id           varchar(32) NOT NULL comment 'ID'  primary key,
   tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -17,13 +17,13 @@ create table iam_user
   update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )DEFAULT CHARSET=utf8 COMMENT '系统用户';
 -- 索引
-create index idx_iam_user_1 on iam_user (org_id);
-create index idx_iam_user_2 on iam_user (mobile_phone);
-create index idx_iam_user_num on iam_user (user_num);
-create index idx_iam_user_tenant on iam_user (tenant_id);
+create index idx_dbt_iam_user_1 on dbt_iam_user (org_id);
+create index idx_dbt_iam_user_2 on dbt_iam_user (mobile_phone);
+create index idx_dbt_iam_user_num on dbt_iam_user (user_num);
+create index idx_dbt_iam_user_tenant on dbt_iam_user (tenant_id);
 
 -- 账号表
-create table iam_account
+create table dbt_iam_account
 (
   id           varchar(32) NOT NULL COMMENT 'ID' primary key,
   tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -39,11 +39,11 @@ create table iam_account
   update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 ) DEFAULT CHARSET=utf8 COMMENT '登录账号';
 -- 创建索引
-create index idx_iam_account on iam_account(auth_account, auth_type, user_type);
-create index idx_iam_account_tenant on iam_account (tenant_id);
+create index idx_dbt_iam_account on dbt_iam_account(auth_account, auth_type, user_type);
+create index idx_dbt_iam_account_tenant on dbt_iam_account (tenant_id);
 
 -- 角色表
-create table iam_role
+create table dbt_iam_role
 (
   id        varchar(32) NOT NULL comment 'ID'    primary key,
   tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -55,10 +55,10 @@ create table iam_role
   update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )DEFAULT CHARSET=utf8 COMMENT '角色';
 -- 创建索引
-create index idx_iam_role_tenant on iam_role (tenant_id);
+create index idx_dbt_iam_role_tenant on dbt_iam_role (tenant_id);
 
 -- 用户角色表
-create table iam_user_role
+create table dbt_iam_user_role
 (
   id        varchar(32) NOT NULL comment 'ID'      primary key,
   tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -70,11 +70,11 @@ create table iam_user_role
   update_time datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )DEFAULT CHARSET=utf8 COMMENT '用户角色关联';
 -- 索引
-create index idx_iam_user_role on iam_user_role (user_type, user_id);
-create index idx_iam_user_role_tenant on iam_user_role (tenant_id);
+create index idx_dbt_iam_user_role on dbt_iam_user_role (user_type, user_id);
+create index idx_dbt_iam_user_role_tenant on dbt_iam_user_role (tenant_id);
 
 -- 前端资源权限表
-create table iam_resource_permission
+create table dbt_iam_resource
 (
     id                varchar(32)                           NOT NULL comment 'ID' primary key,
     parent_id         varchar(32) NULL default '0' comment '父级资源',
@@ -94,11 +94,11 @@ create table iam_resource_permission
     update_time       datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )DEFAULT CHARSET=utf8 COMMENT '资源权限';
 -- 索引
-create index idx_iam_resource_permission on iam_resource_permission (parent_id);
-create index idx_iam_resource_permission_tenant on iam_resource_permission (tenant_id);
+create index idx_dbt_iam_resource on dbt_iam_resource (parent_id);
+create index idx_dbt_iam_resource_tenant on dbt_iam_resource (tenant_id);
 
 -- 角色-权限
-create table iam_role_resource
+create table dbt_iam_role_resource
 (
   id  varchar(32) NOT NULL comment 'ID' primary key,
   tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -106,13 +106,13 @@ create table iam_role_resource
   resource_id varchar(32) not null comment '资源ID',
   is_deleted    tinyint(1) default 0 not null comment '是否删除',
   create_time   datetime  default CURRENT_TIMESTAMP not null comment '创建时间'
-)DEFAULT CHARSET=utf8 COMMENT '角色资源';
+)DEFAULT CHARSET=utf8 COMMENT '角色权限';
 -- 索引
-create index idx_iam_role_resource on iam_role_resource (role_id, resource_id);
-create index idx_iam_role_resource_tenant on iam_role_resource (tenant_id);
+create index idx_dbt_iam_role_resource on dbt_iam_role_resource (role_id, resource_id);
+create index idx_dbt_iam_role_resource_tenant on dbt_iam_role_resource (tenant_id);
 
 -- 登录日志表
-create table iam_login_trace
+create table dbt_iam_login_trace
 (
   id           varchar(32) NOT NULL comment 'ID'   primary key,
   tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -126,12 +126,12 @@ create table iam_login_trace
   create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间'
 ) DEFAULT CHARSET=utf8 COMMENT '登录日志';
 -- 创建索引
-create index idx_iam_login_trace on iam_login_trace (user_type, user_id);
-create index idx_iam_login_trace_2 on iam_login_trace (auth_account);
-create index idx_iam_login_trace_tenant on iam_login_trace (tenant_id);
+create index idx_dbt_iam_login_trace on dbt_iam_login_trace (user_type, user_id);
+create index idx_dbt_iam_login_trace_2 on dbt_iam_login_trace (auth_account);
+create index idx_dbt_iam_login_trace_tenant on dbt_iam_login_trace (tenant_id);
 
 -- 操作日志表
-create table iam_operation_log
+create table dbt_iam_operation_log
 (
   id        varchar(32) NOT NULL comment 'ID'   primary key,
   tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -152,11 +152,11 @@ create table iam_operation_log
 )
   DEFAULT CHARSET=utf8 COMMENT '操作日志';
 -- 创建索引
-create index idx_iam_operation_log on iam_operation_log (user_type, user_id);
-create index idx_iam_operation_log_tenant on iam_operation_log (tenant_id);
+create index idx_dbt_iam_operation_log on dbt_iam_operation_log (user_type, user_id);
+create index idx_dbt_iam_operation_log_tenant on dbt_iam_operation_log (tenant_id);
 
 -- 组织表
-create table iam_org
+create table dbt_iam_org
 (
     id              varchar(32)  NOT NULL comment 'ID' primary key,
     tenant_id       varchar(32)  NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -175,12 +175,12 @@ create table iam_org
     update_time     datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
   comment '组织';
-create index idx_iam_org on iam_org (parent_id);
-create index idx_iam_org_tenant on iam_org (tenant_id);
-create index idx_iam_org_parent_path on iam_org (parent_ids_path);
+create index idx_dbt_iam_org on dbt_iam_org (parent_id);
+create index idx_dbt_iam_org_tenant on dbt_iam_org (tenant_id);
+create index idx_dbt_iam_org_parent_path on dbt_iam_org (parent_ids_path);
 
 -- 岗位
-create table iam_position
+create table dbt_iam_position
 (
   id        varchar(32) NOT NULL comment 'ID' primary key,
   tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -195,11 +195,11 @@ create table iam_position
   update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )
 comment '岗位';
-create index idx_iam_position on iam_position (code);
-create index idx_iam_position_tenant on iam_position (tenant_id);
+create index idx_dbt_iam_position on dbt_iam_position (code);
+create index idx_dbt_iam_position_tenant on dbt_iam_position (tenant_id);
 
 -- 用户岗位
-create table iam_user_position
+create table dbt_iam_user_position
 (
   id        varchar(32) NOT NULL comment 'ID' primary key,
   tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -213,11 +213,11 @@ create table iam_user_position
   update_time         datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
 )
 comment '用户岗位关联';
-create index idx_iam_user_position on iam_user_position (user_type, user_id);
-create index idx_iam_user_position_2 on iam_user_position (org_id, position_id);
+create index idx_dbt_iam_user_position on dbt_iam_user_position (user_type, user_id);
+create index idx_dbt_iam_user_position_2 on dbt_iam_user_position (org_id, position_id);
 
 -- 系统配置表
-CREATE TABLE `system_config`
+CREATE TABLE `dbt_system_config`
 (
     `id`          varchar(32) NOT NULL COMMENT 'ID' primary key,
     `tenant_id`   varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -228,5 +228,5 @@ CREATE TABLE `system_config`
     `create_time` datetime                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` datetime                       NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 )COMMENT = '系统配置';
-create index idx_system_config_tenant_id on system_config (tenant_id);
-create index idx_system_config on system_config (`type`, `prop`);
+create index idx_dbt_system_config_tenant_id on dbt_system_config (tenant_id);
+create index idx_dbt_system_config on dbt_system_config (`type`, `prop`);

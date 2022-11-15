@@ -247,10 +247,10 @@ public class Cons {
             return label;
         }
         public static String getLabel(String val){
-            if(val.equalsIgnoreCase(A.name())){
-                return A.label;
+            if(val.equalsIgnoreCase(I.name())){
+                return I.label;
             }
-            return I.label;
+            return A.label;
         }
     }
 

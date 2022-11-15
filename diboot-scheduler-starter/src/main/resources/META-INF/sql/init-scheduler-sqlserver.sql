@@ -1,5 +1,5 @@
 -- 定时任务表
-CREATE TABLE schedule_job (
+CREATE TABLE dbt_schedule_job (
   id varchar(32) not null,
   tenant_id varchar(32) default '0' not null,
   job_key    VARCHAR(100)          not null,
@@ -14,26 +14,26 @@ CREATE TABLE schedule_job (
   create_by varchar(32) DEFAULT '0' NOT NULL,
   create_time  datetime default CURRENT_TIMESTAMP  not null,
   update_time  datetime default CURRENT_TIMESTAMP  null,
-  constraint PK_schedule_job primary key (id)
+  constraint PK_dbt_schedule_job primary key (id)
 );
 -- 添加备注
-execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'id';
-execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'tenant_id';
-execute sp_addextendedproperty 'MS_Description', N'job编码', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'job_key';
-execute sp_addextendedproperty 'MS_Description', N'job名称', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'job_name';
-execute sp_addextendedproperty 'MS_Description', N'定时表达式', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'cron';
-execute sp_addextendedproperty 'MS_Description', N'参数', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'param_json';
-execute sp_addextendedproperty 'MS_Description', N'初始化策略', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'init_strategy';
-execute sp_addextendedproperty 'MS_Description', N'状态', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'job_status';
-execute sp_addextendedproperty 'MS_Description', N'备注', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'job_comment';
-execute sp_addextendedproperty 'MS_Description', N'是否记录日志', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'save_log';
-execute sp_addextendedproperty 'MS_Description', N'删除标记', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'is_deleted';
-execute sp_addextendedproperty 'MS_Description', N'创建人', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'create_by';
-execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'create_time';
-execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, 'column', 'update_time';
-execute sp_addextendedproperty 'MS_Description', N'定时任务', 'SCHEMA', '${SCHEMA}', 'table', schedule_job, null, null;
+execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'id';
+execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'tenant_id';
+execute sp_addextendedproperty 'MS_Description', N'job编码', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'job_key';
+execute sp_addextendedproperty 'MS_Description', N'job名称', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'job_name';
+execute sp_addextendedproperty 'MS_Description', N'定时表达式', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'cron';
+execute sp_addextendedproperty 'MS_Description', N'参数', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'param_json';
+execute sp_addextendedproperty 'MS_Description', N'初始化策略', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'init_strategy';
+execute sp_addextendedproperty 'MS_Description', N'状态', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'job_status';
+execute sp_addextendedproperty 'MS_Description', N'备注', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'job_comment';
+execute sp_addextendedproperty 'MS_Description', N'是否记录日志', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'save_log';
+execute sp_addextendedproperty 'MS_Description', N'删除标记', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'is_deleted';
+execute sp_addextendedproperty 'MS_Description', N'创建人', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'create_by';
+execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'create_time';
+execute sp_addextendedproperty 'MS_Description', N'更新时间', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, 'column', 'update_time';
+execute sp_addextendedproperty 'MS_Description', N'定时任务', 'SCHEMA', '${SCHEMA}', 'table', dbt_schedule_job, null, null;
 -- 索引
-create nonclustered index idx_schedule_job on schedule_job (job_key);
+create nonclustered index idx_dbt_schedule_job on schedule_job (job_key);
 create nonclustered index idx_schedule_job_tenant on schedule_job (tenant_id);
 
 -- 定时任务日志表

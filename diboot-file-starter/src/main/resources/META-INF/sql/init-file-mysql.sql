@@ -1,5 +1,5 @@
 -- 文件记录
-create table file_record
+create table dbt_file_record
 (
     id            varchar(32)  not null comment 'ID' primary key,
     tenant_id     varchar(32)  default '0' not null comment '租户ID',
@@ -17,5 +17,5 @@ create table file_record
     create_time   datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 ) comment '文件存储' charset = utf8mb4;
 -- 索引
-create index idx_file_record_md5 on file_record (md5);
-create index idx_file_record_tenant on file_record (tenant_id);
+create index idx_dbt_file_record_md5 on dbt_file_record (md5);
+create index idx_dbt_file_record_tenant on dbt_file_record (tenant_id);

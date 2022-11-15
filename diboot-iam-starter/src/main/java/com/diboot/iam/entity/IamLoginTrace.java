@@ -16,6 +16,7 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -34,6 +35,7 @@ import javax.validation.constraints.NotNull;
 * @date 2019-12-17
 */
 @Getter @Setter @Accessors(chain = true)
+@TableName("dbt_iam_login_trace")
 public class IamLoginTrace extends BaseEntity {
     private static final long serialVersionUID = -6166037224391478085L;
 

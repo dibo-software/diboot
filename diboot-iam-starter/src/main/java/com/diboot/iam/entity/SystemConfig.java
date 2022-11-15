@@ -35,7 +35,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("system_config")
+@TableName("dbt_system_config")
 public class SystemConfig extends BaseEntity {
     private static final long serialVersionUID = 2862339898530606166L;
 

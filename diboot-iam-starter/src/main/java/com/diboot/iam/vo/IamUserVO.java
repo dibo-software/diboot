@@ -46,7 +46,7 @@ public class IamUserVO extends IamUser {
     private LabelValue statusLabel;
 
     // 字段关联：this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'
-    @BindEntityList(entity = IamRole.class, condition = "this.id=iam_user_role.user_id AND iam_user_role.role_id=id AND iam_user_role.user_type = 'IamUser'")
+    @BindEntityList(entity = IamRole.class, condition = "this.id=dbt_iam_user_role.user_id AND dbt_iam_user_role.role_id=id AND dbt_iam_user_role.user_type = 'IamUser'")
     private List<IamRole> roleList;
 
     @BindEntityList(entity = IamUserPosition.class, condition = "this.id = user_id AND user_type = 'IamUser'")

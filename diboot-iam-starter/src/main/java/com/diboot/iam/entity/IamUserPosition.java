@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -36,6 +37,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName("dbt_iam_user_position")
 public class IamUserPosition extends BaseEntity {
     private static final long serialVersionUID = -8470407660973877945L;
 

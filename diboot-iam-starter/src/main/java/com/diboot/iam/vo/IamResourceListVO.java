@@ -18,7 +18,8 @@ package com.diboot.iam.vo;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
-import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.core.config.Cons;
+import com.diboot.iam.entity.IamResource;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -35,25 +36,26 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class IamResourcePermissionListVO extends IamResourcePermission {
+public class IamResourceListVO extends IamResource {
 
     private static final long serialVersionUID = 6643651522844488124L;
 
     // 字段关联：this.parent_id=id
-    @BindField(entity = IamResourcePermission.class, field = "displayName", condition = "this.parent_id=id")
+    @BindField(entity = IamResource.class, field = "displayName", condition = "this.parent_id=id")
     private String parentDisplayName;
 
-    // 关联数据字典：RESOURCE_PERMISSION_TYPE
-    @BindDict(type = DICT_RESOURCE_PERMISSION_TYPE, field = "displayType")
+    // 关联数据字典：RESOURCE_TYPE
+    @BindDict(type = DICT_RESOURCE_TYPE, field = "displayType")
     private String displayTypeLabel;
 
-    // 关联数据字典：RESOURCE_PERMISSION_STATUS
-    @BindDict(type = DICT_RESOURCE_PERMISSION_STATUS, field = "status")
-    private String statusLabel;
+    // 枚举中获取状态label
+    public String getStatusLabel() {
+        return Cons.ENABLE_STATUS.getLabel(this.getStatus());
+    }
 
-    // 绑定iamResourcePermissionList
-    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND display_type ='PERMISSION'")
-    private List<IamResourcePermission> permissionList;
+    // 绑定iamResourceList
+    @BindEntityList(entity = IamResource.class, condition = "this.id=parent_id AND display_type ='PERMISSION'")
+    private List<IamResource> permissionList;
 
-    private List<IamResourcePermissionListVO> children;
+    private List<IamResourceListVO> children;
 }

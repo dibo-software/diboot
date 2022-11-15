@@ -49,7 +49,7 @@ public class FilePluginInitializer implements ApplicationRunner {
         if (fileProperties.isInitSql()) {
             // 初始化SCHEMA
             SqlFileInitializer.init(environment);
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.file_record WHERE id='xyz'";
+            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_file_record WHERE id='0'";
             if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
                 SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "file");
                 log.info("diboot-file 初始化SQL完成.");

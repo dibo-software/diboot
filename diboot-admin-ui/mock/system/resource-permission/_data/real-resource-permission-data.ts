@@ -363,7 +363,7 @@ export default [
         displayName: '资源权限管理',
         routePath: 'resourcePermission',
         resourceCode: 'ResourcePermission',
-        permissionCode: 'IamResourcePermission:read',
+        permissionCode: 'IamResource:read',
         status: 'A',
         sortId: '20',
         routeMeta: {
@@ -378,11 +378,11 @@ export default [
             displayType: 'PERMISSION',
             displayName: '详情',
             resourceCode: 'detail',
-            permissionCode: 'IamResourcePermission:read',
+            permissionCode: 'IamResource:read',
             status: 'A',
             sortId: '23',
             routeMeta: {},
-            permissionCodes: ['IamResourcePermission:read']
+            permissionCodes: ['IamResource:read']
           },
           {
             id: '10008',
@@ -390,11 +390,11 @@ export default [
             displayType: 'PERMISSION',
             displayName: '新建',
             resourceCode: 'create',
-            permissionCode: 'IamResourcePermission:write',
+            permissionCode: 'IamResource:write',
             status: 'A',
             sortId: '21',
             routeMeta: {},
-            permissionCodes: ['IamResourcePermission:write']
+            permissionCodes: ['IamResource:write']
           },
           {
             id: '10009',
@@ -402,11 +402,11 @@ export default [
             displayType: 'PERMISSION',
             displayName: '更新',
             resourceCode: 'update',
-            permissionCode: 'IamResourcePermission:write,IamResourcePermission:read',
+            permissionCode: 'IamResource:write,IamResource:read',
             status: 'A',
             sortId: '20',
             routeMeta: {},
-            permissionCodes: ['IamResourcePermission:write', 'IamResourcePermission:read']
+            permissionCodes: ['IamResource:write', 'IamResource:read']
           },
           {
             id: '10010',
@@ -414,11 +414,11 @@ export default [
             displayType: 'PERMISSION',
             displayName: '删除',
             resourceCode: 'delete',
-            permissionCode: 'IamResourcePermission:write',
+            permissionCode: 'IamResource:write',
             status: 'A',
             sortId: '19',
             routeMeta: {},
-            permissionCodes: ['IamResourcePermission:write']
+            permissionCodes: ['IamResource:write']
           },
           {
             id: '10011',
@@ -426,20 +426,20 @@ export default [
             displayType: 'PERMISSION',
             displayName: '排序',
             resourceCode: 'sort',
-            permissionCode: 'IamResourcePermission:write',
+            permissionCode: 'IamResource:write',
             status: 'A',
             sortId: '18',
             routeMeta: {},
-            permissionCodes: ['IamResourcePermission:write']
+            permissionCodes: ['IamResource:write']
           }
         ],
-        permissionCodes: ['IamResourcePermission:read']
+        permissionCodes: ['IamResource:read']
       },
       {
         id: '10012',
         parentId: '10000',
         displayType: 'MENU',
-        displayName: '角色资源管理',
+        displayName: '角色权限管理',
         routePath: 'role',
         resourceCode: 'RoleList',
         permissionCode: 'IamRole:read',
@@ -481,11 +481,11 @@ export default [
             displayType: 'PERMISSION',
             displayName: '更新',
             resourceCode: 'update',
-            permissionCode: 'IamRole:write,IamRole:read,IamResourcePermission:read',
+            permissionCode: 'IamRole:write,IamRole:read,IamResource:read',
             status: 'A',
             sortId: '14',
             routeMeta: {},
-            permissionCodes: ['IamRole:write', 'IamRole:read', 'IamResourcePermission:read']
+            permissionCodes: ['IamRole:write', 'IamRole:read', 'IamResource:read']
           },
           {
             id: '10016',

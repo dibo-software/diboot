@@ -23,11 +23,11 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.dto.IamResourcePermissionDTO;
-import com.diboot.iam.entity.IamResourcePermission;
-import com.diboot.iam.mapper.IamResourcePermissionMapper;
-import com.diboot.iam.service.IamResourcePermissionService;
-import com.diboot.iam.vo.IamResourcePermissionListVO;
+import com.diboot.iam.dto.IamResourceDTO;
+import com.diboot.iam.entity.IamResource;
+import com.diboot.iam.mapper.IamResourceMapper;
+import com.diboot.iam.service.IamResourceService;
+import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,46 +45,46 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamResourcePermissionMapper, IamResourcePermission> implements IamResourcePermissionService {
+public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deepCreatePermissionAndChildren(IamResourcePermissionListVO iamResourcePermissionListVO) {
-        if (iamResourcePermissionListVO == null) {
+    public void deepCreateResourceAndChildren(IamResourceListVO iamResourceListVO) {
+        if (iamResourceListVO == null) {
             return ;
         }
-        IamResourcePermission iamResourcePermission = (IamResourcePermission) iamResourcePermissionListVO;
-        if(!super.createEntity(iamResourcePermission)){
-            log.warn("新建资源权限失败，displayType="+iamResourcePermission.getDisplayType());
+        IamResource iamResource = (IamResource) iamResourceListVO;
+        if(!super.createEntity(iamResource)){
+            log.warn("新建资源权限失败，displayType="+ iamResource.getDisplayType());
             throw new BusinessException(Status.FAIL_OPERATION, "新建资源权限失败");
         }
-        List<IamResourcePermissionListVO> children = iamResourcePermissionListVO.getChildren();
+        List<IamResourceListVO> children = iamResourceListVO.getChildren();
         if (V.notEmpty(children)) {
-            for (IamResourcePermissionListVO vo : children) {
-                vo.setParentId(iamResourcePermission.getId());
-                this.deepCreatePermissionAndChildren(vo);
+            for (IamResourceListVO vo : children) {
+                vo.setParentId(iamResource.getId());
+                this.deepCreateResourceAndChildren(vo);
             }
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO) {
+    public void createMenuResources(IamResourceDTO iamResourceDTO) {
         // 创建menu
-        boolean success = this.createEntity(iamResourcePermissionDTO);
+        boolean success = this.createEntity(iamResourceDTO);
         if (!success){
             throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
         }
 
         // 批量创建按钮/权限列表
-        List<IamResourcePermissionDTO> permissionDTOList = iamResourcePermissionDTO.getPermissionList();
+        List<IamResourceDTO> permissionDTOList = iamResourceDTO.getPermissionList();
         if (V.isEmpty(permissionDTOList)){
             return;
         }
-        List<IamResourcePermission> permissionList = BeanUtils.convertList(permissionDTOList, IamResourcePermission.class);
+        List<IamResource> permissionList = BeanUtils.convertList(permissionDTOList, IamResource.class);
         // 设置每一条按钮/权限的parentId与接口列表
         permissionList.forEach(p -> {
-            p.setParentId(iamResourcePermissionDTO.getId());
+            p.setParentId(iamResourceDTO.getId());
             p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
         });
         this.createEntities(permissionList);
@@ -92,52 +92,52 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO) {
+    public void updateMenuResources(IamResourceDTO iamResourceDTO) {
         // 检查是否设置了自身id为parentId，如果设置parentId与自身id相同，将会导致非常严重的潜在隐患
-        if (V.equals(iamResourcePermissionDTO.getId(), iamResourcePermissionDTO.getParentId())){
+        if (V.equals(iamResourceDTO.getId(), iamResourceDTO.getParentId())){
             throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单资源为自身");
         }
         // 更新menu
-        this.updateEntity(iamResourcePermissionDTO);
-        List<IamResourcePermissionDTO> permissionList = iamResourcePermissionDTO.getPermissionList();
+        this.updateEntity(iamResourceDTO);
+        List<IamResourceDTO> permissionList = iamResourceDTO.getPermissionList();
         permissionList.forEach(p -> {
-            p.setParentId(iamResourcePermissionDTO.getId());
+            p.setParentId(iamResourceDTO.getId());
             p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
         });
         // 需要更新的列表
-        List<IamResourcePermissionDTO> updatePermissionList = permissionList.stream()
+        List<IamResourceDTO> updatePermissionList = permissionList.stream()
                 .filter(p -> V.notEmpty(p.getId()))
                 .collect(Collectors.toList());
         // 需要新建的列表
-        List<IamResourcePermissionDTO> createPermissionDTOList = permissionList.stream()
+        List<IamResourceDTO> createPermissionDTOList = permissionList.stream()
                 .filter(p -> V.isEmpty(p.getId()))
                 .collect(Collectors.toList());
         List<String> updatePermissionIdList = updatePermissionList.stream()
-                .map(IamResourcePermission::getId)
+                .map(IamResource::getId)
                 .collect(Collectors.toList());
         // 批量删除不存在的按钮/权限列表
-        List<IamResourcePermission> oldPermissionList = this.getEntityList(
-                Wrappers.<IamResourcePermission>lambdaQuery()
-                        .eq(IamResourcePermission::getParentId, iamResourcePermissionDTO.getId())
-                        .eq(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION)
+        List<IamResource> oldPermissionList = this.getEntityList(
+                Wrappers.<IamResource>lambdaQuery()
+                        .eq(IamResource::getParentId, iamResourceDTO.getId())
+                        .eq(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION)
         );
         if (V.notEmpty(oldPermissionList)) {
-            LambdaQueryWrapper<IamResourcePermission> deleteWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                    .eq(IamResourcePermission::getParentId, iamResourcePermissionDTO.getId())
-                    .eq(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION);
+            LambdaQueryWrapper<IamResource> deleteWrapper = Wrappers.<IamResource>lambdaQuery()
+                    .eq(IamResource::getParentId, iamResourceDTO.getId())
+                    .eq(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION);
             if (V.notEmpty(updatePermissionIdList)) {
-                deleteWrapper.notIn(IamResourcePermission::getId, updatePermissionIdList);
+                deleteWrapper.notIn(IamResource::getId, updatePermissionIdList);
             }
             this.deleteEntities(deleteWrapper);
         }
         // 批量新建按钮/权限列表
         if (V.notEmpty(createPermissionDTOList)) {
-            List<IamResourcePermission> createPermissionList = BeanUtils.convertList(createPermissionDTOList, IamResourcePermission.class);
+            List<IamResource> createPermissionList = BeanUtils.convertList(createPermissionDTOList, IamResource.class);
             this.createEntities(createPermissionList);
         }
         // 批量更新按钮/权限列表
         if (V.notEmpty(updatePermissionList)) {
-            for (IamResourcePermissionDTO updatePermission : updatePermissionList) {
+            for (IamResourceDTO updatePermission : updatePermissionList) {
                 this.updateEntity(updatePermission);
             }
         }
@@ -151,77 +151,77 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteMenuAndPermissions(String id) {
+    public void deleteMenuResources(String id) {
         if (V.isEmpty(id)) {
             throw new BusinessException(Status.FAIL_OPERATION, "参数错误");
         }
         // 删除该菜单
         this.deleteEntity(id);
         // 删除该菜单下的子菜单列表和相关按钮/权限列表
-        LambdaQueryWrapper<IamResourcePermission> subWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .eq(IamResourcePermission::getParentId, id);
-        List<IamResourcePermission> subList = this.getEntityList(subWrapper);
+        LambdaQueryWrapper<IamResource> subWrapper = Wrappers.<IamResource>lambdaQuery()
+                .eq(IamResource::getParentId, id);
+        List<IamResource> subList = this.getEntityList(subWrapper);
         if (subList.size() > 0) {
             this.deleteEntities(subWrapper);
         }
         // 递归删除下级子菜单的子菜单以及按钮/权限列表
         List<String> subMenuIdList = subList.stream()
                 .filter(item -> Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name().equals(item.getDisplayType()))
-                .map(IamResourcePermission::getId)
+                .map(IamResource::getId)
                 .collect(Collectors.toList());
         if (V.notEmpty(subMenuIdList)) {
             subMenuIdList.forEach(menuId -> {
                 log.info("开始递归删除子资源：{}", menuId);
-                this.deleteMenuAndPermissions(menuId);
+                this.deleteMenuResources(menuId);
             });
         }
     }
 
     @Override
-    public List<IamResourcePermission> getAllResourcePermissions(String application) {
+    public List<IamResource> getAllResources(String application) {
         // 查询数据库中的所有权限
-        List<IamResourcePermission> entList = this.getEntityList(null);
+        List<IamResource> entList = this.getEntityList(null);
         return entList;
     }
 
     @Override
-    public List<IamResourcePermissionListVO> getMenuResourcePermissions(String application) {
-        LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .eq(V.notEmpty(application), IamResourcePermission::getAppModule, application)
-                .ne(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
-        List<IamResourcePermission> menuPermissionList = getEntityList(wrapper);
+    public List<IamResourceListVO> getMenuResources(String application) {
+        LambdaQueryWrapper<IamResource> wrapper = Wrappers.<IamResource>lambdaQuery()
+                .eq(V.notEmpty(application), IamResource::getAppModule, application)
+                .ne(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
+        List<IamResource> menuPermissionList = getEntityList(wrapper);
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
         }
         // 构建树结构
-        List<IamResourcePermissionListVO> iamResourcePermissionTreeVOList = RelationsBinder.convertAndBind(menuPermissionList, IamResourcePermissionListVO.class);
-        return BeanUtils.buildTree(iamResourcePermissionTreeVOList, Cons.TREE_ROOT_ID);
+        List<IamResourceListVO> iamResourceTreeVOList = RelationsBinder.convertAndBind(menuPermissionList, IamResourceListVO.class);
+        return BeanUtils.buildTree(iamResourceTreeVOList, Cons.TREE_ROOT_ID);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteMenuAndPermissions(List<String> idList) {
+    public void deleteMenuResources(List<String> idList) {
         if (V.isEmpty(idList)) {
             throw new BusinessException(Status.FAIL_OPERATION, "id列表不能为空");
         }
         // 删除所有idList权限
         this.deleteEntities(
-                Wrappers.<IamResourcePermission>lambdaQuery().in(IamResourcePermission::getId, idList)
+                Wrappers.<IamResource>lambdaQuery().in(IamResource::getId, idList)
         );
         // 删除idList下的子菜单列表和相关按钮/权限列表
-        LambdaQueryWrapper<IamResourcePermission> subWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .in(IamResourcePermission::getParentId, idList);
-        List<IamResourcePermission> subList = this.getEntityList(subWrapper);
+        LambdaQueryWrapper<IamResource> subWrapper = Wrappers.<IamResource>lambdaQuery()
+                .in(IamResource::getParentId, idList);
+        List<IamResource> subList = this.getEntityList(subWrapper);
         if (subList.size() > 0) {
             this.deleteEntities(subWrapper);
         }
         // 筛选出是菜单的选项，递归删除
         List<String> subMenuIdList = subList.stream()
                 .filter(item -> Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.MENU.name().equals(item.getDisplayType()))
-                .map(IamResourcePermission::getId)
+                .map(IamResource::getId)
                 .collect(Collectors.toList());
         if (V.notEmpty(subMenuIdList)) {
-            deleteMenuAndPermissions(subMenuIdList);
+            deleteMenuResources(subMenuIdList);
         }
     }
 
@@ -230,13 +230,13 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
      * @return
      */
     private boolean hasDirtyData() {
-        List<IamResourcePermission> list = this.getEntityList(null);
+        List<IamResource> list = this.getEntityList(null);
         if (V.isEmpty(list)) {
             return false;
         }
-        Map<String, IamResourcePermission> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResourcePermission::getId));
+        Map<String, IamResource> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResource::getId));
         List<String> deleteIdList = new ArrayList<>();
-        for (IamResourcePermission item : list) {
+        for (IamResource item : list) {
             if (!hasTopRootNode(idObjectMap, item, null)) {
                 deleteIdList.add(item.getId());
             }
@@ -248,20 +248,20 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
      * 清理没有关联关系的
      */
     private void clearDirtyData() {
-        List<IamResourcePermission> list = this.getEntityList(null);
+        List<IamResource> list = this.getEntityList(null);
         if (V.isEmpty(list)) {
             return;
         }
-        Map<String, IamResourcePermission> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResourcePermission::getId));
+        Map<String, IamResource> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResource::getId));
         List<String> deleteIdList = new ArrayList<>();
-        for (IamResourcePermission item : list) {
+        for (IamResource item : list) {
             if (!hasTopRootNode(idObjectMap, item, null)) {
                 deleteIdList.add(item.getId());
             }
         }
         if (V.notEmpty(deleteIdList)) {
-            LambdaQueryWrapper deleteWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                    .in(IamResourcePermission::getId, deleteIdList);
+            LambdaQueryWrapper deleteWrapper = Wrappers.<IamResource>lambdaQuery()
+                    .in(IamResource::getId, deleteIdList);
             long count = this.getEntityListCount(deleteWrapper);
             if (count > 0) {
                 this.deleteEntities(deleteWrapper);
@@ -276,7 +276,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
      * @param item
      * @return
      */
-    private boolean hasTopRootNode(Map<String, IamResourcePermission> idObjectMap, IamResourcePermission item, List<String> existIdList) {
+    private boolean hasTopRootNode(Map<String, IamResource> idObjectMap, IamResource item, List<String> existIdList) {
         if (V.equals(item.getParentId(), "0")) {
             return true;
         }
@@ -287,7 +287,7 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
             return false;
         }
         // 如果不是顶级节点，则以此向上查找顶级节点，如果没有找到父级节点，则认为没有顶级节点，如果找到，则继续查找父级节点是否具有顶级节点
-        IamResourcePermission parentItem = idObjectMap.get(String.valueOf(item.getParentId()));
+        IamResource parentItem = idObjectMap.get(String.valueOf(item.getParentId()));
         if (parentItem == null) {
             return false;
         }

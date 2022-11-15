@@ -4,7 +4,7 @@ import type { ElTreeInstanceType } from 'element-plus'
 import type { ResourcePermission } from './type'
 import type { WatchStopHandle } from 'vue'
 
-const baseApi = '/iam/resource-permission'
+const baseApi = '/iam/resource'
 
 // tree实例
 const treeRef = ref<ElTreeInstanceType>()

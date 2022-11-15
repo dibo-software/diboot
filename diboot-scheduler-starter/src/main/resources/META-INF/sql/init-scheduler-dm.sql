@@ -1,5 +1,5 @@
 -- 定时任务表
-CREATE TABLE ${SCHEMA}.schedule_job (
+CREATE TABLE ${SCHEMA}.dbt_schedule_job (
   id varchar(32) not null primary key,
   tenant_id varchar(32) default '0' not null,
   job_key    VARCHAR(100)          not null,
@@ -15,26 +15,26 @@ CREATE TABLE ${SCHEMA}.schedule_job (
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null
 );
-comment on column ${SCHEMA}.schedule_job.id is 'ID';
-comment on column ${SCHEMA}.schedule_job.tenant_id is '租户ID';
-comment on column ${SCHEMA}.schedule_job.job_key is 'job编码';
-comment on column ${SCHEMA}.schedule_job.job_name is 'job名称';
-comment on column ${SCHEMA}.schedule_job.cron is '定时表达式';
-comment on column ${SCHEMA}.schedule_job.param_json is '参数';
-comment on column ${SCHEMA}.schedule_job.init_strategy is '初始化策略';
-comment on column ${SCHEMA}.schedule_job.job_status is '状态';
-comment on column ${SCHEMA}.schedule_job.job_comment is '备注';
-comment on column ${SCHEMA}.schedule_job.save_log is '是否记录日志';
-comment on column ${SCHEMA}.schedule_job.is_deleted is '是否删除';
-comment on column ${SCHEMA}.schedule_job.create_by is '创建人';
-comment on column ${SCHEMA}.schedule_job.create_time is '创建时间';
-comment on column ${SCHEMA}.schedule_job.update_time is '更新时间';
-comment on table ${SCHEMA}.schedule_job is '定时任务';
-create index idx_schedule_job on ${SCHEMA}.schedule_job (job_key);
-create index idx_schedule_job_tenant on ${SCHEMA}.schedule_job (tenant_id);
+comment on column ${SCHEMA}.dbt_schedule_job.id is 'ID';
+comment on column ${SCHEMA}.dbt_schedule_job.tenant_id is '租户ID';
+comment on column ${SCHEMA}.dbt_schedule_job.job_key is 'job编码';
+comment on column ${SCHEMA}.dbt_schedule_job.job_name is 'job名称';
+comment on column ${SCHEMA}.dbt_schedule_job.cron is '定时表达式';
+comment on column ${SCHEMA}.dbt_schedule_job.param_json is '参数';
+comment on column ${SCHEMA}.dbt_schedule_job.init_strategy is '初始化策略';
+comment on column ${SCHEMA}.dbt_schedule_job.job_status is '状态';
+comment on column ${SCHEMA}.dbt_schedule_job.job_comment is '备注';
+comment on column ${SCHEMA}.dbt_schedule_job.save_log is '是否记录日志';
+comment on column ${SCHEMA}.dbt_schedule_job.is_deleted is '是否删除';
+comment on column ${SCHEMA}.dbt_schedule_job.create_by is '创建人';
+comment on column ${SCHEMA}.dbt_schedule_job.create_time is '创建时间';
+comment on column ${SCHEMA}.dbt_schedule_job.update_time is '更新时间';
+comment on table ${SCHEMA}.dbt_schedule_job is '定时任务';
+create index idx_dbt_schedule_job on ${SCHEMA}.dbt_schedule_job (job_key);
+create index idx_dbt_schedule_job_tenant on ${SCHEMA}.dbt_schedule_job (tenant_id);
 
 -- 定时任务日志表
-CREATE TABLE ${SCHEMA}.schedule_job_log (
+CREATE TABLE ${SCHEMA}.dbt_schedule_job_log (
  id varchar(32) not null primary key,
  tenant_id varchar(32) default '0' not null,
  job_id    VARCHAR(100)          not null,
@@ -50,13 +50,13 @@ CREATE TABLE ${SCHEMA}.schedule_job_log (
  is_deleted   BIT DEFAULT 0    not null,
  create_time  timestamp default CURRENT_TIMESTAMP   not null
 );
-comment on column ${SCHEMA}.schedule_job_log.id is 'ID';
-comment on column ${SCHEMA}.schedule_job_log.tenant_id is '租户ID';
-comment on column ${SCHEMA}.schedule_job_log.job_id is 'job编码';
-comment on column ${SCHEMA}.schedule_job_log.job_name is 'job名称';
-comment on column ${SCHEMA}.schedule_job_log.cron is '定时表达式';
-comment on column ${SCHEMA}.schedule_job_log.param_json is '参数';
-comment on column ${SCHEMA}.schedule_job_log.start_time is '开始时间';
+comment on column ${SCHEMA}.dbt_schedule_job_log.id is 'ID';
+comment on column ${SCHEMA}.dbt_schedule_job_log.tenant_id is '租户ID';
+comment on column ${SCHEMA}.dbt_schedule_job_log.job_id is 'job编码';
+comment on column ${SCHEMA}.dbt_schedule_job_log.job_name is 'job名称';
+comment on column ${SCHEMA}.dbt_schedule_job_log.cron is '定时表达式';
+comment on column ${SCHEMA}.dbt_schedule_job_log.param_json is '参数';
+comment on column ${SCHEMA}.dbt_schedule_job_log.start_time is '开始时间';
 comment on column ${SCHEMA}.schedule_job_log.end_time is '结束时间';
 comment on column ${SCHEMA}.schedule_job_log.elapsed_seconds is '耗时(s)';
 comment on column ${SCHEMA}.schedule_job_log.run_status is '运行状态';

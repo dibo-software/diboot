@@ -15,6 +15,9 @@
  */
 package com.diboot.core.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -31,14 +34,21 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName("dbt_i18n_config")
 public class I18nConfig extends BaseEntity {
-
     private static final long serialVersionUID = 11501L;
 
     /**
      * type字段的关联字典
      */
     public static final String DICT_I18N_TYPE = "I18N_TYPE";
+
+    /**
+     * 租户ID
+     */
+    @JsonIgnore
+    @TableField
+    private String tenantId;
 
     /**
      * 类型

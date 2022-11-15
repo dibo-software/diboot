@@ -1,5 +1,5 @@
 -- 定时任务表
-create table schedule_job
+create table dbt_schedule_job
 (
   id        varchar(32) NOT NULL COMMENT 'ID' primary key,
   tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -18,10 +18,10 @@ create table schedule_job
 )
 DEFAULT CHARSET=utf8 COMMENT '定时任务';
 -- 创建索引
-create index idx_schedule_job_tenant on schedule_job (tenant_id);
+create index idx_dbt_schedule_job_tenant on dbt_schedule_job (tenant_id);
 
 -- 定时任务日志表
-create table schedule_job_log
+create table dbt_schedule_job_log
 (
   id        varchar(32) NOT NULL COMMENT 'ID' primary key,
   tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -40,5 +40,5 @@ create table schedule_job_log
 )
   DEFAULT CHARSET=utf8 COMMENT '定时任务日志';
 -- 创建索引
-create index idx_sch_job_log_1 on schedule_job_log (job_id);
-create index idx_sch_job_log_tenant on schedule_job_log (tenant_id);
+create index idx_sch_job_log_1 on dbt_schedule_job_log (job_id);
+create index idx_sch_job_log_tenant on dbt_schedule_job_log (tenant_id);

@@ -17,6 +17,7 @@ package com.diboot.message.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
@@ -44,6 +45,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName("dbt_message")
 public class Message extends BaseEntity {
 
     private static final long serialVersionUID = -2648761257152687435L;

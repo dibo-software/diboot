@@ -15,10 +15,10 @@
  */
 package com.diboot.iam.service;
 
-import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamRoleResource;
 import com.diboot.iam.entity.route.RouteRecord;
-import com.diboot.iam.vo.IamResourcePermissionVO;
+import com.diboot.iam.vo.IamResourceVO;
 import com.diboot.iam.vo.ResourceRoleVO;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleId
      * @return
      */
-    List<IamResourcePermissionVO> getPermissionVOList(String appModule, String roleId);
+    List<IamResourceVO> getPermissionVOList(String appModule, String roleId);
 
     /**
      * 获取指定角色集合对应的权限VO集合（转换为树形结构VO）
@@ -57,7 +57,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleIds
      * @return
      */
-    List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<String> roleIds);
+    List<IamResourceVO> getPermissionVOList(String appModule, List<String> roleIds);
 
     /**
      * 获取指定角色集合对应的权限集
@@ -66,7 +66,7 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @param roleIds
      * @return
      */
-    List<IamResourcePermission> getPermissionList(String appModule, List<String> roleIds);
+    List<IamResource> getPermissionList(String appModule, List<String> roleIds);
 
     /**
      * 获取指定角色集合对应的权限码集合
@@ -113,6 +113,6 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      *
      * @return
      */
-    IamResourcePermissionService getPermissionService();
+    IamResourceService getPermissionService();
 
 }

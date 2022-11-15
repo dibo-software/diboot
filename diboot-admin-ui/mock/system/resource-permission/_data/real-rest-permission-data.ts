@@ -694,68 +694,68 @@ export default [
   },
   {
     name: '系统资源权限',
-    code: 'IamResourcePermission',
+    code: 'IamResource',
     apiPermissionList: [
       {
-        code: 'IamResourcePermission:list',
+        code: 'IamResource:list',
         apiUriList: [
           {
             method: 'GET',
-            uri: '/iam/resource-permission',
+            uri: '/iam/resource',
             label: '查看列表'
           },
           {
             method: 'GET',
-            uri: '/iam/resource-permission/getMenuTreeList',
+            uri: '/iam/resource/getMenuTreeList',
             label: '查看列表'
           }
         ],
         label: '查看列表,查看列表'
       },
       {
-        code: 'IamResourcePermission:detail',
+        code: 'IamResource:detail',
         apiUriList: [
           {
             method: 'GET',
-            uri: '/iam/resource-permission/{id}',
+            uri: '/iam/resource/{id}',
             label: '查看详情'
           }
         ],
         label: '查看详情'
       },
       {
-        code: 'IamResourcePermission:create',
+        code: 'IamResource:create',
         apiUriList: [
           {
             method: 'POST',
-            uri: '/iam/resource-permission',
+            uri: '/iam/resource',
             label: '创建'
           }
         ],
         label: '创建'
       },
       {
-        code: 'IamResourcePermission:update',
+        code: 'IamResource:update',
         apiUriList: [
           {
             method: 'PUT',
-            uri: '/iam/resource-permission/{id}',
+            uri: '/iam/resource/{id}',
             label: '更新'
           },
           {
             method: 'POST',
-            uri: '/iam/resource-permission/sort',
+            uri: '/iam/resource/sort',
             label: '列表排序'
           }
         ],
         label: '更新,列表排序'
       },
       {
-        code: 'IamResourcePermission:delete',
+        code: 'IamResource:delete',
         apiUriList: [
           {
             method: 'DELETE',
-            uri: '/iam/resource-permission/{id}',
+            uri: '/iam/resource/{id}',
             label: '删除'
           }
         ],

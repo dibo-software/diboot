@@ -35,6 +35,6 @@ import java.util.List;
 public class IamUserOrgVO extends IamUserVO {
     private static final long serialVersionUID = -8154734016521065051L;
 
-    @BindEntityList(entity = IamPosition.class, condition="this.id=iam_user_position.user_id AND iam_user_position.position_id=id")
+    @BindEntityList(entity = IamPosition.class, condition="this.id=dbt_iam_user_position.user_id AND dbt_iam_user_position.position_id=id")
     private List<IamPosition> positionList;
 }

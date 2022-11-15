@@ -16,6 +16,7 @@
 package com.diboot.scheduler.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -39,6 +40,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName("dbt_schedule_job_log")
 public class ScheduleJobLog extends BaseEntity {
     private static final long serialVersionUID = -1854961913574904234L;
 

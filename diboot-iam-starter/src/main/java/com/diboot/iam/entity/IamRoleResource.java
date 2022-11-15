@@ -16,6 +16,7 @@
 package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -31,6 +32,7 @@ import javax.validation.constraints.NotNull;
 * @date 2019-12-03
 */
 @Getter @Setter @Accessors(chain = true)
+@TableName("dbt_iam_role_resource")
 public class IamRoleResource extends BaseEntity {
     private static final long serialVersionUID = -8228772361638435896L;
 

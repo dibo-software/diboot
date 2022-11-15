@@ -33,12 +33,11 @@ import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.file.excel.BaseExcelModel;
+import com.diboot.file.excel.TableHead;
 import com.diboot.file.excel.listener.DynamicHeadExcelListener;
 import com.diboot.file.excel.listener.FixedHeadExcelListener;
 import com.diboot.file.excel.write.CommentWriteHandler;
 import com.diboot.file.excel.write.OptionWriteHandler;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
@@ -448,7 +447,7 @@ public class ExcelHelper {
      * @param clazz ExcelModel
      * @return excel表头映射
      */
-    public static List<TableHead> getTableHead(Class<?> clazz) {
+    public static List<TableHead> getTableHeads(Class<?> clazz) {
         TreeMap<Integer, Field> sortedAllFiledMap = new TreeMap<>();
         ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
         TreeMap<Integer, List<String>> headNameMap = new TreeMap<>();
@@ -457,7 +456,7 @@ public class ExcelHelper {
             fieldNameMap.put(index, field.getName());
             headNameMap.put(index, getHeadColumnName(field));
         });
-        return buildTableHead(headNameMap, fieldNameMap);
+        return buildTableHeads(headNameMap, fieldNameMap);
     }
 
     /**
@@ -479,7 +478,7 @@ public class ExcelHelper {
      * @param fieldNameMap
      * @return 表头映射
      */
-    public static List<TableHead> buildTableHead(Map<Integer, List<String>> headNameMap, Map<Integer, String> fieldNameMap) {
+    public static List<TableHead> buildTableHeads(Map<Integer, List<String>> headNameMap, Map<Integer, String> fieldNameMap) {
         List<TableHead> tableHead = new ArrayList<>();
         Map<String, TableHead> hashMap = new HashMap<>();
         int col = Integer.MIN_VALUE;
@@ -559,11 +558,4 @@ public class ExcelHelper {
         return tableHead;
     }
 
-    @Getter
-    @Setter
-    public static class TableHead {
-        private String key;
-        private String title;
-        private List<TableHead> children;
-    }
 }
