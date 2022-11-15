@@ -23,6 +23,7 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
   }
 
   const onSuccess = (response: ApiData<FileRecord>, uploadFile: UploadUserFile) => {
+    if (!response) return
     const data = response.data
     if (data) {
       uploadFile.id = data.id

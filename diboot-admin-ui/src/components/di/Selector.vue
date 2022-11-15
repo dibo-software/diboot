@@ -11,22 +11,26 @@ interface ListSelectorProps extends Omit<ListSelector, keyof Omit<Input, 'placeh
   // vue语法限制导致只能在当前文件中再次定义
   // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
   tree?: Omit<TreeConfig, 'sortApi'>
-  list: Omit<ListConfig, 'operation'>
-  // list 中的对象类型（用户回显树获取）
+  list?: Omit<ListConfig, 'operation'>
   dataType: string
-  // 列表数据显示字段；默认取list第一列（list.columns[0].prop）
   dataLabel?: string
   multiple?: boolean
 }
 
 const props = defineProps<ListSelectorProps>()
 
+const config = reactive({ tree: props.tree, list: props.list })
+
+// if (!config.list) {
+//
+// }
+
 provide('multiple', !!props.multiple)
 
 const selectedKeys = ref<string | string[] | undefined>(props.modelValue)
 const selectedRows = ref<LabelValue[]>([])
 provide('selected-rows', selectedRows)
-const dataLabel = props.dataLabel ?? (props.list.columns[0] ?? { prop: 'label' })?.prop
+const dataLabel = props.dataLabel ?? (config.list?.columns[0] ?? { prop: 'label' })?.prop
 provide('data-label', dataLabel)
 
 const selected: RelatedData = reactive({ type: props.dataType, label: dataLabel })
@@ -40,7 +44,7 @@ watch(
       nextTick(() => {
         const ids = selectedRows.value.map(e => e.value).sort()
         if (ids.toString() !== (Array.isArray(value) ? value : [value]).sort().toString()) {
-          selected.condition = { [props.list.primaryKey || 'id']: value }
+          selected.condition = { [config.list?.primaryKey || 'id']: value }
           initRelatedData().then(() => (selectedRows.value = relatedData.selected))
         }
       })
@@ -112,13 +116,13 @@ const clickNode = (id?: string) => (parent.value = id)
     <el-option v-for="item in selectedRows" :key="item.value" :value="item.value" :label="item.label" />
   </el-select>
 
-  <el-dialog v-model="visible" top="3vh" :width="props.tree ? '75%' : ''" append-to-body>
+  <el-dialog v-model="visible" top="3vh" :width="config.tree ? '75%' : ''" append-to-body>
     <template #header>
       <div style="display: flex">
         <strong style="margin: 0 8px; zoom: 1.1">选择</strong>
         <el-space
           wrap
-          :style="tree ? { width: 'calc(100% - 320px)', marginLeft: '260px' } : { width: 'calc(100% - 60px)' }"
+          :style="config.tree ? { width: 'calc(100% - 320px)', marginLeft: '260px' } : { width: 'calc(100% - 60px)' }"
         >
           <el-tag v-for="(item, index) in selectedRows" :key="index" closable @close="removeTag(item.value)">
             {{ item.label }}
@@ -127,9 +131,9 @@ const clickNode = (id?: string) => (parent.value = id)
       </div>
     </template>
     <div class="body-container">
-      <di-tree v-if="tree" v-bind="tree" @click-node="clickNode" />
+      <di-tree v-if="config.tree" v-bind="config.tree" :sort-api="undefined" @click-node="clickNode" />
 
-      <di-list v-bind="list" :operation="undefined" :parent="parent" />
+      <di-list v-bind="config.list" :operation="undefined" :parent="parent" />
     </div>
   </el-dialog>
 </template>

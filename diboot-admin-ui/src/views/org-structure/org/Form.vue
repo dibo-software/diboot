@@ -111,11 +111,13 @@ defineExpose({ open })
               :list="{
                 baseApi: '/iam/user',
                 relatedKey: 'orgId',
-                searchProps: [
-                  { prop: 'realname', label: '姓名', type: 'input' },
-                  { prop: 'userNum', label: '编号', type: 'input' },
-                  { prop: 'gender', label: '性别', type: 'select', loader: 'GENDER' }
-                ],
+                searchArea: {
+                  propList: [
+                    { prop: 'realname', label: '姓名', type: 'input' },
+                    { prop: 'userNum', label: '编号', type: 'input' },
+                    { prop: 'gender', label: '性别', type: 'select', loader: 'GENDER' }
+                  ]
+                },
                 columns: [
                   { prop: 'realname', label: '姓名' },
                   { prop: 'userNum', label: '编号' },

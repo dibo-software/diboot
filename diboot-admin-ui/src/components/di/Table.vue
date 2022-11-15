@@ -58,7 +58,6 @@ const columns = () => {
 }
 const columnsKey = `table-columns-` + (route?.name ?? +new Date()).toString()
 const columnList = ref(columns())
-watch(columnList, value => setCache(columnsKey, value), { deep: true })
 const resetColumnConfig = () => (columnList.value = columns())
 const saveColumnChange = () => setCache(columnsKey, columnList.value)
 

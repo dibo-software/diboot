@@ -1,4 +1,4 @@
-import type { LinkageControl, RelatedData } from '@/hooks/use-option'
+import type { RelatedData } from '@/hooks/use-option'
 import type { FormItemRule } from 'element-plus/es/tokens/form'
 
 // tree 配置
@@ -10,16 +10,15 @@ export interface TreeConfig extends RelatedData {
 
 // list 配置
 export interface ListConfig {
-  baseApi: string
+  // (动态业务模型可空，反之必需)
+  baseApi?: string
   // 主键属性名（默认值：id）
   primaryKey?: string
-  // 默认 8 （24/8 三列）
-  searchSpan?: number
-  // FormItem 其中 'span' | 'rule' | 'required' 失效
-  searchProps?: FormItem[]
-  columns: TableColumn[]
   // 左树右列表 不指定时默认：parentId
   relatedKey?: string
+  // FormItem 其中 'span' | 'rule' | 'required' 失效 (colSpan 默认 8 （24/8 三列）)
+  searchArea?: FormConfig
+  columns: TableColumn[]
   operation?: ListOperation
 }
 
@@ -40,14 +39,30 @@ export interface TableColumn {
   showOverflowTooltip?: boolean
 }
 
+// 表单页配置
+export interface FormConfig {
+  labelWidth?: string // 默认 80px
+  column?: number
+  propList: FormItem[]
+}
+
+// 选项数据过滤控制
+export interface Control {
+  // 加载器条件属性值来源（当前模型）属性名
+  prop: string
+  // 加载器条件属性（当前属性的loader.type模型属性名）
+  condition: string
+}
+
 // 输入类型
 export interface Input {
   span?: number
   prop: string
   label?: string
   placeholder?: string
-  rule?: FormItemRule
+  rules?: FormItemRule[]
   required?: boolean
+  unique?: boolean
 }
 
 export interface InputText extends Input {
@@ -61,27 +76,43 @@ export interface InputNumber extends Input {
   type: 'input-number'
   min?: number
   max?: number
+  // 严格步长则为整数
+  stepStrictly?: boolean
+  controls?: false | 'right'
+}
+
+export interface BooleanSwitch extends Input {
+  type: 'boolean'
+
+  // 默认 select
+  mode?: 'select' | 'switch'
+}
+
+export interface Checkbox extends Input {
+  type: 'checkbox'
+  loader?: string
+  labelProp: string
+}
+
+export interface Radio extends Omit<Checkbox, 'type'> {
+  type: 'radio'
 }
 
 export interface Select extends Input {
-  type: 'select' | 'checkbox' | 'radio'
+  type: 'select'
   loader?: string | RelatedData
   labelProp: string
+  // 选项动态过滤（附加条件）
+  control?: Control
   remote?: boolean
   multiple?: boolean
-  filterable?: boolean
-  control?: LinkageControl | LinkageControl[]
 }
 
-export interface Cascader extends Input {
-  type: 'cascader' | 'tree-select'
-  lazy?: boolean
+export interface TreeSelect extends Omit<Select, 'type' | 'remote'> {
+  type: 'tree-select' | 'cascader'
   loader?: RelatedData
-  labelProp: string
-  multiple?: boolean
-  filterable?: boolean
+  lazy?: boolean
   checkStrictly?: boolean
-  control?: LinkageControl | LinkageControl[]
 }
 
 export interface DateTime extends Input {
@@ -94,10 +125,22 @@ export interface Time extends Input {
   range?: boolean
 }
 
+export interface Upload extends Input {
+  type: 'upload'
+  listType?: 'text' | 'picture' | 'picture-card'
+  limit?: number
+  accept?: string
+  // 文件大小限制（单位：兆 MB）
+  size?: number
+  // VO中关联文件记录列表属性名
+  files?: string
+}
+
 export interface ListSelector extends Input {
   type: 'list-selector'
   tree?: Omit<TreeConfig, 'sortApi'>
-  list: Omit<ListConfig, 'operation'>
+  // list配置 (关联对象为动态业务模型可空，反之必需)
+  list?: Omit<ListConfig, 'operation'>
   // list 中的对象类型（用户回显树获取）
   dataType: string
   // 列表数据显示字段；默认取list第一列（list.columns[0].prop）
@@ -105,4 +148,15 @@ export interface ListSelector extends Input {
   multiple?: boolean
 }
 
-export type FormItem = InputText | InputNumber | Select | Cascader | DateTime | Time
+export type FormItem =
+  | InputText
+  | InputNumber
+  | BooleanSwitch
+  | Checkbox
+  | Radio
+  | Select
+  | TreeSelect
+  | DateTime
+  | Time
+  | Upload
+  | ListSelector

@@ -43,6 +43,7 @@ const loadNodes = async ({ data }: { data: LabelValue }, resolve: (options: Labe
 
 const emit = defineEmits<{
   (e: 'clickNode', nodeKey?: string): void
+  (e: 'changeOrder', nodeKey?: string): void
 }>()
 
 const searchValue = ref('')
@@ -66,9 +67,21 @@ const clickNode = (data: LabelValue) => {
     emit('clickNode', (activateNode.value = data.value))
   }
 }
+
+const treeKey = ref(0)
+const refresh = () => {
+  if (props.lazyChild) treeKey.value = +new Date()
+  else initRelatedData().then(() => treeRef.value?.setCurrentKey(activateNode.value))
+}
+
+defineExpose({ refresh })
+
 const { nodeDrag } = useSort({
   sortApi: `${props.sortApi}`,
-  callback: () => initRelatedData().then(() => treeRef.value?.setCurrentKey(activateNode.value)),
+  callback: () => {
+    emit('changeOrder')
+    refresh()
+  },
   idKey: 'value',
   sortIdKey: 'ext'
 })
@@ -87,14 +100,14 @@ const { nodeDrag } = useSort({
       <el-skeleton v-if="initLoading" :rows="5" animated />
       <el-scrollbar v-show="!initLoading">
         <el-tree
-          :key="lazyChild ? searchValue : 0"
+          :key="lazyChild ? searchValue + treeKey : 0"
           ref="treeRef"
           node-key="value"
           :data="relatedData[treeDataKey]"
           :lazy="lazyChild && !searchValue"
           :load="loadNodes"
           highlight-current
-          :draggable="!!sortApi"
+          :draggable="!!sortApi && !!ext"
           :expand-on-click-node="false"
           :filter-node-method="filterNode"
           :default-expand-all="!lazyChild || !!searchValue"
