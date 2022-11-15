@@ -169,7 +169,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
     <el-radio-group v-if="config.type === 'radio'" v-model="value" @change="handleChange">
       <el-radio v-for="(item, index) in relatedDatas" :key="index" :label="item.value">{{ item.label }}</el-radio>
     </el-radio-group>
-    <di-list-selector
+    <di-selector
       v-if="config.type === 'list-selector'"
       v-model="value"
       :tree="config.tree"
