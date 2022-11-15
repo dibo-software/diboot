@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -43,14 +44,12 @@ import java.util.List;
 * Copyright © diboot.com
 */
 @Getter @Setter @Accessors(chain = true)
-public class IamResourcePermission extends BaseEntity {
+@TableName("dbt_iam_resource")
+public class IamResource extends BaseEntity {
     private static final long serialVersionUID = -6133621123987747250L;
 
     // display_type字段的关联数据字典
-    public static final String DICT_RESOURCE_PERMISSION_TYPE = "RESOURCE_PERMISSION_TYPE";
-
-    // status字段的关联数据字典
-    public static final String DICT_RESOURCE_PERMISSION_STATUS = "RESOURCE_PERMISSION_STATUS";
+    public static final String DICT_RESOURCE_TYPE = "RESOURCE_TYPE";
 
     /**
      * 租户ID

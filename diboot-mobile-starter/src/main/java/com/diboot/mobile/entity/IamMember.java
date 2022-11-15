@@ -17,6 +17,7 @@ package com.diboot.mobile.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.iam.entity.BaseLoginUser;
@@ -40,6 +41,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName("dbt_iam_member")
 public class IamMember extends BaseLoginUser {
 
     private static final long serialVersionUID = -1947077615295781979L;

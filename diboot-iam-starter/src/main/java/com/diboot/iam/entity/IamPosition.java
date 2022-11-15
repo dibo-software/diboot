@@ -15,10 +15,7 @@
  */
 package com.diboot.iam.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -40,6 +37,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
+@TableName("dbt_iam_position")
 public class IamPosition extends BaseEntity {
     private static final long serialVersionUID = 8716775927523689964L;
     /**

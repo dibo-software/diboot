@@ -38,10 +38,10 @@ public class Cons extends com.diboot.core.config.Cons {
         ACCOUNT_STATUS,
         USER_STATUS,
         ORG_TYPE,
-        PERMISSION_TYPE,
+        RESOURCE_TYPE,
         POSITION_GRADE,
         GENDER,
-        RESOURCE_PERMISSION_CODE
+        RESOURCE_CODE
     }
 
     /**

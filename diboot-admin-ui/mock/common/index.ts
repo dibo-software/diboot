@@ -34,7 +34,7 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { value: 'IGNORE_MISFIRES', label: '超期立即执行，并周期执行' }
   ],
   // 定时任务初始化策略
-  RESOURCE_PERMISSION_CODE: [
+  RESOURCE_CODE: [
     { value: 'detail', label: '详情' },
     { value: 'create', label: '新建' },
     { value: 'update', label: '更新' },

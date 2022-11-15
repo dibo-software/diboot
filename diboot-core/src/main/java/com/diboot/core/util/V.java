@@ -380,15 +380,46 @@ public class V {
     }
 
     /**
+     * 对参数值做安全检查
+     */
+    public static void securityCheck(Object... paramValues) {
+        if (isEmpty(paramValues)) {
+            return;
+        }
+        for (Object param : paramValues) {
+            if (!V.isValidSqlParam(param)) {
+                throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数: " + param);
+            }
+        }
+    }
+
+    /**
      * 是否为合法的数据库列参数（orderBy等参数安全检查）
      */
     private static final Pattern PATTERN = Pattern.compile("^[A-Za-z_][\\w.:]*$");
 
-    public static boolean isValidSqlParam(String columnStr) {
-        if (isEmpty(columnStr)) {
+    public static boolean isValidSqlParam(Object sqlParam) {
+        if (isEmpty(sqlParam)) {
             return true;
         }
-        return PATTERN.matcher(columnStr).matches();
+        if(sqlParam instanceof Map) {
+            Map map = (Map) sqlParam;
+            for(Object key : map.keySet()){
+                boolean valid =  PATTERN.matcher(S.valueOf(key)).matches();
+                if(!valid) {
+                    log.debug("不符合安全规范的参数: {}", key);
+                    return false;
+                }
+            }
+            for(Object val : map.values()){
+                boolean valid =  PATTERN.matcher(S.valueOf(val)).matches();
+                if(!valid) {
+                    log.debug("不符合安全规范的参数值: {}", val);
+                    return false;
+                }
+            }
+        }
+        return PATTERN.matcher(S.valueOf(sqlParam)).matches();
     }
 
     /**

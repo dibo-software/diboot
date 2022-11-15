@@ -18,7 +18,7 @@ package com.diboot.iam.util;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
-import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +58,7 @@ public class IamHelper {
         // 对RoleList做聚合处理，以适配前端
         List<String> nameList = new ArrayList<>(roleVOList.size());
         List<String> codeList = new ArrayList<>(roleVOList.size());
-        List<IamResourcePermission> allPermissionList = new ArrayList<>();
+        List<IamResource> allPermissionList = new ArrayList<>();
         roleVOList.forEach(vo -> {
             nameList.add(vo.getName());
             codeList.add(vo.getCode());
@@ -67,7 +67,7 @@ public class IamHelper {
             }
         });
         // 对permissionList进行去重
-        List permissionList = BeanUtils.distinctByKey(allPermissionList, IamResourcePermission::getId);
+        List permissionList = BeanUtils.distinctByKey(allPermissionList, IamResource::getId);
         IamRoleVO roleVO = new IamRoleVO();
         roleVO.setName(S.join(nameList));
         roleVO.setCode(S.join(codeList));

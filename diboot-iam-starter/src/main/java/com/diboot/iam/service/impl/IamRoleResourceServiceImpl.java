@@ -26,19 +26,19 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
-import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamRoleResource;
 import com.diboot.iam.entity.route.RouteMeta;
 import com.diboot.iam.entity.route.RouteRecord;
 import com.diboot.iam.mapper.IamRoleResourceMapper;
-import com.diboot.iam.service.IamResourcePermissionService;
+import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.IamRoleResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamSecurityUtils;
-import com.diboot.iam.vo.IamResourcePermissionListVO;
-import com.diboot.iam.vo.IamResourcePermissionVO;
+import com.diboot.iam.vo.IamResourceListVO;
+import com.diboot.iam.vo.IamResourceVO;
 import com.diboot.iam.vo.PositionDataScope;
 import com.diboot.iam.vo.ResourceRoleVO;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     private IamRoleService iamRoleService;
 
     @Autowired
-    private IamResourcePermissionService iamResourcePermissionService;
+    private IamResourceService iamResourceService;
 
     @Autowired
     private IamUserRoleService iamUserRoleService;
@@ -96,9 +96,9 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
                 break;
             }
         }
-        LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .ne(IamResourcePermission::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
-                .eq(IamResourcePermission::getStatus, Cons.DICTCODE_RESOURCE_STATUS.A.name());
+        LambdaQueryWrapper<IamResource> wrapper = Wrappers.<IamResource>lambdaQuery()
+                .ne(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
+                .eq(IamResource::getStatus, Cons.DICTCODE_RESOURCE_STATUS.A.name());
         if (!isAdmin) {
             List<String> roleIds = roleList.stream().map(IamRole::getId).collect(Collectors.toList());
             // 获取角色对应的菜单权限
@@ -106,38 +106,38 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             if (V.isEmpty(permissionIds)) {
                 return Collections.emptyList();
             }
-            wrapper.in(IamResourcePermission::getId, permissionIds);
+            wrapper.in(IamResource::getId, permissionIds);
 
         }
-        List<IamResourcePermission> menuPermissionList = iamResourcePermissionService.getEntityList(wrapper);
+        List<IamResource> menuPermissionList = iamResourceService.getEntityList(wrapper);
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
         }
         // 绑定菜单下按钮权限
-        List<IamResourcePermissionListVO> iamResourcePermissionListVOS = RelationsBinder.convertAndBind(menuPermissionList, IamResourcePermissionListVO.class);
-        iamResourcePermissionListVOS = BeanUtils.buildTree(iamResourcePermissionListVOS, Cons.TREE_ROOT_ID);
+        List<IamResourceListVO> iamResourceListVOS = RelationsBinder.convertAndBind(menuPermissionList, IamResourceListVO.class);
+        iamResourceListVOS = BeanUtils.buildTree(iamResourceListVOS, Cons.TREE_ROOT_ID);
         // 构建路由菜单
         List<RouteRecord> routeRecordList = new ArrayList<>();
-        buildRouteRecordList(routeRecordList, iamResourcePermissionListVOS);
+        buildRouteRecordList(routeRecordList, iamResourceListVOS);
         return routeRecordList;
     }
 
     @Override
-    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, String roleId) {
+    public List<IamResourceVO> getPermissionVOList(String appModule, String roleId) {
         List<String> roleIdList = new ArrayList<>();
         roleIdList.add(roleId);
         return getPermissionVOList(appModule, roleIdList);
     }
 
     @Override
-    public List<IamResourcePermissionVO> getPermissionVOList(String appModule, List<String> roleIds) {
-        List<IamResourcePermission> list = getPermissionList(appModule, roleIds);
-        List<IamResourcePermissionVO> voList = BeanUtils.convertList(list, IamResourcePermissionVO.class);
+    public List<IamResourceVO> getPermissionVOList(String appModule, List<String> roleIds) {
+        List<IamResource> list = getPermissionList(appModule, roleIds);
+        List<IamResourceVO> voList = BeanUtils.convertList(list, IamResourceVO.class);
         return BeanUtils.buildTree(voList, Cons.TREE_ROOT_ID);
     }
 
     @Override
-    public List<IamResourcePermission> getPermissionList(String appModule, List<String> roleIds) {
+    public List<IamResource> getPermissionList(String appModule, List<String> roleIds) {
         if (V.isEmpty(roleIds)) {
             return Collections.emptyList();
         }
@@ -145,8 +145,8 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         if (V.isEmpty(permissionIds)) {
             return Collections.emptyList();
         }
-        return iamResourcePermissionService.getEntityList(Wrappers.<IamResourcePermission>lambdaQuery()
-                .in(IamResourcePermission::getId, permissionIds));
+        return iamResourceService.getEntityList(Wrappers.<IamResource>lambdaQuery()
+                .in(IamResource::getId, permissionIds));
     }
 
     @Override
@@ -156,21 +156,21 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             return Collections.emptyList();
         }
         // 查询权限
-        LambdaQueryWrapper<IamResourcePermission> queryWrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .select(IamResourcePermission::getPermissionCode)
-                .in(IamResourcePermission::getId, permissionIds)
-                .isNotNull(IamResourcePermission::getPermissionCode);
+        LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.<IamResource>lambdaQuery()
+                .select(IamResource::getPermissionCode)
+                .in(IamResource::getId, permissionIds)
+                .isNotNull(IamResource::getPermissionCode);
         // 仅查询PermissionCode字段
-        return iamResourcePermissionService.getValuesOfField(
-                queryWrapper, IamResourcePermission::getPermissionCode
+        return iamResourceService.getValuesOfField(
+                queryWrapper, IamResource::getPermissionCode
         );
     }
 
     @Override
     public List<ResourceRoleVO> getAllResourceRoleVOList() {
-        LambdaQueryWrapper<IamResourcePermission> wrapper = Wrappers.<IamResourcePermission>lambdaQuery()
-                .isNotNull(IamResourcePermission::getPermissionCode);
-        List<IamResourcePermission> list = iamResourcePermissionService.getEntityList(wrapper);
+        LambdaQueryWrapper<IamResource> wrapper = Wrappers.<IamResource>lambdaQuery()
+                .isNotNull(IamResource::getPermissionCode);
+        List<IamResource> list = iamResourceService.getEntityList(wrapper);
         if (list == null) {
             list = Collections.emptyList();
         }
@@ -224,8 +224,8 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
     }
 
     @Override
-    public IamResourcePermissionService getPermissionService() {
-        return iamResourcePermissionService;
+    public IamResourceService getPermissionService() {
+        return iamResourceService;
     }
 
     /**
@@ -246,11 +246,11 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
      * 构建前端路由信息
      *
      * @param routeRecordList
-     * @param iamResourcePermissionListVOList
+     * @param iamResourceListVOList
      */
-    private void buildRouteRecordList(List<RouteRecord> routeRecordList, List<IamResourcePermissionListVO> iamResourcePermissionListVOList) {
+    private void buildRouteRecordList(List<RouteRecord> routeRecordList, List<IamResourceListVO> iamResourceListVOList) {
         RouteRecord routeRecord = null;
-        for (IamResourcePermissionListVO resource : iamResourcePermissionListVOList) {
+        for (IamResourceListVO resource : iamResourceListVOList) {
             routeRecord = new RouteRecord();
             RouteMeta routeMeta = resource.getRouteMeta();
             routeMeta.setTitle(resource.getDisplayName()).setSort(resource.getSortId());
@@ -258,7 +258,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             if (V.notEmpty(resource.getPermissionList())) {
                 routeMeta.setPermissions(resource.getPermissionList()
                         .stream()
-                        .map(IamResourcePermission::getResourceCode)
+                        .map(IamResource::getResourceCode)
                         .collect(Collectors.toList()));
             }
             routeRecord.setName(resource.getResourceCode())

@@ -16,9 +16,9 @@
 package com.diboot.iam.service;
 
 
-import com.diboot.iam.dto.IamResourcePermissionDTO;
-import com.diboot.iam.entity.IamResourcePermission;
-import com.diboot.iam.vo.IamResourcePermissionListVO;
+import com.diboot.iam.dto.IamResourceDTO;
+import com.diboot.iam.entity.IamResource;
+import com.diboot.iam.vo.IamResourceListVO;
 
 import java.util.List;
 
@@ -30,37 +30,37 @@ import java.util.List;
  * @date 2020-02-27
  * Copyright © diboot.com
  */
-public interface IamResourcePermissionService extends BaseIamService<IamResourcePermission> {
+public interface IamResourceService extends BaseIamService<IamResource> {
 
     /***
      * 深度创建资源权限及其所有子列表
-     * @param iamResourcePermissionListVO
+     * @param iamResourceListVO
      */
-    void deepCreatePermissionAndChildren(IamResourcePermissionListVO iamResourcePermissionListVO);
+    void deepCreateResourceAndChildren(IamResourceListVO iamResourceListVO);
 
     /***
      * 创建菜单和按钮/权限列表
-     * @param iamResourcePermissionDTO
+     * @param iamResourceDTO
      */
-    void createMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO);
+    void createMenuResources(IamResourceDTO iamResourceDTO);
 
     /***
      * 更新菜单和按钮/权限列表
-     * @param iamResourcePermissionDTO
+     * @param iamResourceDTO
      */
-    void updateMenuAndPermissions(IamResourcePermissionDTO iamResourcePermissionDTO);
+    void updateMenuResources(IamResourceDTO iamResourceDTO);
 
     /***
      * 删除菜单及其包含的所有子菜单以及按钮/权限列表
      * @param id
      */
-    void deleteMenuAndPermissions(String id);
+    void deleteMenuResources(String id);
 
     /***
      * 删除指定id的权限及其包含的所有子菜单以及按钮/权限列表
      * @param idList
      */
-    void deleteMenuAndPermissions(List<String> idList);
+    void deleteMenuResources(List<String> idList);
 
     /**
      * 获取所有前端权限定义
@@ -68,7 +68,7 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      * @param application
      * @return
      */
-    List<IamResourcePermission> getAllResourcePermissions(String application);
+    List<IamResource> getAllResources(String application);
 
     /**
      * 获取前端菜单
@@ -76,6 +76,6 @@ public interface IamResourcePermissionService extends BaseIamService<IamResource
      * @param application
      * @return
      */
-    List<IamResourcePermissionListVO> getMenuResourcePermissions(String application);
+    List<IamResourceListVO> getMenuResources(String application);
 
 }

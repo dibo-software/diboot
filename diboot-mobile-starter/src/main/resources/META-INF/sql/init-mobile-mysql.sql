@@ -1,5 +1,5 @@
 -- 移动端成员表
-CREATE TABLE `iam_member` (
+CREATE TABLE `dbt_iam_member` (
     `id` varchar(32) NOT NULL COMMENT 'ID',
     `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户id',
     `org_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '组织',
@@ -22,8 +22,8 @@ CREATE TABLE `iam_member` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 COMMENT='移动端用户';
 -- 索引
-create index idx_member_tenant on iam_member (tenant_id);
-create index idx_member_orgid on iam_member (org_id);
-create index idx_member_openid on iam_member (openid);
-create index idx_member_phone on iam_member (mobile_phone);
-create index idx_member_user on iam_member (user_id, user_type);
+create index idx_dbt_member_tenant on dbt_iam_member (tenant_id);
+create index idx_dbt_member_orgid on dbt_iam_member (org_id);
+create index idx_dbt_member_openid on dbt_iam_member (openid);
+create index idx_dbt_member_phone on dbt_iam_member (mobile_phone);
+create index idx_dbt_member_user on dbt_iam_member (user_id, user_type);

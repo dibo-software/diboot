@@ -13,28 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.dto;
+package com.diboot.iam.mapper;
 
-import com.diboot.iam.entity.IamResourcePermission;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-import java.util.List;
+import com.diboot.core.mapper.BaseCrudMapper;
+import com.diboot.iam.entity.IamResource;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 前端资源权限 DTO定义
- * @author yangzhao
- * @version 2.0.0
- * @date 2020-02-27
+* 前端资源权限Mapper
+* @author yangzhao
+* @version 2.0.0
+* @date 2020-02-27
  * Copyright © diboot.com
- */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class IamResourcePermissionDTO extends IamResourcePermission {
-    private static final long serialVersionUID = -7218371066111984841L;
+*/
+@Mapper
+public interface IamResourceMapper extends BaseCrudMapper<IamResource> {
 
-    // 按钮/权限列表
-    private List<IamResourcePermissionDTO> permissionList;
 }
+

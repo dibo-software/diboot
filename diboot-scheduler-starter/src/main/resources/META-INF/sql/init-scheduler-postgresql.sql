@@ -1,5 +1,5 @@
 -- 定时任务表
-CREATE TABLE schedule_job (
+CREATE TABLE dbt_schedule_job (
   id  varchar(32) not null,
   tenant_id varchar(32) default '0' not null,
   job_key    VARCHAR(100)          not null,
@@ -15,26 +15,26 @@ CREATE TABLE schedule_job (
   create_time  timestamp default CURRENT_TIMESTAMP   not null,
   update_time  timestamp default CURRENT_TIMESTAMP  null
 );
-comment on column schedule_job.id is 'ID';
-comment on column schedule_job.tenant_id is '租户ID';
-comment on column schedule_job.job_key is 'job编码';
-comment on column schedule_job.job_name is 'job名称';
-comment on column schedule_job.cron is '定时表达式';
-comment on column schedule_job.param_json is '参数';
-comment on column schedule_job.init_strategy is '初始化策略';
-comment on column schedule_job.job_status is '状态';
-comment on column schedule_job.job_comment is '备注';
-comment on column schedule_job.save_log is '是否记录日志';
-comment on column schedule_job.is_deleted is '是否删除';
-comment on column schedule_job.create_by is '创建人';
-comment on column schedule_job.create_time is '创建时间';
-comment on column schedule_job.update_time is '更新时间';
-comment on table schedule_job is '定时任务';
-create index idx_schedule_job on schedule_job (job_key);
-create index idx_schedule_job_tenant on schedule_job (tenant_id);
+comment on column dbt_schedule_job.id is 'ID';
+comment on column dbt_schedule_job.tenant_id is '租户ID';
+comment on column dbt_schedule_job.job_key is 'job编码';
+comment on column dbt_schedule_job.job_name is 'job名称';
+comment on column dbt_schedule_job.cron is '定时表达式';
+comment on column dbt_schedule_job.param_json is '参数';
+comment on column dbt_schedule_job.init_strategy is '初始化策略';
+comment on column dbt_schedule_job.job_status is '状态';
+comment on column dbt_schedule_job.job_comment is '备注';
+comment on column dbt_schedule_job.save_log is '是否记录日志';
+comment on column dbt_schedule_job.is_deleted is '是否删除';
+comment on column dbt_schedule_job.create_by is '创建人';
+comment on column dbt_schedule_job.create_time is '创建时间';
+comment on column dbt_schedule_job.update_time is '更新时间';
+comment on table dbt_schedule_job is '定时任务';
+create index idx_dbt_schedule_job on dbt_schedule_job (job_key);
+create index idx_dbt_schedule_job_tenant on dbt_schedule_job (tenant_id);
 
 -- 定时任务日志表
-CREATE TABLE schedule_job_log (
+CREATE TABLE dbt_schedule_job_log (
   id  varchar(32) not null,
   tenant_id varchar(32) default '0' not null,
   job_id    VARCHAR(100)          not null,
@@ -50,7 +50,7 @@ CREATE TABLE schedule_job_log (
   is_deleted   BOOLEAN default FALSE  not null,
   create_time  timestamp default CURRENT_TIMESTAMP   not null
 );
-comment on column schedule_job_log.id is 'ID';
+comment on column dbt_schedule_job_log.id is 'ID';
 comment on column schedule_job_log.tenant_id is '租户ID';
 comment on column schedule_job_log.job_id is 'job编码';
 comment on column schedule_job_log.job_name is 'job名称';

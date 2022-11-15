@@ -13,7 +13,7 @@ const erd = elementResizeDetectorMaker()
 erd.listenTo(document.body, () => (clientWidth.value = document.body.clientWidth))
 onBeforeUnmount(() => erd.uninstall(document.body))
 
-const baseApi = '/iam/resource-permission'
+const baseApi = '/iam/resource'
 
 const props = defineProps<{ formValue?: ResourcePermission }>()
 
@@ -62,7 +62,7 @@ const openPermissionConfig = (permission?: ResourcePermission) => {
 }
 
 // option hook
-const { relatedData, initRelatedData } = useOption({ dict: 'RESOURCE_PERMISSION_CODE' })
+const { relatedData, initRelatedData } = useOption({ dict: 'RESOURCE_CODE' })
 initRelatedData()
 
 // 按钮权限配置
@@ -84,9 +84,9 @@ const handleAddTab = () => {
   const permissionList = model.value.permissionList ? model.value.permissionList : (model.value.permissionList = [])
   activeTab.value = permissionList.push(permission) - 1 + ''
   // 自动补全编码选项
-  if (relatedData && relatedData.resourcePermissionCodeOptions) {
+  if (relatedData && relatedData.resourceCodeOptions) {
     const resourceCodes = permissionList.map(e => e.resourceCode)
-    const validOption = relatedData.resourcePermissionCodeOptions.find(item => {
+    const validOption = relatedData.resourceCodeOptions.find(item => {
       return !resourceCodes.includes(item.value)
     })
     if (validOption) {
@@ -106,11 +106,11 @@ const handleChangeTab = (index: string | number) => {
 }
 
 const changeBtnResourceCode = (permission: ResourcePermission, code: string) => {
-  const displayName = relatedData.resourcePermissionCodeOptions?.find(e => e.value === code)?.label
+  const displayName = relatedData.resourceCodeOptions?.find(e => e.value === code)?.label
   if (displayName) permission.displayName = displayName
 }
 const changeBtnPermissionName = (permission: ResourcePermission, name: string) => {
-  const resourceCode = relatedData.resourcePermissionCodeOptions?.find(e => e.label === name)?.value
+  const resourceCode = relatedData.resourceCodeOptions?.find(e => e.label === name)?.value
   if (resourceCode) permission.resourceCode = resourceCode
 }
 
@@ -275,7 +275,7 @@ const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
                               @change="(value: string) => changeBtnResourceCode(permission, value)"
                             >
                               <el-option
-                                v-for="(item, i) in relatedData.resourcePermissionCodeOptions"
+                                v-for="(item, i) in relatedData.resourceCodeOptions"
                                 :key="`frontend-code_${i}`"
                                 :label="`${item.label}[${item.value}]`"
                                 :value="item.value"

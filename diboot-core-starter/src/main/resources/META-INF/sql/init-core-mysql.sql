@@ -1,5 +1,5 @@
 -- 字典表
-CREATE TABLE `dictionary` (
+CREATE TABLE `dbt_dictionary` (
   `id` varchar(32) NOT NULL COMMENT 'ID',
   `parent_id` varchar(32) NULL COMMENT '父ID',
   `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -18,13 +18,14 @@ CREATE TABLE `dictionary` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COMMENT '数据字典';
 -- 创建索引
-create index idx_directory on dictionary(type, item_value);
-create index idx_directory_tenant on dictionary(tenant_id);
+create index idx_dbt_directory on dbt_dictionary(type, item_value);
+create index idx_dbt_directory_tenant on dbt_dictionary(tenant_id);
 
 -- 国际化表
-create table i18n_config
+create table dbt_i18n_config
 (
     id          varchar(32)                           not null comment 'ID',
+    `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
     type        varchar(20) default 'CUSTOM'          not null comment '类型',
     language    varchar(20)                           not null comment '语言',
     code        varchar(200)                          not null comment '资源标识',
@@ -34,4 +35,4 @@ create table i18n_config
     PRIMARY KEY (`id`)
 ) comment '国际化配置';
 -- 创建索引
-create index idx_i18n_config on i18n_config (code, language);
+create index idx_dbt_i18n_config on dbt_i18n_config (code, language);

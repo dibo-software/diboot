@@ -1,5 +1,5 @@
 -- 消息模版表
-CREATE TABLE `message_template` (
+CREATE TABLE `dbt_message_template` (
   `id` varchar(32) NOT NULL COMMENT 'ID' PRIMARY KEY,
   `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户id',
   `app_module` varchar(50) DEFAULT NULL COMMENT '应用模块',
@@ -13,10 +13,10 @@ CREATE TABLE `message_template` (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8 COMMENT '消息模版';
 -- 索引
-create index idx_msg_tmpl_tenant on message_template (tenant_id);
-create index idx_msg_tmpl_code ON message_template(code);
+create index idx_dbt_msg_tmpl_tenant on dbt_message_template (tenant_id);
+create index idx_dbt_msg_tmpl_code ON dbt_message_template(code);
 -- 消息表
-CREATE TABLE `message` (
+CREATE TABLE `dbt_message` (
   `id` varchar(32) NOT NULL COMMENT 'ID' PRIMARY KEY,
   `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户id',
   `app_module` varchar(50) DEFAULT NULL COMMENT '应用模块',
@@ -37,6 +37,6 @@ CREATE TABLE `message` (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8 COMMENT '消息';
 -- 索引
-create index idx_msg_tenant on message (tenant_id);
-create index idx_msg_template on message (template_id);
-create index idx_msg_receiver on message (receiver);
+create index idx_dbt_msg_tenant on dbt_message (tenant_id);
+create index idx_dbt_msg_template on dbt_message (template_id);
+create index idx_dbt_msg_receiver on dbt_message (receiver);

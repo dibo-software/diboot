@@ -15,10 +15,7 @@
  */
 package com.diboot.iam.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +34,7 @@ import java.util.Date;
 * @date 2019-12-17
 */
 @Getter @Setter @Accessors(chain = true)
+@TableName("dbt_iam_user")
 public class IamUser extends BaseLoginUser {
     private static final long serialVersionUID = -8462352695775599715L;
 

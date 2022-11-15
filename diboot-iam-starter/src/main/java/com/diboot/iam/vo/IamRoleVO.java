@@ -18,7 +18,7 @@ package com.diboot.iam.vo;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.IamResourcePermission;
+import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamRole;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,10 +39,10 @@ public class IamRoleVO extends IamRole {
     private static final long serialVersionUID = -6778550575399070076L;
 
     // 字段关联：this.id=iam_role_resource.role_id AND iam_role_resource.resource_id=id
-    @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=iam_role_resource.role_id AND iam_role_resource.resource_id=id")
-    private List<IamResourcePermission> permissionList;
+    @BindEntityList(entity = IamResource.class, condition = "this.id=dbt_iam_role_resource.role_id AND dbt_iam_role_resource.resource_id=id")
+    private List<IamResource> permissionList;
 
-    private List<IamResourcePermissionListVO> permissionVOList;
+    private List<IamResourceListVO> permissionVOList;
 
     /***
      * 是否为超级管理员

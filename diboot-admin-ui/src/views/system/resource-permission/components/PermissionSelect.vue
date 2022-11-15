@@ -36,7 +36,7 @@ const moduleList = computed(() => Object.keys(moduleRestPermissionMap.value))
 watch(moduleList, value => emits('moduleList', value))
 
 api
-  .get<RestPermission[] | Record<string, RestPermission[]>>('/iam/resource-permission/api-list')
+  .get<RestPermission[] | Record<string, RestPermission[]>>('/iam/resource/api-list')
   .then(res => {
     if (Array.isArray(res.data)) restPermissions.push(...(res.data ?? []))
     else moduleRestPermissionMap.value = res.data ?? {}
