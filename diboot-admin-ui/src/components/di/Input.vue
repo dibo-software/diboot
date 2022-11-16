@@ -207,7 +207,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       v-bind="bindUpload"
       :list-type="config.listType"
       :limit="config.limit"
-      :multiple="config.limit > 1"
+      :multiple="config.limit ?? 2 > 1"
       :before-upload="beforeUpload"
       style="width: 100%"
     >
