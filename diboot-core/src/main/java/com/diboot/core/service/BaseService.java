@@ -329,6 +329,13 @@ public interface BaseService<T> {
     <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn);
 
     /**
+     * 获取指定条件的id-Entity 映射map
+     * @param getterFn
+     * @return
+     */
+    Map<String, T> getId2EntityMap(List entityIds, IGetter<T>... getterFn);
+
+    /**
      * 获取Map
      * @param queryWrapper
      * @return
