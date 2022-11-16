@@ -1,5 +1,6 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { type ApiRequest, JsonResult } from '../_util'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import { list2Tree } from '../_util/list'
 import type { OrgModel } from '@/views/org-structure/org/type'

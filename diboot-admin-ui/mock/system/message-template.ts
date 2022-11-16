@@ -2,7 +2,8 @@ import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_util/crud-template'
 import type { MessageTemplate } from '@/views/system/message-template/type'
 import { Random } from 'mockjs'
-import { type ApiRequest, JsonResult } from '../_util'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 
 const dataList: MessageTemplate[] = Array.from({ length: 100 }).map((_, index) => {
   const id = String(100 - index)

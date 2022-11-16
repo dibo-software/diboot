@@ -2,7 +2,8 @@ import type { MockMethod } from 'vite-plugin-mock'
 import crudTemplate from '../_util/crud-template'
 import type { Role } from '@/views/system/role/type'
 import Mock, { Random } from 'mockjs'
-import { type ApiRequest, JsonResult } from '../_util'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 
 export const dataList: Role[] = Array.from({ length: 50 }).map((_, index) => {
   const id = String(50 - index)

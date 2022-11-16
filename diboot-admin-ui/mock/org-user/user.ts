@@ -1,4 +1,5 @@
-import { type ApiRequest, JsonResult } from '../_util'
+import type { ApiRequest } from '../_util'
+import { JsonResult } from '../_util'
 import { Random } from 'mockjs'
 import type { UserModel } from '@/views/org-structure/user/type'
 import crudTemplate from '../_util/crud-template'
