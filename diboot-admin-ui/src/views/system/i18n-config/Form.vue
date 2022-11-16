@@ -102,6 +102,7 @@ const checkCodeDuplicate = (rule: unknown, value: unknown, callback: (error?: st
         label="资源标识"
         :rules="[
           { required: true, message: '不能为空', whitespace: true },
+          { pattern: /^\w+$/, message: '只可以输入字母数字下划线', trigger: 'blur' },
           { validator: checkCodeDuplicate, trigger: 'blur' }
         ]"
       >
