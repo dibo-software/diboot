@@ -1,4 +1,4 @@
-import type { RestPermission } from '@/views/system/resource-permission/type'
+import type { RestPermission } from '@/views/system/resource/type'
 
 export default [
   {

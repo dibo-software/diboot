@@ -198,12 +198,12 @@ const authMenu = [
         }
       },
       {
-        path: 'resource-permission',
-        name: 'ResourcePermission',
+        path: 'resource',
+        name: 'Resource',
         meta: {
-          title: '资源权限管理',
+          title: '菜单资源管理',
           icon: 'Element:Menu',
-          componentPath: prefix + 'system/resource-permission/index.vue',
+          componentPath: prefix + 'system/resource/index.vue',
           sort: 2,
           keepAlive: false,
           permissions: ['create', 'update', 'delete']

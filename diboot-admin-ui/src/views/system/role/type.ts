@@ -1,10 +1,10 @@
-import type { ResourcePermission } from '@/views/system/resource-permission/type'
+import type { Resource } from '@/views/system/resource/type'
 
 export interface Role {
   id: string
   name: string
   code: string
-  permissionList?: ResourcePermission[]
+  permissionList?: Resource[]
   description: string
   createTime: string
   updateTime: string

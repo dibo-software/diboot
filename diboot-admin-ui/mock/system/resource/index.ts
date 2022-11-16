@@ -1,22 +1,22 @@
-import type { ResourcePermission } from '@/views/system/resource-permission/type'
+import type { Resource } from '@/views/system/resource/type'
 import type { MockMethod } from 'vite-plugin-mock'
 import type { ApiRequest } from '../../_util'
 import { JsonResult } from '../../_util'
 import Mock, { Random } from 'mockjs'
-import realResourcePermissionData from './_data/real-resource-permission-data'
+import realResourcePermissionData from './_data/real-resource-data'
 import dbRestPermissionDataList from './_data/real-rest-permission-data'
 import dbCloudRestPermissionDataList from './_data/real-cloud-rest-permission-data'
-import realRoleResourcePermissionData from './_data/real-role-resource-permission-data'
+import realRoleResourcePermissionData from './_data/real-role-resource-data'
 const baseUrl = '/api/iam/resource'
 const deleteDataIds: string[] = []
-const dbDataList = realResourcePermissionData as unknown as ResourcePermission[]
-const dbRoleResourcePermissionData = realRoleResourcePermissionData as unknown as ResourcePermission[]
+const dbDataList = realResourcePermissionData as unknown as Resource[]
+const dbRoleResourcePermissionData = realRoleResourcePermissionData as unknown as Resource[]
 /**
  * tree转化为list
  * @param tree
  */
-const tree2List = (tree: ResourcePermission[]): ResourcePermission[] => {
-  const list: ResourcePermission[] = []
+const tree2List = (tree: Resource[]): Resource[] => {
+  const list: Resource[] = []
   for (const resourcePermission of tree) {
     if (resourcePermission.children && resourcePermission.children.length > 0) {
       for (const child of tree2List(resourcePermission.children)) {
@@ -24,7 +24,7 @@ const tree2List = (tree: ResourcePermission[]): ResourcePermission[] => {
       }
     }
     // 移除children
-    const temp: ResourcePermission = { parentId: '', routeMeta: { icon: 'Plus' } }
+    const temp: Resource = { parentId: '', routeMeta: { icon: 'Plus' } }
     Object.assign(temp, resourcePermission)
     delete temp.children
     list.push(temp)
@@ -35,8 +35,8 @@ const tree2List = (tree: ResourcePermission[]): ResourcePermission[] => {
  * list转化为tree
  * @param originList
  */
-const list2Tree = (originList: ResourcePermission[]) => {
-  const parentTopList: ResourcePermission[] = []
+const list2Tree = (originList: Resource[]) => {
+  const parentTopList: Resource[] = []
   const removeIds: string[] = []
   for (const resourcePermission of originList) {
     resourcePermission.children = []
@@ -54,7 +54,7 @@ const list2Tree = (originList: ResourcePermission[]) => {
  * list转化为tree 构建子项
  * @param originList
  */
-const buildChildren = (parents: ResourcePermission[], originList: ResourcePermission[]) => {
+const buildChildren = (parents: Resource[], originList: Resource[]) => {
   if (!parents || parents.length === 0) {
     return
   }
@@ -96,7 +96,7 @@ export default [
     url: `${baseUrl}/`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: ({ body }: ApiRequest<ResourcePermission>) => {
+    response: ({ body }: ApiRequest<Resource>) => {
       const mock = Mock.mock({ id: '@id' })
       const id = mock.id
       Object.assign(body, { id: id })
@@ -108,7 +108,7 @@ export default [
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'put',
-    response: ({ body }: ApiRequest<ResourcePermission>) => {
+    response: ({ body }: ApiRequest<Resource>) => {
       const list = tree2List(dbDataList)
       const index = list.findIndex(item => item.id === body.id)
       list.splice(index, 1, body)

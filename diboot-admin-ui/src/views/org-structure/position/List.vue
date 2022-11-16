@@ -7,10 +7,9 @@ interface PositionSearch extends Position {
   keywords?: string
 }
 
-const { queryParam, onSearch, getList, loading, dataList, pagination, remove, batchRemove } = useList<
-  Position,
-  PositionSearch
->({ baseApi: '/iam/position' })
+const { queryParam, onSearch, getList, loading, dataList, pagination, remove } = useList<Position, PositionSearch>({
+  baseApi: '/iam/position'
+})
 
 getList()
 
@@ -36,9 +35,6 @@ const deletePermission = checkPermission('delete')
       <el-space wrap class="list-operation">
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
-        </el-button>
-        <el-button v-has-permission="'delete'" @click="batchRemove(selectedKeys)">
-          {{ $t('operation.batchDelete') }}
         </el-button>
         <el-space>
           <el-input

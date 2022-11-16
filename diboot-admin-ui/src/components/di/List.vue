@@ -1,7 +1,7 @@
 <script setup lang="ts" name="DiList">
 import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
 import { buildOptionProps, buildGetRelatedData } from './utils'
-import type { FormItem, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
+import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
 interface ListProps extends ListConfig {
   // 左树父级ID
@@ -11,8 +11,7 @@ interface ListProps extends ListConfig {
   // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
   baseApi: string
   primaryKey?: string
-  searchSpan?: number
-  searchProps?: FormItem[]
+  searchArea?: FormConfig
   columns: TableColumn[]
   relatedKey?: string
   operation?: ListOperation
@@ -21,7 +20,7 @@ interface ListProps extends ListConfig {
 const props = defineProps<ListProps>()
 
 const { initRelatedData, relatedData, asyncLoading, remoteRelatedDataFilter, lazyLoadRelatedData } = useOption(
-  buildOptionProps(props?.searchProps)
+  buildOptionProps(props.searchArea?.propList)
 )
 initRelatedData()
 
@@ -79,8 +78,13 @@ defineExpose({
   refresh: getList
 })
 
+const createPermission = checkPermission('create')
+const detailPermission = checkPermission('detail')
+const importPermission = checkPermission('import')
+const exportPermission = checkPermission('export')
 const updatePermission = checkPermission('update')
 const deletePermission = checkPermission('delete')
+const updateOrDeletePermission = checkPermission(['update', 'delete'])
 
 const multiple = inject<boolean | undefined>(
   'multiple',
@@ -90,9 +94,14 @@ const multiple = inject<boolean | undefined>(
 
 <template>
   <div class="list-page">
-    <el-form v-if="searchProps" v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+    <el-form v-if="searchArea" v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
       <el-row :gutter="18">
-        <el-col v-for="item in searchProps" :key="item.prop" :md="searchSpan ?? 8" :sm="24">
+        <el-col
+          v-for="item in searchArea.propList"
+          :key="item.prop"
+          :md="searchArea.column ? 24 / searchArea.column : 8"
+          :sm="24"
+        >
           <di-input
             v-if="['daterange', 'datetimerange'].includes(item.type)"
             v-model="dateRangeQuery[item.prop]"
@@ -110,7 +119,7 @@ const multiple = inject<boolean | undefined>(
             @lazy-load="(parentId: string) => lazyLoadRelatedData(item.prop, parentId)"
           />
         </el-col>
-        <el-col :md="8" :sm="24" style="margin-left: auto">
+        <el-col :md="searchArea.column ? 24 / Math.max(searchArea.column, 3) : 8" :sm="24" style="margin-left: auto">
           <el-button type="primary" @click="onSearch">搜索</el-button>
           <el-button @click="resetFilter">重置</el-button>
         </el-col>
@@ -118,12 +127,9 @@ const multiple = inject<boolean | undefined>(
     </el-form>
     <el-header>
       <el-space wrap class="list-operation" :size="10">
-        <el-button v-if="operation?.create" v-has-permission="'create'" type="primary" @click="openForm()">
-          新建
-        </el-button>
+        <el-button v-if="createPermission && operation?.create" type="primary" @click="openForm()"> 新建 </el-button>
         <el-button
-          v-if="operation?.batchRemove"
-          v-has-permission="'delete'"
+          v-if="operation?.batchRemove && deletePermission"
           type="danger"
           plain
           :disabled="!selectedKeys.length"
@@ -132,17 +138,14 @@ const multiple = inject<boolean | undefined>(
           批量删除
         </el-button>
         <excel-export
-          v-if="operation?.exportData"
-          v-has-permission="'export'"
+          v-if="operation?.exportData && exportPermission"
           :export-url="`${baseApi}/excel/export`"
           :table-head-url="`${baseApi}/excel/export-table-head`"
         />
-        <template v-if="operation?.importData">
-          <excel-import v-has-permission="'import'" :excel-base-api="`${baseApi}/excel`" />
-        </template>
+        <excel-import v-if="operation?.importData && importPermission" :excel-base-api="`${baseApi}/excel`" />
         <el-space>
           <el-button :icon="Refresh" circle @click="getList()" />
-          <el-button v-if="searchProps" :icon="Search" circle @click="searchState = !searchState" />
+          <el-button v-if="searchArea" :icon="Search" circle @click="searchState = !searchState" />
         </el-space>
       </el-space>
     </el-header>
@@ -164,8 +167,7 @@ const multiple = inject<boolean | undefined>(
         <template #default="{ row }">
           <el-space>
             <el-button
-              v-if="operation?.detail"
-              v-has-permission="'detail'"
+              v-if="operation?.detail && detailPermission"
               text
               bg
               type="primary"
@@ -174,7 +176,7 @@ const multiple = inject<boolean | undefined>(
             >
               详情
             </el-button>
-            <el-dropdown v-if="operation?.update || operation?.remove" v-has-permission="['update', 'delete']">
+            <el-dropdown v-if="(operation?.update || operation?.remove) && updateOrDeletePermission">
               <el-button text bg type="primary" size="small">
                 更多
                 <el-icon :size="16" style="margin-left: 5px">

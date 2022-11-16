@@ -1,4 +1,4 @@
-import type { FormItem } from '@/components/di/type'
+import type { Control, FormItem } from '@/components/di/type'
 import type { LinkageControl, RelatedData, RelatedDataOption } from '@/hooks/use-option'
 
 /**
@@ -10,9 +10,10 @@ import type { LinkageControl, RelatedData, RelatedDataOption } from '@/hooks/use
 export const buildOptionProps = (formItemList?: FormItem[]) => {
   if (!formItemList || !formItemList.length) return {}
   const optionProps = formItemList
+    .filter(e => e.type !== 'list-selector')
     .filter(e => e['loader' as keyof typeof e])
     .reduce((option: RelatedDataOption, e) => {
-      const loader = e['loader' as keyof typeof e]
+      const loader = e['loader' as keyof typeof e] as string | RelatedData
       if (typeof loader === 'string') {
         const dicts = option.dict ? (option.dict as string[]) : (option.dict = [])
         dicts.push(loader)
@@ -26,10 +27,32 @@ export const buildOptionProps = (formItemList?: FormItem[]) => {
       return option
     }, {})
   formItemList
+    .filter(e => e.type !== 'list-selector')
     .filter(e => e['control' as keyof typeof e])
     .reduce((option: RelatedDataOption, e) => {
+      const control: Control = e['control' as keyof typeof e] as any
+      if (!(control.prop && control.condition)) {
+        // 未完全配置，则不生效
+        return option
+      }
+      let isAsyncLoad = true
+      const asyncLoad = option.asyncLoad ? option.asyncLoad : (option.asyncLoad = {})
+      if ((option.load ?? {})[e.prop]) {
+        isAsyncLoad = false
+        asyncLoad[e.prop] = (option.load ?? {})[e.prop]
+        delete (option.load ?? {})[e.prop]
+      }
       const linkageControl = option.linkageControl ? option.linkageControl : (option.linkageControl = {})
-      linkageControl[e.prop] = e['control' as keyof typeof e] as LinkageControl | LinkageControl[]
+      const controls = linkageControl[e.prop]
+        ? (linkageControl[e.prop] as LinkageControl[])
+        : (linkageControl[e.prop] = [])
+      controls.push({
+        prop: control.prop,
+        loader: control.prop,
+        condition: control.condition,
+        autoLoad: !isAsyncLoad
+      })
+
       return option
     }, optionProps)
   return optionProps

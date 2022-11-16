@@ -362,13 +362,13 @@ export default [
         displayType: 'MENU',
         displayName: '资源权限管理',
         routePath: 'resourcePermission',
-        resourceCode: 'ResourcePermission',
+        resourceCode: 'Resource',
         permissionCode: 'IamResource:read',
         status: 'A',
         sortId: '20',
         routeMeta: {
           icon: 'Element:Menu',
-          componentPath: '@/views/system/resource-permission/List.vue'
+          componentPath: '@/views/system/resource/index.vue'
         },
         parentDisplayName: '系统管理',
         permissionList: [

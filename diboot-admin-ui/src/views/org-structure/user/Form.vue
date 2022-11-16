@@ -215,10 +215,12 @@ const rules: FormRules = {
               multiple
               :list="{
                 baseApi: '/iam/role',
-                searchProps: [
-                  { prop: 'name', label: '名称', type: 'input' },
-                  { prop: 'code', label: '编码', type: 'input' }
-                ],
+                searchArea: {
+                  propList: [
+                    { prop: 'name', label: '名称', type: 'input' },
+                    { prop: 'code', label: '编码', type: 'input' }
+                  ]
+                },
                 columns: [
                   { prop: 'name', label: '姓名' },
                   { prop: 'code', label: '编号' },

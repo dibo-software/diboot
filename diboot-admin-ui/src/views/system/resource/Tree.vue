@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Search, Plus, Delete } from '@element-plus/icons-vue'
 import type { ElTreeInstanceType } from 'element-plus'
-import type { ResourcePermission } from './type'
+import type { Resource } from './type'
 import type { WatchStopHandle } from 'vue'
 
 const baseApi = '/iam/resource'
@@ -9,7 +9,7 @@ const baseApi = '/iam/resource'
 // tree实例
 const treeRef = ref<ElTreeInstanceType>()
 
-const { getList, dataList, loading, remove } = useList<ResourcePermission>({
+const { getList, dataList, loading, remove } = useList<Resource>({
   baseApi,
   listApi: `${baseApi}/menu-tree`
 })
@@ -22,10 +22,10 @@ const setTreeCurrentKey = (key: string) => {
         value.setCurrentKey(key)
         const currentNode = value.getCurrentNode()
         if (currentNode) {
-          clickNode(currentNode as ResourcePermission)
+          clickNode(currentNode as Resource)
         } else if (dataList.length) {
           value.setCurrentKey(dataList[0].id as string)
-          clickNode(value.getCurrentNode() as ResourcePermission)
+          clickNode(value.getCurrentNode() as Resource)
         }
         watchTreeRef()
       }
@@ -48,10 +48,10 @@ const removeData = (id: string) => {
 }
 
 const emit = defineEmits<{
-  (e: 'click-node', resource: ResourcePermission): void
+  (e: 'click-node', resource: Resource): void
 }>()
 
-const clickNode = (data: ResourcePermission) => {
+const clickNode = (data: Resource) => {
   emit('click-node', data)
 }
 
@@ -61,12 +61,12 @@ const searchWord = ref('')
 watch(searchWord, val => {
   treeRef.value?.filter(val)
 })
-const filterNode = (value: string, data: Partial<ResourcePermission>) => !value || data.displayName?.includes(value)
+const filterNode = (value: string, data: Partial<Resource>) => !value || data.displayName?.includes(value)
 
 /**
  * 添加子菜单
  */
-const addChildNode = (parent?: ResourcePermission) => {
+const addChildNode = (parent?: Resource) => {
   treeRef.value?.setCurrentKey()
   clickNode({
     parentId: parent?.id ?? '0',
