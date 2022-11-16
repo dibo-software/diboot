@@ -97,10 +97,10 @@ defineExpose({ open })
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="type" label="类型">
-            <el-select v-model="model.type">
-              <el-option key="COMP" label="公司" value="COMP" />
-              <el-option key="DEPT" label="部门" value="DEPT" />
-            </el-select>
+            <el-radio-group v-model="model.type">
+              <el-radio label="COMP">公司</el-radio>
+              <el-radio label="DEPT">部门</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
