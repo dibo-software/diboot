@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
-import type { ResourcePermission } from '@/views/system/resource-permission/type'
+import type { Resource } from '@/views/system/resource/type'
 import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/role'
@@ -15,12 +15,11 @@ const visible = ref(false)
 const transformField = {
   label: 'displayName'
 }
-const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } =
-  useTreeCrud<ResourcePermission>({
-    baseApi: '/iam/resource',
-    treeApi: '',
-    transformField
-  })
+const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } = useTreeCrud<Resource>({
+  baseApi: '/iam/resource',
+  treeApi: '',
+  transformField
+})
 const treeProps = {
   label: 'displayName',
   class: flatTreeNodeClass
@@ -67,7 +66,7 @@ const rules: FormRules = {
     { validator: checkCodeDuplicate, trigger: 'blur' }
   ]
 }
-const handleCheckNode = (currentNode: ResourcePermission, data: { checkedKeys: string[] }) => {
+const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] }) => {
   checkNode(currentNode, data)
   model.value.permissionIdList = selectedIdList.value
 }

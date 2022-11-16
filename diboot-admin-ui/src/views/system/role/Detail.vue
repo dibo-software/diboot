@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Role } from './type'
-import type { ResourcePermission } from '@/views/system/resource-permission/type'
+import type { Resource } from '@/views/system/resource/type'
 import { Folder, Menu, Link, Connection, Key } from '@element-plus/icons-vue'
 import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 
-const { loadData, loading, model } = useDetail<Role & { permissionVOList?: ResourcePermission[] }>('/iam/role')
+const { loadData, loading, model } = useDetail<Role & { permissionVOList?: Resource[] }>('/iam/role')
 
 const visible = ref(false)
 

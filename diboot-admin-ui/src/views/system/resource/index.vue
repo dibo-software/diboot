@@ -1,10 +1,10 @@
-<script setup lang="ts" name="ResourcePermission">
+<script setup lang="ts" name="Resource">
 import ResourceTree from './Tree.vue'
 import ResourceForm from './Form.vue'
-import type { ResourcePermission } from './type'
+import type { Resource } from './type'
 
-const formValue = ref<ResourcePermission>()
-const clickNode = (node: ResourcePermission) => {
+const formValue = ref<Resource>()
+const clickNode = (node: Resource) => {
   formValue.value = node
 }
 

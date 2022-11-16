@@ -1,6 +1,6 @@
 import type { RouteMeta } from 'vue-router'
 
-export interface ResourcePermission {
+export interface Resource {
   id?: string
   parentId: string
   appModule?: string
@@ -14,8 +14,8 @@ export interface ResourcePermission {
   routeMeta: Partial<RouteMeta & { redirectPath: string }>
   sortId?: string
   status?: string
-  children?: ResourcePermission[]
-  permissionList?: ResourcePermission[]
+  children?: Resource[]
+  permissionList?: Resource[]
   [key: string]: unknown
 }
 

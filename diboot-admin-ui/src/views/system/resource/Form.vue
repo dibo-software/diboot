@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import elementResizeDetectorMaker from 'element-resize-detector'
 import type { FormInstance } from 'element-plus'
-import type { ResourcePermission } from './type'
+import type { Resource } from './type'
 import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 import RouteSelect from './components/RouteSelect.vue'
 import PermissionSelect from './components/PermissionSelect.vue'
@@ -15,9 +15,9 @@ onBeforeUnmount(() => erd.uninstall(document.body))
 
 const baseApi = '/iam/resource'
 
-const props = defineProps<{ formValue?: ResourcePermission }>()
+const props = defineProps<{ formValue?: Resource }>()
 
-const model = ref<ResourcePermission>()
+const model = ref<Resource>()
 
 watch(
   () => props.formValue,
@@ -50,12 +50,12 @@ const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code',
 
 // 权限
 const moduleList = ref<string[]>([])
-const configResource = ref<Partial<ResourcePermission>>({})
+const configResource = ref<Partial<Resource>>({})
 const permissionSelectRef = ref<InstanceType<typeof PermissionSelect>>()
 
 watch(configResource, () => permissionSelectRef.value?.relocation())
 
-const openPermissionConfig = (permission?: ResourcePermission) => {
+const openPermissionConfig = (permission?: Resource) => {
   if (!permission) return
   permission.permissionCodes ? permission.permissionCodes : (permission.permissionCodes = [])
   configResource.value = permission
@@ -66,7 +66,7 @@ const { relatedData, initRelatedData } = useOption({ dict: 'RESOURCE_CODE' })
 initRelatedData()
 
 // 按钮权限配置
-const NEW_PERMISSION_ITEM: ResourcePermission = {
+const NEW_PERMISSION_ITEM: Resource = {
   id: undefined,
   parentId: '',
   displayType: 'PERMISSION',
@@ -105,16 +105,16 @@ const handleChangeTab = (index: string | number) => {
   configResource.value = permissionList[parseInt(`${index}`)]
 }
 
-const changeBtnResourceCode = (permission: ResourcePermission, code: string) => {
+const changeBtnResourceCode = (permission: Resource, code: string) => {
   const displayName = relatedData.resourceCodeOptions?.find(e => e.value === code)?.label
   if (displayName) permission.displayName = displayName
 }
-const changeBtnPermissionName = (permission: ResourcePermission, name: string) => {
+const changeBtnPermissionName = (permission: Resource, name: string) => {
   const resourceCode = relatedData.resourceCodeOptions?.find(e => e.label === name)?.value
   if (resourceCode) permission.resourceCode = resourceCode
 }
 
-const toggleBtnResourceCodeSelect = (permission: ResourcePermission) => {
+const toggleBtnResourceCodeSelect = (permission: Resource) => {
   permission._customCode = !permission._customCode
   permission.resourceCode = ''
   permission.displayName = ''
