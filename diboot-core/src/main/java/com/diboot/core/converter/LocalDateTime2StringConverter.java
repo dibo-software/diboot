@@ -18,10 +18,7 @@ package com.diboot.core.converter;
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import org.springframework.core.convert.converter.Converter;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 /**
  * LocalDateTime - Date 转换器
@@ -31,14 +28,17 @@ import java.util.Date;
  * Copyright © diboot.com
  */
 @CollectThisConvertor
-public class LocalDateTime2DateConverter implements Converter<LocalDateTime, Date> {
+public class LocalDateTime2StringConverter implements Converter<LocalDateTime, String> {
 
     @Override
-    public Date convert(LocalDateTime source) {
+    public String convert(LocalDateTime source) {
         if (source == null) {
             return null;
         }
-        Instant instant = source.atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(instant);
+        return source.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(LocalDateTime.now().toString());
     }
 }

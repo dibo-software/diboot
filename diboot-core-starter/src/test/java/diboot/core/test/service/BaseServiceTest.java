@@ -50,6 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -175,7 +176,7 @@ public class BaseServiceTest {
         success = dictionaryService.createEntities(dictionaryList);
         Assert.assertTrue(success);
 
-        dictionaryList.get(2).setCreateTime(new Date());
+        dictionaryList.get(2).setCreateTime(LocalDateTime.now());
         dictionaryList.get(2).setItemValue("HZ2");
         dictionaryService.updateEntity(dictionaryList.get(2));
         Assert.assertTrue(success);

@@ -25,7 +25,8 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
 * 系统用户 Entity定义
@@ -82,7 +83,7 @@ public class IamUser extends BaseLoginUser {
      */
     @JsonFormat(pattern=D.FORMAT_DATE_Y4MD)
     @TableField()
-    private Date birthdate;
+    private LocalDate birthdate;
 
     // 状态
     @NotNull(message = "状态不能为空")
@@ -98,7 +99,7 @@ public class IamUser extends BaseLoginUser {
      * 更新时间
      */
     @TableField(fill = FieldFill.UPDATE)
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     @Override
     public String getDisplayName() {

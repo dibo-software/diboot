@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author mazc@dibo.ltd
@@ -44,7 +44,7 @@ public class CcCityInfo extends BaseEntity {
     private String regionName;
 
     @TableField(exist = false)
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @TableField(exist = false)
     private boolean deleted;

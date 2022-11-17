@@ -23,8 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
-
+import java.time.LocalDateTime;
 
 /**
  * 消息模版 DTO定义
@@ -44,33 +43,22 @@ public class MessageTemplateDTO extends MessageTemplate {
      * 创建时间-起始
      */
     @BindQuery(comparison = Comparison.GE, column = "createTime")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 创建时间-截止
      */
     @BindQuery(comparison = Comparison.LT, column = "createTime")
-    private Date createTimeEnd;
+    private LocalDateTime createTimeEnd;
 
-    @Override()
-    public Date getCreateTime() {
-        return this.createTime;
-    }
-
-    @Override()
-    public MessageTemplate setCreateTime(Date createTime) {
-        this.createTime = createTime;
-        return this;
-    }
-
-    public Date getCreateTimeEnd() {
+    public LocalDateTime getCreateTimeEnd() {
         if(createTimeEnd != null){
             return createTimeEnd;
         }
-        return D.nextDay(createTime);
+        return createTime != null? createTime.plusDays(1) : null;
     }
 
-    public MessageTemplate setCreateTimeEnd(Date createTimeEnd) {
+    public MessageTemplate setCreateTimeEnd(LocalDateTime createTimeEnd) {
         this.createTimeEnd = createTimeEnd;
         return this;
     }

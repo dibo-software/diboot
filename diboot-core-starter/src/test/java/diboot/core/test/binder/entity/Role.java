@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author mazc@dibo.ltd
@@ -39,6 +39,6 @@ public class Role extends BaseEntity {
     private String code;
 
     @JsonIgnore
-    public Date createTime;
+    public LocalDateTime createTime;
 
 }

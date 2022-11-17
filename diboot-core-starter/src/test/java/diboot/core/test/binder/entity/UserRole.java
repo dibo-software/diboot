@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 用户角色
@@ -51,6 +51,6 @@ public class UserRole extends BaseEntity {
     private boolean deleted;
 
     @TableField(exist = false)
-    private Date createTime;
+    private LocalDateTime createTime;
 
 }

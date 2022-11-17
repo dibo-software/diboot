@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -54,6 +54,6 @@ public class EntityListComplexVO extends User {
 
     // 支持通过中间表的多-多Entity的单个属性集
     @BindFieldList(entity = Role.class, field = "createTime", condition="this.id=user_role.user_id AND user_role.role_id=id")
-    private List<Date> roleCreateDates;
+    private List<LocalDateTime> roleCreateDates;
 
 }

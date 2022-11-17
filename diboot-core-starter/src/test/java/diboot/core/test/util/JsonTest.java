@@ -31,6 +31,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,20 +58,20 @@ public class JsonTest {
 
         user = new User();
         user.setId("123");
-        user.setUsername("zhangs").setCreateTime(new Date());
-        user.setBirthdate(D.convert2Date("1988-09-12 12:34"));
-        user.setCreateTime(new Date());
+        user.setUsername("zhangs").setCreateTime(LocalDateTime.now());
+        user.setBirthdate(LocalDate.parse("1988-09-12 12:34"));
+        user.setCreateTime(LocalDateTime.now());
         String jsonStr = JSON.stringify(user);
         Assert.assertTrue(jsonStr != null);
         System.out.println(jsonStr);
         User user2 = JSON.toJavaObject(jsonStr, User.class);
-        Assert.assertTrue("1988-09-12".equals(D.convert2DateString(user2.getBirthdate())));
+        Assert.assertTrue(LocalDate.parse("1988-09-12").equals(user2.getBirthdate()));
     }
 
     @Test
     public void testJsonConvert(){
         Role role = new Role();
-        role.setCreateTime(new Date());
+        role.setCreateTime(LocalDateTime.now());
         role.setId("1");
         role.setCode("ADMIN").setName("管理员");
 
@@ -83,8 +85,8 @@ public class JsonTest {
     public void testJsonResult(){
         User user = new User();
         user.setId("123");
-        user.setUsername("zhangs").setCreateTime(new Date());
-        user.setBirthdate(D.convert2Date("1988-09-12 12:34"));
+        user.setUsername("zhangs").setCreateTime(LocalDateTime.now());
+        user.setBirthdate(LocalDate.parse("1988-09-12 12:34"));
         List<User> userList = new ArrayList<>();
         userList.add(user);
 

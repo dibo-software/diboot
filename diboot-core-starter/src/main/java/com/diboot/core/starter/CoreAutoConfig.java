@@ -140,6 +140,10 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         ObjectMapper objectMapper = ContextHelper.getBean(ObjectMapper.class);
         if (objectMapper == null) {
             objectMapper = converter.getObjectMapper();
+            System.out.println("converter.getObjectMapper = " + objectMapper.toString());
+        }
+        else {
+            System.out.println("ContextHelper.getObjectMapper = " + objectMapper.toString());
         }
         converter.setObjectMapper(objectMapper);
         return converter;

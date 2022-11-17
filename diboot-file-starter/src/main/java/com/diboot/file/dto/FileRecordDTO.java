@@ -21,7 +21,7 @@ import com.diboot.core.util.D;
 import com.diboot.file.entity.FileRecord;
 import lombok.Getter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 文件记录 DTO
@@ -37,21 +37,21 @@ public class FileRecordDTO extends FileRecord {
      * 创建时间-起始
      */
     @BindQuery(comparison = Comparison.GE, column = "createTime")
-    private Date createTimeBegin;
+    private LocalDateTime createTimeBegin;
 
     /**
      * 创建时间-截止
      */
     @BindQuery(comparison = Comparison.LT, column = "createTime")
-    private Date createTimeEnd;
+    private LocalDateTime createTimeEnd;
 
-    public FileRecord setCreatetimeBegin(Date createtimeBegin) {
-        this.createTimeBegin = createtimeBegin;
+    public FileRecord setCreateTimeBegin(LocalDateTime createTimeBegin) {
+        this.createTimeBegin = createTimeBegin;
         return this;
     }
 
-    public FileRecord setCreatetimeEnd(Date createtimeEnd) {
-        this.createTimeEnd = D.nextDay(createtimeEnd);
+    public FileRecord setCreateTimeEnd(LocalDateTime createTimeEnd) {
+        this.createTimeEnd = createTimeEnd.plusDays(1);
         return this;
     }
 }

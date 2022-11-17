@@ -25,7 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -63,7 +63,7 @@ public abstract class BaseEntity extends AbstractEntity<String> {
      * 默认记录创建时间字段，新建时由数据库赋值
      */
     @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /***
      * Entity对象转为map

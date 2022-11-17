@@ -16,7 +16,6 @@
 package diboot.core.test.binder.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.data.copy.Accept;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.D;
@@ -24,9 +23,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.junit.Test;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * @author mazc@dibo.ltd
@@ -51,7 +52,7 @@ public class User extends BaseEntity {
     private String gender;
 
     @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
-    private Date birthdate;
+    private LocalDate birthdate;
 
     @JsonFormat(pattern = D.FORMAT_DATETIME_Y4MDHMS)
     private LocalDateTime localDatetime;
@@ -59,4 +60,5 @@ public class User extends BaseEntity {
     @TableField("`character`")
     //@TableField
     private String character;
+
 }

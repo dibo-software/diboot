@@ -26,7 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -40,10 +40,9 @@ import java.util.List;
 @Accessors(chain = true)
 public class IamOrgVO extends IamOrg  {
     private static final long serialVersionUID = 1503838254395651126L;
-
     @TableField(exist = false)
     @JsonIgnore
-    private Date createTime;
+    private LocalDateTime createTime;
 
     // 数据字典关联
     @BindDict(type="ORG_TYPE", field = "type")

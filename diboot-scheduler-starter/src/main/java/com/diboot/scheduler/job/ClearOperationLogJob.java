@@ -25,8 +25,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,7 +55,7 @@ public class ClearOperationLogJob extends QuartzJobBean {
             days = jobDataMap.getInt(PARAM_KEY_DAYS_BEFORE);
         }
         List<Object> params = new ArrayList<>(1);
-        params.add(D.getDate(new Date(), -days));
+        params.add(LocalDateTime.now().minusDays(days));
         try {
             SqlExecutor.executeUpdate(SQL, params);
         } catch (Exception e) {

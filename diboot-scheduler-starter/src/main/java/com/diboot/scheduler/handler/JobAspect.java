@@ -29,7 +29,8 @@ import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * job执行日志的切面处理
@@ -64,11 +65,11 @@ public class JobAspect {
         ScheduleJobLog jobLog = new ScheduleJobLog();
         jobLog.setJobId(Long.valueOf(((JobExecutionContext) joinPoint.getArgs()[0]).getJobDetail().getKey().getName()));
         try {
-            jobLog.setStartTime(new Date());
+            jobLog.setStartTime(LocalDateTime.now());
             joinPoint.proceed(joinPoint.getArgs());
-            jobLog.setEndTime(new Date());
-            long seconds = (jobLog.getEndTime().getTime() - jobLog.getStartTime().getTime()) / 1000;
-            jobLog.setElapsedSeconds(seconds).setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
+            jobLog.setEndTime(LocalDateTime.now());
+            Duration duration = Duration.between(jobLog.getStartTime(), jobLog.getEndTime());
+            jobLog.setElapsedSeconds(duration.getSeconds()).setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
         } catch (Throwable throwable) {
             // 处理异常返回结果
             String errorMsg = throwable.toString();
@@ -82,4 +83,5 @@ public class JobAspect {
         // 异步保存日志
         schedulerAsyncWorker.saveScheduleJobLog(jobLog);
     }
+
 }

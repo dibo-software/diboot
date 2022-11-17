@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 任务执行日志 Entity定义
@@ -88,13 +88,13 @@ public class ScheduleJobLog extends BaseEntity {
      * 开始时间
      */
     @TableField()
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /**
      * 结束时间
      */
     @TableField()
-    private Date endTime;
+    private LocalDateTime endTime;
 
     /**
      * 耗时(秒)

@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.binding.query.Strategy;
-import com.diboot.core.util.D;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
@@ -27,7 +26,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -63,10 +62,10 @@ public class DepartmentDTO implements Serializable {
 
     // 查询单个日期
     @BindQuery(comparison = Comparison.GE, column = "createTime")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @BindQuery(comparison = Comparison.LT, column = "createTime")
-    private Date createTimeEnd;
+    private LocalDateTime createTimeEnd;
 
     @BindQuery(column = "parent_id", comparison = Comparison.IN)
     private List<Long> parentIds;
@@ -76,8 +75,8 @@ public class DepartmentDTO implements Serializable {
     //@TableField
     private String character;
 
-    public Date getCreateTimeEnd(){
-        return D.nextDay(createTime);
+    public LocalDateTime getCreateTimeEnd(){
+        return createTime!= null? createTime.plusDays(1) : null;
     }
 
 }

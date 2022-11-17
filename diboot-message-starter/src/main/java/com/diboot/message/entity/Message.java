@@ -30,7 +30,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -181,7 +181,7 @@ public class Message extends BaseEntity {
      */
     @JsonFormat(pattern = D.FORMAT_DATETIME_Y4MDHM)
     @TableField()
-    private Date scheduleTime;
+    private LocalDateTime scheduleTime;
 
     /**
      * 扩展数据
@@ -194,7 +194,7 @@ public class Message extends BaseEntity {
      * 更新时间
      */
     @TableField(fill = FieldFill.UPDATE)
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 扩展字段Map
