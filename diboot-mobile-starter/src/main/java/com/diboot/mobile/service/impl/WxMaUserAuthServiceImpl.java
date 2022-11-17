@@ -34,7 +34,7 @@ import com.diboot.mobile.vo.IamMemberVO;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 微信小程序相关操作（登陆用户为IamUser类型）
+ * 微信小程序相关操作（登录用户为IamUser类型）
  *
  * @author : uu
  * @version : v2.4.0
@@ -52,7 +52,7 @@ public class WxMaUserAuthServiceImpl extends WxMaMemberAuthServiceImpl {
     public IamMember bindWxMa(WxMemberDTO wxInfoDTO) throws Exception {
         IamUser iamUser = IamSecurityUtils.getCurrentUser();
         if (V.isEmpty(iamUser)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "请登陆后绑定");
+            throw new BusinessException(Status.FAIL_OPERATION, "请登录后绑定");
         }
         // 获取用户信息
         IamMember iamMember = iamMemberService.getSingleEntity(
@@ -88,9 +88,9 @@ public class WxMaUserAuthServiceImpl extends WxMaMemberAuthServiceImpl {
                         .eq(IamMember::getOpenid, wxInfoDTO.getOpenid())
                         .eq(IamMember::getStatus, Cons.DICTCODE_ACCOUNT_STATUS.A.name())
         );
-        // 账户存在，直接登陆
+        // 账户存在，直接登录
         if (V.isEmpty(iamMember)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请登陆后绑定再使用快捷登陆");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请登录后绑定再使用快捷登录");
         }
         return Binder.convertAndBindRelations(iamMember, IamMemberUserVO.class);
     }

@@ -6,12 +6,12 @@ export default class PwdLogin extends Member {
 		super()
 	}
 	/**
-	 * 登陆
+	 * 登录
 	 */
 	go(form) {
 		return new Promise(async (reslove, reject) => {
 			try {
-				uni.showLoading({title: '登陆中'})
+				uni.showLoading({title: '登录中'})
 				const res = await dibootApi.post('/h5/auth/login', form)
 				if(res.code === 0) {
 					uni.setStorageSync("Authorization", res.data)

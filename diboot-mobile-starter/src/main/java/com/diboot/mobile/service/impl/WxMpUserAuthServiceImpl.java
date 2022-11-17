@@ -35,7 +35,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 微信公众号相关操作（登陆用户为IamUser类型）
+ * 微信公众号相关操作（登录用户为IamUser类型）
  *
  * @author : uu
  * @version : v2.4.0
@@ -61,7 +61,7 @@ public class WxMpUserAuthServiceImpl extends WxMpMemberAuthServiceImpl {
         }
         IamUser iamUser = IamSecurityUtils.getCurrentUser();
         if (V.isEmpty(iamUser)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "请登陆后绑定");
+            throw new BusinessException(Status.FAIL_OPERATION, "请登录后绑定");
         }
         WxOAuth2AccessToken accessToken = wxMpService.getOAuth2Service().getAccessToken(code);
         // 获取用户信息
@@ -106,9 +106,9 @@ public class WxMpUserAuthServiceImpl extends WxMpMemberAuthServiceImpl {
                         .eq(IamAccount::getAuthType, Cons.DICTCODE_AUTH_TYPE.WX_MP.name()));
         MobileCredential credential = new MobileCredential(accessToken.getOpenId());
         credential.setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name());
-        // 账户存在，直接登陆
+        // 账户存在，直接登录
         if (V.isEmpty(account)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请登陆后绑定再使用快捷登陆");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请登录后绑定再使用快捷登录");
         }
         return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.WX_MP.name()).applyToken(credential);
     }

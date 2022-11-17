@@ -21,7 +21,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 小程序登陆或者获取手机号需要的DTO包装类
+ * 小程序登录或者获取手机号需要的DTO包装类
  *
  * @author : uu
  * @version : v2.3.1
@@ -39,7 +39,7 @@ public class WxMemberDTO implements Serializable {
     private String openid;
 
     /**
-     * 用户登陆后换取的sessionKey
+     * 用户登录后换取的sessionKey
      */
     private String sessionKey;
 

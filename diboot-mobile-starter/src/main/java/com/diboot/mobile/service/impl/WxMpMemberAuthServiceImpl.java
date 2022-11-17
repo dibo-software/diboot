@@ -36,7 +36,7 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 微信公众号相关操作（登陆用户为IamMember类型）
+ * 微信公众号相关操作（登录用户为IamMember类型）
  *
  * @author : uu
  * @version : v2.4.0
@@ -93,7 +93,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
         MobileCredential credential = new MobileCredential(accessToken.getOpenId());
         credential.setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name());
         credential.setUserTypeClass(IamMember.class);
-        // 账户存在，直接登陆
+        // 账户存在，直接登录
         if (V.notEmpty(account)) {
             return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.WX_MP.name()).applyToken(credential);
         }
