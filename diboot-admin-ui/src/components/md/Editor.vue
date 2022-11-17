@@ -11,10 +11,10 @@ const props = withDefaults(
     width?: number | string
   }>(),
   {
-    modelValue: undefined,
+    modelValue: '',
     placeholder: '请输入内容...',
     height: undefined,
-    width: undefined
+    width: '100%'
   }
 )
 
@@ -25,6 +25,11 @@ const emit = defineEmits<{
 const vditor = ref<Vditor>()
 const vditorId = 'vditor' + Math.random()
 
+watch(
+  () => props.modelValue,
+  value => vditor.value?.getValue() !== value && vditor.value?.setValue(value)
+)
+
 onMounted(() => {
   vditor.value = new Vditor(vditorId, {
     mode: 'wysiwyg',
@@ -32,7 +37,7 @@ onMounted(() => {
     counter: { enable: true },
     height: props.height,
     width: props.width,
-    minHeight: 500,
+    minHeight: 300,
     placeholder: props.placeholder,
     after() {
       vditor.value?.setValue(props.modelValue)
