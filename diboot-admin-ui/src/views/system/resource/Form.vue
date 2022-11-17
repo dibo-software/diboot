@@ -289,7 +289,7 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                               size="small"
                               @click="toggleBtnResourceCodeSelect(permission)"
                             >
-                              {{ permission._customCode ? '自定义输入' : '从字典选取' }}
+                              输入/选择 切换
                             </el-button>
                           </el-col>
                         </el-row>
