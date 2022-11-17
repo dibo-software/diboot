@@ -22,7 +22,7 @@ export default class MiniLogin extends Member {
 	 */
 	go() {
 		let _this = this
-		// 微信登陆授权
+		// 微信登录授权
 		wx.getUserProfile({
 		    desc : '用于完善用户资料',
 		    lang : 'zh_CN',
@@ -30,7 +30,7 @@ export default class MiniLogin extends Member {
 				uni.login({
 				  provider: 'weixin',
 				  success: function (loginRes) {
-					// 微信登陆
+					// 微信登录
 					_this.miniAuthLogin(loginRes.code, res.userInfo)
 				 }
 				});
@@ -41,18 +41,18 @@ export default class MiniLogin extends Member {
 		})
 	}
 	/**
-	 * 微信小程序登陆
+	 * 微信小程序登录
 	 * @param {Object} code 微信code，
 	 * @param {Object} encodePhone 加密的手机号信息
 	 */
 	async miniAuthLogin(code, infoRes) {
 		let msg = this.bindWx ? '绑定中' : '登录中'
-		let msgFail = this.bindWx ? '绑定失败' : '登陆失败'
+		let msgFail = this.bindWx ? '绑定失败' : '登录失败'
 		uni.showLoading({
 		    title: msg
 		});
 		try {
-			// 调用登陆接口
+			// 调用登录接口
 			const res = await dibootApi.get('/wx-ma/auth/getSessionInfo', {params: {code}})
 			if(res.code === 0) {
 				const {sessionKey, openid} = res.data
@@ -85,7 +85,7 @@ export default class MiniLogin extends Member {
 		const saveRes = await dibootApi.post('/wx-ma/auth/getAndSaveWxMember', data)
 		if(saveRes.code === 0 ) {
 			uni.setStorageSync("member", JSON.stringify(saveRes.data))
-			// 调用iam登陆接口
+			// 调用iam登录接口
 			const loginForm =  {authAccount: saveRes.data.openid, authType: 'WX_MP'}
 			const loginRes = await dibootApi.post('/wx-ma/auth/login', loginForm)
 			if(loginRes.code === 0) {

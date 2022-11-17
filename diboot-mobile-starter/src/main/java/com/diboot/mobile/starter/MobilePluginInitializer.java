@@ -66,7 +66,7 @@ public class MobilePluginInitializer implements ApplicationRunner {
                 log.info("diboot-mobile 初始化SQL ...");
                 // 执行初始化SQL
                 SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "mobile");
-                // 插入IamMember登陆数据
+                // 插入IamMember登录数据
                 insertInitData();
                 log.info("diboot-mobile 初始化SQL完成.");
             }

@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
- * 移动端登陆用户
+ * 移动端登录用户
  *
  * @author : uu
  * @version : v2.3.1

@@ -749,15 +749,17 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
 		String pk = ContextHolder.getIdColumnName(getEntityClass());
 		if(V.notEmpty(selectFlds)) {
-			queryWrapper.select(pk);
+			List<String> columns = new ArrayList<>();
+			columns.add(pk);
 			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
 			for(IGetter<T> getter : selectFlds) {
 				String fieldName = BeanUtils.convertToFieldName(getter);
 				String columnName = entityInfo.getColumnByField(fieldName);
 				if(columnName != null) {
-					queryWrapper.select(columnName);
+					columns.add(columnName);
 				}
 			}
+			queryWrapper.select(S.toStringArray(columns));
 		}
 		queryWrapper.in(pk, entityIds);
 		List<T> entityList = getEntityList(queryWrapper);

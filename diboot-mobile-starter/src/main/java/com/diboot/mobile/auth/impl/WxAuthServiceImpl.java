@@ -63,7 +63,7 @@ public class WxAuthServiceImpl extends BaseAuthServiceImpl {
     protected IamAuthToken initAuthToken(AuthCredential credential){
         MobileCredential wxMpCredential = (MobileCredential)credential;
         IamAuthToken token = new IamAuthToken(getAuthType(), wxMpCredential.getUserTypeClass());
-        // 设置登陆的
+        // 设置登录的
         token.setAuthAccount(wxMpCredential.getAuthAccount());
         token.setRememberMe(wxMpCredential.isRememberMe());
         token.setExpiresInMinutes(getExpiresInMinutes());

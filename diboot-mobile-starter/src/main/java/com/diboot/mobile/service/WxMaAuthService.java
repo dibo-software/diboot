@@ -42,7 +42,7 @@ public interface WxMaAuthService {
     WxMaSessionInfoVO getSessionInfo(String jsCode) throws Exception;
 
     /**
-     * 用户绑定小程序(先登陆，后绑定)
+     * 用户绑定小程序(先登录，后绑定)
      *
      * 已经绑定提示已经绑定
      * 未绑定，IamMember自动创建，绑定IamUser

@@ -147,7 +147,7 @@ const createPermission = checkPermission('create')
     </el-space>
     <div v-has-permission="'create'" class="is-fixed">
       <el-button style="width: 100%" type="primary" :icon="Plus" size="default" @click="addChildNode()">
-        添加顶级菜单
+        添加一级菜单
       </el-button>
     </div>
   </div>
