@@ -301,6 +301,10 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
           border-bottom: 0;
         }
       }
+      .el-descriptions--small .el-descriptions__header {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
     }
   }
 }

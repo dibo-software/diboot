@@ -3,7 +3,7 @@ import constant from '@/utils/constant.js'
 import Member from './class.member.js'
 
 /**
- * 微信公众号登陆
+ * 微信公众号登录
  */
 export default class MpLogin extends Member {
 	constructor() {
@@ -11,7 +11,7 @@ export default class MpLogin extends Member {
 	}
 
 	/**
-	 * 微信公众号登陆
+	 * 微信公众号登录
 	 */
 	redirect(bindWp = false) {
 		let authtoken = uni.getStorageSync("Authorization")
@@ -44,12 +44,12 @@ export default class MpLogin extends Member {
 		}
 	}
 	/**
-	 * 登陆
+	 * 登录
 	 */
 	go() {
 		return new Promise(async (reslove, reject) => {
 			try {
-				uni.showLoading({title: '登陆中'})
+				uni.showLoading({title: '登录中'})
 				const res = await dibootApi.get('/wx-mp/auth/apply', {
 					params: {
 						code: this.getQueryString4hash('code'),

@@ -42,12 +42,24 @@ export default defineStore('auth', {
     getInfo: async function () {
       try {
         const res = await api.get<{ info: IUserInfo; roles: Array<string> }>('/auth/user-info')
+        const BASE_URL = import.meta.env.VITE_APP_BASE_URL
         this.info = res.data?.info
-        this.avatar = `${this.info?.avatar}`
+        this.avatar = `${BASE_URL}${this.info?.avatarUrl}/image`
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
       } catch (e) {
-        throw new Error('获取登录者信息异常')
+        throw new Error('获取登录用户信息异常')
+      }
+    },
+    getNewInfo: async function () {
+      try {
+        const res = await api.get<{ info: IUserInfo; roles: Array<string> }>('/iam/user/current-user-info')
+        const BASE_URL = import.meta.env.VITE_APP_BASE_URL
+        this.info = res.data
+        this.avatar = `${BASE_URL}${this.info?.avatarUrl}/image`
+        this.realname = `${this.info?.realname}`
+      } catch (e) {
+        throw new Error('获取登录用户信息异常')
       }
     },
     async logout() {

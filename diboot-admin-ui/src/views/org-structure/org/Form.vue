@@ -24,25 +24,46 @@ const visible = ref(false)
 
 const props = defineProps<{ parentId?: string; siblingsNumber?: number }>()
 
+// 设置表单初始值
+const setFormInitialValue = () => {
+  nextTick(() => {
+    model.value.parentId = props.parentId === '0' ? '' : props.parentId
+    model.value.type = 'DEPT'
+    model.value.sortId = props.siblingsNumber ? `${props.siblingsNumber + 1}` : '1'
+  })
+}
+
 const open = async (id?: string) => {
   title.value = id ? '更新' : '新建'
   // 当新建模式时，设置系列初始值
   if (!id) {
-    model.value.parentId = props.parentId === '0' ? '' : props.parentId
-    model.value.type = 'DEPT'
-    model.value.sortId = props.siblingsNumber ? `${props.siblingsNumber}` : '1'
+    setFormInitialValue()
   }
+
   visible.value = true
   // 加载表单数据与树结构数据
   await loadData(id)
   await initRelatedData()
 }
 
+// 新建完是否清空表单继续填写
+const isContinueAdd = ref(false)
+
 const formRef = ref<FormInstance>()
 
 watch(visible, value => {
   if (!value) formRef.value?.resetFields()
 })
+
+//确认并继续添加后刷新排序值
+watch(
+  () => props.siblingsNumber,
+  value => {
+    if (!model.value.id) {
+      model.value.sortId = value ? `${value + 1}` : '1'
+    }
+  }
+)
 
 const emit = defineEmits<{
   (e: 'complete', id?: string): void
@@ -52,9 +73,19 @@ const { submitting, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)
-    visible.value = false
+    visible.value = isContinueAdd.value
+    if (isContinueAdd.value) {
+      formRef.value?.resetFields()
+      setFormInitialValue()
+    }
   }
 })
+
+// 保存之前判断是否确认并继续添加
+const beforeSubmit = (value: boolean) => {
+  isContinueAdd.value = value
+  submit(model.value, formRef.value)
+}
 
 const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
 
@@ -97,10 +128,10 @@ defineExpose({ open })
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="type" label="类型">
-            <el-select v-model="model.type">
-              <el-option key="COMP" label="公司" value="COMP" />
-              <el-option key="DEPT" label="部门" value="DEPT" />
-            </el-select>
+            <el-radio-group v-model="model.type">
+              <el-radio label="COMP">公司</el-radio>
+              <el-radio label="DEPT">部门</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
@@ -136,14 +167,17 @@ defineExpose({ open })
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="备注">
+      <el-form-item prop="orgComment" label="备注">
         <el-input v-model="model.orgComment" :rows="2" type="textarea" placeholder="请输入备注" />
       </el-form-item>
     </el-form>
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">提交</el-button>
+      <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
+        >确认并继续添加
+      </el-button>
+      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">提交</el-button>
     </template>
   </el-dialog>
 </template>

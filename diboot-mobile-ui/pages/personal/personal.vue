@@ -48,11 +48,11 @@
 			 * 微信绑定
 			 */
 			weiBind() {
-				// 小程序登陆
+				// 小程序登录
 				// #ifdef MP-WEIXIN
 				this.$miniLogin.setBindWx(true).setTip(this.$refs.uToast).setUrlPath('/pages/personal/personal').go()
 				//#endif
-				// 微信公众号登陆
+				// 微信公众号登录
 				// #ifdef H5
 				this.$mpLogin.redirect(true)
 				//#endif

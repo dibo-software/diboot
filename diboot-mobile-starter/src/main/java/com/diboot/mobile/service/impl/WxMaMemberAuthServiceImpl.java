@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
- * 微信公众号相关操作（登陆用户为IamMember类型）
+ * 微信公众号相关操作（登录用户为IamMember类型）
  *
  * @author : uu
  * @version : v2.3.1

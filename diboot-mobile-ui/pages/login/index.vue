@@ -14,7 +14,7 @@
 			</register-form>
 		</view>
 		<view class="u-m-t-80 ">
-			<u-divider margin-bottom="40">其他方式登陆</u-divider>
+			<u-divider margin-bottom="40">其他方式登录</u-divider>
 			<view class="u-flex u-row-center">
 				<u-icon @click="weiLogin" size="90" name="weixin-circle-fill" color="rgb(83,194,64)"></u-icon>
 			</view>
@@ -61,15 +61,15 @@
 			 */
 			register(data) {
 				// 注册逻辑
-				this.$tip(this.$refs.uTips, '注册成功,请重新登陆').then(() => {
+				this.$tip(this.$refs.uTips, '注册成功,请重新登录').then(() => {
 					this.currentType = 'login'
 				})
 			},
 			/**
-			 * 登陆成功
+			 * 登录成功
 			 */
 			login(data) {
-				// 密码登陆
+				// 密码登录
 				this.$pwdLogin
 					// .setTip(this.$refs.uTips)
 					.go(data)
@@ -81,14 +81,14 @@
 					})
 			},
 			/**
-			 * 微信登陆：
+			 * 微信登录：
 			 */
 			weiLogin() {
-				// 小程序登陆
+				// 小程序登录
 				// #ifdef MP-WEIXIN
 				this.$miniLogin.setTip(this.$refs.uTips).setBindWx(false).setUrlPath('/pages/home/home').go()
 				//#endif
-				// 微信公众号登陆
+				// 微信公众号登录
 				// #ifdef H5
 				this.$mpLogin.redirect()
 				//#endif

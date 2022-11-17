@@ -21,7 +21,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * 移动端登陆凭证
+ * 移动端登录凭证
  *
  * @author : uu
  * @version : v2.3.1
