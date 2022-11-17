@@ -13,9 +13,6 @@ const { queryParam, onSearch, getList, loading, dataList, pagination, remove } =
 
 getList()
 
-// 选中的数据 Id 集合
-const selectedKeys = ref<string[]>([])
-
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
@@ -49,16 +46,7 @@ const deletePermission = checkPermission('delete')
         </el-space>
       </el-space>
     </el-header>
-    <el-table
-      ref="tableRef"
-      v-loading="loading"
-      class="list-body"
-      :data="dataList"
-      stripe
-      height="100%"
-      @selection-change="(arr: Position[]) => (selectedKeys = arr.map((e: Position) => e.id))"
-    >
-      <el-table-column type="selection" width="55" />
+    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="gradeName" label="职级" />
