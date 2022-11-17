@@ -67,9 +67,22 @@ export interface Input {
 
 export interface InputText extends Input {
   type: 'input'
-  textarea?: boolean
+  maxlength?: number
+}
+
+export interface Textarea extends Omit<InputText, 'type'> {
+  type: 'textarea'
   autosize?: boolean | { minRows: number; maxRows: number }
-  showWordLimit?: boolean
+}
+
+export interface Markdown extends Input {
+  type: 'md'
+  height?: string
+}
+export interface RichText extends Omit<Markdown, 'type'> {
+  type: 'rich'
+  // 编辑器模式
+  mode?: 'default' | 'simple'
 }
 
 export interface InputNumber extends Input {
@@ -122,7 +135,6 @@ export interface DateTime extends Input {
 
 export interface Time extends Input {
   type: 'time'
-  range?: boolean
 }
 
 export interface Upload extends Input {
@@ -150,6 +162,9 @@ export interface ListSelector extends Input {
 
 export type FormItem =
   | InputText
+  | Textarea
+  | Markdown
+  | RichText
   | InputNumber
   | BooleanSwitch
   | Checkbox

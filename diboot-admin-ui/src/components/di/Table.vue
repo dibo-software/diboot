@@ -159,12 +159,12 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     @selection-change="selected"
     @sort-change="sortChange"
   >
-    <el-table-column v-if="multiple === false" type="index" width="50">
+    <el-table-column v-if="multiple === false" type="index" width="50" fixed>
       <template #default="{ row }">
         <el-radio v-model="single" :label="row[primaryKey]" @change="getSingleRow(row)">{{ '' }}</el-radio>
       </template>
     </el-table-column>
-    <el-table-column v-else-if="multiple" type="selection" width="55" />
+    <el-table-column v-else-if="multiple" type="selection" width="55" fixed />
 
     <slot />
     <template v-for="(item, index) in columnList" :key="index">

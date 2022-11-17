@@ -41,13 +41,12 @@ const requiredRule = { required: true, message: '不能为空', whitespace: true
 const checkUniqueRule = {
   validator: (rule: unknown, value: unknown, callback: (error?: string | Error) => void) => {
     if (value) {
-      const params = {
-        id: props.getId ? props.getId() : undefined,
-        field: props.config.prop,
-        [props.config.prop]: value
-      }
       api
-        .get(`${props.baseApi}/check-unique`, params)
+        .get(`${props.baseApi}/check-unique`, {
+          id: props.getId ? props.getId() : undefined,
+          field: props.config.prop,
+          value
+        })
         .then(() => {
           callback()
         })
@@ -76,6 +75,9 @@ const remoteFilter = (value?: unknown) => emit('remoteFilter', value)
 const lazyLoad = ({ data }: { data: LabelValue }, resolve: (data: LabelValue[]) => void) =>
   resolve(emit('lazyLoad', data.value))
 
+const DEFAULT_DATE_FORMAT: Record<string, string> = { date: 'YYYY-MM-DD', datetime: 'YYYY-MM-DD HH:mm:ss' }
+const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
+
 const bindUpload = useUploadFile(fileIds => (value.value = fileIds), props.getFileList ?? (() => []))
 
 const beforeUpload = (rawFile: UploadRawFile) => {
@@ -102,7 +104,33 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       v-model="value"
       :placeholder="config.placeholder"
       clearable
+      :maxlength="config.maxlength"
+      :show-word-limit="!!config.maxlength"
       @change="handleChange"
+    />
+    <el-input
+      v-else-if="config.type === 'textarea'"
+      v-model="value"
+      :placeholder="config.placeholder"
+      clearable
+      type="textarea"
+      :autosize="config.autosize"
+      :maxlength="config.maxlength"
+      :show-word-limit="!!config.maxlength"
+      @change="handleChange"
+    />
+    <rich-editor
+      v-else-if="config.type === 'rich'"
+      v-model="value"
+      :placeholder="config.placeholder"
+      :mode="config.mode"
+      :style="{ height: config.height }"
+    />
+    <md-editor
+      v-else-if="config.type === 'md'"
+      v-model="value"
+      :placeholder="config.placeholder"
+      :height="config.height"
     />
     <el-input-number
       v-if="config.type === 'input-number'"
@@ -181,19 +209,28 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       @change="handleChange"
     />
     <el-date-picker
-      v-if="['year', 'month', 'date', 'datetime', 'week'].includes(config.type)"
+      v-if="
+        config.type === 'year' ||
+        config.type === 'month' ||
+        config.type === 'date' ||
+        config.type === 'datetime' ||
+        config.type === 'week'
+      "
       v-model="value"
       clearable
       :type="config.type"
+      :value-format="config.format ? config.format : getDateFormtDef(config.type)"
       :placeholder="config.placeholder"
       @change="handleChange"
     />
-    <el-time-picker
+    <el-time-select
       v-if="config.type === 'time'"
       v-model="value"
-      :is-range="config.range"
       clearable
       :placeholder="config.placeholder"
+      start="00:00"
+      step="00:15"
+      end="23:59"
       @change="handleChange"
     />
     <date-range
