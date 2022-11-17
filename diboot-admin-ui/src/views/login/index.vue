@@ -100,11 +100,11 @@ const submitForm = async () => {
   align-items: center;
   justify-content: center;
 
-  background-image: radial-gradient(closest-side, rgba(235, 105, 78, 1), rgba(235, 105, 78, 0)),
-    radial-gradient(closest-side, rgba(252, 88, 200, 1), rgba(243, 11, 164, 0)),
-    radial-gradient(closest-side, rgba(254, 234, 131, 1), rgba(254, 234, 131, 0)),
-    radial-gradient(closest-side, rgba(170, 142, 245, 1), rgba(170, 142, 245, 0)),
-    radial-gradient(closest-side, rgba(248, 192, 147, 1), rgba(248, 192, 147, 0));
+  background-image: radial-gradient(closest-side, rgb(120, 142, 225), rgba(248, 192, 147, 0)),
+    radial-gradient(closest-side, rgb(168, 178, 220), rgba(170, 142, 245, 0)),
+    radial-gradient(closest-side, rgb(143, 173, 210), rgba(235, 105, 78, 0)),
+    radial-gradient(closest-side, rgb(129, 199, 211), rgba(243, 11, 164, 0)),
+    radial-gradient(closest-side, rgb(137, 196, 148), rgba(254, 234, 131, 0));
   background-size: 130vmax 130vmax, 80vmax 80vmax, 90vmax 90vmax, 110vmax 110vmax, 90vmax 9vmax;
   background-position: -80vmax -80vmax, 60vmax - 30vmax, 10vmax 10vmax, -30vmax - 10vmax, 50vmax 50vmax;
   background-repeat: no-repeat;
