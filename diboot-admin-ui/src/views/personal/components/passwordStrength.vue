@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { level } from './CheckPassword'
+import { level } from './checkPassword'
 
 const props = defineProps<{
   password?: string
@@ -34,8 +34,8 @@ const strength = ref('')
 watch(
   () => props.password,
   newVal => {
-    if (newVal != '') {
-      const res: string = level(newVal)
+    if (newVal && newVal != '') {
+      const res = level(newVal)
       if (res == '弱') {
         barColor.value = 'red'
         width.value = '35'

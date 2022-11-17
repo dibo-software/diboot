@@ -33,15 +33,15 @@ import { reactive } from 'vue'
 
 const baseApi = '/iam/user'
 
-const authStore = useAuthStore()
+const authStore: any = useAuthStore()
 const { relatedData, initRelatedData } = useOption({ dict: ['GENDER'] })
 initRelatedData()
 
 const form = reactive({
   realname: authStore.realname,
-  mobilePhone: authStore.info.mobilePhone,
-  gender: authStore.info.gender,
-  email: authStore.info.email
+  mobilePhone: authStore.info?.mobilePhone,
+  gender: authStore.info?.gender,
+  email: authStore.info?.email
 })
 
 const save = async () => {
@@ -49,7 +49,7 @@ const save = async () => {
   const res = await api.post<string>(`${baseApi}/update-current-user-info`, data)
   if (res.code === 0) {
     ElMessage.success(res.msg)
-    await authStore.getNewInfo()
+    await authStore.getInfo()
   }
 }
 </script>

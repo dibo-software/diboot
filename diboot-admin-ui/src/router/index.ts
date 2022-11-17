@@ -77,7 +77,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: 'personal',
         name: 'Personal',
-        component: () => import('@/layout/header/personal/index.vue'),
+        component: () => import('@/views/personal/index.vue'),
         meta: { title: '账号信息', icon: 'Element:User', affixTab: false, hidden: true }
       }
     ]

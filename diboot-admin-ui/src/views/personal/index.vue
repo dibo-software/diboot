@@ -54,7 +54,7 @@ import account from './components/account.vue'
 import password from './components/password.vue'
 import cropAvatar from './components/cropAvatar.vue'
 
-const authStore = useAuthStore()
+const authStore: any = useAuthStore()
 
 const menu = shallowRef([
   {
@@ -80,9 +80,9 @@ const openPage = (item: any) => {
 //修改头像
 const getFile = () => {
   const fileEle = document.getElementById('avatarFile')
-  fileEle.click()
+  fileEle?.click()
 }
-const avatarBase64 = ref('')
+const avatarBase64: any = ref('')
 const showSetAvatarDialog = ref()
 const filename = ref('')
 const selectFile = (e: any) => {

@@ -34,6 +34,7 @@
     "vditor": "^3.8.18",
     "vue": "^3.2.45",
     "vue-clipboard3": "^2.0.0",
+    "vue-cropper": "^1.0.5",
     "vue-fuse": "^4.1.1",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",

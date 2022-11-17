@@ -2,14 +2,14 @@
   <el-card shadow="never" header="修改密码">
     <el-form ref="ruleFormRef" :model="form" :rules="rules" label-width="120px" style="margin-top: 20px; width: 50%">
       <el-form-item label="当前密码" prop="oldPassword">
-        <el-input v-model="form.oldPassword" />
+        <el-input v-model="form.oldPassword" type="password" show-password />
       </el-form-item>
       <el-form-item label="新密码" prop="password">
-        <el-input v-model="form.password" />
+        <el-input v-model="form.password" type="password" show-password />
       </el-form-item>
       <password-strength :password="form.password" />
       <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input v-model="form.confirmPassword" />
+        <el-input v-model="form.confirmPassword" type="password" show-password />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
@@ -21,12 +21,14 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { checkPasswordRule } from './CheckPassword'
+import { checkPasswordRule } from './checkPassword'
 import passwordStrength from './passwordStrength.vue'
+import useAuthStore from '@/store/auth'
 
 const baseApi = '/iam/user'
+const authStore = useAuthStore()
 
-const form = reactive({
+const form: any = reactive({
   oldPassword: '',
   password: '',
   confirmPassword: ''
@@ -82,6 +84,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         if (res.code === 0) {
           ElMessage.success(res.msg)
           Object.keys(form).forEach(key => (form[key] = ''))
+          authStore.logout()
         }
       })
     } else {
