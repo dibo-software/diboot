@@ -3,12 +3,12 @@ import type { ApiData } from '@/utils/request'
 import { imageBindSrc } from '@/utils/file'
 
 export default (setValue: (fileIds?: string) => void, getFileList: () => FileRecord[] | undefined) => {
-  const uploadFileList: UploadUserFile[] = reactive([])
+  const uploadFileList = ref<UploadUserFile[]>([])
 
   watch(getFileList, value => {
-    uploadFileList.splice(0)
+    uploadFileList.value.length = 0
     if (value)
-      uploadFileList.push(
+      uploadFileList.value.push(
         ...value.map(e => ({
           id: e.id,
           url: imageBindSrc(e).src,
@@ -18,11 +18,9 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
       )
   })
 
-  const getFileIds = () => {
-    return uploadFileList.map(e => String(e.id)).join()
-  }
+  const getFileIds = () => uploadFileList.value.map(e => String(e.id)).join()
 
-  const onSuccess = (response: ApiData<FileRecord>, uploadFile: UploadUserFile) => {
+  const onSuccess = (response: ApiData<FileRecord>, uploadFile: UploadUserFile, uploadFiles: UploadUserFile[]) => {
     if (!response) return
     const data = response.data
     if (data) {
@@ -30,6 +28,12 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
       uploadFile.url = imageBindSrc(data).src
       uploadFile.accessUrl = data.accessUrl
     }
+    uploadFileList.value = uploadFiles
+    setValue(getFileIds())
+  }
+
+  const onRemove = (uploadFile: UploadUserFile, uploadFiles: UploadUserFile[]) => {
+    uploadFileList.value = uploadFiles
     setValue(getFileIds())
   }
 
@@ -45,8 +49,8 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
   return {
     action: `/file/upload`,
     httpRequest,
-    fileList: uploadFileList,
+    fileList: uploadFileList.value,
     onSuccess,
-    onRemove: () => setValue(getFileIds())
+    onRemove
   }
 }
