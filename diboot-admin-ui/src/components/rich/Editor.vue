@@ -19,11 +19,11 @@ interface PropsType {
 }
 
 const props = withDefaults(defineProps<PropsType>(), {
-  modelValue: undefined,
+  modelValue: '',
   placeholder: '请输入内容...',
   mode: 'simple',
   doc: false,
-  title: undefined
+  title: ''
 })
 
 // 编辑器实例，必须用 shallowRef
@@ -38,8 +38,13 @@ const handleCreated = (editor: IDomEditor) => {
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => editorRef.value?.destroy())
 
-const titleValue = ref<string>(props.title)
-const contentValue = ref<string>(props.modelValue)
+const titleValue = ref(props.title)
+const contentValue = ref(props.modelValue)
+
+watch([() => props.title, () => props.modelValue], ([title, value]) => {
+  titleValue.value = title
+  contentValue.value = value
+})
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void
@@ -149,6 +154,7 @@ const editorConfig: IEditorConfig = {
       :mode="mode"
       @on-created="handleCreated"
       @on-change="handleChangeValue"
+      @click="editorRef?.focus()"
     />
   </div>
 </template>
@@ -164,7 +170,8 @@ const editorConfig: IEditorConfig = {
   }
 
   .editor-content {
-    overflow-y: hidden;
+    flex: 1;
+    height: 0 !important;
   }
 
   .editor-container {

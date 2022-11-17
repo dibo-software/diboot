@@ -31,16 +31,28 @@ const props = defineProps<{
   avatarBase64?: string
   filename?: string
 }>()
-const dialogVisible = ref(false)
-const imgSrc = ref('')
-const filename = ref('')
+const dialogVisible: any = ref(false)
+const imgSrc: any = ref('')
+const filename: any = ref('')
 watch(
-  () => [props.showSetAvatarDialog, props.avatarBase64, props.filename],
+  () => props.showSetAvatarDialog,
   val => {
     // console.log(val, 'vallll')
-    dialogVisible.value = val[0]
-    imgSrc.value = val[1]
-    filename.value = val[2]
+    dialogVisible.value = val
+  }
+)
+watch(
+  () => props.avatarBase64,
+  val => {
+    // console.log(val, 'vallll')
+    imgSrc.value = val
+  }
+)
+watch(
+  () => props.filename,
+  val => {
+    // console.log(val, 'vallll')
+    filename.value = val
   }
 )
 
@@ -50,31 +62,34 @@ const handleClose = () => {
   emits('cropDialog', false)
 }
 
-const dataURLtoFile = (dataurl, filename) => {
+const dataURLtoFile = (dataurl: string, filename: string) => {
   const arr = dataurl.split(',')
-  const mime = arr[0].match(/:(.*?);/)[1]
-  const bstr = window.atob(arr[1])
-  let n = bstr.length
-  const u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
+  const test = arr[0].match(/:(.*?);/)
+  if (test) {
+    const mime = test[1]
+    const bstr = window.atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, { type: mime })
   }
-  return new File([u8arr], filename, { type: mime })
 }
 
-const authStore = useAuthStore()
+const authStore: any = useAuthStore()
 const getPickAvatar = () => {
-  const file = dataURLtoFile(imgSrc.value, filename.value)
+  const file: any = dataURLtoFile(imgSrc.value, filename.value)
   const formData = new FormData()
   formData.set('file', file)
   api.upload<FileRecord>(`${baseApi}/upload`, formData).then(res => {
     if (res.code === 0) {
-      const data = reactive(authStore.info)
-      data.avatarUrl = res.data.accessUrl
+      const data: any = reactive(authStore.info)
+      data.avatarUrl = res.data?.accessUrl
       api.post<string>(`${updateApi}/update-current-user-info`, data).then(re => {
         if (re.code === 0) {
           ElMessage.success(re.msg)
-          authStore.getNewInfo()
+          authStore.getInfo()
         }
       })
     }

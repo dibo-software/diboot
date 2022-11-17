@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Search } from '@element-plus/icons-vue'
+import { Search, HomeFilled, Histogram } from '@element-plus/icons-vue'
 import type { OrgModel } from '@/views/org-structure/org/type'
 import type { ElTreeInstanceType } from 'element-plus'
 
@@ -63,7 +63,17 @@ defineExpose({
         :check-strictly="true"
         :filter-node-method="filterNode"
         @node-click="clickNode"
-      />
+      >
+        <template #default="{ node, data }">
+          <span class="custom-tree-node" :title="data.type === 'COMP' ? '公司' : '部门'">
+            <el-icon>
+              <HomeFilled v-if="data.type === 'COMP'" />
+              <Histogram v-else />
+            </el-icon>
+            <span>{{ node.label }}</span>
+          </span>
+        </template>
+      </el-tree>
     </el-scrollbar>
   </div>
 </template>
@@ -73,5 +83,14 @@ defineExpose({
   height: auto;
   padding: 10px;
   border-bottom: 1px solid var(--el-border-color);
+}
+
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+
+  .el-icon {
+    margin-right: 3px;
+  }
 }
 </style>

@@ -54,6 +54,7 @@
     "readonly": "readonly",
     "ref": "readonly",
     "resolveComponent": "readonly",
+    "resolveDirective": "readonly",
     "setActivePinia": "readonly",
     "setMapStoreSuffix": "readonly",
     "shallowReactive": "readonly",

@@ -133,7 +133,7 @@ const clickNode = (id?: string) => (parent.value = id)
     <div class="body-container">
       <di-tree v-if="config.tree" v-bind="config.tree" :sort-api="undefined" @click-node="clickNode" />
 
-      <di-list v-bind="config.list" :operation="undefined" :parent="parent" />
+      <di-list v-bind="config.list" :operation="undefined" :parent="parent" style="width: 0" />
     </div>
   </el-dialog>
 </template>
