@@ -123,6 +123,7 @@ create table dbt_iam_login_trace
   ip_address   varchar(50)  null comment 'IP',
   user_agent   varchar(200) null comment '客户端信息',
   is_success   tinyint(1)   default 0                 not null comment '是否成功',
+  logout_time  datetime    null comment '退出时间',
   create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间'
 ) DEFAULT CHARSET=utf8 COMMENT '登录日志';
 -- 创建索引

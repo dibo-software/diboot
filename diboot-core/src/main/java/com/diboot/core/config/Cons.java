@@ -70,6 +70,10 @@ public class Cons {
      * 默认树形结构根id
      */
     public static final String TREE_ROOT_ID = "0";
+    /**
+     * id空的默认值，避免null
+     */
+    public static final String ID_PREVENT_NULL = "0";
 
     /***
      * 常用字段名定义

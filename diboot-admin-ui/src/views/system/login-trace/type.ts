@@ -19,4 +19,6 @@ export interface LoginTrace {
   userAgent: string
   // 登录时间
   createTime: string
+  // 退出时间
+  logoutTime: string
 }

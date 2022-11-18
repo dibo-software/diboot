@@ -15,11 +15,17 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.mapper.IamLoginTraceMapper;
 import com.diboot.iam.service.IamLoginTraceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 /**
 * 登录记录相关Service实现
@@ -31,4 +37,22 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class IamLoginTraceServiceImpl extends BaseIamServiceImpl<IamLoginTraceMapper, IamLoginTrace> implements IamLoginTraceService {
 
+    @Override
+    public boolean updateLogoutInfo(String userType, String userId) {
+        LambdaQueryWrapper<IamLoginTrace> queryWrapper = new QueryWrapper<IamLoginTrace>()
+                .lambda()
+                .select(IamLoginTrace::getId)
+                .eq(IamLoginTrace::getUserType, userType)
+                .eq(IamLoginTrace::getUserId, userId)
+                .eq(IamLoginTrace::isSuccess, true)
+                .orderByDesc(IamLoginTrace::getId);
+        IamLoginTrace latestTrace = getSingleEntity(queryWrapper);
+        if(latestTrace != null) {
+            LambdaUpdateWrapper<IamLoginTrace> updateWrapper = new UpdateWrapper<IamLoginTrace>().lambda()
+                    .set(IamLoginTrace::getLogoutTime, LocalDateTime.now())
+                    .eq(IamLoginTrace::getId, latestTrace.getId());
+            return super.update(updateWrapper);
+        }
+        return false;
+    }
 }

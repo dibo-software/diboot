@@ -188,6 +188,7 @@ create table ${SCHEMA}.dbt_iam_login_trace
     ip_address VARCHAR(100)    null,
     user_agent VARCHAR(500)    null,
     is_success BIT DEFAULT 0    not null,
+    logout_time  timestamp    null,
     create_time timestamp default CURRENT_TIMESTAMP   not null
 );
 comment on column ${SCHEMA}.dbt_iam_login_trace.id is 'ID';
@@ -199,6 +200,7 @@ comment on column ${SCHEMA}.dbt_iam_login_trace.auth_account is '用户名';
 comment on column ${SCHEMA}.dbt_iam_login_trace.ip_address is 'IP';
 comment on column ${SCHEMA}.dbt_iam_login_trace.user_agent is '客户端信息';
 comment on column ${SCHEMA}.dbt_iam_login_trace.is_success is '是否成功';
+comment on column ${SCHEMA}.dbt_iam_login_trace.logout_time is '退出时间';
 comment on column ${SCHEMA}.dbt_iam_login_trace.create_time is '创建时间';
 comment on table ${SCHEMA}.dbt_iam_login_trace is '登录日志';
 -- 创建索引

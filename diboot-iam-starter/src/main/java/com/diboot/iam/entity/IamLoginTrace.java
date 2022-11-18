@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -27,6 +28,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
 * 登录记录 Entity定义
@@ -55,7 +57,7 @@ public class IamLoginTrace extends BaseEntity {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private String userId;
+    private String userId = Cons.ID_PREVENT_NULL;
 
     // 认证方式
     @NotNull(message = "认证方式不能为空")
@@ -80,6 +82,12 @@ public class IamLoginTrace extends BaseEntity {
     @Length(max=200, message="User-Agent长度应小于200")
     @TableField()
     private String userAgent;
+
+    /**
+     * 退出时间
+     */
+    @TableField()
+    private LocalDateTime logoutTime;
 
     public IamLoginTrace setUserAgent(String userAgent){
         if(V.notEmpty(userAgent) && userAgent.length() > 200){
