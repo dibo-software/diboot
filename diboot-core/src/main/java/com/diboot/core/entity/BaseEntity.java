@@ -15,15 +15,18 @@
  */
 package com.diboot.core.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.Cons;
+import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -62,7 +65,8 @@ public abstract class BaseEntity extends AbstractEntity<String> {
     /**
      * 默认记录创建时间字段，新建时由数据库赋值
      */
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
+    @DateTimeFormat(pattern = D.FORMAT_DATETIME_Y4MDHMS)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /***
