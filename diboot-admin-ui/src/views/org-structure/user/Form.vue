@@ -66,6 +66,8 @@ defineExpose({
     if (model.value.isSysAccount) model.value.hidePassword = true
     // 加载树结构数据
     await initRelatedData()
+    // 新建时状态默认在职
+    !id && (model.value.status = 'A')
   }
 })
 // 表单
@@ -202,10 +204,10 @@ const rules: FormRules = {
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="status" label="状态">
-            <el-select v-model="model.status">
-              <el-option key="A" label="正常" value="A" />
-              <el-option key="S" label="停用" value="S" />
-            </el-select>
+            <el-radio-group v-model="model.status">
+              <el-radio label="A">在职</el-radio>
+              <el-radio label="I">离职</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col v-if="model.isSysAccount" :md="12" :sm="24">
