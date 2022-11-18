@@ -97,7 +97,7 @@ const batchDownload = () => {
       <el-table-column type="selection" width="55" />
       <el-table-column prop="fileName" label="文件名称" show-overflow-tooltip />
       <el-table-column prop="fileType" label="文件类型" width="140" />
-      <el-table-column prop="fileSize" label="文件大小（Byte）" width="140" />
+      <el-table-column prop="fileSizeLabel" label="文件大小" width="140" />
       <el-table-column prop="createByName" label="创建者" width="140" />
       <el-table-column prop="createTime" label="创建时间" width="185" />
       <el-table-column label="操作" width="160" fixed="right">

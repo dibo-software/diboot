@@ -26,8 +26,8 @@ declare global {
     fileName: string
     // 文件类型
     fileType: string
-    // 文件大小（Byte）
-    fileSize: string
+    // 文件大小
+    fileSizeLabel: string
     // 访问地址
     accessUrl: string
     // 缩略图地址

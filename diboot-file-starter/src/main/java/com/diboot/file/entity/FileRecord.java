@@ -17,6 +17,7 @@ package com.diboot.file.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.file.util.FileHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -108,4 +109,11 @@ public class FileRecord extends BaseEntity {
     @TableField(fill = FieldFill.INSERT)
     private String createBy;
 
+    /**
+     * 文件大小格式化
+     * @return
+     */
+    public String getFileSizeLabel() {
+        return FileHelper.formatFileSize(this.fileSize);
+    }
 }

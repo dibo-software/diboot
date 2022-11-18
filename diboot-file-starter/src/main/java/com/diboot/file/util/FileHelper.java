@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,6 +64,10 @@ public class FileHelper{
 	public static final String HTTP = "http";
 	public static final String QUESTION_MARK = "?";
 
+	/**
+	 * 文件大小单位
+	 */
+	private static final String[] SIZE_UNIT = {"Bytes", "KB", "MB", "GB", "TB", "PB"};
 	/**
 	 * 文件和图片的后台存储路径
 	 */
@@ -256,6 +261,24 @@ public class FileHelper{
 			return file.delete();
 		}
 		return false;
+	}
+
+	/**
+	 * 格式化文件大小
+	 * @param bytes
+	 * @return
+	 */
+	public static String formatFileSize(Long bytes) {
+		if(bytes == null || bytes.equals(0l)) {
+			return "-";
+		}
+		int index = (int) (Math.floor(Math.log(bytes) / Math.log(1024)));
+		double size = bytes / Math.pow(1024, index);
+		size = Double.valueOf(new DecimalFormat("#.0").format(size));
+		if(index > SIZE_UNIT.length -1) {
+			return "?PB";
+		}
+		return size + " " +SIZE_UNIT[index];
 	}
 
 }
