@@ -2,7 +2,7 @@
 import { Plus } from '@element-plus/icons-vue'
 import type { FormItem, Upload } from './type'
 import type { FormItemRule } from 'element-plus/es/tokens/form'
-import type { UploadRawFile } from 'element-plus'
+import type { UploadRawFile, UploadFile } from 'element-plus'
 
 const props = defineProps<{
   config: FormItem
@@ -11,7 +11,7 @@ const props = defineProps<{
   getId?: () => string | undefined
   relatedDatas?: LabelValue[]
   lazyLoading?: boolean
-  getFileList?: () => FileRecord[] | undefined
+  fileList?: FileRecord[]
 }>()
 
 const emit = defineEmits<{
@@ -19,6 +19,7 @@ const emit = defineEmits<{
   (e: 'change', value?: unknown): void
   (e: 'remoteFilter', value?: unknown): void
   (e: 'lazyLoad', parentId: string): LabelValue[]
+  (e: 'preview', accessUrl: string, isImage: boolean): void
 }>()
 
 const instance = getCurrentInstance()
@@ -78,7 +79,17 @@ const lazyLoad = ({ data }: { data: LabelValue }, resolve: (data: LabelValue[]) 
 const DEFAULT_DATE_FORMAT: Record<string, string> = { date: 'YYYY-MM-DD', datetime: 'YYYY-MM-DD HH:mm:ss' }
 const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
 
-const bindUpload = useUploadFile(fileIds => (value.value = fileIds), props.getFileList ?? (() => []))
+const bindUpload = useUploadFile(
+  fileIds => (value.value = fileIds),
+  () => props.fileList
+)
+
+const previewFile = (file: UploadFile) =>
+  emit(
+    'preview',
+    file.accessUrl as string,
+    ['picture-card', 'picture'].includes((props.config as Upload).listType as string)
+  )
 
 const beforeUpload = (rawFile: UploadRawFile) => {
   const fileConfig: Upload = props.config as any
@@ -247,6 +258,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :limit="config.limit"
       :multiple="config.limit ?? 2 > 1"
       :before-upload="beforeUpload"
+      :on-preview="previewFile"
       style="width: 100%"
     >
       <el-icon v-if="config.listType === 'picture-card'">
