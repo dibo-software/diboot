@@ -52,6 +52,7 @@ specifiers:
   vitest: ^0.25.2
   vue: ^3.2.45
   vue-clipboard3: ^2.0.0
+  vue-cropper: ^1.0.5
   vue-fuse: ^4.1.1
   vue-i18n: ^9.2.2
   vue-router: ^4.1.6
@@ -78,6 +79,7 @@ dependencies:
   vditor: registry.npmmirror.com/vditor/3.8.18
   vue: registry.npmmirror.com/vue/3.2.45
   vue-clipboard3: registry.npmmirror.com/vue-clipboard3/2.0.0
+  vue-cropper: registry.npmmirror.com/vue-cropper/1.0.5
   vue-fuse: registry.npmmirror.com/vue-fuse/4.1.1_fuse.js@6.6.2+vue@3.2.45
   vue-i18n: registry.npmmirror.com/vue-i18n/9.2.2_vue@3.2.45
   vue-router: registry.npmmirror.com/vue-router/4.1.6_vue@3.2.45
@@ -6285,6 +6287,12 @@ packages:
     version: 2.0.0
     dependencies:
       clipboard: registry.npmmirror.com/clipboard/2.0.11
+    dev: false
+
+  registry.npmmirror.com/vue-cropper/1.0.5:
+    resolution: {integrity: sha512-D4XXdqWmMWRLOIV9LIh7/mkH6OBOMQDFbRjwntkxmAtxOtwpC9U5ZZ6lSXw5F5cbd4g8znDjk6MuCwIL+fZSrA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-cropper/-/vue-cropper-1.0.5.tgz}
+    name: vue-cropper
+    version: 1.0.5
     dev: false
 
   registry.npmmirror.com/vue-demi/0.11.4_vue@3.2.45:
