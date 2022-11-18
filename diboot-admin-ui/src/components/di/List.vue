@@ -142,7 +142,12 @@ const multiple = inject<boolean | undefined>(
           :export-url="`${baseApi}/excel/export`"
           :table-head-url="`${baseApi}/excel/export-table-head`"
         />
-        <excel-import v-if="operation?.importData && importPermission" :excel-base-api="`${baseApi}/excel`" />
+        <excel-import
+          v-if="operation?.importData && importPermission"
+          :excel-base-api="`${baseApi}/excel`"
+          :attach="relatedKey ? () => ({ [relatedKey]: parent }) : undefined"
+          @complete="onSearch"
+        />
         <el-space>
           <el-button :icon="Refresh" circle @click="getList()" />
           <el-button v-if="searchArea" :icon="Search" circle @click="searchState = !searchState" />

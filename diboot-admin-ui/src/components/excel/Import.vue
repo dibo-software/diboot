@@ -8,6 +8,8 @@ import { fileDownload } from '@/utils/file'
 
 const props = defineProps<{ excelBaseApi: string; attach?: () => Record<string, unknown>; width?: string }>()
 
+const emit = defineEmits<{ (e: 'complete'): void }>()
+
 const visible = ref(false)
 
 // 下载示例文件
@@ -19,19 +21,29 @@ const downloadExample = () => {
 
 const uploadDisabled = ref(true)
 const previewDisabled = ref(true)
-const importDataLoading = ref(false)
 const description = ref('')
 const fileList: UploadUserFile[] = reactive([])
 
+watch(visible, value => {
+  if (value) return
+  description.value = ''
+  removeFile()
+})
+
 // 移除文件
 const removeFile = () => {
+  fileList.length = 0
+  data.value = undefined
+  errMsg.value = undefined
   uploadDisabled.value = true
   previewDisabled.value = true
 }
 // 文件列表变化
 const fileListChange = (uploadFile: UploadUserFile) => {
-  fileList.splice(0)
+  fileList.length = 0
   fileList.push(uploadFile)
+  data.value = undefined
+  errMsg.value = undefined
   uploadDisabled.value = false
   previewDisabled.value = false
 }
@@ -50,21 +62,19 @@ const sendRequest = (url: string, formData: FormData) => {
   }
   uploadDisabled.value = true
   previewDisabled.value = true
-  importDataLoading.value = true
   api
     .upload<ExcelPreview & ExcelImport>(url, formData)
     .then(res => {
-      ElMessage.success(res.msg || '上传数据成功')
-      data.value = res.data
+      if (!res.data) visible.value = false
+      else data.value = res.data
+      if (!res.data?.tableHeads) emit('complete')
+      uploadDisabled.value = false
     })
     .catch(err => {
-      if (err.code) errMsg.value = err.msg
-      else ElMessage.error(err.message || '上传异常，请稍后重试！')
+      errMsg.value = err.msg
     })
     .finally(() => {
-      uploadDisabled.value = false
       previewDisabled.value = false
-      importDataLoading.value = false
     })
 }
 
@@ -140,6 +150,7 @@ const TableColumn = defineComponent({
       <el-row :gutter="16">
         <el-col :md="6">
           <el-upload
+            :key="fileList.length && fileList[0].uid"
             action=""
             :limti="1"
             :auto-upload="false"
@@ -155,20 +166,10 @@ const TableColumn = defineComponent({
         </el-col>
         <el-col :md="10">
           <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview">预览数据</el-button>
-          <el-button :disabled="uploadDisabled" type="default" :icon="Upload" @click="handleUpload">上传数据</el-button>
+          <el-button :disabled="uploadDisabled" :icon="Upload" @click="handleUpload">上传数据</el-button>
         </el-col>
       </el-row>
-      <el-row v-if="errMsg">
-        <el-col :span="24">
-          <br />
-          <el-alert type="error">
-            <div>
-              <b>请检查Excel文件，错误信息: </b><br />
-              {{ errMsg }}
-            </div>
-          </el-alert>
-        </el-col>
-      </el-row>
+      <el-alert v-if="errMsg" type="error" :closable="false" title="请检查Excel文件，错误信息" :description="errMsg" />
       <div v-if="data">
         <el-divider />
         <el-alert type="success" :closable="false">
@@ -178,8 +179,8 @@ const TableColumn = defineComponent({
           </span>
           可上传。
         </el-alert>
-        <el-collapse v-if="Number(data.errorCount ?? 0) > 0" value="1">
-          <el-collapse-item style="background-color: antiquewhite" name="1">
+        <el-collapse v-if="Number(data.errorCount ?? 0) > 0" model-value="1">
+          <el-collapse-item name="1">
             <template #title>
               <span style="color: red; zoom: 1.2">{{ `共有 ${data.errorCount} 条数据异常` }}</span>
               （上传数据后可
@@ -195,9 +196,7 @@ const TableColumn = defineComponent({
               </el-button>
               ）
             </template>
-            <div v-for="error in data.errorMsgs" :key="error">
-              {{ error }}
-            </div>
+            <div v-for="error in data.errorMsgs" :key="error" style="color: var(--el-color-danger)">{{ error }}</div>
             <span v-if="Number(data.errorCount ?? 0) > 20">...</span>
           </el-collapse-item>
         </el-collapse>
