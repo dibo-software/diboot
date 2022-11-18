@@ -22,9 +22,10 @@ watch(
 interface UserSearch extends UserModel {
   keywords?: string
 }
-const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<UserModel, UserSearch>({
-  baseApi
-})
+const { queryParam, loading, dataList, pagination, getList, buildQueryParam, onSearch, remove } = useList<
+  UserModel,
+  UserSearch
+>({ baseApi })
 getList()
 
 const detailRef = ref()
@@ -54,6 +55,7 @@ const deletePermission = checkPermission('delete')
         </el-button>
         <excel-export
           v-has-permission="'export'"
+          :build-param="buildQueryParam"
           :export-url="`${baseApi}/excel/export`"
           :table-head-url="`${baseApi}/excel/export-table-head`"
         />

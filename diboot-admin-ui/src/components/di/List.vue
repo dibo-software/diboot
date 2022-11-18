@@ -40,6 +40,7 @@ const {
   getList,
   onSearch,
   resetFilter,
+  buildQueryParam,
   remove,
   batchRemove
 } = useList<Record<string, unknown>>({ baseApi: props.baseApi })
@@ -139,6 +140,7 @@ const multiple = inject<boolean | undefined>(
         </el-button>
         <excel-export
           v-if="operation?.exportData && exportPermission"
+          :build-param="buildQueryParam"
           :export-url="`${baseApi}/excel/export`"
           :table-head-url="`${baseApi}/excel/export-table-head`"
         />
