@@ -19,6 +19,9 @@ defineExpose({
   }
 })
 
+// 新建完是否清空表单继续填写
+const isContinueAdd = ref(false)
+
 // 表单
 const formRef = ref<FormInstance>()
 
@@ -34,9 +37,18 @@ const { submitting, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)
-    visible.value = false
+    visible.value = isContinueAdd.value
+    if (isContinueAdd.value) {
+      formRef.value?.resetFields()
+    }
   }
 })
+
+// 保存之前判断是否确认并继续添加
+const beforeSubmit = (value: boolean) => {
+  isContinueAdd.value = value
+  submit(model.value, formRef.value)
+}
 
 const onGradeValueChanged = (val: string) => {
   const grade = relatedData.positionGradeOptions.find((item: LabelValue) => item.value === val)
@@ -92,7 +104,10 @@ const rules: FormRules = {
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">提交</el-button>
+      <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
+        >确认并继续添加
+      </el-button>
+      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">提交</el-button>
     </template>
   </el-dialog>
 </template>
