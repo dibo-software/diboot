@@ -4,6 +4,8 @@ import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
+const baseApi = '/iam/user'
+
 type Props = {
   orgId?: string
 }
@@ -21,7 +23,7 @@ interface UserSearch extends UserModel {
   keywords?: string
 }
 const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<UserModel, UserSearch>({
-  baseApi: '/iam/user'
+  baseApi
 })
 getList()
 
@@ -50,6 +52,17 @@ const deletePermission = checkPermission('delete')
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
+        <excel-export
+          v-has-permission="'export'"
+          :export-url="`${baseApi}/excel/export`"
+          :table-head-url="`${baseApi}/excel/export-table-head`"
+        />
+        <excel-import
+          v-has-permission="'import'"
+          :excel-base-api="`${baseApi}/excel`"
+          :attach="() => ({ orgId })"
+          @complete="onSearch"
+        />
         <el-space>
           <el-input
             v-model="queryParam.keywords"
