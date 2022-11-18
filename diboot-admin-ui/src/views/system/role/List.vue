@@ -4,16 +4,14 @@ import type { Role } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove, batchRemove } =
-  useList<Role>({ baseApi: '/iam/role' })
+const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove } = useList<Role>({
+  baseApi: '/iam/role'
+})
 
 getList()
 
 // 搜索区折叠
 const searchState = ref(false)
-
-// 选中的数据 Id 集合
-const selectedKeys = ref<string[]>([])
 
 const formRef = ref()
 const openForm = (id?: string) => {
@@ -55,25 +53,13 @@ const deletePermission = checkPermission('delete')
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
-        <el-button v-has-permission="'delete'" @click="batchRemove(selectedKeys)">
-          {{ $t('operation.batchDelete') }}
-        </el-button>
         <el-space>
           <el-button :icon="Refresh" circle @click="getList()" />
           <el-button :icon="Search" circle @click="searchState = !searchState" />
         </el-space>
       </el-space>
     </el-header>
-    <el-table
-      ref="tableRef"
-      v-loading="loading"
-      class="list-body"
-      :data="dataList"
-      stripe
-      height="100%"
-      @selection-change="(arr: Role[]) => (selectedKeys = arr.map(e => e.id))"
-    >
-      <el-table-column type="selection" width="55" />
+    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="createTime" label="创建时间" width="165" />
