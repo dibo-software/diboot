@@ -87,7 +87,7 @@ export default ({
     const reqList: Promise<ApiData<Record<string, LabelValue[]>>>[] = []
     // 通用获取关联字典的数据
     if ((dict ?? []).length > 0)
-      reqList.push(api.post('/common/load-related-dict', dict instanceof Array ? dict : [dict]))
+      reqList.push(api.post('/common/load-related-dict', Array.isArray(dict) ? dict : [dict]))
     // 通用获取关联绑定的数据
     if (Object.keys(load ?? []).length > 0) reqList.push(api.post(`${baseApi}/load-related-data`, load))
 
