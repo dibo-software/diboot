@@ -18,4 +18,5 @@ export interface UserModel {
   status: string
   statusLabel?: LabelValue<{ color?: string }>
   createTime?: string
+  avatarUrl?: string
 }

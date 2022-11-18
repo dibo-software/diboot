@@ -59,26 +59,19 @@ export const constantRoutes: RouteRecordRaw[] = [
     name: 'Home',
     redirect: '/dashboard',
     component: () => import('@/layout/index.vue'),
+    meta: { title: '仪表盘', icon: 'Element:Odometer' },
     children: [
       {
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index.vue'),
         meta: { title: '仪表盘', icon: 'Element:Odometer', affixTab: true, sort: -1 }
-      }
-    ]
-  },
-  {
-    path: '/',
-    name: 'Personal',
-    redirect: '/personal',
-    component: () => import('@/layout/index.vue'),
-    children: [
+      },
       {
         path: 'personal',
         name: 'Personal',
         component: () => import('@/views/personal/index.vue'),
-        meta: { title: '账号信息', icon: 'Element:User', affixTab: false, hidden: true }
+        meta: { title: '个人中心', icon: 'Element:User', sort: 999 }
       }
     ]
   }

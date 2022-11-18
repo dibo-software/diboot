@@ -1,16 +1,13 @@
 import auth from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import { buildImgSrc } from '@/utils/file'
+import type { UserModel } from '@/views/org-structure/user/type'
 
 export interface IAuthStore {
   realname: string
   avatar?: string
   roles: Array<string>
-  info?: IUserInfo
-}
-
-export interface IUserInfo extends Record<string, unknown> {
-  realname?: string
-  avatar?: string
+  info?: UserModel
 }
 
 export default defineStore('auth', {
@@ -41,23 +38,11 @@ export default defineStore('auth', {
     },
     getInfo: async function () {
       try {
-        const res = await api.get<{ info: IUserInfo; roles: Array<string> }>('/auth/user-info')
-        const BASE_URL = import.meta.env.VITE_APP_BASE_URL
+        const res = await api.get<{ info: UserModel; roles: Array<string> }>('/auth/user-info')
         this.info = res.data?.info
-        this.avatar = `${BASE_URL}${this.info?.avatarUrl}/image`
+        if (this.info?.avatarUrl) this.avatar = buildImgSrc(this.info?.avatarUrl)
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
-      } catch (e) {
-        throw new Error('获取登录用户信息异常')
-      }
-    },
-    getNewInfo: async function () {
-      try {
-        const res = await api.get<{ info: IUserInfo; roles: Array<string> }>('/iam/user/current-user-info')
-        const BASE_URL = import.meta.env.VITE_APP_BASE_URL
-        this.info = res.data
-        this.avatar = `${BASE_URL}${this.info?.avatarUrl}/image`
-        this.realname = `${this.info?.realname}`
       } catch (e) {
         throw new Error('获取登录用户信息异常')
       }

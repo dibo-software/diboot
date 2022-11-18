@@ -1,60 +1,17 @@
-<template>
-  <el-container class="page-user">
-    <input id="avatarFile" type="file" hidden @change="selectFile" />
-    <crop-avatar
-      :show-set-avatar-dialog="showSetAvatarDialog"
-      :avatar-base64="avatarBase64"
-      :filename="filename"
-      @cropDialog="cropDialog"
-    />
-    <el-aside class="el-aside" width="240px">
-      <el-container>
-        <el-header style="height: auto; display: block">
-          <div class="user-info-top">
-            <el-avatar :size="70" :src="authStore.avatar" />
-            <div class="setAvatar">
-              <el-tooltip content="修改头像">
-                <el-icon :size="14">
-                  <CameraFilled @click="getFile" />
-                </el-icon>
-              </el-tooltip>
-            </div>
-            <h2>{{ authStore.realname }}</h2>
-            <p>
-              <el-tag effect="dark" round size="large">{{ authStore.roles[0].name }}</el-tag>
-            </p>
-          </div>
-        </el-header>
-        <el-main class="nopadding">
-          <el-menu class="menu" :default-active="pageKey">
-            <el-menu-item v-for="item in menu" :key="item.key" :index="item.key" @click="openPage">
-              <!--              <el-icon v-if="item.icon"><component :is="item.icon" /></el-icon>-->
-              <template #title>
-                <span>{{ item.title }}</span>
-              </template>
-            </el-menu-item>
-          </el-menu>
-        </el-main>
-      </el-container>
-    </el-aside>
-    <el-main>
-      <Suspense>
-        <template #default>
-          <component :is="page" />
-        </template>
-      </Suspense>
-    </el-main>
-  </el-container>
-</template>
-
 <script setup lang="ts">
-import { CameraFilled } from '@element-plus/icons-vue'
+import { UserFilled } from '@element-plus/icons-vue'
 import useAuthStore from '@/store/auth'
 import account from './components/account.vue'
 import password from './components/password.vue'
 import cropAvatar from './components/cropAvatar.vue'
 
-const authStore: any = useAuthStore()
+const authStore = useAuthStore()
+
+const tagName = ref()
+const roles = authStore.roles as any
+if ('name' in roles[0]) {
+  tagName.value = roles[0].name
+}
 
 const menu = shallowRef([
   {
@@ -82,18 +39,16 @@ const getFile = () => {
   const fileEle = document.getElementById('avatarFile')
   fileEle?.click()
 }
-const avatarBase64: any = ref('')
+const avatarBase64 = ref()
 const showSetAvatarDialog = ref()
 const filename = ref('')
 const selectFile = (e: any) => {
   const file = e.target.files[0]
-  const filesize = file.size
   filename.value = file.name
   const reader = new FileReader()
   reader.readAsDataURL(file)
   reader.onload = e => {
-    const imgcode = e.target?.result
-    avatarBase64.value = imgcode
+    avatarBase64.value = e.target?.result
     showSetAvatarDialog.value = true
   }
 }
@@ -102,6 +57,51 @@ const cropDialog = (val: boolean) => {
   avatarBase64.value = ''
 }
 </script>
+
+<template>
+  <el-container class="page-user">
+    <input id="avatarFile" type="file" hidden @change="selectFile" />
+    <crop-avatar
+      :show-set-avatar-dialog="showSetAvatarDialog"
+      :avatar-base64="avatarBase64"
+      :filename="filename"
+      @cropDialog="cropDialog"
+    />
+    <el-aside class="el-aside" width="240px">
+      <el-container>
+        <el-header style="height: auto; display: block">
+          <div class="user-info-top">
+            <el-tooltip content="修改头像">
+              <el-avatar :size="70" :icon="UserFilled" :src="authStore.avatar" @click="getFile" />
+            </el-tooltip>
+
+            <h2>{{ authStore.realname }}</h2>
+            <p>
+              <el-tag effect="dark" round size="large">{{ tagName }}</el-tag>
+            </p>
+          </div>
+        </el-header>
+        <el-main class="nopadding">
+          <el-menu class="menu" :default-active="pageKey">
+            <el-menu-item v-for="item in menu" :key="item.key" :index="item.key" @click="openPage">
+              <!--              <el-icon v-if="item.icon"><component :is="item.icon" /></el-icon>-->
+              <template #title>
+                <span>{{ item.title }}</span>
+              </template>
+            </el-menu-item>
+          </el-menu>
+        </el-main>
+      </el-container>
+    </el-aside>
+    <el-main>
+      <Suspense>
+        <template #default>
+          <component :is="page" />
+        </template>
+      </Suspense>
+    </el-main>
+  </el-container>
+</template>
 
 <style scoped lang="scss">
 .page-user {

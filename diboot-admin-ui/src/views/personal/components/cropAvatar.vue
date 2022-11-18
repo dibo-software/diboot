@@ -1,57 +1,35 @@
-<template>
-  <el-dialog v-model="dialogVisible" :before-close="handleClose" title="头像设置">
-    <div class="cropperBox">
-      <vue-cropper
-        ref="cropper"
-        :can-move-box="false"
-        :img="imgSrc"
-        :auto-crop="true"
-        auto-crop-width="200"
-        auto-crop-height="200"
-        output-type="png"
-      />
-    </div>
-    <div class="optionBtn">
-      <el-button type="primary" @click="getPickAvatar"><i class="fa fa-save" />保存</el-button>
-    </div>
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
-import { reactive } from 'vue'
 import useAuthStore from '@/store/auth'
+import type { UserModel } from '@/views/org-structure/user/type'
 
 const baseApi = '/file'
 const updateApi = '/iam/user'
 
 const props = defineProps<{
   showSetAvatarDialog?: boolean
-  avatarBase64?: string
+  avatarBase64?: string | undefined
   filename?: string
 }>()
-const dialogVisible: any = ref(false)
-const imgSrc: any = ref('')
-const filename: any = ref('')
+const dialogVisible = ref<boolean | undefined>(false)
+const imgSrc = ref<string | undefined>('')
+const filename = ref<string | undefined>('')
 watch(
   () => props.showSetAvatarDialog,
   val => {
-    // console.log(val, 'vallll')
     dialogVisible.value = val
   }
 )
 watch(
   () => props.avatarBase64,
   val => {
-    // console.log(val, 'vallll')
     imgSrc.value = val
   }
 )
 watch(
   () => props.filename,
   val => {
-    // console.log(val, 'vallll')
     filename.value = val
   }
 )
@@ -77,26 +55,58 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   }
 }
 
-const authStore: any = useAuthStore()
+const loading = ref(false)
+const authStore = useAuthStore()
 const getPickAvatar = () => {
-  const file: any = dataURLtoFile(imgSrc.value, filename.value)
+  loading.value = true
+  const file: any = dataURLtoFile(imgSrc.value ?? '', filename.value ?? '')
   const formData = new FormData()
   formData.set('file', file)
-  api.upload<FileRecord>(`${baseApi}/upload`, formData).then(res => {
-    if (res.code === 0) {
-      const data: any = reactive(authStore.info)
-      data.avatarUrl = res.data?.accessUrl
-      api.post<string>(`${updateApi}/update-current-user-info`, data).then(re => {
-        if (re.code === 0) {
-          ElMessage.success(re.msg)
-          authStore.getInfo()
+  api
+    .upload<FileRecord>(`${baseApi}/upload`, formData)
+    .then(res => {
+      if (res.code === 0) {
+        const data = ref(_.cloneDeep(authStore.info))
+        if (data.value) {
+          data.value.avatarUrl = res.data?.accessUrl
         }
-      })
-    }
-  })
+        api
+          .post<UserModel>(`${updateApi}/update-current-user-info`, data.value)
+          .then(re => {
+            if (re.code === 0) {
+              ElMessage.success(re.msg)
+              authStore.getInfo()
+            }
+          })
+          .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
+          .finally(() => (loading.value = false))
+      }
+    })
+    .catch(err => ElMessage.error(err.msg || err.message || '上传失败！'))
+    .finally(() => (loading.value = false))
+
   handleClose()
 }
 </script>
+
+<template>
+  <el-dialog v-model="dialogVisible" :before-close="handleClose" title="头像设置">
+    <div class="cropperBox">
+      <vue-cropper
+        ref="cropper"
+        :can-move-box="false"
+        :img="imgSrc"
+        :auto-crop="true"
+        auto-crop-width="200"
+        auto-crop-height="200"
+        output-type="png"
+      />
+    </div>
+    <div class="optionBtn">
+      <el-button type="primary" :loading="loading" @click="getPickAvatar">保存</el-button>
+    </div>
+  </el-dialog>
+</template>
 
 <style scoped>
 .cropperBox {

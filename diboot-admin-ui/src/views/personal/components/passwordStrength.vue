@@ -1,21 +1,3 @@
-<template>
-  <el-form ref="ruleFormRef" label-width="120px">
-    <el-form-item v-if="password !== '' && password !== undefined" label="" align="center" style="height: 25px">
-      <!-- 展示长度条 -->
-      <div
-        v-if="password !== '' && password !== undefined"
-        class="bar"
-        :style="{ background: barColor, width: width + '%' }"
-      >
-        <!-- 展示文字 -->
-        <div v-if="password !== '' && password !== undefined" class="strength" :style="{ color: barColor }">
-          {{ strength }}
-        </div>
-      </div>
-    </el-form-item>
-  </el-form>
-</template>
-
 <script setup lang="ts">
 import { level } from './checkPassword'
 
@@ -53,6 +35,24 @@ watch(
   }
 )
 </script>
+
+<template>
+  <el-form ref="ruleFormRef" label-width="120px">
+    <el-form-item v-if="password !== '' && password !== undefined" label="" align="center" style="height: 25px">
+      <!-- 展示长度条 -->
+      <div
+        v-if="password !== '' && password !== undefined"
+        class="bar"
+        :style="{ background: barColor, width: width + '%' }"
+      >
+        <!-- 展示文字 -->
+        <div v-if="password !== '' && password !== undefined" class="strength" :style="{ color: barColor }">
+          {{ strength }}
+        </div>
+      </div>
+    </el-form-item>
+  </el-form>
+</template>
 
 <style scoped>
 .strength {
