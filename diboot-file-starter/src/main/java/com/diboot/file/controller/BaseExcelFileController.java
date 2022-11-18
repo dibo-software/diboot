@@ -15,7 +15,6 @@
  */
 package com.diboot.file.controller;
 
-import com.alibaba.excel.support.ExcelTypeEnum;
 import com.diboot.core.controller.BaseController;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.S;
@@ -80,7 +79,7 @@ public abstract class BaseExcelFileController extends BaseController {
         // 预览
         listener.setPreview(true);
         // 读取excel
-        readExcelFile(file.getInputStream(), fileRecord.getFileType(), listener);
+        readExcelFile(file.getInputStream(), listener);
         // 保存文件上传记录
         fileRecordService.createEntity(fileRecord);
 
@@ -146,7 +145,7 @@ public abstract class BaseExcelFileController extends BaseController {
         listener.setImportFileUuid(uploadFile.getId());
         listener.setRequestParams(params);
         // 读excel
-        readExcelFile(inputStream, uploadFile.getFileType(), listener);
+        readExcelFile(inputStream, listener);
         fileRecordService.updateEntity(uploadFile);
 
         String errorDataFilePath = listener.getErrorDataFilePath();
@@ -185,12 +184,11 @@ public abstract class BaseExcelFileController extends BaseController {
      * 读取excel方法
      *
      * @param inputStream
-     * @param fileExt     文件扩展名（不包含`.`）
      * @param listener
      */
-    protected <T extends BaseExcelModel> void readExcelFile(InputStream inputStream, String fileExt, ReadExcelListener<T> listener) throws Exception {
+    protected <T extends BaseExcelModel> void readExcelFile(InputStream inputStream, ReadExcelListener<T> listener) throws Exception {
         try {
-            ExcelHelper.read(inputStream, "csv".equalsIgnoreCase(fileExt) ? ExcelTypeEnum.CSV : null, listener, listener.getExcelModelClass());
+            ExcelHelper.read(inputStream, listener, listener.getExcelModelClass());
         } catch (Exception e) {
             log.warn("解析excel文件失败", e);
             if (e instanceof BusinessException) {

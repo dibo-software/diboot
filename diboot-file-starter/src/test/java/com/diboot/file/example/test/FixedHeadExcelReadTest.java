@@ -24,8 +24,12 @@ import com.diboot.file.util.ExcelHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * 固定表头excel读测试
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2020/02/19
@@ -33,80 +37,71 @@ import org.junit.Test;
 public class FixedHeadExcelReadTest extends ExcelWriteTest {
 
     @Test
-    public void testValidate(){
+    public void testValidate() {
         DepartmentExcelModel department = new DepartmentExcelModel();
         department.setOrgName("dd");
         department.setParentName("产品部");
         department.setMemCount(1);
         department.setUserStatus("S");
         String msg = V.validateBeanErrMsg(department);
-        Assert.assertTrue(msg != null);
+        Assert.assertNotNull(msg);
     }
 
     @Test
-    public void testNormalDataRead(){
-        try{
+    public void testNormalDataRead() {
+        try {
             prepareNormalDataExcel();
             // 读且保存
             DepartmentImportListener listener = new DepartmentImportListener();
-            boolean success = ExcelHelper.previewReadExcel(getTempFilePath(), listener);
-            Assert.assertTrue(success);
+            ExcelHelper.read(Files.newInputStream(Paths.get(getTempFilePath())), listener);
             System.out.println(JSON.stringify(listener.getFieldHeadMap()));
             System.out.println(JSON.stringify(listener.getDataList()));
-            Assert.assertTrue(listener.getDataList().get(0).getUserStatus().equals("在职"));
-            Assert.assertTrue("产品部".equals(listener.getDataList().get(0).getParentName()));
+            Assert.assertEquals("在职", listener.getDataList().get(0).getUserStatus());
+            Assert.assertEquals("产品部", listener.getDataList().get(0).getParentName());
             Assert.assertNull(listener.getDataList().get(1).getParentId());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
             Assert.fail();
-        }
-        finally {
+        } finally {
             deleteTempFile();
         }
     }
 
     @Test
-    public void testErrorDataRead(){
-        try{
+    public void testErrorDataRead() {
+        try {
             prepareErrorDataExcel();
             // 读且保存
-            ExcelHelper.previewReadExcel(getTempFilePath(), new DepartmentImportListener());
-        }
-        catch (Exception e){
+            ExcelHelper.read(Files.newInputStream(Paths.get(getTempFilePath())), new DepartmentImportListener());
+        } catch (Exception e) {
             e.printStackTrace();
             Assert.assertTrue(e.getMessage().contains(Status.FAIL_VALIDATION.label()));
-        }
-        finally {
+        } finally {
             deleteTempFile();
         }
     }
 
     @Test
-    public void testNormalDataReadSave(){
-        try{
+    public void testNormalDataReadSave() {
+        try {
             prepareNormalDataExcel();
             // 读且保存
             DepartmentImportListener listener = new DepartmentImportListener();
-            boolean success = ExcelHelper.readAndSaveExcel(getTempFilePath(), listener);
-            Assert.assertTrue(success);
+            ExcelHelper.read(Files.newInputStream(Paths.get(getTempFilePath())), listener);
             System.out.println(JSON.stringify(listener.getFieldHeadMap()));
             System.out.println(JSON.stringify(listener.getDataList()));
-            Assert.assertTrue(listener.getDataList().get(0).getUserStatus().equals("A"));
-            Assert.assertTrue(listener.getDataList().get(0).getParentName().equals("产品部"));
-            Assert.assertTrue(listener.getDataList().get(0).getParentId().equals(10001L));
-            Assert.assertTrue(listener.getDataList().get(1).getParentId().equals(0L));
-        }
-        catch (Exception e){
+            Assert.assertEquals("A", listener.getDataList().get(0).getUserStatus());
+            Assert.assertEquals("产品部", listener.getDataList().get(0).getParentName());
+            Assert.assertEquals(10001L, (long) listener.getDataList().get(0).getParentId());
+            Assert.assertEquals(0L, (long) listener.getDataList().get(1).getParentId());
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
             Assert.fail();
-        }
-        finally {
+        } finally {
             deleteTempFile();
         }
     }
-
 
 }
