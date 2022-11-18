@@ -25,4 +25,12 @@ import com.diboot.iam.entity.IamLoginTrace;
 */
 public interface IamLoginTraceService extends BaseIamService<IamLoginTrace> {
 
+    /**
+     * 更新退出时间等信息
+     * @param userType
+     * @param userId
+     * @return
+     */
+    boolean updateLogoutInfo(String userType, String userId);
+
 }

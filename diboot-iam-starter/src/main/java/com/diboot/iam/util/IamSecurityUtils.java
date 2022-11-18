@@ -16,10 +16,13 @@
 package com.diboot.iam.util;
 
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
+import com.diboot.iam.entity.IamLoginTrace;
+import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -67,10 +70,17 @@ public class IamSecurityUtils extends SecurityUtils {
      * 退出 注销用户
      */
     public static void logout(){
+        BaseLoginUser user = getCurrentUser();
+        if(user != null) {
+            try{
+                ContextHolder.getBean(IamLoginTraceService.class).updateLogoutInfo(user.getClass().getSimpleName(), user.getId());
+            }
+            catch (Exception e) {
+                log.warn("更新用户退出时间异常: {}", e.getMessage());
+            }
+        }
         Subject subject = getSubject();
         if(subject.isAuthenticated() || subject.getPrincipals() != null){
-            // 缓存当前token与用户信息
-            //TokenCacheHelper.removeAccessToken(accessToken);
             subject.logout();
         }
     }
@@ -93,6 +103,12 @@ public class IamSecurityUtils extends SecurityUtils {
                 cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(authInfo.getCredentials());
                 TokenUtils.removeAccessTokens(principalCollection.toString());
                 log.info("强制退出用户: {}", userTypeAndId);
+                try{
+                    ContextHolder.getBean(IamLoginTraceService.class).updateLogoutInfo(user.getClass().getSimpleName(), user.getId());
+                }
+                catch (Exception e) {
+                    log.warn("更新用户 {} 退出时间异常: {}", userTypeAndId, e.getMessage());
+                }
             }
         }
     }

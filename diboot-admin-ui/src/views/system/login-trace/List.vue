@@ -58,6 +58,7 @@ getList()
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="登录时间" />
+      <el-table-column prop="logoutTime" label="退出时间" />
     </el-table>
     <el-pagination
       v-if="pagination.total"

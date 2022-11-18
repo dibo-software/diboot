@@ -189,6 +189,7 @@ create table dbt_iam_login_trace
   ip_address varchar(50) null ,
   user_agent varchar(200) null ,
   is_success BOOLEAN default FALSE not null ,
+  logout_time timestamp null,
   create_time timestamp default CURRENT_TIMESTAMP not null
 );
 comment on column dbt_iam_login_trace.id is 'ID';
@@ -200,6 +201,7 @@ comment on column dbt_iam_login_trace.auth_account is '用户名';
 comment on column dbt_iam_login_trace.ip_address is 'IP';
 comment on column dbt_iam_login_trace.user_agent is '客户端信息';
 comment on column dbt_iam_login_trace.is_success is '是否成功';
+comment on column dbt_iam_login_trace.logout_time is '退出时间';
 comment on column dbt_iam_login_trace.create_time is '创建时间';
 comment on table dbt_iam_login_trace is '登录日志';
 -- 创建索引

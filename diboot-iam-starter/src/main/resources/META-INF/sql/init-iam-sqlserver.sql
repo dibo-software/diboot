@@ -195,6 +195,7 @@ create table ${SCHEMA}.dbt_iam_login_trace
     ip_address varchar(50) null,
     user_agent varchar(200) null,
     is_success tinyint default 0 not null,
+    logout_time datetime null,
     create_time datetime default CURRENT_TIMESTAMP not null,
     constraint PK_dbt_iam_login_trace primary key (id)
 );
@@ -207,6 +208,7 @@ execute sp_addextendedproperty 'MS_Description', N'用户名', 'SCHEMA', '${SCHE
 execute sp_addextendedproperty 'MS_Description', N'IP', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_login_trace, 'column', 'ip_address';
 execute sp_addextendedproperty 'MS_Description', N'客户端信息', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_login_trace, 'column', 'user_agent';
 execute sp_addextendedproperty 'MS_Description', N'是否成功', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_login_trace, 'column', 'is_success';
+execute sp_addextendedproperty 'MS_Description', N'退出时间', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_login_trace, 'column', 'logout_time';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_login_trace, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'登录日志', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_login_trace, null, null;
 -- 创建索引

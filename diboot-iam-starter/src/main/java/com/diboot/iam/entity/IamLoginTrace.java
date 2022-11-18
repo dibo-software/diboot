@@ -28,6 +28,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
 * 登录记录 Entity定义
@@ -81,6 +82,12 @@ public class IamLoginTrace extends BaseEntity {
     @Length(max=200, message="User-Agent长度应小于200")
     @TableField()
     private String userAgent;
+
+    /**
+     * 退出时间
+     */
+    @TableField()
+    private LocalDateTime logoutTime;
 
     public IamLoginTrace setUserAgent(String userAgent){
         if(V.notEmpty(userAgent) && userAgent.length() > 200){
