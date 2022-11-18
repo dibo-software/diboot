@@ -11,6 +11,9 @@ const { loadData, loading, model } = useDetail<Role & { permissionIdList?: strin
 const title = ref('')
 const visible = ref(false)
 
+// 新建完是否清空表单继续填写
+const isContinueAdd = ref(false)
+
 // 权限树相关
 const transformField = {
   label: 'displayName'
@@ -53,9 +56,21 @@ const { submitting, submit } = useForm({
   baseApi,
   successCallback(id) {
     emit('complete', id)
-    visible.value = false
+    visible.value = isContinueAdd.value
+    if (isContinueAdd.value) {
+      formRef.value?.resetFields()
+      selectedIdList.value = []
+      model.value.permissionIdList = []
+      treeRef.value?.setCheckedKeys([])
+    }
   }
 })
+
+// 保存之前判断是否确认并继续添加
+const beforeSubmit = (value: boolean) => {
+  isContinueAdd.value = value
+  submit(model.value, formRef.value)
+}
 
 const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
 
@@ -104,7 +119,10 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">提交</el-button>
+      <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
+        >确认并继续添加
+      </el-button>
+      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">提交</el-button>
     </template>
   </el-dialog>
 </template>
