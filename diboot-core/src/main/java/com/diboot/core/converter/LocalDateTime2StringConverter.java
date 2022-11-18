@@ -16,9 +16,11 @@
 package com.diboot.core.converter;
 
 import com.diboot.core.converter.annotation.CollectThisConvertor;
+import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * LocalDateTime - Date 转换器
@@ -35,10 +37,7 @@ public class LocalDateTime2StringConverter implements Converter<LocalDateTime, S
         if (source == null) {
             return null;
         }
-        return source.toString();
+        return source.format(DateTimeFormatter.ofPattern (D.FORMAT_DATETIME_Y4MDHMS));
     }
 
-    public static void main(String[] args) {
-        System.out.println(LocalDateTime.now().toString());
-    }
 }
