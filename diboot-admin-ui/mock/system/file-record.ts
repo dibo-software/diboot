@@ -6,7 +6,7 @@ export const dataList: FileRecord[] = [
     id: '037d8cbdd45f4cfa9844942eeb95504c',
     fileName: 'logo.png',
     fileType: 'png',
-    fileSize: '1908530',
+    fileSizeLabel: '1.9 MB',
     accessUrl: '/file/037d8cbdd45f4cfa9844942eeb95504c.png',
     createByName: 'DIBOOT',
     createTime: '2022-07-18 13:51:59'

@@ -145,7 +145,7 @@ const multiple = inject<boolean | undefined>(
         <excel-import
           v-if="operation?.importData && importPermission"
           :excel-base-api="`${baseApi}/excel`"
-          :attach="relatedKey ? () => ({ [relatedKey]: parent }) : undefined"
+          :attach="relatedKey ? () => ({ [`${relatedKey}`]: parent }) : undefined"
           @complete="onSearch"
         />
         <el-space>
