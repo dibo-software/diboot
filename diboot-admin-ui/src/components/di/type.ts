@@ -89,8 +89,8 @@ export interface InputNumber extends Input {
   type: 'input-number'
   min?: number
   max?: number
-  // 严格步长则为整数
-  stepStrictly?: boolean
+  // 精度（未指定则为整数）
+  precision?: number
   controls?: false | 'right'
 }
 
