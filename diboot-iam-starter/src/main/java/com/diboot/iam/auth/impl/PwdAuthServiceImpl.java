@@ -50,7 +50,7 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     protected Wrapper buildQueryWrapper(IamAuthToken iamAuthToken) {
         // 查询最新的记录
         LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
-                .select(IamAccount::getAuthAccount, IamAccount::getAuthSecret, IamAccount::getSecretSalt, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
+                .select(IamAccount::getId, IamAccount::getAuthAccount, IamAccount::getAuthSecret, IamAccount::getSecretSalt, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(IamAccount::getAuthType, iamAuthToken.getAuthType())
                 .eq(IamAccount::getAuthAccount, iamAuthToken.getAuthAccount())
@@ -63,9 +63,13 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
         IamAccount latestAccount = super.getAccount(iamAuthToken);
         // 如果需要密码校验，那么无状态的时候不需要验证
-        if (latestAccount == null ||
-                (iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false)){
-            throw new AuthenticationException("用户名或密码错误! account="+iamAuthToken.getAuthAccount());
+        if (latestAccount == null){
+            throw new AuthenticationException("用户名或密码错误!");
+        }
+        if(iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false) {
+            // 查询是否锁定账号
+            super.lockAccountIfRequired(latestAccount);
+            throw new AuthenticationException("用户名或密码错误!");
         }
         return latestAccount;
     }

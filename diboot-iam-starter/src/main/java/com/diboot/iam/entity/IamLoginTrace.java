@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -55,7 +56,7 @@ public class IamLoginTrace extends BaseEntity {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private String userId;
+    private String userId = Cons.ID_PREVENT_NULL;
 
     // 认证方式
     @NotNull(message = "认证方式不能为空")
