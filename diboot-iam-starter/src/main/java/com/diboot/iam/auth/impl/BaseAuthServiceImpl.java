@@ -94,7 +94,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
             if (subject.isAuthenticated()) {
                 String accessToken = (String) authToken.getCredentials();
                 // 缓存当前token与用户信息
-                TokenUtils.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), authToken.getExpiresInMinutes());
+                TokenUtils.cacheAccessToken(accessToken, authToken.buildUserInfoStr());
                 log.debug("申请token成功！authtoken={}", authToken.getCredentials());
                 saveLoginTrace(authToken, true);
                 // 返回
