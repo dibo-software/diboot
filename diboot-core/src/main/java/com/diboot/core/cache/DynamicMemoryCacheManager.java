@@ -38,15 +38,6 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements BaseCacheManager{
 
-    public DynamicMemoryCacheManager(String... cacheNames){
-        List<Cache> caches = new ArrayList<>(cacheNames.length);
-        for(String cacheName : cacheNames){
-            caches.add(new ConcurrentMapCache(cacheName));
-        }
-        setCaches(caches);
-        super.afterPropertiesSet();
-    }
-
     /**
      * cache的清理时间缓存
      */
@@ -67,7 +58,20 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     }
 
     /**
-     * 统一过期时间
+     * 指定cacheNames，无过期时间
+     * @param cacheNames
+     */
+    public DynamicMemoryCacheManager(String... cacheNames){
+        List<Cache> caches = new ArrayList<>(cacheNames.length);
+        for(String cacheName : cacheNames){
+            caches.add(new ConcurrentMapCache(cacheName));
+        }
+        setCaches(caches);
+        super.afterPropertiesSet();
+    }
+
+    /**
+     * 指定cacheNames，统一过期时间
      * @param expiredMinutes
      * @param cacheNames
      */
@@ -77,6 +81,21 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
             caches.add(new ConcurrentMapCache(cacheName));
             this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expiredMinutes);
             this.CACHE_CLEANDATE_CACHE.put(cacheName, "");
+        }
+        setCaches(caches);
+        super.afterPropertiesSet();
+    }
+
+    /**
+     * 指定cacheNames，附带不同的过期时间
+     * @param cacheName2ExpiredMinutes
+     */
+    public DynamicMemoryCacheManager(Map<String, Integer> cacheName2ExpiredMinutes){
+        List<Cache> caches = new ArrayList<>(cacheName2ExpiredMinutes.size());
+        for(Map.Entry<String, Integer> cacheEntry : cacheName2ExpiredMinutes.entrySet()){
+            caches.add(new ConcurrentMapCache(cacheEntry.getKey()));
+            this.CACHE_EXPIREDMINUTES_CACHE.put(cacheEntry.getKey(), cacheEntry.getValue());
+            this.CACHE_CLEANDATE_CACHE.put(cacheEntry.getKey(), "");
         }
         setCaches(caches);
         super.afterPropertiesSet();
@@ -114,22 +133,6 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         super.putCacheObj(cacheName, objKey, obj);
         refreshCacheTimestamp(cacheName, objKey);
         clearOutOfDateDataIfNeeded(cacheName);
-    }
-
-    /**
-     * 缓存对象
-     * @param cacheName
-     * @param objKey
-     * @param obj
-     */
-    public void putCacheObj(String cacheName, Object objKey, Object obj, int expireMinutes) {
-        if(!this.CACHE_EXPIREDMINUTES_CACHE.containsKey(cacheName) || (this.CACHE_EXPIREDMINUTES_CACHE.get(cacheName) != expireMinutes)){
-            this.CACHE_EXPIREDMINUTES_CACHE.put(cacheName, expireMinutes);
-            if(log.isDebugEnabled()){
-                log.debug("设置缓存过期时间: {}={}", cacheName, expireMinutes);
-            }
-        }
-        this.putCacheObj(cacheName, objKey, obj);
     }
 
     @Override

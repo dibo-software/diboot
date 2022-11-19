@@ -30,15 +30,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
 
-import java.time.Duration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Shiro の Redis 缓存自动配置
@@ -81,27 +77,12 @@ public class IamRedisAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public BaseCacheManager baseCacheManager(){
-        // redis配置参数
-        RedisCacheConfiguration defaultCacheConfiguration = RedisCacheConfiguration
-                        .defaultCacheConfig()
-                            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getStringSerializer()))
-                            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()))
-                            .entryTtl(Duration.ofMinutes(iamProperties.getTokenExpiresMinutes()));
-        Set<String> cacheNames = new HashSet<String>(){{
-                add(Cons.CACHE_TOKEN_USERINFO);
-                add(Cons.CACHE_CAPTCHA);
+        log.info("初始化IAM Redis缓存: DynamicRedisCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
+                put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
+                put(Cons.CACHE_CAPTCHA, 5);
         }};
-
-        // 初始化redisCacheManager
-        RedisCacheManager redisCacheManager =
-                RedisCacheManager.RedisCacheManagerBuilder
-                        .fromConnectionFactory(redisTemplate.getConnectionFactory())
-                        .cacheDefaults(defaultCacheConfiguration)
-                        .initialCacheNames(cacheNames)
-                        .transactionAware()
-                        .build();
-        log.info("初始化IAM缓存: DynamicRedisCacheManager");
-        return new DynamicRedisCacheManager(redisCacheManager);
+        return new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
     }
 
 }

@@ -46,6 +46,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.Filter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -210,9 +211,11 @@ public class IamAutoConfig {
     @ConditionalOnMissingBean
     public BaseCacheManager baseCacheManager(){
         log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
-        return new DynamicMemoryCacheManager(iamProperties.getTokenExpiresMinutes(),
-                Cons.CACHE_TOKEN_USERINFO,
-                Cons.CACHE_CAPTCHA);
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
+            put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
+            put(Cons.CACHE_CAPTCHA, 5);
+        }};
+        return new DynamicMemoryCacheManager(cacheName2ExpireMap);
     }
 
     /**
