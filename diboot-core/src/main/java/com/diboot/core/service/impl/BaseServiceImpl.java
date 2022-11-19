@@ -750,7 +750,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public Map<String, T> getId2EntityMap(List entityIds, IGetter<T>... selectFlds) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHolder.getIdColumnName(getEntityClass());
+		String pk = ContextHelper.getIdColumnName(getEntityClass());
 		if(V.notEmpty(selectFlds)) {
 			queryWrapper.select(pk);
 			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
