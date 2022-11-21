@@ -198,6 +198,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :data="relatedDatas"
       :lazy="config.lazy"
       :load="config.lazy ? lazyLoad : undefined"
+      :check-strictly="config.checkStrictly"
       :multiple="config.multiple"
       filterable
       clearable

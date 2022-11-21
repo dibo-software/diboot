@@ -19,6 +19,7 @@ export const buildOptionProps = (formItemList?: FormItem[]) => {
         dicts.push(loader)
       } else if (e['remote' as keyof typeof e] || e['lazy' as keyof typeof e]) {
         const asyncLoad = option.asyncLoad ? option.asyncLoad : (option.asyncLoad = {})
+        loader.lazyChild = !!e['lazy' as keyof typeof e]
         asyncLoad[e.prop] = loader as RelatedData
       } else {
         const load = option.load ? option.load : (option.load = {})
