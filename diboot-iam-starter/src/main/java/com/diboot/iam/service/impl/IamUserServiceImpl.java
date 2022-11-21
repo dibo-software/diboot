@@ -242,6 +242,25 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
         return voList;
     }
 
+    /**
+     * 刷新用户电话邮箱头像等信息
+     * @return
+     */
+    @Override
+    public boolean refreshUserInfo(IamUser currentUser) {
+        IamUser latestInfo = getEntity(currentUser.getId());
+        currentUser
+                .setRealname(latestInfo.getRealname())
+                .setStatus(latestInfo.getStatus())
+                .setAvatarUrl(latestInfo.getAvatarUrl())
+                .setUserNum(latestInfo.getUserNum())
+                .setGender(latestInfo.getGender())
+                .setBirthdate(latestInfo.getBirthdate())
+                .setEmail(latestInfo.getEmail())
+                .setMobilePhone(latestInfo.getMobilePhone())
+                .setOrgId(latestInfo.getOrgId());
+    }
+
     /***
      * 检查重复用户编号
      * @param userNumList

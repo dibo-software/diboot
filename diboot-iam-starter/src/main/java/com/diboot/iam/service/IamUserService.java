@@ -96,4 +96,9 @@ public interface IamUserService extends BaseIamService<IamUser> {
      */
     List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, String orgId);
 
+    /**
+     * 刷新用户电话邮箱头像等信息
+     * @return
+     */
+    boolean refreshUserInfo(IamUser currentUser);
 }
