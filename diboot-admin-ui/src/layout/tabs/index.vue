@@ -3,7 +3,7 @@ import type { RouteLocationNormalized } from 'vue-router'
 import type { WatchStopHandle } from 'vue'
 import type { ElScrollbar } from 'element-plus'
 import { onBeforeRouteLeave } from 'vue-router'
-import { Close, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
+import { Close, FullScreen, Menu, ArrowLeft, ArrowRight, CloseBold } from '@element-plus/icons-vue'
 import Draggable from 'vuedraggable'
 import useViewTabsStore from '@/store/view-tabs'
 import useAppStore from '@/store/app'
@@ -185,8 +185,8 @@ const fullScreenTabsView = () => {
         </el-icon>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
-            <el-dropdown-item @click="fullScreenTabsView()">{{ fullScreen ? '关闭' : '开启' }}全屏</el-dropdown-item>
+            <el-dropdown-item :icon="Close" @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
+            <el-dropdown-item :icon="FullScreen" @click="fullScreenTabsView()">{{ fullScreen ? '关闭' : '开启' }}全屏</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -260,7 +260,7 @@ const fullScreenTabsView = () => {
       }
 
       &:hover {
-        --tab-bg-color: var(--el-color-primary-light-9);
+        --tab-bg-color: var(--el-color-primary-light-8);
       }
 
       .el-icon {
