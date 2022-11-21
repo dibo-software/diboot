@@ -247,7 +247,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
      * @return
      */
     @Override
-    public boolean refreshUserInfo(IamUser currentUser) {
+    public void refreshUserInfo(IamUser currentUser) {
         IamUser latestInfo = getEntity(currentUser.getId());
         currentUser
                 .setRealname(latestInfo.getRealname())

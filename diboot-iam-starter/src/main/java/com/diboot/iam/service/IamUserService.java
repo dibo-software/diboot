@@ -100,5 +100,5 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * 刷新用户电话邮箱头像等信息
      * @return
      */
-    boolean refreshUserInfo(IamUser currentUser);
+    void refreshUserInfo(IamUser currentUser);
 }
