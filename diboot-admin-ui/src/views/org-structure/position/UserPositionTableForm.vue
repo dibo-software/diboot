@@ -34,6 +34,12 @@ const initModel = {
   orgId: props.orgId || '',
   isPrimaryPosition: false
 }
+
+const isPrimaryPositionChange = (index: number) => {
+  dataList.value.forEach((row, i) => {
+    row.isPrimaryPosition = index === i
+  })
+}
 // 添加数据字典条目
 const addItem = () => {
   dataList.value.push(_.cloneDeep(initModel))
@@ -134,7 +140,7 @@ defineExpose({
       <el-table-column label="主岗" width="100">
         <template #default="scope">
           <el-form-item :prop="`${scope.$index}.isPrimaryPosition`">
-            <el-switch v-model="scope.row.isPrimaryPosition" />
+            <el-switch v-model="scope.row.isPrimaryPosition" @change="isPrimaryPositionChange(scope.$index)" />
           </el-form-item>
         </template>
       </el-table-column>
