@@ -45,6 +45,13 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
     List<IamOrgVO> getOrgTree(String rootOrgId);
 
     /**
+     * 获取指定根下的全部节点的组织树
+     * @param rootOrgId
+     * @return
+     */
+    List<LabelValue> getSimpleOrgTree(String rootOrgId);
+
+    /**
      * 获取当前部门节点所有上级部门id集合
      * @param orgId
      * @return
@@ -60,9 +67,9 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
 
     /**
      * 获取id值-选项的映射Map
-     * @param ids
+     * @param orgIds
      * @return
      */
-    Map<String, LabelValue> getLabelValueMap(List<String> ids);
+    Map<String, LabelValue> getLabelValueMap(List<String> orgIds);
 
 }

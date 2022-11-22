@@ -33,6 +33,13 @@ public interface IamPositionService extends BaseIamService<IamPosition> {
      * @param userId
      * @return
      */
-    List<IamPosition> getPositionListByUser(String userType, String userId);
+    List<IamPosition> getPositionsByUser(String userType, String userId);
+
+    /**
+     * 获取指定部门下的岗位列表
+     * @param orgId
+     * @return
+     */
+    List<IamPosition> getPositionsByOrg(String orgId);
 
 }

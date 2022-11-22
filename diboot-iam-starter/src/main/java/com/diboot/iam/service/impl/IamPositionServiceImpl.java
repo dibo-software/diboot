@@ -44,9 +44,16 @@ public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper
     private IamUserPositionService iamUserPositionService;
 
     @Override
-    public List<IamPosition> getPositionListByUser(String userType, String userId) {
+    public List<IamPosition> getPositionsByUser(String userType, String userId) {
         List<IamUserPosition> userPositionList = iamUserPositionService.getUserPositionListByUser(userType, userId);
         List<String> positionIds = BeanUtils.collectToList(userPositionList, IamUserPosition::getPositionId);
         return V.isEmpty(positionIds) ? Collections.emptyList() : this.getEntityListByIds(positionIds);
     }
+
+    @Override
+    public List<IamPosition> getPositionsByOrg(String orgId) {
+        List<String> positionIds = iamUserPositionService.getPositionIdsByOrg(orgId);
+        return V.isEmpty(positionIds) ? Collections.emptyList() : this.getEntityListByIds(positionIds);
+    }
+
 }

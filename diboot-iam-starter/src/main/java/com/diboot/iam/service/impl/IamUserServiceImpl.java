@@ -202,6 +202,12 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     @Override
+    public List<IamUser> getUsersByRoleIds(List<String> roleIds) {
+        List<String> ids = iamUserRoleService.getUserIdsByRoleIds(roleIds);
+        return getEntityListByIds(ids);
+    }
+
+    @Override
     public Map<String, LabelValue> getLabelValueMap(List<String> ids) {
         LambdaQueryWrapper<IamUser> queryWrapper = new QueryWrapper<IamUser>().lambda()
                 .select(IamUser::getRealname, IamUser::getId, IamUser::getUserNum)

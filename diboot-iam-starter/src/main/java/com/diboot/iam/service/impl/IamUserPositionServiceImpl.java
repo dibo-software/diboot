@@ -27,7 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户岗位关联相关Service实现
@@ -40,7 +42,6 @@ import java.util.List;
 @Service
 public class IamUserPositionServiceImpl extends BaseIamServiceImpl<IamUserPositionMapper, IamUserPosition> implements IamUserPositionService {
 
-
     @Override
     public List<IamUserPosition> getUserPositionListByUser(String userType, String userId) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
@@ -48,6 +49,18 @@ public class IamUserPositionServiceImpl extends BaseIamServiceImpl<IamUserPositi
                 .eq(IamUserPosition::getUserId, userId)
                 .orderByDesc(IamUserPosition::getIsPrimaryPosition);
         return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<String> getPositionIdsByOrg(String orgId) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .select(IamUserPosition::getPositionId)
+                .eq(IamUserPosition::getOrgId, orgId);
+        List<IamUserPosition> userPositions = baseMapper.selectList(queryWrapper);
+        if(V.notEmpty(userPositions)) {
+            return userPositions.stream().map(IamUserPosition::getPositionId).distinct().collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -96,5 +109,17 @@ public class IamUserPositionServiceImpl extends BaseIamServiceImpl<IamUserPositi
             baseMapper.insert(userPosition);
         }
         return true;
+    }
+
+    @Override
+    public List<String> getUserIdsByPosition(List<String> positionIds) {
+        LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
+                .select(IamUserPosition::getUserId)
+                .in(IamUserPosition::getPositionId, positionIds);
+        List<IamUserPosition> userPositions = baseMapper.selectList(queryWrapper);
+        if(V.notEmpty(userPositions)) {
+            return userPositions.stream().map(IamUserPosition::getUserId).distinct().collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

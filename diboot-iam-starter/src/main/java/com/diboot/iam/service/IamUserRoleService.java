@@ -95,4 +95,11 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @return 角色VO
      */
     IamRoleVO buildRoleVo4FrontEnd(BaseLoginUser loginUser);
+
+    /**
+     * 根据角色获取用户ids
+     * @param roleIds
+     * @return
+     */
+    List<String> getUserIdsByRoleIds(List<String> roleIds);
 }

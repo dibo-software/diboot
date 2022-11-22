@@ -121,6 +121,20 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     }
 
     @Override
+    public List<LabelValue> getSimpleOrgTree(String rootOrgId) {
+        LambdaQueryWrapper<IamOrg> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper
+                .select(IamOrg::getName, IamOrg::getId, IamOrg::getCode, IamOrg::getParentId)
+                .orderByAsc(IamOrg::getSortId);
+        IamOrg parentOrg = getEntity(rootOrgId);
+        if (parentOrg != null) {
+            String parentIds = parentOrg.getParentIdsPath() == null ? rootOrgId : S.joinWith(Cons.SEPARATOR_COMMA, parentOrg.getParentIdsPath(), rootOrgId);
+            queryWrapper.likeRight(IamOrg::getParentIdsPath, parentIds);
+        }
+        return getLabelValueList(queryWrapper);
+    }
+
+    @Override
     public List<String> getParentOrgIds(String orgId) {
         IamOrg parentOrg = getEntity(orgId);
         if (parentOrg == null || parentOrg.getParentIdsPath() == null) {

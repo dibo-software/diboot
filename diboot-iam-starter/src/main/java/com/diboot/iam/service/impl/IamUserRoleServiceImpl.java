@@ -24,10 +24,7 @@ import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.BaseLoginUser;
-import com.diboot.iam.entity.IamResource;
-import com.diboot.iam.entity.IamRole;
-import com.diboot.iam.entity.IamUserRole;
+import com.diboot.iam.entity.*;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
@@ -242,6 +239,16 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         }
         // 组合为前端格式
         return IamHelper.buildRoleVo4FrontEnd(roleVOList);
+    }
+
+    @Override
+    public List<String> getUserIdsByRoleIds(List<String> roleIds) {
+        List<String> userIds = getValuesOfField(Wrappers.<IamUserRole>lambdaQuery()
+                .select(IamUserRole::getRoleId)
+                .in(IamUserRole::getRoleId, roleIds),
+                IamUserRole::getUserId
+        );
+        return userIds;
     }
 
     /**

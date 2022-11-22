@@ -38,6 +38,13 @@ public interface IamUserPositionService extends BaseIamService<IamUserPosition> 
     List<IamUserPosition> getUserPositionListByUser(String userType, String userId);
 
     /**
+     * 获取指定部门下的岗位列表
+     *
+     * @return
+     */
+    List<String> getPositionIdsByOrg(String orgId);
+
+    /**
      * 获取用户的第一主岗
      *
      * @param userType
@@ -56,4 +63,10 @@ public interface IamUserPositionService extends BaseIamService<IamUserPosition> 
      */
     boolean updateUserPositionRelations(String userType, String userId, List<IamUserPosition> userPositionList);
 
+    /**
+     * 获取岗位下匹配的用户
+     * @param positionIds
+     * @return
+     */
+    List<String> getUserIdsByPosition(List<String> positionIds);
 }
