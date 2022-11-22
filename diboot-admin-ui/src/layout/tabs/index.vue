@@ -186,7 +186,9 @@ const fullScreenTabsView = () => {
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item :icon="Close" @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
-            <el-dropdown-item :icon="FullScreen" @click="fullScreenTabsView()">{{ fullScreen ? '关闭' : '开启' }}全屏</el-dropdown-item>
+            <el-dropdown-item :icon="FullScreen" @click="fullScreenTabsView()">
+              {{ fullScreen ? '关闭' : '开启' }}全屏
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>

@@ -86,7 +86,7 @@ const submitForm = async () => {
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">登 陆</el-button>
+          <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">登 录</el-button>
         </el-form-item>
       </el-form>
     </div>
