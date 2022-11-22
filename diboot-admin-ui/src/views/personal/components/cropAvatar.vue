@@ -75,7 +75,7 @@ const getPickAvatar = () => {
           .then(re => {
             if (re.code === 0) {
               ElMessage.success(re.msg)
-              authStore.getInfo()
+              authStore.getInfo(true)
             }
           })
           .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
