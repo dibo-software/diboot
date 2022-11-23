@@ -492,7 +492,7 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void tesExecuteMultipleUpdateSqls(){
+    public void tesExecuteMultipleUpdateSqls() throws Exception {
         List<String> sqls = new ArrayList<>();
         Long dictId = 20000l;
         if(ContextHelper.getDatabaseType().equals("dm")) {

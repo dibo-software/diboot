@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -234,24 +235,11 @@ public class SqlFileInitializer {
     }
 
     /***
-     * 执行多条批量更新SQL（支持事务，有报错即回滚）
-     * @param sqlStatementList
-     * @return
-     */
-    public static boolean executeMultipleUpdateSqlsWithTransaction(List<String> sqlStatementList){
-        try {
-            return executeMultipleUpdateSqlsWithTransactionThrowException(sqlStatementList);
-        } catch(Exception e) {
-            return false;
-        }
-    }
-
-    /***
      * 执行多条批量更新SQL，并在执行异常时跑出异常（支持事务，有报错即回滚）
      * @param sqlStatementList
      * @return
      */
-    public static boolean executeMultipleUpdateSqlsWithTransactionThrowException(List<String> sqlStatementList) throws Exception{
+    public static boolean executeMultipleUpdateSqlsWithTransaction(List<String> sqlStatementList) throws Exception {
         if(V.isEmpty(sqlStatementList)){
             return false;
         }
@@ -261,25 +249,24 @@ public class SqlFileInitializer {
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return false;
         }
-        SqlSession session = sqlSessionFactory.openSession(false);
-        try(Connection conn = session.getConnection()){
+        SqlSession session = sqlSessionFactory.openSession();
+        Connection conn = session.getConnection();
+        try{
             conn.setAutoCommit(false);
             for(String sqlStatement : sqlStatementList){
-                SqlExecutor.executeUpdate(conn, sqlStatement, null);
+                PreparedStatement stmt = conn.prepareStatement(sqlStatement);
+                stmt.execute();
+                stmt.close();
             }
             conn.commit();
             return true;
         }
         catch (Exception e){
             log.error("SQL执行异常，请检查：", e);
-            session.rollback();
-            session.close();
-            throw e;
-        }
-        finally {
-            if(session != null){
-                session.close();
+            if(session != null) {
+                session.rollback();
             }
+            throw e;
         }
     }
 
