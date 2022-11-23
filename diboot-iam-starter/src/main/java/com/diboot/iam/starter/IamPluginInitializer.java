@@ -44,7 +44,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(920)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class IamPluginInitializer implements ApplicationRunner {
     @Autowired
     private IamProperties iamProperties;
@@ -54,18 +54,16 @@ public class IamPluginInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库字典是否已存在
-        if(iamProperties.isInitSql()){
-            SqlFileInitializer.init(environment);
-            // 验证SQL
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_iam_role WHERE id='0'";
-            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
-                log.info("diboot-IAM 初始化SQL ...");
-                // 执行初始化SQL
-                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "iam");
-                // 插入相关数据：Dict，Role等
-                insertInitData();
-                log.info("diboot-IAM 初始化SQL完成.");
-            }
+        SqlFileInitializer.init(environment);
+        // 验证SQL
+        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_iam_role WHERE id='0'";
+        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+            log.info("diboot-IAM 初始化SQL ...");
+            // 执行初始化SQL
+            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "iam");
+            // 插入相关数据：Dict，Role等
+            insertInitData();
+            log.info("diboot-IAM 初始化SQL完成.");
         }
     }
 

@@ -53,9 +53,9 @@ public class PropertiesTest {
         Assert.assertTrue(BaseConfig.getPageSize() == 20);
         Assert.assertTrue(BaseConfig.getBatchSize() == 1000);
 
-        String path = PropertiesUtils.get("diboot.component.file.storageDirectory");
+        String path = PropertiesUtils.get("diboot.file.storageDirectory");
         System.out.println(path);
-        path = PropertiesUtils.get("diboot.component.file.storage-directory");
+        path = PropertiesUtils.get("diboot.file.storage-directory");
         System.out.println(path);
     }
 

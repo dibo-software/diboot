@@ -34,11 +34,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(930)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class FilePluginInitializer implements ApplicationRunner {
-
-    @Autowired
-    private FileProperties fileProperties;
 
     @Autowired
     private Environment environment;
@@ -46,14 +43,11 @@ public class FilePluginInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库文件记录表是否已存在
-        if (fileProperties.isInitSql()) {
-            // 初始化SCHEMA
-            SqlFileInitializer.init(environment);
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_file_record WHERE id='0'";
-            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
-                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "file");
-                log.info("diboot-file 初始化SQL完成.");
-            }
+        SqlFileInitializer.init(environment);
+        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_file_record WHERE id='0'";
+        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "file");
+            log.info("diboot-file 初始化SQL完成.");
         }
     }
 }

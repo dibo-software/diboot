@@ -41,9 +41,4 @@ public class CoreProperties {
      * 是否开启国际化
      */
     private boolean i18n = false;
-    /**
-     * 是否初始化，默认true自动安装SQL
-     */
-    private boolean initSql = true;
-
 }

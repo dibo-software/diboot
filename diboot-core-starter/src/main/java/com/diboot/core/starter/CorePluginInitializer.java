@@ -39,27 +39,22 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(910)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class CorePluginInitializer implements ApplicationRunner {
     @Autowired
     private Environment environment;
-
-    @Autowired
-    private CoreProperties coreProperties;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 初始化SCHEMA
         SqlFileInitializer.init(environment);
         // 检查数据库字典是否已存在
-        if (coreProperties.isInitSql()) {
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_dictionary WHERE id='0'";
-            if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
-                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "core");
-                // 插入相关数据：Dict等
-                insertInitData();
-                log.info("diboot-core 初始化SQL完成.");
-            }
+        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_dictionary WHERE id='0'";
+        if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
+            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "core");
+            // 插入相关数据：Dict等
+            insertInitData();
+            log.info("diboot-core 初始化SQL完成.");
         }
     }
 

@@ -30,12 +30,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Setter
 @Getter
-@ConfigurationProperties(prefix = "diboot.global")
+@ConfigurationProperties(prefix = "diboot")
 public class GlobalProperties {
 
     /**
-     * 全局初始化SQL，默认true自动安装SQL
+     * 全局初始化SQL，默认false不自动安装SQL
      */
-    private boolean initSql = true;
+    private boolean initSql = false;
 
 }

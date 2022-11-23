@@ -52,10 +52,6 @@ public class IamProperties {
      */
     private Set<String> anonUrls;
     /**
-     * 是否初始化SQL
-     */
-    private boolean initSql = true;
-    /**
      * 是否开启权限检查（开发环境可关闭方便调试）
      */
     private boolean enablePermissionCheck = true;

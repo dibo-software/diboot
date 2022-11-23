@@ -27,12 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @Copyright © diboot.com
  */
 @Getter @Setter
-@ConfigurationProperties(prefix = "diboot.component.message")
+@ConfigurationProperties(prefix = "diboot.message")
 public class MessageProperties {
-
-    /**
-     * 是否初始化SQL
-     */
-    private boolean initSql = true;
 
 }

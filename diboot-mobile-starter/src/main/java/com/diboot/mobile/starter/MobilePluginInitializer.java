@@ -48,28 +48,25 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(930)
 @AutoConfigureAfter({IamAutoConfig.class})
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class MobilePluginInitializer implements ApplicationRunner {
-    @Autowired
-    private MobileProperties mobileProperties;
+
     @Autowired
     private Environment environment;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库字典是否已存在
-        if(mobileProperties.isInitSql()){
-            SqlFileInitializer.init(environment);
-            // 验证SQL
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_iam_member WHERE id='0'";
-            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
-                log.info("diboot-mobile 初始化SQL ...");
-                // 执行初始化SQL
-                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "mobile");
-                // 插入IamMember登录数据
-                insertInitData();
-                log.info("diboot-mobile 初始化SQL完成.");
-            }
+        SqlFileInitializer.init(environment);
+        // 验证SQL
+        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_iam_member WHERE id='0'";
+        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+            log.info("diboot-mobile 初始化SQL ...");
+            // 执行初始化SQL
+            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "mobile");
+            // 插入IamMember登录数据
+            insertInitData();
+            log.info("diboot-mobile 初始化SQL完成.");
         }
     }
 

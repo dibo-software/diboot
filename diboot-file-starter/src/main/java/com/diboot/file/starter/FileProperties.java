@@ -24,18 +24,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "diboot.component.file")
+@ConfigurationProperties(prefix = "diboot.file")
 public class FileProperties {
 
     /**
      * 文件存储路径
      */
     private String storageDirectory;
-
-    /**
-     * 是否初始化，默认true自动安装SQL
-     */
-    private boolean initSql = true;
 
     /**
      * 最大上传大小（默认10M），推荐用spring.servlet.multipart.max-request-size

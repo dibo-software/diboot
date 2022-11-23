@@ -41,11 +41,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(950)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class MessagePluginInitializer implements ApplicationRunner {
-
-    @Autowired
-    private MessageProperties messageProperties;
 
     @Autowired
     private Environment environment;
@@ -53,16 +50,14 @@ public class MessagePluginInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库字典是否已存在
-        if (messageProperties.isInitSql()) {
-            // 初始化SCHEMA
-            SqlFileInitializer.init(environment);
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_message_template WHERE id='0'";
-            if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
-                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "message");
-                // 插入相关数据：Dict等
-                insertInitData();
-                log.info("diboot-message 初始化SQL完成.");
-            }
+        // 初始化SCHEMA
+        SqlFileInitializer.init(environment);
+        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_message_template WHERE id='0'";
+        if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
+            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "message");
+            // 插入相关数据：Dict等
+            insertInitData();
+            log.info("diboot-message 初始化SQL完成.");
         }
     }
 

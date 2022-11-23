@@ -21,6 +21,7 @@ import com.diboot.core.converter.*;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.encrypt.ProtectInterceptor;
 import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -137,13 +138,13 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         // 优先使用全局默认ObjectMapper, 保证ObjectMapper全局配置相同
-        ObjectMapper objectMapper = ContextHelper.getBean(ObjectMapper.class);
+        ObjectMapper objectMapper = ContextHolder.getBean(ObjectMapper.class);
         if (objectMapper == null) {
             objectMapper = converter.getObjectMapper();
-            System.out.println("converter.getObjectMapper = " + objectMapper.toString());
+            log.info("初始化 ObjectMapper from MessageConverter");
         }
         else {
-            System.out.println("ContextHelper.getObjectMapper = " + objectMapper.toString());
+            log.info("初始化 ObjectMapper from Spring getBean");
         }
         converter.setObjectMapper(objectMapper);
         return converter;

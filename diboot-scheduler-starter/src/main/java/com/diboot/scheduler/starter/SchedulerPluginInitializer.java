@@ -39,11 +39,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @Order(940)
-@ConditionalOnProperty(prefix = "diboot.global", name = "init-sql", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class SchedulerPluginInitializer implements ApplicationRunner {
-
-    @Autowired
-    private SchedulerProperties schedulerProperties;
 
     @Autowired
     private Environment environment;
@@ -51,18 +48,16 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库是否已存在
-        if(schedulerProperties.isInitSql()){
-            SqlFileInitializer.init(environment);
-            // 验证SQL
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_schedule_job WHERE id='0'";
-            if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
-                log.info("diboot-scheduler 初始化SQL ...");
-                // 执行初始化SQL
-                SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "scheduler");
-                // 插入相关数据：Dict等
-                insertInitData();
-                log.info("diboot-scheduler 初始化SQL完成.");
-            }
+        SqlFileInitializer.init(environment);
+        // 验证SQL
+        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_schedule_job WHERE id='0'";
+        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+            log.info("diboot-scheduler 初始化SQL ...");
+            // 执行初始化SQL
+            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "scheduler");
+            // 插入相关数据：Dict等
+            insertInitData();
+            log.info("diboot-scheduler 初始化SQL完成.");
         }
     }
 

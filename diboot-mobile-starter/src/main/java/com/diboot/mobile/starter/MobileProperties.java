@@ -35,11 +35,6 @@ import org.springframework.stereotype.Component;
 public class MobileProperties {
 
     /**
-     * 是否初始化SQL
-     */
-    private boolean initSql = true;
-
-    /**
      * 小程序的配置
      */
     private Config wxMiniapp;

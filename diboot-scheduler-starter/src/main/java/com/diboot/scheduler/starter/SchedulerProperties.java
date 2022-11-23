@@ -26,12 +26,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2020/11/28
  */
 @Getter @Setter
-@ConfigurationProperties(prefix = "diboot.component.scheduler")
+@ConfigurationProperties(prefix = "diboot.scheduler")
 public class SchedulerProperties {
-
-    /**
-     * 是否初始化SQL
-     */
-    private boolean initSql = true;
 
 }
