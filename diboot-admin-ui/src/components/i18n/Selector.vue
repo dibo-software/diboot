@@ -70,7 +70,7 @@ watch(
         </el-descriptions-item>
       </el-descriptions>
     </el-popover>
-    <el-dialog v-model="visible" top="10vh" width="1000px">
+    <el-dialog v-model="visible" top="10vh" width="1000px" append-to-body>
       <template #header>
         <div style="display: flex; justify-content: space-between; margin-right: 30px">
           <span class="el-dialog__title">国际化配置</span>
