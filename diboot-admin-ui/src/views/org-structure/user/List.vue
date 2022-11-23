@@ -1,5 +1,5 @@
 <script setup lang="ts" name="UserList">
-import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
+import { Refresh, Search, ArrowDown, CircleClose } from '@element-plus/icons-vue'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
@@ -22,7 +22,7 @@ watch(
 interface UserSearch extends UserModel {
   keywords?: string
 }
-const { queryParam, loading, dataList, pagination, getList, buildQueryParam, onSearch, remove } = useList<
+const { queryParam, loading, dataList, pagination, getList, buildQueryParam, onSearch, remove, resetFilter } = useList<
   UserModel,
   UserSearch
 >({ baseApi })
@@ -71,10 +71,10 @@ const deletePermission = checkPermission('delete')
             class="search-input"
             placeholder="编码/名称"
             clearable
-            :suffix-icon="Search"
             @keyup.enter="onSearch"
           />
-          <el-button :icon="Refresh" circle @click="getList()" />
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
         </el-space>
       </el-space>
     </el-header>
@@ -90,6 +90,13 @@ const deletePermission = checkPermission('delete')
       </el-table-column>
       <el-table-column prop="mobilePhone" label="电话" />
       <el-table-column prop="email" label="邮箱" />
+      <el-table-column prop="genderLabel" label="状态">
+        <template #default="{ row }">
+          <el-tag :color="row.statusLabel?.ext?.color" effect="dark" type="info">
+            {{ row.statusLabel?.label }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="165" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
@@ -109,7 +116,7 @@ const deletePermission = checkPermission('delete')
                   <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                     {{ $t('operation.update') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="deletePermission" @click="remove(row.id)">
+                  <el-dropdown-item v-if="deletePermission && row.status === 'I'" @click="remove(row.id)">
                     {{ $t('operation.delete') }}
                   </el-dropdown-item>
                 </el-dropdown-menu>

@@ -1,5 +1,5 @@
 <script setup lang="ts" name="MessageTemplate">
-import { Refresh, Search, CircleClose, ArrowDown } from '@element-plus/icons-vue'
+import { Refresh, Search, CircleClose, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import type { MessageTemplate } from './type'
 import Detail from '@/views/system/message-template/Detail.vue'
 import Form from './Form.vue'
@@ -51,12 +51,6 @@ const deletePermission = checkPermission('delete')
             />
           </el-form-item>
         </el-col>
-        <el-col :md="6" :sm="12" style="margin-left: auto">
-          <el-form-item>
-            <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-            <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-          </el-form-item>
-        </el-col>
       </el-row>
     </el-form>
     <el-header>
@@ -65,8 +59,13 @@ const deletePermission = checkPermission('delete')
           {{ $t('operation.create') }}
         </el-button>
         <el-space>
-          <el-button :icon="Refresh" circle @click="getList()" />
-          <el-button :icon="Search" circle @click="searchState = !searchState" />
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
         </el-space>
       </el-space>
     </el-header>

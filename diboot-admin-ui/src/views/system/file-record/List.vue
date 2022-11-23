@@ -1,6 +1,6 @@
 <script setup lang="ts" name="FileRecord">
 import { fileDownload } from '@/utils/file'
-import { Refresh, Search } from '@element-plus/icons-vue'
+import { Refresh, Search, ArrowDown, ArrowUp, CircleClose } from '@element-plus/icons-vue'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
@@ -41,50 +41,50 @@ const batchDownload = () => {
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :md="8" :sm="24">
-          <el-form-item label="文件名称">
-            <el-input v-model="queryParam.fileName" clearable @change="onSearch" />
-          </el-form-item>
+    <el-form label-width="80px" class="list-search" @submit.prevent>
+      <el-row style="align-items: center; flex-direction: row-reverse; margin: 0 !important">
+        <el-col :lg="18" :md="24">
+          <el-row :gutter="8">
+            <el-col :lg="8" :md="12">
+              <el-form-item label="文件名称">
+                <el-input v-model="queryParam.fileName" clearable @change="onSearch" />
+              </el-form-item>
+            </el-col>
+            <el-col :md="8" :sm="24">
+              <el-form-item label="创建者">
+                <el-select
+                  v-model="queryParam.createBy"
+                  remote
+                  filterable
+                  :loading="asyncLoading"
+                  :remote-method="(value: string) => remoteRelatedDataFilter(value, 'userOptions')"
+                  clearable
+                  @change="onSearch"
+                >
+                  <el-option
+                    v-for="item in relatedData.userOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :lg="8" :md="12" style="margin-left: auto">
+              <el-form-item>
+                <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+                <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-col>
-        <el-col :md="8" :sm="24">
-          <el-form-item label="创建者">
-            <el-select
-              v-model="queryParam.createBy"
-              remote
-              filterable
-              :loading="asyncLoading"
-              :remote-method="(value: string) => remoteRelatedDataFilter(value, 'userOptions')"
-              clearable
-              @change="onSearch"
-            >
-              <el-option
-                v-for="item in relatedData.userOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :md="8" :sm="24" style="margin-left: auto">
-          <el-form-item>
-            <el-button type="primary" @click="onSearch">搜索</el-button>
-            <el-button @click="resetFilter">重置</el-button>
-          </el-form-item>
+        <el-col :lg="6" :md="24">
+          <el-button v-has-permission="'create'" type="primary" style="margin-left: 10px" @click="openForm()">
+            {{ $t('operation.create') }}
+          </el-button>
         </el-col>
       </el-row>
     </el-form>
-    <el-header>
-      <el-space wrap class="list-operation">
-        <el-button :loading="downloadProgress > 0 && downloadProgress < 100" @click="batchDownload">批量下载</el-button>
-        <el-space>
-          <el-button :icon="Refresh" circle @click="getList()" />
-          <el-button :icon="Search" circle @click="searchState = !searchState" />
-        </el-space>
-      </el-space>
-    </el-header>
     <el-table
       ref="tableRef"
       v-loading="loading"

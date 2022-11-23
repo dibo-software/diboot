@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Position">
-import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
+import { Refresh, Search, ArrowDown, CircleClose } from '@element-plus/icons-vue'
 import type { Position } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
@@ -7,7 +7,10 @@ interface PositionSearch extends Position {
   keywords?: string
 }
 
-const { queryParam, onSearch, getList, loading, dataList, pagination, remove } = useList<Position, PositionSearch>({
+const { queryParam, onSearch, getList, loading, dataList, pagination, remove, resetFilter } = useList<
+  Position,
+  PositionSearch
+>({
   baseApi: '/iam/position'
 })
 
@@ -39,10 +42,10 @@ const deletePermission = checkPermission('delete')
             class="search-input"
             placeholder="编码/名称"
             clearable
-            :suffix-icon="Search"
             @keyup.enter="onSearch"
           />
-          <el-button :icon="Refresh" circle @click="getList()" />
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
         </el-space>
       </el-space>
     </el-header>
