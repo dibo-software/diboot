@@ -36,9 +36,9 @@ export default defineStore('auth', {
           })
       })
     },
-    getInfo: async function () {
+    getInfo: async function (refresh = false) {
       try {
-        const res = await api.get<{ info: UserModel; roles: Array<string> }>('/auth/user-info')
+        const res = await api.get<{ info: UserModel; roles: Array<string> }>('/auth/user-info', { refresh })
         this.info = res.data?.info
         if (this.info?.avatarUrl) this.avatar = buildImgSrc(this.info?.avatarUrl)
         this.realname = `${this.info?.realname}`

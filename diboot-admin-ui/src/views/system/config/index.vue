@@ -2,6 +2,16 @@
 import type { Directive } from 'vue'
 import { CircleCheck, CircleClose } from '@element-plus/icons-vue'
 import type { SystemConfigType, SystemConfig } from './type'
+import { isDark } from '@/utils/theme'
+
+const notBgColor = ref(isDark.value)
+watch(
+  () => isDark.value,
+  val => {
+    notBgColor.value = val
+    return { notBgColor }
+  }
+)
 
 const baseApi = '/system-config'
 const type = ref('')
@@ -181,7 +191,7 @@ table {
 
   tr {
     th {
-      background-color: #fafafa;
+      background-color: v-bind("notBgColor ? '' : '#fafafa'");
       width: 220px;
     }
 

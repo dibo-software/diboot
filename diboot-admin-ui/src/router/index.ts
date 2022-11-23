@@ -76,7 +76,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: '/personal',
         name: 'Personal',
         component: () => import('@/views/personal/index.vue'),
-        meta: { title: '个人中心', icon: 'Element:User', sort: 999 }
+        meta: { title: '个人中心', hidden: true }
       }
     ]
   }

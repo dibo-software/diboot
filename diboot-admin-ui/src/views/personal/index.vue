@@ -5,13 +5,12 @@ import account from './components/account.vue'
 import password from './components/password.vue'
 import cropAvatar from './components/cropAvatar.vue'
 
+useAuthStore().getInfo(true)
 const authStore = useAuthStore()
 
-const tagName = ref()
-const roles = authStore.roles as any
-if ('name' in roles[0]) {
-  tagName.value = roles[0].name
-}
+const tagNameList = ref()
+const roles = authStore.roles
+tagNameList.value = roles.map((role: any) => role.name)
 
 const menu = shallowRef([
   {
@@ -43,13 +42,20 @@ const avatarBase64 = ref()
 const showSetAvatarDialog = ref()
 const filename = ref('')
 const selectFile = (e: any) => {
+  const filepath = e.target.value
   const file = e.target.files[0]
-  filename.value = file.name
-  const reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.onload = e => {
-    avatarBase64.value = e.target?.result
-    showSetAvatarDialog.value = true
+  const fileTypes = ['.jpg', '.png']
+  const fileEnd = filepath.substring(filepath.lastIndexOf('.'))
+  if (fileTypes.indexOf(fileEnd) > -1) {
+    filename.value = file.name
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = e => {
+      avatarBase64.value = e.target?.result
+      showSetAvatarDialog.value = true
+    }
+  } else {
+    ElMessage.error('请上传图片文件！')
   }
 }
 const cropDialog = (val: boolean) => {
@@ -60,7 +66,7 @@ const cropDialog = (val: boolean) => {
 
 <template>
   <el-container class="page-user">
-    <input id="avatarFile" type="file" hidden @change="selectFile" />
+    <input id="avatarFile" type="file" hidden accept=".jpg,.png" @change="selectFile" />
     <crop-avatar
       :show-set-avatar-dialog="showSetAvatarDialog"
       :avatar-base64="avatarBase64"
@@ -76,9 +82,9 @@ const cropDialog = (val: boolean) => {
             </el-tooltip>
 
             <h2>{{ authStore.realname }}</h2>
-            <p>
-              <el-tag effect="dark" round size="large">{{ tagName }}</el-tag>
-            </p>
+            <span v-for="(tagName, index) in tagNameList" :key="index">
+              <el-tag effect="dark" round size="large" style="margin: 0 5px 5px 0">{{ tagNameList[index] }}</el-tag>
+            </span>
           </div>
         </el-header>
         <el-main class="nopadding">
