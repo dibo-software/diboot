@@ -22,7 +22,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -145,10 +145,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      */
     protected JsonResult<?> createEntity(E entity) throws Exception {
         // 执行创建资源前的操作
-        String validateResult = this.beforeCreate(entity);
-        if (validateResult != null) {
-            return JsonResult.FAIL_VALIDATION(validateResult);
-        }
+        this.beforeCreate(entity);
         // 执行保存操作
         boolean success = getService().createEntity(entity);
         if (success) {
@@ -172,19 +169,15 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected JsonResult<?> updateEntity(Serializable id, E entity) throws Exception {
         // 如果前端没有指定entity.id，在此设置，以兼容前端不传的情况
         if (entity.getId() == null) {
-            String pk = ContextHelper.getIdFieldName(getEntityClass());
+            String pk = ContextHolder.getIdFieldName(getEntityClass());
             if (Cons.FieldName.id.name().equals(pk)) {
-                Long longId = (id instanceof Long) ? (Long) id : Long.parseLong((String) id);
-                entity.setId(longId);
+                entity.setId(id);
             } else if (BeanUtils.getProperty(entity, pk) == null) {
                 BeanUtils.setProperty(entity, pk, id);
             }
         }
         // 执行更新资源前的操作
-        String validateResult = this.beforeUpdate(entity);
-        if (validateResult != null) {
-            return JsonResult.FAIL_VALIDATION(validateResult);
-        }
+        this.beforeUpdate(entity);
         // 执行保存操作
         boolean success = getService().updateEntity(entity);
         if (success) {
@@ -209,21 +202,16 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             return failInvalidParam( "请选择需要删除的条目！");
         }
         // 是否有权限删除
-        E entity = getService().getEntity(id);
-        String validateResult = beforeDelete(entity);
-        if (validateResult != null) {
-            // 返回json
-            return failOperation(validateResult);
-        }
+        this.beforeDelete(id);
         // 执行删除操作
         boolean success = getService().deleteEntity(id);
         if (success) {
             // 执行更新成功后的操作
-            this.afterDeleted(entity);
-            log.info("删除操作成功，{}:{}", entity.getClass().getSimpleName(), id);
+            this.afterDeleted(id);
+            log.info("删除操作成功，{}:{}", getEntityClass().getSimpleName(), id);
             return JsonResult.OK();
         } else {
-            log.warn("删除操作未成功，{}:{}", entity.getClass().getSimpleName(), id);
+            log.warn("删除操作未成功，{}:{}", getEntityClass().getSimpleName(), id);
             return failOperation();
         }
     }
@@ -239,11 +227,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             return failInvalidParam("请选择需要删除的条目！");
         }
         // 是否有权限删除
-        String validateResult = beforeBatchDelete(ids);
-        if (validateResult != null) {
-            // 返回json
-            return failOperation(validateResult);
-        }
+        this.beforeBatchDelete(ids);
         // 执行删除操作
         boolean success = getService().deleteEntities(ids);
         if (success) {
@@ -294,8 +278,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeCreate(E entityOrDto) throws Exception {
-        return null;
+    protected void beforeCreate(E entityOrDto) throws Exception {
     }
 
     /***
@@ -311,9 +294,8 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param entityOrDto
      * @return
      */
-    protected String beforeUpdate(E entityOrDto) throws Exception {
+    protected void beforeUpdate(E entityOrDto) throws Exception {
         BeanUtils.clearFieldValue(entityOrDto, BindingCacheManager.getPropInfoByClass(getEntityClass()).getFillUpdateFieldList());
-        return null;
     }
 
     /***
@@ -325,28 +307,19 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     }
 
     /***
-     * 是否有删除权限，如不可删除返回错误提示信息，如 Status.FAIL_NO_PERMISSION.label()
-     * @param entityOrDto
+     * 是否有删除权限，如不可删除返回错误提示信息
+     * @param id
      * @return
      */
-    protected String beforeDelete(E entityOrDto) throws Exception {
-        return null;
+    protected void beforeDelete(Serializable id) throws Exception {
     }
 
     /***
      * 删除成功后的相关处理
-     * @param entityOrDto
+     * @param id
      * @return
      */
-    protected void afterDeleted(E entityOrDto) throws Exception {
-    }
-
-    /***
-     * 撤销删除成功后的相关处理
-     * @param entityOrDto
-     * @throws Exception
-     */
-    protected void afterDeletedCanceled(E entityOrDto) throws Exception {
+    protected void afterDeleted(Serializable id) throws Exception {
     }
 
     /***
@@ -354,8 +327,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @param ids
      * @return
      */
-    protected String beforeBatchDelete(Collection<? extends Serializable> ids) throws Exception {
-        return null;
+    protected void beforeBatchDelete(Collection<? extends Serializable> ids) throws Exception {
     }
 
     /***
@@ -372,7 +344,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return
      */
     protected BaseService<E> getService() {
-        return ContextHelper.getBaseServiceByEntity(getEntityClass());
+        return ContextHolder.getBaseServiceByEntity(getEntityClass());
     }
 
     /**
