@@ -43,6 +43,8 @@ public class IamUserFormDTO extends IamUser {
 
     private String password;
 
+    private String accountStatus;
+
     private List<String> roleIdList;
 
     private List<IamUserPosition> userPositionList;

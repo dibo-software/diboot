@@ -121,8 +121,11 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 iamUserRoleService.updateUserRoleRelations(iamAccount.getUserType(), iamAccount.getUserId(), Collections.emptyList());
             } else {
                 // 更新账号
-                iamAccount.setAuthAccount(userFormDTO.getUsername())
-                        .setStatus(userFormDTO.getStatus());
+                iamAccount.setAuthAccount(userFormDTO.getUsername()).setStatus(userFormDTO.getAccountStatus());
+                // 用户离职，状态停用
+                if(Cons.ENABLE_STATUS.I.name().equals(userFormDTO.getStatus())){
+                    iamAccount.setStatus(Cons.ENABLE_STATUS.I.name());
+                }
                 // 设置密码
                 if (V.notEmpty(userFormDTO.getPassword())){
                     iamAccount.setAuthSecret(userFormDTO.getPassword());
