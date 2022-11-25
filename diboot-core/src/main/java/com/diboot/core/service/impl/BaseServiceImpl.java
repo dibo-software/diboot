@@ -53,6 +53,7 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import org.apache.ibatis.reflection.property.PropertyNamer;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -62,7 +63,6 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -799,33 +799,30 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass) {
-		// 父类
-		if(!BaseTreeEntity.class.isAssignableFrom(getEntityClass())) {
-			throw new InvalidUsageException("Entity " + getEntityClass().getSimpleName() + " 非树形结构！");
-		}
-		AtomicReference<String> parentIdsPath = new AtomicReference<>();
-		if(V.notEmpty(rootNodeId)) {
-			T entity = getEntity(rootNodeId);
-			if (entity != null) {
-				parentIdsPath.set(((BaseTreeEntity)entity).getParentIdsPath());
-			}
-		}
-		if (parentIdsPath.get() == null) {
-			parentIdsPath.set(S.valueOf(rootNodeId));
-		}
-		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
-						.likeRight(Cons.ColumnName.parent_ids_path.name(), parentIdsPath);
+	public <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass, SFunction<T, String> getParentIdsPath,
+										   @Nullable SFunction<T, Comparable<?>> getSortId) {
+		LambdaQueryWrapper<T> queryWrapper = Wrappers.lambdaQuery();
 		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
 		// 排序
-		//queryWrapper.orderByAsc(Cons.ColumnName.id.name());
-		List<T> entityList = getEntityList(queryWrapper, null);
-		if(V.notEmpty(entityList)) {
-			entityList = entityList.stream().filter(ent -> {
-				String pidsPath = ((BaseTreeEntity)ent).getParentIdsPath();
-				String left = S.substringAfter(pidsPath, parentIdsPath.get());
-				return V.isEmpty(left) || left.startsWith(Cons.SEPARATOR_COMMA);
-			}).collect(Collectors.toList());
+		queryWrapper.orderByAsc(getSortId != null, getSortId);
+
+		if (V.isEmpty(rootNodeId)) {
+			return BeanUtils.buildTree(getViewObjectList(queryWrapper, null, voClass));
+		}
+		T entity = getEntity(rootNodeId);
+		// 无根节点
+		if (entity == null) {
+			return Collections.emptyList();
+		}
+		String parentPath = getParentIdsPath.apply(entity);
+		if (V.isEmpty(parentPath)) {
+			// parentPath格式：/([0-9a-f]+,)+/g
+			parentPath = rootNodeId + Cons.SEPARATOR_COMMA;
+		}
+		queryWrapper.likeRight(getParentIdsPath, parentPath);
+		List<T> entityList = getEntityList(queryWrapper);
+		if (V.notEmpty(rootNodeId)) {
+			entityList.add(entity);
 		}
 		// 自动转换为VO并绑定关联对象
 		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
@@ -833,12 +830,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField) {
+	public boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField) {
 		return sort(sortParam, sortField, null, null);
 	}
 
 	@Override
-	public boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField) {
+	public boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField) {
 		Serializable id = sortParam.getId();
 		Serializable newParentId = sortParam.getNewParentId();
 		Long newSortId = sortParam.getNewSortId();

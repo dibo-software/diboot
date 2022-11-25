@@ -28,6 +28,7 @@ import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -363,10 +364,12 @@ public interface BaseService<T> {
      * 根据查询条件获取vo树形结构
      * @param rootNodeId
      * @param voClass
+     * @param getParentIdsPath
+     * @param getSortId
      * @return
      * @throws Exception
      */
-    <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass);
+    <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass, SFunction<T, String> getParentIdsPath, @Nullable SFunction<T, Comparable<?>> getSortId);
 
     /**
      * list 排序
@@ -375,7 +378,7 @@ public interface BaseService<T> {
      * @param sortField 排序字段
      * @return 排序结果；是否成功
      */
-    boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField);
+    boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField);
 
     /**
      * tree 排序
@@ -385,6 +388,6 @@ public interface BaseService<T> {
      * @param parentIdsField 父级IDs字段（记录层级关系的字段）
      * @return 排序结果；是否成功
      */
-    boolean sort(SortParamDTO sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField);
+    boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField);
 
 }

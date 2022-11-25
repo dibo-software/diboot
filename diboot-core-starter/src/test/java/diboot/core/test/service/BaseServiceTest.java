@@ -580,15 +580,15 @@ public class BaseServiceTest {
 
     @Test
     public void test() {
-        List<RegionVO> tree = regionService.getViewObjectTree("0", RegionVO.class);
+        List<RegionVO> tree = regionService.getViewObjectTree("0", RegionVO.class, Region::getParentIdsPath, null);
         Assert.assertTrue(tree != null);
-        for(RegionVO vo : tree) {
-            if(vo.getId().equals("800")) {
+        for (RegionVO vo : tree) {
+            if (vo.getId().equals("800")) {
                 Assert.assertTrue(vo.getChildren().size() > 1);
             }
         }
-        tree = regionService.getViewObjectTree("800", RegionVO.class);
-        for(RegionVO vo : tree) {
+        tree = regionService.getViewObjectTree("800", RegionVO.class, Region::getParentIdsPath, null );
+        for (RegionVO vo : tree) {
             if(vo.getId().equals("839")) {
                 Assert.assertTrue(vo.getChildren().size() > 1);
             }

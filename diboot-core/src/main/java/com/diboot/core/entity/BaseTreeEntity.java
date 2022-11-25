@@ -15,7 +15,10 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.diboot.core.config.Cons;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -34,13 +37,20 @@ public class BaseTreeEntity extends BaseEntity {
     /**
      * 父级ID
      */
-    @TableField
     private String parentId;
 
     /**
      * 父级ID的全路径
+     * <p>
+     * 格式：/([0-9a-f]+,)+/g
      */
-    @TableField
+    @JsonIgnore
     private String parentIdsPath;
 
+    public void setParentIdsPath(String parentIdsPath) {
+        if (V.notEmpty(parentIdsPath) && !S.endsWith(parentIdsPath, Cons.SEPARATOR_COMMA)) {
+            parentIdsPath += Cons.SEPARATOR_COMMA;
+        }
+        this.parentIdsPath = parentIdsPath;
+    }
 }
