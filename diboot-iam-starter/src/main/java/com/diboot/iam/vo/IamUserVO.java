@@ -16,6 +16,7 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.*;
+import com.diboot.core.config.Cons;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
@@ -55,5 +56,4 @@ public class IamUserVO extends IamUser {
 
     @BindField(entity = IamAccount.class, field = "status", condition = "this.id = user_id AND user_type = 'IamUser'")
     private String accountStatus;
-
 }
