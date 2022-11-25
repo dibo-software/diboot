@@ -15,12 +15,13 @@
  */
 package com.diboot.iam.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
-import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.binding.annotation.*;
 import com.diboot.core.vo.LabelValue;
+import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -51,4 +52,8 @@ public class IamUserVO extends IamUser {
 
     @BindEntityList(entity = IamUserPosition.class, condition = "this.id = user_id AND user_type = 'IamUser'")
     private List<IamUserPosition> userPositionList;
+
+    @BindField(entity = IamAccount.class, field = "status", condition = "this.id = user_id AND user_type = 'IamUser'")
+    private String accountStatus;
+
 }
