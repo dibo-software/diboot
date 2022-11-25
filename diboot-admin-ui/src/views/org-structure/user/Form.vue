@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import type { UserModel } from './type'
+import type { UserModel, AccountInfo } from './type'
 import { defineEmits } from 'vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
 import { checkValue } from '@/utils/validate-form'
@@ -18,7 +18,7 @@ const { loadData, loading, model } = useDetail<
 >(baseApi, { roleIdList: [] })
 
 const { initRelatedData, relatedData } = useOption({
-  dict: 'GENDER',
+  dict: ['GENDER', 'ACCOUNT_STATUS'],
   load: {
     orgTree: {
       type: 'IamOrg',
@@ -44,12 +44,12 @@ const switchType = (type: boolean) => {
   model.value.username = undefined
 }
 
-const loadUsername = async (id?: string) => {
-  oldUsername.value = undefined
+const loadAccountInfo = async (type: string, id?: string) => {
+  type === 'authAccount' && (oldUsername.value = undefined)
   if (id != null) {
-    const res = await api.get<string>(`${baseApi}/username/${id}`)
+    const res = await api.get<AccountInfo>(`${baseApi}/account/${id}`)
     if (res.code === 0 && res.data) {
-      return res.data
+      return res.data[type as keyof AccountInfo]
     }
   }
 }
@@ -60,7 +60,8 @@ defineExpose({
     visible.value = true
     await loadData(id)
     if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
-    model.value.username = await loadUsername(id)
+    model.value.username = await loadAccountInfo('authAccount', id)
+    model.value.accountStatus = await loadAccountInfo('status', id)
     // 判定是否属于系统用户
     model.value.isSysAccount = !!model.value.username
     if (model.value.isSysAccount) model.value.hidePassword = true
@@ -105,6 +106,7 @@ const rules: FormRules = {
     { required: true, message: '不能为空', whitespace: true },
     { validator: checkUsernameDuplicate, trigger: 'blur' }
   ],
+  accountStatus: { required: true, message: '不能为空', whitespace: true },
   realname: { required: true, message: '不能为空', whitespace: true },
   userNum: [
     { required: true, message: '不能为空', whitespace: true },
@@ -165,6 +167,18 @@ const rules: FormRules = {
         </el-col>
       </el-row>
       <el-row :gutter="18">
+        <el-col v-if="model.isSysAccount" :md="12" :sm="24">
+          <el-form-item prop="accountStatus" label="账号状态">
+            <el-select v-model="model.accountStatus" placeholder="请选择账号状态">
+              <el-option
+                v-for="item in relatedData.accountStatusOptions"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="realname" label="姓名">
             <el-input v-model="model.realname" placeholder="请输入姓名" />
@@ -177,7 +191,7 @@ const rules: FormRules = {
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="gender" label="性别">
-            <el-select v-model="model.gender">
+            <el-select v-model="model.gender" placeholder="请选择性别">
               <el-option
                 v-for="item in relatedData.genderOptions"
                 :key="item.value"
