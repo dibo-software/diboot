@@ -54,6 +54,7 @@ public class IamUserVO extends IamUser {
     @BindEntityList(entity = IamUserPosition.class, condition = "this.id = user_id AND user_type = 'IamUser'")
     private List<IamUserPosition> userPositionList;
 
+    @BindDict(type="ACCOUNT_STATUS", field = "accountStatusLabel")
     @BindField(entity = IamAccount.class, field = "status", condition = "this.id = user_id AND user_type = 'IamUser'")
-    private String accountStatus;
+    private String accountStatusLabel;
 }
