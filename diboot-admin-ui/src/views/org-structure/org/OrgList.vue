@@ -1,6 +1,6 @@
 <script setup name="OrgList" lang="ts">
 import type { OrgModel } from '@/views/org-structure/org/type'
-import { Search, Refresh } from '@element-plus/icons-vue'
+import { Search, Refresh, CircleClose } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
 const props = defineProps<{ parentId?: string }>()
@@ -12,7 +12,10 @@ const emit = defineEmits<{
 interface OrgSearch extends OrgModel {
   keywords?: string
 }
-const { queryParam, onSearch, getList, loading, dataList, pagination, remove } = useList<OrgModel, OrgSearch>({
+const { queryParam, onSearch, getList, loading, dataList, pagination, remove, resetFilter } = useList<
+  OrgModel,
+  OrgSearch
+>({
   baseApi: '/iam/org',
   deleteCallback() {
     getList()
@@ -51,10 +54,10 @@ const onFormComplete = () => {
             class="search-input"
             placeholder="编码/名称"
             clearable
-            :suffix-icon="Search"
             @keyup.enter="onSearch"
           />
-          <el-button :icon="Refresh" circle @click="getList()" />
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
         </el-space>
       </el-space>
     </el-header>

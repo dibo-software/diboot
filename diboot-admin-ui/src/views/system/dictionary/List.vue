@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Dictionary">
-import { ArrowDown, Refresh, Search } from '@element-plus/icons-vue'
+import { ArrowDown, Refresh, Search, CircleClose } from '@element-plus/icons-vue'
 import FormPage from './Form.vue'
 import DetailPage from './Detail.vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
@@ -12,7 +12,7 @@ type DictionaryTableExpand = Dictionary & {
   isExpand?: boolean | undefined
 }
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, remove } = useList<
+const { queryParam, loading, dataList, pagination, getList, onSearch, remove, resetFilter } = useList<
   DictionaryTableExpand,
   DictionarySearch
 >({
@@ -54,10 +54,10 @@ function rowClick(row: DictionaryTableExpand) {
             class="search-input"
             placeholder="编码/名称"
             clearable
-            :suffix-icon="Search"
             @keyup.enter="onSearch"
           />
-          <el-button :icon="Refresh" circle @click="getList()" />
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
         </el-space>
       </el-space>
     </el-header>
