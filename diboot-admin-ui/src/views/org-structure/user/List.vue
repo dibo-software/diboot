@@ -81,7 +81,7 @@ const deletePermission = checkPermission('delete')
     <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
       <el-table-column prop="realname" label="姓名" />
       <el-table-column prop="userNum" label="编号" />
-      <el-table-column prop="genderLabel" label="性别">
+      <el-table-column prop="genderLabel" label="性别" width="80">
         <template #default="{ row }">
           <el-tag :color="row.genderLabel?.ext?.color" effect="dark" type="info">
             {{ row.genderLabel?.label }}
@@ -89,12 +89,16 @@ const deletePermission = checkPermission('delete')
         </template>
       </el-table-column>
       <el-table-column prop="mobilePhone" label="电话" />
-      <el-table-column prop="email" label="邮箱" />
       <el-table-column prop="genderLabel" label="状态">
         <template #default="{ row }">
           <el-tag :color="row.statusLabel?.ext?.color" effect="dark" type="info">
             {{ row.statusLabel?.label }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="accountStatus" label="账号状态">
+        <template #default="{ row }">
+          <span>{{ row.accountStatusLabel || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="165" />

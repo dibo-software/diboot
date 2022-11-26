@@ -38,6 +38,9 @@ defineExpose({
           {{ model.statusLabel?.label }}
         </el-tag>
       </el-descriptions-item>
+      <el-descriptions-item label="账号状态">
+        {{ model.accountStatusLabel || '-' }}
+      </el-descriptions-item>
       <el-descriptions-item label="角色">
         <el-tag v-for="item in model.roleList" :key="item.id" effect="plain">
           {{ item.name }}

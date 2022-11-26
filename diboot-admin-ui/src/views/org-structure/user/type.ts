@@ -8,6 +8,8 @@ export interface UserModel {
   roleList?: Role[]
   positionList?: Position[]
   password?: string
+  accountStatus?: string
+  accountStatusLabel?: string
   realname: string
   userNum: string
   gender: string
@@ -19,4 +21,13 @@ export interface UserModel {
   statusLabel?: LabelValue<{ color?: string }>
   createTime?: string
   avatarUrl?: string
+}
+
+
+export interface AccountInfo {
+  // 用户名
+  authAccount: string
+  authType?: string
+  // 账号状态
+  status: string
 }
