@@ -913,9 +913,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 				BiFunction<String, Serializable, String> buildPids = (pids, idValue) -> V.isEmpty(pids) ? S.valueOf(idValue) : pids + "," + idValue;
 				String parentIds = buildPids.apply(parentEntity == null ? null : parentIdsField.apply(parentEntity), newParentId);
 				BeanUtils.setProperty(entity, parentIdsFieldName, parentIds);
-				// 更新子孙节点的 parentIds
-				QueryWrapper<T> queryWrapper = Wrappers.<T>query().select(idColumn, propInfo.getColumnByField(parentIdsFieldName))
-						.likeRight(parentIdsFieldName, buildPids.apply(parentIdsField.apply(getEntity(id)), id));
+				// 更新子孙节点的 parentPath
+				String parentPathColumnName = propInfo.getColumnByField(parentIdsFieldName);
+				QueryWrapper<T> queryWrapper = Wrappers.<T>query().select(idColumn, parentPathColumnName)
+						.likeRight(parentPathColumnName, buildPids.apply(parentIdsField.apply(getEntity(id)), id));
 				List<T> entityList = getEntityList(queryWrapper);
 				if (V.notEmpty(entityList)) {
 					Map<Serializable, List<T>> pid2entityMap = entityList.stream().collect(Collectors.groupingBy(parentIdField));
