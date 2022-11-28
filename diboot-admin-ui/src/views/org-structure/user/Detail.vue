@@ -19,7 +19,7 @@ defineExpose({
       <el-descriptions-item label="姓名">
         {{ model.realname }}
       </el-descriptions-item>
-      <el-descriptions-item label="编号">
+      <el-descriptions-item label="员工编号">
         {{ model.userNum }}
       </el-descriptions-item>
       <el-descriptions-item label="性别">

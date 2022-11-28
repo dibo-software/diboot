@@ -185,8 +185,8 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="userNum" label="编号">
-            <el-input v-model="model.userNum" placeholder="请输入编号" />
+          <el-form-item prop="userNum" label="员工编号">
+            <el-input v-model="model.userNum" placeholder="请输入员工编号" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">

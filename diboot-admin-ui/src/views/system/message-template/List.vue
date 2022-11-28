@@ -30,23 +30,23 @@ const deletePermission = checkPermission('delete')
   <div class="list-page">
     <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
       <el-row :gutter="18">
-        <el-col :md="6" :sm="12">
+        <el-col :lg="6" :sm="12">
           <el-form-item label="模版编码">
             <el-input v-model="queryParam.code" clearable placeholder="" @change="onSearch" />
           </el-form-item>
         </el-col>
-        <el-col :md="6" :sm="12">
+        <el-col :lg="6" :sm="12">
           <el-form-item label="模版标题">
             <el-input v-model="queryParam.title" clearable placeholder="" @change="onSearch" />
           </el-form-item>
         </el-col>
-        <el-col :md="6" :sm="12">
+        <el-col :lg="6" :sm="12">
           <el-form-item label="创建时间">
             <el-date-picker
               v-model="queryParam.createTime"
               clearable
               type="date"
-              value-format="yyyy-MM-dd"
+              value-format="YYYY-MM-DD"
               @change="onSearch"
             />
           </el-form-item>
@@ -59,6 +59,13 @@ const deletePermission = checkPermission('delete')
           {{ $t('operation.create') }}
         </el-button>
         <el-space>
+          <el-input
+            v-show="!searchState"
+            v-model="queryParam.code"
+            clearable
+            placeholder="模版编码"
+            @change="onSearch"
+          />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
           <el-button

@@ -8,7 +8,8 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilte
 })
 getList()
 
-const advanced = ref(false)
+// 搜索区折叠
+const searchState = ref(false)
 
 const detailRef = ref()
 const openDetail = (id: string) => {
@@ -21,65 +22,78 @@ initRelatedData()
 
 <template>
   <div class="list-page">
-    <el-header>
-      <el-form label-width="80px" class="list-search" @submit.prevent>
-        <el-row :gutter="18">
-          <el-col :md="6" :sm="12">
-            <el-form-item label="发送通道">
-              <el-select v-model="queryParam.channel" placeholder="请选择发送通道" clearable @change="onSearch">
-                <el-option
-                  v-for="item in relatedData.messageChannelOptions || []"
-                  :key="item.value"
-                  :value="item.value"
-                  :label="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :md="6" :sm="12">
-            <el-form-item label="标题">
-              <el-input v-model="queryParam.title" clearable @change="onSearch" />
-            </el-form-item>
-          </el-col>
-          <el-col :md="6" :sm="12">
-            <el-form-item label="消息状态">
-              <el-select v-model="queryParam.status" clearable placeholder="请选择消息状态" @change="onSearch">
-                <el-option
-                  v-for="item in relatedData.messageStatusOptions || []"
-                  :key="item.value"
-                  :value="item.value"
-                  :label="item.label"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <template v-if="advanced">
-            <el-col :md="6" :sm="12">
-              <el-form-item label="创建时间">
-                <el-date-picker
-                  v-model="queryParam.createTime"
-                  clearable
-                  type="date"
-                  value-format="yyyy-MM-dd"
-                  @change="onSearch"
-                />
-              </el-form-item>
-            </el-col>
-          </template>
-          <el-col :md="6" :sm="12" style="margin-left: auto">
-            <el-form-item>
-              <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-              <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-              <el-button
-                :icon="advanced ? ArrowUp : ArrowDown"
-                :title="advanced ? '收起' : '展开'"
-                @click="advanced = !advanced"
+    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+      <el-row :gutter="18">
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="发送通道">
+            <el-select v-model="queryParam.channel" placeholder="请选择发送通道" clearable @change="onSearch">
+              <el-option
+                v-for="item in relatedData.messageChannelOptions || []"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
               />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="标题">
+            <el-input v-model="queryParam.title" clearable @change="onSearch" />
+          </el-form-item>
+        </el-col>
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="消息状态">
+            <el-select v-model="queryParam.status" clearable placeholder="请选择消息状态" @change="onSearch">
+              <el-option
+                v-for="item in relatedData.messageStatusOptions || []"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="创建时间">
+            <el-date-picker
+              v-model="queryParam.createTime"
+              clearable
+              type="date"
+              value-format="YYYY-MM-DD"
+              @change="onSearch"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+    <el-header>
+      <el-space wrap class="list-operation">
+        <el-space>
+          <el-select
+            v-show="!searchState"
+            v-model="queryParam.channel"
+            placeholder="请选择发送通道"
+            clearable
+            @change="onSearch"
+          >
+            <el-option
+              v-for="item in relatedData.messageChannelOptions || []"
+              :key="item.value"
+              :value="item.value"
+              :label="item.label"
+            />
+          </el-select>
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
+        </el-space>
+      </el-space>
     </el-header>
+
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
       <el-table-column prop="businessType" label="业务类型" />
       <el-table-column prop="sender" label="发送方" />

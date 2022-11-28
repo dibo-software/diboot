@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Dictionary">
-import { ArrowDown, Refresh, Search, CircleClose } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown, Refresh, Search, CircleClose } from '@element-plus/icons-vue'
 import FormPage from './Form.vue'
 import DetailPage from './Detail.vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
@@ -11,6 +11,9 @@ interface DictionarySearch extends Dictionary {
 type DictionaryTableExpand = Dictionary & {
   isExpand?: boolean | undefined
 }
+
+// 搜索区折叠
+const searchState = ref(false)
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, remove, resetFilter } = useList<
   DictionaryTableExpand,
@@ -43,6 +46,20 @@ function rowClick(row: DictionaryTableExpand) {
 </script>
 <template>
   <div class="list-page">
+    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+      <el-row :gutter="18">
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="类型名称">
+            <el-input v-model="queryParam.itemName" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="类型编码">
+            <el-input v-model="queryParam.type" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-header>
       <el-space wrap class="list-operation">
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">
@@ -50,17 +67,23 @@ function rowClick(row: DictionaryTableExpand) {
         </el-button>
         <el-space>
           <el-input
-            v-model="queryParam.keywords"
-            class="search-input"
-            placeholder="编码/名称"
+            v-show="!searchState"
+            v-model="queryParam.itemName"
             clearable
-            @keyup.enter="onSearch"
+            placeholder="类型名称"
+            @change="onSearch"
           />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
         </el-space>
       </el-space>
     </el-header>
+
     <el-table
       ref="table"
       v-loading="loading"
