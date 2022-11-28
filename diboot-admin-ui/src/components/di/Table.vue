@@ -61,6 +61,11 @@ const columnList = ref(columns())
 const resetColumnConfig = () => (columnList.value = columns())
 const saveColumnChange = () => setCache(columnsKey, columnList.value)
 
+const selectedRows = inject<Ref<LabelValue[] | undefined>>('selected-rows', ref())
+const dataLabel = inject<string>('data-label', 'label')
+
+const single = ref<string>()
+
 // 选中的数据
 const selected = (arr: Array<Record<string, unknown>>) => {
   onSelectionChange(arr)
@@ -69,27 +74,7 @@ const selected = (arr: Array<Record<string, unknown>>) => {
     arr.map(e => `${e[props.primaryKey]}`)
   )
 }
-
-const selectedRows = inject<Ref<LabelValue[] | undefined>>('selected-rows', ref())
-const dataLabel = inject<string>('data-label', 'label')
-
-const single = ref<string>()
-
-if (selectedRows.value) {
-  watch(
-    selectedRows,
-    value => {
-      const ids = value?.map(e => e.value) ?? []
-      if (props.multiple)
-        props.dataList
-          ?.filter(item => !ids.includes(item[props.primaryKey] as string))
-          .forEach(item => tableRef.value?.toggleRowSelection(item, false))
-      else single.value = value?.length ? value[0].value : undefined
-    },
-    { deep: true, immediate: true }
-  )
-}
-
+// 选中数据变更
 const onSelectionChange = (rows: Array<Record<string, unknown>>) => {
   if (!selectedRows.value) return
   const ids = selectedRows.value.map(e => e.value)
@@ -111,13 +96,23 @@ const onSelectionChange = (rows: Array<Record<string, unknown>>) => {
   selectedRows.value = allSelectedRows
 }
 
-const getSingleRow = (row: Record<string, unknown>) => {
-  selectedRows.value = [{ value: row[props.primaryKey], label: row[dataLabel as keyof typeof row] } as LabelValue]
+// 点击行
+const rowClick = (row: Record<string, unknown>) => {
+  if (!selectedRows.value) return
+  const index = selectedRows.value.findIndex(e => e.value === row[props.primaryKey])
+  if (index === -1) {
+    const item = {
+      value: row[props.primaryKey] as string,
+      label: row[dataLabel as keyof typeof row] as string
+    }
+    if (props.multiple) selectedRows.value.push(item)
+    else selectedRows.value = [item]
+  } else selectedRows.value.splice(index as number, 1)
 }
 
 const tableRef = ref<InstanceType<typeof ElTable>>()
 
-if (props.multiple && selectedRows.value) {
+if (selectedRows.value) {
   watch(
     () => props.dataList,
     value => {
@@ -125,6 +120,18 @@ if (props.multiple && selectedRows.value) {
       value?.forEach(item => {
         if (ids.includes(item[props.primaryKey] as string)) tableRef.value?.toggleRowSelection(item, true)
       })
+    },
+    { deep: true, immediate: true }
+  )
+  watch(
+    selectedRows,
+    value => {
+      const ids = value?.map(e => e.value) ?? []
+      if (props.multiple)
+        props.dataList
+          ?.filter(item => !ids.includes(item[props.primaryKey] as string))
+          .forEach(item => tableRef.value?.toggleRowSelection(item, false))
+      else single.value = value?.length ? value[0].value : undefined
     },
     { deep: true, immediate: true }
   )
@@ -156,12 +163,13 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     height="100%"
     :row-key="primaryKey"
     v-bind="config"
+    @row-click="rowClick"
     @selection-change="selected"
     @sort-change="sortChange"
   >
     <el-table-column v-if="multiple === false" type="index" width="50" fixed>
       <template #default="{ row }">
-        <el-radio v-model="single" :label="row[primaryKey]" @change="getSingleRow(row)">{{ '' }}</el-radio>
+        <el-radio v-model="single" :label="row[primaryKey]">{{ '' }}</el-radio>
       </template>
     </el-table-column>
     <el-table-column v-else-if="multiple" type="selection" width="55" fixed />
@@ -213,7 +221,7 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     <div>
       <slot name="pagination" />
     </div>
-    <el-space v-show="!selectedRows" :size="20" style="height: 38px">
+    <el-space v-if="!selectedRows" :size="20" style="height: 38px">
       <el-popover :width="500" trigger="click" placement="top-start">
         <template #reference>
           <el-button v-show="columnList" :icon="SetUp" size="default" text bg circle />

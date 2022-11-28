@@ -89,13 +89,16 @@ const { nodeDrag } = useSort({
 
 <template>
   <div class="tree-container">
-    <el-input
-      v-if="lazyChild === !!parentPath || !lazyChild"
-      v-model="searchValue"
-      :prefix-icon="Search"
-      placeholder="搜索过滤"
-      clearable
-    />
+    <div class="top">
+      <slot name="top" />
+      <el-input
+        v-if="!lazyChild || !!parentPath"
+        v-model="searchValue"
+        :prefix-icon="Search"
+        placeholder="搜索过滤"
+        clearable
+      />
+    </div>
     <div :style="lazyChild === !!parentPath ? { height: 'calc(100% - 48px)' } : {}">
       <el-skeleton v-if="initLoading" :rows="5" animated />
       <el-scrollbar v-show="!initLoading">
@@ -113,7 +116,13 @@ const { nodeDrag } = useSort({
           :default-expand-all="!lazyChild || !!searchValue"
           @node-click="clickNode"
           @node-drop="nodeDrag"
-        />
+        >
+          <template #default="{ node, data }">
+            <slot v-bind="{ node, data }">
+              {{ node.label }}
+            </slot>
+          </template>
+        </el-tree>
       </el-scrollbar>
     </div>
   </div>
@@ -122,11 +131,16 @@ const { nodeDrag } = useSort({
 <style scoped lang="scss">
 .tree-container {
   height: 100%;
-  width: 300px;
+  width: 240px;
   border-right: 1px solid var(--el-border-color-lighter);
 
-  .el-input {
+  .top {
+    display: flex;
     padding: 8px;
+  }
+
+  .el-tree :deep(.el-tree-node__label) {
+    flex: 1;
   }
 }
 </style>
