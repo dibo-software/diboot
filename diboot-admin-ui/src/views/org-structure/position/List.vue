@@ -71,6 +71,7 @@ const deletePermission = checkPermission('delete')
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="gradeName" label="职级" />
       <el-table-column prop="dataPermissionTypeLabel" label="数据权限" />
+      <el-table-column prop="updateTime" label="更新时间" width="165" />
       <el-table-column label="操作" width="180" fixed="right">
         <template #default="{ row }">
           <el-space>
