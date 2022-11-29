@@ -113,24 +113,26 @@ const rowClick = (row: Record<string, unknown>) => {
 const tableRef = ref<InstanceType<typeof ElTable>>()
 
 if (selectedRows.value) {
-  watch(
-    () => props.dataList,
-    value => {
-      const ids = selectedRows.value?.map(e => e.value) ?? []
-      value?.forEach(item => {
-        if (ids.includes(item[props.primaryKey] as string)) tableRef.value?.toggleRowSelection(item, true)
-      })
-    },
-    { deep: true, immediate: true }
-  )
+  if (props.multiple)
+    watch(
+      () => props.dataList,
+      value => {
+        const ids = selectedRows.value?.map(e => e.value) ?? []
+        value?.forEach(item => {
+          if (ids.includes(item[props.primaryKey] as string)) tableRef.value?.toggleRowSelection(item, true)
+        })
+      },
+      { deep: true, immediate: true }
+    )
+
   watch(
     selectedRows,
     value => {
       const ids = value?.map(e => e.value) ?? []
       if (props.multiple)
-        props.dataList
-          ?.filter(item => !ids.includes(item[props.primaryKey] as string))
-          .forEach(item => tableRef.value?.toggleRowSelection(item, false))
+        props.dataList?.forEach(item =>
+          tableRef.value?.toggleRowSelection(item, ids.includes(item[props.primaryKey] as string))
+        )
       else single.value = value?.length ? value[0].value : undefined
     },
     { deep: true, immediate: true }

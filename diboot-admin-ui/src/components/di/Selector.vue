@@ -28,7 +28,7 @@ const config = reactive({ tree: props.tree, list: props.list })
 provide('multiple', !!props.multiple)
 
 const selectedKeys = ref<string | string[] | undefined>(props.modelValue)
-const selectedDataList = ref<LabelValue[]>([])
+const selectedList = ref<LabelValue[]>([])
 
 const selectedRows = ref<LabelValue[]>([])
 provide('selected-rows', selectedRows)
@@ -37,57 +37,72 @@ provide('data-label', dataLabel)
 
 const selected: RelatedData = reactive({ type: props.dataType, label: dataLabel })
 
-const { initRelatedData, relatedData } = useOption({ load: { selected } })
+const { loadRelatedData } = useOption({})
 
 watch(
   () => props.modelValue,
-  value => {
-    if (value && value.length) {
+  (newValue, oldValue) => {
+    if (`${newValue}` === `${oldValue}`) return
+    else if (newValue && newValue.length) {
       nextTick(() => {
-        const ids = selectedDataList.value.map(e => e.value).sort()
-        if (ids.toString() !== (Array.isArray(value) ? value : [value]).sort().toString()) {
-          selected.condition = { [config.list?.primaryKey || 'id']: value }
-          initRelatedData().then(() => {
-            selectedRows.value = relatedData.selected
-            selectedDataList.value = relatedData.selected
+        const values = Array.isArray(newValue) ? newValue : [newValue]
+
+        const buildList = () => {
+          const list = []
+          for (const id of values) {
+            const item = selectedList.value.find(e => e.value === id)
+            if (item) list.push(item)
+            else return
+          }
+          return list
+        }
+        // 现有数据构建回显，无法构建时异步获取
+        const list = buildList()
+        if (list) {
+          selectedRows.value = list
+          confirm()
+        } else {
+          selected.condition = { [config.list?.primaryKey || 'id']: newValue }
+          loadRelatedData(selected).then(list => {
+            selectedRows.value = list.sort((e1, e2) => values.indexOf(e1.value) - values.indexOf(e2.value))
+            confirm()
           })
         }
       })
     } else {
       selectedRows.value.length = 0
-      selectedDataList.value.length = 0
+      confirm()
     }
-  },
-  { immediate: true }
+  }
 )
 
 const confirm = () => {
-  selectedDataList.value = selectedRows.value
-  if (!selectedDataList.value?.length) {
+  selectedList.value = _.clone(selectedRows.value)
+  if (!selectedList.value?.length) {
     selectedKeys.value = props.multiple ? [] : undefined
   } else if (props.multiple) {
-    selectedKeys.value = selectedDataList.value.map(e => `${e.value}`)
+    selectedKeys.value = selectedList.value.map(e => `${e.value}`)
   } else {
-    selectedKeys.value = selectedDataList.value[0].value
+    selectedKeys.value = selectedList.value[0].value
   }
   visible.value = false
 }
 
 const cancel = () => {
   visible.value = false
-  selectedRows.value = selectedDataList.value
+  selectedRows.value = _.clone(selectedList.value)
 }
 
 const removeTag = (val: string) => {
   const index = (selectedKeys.value as string[]).indexOf(val)
   selectedRows.value?.splice(index, 1)
-  selectedDataList.value?.splice(index, 1)
+  selectedList.value?.splice(index, 1)
 }
 
 const clear = () => {
   selectedKeys.value = props.multiple ? [] : undefined
   selectedRows.value = []
-  selectedDataList.value = []
+  selectedList.value = []
 }
 
 const emit = defineEmits<{
@@ -125,10 +140,10 @@ const clickNode = (id?: string) => (parent.value = id)
     @clear="clear"
     @visible-change="open"
   >
-    <el-option v-for="item in selectedDataList" :key="item.value" :value="item.value" :label="item.label" />
+    <el-option v-for="item in selectedList" :key="item.value" :value="item.value" :label="item.label" />
   </el-select>
 
-  <el-dialog v-model="visible" top="3vh" :width="config.tree ? '75%' : ''" append-to-body>
+  <el-dialog v-model="visible" top="3vh" :width="config.tree ? '75%' : ''" append-to-body @close="cancel">
     <template #header>
       <div style="display: flex">
         <strong style="margin: 0 8px; zoom: 1.1">选择</strong>
