@@ -1,10 +1,12 @@
 <script setup lang="ts" name="UserList">
-import { Refresh, Search, ArrowDown, CircleClose } from '@element-plus/icons-vue'
+import { Refresh, Search, ArrowUp, ArrowDown, CircleClose } from '@element-plus/icons-vue'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
 const baseApi = '/iam/user'
+
+const advanced = ref(false)
 
 type Props = {
   orgId?: string
@@ -28,6 +30,9 @@ const { queryParam, loading, dataList, pagination, getList, buildQueryParam, onS
 >({ baseApi })
 getList()
 
+// 搜索区折叠
+const searchState = ref(false)
+
 const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
@@ -48,6 +53,25 @@ const deletePermission = checkPermission('delete')
 </script>
 <template>
   <div class="list-page">
+    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+      <el-row :gutter="18">
+        <el-col :lg="8" :sm="12">
+          <el-form-item label="姓名">
+            <el-input v-model="queryParam.realname" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+        <el-col :lg="8" :sm="12">
+          <el-form-item label="员工编号">
+            <el-input v-model="queryParam.userNum" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+        <el-col :lg="8" :sm="12">
+          <el-form-item label="电话">
+            <el-input v-model="queryParam.mobilePhone" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-header>
       <el-space wrap class="list-operation">
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">
@@ -67,21 +91,27 @@ const deletePermission = checkPermission('delete')
         />
         <el-space>
           <el-input
-            v-model="queryParam.keywords"
-            class="search-input"
-            placeholder="编码/名称"
+            v-show="!searchState"
+            v-model="queryParam.realname"
             clearable
-            @keyup.enter="onSearch"
+            placeholder="姓名"
+            @change="onSearch"
           />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
         </el-space>
       </el-space>
     </el-header>
+
     <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
       <el-table-column prop="realname" label="姓名" />
-      <el-table-column prop="userNum" label="编号" />
-      <el-table-column prop="genderLabel" label="性别">
+      <el-table-column prop="userNum" label="员工编号" />
+      <el-table-column prop="genderLabel" label="性别" width="80">
         <template #default="{ row }">
           <el-tag :color="row.genderLabel?.ext?.color" effect="dark" type="info">
             {{ row.genderLabel?.label }}
@@ -89,7 +119,6 @@ const deletePermission = checkPermission('delete')
         </template>
       </el-table-column>
       <el-table-column prop="mobilePhone" label="电话" />
-      <el-table-column prop="email" label="邮箱" />
       <el-table-column prop="genderLabel" label="状态">
         <template #default="{ row }">
           <el-tag :color="row.statusLabel?.ext?.color" effect="dark" type="info">
@@ -97,7 +126,12 @@ const deletePermission = checkPermission('delete')
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="165" />
+      <el-table-column prop="accountStatus" label="账号状态">
+        <template #default="{ row }">
+          <span>{{ row.accountStatusLabel || '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateTime" label="更新时间" width="165" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>

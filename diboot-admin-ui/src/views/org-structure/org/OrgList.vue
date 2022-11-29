@@ -1,6 +1,6 @@
 <script setup name="OrgList" lang="ts">
 import type { OrgModel } from '@/views/org-structure/org/type'
-import { Search, Refresh, CircleClose } from '@element-plus/icons-vue'
+import { Search, Refresh, CircleClose, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
 const props = defineProps<{ parentId?: string }>()
@@ -22,6 +22,9 @@ const { queryParam, onSearch, getList, loading, dataList, pagination, remove, re
     emit('reload')
   }
 })
+
+// 搜索区折叠
+const searchState = ref(false)
 
 watch(
   () => props.parentId,
@@ -45,22 +48,38 @@ const onFormComplete = () => {
 
 <template>
   <div class="list-page">
+    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+      <el-row :gutter="18">
+        <el-col :lg="8" :sm="12">
+          <el-form-item label="名称">
+            <el-input v-model="queryParam.name" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+        <el-col :lg="8" :sm="12">
+          <el-form-item label="编码">
+            <el-input v-model="queryParam.code" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">新建</el-button>
+        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+          {{ $t('operation.create') }}
+        </el-button>
         <el-space>
-          <el-input
-            v-model="queryParam.keywords"
-            class="search-input"
-            placeholder="编码/名称"
-            clearable
-            @keyup.enter="onSearch"
-          />
+          <el-input v-show="!searchState" v-model="queryParam.name" clearable placeholder="名称" @change="onSearch" />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
         </el-space>
       </el-space>
     </el-header>
+
     <el-table
       ref="tableRef"
       v-loading="loading"

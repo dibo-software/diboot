@@ -20,6 +20,7 @@ import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * String - LocalDate 转换器
@@ -34,7 +35,7 @@ public class String2LocalDateConverter implements Converter<String, LocalDate> {
     @Override
     public LocalDate convert(String dateString) {
         dateString = D.formatDateString(dateString);
-        return LocalDate.parse(dateString);
+        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD));
     }
 
 }

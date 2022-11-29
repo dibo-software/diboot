@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserFilled } from '@element-plus/icons-vue'
+import { UserFilled, Postcard, Lock } from '@element-plus/icons-vue'
 import useAuthStore from '@/store/auth'
 import account from './components/account.vue'
 import password from './components/password.vue'
@@ -16,11 +16,13 @@ const menu = shallowRef([
   {
     title: '个人信息',
     key: 'account',
+    icon: 'Postcard',
     component: account
   },
   {
     title: '密码',
     key: 'password',
+    icon: 'Lock',
     component: password
   }
 ])
@@ -92,6 +94,9 @@ const cropDialog = (val: boolean) => {
             <el-menu-item v-for="item in menu" :key="item.key" :index="item.key" @click="openPage">
               <!--              <el-icon v-if="item.icon"><component :is="item.icon" /></el-icon>-->
               <template #title>
+                <el-icon v-if="item.icon">
+                  <icon :name="item.icon" />
+                </el-icon>
                 <span>{{ item.title }}</span>
               </template>
             </el-menu-item>

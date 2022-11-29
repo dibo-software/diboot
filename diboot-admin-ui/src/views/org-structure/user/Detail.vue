@@ -19,7 +19,7 @@ defineExpose({
       <el-descriptions-item label="姓名">
         {{ model.realname }}
       </el-descriptions-item>
-      <el-descriptions-item label="编号">
+      <el-descriptions-item label="员工编号">
         {{ model.userNum }}
       </el-descriptions-item>
       <el-descriptions-item label="性别">
@@ -37,6 +37,9 @@ defineExpose({
         <el-tag :color="model.statusLabel?.ext?.color" effect="dark" type="info">
           {{ model.statusLabel?.label }}
         </el-tag>
+      </el-descriptions-item>
+      <el-descriptions-item label="账号状态">
+        {{ model.accountStatusLabel || '-' }}
       </el-descriptions-item>
       <el-descriptions-item label="角色">
         <el-tag v-for="item in model.roleList" :key="item.id" effect="plain">

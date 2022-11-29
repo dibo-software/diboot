@@ -19,7 +19,9 @@ import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * String - LocalDateTime 转换器
@@ -34,7 +36,10 @@ public class String2LocalDateTimeConverter implements Converter<String, LocalDat
     @Override
     public LocalDateTime convert(String dateString) {
         dateString = D.formatDateString(dateString);
-        return LocalDateTime.parse(dateString);
+        if(dateString.length() <= D.FORMAT_DATE_Y4MD.length()) {
+            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD)).atStartOfDay();
+        }
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS));
     }
 
 }

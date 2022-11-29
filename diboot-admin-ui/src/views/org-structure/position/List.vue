@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Position">
-import { Refresh, Search, ArrowDown, CircleClose } from '@element-plus/icons-vue'
+import { Refresh, Search, ArrowDown, ArrowUp, CircleClose } from '@element-plus/icons-vue'
 import type { Position } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
@@ -13,6 +13,9 @@ const { queryParam, onSearch, getList, loading, dataList, pagination, remove, re
 >({
   baseApi: '/iam/position'
 })
+
+// 搜索区折叠
+const searchState = ref(false)
 
 getList()
 
@@ -31,29 +34,44 @@ const deletePermission = checkPermission('delete')
 
 <template>
   <div class="list-page">
+    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+      <el-row :gutter="18">
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="名称">
+            <el-input v-model="queryParam.name" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+        <el-col :lg="6" :sm="12">
+          <el-form-item label="编码">
+            <el-input v-model="queryParam.code" clearable placeholder="" @change="onSearch" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-header>
       <el-space wrap class="list-operation">
         <el-button v-has-permission="'create'" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <el-space>
-          <el-input
-            v-model="queryParam.keywords"
-            class="search-input"
-            placeholder="编码/名称"
-            clearable
-            @keyup.enter="onSearch"
-          />
+          <el-input v-show="!searchState" v-model="queryParam.name" clearable placeholder="名称" @change="onSearch" />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
         </el-space>
       </el-space>
     </el-header>
+
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="code" label="编码" />
       <el-table-column prop="gradeName" label="职级" />
       <el-table-column prop="dataPermissionTypeLabel" label="数据权限" />
+      <el-table-column prop="updateTime" label="更新时间" width="165" />
       <el-table-column label="操作" width="180" fixed="right">
         <template #default="{ row }">
           <el-space>
