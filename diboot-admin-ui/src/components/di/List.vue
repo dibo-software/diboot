@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DiList">
-import { Refresh, Search, ArrowDown } from '@element-plus/icons-vue'
+import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { buildOptionProps, buildGetRelatedData } from './utils'
 import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
@@ -120,15 +120,11 @@ const multiple = inject<boolean | undefined>(
             @lazy-load="(parentId: string) => lazyLoadRelatedData(item.prop, parentId)"
           />
         </el-col>
-        <el-col :md="searchArea.column ? 24 / Math.max(searchArea.column, 3) : 8" :sm="24" style="margin-left: auto">
-          <el-button type="primary" @click="onSearch">搜索</el-button>
-          <el-button @click="resetFilter">重置</el-button>
-        </el-col>
       </el-row>
     </el-form>
     <el-header>
       <el-space wrap class="list-operation" :size="10">
-        <el-button v-if="createPermission && operation?.create" type="primary" @click="openForm()"> 新建 </el-button>
+        <el-button v-if="createPermission && operation?.create" type="primary" @click="openForm()"> 新建</el-button>
         <el-button
           v-if="operation?.batchRemove && deletePermission"
           type="danger"
@@ -151,8 +147,36 @@ const multiple = inject<boolean | undefined>(
           @complete="onSearch"
         />
         <el-space>
-          <el-button :icon="Refresh" circle @click="getList()" />
-          <el-button v-if="searchArea" :icon="Search" circle @click="searchState = !searchState" />
+          <span v-if="searchArea" v-show="!searchState" class="search">
+            <di-input
+              v-if="['daterange', 'datetimerange'].includes(searchArea.propList[0].type)"
+              v-model="dateRangeQuery[searchArea.propList[0].prop]"
+              :config="{ ...searchArea.propList[0], label: '' }"
+              @change="onSearch"
+            />
+            <di-input
+              v-else
+              v-model="queryParam[searchArea.propList[0].prop]"
+              :config="{
+                ...searchArea.propList[0],
+                label: '',
+                placeholder: searchArea.propList[0].placeholder ?? searchArea.propList[0].label
+              }"
+              :related-datas="getRelatedData(searchArea.propList[0])"
+              :loading="asyncLoading"
+              @change="onSearch"
+              @remote-filter="(value: string) => remoteRelatedDataFilter(value, searchArea.propList[0].prop)"
+              @lazy-load="(parentId: string) => lazyLoadRelatedData(searchArea.propList[0].prop, parentId)"
+            />
+          </span>
+          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button
+            v-if="searchArea"
+            :icon="searchState ? ArrowUp : ArrowDown"
+            :title="searchState ? '收起' : '展开'"
+            @click="searchState = !searchState"
+          />
         </el-space>
       </el-space>
     </el-header>
@@ -228,5 +252,9 @@ const multiple = inject<boolean | undefined>(
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }
+}
+
+.list-operation .search :deep(.el-form-item) {
+  margin-bottom: 0 !important;
 }
 </style>
