@@ -347,12 +347,12 @@ public class BaseController {
 			Object itemValue = item.getValue();
 			if (itemValue == null) {
 				queryWrapper.isNull(columnName);
+			} else if (itemValue instanceof Collection) {
+				queryWrapper.in(columnName, (Collection<?>) itemValue);
+			} else if (itemValue.getClass().isArray()) {
+				queryWrapper.in(columnName, (Object[]) itemValue);
 			} else {
-				if (itemValue instanceof Collection) {
-					queryWrapper.in(columnName, (Collection<?>) itemValue);
-				} else {
-					queryWrapper.eq(columnName, itemValue);
-				}
+				queryWrapper.eq(columnName, itemValue);
 			}
 		}
 	}
