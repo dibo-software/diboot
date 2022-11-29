@@ -89,7 +89,7 @@ export default ({
     if ((dict ?? []).length > 0)
       reqList.push(api.post('/common/load-related-dict', Array.isArray(dict) ? dict : [dict]))
     // 通用获取关联绑定的数据
-    if (Object.keys(load ?? []).length > 0) reqList.push(api.post(`${baseApi}/load-related-data`, load))
+    if (Object.keys(load ?? {}).length > 0) reqList.push(api.post(`${baseApi}/load-related-data`, load))
 
     if (reqList.length > 0) {
       const resList = await Promise.all(reqList)
@@ -111,8 +111,9 @@ export default ({
    * @param parentId 父节点ID
    */
   const loadRelatedData = async (relatedDataLoader: AsyncRelatedData, parentId?: string) => {
+    const empty = [] as LabelValue[]
     if (relatedDataLoader.disabled) {
-      return []
+      return empty
     }
     asyncLoading.value = true
     const res = await api.get<LabelValue[]>(
@@ -120,9 +121,9 @@ export default ({
       relatedDataLoader
     )
     asyncLoading.value = false
-    if (res.code === 0) return res.data ?? []
+    if (res.code === 0) return res.data ?? empty
     else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
-    return []
+    return empty
   }
 
   /**
@@ -158,13 +159,13 @@ export default ({
   }
 
   /**
-   * 异步加载tree数据
+   * 异步加载(tree)数据
    *
    * @param loader 加载器名称
    * @param parentId 当前tree节点数据ID，用于加载子节点列表
    */
   const lazyLoadRelatedData = async (loader: string, parentId?: string) =>
-    (await loadRelatedData(findAsyncLoader(loader), parentId)) ?? []
+    await loadRelatedData(findAsyncLoader(loader), parentId)
 
   /**
    * 处理联动
@@ -198,6 +199,7 @@ export default ({
     initLoading,
     initRelatedData,
     asyncLoading,
+    loadRelatedData,
     remoteRelatedDataFilter,
     lazyLoadRelatedData,
     handleLinkage
