@@ -20,11 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.diboot.core.converter.*;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.encrypt.ProtectInterceptor;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -38,15 +35,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -129,25 +124,17 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public HttpMessageConverters jacksonHttpMessageConverters() {
-        return new HttpMessageConverters(jacksonMessageConverter());
+    public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
+        Jackson2ObjectMapperBuilder objectMapperBuilder = new Jackson2ObjectMapperBuilder();
+        jsonCustomizer().customize(objectMapperBuilder);
+        log.info("启用diboot默认的Jackson自定义配置");
+        return objectMapperBuilder;
     }
 
     @Bean
     @ConditionalOnMissingBean
     public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        // 优先使用全局默认ObjectMapper, 保证ObjectMapper全局配置相同
-        ObjectMapper objectMapper = ContextHolder.getBean(ObjectMapper.class);
-        if (objectMapper == null) {
-            objectMapper = converter.getObjectMapper();
-            log.info("初始化 ObjectMapper from MessageConverter");
-        }
-        else {
-            log.info("初始化 ObjectMapper from Spring getBean");
-        }
-        converter.setObjectMapper(objectMapper);
-        return converter;
+        return new MappingJackson2HttpMessageConverter(jackson2ObjectMapperBuilder().build());
     }
 
     /**
