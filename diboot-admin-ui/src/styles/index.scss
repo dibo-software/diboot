@@ -86,3 +86,24 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+// 自定义树节点
+.custom-tree-node {
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  .operation-container {
+    display: none;
+    margin-left: auto;
+    margin-right: 8px;
+
+    .el-button + .el-button {
+      margin-left: 8px;
+    }
+  }
+
+  &:hover .operation-container {
+    display: inline-block;
+  }
+}
