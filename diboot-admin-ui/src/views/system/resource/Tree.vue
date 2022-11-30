@@ -96,20 +96,31 @@ const { nodeDrag } = useSort({
   }
 })
 
-const createPermission = checkPermission('create')
+const treeNodeClass = (data: Resource) => {
+  if (data.status !== 'A') {
+    // 非可用
+    return 'through'
+  } else if (data.routeMeta?.hidden) {
+    // 隐藏
+    return 'hidden'
+  }
+}
 </script>
 <template>
   <div class="tree-container">
     <el-skeleton v-if="loading" :rows="5" animated />
     <el-space v-else :fill="true" wrap>
       <div class="tree-search">
+        <el-button v-has-permission="'create'" :icon="Plus" style="margin-right: 2px" @click="addChildNode()">
+          目录
+        </el-button>
         <el-input v-model="searchWord" placeholder="请输入内容过滤" clearable :prefix-icon="Search" />
       </div>
-      <el-scrollbar :height="createPermission ? 'calc(100vh - 175px)' : 'calc(100vh - 139px)'">
+      <el-scrollbar height="calc(100vh - 139px)">
         <el-tree
           ref="treeRef"
           :data="dataList"
-          :props="{ label: 'displayName' }"
+          :props="{ label: 'displayName', class: treeNodeClass }"
           draggable
           node-key="id"
           highlight-current
@@ -121,35 +132,39 @@ const createPermission = checkPermission('create')
         >
           <template #default="{ node, data }">
             <span class="custom-tree-node">
-              <span>{{ node.label }}</span>
-              <span v-has-permission="['create', 'delete']" class="icon-container">
-                <el-icon
-                  v-show="data.displayType === 'CATALOGUE'"
-                  v-has-permission="'create'"
-                  class="plus-icon"
-                  @click.stop="addChildNode(data)"
-                >
-                  <Plus />
+              <span class="content">
+                <el-icon v-if="data.routeMeta.icon" style="margin-right: 5px">
+                  <Icon :name="data.routeMeta.icon" />
                 </el-icon>
-                <el-icon
-                  v-show="(data.children ?? []).length === 0"
-                  v-has-permission="'delete'"
-                  class="delete-icon"
-                  @click.stop="removeData(data.id)"
-                >
-                  <Delete />
-                </el-icon>
+                <span>{{ node.label }}</span>
+              </span>
+              <span class="operation-container">
+                <el-tooltip :show-after="1000" content="添加子菜单">
+                  <el-button
+                    v-show="data.displayType === 'CATALOGUE'"
+                    v-has-permission="'create'"
+                    :icon="Plus"
+                    type="success"
+                    link
+                    @click.stop="addChildNode(data)"
+                  />
+                </el-tooltip>
+                <el-tooltip :show-after="1000" content="删除">
+                  <el-button
+                    v-show="(data.children ?? []).length === 0"
+                    v-has-permission="'delete'"
+                    :icon="Delete"
+                    type="danger"
+                    link
+                    @click.stop="removeData(data.id)"
+                  />
+                </el-tooltip>
               </span>
             </span>
           </template>
         </el-tree>
       </el-scrollbar>
     </el-space>
-    <div v-has-permission="'create'" class="is-fixed">
-      <el-button style="width: 100%" type="primary" :icon="Plus" size="default" @click="addChildNode()">
-        添加一级菜单
-      </el-button>
-    </div>
   </div>
 </template>
 
@@ -160,6 +175,7 @@ const createPermission = checkPermission('create')
   border-right: 1px solid var(--el-border-color-lighter);
 
   .tree-search {
+    display: flex;
     padding: 5px 5px 0;
   }
 
@@ -177,54 +193,21 @@ const createPermission = checkPermission('create')
     border-top: 1px solid var(--el-border-color-lighter);
   }
 
+  .hidden,
+  .through {
+    .content {
+      color: var(--el-color-info-light-3);
+    }
+  }
+
+  .through {
+    .content {
+      text-decoration: line-through;
+    }
+  }
+
   .el-tree :deep(.el-tree-node__label) {
     flex: 1;
-
-    .custom-tree-node {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: var(--el-font-size-base);
-
-      .el-icon {
-        display: none;
-        color: white;
-        padding: 2px;
-        margin-right: 8px;
-        border-radius: 50%;
-
-        &:hover {
-          transition: background-color 0.3s;
-        }
-      }
-
-      .plus-icon {
-        &:hover {
-          background-color: var(--el-color-primary-light-3);
-        }
-      }
-
-      .delete-icon {
-        &:hover {
-          background-color: var(--el-color-error-light-3);
-        }
-      }
-    }
-
-    &:hover {
-      .el-icon {
-        display: inline-block;
-      }
-
-      .plus-icon {
-        background-color: var(--el-color-primary);
-      }
-
-      .delete-icon {
-        background-color: var(--el-color-error);
-      }
-    }
   }
 }
 </style>

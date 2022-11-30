@@ -93,16 +93,20 @@ const cancel = () => {
   selectedRows.value = _.clone(selectedList.value)
 }
 
-const removeTag = (val: string) => {
-  const index = (selectedKeys.value as string[]).indexOf(val)
-  selectedRows.value?.splice(index, 1)
-  selectedList.value?.splice(index, 1)
+const removeTag = (val: string) => (selectedRows.value = selectedRows.value.filter(e => e.value !== val))
+
+const remove = (val: string) => {
+  const keys = selectedKeys.value as string[]
+  const index = keys.indexOf(val)
+  keys.splice(index, 1)
+  selectedRows.value.splice(index, 1)
+  selectedList.value.splice(index, 1)
 }
 
 const clear = () => {
   selectedKeys.value = props.multiple ? [] : undefined
-  selectedRows.value = []
-  selectedList.value = []
+  selectedRows.value.length = 0
+  selectedList.value.length = 0
 }
 
 const emit = defineEmits<{
@@ -121,27 +125,31 @@ watch(
 
 // 选择器显隐
 const visible = ref(false)
-const open = (val: boolean) => {
-  if (val) visible.value = true
+const open = (val = true) => {
+  if (val) visible.value = val
 }
+
+defineExpose({ open, clear })
 
 const parent = ref<string>()
 const clickNode = (id?: string) => (parent.value = id)
 </script>
 
 <template>
-  <el-select
-    :model-value="selectedKeys"
-    clearable
-    :multiple="multiple"
-    popper-class="hide"
-    :placeholder="placeholder"
-    @remove-tag="removeTag"
-    @clear="clear"
-    @visible-change="open"
-  >
-    <el-option v-for="item in selectedList" :key="item.value" :value="item.value" :label="item.label" />
-  </el-select>
+  <slot v-bind="{ open, clear, list: selectedList }">
+    <el-select
+      :model-value="selectedKeys"
+      clearable
+      :multiple="multiple"
+      popper-class="hide"
+      :placeholder="placeholder"
+      @remove-tag="remove"
+      @clear="clear"
+      @visible-change="open"
+    >
+      <el-option v-for="item in selectedList" :key="item.value" :value="item.value" :label="item.label" />
+    </el-select>
+  </slot>
 
   <el-dialog v-model="visible" top="3vh" :width="config.tree ? '75%' : ''" append-to-body @close="cancel">
     <template #header>
