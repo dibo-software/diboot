@@ -1,6 +1,6 @@
 <script setup lang="ts" name="FileRecord">
 import { fileDownload } from '@/utils/file'
-import { Refresh, Search, ArrowDown, ArrowUp, CircleClose } from '@element-plus/icons-vue'
+import { Search, ArrowDown, ArrowUp, CircleClose } from '@element-plus/icons-vue'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 

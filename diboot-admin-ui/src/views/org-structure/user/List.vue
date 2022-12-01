@@ -1,12 +1,10 @@
 <script setup lang="ts" name="UserList">
-import { Refresh, Search, ArrowUp, ArrowDown, CircleClose } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown, CircleClose } from '@element-plus/icons-vue'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
 const baseApi = '/iam/user'
-
-const advanced = ref(false)
 
 type Props = {
   orgId?: string
