@@ -42,24 +42,19 @@ public class MessageTemplateDTO extends MessageTemplate {
     /**
      * 创建时间-起始
      */
-    @BindQuery(comparison = Comparison.GE, column = "createTime")
+    @BindQuery(comparison = Comparison.GE, column = "create_time")
     private LocalDateTime createTime;
 
     /**
      * 创建时间-截止
      */
-    @BindQuery(comparison = Comparison.LT, column = "createTime")
+    @BindQuery(comparison = Comparison.LT, column = "create_time")
     private LocalDateTime createTimeEnd;
 
-    public LocalDateTime getCreateTimeEnd() {
-        if(createTimeEnd != null){
-            return createTimeEnd;
-        }
-        return createTime != null? createTime.plusDays(1) : null;
-    }
-
-    public MessageTemplate setCreateTimeEnd(LocalDateTime createTimeEnd) {
-        this.createTimeEnd = createTimeEnd;
+    public MessageTemplateDTO setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+        this.createTimeEnd = createTime != null? createTime.plusDays(1) : null;
         return this;
     }
+
 }

@@ -61,10 +61,10 @@ public class DepartmentDTO implements Serializable {
     private String search;
 
     // 查询单个日期
-    @BindQuery(comparison = Comparison.GE, column = "createTime")
+    @BindQuery(comparison = Comparison.GE, column = "create_time")
     private LocalDateTime createTime;
 
-    @BindQuery(comparison = Comparison.LT, column = "createTime")
+    @BindQuery(comparison = Comparison.LT, column = "create_time")
     private LocalDateTime createTimeEnd;
 
     @BindQuery(column = "parent_id", comparison = Comparison.IN)
