@@ -147,32 +147,30 @@ const multiple = inject<boolean | undefined>(
           @complete="onSearch"
         />
         <el-space>
-          <span v-if="searchArea" v-show="!searchState" class="search">
-            <di-input
-              v-if="['daterange', 'datetimerange'].includes(searchArea.propList[0].type)"
-              v-model="dateRangeQuery[searchArea.propList[0].prop]"
-              :config="{ ...searchArea.propList[0], label: '' }"
-              @change="onSearch"
-            />
-            <di-input
-              v-else
-              v-model="queryParam[searchArea.propList[0].prop]"
-              :config="{
-                ...searchArea.propList[0],
-                label: '',
-                placeholder: searchArea.propList[0].placeholder ?? searchArea.propList[0].label
-              }"
-              :related-datas="getRelatedData(searchArea.propList[0])"
-              :loading="asyncLoading"
-              @change="onSearch"
-              @remote-filter="(value: string) => remoteRelatedDataFilter(value, searchArea.propList[0].prop)"
-              @lazy-load="(parentId: string) => lazyLoadRelatedData(searchArea.propList[0].prop, parentId)"
-            />
+          <span v-if="searchArea?.propList?.length" v-show="!searchState" class="search">
+            <template v-for="item in [searchArea.propList[0]]" :key="item.prop">
+              <di-input
+                v-if="['daterange', 'datetimerange'].includes(item.type)"
+                v-model="dateRangeQuery[item.prop]"
+                :config="{ ...item, label: '' }"
+                @change="onSearch"
+              />
+              <di-input
+                v-else
+                v-model="queryParam[item.prop]"
+                :config="{ ...item, label: '', placeholder: item.placeholder ?? item.label }"
+                :related-datas="getRelatedData(item)"
+                :loading="asyncLoading"
+                @change="onSearch"
+                @remote-filter="(value: string) => remoteRelatedDataFilter(value, item.prop)"
+                @lazy-load="(parentId: string) => lazyLoadRelatedData(item.prop, parentId)"
+              />
+            </template>
           </span>
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
           <el-button
-            v-if="searchArea"
+            v-if="searchArea?.propList?.length"
             :icon="searchState ? ArrowUp : ArrowDown"
             :title="searchState ? '收起' : '展开'"
             @click="searchState = !searchState"
