@@ -1,5 +1,5 @@
 <script setup lang="ts" name="UserList">
-import { Search, ArrowUp, ArrowDown, CircleClose } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown, CircleClose, Plus } from '@element-plus/icons-vue'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
@@ -72,7 +72,7 @@ const deletePermission = checkPermission('delete')
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <excel-export

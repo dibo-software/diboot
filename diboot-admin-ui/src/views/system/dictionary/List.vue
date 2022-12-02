@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Dictionary">
-import { ArrowUp, ArrowDown, Search, CircleClose } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown, Search, CircleClose, Plus } from '@element-plus/icons-vue'
 import FormPage from './Form.vue'
 import DetailPage from './Detail.vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
@@ -62,7 +62,7 @@ function rowClick(row: DictionaryTableExpand) {
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <el-space>

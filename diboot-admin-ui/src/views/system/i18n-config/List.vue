@@ -1,5 +1,5 @@
 <script setup lang="ts" name="I18nConfig">
-import { Search, CircleClose, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import { Search, CircleClose, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import type { I18nConfig } from './type'
 import Form from './Form.vue'
 
@@ -56,7 +56,7 @@ const singleRow = (row: Array<I18nConfig>) => {
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <el-space>

@@ -1,6 +1,6 @@
 <script setup name="OrgList" lang="ts">
 import type { OrgModel } from '@/views/org-structure/org/type'
-import { Search, CircleClose, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import { Search, CircleClose, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
 const props = defineProps<{ parentId?: string }>()
@@ -64,7 +64,7 @@ const onFormComplete = () => {
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <el-space>
