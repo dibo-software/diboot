@@ -121,6 +121,7 @@ const vDrag: Directive<HTMLElement> = {
                 :key="item.name"
                 class="default-menu-item"
                 :index="item.path"
+                :title="item.meta?.title"
                 @click="openOneLevel(item)"
               >
                 <el-icon v-if="item.meta?.icon" :size="iconSizeNumber">
@@ -264,6 +265,7 @@ const vDrag: Directive<HTMLElement> = {
     .el-menu-item.is-active {
       background-color: rgba(100, 89, 89, 0.2) !important;
     }
+
     // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）
 
     .one-level-logo {
@@ -340,6 +342,11 @@ const vDrag: Directive<HTMLElement> = {
     .title {
       line-height: 24px;
       font-size: var(--el-font-size-dynamic);
+      width: calc(100% - 10px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 5px;
     }
   }
 }
