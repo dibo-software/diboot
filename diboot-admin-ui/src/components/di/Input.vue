@@ -95,7 +95,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
   const fileConfig: Upload = props.config as any
   if (
     fileConfig.accept &&
-    !fileConfig.accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.') + 1))
+    !fileConfig.accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.')))
   ) {
     ElMessage.error(`请上传${fileConfig.accept.replace(/,/, '/')}格式的文件！`)
     return false
@@ -256,9 +256,10 @@ const beforeUpload = (rawFile: UploadRawFile) => {
     <el-upload
       v-if="config.type === 'upload'"
       v-bind="bindUpload"
-      :list-type="config.listType"
       :limit="config.limit"
-      :multiple="config.limit ?? 2 > 1"
+      :accept="config.accept"
+      :list-type="config.listType"
+      :multiple="(config.limit ?? 2) > 1"
       :before-upload="beforeUpload"
       :on-preview="previewFile"
       style="width: 100%"
