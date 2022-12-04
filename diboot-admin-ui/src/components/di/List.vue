@@ -127,6 +127,18 @@ const multiple = inject<boolean | undefined>(
     <el-header>
       <el-space wrap class="list-operation" :size="10">
         <el-button v-if="createPermission && operation?.create" type="primary" @click="openForm()"> 新建</el-button>
+        <excel-import
+          v-if="operation?.importData && importPermission"
+          :excel-base-api="`${baseApi}/excel`"
+          :attach="relatedKey ? () => ({ [`${relatedKey}`]: parent }) : undefined"
+          @complete="onSearch"
+        />
+        <excel-export
+          v-if="operation?.exportData && exportPermission"
+          :build-param="buildQueryParam"
+          :export-url="`${baseApi}/excel/export`"
+          :table-head-url="`${baseApi}/excel/export-table-head`"
+        />
         <el-button
           v-if="operation?.batchRemove && deletePermission"
           type="danger"
@@ -136,18 +148,6 @@ const multiple = inject<boolean | undefined>(
         >
           批量删除
         </el-button>
-        <excel-export
-          v-if="operation?.exportData && exportPermission"
-          :build-param="buildQueryParam"
-          :export-url="`${baseApi}/excel/export`"
-          :table-head-url="`${baseApi}/excel/export-table-head`"
-        />
-        <excel-import
-          v-if="operation?.importData && importPermission"
-          :excel-base-api="`${baseApi}/excel`"
-          :attach="relatedKey ? () => ({ [`${relatedKey}`]: parent }) : undefined"
-          @complete="onSearch"
-        />
         <el-space>
           <span v-if="searchArea?.propList?.length" v-show="!searchState" class="search">
             <template v-for="item in [searchArea.propList[0]]" :key="item.prop">
