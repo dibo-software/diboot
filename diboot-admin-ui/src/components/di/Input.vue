@@ -12,13 +12,13 @@ const props = defineProps<{
   relatedDatas?: LabelValue[]
   lazyLoading?: boolean
   fileList?: FileRecord[]
+  lazyLoad?: (parentId: string) => Promise<LabelValue[]>
 }>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value?: unknown): void
   (e: 'change', value?: unknown): void
   (e: 'remoteFilter', value?: unknown): void
-  (e: 'lazyLoad', parentId: string): LabelValue[]
   (e: 'preview', accessUrl: string, isImage: boolean): void
 }>()
 
@@ -74,7 +74,7 @@ const handleChange = (value?: unknown) => emit('change', value)
 const remoteFilter = (value?: unknown) => emit('remoteFilter', value)
 
 const lazyLoad = ({ data }: { data: LabelValue }, resolve: (data: LabelValue[]) => void) =>
-  resolve(emit('lazyLoad', data.value))
+  props.lazyLoad ? props.lazyLoad(data.value).then(list => resolve(list)) : resolve([])
 
 const DEFAULT_DATE_FORMAT: Record<string, string> = { date: 'YYYY-MM-DD', datetime: 'YYYY-MM-DD HH:mm:ss' }
 const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
@@ -200,6 +200,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :lazy="config.lazy"
       :load="config.lazy ? lazyLoad : undefined"
       :check-strictly="config.checkStrictly"
+      :default-expand-all="!config.lazy"
       :multiple="config.multiple"
       clearable
       @change="handleChange"

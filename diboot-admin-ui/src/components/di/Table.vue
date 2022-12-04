@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DiTable">
-import { SetUp, Sort, Setting } from '@element-plus/icons-vue'
+import { SetUp, Sort } from '@element-plus/icons-vue'
 import Draggable from 'vuedraggable'
 import type { TableColumn } from './type'
 import type { Ref } from 'vue'
@@ -15,19 +15,9 @@ const setCache = (key: string, value?: unknown) => {
   else localStorage.removeItem(key)
 }
 
-// 表配置
-interface TableConfig {
-  size: string
-  border: boolean
-  stripe: boolean
-}
-
-const tableConfigKey = 'table-config'
-const config = ref<TableConfig>(getCache(tableConfigKey, { size: '', border: false, stripe: false }))
-watch(config, value => setCache(tableConfigKey, value), { deep: true })
-
 const props = withDefaults(
   defineProps<{
+    model: string
     // 主键属性名（默认值：id）
     primaryKey?: string
     columns: TableColumn[]
@@ -43,12 +33,16 @@ const emit = defineEmits<{
   (e: 'order', prop: string, order?: 'ASC' | 'DESC'): void
 }>()
 
-const route = useRoute()
-
+// 表配置
+interface TableConfig {
+  border: boolean
+  stripe: boolean
+  columns: TableColumn[]
+}
 // 表列
 const columns = () => {
   const list = _.cloneDeep(props.columns)
-  const cacheList = getCache<TableColumn[]>(columnsKey, [])
+  const cacheList = (getCache<TableConfig>(tableConfigKey) ?? { columns: [] }).columns
   for (let i = 0; i < list?.length; i++) {
     const tableColumn = list[i]
     const find = cacheList.find(e => e.prop === tableColumn.prop)
@@ -56,10 +50,15 @@ const columns = () => {
   }
   return list
 }
-const columnsKey = `table-columns-` + (route?.name ?? +new Date()).toString()
-const columnList = ref(columns())
-const resetColumnConfig = () => (columnList.value = columns())
-const saveColumnChange = () => setCache(columnsKey, columnList.value)
+const visible = ref<boolean>()
+const tableConfigKey = 'table-config-' + props.model
+const config = ref<TableConfig>(getCache(tableConfigKey, { border: false, stripe: false, columns: columns() }))
+const resetTableConfig = () => (config.value = { border: false, stripe: false, columns: columns() })
+const saveColumnChange = () => {
+  visible.value = false
+  setCache(tableConfigKey, config.value)
+  nextTick(() => (visible.value = undefined))
+}
 
 const selectedRows = inject<Ref<LabelValue[] | undefined>>('selected-rows', ref())
 const dataLabel = inject<string>('data-label', 'label')
@@ -177,7 +176,7 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     <el-table-column v-else-if="multiple" type="selection" width="55" fixed />
 
     <slot />
-    <template v-for="(item, index) in columnList" :key="index">
+    <template v-for="(item, index) in config.columns" :key="index">
       <el-table-column
         v-if="!item.hide"
         :column-key="item.prop"
@@ -224,9 +223,9 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
       <slot name="pagination" />
     </div>
     <el-space v-if="!selectedRows" :size="20" style="height: 38px">
-      <el-popover :width="500" trigger="click" placement="top-start">
+      <el-popover :visible="visible" :width="500" trigger="click" placement="top-start">
         <template #reference>
-          <el-button v-show="columnList" :icon="SetUp" size="default" text bg circle />
+          <el-button :icon="SetUp" size="default" text bg circle />
         </template>
         <table class="sortable-table">
           <thead>
@@ -240,7 +239,7 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
             </tr>
           </thead>
           <draggable
-            v-model="columnList"
+            v-model="config.columns"
             tag="tbody"
             item-key="prop"
             ghost-class="sortable-ghost"
@@ -270,29 +269,16 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
             </template>
           </draggable>
         </table>
-        <div style="display: flex; justify-content: flex-end">
-          <el-button size="small" @click="resetColumnConfig">重置</el-button>
-          <el-button type="primary" size="small" @click="saveColumnChange">保存</el-button>
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div>
+            <el-checkbox v-model="config.border" label="纵向边框" size="small" />
+            <el-checkbox v-model="config.stripe" label="斑马纹" size="small" />
+          </div>
+          <div>
+            <el-button size="small" @click="resetTableConfig">重置</el-button>
+            <el-button size="small" type="primary" @click="saveColumnChange"> 保存 </el-button>
+          </div>
         </div>
-      </el-popover>
-      <el-popover :width="250" trigger="click" placement="top-start">
-        <template #reference>
-          <el-button :icon="Setting" size="default" text bg circle />
-        </template>
-        <el-form label-width="50px" label-position="left" class="config">
-          <el-form-item label="尺寸">
-            <el-radio-group v-model="config.size" size="small">
-              <el-radio-button label="large">大</el-radio-button>
-              <el-radio-button label="default">正常</el-radio-button>
-              <el-radio-button label="small">小</el-radio-button>
-              <el-radio-button label="">跟随全局</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="样式">
-            <el-checkbox v-model="config.border" label="纵向边框" />
-            <el-checkbox v-model="config.stripe" label="斑马纹" />
-          </el-form-item>
-        </el-form>
       </el-popover>
     </el-space>
   </div>

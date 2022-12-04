@@ -22,6 +22,7 @@ export const buildOptionProps = (formItemList?: FormItem[]) => {
         loader.lazyChild = !!e['lazy' as keyof typeof e]
         asyncLoad[e.prop] = loader as RelatedData
       } else {
+        loader.lazyChild = false
         const load = option.load ? option.load : (option.load = {})
         load[e.prop] = loader as RelatedData
       }

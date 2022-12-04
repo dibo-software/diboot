@@ -93,7 +93,7 @@ const { nodeDrag } = useSort({
       <slot name="top" />
       <el-input
         v-if="!lazyChild || !!parentPath"
-        v-model="searchValue"
+        v-model.lazy.trim="searchValue"
         :prefix-icon="Search"
         placeholder="搜索过滤"
         clearable

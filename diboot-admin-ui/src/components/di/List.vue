@@ -4,6 +4,8 @@ import { buildOptionProps, buildGetRelatedData } from './utils'
 import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
 interface ListProps extends ListConfig {
+  // 模型名
+  model: string
   // 左树父级ID
   parent?: string
 
@@ -79,13 +81,13 @@ defineExpose({
   refresh: getList
 })
 
-const createPermission = checkPermission('create')
-const detailPermission = checkPermission('detail')
-const importPermission = checkPermission('import')
-const exportPermission = checkPermission('export')
-const updatePermission = checkPermission('update')
-const deletePermission = checkPermission('delete')
-const updateOrDeletePermission = checkPermission(['update', 'delete'])
+const createPermission = checkPermission('create', false, false, props.model)
+const detailPermission = checkPermission('detail', false, false, props.model)
+const importPermission = checkPermission('import', false, false, props.model)
+const exportPermission = checkPermission('export', false, false, props.model)
+const updatePermission = checkPermission('update', false, false, props.model)
+const deletePermission = checkPermission('delete', false, false, props.model)
+const updateOrDeletePermission = checkPermission(['update', 'delete'], false, false, props.model)
 
 const multiple = inject<boolean | undefined>(
   'multiple',
@@ -115,9 +117,9 @@ const multiple = inject<boolean | undefined>(
             :config="item"
             :related-datas="getRelatedData(item)"
             :loading="asyncLoading"
+            :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
             @change="onSearch"
             @remote-filter="(value: string) => remoteRelatedDataFilter(value, item.prop)"
-            @lazy-load="(parentId: string) => lazyLoadRelatedData(item.prop, parentId)"
           />
         </el-col>
       </el-row>
@@ -161,9 +163,9 @@ const multiple = inject<boolean | undefined>(
                 :config="{ ...item, label: '', placeholder: item.placeholder ?? item.label }"
                 :related-datas="getRelatedData(item)"
                 :loading="asyncLoading"
+                :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
                 @change="onSearch"
                 @remote-filter="(value: string) => remoteRelatedDataFilter(value, item.prop)"
-                @lazy-load="(parentId: string) => lazyLoadRelatedData(item.prop, parentId)"
               />
             </template>
           </span>
@@ -179,6 +181,7 @@ const multiple = inject<boolean | undefined>(
       </el-space>
     </el-header>
     <di-table
+      :model="model"
       :loading="loading"
       :columns="columns"
       :data-list="dataList"
@@ -230,7 +233,7 @@ const multiple = inject<boolean | undefined>(
       <template #pagination>
         <el-pagination
           v-if="pagination.total"
-          v-model:currentPage="pagination.current"
+          v-model:current-page="pagination.current"
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 20, 30, 50, 100]"
           small

@@ -168,11 +168,11 @@ const clickNode = (id?: string) => (parent.value = id)
     <div class="body-container">
       <di-tree v-if="config.tree" v-bind="config.tree" :sort-api="undefined" @click-node="clickNode" />
 
-      <di-list v-bind="config.list" :operation="undefined" :parent="parent" style="width: 0" />
+      <di-list v-bind="config.list" :model="dataType" :operation="undefined" :parent="parent" style="width: 0" />
 
       <div class="bottom-operation">
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="confirm">确认</el-button>
+        <el-button size="default" @click="cancel">取消</el-button>
+        <el-button size="default" type="primary" @click="confirm">确认</el-button>
       </div>
     </div>
   </el-dialog>
@@ -188,7 +188,7 @@ const clickNode = (id?: string) => (parent.value = id)
 
   .bottom-operation {
     position: absolute;
-    bottom: 0;
+    bottom: -3px;
     right: 0;
   }
 }
