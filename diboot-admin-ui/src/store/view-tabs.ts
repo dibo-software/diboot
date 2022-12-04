@@ -55,20 +55,20 @@ export default defineStore({
       else return false
     },
     // 关闭指定前页
-    closeTab(route: RouteLocationNormalized, router: Router) {
+    closeTab(route: RouteLocationNormalized, router: Router, autoTab = true) {
       const findIndex = this.tabList.findIndex(findTabFu(route))
       this.tabList.splice(findIndex, 1)
-      if (router.currentRoute.value.name === route.name) goTabOrLastOrHome(this.tabList, router, findIndex)
+      if (router.currentRoute.value.name === route.name && autoTab) goTabOrLastOrHome(this.tabList, router, findIndex)
     },
     // 关闭左侧
-    closeLeftTabs(route: RouteLocationNormalized, router: Router) {
+    closeLeftTabs(route: RouteLocationNormalized, router: Router, autoTab = true) {
       const discard = this.tabList.splice(0, this.tabList.findIndex(findTabFu(route)))
-      if (isPresenceActivation(discard, router)) goTabOrLastOrHome(this.tabList, router)
+      if (isPresenceActivation(discard, router) && autoTab) goTabOrLastOrHome(this.tabList, router)
     },
     // 关闭右侧
-    closeRightTabs(route: RouteLocationNormalized, router: Router) {
+    closeRightTabs(route: RouteLocationNormalized, router: Router, autoTab = true) {
       const discard = this.tabList.splice(this.tabList.findIndex(findTabFu(route)) + 1)
-      if (isPresenceActivation(discard, router)) goTabOrLastOrHome(this.tabList, router)
+      if (isPresenceActivation(discard, router) && autoTab) goTabOrLastOrHome(this.tabList, router)
     },
     // 关闭其他
     closeOtherTabs(route: RouteLocationNormalized, router: Router) {
@@ -76,7 +76,7 @@ export default defineStore({
       this.tabList = [route]
     },
     // 关闭全部
-    closeAllTabs(router: Router) {
+    closeAllTabs(router: Router, autoTab = true) {
       let isPresenceActivation = false
       const currentRouteName = router.currentRoute.value.name
       //保留固定路由
@@ -84,7 +84,7 @@ export default defineStore({
         if (!isPresenceActivation) isPresenceActivation = item.name === currentRouteName
         return item.meta.affixTab ?? false
       })
-      if (isPresenceActivation) goTabOrLastOrHome(this.tabList, router)
+      if (isPresenceActivation && autoTab) goTabOrLastOrHome(this.tabList, router)
     }
   }
 })
