@@ -1,295 +1,223 @@
 <script setup lang="ts" name="Dashboard">
 import type { EChartsOption } from 'echarts'
+import { StarFilled } from '@element-plus/icons-vue'
+import logoSrc from '@/assets/logo.png'
 
-const stackedAreaChart: EChartsOption = {
-  title: {
-    text: 'Stacked Area Chart'
+const tags = reactive([
+  {
+    label: '低代码',
+    type: ''
   },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross',
-      label: {
-        backgroundColor: '#6a7985'
-      }
-    }
+  {
+    label: '代码生成器',
+    type: 'success'
   },
-  legend: {
-    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+  {
+    label: 'vue',
+    type: 'info'
   },
-  toolbox: {
-    feature: {
-      saveAsImage: {}
-    }
+  {
+    label: 'flowable',
+    type: 'warning'
   },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true
-  },
-  xAxis: [
-    {
-      type: 'category',
-      boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    }
-  ],
-  yAxis: [
-    {
-      type: 'value'
-    }
-  ],
-  series: [
-    {
-      name: 'Email',
-      type: 'line',
-      stack: 'Total',
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [120, 132, 101, 134, 90, 230, 210],
-      smooth: true
-    },
-    {
-      name: 'Union Ads',
-      type: 'line',
-      stack: 'Total',
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [220, 182, 191, 234, 290, 330, 310],
-      smooth: true
-    },
-    {
-      name: 'Video Ads',
-      type: 'line',
-      stack: 'Total',
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [150, 232, 201, 154, 190, 330, 410],
-      smooth: true
-    },
-    {
-      name: 'Direct',
-      type: 'line',
-      stack: 'Total',
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [320, 332, 301, 334, 390, 330, 320],
-      smooth: true
-    },
-    {
-      name: 'Search Engine',
-      type: 'line',
-      stack: 'Total',
-      label: {
-        show: true,
-        position: 'top'
-      },
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [820, 932, 901, 934, 1290, 1330, 1320],
-      smooth: true
-    }
-  ]
-}
-
-//
-
-const data: number[] = reactive([])
-for (let i = 0; i < 5; ++i) {
-  data.push(Math.round(Math.random() * 200))
-}
-const dynamicChart = {
-  title: {
-    text: '动态数据变化'
-  },
-  xAxis: {
-    max: 'dataMax'
-  },
-  yAxis: {
-    type: 'category',
-    data: ['A', 'B', 'C', 'D', 'E'],
-    inverse: true,
-    animationDuration: 300,
-    animationDurationUpdate: 300,
-    max: 2 // only the largest 3 bars will be displayed
-  },
-  series: [
-    {
-      realtimeSort: true,
-      name: 'X',
-      type: 'bar',
-      data: data,
-      label: {
-        show: true,
-        position: 'right',
-        valueAnimation: true
-      }
-    }
-  ],
-  legend: {
-    show: true
-  },
-  animationDuration: 0,
-  animationDurationUpdate: 3000,
-  animationEasing: 'linear',
-  animationEasingUpdate: 'linear'
-}
-const run = () => {
-  for (let i = 0; i < data.length; ++i) {
-    if (Math.random() > 0.9) {
-      data[i] += Math.round(Math.random() * 2000)
-    } else {
-      data[i] += Math.round(Math.random() * 200)
-    }
+  {
+    label: '工作流',
+    type: 'danger'
   }
-}
+])
 
-run()
-setInterval(() => {
-  run()
-}, 3000)
+const progress = reactive([
+  {
+    label: 'Java',
+    value: 62.1
+  },
+  {
+    label: 'Vue',
+    value: 27.9
+  },
+  {
+    label: 'JavaScript',
+    value: 6.2
+  },
+  {
+    label: 'CSS',
+    value: 3.2
+  },
+  {
+    label: 'SCSS',
+    value: 0.6
+  }
+])
 
-// 右
-
-const gaugeChart: EChartsOption = {
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {},
-  toolbox: {
-    show: true,
-    feature: {
-      saveAsImage: {}
-    }
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: {
-      formatter: '{value} °C'
-    }
+const radarChart: EChartsOption = {
+  radar: {
+    indicator: [
+      { name: '代码活跃度', max: 50 },
+      { name: '社区活跃度', max: 50 },
+      { name: '团队健康', max: 50 },
+      { name: '流行趋势', max: 50 },
+      { name: '影响力', max: 50 }
+    ],
+    radius: 90
   },
   series: [
     {
-      name: 'Highest',
-      type: 'line',
-      data: [10, 11, 13, 11, 12, 12, 9],
-      markPoint: {
-        data: [
-          { type: 'max', name: 'Max' },
-          { type: 'min', name: 'Min' }
-        ]
-      },
-      markLine: {
-        data: [{ type: 'average', name: 'Avg' }]
-      }
-    },
-    {
-      name: 'Lowest',
-      type: 'line',
-      data: [1, -2, 2, 5, 3, 2, 0],
-      markPoint: {
-        data: [{ name: '周最低', value: -2, xAxis: 1, yAxis: -1.5 }]
-      },
-      markLine: {
-        data: [
-          { type: 'average', name: 'Avg' },
-          [
-            {
-              symbol: 'none',
-              x: '90%',
-              yAxis: 'max'
-            },
-            {
-              symbol: 'circle',
-              label: {
-                position: 'start',
-                formatter: 'Max'
-              },
-              type: 'max',
-              name: '最高点'
-            }
-          ]
-        ]
-      }
-    }
-  ]
-}
-//
-const pieChart: EChartsOption = {
-  legend: {
-    top: 'bottom'
-  },
-  toolbox: {
-    show: true,
-    feature: {
-      saveAsImage: { show: true }
-    }
-  },
-  series: [
-    {
-      name: 'Nightingale Chart',
-      type: 'pie',
-      radius: [30, 100],
-      center: ['50%', '50%'],
-      roseType: 'area',
-      itemStyle: {
-        borderRadius: 8
-      },
+      type: 'radar',
+      areaStyle: {},
       data: [
-        { value: 40, name: 'rose 1' },
-        { value: 38, name: 'rose 2' },
-        { value: 32, name: 'rose 3' },
-        { value: 30, name: 'rose 4' },
-        { value: 28, name: 'rose 5' },
-        { value: 26, name: 'rose 6' },
-        { value: 22, name: 'rose 7' },
-        { value: 18, name: 'rose 8' }
+        {
+          value: [27, 10, 44, 38, 14]
+        }
       ]
     }
   ]
 }
+
+const currentDate = ref(new Date())
 </script>
 
 <template>
-  <div style="height: calc(100% - 20px); padding: 10px; display: flex">
-    <div style="width: calc(100% - 400px)">
-      <el-card style="height: 49%" :body-style="{ height: 'calc(100% - 30px)' }">
-        <Chart :option="stackedAreaChart" />
+  <el-row :gutter="10" style="display: flex">
+    <el-col :lg="10" :md="24" :xs="24">
+      <el-card class="h100">
+        <div class="card-title">欢迎</div>
+        <div class="card-body">
+          <el-image class="mb-20" style="width: 100px; height: 100px" :src="logoSrc" />
+          <span class="mb-20" style="font-weight: bold; font-size: 28px">欢迎体验 diboot低代码开发平台</span>
+          <span class="mb-20">
+            写的更少, 性能更好 ->
+            为开发人员打造的低代码开发平台。Mybatis-plus关联查询，关联无SQL，性能高10倍，前后端代码可视化生成，flowable工作流，spring
+            cloud微服务等全方位赋能！
+          </span>
+          <div class="mb-20" style="align-self: flex-start">
+            <el-tag
+              v-for="({ label, type }, index) in tags"
+              :key="label"
+              :class="{ 'ml-10': index !== 0 }"
+              :type="type"
+            >
+              {{ label }}</el-tag
+            >
+          </div>
+          <span style="align-self: flex-end"
+            >官网链接：<a class="mainColor" target="_blank" href="https://www.diboot.com"
+              >https://www.diboot.com</a
+            ></span
+          >
+        </div>
       </el-card>
-      <el-card style="height: 49%; margin-top: 10px" :body-style="{ height: 'calc(100% - 30px)' }">
-        <Chart :option="dynamicChart" />
+    </el-col>
+    <el-col :lg="7" :md="12" :xs="24" style="display: flex; flex-direction: column">
+      <el-card class="mb-10">
+        <div class="card-title mb-20">关于项目</div>
+        <div class="mainColor mb-10" style="font-weight: bold; font-size: 16px">基础组件化繁为简，高效工具以简驭繁</div>
+        <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
+        <a class="card-gitee" href="https://gitee.com/dibo_software/diboot" target="_blank">
+          <el-icon size="16">
+            <StarFilled />
+          </el-icon>
+          <span>Stars</span>
+          <span style="margin-left: 5px">1.5k</span>
+        </a>
       </el-card>
-    </div>
-    <div style="width: 390px; margin-left: 10px">
-      <el-card style="height: calc(100% - 403px)" :body-style="{ height: 'calc(100%)' }">
-        <Chart :option="gaugeChart" />
+      <el-card style="flex: 1">
+        <div class="card-title">活跃度</div>
+        <Chart :option="radarChart" style="height: 300px" />
       </el-card>
-      <el-card style="height: 390px; margin-top: 10px" :body-style="{ height: 'calc(100% - 30px)' }">
-        <Chart :option="pieChart" />
+    </el-col>
+    <el-col :lg="7" :md="12" :xs="24">
+      <el-card class="mb-10">
+        <el-calendar v-model="currentDate">
+          <template #header="{ date }">
+            <span>{{ date }}</span>
+          </template>
+        </el-calendar>
       </el-card>
-    </div>
-  </div>
+      <el-card>
+        <div class="card-title mb-20">语言</div>
+        <div v-for="{ label, value } in progress" :key="label" style="display: flex; align-items: center" class="mb-10">
+          <span style="width: 80px; text-align: right">{{ label }}</span>
+          <el-progress :percentage="value" :stroke-width="10" style="flex: 1" class="ml-10" />
+        </div>
+      </el-card>
+    </el-col>
+  </el-row>
 
   <!--  <div class="footer">Diboot © P01-2022</div>-->
 </template>
 
 <style scoped lang="scss">
+.ml-10 {
+  margin-left: 10px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.h100 {
+  height: 100%;
+}
+
+.mainColor {
+  color: var(--el-color-primary);
+}
+
+a {
+  text-decoration: none;
+}
+
+.el-row {
+  padding: 10px 5px 0;
+  margin: 0 !important;
+
+  .el-col {
+    margin-bottom: 10px;
+  }
+}
+
+.el-card {
+  font-size: 14px;
+
+  &:hover {
+    box-shadow: var(--el-box-shadow-dark);
+  }
+}
+
+.el-calendar {
+  :deep(.el-calendar-day) {
+    height: unset;
+  }
+}
+
+.card {
+  &-title {
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  &-body {
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &-gitee {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    color: #e7e7e7;
+    background-color: #393939;
+    border-radius: 3px;
+  }
+}
+
 //.footer {
 //  min-height: 30px;
 //  padding-top: 10px;

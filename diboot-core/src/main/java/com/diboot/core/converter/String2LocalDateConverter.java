@@ -17,6 +17,7 @@ package com.diboot.core.converter;
 
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.D;
+import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.LocalDate;
@@ -34,6 +35,9 @@ public class String2LocalDateConverter implements Converter<String, LocalDate> {
 
     @Override
     public LocalDate convert(String dateString) {
+        if(V.isEmpty(dateString)){
+            return null;
+        }
         dateString = D.formatDateString(dateString);
         return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD));
     }

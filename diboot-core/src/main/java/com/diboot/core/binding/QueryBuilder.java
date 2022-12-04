@@ -42,6 +42,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -377,7 +379,7 @@ public class QueryBuilder {
             // 非指定属性，非逻辑删除字段，跳过；
             if (V.notContains(fields, fieldName)) {
                 //Date 属性放过
-                if (!V.equals(field.getType(), Date.class)) {
+                if (!V.equals(field.getType(), Date.class) && !V.equals(field.getType(), LocalDate.class) && !V.equals(field.getType(), LocalDateTime.class)) {
                     continue;
                 }
             }

@@ -1,5 +1,5 @@
 <script setup lang="ts" name="MessageTemplate">
-import { Refresh, Search, CircleClose, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
+import { Search, CircleClose, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import type { MessageTemplate } from './type'
 import Detail from '@/views/system/message-template/Detail.vue'
 import Form from './Form.vue'
@@ -55,7 +55,7 @@ const deletePermission = checkPermission('delete')
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <el-space>

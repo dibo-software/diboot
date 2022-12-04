@@ -1,12 +1,10 @@
 <script setup lang="ts" name="UserList">
-import { Refresh, Search, ArrowUp, ArrowDown, CircleClose } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown, CircleClose, Plus } from '@element-plus/icons-vue'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
 const baseApi = '/iam/user'
-
-const advanced = ref(false)
 
 type Props = {
   orgId?: string
@@ -74,7 +72,7 @@ const deletePermission = checkPermission('delete')
     </el-form>
     <el-header>
       <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" type="primary" @click="openForm()">
+        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
           {{ $t('operation.create') }}
         </el-button>
         <excel-export
@@ -131,7 +129,7 @@ const deletePermission = checkPermission('delete')
           <span>{{ row.accountStatusLabel || '-' }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="updateTime" label="更新时间" width="165" />
+      <el-table-column prop="updateTime" label="更新时间" width="175" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
