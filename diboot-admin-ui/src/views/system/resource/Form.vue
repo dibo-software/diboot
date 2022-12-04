@@ -159,7 +159,7 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                 prop="routePath"
                 :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
               >
-                <el-input v-model="model.routePath" placeholder="请输入路由地址" clearable />
+                <el-input v-model="model.routePath" placeholder="请输入路由地址（例：route-path）" clearable />
               </el-form-item>
               <el-form-item
                 label="路由名称"
@@ -178,7 +178,7 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                 <el-input
                   v-show="model.displayType !== 'MENU'"
                   v-model="model.resourceCode"
-                  placeholder="请输入路由名称"
+                  placeholder="请输入路由名称（例：RouteName）"
                   clearable
                 />
               </el-form-item>

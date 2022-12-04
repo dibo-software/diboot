@@ -179,20 +179,6 @@ const treeNodeClass = (data: Resource) => {
     padding: 5px 5px 0;
   }
 
-  .is-fixed {
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 39px;
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    background: var(--el-bg-color);
-    border-top: 1px solid var(--el-border-color-lighter);
-  }
-
   .hidden,
   .through {
     .content {
