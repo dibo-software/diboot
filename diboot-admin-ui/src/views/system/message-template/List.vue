@@ -125,7 +125,7 @@ const deletePermission = checkPermission('delete')
     </el-table>
     <el-pagination
       v-if="pagination.total"
-      v-model:currentPage="pagination.current"
+      v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 20, 30, 50, 100]"
       small
