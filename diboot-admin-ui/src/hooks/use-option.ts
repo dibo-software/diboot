@@ -82,8 +82,7 @@ export default ({
   /**
    * 初始化 RelatedData
    */
-  const initRelatedData = async () => {
-    initLoading.value = true
+  const initRelatedData = () => {
     const reqList: Promise<ApiData<Record<string, LabelValue[]>>>[] = []
     // 通用获取关联字典的数据
     if ((dict ?? []).length > 0)
@@ -91,14 +90,21 @@ export default ({
     // 通用获取关联绑定的数据
     if (Object.keys(load ?? {}).length > 0) reqList.push(api.post(`${baseApi}/load-related-data`, load))
 
-    if (reqList.length > 0) {
-      const resList = await Promise.all(reqList)
-      resList.forEach(res => {
-        if (res.code === 0) Object.assign(relatedData, res.data)
-        else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
-      })
-    }
-    initLoading.value = false
+    return new Promise<void>((resolve, reject) => {
+      if (reqList.length > 0) {
+        initLoading.value = true
+        Promise.all(reqList)
+          .then(resList => {
+            resList.forEach(res => Object.assign(relatedData, res.data))
+            resolve()
+          })
+          .catch(err => {
+            ElNotification.error(err?.msg || err?.message || (err?.length ? err : '初始化选项数据失败'))
+            reject(err)
+          })
+          .finally(() => (initLoading.value = false))
+      } else resolve()
+    })
   }
 
   // 异步加载状态
@@ -110,20 +116,20 @@ export default ({
    * @param relatedDataLoader 加载器
    * @param parentId 父节点ID
    */
-  const loadRelatedData = async (relatedDataLoader: AsyncRelatedData, parentId?: string) => {
+  const loadRelatedData = (relatedDataLoader: AsyncRelatedData, parentId?: string) => {
     const empty = [] as LabelValue[]
-    if (relatedDataLoader.disabled) {
-      return empty
-    }
+    if (relatedDataLoader.disabled) return Promise.reject<LabelValue[]>(empty)
     asyncLoading.value = true
-    const res = await api.get<LabelValue[]>(
-      `${baseApi}/load-related-data${parentId ? `/${parentId}` : ''}`,
-      relatedDataLoader
-    )
-    asyncLoading.value = false
-    if (res.code === 0) return res.data ?? empty
-    else ElNotification.error({ title: '获取选项数据失败', message: res.msg })
-    return empty
+    return new Promise<LabelValue[]>(resolve => {
+      api
+        .get<LabelValue[]>(`${baseApi}/load-related-data${parentId ? `/${parentId}` : ''}`, relatedDataLoader)
+        .then(res => resolve(res.data ?? empty))
+        .catch(err => {
+          ElNotification.error(err?.msg || err?.message || (err?.length ? err : '获取选项数据失败'))
+          resolve(empty)
+        })
+        .finally(() => (asyncLoading.value = false))
+    })
   }
 
   /**
@@ -145,10 +151,10 @@ export default ({
   /**
    * 远程过滤加载选项
    *
-   * @param value 输入值
    * @param loader 加载器（asyncBind 的 key）
+   * @param value 输入值
    */
-  const remoteRelatedDataFilter = async (value: string, loader: string) => {
+  const remoteRelatedDataFilter = async (loader: string, value?: string) => {
     if (value == null || (value = value.trim()).length === 0) {
       relatedData[loader] = []
       return

@@ -55,7 +55,7 @@ const batchDownload = () => {
               remote
               filterable
               :loading="asyncLoading"
-              :remote-method="(value: string) => remoteRelatedDataFilter(value, 'userOptions')"
+              :remote-method="(value: string) => remoteRelatedDataFilter('userOptions', value)"
               clearable
               @change="onSearch"
             >

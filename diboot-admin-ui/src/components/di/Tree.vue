@@ -53,7 +53,7 @@ watch(searchValue, val => {
   if (!props.lazyChild) {
     treeRef.value?.filter(val)
   } else if (props.parentPath)
-    remoteRelatedDataFilter(val, treeDataKey).then(() => treeRef.value?.setCurrentKey(activateNode.value))
+    remoteRelatedDataFilter(treeDataKey, val).then(() => treeRef.value?.setCurrentKey(activateNode.value))
 })
 
 const filterNode = (value: string, data: Partial<LabelValue>) => !value || data.label?.includes(value)
