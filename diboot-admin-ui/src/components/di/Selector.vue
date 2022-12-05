@@ -73,7 +73,8 @@ watch(
       selectedRows.value.length = 0
       confirm()
     }
-  }
+  },
+  { immediate: true }
 )
 
 const confirm = () => {
