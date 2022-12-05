@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     DiSelector: typeof import('@/components/di/Selector.vue')['default']
     DiTable: typeof import('@/components/di/Table.vue')['default']
     DiTree: typeof import('@/components/di/Tree.vue')['default']
+    DynamicPrint: typeof import('@/components/dynamicPrint/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']

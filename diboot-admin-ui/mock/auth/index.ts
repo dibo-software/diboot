@@ -110,6 +110,16 @@ const authMenu = [
           componentPath: prefix + 'example/Markdown.vue',
           sort: 2
         }
+      },
+      {
+        path: 'print',
+        name: 'Print',
+        meta: {
+          title: '打印',
+          icon: 'Element:Printer',
+          componentPath: prefix + 'example/Print.vue',
+          sort: 3
+        }
       }
     ]
   },
