@@ -97,7 +97,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
     fileConfig.accept &&
     !fileConfig.accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.')))
   ) {
-    ElMessage.error(`请上传${fileConfig.accept.replace(/,/, '/')}格式的文件！`)
+    ElMessage.error(`请上传${fileConfig.accept.replace(/,/g, '/')}格式的文件！`)
     return false
   }
   if (fileConfig.size && rawFile.size / 1024 / 1024 > fileConfig.size) {
@@ -278,7 +278,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
             {{ config.limit }} 个文件
             <span v-if="config.accept">，</span>
           </span>
-          <span v-if="config.accept">类型为 {{ config.accept.replace(/,/, '/') }} 的文件</span>
+          <span v-if="config.accept">类型为 {{ config.accept.replace(/,/g, '/') }} 的文件</span>
           <span v-if="config.size && (config.limit || config.accept)">，</span>
           <span v-if="config.size">单文件大小应小于 {{ config.size }} MB</span>。
         </div>
