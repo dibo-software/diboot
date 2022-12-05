@@ -254,6 +254,25 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 }
                 BeanUtils.setProperty(item, setFieldName, labelList);
             }
+            else if (value.getClass().isArray()) {
+                List labelList = new ArrayList<>();
+                for (Object key : (Object[])value) {
+                    LabelValue labelValue = map.get((String)key);
+                    if(labelValue == null) {
+                        continue;
+                    }
+                    if(isLabelValueClass) {
+                        labelList.add(labelValue);
+                    }
+                    else {
+                        labelList.add(labelValue.getLabel());
+                    }
+                }
+                BeanUtils.setProperty(item, setFieldName, labelList);
+            }
+            else {
+                log.warn("不支持的属性类型: {}", value.getClass().getSimpleName());
+            }
         }
     }
 
