@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DiList">
-import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Plus, Delete, Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { buildOptionProps, buildGetRelatedData } from './utils'
 import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
@@ -126,7 +126,9 @@ const multiple = inject<boolean | undefined>(
     </el-form>
     <el-header>
       <el-space wrap class="list-operation" :size="10">
-        <el-button v-if="createPermission && operation?.create" type="primary" @click="openForm()"> 新建</el-button>
+        <el-button v-if="createPermission && operation?.create" type="primary" :icon="Plus" @click="openForm()">
+          新建
+        </el-button>
         <excel-import
           v-if="operation?.importData && importPermission"
           :excel-base-api="`${baseApi}/excel`"
@@ -141,8 +143,9 @@ const multiple = inject<boolean | undefined>(
         />
         <el-button
           v-if="operation?.batchRemove && deletePermission"
-          type="danger"
           plain
+          type="danger"
+          :icon="Delete"
           :disabled="!selectedKeys.length"
           @click="batchRemove(selectedKeys)"
         >
