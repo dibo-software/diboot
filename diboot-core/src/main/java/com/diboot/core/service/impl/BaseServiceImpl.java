@@ -145,6 +145,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * 用于创建之前的自动填充等场景调用
 	 */
 	protected void beforeCreateEntity(T entity){
+		if(entity instanceof BaseTreeEntity) {
+			fillTreeNodeParentPath(entity);
+		}
 	}
 
 	@Override
@@ -221,6 +224,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * 用于更新之前的自动填充等场景调用
 	 */
 	protected void beforeUpdateEntity(T entity){
+		if(entity instanceof BaseTreeEntity) {
+			fillTreeNodeParentPath(entity);
+		}
 	}
 
 	@Override
@@ -263,8 +269,35 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean createOrUpdateEntity(T entity) {
+		if(entity instanceof BaseTreeEntity) {
+			fillTreeNodeParentPath(entity);
+		}
 		boolean success = super.saveOrUpdate(entity);
 		return success;
+	}
+
+	/**
+	 * 填充树节点父级path
+	 * @param entity
+	 */
+	private void fillTreeNodeParentPath(T entity) {
+		BaseTreeEntity treeEntity = (BaseTreeEntity) entity;
+		if(V.isEmpty(treeEntity.getParentId())) {
+			return;
+		}
+		BaseTreeEntity parentNode = (BaseTreeEntity) getEntity(treeEntity.getParentId());
+		if(parentNode != null) {
+			String parentIdsPath = parentNode.getParentIdsPath();
+			if(parentIdsPath == null) {
+				parentIdsPath = "";
+			}
+			else if(!S.endsWith(parentIdsPath, Cons.SEPARATOR_COMMA)) {
+				parentIdsPath += Cons.SEPARATOR_COMMA;
+			}
+			parentIdsPath += treeEntity.getParentId();
+			treeEntity.setParentIdsPath(parentIdsPath);
+			log.debug("自动填充 parentIdsPath = {}", parentIdsPath);
+		}
 	}
 
 	@Override

@@ -35,7 +35,7 @@ const visible = ref(false)
 
 const oldUsername = ref<string>()
 
-const switchType = (type: boolean) => {
+const switchType = (type: boolean | number | string) => {
   if (type) {
     model.value.username = oldUsername.value
     return
@@ -203,7 +203,7 @@ const rules: FormRules = {
         </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="birthday" label="生日">
-            <el-input v-model="model.birthday" placeholder="请输入编号" />
+            <el-date-picker v-model="model.birthday" value-format="YYYY-MM-DD" type="date" placeholder="请选择生日" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
