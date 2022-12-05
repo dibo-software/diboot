@@ -60,9 +60,11 @@ export interface Input {
   prop: string
   label?: string
   placeholder?: string
+
   rules?: FormItemRule[]
   required?: boolean
   unique?: boolean
+  defaultVal?: unknown
 }
 
 export interface InputText extends Input {
