@@ -45,6 +45,7 @@ declare module '@vue/runtime-core' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElIconElemeFilled: typeof import('@element-plus/icons-vue')['ElemeFilled']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
@@ -88,6 +89,7 @@ declare module '@vue/runtime-core' {
     RichRead: typeof import('@/components/rich/Read.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Watermark: typeof import('@/components/watermark/index.vue')['default']
   }
   export interface ComponentCustomProperties {
     vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
