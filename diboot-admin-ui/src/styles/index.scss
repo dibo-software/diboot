@@ -25,6 +25,7 @@
   width: 100% !important;
 
   .el-input__wrapper {
+    width: -moz-available;
     width: -webkit-fill-available;
   }
 }
