@@ -170,7 +170,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :placeholder="config.placeholder"
       :multiple="config.multiple"
       :remote="config.remote"
-      :remote-method="remoteFilter"
+      :remote-method="config.remote ? remoteFilter : undefined"
       :loading="lazyLoading"
       @change="handleChange"
     >

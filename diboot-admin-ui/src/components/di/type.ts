@@ -74,7 +74,7 @@ export interface InputText extends Input {
 
 export interface Textarea extends Omit<InputText, 'type'> {
   type: 'textarea'
-  autosize?: boolean | { minRows: number; maxRows: number }
+  autosize?: boolean | { minRows?: number; maxRows?: number }
 }
 
 export interface Markdown extends Input {
