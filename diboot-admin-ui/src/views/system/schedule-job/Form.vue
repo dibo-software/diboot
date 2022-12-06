@@ -137,7 +137,7 @@ const jobChange = (jobKey: string) => {
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">提交</el-button>
+      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">保存</el-button>
     </template>
   </el-dialog>
 </template>

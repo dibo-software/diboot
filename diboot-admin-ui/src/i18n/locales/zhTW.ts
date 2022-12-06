@@ -5,7 +5,7 @@ const zhTW: Locale = {
   operation: {
     create: '新建',
     detail: '詳情',
-    update: '更新',
+    update: '編輯',
     delete: '刪除',
     batchDelete: '批量刪除',
     import: '導入',
