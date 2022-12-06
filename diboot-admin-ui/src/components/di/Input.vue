@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DiInput">
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
 import type { FormItem, Upload } from './type'
 import type { FormItemRule } from 'element-plus/es/tokens/form'
 import type { UploadRawFile, UploadFile } from 'element-plus'
@@ -267,7 +267,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       <el-icon v-if="config.listType === 'picture-card'">
         <Plus />
       </el-icon>
-      <el-button v-else>上传文件</el-button>
+      <el-button v-else :icon="UploadIcon">上传文件</el-button>
       <template #tip>
         <div v-if="config.placeholder" class="el-upload__tip">
           {{ config.placeholder }}
