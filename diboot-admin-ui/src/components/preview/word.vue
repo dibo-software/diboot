@@ -3,11 +3,12 @@ import { renderAsync } from 'docx-preview'
 import { print } from '@/utils/print'
 
 const props = defineProps<{
-  file: string | Blob | ArrayBuffer // 文件流
+  // string: 文件uri ;  Blob | ArrayBuffer: 文件流
+  value: string | Blob | ArrayBuffer
 }>()
 
-const container = ref() // 展示word的div
-const downloadBlob = ref<Blob | ArrayBuffer>()
+const container = ref()
+const context = ref<Blob | ArrayBuffer>()
 const fileName = ref('')
 
 /**
@@ -19,31 +20,36 @@ const wordPreview = (file: Blob | ArrayBuffer) => {
 }
 
 watch(
-  () => props.file,
+  () => props.value,
   value => {
     if (typeof value === 'string') {
       if (value) {
-        api.download(value).then(res => {
-          if (res.data) {
-            if (res.filename) fileName.value = res.filename
-            downloadBlob.value = res.data
-            wordPreview(res.data)
-          }
-        })
+        api
+          .download(value)
+          .then(res => {
+            if (res.data) {
+              if (res.filename) fileName.value = res.filename
+              context.value = res.data
+              wordPreview(res.data)
+            }
+          })
+          .catch(err => {
+            ElMessage.error(err.msg || err.message || '获取文件失败')
+          })
       }
-    } else wordPreview((downloadBlob.value = value))
+    } else wordPreview((context.value = value))
   },
   { immediate: true }
 )
 
 const date = new Date()
-const currDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-const download = () => {
+const download = (filename?: string) => {
+  if (!context.value) return ElMessage.error('文件内容为空')
   const elink = document.createElement('a')
-  elink.download = fileName.value || currDate + '.docx'
+  elink.download =
+    filename || fileName.value || date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + '.docx'
   elink.style.display = 'none'
-  let fileBlob
-  if (downloadBlob.value)  fileBlob = new Blob([downloadBlob.value])
+  const fileBlob = context.value instanceof Blob ? context.value : new Blob([context.value])
   if (fileBlob) elink.href = URL.createObjectURL(fileBlob)
   document.body.appendChild(elink)
   elink.click()

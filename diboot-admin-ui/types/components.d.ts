@@ -86,6 +86,7 @@ declare module '@vue/runtime-core' {
     MdEditor: typeof import('@/components/md/Editor.vue')['default']
     MdRead: typeof import('@/components/md/Read.vue')['default']
     PreviewPdf: typeof import('@/components/preview/pdf.vue')['default']
+    PreviewWord: typeof import('@/components/preview/word.vue')['default']
     RichEditor: typeof import('@/components/rich/Editor.vue')['default']
     RichRead: typeof import('@/components/rich/Read.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
