@@ -53,7 +53,7 @@ service.interceptors.response.use(
           message = '服务器好像开小差了，重试下吧！'
           break
         case 400:
-          message = '提交数据出错'
+          message = '保存数据出错'
           break
         case 401:
           message = '没有权限'

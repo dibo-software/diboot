@@ -122,7 +122,7 @@ const checkCodeDuplicate = (rule: unknown, value: unknown, callback: (error?: st
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="submitPost(modle.list, formRef)">提交</el-button>
+      <el-button type="primary" :loading="submitting" @click="submitPost(modle.list, formRef)">保存</el-button>
     </template>
   </el-dialog>
 </template>

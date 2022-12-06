@@ -173,7 +173,7 @@ const clickNode = (id?: string) => (parent.value = id)
 
       <div class="bottom-operation">
         <el-button size="default" @click="cancel">取消</el-button>
-        <el-button size="default" type="primary" @click="confirm">确认</el-button>
+        <el-button size="default" type="primary" @click="confirm">保存</el-button>
       </div>
     </div>
   </el-dialog>

@@ -60,7 +60,7 @@ export default (option: FormOption) => {
       successCallback(res.data ?? (id as string))
       return true
     } catch (e: any) {
-      ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
+      ElMessage.error(e.msg || e.message || (e.length ? e : '保存失败'))
       return false
     } finally {
       submitting.value = false
@@ -84,7 +84,7 @@ export default (option: FormOption) => {
       successCallback(res.data)
       return true
     } catch (e: any) {
-      ElMessage.error(e.msg || e.message || (e.length ? e : '提交失败'))
+      ElMessage.error(e.msg || e.message || (e.length ? e : '保存失败'))
       return false
     } finally {
       submitting.value = false

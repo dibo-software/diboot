@@ -204,9 +204,9 @@ defineExpose({ open })
       <span class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
         <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
-          >确认并继续添加
+          >保存并继续
         </el-button>
-        <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">确认</el-button>
+        <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">保存</el-button>
       </span>
     </template>
   </el-dialog>
