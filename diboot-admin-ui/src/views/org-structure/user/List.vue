@@ -111,7 +111,7 @@ const deletePermission = checkPermission('delete')
       <el-table-column prop="userNum" label="员工编号" />
       <el-table-column prop="genderLabel" label="性别" width="80">
         <template #default="{ row }">
-          <el-tag :color="row.genderLabel?.ext?.color" effect="dark" type="info">
+          <el-tag :color="row.genderLabel?.ext?.color" effect="dark">
             {{ row.genderLabel?.label }}
           </el-tag>
         </template>
@@ -119,7 +119,7 @@ const deletePermission = checkPermission('delete')
       <el-table-column prop="mobilePhone" label="电话" />
       <el-table-column prop="genderLabel" label="状态">
         <template #default="{ row }">
-          <el-tag :color="row.statusLabel?.ext?.color" effect="dark" type="info">
+          <el-tag :color="row.statusLabel?.ext?.color" effect="dark">
             {{ row.statusLabel?.label }}
           </el-tag>
         </template>
