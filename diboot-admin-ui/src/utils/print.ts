@@ -1,8 +1,8 @@
 const currDom = ref('')
-export const Print = (dom: Array<HTMLElement | null>) => {
+export const print = (...dom: Array<HTMLElement>) => {
   currDom.value = ''
   for (let i = 0; i < dom.length; i++) {
-    currDom.value += dom[i]?.outerHTML + getStyle()
+    currDom.value += dom[i].outerHTML + getStyle()
   }
   writeIframe(currDom.value)
 }
