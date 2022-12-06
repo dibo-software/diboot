@@ -44,7 +44,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     meta: { hidden: true, ignoreAuth: true },
     redirect: to => {
       return auth.getToken()
-        ? { name: '404', query: { path: to.path }, replace: true }
+        ? { name: '404', query: { path: to.path, ...to.query }, replace: true }
         : { name: 'Login', query: { redirect: to.path }, replace: true }
     }
   },

@@ -31,7 +31,7 @@ export function createRouterGuard(router: Router) {
 
         const redirectPath = ((to.name === '404' && to.query.path) || from.query.redirect || to.path) as string
         const redirect = decodeURIComponent(redirectPath)
-        return to.path === redirect ? { ...to, replace: true } : { path: redirect }
+        return to.path === redirect ? to : { path: redirect, query: { ...to.query, path: undefined } }
       } catch (e) {
         // 获取数据异常
         console.log('动态加载授权路由失败', e)
