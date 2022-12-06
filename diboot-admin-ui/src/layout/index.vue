@@ -280,6 +280,15 @@ const vDrag: Directive<HTMLElement> = {
     .el-menu {
       width: 70px;
       margin-top: 10px;
+      overflow-y: auto;
+      height: calc(100vh - 60px);
+      scrollbar-width: none; // 火狐
+      -ms-overflow-style: none; // IE
+
+      &::-webkit-scrollbar {
+        // 谷歌  safari
+        display: none;
+      }
 
       .el-menu-item {
         height: 60px;
