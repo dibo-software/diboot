@@ -39,6 +39,45 @@ const selected: RelatedData = reactive({ type: props.dataType, label: dataLabel 
 
 const { loadRelatedData } = useOption({})
 
+// 选择器显隐
+const visible = ref(false)
+const open = (val = true) => {
+  if (val) visible.value = val
+}
+
+const confirm = () => {
+  selectedList.value = _.clone(selectedRows.value)
+  if (!selectedList.value?.length) {
+    selectedKeys.value = props.multiple ? [] : undefined
+  } else if (props.multiple) {
+    selectedKeys.value = selectedList.value.map(e => `${e.value}`)
+  } else {
+    selectedKeys.value = selectedList.value[0].value
+  }
+  visible.value = false
+}
+
+const cancel = () => {
+  visible.value = false
+  selectedRows.value = _.clone(selectedList.value)
+}
+
+const removeTag = (val: string) => (selectedRows.value = selectedRows.value.filter(e => e.value !== val))
+
+const remove = (val: string) => {
+  const keys = selectedKeys.value as string[]
+  const index = keys.indexOf(val)
+  keys.splice(index, 1)
+  selectedRows.value.splice(index, 1)
+  selectedList.value.splice(index, 1)
+}
+
+const clear = () => {
+  selectedKeys.value = props.multiple ? [] : undefined
+  selectedRows.value.length = 0
+  selectedList.value.length = 0
+}
+
 watch(
   () => props.modelValue,
   (newValue, oldValue) => {
@@ -77,39 +116,6 @@ watch(
   { immediate: true }
 )
 
-const confirm = () => {
-  selectedList.value = _.clone(selectedRows.value)
-  if (!selectedList.value?.length) {
-    selectedKeys.value = props.multiple ? [] : undefined
-  } else if (props.multiple) {
-    selectedKeys.value = selectedList.value.map(e => `${e.value}`)
-  } else {
-    selectedKeys.value = selectedList.value[0].value
-  }
-  visible.value = false
-}
-
-const cancel = () => {
-  visible.value = false
-  selectedRows.value = _.clone(selectedList.value)
-}
-
-const removeTag = (val: string) => (selectedRows.value = selectedRows.value.filter(e => e.value !== val))
-
-const remove = (val: string) => {
-  const keys = selectedKeys.value as string[]
-  const index = keys.indexOf(val)
-  keys.splice(index, 1)
-  selectedRows.value.splice(index, 1)
-  selectedList.value.splice(index, 1)
-}
-
-const clear = () => {
-  selectedKeys.value = props.multiple ? [] : undefined
-  selectedRows.value.length = 0
-  selectedList.value.length = 0
-}
-
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue?: ModelValue): void
   (e: 'change', modelValue?: ModelValue): void
@@ -123,12 +129,6 @@ watch(
   },
   { deep: true }
 )
-
-// 选择器显隐
-const visible = ref(false)
-const open = (val = true) => {
-  if (val) visible.value = val
-}
 
 defineExpose({ open, clear })
 
