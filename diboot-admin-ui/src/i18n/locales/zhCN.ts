@@ -3,7 +3,7 @@ const zhCN = {
   operation: {
     create: '新建',
     detail: '详情',
-    update: '更新',
+    update: '编辑',
     delete: '删除',
     batchDelete: '批量删除',
     import: '导入',
