@@ -43,10 +43,16 @@ const isPrimaryPositionChange = (index: number) => {
 // 添加数据字典条目
 const addItem = () => {
   dataList.value.push(_.cloneDeep(initModel))
+  // 第一条数据默认选中主岗
+  dataList.value.length === 1 && (dataList.value[0].isPrimaryPosition = true)
 }
 // 移除数据字典条目
 const removeItem = (index: number) => {
   dataList.value.splice(index, 1)
+  // 当删除的是选中主岗的数据，则让数组第一条数据选中主岗
+  if (dataList.value.length !== 0 && !dataList.value.some(v => v.isPrimaryPosition)) {
+    dataList.value[0].isPrimaryPosition = true
+  }
 }
 // 清空数据字典
 const clearDataList = () => {
