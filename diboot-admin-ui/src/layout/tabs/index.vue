@@ -112,6 +112,9 @@ const fullScreenTabsView = () => {
   else fullScreen.value = 'Tabs'
   refreshButton()
 }
+
+provide('full-screen', (open = true) => fullScreenTabView(open ? route : undefined))
+provide('full-screen-tabs', fullScreenTabsView)
 </script>
 
 <template>
