@@ -66,16 +66,18 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="container" />
+  <el-scrollbar>
+    <div ref="container" />
+  </el-scrollbar>
 </template>
 
 <style scoped lang="scss">
 :deep(.docx-wrapper) {
-  padding: 0;
+  padding: 0 !important;
   background: #ffffff;
 }
 :deep(.docx-wrapper section.docx) {
   box-shadow: 0 0 0;
-  padding: 0 !important;
+  padding-top: 0 !important;
 }
 </style>

@@ -56,6 +56,7 @@ specifiers:
   vue-cropper: ^1.0.5
   vue-fuse: ^4.1.1
   vue-i18n: ^9.2.2
+  vue-pdf-embed: ^1.1.5
   vue-router: ^4.1.6
   vue-tsc: ^1.0.9
   vuedraggable: 4.1.0
@@ -84,6 +85,7 @@ dependencies:
   vue-cropper: registry.npmmirror.com/vue-cropper/1.0.5
   vue-fuse: registry.npmmirror.com/vue-fuse/4.1.1_fuse.js@6.6.2+vue@3.2.45
   vue-i18n: registry.npmmirror.com/vue-i18n/9.2.2_vue@3.2.45
+  vue-pdf-embed: registry.npmmirror.com/vue-pdf-embed/1.1.5_vue@3.2.45
   vue-router: registry.npmmirror.com/vue-router/4.1.6_vue@3.2.45
   vuedraggable: registry.npmmirror.com/vuedraggable/4.1.0_vue@3.2.45
 
@@ -6400,6 +6402,17 @@ packages:
       '@intlify/shared': registry.npmmirror.com/@intlify/shared/9.2.2
       '@intlify/vue-devtools': registry.npmmirror.com/@intlify/vue-devtools/9.2.2
       '@vue/devtools-api': registry.npmmirror.com/@vue/devtools-api/6.4.5
+      vue: registry.npmmirror.com/vue/3.2.45
+    dev: false
+
+  registry.npmmirror.com/vue-pdf-embed/1.1.5_vue@3.2.45:
+    resolution: {integrity: sha512-aOUKlPFML9abOmFJgCuDujzcXmjN1Ck3X3vt0h2N/EGZYASS9TRXu96s+NzwZDr13iTZ8LGskLOzzXvf7FIpwQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-pdf-embed/-/vue-pdf-embed-1.1.5.tgz}
+    id: registry.npmmirror.com/vue-pdf-embed/1.1.5
+    name: vue-pdf-embed
+    version: 1.1.5
+    peerDependencies:
+      vue: ^2.x || ^3.x
+    dependencies:
       vue: registry.npmmirror.com/vue/3.2.45
     dev: false
 

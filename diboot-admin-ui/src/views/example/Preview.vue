@@ -48,7 +48,7 @@ const pdfPreview = ref()
             <div class="item">打印内容2</div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="word预览打印" name="wordPreview" lazy>
+        <el-tab-pane label="word预览打印" name="wordPreview" lazy style="height: 675px">
           <el-upload
             :http-request="httpRequest"
             :show-file-list="false"
@@ -60,6 +60,19 @@ const pdfPreview = ref()
           <el-button @click="wordPreview?.print()">打印</el-button>
           <el-button @click="wordPreview?.download()">下载</el-button>
           <preview-word ref="wordPreview" :value="fileValue" />
+        </el-tab-pane>
+        <el-tab-pane label="pdf预览打印" name="pdfPreview" lazy style="height: 675px">
+          <el-upload
+            :http-request="httpRequest"
+            :show-file-list="false"
+            accept=".pdf"
+            style="display: inline-block; margin-right: 10px"
+          >
+            <el-button> 上传文件</el-button>
+          </el-upload>
+          <el-button @click="pdfPreview?.print()">打印</el-button>
+          <el-button @click="pdfPreview?.download()">下载</el-button>
+          <preview-pdf ref="pdfPreview" :value="fileValue" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
