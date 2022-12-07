@@ -21,7 +21,10 @@
   font-weight: bold;
 }
 
-.el-select, .el-date-editor, .el-input-number, .el-cascader {
+.el-select,
+.el-date-editor,
+.el-input-number,
+.el-cascader {
   width: 100% !important;
 
   .el-input__wrapper {
@@ -60,7 +63,7 @@
     width: 100%;
     box-sizing: border-box;
 
-    > div:last-child {
+    >div:last-child {
       margin-left: auto;
     }
 
@@ -69,8 +72,7 @@
     }
   }
 
-  .list-body {
-  }
+  .list-body {}
 
   .el-pagination {
     margin: 5px;
@@ -81,8 +83,9 @@
   word-wrap: break-word;
   word-break: break-all;
 }
+
 // 树节点扁平化
-.el-tree-node.is-expanded.flat-tree-node-container > .el-tree-node__children {
+.el-tree-node.is-expanded.flat-tree-node-container>.el-tree-node__children {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -99,7 +102,7 @@
     margin-left: auto;
     margin-right: 8px;
 
-    .el-button + .el-button {
+    .el-button+.el-button {
       margin-left: 8px;
     }
   }
@@ -107,4 +110,8 @@
   &:hover .operation-container {
     display: inline-block;
   }
+}
+
+.el-tag {
+  border-width: 0 !important;
 }

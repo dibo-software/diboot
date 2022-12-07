@@ -112,12 +112,12 @@ const authMenu = [
         }
       },
       {
-        path: 'print',
-        name: 'Print',
+        path: 'preview',
+        name: 'Preview',
         meta: {
           title: '打印',
           icon: 'Element:Printer',
-          componentPath: prefix + 'example/Print.vue',
+          componentPath: prefix + 'example/Preview.vue',
           sort: 3
         }
       }

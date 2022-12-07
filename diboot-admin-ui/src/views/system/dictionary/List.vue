@@ -105,7 +105,6 @@ function rowClick(row: DictionaryTableExpand) {
                 type="info"
                 effect="dark"
                 class="dict-item"
-                style="border: none"
                 :color="item.extension?.color"
               >
                 {{ item.itemName }}({{ item.itemValue }})
