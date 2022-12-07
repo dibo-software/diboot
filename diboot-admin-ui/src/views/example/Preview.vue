@@ -2,8 +2,6 @@
 import { print } from '@/utils/print'
 import type { UploadRequestOptions } from 'element-plus'
 
-const activeKey = ref('primaryPrint')
-
 const printOne = ref()
 const printTwo = ref()
 const primaryPrint = () => {
@@ -29,11 +27,45 @@ const pdfPreview = ref()
 </script>
 
 <template>
-  <el-main>
-    <el-card shadow="never">
-      <el-tabs v-model="activeKey" tab-position="top">
-        <el-tab-pane label="普通打印" name="primaryPrint">
-          <el-button type="primary" @click="primaryPrint">普通打印</el-button>
+  <el-main class="fullHeight">
+    <el-card shadow="never" class="cardHeight">
+      <el-tabs tab-position="top" class="fullHeight">
+        <el-tab-pane label="word预览打印" lazy class="fullHeight">
+          <div class="fullHeight" style="display: flex; flex-direction: column">
+            <div>
+              <el-upload
+                :http-request="httpRequest"
+                :show-file-list="false"
+                accept=".docx"
+                style="display: inline-block; margin-right: 10px"
+              >
+                <el-button> 上传文件</el-button>
+              </el-upload>
+              <el-button @click="wordPreview?.print()">打印</el-button>
+              <el-button @click="wordPreview?.download()">下载</el-button>
+            </div>
+            <preview-word ref="wordPreview" :value="fileValue" style="flex: 1" />
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="pdf预览打印" lazy class="fullHeight">
+          <div class="fullHeight" style="display: flex; flex-direction: column">
+            <div>
+              <el-upload
+                :http-request="httpRequest"
+                :show-file-list="false"
+                accept=".pdf"
+                style="display: inline-block; margin-right: 10px"
+              >
+                <el-button> 上传文件</el-button>
+              </el-upload>
+              <el-button @click="pdfPreview?.print()">打印</el-button>
+              <el-button @click="pdfPreview?.download()">下载</el-button>
+            </div>
+            <preview-pdf ref="pdfPreview" :value="fileValue" style="flex: 1" />
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="页面元素打印">
+          <el-button type="primary" @click="primaryPrint">打印</el-button>
           <div style="height: 20px" />
           <div ref="printOne" class="printMain">
             <div class="item">
@@ -47,32 +79,6 @@ const pdfPreview = ref()
           <div ref="printTwo" class="printMain">
             <div class="item">打印内容2</div>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="word预览打印" name="wordPreview" lazy style="height: 675px">
-          <el-upload
-            :http-request="httpRequest"
-            :show-file-list="false"
-            accept=".docx"
-            style="display: inline-block; margin-right: 10px"
-          >
-            <el-button> 上传文件</el-button>
-          </el-upload>
-          <el-button @click="wordPreview?.print()">打印</el-button>
-          <el-button @click="wordPreview?.download()">下载</el-button>
-          <preview-word ref="wordPreview" :value="fileValue" />
-        </el-tab-pane>
-        <el-tab-pane label="pdf预览打印" name="pdfPreview" lazy style="height: 675px">
-          <el-upload
-            :http-request="httpRequest"
-            :show-file-list="false"
-            accept=".pdf"
-            style="display: inline-block; margin-right: 10px"
-          >
-            <el-button> 上传文件</el-button>
-          </el-upload>
-          <el-button @click="pdfPreview?.print()">打印</el-button>
-          <el-button @click="pdfPreview?.download()">下载</el-button>
-          <preview-pdf ref="pdfPreview" :value="fileValue" />
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -91,5 +97,18 @@ const pdfPreview = ref()
 .printMain p {
   margin-top: 20px;
   color: #999;
+}
+
+:deep(.el-card__body) {
+  height: calc(100% - -50px);
+}
+:deep(.el-tabs__content) {
+  height: calc(100% - 150px);
+}
+.fullHeight {
+  height: 100%;
+}
+.cardHeight {
+  height: 99%;
 }
 </style>

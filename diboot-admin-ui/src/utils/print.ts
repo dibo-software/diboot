@@ -1,10 +1,10 @@
-const currDom = ref('')
 export const print = (...dom: Array<HTMLElement>) => {
-  currDom.value = ''
-  for (let i = 0; i < dom.length; i++) {
-    currDom.value += dom[i].outerHTML + getStyle()
+  let currDom = ''
+  for (const htmlElement of dom) {
+    if (!htmlElement) continue
+    currDom += htmlElement.outerHTML + getStyle()
   }
-  writeIframe(currDom.value)
+  writeIframe(currDom)
 }
 
 /**
