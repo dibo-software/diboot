@@ -123,7 +123,7 @@ export default ({
     return new Promise<LabelValue[]>(resolve => {
       api
         .get<LabelValue[]>(`${baseApi}/load-related-data${parentId ? `/${parentId}` : ''}`, relatedDataLoader)
-        .then(res => resolve(res.data ?? empty))
+        .then(res => resolve(res.data))
         .catch(err => {
           ElNotification.error(err?.msg || err?.message || (err?.length ? err : '获取选项数据失败'))
           resolve(empty)

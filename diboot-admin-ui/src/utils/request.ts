@@ -90,12 +90,11 @@ function resetPingTimer() {
   }, TOKEN_REFRESH_EXPIRE * 60 * 1000)
 }
 
-export interface ApiData<T> {
+export interface ApiData<T = never> {
   code: number
   msg: string
-  data?: T
+  data: T
   page?: Pagination
-  filename?: string
 }
 
 interface Pagination {
@@ -127,10 +126,10 @@ function unpack<T>(request: Promise<AxiosResponse<ApiData<T>>>): Promise<ApiData
 }
 
 const api = {
-  get<T>(url: string, params?: unknown) {
+  get<T = never>(url: string, params?: unknown) {
     return unpack(service.get<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, { params }))
   },
-  post<T>(url: string, data?: unknown) {
+  post<T = never>(url: string, data?: unknown) {
     return unpack(
       service.post<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, JSON.stringify(data), {
         headers: {
@@ -139,7 +138,7 @@ const api = {
       })
     )
   },
-  put<T>(url: string, data?: unknown) {
+  put<T = never>(url: string, data?: unknown) {
     return unpack(
       service.put<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, JSON.stringify(data), {
         headers: {
@@ -148,7 +147,7 @@ const api = {
       })
     )
   },
-  patch<T>(url: string, data?: unknown) {
+  patch<T = never>(url: string, data?: unknown) {
     return unpack(
       service.patch<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, JSON.stringify(data), {
         headers: {
@@ -157,7 +156,7 @@ const api = {
       })
     )
   },
-  delete<T>(url: string, params?: unknown) {
+  delete<T = never>(url: string, params?: unknown) {
     return unpack(
       service.delete<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, {
         params,
@@ -174,7 +173,7 @@ const api = {
    * @param url
    * @param formData
    */
-  upload<T>(url: string, formData: FormData) {
+  upload<T = never>(url: string, formData: FormData) {
     return unpack(service.post<ApiData<T>, AxiosResponse<ApiData<T>>, unknown>(url, formData))
   },
   /**
@@ -185,7 +184,7 @@ const api = {
    * @param onDownloadProgress
    */
   download(url: string, params?: unknown, onDownloadProgress?: (percentage: number) => void) {
-    return new Promise<ApiData<ArrayBuffer>>((resolve, reject) => {
+    return new Promise<ApiData<ArrayBuffer> & { filename: string }>((resolve, reject) => {
       service
         .get<ArrayBuffer, AxiosResponse<ArrayBuffer>, unknown>(url, {
           responseType: 'arraybuffer',
@@ -224,7 +223,7 @@ const api = {
    * @param onDownloadProgress
    */
   postDownload(url: string, data?: unknown, onDownloadProgress?: (percentage: number) => void) {
-    return new Promise<ApiData<ArrayBuffer>>((resolve, reject) => {
+    return new Promise<ApiData<ArrayBuffer> & { filename: string }>((resolve, reject) => {
       service
         .post<ArrayBuffer, AxiosResponse<ArrayBuffer>, unknown>(url, JSON.stringify(data), {
           responseType: 'arraybuffer',

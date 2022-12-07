@@ -38,6 +38,7 @@
     "vue-cropper": "^1.0.5",
     "vue-fuse": "^4.1.1",
     "vue-i18n": "^9.2.2",
+    "vue-pdf-embed": "^1.1.5",
     "vue-router": "^4.1.6",
     "vuedraggable": "4.1.0"
   },

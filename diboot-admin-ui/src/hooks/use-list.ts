@@ -64,15 +64,14 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
       api
         .get<Array<T>>(option.listApi ? option.listApi : option.baseApi, buildQueryParam())
         .then(res => {
-          dataList.splice(0)
-          if (res.data) dataList.push(...(res.data ?? []))
-          pagination.pageSize = res.page?.pageSize
-          pagination.current = res.page?.pageIndex
-          pagination.total = res.page?.totalCount ? Number(res.page.totalCount) : 0
-          pagination.orderBy = res.page?.orderBy
-          if (option.loadSuccess !== undefined) {
-            option.loadSuccess()
-          }
+          dataList.length = 0
+          dataList.push(...res.data)
+          const { pageSize, pageIndex, totalCount, orderBy } = res.page ?? {}
+          pagination.pageSize = pageSize
+          pagination.current = pageIndex
+          pagination.total = totalCount ? Number(totalCount) : 0
+          pagination.orderBy = orderBy
+          if (option.loadSuccess !== undefined) option.loadSuccess()
           resolve()
         })
         .catch(err => {
