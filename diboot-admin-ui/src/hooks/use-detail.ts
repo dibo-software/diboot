@@ -20,7 +20,7 @@ export default <T>(baseApi: string, init: Partial<T> = {}) => {
       api
         .get<T>(`${baseApi}/${unref(id)}`)
         .then(res => {
-          model.value = res.data ?? init
+          model.value = res.data
           resolve()
         })
         .catch(err => {
