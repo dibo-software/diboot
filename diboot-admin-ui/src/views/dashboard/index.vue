@@ -79,7 +79,7 @@ const currentDate = ref(new Date())
 <template>
   <el-row :gutter="10" style="display: flex">
     <el-col :lg="10" :md="24" :xs="24">
-      <el-card class="h100">
+      <el-card class="h100" shadow="hover">
         <div class="card-title">欢迎</div>
         <div class="card-body">
           <el-image class="mb-20" style="width: 100px; height: 100px" :src="logoSrc" />
@@ -108,7 +108,7 @@ const currentDate = ref(new Date())
       </el-card>
     </el-col>
     <el-col :lg="7" :md="12" :xs="24" style="display: flex; flex-direction: column">
-      <el-card class="mb-10">
+      <el-card class="mb-10" shadow="hover">
         <div class="card-title mb-20">关于项目</div>
         <div class="mainColor mb-10" style="font-weight: bold; font-size: 16px">基础组件化繁为简，高效工具以简驭繁</div>
         <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
@@ -120,20 +120,20 @@ const currentDate = ref(new Date())
           <span style="margin-left: 5px">1.5k</span>
         </a>
       </el-card>
-      <el-card style="flex: 1">
+      <el-card style="flex: 1" shadow="hover">
         <div class="card-title">活跃度</div>
         <Chart :option="radarChart" style="height: 300px" />
       </el-card>
     </el-col>
     <el-col :lg="7" :md="12" :xs="24">
-      <el-card class="mb-10">
+      <el-card class="mb-10" shadow="hover">
         <el-calendar v-model="currentDate">
           <template #header="{ date }">
             <span>{{ date }}</span>
           </template>
         </el-calendar>
       </el-card>
-      <el-card>
+      <el-card shadow="hover">
         <div class="card-title mb-20">语言</div>
         <div v-for="{ label, value } in progress" :key="label" style="display: flex; align-items: center" class="mb-10">
           <span style="width: 80px; text-align: right">{{ label }}</span>
@@ -182,10 +182,6 @@ a {
 
 .el-card {
   font-size: 14px;
-
-  &:hover {
-    box-shadow: var(--el-box-shadow-dark);
-  }
 }
 
 .el-calendar {
