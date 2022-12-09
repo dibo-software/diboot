@@ -7,6 +7,7 @@ type ModelValue = string | string[]
 interface ListSelectorProps extends Omit<ListSelector, keyof Omit<Input, 'placeholder'> | 'type'> {
   modelValue?: ModelValue
   placeholder?: string
+  disabled?: boolean
 
   // vue语法限制导致只能在当前文件中再次定义
   // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
@@ -144,6 +145,7 @@ const clickNode = (id?: string) => (parent.value = id)
       :multiple="multiple"
       popper-class="hide"
       :placeholder="placeholder"
+      :disabled="disabled"
       @remove-tag="remove"
       @clear="clear"
       @visible-change="open"
