@@ -100,25 +100,23 @@ const fullScreen = ref<boolean | 'Tabs'>()
 // 全屏指定Tab
 const fullScreenTabView = (tab?: RouteLocationNormalized) => {
   if (tab == null) fullScreen.value = false
-  else {
-    if (tab.name !== route.name) router.push(tab.fullPath).finally()
-    fullScreen.value = true
-  }
+  else if (tab.name === route.name) fullScreen.value = true
+  else router.push(tab.fullPath).then(() => (fullScreen.value = true))
   refreshButton()
 }
-// 全屏Tabs
-const fullScreenTabsView = () => {
-  if (fullScreen.value) fullScreen.value = false
-  else fullScreen.value = 'Tabs'
+// 全屏含Tabs
+const fullScreenTabsView = (open = !fullScreen.value) => {
+  fullScreen.value = open ? 'Tabs' : false
   refreshButton()
 }
 
 provide('full-screen', (open = true) => fullScreenTabView(open ? route : undefined))
 provide('full-screen-tabs', fullScreenTabsView)
+provide('update-tab-title', (title: string) => title && viewTabsStore.updateTabTitle(route, title))
 </script>
 
 <template>
-  <div :class="fullScreen === 'Tabs' ? 'fullScreen' : ''">
+  <div :class="fullScreen === 'Tabs' ? 'full-screen' : ''">
     <div v-if="appStore.enableTabs" class="tabs-hull">
       <el-icon
         v-show="showButtons"
@@ -196,8 +194,8 @@ provide('full-screen-tabs', fullScreenTabsView)
         </template>
       </el-dropdown>
     </div>
-    <div :class="fullScreen === true ? 'fullScreen' : ''">
-      <div v-show="fullScreen === true" class="fullScreen-close" title="关闭全屏" @click="fullScreenTabView()">
+    <div :class="fullScreen === true ? 'full-screen' : ''">
+      <div v-show="fullScreen === true" class="full-screen-close" title="关闭全屏" @click="fullScreenTabView()">
         <el-icon :size="20">
           <close-bold />
         </el-icon>
@@ -301,18 +299,18 @@ provide('full-screen-tabs', fullScreenTabsView)
   }
 }
 
-.fullScreen {
+.full-screen {
   position: absolute;
   width: 100%;
   left: 0;
   top: 0;
 
-  .fullScreen-close {
+  .full-screen-close {
     width: 39px;
     height: 39px;
     border-bottom-left-radius: 100%;
     position: absolute;
-    z-index: 1;
+    z-index: 999;
     top: 0;
     right: 0;
     cursor: pointer;
