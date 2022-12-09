@@ -7,34 +7,47 @@ const props = defineProps<{
 }>()
 
 const fileName = ref<string>('')
-const objectURL = ref<string>()
+const objectURL = ref<string>('')
 
 const revoke = () => objectURL.value && URL.revokeObjectURL(objectURL.value)
+
+const pdfInit = (value: string | Blob | ArrayBuffer) => {
+  if (typeof value === 'string') {
+    api
+      .download(value)
+      .then(res => {
+        revoke()
+        fileName.value = res.filename
+        objectURL.value = URL.createObjectURL(new Blob([res.data]))
+      })
+      .catch(err => ElMessage.error(err.msg || err.message || '获取文件失败'))
+  } else {
+    revoke()
+    objectURL.value = URL.createObjectURL(value instanceof Blob ? value : new Blob([value]))
+  }
+}
 
 watch(
   () => props.value,
   value => {
-    if (!value) return
-    if (typeof value === 'string') {
-      api
-        .download(value)
-        .then(res => {
-          revoke()
-          fileName.value = res.filename
-          objectURL.value = URL.createObjectURL(new Blob([res.data]))
-        })
-        .catch(err => ElMessage.error(err.msg || err.message || '获取文件失败'))
-    } else {
-      revoke()
-      objectURL.value = URL.createObjectURL(value instanceof Blob ? value : new Blob([value]))
-    }
+    if (value) pdfInit(value)
   },
   { immediate: true }
 )
 
 const pdfEmbed = ref()
+const dispaly = ref(true)
+
 defineExpose({
-  print: () => pdfEmbed.value?.print(),
+  print: (value?: string | Blob | ArrayBuffer) => {
+    if (value) {
+      dispaly.value = false
+      pdfInit(value)
+      setTimeout(() => {
+        pdfEmbed.value?.print()
+      }, 100)
+    } else pdfEmbed.value?.print()
+  },
   download: (filename: string) => {
     if (!objectURL.value) return ElMessage.error('文件内容为空')
     const elink = document.createElement('a')
@@ -54,7 +67,7 @@ onBeforeUnmount(() => revoke)
 </script>
 
 <template>
-  <el-scrollbar style="height: 100%">
+  <el-scrollbar v-show="dispaly">
     <vue-pdf-embed ref="pdfEmbed" :source="objectURL" />
   </el-scrollbar>
 </template>

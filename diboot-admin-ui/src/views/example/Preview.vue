@@ -44,7 +44,7 @@ const pdfPreview = ref()
               <el-button @click="wordPreview?.print()">打印</el-button>
               <el-button @click="wordPreview?.download()">下载</el-button>
             </div>
-            <preview-word ref="wordPreview" :value="fileValue" style="flex: 1" />
+            <document-word ref="wordPreview" :value="fileValue" style="flex: 1" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="pdf预览打印" lazy class="fullHeight">
@@ -61,7 +61,7 @@ const pdfPreview = ref()
               <el-button @click="pdfPreview?.print()">打印</el-button>
               <el-button @click="pdfPreview?.download()">下载</el-button>
             </div>
-            <preview-pdf ref="pdfPreview" :value="fileValue" style="flex: 1" />
+            <document-pdf ref="pdfPreview" :value="fileValue" style="flex: 1" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="页面元素打印">
