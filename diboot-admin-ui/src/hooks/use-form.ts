@@ -12,7 +12,7 @@ interface FormOption {
   // 校验成功后置处理函数
   afterValidate?: () => Promise<void> | void
   // 成功回调
-  successCallback: (primaryKey?: string) => void
+  successCallback: (primaryKey: string) => void
 }
 
 export default (option: FormOption) => {
@@ -68,7 +68,7 @@ export default (option: FormOption) => {
   }
 
   /**
-   * 批量提交数据
+   * Post提交数据
    *
    * @param data
    * @param formEl
