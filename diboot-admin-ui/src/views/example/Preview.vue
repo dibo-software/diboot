@@ -1,6 +1,7 @@
 <script setup lang="ts" name="Preview">
 import { print } from '@/utils/print'
 import type { UploadRequestOptions } from 'element-plus'
+import { View } from '@element-plus/icons-vue'
 
 const printOne = ref()
 const printTwo = ref()
@@ -71,7 +72,7 @@ const pdfPreview = ref()
             <div class="item">
               打印内容1
               <el-icon>
-                <el-icon-eleme-filled />
+                <View />
               </el-icon>
               <p class="no-print">忽略打印</p>
             </div>
@@ -102,12 +103,15 @@ const pdfPreview = ref()
 :deep(.el-card__body) {
   height: calc(100% - -50px);
 }
+
 :deep(.el-tabs__content) {
   height: calc(100% - 150px);
 }
+
 .fullHeight {
   height: 100%;
 }
+
 .cardHeight {
   height: 99%;
 }

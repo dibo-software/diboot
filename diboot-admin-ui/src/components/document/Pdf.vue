@@ -12,6 +12,7 @@ const objectURL = ref<string>('')
 const revoke = () => objectURL.value && URL.revokeObjectURL(objectURL.value)
 
 const pdfInit = (value: string | Blob | ArrayBuffer) => {
+  isPropsValue.value = true
   if (typeof value === 'string') {
     api
       .download(value)
@@ -27,10 +28,13 @@ const pdfInit = (value: string | Blob | ArrayBuffer) => {
   }
 }
 
+const isPropsValue = ref(false)
+
 watch(
   () => props.value,
   value => {
     if (value) pdfInit(value)
+    else isPropsValue.value = false
   },
   { immediate: true }
 )
@@ -68,6 +72,6 @@ onBeforeUnmount(() => revoke)
 
 <template>
   <el-scrollbar v-show="dispaly">
-    <vue-pdf-embed ref="pdfEmbed" :source="objectURL" />
+    <vue-pdf-embed v-if="isPropsValue" ref="pdfEmbed" :source="objectURL" />
   </el-scrollbar>
 </template>
