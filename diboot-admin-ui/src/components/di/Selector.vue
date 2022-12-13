@@ -61,6 +61,7 @@ const confirm = () => {
 const cancel = () => {
   visible.value = false
   selectedRows.value = _.clone(selectedList.value)
+  emit('close')
 }
 
 const removeTag = (val: string) => (selectedRows.value = selectedRows.value.filter(e => e.value !== val))
@@ -120,6 +121,7 @@ watch(
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue?: ModelValue): void
   (e: 'change', modelValue?: ModelValue): void
+  (e: 'close'): void
 }>()
 
 watch(
