@@ -16,7 +16,7 @@ const form = reactive({
 const ruleFormRef = ref<FormInstance>()
 
 // 密码校验规则
-const validateNewPassword = (rule: any, value: string, callback: any) => {
+const validateNewPassword = (rule: unknown, value: string, callback: (error?: string | Error) => void) => {
   const result: string = checkPasswordRule(value)
   if (result === '校验通过') {
     callback()
@@ -25,7 +25,7 @@ const validateNewPassword = (rule: any, value: string, callback: any) => {
   }
 }
 
-const validateCheckPassword = (rule: any, value: string, callback: any) => {
+const validateCheckPassword = (rule: unknown, value: string, callback: (error?: string | Error) => void) => {
   if (value !== form.password) {
     callback(new Error('两次输入密码不一致!'))
   } else {
@@ -64,7 +64,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
         .finally(() => (loading.value = false))
     } else {
-      console.log('error submit!')
+      ElMessage.error('更新失败！')
       return false
     }
   })

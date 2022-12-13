@@ -59,7 +59,7 @@ const loading = ref(false)
 const authStore = useAuthStore()
 const getPickAvatar = () => {
   loading.value = true
-  const file: any = dataURLtoFile(imgSrc.value ?? '', filename.value ?? '')
+  const file = dataURLtoFile(imgSrc.value ?? '', filename.value ?? '') as File
   const formData = new FormData()
   formData.set('file', file)
   api

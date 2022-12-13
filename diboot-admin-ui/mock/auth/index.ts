@@ -112,13 +112,23 @@ const authMenu = [
         }
       },
       {
-        path: 'preview',
-        name: 'Preview',
+        path: 'document',
+        name: 'Document',
         meta: {
-          title: '打印',
+          title: '预览打印',
           icon: 'Element:Printer',
-          componentPath: prefix + 'example/Preview.vue',
+          componentPath: prefix + 'example/Document.vue',
           sort: 3
+        }
+      },
+      {
+        path: 'watermarkExample',
+        name: 'WatermarkExample',
+        meta: {
+          title: '水印',
+          icon: 'Element:MagicStick',
+          componentPath: prefix + 'example/WatermarkExample.vue',
+          sort: 4
         }
       }
     ]
