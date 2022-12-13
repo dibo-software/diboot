@@ -60,6 +60,7 @@ export interface Input {
   prop: string
   label?: string
   placeholder?: string
+  disabled?: boolean
 
   rules?: FormItemRule[]
   required?: boolean

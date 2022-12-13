@@ -123,7 +123,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       clearable
       :maxlength="config.maxlength"
       :show-word-limit="!!config.maxlength"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <el-input
@@ -135,11 +135,11 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :autosize="config.autosize"
       :maxlength="config.maxlength"
       :show-word-limit="!!config.maxlength"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <template v-else-if="config.type === 'rich'">
-      <rich-read v-if="disabled" :value="value" :style="{ height: config.height }" />
+      <rich-read v-if="config.disabled || disabled" :value="value" :style="{ height: config.height }" />
       <rich-editor
         v-else
         v-model="value"
@@ -149,7 +149,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       />
     </template>
     <template v-else-if="config.type === 'md'">
-      <md-read v-if="disabled" :value="value" :style="{ height: config.height }" />
+      <md-read v-if="config.disabled || disabled" :value="value" :style="{ height: config.height }" />
       <md-editor v-else v-model="value" :placeholder="config.placeholder" :height="config.height" />
     </template>
     <el-input-number
@@ -162,12 +162,12 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :step-strictly="!config.precision"
       :controls="config.controls === false ? false : undefined"
       :controls-position="config.controls === 'right' ? 'right' : undefined"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <template v-if="config.type === 'boolean'">
-      <el-switch v-if="config.mode === 'switch'" v-model="value" :disabled="disabled" />
-      <el-select v-else v-model="value" clearable :disabled="disabled">
+      <el-switch v-if="config.mode === 'switch'" v-model="value" :disabled="config.disabled || disabled" />
+      <el-select v-else v-model="value" clearable :disabled="config.disabled || disabled">
         <el-option label="是" :value="true" />
         <el-option label="否" :value="false" />
       </el-select>
@@ -182,7 +182,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :remote="config.remote"
       :remote-method="config.remote ? remoteFilter : undefined"
       :loading="lazyLoading"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     >
       <el-option v-for="(item, index) in relatedDatas" :key="index" v-bind="item" />
@@ -200,7 +200,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
         multiple: config.multiple,
         checkStrictly: config.checkStrictly
       }"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <el-tree-select
@@ -214,14 +214,24 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :check-strictly="config.checkStrictly"
       :default-expand-all="!config.lazy"
       :multiple="config.multiple"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       clearable
       @change="handleChange"
     />
-    <el-checkbox-group v-if="config.type === 'checkbox'" v-model="value" :disabled="disabled" @change="handleChange">
+    <el-checkbox-group
+      v-if="config.type === 'checkbox'"
+      v-model="value"
+      :disabled="config.disabled || disabled"
+      @change="handleChange"
+    >
       <el-checkbox v-for="(item, index) in relatedDatas" :key="index" :label="item.value">{{ item.label }}</el-checkbox>
     </el-checkbox-group>
-    <el-radio-group v-if="config.type === 'radio'" v-model="value" :disabled="disabled" @change="handleChange">
+    <el-radio-group
+      v-if="config.type === 'radio'"
+      v-model="value"
+      :disabled="config.disabled || disabled"
+      @change="handleChange"
+    >
       <el-radio v-for="(item, index) in relatedDatas" :key="index" :label="item.value">{{ item.label }}</el-radio>
     </el-radio-group>
     <di-selector
@@ -233,7 +243,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :data-type="config.dataType"
       :data-label="config.dataLabel"
       :placeholder="config.placeholder"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <el-date-picker
@@ -249,7 +259,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :type="config.type"
       :value-format="config.format ? config.format : getDateFormtDef(config.type)"
       :placeholder="config.placeholder"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <el-time-select
@@ -260,7 +270,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       start="00:00"
       step="00:15"
       end="23:59"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <date-range
@@ -278,7 +288,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :multiple="(config.limit ?? 2) > 1"
       :before-upload="beforeUpload"
       :on-preview="previewFile"
-      :disabled="disabled"
+      :disabled="config.disabled || disabled"
       style="width: 100%"
     >
       <el-icon v-if="config.listType === 'picture-card'">
