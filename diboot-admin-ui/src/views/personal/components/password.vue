@@ -63,9 +63,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
         })
         .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
         .finally(() => (loading.value = false))
-    } else {
-      ElMessage.error('更新失败！')
-      return false
     }
   })
 }
