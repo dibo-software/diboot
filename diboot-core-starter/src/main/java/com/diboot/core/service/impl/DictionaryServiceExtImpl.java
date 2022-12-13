@@ -119,13 +119,13 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
 
     @Override
     public List<Dictionary> getDictDefinitionList() {
-        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<Dictionary>().isNull(Dictionary::getParentId);
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<Dictionary>().isNull(Dictionary::getParentId).orderByDesc(Dictionary::getId);
         return getEntityList(queryWrapper);
     }
 
     @Override
     public List<DictionaryVO> getDictDefinitionVOList() {
-        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<Dictionary>().isNull(Dictionary::getParentId);
+        LambdaQueryWrapper<Dictionary> queryWrapper = new LambdaQueryWrapper<Dictionary>().isNull(Dictionary::getParentId).orderByDesc(Dictionary::getId);
         return getViewObjectList(queryWrapper, null, DictionaryVO.class);
     }
 
