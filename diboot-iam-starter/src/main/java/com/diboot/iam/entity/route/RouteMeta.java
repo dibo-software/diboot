@@ -75,18 +75,6 @@ public class RouteMeta implements Serializable {
      */
     private Boolean hidden;
     /**
-     * 是否显示背景色
-     */
-    private Boolean hollow;
-    /**
-     * 是否隐藏页面底部
-     */
-    private Boolean hideFooter;
-    /**
-     * 是否显示边框
-     */
-    private Boolean borderless;
-    /**
      * 是否打开新窗口
      */
     private Boolean openNewWindow;
