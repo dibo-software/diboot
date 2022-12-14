@@ -1,58 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Diboot Admin UI - beta</title>
-  </head>
-  <body>
-    <div id="app">
-      <style>
-          body{
-              margin: 0;
-          }
-          .first-loading-wrapper {
-              height: 100vh;
-              width: 100vw;
-              position: relative;
-          }
-          .first-loading {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-280px, -90px);
-              font-size: 64px;
-              font-weight: bold;
-              color: #90cf5b;
-              letter-spacing: 5px;
-          }
-          .first-loading::after {
-              content: "Diboot admin ui";
-              position: absolute;
-              left: 0;
-              top: 0;
-              color: #FFF;
-              text-shadow: 0 0 2px #90cf5b, 0 0 1px #90cf5b, 0 0 1px #90cf5b;
-              overflow: hidden;
-              animation: loadingDiboot 3s linear infinite;
-              -webkit-animation: loadingDiboot 3s linear infinite;
-          }
-          @keyframes loadingDiboot {
-              0% {
-                  height: 100%;
-              }
-              100% {
-                  height: 0%;
-              }
-          }
-      </style>
-      <div class="first-loading-wrapper">
-        <div class="first-loading">
-          Diboot admin ui
-        </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diboot Admin UI - beta</title>
+</head>
+
+<body>
+  <div id="app">
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .first-loading-wrapper {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .img1 {
+        -webkit-animation: loadingDiboot 2s linear infinite both;
+        animation: loadingDiboot 2s linear infinite both;
+      }
+
+      .img2 {
+        -webkit-animation: loadingDiboot 2s linear 0.2s infinite both;
+        animation: loadingDiboot 2s linear 0.2s infinite both;
+      }
+
+      .img3 {
+        -webkit-animation: loadingDiboot 2s linear 0.4s infinite both;
+        animation: loadingDiboot 2s linear 0.4s infinite both;
+      }
+
+      .img4 {
+        -webkit-animation: loadingDiboot 2s linear 0.6s infinite both;
+        animation: loadingDiboot 2s linear 0.6s infinite both;
+      }
+
+      .img5 {
+        -webkit-animation: loadingDiboot 2s linear 0.8s infinite both;
+        animation: loadingDiboot 2s linear 0.8s infinite both;
+      }
+
+      .img6 {
+        -webkit-animation: loadingDiboot 2s linear 1s infinite both;
+        animation: loadingDiboot 2s linear 1s infinite both;
+      }
+
+      @keyframes loadingDiboot {
+        0% {
+          -webkit-transform: translateX(0);
+          transform: translateX(0);
+        }
+
+        10% {
+          -webkit-transform: translateY(-10px);
+          transform: translateY(-10px);
+        }
+
+        20% {
+          -webkit-transform: translateY(0);
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <div class="first-loading-wrapper">
+      <div>
+        <img src="./src/assets/loading/D.png" alt="" class="img1">
+        <img src="./src/assets/loading/I.png" alt="" class="img2">
+        <img src="./src/assets/loading/B.png" alt="" class="img3">
+        <img src="./src/assets/loading/O.png" alt="" class="img4">
+        <img src="./src/assets/loading/O.png" alt="" class="img5">
+        <img src="./src/assets/loading/T.png" alt="" class="img6">
       </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
