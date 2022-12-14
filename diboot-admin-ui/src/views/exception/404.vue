@@ -29,15 +29,21 @@ onBeforeRouteLeave(() => clearTimeout(timer))
 
 <template>
   <div class="content">
-    <h1>404</h1>
+    <div class="content-title">404</div>
     <h3>页面不存在或无权访问</h3>
-    <el-button @click="goHome">返回首页（{{ countDown }}s）</el-button>
+    <el-button type="success" plain @click="goHome">返回首页（{{ countDown }}s）</el-button>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .content {
   text-align: center;
-  margin: calc(50vh - 100px) 0;
+  margin: 20vh 0;
+
+  &-title {
+    font-size: 130px;
+    font-weight: bold;
+    color: #eadb54;
+  }
 }
 </style>
