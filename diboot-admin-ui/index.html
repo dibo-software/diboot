@@ -15,10 +15,18 @@
         margin: 0;
       }
 
+      #content {
+        letter-spacing: 2px;
+        color: #909399;
+        width: 500px;
+        text-align: center;
+      }
+
       .first-loading-wrapper {
         height: 100vh;
         width: 100vw;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
       }
@@ -79,9 +87,36 @@
         <img src="./src/assets/loading/O.png" alt="" class="img5">
         <img src="./src/assets/loading/T.png" alt="" class="img6">
       </div>
+      <p id="content"></p>
     </div>
   </div>
   <script type="module" src="/src/main.ts"></script>
+  <script>
+    const list = [
+      '与其羡慕他人成功，不如自己厚积薄发。',
+      '赢了自己才能成功。',
+      '只有不想做的，没有做不到的!',
+      '人生需要有目标，有追求，然有所以。',
+      '状态比能力更重要，行动比知识更重要!',
+      '有梦就去追，没有梦想的人，灵魂是空虚的。',
+      '学习时的痛苦是短暂的，未学到的痛苦是终身的。',
+      '总有一些事情会促使你前进，或是挫折，或是鼓励。',
+      '跌倒，撞墙，一败涂地，都不用害怕，年轻叫你勇敢。',
+      '首先细心思考，然后果断决定，最后坚韧不拔地去做。',
+      '你不能总是等着时机成熟，有时候，你必须要主动搏一把。',
+      '知识是从刻苦劳动中得来的任何成就都是刻苦劳动的结果。',
+      '你的努力别人不一定放在眼里，你不努力，别人一定放在心里。',
+      '做决定之前仔细考虑，一旦作了决定就要勇往直前、坚持到底。',
+      '一次的失败，或许是下次成功的开始。',
+      '年纪轻轻就选择安逸，是对自己最大的残忍。',
+      '你可以岁月静好，但生活不会。',
+      '真正优秀的人，没时间跟生活抬杠。',
+      '有人在奔跑，有人在睡觉。',
+      '最大的失败并不是没有成功，而是从未尝试过。'
+    ]
+    const index = Math.floor(Math.random() * 20)
+    document.getElementById('content').innerText = list[index]
+  </script>
 </body>
 
 </html>
