@@ -238,7 +238,7 @@ const rules: FormRules = {
                   ]
                 },
                 columns: [
-                  { prop: 'name', label: '姓名' },
+                  { prop: 'name', label: '名称' },
                   { prop: 'code', label: '编号' },
                   { prop: 'createTime', label: '创建时间' }
                 ]

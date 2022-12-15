@@ -49,6 +49,7 @@ const loadListByOrgId = (orgId: string) => {
 const updatePermission = checkPermission('update')
 const deletePermission = checkPermission('delete')
 </script>
+
 <template>
   <div class="list-page">
     <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
@@ -107,7 +108,18 @@ const deletePermission = checkPermission('delete')
     </el-header>
 
     <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
-      <el-table-column prop="realname" label="姓名" />
+      <el-table-column prop="realname" label="姓名">
+        <template #default="{ row }">
+          <span v-if="!row.userPositionList?.length || row.userPositionList.some(e => e.isPrimaryPosition)">
+            {{ row.realname }}
+          </span>
+          <el-tooltip v-else placement="top" content="兼职">
+            <el-badge is-dot>
+              {{ row.realname }}
+            </el-badge>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column prop="userNum" label="员工编号" />
       <el-table-column prop="genderLabel" label="性别" width="80">
         <template #default="{ row }">
@@ -174,6 +186,7 @@ const deletePermission = checkPermission('delete')
   <Detail ref="detailRef" />
   <Form ref="formRef" @complete="getList()" />
 </template>
+
 <style lang="scss" scoped>
 .el-header {
   height: auto;
@@ -184,5 +197,10 @@ const deletePermission = checkPermission('delete')
 .list-operation {
   margin-bottom: 0;
   padding: 0;
+}
+
+.el-badge :deep(.is-dot) {
+  right: 0;
+  top: 5px;
 }
 </style>
