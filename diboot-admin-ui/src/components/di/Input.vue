@@ -36,7 +36,7 @@ watch(
 )
 watch(
   () => props.modelValue,
-  val => (value.value = val)
+  val => (value.value = props.config.type === 'input-number' && val ? Number(val as string) : val)
 )
 
 const requiredRule = {
