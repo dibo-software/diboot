@@ -3,7 +3,7 @@ import type { EChartsOption } from 'echarts'
 import { StarFilled } from '@element-plus/icons-vue'
 import logoSrc from '@/assets/logo.png'
 
-const tags = reactive([
+const tags: Array<{ label: string; type: '' | 'success' | 'info' | 'warning' | 'danger' }> = [
   {
     label: '低代码',
     type: ''
@@ -24,9 +24,9 @@ const tags = reactive([
     label: '工作流',
     type: 'danger'
   }
-])
+]
 
-const progress = reactive([
+const progress = [
   {
     label: 'Java',
     value: 62.1
@@ -47,7 +47,7 @@ const progress = reactive([
     label: 'SCSS',
     value: 0.6
   }
-])
+]
 
 const radarChart: EChartsOption = {
   radar: {
@@ -77,150 +77,98 @@ const currentDate = ref(new Date())
 </script>
 
 <template>
-  <el-row :gutter="10" style="display: flex">
-    <el-col :lg="10" :md="24" :xs="24">
-      <el-card class="h100" shadow="hover">
-        <div class="card-title">欢迎</div>
-        <div class="card-body">
-          <el-image class="mb-20" style="width: 100px; height: 100px" :src="logoSrc" />
-          <span class="mb-20" style="font-weight: bold; font-size: 28px">欢迎体验 diboot低代码开发平台</span>
-          <span class="mb-20">
-            写的更少, 性能更好 ->
-            为开发人员打造的低代码开发平台。Mybatis-plus关联查询，关联无SQL，性能高10倍，前后端代码可视化生成，flowable工作流，spring
-            cloud微服务等全方位赋能！
-          </span>
-          <div class="mb-20" style="align-self: flex-start">
-            <el-tag
-              v-for="({ label, type }, index) in tags"
-              :key="label"
-              :class="{ 'ml-10': index !== 0 }"
-              :type="type"
+  <div class="p-10 fs-dynamic">
+    <el-row :gutter="10">
+      <el-col :lg="10" :md="24" :xs="24">
+        <el-card class="h100" shadow="hover">
+          <div class="fw-bold mb-20" style="font-size: calc(var(--el-font-size-dynamic) + 4px)">欢迎</div>
+          <div class="flex flex-dir-col flex-col-center">
+            <el-image class="mb-20" style="width: 100px; height: 100px" :src="logoSrc" />
+            <span class="mb-20 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 14px)"
+              >欢迎体验 diboot低代码开发平台</span
             >
-              {{ label }}</el-tag
+            <span class="mb-20">
+              写的更少, 性能更好 ->
+              为开发人员打造的低代码开发平台。Mybatis-plus关联查询，关联无SQL，性能高10倍，前后端代码可视化生成，flowable工作流，spring
+              cloud微服务等全方位赋能！
+            </span>
+            <div class="mb-20" style="align-self: flex-start">
+              <el-tag
+                v-for="({ label, type }, index) in tags"
+                :key="label"
+                :class="{ 'ml-10': index !== 0 }"
+                :type="type"
+              >
+                {{ label }}</el-tag
+              >
+            </div>
+            <span style="align-self: flex-end"
+              >官网链接：<a class="mainColor" target="_blank" href="https://www.diboot.com"
+                >https://www.diboot.com</a
+              ></span
             >
           </div>
-          <span style="align-self: flex-end"
-            >官网链接：<a class="mainColor" target="_blank" href="https://www.diboot.com"
-              >https://www.diboot.com</a
-            ></span
+        </el-card>
+      </el-col>
+      <el-col :lg="7" :md="12" :xs="24" style="display: flex" class="flex-dir-col">
+        <el-card class="mb-10" shadow="hover">
+          <div class="fw-bold mb-20" style="font-size: calc(var(--el-font-size-dynamic) + 4px)">关于项目</div>
+          <div class="mainColor mb-10 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 2px)">
+            基础组件化繁为简，高效工具以简驭繁
+          </div>
+          <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
+          <a class="gitee" href="https://gitee.com/dibo_software/diboot" target="_blank">
+            <el-icon size="16">
+              <StarFilled />
+            </el-icon>
+            <span>Stars</span>
+            <span class="ml-5">1.5k</span>
+          </a>
+        </el-card>
+        <el-card style="flex: 1" shadow="hover">
+          <div class="fw-bold mb-20" style="font-size: calc(var(--el-font-size-dynamic) + 4px)">活跃度</div>
+          <Chart :option="radarChart" style="height: 300px" />
+        </el-card>
+      </el-col>
+      <el-col :lg="7" :md="12" :xs="24" style="display: flex" class="flex-dir-col">
+        <el-card class="mb-10" shadow="hover">
+          <el-calendar v-model="currentDate">
+            <template #header="{ date }">
+              <span>{{ date }}</span>
+            </template>
+          </el-calendar>
+        </el-card>
+        <el-card shadow="hover" style="flex: 1">
+          <div class="fw-bold mb-20" style="font-size: calc(var(--el-font-size-dynamic) + 4px)">语言</div>
+          <div
+            v-for="{ label, value } in progress"
+            :key="label"
+            style="display: flex; align-items: center"
+            class="mb-10"
           >
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :lg="7" :md="12" :xs="24" style="display: flex; flex-direction: column">
-      <el-card class="mb-10" shadow="hover">
-        <div class="card-title mb-20">关于项目</div>
-        <div class="mainColor mb-10" style="font-weight: bold; font-size: 16px">基础组件化繁为简，高效工具以简驭繁</div>
-        <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
-        <a class="card-gitee" href="https://gitee.com/dibo_software/diboot" target="_blank">
-          <el-icon size="16">
-            <StarFilled />
-          </el-icon>
-          <span>Stars</span>
-          <span style="margin-left: 5px">1.5k</span>
-        </a>
-      </el-card>
-      <el-card style="flex: 1" shadow="hover">
-        <div class="card-title">活跃度</div>
-        <Chart :option="radarChart" style="height: 300px" />
-      </el-card>
-    </el-col>
-    <el-col :lg="7" :md="12" :xs="24">
-      <el-card class="mb-10" shadow="hover">
-        <el-calendar v-model="currentDate">
-          <template #header="{ date }">
-            <span>{{ date }}</span>
-          </template>
-        </el-calendar>
-      </el-card>
-      <el-card shadow="hover">
-        <div class="card-title mb-20">语言</div>
-        <div v-for="{ label, value } in progress" :key="label" style="display: flex; align-items: center" class="mb-10">
-          <span style="width: 80px; text-align: right">{{ label }}</span>
-          <el-progress :percentage="value" :stroke-width="10" style="flex: 1" class="ml-10" />
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
-
-  <!--  <div class="footer">Diboot © P01-2022</div>-->
+            <span style="width: 80px; text-align: right">{{ label }}</span>
+            <el-progress :percentage="value" :stroke-width="10" style="flex: 1" class="ml-10" />
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <style scoped lang="scss">
-.ml-10 {
-  margin-left: 10px;
-}
-
-.mb-20 {
-  margin-bottom: 20px;
-}
-
-.mb-10 {
-  margin-bottom: 10px;
-}
-
-.h100 {
-  height: 100%;
-}
-
-.mainColor {
-  color: var(--el-color-primary);
-}
-
-a {
-  text-decoration: none;
-}
-
-.el-row {
-  padding: 10px 5px 0;
-  margin: 0 !important;
-
-  .el-col {
-    margin-bottom: 10px;
-  }
-}
-
-.el-card {
-  font-size: 14px;
-}
-
 .el-calendar {
   :deep(.el-calendar-day) {
     height: unset;
   }
 }
 
-.card {
-  &-title {
-    font-weight: bold;
-    font-size: 16px;
-  }
-
-  &-body {
-    padding: 20px 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  &-gitee {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 90px;
-    color: #e7e7e7;
-    background-color: #393939;
-    border-radius: 3px;
-  }
+.gitee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  color: #e7e7e7;
+  background-color: #393939;
+  border-radius: 3px;
 }
-
-//.footer {
-//  min-height: 30px;
-//  padding-top: 10px;
-//  color: var(--el-color-info);
-//  display: flex;
-//  align-items: center;
-//  justify-content: space-around;
-//  border-top: 2px dashed var(--el-border-color-lighter);
-//}
 </style>
