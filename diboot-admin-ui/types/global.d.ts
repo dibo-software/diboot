@@ -10,7 +10,7 @@ declare global {
     // tree构建数据的parentId值（整tree获取或远程搜索tree节点时有值）
     parentId?: string
     // 子节点集合
-    children?: LabelValue<E>
+    children?: LabelValue<E>[]
   }
 
   /**
