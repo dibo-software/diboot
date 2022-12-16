@@ -282,6 +282,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
     <el-upload
       v-if="config.type === 'upload'"
       v-bind="bindUpload"
+      v-model:file-list="bindUpload.fileList"
       :limit="config.limit"
       :accept="config.accept"
       :list-type="config.listType"
@@ -289,13 +290,27 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :before-upload="beforeUpload"
       :on-preview="previewFile"
       :disabled="config.disabled || disabled"
+      :class="{ 'hide-plus': config.disabled || disabled || bindUpload.fileList.length >= config.limit }"
       style="width: 100%"
     >
       <el-icon v-if="config.listType === 'picture-card'">
         <Plus />
       </el-icon>
-      <el-button v-else :icon="UploadIcon">上传文件</el-button>
+      <el-button
+        v-else-if="!(bindUpload.fileList.length >= config.limit)"
+        :icon="UploadIcon"
+        :disabled="config.disabled || disabled"
+      >
+        上传文件
+      </el-button>
       <template #tip>
+        <el-button
+          v-if="config.listType !== 'picture-card' && bindUpload.fileList.length >= config.limit"
+          :icon="UploadIcon"
+          disabled
+        >
+          上传文件
+        </el-button>
         <div v-if="config.placeholder" class="el-upload__tip">
           {{ config.placeholder }}
         </div>
@@ -313,3 +328,9 @@ const beforeUpload = (rawFile: UploadRawFile) => {
     </el-upload>
   </el-form-item>
 </template>
+
+<style scoped>
+.hide-plus :deep(.el-upload--picture-card) {
+  display: none;
+}
+</style>
