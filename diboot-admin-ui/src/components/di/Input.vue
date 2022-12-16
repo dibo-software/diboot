@@ -139,7 +139,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       @change="handleChange"
     />
     <template v-else-if="config.type === 'rich'">
-      <rich-read v-if="config.disabled || disabled" :value="value" :style="{ height: config.height }" />
+      <rich-read v-if="config.disabled || disabled" :value="value" :style="{ flex: 1, height: config.height }" />
       <rich-editor
         v-else
         v-model="value"
@@ -149,7 +149,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       />
     </template>
     <template v-else-if="config.type === 'md'">
-      <md-read v-if="config.disabled || disabled" :value="value" :style="{ height: config.height }" />
+      <md-read v-if="config.disabled || disabled" :value="value" :style="{ flex: 1, height: config.height }" />
       <md-editor v-else v-model="value" :placeholder="config.placeholder" :height="config.height" />
     </template>
     <el-input-number
