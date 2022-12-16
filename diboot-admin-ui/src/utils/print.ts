@@ -1,66 +1,63 @@
-export const print = (...dom: Array<HTMLElement>) => {
-  let currDom = ''
-  for (const htmlElement of dom) {
-    if (!htmlElement) continue
-    currDom += htmlElement.outerHTML + getStyle()
-  }
-  writeIframe(currDom)
+/**
+ * 表单转换器 （处理form表单控件value）
+ *
+ * @param element HTML元素
+ */
+const formConverter = (element: HTMLElement) => {
+  for (const item of element.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input,textarea'))
+    item.tagName === 'INPUT' ? item.setAttribute('value', item.value) : (item.innerHTML = item.value)
+  return element
 }
 
 /**
- * 获取/设置打印样式
+ * 构建 iframe
+ *
+ * @param elements 元素列表（或元素ID列表）
+ * @param mountElement 指定挂载元素
  */
-const getStyle = () => {
-  let str = ''
-  const styles = document.querySelectorAll('style,link')
-  for (let i = 0; i < styles.length; i++) {
-    str += styles[i].outerHTML
-  }
-  str += '<style>' + '.no-print' + '{display:none;}</style>'
-  str += '<style>html,body{background-color:#fff;}</style>'
-  return str
-}
-
-/**
- * 创建iframe
- * @param content
- */
-const writeIframe = (content: string) => {
+export const buildIframe = (elements: string[] | HTMLElement[], mountElement?: HTMLElement) => {
+  if (!elements.length) throw new Error('No element.')
+  // 创建iframe
   const iframe = document.createElement('iframe')
-  const f = document.body.appendChild(iframe)
-  iframe.id = 'myIframe'
-  iframe.setAttribute('style', 'position:absolute;width:0;height:0;top:-10px;left:-10px;')
-  const w = f.contentWindow
-  const doc = f.contentDocument || (f.contentWindow && f.contentWindow.document)
-  doc?.open()
-  doc?.write(content)
-  doc?.close()
-  iframe.onload = function () {
-    if (w) {
-      toPrint(w)
-    }
-    setTimeout(function () {
-      document.body.removeChild(iframe)
-    }, 100)
-  }
+  ;(mountElement ?? document.body).appendChild(iframe)
+  iframe.style.cssText = 'border:0; position:absolute; width:0px; height:0px; right:0px; top:0px;'
+  const doc = iframe.contentDocument ? iframe.contentDocument : iframe.contentWindow?.document
+  if (doc == null) throw new Error('Cannot find document.')
+  // 写入内容
+  doc.open()
+  doc.write(
+    `${(function () {
+      let styles = ''
+      for (const item of document.querySelectorAll('style,link')) styles += item.outerHTML
+      return styles + '<style>.no-print{display:none;} html,body{background-color:#fff;}</style>'
+    })()}
+    <body>
+      ${(typeof elements[0] === 'string'
+        ? (elements.map(id => document.getElementById(id as string)).filter(e => !!e) as HTMLElement[])
+        : (elements as HTMLElement[])
+      ).reduce((html, element) => html + formConverter(element).outerHTML, '')}
+    </body>`
+  )
+  doc.close()
+  return iframe
+}
+
+/**
+ * 打印并移除挂载
+ *
+ * @param iframe
+ */
+export const printAndRemove = (iframe: HTMLIFrameElement) => {
+  // 调用打印
+  iframe.contentWindow?.focus()
+  iframe.contentWindow?.print()
+  // 移除挂载
+  setTimeout(() => iframe.parentNode?.removeChild(iframe), 100)
 }
 
 /**
  * 打印
- * @param frameWindow
+ *
+ * @param elements 元素列表（或元素ID列表）
  */
-const toPrint = (frameWindow: Window) => {
-  try {
-    setTimeout(function () {
-      frameWindow.focus()
-      try {
-        frameWindow.print()
-      } catch (e) {
-        console.log('e', e)
-      }
-      frameWindow.close()
-    }, 10)
-  } catch (err) {
-    console.log('err', err)
-  }
-}
+export default (...elements: string[] | HTMLElement[]) => printAndRemove(buildIframe(elements))

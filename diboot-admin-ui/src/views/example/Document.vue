@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Document">
-import { print } from '@/utils/print'
+import print from '@/utils/print'
 import type { UploadRequestOptions } from 'element-plus'
 import { View } from '@element-plus/icons-vue'
 

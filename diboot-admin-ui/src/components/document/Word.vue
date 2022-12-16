@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { renderAsync } from 'docx-preview'
-import { print } from '@/utils/print'
+import print from '@/utils/print'
 
 const props = defineProps<{
   // string: 文件链接 ;  Blob | ArrayBuffer: 文件流
