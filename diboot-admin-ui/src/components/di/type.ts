@@ -14,7 +14,7 @@ export interface ListConfig {
   baseApi?: string
   // 主键属性名（默认值：id）
   primaryKey?: string
-  // 左树右列表 不指定时默认：parentId
+  // 右列表关联左树属性名
   relatedKey?: string
   // FormItem 其中 'span' | 'rule' | 'required' 失效 (colSpan 默认 8 （24/8 三列）)
   searchArea?: FormConfig
@@ -161,6 +161,8 @@ export interface ListSelector extends Input {
   // 列表数据显示字段；默认取list第一列（list.columns[0].prop）
   dataLabel?: string
   multiple?: boolean
+  // tree根节点
+  rootId?: string
 }
 
 export type FormItem =

@@ -46,15 +46,15 @@ const {
   remove,
   batchRemove
 } = useList<Record<string, unknown>>({ baseApi: props.baseApi })
-getList()
 
 // 监听左树节点变化
 watch(
   () => props.parent,
   value => {
-    queryParam[props.relatedKey ?? 'parentId'] = value
+    if (props.relatedKey) queryParam[props.relatedKey] = value
     onSearch()
-  }
+  },
+  { immediate: true }
 )
 
 // 搜索区折叠

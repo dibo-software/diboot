@@ -28,14 +28,15 @@ const props = withDefaults(defineProps<TreeProps>(), {
 
 const treeDataKey = 'treeData'
 
-const { initRelatedData, relatedData, initLoading, remoteRelatedDataFilter, lazyLoadRelatedData } = useOption({
-  load: { [treeDataKey]: props },
+const { relatedData, asyncLoading, remoteRelatedDataFilter, lazyLoadRelatedData } = useOption({
   asyncLoad: { [treeDataKey]: props }
 })
 
-if (!props.lazyChild) initRelatedData()
+const initTreeData = async () => (relatedData[treeDataKey] = await lazyLoadRelatedData(treeDataKey))
 
-const loadNodes = async ({ data }: { data: LabelValue }, resolve: (options: LabelValue[]) => void) =>
+if (!props.lazyChild) initTreeData()
+
+const loadNodes = ({ data }: { data: LabelValue }, resolve: (options: LabelValue[]) => void) =>
   lazyLoadRelatedData(treeDataKey, data.value).then(lsit => {
     resolve(lsit)
     treeRef.value?.setCurrentKey(activateNode.value)
@@ -71,7 +72,7 @@ const clickNode = (data: LabelValue) => {
 const treeKey = ref(0)
 const refresh = () => {
   if (props.lazyChild) treeKey.value = +new Date()
-  else initRelatedData().then(() => treeRef.value?.setCurrentKey(activateNode.value))
+  else initTreeData().then(() => treeRef.value?.setCurrentKey(activateNode.value))
 }
 
 defineExpose({ refresh })
@@ -100,8 +101,8 @@ const { nodeDrag } = useSort({
       />
     </div>
     <div :style="lazyChild === !!parentPath ? { height: 'calc(100% - 48px)' } : {}">
-      <el-skeleton v-if="initLoading" :rows="5" animated />
-      <el-scrollbar v-show="!initLoading">
+      <el-skeleton v-if="asyncLoading" :rows="5" animated />
+      <el-scrollbar v-show="!asyncLoading">
         <el-tree
           :key="lazyChild ? searchValue + treeKey : 0"
           ref="treeRef"

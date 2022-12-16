@@ -20,7 +20,7 @@ export interface RelatedData {
   // 懒加载（默认：true ；为 false 时会同步加载下一级，且当为树时会加载整个树）
   lazyChild?: boolean
   // 附加条件
-  condition?: Record<string, boolean | string | number | (string | number)[] | null>
+  condition?: Record<string, boolean | string | number | (string | number)[] | null | undefined>
 }
 
 /**

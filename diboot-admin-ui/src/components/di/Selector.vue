@@ -16,15 +16,23 @@ interface ListSelectorProps extends Omit<ListSelector, keyof Omit<Input, 'placeh
   dataType: string
   dataLabel?: string
   multiple?: boolean
+  rootId?: string
 }
 
 const props = defineProps<ListSelectorProps>()
 
-const config = reactive({ tree: props.tree, list: props.list })
+const config = { tree: props.tree, list: props.list }
+
+const specifyRootNode = () => {
+  if (!config.tree || !props.rootId) return
+  const tree = (config.tree = _.cloneDeep(config.tree))
+  ;(tree.condition ?? (tree.condition = {}))[tree.parent] = props.rootId
+}
 
 // if (!config.list) {
 //
 // }
+specifyRootNode()
 
 provide('multiple', !!props.multiple)
 
@@ -135,8 +143,8 @@ watch(
 
 defineExpose({ open, clear })
 
-const parent = ref<string>()
-const clickNode = (id?: string) => (parent.value = id)
+const parent = ref<string | undefined>(props.rootId)
+const clickNode = (id?: string) => (parent.value = id ?? props.rootId)
 </script>
 
 <template>
