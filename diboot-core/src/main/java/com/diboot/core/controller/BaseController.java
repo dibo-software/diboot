@@ -27,15 +27,13 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.dto.RelatedDataDTO;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.ContextHolder;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -222,7 +220,7 @@ public class BaseController {
 	 * @param keyword       搜索关键词
 	 * @return labelValue集合
 	 */
-	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, String parentId, String keyword) {
+	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, @Nullable String parentId,  @Nullable String keyword) {
 		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getLabel(), relatedDataDTO.getExt(),
 				relatedDataDTO.getOrderBy(), relatedDataDTO.getParent(), relatedDataDTO.getParentPath());
 		if (!relatedDataSecurityCheck(relatedDataDTO)) {
@@ -262,17 +260,33 @@ public class BaseController {
 		QueryWrapper<?> queryWrapper = Wrappers.query();
 		// 构建排序
         WrapperHelper.buildOrderBy(queryWrapper, relatedDataDTO.getOrderBy(), field2column);
-		// 父级限制
+		// tree
 		if (V.notEmpty(relatedDataDTO.getParent())) {
 			String parentColumn = field2column.apply(relatedDataDTO.getParent());
 			Class<?> parentFieldType = propInfoCache.getFieldTypeByColumn(parentColumn);
-			Function<String, Serializable> parentIdTypeConversion = pid -> parentFieldType == Long.class ? Long.valueOf(pid) : pid;
+			Function<String, Serializable> parentIdTypeConversion = pid -> V.isEmpty(pid) ? null : parentFieldType == Long.class ? Long.valueOf(pid) : pid;
+			String parentPathColumn = field2column.apply(relatedDataDTO.getParentPath());
+			// 动态根点 限制（需同时指定parentPath属性）
+			Serializable rootId = relatedDataDTO.getCondition() == null ? null :
+					parentIdTypeConversion.apply(S.valueOf(relatedDataDTO.getCondition().remove(relatedDataDTO.getParent())));
+			boolean isDynamicRoot = !parentIdTypeConversion.apply(Cons.TREE_ROOT_ID).equals(rootId) && V.isNoneEmpty(rootId, parentPathColumn);
+			if (isDynamicRoot) {
+				Object rootNode = baseService.getEntity(rootId);
+				if (rootNode == null) {
+					return Collections.emptyList();
+				}
+				String parentPath = S.valueOf(BeanUtils.getProperty(rootNode, relatedDataDTO.getParentPath()));
+				queryWrapper.and(query -> {
+					query.likeRight(parentPathColumn, V.isEmpty(parentPath) ? S.valueOf(rootId) : parentPath + Cons.SEPARATOR_COMMA + rootId);
+					query.or().eq(idColumn, rootId);
+				});
+			}
+
 			if (V.notEmpty(parentId)) {
 				// 加载其节点相应下一层节点列表
 				queryWrapper.eq(parentColumn, parentIdTypeConversion.apply(parentId));
 			} else if (V.isNoneEmpty(keyword, relatedDataDTO.getParentPath())) {
 				// tree 模糊搜索（未指定或无parentPath属性及不支持tree搜索）
-				String parentPathColumn = field2column.apply(relatedDataDTO.getParentPath());
 				List<Map<String, Object>> mapList = baseService.getMapList(Wrappers.query().select(idColumn, parentPathColumn).like(label, keyword));
 				if (V.isEmpty(mapList)) {
 					return Collections.emptyList();
@@ -284,12 +298,16 @@ public class BaseController {
 				}});
 				columns.add(S.joinWith(" as ", parentColumn, Cons.FieldName.parentId.name()));
 			} else if (relatedDataDTO.isLazyChild()) {
-				// 懒加载tree的根节点列表
-				Serializable treeRootId = getTreeRootId(entityClass, parentFieldType);
-				if (treeRootId == null) {
-					queryWrapper.isNull(parentColumn);
+				if (isDynamicRoot) {
+					queryWrapper.eq(idColumn, rootId);
 				} else {
-					queryWrapper.eq(parentColumn, treeRootId);
+					// 懒加载tree的根节点列表
+					Serializable treeRootId = getTreeRootId(entityClass, parentFieldType);
+					if (treeRootId == null) {
+						queryWrapper.isNull(parentColumn);
+					} else {
+						queryWrapper.eq(parentColumn, treeRootId);
+					}
 				}
 			} else {
 				// 加载整个Tree结构数据
@@ -345,7 +363,7 @@ public class BaseController {
 		for (Map.Entry<String, Object> item : relatedDataDTO.getCondition().entrySet()) {
 			String columnName = field2column.apply(item.getKey());
 			Object itemValue = item.getValue();
-			if (itemValue == null) {
+			if (V.isEmpty(itemValue)) {
 				queryWrapper.isNull(columnName);
 			} else if (itemValue instanceof Collection) {
 				queryWrapper.in(columnName, (Collection<?>) itemValue);
