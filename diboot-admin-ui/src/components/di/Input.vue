@@ -25,7 +25,9 @@ const emit = defineEmits<{
 
 const instance = getCurrentInstance()
 
-const value = ref(props.modelValue)
+const value = ref(
+  props.config.type === 'input-number' && props.modelValue ? Number(`${props.modelValue}`) : props.modelValue
+)
 watch(
   value,
   value => {
