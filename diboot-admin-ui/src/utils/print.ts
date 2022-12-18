@@ -27,9 +27,9 @@ export const buildIframe = (elements: string[] | HTMLElement[], mountElement?: H
   doc.open()
   doc.write(
     `${(function () {
-      let styles = ''
+      let styles = '<style>html,body{height: max-content; background-color: #ffffff;}</style>'
       for (const item of document.querySelectorAll('style,link')) styles += item.outerHTML
-      return styles + '<style>.no-print{display:none;} html,body{background-color:#fff;}</style>'
+      return styles + '<style>.print-ignore{display: none !important} .print-display{display: flex !important}</style>'
     })()}
     <body>
       ${(typeof elements[0] === 'string'

@@ -74,7 +74,7 @@ const pdfPreview = ref()
               <el-icon>
                 <View />
               </el-icon>
-              <p class="no-print">忽略打印</p>
+              <p class="print-ignore">忽略打印</p>
             </div>
           </div>
           <div ref="printTwo" class="printMain">
