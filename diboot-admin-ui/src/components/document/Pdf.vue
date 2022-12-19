@@ -3,7 +3,7 @@ import VuePdfEmbed from 'vue-pdf-embed'
 
 const props = defineProps<{
   // string: 文件链接 ;  Blob | ArrayBuffer: 文件流
-  value?: { type: [string, Blob, ArrayBuffer] }
+  value?: string | Blob | ArrayBuffer
 }>()
 
 const fileName = ref<string>('')
