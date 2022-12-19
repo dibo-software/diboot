@@ -21,7 +21,7 @@ const wordPreview = async (file: Blob | ArrayBuffer) =>
     () =>
       new Promise<HTMLElement>(resolve =>
         // 延时，等待图片渲染
-        setTimeout(() => resolve((contextDom.value = container.value?.children[3]?.children[0])), 100)
+        setTimeout(() => resolve((contextDom.value = container.value?.querySelector('div')?.children[0])), 100)
       )
   )
 
