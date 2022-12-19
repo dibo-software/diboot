@@ -292,7 +292,10 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :before-upload="beforeUpload"
       :on-preview="previewFile"
       :disabled="config.disabled || disabled"
-      :class="{ 'hide-plus': config.disabled || disabled || bindUpload.fileList.length >= config.limit }"
+      :class="{
+        'upload-plus-hide': bindUpload.fileList.length >= config.limit,
+        'upload-plus-disabled': config.disabled || disabled
+      }"
       style="width: 100%"
     >
       <el-icon v-if="config.listType === 'picture-card'">
@@ -313,18 +316,15 @@ const beforeUpload = (rawFile: UploadRawFile) => {
         >
           上传文件
         </el-button>
+        {{ bindUpload.fileList.length + '-' + config.limit }}
         <div v-if="config.placeholder" class="el-upload__tip">
           {{ config.placeholder }}
         </div>
         <div v-else-if="config.limit || config.accept || config.size" class="el-upload__tip">
-          可上传
-          <span v-if="config.limit">
-            {{ config.limit }} 个文件
-            <span v-if="config.accept">，</span>
-          </span>
+          可上传<span v-if="config.limit">{{ ' ' }}{{ config.limit }} 个<span v-if="!config.accept">文件</span></span>
           <span v-if="config.accept">类型为 {{ config.accept.replace(/,/g, '/') }} 的文件</span>
           <span v-if="config.size && (config.limit || config.accept)">，</span>
-          <span v-if="config.size">单文件大小应小于 {{ config.size }} MB</span>。
+          <span v-if="config.size">单文件需小于 {{ config.size }} MB</span>。
         </div>
       </template>
     </el-upload>
@@ -332,7 +332,11 @@ const beforeUpload = (rawFile: UploadRawFile) => {
 </template>
 
 <style scoped>
-.hide-plus :deep(.el-upload--picture-card) {
+.upload-plus-hide :deep(.el-upload--picture-card) {
   display: none;
+}
+
+.upload-plus-disabled :deep(.el-upload--picture-card) {
+  cursor: not-allowed;
 }
 </style>
