@@ -4,7 +4,7 @@ import print from '@/utils/print'
 
 const props = defineProps<{
   // string: 文件链接 ;  Blob | ArrayBuffer: 文件流
-  value?: string | Blob | ArrayBuffer
+  value?: { type: [string, Blob, ArrayBuffer] }
 }>()
 
 const context = ref<Blob | ArrayBuffer>()
