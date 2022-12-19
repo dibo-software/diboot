@@ -204,7 +204,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             if (V.isEmpty(value)) {
                 continue;
             }
-            LabelValue matchedItem = map.get(value);
+            LabelValue matchedItem = map.get((String)value);
             if (matchedItem != null) {
                 if (isLabelValueClass) {
                     BeanUtils.setProperty(item, setFieldName, matchedItem);
@@ -271,7 +271,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 BeanUtils.setProperty(item, setFieldName, labelList);
             }
             else {
-                log.warn("不支持的属性类型: {}", value.getClass().getSimpleName());
+                log.warn("不支持的属性类型: {}，存储值: {}", value.getClass().getSimpleName(), value);
             }
         }
     }
