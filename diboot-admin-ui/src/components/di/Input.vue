@@ -293,7 +293,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :on-preview="previewFile"
       :disabled="config.disabled || disabled"
       :class="{
-        'upload-plus-hide': bindUpload.fileList.length >= config.limit,
+        'upload-plus-hide': bindUpload.fileList.length >= (config.limit ?? Number.MAX_VALUE),
         'upload-plus-disabled': config.disabled || disabled
       }"
       style="width: 100%"
@@ -302,7 +302,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
         <Plus />
       </el-icon>
       <el-button
-        v-else-if="!(bindUpload.fileList.length >= config.limit)"
+        v-else-if="!(bindUpload.fileList.length >= (config.limit ?? Number.MAX_VALUE))"
         :icon="UploadIcon"
         :disabled="config.disabled || disabled"
       >
@@ -310,13 +310,12 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       </el-button>
       <template #tip>
         <el-button
-          v-if="config.listType !== 'picture-card' && bindUpload.fileList.length >= config.limit"
+          v-if="config.listType !== 'picture-card' && bindUpload.fileList.length >= (config.limit ?? Number.MAX_VALUE)"
           :icon="UploadIcon"
           disabled
         >
           上传文件
         </el-button>
-        {{ bindUpload.fileList.length + '-' + config.limit }}
         <div v-if="config.placeholder" class="el-upload__tip">
           {{ config.placeholder }}
         </div>
