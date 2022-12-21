@@ -70,6 +70,7 @@ public class JobAspect {
             long seconds = (jobLog.getEndTime().getTime() - jobLog.getStartTime().getTime()) / 1000;
             jobLog.setElapsedSeconds(seconds).setRunStatus(Cons.RESULT_STATUS.S.name()).setExecuteMsg("执行成功");
         } catch (Throwable throwable) {
+            log.error("定时任务执行异常", throwable);
             // 处理异常返回结果
             String errorMsg = throwable.toString();
             StackTraceElement[] stackTraceElements = throwable.getStackTrace();
