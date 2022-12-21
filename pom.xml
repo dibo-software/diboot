@@ -27,7 +27,7 @@
     </modules>
 
     <properties>
-        <hibernate-validator.version>6.2.4.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <okhttp.version>4.10.0</okhttp.version>
         <aspectjweaver.version>1.9.9.1</aspectjweaver.version>
