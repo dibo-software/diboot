@@ -599,17 +599,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
 		LambdaQueryWrapper query = null;
+		List<T> entityList = null;
 		// 优化SQL，只查询当前字段
 		if(queryWrapper instanceof QueryWrapper){
-				query = ((QueryWrapper)queryWrapper).lambda();
+			query = ((QueryWrapper)queryWrapper).lambda();
 		}
 		else if(queryWrapper instanceof LambdaQueryWrapper){
-				query = ((LambdaQueryWrapper) queryWrapper);
+			query = ((LambdaQueryWrapper) queryWrapper);
 		}
 		else {
 			throw new InvalidUsageException("不支持的Wrapper类型：" + (queryWrapper == null ? "null" : queryWrapper.getClass()));
 		}
-		List<T> entityList = getEntityList(query.select(getterFn));
+		// 如果是动态join，则调用JoinsBinder
+		query.select(getterFn);
+		if(queryWrapper instanceof DynamicJoinQueryWrapper){
+			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, entityClass, null);
+		}
+		else{
+			entityList = getEntityList(query);
+		}
 		if(V.isEmpty(entityList)){
 			return Collections.emptyList();
 		}
@@ -703,49 +711,46 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String sqlSelect = queryWrapper.getSqlSelect();
 		// 最少2个属性：label, value , (ext , parentId)
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) < 1){
-			log.error("调用错误: getLabelValueList必须用select依次指定返回的Label,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
+			log.error("调用错误: getLabelValueList必须用select依次指定返回的 label,value,ext 键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 			return Collections.emptyList();
 		}
-		// 获取mapList
-		List<Map<String, Object>> mapList = super.listMaps(queryWrapper);
-		if(V.isEmpty(mapList)){
+		List<T> entityList = getEntityList(queryWrapper);
+		if(entityList == null){
 			return Collections.emptyList();
 		}
-		else if(mapList.size() > BaseConfig.getBatchSize()){
-			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", mapList.size());
+		else if(entityList.size() > BaseConfig.getBatchSize()){
+			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", entityList.size());
 		}
 		// 转换为LabelValue
 		String[] selectArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
-		String label = selectArray[0];
-		String value = selectArray[1];
-		String ext = selectArray.length > 2 ? selectArray[2] : null;
-		List<LabelValue> labelValueList = new ArrayList<>(mapList.size());
-		for(Map<String, Object> map : mapList){
+		// 是否有ext字段
+		boolean hasExt = selectArray.length > 2;
+		List<LabelValue> labelValueList = new ArrayList<>(entityList.size());
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		boolean hasParentNode = propInfo.containsField(Cons.FieldName.parentId.name());
+		for(T entity : entityList){
+			String label = propInfo.getFieldByColumn(selectArray[0]), value = propInfo.getFieldByColumn(selectArray[1]), ext;
+			Object labelVal = BeanUtils.getProperty(entity, label);
+			Object valueVal = BeanUtils.getProperty(entity, value);
 			// 如果key和value的的值都为null的时候map也为空，则不处理此项
-			if (V.isEmpty(map)) {
+			if (V.isEmpty(labelVal) && V.isEmpty(valueVal)) {
 				continue;
 			}
-			LabelValue labelValue = new LabelValue();
 			// 兼容oracle大写
-			// 设置label
-			if (map.containsKey(label) || map.containsKey(label = label.toUpperCase())) {
-				labelValue.setLabel(S.valueOf(map.get(label)));
-			}
-			// 设置value
-			if (map.containsKey(value) || map.containsKey(value = value.toUpperCase())) {
-				labelValue.setValue(map.get(value));
-			}
+			LabelValue labelValue = new LabelValue(S.valueOf(labelVal), valueVal);
 			// 设置ext
-			if (ext != null && (map.containsKey(ext) || map.containsKey(ext = ext.toUpperCase()))) {
-				labelValue.setExt(map.get(ext));
-			} else {
-				ext = null;
+			if (hasExt) {
+				ext = propInfo.getFieldByColumn(selectArray[2]);
+				labelValue.setExt(BeanUtils.getProperty(entity, ext));
 			}
 			// 设置 parentId
-			labelValue.setParentId(map.get(Cons.FieldName.parentId.name()));
+			if(hasParentNode) {
+				Object parentId = BeanUtils.getProperty(entity, Cons.FieldName.parentId.name());
+				labelValue.setParentId(parentId);
+			}
 			labelValueList.add(labelValue);
 		}
-		if (mapList.get(0).containsKey(Cons.FieldName.parentId.name())) {
+		if (hasParentNode) {
 			return BeanUtils.buildTree(labelValueList, LabelValue::getValue, LabelValue::getParentId, LabelValue::setChildren);
 		}
 		return labelValueList;

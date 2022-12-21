@@ -169,6 +169,18 @@ public class PropInfo implements Serializable {
         return this.fieldToColumnMap.get(fieldName);
     }
 
+
+    /**
+     * 是否包含字段
+     * @return
+     */
+    public boolean containsField(String fieldName){
+        if(V.isEmpty(this.fieldToColumnMap)){
+            return false;
+        }
+        return this.fieldToColumnMap.containsKey(fieldName);
+    }
+
     /**
      * 获取主键属性名
      *
