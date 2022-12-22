@@ -1,101 +1,101 @@
 .w100 {
-    width: 100%;
+  width: 100%;
 }
 
 .h100 {
-    height: 100%;
+  height: 100%;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 // 文字大小
 .fs-dynamic {
-    font-size: var(--el-font-size-dynamic);
+  font-size: var(--el-font-size-dynamic);
 }
 
 .fw-bold {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 // 文字颜色
 .tc-primary {
-    color: var(--el-text-color-primary);
+  color: var(--el-text-color-primary);
 }
 
 .tc-secondary {
-    color: var(--el-text-color-secondary);
+  color: var(--el-text-color-secondary);
 }
 
 .tc-disabled {
-    color: var(--el-text-color-disabled);
+  color: var(--el-text-color-disabled);
 }
 
 // 主颜色
-.mainColor {
-    color: var(--el-color-primary);
+.main-color {
+  color: var(--el-color-primary);
 }
 
 // flex布局
 .flex {
-    display: flex;
+  display: flex;
 }
 
 .flex-row-center {
-    justify-content: center;
+  justify-content: center;
 }
 
 .flex-col-center {
-    align-items: center;
+  align-items: center;
 }
 
 .flex-dir-col {
-    flex-direction: column;
+  flex-direction: column;
 }
 
 // 边距
 .p-10 {
-    padding: 10px;
+  padding: 10px;
 }
 
 .mb-10 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .mb-20 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .ml-5 {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .ml-10 {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .ml-20 {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 .mr-10 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .mr-20 {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 // 文字一行显示
 .text-one-line {
-    display: inline-block;
-    white-space: nowrap;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

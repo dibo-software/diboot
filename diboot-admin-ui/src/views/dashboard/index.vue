@@ -84,9 +84,9 @@ const currentDate = ref(new Date())
           <div class="fw-bold mb-20" style="font-size: calc(var(--el-font-size-dynamic) + 4px)">欢迎</div>
           <div class="flex flex-dir-col flex-col-center">
             <el-image class="mb-20" style="width: 100px; height: 100px" :src="logoSrc" />
-            <span class="mb-20 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 14px)"
-              >欢迎体验 diboot低代码开发平台</span
-            >
+            <span class="mb-20 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 14px)">
+              欢迎体验 diboot低代码开发平台
+            </span>
             <span class="mb-20">
               写的更少, 性能更好 ->
               为开发人员打造的低代码开发平台。Mybatis-plus关联查询，关联无SQL，性能高10倍，前后端代码可视化生成，flowable工作流，spring
@@ -99,21 +99,19 @@ const currentDate = ref(new Date())
                 :class="{ 'ml-10': index !== 0 }"
                 :type="type"
               >
-                {{ label }}</el-tag
-              >
+                {{ label }}
+              </el-tag>
             </div>
-            <span style="align-self: flex-end"
-              >官网链接：<a class="mainColor" target="_blank" href="https://www.diboot.com"
-                >https://www.diboot.com</a
-              ></span
-            >
+            <span style="align-self: flex-end">
+              官网链接：<a class="main-color" target="_blank" href="https://www.diboot.com">https://www.diboot.com</a>
+            </span>
           </div>
         </el-card>
       </el-col>
       <el-col :lg="7" :md="12" :xs="24" style="display: flex" class="flex-dir-col">
         <el-card class="mb-10" shadow="hover">
           <div class="fw-bold mb-20" style="font-size: calc(var(--el-font-size-dynamic) + 4px)">关于项目</div>
-          <div class="mainColor mb-10 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 2px)">
+          <div class="main-color mb-10 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 2px)">
             基础组件化繁为简，高效工具以简驭繁
           </div>
           <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
