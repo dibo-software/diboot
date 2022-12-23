@@ -28,6 +28,7 @@
 			:selection-start="uSelectionStart"
 			:cursor-spacing="getCursorSpacing"
 			:show-confirm-bar="showConfirmbar"
+      :adjust-position="adjustPosition"
 			@input="handleInput"
 			@blur="handleBlur"
 			@focus="onFocus"
@@ -255,7 +256,7 @@ export default {
 		},
 		getStyle() {
 			let style = {};
-			// 如果没有自定义高度，就根据type为input还是textare来分配一个默认的高度
+			// 如果没有自定义高度，就根据type为input还是textarea来分配一个默认的高度
 			style.minHeight = this.height ? this.height + 'rpx' : this.type == 'textarea' ?
 				this.textareaHeight + 'rpx' : this.inputHeight + 'rpx';
 			style = Object.assign(style, this.customStyle);
@@ -352,7 +353,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../libs/css/style.components";
+@import "../../libs/css/style.components.scss";
 
 .u-input {
 	position: relative;

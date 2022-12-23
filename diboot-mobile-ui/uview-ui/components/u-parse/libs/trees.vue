@@ -72,11 +72,11 @@
 		</block>
 	</view>
 </template>
-<script module="handler" lang="wxs" src="handler.wxs"></script>
+<script module="handler" lang="wxs" src="./handler.wxs"></script>
 <script>
 	global.Parser = {};
 	import trees from './trees'
-	const errorImg = require('./config.js').errorImg;
+	const errorImg = require('../libs/config.js').errorImg;
 	export default {
 		components: {
 			trees

@@ -209,7 +209,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../libs/css/style.components";
+@import "../../libs/css/style.components.scss";
 	
 .u-notice-bar {
 	padding: 18rpx 24rpx;

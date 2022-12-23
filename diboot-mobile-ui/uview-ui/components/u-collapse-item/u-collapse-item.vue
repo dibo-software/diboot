@@ -161,7 +161,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 	
 	.u-collapse-head {
 		position: relative;

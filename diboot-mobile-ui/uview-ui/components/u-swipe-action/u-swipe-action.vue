@@ -220,7 +220,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../libs/css/style.components";
+@import "../../libs/css/style.components.scss";
 	
 .u-swipe-action {
 	width: auto;

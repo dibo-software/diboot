@@ -230,7 +230,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '../../libs/css/style.components';
+@import '../../libs/css/style.components.scss';
 
 .content {
 	background: rgba(255, 255, 255, 1);
