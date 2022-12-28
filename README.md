@@ -21,8 +21,11 @@
 
 > [diboot-workflow 工作流版本，看这里->](https://www.diboot.com/guide/diboot-workflow/introduce.html)
 
-## diboot基础组件
-### 1、 diboot-core: 精简优化内核：写的更少，性能更好
+## 1. 配套VUE3前端框架预览（diboot-admin-ui）
+
+## 2. diboot 后端基础组件
+
+### 2-1、diboot-core: 精简优化内核：写的更少，性能更好
 主要特性：
 * 单表CRUD无SQL
 * 关联绑定无SQL（注解自动绑定）
@@ -34,7 +37,7 @@
 基于diboot-core的CRUD和常规关联的功能实现，代码量比传统Mybatis项目减少80%+，且性能更好更易维护。
 > 详细文档: [diboot-core文档](https://www.diboot.com/guide/diboot-core/introduce.html).
 
-### 2、IAM 身份认证基础组件 及 配套VUE前端框架（diboot-antd-admin、diboot-element-admin）
+### 2-2、IAM 身份认证基础组件 
 
 * 开箱即用的RBAC角色权限模型与预置组织人员岗位模型
 * 基于JWT的认证授权，支持申请token、刷新token、无状态认证
@@ -45,32 +48,32 @@
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
 > 详细文档: [diboot-iam文档](https://www.diboot.com/guide/diboot-iam/introduce.html).
 
-### 3、diboot-file 文件相关处理组件
+### 2-3、diboot-file 文件相关处理组件
 
 * EasyExcel轻量封装，支持Java注解校验与@ExcelBind*注解实现字典及关联字段的name-value转换，并提供完善的校验错误提示
 * 文件存储接口化，预置本地存储，简单扩展OSS、分布式存储等实现
 * 封装常用的文件上传下载、图片压缩水印等常用处理
 > 详细文档: [diboot-file文档](https://www.diboot.com/guide/diboot-file/introduce.html).
 
-### 4、diboot-scheduler 定时任务组件
+### 2-4、diboot-scheduler 定时任务组件
 
 * Quartz定时任务统一管理及日志的最佳实践封装
 * @CollectThisJob注解提供定时任务定义，自动收集供前端选择
 > 详细文档: [diboot-scheduler文档](https://www.diboot.com/guide/diboot-scheduler/introduce.html).
 
-### 5. diboot-message 消息通知组件
+### 2-5. diboot-message 消息通知组件
 
 * 通用的消息模板&模板变量的设计方案
 * 支持多通道的消息通知发送
 > 详细文档: [diboot-message文档](https://www.diboot.com/guide/diboot-message/introduce.html).
 
-### 6. diboot-mobile 移动端组件
+### 2-6. diboot-mobile 移动端组件
 
 * 提供了配套的 [diboot-mobile-ui](https://gitee.com/dibo_software/diboot-mobile-ui) ，内置了多种登录方式
 * 支持 账号密码登录、微信小程序登录（自动注册）微信公众号登录（自动注册）
 > 详细文档: [diboot-mobile文档](https://www.diboot.com/guide/diboot-mobile/introduce.html).
 
-## devtools开发助理
+## 3. devtools开发助理
 * 极简易用（引入依赖jar，配置参数后，即可随应用启动运行）
 * 功能强大（数据结构与代码同步、前后端代码一键生成、前端面板组件编排）
 * 配置灵活（可按需配置生成代码路径及启用`Lombok`、`Swagger`等）
@@ -79,12 +82,7 @@
 
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/introduce.html).
 
-## 捐助支持
-<img src="https://www.diboot.com/wechat_donate.png" width = "200" height = "200" alt="捐助二维码" align=center />
-
-感谢每一位支持diboot的粉丝朋友。
-
-## 技术交流
+## 4. 技术交流
 如遇diboot相关技术问题，欢迎加群交流：
 
 * **VIP技术支持QQ群**（捐助/付费用户尊享）: [931266830]()
