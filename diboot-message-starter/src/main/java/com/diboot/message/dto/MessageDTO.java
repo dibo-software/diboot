@@ -15,6 +15,7 @@
  */
 package com.diboot.message.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.message.entity.Message;
@@ -22,6 +23,7 @@ import com.diboot.message.entity.MessageTemplate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * 消息 DTO定义
@@ -36,6 +38,12 @@ import lombok.experimental.Accessors;
 public class MessageDTO extends Message {
 
     private static final long serialVersionUID = 9013608670040655788L;
+
+    /**
+     * 标题
+     */
+    @BindQuery(comparison = Comparison.LIKE)
+    private String title;
 
     /**
      * 关联字段 MessageTemplate.title

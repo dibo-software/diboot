@@ -69,20 +69,7 @@ initRelatedData()
     <el-header>
       <el-space wrap class="list-operation">
         <el-space>
-          <el-select
-            v-show="!searchState"
-            v-model="queryParam.channel"
-            placeholder="请选择发送通道"
-            clearable
-            @change="onSearch"
-          >
-            <el-option
-              v-for="item in relatedData.messageChannelOptions || []"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label"
-            />
-          </el-select>
+          <el-input v-model="queryParam.title" clearable @change="onSearch" />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
           <el-button
