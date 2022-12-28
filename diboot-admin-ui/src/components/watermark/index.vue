@@ -27,16 +27,18 @@ const watermark = ref()
 //创建水印容器
 const createWatermarkContainer = (width: number, height: number, dataUrl: string) => {
   const watermarkDiv = document.createElement('div')
-  watermarkDiv.setAttribute('class', 'watermarkDiv')
-  const styleStr = `position:absolute;top:0;left:0;right:0;bottom:0;z-index:99;pointer-events:none;background-repeat:repeat;
-  background-position:${width / 2}px ${height / 2}px, 0 0;background-image:url('${dataUrl}'),url('${dataUrl}');`
-  watermarkDiv.setAttribute('style', styleStr)
+  watermarkDiv.className = 'water-mark-div'
+  watermarkDiv.style.position = 'absolute'
+  watermarkDiv.style.inset = '0'
+  watermarkDiv.style.zIndex = '1000'
+  watermarkDiv.style.backgroundPosition = `${width / 2}px ${height / 2}px, 0 0`
+  watermarkDiv.style.backgroundImage = `url('${dataUrl}'),url('${dataUrl}')`
   watermark.value.appendChild(watermarkDiv)
 }
 
 // 清空dom
 const clear = () => {
-  const wmDom = watermark.value.querySelector('.watermarkDiv')
+  const wmDom = watermark.value.querySelector('.water-mark-div')
   wmDom && wmDom.remove()
 }
 
@@ -47,7 +49,6 @@ const create = () => {
   const canvas = document.createElement('canvas')
   canvas.width = props.width || 300
   canvas.height = props.height || 300
-  canvas.style.display = 'none'
   //绘制图片/文字
   const ctx = canvas.getContext('2d')
   if (!ctx) return ElMessage?.warning('浏览器不支持水印功能')
@@ -84,10 +85,6 @@ const create = () => {
 }
 
 defineExpose({ create, clear })
-
-onMounted(() => {
-  create()
-})
 </script>
 
 <template>
@@ -99,8 +96,5 @@ onMounted(() => {
 <style scoped lang="scss">
 .water-mark {
   position: relative;
-  display: inherit;
-  width: 100%;
-  height: 100%;
 }
 </style>
