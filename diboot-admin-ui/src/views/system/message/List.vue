@@ -69,7 +69,7 @@ initRelatedData()
     <el-header>
       <el-space wrap class="list-operation">
         <el-space>
-          <el-input v-model="queryParam.title" clearable @change="onSearch" />
+          <el-input v-show="!searchState" v-model="queryParam.title" clearable @change="onSearch" />
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
           <el-button
