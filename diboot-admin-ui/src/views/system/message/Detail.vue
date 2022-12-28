@@ -29,10 +29,10 @@ defineExpose({
         {{ model.content }}
       </el-descriptions-item>
       <el-descriptions-item label="发送方">
-        <span>{{ model.sender }}</span>
+        <span>{{ model.senderName }}</span>
       </el-descriptions-item>
       <el-descriptions-item label="接收方">
-        {{ model.receiver }}
+        {{ model.receiverName }}
       </el-descriptions-item>
       <el-descriptions-item label="发送结果">
         <el-tag>{{ model.result }}</el-tag>
