@@ -96,8 +96,9 @@ initRelatedData()
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
       <el-table-column prop="businessType" label="业务类型" />
-      <el-table-column prop="sender" label="发送方" />
-      <el-table-column prop="receiver" label="接收方" />
+      <el-table-column prop="title" label="标题" />
+      <el-table-column prop="senderName" label="发送方" />
+      <el-table-column prop="receiverName" label="接收方" />
       <el-table-column prop="channelLabel" label="发送通道">
         <template #default="{ row }">
           <el-tag type="info">{{ row.channelLabel }}</el-tag>

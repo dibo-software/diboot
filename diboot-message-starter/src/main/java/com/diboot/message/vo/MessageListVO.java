@@ -17,8 +17,8 @@ package com.diboot.message.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.message.entity.Message;
-import com.diboot.message.entity.MessageTemplate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -51,8 +51,15 @@ public class MessageListVO extends Message {
     private String statusLabel;
 
     /**
-     * 关联字段：MessageTemplate.title
+     * 发送人姓名
      */
-    @BindField(entity = MessageTemplate.class, field = "title", condition = "this.template_id=id")
-    private String messageTemplateTitle;
+    @BindField(entity = IamUser.class, field = "realname", condition = "this.sender=id")
+    private String senderName;
+
+    /**
+     * 接收人姓名
+     */
+    @BindField(entity = IamUser.class, field = "realname", condition = "this.receiver=id")
+    private String receiverName;
+
 }
