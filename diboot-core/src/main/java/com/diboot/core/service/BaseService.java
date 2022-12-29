@@ -28,7 +28,7 @@ import com.diboot.core.util.IGetter;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
-import org.jetbrains.annotations.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
 import java.util.Collection;
