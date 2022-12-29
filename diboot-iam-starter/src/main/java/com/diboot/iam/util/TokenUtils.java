@@ -92,9 +92,9 @@ public class TokenUtils {
      * @param accessToken
      * @param userInfoStr
      */
-    public static void cacheAccessToken(String accessToken, String userInfoStr, int expiresInMinutes) {
+    public static void cacheAccessToken(String accessToken, String userInfoStr) {
         BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
-        baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken, userInfoStr, expiresInMinutes);
+        baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken, userInfoStr);
     }
 
     /**
@@ -143,10 +143,9 @@ public class TokenUtils {
      */
     public synchronized static void cacheRefreshToken(String refreshToken, String userInfoStr) {
         String prefixTemp = S.substringBeforeLast(userInfoStr, Cons.SEPARATOR_COMMA);
-        int expiresMinutes = Integer.parseInt(S.substringAfterLast(prefixTemp, Cons.SEPARATOR_COMMA));
         //如果是刷新token则更新颁发时间
         userInfoStr = prefixTemp + Cons.SEPARATOR_COMMA + System.currentTimeMillis();
-        cacheAccessToken(refreshToken, userInfoStr, expiresMinutes + 1); //适当延长1m避免临界点问题
+        cacheAccessToken(refreshToken, userInfoStr);
     }
 
     /**

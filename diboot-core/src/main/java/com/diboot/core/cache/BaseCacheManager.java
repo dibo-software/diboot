@@ -61,16 +61,6 @@ public interface BaseCacheManager {
     void putCacheObj(String cacheName, Object objKey, Object obj);
 
     /**
-     * 缓存对象 - 支持过期时间
-     * @param cacheName
-     * @param objKey
-     * @param obj
-     */
-    default void putCacheObj(String cacheName, Object objKey, Object obj, int expiredMinutes){
-        putCacheObj(cacheName, objKey, obj);
-    }
-
-    /**
      * 删除缓存对象
      * @param cacheName
      * @param objKey

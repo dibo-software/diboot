@@ -210,7 +210,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 
 	.u-checkbox {
 		/* #ifndef APP-NVUE */

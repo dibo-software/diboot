@@ -67,7 +67,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 	
 	.u-index-anchor {
 		box-sizing: border-box;

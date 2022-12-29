@@ -17,6 +17,8 @@ package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -119,6 +121,14 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
             queryWrapper.ne(IamAccount::getId, iamAccount.getId());
         }
         return exists(queryWrapper);
+    }
+
+    @Override
+    public boolean updateAccountStatus(Long accountId, String status) {
+        LambdaUpdateWrapper<IamAccount> updateWrapper = new UpdateWrapper<IamAccount>()
+                .lambda().set(IamAccount::getStatus, status)
+                .eq(IamAccount::getId, accountId);
+        return super.update(updateWrapper);
     }
 
     /**

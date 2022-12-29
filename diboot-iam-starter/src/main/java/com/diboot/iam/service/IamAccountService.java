@@ -66,4 +66,11 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
      */
     boolean isAccountExists(IamAccount iamAccount);
 
+    /**
+     * 更新账号状态
+     * @param accountId
+     * @return
+     */
+    boolean updateAccountStatus(Long accountId, String status);
+
 }

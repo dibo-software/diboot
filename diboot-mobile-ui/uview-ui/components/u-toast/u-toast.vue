@@ -48,7 +48,7 @@
 		},
 		computed: {
 			iconName() {
-				// 只有不为none，并且type为error|warning|succes|info时候，才显示图标
+				// 只有不为none，并且type为error|warning|success|info时候，才显示图标
 				if (['error', 'warning', 'success', 'info'].indexOf(this.tmpConfig.type) >= 0 && this.tmpConfig.icon) {
 					let icon = this.$u.type2icon(this.tmpConfig.type);
 					return icon;
@@ -132,7 +132,7 @@
 </script>
 
 <style lang="scss" scoped>
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 	
 	.u-toast {
 		position: fixed;

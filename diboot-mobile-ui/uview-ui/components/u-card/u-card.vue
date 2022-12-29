@@ -23,7 +23,7 @@
 					<image
 						:src="thumb"
 						class="u-card__head--left__thumb"
-						mode="aspectfull"
+						mode="aspectFill"
 						v-if="thumb"
 						:style="{ 
 							height: thumbWidth + 'rpx', 
@@ -249,7 +249,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../libs/css/style.components";
+@import "../../libs/css/style.components.scss";
 	
 .u-card {
 	position: relative;

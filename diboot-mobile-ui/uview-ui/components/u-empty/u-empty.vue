@@ -170,7 +170,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 
 	.u-empty {
 		@include vue-flex;

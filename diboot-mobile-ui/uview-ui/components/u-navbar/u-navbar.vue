@@ -239,7 +239,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 
 	.u-navbar {
 		width: 100%;
