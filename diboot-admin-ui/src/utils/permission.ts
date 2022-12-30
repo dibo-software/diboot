@@ -11,7 +11,7 @@ import router from '@/router'
  */
 export function checkRole(value: string | Array<string>, not = false, all = false) {
   if (value && value.length) {
-    const roles = useAuthStore().roles ?? []
+    const roles = (useAuthStore().roles ?? []).map(role => role.code)
     const permissionRoles = value instanceof Array ? value : [value]
     const findFn = (role: string) => roles.includes(role)
     const exist = all ? permissionRoles.every(findFn) : permissionRoles.some(findFn)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus'
-import { checkPasswordRule } from './checkPassword'
-import passwordStrength from './passwordStrength.vue'
+import { checkPasswordRule } from './check-password'
+import PasswordStrength from './PasswordStrength.vue'
 import useAuthStore from '@/store/auth'
 
 const baseApi = '/iam/user'

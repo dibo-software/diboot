@@ -1,34 +1,35 @@
 <script setup lang="ts">
-import { UserFilled, Postcard, Lock } from '@element-plus/icons-vue'
+import { UserFilled } from '@element-plus/icons-vue'
 import useAuthStore from '@/store/auth'
-import account from './components/account.vue'
-import password from './components/password.vue'
-import cropAvatar from './components/cropAvatar.vue'
+import Account from './components/Account.vue'
+import Password from './components/Password.vue'
+import CropAvatar from './components/CropAvatar.vue'
+import type { Role } from '@/views/system/role/type'
 
 useAuthStore().getInfo(true)
 const authStore = useAuthStore()
 
 const tagNameList = ref()
 const roles = authStore.roles
-tagNameList.value = roles.map((role: any) => role.name)
+tagNameList.value = roles.map((role: Role) => role.name)
 
 const menu = shallowRef([
   {
     title: '个人信息',
     key: 'account',
     icon: 'Postcard',
-    component: account
+    component: Account
   },
   {
     title: '密码',
     key: 'password',
     icon: 'Lock',
-    component: password
+    component: Password
   }
 ])
 
 // 切换页面
-const page = shallowRef(account)
+const page = shallowRef(Account)
 const pageKey = ref('account')
 const openPage = (item: any) => {
   pageKey.value = item.index

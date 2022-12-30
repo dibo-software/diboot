@@ -31,12 +31,6 @@ const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
-
-const downloadProgress = ref(0)
-
-const batchDownload = () => {
-  fileDownload('/file', selectedKeys.value, percentage => (downloadProgress.value = percentage))
-}
 </script>
 
 <template>

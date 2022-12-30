@@ -1,5 +1,6 @@
 <script setup lang="ts" name="UserList">
 import { Search, ArrowUp, ArrowDown, CircleClose, Plus } from '@element-plus/icons-vue'
+import type { UserPosition } from '../position/type'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
@@ -110,7 +111,9 @@ const deletePermission = checkPermission('delete')
     <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
       <el-table-column prop="realname" label="姓名">
         <template #default="{ row }">
-          <span v-if="!row.userPositionList?.length || row.userPositionList.some(e => e.isPrimaryPosition)">
+          <span
+            v-if="!row.userPositionList?.length || row.userPositionList.some((e:UserPosition) => e.isPrimaryPosition)"
+          >
             {{ row.realname }}
           </span>
           <el-tooltip v-else placement="top" content="兼职">

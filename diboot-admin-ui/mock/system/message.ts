@@ -10,8 +10,6 @@ const dataList: Message[] = Array.from({ length: 100 }).map((_, index) => {
   const method = Random.pick(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
   return {
     id,
-    requestUri: Random.url('http', 'localhost').split('localhost')[1],
-    requestMethod: method,
     appModule: Random.pick(['SYS', 'CRM', 'OA']),
     templateId: Random.id(),
     businessType: Random.pick(['Customer', 'Contract', 'OrderForm']),

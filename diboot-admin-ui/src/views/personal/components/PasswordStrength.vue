@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { level } from './checkPassword'
+import { level } from './check-password'
 
 const props = defineProps<{
   password?: string

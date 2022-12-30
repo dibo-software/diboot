@@ -2,11 +2,12 @@ import auth from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { buildImgSrc } from '@/utils/file'
 import type { UserModel } from '@/views/org-structure/user/type'
+import type { Role } from '@/views/system/role/type'
 
 export interface IAuthStore {
   realname: string
   avatar?: string
-  roles: Array<string>
+  roles: Array<Role>
   info?: UserModel
 }
 
@@ -38,7 +39,7 @@ export default defineStore('auth', {
     },
     getInfo: async function (refresh = false) {
       try {
-        const res = await api.get<{ info: UserModel; roles: Array<string> }>('/auth/user-info', { refresh })
+        const res = await api.get<{ info: UserModel; roles: Array<Role> }>('/auth/user-info', { refresh })
         this.info = res.data?.info
         if (this.info?.avatarUrl) this.avatar = buildImgSrc(this.info?.avatarUrl)
         this.realname = `${this.info?.realname}`

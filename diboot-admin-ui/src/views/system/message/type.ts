@@ -11,11 +11,11 @@ export interface Message {
   // 发送人
   sender: string
   // 发送人姓名
-  senderName: string
+  senderName?: string
   // 接收人
   receiver: string
   // 接收人姓名
-  receiverName: string
+  receiverName?: string
   // 标题
   title: string
   // 内容
