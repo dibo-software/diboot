@@ -43,7 +43,7 @@ public class ClearOperationLogJob extends QuartzJobBean {
     /**
      * 清理过期日志的SQL示例
      */
-    private static final String SQL = "DELETE FROM iam_operation_log WHERE create_time <= ?";
+    private static final String SQL = "DELETE FROM dbt_iam_operation_log WHERE create_time <= ?";
     private static final String PARAM_KEY_DAYS_BEFORE = "daysBefore";
 
     @Override

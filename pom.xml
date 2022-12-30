@@ -22,7 +22,7 @@
         <module>diboot-file-starter</module>
         <module>diboot-iam-starter</module>
         <module>diboot-scheduler-starter</module>
-        <module>diboot-message-starter</module>
+        <module>diboot-notification-starter</module>
         <module>diboot-mobile-starter</module>
     </modules>
 
@@ -30,7 +30,7 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.3</mybatis-plus.version>
         <okhttp.version>4.10.0</okhttp.version>
-        <aspectjweaver.version>1.9.9.1</aspectjweaver.version>
+        <aspectjweaver.version>1.9.19</aspectjweaver.version>
         <commons-io.version>2.11.0</commons-io.version>
         <easyexcel.version>3.1.3</easyexcel.version>
         <diboot.version>3.0.0</diboot.version>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.30</version>
+            <version>8.0.31</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
