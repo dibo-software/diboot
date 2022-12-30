@@ -36,11 +36,5 @@ module.exports = {
     'prettier/prettier': 'warn',
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off'
-  },
-  overrides: [
-    {
-      files: ['cypress/e2e/**.{cy,spec}.{js,ts,jsx,tsx}'],
-      extends: ['plugin:cypress/recommended']
-    }
-  ]
+  }
 }
