@@ -16,7 +16,9 @@
 package com.diboot.iam.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.process.IamAsyncWorker;
 import com.diboot.iam.auth.AuthService;
@@ -26,6 +28,7 @@ import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.service.IamAccountService;
+import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthToken;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
@@ -37,6 +40,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 /**
  * 用户名密码认证的service实现
@@ -52,6 +56,8 @@ public abstract class BaseAuthServiceImpl implements AuthService {
     private IamAsyncWorker iamAsyncWorker;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private IamLoginTraceService loginTraceService;
 
     @Override
     public String getAuthType() {
@@ -88,7 +94,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
             if (subject.isAuthenticated()) {
                 String accessToken = (String) authToken.getCredentials();
                 // 缓存当前token与用户信息
-                TokenUtils.cacheAccessToken(accessToken, authToken.buildUserInfoStr(), authToken.getExpiresInMinutes());
+                TokenUtils.cacheAccessToken(accessToken, authToken.buildUserInfoStr());
                 log.debug("申请token成功！authtoken={}", authToken.getCredentials());
                 saveLoginTrace(authToken, true);
                 // 返回
@@ -143,4 +149,26 @@ public abstract class BaseAuthServiceImpl implements AuthService {
         iamAsyncWorker.saveLoginTraceLog(loginTrace);
     }
 
+    /**
+     * 失败次数超限锁定账号
+     * @param latestAccount
+     */
+    protected void lockAccountIfRequired(IamAccount latestAccount) {
+        // 查询最新1天内的失败记录
+        LambdaQueryWrapper<IamLoginTrace> queryWrapper = new LambdaQueryWrapper<IamLoginTrace>()
+                .select(IamLoginTrace::getId)
+                .eq(IamLoginTrace::getUserType, latestAccount.getUserType())
+                .eq(IamLoginTrace::getAuthType, latestAccount.getAuthType())
+                .eq(IamLoginTrace::getAuthAccount, latestAccount.getAuthAccount())
+                .eq(IamLoginTrace::isSuccess, false)
+                .gt(IamLoginTrace::getCreateTime, LocalDateTime.now().minusDays(1))
+                .eq(V.notEmpty(latestAccount.getTenantId()) ,IamLoginTrace::getTenantId, latestAccount.getTenantId());
+
+        long failedCount = loginTraceService.getEntityListCount(queryWrapper);
+        if(failedCount >= Cons.LOGIN_MAX_ATTEMPTS) {
+            latestAccount.setStatus(Cons.DICTCODE_ACCOUNT_STATUS.L.name());
+            log.warn("用户登录失败次数超过最大限值，账号 {} 已被锁定！", latestAccount.getAuthAccount());
+            accountService.updateAccountStatus(latestAccount.getId(), Cons.DICTCODE_ACCOUNT_STATUS.L.name());
+        }
+    }
 }

@@ -16,13 +16,14 @@
 package com.diboot.message.channel;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.message.config.Cons;
 import com.diboot.message.entity.Message;
 import com.diboot.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -45,12 +46,6 @@ import java.util.Date;
 @Slf4j
 public class SimpleEmailChannel implements MessageChannel {
 
-    @Autowired(required = false)
-    private JavaMailSender javaMailSender;
-
-    @Autowired
-    private MessageService messageService;
-
     @Override
     public String type() {
         return Cons.MESSAGE_CHANNEL.EMAIL.name();
@@ -62,6 +57,10 @@ public class SimpleEmailChannel implements MessageChannel {
         log.debug("[开始发送邮件]：邮件内容：{}", JSON.stringify(message));
         String result = "success";
         String status = Cons.MESSAGE_STATUS.DELIVERY.name();
+        JavaMailSender javaMailSender = ContextHelper.getBean(JavaMailSender.class);
+        if(javaMailSender == null) {
+            throw new InvalidUsageException("邮件无法发送：无JavaMailSender实例，请检查相关配置及依赖环境。");
+        }
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             //发送有附件邮件
@@ -99,7 +98,7 @@ public class SimpleEmailChannel implements MessageChannel {
             status = Cons.MESSAGE_STATUS.FAILED.name();
         }
         // 更新结果
-        messageService.updateEntity(
+        ContextHelper.getBean(MessageService.class).updateEntity(
                 Wrappers.<Message>lambdaUpdate()
                         .set(Message::getResult, result)
                         .set(Message::getStatus, status)

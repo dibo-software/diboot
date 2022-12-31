@@ -31,21 +31,18 @@ create table department
     `character` varchar(100) null comment '关键字',
     is_deleted tinyint(1) default 0 not null comment '已删除',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
-)
-    comment '部门' charset=utf8mb4;
+) comment '部门' charset=utf8mb4;
 
 create table organization
 (
-    id int auto_increment comment 'ID'
-        primary key,
+    id int auto_increment comment 'ID' primary key,
     parent_id int default 0 not null comment '上级单位ID',
     name varchar(100) not null comment '名称',
     telphone varchar(20) null comment '电话',
     manager_id bigint not null comment '负责人id',
     is_deleted tinyint(1) default 0 not null comment '是否有效',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
-)
-    comment '单位' charset=utf8mb4;
+) comment '单位' charset=utf8mb4;
 
 create table role
 (
@@ -91,7 +88,7 @@ CREATE TABLE `db_goods_goods_info` (
                                        `create_ts` datetime default CURRENT_TIMESTAMP null,
                                        `update_ts`  datetime null,
                                        `is_del` tinyint DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) comment '商品信息' CHARSET=utf8;
 
 CREATE TABLE `db_purchase_rel_plan_goods` (
                                               `rel_id` bigint DEFAULT NULL,
@@ -100,7 +97,7 @@ CREATE TABLE `db_purchase_rel_plan_goods` (
                                               `create_ts` datetime default CURRENT_TIMESTAMP null,
                                               `update_ts`  datetime null,
                                               `is_del` tinyint DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) comment 'purchase_rel_plan_goods' CHARSET=utf8;
 
 CREATE TABLE `db_purchase_form_plan` (
                                          `purchase_form_plan_id` bigint DEFAULT NULL,
@@ -108,7 +105,7 @@ CREATE TABLE `db_purchase_form_plan` (
                                          `is_del` tinyint DEFAULT '0',
                                          `create_ts` datetime default CURRENT_TIMESTAMP null,
                                          `update_ts`  datetime null
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) comment 'purchase_form_plan' CHARSET=utf8;
 
 -- 上传文件表
 CREATE TABLE test_upload_file (
@@ -122,7 +119,7 @@ CREATE TABLE test_upload_file (
                                   file_type varchar(20) DEFAULT NULL COMMENT '文件类型',
                                   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
                                   create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
-) DEFAULT CHARSET=utf8 COMMENT='测试uuid';
+) comment '测试uuid';
 
 -- playground.demo_test definition
 
@@ -143,7 +140,7 @@ CREATE TABLE `demo_test` (
                              `create_by` bigint DEFAULT '0' COMMENT '创建人',
                              `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                              `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Demo测试';
+) comment 'Demo测试';
 
 -- playground.demo_test_join definition
 
@@ -154,7 +151,7 @@ CREATE TABLE `demo_test_join` (
                                   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
                                   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
                                   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
+) comment '关联测试';
 
 create table customer
 (
@@ -164,8 +161,20 @@ create table customer
     extjsonarr JSON null comment '扩展json对象',
     is_deleted tinyint(1) default 0 not null comment '已删除',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
-)
-    comment '客户' charset=utf8mb4;
+) comment '客户' charset=utf8mb4;
+
+-- playground.region definition
+CREATE TABLE `region` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(20) NOT NULL COMMENT '名称',
+  `code` varchar(20) NOT NULL COMMENT '编码',
+  `parent_id` bigint NOT NULL COMMENT '父级',
+  `level` smallint NOT NULL DEFAULT '0' COMMENT '层级',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='行政区划';
 
 INSERT INTO customer (id, realname, cellphone, extjsonarr)
 VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');

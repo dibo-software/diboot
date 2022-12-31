@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -107,7 +108,12 @@ public class PropInfo implements Serializable {
                         columnName = S.toSnakeCase(fldName);
                     }
                     this.idColumn = columnName;
-                    this.idFieldType = fld.getType();
+                    if(beanClass.isAssignableFrom(BaseEntity.class)) {
+                        this.idFieldType = Long.class;
+                    }
+                    else {
+                        this.idFieldType = fld.getType();
+                    }
                 }
                 else{
                     TableLogic tableLogic = fld.getAnnotation(TableLogic.class);
@@ -128,7 +134,12 @@ public class PropInfo implements Serializable {
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){
                     this.columnToFieldMap.put(columnName, fldName);
-                    this.columnToFieldTypeMap.put(columnName, fld.getType());
+                    if(this.idColumn != null && columnName.equals(this.idColumn) && beanClass.isAssignableFrom(BaseEntity.class)) {
+                        this.columnToFieldTypeMap.put(columnName, Long.class);
+                    }
+                    else {
+                        this.columnToFieldTypeMap.put(columnName, fld.getType());
+                    }
                     this.columns.add(columnName);
                 }
             }

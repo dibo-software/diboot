@@ -229,7 +229,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 
 	.u-dropdown {
 		flex: 1;

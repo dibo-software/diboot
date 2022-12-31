@@ -37,6 +37,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
@@ -680,43 +681,35 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			log.error("调用错误: getLabelValueList必须用select依次指定返回的Label,Value, ext键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 			return Collections.emptyList();
 		}
-		// 获取mapList
-		List<Map<String, Object>> mapList = super.listMaps(queryWrapper);
-		if(mapList == null){
+		List<T> entityList = getEntityList(queryWrapper);
+		if(entityList == null){
 			return Collections.emptyList();
 		}
-		else if(mapList.size() > BaseConfig.getBatchSize()){
-			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", mapList.size());
+		else if(entityList.size() > BaseConfig.getBatchSize()){
+			log.warn("单次查询记录数量过大，建议您及时检查优化。返回结果数={}", entityList.size());
 		}
 		// 转换为LabelValue
 		String[] selectArray = sqlSelect.split(Cons.SEPARATOR_COMMA);
 		// 是否有ext字段
 		boolean hasExt = selectArray.length > 2;
-		List<LabelValue> labelValueList = new ArrayList<>(mapList.size());
-		for(Map<String, Object> map : mapList){
+		List<LabelValue> labelValueList = new ArrayList<>(entityList.size());
+		for(T entity : entityList){
+			PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+			String label = propInfo.getFieldByColumn(selectArray[0]), value = propInfo.getFieldByColumn(selectArray[1]), ext;
+			Object labelVal = BeanUtils.getProperty(entity, label);
+			Object valueVal = BeanUtils.getProperty(entity, value);
 			// 如果key和value的的值都为null的时候map也为空，则不处理此项
-			if (V.isEmpty(map)) {
+			if (V.isEmpty(labelVal) && V.isEmpty(valueVal)) {
 				continue;
 			}
-			String label = selectArray[0], value = selectArray[1], ext;
 			// 兼容oracle大写
-			if (map.containsKey(label) || map.containsKey(label = label.toUpperCase())) {
-				LabelValue labelValue = new LabelValue();
-				// 设置label
-				labelValue.setLabel(S.valueOf(map.get(label)));
-				// 设置value
-				if (map.containsKey(value) || map.containsKey(value = value.toUpperCase())) {
-					labelValue.setValue(map.get(value));
-				}
-				// 设置ext
-				if (hasExt) {
-					ext = selectArray[2];
-					if (map.containsKey(ext) || map.containsKey(ext = ext.toUpperCase())) {
-						labelValue.setExt(map.get(ext));
-					}
-				}
-				labelValueList.add(labelValue);
+			LabelValue labelValue = new LabelValue(S.valueOf(labelVal), valueVal);
+			// 设置ext
+			if (hasExt) {
+				ext = propInfo.getFieldByColumn(selectArray[2]);
+				labelValue.setExt(BeanUtils.getProperty(entity, ext));
 			}
+			labelValueList.add(labelValue);
 		}
 		return labelValueList;
 	}
@@ -745,6 +738,29 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			idNameMap.put(key, value);
 		}
 		return idNameMap;
+	}
+
+	@Override
+	public Map<String, T> getId2EntityMap(List entityIds, IGetter<T>... selectFlds) {
+		QueryWrapper<T> queryWrapper = new QueryWrapper();
+		String pk = ContextHelper.getIdColumnName(getEntityClass());
+		if(V.notEmpty(selectFlds)) {
+			queryWrapper.select(pk);
+			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
+			for(IGetter<T> getter : selectFlds) {
+				String fieldName = BeanUtils.convertToFieldName(getter);
+				String columnName = entityInfo.getColumnByField(fieldName);
+				if(columnName != null) {
+					queryWrapper.select(columnName);
+				}
+			}
+		}
+		queryWrapper.in(pk, entityIds);
+		List<T> entityList = getEntityList(queryWrapper);
+		if(V.isEmpty(entityList)) {
+			return Collections.emptyMap();
+		}
+		return BeanUtils.convertToStringKeyObjectMap(entityList, pk);
 	}
 
 	@Override

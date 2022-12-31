@@ -40,11 +40,12 @@ public class SimpleUuidSplitVO extends User {
 
     // ，拆分的id值绑定
     @BindEntityList(entity = TestUploadFile.class, condition="this.`character`=uuid", splitBy= Cons.SEPARATOR_COMMA)
+    //@BindEntityList(entity = TestUploadFile.class, condition="this.character=uuid", splitBy= Cons.SEPARATOR_COMMA)
     private List<TestUploadFile> photos;
 
     // ，拆分的id值绑定
-    @BindFieldList(entity = TestUploadFile.class, field = "fileName", condition="this.`character`=uuid",
-            splitBy= Cons.SEPARATOR_COMMA)
+    @BindFieldList(entity = TestUploadFile.class, field = "fileName", condition="this.`character`=uuid", splitBy= Cons.SEPARATOR_COMMA)
+    //@BindFieldList(entity = TestUploadFile.class, field = "fileName", condition="this.character=uuid", splitBy= Cons.SEPARATOR_COMMA)
     private List<String> photoNames;
 
 }

@@ -81,11 +81,11 @@ public abstract class BaseBinder<T> {
     /**
      * 注解宿主对象列名-字段名的映射map
      */
-    private PropInfo annoObjPropInfo;
+    protected PropInfo annoObjPropInfo;
     /**
      * 被关联对象列名-字段名的映射map
      */
-    private PropInfo refObjPropInfo;
+    protected PropInfo refObjPropInfo;
 
     public static final String NOT_SUPPORT_MSG = "中间表关联暂不支持涉及目标表多列的情况!";
 
@@ -317,7 +317,8 @@ public abstract class BaseBinder<T> {
             // 构建查询条件
             if (V.notEmpty(annoObjectJoinOnList)) {
                 String refObjJoinOnCol = refObjJoinCols.get(i);
-                List<?> unpackAnnoObjectJoinOnList = ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy);
+                Class<?> fieldType = refObjPropInfo.getFieldTypeByColumn(refObjJoinOnCol);
+                List<?> unpackAnnoObjectJoinOnList = ResultAssembler.unpackValueList(annoObjectJoinOnList, this.splitBy, fieldType);
                 queryWrapper.in(refObjJoinOnCol, unpackAnnoObjectJoinOnList);
                 if (remoteBindDTO != null) {
                     remoteBindDTO.setRefJoinCol(refObjJoinOnCol).setInConditionValues(unpackAnnoObjectJoinOnList);

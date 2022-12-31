@@ -243,22 +243,34 @@ public class BeanUtils {
         if(value == null){
             return null;
         }
-        Class<?> type = field.getType();
-        if (value.getClass().equals(type)) {
+        return convertValueToFieldType(value, field.getType());
+    }
+
+    /**
+     * 转换为field对应的类型
+     * @param value
+     * @param fieldType
+     * @return
+     */
+    public static Object convertValueToFieldType(Object value, Class<?> fieldType){
+        if(value == null){
+            return null;
+        }
+        if (value.getClass().equals(fieldType)) {
             return value;
         }
         String valueStr = S.valueOf(value);
-        if (fieldConverterMap.containsKey(type)) {
-            return fieldConverterMap.get(type).apply(valueStr);
-        } else if (LocalDate.class.equals(type) || LocalDateTime.class.equals(type)) {
+        if (fieldConverterMap.containsKey(fieldType)) {
+            return fieldConverterMap.get(fieldType).apply(valueStr);
+        } else if (LocalDate.class.equals(fieldType) || LocalDateTime.class.equals(fieldType)) {
             Date dateVal = (value instanceof Date) ? (Date) value : D.fuzzyConvert(valueStr);
             if (dateVal == null) {
                 return null;
             }
             ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
-            return LocalDateTime.class.equals(type) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
-        } else if (Serializable.class.isAssignableFrom(type)) {
-            return JSON.parseObject(valueStr, type);
+            return LocalDateTime.class.equals(fieldType) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
+        } else if (Serializable.class.isAssignableFrom(fieldType)) {
+            return JSON.parseObject(valueStr, fieldType);
         }
         return value;
     }
@@ -443,60 +455,43 @@ public class BeanUtils {
         if(V.isEmpty(allNodes)){
             return null;
         }
+        Map<Object, List<T>> parentId2ListMap = new HashMap<>();
         // 提取所有的top level对象
-        List<T> topLevelModels = new ArrayList();
-        for(T node : allNodes){
+        for (T node : allNodes) {
             Object parentId = getProperty(node, parentIdFieldName);
-            if(parentId == null || V.fuzzyEqual(parentId, rootNodeId)){
-                topLevelModels.add(node);
-            }
             Object nodeId = getProperty(node, idFieldName);
             if(V.equals(nodeId, parentId)){
                 throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName()+":"+nodeId);
             }
+            parentId2ListMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(node);
         }
-        if(V.isEmpty(topLevelModels)){
+        List<T> topLevelModels = parentId2ListMap.get(rootNodeId);
+        if (V.isEmpty(topLevelModels)) {
             return Collections.emptyList();
         }
-        // 遍历第一级节点，并挂载 children 子节点
-        for(T node : allNodes) {
-            Object nodeId = getProperty(node, idFieldName);
-            List<T> children = buildTreeChildren(nodeId, allNodes, idFieldName, parentIdFieldName, childrenFieldName);
-            setProperty(node, childrenFieldName, children);
-        }
+        buildTreeChildren(topLevelModels, parentId2ListMap, idFieldName, childrenFieldName);
         return topLevelModels;
     }
 
     /**
      * 递归构建树节点的子节点
-     * @param parentId
-     * @param nodeList
+     *
+     * @param topLevelModels
+     * @param parentId2ListMap
      * @param idFieldName
-     * @param parentIdFieldName 父节点属性名
-     * @param childrenFieldName 子节点集合属性名
-     * @return
+     * @param childrenFieldName
+     * @param <T>
      */
-    public static <T> List<T> buildTreeChildren(Object parentId, List<T> nodeList, String idFieldName, String parentIdFieldName, String childrenFieldName) {
-        List<T> children = null;
-        for(T node : nodeList) {
-            Object nodeParentId = getProperty(node, parentIdFieldName);
-            if(nodeParentId != null && V.equals(nodeParentId, parentId)) {
-                if(children == null){
-                    children = new ArrayList<>();
-                }
-                children.add(node);
+    public static <T> void buildTreeChildren(List<T> topLevelModels, Map<Object, List<T>> parentId2ListMap, String idFieldName, String childrenFieldName) {
+        for (T item : topLevelModels) {
+            Object nodeId = getProperty(item, idFieldName);
+            if (!parentId2ListMap.containsKey(nodeId)) {
+                continue;
             }
+            List<T> children = parentId2ListMap.get(nodeId);
+            setProperty(item, childrenFieldName, children);
+            buildTreeChildren(children, parentId2ListMap, idFieldName, childrenFieldName);
         }
-        if(children != null){
-            for(T child : children) {
-                Object nodeId = getProperty(child, idFieldName);
-                List<T> childNodeChildren = buildTreeChildren(nodeId, nodeList, idFieldName, parentIdFieldName, childrenFieldName);
-                if(childNodeChildren != null) {
-                    setProperty(child, childrenFieldName, childNodeChildren);
-                }
-            }
-        }
-        return children;
     }
 
     /***

@@ -150,7 +150,7 @@ public class DynamicSqlProvider {
      * @return
      */
     private String formatSqlSelect(String sqlSelect, Page<?> page){
-        Set<String> columnSets = new HashSet<>();
+        Set<String> columnSets = null;
         StringBuilder sb = new StringBuilder();
         if(V.isEmpty(sqlSelect)){
             sb.append("self.*");
@@ -163,15 +163,18 @@ public class DynamicSqlProvider {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append("self.").append(column);
+                if(columnSets == null) {
+                    columnSets = new HashSet<>();
+                }
                 columnSets.add("self."+column);
             }
         }
         if(page != null && page.orders() != null) {
             for(OrderItem orderItem : page.orders()){
                 if((V.isEmpty(sqlSelect) && !S.startsWith(orderItem.getColumn(), "self."))
-                    || !columnSets.contains(orderItem.getColumn())
+                    || (columnSets != null && !columnSets.contains(orderItem.getColumn()))
                 ){
-                    sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS ").append(PLACEHOLDER_COLUMN_FLAG).append(S.replace(orderItem.getColumn(), ".", "_"));
+                    sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS ").append(S.replace(orderItem.getColumn(), ".", "_")).append(PLACEHOLDER_COLUMN_FLAG);
                 }
             }
         }

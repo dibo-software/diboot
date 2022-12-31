@@ -230,7 +230,7 @@
 </script>
 
 <style scoped lang="scss">
-	@import "../../libs/css/style.components";
+	@import "../../libs/css/style.components.scss";
 	.u-fixed-placeholder {
 		/* #ifndef APP-NVUE */
 		box-sizing: content-box;

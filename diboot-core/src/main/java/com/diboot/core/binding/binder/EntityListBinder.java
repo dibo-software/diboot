@@ -108,7 +108,8 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             // 收集查询结果values集合
             List entityIdList = extractIdValueFromMap(middleTableResultMap);
             if(V.notEmpty(this.splitBy)){
-                entityIdList = ResultAssembler.unpackValueList(entityIdList, this.splitBy);
+                Class<?> fieldType = refObjPropInfo.getFieldTypeByColumn(refObjJoinCols.get(0));
+                entityIdList = ResultAssembler.unpackValueList(entityIdList, this.splitBy, fieldType);
             }
             //处理orderBy，附加排序
             this.appendOrderBy(remoteBindDTO);
