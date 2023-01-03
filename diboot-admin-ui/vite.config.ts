@@ -34,7 +34,6 @@ export default defineConfig(({ command }) => {
           { '@/hooks/use-option': [['default', 'useOption']] },
           { '@/hooks/use-sort': [['default', 'useSort']] },
           { '@/hooks/use-upload-file': [['default', 'useUploadFile']] },
-          { '@/hooks/use-tabs': [['default', 'useTabs']] },
           { '@/hooks/use-tree-crud': [['default', 'useTreeCrud']] },
           { '@/utils/permission': ['checkPermission', 'checkRole'] }
         ],
