@@ -78,12 +78,9 @@ export interface Textarea extends Omit<InputText, 'type'> {
   autosize?: boolean | { minRows?: number; maxRows?: number }
 }
 
-export interface Markdown extends Input {
-  type: 'md'
-  height?: string
-}
-export interface RichText extends Omit<Markdown, 'type'> {
+export interface RichText extends Input {
   type: 'rich'
+  height?: string
   // 编辑器模式
   mode?: 'default' | 'simple'
 }
@@ -168,7 +165,6 @@ export interface ListSelector extends Input {
 export type FormItem =
   | InputText
   | Textarea
-  | Markdown
   | RichText
   | InputNumber
   | BooleanSwitch
