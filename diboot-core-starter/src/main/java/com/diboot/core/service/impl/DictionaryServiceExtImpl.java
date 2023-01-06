@@ -65,8 +65,22 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .collect(Collectors.toList());
     }
 
+
     @Override
-    public Map<String, LabelValue> getLabelValueMap(String type) {
+    public Map<String, LabelValue> getLabel2ItemMap(String type) {
+        // 构建查询条件
+        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
+                .eq(Dictionary::getType, type)
+                .isNotNull(Dictionary::getParentId);
+        // 返回构建条件
+        return getEntityList(queryDictionary).stream().collect(
+                Collectors.toMap(dict -> dict.getItemName(),
+                        dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
+    }
+
+    @Override
+    public Map<String, LabelValue> getValue2ItemMap(String type) {
         // 构建查询条件
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
