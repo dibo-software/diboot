@@ -150,10 +150,6 @@ const beforeUpload = (rawFile: UploadRawFile) => {
         :style="{ height: config.height }"
       />
     </template>
-    <template v-else-if="config.type === 'md'">
-      <md-read v-if="config.disabled || disabled" :value="value" :style="{ flex: 1, height: config.height }" />
-      <md-editor v-else v-model="value" :placeholder="config.placeholder" :height="config.height" />
-    </template>
     <el-input-number
       v-if="config.type === 'input-number'"
       v-model="value"

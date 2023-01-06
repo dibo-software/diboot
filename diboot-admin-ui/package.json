@@ -31,7 +31,6 @@
     "pinia-plugin-persist": "^1.0.0",
     "qs": "^6.11.0",
     "sortablejs": "^1.15.0",
-    "vditor": "^3.8.18",
     "vue": "^3.2.45",
     "vue-clipboard3": "^2.0.0",
     "vue-cropper": "^1.0.5",

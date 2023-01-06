@@ -44,7 +44,6 @@ specifiers:
   typescript: ~4.9.4
   unplugin-auto-import: ^0.12.1
   unplugin-vue-components: ^0.22.12
-  vditor: ^3.8.18
   vite: ^4.0.3
   vite-plugin-checker: ^0.5.3
   vite-plugin-eslint: ^1.8.1
@@ -79,7 +78,6 @@ dependencies:
   pinia-plugin-persist: registry.npmmirror.com/pinia-plugin-persist/1.0.0_pinia@2.0.28+vue@3.2.45
   qs: registry.npmmirror.com/qs/6.11.0
   sortablejs: registry.npmmirror.com/sortablejs/1.15.0
-  vditor: registry.npmmirror.com/vditor/3.8.18
   vue: registry.npmmirror.com/vue/3.2.45
   vue-clipboard3: registry.npmmirror.com/vue-clipboard3/2.0.0
   vue-cropper: registry.npmmirror.com/vue-cropper/1.0.5
@@ -2094,12 +2092,6 @@ packages:
     resolution: {integrity: sha512-IofjkYBZaZivn0V8nnsMJGBr4jVLxHDheKSW88PyxS5QC4Vo9ZbZVvhzlSxY87fVq3STR6r+4cGepyHkcWOQSw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/delegate/-/delegate-3.2.0.tgz}
     name: delegate
     version: 3.2.0
-    dev: false
-
-  registry.npmmirror.com/diff-match-patch/1.0.5:
-    resolution: {integrity: sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/diff-match-patch/-/diff-match-patch-1.0.5.tgz}
-    name: diff-match-patch
-    version: 1.0.5
     dev: false
 
   registry.npmmirror.com/dir-glob/3.0.1:
@@ -5168,14 +5160,6 @@ packages:
       spdx-correct: registry.npmmirror.com/spdx-correct/3.1.1
       spdx-expression-parse: registry.npmmirror.com/spdx-expression-parse/3.0.1
     dev: true
-
-  registry.npmmirror.com/vditor/3.8.18:
-    resolution: {integrity: sha512-RSKCPKy0zrKwkI5GuEXUSxsxUhEO8hcIQivj5JVYvtUDWHfEOS1W7xKP8+zFKvoZNC4qm8zly2qErSMzHcEbNQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vditor/-/vditor-3.8.18.tgz}
-    name: vditor
-    version: 3.8.18
-    dependencies:
-      diff-match-patch: registry.npmmirror.com/diff-match-patch/1.0.5
-    dev: false
 
   registry.npmmirror.com/vite-node/0.26.2_ovmyjmuuyckt3r3gpaexj2onji:
     resolution: {integrity: sha512-4M/zlatItZAyvrQG+82zQBhgDjRZRhVJYFW4T9wcAKh7eMmSiPOVSeI5zsV9UzHXgCcIDKX0o0r3s4OxExTHqg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vite-node/-/vite-node-0.26.2.tgz}

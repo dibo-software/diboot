@@ -102,16 +102,6 @@ const authMenu = [
         }
       },
       {
-        path: 'markdown',
-        name: 'Markdown',
-        meta: {
-          title: 'Markdown编辑器',
-          icon: 'Element:Edit',
-          componentPath: prefix + 'example/Markdown.vue',
-          sort: 2
-        }
-      },
-      {
         path: 'document',
         name: 'Document',
         meta: {

@@ -78,7 +78,6 @@
     "useRouter": "readonly",
     "useSlots": "readonly",
     "useSort": "readonly",
-    "useTabs": "readonly",
     "useTreeCrud": "readonly",
     "useUploadFile": "readonly",
     "watch": "readonly",

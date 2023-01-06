@@ -79,7 +79,6 @@ declare global {
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
   const useSort: typeof import('@/hooks/use-sort')['default']
-  const useTabs: typeof import('@/hooks/use-tabs')['default']
   const useTreeCrud: typeof import('@/hooks/use-tree-crud')['default']
   const useUploadFile: typeof import('@/hooks/use-upload-file')['default']
   const watch: typeof import('vue')['watch']
