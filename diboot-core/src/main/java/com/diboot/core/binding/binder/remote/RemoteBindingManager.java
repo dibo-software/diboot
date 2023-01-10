@@ -15,12 +15,12 @@
  */
 package com.diboot.core.binding.binder.remote;
 
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.openfeign.FeignClientBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,10 +41,6 @@ public class RemoteBindingManager {
      * restTemplate 实例缓存
      */
     private static Map<String, RemoteBindingProvider> MODULE_PROVIDER_MAP;
-    /**
-     * feignClientBuilder 实例
-     */
-    private static FeignClientBuilder feignClientBuilder;
 
     /**
      * 从远程接口抓取 Entity List
@@ -78,10 +74,11 @@ public class RemoteBindingManager {
             MODULE_PROVIDER_MAP = new ConcurrentHashMap<>();
         }
         return MODULE_PROVIDER_MAP.computeIfAbsent(module, key -> {
-            if(feignClientBuilder == null){
-                feignClientBuilder = new FeignClientBuilder(ContextHelper.getApplicationContext());
+            RemoteBindingProviderFactory factory = ContextHolder.getBean(RemoteBindingProviderFactory.class);
+            if(factory == null) {
+                throw new InvalidUsageException("RemoteBindingProviderFactory 未实现，无法使用远程绑定功能！");
             }
-            return feignClientBuilder.forType(RemoteBindingProvider.class, module).build();
+            return factory.create(module);
         });
     }
 
