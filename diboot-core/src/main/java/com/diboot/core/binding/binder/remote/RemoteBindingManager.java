@@ -16,7 +16,7 @@
 package com.diboot.core.binding.binder.remote;
 
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -74,7 +74,7 @@ public class RemoteBindingManager {
             MODULE_PROVIDER_MAP = new ConcurrentHashMap<>();
         }
         return MODULE_PROVIDER_MAP.computeIfAbsent(module, key -> {
-            RemoteBindingProviderFactory factory = ContextHolder.getBean(RemoteBindingProviderFactory.class);
+            RemoteBindingProviderFactory factory = ContextHelper.getBean(RemoteBindingProviderFactory.class);
             if(factory == null) {
                 throw new InvalidUsageException("RemoteBindingProviderFactory 未实现，无法使用远程绑定功能！");
             }
