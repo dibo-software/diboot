@@ -72,9 +72,9 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
     /**
      * 错误信息
      */
-    @Getter
+    @Getter @Setter
     private List<String> errorMsgs;
-    @Getter
+    @Getter @Setter
     protected Integer errorCount = 0;
 
     // 全部数据
@@ -152,6 +152,17 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
      */
     public List<Map<Integer, String>> getDataList(){
         return dataList;
+    }
+
+    /**
+     * 添加错误信息
+     * @param errorMsg
+     */
+    protected void addErrorMsg(String errorMsg) {
+        if(this.errorMsgs == null) {
+            this.errorMsgs = new ArrayList<>();
+        }
+        this.errorMsgs.add(errorMsg);
     }
 
     /**
