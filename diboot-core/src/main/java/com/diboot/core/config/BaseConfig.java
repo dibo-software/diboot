@@ -138,4 +138,34 @@ public class BaseConfig {
 			ACTIVE_FLAG_VALUE = value;
 		}
 	}
+
+	private static Long workerId = null, dataCenterId = null;
+
+	/***
+	 * 获取workerId
+	 * @return
+	 */
+	public static long getWorkerId(){
+		if(workerId == null){
+			workerId = PropertiesUtils.getLong("diboot.id.worker-id");
+			if(workerId == null){
+				workerId = 1L;
+			}
+		}
+		return workerId;
+	}
+
+	/***
+	 * 获取DataCenterId
+	 * @return
+	 */
+	public static long getDataCenterId() {
+		if(dataCenterId == null){
+			dataCenterId = PropertiesUtils.getLong("diboot.id.data-center-id");
+			if(dataCenterId == null){
+				dataCenterId = 1L;
+			}
+		}
+		return dataCenterId;
+	}
 }

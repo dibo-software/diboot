@@ -80,6 +80,20 @@ public class PropertiesUtils {
     }
 
     /***
+     *  读取Long型的配置项
+     * @param key
+     * @return
+     */
+    public static Long getLong(String key){
+        // 获取配置值
+        String value = get(key);
+        if(V.notEmpty(value)){
+            return Long.parseLong(value);
+        }
+        return null;
+    }
+
+    /***
      * 读取boolean值的配置项
      */
     public static boolean getBoolean(String key) {

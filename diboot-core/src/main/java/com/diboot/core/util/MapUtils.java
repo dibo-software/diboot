@@ -15,6 +15,11 @@
  */
 package com.diboot.core.util;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +29,7 @@ import java.util.Map;
  * @date 2022/6/15
  * Copyright © diboot.com
  */
+@Slf4j
 public class MapUtils {
 
     /**
@@ -38,6 +44,50 @@ public class MapUtils {
             return map.get(key);
         }
         return map.get(key.toUpperCase());
+    }
+
+    /**
+     * 构建ResultMap为实体
+     * @param model
+     * @param dataMap
+     * @return
+     * @param <T>
+     */
+    public static <T> T buildResultMapToEntity(T model, Map<String, Object> dataMap){
+        // 字段映射
+        if(V.isEmpty(dataMap)){
+            return model;
+        }
+        BeanUtils.bindProperties(model, dataMap);
+        return model;
+    }
+
+    /**
+     * 构建ResultMap为实体列表
+     * @param resultListMap
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
+    public static <T> List<T> buildResultMapToEntityList(List<Map<String, Object>> resultListMap, Class<T> entityClass) {
+        if(V.isEmpty(resultListMap)){
+            return Collections.emptyList();
+        }
+        List<T> entityList = new ArrayList<>(resultListMap.size());
+        for(Map<String, Object> resultMap : resultListMap){
+            T entityInstance = null;
+            try {
+                entityInstance = entityClass.newInstance();
+            }
+            catch (Exception e){
+                log.warn("实例化Entity {} 异常", entityClass.getSimpleName());
+            }
+            if(entityInstance != null) {
+                buildResultMapToEntity(entityInstance, resultMap);
+                entityList.add(entityInstance);
+            }
+        }
+        return entityList;
     }
 
 }
