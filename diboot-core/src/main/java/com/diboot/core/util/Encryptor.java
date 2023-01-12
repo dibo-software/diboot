@@ -168,6 +168,6 @@ public class Encryptor {
 	 */
 	private static String getDefaultKey(){
 		String defaultKey = BaseConfig.getProperty("diboot.encryptor.seed");
-		return V.notEmpty(defaultKey)? defaultKey : "DibootV2";
+		return V.notEmpty(defaultKey)? defaultKey : "DibootV3";
 	}
 }
