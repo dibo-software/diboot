@@ -104,7 +104,7 @@ const getTagType = (val: string, map: Record<string, string>) => {
       v-if="pagination.total"
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
-      :page-sizes="[10, 20, 30, 50, 100]"
+      :page-sizes="[10, 15, 20, 30, 50, 100]"
       small
       background
       layout="total, sizes, prev, pager, next, jumper"
