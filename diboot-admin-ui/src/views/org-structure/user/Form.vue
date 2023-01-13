@@ -61,7 +61,6 @@ defineExpose({
     await loadData(id)
     if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
     model.value.username = await loadAccountInfo('authAccount', id)
-    model.value.accountStatus = await loadAccountInfo('status', id)
     // 判定是否属于系统用户
     model.value.isSysAccount = !!model.value.username
     if (model.value.isSysAccount) model.value.hidePassword = true
