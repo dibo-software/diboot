@@ -107,7 +107,11 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             } else {
                 // 更新账号
                 iamAccount.setAuthAccount(userAccountDTO.getUsername())
-                        .setStatus(userAccountDTO.getStatus());
+                        .setStatus(userAccountDTO.getAccountStatus());
+                // 用户离职，状态停用
+                if(Cons.ENABLE_STATUS.I.name().equals(userAccountDTO.getStatus())){
+                    iamAccount.setStatus(Cons.ENABLE_STATUS.I.name());
+                }
                 // 设置密码
                 if (V.notEmpty(userAccountDTO.getPassword())){
                     iamAccount.setAuthSecret(userAccountDTO.getPassword());
@@ -215,6 +219,25 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             }
         }
         return voList;
+    }
+
+    /**
+     * 刷新用户电话邮箱头像等信息
+     * @return
+     */
+    @Override
+    public void refreshUserInfo(IamUser currentUser) {
+        IamUser latestInfo = getEntity(currentUser.getId());
+        currentUser
+                .setRealname(latestInfo.getRealname())
+                .setStatus(latestInfo.getStatus())
+                .setAvatarUrl(latestInfo.getAvatarUrl())
+                .setUserNum(latestInfo.getUserNum())
+                .setGender(latestInfo.getGender())
+                .setBirthdate(latestInfo.getBirthdate())
+                .setEmail(latestInfo.getEmail())
+                .setMobilePhone(latestInfo.getMobilePhone())
+                .setOrgId(latestInfo.getOrgId());
     }
 
     /***

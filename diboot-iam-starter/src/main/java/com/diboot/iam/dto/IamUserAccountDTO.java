@@ -40,6 +40,7 @@ public class IamUserAccountDTO extends IamUser {
     private String username;
 
     private String password;
+    private String accountStatus;
 
     private List<Long> roleIdList;
 }
