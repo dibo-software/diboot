@@ -72,41 +72,34 @@ const deletePermission = checkPermission('delete')
         </el-col>
       </el-row>
     </el-form>
-    <el-header>
-      <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
-          {{ $t('operation.create') }}
-        </el-button>
-        <excel-export
-          v-has-permission="'export'"
-          :build-param="buildQueryParam"
-          :export-url="`${baseApi}/excel/export`"
-          :table-head-url="`${baseApi}/excel/export-table-head`"
+
+    <el-space wrap class="list-operation">
+      <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
+        {{ $t('operation.create') }}
+      </el-button>
+      <excel-export
+        v-has-permission="'export'"
+        :build-param="buildQueryParam"
+        :export-url="`${baseApi}/excel/export`"
+        :table-head-url="`${baseApi}/excel/export-table-head`"
+      />
+      <excel-import
+        v-has-permission="'import'"
+        :excel-base-api="`${baseApi}/excel`"
+        :attach="() => ({ orgId })"
+        @complete="onSearch"
+      />
+      <el-space>
+        <el-input v-show="!searchState" v-model="queryParam.realname" clearable placeholder="姓名" @change="onSearch" />
+        <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+        <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+        <el-button
+          :icon="searchState ? ArrowUp : ArrowDown"
+          :title="searchState ? '收起' : '展开'"
+          @click="searchState = !searchState"
         />
-        <excel-import
-          v-has-permission="'import'"
-          :excel-base-api="`${baseApi}/excel`"
-          :attach="() => ({ orgId })"
-          @complete="onSearch"
-        />
-        <el-space>
-          <el-input
-            v-show="!searchState"
-            v-model="queryParam.realname"
-            clearable
-            placeholder="姓名"
-            @change="onSearch"
-          />
-          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-          <el-button
-            :icon="searchState ? ArrowUp : ArrowDown"
-            :title="searchState ? '收起' : '展开'"
-            @click="searchState = !searchState"
-          />
-        </el-space>
       </el-space>
-    </el-header>
+    </el-space>
 
     <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
       <el-table-column prop="realname" label="姓名">

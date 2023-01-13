@@ -124,65 +124,67 @@ const multiple = inject<boolean | undefined>(
         </el-col>
       </el-row>
     </el-form>
-    <el-header>
-      <el-space wrap class="list-operation" :size="10">
-        <el-button v-if="createPermission && operation?.create" type="primary" :icon="Plus" @click="openForm()">
-          新建
-        </el-button>
-        <excel-import
-          v-if="operation?.importData && importPermission"
-          :excel-base-api="`${baseApi}/excel`"
-          :attach="relatedKey ? () => ({ [`${relatedKey}`]: parent }) : undefined"
-          @complete="onSearch"
-        />
-        <excel-export
-          v-if="operation?.exportData && exportPermission"
-          :build-param="buildQueryParam"
-          :export-url="`${baseApi}/excel/export`"
-          :table-head-url="`${baseApi}/excel/export-table-head`"
-        />
-        <el-button
-          v-if="operation?.batchRemove && deletePermission"
-          plain
-          type="danger"
-          :icon="Delete"
-          :disabled="!selectedKeys.length"
-          @click="batchRemove(selectedKeys)"
-        >
-          批量删除
-        </el-button>
-        <el-space>
-          <span v-if="searchArea?.propList?.length" v-show="!searchState" class="search">
-            <template v-for="item in [searchArea.propList[0]]" :key="item.prop">
-              <di-input
-                v-if="['daterange', 'datetimerange'].includes(item.type)"
-                v-model="dateRangeQuery[item.prop]"
-                :config="{ ...item, label: '' }"
-                @change="onSearch"
-              />
-              <di-input
-                v-else
-                v-model="queryParam[item.prop]"
-                :config="{ ...item, label: '', placeholder: item.placeholder ?? item.label }"
-                :related-datas="getRelatedData(item)"
-                :loading="asyncLoading"
-                :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
-                @change="onSearch"
-                @remote-filter="(value: string) => remoteRelatedDataFilter(item.prop, value)"
-              />
-            </template>
-          </span>
+
+    <el-space wrap class="list-operation">
+      <el-button v-if="createPermission && operation?.create" type="primary" :icon="Plus" @click="openForm()">
+        新建
+      </el-button>
+      <excel-import
+        v-if="operation?.importData && importPermission"
+        :excel-base-api="`${baseApi}/excel`"
+        :attach="relatedKey ? () => ({ [`${relatedKey}`]: parent }) : undefined"
+        @complete="onSearch"
+      />
+      <excel-export
+        v-if="operation?.exportData && exportPermission"
+        :build-param="buildQueryParam"
+        :export-url="`${baseApi}/excel/export`"
+        :table-head-url="`${baseApi}/excel/export-table-head`"
+      />
+      <el-button
+        v-if="operation?.batchRemove && deletePermission"
+        plain
+        type="danger"
+        :icon="Delete"
+        :disabled="!selectedKeys.length"
+        @click="batchRemove(selectedKeys)"
+      >
+        批量删除
+      </el-button>
+      <el-space>
+        <span v-if="searchArea?.propList?.length" v-show="!searchState" class="search">
+          <template v-for="item in [searchArea.propList[0]]" :key="item.prop">
+            <di-input
+              v-if="['daterange', 'datetimerange'].includes(item.type)"
+              v-model="dateRangeQuery[item.prop]"
+              :config="{ ...item, label: '' }"
+              @change="onSearch"
+            />
+            <di-input
+              v-else
+              v-model="queryParam[item.prop]"
+              :config="{ ...item, label: '', placeholder: item.placeholder ?? item.label }"
+              :related-datas="getRelatedData(item)"
+              :loading="asyncLoading"
+              :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
+              @change="onSearch"
+              @remote-filter="(value: string) => remoteRelatedDataFilter(item.prop, value)"
+            />
+          </template>
+        </span>
+        <template v-if="searchArea?.propList?.length">
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
           <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-          <el-button
-            v-if="searchArea?.propList?.length"
-            :icon="searchState ? ArrowUp : ArrowDown"
-            :title="searchState ? '收起' : '展开'"
-            @click="searchState = !searchState"
-          />
-        </el-space>
+        </template>
+        <el-button
+          v-if="(searchArea?.propList?.length ?? 0) > 1"
+          :icon="searchState ? ArrowUp : ArrowDown"
+          :title="searchState ? '收起' : '展开'"
+          @click="searchState = !searchState"
+        />
       </el-space>
-    </el-header>
+    </el-space>
+
     <di-table
       :model="model"
       :loading="loading"

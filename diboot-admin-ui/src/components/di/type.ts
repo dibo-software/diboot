@@ -153,7 +153,7 @@ export interface ListSelector extends Input {
   tree?: Omit<TreeConfig, 'sortApi'>
   // list配置 (关联对象为动态业务模型可空，反之必需)
   list?: Omit<ListConfig, 'operation'>
-  // list 中的对象类型（用户回显树获取）
+  // list 中的对象类型（用于回显值获取）
   dataType: string
   // 列表数据显示字段；默认取list第一列（list.columns[0].prop）
   dataLabel?: string

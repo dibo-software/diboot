@@ -60,29 +60,28 @@ function rowClick(row: DictionaryTableExpand) {
         </el-col>
       </el-row>
     </el-form>
-    <el-header>
-      <el-space wrap class="list-operation">
-        <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
-          {{ $t('operation.create') }}
-        </el-button>
-        <el-space>
-          <el-input
-            v-show="!searchState"
-            v-model="queryParam.itemName"
-            clearable
-            placeholder="类型名称"
-            @change="onSearch"
-          />
-          <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
-          <el-button
-            :icon="searchState ? ArrowUp : ArrowDown"
-            :title="searchState ? '收起' : '展开'"
-            @click="searchState = !searchState"
-          />
-        </el-space>
+
+    <el-space wrap class="list-operation">
+      <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
+        {{ $t('operation.create') }}
+      </el-button>
+      <el-space>
+        <el-input
+          v-show="!searchState"
+          v-model="queryParam.itemName"
+          clearable
+          placeholder="类型名称"
+          @change="onSearch"
+        />
+        <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
+        <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+        <el-button
+          :icon="searchState ? ArrowUp : ArrowDown"
+          :title="searchState ? '收起' : '展开'"
+          @click="searchState = !searchState"
+        />
       </el-space>
-    </el-header>
+    </el-space>
 
     <el-table
       ref="table"
