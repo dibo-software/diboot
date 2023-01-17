@@ -136,7 +136,7 @@ create table ${SCHEMA}.dbt_iam_resource
     display_name_i18n VARCHAR2(200) null,
     resource_code VARCHAR2(100)   null,
     permission_code VARCHAR2(200)   null,
-    sort_id VARCHAR2(32)  null,
+    sort_id NUMBER(20) DEFAULT 0  null,
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP  null,
