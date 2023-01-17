@@ -195,12 +195,17 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             }
             Object label = map.get(value);
             if (label == null) {
-                if(value instanceof String && ((String)value).contains(S.SEPARATOR)) {
-                    List<String> labelList = new ArrayList<>();
-                    for (String key : ((String)value).split(S.SEPARATOR)) {
-                        labelList.add(map.get(key));
+                if(value instanceof String) {
+                    if(((String)value).contains(S.SEPARATOR)) {
+                        List<String> labelList = new ArrayList<>();
+                        for (String key : ((String)value).split(S.SEPARATOR)) {
+                            labelList.add(map.get(key));
+                        }
+                        label = S.join(labelList);
                     }
-                    label = S.join(labelList);
+                    else {
+                        log.warn("未匹配到字典选项: {}，存储值: {}", type, value);
+                    }
                 }
                 else if(value instanceof Collection) {
                     List<String> labelList = new ArrayList<>();
