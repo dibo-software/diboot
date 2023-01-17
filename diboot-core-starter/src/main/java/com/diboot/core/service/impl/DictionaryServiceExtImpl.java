@@ -229,27 +229,32 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 continue;
             }
             // 直接匹配无结果
-            if((value instanceof String && ((String)value).contains(S.SEPARATOR))) {
-                List labelList = new ArrayList<>();
-                for (String key : ((String)value).split(S.SEPARATOR)) {
-                    LabelValue labelValue = map.get(key);
-                    if(labelValue == null) {
-                        continue;
+            if(value instanceof String) {
+                if(((String)value).contains(S.SEPARATOR)) {
+                    List labelList = new ArrayList<>();
+                    for (String key : ((String)value).split(S.SEPARATOR)) {
+                        LabelValue labelValue = map.get(key);
+                        if(labelValue == null) {
+                            continue;
+                        }
+                        if(isLabelValueClass) {
+                            labelList.add(labelValue);
+                        }
+                        else {
+                            labelList.add(labelValue.getLabel());
+                        }
                     }
-                    if(isLabelValueClass) {
-                        labelList.add(labelValue);
-                    }
-                    else {
-                        labelList.add(labelValue.getLabel());
+                    if(V.notEmpty(labelList)) {
+                        if(isLabelValueClass) {
+                            BeanUtils.setProperty(item, setFieldName, labelList);
+                        }
+                        else {
+                            BeanUtils.setProperty(item, setFieldName, S.join(labelList));
+                        }
                     }
                 }
-                if(V.notEmpty(labelList)) {
-                    if(isLabelValueClass) {
-                        BeanUtils.setProperty(item, setFieldName, labelList);
-                    }
-                    else {
-                        BeanUtils.setProperty(item, setFieldName, S.join(labelList));
-                    }
+                else {
+                    log.warn("未匹配到字典选项: {}，存储值: {}", type, value);
                 }
             }
             else if(value instanceof Collection) {
