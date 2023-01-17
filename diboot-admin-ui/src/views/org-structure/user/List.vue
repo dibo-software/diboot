@@ -190,11 +190,6 @@ const deletePermission = checkPermission('delete')
   border-bottom: 1px solid var(--el-border-color);
 }
 
-.list-operation {
-  margin-bottom: 0;
-  padding: 0;
-}
-
 .el-badge :deep(.is-dot) {
   right: 0;
   top: 5px;
