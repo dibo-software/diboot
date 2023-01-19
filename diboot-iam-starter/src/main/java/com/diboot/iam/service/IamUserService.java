@@ -47,12 +47,12 @@ public interface IamUserService extends BaseIamService<IamUser> {
     boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
 
     /***
-     * 删除用户和账号
+     * 删除用户和关联信息（账号、岗位、角色等）
      * @param id
      * @return
      * @throws Exception
      */
-    boolean deleteUserAndAccount(Long id) throws Exception;
+    boolean deleteUserAndRelatedInfo(Long id) throws Exception;
 
     /**
      * 过滤重复的员工号

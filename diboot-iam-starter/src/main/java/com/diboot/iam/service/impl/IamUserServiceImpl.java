@@ -129,15 +129,16 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteUserAndAccount(Long id) {
+    public boolean deleteUserAndRelatedInfo(Long id) {
         if (exists(IamUser::getId, id) == false){
             throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
         }
         // 删除用户信息
         this.deleteEntity(id);
-        // 删除账号信息
+        // 删除账号及角色信息
         this.deleteAccount(id);
-
+        // 删除岗位信息
+        this.deleteUserPositions(id);
         return true;
     }
 
@@ -329,5 +330,15 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
         }
     }
+
+    private void deleteUserPositions(Long userId) {
+        // 删除岗位信息
+        iamUserPositionService.deleteEntities(
+                Wrappers.<IamUserPosition>lambdaQuery()
+                        .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
+                        .eq(IamUserPosition::getUserId, userId)
+        );
+    }
+
 
 }
