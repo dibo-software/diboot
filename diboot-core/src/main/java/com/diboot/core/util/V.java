@@ -396,7 +396,7 @@ public class V {
     /**
      * 是否为合法的数据库列参数（orderBy等参数安全检查）
      */
-    private static final Pattern PATTERN = Pattern.compile("^[A-Za-z_][\\w.:]*$");
+    private static final Pattern PATTERN = Pattern.compile("^[0-9A-Za-z_][\\w.:]*$");
 
     public static boolean isValidSqlParam(Object sqlParam) {
         if (isEmpty(sqlParam)) {
