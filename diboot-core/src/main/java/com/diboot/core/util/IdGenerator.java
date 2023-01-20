@@ -19,6 +19,12 @@ import com.diboot.core.config.BaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+
 /**
  * Snowflake ID生成器控件
  * @author mazc@dibo.ltd
@@ -44,7 +50,7 @@ public class IdGenerator {
     /**
      * 时间戳差值
      */
-    private static final long startTimestamp = 1672502400000L;
+    private static final long startTimestamp = 1352037060000L;
 
     /***
      * 生成下一个id
