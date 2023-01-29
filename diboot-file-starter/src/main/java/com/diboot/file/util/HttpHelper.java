@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -260,17 +261,20 @@ public class HttpHelper {
      * @param response
      * @throws Exception
      */
-    public static void downloadLocalFile(File localFile, String exportFileName, HttpServletResponse response) throws Exception{
+    public static void downloadLocalFile(File localFile, String exportFileName, HttpServletResponse response) throws Exception {
+        downloadFile(Files.newInputStream(localFile.toPath()), localFile.length(), exportFileName, response);
+    }
+
+    public static void downloadFile(InputStream inputStream, long fileLength, String exportFileName, HttpServletResponse response) throws Exception{
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try{
-            String fileName = new String(exportFileName.getBytes("utf-8"), "ISO8859-1");
-            long fileLength = localFile.length();
+            String fileName = new String(exportFileName.getBytes(StandardCharsets.UTF_8), "ISO8859-1");
             response.setContentType(getContextType(fileName));
             response.setHeader("Content-disposition", "attachment; filename="+ fileName);
             response.setHeader("Content-Length", String.valueOf(fileLength));
             response.setHeader("filename", URLEncoder.encode(exportFileName, StandardCharsets.UTF_8.name()));
-            bis = new BufferedInputStream(new FileInputStream(localFile));
+            bis = new BufferedInputStream(inputStream);
             bos = new BufferedOutputStream(response.getOutputStream());
             byte[] buff = new byte[2048];
             int bytesRead;
@@ -279,7 +283,7 @@ public class HttpHelper {
             }
         }
         catch (Exception e) {
-            log.error("下载文件失败:{}", localFile.getAbsolutePath(), e);
+            log.error("下载文件失败:{}", exportFileName, e);
         }
         finally {
             if (bis != null) {
