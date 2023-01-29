@@ -1,5 +1,4 @@
 import useAuthStore from '@/store/auth'
-import router from '@/router'
 
 /**
  * 角色权限校验
@@ -33,6 +32,7 @@ export function checkRole(value: string | Array<string>, not = false, all = fals
  */
 export function checkPermission(value: string | Array<string>, not = false, all = false, routeName?: string) {
   if (value && value.length) {
+    const router = useRouter()
     const permissions = routeName
       ? router.getRoutes().find(e => e.name === routeName)?.meta?.permissions ?? []
       : router.currentRoute.value.meta?.permissions ?? []
