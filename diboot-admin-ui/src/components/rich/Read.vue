@@ -2,7 +2,7 @@
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { Editor } from '@wangeditor/editor-for-vue'
 
-defineProps<{ value: string }>()
+defineProps<{ value?: string }>()
 </script>
 
 <template>
