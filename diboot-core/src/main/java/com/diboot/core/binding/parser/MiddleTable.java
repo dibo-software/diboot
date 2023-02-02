@@ -204,6 +204,10 @@ public class MiddleTable {
                 queryWrapper.apply(condition);
             }
         }
+        // 查询条件为空时不进行查询
+        if (queryWrapper.isEmptyOfNormal()) {
+            return Collections.emptyList();
+        }
         BaseMapper mapper = linkage.getBaseMapper();
         List<Map<String, Object>> resultSetMapList = mapper.selectMaps(queryWrapper);
         return resultSetMapList;
