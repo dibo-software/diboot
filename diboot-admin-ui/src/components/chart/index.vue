@@ -22,7 +22,11 @@ onMounted(() => {
 
   watch(
     () => props.option,
-    value => value && chart.setOption(value),
+    value => {
+      if (!value) return
+      chart.setOption(value, true)
+      chart.updateLabelLayout()
+    },
     { immediate: true, deep: true }
   )
 })
