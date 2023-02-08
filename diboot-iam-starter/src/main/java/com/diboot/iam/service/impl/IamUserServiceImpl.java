@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -29,7 +28,6 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.entity.IamPosition;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserMapper;
@@ -227,17 +225,17 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     public List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, String orgId) {
         List<String> orgIds = new ArrayList<>();
         // 获取当前部门及所有下属部门的人员列表
-        if (V.notEmpty(orgId) && orgId != null) {
+        if (V.notEmpty(orgId)) {
             orgIds.add(orgId);
             // 获取所有下级部门列表
             orgIds.addAll(iamOrgService.getChildOrgIds(orgId));
-            queryWrapper.in(Cons.ColumnName.org_id.name(), orgIds);
             // 相应部门下岗位相关用户
             LambdaQueryWrapper<IamUserPosition> queryUserIds = Wrappers.<IamUserPosition>lambdaQuery()
                     .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
                     .in(IamUserPosition::getOrgId, orgIds);
             List<String> userIds = iamUserPositionService.getValuesOfField(queryUserIds, IamUserPosition::getUserId);
-            queryWrapper.or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds);
+            queryWrapper.and(query -> query.in(Cons.ColumnName.org_id.name(), orgIds)
+                    .or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds));
         }
         // 查询指定页的数据
         List<IamUserVO> voList = getViewObjectList(queryWrapper, pagination, IamUserVO.class);
