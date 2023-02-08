@@ -199,13 +199,13 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             orgIds.add(orgId);
             // 获取所有下级部门列表
             orgIds.addAll(iamOrgService.getChildOrgIds(orgId));
-            queryWrapper.in(Cons.ColumnName.org_id.name(), orgIds);
             // 相应部门下岗位相关用户
             LambdaQueryWrapper<IamUserPosition> queryUserIds = Wrappers.<IamUserPosition>lambdaQuery()
                     .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
                     .in(IamUserPosition::getOrgId, orgIds);
             List<Long> userIds = iamUserPositionService.getValuesOfField(queryUserIds, IamUserPosition::getUserId);
-            queryWrapper.or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds);
+            queryWrapper.and(query -> query.in(Cons.ColumnName.org_id.name(), orgIds)
+                    .or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds));
         }
         // 查询指定页的数据
         List<IamUserVO> voList = getViewObjectList(queryWrapper, pagination, IamUserVO.class);
