@@ -18,7 +18,6 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -49,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +82,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         // 根据用户类型与用户id获取roleList
         String extensionObjId = null;
         if (extensionObj != null) {
-            extensionObjId = ((PositionDataScope) extensionObj.getValue()).getPositionId();
+            extensionObjId = ((PositionDataScope) extensionObj.getExt()).getPositionId();
         }
         // 获取当前用户的角色列表
         List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
@@ -97,7 +97,6 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             }
         }
         LambdaQueryWrapper<IamResource> wrapper = Wrappers.<IamResource>lambdaQuery()
-                .ne(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
                 .eq(IamResource::getStatus, Cons.DICTCODE_RESOURCE_STATUS.A.name());
         if (!isAdmin) {
             List<String> roleIds = roleList.stream().map(IamRole::getId).collect(Collectors.toList());
@@ -113,12 +112,14 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
         }
-        // 绑定菜单下按钮权限
-        List<IamResourceListVO> iamResourceListVOS = RelationsBinder.convertAndBind(menuPermissionList, IamResourceListVO.class);
-        iamResourceListVOS = BeanUtils.buildTree(iamResourceListVOS, Cons.TREE_ROOT_ID);
+        // 绑定菜单下按钮权限，进行菜单权限分组
+        Map<String, List<IamResource>> listMap = menuPermissionList.stream().collect(Collectors.groupingBy(e ->
+                Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name().equals(e.getDisplayType()) ? e.getParentId() : Cons.TREE_ROOT_ID));
+        List<IamResourceListVO> iamResourceList = BeanUtils.convertList(listMap.get(Cons.TREE_ROOT_ID), IamResourceListVO.class);
+        iamResourceList.forEach(e-> e.setPermissionList(listMap.get(e.getId())));
         // 构建路由菜单
         List<RouteRecord> routeRecordList = new ArrayList<>();
-        buildRouteRecordList(routeRecordList, iamResourceListVOS);
+        buildRouteRecordList(routeRecordList,  BeanUtils.buildTree(iamResourceList));
         return routeRecordList;
     }
 
