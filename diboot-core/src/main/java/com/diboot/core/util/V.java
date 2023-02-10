@@ -418,6 +418,7 @@ public class V {
                     return false;
                 }
             }
+            return true;
         }
         return PATTERN.matcher(S.valueOf(sqlParam)).matches();
     }
