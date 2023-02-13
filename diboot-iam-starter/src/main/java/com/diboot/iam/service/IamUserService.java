@@ -80,6 +80,13 @@ public interface IamUserService extends BaseIamService<IamUser> {
     List<String> getUserIdsByManagerId(String managerId);
 
     /**
+     * 获取指定用户的上级id
+     * @param userId
+     * @return
+     */
+    String getUserLeaderId(Long userId);
+
+    /**
      * 获取指定角色下的用户
      * @param userIds
      * @return

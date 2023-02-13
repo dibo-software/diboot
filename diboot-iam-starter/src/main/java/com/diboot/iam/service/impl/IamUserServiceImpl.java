@@ -28,6 +28,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.IamAccount;
+import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserMapper;
@@ -202,6 +203,19 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 IamUser::getId
         );
         return iamUserIds;
+    }
+
+    @Override
+    public String getUserLeaderId(Long userId) {
+        IamUser iamUser = getEntity(userId);
+        if (V.isEmpty(iamUser)) {
+            return null;
+        }
+        IamOrg iamOrg = iamOrgService.getEntity(iamUser.getOrgId());
+        if (V.isEmpty(iamOrg) || V.isEmpty(iamOrg.getManagerId())) {
+            return null;
+        }
+        return iamOrg.getManagerId();
     }
 
     @Override
