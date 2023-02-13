@@ -77,6 +77,13 @@ public interface IamUserService extends BaseIamService<IamUser> {
     List<Long> getUserIdsByManagerId(Long managerId);
 
     /**
+     * 获取指定用户的上级id
+     * @param userId
+     * @return
+     */
+    Long getUserLeaderId(Long userId);
+
+    /**
      * 获取用户VO列表
      *
      * @param queryWrapper
