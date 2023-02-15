@@ -84,7 +84,7 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @param userId
      * @return
      */
-    String getUserLeaderId(Long userId);
+    String getUserLeaderId(String userId);
 
     /**
      * 获取指定角色下的用户

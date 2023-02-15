@@ -206,7 +206,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     @Override
-    public String getUserLeaderId(Long userId) {
+    public String getUserLeaderId(String userId) {
         IamUser iamUser = getEntity(userId);
         if (V.isEmpty(iamUser)) {
             return null;
