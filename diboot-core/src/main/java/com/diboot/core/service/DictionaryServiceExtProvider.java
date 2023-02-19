@@ -20,6 +20,7 @@ import com.diboot.core.vo.DictionaryVO;
 import com.diboot.core.vo.LabelValue;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * BindDict等字典服务绑定Service提供接口
@@ -77,5 +78,12 @@ public interface DictionaryServiceExtProvider {
      * @return
      */
     List<DictionaryVO> getDictDefinitionVOList();
+
+    /**
+     * 获取存储值-选项的映射Map
+     * @param type
+     * @return
+     */
+    Map<String, LabelValue> getValue2ItemMap(String type);
 
 }
