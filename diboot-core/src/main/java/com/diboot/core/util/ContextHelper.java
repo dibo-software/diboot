@@ -23,6 +23,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.parser.PropInfo;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,7 @@ public class ContextHelper implements ApplicationContextAware, ApplicationListen
         }
         if(APPLICATION_CONTEXT == null){
             log.warn("无法获取ApplicationContext，请确保ComponentScan扫描路径包含com.diboot包路径，并在Spring初始化之后调用接口!");
+            new InvalidUsageException("检查调用时机").printStackTrace();
         }
         return APPLICATION_CONTEXT;
     }
