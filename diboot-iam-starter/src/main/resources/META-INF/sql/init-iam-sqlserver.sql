@@ -365,9 +365,10 @@ create table ${SCHEMA}.dbt_system_config
 (
     id          varchar(32)  not null,
     tenant_id   varchar(32)  not null default '0',
-    type        varchar(50)  not null,
-    prop        varchar(50)  not null,
-    value       varchar(255) null,
+    category        varchar(50)  null,
+    prop_key        varchar(50)  not null,
+    prop_value       varchar(255) null,
+    data_type       varchar(50) not null default 'text',
     is_deleted  tinyint      not null default 0,
     create_time datetime     not null default CURRENT_TIMESTAMP,
     update_time datetime     null default CURRENT_TIMESTAMP,
@@ -376,14 +377,15 @@ create table ${SCHEMA}.dbt_system_config
 -- 添加备注
 execute sp_addextendedproperty 'MS_Description', N'ID', 'SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'id';
 execute sp_addextendedproperty 'MS_Description', N'租户ID','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'tenant_id';
-execute sp_addextendedproperty 'MS_Description', N'类型','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'type';
-execute sp_addextendedproperty 'MS_Description', N'属性','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'prop';
-execute sp_addextendedproperty 'MS_Description', N'属性值','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'value';
+execute sp_addextendedproperty 'MS_Description', N'类别','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'category';
+execute sp_addextendedproperty 'MS_Description', N'属性名','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'prop_key';
+execute sp_addextendedproperty 'MS_Description', N'属性值','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'prop_value';
+execute sp_addextendedproperty 'MS_Description', N'数据类型','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'data_type';
 execute sp_addextendedproperty 'MS_Description', N'删除标记','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'create_time';
 execute sp_addextendedproperty 'MS_Description', N'更新时间','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, 'column', 'update_time';
 
 execute sp_addextendedproperty 'MS_Description', N'系统配置','SCHEMA', '${SCHEMA}', 'table', dbt_system_config, null, null;
 -- 创建索引
-create nonclustered index idx_dbt_system_config on ${SCHEMA}.dbt_system_config(type, prop);
+create nonclustered index idx_dbt_system_config on ${SCHEMA}.dbt_system_config(category, prop_key);
 create nonclustered index idx_dbt_system_config_tenant on ${SCHEMA}.dbt_system_config(tenant_id);

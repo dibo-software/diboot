@@ -222,12 +222,13 @@ CREATE TABLE `dbt_system_config`
 (
     `id`          varchar(32) NOT NULL COMMENT 'ID' primary key,
     `tenant_id`   varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
-    `type`        varchar(50) NOT NULL COMMENT '类型',
-    `prop`        varchar(50) NOT NULL COMMENT '属性',
-    `value`       varchar(255) NULL COMMENT '属性值',
-    `is_deleted`  tinyint(1)                      NOT NULL DEFAULT 0 COMMENT '删除标记',
-    `create_time` datetime                       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` datetime                       NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+    `category`    varchar(50) NULL COMMENT '类别',
+    `prop_key`    varchar(50) NOT NULL COMMENT '属性名',
+    `prop_value`  varchar(255) NULL COMMENT '属性值',
+    `data_type`   varchar(50) NULL DEFAULT 'text' COMMENT '数据类型',
+    `is_deleted`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标记',
+    `create_time` datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 )COMMENT = '系统配置';
 create index idx_dbt_system_config_tenant_id on dbt_system_config (tenant_id);
-create index idx_dbt_system_config on dbt_system_config (`type`, `prop`);
+create index idx_dbt_system_config on dbt_system_config (`category`, `prop_key`);

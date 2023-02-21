@@ -42,26 +42,27 @@ public class SystemConfig extends BaseEntity {
     /**
      * 租户ID
      */
-    @TableField()
     private String tenantId;
 
     /**
-     * 类型
+     * 类别
      */
-    @TableField()
-    private String type;
+    private String category;
 
     /**
      * 属性名
      */
-    @TableField()
-    private String prop;
+    private String propKey;
 
     /**
      * 属性值
      */
-    @TableField()
-    private String value;
+    private String propValue;
+
+    /**
+     * 数据类型
+     */
+    private String dataType;
 
     /**
      * 更新时间

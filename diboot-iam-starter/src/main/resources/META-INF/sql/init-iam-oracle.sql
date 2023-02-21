@@ -361,10 +361,11 @@ create index idx_dbt_iam_user_position_pos on ${SCHEMA}.dbt_iam_user_position (p
 create table ${SCHEMA}.dbt_system_config
 (
     id VARCHAR2(32) NOT NULL,
-    tenant_id VARCHAR2(32) default 0 not null,
-    type VARCHAR2 (50) not null,
-    prop VARCHAR2 (50) not null,
-    value VARCHAR2 (255),
+    tenant_id VARCHAR2(32) default '0' not null,
+    category VARCHAR2 (50) null,
+    prop_key VARCHAR2 (50) not null,
+    prop_value VARCHAR2 (255),
+    data_type VARCHAR2 (50) default 'text' not null,
     is_deleted NUMBER (1) default 0 not null,
     create_time TIMESTAMP default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP null,
@@ -373,14 +374,15 @@ create table ${SCHEMA}.dbt_system_config
 -- 添加备注
 comment on column ${SCHEMA}.dbt_system_config.id is 'ID';
 comment on column ${SCHEMA}.dbt_system_config.tenant_id is '租户ID';
-comment on column ${SCHEMA}.dbt_system_config.type is '类型';
-comment on column ${SCHEMA}.dbt_system_config.prop is '属性';
-comment on column ${SCHEMA}.dbt_system_config.value is '属性值';
+comment on column ${SCHEMA}.dbt_system_config.category is '类别';
+comment on column ${SCHEMA}.dbt_system_config.prop_key is '属性名';
+comment on column ${SCHEMA}.dbt_system_config.prop_value is '属性值';
+comment on column ${SCHEMA}.dbt_system_config.data_type is '数据类型';
 comment on column ${SCHEMA}.dbt_system_config.is_deleted is '删除标记';
 comment on column ${SCHEMA}.dbt_system_config.create_time is '创建时间';
 comment on column ${SCHEMA}.dbt_system_config.update_time is '更新时间';
 
 comment on table ${SCHEMA}.dbt_system_config is '系统配置';
 -- 创建索引
-create index idx_dbt_system_config on ${SCHEMA}.dbt_system_config (type, prop);
+create index idx_dbt_system_config on ${SCHEMA}.dbt_system_config (category, prop_key);
 create index idx_dbt_system_config_tenant on ${SCHEMA}.dbt_system_config (tenant_id);

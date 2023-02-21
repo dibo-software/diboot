@@ -349,27 +349,29 @@ create index idx_dbt_iam_user_position_pos on dbt_iam_user_position (position_id
 -- 系统配置表
 create table dbt_system_config
 (
-    id          varchar(32) not null,
-    tenant_id   varchar(32) not null default '0',
-    type        VARCHAR(50) not null,
-    prop        VARCHAR(50) not null,
-    value       VARCHAR(255),
-    is_deleted  BOOLEAN     not null default FALSE,
-    create_time timestamp   not null default CURRENT_TIMESTAMP,
-    update_time timestamp   null default CURRENT_TIMESTAMP,
-    constraint PK_dbt_system_config primary key (id)
+  id          varchar(32) not null,
+  tenant_id   varchar(32) not null default '0',
+  category        VARCHAR(50) null,
+  prop_key        VARCHAR(50) not null,
+  prop_value       VARCHAR(255),
+  data_type       VARCHAR(50) not null default 'text',
+  is_deleted  BOOLEAN     not null default FALSE,
+  create_time timestamp   not null default CURRENT_TIMESTAMP,
+  update_time timestamp   null default CURRENT_TIMESTAMP,
+  constraint PK_dbt_system_config primary key (id)
 );
 -- 添加备注
 comment on column dbt_system_config.id is 'ID';
 comment on column dbt_system_config.tenant_id is '租户ID';
-comment on column dbt_system_config.type is '类型';
-comment on column dbt_system_config.prop is '属性';
-comment on column dbt_system_config.value is '属性值';
+comment on column dbt_system_config.category is '类别';
+comment on column dbt_system_config.prop_key is '属性名';
+comment on column dbt_system_config.prop_value is '属性值';
+comment on column dbt_system_config.data_type is '属性类型';
 comment on column dbt_system_config.is_deleted is '删除标记';
 comment on column dbt_system_config.create_time is '创建时间';
 comment on column dbt_system_config.update_time is '更新时间';
 
 comment on table dbt_system_config is '系统配置';
 -- 创建索引
-create index idx_dbt_system_config on dbt_system_config (type, prop);
+create index idx_dbt_system_config on dbt_system_config (category, prop_key);
 create index idx_dbt_system_config_tenant on dbt_system_config (tenant_id);

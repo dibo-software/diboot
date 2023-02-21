@@ -16,12 +16,8 @@
 package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
-import com.diboot.core.vo.LabelValue;
-import com.diboot.iam.config.SystemConfigType;
 import com.diboot.iam.entity.SystemConfig;
-import com.diboot.iam.vo.SystemConfigVO;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,59 +30,20 @@ import java.util.Map;
 public interface SystemConfigService extends BaseService<SystemConfig> {
 
     /**
-     * 获取配置类型列表
-     *
-     * @return 配置类型列表
-     */
-    List<LabelValue> getTypeList();
-
-    /**
-     * 获取配置元素类型映射
-     *
-     * @return 全部配置元素类型映射
-     */
-    Map<String, List<Enum<? extends SystemConfigType>>> getConfigItemsMap();
-
-    /**
-     * 根据类型获取配置
-     *
-     * @param type 类型
-     * @return 配置列表
-     */
-    List<SystemConfigVO> getConfigByType(String type);
-
-    /**
-     * 根据类型及属性删除配置
-     *
-     * @param type
-     * @param prop
-     * @return
-     */
-    boolean deleteByTypeAndProp(String type, String prop);
-
-    /**
-     * 配置测试
-     *
-     * @param type 类型
-     * @param data 数据
-     */
-    void configTest(String type, Map<String, Object> data);
-
-    /**
      * 查找配置值
      *
-     * @param type 类型
-     * @param prop 属性名
+     * @param category 类型
+     * @param propKey  属性名
      * @return 值
      */
-    String findConfigValue(String type, String prop);
+    <T> T findConfigValue(String category, String propKey);
 
     /**
      * 根据类型获取配置映射
      *
-     * @param type 类型
+     * @param category 类型
      * @return 配置值映射
      */
-    Map<String, String> getConfigMapByType(String type);
+    Map<String, Object> getConfigMapByCategory(String category);
 
 }

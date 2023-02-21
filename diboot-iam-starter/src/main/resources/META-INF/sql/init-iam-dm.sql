@@ -251,21 +251,21 @@ create index idx_dbt_iam_operation_log_tenant on ${SCHEMA}.dbt_iam_operation_log
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.dbt_iam_org (
-   id varchar(32) not null primary key,
-   tenant_id varchar(32) default '0' not null,
-   parent_id varchar(32) DEFAULT '0' NOT NULL,
-   parent_ids_path varchar(500) NULL,
-   root_org_id varchar(32) DEFAULT '0' NOT NULL,
-   name VARCHAR(100) NOT NULL,
-   type        VARCHAR(100) DEFAULT 'DEPT' NOT NULL,
-   code        VARCHAR(50)  NOT NULL,
-   manager_id varchar(32)  DEFAULT '0' NOT NULL,
-   sort_id bigint DEFAULT 1 NOT NULL,
-   status      VARCHAR(10)  DEFAULT 'A' NOT NULL,
-   org_comment VARCHAR(500)   null,
-   is_deleted BIT DEFAULT 0    not null,
-   create_time timestamp default CURRENT_TIMESTAMP   not null,
-   update_time timestamp   default CURRENT_TIMESTAMP null
+                                       id varchar(32) not null primary key,
+                                       tenant_id varchar(32) default '0' not null,
+                                       parent_id varchar(32) DEFAULT '0' NOT NULL,
+                                       parent_ids_path varchar(500) NULL,
+                                       root_org_id varchar(32) DEFAULT '0' NOT NULL,
+                                       name VARCHAR(100) NOT NULL,
+                                       type        VARCHAR(100) DEFAULT 'DEPT' NOT NULL,
+                                       code        VARCHAR(50)  NOT NULL,
+                                       manager_id varchar(32)  DEFAULT '0' NOT NULL,
+                                       sort_id bigint DEFAULT 1 NOT NULL,
+                                       status      VARCHAR(10)  DEFAULT 'A' NOT NULL,
+                                       org_comment VARCHAR(500)   null,
+                                       is_deleted BIT DEFAULT 0    not null,
+                                       create_time timestamp default CURRENT_TIMESTAMP   not null,
+                                       update_time timestamp   default CURRENT_TIMESTAMP null
 );
 comment on column ${SCHEMA}.dbt_iam_org.id is 'ID';
 comment on column ${SCHEMA}.dbt_iam_org.tenant_id is '租户ID';
@@ -350,9 +350,10 @@ create table ${SCHEMA}.dbt_system_config
 (
     id varchar(32)  primary key,
     tenant_id varchar(32) default '0' not null,
-    type VARCHAR (100) not null,
-    prop VARCHAR (100) not null,
-    value VARCHAR (500),
+    category VARCHAR (100) null,
+    prop_key VARCHAR (100) not null,
+    prop_value VARCHAR (500),
+    data_type VARCHAR (100) default 'text' not null,
     is_deleted NUMBER (1) default 0 not null,
     create_time TIMESTAMP default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP null
@@ -360,14 +361,15 @@ create table ${SCHEMA}.dbt_system_config
 -- 添加备注
 comment on column ${SCHEMA}.dbt_system_config.id is 'ID';
 comment on column ${SCHEMA}.dbt_system_config.tenant_id is '租户ID';
-comment on column ${SCHEMA}.dbt_system_config.type is '类型';
-comment on column ${SCHEMA}.dbt_system_config.prop is '属性';
-comment on column ${SCHEMA}.dbt_system_config.value is '属性值';
+comment on column ${SCHEMA}.dbt_system_config.category is '类别';
+comment on column ${SCHEMA}.dbt_system_config.prop_key is '属性名';
+comment on column ${SCHEMA}.dbt_system_config.prop_value is '属性值';
+comment on column ${SCHEMA}.dbt_system_config.data_type is '数据类型';
 comment on column ${SCHEMA}.dbt_system_config.is_deleted is '删除标记';
 comment on column ${SCHEMA}.dbt_system_config.create_time is '创建时间';
 comment on column ${SCHEMA}.dbt_system_config.update_time is '更新时间';
 
 comment on table ${SCHEMA}.dbt_system_config is '系统配置';
 -- 创建索引
-create index idx_dbt_system_config on ${SCHEMA}.dbt_system_config (type, prop);
+create index idx_dbt_system_config on ${SCHEMA}.dbt_system_config (category, prop_key);
 create index idx_dbt_system_config_tenant on ${SCHEMA}.dbt_system_config (tenant_id);
