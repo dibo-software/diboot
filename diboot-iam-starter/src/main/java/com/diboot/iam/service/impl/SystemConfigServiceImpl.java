@@ -64,16 +64,17 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
     }
 
     protected Object value4Type(SystemConfig systemConfig) {
-        if (V.isEmail(systemConfig.getPropValue())) {
-            return null;
+        String propValue = systemConfig.getPropValue();
+        if (V.isEmpty(propValue)) {
+            return propValue;
         }
         if ("boolean".equals(systemConfig.getDataType())) {
-            return V.isTrue(systemConfig.getPropValue());
+            return V.isTrue(propValue);
         }
         if ("number".equals(systemConfig.getDataType())) {
-            return new BigDecimal(systemConfig.getPropValue());
+            return new BigDecimal(propValue);
         }
-        return systemConfig.getPropValue();
+        return propValue;
     }
 
 }

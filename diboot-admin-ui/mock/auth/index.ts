@@ -287,7 +287,7 @@ const authMenu = [
           componentPath: prefix + 'system/config/index.vue',
           keepAlive: false,
           sort: 8,
-          permissions: ['update']
+          permissions: ['create', 'update', 'delete']
         }
       },
       {

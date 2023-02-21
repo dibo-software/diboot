@@ -3,8 +3,8 @@
  */
 export interface SystemConfig {
   id: string
-  category: string
+  category?: string
   propKey: string
-  propValue: string
+  propValue?: string
   dataType: string
 }
