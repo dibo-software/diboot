@@ -28,7 +28,7 @@ watch(
   () => props.appModule,
   module => {
     restPermissions.length = 0
-    restPermissions.push(...moduleRestPermissionMap.value[module ?? ''])
+    restPermissions.push(...(moduleRestPermissionMap.value[module ?? ''] || []))
   }
 )
 
