@@ -174,8 +174,8 @@ function rowClick(row: DictionaryTableExpand) {
       @current-change="getList()"
     />
 
-    <form-page ref="formPage" @complete="getList()" />
-    <detail-page ref="detailPage" />
+    <FormPage ref="formPage" @complete="getList()" />
+    <DetailPage ref="detailPage" />
   </div>
 </template>
 <style lang="scss">

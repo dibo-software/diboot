@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus'
 import type { SystemConfig } from './type'
-import { defineEmits } from 'vue'
 import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/system-config'

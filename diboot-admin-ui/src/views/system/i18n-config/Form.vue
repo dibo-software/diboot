@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { I18nConfig } from './type'
 import type { FormInstance } from 'element-plus'
-import { defineEmits } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const baseApi = '/i18n-config'

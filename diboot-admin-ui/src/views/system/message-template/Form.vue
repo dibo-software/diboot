@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { MessageTemplate } from './type'
-import { defineEmits } from 'vue'
 import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/message-template'
