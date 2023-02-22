@@ -30,11 +30,14 @@ module.exports = {
   rules: {
     'comma-dangle': ['warn', 'only-multiline'],
     'vue/multi-word-component-names': 'off',
+    'vue/no-v-html': 'off',
     'vue/html-self-closing': ['warn', { html: { void: 'always' } }],
-    'no-console': 'warn',
     'no-debugger': 'warn',
     'prettier/prettier': 'warn',
     'arrow-body-style': 'off',
-    'prefer-arrow-callback': 'off'
+    'prefer-arrow-callback': 'off',
+    'no-console': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+
   }
 }
