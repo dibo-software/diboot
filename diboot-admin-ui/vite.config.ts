@@ -21,7 +21,9 @@ const optimizeDepsElementPlusIncludes = [
   'qs',
   'echarts',
   '@wangeditor/editor',
-  '@wangeditor/editor-for-vue'
+  '@wangeditor/editor-for-vue',
+  'docx-preview',
+  'vue-pdf-embed'
 ];
 const ELEMENT_PLUS_COMPONENTS_PATH = 'node_modules/element-plus/es/components'
 fs.readdirSync(ELEMENT_PLUS_COMPONENTS_PATH).map((dirname) => {
