@@ -74,7 +74,7 @@ const cropDialog = (val: boolean) => {
       :show-set-avatar-dialog="showSetAvatarDialog"
       :avatar-base64="avatarBase64"
       :filename="filename"
-      @cropDialog="cropDialog"
+      @crop-dialog="cropDialog"
     />
     <el-aside class="el-aside" width="240px">
       <el-container>

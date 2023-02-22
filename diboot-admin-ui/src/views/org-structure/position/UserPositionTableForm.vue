@@ -2,7 +2,6 @@
 import type { UserPosition } from './type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
-import { defineEmits } from 'vue'
 
 type Props = {
   userId?: string

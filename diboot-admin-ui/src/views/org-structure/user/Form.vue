@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UserModel, AccountInfo } from './type'
-import { defineEmits } from 'vue'
 import UserPositionTableForm from '../position/UserPositionTableForm.vue'
 import { checkValue } from '@/utils/validate-form'
 import type { UserPosition } from '@/views/org-structure/position/type'

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
-import { defineEmits, defineProps } from 'vue'
 import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/org'
