@@ -22,6 +22,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -42,16 +43,16 @@ public class QueryCondition implements Serializable {
     @Getter
     private List<CriteriaItem> criteriaList;
 
-    @Getter @Setter
+    @Getter @Setter @Accessors(chain = true)
     private Pagination pagination;
 
-    @Getter @Setter
+    @Getter @Setter @Accessors(chain = true)
     private List<String> orderItems;
 
-    @Getter @Setter
+    @Getter @Setter @Accessors(chain = true)
     private List<String> selectFields;
 
-    @Getter @Setter
+    @Getter @Setter @Accessors(chain = true)
     private List<String> excludeFields;
 
     public QueryCondition() {
@@ -103,6 +104,16 @@ public class QueryCondition implements Serializable {
     public QueryCondition clear() {
         this.criteriaList = null;
         this.orderItems = null;
+        return this;
+    }
+
+    public QueryCondition orderBy(String orderItem) {
+        this.orderItems = Arrays.asList(orderItem);
+        return this;
+    }
+
+    public QueryCondition orderBy(List<String> orderItems) {
+        this.orderItems = orderItems;
         return this;
     }
 
