@@ -87,7 +87,7 @@ const lazyLoad = ({ data }: { data: LabelValue }, resolve: (data: LabelValue[]) 
 const DEFAULT_DATE_FORMAT: Record<string, string> = { date: 'YYYY-MM-DD', datetime: 'YYYY-MM-DD HH:mm:ss' }
 const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
 
-const bindUpload = useUploadFile(
+const { action, httpRequest, fileList, onSuccess, onRemove } = useUploadFile(
   fileIds => (value.value = fileIds),
   () => props.fileList
 )
@@ -279,8 +279,11 @@ const beforeUpload = (rawFile: UploadRawFile) => {
     />
     <el-upload
       v-if="config.type === 'upload'"
-      v-bind="bindUpload"
-      v-model:file-list="bindUpload.fileList"
+      v-model:file-list="fileList"
+      :action="action"
+      :http-request="httpRequest"
+      :on-success="onSuccess"
+      :on-remove="onRemove"
       :limit="config.limit"
       :accept="config.accept"
       :list-type="config.listType"
@@ -289,7 +292,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :on-preview="previewFile"
       :disabled="config.disabled || disabled"
       :class="{
-        'upload-plus-hide': bindUpload.fileList.length >= (config.limit ?? Number.MAX_VALUE),
+        'upload-plus-hide': fileList.length >= (config.limit ?? Number.MAX_VALUE),
         'upload-plus-disabled': config.disabled || disabled
       }"
       style="width: 100%"
@@ -298,7 +301,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
         <Plus />
       </el-icon>
       <el-button
-        v-else-if="!(bindUpload.fileList.length >= (config.limit ?? Number.MAX_VALUE))"
+        v-else-if="!(fileList.length >= (config.limit ?? Number.MAX_VALUE))"
         :icon="UploadIcon"
         :disabled="config.disabled || disabled"
       >
@@ -306,7 +309,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       </el-button>
       <template #tip>
         <el-button
-          v-if="config.listType !== 'picture-card' && bindUpload.fileList.length >= (config.limit ?? Number.MAX_VALUE)"
+          v-if="config.listType !== 'picture-card' && fileList.length >= (config.limit ?? Number.MAX_VALUE)"
           :icon="UploadIcon"
           disabled
         >
