@@ -160,7 +160,7 @@ public class BeanUtils {
                 beanWrapper.setPropertyValue(entry.getKey(), entry.getValue());
             }
             catch (Exception e){
-                log.warn("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
+                log.debug("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
             }
         }
     }
