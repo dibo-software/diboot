@@ -289,7 +289,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
         }
       }
       .light-high {
-        background-color: var(--el-color-primary);
+        background-color: var(--el-color-primary-light-5);
         border-radius: 5px;
         padding: 0 10px;
         transition: 0.3s;
