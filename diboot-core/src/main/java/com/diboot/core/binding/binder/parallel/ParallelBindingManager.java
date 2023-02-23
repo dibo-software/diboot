@@ -162,13 +162,13 @@ public class ParallelBindingManager {
      */
     @Async
     public CompletableFuture<Boolean> doBindingI18n(List voList, FieldAnnotation fieldAnnotation) {
+        BindI18n annotation = (BindI18n) fieldAnnotation.getAnnotation();
+        String i18nCodeField = annotation.value();
         if (i18nConfigService != null) {
-            BindI18n annotation = (BindI18n) fieldAnnotation.getAnnotation();
-            String i18nCodeField = annotation.value();
             // 国际化绑定接口化
             i18nConfigService.bindI18nContent(voList, i18nCodeField, fieldAnnotation.getFieldName());
         } else {
-            throw new InvalidUsageException("I18nConfigService未实现，无法使用I18n注解！");
+            log.warn("I18nConfigService未实现，无法翻译I18n注解: {}", i18nCodeField);
         }
         return CompletableFuture.completedFuture(true);
     }
