@@ -270,7 +270,7 @@ CREATE TABLE ${SCHEMA}.dbt_iam_org (
 comment on column ${SCHEMA}.dbt_iam_org.id is 'ID';
 comment on column ${SCHEMA}.dbt_iam_org.tenant_id is '租户ID';
 comment on column ${SCHEMA}.dbt_iam_org.parent_id is '上级ID';
-comment on column ${SCHEMA}.dbt_iam_org.parent_id is '上级ID路径';
+comment on column ${SCHEMA}.dbt_iam_org.parent_ids_path is '上级ID路径';
 comment on column ${SCHEMA}.dbt_iam_org.root_org_id is '企业ID';
 comment on column ${SCHEMA}.dbt_iam_org.name is '名称';
 comment on column ${SCHEMA}.dbt_iam_org.type is '类型';
