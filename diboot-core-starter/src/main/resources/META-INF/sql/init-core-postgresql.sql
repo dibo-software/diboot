@@ -24,7 +24,7 @@ comment on column dbt_dictionary.tenant_id is '租户ID';
 comment on column dbt_dictionary.app_module is '应用模块';
 comment on column dbt_dictionary.type is '字典类型';
 comment on column dbt_dictionary.item_name is '显示名';
-comment on column dbt_dictionary.item_name is '显示名国际化资源标识';
+comment on column dbt_dictionary.item_name_18n is '显示名国际化资源标识';
 comment on column dbt_dictionary.item_value is '存储值';
 comment on column dbt_dictionary.description is '描述说明';
 comment on column dbt_dictionary.extension is '扩展JSON';
