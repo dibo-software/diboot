@@ -49,7 +49,7 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
   return {
     action: `/file/upload`,
     httpRequest,
-    fileList: uploadFileList.value,
+    fileList: uploadFileList,
     onSuccess,
     onRemove
   }

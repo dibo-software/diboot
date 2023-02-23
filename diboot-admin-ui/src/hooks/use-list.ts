@@ -65,7 +65,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
         .get<Array<T>>(option.listApi ? option.listApi : option.baseApi, buildQueryParam())
         .then(res => {
           dataList.length = 0
-          dataList.push(...res.data)
+          dataList.push(...(res.data || []))
           const { pageSize, pageIndex, totalCount, orderBy } = res.page ?? {}
           pagination.pageSize = pageSize
           pagination.current = pageIndex

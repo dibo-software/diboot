@@ -84,8 +84,8 @@ const singleRow = (row: Array<I18nConfig>) => {
       </el-table-column>
       <el-table-column v-if="!select" prop="typeLabel" label="类型" fixed show-overflow-tooltip width="90px">
         <template #default="{ row }">
-          <el-tag :color="row[0].typeLabel.ext?.color" effect="dark" type="info">
-            {{ row[0].typeLabel.label }}
+          <el-tag :color="row[0].typeLabel?.ext?.color" effect="dark" type="info">
+            {{ row[0].typeLabel?.label }}
           </el-tag>
         </template>
       </el-table-column>

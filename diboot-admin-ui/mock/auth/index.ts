@@ -148,16 +148,28 @@ const authMenu = [
   {
     path: 'org-structure',
     name: 'OrgStructure ',
-    redirect: '/org-structure/org',
+    redirect: '/org-structure/user',
     meta: { title: '组织架构', icon: 'Element:User' },
     children: [
+      {
+        path: 'user',
+        name: 'User',
+        meta: {
+          title: '人员管理',
+          componentPath: prefix + 'org-structure/user/index.vue',
+          sort: '1',
+          keepAlive: false,
+          icon: 'Element:User',
+          permissions: ['detail', 'create', 'update', 'delete', 'import', 'export', 'position', 'addPosition']
+        }
+      },
       {
         path: 'org',
         name: 'Org',
         meta: {
           title: '组织部门',
           componentPath: prefix + 'org-structure/org/index.vue',
-          sort: '@natural',
+          sort: '2',
           keepAlive: false,
           icon: 'Element:Folder',
           permissions: ['detail', 'create', 'update', 'delete', 'sort']
@@ -169,23 +181,11 @@ const authMenu = [
         meta: {
           title: '岗位管理',
           componentPath: prefix + 'org-structure/position/List.vue',
-          sort: '@natural',
+          sort: '3',
           keepAlive: false,
           hollow: false,
           icon: 'Element:Guide',
           permissions: ['detail', 'create', 'update', 'delete']
-        }
-      },
-      {
-        path: 'user',
-        name: 'User',
-        meta: {
-          title: '人员管理',
-          componentPath: prefix + 'org-structure/user/index.vue',
-          sort: '@natural',
-          keepAlive: false,
-          icon: 'Element:User',
-          permissions: ['detail', 'create', 'update', 'delete', 'import', 'export', 'position', 'addPosition']
         }
       }
     ]
