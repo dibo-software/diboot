@@ -46,7 +46,7 @@ public class QueryCondition implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private Pagination pagination;
 
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
     private List<String> orderItems;
 
     @Getter @Setter @Accessors(chain = true)
