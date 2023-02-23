@@ -248,7 +248,7 @@ const rules: FormRules = {
         </el-col>
       </el-row>
     </el-form>
-    <user-position-table-form
+    <UserPositionTableForm
       ref="userPositionTableForm"
       v-model="model.userPositionList"
       :org-tree="relatedData.orgTree"
