@@ -168,13 +168,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 填充关联关系
 		relatedEntities.forEach(relatedEntity-> BeanUtils.setProperty(relatedEntity, attributeName, pkValue));
 		// 获取关联对象对应的Service
-		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService != null){
 			return relatedEntityService.createEntities(relatedEntities);
 		}
 		else{
 			// 查找mapper
-			BaseMapper mapper = ContextHelper.getBaseMapperByEntity(entity.getClass());
+			BaseMapper mapper = ContextHolder.getBaseMapperByEntity(entity.getClass());
 			// 新增关联，无service只能循环插入
 			for(RE relation : relatedEntities){
 				mapper.insert(relation);
@@ -189,7 +189,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityList)){
 			return false;
 		}
-		if(DbType.SQL_SERVER.getDb().equalsIgnoreCase(ContextHelper.getDatabaseType())){
+		if(DbType.SQL_SERVER.getDb().equalsIgnoreCase(ContextHolder.getDatabaseType())){
 			for(T entity : entityList){
 				createEntity(entity);
 			}
@@ -446,7 +446,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			}
 		}
 		// 获取关联对象对应的Service
-		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService == null){
 			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
 			return false;
@@ -500,7 +500,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return false;
 		}
 		// 获取关联对象对应的Service
-		BaseService relatedEntityService = ContextHelper.getBaseServiceByEntity(relatedEntityClass);
+		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService == null){
 			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
 			return false;
@@ -663,7 +663,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean exists(Wrapper queryWrapper) {
 		if((queryWrapper instanceof QueryWrapper) && queryWrapper.getSqlSelect() == null){
-			String pk = ContextHelper.getIdColumnName(getEntityClass());
+			String pk = ContextHolder.getIdColumnName(getEntityClass());
 			((QueryWrapper)queryWrapper).select(pk);
 		}
 		T entity = getSingleEntity(queryWrapper);
@@ -673,7 +673,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<T> getEntityListByIds(List ids) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHelper.getIdColumnName(getEntityClass());
+		String pk = ContextHolder.getIdColumnName(getEntityClass());
 		queryWrapper.in(pk, ids);
 		return getEntityList(queryWrapper);
 	}
@@ -1015,7 +1015,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	private Object getPrimaryKeyValue(Object entity){
-		String pk = ContextHelper.getIdFieldName(entity.getClass());
+		String pk = ContextHolder.getIdFieldName(entity.getClass());
 		return BeanUtils.getProperty(entity, pk);
 	}
 

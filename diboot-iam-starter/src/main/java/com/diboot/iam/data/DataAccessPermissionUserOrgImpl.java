@@ -136,7 +136,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
     protected List<? extends Serializable> buildOrgIdsScope(IamUser currentUser){
         List<Serializable> accessibleIds = new ArrayList<>();
         accessibleIds.add(currentUser.getOrgId());
-        /*List<Long> childOrgIds = ContextHelper.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
+        /*List<Long> childOrgIds = ContextHolder.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
         if(V.notEmpty(childOrgIds)){
             accessibleIds.addAll(childOrgIds);
         }*/

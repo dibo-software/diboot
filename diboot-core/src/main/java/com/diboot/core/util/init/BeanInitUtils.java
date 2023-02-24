@@ -1,7 +1,7 @@
 
 package com.diboot.core.util.init;
 
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import lombok.SneakyThrows;
 
 import java.util.Objects;
@@ -46,7 +46,7 @@ public class BeanInitUtils {
         return new LazyBeanInitializer<T>() {
             @Override
             protected T initialize() {
-                return Objects.requireNonNull(ContextHelper.getBean(beanClass), () -> "找不到class对应的bean: " + beanClass.getName());
+                return Objects.requireNonNull(ContextHolder.getBean(beanClass), () -> "找不到class对应的bean: " + beanClass.getName());
             }
         };
     }

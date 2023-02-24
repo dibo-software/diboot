@@ -18,7 +18,7 @@ package com.diboot.iam.starter;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.SqlFileInitializer;
 import com.diboot.core.vo.DictionaryVO;
@@ -72,7 +72,7 @@ public class IamPluginInitializer implements ApplicationRunner {
      */
     private synchronized void insertInitData(){
         // 插入iam组件所需的数据字典
-        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+        DictionaryService dictionaryService = ContextHolder.getBean(DictionaryService.class);
         if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "AUTH_TYPE")){
             String[] DICT_INIT_DATA = {
                     "{\"type\":\"AUTH_TYPE\", \"itemName\":\"登录认证方式\", \"description\":\"IAM用户登录认证方式\", \"children\":[{\"itemName\":\"用户名密码\", \"itemValue\":\"PWD\", \"sortId\":1},{\"itemName\":\"单点登录\", \"itemValue\":\"SSO\", \"sortId\":2},{\"itemName\":\"公众号\", \"itemValue\":\"WX_MP\", \"sortId\":3},{\"itemName\":\"企业微信\", \"itemValue\":\"WX_CP\", \"sortId\":4},{\"itemName\":\"其他\", \"itemValue\":\"OTHER\", \"sortId\":5}]}",
@@ -94,7 +94,7 @@ public class IamPluginInitializer implements ApplicationRunner {
         }
 
         // 插入iam组件所需的初始权限数据
-        IamResourceService resourcePermissionService = ContextHelper.getBean(IamResourceService.class);
+        IamResourceService resourcePermissionService = ContextHolder.getBean(IamResourceService.class);
         if(resourcePermissionService != null && !resourcePermissionService.exists(IamResource::getResourceCode, "system")){
             String[] RESOURCE_PERMISSION_DATA = {
                     "{\"displayType\":\"CATALOGUE\",\"displayName\":\"组织机构\",\"routePath\":\"org-structure\",\"resourceCode\":\"OrgStructure\",\"meta\":\"{\\\"icon\\\":\\\"Element:UserFilled\\\"}\",\"sortId\":\"90\",\"children\":[{\"displayType\":\"MENU\",\"displayName\":\"组织机构管理\",\"routePath\":\"org\",\"resourceCode\":\"Org\",\"permissionCode\":\"IamOrg:read\",\"meta\":\"{\\\"icon\\\":\\\"Element:Folder\\\",\\\"componentPath\\\":\\\"@/views/org-structure/org/index.vue\\\"}\",\"sortId\":\"1\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"排序\",\"resourceCode\":\"sort\",\"permissionCode\":\"IamOrg:write\",\"sortId\":\"106\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"permissionCode\":\"IamOrg:write\",\"sortId\":\"105\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"permissionCode\":\"IamOrg:write,IamOrg:read\",\"sortId\":\"104\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"permissionCode\":\"IamOrg:write\",\"sortId\":\"103\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"permissionCode\":\"IamOrg:read\",\"sortId\":\"102\"}]},{\"displayType\":\"MENU\",\"displayName\":\"岗位管理\",\"routePath\":\"position\",\"resourceCode\":\"Position\",\"permissionCode\":\"IamPosition:read\",\"meta\":\"{\\\"icon\\\":\\\"Element:Avatar\\\",\\\"componentPath\\\":\\\"@/views/org-structure/position/List.vue\\\"}\",\"sortId\":\"2\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"permissionCode\":\"IamPosition:write\",\"sortId\":\"112\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"permissionCode\":\"IamPosition:read\",\"sortId\":\"111\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"permissionCode\":\"IamPosition:write,IamPosition:read\",\"sortId\":\"110\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"permissionCode\":\"IamPosition:write\",\"sortId\":\"108\"}]},{\"displayType\":\"MENU\",\"displayName\":\"组织人员管理\",\"routePath\":\"user\",\"resourceCode\":\"User\",\"permissionCode\":\"IamOrg:read,IamUser:read\",\"meta\":\"{\\\"icon\\\":\\\"Element:User\\\",\\\"componentPath\\\":\\\"@/views/org-structure/user/index.vue\\\"}\",\"sortId\":\"3\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"permissionCode\":\"IamUser:write\",\"sortId\":\"40\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"permissionCode\":\"IamUser:write,IamUser:read\",\"sortId\":\"39\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"permissionCode\":\"IamUser:write\",\"sortId\":\"38\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"permissionCode\":\"IamUser:read\",\"sortId\":\"37\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"导入\",\"resourceCode\":\"import\",\"permissionCode\":\"IamUserExcel:import\",\"sortId\":\"36\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"导出\",\"resourceCode\":\"export\",\"permissionCode\":\"IamUserExcel:export\",\"sortId\":\"35\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"人员岗位设置\",\"resourceCode\":\"position\",\"permissionCode\":\"IamPosition:write,IamPosition:read\",\"sortId\":\"34\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"添加岗位\",\"resourceCode\":\"addPosition\",\"permissionCode\":\"IamPosition:write,IamPosition:read\",\"sortId\":\"33\"}]}]}",
@@ -113,7 +113,7 @@ public class IamPluginInitializer implements ApplicationRunner {
         }
 
         // 插入公司根节点
-        IamOrgService iamOrgService = ContextHelper.getBean(IamOrgService.class);
+        IamOrgService iamOrgService = ContextHolder.getBean(IamOrgService.class);
         if(iamOrgService != null && iamOrgService.getEntityListCount(null) == 0){
             IamOrg iamOrg = new IamOrg();
             iamOrg.setCode("ROOT").setRootOrgId("1").setName("我的公司")
@@ -122,7 +122,7 @@ public class IamPluginInitializer implements ApplicationRunner {
         }
 
         // 插入超级管理员用户及角色
-        IamRoleService iamRoleService = ContextHelper.getBean(IamRoleService.class);
+        IamRoleService iamRoleService = ContextHolder.getBean(IamRoleService.class);
         if(iamRoleService != null && iamRoleService.getEntityListCount(null) == 0){
             IamRole iamRole = new IamRole();
             iamRole.setName("超级管理员").setCode(Cons.ROLE_SUPER_ADMIN);
@@ -130,18 +130,18 @@ public class IamPluginInitializer implements ApplicationRunner {
 
             IamUser iamUser = new IamUser();
             iamUser.setOrgId("0").setRealname("DIBOOT").setUserNum("0000").setGender("M").setMobilePhone("10000000000");
-            ContextHelper.getBean(IamUserService.class).createEntity(iamUser);
+            ContextHolder.getBean(IamUserService.class).createEntity(iamUser);
 
             // 插入对象
             IamUserRole iamUserRole = new IamUserRole(IamUser.class.getSimpleName(), iamUser.getId(), iamRole.getId());
-            ContextHelper.getBean(IamUserRoleService.class).getMapper().insert(iamUserRole);
+            ContextHolder.getBean(IamUserRoleService.class).getMapper().insert(iamUserRole);
 
             // 创建账号
             IamAccount iamAccount = new IamAccount();
             iamAccount.setUserType(IamUser.class.getSimpleName()).setUserId(iamUser.getId())
                     .setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name())
                     .setAuthAccount("admin").setAuthSecret("123456");
-            ContextHelper.getBean(IamAccountService.class).createEntity(iamAccount);
+            ContextHolder.getBean(IamAccountService.class).createEntity(iamAccount);
         }
 
     }

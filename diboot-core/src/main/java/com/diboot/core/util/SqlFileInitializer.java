@@ -244,7 +244,7 @@ public class SqlFileInitializer {
             return false;
         }
         // 获取SqlSessionFactory实例
-        SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
+        SqlSessionFactory sqlSessionFactory = ContextHolder.getBean(SqlSessionFactory.class);
         if (sqlSessionFactory == null){
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return false;
@@ -340,7 +340,7 @@ public class SqlFileInitializer {
      */
     public static String getCurrentSchema() {
         if(CURRENT_SCHEMA == null) {
-            DataSource dataSource = ContextHelper.getBean(DataSource.class);
+            DataSource dataSource = ContextHolder.getBean(DataSource.class);
             try{
                 Connection connection = dataSource.getConnection();
                 CURRENT_SCHEMA = connection.getSchema();
@@ -361,7 +361,7 @@ public class SqlFileInitializer {
      * @return
      */
     public static String getDbType(){
-        return ContextHelper.getDatabaseType();
+        return ContextHolder.getDatabaseType();
     }
 
 }

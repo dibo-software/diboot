@@ -23,7 +23,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.vo.Pagination;
 
 import java.util.List;

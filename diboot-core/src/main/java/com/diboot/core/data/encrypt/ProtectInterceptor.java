@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
@@ -117,7 +117,7 @@ public class ProtectInterceptor implements Interceptor {
         List<String> protectFieldList = ParserCache.getProtectFieldList(clazz);
         if (!protectFieldList.isEmpty()) {
             MetaObject metaObject = config.newMetaObject(entity);
-            ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
+            ProtectFieldHandler protectFieldHandler = ContextHolder.getBean(ProtectFieldHandler.class);
             if (protectFieldHandler == null) {
                 throw new InvalidUsageException("未注入 ProtectFieldHandler 实现");
             }

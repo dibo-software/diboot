@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.auth;
 
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -41,7 +41,7 @@ public class AuthServiceFactory {
      */
     public static AuthService getAuthService(String authType){
         if(AUTHTYPE_SERVICE_CACHE.isEmpty()){
-            List<AuthService> authServiceList = ContextHelper.getBeans(AuthService.class);
+            List<AuthService> authServiceList = ContextHolder.getBeans(AuthService.class);
             if(V.notEmpty(authServiceList)){
                 authServiceList.stream().forEach((service)->{
                     if(AUTHTYPE_SERVICE_CACHE.containsKey(service.getAuthType())){

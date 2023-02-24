@@ -18,7 +18,7 @@ package com.diboot.core.data.mask;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.annotation.ProtectField;
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -62,7 +62,7 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
     }
 
     public SensitiveInfoSerialize(Class<?> clazz, String fieldName) {
-        this.protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
+        this.protectFieldHandler = ContextHolder.getBean(ProtectFieldHandler.class);
         if (protectFieldHandler == null) {
             throw new InvalidUsageException("未注入 ProtectFieldHandler 实现");
         }

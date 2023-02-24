@@ -16,7 +16,7 @@
 package com.diboot.iam.shiro;
 
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -97,7 +97,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
             }
             // 获取当前user对象并缓存
             BaseLoginUser loginUser = null;
-            BaseService userService = ContextHelper.getBaseServiceByEntity(iamAuthToken.getUserTypeClass());
+            BaseService userService = ContextHolder.getBaseServiceByEntity(iamAuthToken.getUserTypeClass());
             if(userService != null){
                 loginUser = (BaseLoginUser)userService.getEntity(account.getUserId());
             }
@@ -177,14 +177,14 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
 
     private IamUserRoleService getIamUserRoleService(){
         if(iamUserRoleService == null){
-            iamUserRoleService = ContextHelper.getBean(IamUserRoleService.class);
+            iamUserRoleService = ContextHolder.getBean(IamUserRoleService.class);
         }
         return iamUserRoleService;
     }
 
     private IamRoleResourceService getIamRoleResourceService(){
         if(iamRoleResourceService == null){
-            iamRoleResourceService = ContextHelper.getBean(IamRoleResourceService.class);
+            iamRoleResourceService = ContextHolder.getBean(IamRoleResourceService.class);
         }
         return iamRoleResourceService;
     }

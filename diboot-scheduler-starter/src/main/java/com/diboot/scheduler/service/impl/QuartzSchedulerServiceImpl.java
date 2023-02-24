@@ -17,7 +17,7 @@ package com.diboot.scheduler.service.impl;
 
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -80,7 +80,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
             return CACHE_JOB;
         }
         // 获取所有被com.diboot.scheduler.job.anno.CollectThisJob注解的job
-        List<Object> annoJobList = ContextHelper.getBeansByAnnotation(CollectThisJob.class);
+        List<Object> annoJobList = ContextHolder.getBeansByAnnotation(CollectThisJob.class);
         if (V.notEmpty(annoJobList)) {
             List<Map<String, Object>> result = loadJobs(annoJobList);
             CACHE_JOB.addAll(result);

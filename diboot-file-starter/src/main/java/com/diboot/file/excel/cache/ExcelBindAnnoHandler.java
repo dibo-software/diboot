@@ -22,7 +22,7 @@ import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -105,7 +105,7 @@ public class ExcelBindAnnoHandler {
             else{
                 dictType = ((BindDict)annotation).type();
             }
-            DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
+            DictionaryServiceExtProvider bindDictService = ContextHolder.getBean(DictionaryServiceExtProvider.class);
             if(bindDictService == null){
                 throw new InvalidUsageException("DictionaryService未实现，无法使用ExcelBindDict注解！");
             }
@@ -131,9 +131,9 @@ public class ExcelBindAnnoHandler {
         if(V.isEmpty(nameList)){
             return Collections.emptyMap();
         }
-        BaseService service = ContextHelper.getBaseServiceByEntity(bindField.entity());
+        BaseService service = ContextHolder.getBaseServiceByEntity(bindField.entity());
         String nameColumn = S.toSnakeCase(bindField.field());
-        String idColumn = ContextHelper.getIdColumnName(bindField.entity());
+        String idColumn = ContextHolder.getIdColumnName(bindField.entity());
         QueryWrapper queryWrapper = Wrappers.query().select(nameColumn, idColumn).in(nameColumn, nameList);
         List<LabelValue> list = service.getLabelValueList(queryWrapper);
         return convertLabelValueListToMap(list);

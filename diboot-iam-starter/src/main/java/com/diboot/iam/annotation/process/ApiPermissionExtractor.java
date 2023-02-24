@@ -17,7 +17,7 @@ package com.diboot.iam.annotation.process;
 
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.ApiUri;
 import com.diboot.iam.annotation.BindPermission;
@@ -61,10 +61,10 @@ public class ApiPermissionExtractor {
             UNIQUE_KEY_SET = new HashSet<>();
             // 初始化
             // 提取rest controller
-            List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
+            List<Object> controllerList = ContextHolder.getBeansByAnnotation(RestController.class);
             extractApiPermissions(controllerList);
             // 提取controller
-            controllerList = ContextHelper.getBeansByAnnotation(Controller.class);
+            controllerList = ContextHolder.getBeansByAnnotation(Controller.class);
             extractApiPermissions(controllerList);
         }
         return API_PERMISSION_CACHE;

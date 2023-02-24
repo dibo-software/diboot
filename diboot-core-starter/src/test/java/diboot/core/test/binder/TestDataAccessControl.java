@@ -1,7 +1,7 @@
 package diboot.core.test.binder;
 
 import com.diboot.core.data.access.DataAccessInterface;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.service.CcCityInfoService;
@@ -32,7 +32,7 @@ public class TestDataAccessControl {
 
     @Test
     public void testDataControl(){
-        DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
+        DataAccessInterface checkImpl = ContextHolder.getBean(DataAccessInterface.class);
         Assert.assertNotNull(checkImpl);
         List<CcCityInfo> ccCityInfoList = ccCityInfoService.list(null);
         Assert.assertEquals(2, ccCityInfoList.size());

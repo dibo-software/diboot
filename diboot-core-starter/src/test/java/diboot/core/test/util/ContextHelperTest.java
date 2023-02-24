@@ -17,7 +17,7 @@ package diboot.core.test.util;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.DemoTest;
 import diboot.core.test.binder.service.impl.DemoTestServiceImpl;
@@ -30,7 +30,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * ContextHelper单元测试
+ * ContextHolder单元测试
  * @author mazc@dibo.ltd
  * @version 1.0
  * @date 2022/06/22
@@ -42,10 +42,10 @@ public class ContextHelperTest {
 
     @Test
     public void testDatabaseType(){
-        String dbType = ContextHelper.getDatabaseType();
+        String dbType = ContextHolder.getDatabaseType();
         Assert.assertTrue(dbType.equals("mysql") || dbType.equals("dm") || dbType.equals("postgresql"));
 
-        BaseService baseService = ContextHelper.getBaseServiceByEntity(DemoTest.class);
+        BaseService baseService = ContextHolder.getBaseServiceByEntity(DemoTest.class);
         Assert.assertTrue(BeanUtils.getTargetClass(baseService).getName().equals(DemoTestServiceImpl.class.getName()));
 
     }

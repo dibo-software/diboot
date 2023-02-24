@@ -17,7 +17,7 @@ package com.diboot.iam.util;
 
 import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
@@ -93,7 +93,7 @@ public class TokenUtils {
      * @param userInfoStr
      */
     public static void cacheAccessToken(String accessToken, String userInfoStr) {
-        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        BaseCacheManager baseCacheManager = ContextHolder.getBean(BaseCacheManager.class);
         baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken, userInfoStr);
     }
 
@@ -102,7 +102,7 @@ public class TokenUtils {
      * @param accessToken
      */
     public static void removeAccessTokens(String accessToken) {
-        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        BaseCacheManager baseCacheManager = ContextHolder.getBean(BaseCacheManager.class);
         baseCacheManager.removeCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken);
     }
 
@@ -112,7 +112,7 @@ public class TokenUtils {
      * @return
      */
     public static String getCachedUserInfoStr(String accessToken) {
-        BaseCacheManager baseCacheManager = ContextHelper.getBean(BaseCacheManager.class);
+        BaseCacheManager baseCacheManager = ContextHolder.getBean(BaseCacheManager.class);
         String userInfoStr = baseCacheManager.getCacheString(Cons.CACHE_TOKEN_USERINFO, accessToken);
         if(userInfoStr == null){
             log.info("token {} 缓存信息不存在", accessToken);

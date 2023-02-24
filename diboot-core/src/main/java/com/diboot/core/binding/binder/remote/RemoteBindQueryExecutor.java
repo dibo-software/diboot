@@ -24,7 +24,7 @@ import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -103,7 +103,7 @@ public class RemoteBindQueryExecutor {
      * @return
      */
     private static List<Map<String, Object>> getMapList(Class entityClass, Wrapper queryWrapper) {
-        IService referencedService = ContextHelper.getIServiceByEntity(entityClass);
+        IService referencedService = ContextHolder.getIServiceByEntity(entityClass);
         if(referencedService instanceof BaseService){
             return ((BaseService)referencedService).getMapList(queryWrapper);
         }
@@ -119,7 +119,7 @@ public class RemoteBindQueryExecutor {
      * @return
      */
     private static <T> List<T> getEntityList(Class entityClass, Wrapper queryWrapper) {
-        IService referencedService = ContextHelper.getIServiceByEntity(entityClass);
+        IService referencedService = ContextHolder.getIServiceByEntity(entityClass);
         if(referencedService instanceof BaseService){
             return ((BaseService)referencedService).getEntityList(queryWrapper);
         }

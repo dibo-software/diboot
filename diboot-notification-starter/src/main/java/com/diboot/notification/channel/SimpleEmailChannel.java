@@ -17,7 +17,7 @@ package com.diboot.notification.channel;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.notification.config.Cons;
@@ -57,7 +57,7 @@ public class SimpleEmailChannel implements MessageChannel {
         log.debug("[开始发送邮件]：邮件内容：{}", JSON.stringify(message));
         String result = "success";
         String status = Cons.MESSAGE_STATUS.DELIVERY.name();
-        JavaMailSender javaMailSender = ContextHelper.getBean(JavaMailSender.class);
+        JavaMailSender javaMailSender = ContextHolder.getBean(JavaMailSender.class);
         if(javaMailSender == null) {
             throw new InvalidUsageException("邮件无法发送：无JavaMailSender实例，请检查相关配置及依赖环境。");
         }
@@ -98,7 +98,7 @@ public class SimpleEmailChannel implements MessageChannel {
             status = Cons.MESSAGE_STATUS.FAILED.name();
         }
         // 更新结果
-        ContextHelper.getBean(MessageService.class).updateEntity(
+        ContextHolder.getBean(MessageService.class).updateEntity(
                 Wrappers.<Message>lambdaUpdate()
                         .set(Message::getResult, result)
                         .set(Message::getStatus, status)
