@@ -24,7 +24,7 @@ comment on column ${SCHEMA}.dbt_dictionary.tenant_id is '租户ID';
 comment on column ${SCHEMA}.dbt_dictionary.app_module is '应用模块';
 comment on column ${SCHEMA}.dbt_dictionary.type is '字典类型';
 comment on column ${SCHEMA}.dbt_dictionary.item_name is '显示名';
-comment on column ${SCHEMA}.dbt_dictionary.item_name is '国际化资源标识';
+comment on column ${SCHEMA}.dbt_dictionary.item_name_18n is '国际化资源标识';
 comment on column ${SCHEMA}.dbt_dictionary.item_value is '存储值';
 comment on column ${SCHEMA}.dbt_dictionary.description is '备注';
 comment on column ${SCHEMA}.dbt_dictionary.extension is '扩展JSON';
