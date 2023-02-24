@@ -48,18 +48,40 @@ public class MapUtils {
 
     /**
      * 构建ResultMap为实体
-     * @param model
      * @param dataMap
+     * @param model
      * @return
      * @param <T>
      */
-    public static <T> T buildResultMapToEntity(T model, Map<String, Object> dataMap){
+    public static <T> void buildEntity(Map<String, Object> dataMap, T model){
         // 字段映射
         if(V.isEmpty(dataMap)){
-            return model;
+            return;
         }
         BeanUtils.bindProperties(model, dataMap);
-        return model;
+    }
+
+    /**
+     * 构建ResultMap为实体
+     * @param dataMap
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
+    public static <T> T buildEntity(Map<String, Object> dataMap, Class<T> entityClass) {
+        // 字段映射
+        if(V.isEmpty(dataMap)){
+            return null;
+        }
+        T entityInstance = null;
+        try {
+            entityInstance = entityClass.newInstance();
+        }
+        catch (Exception e){
+            log.warn("实例化Entity {} 异常: {}", entityClass.getSimpleName(), e.getMessage());
+        }
+        BeanUtils.bindProperties(entityInstance, dataMap);
+        return entityInstance;
     }
 
     /**
@@ -69,7 +91,7 @@ public class MapUtils {
      * @return
      * @param <T>
      */
-    public static <T> List<T> buildResultMapToEntityList(List<Map<String, Object>> resultListMap, Class<T> entityClass) {
+    public static <T> List<T> buildEntityList(List<Map<String, Object>> resultListMap, Class<T> entityClass) {
         if(V.isEmpty(resultListMap)){
             return Collections.emptyList();
         }
@@ -80,10 +102,10 @@ public class MapUtils {
                 entityInstance = entityClass.newInstance();
             }
             catch (Exception e){
-                log.warn("实例化Entity {} 异常", entityClass.getSimpleName());
+                log.warn("实例化Entity {} 异常: {}", entityClass.getSimpleName(), e.getMessage());
             }
             if(entityInstance != null) {
-                buildResultMapToEntity(entityInstance, resultMap);
+                buildEntity(resultMap, entityInstance);
                 entityList.add(entityInstance);
             }
         }
