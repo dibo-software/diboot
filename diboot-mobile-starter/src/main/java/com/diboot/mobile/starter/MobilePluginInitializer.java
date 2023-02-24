@@ -59,7 +59,7 @@ public class MobilePluginInitializer implements ApplicationRunner {
         // 检查数据库字典是否已存在
         SqlFileInitializer.init(environment);
         // 验证SQL
-        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_iam_member WHERE id='0'";
+        String initDetectSql = "SELECT id FROM dbt_iam_member WHERE id='0'";
         if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
             log.info("diboot-mobile 初始化SQL ...");
             // 执行初始化SQL

@@ -56,7 +56,7 @@ public class IamPluginInitializer implements ApplicationRunner {
         // 检查数据库字典是否已存在
         SqlFileInitializer.init(environment);
         // 验证SQL
-        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_iam_role WHERE id='0'";
+        String initDetectSql = "SELECT id FROM dbt_iam_role WHERE id='0'";
         if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
             log.info("diboot-IAM 初始化SQL ...");
             // 执行初始化SQL

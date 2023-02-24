@@ -49,7 +49,7 @@ public class CorePluginInitializer implements ApplicationRunner {
         // 初始化SCHEMA
         SqlFileInitializer.init(environment);
         // 检查数据库字典是否已存在
-        String initDetectSql = "SELECT id FROM ${SCHEMA}.dbt_dictionary WHERE id='0'";
+        String initDetectSql = "SELECT id FROM dbt_dictionary WHERE id='0'";
         if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
             SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "core");
             // 插入相关数据：Dict等
