@@ -47,7 +47,7 @@ const copyConfig = () => {
         />
         <el-divider />
         <el-form :model="appStore">
-          <el-form-item label="开启 Tabs">
+          <el-form-item label="布局切换">
             <el-select v-model="appStore.layout">
               <el-option label="分栏" value="default" />
               <el-option label="通栏" value="dock" />
