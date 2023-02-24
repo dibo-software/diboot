@@ -16,7 +16,7 @@
 package com.diboot.file.util;
 
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.diboot.core.util.PropertiesUtils;
 import com.diboot.file.config.Cons;
@@ -105,7 +105,7 @@ public class FileHelper{
      */
     public static boolean isLocalStorage() {
         if (isLocalStorage == null) {
-            isLocalStorage = LocalFileStorageServiceImpl.class.equals(ContextHelper.getBean(FileStorageService.class).getClass());
+            isLocalStorage = LocalFileStorageServiceImpl.class.equals(ContextHolder.getBean(FileStorageService.class).getClass());
         }
         return Boolean.TRUE.equals(isLocalStorage);
     }

@@ -41,7 +41,7 @@ public class SqlExecutor {
      */
     public static JdbcTemplate getJdbcTemplate() {
         if(jdbcTemplate == null) {
-            jdbcTemplate = ContextHelper.getBean(JdbcTemplate.class);
+            jdbcTemplate = ContextHolder.getBean(JdbcTemplate.class);
         }
         return jdbcTemplate;
     }

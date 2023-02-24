@@ -16,7 +16,7 @@
 package com.diboot.core.vo;
 
 import com.diboot.core.plugin.JsonResultFilter;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 
@@ -312,7 +312,7 @@ public class JsonResult<T> implements Serializable {
             return data;
         }
         if(!jsonResultFilterChecked){
-            jsonResultFilter = ContextHelper.getBean(JsonResultFilter.class);
+            jsonResultFilter = ContextHolder.getBean(JsonResultFilter.class);
             jsonResultFilterChecked = true;
         }
         if(jsonResultFilter != null){

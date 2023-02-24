@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
@@ -54,7 +54,7 @@ public abstract class AbstractEntity<T extends Serializable> implements Serializ
      */
     @JsonIgnore
     public Object getPrimaryKeyVal(){
-        String pk = ContextHelper.getIdFieldName(this.getClass());
+        String pk = ContextHolder.getIdFieldName(this.getClass());
         if(pk == null){
             return null;
         }

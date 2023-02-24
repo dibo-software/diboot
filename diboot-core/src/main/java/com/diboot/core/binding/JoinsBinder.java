@@ -30,7 +30,7 @@ import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.DynamicQueryMapper;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
@@ -98,7 +98,7 @@ public class JoinsBinder {
     private static <DTO,T> List<T> executeJoinQuery(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz, Pagination pagination, boolean limit1){
         // 非动态查询，走BaseService
         if(queryWrapper instanceof DynamicJoinQueryWrapper == false){
-            IService iService = ContextHelper.getIServiceByEntity(entityClazz);
+            IService iService = ContextHolder.getIServiceByEntity(entityClazz);
             if(iService != null){
                 return ServiceAdaptor.queryList(iService, (QueryWrapper)queryWrapper, pagination, entityClazz);
             }
@@ -139,7 +139,7 @@ public class JoinsBinder {
         if(mapList.size() > BaseConfig.getBatchSize()){
             log.warn("{} 动态Join查询记录数过大( {} 条), 建议优化", dynamicJoinWrapper.getDtoClass().getSimpleName(), mapList.size());
         }
-        ProtectFieldHandler protectFieldHandler = ContextHelper.getBean(ProtectFieldHandler.class);
+        ProtectFieldHandler protectFieldHandler = ContextHolder.getBean(ProtectFieldHandler.class);
         // 转换查询结果
         List<T> entityList = new ArrayList<>();
         for(Map<String, Object> colValueMap : mapList){
@@ -230,7 +230,7 @@ public class JoinsBinder {
      * @return
      */
     private static DynamicQueryMapper getDynamicQueryMapper(){
-        return ContextHelper.getBean(DynamicQueryMapper.class);
+        return ContextHolder.getBean(DynamicQueryMapper.class);
     }
 
 }

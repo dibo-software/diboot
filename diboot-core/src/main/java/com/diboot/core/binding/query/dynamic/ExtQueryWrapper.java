@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.vo.Pagination;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,7 +58,7 @@ public class ExtQueryWrapper<T> extends QueryWrapper<T> {
      */
     public T queryOne(Class<T> entityClazz){
         this.mainEntityClass = entityClazz;
-        IService<T> iService = ContextHelper.getIServiceByEntity(this.mainEntityClass);
+        IService<T> iService = ContextHolder.getIServiceByEntity(this.mainEntityClass);
         if(iService != null){
             return ServiceAdaptor.getSingleEntity(iService, this);
         }
@@ -74,7 +74,7 @@ public class ExtQueryWrapper<T> extends QueryWrapper<T> {
      */
     public List<T> queryList(Class<T> entityClazz){
         this.mainEntityClass = entityClazz;
-        IService iService = ContextHelper.getIServiceByEntity(entityClazz);
+        IService iService = ContextHolder.getIServiceByEntity(entityClazz);
         if(iService != null){
             return ServiceAdaptor.queryList(iService, this);
         }
@@ -90,7 +90,7 @@ public class ExtQueryWrapper<T> extends QueryWrapper<T> {
      */
     public List queryList(Class<T> entityClazz, Pagination pagination){
         this.mainEntityClass = entityClazz;
-        IService iService = ContextHelper.getIServiceByEntity(entityClazz);
+        IService iService = ContextHolder.getIServiceByEntity(entityClazz);
         if(iService != null){
             return ServiceAdaptor.queryList(iService, this, pagination, entityClazz);
         }

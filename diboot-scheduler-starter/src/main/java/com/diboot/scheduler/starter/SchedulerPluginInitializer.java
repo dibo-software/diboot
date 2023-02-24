@@ -17,7 +17,7 @@ package com.diboot.scheduler.starter;
 
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.SqlFileInitializer;
 import com.diboot.core.vo.DictionaryVO;
@@ -66,7 +66,7 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
      */
     private void insertInitData() {
         // 插入iam组件所需的数据字典
-        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+        DictionaryService dictionaryService = ContextHolder.getBean(DictionaryService.class);
         if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MESSAGE_CHANNEL")){
             // 插入iam组件所需的数据字典
             final String[] DICT_INIT_DATA = {

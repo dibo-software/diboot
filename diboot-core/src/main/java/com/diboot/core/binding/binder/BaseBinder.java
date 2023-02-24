@@ -507,7 +507,7 @@ public abstract class BaseBinder<T> {
      */
     private IService<T> getService(Class<T> entityClass, Module moduleAnno){
         // 根据entity获取Service
-        IService iService = ContextHelper.getIServiceByEntity(entityClass);
+        IService iService = ContextHolder.getIServiceByEntity(entityClass);
         if(iService == null){
             // 本地绑定需确保有Service实现类
             if(moduleAnno == null){

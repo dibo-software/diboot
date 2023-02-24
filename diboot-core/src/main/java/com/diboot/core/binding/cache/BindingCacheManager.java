@@ -23,7 +23,7 @@ import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.cache.StaticMemoryCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.util.init.BeanInitUtils;
@@ -214,7 +214,7 @@ public class BindingCacheManager {
     private static final BeanInitializer<Void> ENTITY_INFO_CACHE_INITIALIZER = BeanInitUtils.lazyInit(() -> {
         StaticMemoryCacheManager cacheManager = getCacheManager();
         // 初始化有service的entity缓存
-        Map<String, IService> serviceMap = ContextHelper.getApplicationContext().getBeansOfType(IService.class);
+        Map<String, IService> serviceMap = ContextHolder.getApplicationContext().getBeansOfType(IService.class);
         Set<String> uniqueEntitySet = new HashSet<>();
         if (V.notEmpty(serviceMap)) {
             for (Map.Entry<String, IService> entry : serviceMap.entrySet()) {
@@ -243,7 +243,7 @@ public class BindingCacheManager {
             log.debug("未获取到任何有效@Service.");
         }
         // 初始化没有service的table-mapper缓存
-        SqlSessionFactory sqlSessionFactory = ContextHelper.getBean(SqlSessionFactory.class);
+        SqlSessionFactory sqlSessionFactory = ContextHolder.getBean(SqlSessionFactory.class);
         if (sqlSessionFactory != null) {
             Collection<Class<?>> mappers = sqlSessionFactory.getConfiguration().getMapperRegistry().getMappers();
             if (V.notEmpty(mappers)) {

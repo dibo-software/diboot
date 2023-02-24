@@ -22,7 +22,7 @@ import com.diboot.core.holder.api.RestApi;
 import com.diboot.core.holder.api.RestApiWrapper;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.ApiUri;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +112,7 @@ public class AnnotationRestApiHolder {
      * 初始化
      */
     private synchronized static void initRestApiCache() {
-        List<Object> controllerList = ContextHelper.getBeansByAnnotation(RestController.class);
+        List<Object> controllerList = ContextHolder.getBeansByAnnotation(RestController.class);
         if(V.isEmpty(controllerList)) {
             return;
         }

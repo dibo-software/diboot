@@ -21,7 +21,7 @@ import com.diboot.core.binding.parser.BindAnnotationGroup;
 import com.diboot.core.binding.parser.FieldAnnotation;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +114,7 @@ public class RelationsBinder {
         }
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         LocaleContextHolder.setLocaleContext(LocaleContextHolder.getLocaleContext(),true);
-        ParallelBindingManager parallelBindingManager = ContextHelper.getBean(ParallelBindingManager.class);
+        ParallelBindingManager parallelBindingManager = ContextHolder.getBean(ParallelBindingManager.class);
         // 不可能出现的错误，但是编译器需要
         assert parallelBindingManager != null;
         List<CompletableFuture<Boolean>> binderFutures = new ArrayList<>();

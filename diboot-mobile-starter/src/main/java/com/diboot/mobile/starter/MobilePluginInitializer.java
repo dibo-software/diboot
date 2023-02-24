@@ -17,7 +17,7 @@ package com.diboot.mobile.starter;
 
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlFileInitializer;
@@ -76,7 +76,7 @@ public class MobilePluginInitializer implements ApplicationRunner {
     private synchronized void insertInitData(){
         // 插入mobile组件所需的数据字典
         // 插入iam组件所需的数据字典
-        DictionaryService dictionaryService = ContextHelper.getBean(DictionaryService.class);
+        DictionaryService dictionaryService = ContextHolder.getBean(DictionaryService.class);
         if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MEMBER_STATUS")){
             String[] DICT_INIT_DATA = {
                     "{\"type\":\"MEMBER_STATUS\", \"itemName\":\"用户状态\", \"description\":\"Member用户状态\", \"children\":[{\"itemName\":\"有效\", \"itemValue\":\"A\", \"sortId\":1},{\"itemName\":\"无效\", \"itemValue\":\"I\", \"sortId\":2}]}",
@@ -88,7 +88,7 @@ public class MobilePluginInitializer implements ApplicationRunner {
             }
             DICT_INIT_DATA = null;
         }
-        IamMemberService iamMemberService = ContextHelper.getBean(IamMemberService.class);
+        IamMemberService iamMemberService = ContextHolder.getBean(IamMemberService.class);
         if(iamMemberService != null && iamMemberService.getEntityListCount(null) == 0){
             IamMember iamMember = new IamMember();
             iamMember.setOrgId("0")
@@ -105,7 +105,7 @@ public class MobilePluginInitializer implements ApplicationRunner {
             iamAccount.setUserType(IamMember.class.getSimpleName()).setUserId(iamMember.getId())
                     .setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name())
                     .setAuthAccount("admin").setAuthSecret("123456");
-            ContextHelper.getBean(IamAccountService.class).createEntity(iamAccount);
+            ContextHolder.getBean(IamAccountService.class).createEntity(iamAccount);
         }
 
     }

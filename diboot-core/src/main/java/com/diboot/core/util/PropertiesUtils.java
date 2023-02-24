@@ -45,7 +45,7 @@ public class PropertiesUtils {
     public static String get(String key){
         if(environment == null){
             try{
-                environment = ContextHelper.getApplicationContext().getEnvironment();
+                environment = ContextHolder.getApplicationContext().getEnvironment();
             }
             catch (Exception e){
                 log.warn("无法获取Environment，参数配置可能不生效");

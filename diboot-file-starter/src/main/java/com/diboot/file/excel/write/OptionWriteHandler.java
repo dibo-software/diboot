@@ -21,7 +21,7 @@ import com.alibaba.excel.write.handler.context.CellWriteHandlerContext;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.AnnotationUtils;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -97,7 +97,7 @@ public class OptionWriteHandler implements CellWriteHandler {
      * @return 选项数组
      */
     protected String[] getDictOptions(String dictType) {
-        DictionaryServiceExtProvider bindDictService = ContextHelper.getBean(DictionaryServiceExtProvider.class);
+        DictionaryServiceExtProvider bindDictService = ContextHolder.getBean(DictionaryServiceExtProvider.class);
         if (bindDictService == null) {
             throw new InvalidUsageException("DictionaryService未实现，@ExcelOption无法关联字典！");
         }

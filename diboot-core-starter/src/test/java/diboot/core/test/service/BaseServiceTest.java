@@ -437,19 +437,19 @@ public class BaseServiceTest {
         // 新增
         List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
-        List<UserRole> list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        List<UserRole> list = ContextHolder.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == roleIdList.size());
 
         // 更新
         roleIdList = Arrays.asList(12L, 13L);
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
-        list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        list = ContextHolder.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 2);
 
         // 删除
         roleIdList = Collections.emptyList();
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
-        list = ContextHelper.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
+        list = ContextHolder.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 0);
     }
 
@@ -477,7 +477,7 @@ public class BaseServiceTest {
 
         DictionaryVO dictionaryVO = RelationsBinder.convertAndBind(dictionary, DictionaryVO.class);
         Assert.assertTrue(dictionaryVO.getPrimaryKeyVal().equals(dictionary.getId()));
-        Assert.assertTrue(ContextHelper.getIdFieldName(dictionaryVO.getClass()).equals("id"));
+        Assert.assertTrue(ContextHolder.getIdFieldName(dictionaryVO.getClass()).equals("id"));
     }
 
     @Test
@@ -495,7 +495,7 @@ public class BaseServiceTest {
     public void tesExecuteMultipleUpdateSqls() throws Exception {
         List<String> sqls = new ArrayList<>();
         Long dictId = 20000l;
-        if(ContextHelper.getDatabaseType().equals("dm")) {
+        if(ContextHolder.getDatabaseType().equals("dm")) {
             sqls.add("SET IDENTITY_INSERT dictionary ON");
         }
         sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
@@ -537,7 +537,7 @@ public class BaseServiceTest {
 
     @Test
     public void testGetEntityList(){
-        DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
+        DataAccessInterface checkImpl = ContextHolder.getBean(DataAccessInterface.class);
         Assert.assertTrue(checkImpl != null);
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id", "item_name", "item_value")
@@ -549,8 +549,8 @@ public class BaseServiceTest {
 
     @Test
     public void testDelete(){
-        CcCityInfo cityInfo = ContextHelper.getBean(CcCityInfoService.class).list().get(0);
-        //ContextHelper.getBean(CcCityInfoService.class).removeById(cityInfo.getId());
+        CcCityInfo cityInfo = ContextHolder.getBean(CcCityInfoService.class).list().get(0);
+        //ContextHolder.getBean(CcCityInfoService.class).removeById(cityInfo.getId());
     }
 
     @Test

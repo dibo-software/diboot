@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.util;
 
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.iam.config.Cons;
@@ -89,7 +89,7 @@ public class IamSecurityUtils extends SecurityUtils {
      * 退出 注销指定用户
      */
     public static void logout(String userTypeAndId){
-        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
+        CacheManager cacheManager = ContextHolder.getBean(CacheManager.class);
         if(cacheManager == null || cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) == null){
             log.warn("cacheManager 实例异常");
             return;
@@ -118,7 +118,7 @@ public class IamSecurityUtils extends SecurityUtils {
      */
     public static void logoutByToken(String accessToken){
         IamSecurityUtils.logout();
-        CacheManager cacheManager = ContextHelper.getBean(CacheManager.class);
+        CacheManager cacheManager = ContextHolder.getBean(CacheManager.class);
         if(cacheManager != null && cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
             cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(accessToken);
         }

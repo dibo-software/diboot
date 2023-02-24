@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.util.ContextHelper;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.Getter;
@@ -73,7 +73,7 @@ public class EntityInfoCache implements Serializable {
     }
 
     public IService getService(){
-        return this.serviceBeanName == null ? null : (IService) ContextHelper.getApplicationContext().getBean(this.serviceBeanName);
+        return this.serviceBeanName == null ? null : (IService) ContextHolder.getApplicationContext().getBean(this.serviceBeanName);
     }
 
     public void setBaseMapper(Class<? extends BaseMapper> mapper) {
@@ -81,7 +81,7 @@ public class EntityInfoCache implements Serializable {
     }
 
     public BaseMapper getBaseMapper() {
-        return mapperClass == null ? getService().getBaseMapper() : ContextHelper.getBean(this.mapperClass);
+        return mapperClass == null ? getService().getBaseMapper() : ContextHolder.getBean(this.mapperClass);
     }
 
     /**
