@@ -66,9 +66,9 @@ const goPersonal = () => {
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="large" :disabled="appStore.globalSize === 'large'">large</el-dropdown-item>
-            <el-dropdown-item command="default" :disabled="appStore.globalSize === 'default'">default</el-dropdown-item>
-            <el-dropdown-item command="small" :disabled="appStore.globalSize === 'small'">small</el-dropdown-item>
+            <el-dropdown-item command="large" :disabled="appStore.globalSize === 'large'">大</el-dropdown-item>
+            <el-dropdown-item command="default" :disabled="appStore.globalSize === 'default'">中</el-dropdown-item>
+            <el-dropdown-item command="small" :disabled="appStore.globalSize === 'small'">小</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
