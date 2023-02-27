@@ -95,7 +95,6 @@ const openDetail = (id: string) => {
       height="100%"
       @selection-change="(arr: FileRecord[]) => (selectedKeys = arr.map(e => e.id))"
     >
-      <el-table-column type="selection" width="55" />
       <el-table-column prop="fileName" label="文件名称" show-overflow-tooltip />
       <el-table-column prop="fileType" label="文件类型" width="140" />
       <el-table-column prop="fileSizeLabel" label="文件大小" width="140" />
