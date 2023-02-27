@@ -70,6 +70,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
   {
     path: '/personal',
+    name: 'Personal',
     component: () => import('@/layout/index.vue'),
     children: [
       {
@@ -101,5 +102,9 @@ export default router
 
 // 重置路由
 export const resetRouter = () => {
-  router.currentRoute.value.matched = createAppRouter().currentRoute.value.matched
+  router
+    .getRoutes()
+    .map(e => String(e.name))
+    .forEach(router.removeRoute)
+  createAppRouter().getRoutes().forEach(router.addRoute)
 }
