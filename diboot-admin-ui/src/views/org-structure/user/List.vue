@@ -1,8 +1,10 @@
 <script setup lang="ts" name="UserList">
 import { Search, ArrowUp, ArrowDown, CircleClose, Plus } from '@element-plus/icons-vue'
+import type { UserPosition } from '../position/type'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
+import type { Role } from '@/views/system/role/type'
 
 const baseApi = '/iam/user'
 
@@ -48,6 +50,10 @@ const loadListByOrgId = (orgId: string) => {
 
 const updatePermission = checkPermission('update')
 const deletePermission = checkPermission('delete')
+
+const isPrimaryPosition = (userPositionList?: UserPosition[]) =>
+  !userPositionList?.length || userPositionList.some(e => e.isPrimaryPosition)
+const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('、')
 </script>
 
 <template>
@@ -103,9 +109,7 @@ const deletePermission = checkPermission('delete')
     <el-table ref="tableRef" v-loading="loading" row-key="id" :data="dataList" stripe height="100%">
       <el-table-column prop="realname" label="姓名">
         <template #default="{ row }">
-          <span
-            v-if="!row.userPositionList?.length || row.userPositionList.some((e:UserPosition) => e.isPrimaryPosition)"
-          >
+          <span v-if="isPrimaryPosition(row.userPositionList)">
             {{ row.realname }}
           </span>
           <el-tooltip v-else placement="top" content="兼职">
@@ -133,7 +137,7 @@ const deletePermission = checkPermission('delete')
       </el-table-column>
       <el-table-column prop="roleList" label="角色" show-overflow-tooltip>
         <template #default="{ row }">
-          {{ row.roleList?.map(e => e.name).join('、') }}
+          {{ buildRoleList(row.roleList) }}
         </template>
       </el-table-column>
       <el-table-column prop="accountStatus" label="账号状态">
