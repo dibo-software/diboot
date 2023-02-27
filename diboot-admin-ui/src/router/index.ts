@@ -71,6 +71,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/personal',
     name: 'Personal',
+    redirect: '/personal',
     component: () => import('@/layout/index.vue'),
     children: [
       {
@@ -106,5 +107,5 @@ export const resetRouter = () => {
     .getRoutes()
     .map(e => String(e.name))
     .forEach(router.removeRoute)
-  createAppRouter().getRoutes().forEach(router.addRoute)
+  constantRoutes.forEach(router.addRoute)
 }
