@@ -123,12 +123,17 @@ const deletePermission = checkPermission('delete')
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="mobilePhone" label="电话" />
+      <el-table-column prop="mobilePhone" label="电话" show-overflow-tooltip />
       <el-table-column prop="genderLabel" label="状态">
         <template #default="{ row }">
           <el-tag :color="row.statusLabel?.ext?.color" effect="dark">
             {{ row.statusLabel?.label }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="roleList" label="角色" show-overflow-tooltip>
+        <template #default="{ row }">
+          {{ row.roleList?.map(e => e.name).join('、') }}
         </template>
       </el-table-column>
       <el-table-column prop="accountStatus" label="账号状态">
