@@ -13,7 +13,7 @@ const menuTreeRef = ref()
 
 <template>
   <div style="height: 100%; display: flex">
-    <resource-tree ref="menuTreeRef" style="width: 300px" @click-node="clickNode" />
+    <resource-tree ref="menuTreeRef" style="width: 260px" @click-node="clickNode" />
     <resource-form :form-value="formValue" style="flex: 1" @complete="(id: string) => menuTreeRef?.refresh(id)" />
   </div>
 </template>

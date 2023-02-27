@@ -140,7 +140,7 @@ defineExpose({ open })
               <th><span class="required-flag">*</span> 条目名称</th>
               <th><span class="required-flag">*</span> 条目编码</th>
               <th>条目颜色</th>
-              <th>国际化</th>
+              <!--              <th>国际化</th>-->
               <th>
                 <el-button size="small" type="primary" @click="addItem">添加</el-button>
               </th>
@@ -188,9 +188,9 @@ defineExpose({ open })
                     :predefine="predefineColors"
                   />
                 </td>
-                <td>
-                  <i18n-selector v-model="element.itemNameI18n" style="position: relative; top: -8px" />
-                </td>
+                <!--                <td>-->
+                <!--                  <i18n-selector v-model="element.itemNameI18n" style="position: relative; top: -8px" />-->
+                <!--                </td>-->
                 <td>
                   <el-button size="small" type="danger" @click="removeItem(index)">删除</el-button>
                 </td>

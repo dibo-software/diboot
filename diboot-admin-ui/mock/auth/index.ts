@@ -149,7 +149,7 @@ const authMenu = [
     path: 'org-structure',
     name: 'OrgStructure ',
     redirect: '/org-structure/user',
-    meta: { title: '组织架构', icon: 'Element:User' },
+    meta: { title: '组织人员', icon: 'Element:User' },
     children: [
       {
         path: 'user',
@@ -184,7 +184,7 @@ const authMenu = [
           sort: '3',
           keepAlive: false,
           hollow: false,
-          icon: 'Element:Guide',
+          icon: 'Element:Postcard',
           permissions: ['detail', 'create', 'update', 'delete']
         }
       }
@@ -310,19 +310,19 @@ const authMenu = [
           componentPath: prefix + 'system/login-trace/List.vue',
           sort: 10
         }
-      },
-      {
-        path: 'i18n-config',
-        name: 'I18nConfig',
-        meta: {
-          title: '国际化管理',
-          icon: 'Element:Setting',
-          componentPath: prefix + 'system/i18n-config/List.vue',
-          keepAlive: false,
-          sort: 11,
-          permissions: ['update']
-        }
       }
+      // {
+      //   path: 'i18n-config',
+      //   name: 'I18nConfig',
+      //   meta: {
+      //     title: '国际化管理',
+      //     icon: 'Element:Setting',
+      //     componentPath: prefix + 'system/i18n-config/List.vue',
+      //     keepAlive: false,
+      //     sort: 11,
+      //     permissions: ['update']
+      //   }
+      // }
     ]
   }
 ]

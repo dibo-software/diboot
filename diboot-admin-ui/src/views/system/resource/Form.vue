@@ -146,9 +146,9 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                 :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
               >
                 <el-input v-model="model.displayName" placeholder="请输入菜单名称" clearable>
-                  <template #append>
-                    <i18n-selector v-model="model.displayNameI18n" />
-                  </template>
+                  <!--                  <template #append>-->
+                  <!--                    <i18n-selector v-model="model.displayNameI18n" />-->
+                  <!--                  </template>-->
                 </el-input>
               </el-form-item>
               <el-form-item label="菜单图标">
