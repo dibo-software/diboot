@@ -68,13 +68,14 @@ const filterNode = (value: string, data: Partial<Resource>) => !value || data.di
  */
 const addChildNode = (parent?: Resource) => {
   treeRef.value?.setCurrentKey()
+  const children = parent ? parent.children ?? [] : dataList
   clickNode({
     parentId: parent?.id ?? '0',
     parentDisplayName: parent?.displayName,
     displayType: parent ? 'MENU' : 'CATALOGUE',
     displayName: '新建',
     resourceCode: '',
-    sortId: '0',
+    sortId: (children?.length ? Number(children[children.length - 1].sortId) : 0) + 1 + '',
     status: 'A',
     routeMeta: {}
   })
