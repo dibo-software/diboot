@@ -25,8 +25,8 @@ const emit = defineEmits<{
 }>()
 
 const change = () => {
-  emit('update:modelValue', [dateRange.begin, dateRange.end])
-  emit('change', [dateRange.begin, dateRange.end])
+  emit('update:modelValue', [dateRange.begin ?? undefined, dateRange.end ?? undefined])
+  emit('change', [dateRange.begin ?? undefined, dateRange.end ?? undefined])
 }
 
 const disabledBeginDate = (date: Date) => {
