@@ -191,15 +191,7 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
         <template #default="scope">
           <slot :name="item.prop" v-bind="scope">
             <span v-if="Array.isArray(scope.row[item.prop])">
-              <el-tag
-                v-for="arrItem in scope.row[item.prop]"
-                :key="arrItem.value ?? arrItem"
-                :color="arrItem.ext?.color"
-                effect="dark"
-                type="info"
-              >
-                {{ arrItem.label ?? arrItem }}
-              </el-tag>
+              {{ scope.row[item.prop].map((e: LabelValue) => e.label ?? e).join(' 、') }}
             </span>
             <el-tag
               v-else-if="scope.row[item.prop]?.value"
