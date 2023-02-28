@@ -47,4 +47,13 @@ public class IamLoginTraceDTO extends IamLoginTrace {
     @BindQuery(column= "logout_time", comparison = Comparison.LE)
     private LocalDateTime logoutTimeEnd;
 
+    public IamLoginTraceDTO setCreateTimeEnd(LocalDateTime createTimeEnd) {
+        this.createTimeEnd = createTimeEnd.plusDays(1);
+        return this;
+    }
+
+    public IamLoginTraceDTO setLogoutTimeEnd(LocalDateTime logoutTimeEnd) {
+        this.logoutTimeEnd = logoutTimeEnd.plusDays(1);
+        return this;
+    }
 }
