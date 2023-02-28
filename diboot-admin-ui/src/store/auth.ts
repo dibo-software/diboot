@@ -3,6 +3,7 @@ import router, { resetRouter } from '@/router'
 import { buildImgSrc } from '@/utils/file'
 import type { UserModel } from '@/views/org-structure/user/type'
 import type { Role } from '@/views/system/role/type'
+import useViewTabs from './view-tabs'
 
 export interface IAuthStore {
   realname: string
@@ -56,6 +57,7 @@ export default defineStore('auth', {
         this.$reset()
         resetRouter()
         router.push({ name: 'Login' }).finally()
+        useViewTabs().$reset()
       }
     }
   }
