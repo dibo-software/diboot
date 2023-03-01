@@ -101,7 +101,7 @@ const multiple = inject<boolean | undefined>(
       <el-row :gutter="18">
         <el-col
           v-for="item in searchArea.propList"
-          :key="item.prop"
+          :key="JSON.stringify(item)"
           :md="searchArea.column ? 24 / searchArea.column : 8"
           :sm="24"
         >
