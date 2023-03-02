@@ -8,7 +8,7 @@ const categoryList = ref<string[]>([])
 
 const refresh = () => {
   api.get<string[]>(`${baseApi}/category`).then(res => {
-    if (res.data) categoryList.value = res.data
+    categoryList.value = res.data ?? []
     if (!type.value) type.value = categoryList.value?.length > 0 ? categoryList.value[0] : '_ext_'
   })
 }

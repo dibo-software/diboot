@@ -6,7 +6,8 @@ import type { SystemConfig } from '@/views/system/config/type'
 defineProps<{ categoryList: string[] }>()
 
 const { queryParam, onSearch, resetFilter, getList, loading, dataList, remove } = useList<SystemConfig>({
-  baseApi: '/system-config'
+  baseApi: '/system-config',
+  deleteCallback: () => refresh()
 })
 
 getList()
