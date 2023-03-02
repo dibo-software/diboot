@@ -88,10 +88,11 @@ public interface IamUserService extends BaseIamService<IamUser> {
 
     /**
      * 获取指定角色下的用户
-     * @param userIds
+     *
+     * @param roleIds
      * @return
      */
-    List<IamUser> getUsersByRoleIds(List<String> userIds);
+    List<IamUser> getUsersByRoleIds(List<String> roleIds);
 
     /**
      * 获取id值-选项的映射Map
