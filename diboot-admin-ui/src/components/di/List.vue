@@ -8,6 +8,8 @@ interface ListProps extends ListConfig {
   model: string
   // 左树父级ID
   parent?: string
+  // 不自动加载列表数据
+  notLoadAuto?: boolean
 
   // vue语法限制导致只能在当前文件中再次定义
   // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
@@ -47,12 +49,16 @@ const {
   batchRemove
 } = useList<Record<string, unknown>>({ baseApi: props.baseApi })
 
+if (!props.notLoadAuto) getList()
+
 // 监听左树节点变化
 watch(
   () => props.parent,
   value => {
-    if (props.relatedKey) queryParam[props.relatedKey] = value
-    onSearch()
+    if (props.relatedKey) {
+      queryParam[props.relatedKey] = value
+      onSearch()
+    }
   },
   { immediate: true }
 )
