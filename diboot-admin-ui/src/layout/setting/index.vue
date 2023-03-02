@@ -64,6 +64,9 @@ const copyConfig = () => {
               @update:model-value="(value: string) => (appStore.colorPrimary = value)"
             />
           </el-form-item>
+          <el-form-item label="开启水印">
+            <el-switch v-model="appStore.enableWatermark" />
+          </el-form-item>
         </el-form>
       </el-scrollbar>
       <template #footer>

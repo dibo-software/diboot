@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import useAppStore from '@/store/app'
+
 const props = defineProps<{
   // 水印文本
   text?: string
@@ -31,6 +33,7 @@ const createWatermarkContainer = (width: number, height: number, dataUrl: string
   watermarkDiv.style.position = 'absolute'
   watermarkDiv.style.inset = '0'
   watermarkDiv.style.zIndex = '1000'
+  watermarkDiv.style.pointerEvents = 'none'
   watermarkDiv.style.backgroundPosition = `${width / 2}px ${height / 2}px, 0 0`
   watermarkDiv.style.backgroundImage = `url('${dataUrl}'),url('${dataUrl}')`
   watermark.value.appendChild(watermarkDiv)
@@ -77,12 +80,24 @@ const create = () => {
     }
   } else if (props.text) {
     ctx.fillStyle = props.color || 'rgba(128,128,128,0.2)'
-    ctx.font = props.font || 'bold 20px Microsoft YaHei'
+    ctx.font = props.font || 'lighter 20px Microsoft YaHei'
     ctx.textAlign = 'center'
     ctx.fillText(props.text, 0, 0)
     createWatermarkContainer(canvas.width, canvas.height, canvas.toDataURL('image/png'))
   }
 }
+
+const appStore = useAppStore()
+watch(
+  () => appStore.enableWatermark,
+  value => {
+    nextTick(() => {
+      if (value) create()
+      else clear()
+    })
+  },
+  { deep: true, immediate: true }
+)
 
 defineExpose({ create, clear })
 </script>

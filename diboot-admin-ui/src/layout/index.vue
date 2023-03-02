@@ -12,9 +12,11 @@ import { iconSizeNumber } from '@/utils/theme'
 import Logo from '@/assets/logo.png'
 
 import useAppStore from '@/store/app'
+import useAuthStore from '@/store/auth'
 import { getMenuTree } from '@/utils/route'
 
 const appStore = useAppStore()
+const authStore = useAuthStore()
 
 const menuTree = getMenuTree()
 
@@ -147,7 +149,9 @@ const vDrag: Directive<HTMLElement> = {
           </el-header>
           <app-tabs>
             <template #default="{ fullScreen }">
-              <app-main :full-screen="fullScreen" />
+              <watermark ref="watermarkRef" :text="authStore.realname" :rotate="-45">
+                <app-main :full-screen="fullScreen" />
+              </watermark>
             </template>
           </app-tabs>
         </el-main>
@@ -178,7 +182,9 @@ const vDrag: Directive<HTMLElement> = {
         <el-main style="padding: 0">
           <app-tabs>
             <template #default="{ fullScreen }">
-              <app-main :full-screen="fullScreen" />
+              <watermark ref="watermarkRef" :text="authStore.realname" :rotate="-45">
+                <app-main :full-screen="fullScreen" />
+              </watermark>
             </template>
           </app-tabs>
         </el-main>
@@ -198,7 +204,9 @@ const vDrag: Directive<HTMLElement> = {
       <el-main style="padding: 0">
         <app-tabs>
           <template #default="{ fullScreen }">
-            <app-main :full-screen="fullScreen" />
+            <watermark ref="watermarkRef" :text="authStore.realname" :rotate="-45">
+              <app-main :full-screen="fullScreen" />
+            </watermark>
           </template>
         </app-tabs>
       </el-main>
@@ -217,7 +225,9 @@ const vDrag: Directive<HTMLElement> = {
         <el-main style="padding: 0">
           <app-tabs>
             <template #default="{ fullScreen }">
-              <app-main :full-screen="fullScreen" />
+              <watermark ref="watermarkRef" :text="authStore.realname" :rotate="-45">
+                <app-main :full-screen="fullScreen" />
+              </watermark>
             </template>
           </app-tabs>
         </el-main>
