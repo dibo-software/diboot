@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.config.Cons;
@@ -43,10 +42,6 @@ public class IamResourceListVO extends IamResource {
     // 字段关联：this.parent_id=id
     @BindField(entity = IamResource.class, field = "displayName", condition = "this.parent_id=id")
     private String parentDisplayName;
-
-    // 关联数据字典：RESOURCE_TYPE
-    @BindDict(type = DICT_RESOURCE_TYPE, field = "displayType")
-    private String displayTypeLabel;
 
     // 枚举中获取状态label
     public String getStatusLabel() {

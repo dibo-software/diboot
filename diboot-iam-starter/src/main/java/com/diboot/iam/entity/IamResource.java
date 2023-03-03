@@ -48,9 +48,6 @@ import java.util.List;
 public class IamResource extends BaseEntity {
     private static final long serialVersionUID = -6133621123987747250L;
 
-    // display_type字段的关联数据字典
-    public static final String DICT_RESOURCE_TYPE = "RESOURCE_TYPE";
-
     /**
      * 租户ID
      */
