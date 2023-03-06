@@ -55,6 +55,8 @@ public class QueryCondition implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private List<String> excludeFields;
 
+    private Map<String, Object> queryParamMap;
+
     public QueryCondition() {
     }
 
@@ -93,6 +95,23 @@ public class QueryCondition implements Serializable {
         return this;
     }
 
+    /**
+     * 移除查询条件
+     * @param field
+     * @return
+     */
+    public QueryCondition removeCriteria(String field) {
+        if(criteriaList != null) {
+            for(CriteriaItem item : criteriaList) {
+                if(item.getField().equals(field)) {
+                    criteriaList.remove(item);
+                    return this;
+                }
+            }
+        }
+        return this;
+    }
+
     public QueryCondition selectFields(String... fieldNames) {
         if(selectFields == null) {
             selectFields = new ArrayList<>();
@@ -101,9 +120,28 @@ public class QueryCondition implements Serializable {
         return this;
     }
 
+    /**
+     * 获取查询参数值
+     * @param field
+     * @return
+     */
+    public Object getQueryParamVal(String field) {
+        if(V.isEmpty(this.criteriaList)) {
+            return null;
+        }
+        if(this.queryParamMap == null) {
+            this.queryParamMap = new HashMap<>();
+            this.criteriaList.stream().forEach(c->{
+                this.queryParamMap.put(c.getField(), c.getValue());
+            });
+        }
+        return this.queryParamMap.get(field);
+    }
+
     public QueryCondition clear() {
         this.criteriaList = null;
         this.orderItems = null;
+        this.queryParamMap = null;
         return this;
     }
 
