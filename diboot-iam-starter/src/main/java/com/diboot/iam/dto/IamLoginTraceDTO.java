@@ -38,13 +38,13 @@ public class IamLoginTraceDTO extends IamLoginTrace {
     @BindQuery(column= "create_time", comparison = Comparison.GE)
     private LocalDateTime createTimeBegin;
 
-    @BindQuery(column= "create_time", comparison = Comparison.LE)
+    @BindQuery(column= "create_time", comparison = Comparison.LT)
     private LocalDateTime createTimeEnd;
 
     @BindQuery(column= "logout_time", comparison = Comparison.GE)
     private LocalDateTime logoutTimeBegin;
 
-    @BindQuery(column= "logout_time", comparison = Comparison.LE)
+    @BindQuery(column= "logout_time", comparison = Comparison.LT)
     private LocalDateTime logoutTimeEnd;
 
     public IamLoginTraceDTO setCreateTimeEnd(LocalDateTime createTimeEnd) {
