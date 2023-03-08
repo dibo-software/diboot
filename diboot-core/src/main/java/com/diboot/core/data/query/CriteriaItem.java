@@ -35,6 +35,12 @@ import java.util.Collection;
 public class CriteriaItem implements Serializable {
     private static final long serialVersionUID = -2342876399137671211L;
 
+    private String joinTable;
+
+    private String onLink;
+
+    private String onWhere;
+
     private String field;
 
     private String comparison = Comparison.EQ.name();
@@ -61,6 +67,13 @@ public class CriteriaItem implements Serializable {
     public CriteriaItem update(Comparison comparison, Object value) {
         this.comparison = comparison.name();
         this.value = value;
+        return this;
+    }
+
+    public CriteriaItem joinOn(String joinTable, String onLink, String onWhere) {
+        this.joinTable = joinTable;
+        this.onLink = onLink;
+        this.onWhere = onWhere;
         return this;
     }
 
