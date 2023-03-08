@@ -21,6 +21,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 
 /**
@@ -45,6 +46,9 @@ public class CriteriaItem implements Serializable {
 
     public CriteriaItem(String field, Object value) {
         this.field = field;
+        if(value != null && value instanceof Collection) {
+            this.comparison = Comparison.IN.name();
+        }
         this.value = value;
     }
 

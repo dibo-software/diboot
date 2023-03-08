@@ -96,6 +96,23 @@ public class QueryCondition implements Serializable {
     }
 
     /**
+     * 更新查询条件
+     * @param field
+     * @return
+     */
+    public QueryCondition updateCriteria(String field, Comparison comparison, Object value) {
+        if(criteriaList != null) {
+            for(CriteriaItem item : criteriaList) {
+                if(item.getField().equals(field)) {
+                    item.setComparison(comparison.name()).setValue(value);
+                    return this;
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
      * 移除查询条件
      * @param field
      * @return
