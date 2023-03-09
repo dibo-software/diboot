@@ -102,7 +102,7 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
             List<String> headNameList = head.getHeadNameList();
             String name = headNameList.get(headNameList.size() - 1);
             this.headMap.put(index, name);
-            fieldNameMap.put(index, fieldName);
+            fieldNameMap.put(index, index.toString());
             headNameMap.put(index, headNameList);
         }
     }
@@ -113,8 +113,9 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
         additionalValidate(dataList, requestParams);
         // TODO 检查
         this.totalCount = dataList.size();
-        this.previewDataList = totalCount > 100? dataList.subList(0, 100) : dataList;
-        if(!preview) {
+        if (preview) {
+            this.previewDataList = totalCount > 100 ? dataList.subList(0, 100) : dataList;
+        } else {
             saveData(this.headMap, this.dataList, requestParams);
         }
     }
