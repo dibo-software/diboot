@@ -68,7 +68,7 @@ public class ParallelBindingManager {
             dictionaryServiceExtProvider.bindItemLabel(voList, fieldAnno.getFieldName(), dictValueField, annotation.type());
         }
         else{
-            throw new InvalidUsageException("BindDictService未实现，无法使用BindDict注解！");
+            log.warn("BindDictService未实现，无法使用BindDict注解！");
         }
         return CompletableFuture.completedFuture(true);
     }
