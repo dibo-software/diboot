@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.8</version>
+        <version>2.7.9</version>
         <relativePath/>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.0-beta</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -33,7 +33,7 @@
         <aspectjweaver.version>1.9.19</aspectjweaver.version>
         <commons-io.version>2.11.0</commons-io.version>
         <easyexcel.version>3.2.1</easyexcel.version>
-        <diboot.version>3.0.0</diboot.version>
+        <diboot.version>3.0.0-beta</diboot.version>
     </properties>
 
     <dependencies>

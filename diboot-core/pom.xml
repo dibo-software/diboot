@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.0-beta</version>
     </parent>
 
     <artifactId>diboot-core</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.0-beta</version>
     <packaging>jar</packaging>
     <description>diboot core project</description>
 
