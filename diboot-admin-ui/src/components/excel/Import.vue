@@ -153,6 +153,7 @@ const TableColumn = defineComponent({
             :key="fileList.length && fileList[0].uid"
             action=""
             :limti="1"
+            accept=".xlsx,.xls,.csv"
             :auto-upload="false"
             :file-list="fileList"
             :on-remove="removeFile"
