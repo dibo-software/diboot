@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RemoteBindingManager {
 
     /**
-     * restTemplate 实例缓存
+     * RemoteBindingProvider 实例缓存
      */
     private static Map<String, RemoteBindingProvider> MODULE_PROVIDER_MAP;
 

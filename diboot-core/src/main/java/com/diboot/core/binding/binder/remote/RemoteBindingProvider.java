@@ -32,7 +32,7 @@ public interface RemoteBindingProvider {
      * @param remoteBindDTO
      * @return
      */
-    @PostMapping("/common/remoteBinding")
+    @PostMapping("/common/remote-binding")
     JsonResult<String> loadBindingData(RemoteBindDTO remoteBindDTO);
 
 }
