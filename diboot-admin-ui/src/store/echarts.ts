@@ -227,6 +227,6 @@ export const useStore = defineStore('main', {
           }
         ]
       }
-    }
+    } as Record<string, EChartsOption>
   }
 })
