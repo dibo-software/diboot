@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
-import QRCode from '@/components/qrcode/QRCode.vue'
-
 interface FormItem {
   value: string
   size: number
@@ -31,7 +29,7 @@ const form: FormItem = reactive({
       </el-form>
     </el-col>
     <el-col :span="16">
-      <q-r-code :value="form.value" :size="form.size" :foreground="form.foreground" />
+      <qr-code :value="form.value" :size="form.size" :foreground="form.foreground" />
     </el-col>
   </el-row>
 </template>
