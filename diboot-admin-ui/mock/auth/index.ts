@@ -130,6 +130,16 @@ const authMenu = [
           componentPath: prefix + 'example/CreateQRCode.vue',
           sort: 5
         }
+      },
+      {
+        path: 'echarts',
+        name: 'Echarts',
+        meta: {
+          title: '图表',
+          icon: 'Element:Histogram',
+          componentPath: prefix + 'example/Echarts.vue',
+          sort: 6
+        }
       }
     ]
   },
