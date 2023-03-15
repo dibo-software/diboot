@@ -120,6 +120,16 @@ const authMenu = [
           componentPath: prefix + 'example/WatermarkExample.vue',
           sort: 4
         }
+      },
+      {
+        path: 'createQRCode',
+        name: 'CreateQRCode',
+        meta: {
+          title: '二维码',
+          icon: 'Element:FullScreen',
+          componentPath: prefix + 'example/CreateQRCode.vue',
+          sort: 5
+        }
       }
     ]
   },

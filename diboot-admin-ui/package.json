@@ -29,6 +29,7 @@
     "nprogress": "^0.2.0",
     "pinia": "^2.0.28",
     "pinia-plugin-persist": "^1.0.0",
+    "qrcode.vue": "^3.3.4",
     "qs": "^6.11.0",
     "sortablejs": "^1.15.0",
     "vue": "^3.2.45",
