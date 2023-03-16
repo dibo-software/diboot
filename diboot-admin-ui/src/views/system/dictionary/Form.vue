@@ -114,7 +114,7 @@ const validateChildren = () => {
 defineExpose({ open })
 </script>
 <template>
-  <el-dialog v-model="visible" :width="width" :title="title">
+  <el-dialog v-model="visible" :width="width" :title="title" append-to-body>
     <el-form v-if="model" ref="formRef" v-loading="loading" :model="model" :rules="rules" label-position="top">
       <el-row :gutter="16">
         <el-col :span="12">
@@ -203,8 +203,8 @@ defineExpose({ open })
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="visible = false">取消</el-button>
-        <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
-          >保存并继续
+        <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)">
+          保存并继续
         </el-button>
         <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">保存</el-button>
       </span>
@@ -247,7 +247,7 @@ defineExpose({ open })
   .sortable-ghost {
     td {
       border-top: 2px solid var(--el-color-primary);
-      background: #efefef;
+      background: var(--el-color-info-light-9);
 
       * {
         visibility: hidden;
