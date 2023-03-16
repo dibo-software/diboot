@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useAppStore from '@/store/app'
 import useViewTabsStore from '@/store/view-tabs'
+import useAuthStore from '@/store/auth'
 
 const appStore = useAppStore()
 // Tabs 高度
@@ -15,18 +16,21 @@ const layoutUsedHeight = computed(() =>
 )
 
 const viewTabsStore = useViewTabsStore()
+const authStore = useAuthStore()
 </script>
 
 <template>
-  <el-scrollbar>
-    <div class="content">
-      <router-view v-slot="{ Component }">
-        <keep-alive :include="viewTabsStore.cachedViews">
-          <component :is="Component" />
-        </keep-alive>
-      </router-view>
-    </div>
-  </el-scrollbar>
+  <watermark ref="watermarkRef" :disable="!appStore.enableWatermark" :text="authStore.realname" :rotate="-45">
+    <el-scrollbar>
+      <div class="content">
+        <router-view v-slot="{ Component }">
+          <keep-alive :include="viewTabsStore.cachedViews">
+            <component :is="Component" />
+          </keep-alive>
+        </router-view>
+      </div>
+    </el-scrollbar>
+  </watermark>
 </template>
 
 <style scoped lang="scss">

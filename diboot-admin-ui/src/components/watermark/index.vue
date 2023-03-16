@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import useAppStore from '@/store/app'
-
 const props = defineProps<{
+  // 是否禁用
+  disable?: boolean
   // 水印文本
   text?: string
   // 文字字体
@@ -87,9 +87,8 @@ const create = () => {
   }
 }
 
-const appStore = useAppStore()
 watch(
-  () => appStore.enableWatermark,
+  () => !props.disable,
   value => {
     nextTick(() => {
       if (value) create()
