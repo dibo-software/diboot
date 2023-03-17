@@ -172,6 +172,9 @@ public class BeanUtils {
      * @return
      */
     public static Object getProperty(Object obj, String field){
+        if(field == null) {
+            return null;
+        }
         if(obj instanceof Map){
             Map objMap = (Map)obj;
             return objMap.get(field);
