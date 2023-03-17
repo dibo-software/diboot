@@ -49,8 +49,8 @@ const rules = reactive({
 // 提交校验方法
 const loading = ref(false)
 const submitForm = (formEl: FormInstance | undefined) => {
-  loading.value = true
   if (!formEl) return
+  loading.value = true
   formEl.validate(valid => {
     if (valid) {
       api
@@ -62,8 +62,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
           }
         })
         .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
-    }
-    loading.value = false
+        .finally(() => (loading.value = false))
+    } else loading.value = false
   })
 }
 </script>

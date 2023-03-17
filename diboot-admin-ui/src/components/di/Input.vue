@@ -19,7 +19,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:modelValue', value?: unknown): void
   (e: 'change', value?: unknown): void
-  (e: 'remoteFilter', value?: unknown): void
+  (e: 'remoteFilter', value?: string): void
   (e: 'preview', accessUrl: string, isImage: boolean): void
 }>()
 
@@ -79,7 +79,7 @@ const rules = (
 
 const handleChange = (value?: unknown) => emit('change', value)
 
-const remoteFilter = (value?: unknown) => emit('remoteFilter', value)
+const remoteFilter = (value?: unknown) => emit('remoteFilter', value as string | undefined)
 
 const lazyLoad = ({ data }: { data: LabelValue }, resolve: (data: LabelValue[]) => void) =>
   props.lazyLoad ? props.lazyLoad(data.value).then(list => resolve(list)) : resolve([])

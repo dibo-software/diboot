@@ -29,7 +29,7 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'selectedKeys', ids?: string[]): void
+  (e: 'selectedKeys', ids: string[]): void
   (e: 'order', prop: string, order?: 'ASC' | 'DESC'): void
 }>()
 

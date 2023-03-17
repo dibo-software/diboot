@@ -125,7 +125,7 @@ const multiple = inject<boolean | undefined>(
             :loading="asyncLoading"
             :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
             @change="onSearch"
-            @remote-filter="(value: string) => remoteRelatedDataFilter(item.prop, value)"
+            @remote-filter="(value?: string) => remoteRelatedDataFilter(item.prop, value)"
           />
         </el-col>
       </el-row>
@@ -174,7 +174,7 @@ const multiple = inject<boolean | undefined>(
               :loading="asyncLoading"
               :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
               @change="onSearch"
-              @remote-filter="(value: string) => remoteRelatedDataFilter(item.prop, value)"
+              @remote-filter="(value?: string) => remoteRelatedDataFilter(item.prop, value)"
             />
           </template>
         </span>

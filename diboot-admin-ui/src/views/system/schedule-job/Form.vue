@@ -26,7 +26,7 @@ defineExpose({
       title.value = '新建'
       model.value.jobStatus = true
       model.value.saveLog = true
-      if (relatedData.initStrategyOptions) model.value.initStrategy = relatedData.initStrategyOptions[0].value
+      if (relatedData.initStrategyOptions?.length) model.value.initStrategy = relatedData.initStrategyOptions[0].value
     }
     visible.value = true
   }

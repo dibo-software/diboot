@@ -75,7 +75,7 @@ const addChildNode = (parent?: Resource) => {
     displayType: parent ? 'MENU' : 'CATALOGUE',
     displayName: '新建',
     resourceCode: '',
-    sortId: (children?.length ? Number(children[children.length - 1].sortId) : 0) + 1 + '',
+    sortId: (children?.length ? Number(children[children.length - 1].sortId ?? children.length) : 0) + 1 + '',
     status: 'A',
     routeMeta: {}
   })
