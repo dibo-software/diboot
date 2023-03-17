@@ -77,4 +77,11 @@ public class CriteriaItem implements Serializable {
         return this;
     }
 
+    public Comparison getComparison() {
+        return Comparison.valueOf(comparison);
+    }
+
+    public String getComparisonName() {
+        return comparison;
+    }
 }

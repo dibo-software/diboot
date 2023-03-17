@@ -15,6 +15,10 @@
  */
 package com.diboot.core.data.query;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
@@ -187,6 +191,117 @@ public class QueryCondition implements Serializable {
             }
         }
         return this;
+    }
+
+    /**
+     * 构建 QueryWrapper
+     *
+     * @param entityClass 实体类型
+     * @param <T>
+     * @return
+     */
+    public <T> QueryWrapper<T> biuldQueryWrapper(Class<T> entityClass) {
+        QueryWrapper<T> query = Wrappers.query();
+        // 指定查询字段
+        if (V.notEmpty(selectFields)) {
+            query.select(selectFields);
+        }
+        // 解析条件
+        if (V.notEmpty(criteriaList)) {
+            for (CriteriaItem criteriaItem : criteriaList) {
+                String field = criteriaItem.getField();
+                Object value = criteriaItem.getValue();
+                switch (criteriaItem.getComparison()) {
+                    // 相等，默认
+                    case EQ:
+                        query.eq(field, value);
+                        break;
+                    // IN
+                    case IN:
+                        if (value instanceof Collection) {
+                            query.in(field, (Collection<?>) value);
+                        } else if (value.getClass().isArray()) {
+                            query.in(field, (Object[]) value);
+                        } else {
+                            query.eq(field, value);
+                        }
+                        break;
+                    //以xx起始
+                    case STARTSWITH:
+                        query.likeRight(field, value);
+                        break;
+                    //以xx结尾
+                    case ENDSWITH:
+                        query.likeLeft(field, value);
+                        break;
+                    // LIKE
+                    case LIKE:
+                        //包含，等同LIKE
+                    case CONTAINS:
+                        query.like(field, value);
+                        break;
+                    // 大于
+                    case GT:
+                        query.gt(field, value);
+                        break;
+                    // 大于等于
+                    case GE:
+                        query.ge(field, value);
+                        break;
+                    // 小于
+                    case LT:
+                        query.lt(field, value);
+                        break;
+                    // 小于等于
+                    case LE:
+                        query.le(field, value);
+                        break;
+                    // 介于-之间
+                    case BETWEEN:
+                        break;
+                    // 介于之后
+                    case BETWEEN_BEGIN:
+                        break;
+                    // 介于之前
+                    case BETWEEN_END:
+                        break;
+                    //不等于
+                    case NOT_EQ:
+                        query.ne(field, value);
+                        break;
+                    // 不在...内
+                    case NOT_IN:
+                        if (value instanceof Collection) {
+                            query.notIn(field, (Collection<?>) value);
+                        } else if (value.getClass().isArray()) {
+                            query.notIn(field, (Object[]) value);
+                        } else {
+                            query.ne(field, value);
+                        }
+                        break;
+                    default:
+                        //
+                }
+            }
+        }
+        // 解析排序
+        if (V.notEmpty(orderItems)) {
+            for (String field : orderItems) {
+                V.securityCheck(field);
+                if (field.contains(":")) {
+                    String[] fieldAndOrder = S.split(field, ":");
+                    String columnName = S.toSnakeCase(fieldAndOrder[0]);
+                    if (Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
+                        query.orderByDesc(columnName);
+                    } else {
+                        query.orderByAsc(columnName);
+                    }
+                } else {
+                    query.orderByAsc(S.toSnakeCase(field));
+                }
+            }
+        }
+        return query;
     }
 
 }
