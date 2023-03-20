@@ -13,7 +13,7 @@
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>3.0.0-beta</version>
+    <version>3.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -33,7 +33,7 @@
         <aspectjweaver.version>1.9.19</aspectjweaver.version>
         <commons-io.version>2.11.0</commons-io.version>
         <easyexcel.version>3.2.1</easyexcel.version>
-        <diboot.version>3.0.0-beta</diboot.version>
+        <diboot.version>3.0.0</diboot.version>
     </properties>
 
     <dependencies>
