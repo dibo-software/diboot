@@ -15,10 +15,10 @@
  */
 package com.diboot.core.data.query;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.cache.BindingCacheManager;
+import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -200,16 +201,17 @@ public class QueryCondition implements Serializable {
      * @param <T>
      * @return
      */
-    public <T> QueryWrapper<T> biuldQueryWrapper(Class<T> entityClass) {
+    public <T> QueryWrapper<T> buildQueryWrapper(Class<T> entityClass) {
+        EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
         QueryWrapper<T> query = Wrappers.query();
         // 指定查询字段
         if (V.notEmpty(selectFields)) {
-            query.select(selectFields);
+            query.select(selectFields.stream().map(entityInfo::getColumnByField).collect(Collectors.toList()));
         }
         // 解析条件
         if (V.notEmpty(criteriaList)) {
             for (CriteriaItem criteriaItem : criteriaList) {
-                String field = criteriaItem.getField();
+                String field = entityInfo.getColumnByField(criteriaItem.getField());
                 Object value = criteriaItem.getValue();
                 switch (criteriaItem.getComparison()) {
                     // 相等，默认
@@ -290,7 +292,7 @@ public class QueryCondition implements Serializable {
                 V.securityCheck(field);
                 if (field.contains(":")) {
                     String[] fieldAndOrder = S.split(field, ":");
-                    String columnName = S.toSnakeCase(fieldAndOrder[0]);
+                    String columnName = entityInfo.getColumnByField(fieldAndOrder[0]);
                     if (Cons.ORDER_DESC.equalsIgnoreCase(fieldAndOrder[1])) {
                         query.orderByDesc(columnName);
                     } else {
