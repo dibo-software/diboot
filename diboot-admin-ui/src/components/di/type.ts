@@ -1,5 +1,5 @@
 import type { RelatedData } from '@/hooks/use-option'
-import type { FormItemRule } from 'element-plus/es/tokens/form'
+import type { FormItemRule } from 'element-plus'
 
 // tree 配置
 export interface TreeConfig extends RelatedData {

@@ -1,8 +1,7 @@
 <script setup lang="ts" name="DiInput">
 import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
 import type { FormItem, Upload } from './type'
-import type { FormItemRule } from 'element-plus/es/tokens/form'
-import type { UploadRawFile, UploadFile } from 'element-plus'
+import type { UploadRawFile, UploadFile, FormItemRule } from 'element-plus'
 
 const props = defineProps<{
   config: FormItem
