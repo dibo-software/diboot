@@ -42,22 +42,18 @@ import java.util.stream.Collectors;
  * Copyright © diboot.com
  */
 @Slf4j
+@Getter @Setter @Accessors(chain = true)
 public class QueryCondition implements Serializable {
     private static final long serialVersionUID = -7495538662136985338L;
 
-    @Getter
     private List<CriteriaItem> criteriaList;
 
-    @Getter @Setter @Accessors(chain = true)
     private Pagination pagination;
 
-    @Getter
     private List<String> orderItems;
 
-    @Getter @Setter @Accessors(chain = true)
     private List<String> selectFields;
 
-    @Getter @Setter @Accessors(chain = true)
     private List<String> excludeFields;
 
     private Map<String, Object> queryParamMap;
