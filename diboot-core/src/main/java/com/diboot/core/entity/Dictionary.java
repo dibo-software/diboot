@@ -77,7 +77,7 @@ public class Dictionary extends BaseEntity {
     @NotNull(message = "数据字典项名称不能为空！")
     @Length(max = 100, message = "数据字典项名称长度超长！")
     @BindQuery(comparison = Comparison.LIKE)
-    @BindI18n("itemNameI18n")
+    // @BindI18n("itemNameI18n")
     private String itemName;
 
     /**

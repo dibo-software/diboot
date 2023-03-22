@@ -75,7 +75,7 @@ public class IamResource extends BaseEntity {
     @NotNull(message = "显示名称不能为空")
     @Length(max=100, message="显示名称长度应小于100")
     @BindQuery(comparison = Comparison.LIKE)
-    @BindI18n("displayNameI18n")
+    // @BindI18n("displayNameI18n")
     private String displayName;
 
     /**
