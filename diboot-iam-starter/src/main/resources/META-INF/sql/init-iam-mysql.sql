@@ -87,7 +87,7 @@ create table dbt_iam_resource
     resource_code     varchar(100)                          not null comment '前端资源编码',
     permission_code   varchar(200) null comment '接口权限编码',
     meta              varchar(300) null comment 'meta配置',
-    sort_id           bigint      default 0 null comment '排序号',
+    sort_id           bigint      not null default 0 comment '排序号',
     status            varchar(10) default 'A'               not null comment '状态',
     is_deleted        tinyint(1) default 0 not null comment '是否删除',
     create_time       datetime    default CURRENT_TIMESTAMP not null comment '创建时间',

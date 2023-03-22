@@ -132,7 +132,7 @@ create table dbt_iam_resource
   display_name_i18n varchar(200) null,
   resource_code varchar(100)   null,
   permission_code varchar(200)   null,
-  sort_id bigint  default 0  null,
+  sort_id bigint  default 0  not null,
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
   update_time timestamp default CURRENT_TIMESTAMP null,

@@ -136,7 +136,7 @@ create table ${SCHEMA}.dbt_iam_resource
     display_name_i18n varchar(200) null,
     resource_code varchar(100)   null,
     permission_code varchar(200)   null,
-    sort_id bigint  default 0 null,
+    sort_id bigint  default 0 not null,
     is_deleted tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
     update_time datetime default CURRENT_TIMESTAMP null,
