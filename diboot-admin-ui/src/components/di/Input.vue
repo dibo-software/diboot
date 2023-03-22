@@ -43,8 +43,7 @@ watch(
 const requiredRule = {
   required: true,
   message: '不能为空',
-  whitespace: true,
-  type: props.config.type === 'input-number' ? 'number' : undefined
+  ...(props.config.type === 'input-number' ? {} : { whitespace: true })
 }
 const checkUniqueRule = {
   validator: (rule: unknown, value: unknown, callback: (error?: string | Error) => void) => {
