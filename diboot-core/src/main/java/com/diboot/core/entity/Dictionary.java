@@ -57,12 +57,6 @@ public class Dictionary extends BaseEntity {
     @TableField
     private String parentId;
 
-    /**
-     * 应用模块
-     */
-    @TableField
-    private String appModule;
-
     /***
      * 数据字典类型
      */
