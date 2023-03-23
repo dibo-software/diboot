@@ -61,7 +61,20 @@ export const buildOptionProps = (formItemList?: FormItem[]) => {
 }
 
 // snake_case 转 CamelCase
-const line2Hump = (value: string) => value.toLowerCase().replace(/_\w/g, str => str.charAt(1).toUpperCase())
+const line2Hump = (value: string) => {
+    if (!value) return value
+    if (!/[_-]/.test(value))
+        if (value.toLocaleUpperCase() === value) return value.toLocaleLowerCase()
+        else return value.charAt(0).toLocaleLowerCase() + value.substring(1)
+    let result: string | undefined = undefined
+    for (const word of value.split(/[_-]/)) {
+        if (!word) continue
+        if (result == null) result = word.toLowerCase()
+        else result += word.charAt(0).toLocaleUpperCase() + word.substring(1).toLocaleLowerCase()
+    }
+    if (value.endsWith('_') && result != null) result += '_'
+    return result
+}
 
 /**
  * 构建获取选项函数
