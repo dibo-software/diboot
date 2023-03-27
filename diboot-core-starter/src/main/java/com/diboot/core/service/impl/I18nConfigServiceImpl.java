@@ -59,7 +59,7 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
             return Collections.emptyList();
         }
         QueryWrapper<I18nConfig> query = Wrappers.query();
-        for (OrderItem order : pagination.toPage().orders()) {
+        for (OrderItem order : pagination.toPage(entityClass).orders()) {
             query.orderBy(true, order.isAsc(), order.getColumn());
         }
         List<I18nConfigVO> entityList = getViewObjectList(query.lambda().in(I18nConfig::getCode, codes), null, I18nConfigVO.class);

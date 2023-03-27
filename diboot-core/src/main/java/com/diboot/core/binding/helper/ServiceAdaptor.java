@@ -19,11 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.diboot.core.binding.cache.BindingCacheManager;
-import com.diboot.core.binding.parser.EntityInfoCache;
-import com.diboot.core.config.Cons;
 import com.diboot.core.service.BaseService;
-import com.diboot.core.util.ContextHolder;
 import com.diboot.core.vo.Pagination;
 
 import java.util.List;
@@ -111,7 +107,7 @@ public class ServiceAdaptor {
         if(pagination == null){
             return null;
         }
-        return pagination.setEntityClass(entityClass).toPage();
+        return pagination.toPage(entityClass);
     }
 
 }

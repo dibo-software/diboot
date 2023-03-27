@@ -25,7 +25,6 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.DynamicSqlProvider;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.mapper.DynamicQueryMapper;
@@ -125,7 +124,7 @@ public class JoinsBinder {
         else{
             // 格式化orderBy
             formatOrderBy(dynamicJoinWrapper, entityClazz, pagination);
-            IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(pagination.toPage(), dynamicJoinWrapper);
+            IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(pagination.toPage(entityClazz), dynamicJoinWrapper);
             pagination.setTotalCount(pageResult.getTotal());
             mapList = pageResult.getRecords();
         }
