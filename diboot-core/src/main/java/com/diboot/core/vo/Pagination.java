@@ -71,14 +71,7 @@ public class Pagination implements Serializable {
      */
     private String orderBy = DEFAULT_ORDER_BY;
 
-    @JsonIgnore
-    private Class<?> entityClass;
-
     public Pagination() {
-    }
-
-    public Pagination(Class<?> entityClass) {
-        this.entityClass = entityClass;
     }
 
     /***
@@ -133,20 +126,20 @@ public class Pagination implements Serializable {
      * @param <T>
      * @return
      */
-    public <T> Page<T> toPage() {
+    public <T> Page<T> toPage(Class<?> entityClass) {
         List<OrderItem> orderItemList = null;
         // 解析排序
         if (V.notEmpty(this.orderBy)) {
             orderItemList = new ArrayList<>();
             // orderBy=shortName:DESC,age:ASC,birthdate
             String[] orderByFields = S.split(this.orderBy);
+            PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
             for (String field : orderByFields) {
                 V.securityCheck(field);
                 if (field.contains(":")) {
                     String[] fieldAndOrder = S.split(field, ":");
                     String fieldName = fieldAndOrder[0];
                     String columnName = S.toSnakeCase(fieldName);
-                    PropInfo propInfo = getEntityPropInfo();
                     if(propInfo != null){
                         // 前参数为字段名
                         if(propInfo.getFieldToColumnMap().containsKey(fieldName)){
@@ -194,12 +187,5 @@ public class Pagination implements Serializable {
      */
     public static boolean isPaginationParam(String paramName){
         return Cons.PaginationParam.isPaginationParam(paramName);
-    }
-
-    private PropInfo getEntityPropInfo(){
-        if (this.entityClass != null) {
-            return BindingCacheManager.getPropInfoByClass(this.entityClass);
-        }
-        return null;
     }
 }
