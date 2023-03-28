@@ -16,9 +16,10 @@
 package diboot.core.test.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.converter.*;
-import com.diboot.core.handler.DataAccessControlInterceptor;
+import com.diboot.core.handler.DataAccessControlHandler;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -154,7 +155,7 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 数据权限拦截器
-        interceptor.addInnerInterceptor(new DataAccessControlInterceptor());
+        interceptor.addInnerInterceptor(new DataPermissionInterceptor(new DataAccessControlHandler()));
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
