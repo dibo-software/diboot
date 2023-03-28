@@ -16,15 +16,14 @@
 package diboot.core.test.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.converter.*;
-import com.diboot.core.handler.DataAccessControlInterceptor;
+import com.diboot.core.handler.DataAccessControlHandler;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -43,7 +42,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -157,7 +155,7 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 数据权限拦截器
-        interceptor.addInnerInterceptor(new DataAccessControlInterceptor());
+        interceptor.addInnerInterceptor(new DataPermissionInterceptor(new DataAccessControlHandler()));
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
