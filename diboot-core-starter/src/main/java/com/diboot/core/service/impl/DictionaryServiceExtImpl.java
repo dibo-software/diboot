@@ -84,7 +84,14 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         List<Dictionary> children = dictVO.getChildren();
         this.buildSortId(children);
         if(V.notEmpty(children)){
+            Set<String> itemValues = new HashSet<>();
             for(Dictionary dict : children){
+                if(itemValues.contains(dict.getItemValue())) {
+                    throw new BusinessException(Status.FAIL_OPERATION, "字典选项: {} 重复", dict.getItemValue());
+                }
+                else {
+                    itemValues.add(dict.getItemValue());
+                }
                 dict.setParentId(dictionary.getId())
                     .setType(dictionary.getType())
                     .setIsDeletable(dictionary.getIsDeletable())
