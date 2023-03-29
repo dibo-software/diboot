@@ -36,5 +36,5 @@ public class IamResourceDTO extends IamResource {
     private static final long serialVersionUID = -7218371066111984841L;
 
     // 按钮/权限列表
-    private List<IamResourceDTO> permissionList;
+    private List<IamResource> permissionList;
 }
