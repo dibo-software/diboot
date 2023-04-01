@@ -32,7 +32,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class SimpleDictionaryVO {
 
-    private Long id;
+    private String id;
 
     private String type;
 
