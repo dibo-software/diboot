@@ -50,7 +50,10 @@ const isMobile = ref(document.body.clientWidth < 992)
 window.addEventListener('resize', () => (isMobile.value = document.body.clientWidth < 992))
 
 const showMenu = ref(false)
-watch(router.currentRoute, () => (showMenu.value = false))
+watch(
+  () => router.currentRoute.value.fullPath,
+  () => (showMenu.value = false)
+)
 
 // 拖拽指令
 const vDrag: Directive<HTMLElement> = {

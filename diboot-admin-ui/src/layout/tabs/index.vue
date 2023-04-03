@@ -48,9 +48,10 @@ watch(
     if (value) {
       // 收集 Tabs
       collectTabs = watch(
-        route,
-        value => {
-          const index = viewTabsStore.addTab(_.cloneDeep(value))
+        () => route.fullPath,
+        () => {
+          const { name, fullPath, meta } = route
+          const index = viewTabsStore.addTab({ name, fullPath, meta } as RouteLocationNormalized)
           refreshButton().then(() =>
             tabsRef.value?.childNodes[0].childNodes[index]?.scrollIntoView({ behavior: 'smooth' })
           )
