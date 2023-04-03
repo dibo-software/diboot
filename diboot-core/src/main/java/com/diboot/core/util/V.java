@@ -402,19 +402,42 @@ public class V {
         if (isEmpty(sqlParam)) {
             return true;
         }
-        if(sqlParam instanceof Map) {
+        if (sqlParam instanceof Collection) {
+            Collection collection = (Collection) sqlParam;
+            for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                Object param = iter.next();
+                boolean valid =  isValidSqlParam(param);
+                if(!valid) {
+                    log.debug("不符合安全规范的参数: {}", S.valueOf(param));
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if (sqlParam.getClass().isArray()) {
+            Object[] paramArray = (Object[]) sqlParam;
+            for(Object param : paramArray){
+                boolean valid =  isValidSqlParam(param);
+                if(!valid) {
+                    log.debug("不符合安全规范的参数: {}", S.valueOf(param));
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if(sqlParam instanceof Map) {
             Map map = (Map) sqlParam;
             for(Object key : map.keySet()){
-                boolean valid =  PATTERN.matcher(S.valueOf(key)).matches();
+                boolean valid =  isValidSqlParam(key);
                 if(!valid) {
-                    log.debug("不符合安全规范的参数: {}", key);
+                    log.debug("不符合安全规范的参数: {}", S.valueOf(key));
                     return false;
                 }
             }
             for(Object val : map.values()){
-                boolean valid =  PATTERN.matcher(S.valueOf(val)).matches();
+                boolean valid =  isValidSqlParam(val);
                 if(!valid) {
-                    log.debug("不符合安全规范的参数值: {}", val);
+                    log.debug("不符合安全规范的参数: {}", S.valueOf(val));
                     return false;
                 }
             }
