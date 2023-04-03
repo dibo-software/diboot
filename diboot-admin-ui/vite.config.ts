@@ -9,35 +9,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { viteMockServe } from 'vite-plugin-mock'
 import { fileURLToPath, URL } from 'url'
 import fs from 'fs'
-const optimizeDepsElementPlusIncludes = [
-  'vue',
-  'element-resize-detector',
-  '@element-plus/icons-vue',
-  'pinia',
-  'pinia-plugin-persist',
-  'nprogress',
-  'vue-router',
-  'axios',
-  'qs',
-  'echarts',
-  '@wangeditor/editor',
-  '@wangeditor/editor-for-vue',
-  'docx-preview',
-  'vue-pdf-embed'
-];
-const ELEMENT_PLUS_COMPONENTS_PATH = 'node_modules/element-plus/es/components'
-fs.readdirSync(ELEMENT_PLUS_COMPONENTS_PATH).map((dirname) => {
-  fs.access(
-      `${ELEMENT_PLUS_COMPONENTS_PATH}/${dirname}/style/css.mjs`,
-      (err) => {
-        if (!err) {
-          optimizeDepsElementPlusIncludes.push(
-              `element-plus/es/components/${dirname}/style/css`
-          );
-        }
-      }
-  );
-});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
   return {
@@ -105,9 +77,6 @@ export default defineConfig(({ command }) => {
           additionalData: `@use "@/styles/theme/index.scss" as *;`
         }
       }
-    },
-    optimizeDeps: {
-      include: optimizeDepsElementPlusIncludes
     },
     resolve: {
       alias: {
