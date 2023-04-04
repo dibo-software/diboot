@@ -15,6 +15,7 @@
  */
 package diboot.core.test.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -572,6 +573,20 @@ public class BaseServiceTest {
                 Assert.assertTrue(dept.getExtjsonobj() != null);
             }
         }
+    }
+
+    @Test
+    public void testGetVoListByChainQuery() {
+        // 测试 QueryChainWrapper 与 WrapperHelper.optimizeSelect 方法联动
+        testGetVoListByChainQuery(dictionaryService.query().eq("parent_id", 0).eq("type", "GENDER"));
+        // 测试 LambdaQueryChainWrapper 与 WrapperHelper.optimizeSelect 方法联动
+        testGetVoListByChainQuery(dictionaryService.lambdaQuery().eq(Dictionary::getParentId, 0).eq(Dictionary::getType, "GENDER"));
+    }
+
+    private void testGetVoListByChainQuery(Wrapper<?> query) {
+        List<SimpleDictionaryVO> simpleVOList = dictionaryService.getViewObjectList(query, null, SimpleDictionaryVO.class);
+        Assert.assertEquals(1, simpleVOList.size());
+        Assert.assertTrue(simpleVOList.get(0).getChildren().size() >= 2);
     }
 
 }
