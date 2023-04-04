@@ -587,6 +587,8 @@ public class BaseServiceTest {
         List<SimpleDictionaryVO> simpleVOList = dictionaryService.getViewObjectList(query, null, SimpleDictionaryVO.class);
         Assert.assertEquals(1, simpleVOList.size());
         Assert.assertTrue(simpleVOList.get(0).getChildren().size() >= 2);
+        Assert.assertTrue(dictionaryService.exists(query));
+        Assert.assertTrue(dictionaryService.getValuesOfField(query, Dictionary::getItemValue).isEmpty());
     }
 
 }
