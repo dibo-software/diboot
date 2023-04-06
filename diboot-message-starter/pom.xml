@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core-spring-boot-starter</artifactId>
-            <version>2.9.0</version>
+            <version>${diboot.version}</version>
         </dependency>
         <!-- 可选依赖 IAM -->
         <dependency>
