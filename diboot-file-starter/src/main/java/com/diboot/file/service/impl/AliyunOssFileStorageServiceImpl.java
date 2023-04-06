@@ -131,7 +131,7 @@ public class AliyunOssFileStorageServiceImpl implements FileStorageService {
         FileProperties.OSS.Aliyun aliyun = fileProperties.getOss().getAliyun();
         String bucketName = aliyun.getBucketName();
         //拼接云储存的文件名
-        String filename = fileRecord.getId() + Cons.SEPARATOR_DOT + fileRecord.getFileType();
+        String filename = fileRecord.getId() + Cons.SEPARATOR_CROSSBAR + fileRecord.getFileName();
         //调用ossClient.getObject返回一个OSSObject实例，该实例包含文件内容及文件元信息
         OSSObject ossObject = ossClient.getObject(bucketName, filename);//bucketName需要自己设置
         HttpHelper.downloadFile(ossObject.getObjectContent(), fileRecord.getFileSize(), fileRecord.getFileName(), response);
