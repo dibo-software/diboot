@@ -84,7 +84,14 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         List<Dictionary> children = dictVO.getChildren();
         this.buildSortId(children);
         if(V.notEmpty(children)){
+            Set<String> itemValues = new HashSet<>();
             for(Dictionary dict : children){
+                if(itemValues.contains(dict.getItemValue())) {
+                    throw new BusinessException(Status.FAIL_OPERATION, "字典选项: {} 重复", dict.getItemValue());
+                }
+                else {
+                    itemValues.add(dict.getItemValue());
+                }
                 dict.setParentId(dictionary.getId())
                     .setType(dictionary.getType())
                     .setIsDeletable(dictionary.getIsDeletable())
@@ -195,12 +202,17 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             }
             Object label = map.get(value);
             if (label == null) {
-                if(value instanceof String && ((String)value).contains(S.SEPARATOR)) {
-                    List<String> labelList = new ArrayList<>();
-                    for (String key : ((String)value).split(S.SEPARATOR)) {
-                        labelList.add(map.get(key));
+                if(value instanceof String) {
+                    if(((String)value).contains(S.SEPARATOR)) {
+                        List<String> labelList = new ArrayList<>();
+                        for (String key : ((String)value).split(S.SEPARATOR)) {
+                            labelList.add(map.get(key));
+                        }
+                        label = S.join(labelList);
                     }
-                    label = S.join(labelList);
+                    else {
+                        log.warn("未匹配到字典选项: {}，存储值: {}", type, value);
+                    }
                 }
                 else if(value instanceof Collection) {
                     List<String> labelList = new ArrayList<>();

@@ -47,12 +47,12 @@ public interface IamUserService extends BaseIamService<IamUser> {
     boolean updateUserAndAccount(IamUserAccountDTO userAccountDTO) throws Exception;
 
     /***
-     * 删除用户和账号
+     * 删除用户和关联信息（账号、岗位、角色等）
      * @param id
      * @return
      * @throws Exception
      */
-    boolean deleteUserAndAccount(Long id) throws Exception;
+    boolean deleteUserAndRelatedInfo(Long id) throws Exception;
 
     /**
      * 过滤重复的员工号
@@ -77,6 +77,13 @@ public interface IamUserService extends BaseIamService<IamUser> {
     List<Long> getUserIdsByManagerId(Long managerId);
 
     /**
+     * 获取指定用户的上级id
+     * @param userId
+     * @return
+     */
+    Long getUserLeaderId(Long userId);
+
+    /**
      * 获取用户VO列表
      *
      * @param queryWrapper
@@ -86,4 +93,9 @@ public interface IamUserService extends BaseIamService<IamUser> {
      */
     List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId);
 
+    /**
+     * 刷新用户电话邮箱头像等信息
+     * @return
+     */
+    void refreshUserInfo(IamUser currentUser);
 }

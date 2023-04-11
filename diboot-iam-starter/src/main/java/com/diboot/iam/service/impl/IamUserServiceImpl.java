@@ -27,6 +27,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.dto.IamUserAccountDTO;
 import com.diboot.iam.entity.IamAccount;
+import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserPosition;
 import com.diboot.iam.mapper.IamUserMapper;
@@ -107,7 +108,11 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             } else {
                 // 更新账号
                 iamAccount.setAuthAccount(userAccountDTO.getUsername())
-                        .setStatus(userAccountDTO.getStatus());
+                        .setStatus(userAccountDTO.getAccountStatus());
+                // 用户离职，状态停用
+                if(Cons.ENABLE_STATUS.I.name().equals(userAccountDTO.getStatus())){
+                    iamAccount.setStatus(Cons.ENABLE_STATUS.I.name());
+                }
                 // 设置密码
                 if (V.notEmpty(userAccountDTO.getPassword())){
                     iamAccount.setAuthSecret(userAccountDTO.getPassword());
@@ -124,15 +129,16 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteUserAndAccount(Long id) {
+    public boolean deleteUserAndRelatedInfo(Long id) {
         if (exists(IamUser::getId, id) == false){
             throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
         }
         // 删除用户信息
         this.deleteEntity(id);
-        // 删除账号信息
+        // 删除账号及角色信息
         this.deleteAccount(id);
-
+        // 删除岗位信息
+        this.deleteUserPositions(id);
         return true;
     }
 
@@ -188,6 +194,19 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     }
 
     @Override
+    public Long getUserLeaderId(Long userId) {
+        IamUser iamUser = getEntity(userId);
+        if (V.isEmpty(iamUser)) {
+            return null;
+        }
+        IamOrg iamOrg = iamOrgService.getEntity(iamUser.getOrgId());
+        if (V.isEmpty(iamOrg) || V.isEmpty(iamOrg.getManagerId())) {
+            return null;
+        }
+        return iamOrg.getManagerId();
+    }
+
+    @Override
     public List<IamUserVO> getUserViewList(QueryWrapper<IamUser> queryWrapper, Pagination pagination, Long orgId) {
         List<Long> orgIds = new ArrayList<>();
         // 获取当前部门及所有下属部门的人员列表
@@ -195,13 +214,13 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             orgIds.add(orgId);
             // 获取所有下级部门列表
             orgIds.addAll(iamOrgService.getChildOrgIds(orgId));
-            queryWrapper.in(Cons.ColumnName.org_id.name(), orgIds);
             // 相应部门下岗位相关用户
             LambdaQueryWrapper<IamUserPosition> queryUserIds = Wrappers.<IamUserPosition>lambdaQuery()
                     .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
                     .in(IamUserPosition::getOrgId, orgIds);
             List<Long> userIds = iamUserPositionService.getValuesOfField(queryUserIds, IamUserPosition::getUserId);
-            queryWrapper.or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds);
+            queryWrapper.and(query -> query.in(Cons.ColumnName.org_id.name(), orgIds)
+                    .or().in(V.notEmpty(userIds), Cons.FieldName.id.name(), userIds));
         }
         // 查询指定页的数据
         List<IamUserVO> voList = getViewObjectList(queryWrapper, pagination, IamUserVO.class);
@@ -215,6 +234,25 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             }
         }
         return voList;
+    }
+
+    /**
+     * 刷新用户电话邮箱头像等信息
+     * @return
+     */
+    @Override
+    public void refreshUserInfo(IamUser currentUser) {
+        IamUser latestInfo = getEntity(currentUser.getId());
+        currentUser
+                .setRealname(latestInfo.getRealname())
+                .setStatus(latestInfo.getStatus())
+                .setAvatarUrl(latestInfo.getAvatarUrl())
+                .setUserNum(latestInfo.getUserNum())
+                .setGender(latestInfo.getGender())
+                .setBirthdate(latestInfo.getBirthdate())
+                .setEmail(latestInfo.getEmail())
+                .setMobilePhone(latestInfo.getMobilePhone())
+                .setOrgId(latestInfo.getOrgId());
     }
 
     /***
@@ -292,5 +330,15 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
             throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
         }
     }
+
+    private void deleteUserPositions(Long userId) {
+        // 删除岗位信息
+        iamUserPositionService.deleteEntities(
+                Wrappers.<IamUserPosition>lambdaQuery()
+                        .eq(IamUserPosition::getUserType, IamUser.class.getSimpleName())
+                        .eq(IamUserPosition::getUserId, userId)
+        );
+    }
+
 
 }

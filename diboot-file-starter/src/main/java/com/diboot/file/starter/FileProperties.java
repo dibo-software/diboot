@@ -42,4 +42,24 @@ public class FileProperties {
      */
     @Deprecated
     private Long maxUploadSize = 10 * 1024 * 1024L;
+
+    private OSS oss;
+
+    @Getter
+    @Setter
+    public static class OSS {
+
+        private Aliyun aliyun;
+
+        @Getter
+        @Setter
+        public static class Aliyun {
+            private String endpoint;
+            private String accessKeyId;
+            private String accessKeySecret;
+            private String bucketName;
+            // 过期时间（单位：分钟）
+            private long expiration = 30 * 365L * 24 * 60;
+        }
+    }
 }

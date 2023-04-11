@@ -485,7 +485,7 @@ public class S extends StringUtils{
 	 * @param params 参数值
 	 * @return
 	 */
-	public static String format(String template, String... params){
+	public static String format(String template, Object... params){
 		if(V.isEmpty(params)){
 			return template;
 		}

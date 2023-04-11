@@ -48,7 +48,7 @@ public class CorePluginInitializer implements ApplicationRunner {
         SqlFileInitializer.init(environment);
         // 检查数据库字典是否已存在
         if (coreProperties.isInitSql()) {
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.dictionary WHERE id=0";
+            String initDetectSql = "SELECT id FROM dictionary WHERE id=0";
             if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
                 SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "core");
                 log.info("diboot-core 初始化SQL完成.");
