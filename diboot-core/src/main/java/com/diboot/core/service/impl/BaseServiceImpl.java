@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
@@ -518,6 +519,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public List<T> getEntityList(Wrapper queryWrapper, Pagination pagination) {
+		// 支持 ChainQuery
+		if (queryWrapper instanceof ChainQuery) {
+			queryWrapper = ((ChainQuery<?>) queryWrapper).getWrapper();
+		}
 		// 如果是动态join，则调用JoinsBinder
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
 			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
@@ -567,22 +572,23 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
 		LambdaQueryWrapper query = null;
 		List<T> entityList = null;
+		// 支持 ChainQuery
+		if (queryWrapper instanceof ChainQuery) {
+			queryWrapper = ((ChainQuery<?>) queryWrapper).getWrapper();
+		}
 		// 优化SQL，只查询当前字段
 		if(queryWrapper instanceof QueryWrapper){
 			query = ((QueryWrapper)queryWrapper).lambda();
-		}
-		else if(queryWrapper instanceof LambdaQueryWrapper){
+		} else if(queryWrapper instanceof LambdaQueryWrapper){
 			query = ((LambdaQueryWrapper) queryWrapper);
-		}
-		else {
+		} else {
 			throw new InvalidUsageException("不支持的Wrapper类型：" + (queryWrapper == null ? "null" : queryWrapper.getClass()));
 		}
 		// 如果是动态join，则调用JoinsBinder
 		query.select(getterFn);
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
 			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, entityClass, null);
-		}
-		else{
+		} else{
 			entityList = getEntityList(query);
 		}
 		if(V.isEmpty(entityList)){
@@ -629,9 +635,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean exists(Wrapper queryWrapper) {
-		if((queryWrapper instanceof QueryWrapper) && queryWrapper.getSqlSelect() == null){
-			String pk = ContextHelper.getIdColumnName(getEntityClass());
-			((QueryWrapper)queryWrapper).select(pk);
+		// 支持 ChainQuery
+		if (queryWrapper instanceof ChainQuery) {
+			queryWrapper = ((ChainQuery<?>) queryWrapper).getWrapper();
 		}
 		T entity = getSingleEntity(queryWrapper);
 		return entity != null;

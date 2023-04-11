@@ -125,7 +125,7 @@ public class JoinsBinder {
         else{
             // 格式化orderBy
             formatOrderBy(dynamicJoinWrapper, entityClazz, pagination);
-            IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(pagination.toPage(), dynamicJoinWrapper);
+            IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(pagination.toPage(entityClazz), dynamicJoinWrapper);
             pagination.setTotalCount(pageResult.getTotal());
             mapList = pageResult.getRecords();
         }

@@ -17,6 +17,8 @@ package com.diboot.scheduler.starter;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
+import com.diboot.core.util.SqlFileInitializer;
+import com.diboot.core.util.V;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.service.QuartzSchedulerService;
 import com.diboot.scheduler.service.ScheduleJobService;
@@ -26,6 +28,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 定时任务初始化
@@ -49,9 +53,17 @@ public class SchedulerJobInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        scheduleJobService.getEntityList(
-                Wrappers.<ScheduleJob>lambdaQuery().eq(ScheduleJob::getJobStatus, Cons.ENABLE_STATUS.A.name())
-        ).forEach(scheduleJob -> {
+        String initDetectSql = "SELECT id FROM dbt_schedule_job WHERE id='0'";
+        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+            return;
+        }
+        List<ScheduleJob> jobList = scheduleJobService.getEntityList(
+            Wrappers.<ScheduleJob>lambdaQuery().eq(ScheduleJob::getJobStatus, Cons.ENABLE_STATUS.A.name())
+        );
+        if(V.isEmpty(jobList)) {
+            return;
+        }
+        jobList.forEach(scheduleJob -> {
             try {
                 quartzSchedulerService.addJob(scheduleJob);
             } catch (Exception e) {

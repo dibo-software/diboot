@@ -28,4 +28,5 @@ public class BaseUserInfoDTO implements Serializable {
     @Length(max = 50, message = "Email长度应小于50")
     private String email;
 
+    private String avatarUrl;
 }

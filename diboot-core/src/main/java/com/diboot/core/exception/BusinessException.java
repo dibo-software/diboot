@@ -15,6 +15,7 @@
  */
 package com.diboot.core.exception;
 
+import com.diboot.core.util.S;
 import com.diboot.core.vo.Status;
 
 import java.util.HashMap;
@@ -63,8 +64,8 @@ public class BusinessException extends RuntimeException {
     /**
      * 自定义状态码和内容提示
      */
-    public BusinessException(Status status, String msg) {
-        super(status.label() + ": "+ msg);
+    public BusinessException(Status status, String msg, Object... args) {
+        super(status.label() + ": "+ S.format(msg, args));
         this.status = status;
     }
 
@@ -79,24 +80,24 @@ public class BusinessException extends RuntimeException {
     /**
      * 自定义内容提示
      */
-    public BusinessException(String msg) {
-        super(msg);
+    public BusinessException(String msg, Object... args) {
+        super(S.format(msg, args));
         this.status = Status.FAIL_OPERATION;
     }
 
     /**
      * 自定义内容提示
      */
-    public BusinessException(Status status, String msg, Throwable ex) {
-        super(status.label() + ": "+ msg, ex);
+    public BusinessException(Status status, Throwable ex, String msg, Object... args) {
+        super(status.label() + ": "+ S.format(msg, args), ex);
         this.status = status;
     }
 
     /**
      * 自定义内容提示
      */
-    public BusinessException(int code, String msg, Throwable ex) {
-        super(msg, ex);
+    public BusinessException(int code, Throwable ex, String msg, Object... args) {
+        super(S.format(msg, args), ex);
         this.code = code;
     }
 

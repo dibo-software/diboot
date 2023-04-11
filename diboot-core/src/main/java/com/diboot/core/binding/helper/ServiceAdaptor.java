@@ -126,7 +126,7 @@ public class ServiceAdaptor {
                 }
             }
         }
-        return pagination.setEntityClass(entityClass).toPage();
+        return pagination.toPage(entityClass);
     }
 
 }

@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.iam.entity.IamResourcePermission;
@@ -39,16 +38,9 @@ public class IamResourcePermissionListVO extends IamResourcePermission {
 
     private static final long serialVersionUID = 6643651522844488124L;
 
-    // display_type字段的关联数据字典
-    public static final String DICT_RESOURCE_PERMISSION_TYPE = "RESOURCE_PERMISSION_TYPE";
-
     // 字段关联：this.parent_id=id
     @BindField(entity = IamResourcePermission.class, field = "displayName", condition = "this.parent_id=id")
     private String parentDisplayName;
-
-    // 关联数据字典：RESOURCE_PERMISSION_TYPE
-    @BindDict(type = DICT_RESOURCE_PERMISSION_TYPE, field = "displayType")
-    private String displayTypeLabel;
 
     // 绑定iamResourcePermissionList
     @BindEntityList(entity = IamResourcePermission.class, condition = "this.id=parent_id AND this.displayType ='PERMISSION'")

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.data.copy.Accept;
@@ -71,6 +72,10 @@ public class WrapperHelper {
      * @param voClass
      */
     public static void optimizeSelect(Wrapper<?> query, Class<?> entityClass, Class<?> voClass) {
+        // 支持 ChainQuery
+        if (query instanceof ChainQuery<?>) {
+            query = ((ChainQuery<?>) query).getWrapper();
+        }
         if (!(query instanceof Query) || query.getSqlSelect() != null) {
             return;
         }

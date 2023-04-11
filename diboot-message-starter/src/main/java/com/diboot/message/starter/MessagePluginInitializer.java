@@ -56,7 +56,7 @@ public class MessagePluginInitializer implements ApplicationRunner {
         if (messageProperties.isInitSql()) {
             // 初始化SCHEMA
             SqlFileInitializer.init(environment);
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.message_template WHERE id=0";
+            String initDetectSql = "SELECT id FROM message_template WHERE id=0";
             if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
                 SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "message");
                 // 插入相关数据：Dict等

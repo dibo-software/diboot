@@ -49,7 +49,7 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
         if(schedulerProperties.isInitSql()){
             SqlFileInitializer.init(environment);
             // 验证SQL
-            String initDetectSql = "SELECT id FROM ${SCHEMA}.schedule_job WHERE id=0";
+            String initDetectSql = "SELECT id FROM schedule_job WHERE id=0";
             if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
                 log.info("diboot-scheduler 初始化SQL ...");
                 // 执行初始化SQL
