@@ -39,13 +39,6 @@ public interface DictionaryService extends BaseService<Dictionary>{
     List<LabelValue> getLabelValueList(String type);
 
     /**
-     * 获取显示值-选项的映射Map（一般用于excel反向解析）
-     * @param type
-     * @return
-     */
-    Map<String, LabelValue> getLabel2ItemMap(String type);
-
-    /**
      * 添加字典定义及其子项
      * @param dictVO
      * @return
