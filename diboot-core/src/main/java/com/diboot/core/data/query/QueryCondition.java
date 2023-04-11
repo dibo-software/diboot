@@ -162,6 +162,25 @@ public class QueryCondition implements Serializable {
         return this.queryParamMap.get(field);
     }
 
+    /**
+     * 获取查询条件
+     * @param field
+     * @return
+     */
+    public CriteriaItem getCriteriaItem(String field) {
+        if(V.isEmpty(this.criteriaList)) {
+            return null;
+        }
+        if(criteriaList != null) {
+            for(CriteriaItem item : criteriaList) {
+                if(item.getField().equals(field)) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
     public QueryCondition clear() {
         this.criteriaList = null;
         this.orderItems = null;
