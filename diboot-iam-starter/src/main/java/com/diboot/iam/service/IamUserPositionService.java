@@ -68,5 +68,5 @@ public interface IamUserPositionService extends BaseIamService<IamUserPosition> 
      * @param positionIds
      * @return
      */
-    List<String> getUserIdsByPosition(List<String> positionIds);
+    List<String> getUserIdsByPosition(String orgId, List<String> positionIds);
 }

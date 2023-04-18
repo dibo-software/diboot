@@ -112,10 +112,13 @@ public class IamUserPositionServiceImpl extends BaseIamServiceImpl<IamUserPositi
     }
 
     @Override
-    public List<String> getUserIdsByPosition(List<String> positionIds) {
+    public List<String> getUserIdsByPosition(String orgId, List<String> positionIds) {
         LambdaQueryWrapper<IamUserPosition> queryWrapper = Wrappers.<IamUserPosition>lambdaQuery()
                 .select(IamUserPosition::getUserId)
                 .in(IamUserPosition::getPositionId, positionIds);
+        if(V.notEmpty(orgId)) {
+            queryWrapper.eq(IamUserPosition::getOrgId, orgId);
+        }
         List<IamUserPosition> userPositions = baseMapper.selectList(queryWrapper);
         if(V.notEmpty(userPositions)) {
             return userPositions.stream().map(IamUserPosition::getUserId).distinct().collect(Collectors.toList());
