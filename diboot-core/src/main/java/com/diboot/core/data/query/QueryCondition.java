@@ -47,24 +47,24 @@ public class QueryCondition implements Serializable {
     private static final long serialVersionUID = -7495538662136985338L;
 
     @Getter
-    private List<CriteriaItem> criteriaList;
+    protected List<CriteriaItem> criteriaList;
 
     @Getter
     @Setter
-    private Pagination pagination;
+    protected Pagination pagination;
 
     @Getter
-    private List<String> orderItems;
-
-    @Getter
-    @Setter
-    private List<String> selectFields;
+    protected List<String> orderItems;
 
     @Getter
     @Setter
-    private List<String> excludeFields;
+    protected List<String> selectFields;
 
-    private Map<String, Object> queryParamMap;
+    @Getter
+    @Setter
+    protected List<String> excludeFields;
+
+    protected Map<String, Object> queryParamMap;
 
     public QueryCondition() {
     }
@@ -301,6 +301,12 @@ public class QueryCondition implements Serializable {
                         } else {
                             query.ne(field, value);
                         }
+                        break;
+                    case IS_NULL:
+                        query.isNull(field);
+                        break;
+                    case IS_NOT_NULL:
+                        query.isNotNull(field);
                         break;
                     default:
                         //

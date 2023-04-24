@@ -40,5 +40,8 @@ public enum Comparison {
     BETWEEN_END, //介于之前
 
     NOT_EQ,  //不等于
-    NOT_IN // 不在...内
+    NOT_IN, // 不在...内
+
+    IS_NULL, // 空
+    IS_NOT_NULL // 非空
 }

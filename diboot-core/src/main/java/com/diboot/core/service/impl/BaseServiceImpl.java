@@ -341,7 +341,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 		// 获取主动从动字段名
 		String driverFieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
-		String followerFieldName = convertGetterToFieldName(followerIdGetter);
+		String followerFieldName = BeanUtils.convertSFunctionToFieldName(followerIdGetter);
 		String driverColumnName = entityInfo.getColumnByField(driverFieldName);
 		String followerColumnName = entityInfo.getColumnByField(followerFieldName);
 
@@ -1026,18 +1026,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	private Object getPrimaryKeyValue(Object entity){
 		String pk = ContextHolder.getIdFieldName(entity.getClass());
 		return BeanUtils.getProperty(entity, pk);
-	}
-
-	/**
-	 * 转换SFunction为属性名
-	 * @param getterFn
-	 * @param <R>
-	 * @return
-	 */
-	private <R> String convertGetterToFieldName(SFunction<R, ?> getterFn) {
-		LambdaMeta lambdaMeta = LambdaUtils.extract(getterFn);
-		String fieldName = PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
-		return fieldName;
 	}
 
 	/***

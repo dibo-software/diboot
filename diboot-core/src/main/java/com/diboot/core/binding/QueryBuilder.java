@@ -355,6 +355,12 @@ public class QueryBuilder {
             case NOT_EQ:
                 wrapper.ne(columnName, value);
                 break;
+            case IS_NULL:
+                wrapper.isNull(columnName);
+                break;
+            case IS_NOT_NULL:
+                wrapper.isNotNull(columnName);
+                break;
             default:
                 break;
         }

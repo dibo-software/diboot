@@ -17,6 +17,9 @@ package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.config.Cons;
 import com.diboot.core.converter.EnhancedConversionService;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
@@ -855,6 +858,17 @@ public class BeanUtils {
     public static <T,R> String convertToFieldName(ISetter<T,R> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
         return PropertyNamer.methodToProperty(lambda.getImplMethodName());
+    }
+
+    /**
+     * 转换SFunction为属性名
+     * @param getterFn
+     * @param <R>
+     * @return
+     */
+    public static <R> String convertSFunctionToFieldName(SFunction<R, ?> getterFn) {
+        LambdaMeta lambdaMeta = LambdaUtils.extract(getterFn);
+        return PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
     }
 
      /**
