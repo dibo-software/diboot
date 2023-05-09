@@ -186,5 +186,7 @@ function rowClick(row: DictionaryTableExpand) {
 
 .dict-item {
   margin-right: 8px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 </style>
