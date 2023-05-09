@@ -54,9 +54,10 @@ const loadAccountInfo = async (type: string, id?: string) => {
 }
 
 defineExpose({
-  open: async (id?: string) => {
+  open: async (id?: string, orgId?: string) => {
     title.value = id ? '更新用户信息' : '新建用户'
     visible.value = true
+    model.value.orgId = orgId
     await loadData(id)
     if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
     model.value.username = await loadAccountInfo('authAccount', id)

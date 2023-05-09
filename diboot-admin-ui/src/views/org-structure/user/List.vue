@@ -40,7 +40,7 @@ const openDetail = (id: string) => {
 
 const formRef = ref()
 const openForm = (id?: string) => {
-  formRef.value?.open(id)
+  formRef.value?.open(id, props.orgId)
 }
 
 const loadListByOrgId = (orgId: string) => {
