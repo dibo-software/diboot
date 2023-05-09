@@ -73,7 +73,7 @@ const deletePermission = checkPermission('delete')
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="code" label="模版编码">
         <template #default="{ row }">
-          <el-tag type="info">{{ row.code }}</el-tag>
+          <el-tag type="info" effect="dark">{{ row.code }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="title" label="模版标题" show-overflow-tooltip>

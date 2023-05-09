@@ -87,7 +87,7 @@ initRelatedData()
       <el-table-column prop="receiverName" label="接收方" />
       <el-table-column prop="channelLabel" label="发送通道">
         <template #default="{ row }">
-          <el-tag type="info">{{ row.channelLabel }}</el-tag>
+          <el-tag type="info" effect="dark">{{ row.channelLabel }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="statusLabel" label="发送状态">
@@ -96,7 +96,7 @@ initRelatedData()
           <el-tag v-else-if="row.status === 'DELIVERY' || row.status === 'READ'" type="success">
             {{ row.statusLabel }}
           </el-tag>
-          <el-tag v-else type="info">{{ row.statusLabel }}</el-tag>
+          <el-tag v-else type="info" effect="dark">{{ row.statusLabel }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="165" />
