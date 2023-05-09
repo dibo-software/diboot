@@ -38,7 +38,7 @@ const refresh = () => {
           <el-option v-for="item in categoryList" :key="item" :label="item" :value="item" />
         </el-select>
         <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-        <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+        <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter">重置</el-button>
       </el-space>
     </el-space>
 
