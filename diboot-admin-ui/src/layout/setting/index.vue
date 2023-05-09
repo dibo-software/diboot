@@ -28,10 +28,33 @@ const copyConfig = () => {
     .then(() => ElMessage.success('复制成功'))
     .catch(() => ElMessage.error('写入剪切板失败，请手动配置'))
 }
+
+// 按钮拖拽
+const startclientX = ref(0)
+const startclientY = ref(0)
+const elRight = ref(0)
+const elBottom = ref(200)
+const dragstart = (e: DragEvent) => {
+  startclientX.value = e.clientX
+  startclientY.value = e.clientY
+}
+const dragend = (e: DragEvent) => {
+  const x = startclientX.value - e.clientX
+  const y = startclientY.value - e.clientY
+  elRight.value += x
+  elBottom.value += y
+}
 </script>
 
 <template>
-  <div class="open-button" @click="openSetting = true">
+  <div
+    class="open-button"
+    draggable="true"
+    :style="`right:${elRight}px;bottom:${elBottom}px`"
+    @click="openSetting = true"
+    @dragstart="dragstart"
+    @dragend="dragend"
+  >
     <el-icon :size="22">
       <setting />
     </el-icon>
