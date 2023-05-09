@@ -134,5 +134,5 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * 登录最大失败次数
      */
-    public static final long LOGIN_MAX_ATTEMPTS = 5;
+    public static final int LOGIN_MAX_ATTEMPTS = 5;
 }
