@@ -29,7 +29,7 @@ defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean }>()
 
 <style scoped lang="scss">
 .el-menu-item.is-active {
-  background-color: var(--el-color-primary-light-9);
+  background-color: var(--el-color-primary-light-8);
 }
 .menu-text {
   font-size: var(--el-font-size-dynamic);
