@@ -1,5 +1,5 @@
 <script setup lang="ts" name="OperationLog">
-import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import type { OperationLog } from './type'
 import Detail from '@/views/system/operation-log/Detail.vue'
 

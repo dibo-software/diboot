@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Dictionary">
-import { ArrowUp, ArrowDown, Search, CircleClose, Plus } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown, Search, Plus } from '@element-plus/icons-vue'
 import FormPage from './Form.vue'
 import DetailPage from './Detail.vue'
 import type { Dictionary } from '@/views/system/dictionary/type'

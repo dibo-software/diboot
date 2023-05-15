@@ -1,6 +1,6 @@
 <script setup name="OrgList" lang="ts">
 import type { OrgModel } from '@/views/org-structure/org/type'
-import { Search, CircleClose, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
 const props = defineProps<{ parentId?: string }>()

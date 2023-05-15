@@ -1,5 +1,5 @@
 <script setup lang="ts" name="UserList">
-import { Search, ArrowUp, ArrowDown, CircleClose, Plus } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown, Plus } from '@element-plus/icons-vue'
 import type { UserPosition } from '../position/type'
 import type { UserModel } from './type'
 import Detail from './Detail.vue'

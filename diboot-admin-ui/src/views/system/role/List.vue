@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Role">
-import { Search, ArrowDown, ArrowUp, CircleClose, Plus } from '@element-plus/icons-vue'
+import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import type { Role } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'

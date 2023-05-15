@@ -1,5 +1,5 @@
 <script setup lang="ts" name="MessageTemplate">
-import { Search, CircleClose, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import type { MessageTemplate } from './type'
 import Detail from '@/views/system/message-template/Detail.vue'
 import Form from './Form.vue'

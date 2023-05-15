@@ -1,5 +1,5 @@
 <script setup lang="ts" name="FileRecord">
-import { Search, CircleClose } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import Form from './Form.vue'
 import type { SystemConfig } from '@/views/system/config/type'
 

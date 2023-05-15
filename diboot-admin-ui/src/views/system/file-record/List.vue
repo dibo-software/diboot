@@ -1,5 +1,5 @@
 <script setup lang="ts" name="FileRecord">
-import { Search, ArrowDown, ArrowUp, CircleClose } from '@element-plus/icons-vue'
+import { Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 

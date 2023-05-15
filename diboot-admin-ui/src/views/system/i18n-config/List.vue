@@ -1,5 +1,5 @@
 <script setup lang="ts" name="I18nConfig">
-import { Search, CircleClose, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
 import type { I18nConfig } from './type'
 import Form from './Form.vue'
 

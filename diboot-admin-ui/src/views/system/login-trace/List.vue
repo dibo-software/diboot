@@ -1,5 +1,5 @@
 <script setup lang="ts" name="LoginTrace">
-import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import type { LoginTrace } from './type'
 
 const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSearch, resetFilter } =

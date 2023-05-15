@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Message">
-import { Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import type { Message } from './type'
 import Detail from '@/views/system/message/Detail.vue'
 

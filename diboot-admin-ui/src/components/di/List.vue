@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DiList">
-import { Plus, Delete, Search, CircleClose, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Plus, Delete, Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 import { buildOptionProps, buildGetRelatedData } from './utils'
 import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
@@ -180,7 +180,7 @@ const multiple = inject<boolean | undefined>(
         </span>
         <template v-if="searchArea?.propList?.length">
           <el-button :icon="Search" type="primary" @click="onSearch">搜索</el-button>
-          <el-button :icon="CircleClose" title="重置搜索条件" @click="resetFilter" />
+          <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
         </template>
         <el-button
           v-if="(searchArea?.propList?.length ?? 0) > 1"
