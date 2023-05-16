@@ -30,7 +30,7 @@ onBeforeRouteLeave(() => clearTimeout(timer))
 <template>
   <div class="content">
     <div class="content-title">404</div>
-    <h3>页面不存在或无权访问</h3>
+    <h3>页面不存在或服务不可用</h3>
     <el-button type="success" plain @click="goHome">返回首页（{{ countDown }}s）</el-button>
   </div>
 </template>
