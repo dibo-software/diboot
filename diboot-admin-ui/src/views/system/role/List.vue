@@ -66,7 +66,8 @@ const deletePermission = checkPermission('delete')
       <el-table-column prop="updateTime" label="更新时间" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-space>
+          <el-space v-if="row.superAdmin === true"> - </el-space>
+          <el-space v-else>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
               {{ $t('operation.detail') }}
             </el-button>
