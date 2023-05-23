@@ -99,7 +99,7 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
       <el-form-item prop="description" label="备注">
         <el-input v-model="model.description" type="textarea" />
       </el-form-item>
-      <el-form-item prop="permissionList" label="角色授权">
+      <el-form-item v-if="model.code?.toUpperCase() !== 'SUPER_ADMIN'" prop="permissionList" label="角色授权">
         <el-scrollbar height="calc(80vh - 350px)">
           <el-tree
             ref="treeRef"
