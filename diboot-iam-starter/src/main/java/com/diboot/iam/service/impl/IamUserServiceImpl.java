@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.event.OperationEvent;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -37,6 +38,7 @@ import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +70,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired(required = false)
     private IamCustomize iamCustomize;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
     @Override
@@ -125,6 +130,8 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
                 // 用户离职，状态停用
                 if(Cons.ENABLE_STATUS.I.name().equals(userFormDTO.getStatus())){
                     iamAccount.setStatus(Cons.ENABLE_STATUS.I.name());
+                    // 对外发布用户离职的事件
+                    applicationEventPublisher.publishEvent(new OperationEvent(IamUser.class.getSimpleName(), userFormDTO));
                 }
                 // 设置密码
                 if (V.notEmpty(userFormDTO.getPassword())){
