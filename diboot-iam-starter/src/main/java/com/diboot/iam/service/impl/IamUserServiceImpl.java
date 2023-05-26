@@ -354,7 +354,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
      * @return
      */
     @Override
-    protected void beforeCreateEntity(IamUser iamUser){
+    public void beforeCreate(IamUser iamUser){
         if(isUserNumExists(null, iamUser.getUserNum())){
             String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
             log.warn("保存用户异常:{}", errorMsg);
@@ -368,7 +368,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
      * @return
      */
     @Override
-    protected void beforeUpdateEntity(IamUser iamUser){
+    public void beforeUpdate(IamUser iamUser){
         if(isUserNumExists(iamUser.getId(), iamUser.getUserNum())){
             String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
             log.warn("保存用户异常:{}", errorMsg);

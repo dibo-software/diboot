@@ -24,8 +24,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.diboot.core.dto.SortParamDTO;
-import com.diboot.core.util.IGetter;
-import com.diboot.core.util.ISetter;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import org.springframework.lang.Nullable;
@@ -42,7 +41,7 @@ import java.util.function.Consumer;
  * @version 2.0
  * @date 2019/01/01
  */
-public interface BaseService<T> {
+public interface BaseService<T> extends GeneralService<T>{
 
     /**
      * 获取对应 entity 的 BaseMapper
@@ -78,29 +77,6 @@ public interface BaseService<T> {
      * @return entity
      */
     T getEntity(Serializable id);
-
-    /**
-     * 获取entity某个属性值
-     * @param idGetterFn id getter
-     * @param idVal id值
-     * @param getterFn 返回属性getter
-     * @return
-     */
-    <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn);
-
-    /**
-     * 创建Entity实体
-     * @param entity
-     * @return true:成功, false:失败
-     */
-    boolean createEntity(T entity);
-
-    /***
-     * 批量创建Entity
-     * @param entityList 实体对象列表
-     * @return true:成功, false: 失败
-     */
-    boolean createEntities(Collection<T> entityList);
 
     /**
      * 添加entity 及 其关联子项entities
@@ -144,13 +120,6 @@ public interface BaseService<T> {
                                            Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer);
 
     /**
-     * 更新Entity实体
-     * @param entity
-     * @return
-     */
-    boolean updateEntity(T entity);
-
-    /**
      * 更新Entity实体（更新符合条件的所有非空字段）
      * @param entity
      * @param updateCriteria
@@ -166,34 +135,13 @@ public interface BaseService<T> {
     boolean updateEntity(Wrapper updateWrapper);
 
     /**
-     * 批量更新entity
-     * @param entityList
-     * @return
-     */
-    boolean updateEntities(Collection<T> entityList);
-
-    /***
-     * 创建或更新entity（entity.id存在则新建，否则更新）
-     * @param entity
-     * @return
-     */
-    boolean createOrUpdateEntity(T entity);
-
-    /**
-     * 批量创建或更新entity（entity.id存在则新建，否则更新）
-     * @param entityList
-     * @return
-     */
-    boolean createOrUpdateEntities(Collection entityList);
-
-    /**
      * 添加entity 及 其关联子项entities
      * @param entity 主表entity
      * @param relatedEntities 关联表entities
      * @param relatedEntitySetter 关联Entity类的setter
      * @return
      */
-    <RE,R> boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
+    <RE,R> boolean updateEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE,R> relatedEntitySetter);
 
     /**
      * 删除entity 及 其关联子项entities
@@ -205,13 +153,6 @@ public interface BaseService<T> {
     <RE,R> boolean deleteEntityAndRelatedEntities(Serializable id, Class<RE> relatedEntityClass, ISetter<RE, R> relatedEntitySetter);
 
     /**
-     * 根据主键删除实体
-     * @param id 主键
-     * @return true:成功, false:失败
-     */
-    boolean deleteEntity(Serializable id);
-
-    /**
      * 按条件删除实体
      * @param queryWrapper
      * @return
@@ -220,12 +161,79 @@ public interface BaseService<T> {
     boolean deleteEntities(Wrapper queryWrapper);
 
     /**
+     * 删除
+     * @param id
+     * @return
+     */
+    boolean deleteEntity(Serializable id);
+
+    /**
      * 批量删除指定id的实体
      * @param entityIds
      * @return
      * @throws Exception
      */
     boolean deleteEntities(Collection<? extends Serializable> entityIds);
+
+    /**
+     * 创建数据的前拦截
+     * @param entity
+     */
+    default void beforeCreate(T entity) {
+    }
+    /**
+     * 创建数据的后拦截
+     * @param entity
+     */
+    default void afterCreate(T entity) {
+    }
+    /**
+     * 批量创建数据的前拦截
+     * @param entityList
+     */
+    default void beforeBatchCreate(Collection<T> entityList) {
+        if(V.isEmpty(entityList)){
+            return;
+        }
+        for(T entity : entityList){
+            beforeCreate(entity);
+        }
+    }
+    /**
+     * 批量创建数据的后拦截
+     * @param entityList
+     */
+    default void afterBatchCreate(Collection<T> entityList) {
+        for(T entity : entityList){
+            afterCreate(entity);
+        }
+    }
+    /**
+     * 更新数据的前拦截
+     * @param entity
+     */
+    default void beforeUpdate(T entity) {
+    }
+    /**
+     * 更新数据的后拦截
+     * @param entity
+     */
+    default void afterUpdate(T entity) {
+    }
+    /**
+     * 删除数据的前拦截，值可能为单值或集合
+     * @param fieldKey
+     * @param fieldVal
+     */
+    default void beforeDelete(String fieldKey, Object fieldVal) {
+    }
+    /**
+     * 删除数据的后拦截，值可能为单值或集合
+     * @param fieldKey
+     * @param fieldVal
+     */
+    default void afterDelete(String fieldKey, Object fieldVal) {
+    }
 
     /**
      * 获取符合条件的entity记录总数
@@ -251,6 +259,21 @@ public interface BaseService<T> {
     List<T> getEntityList(Wrapper queryWrapper, Pagination pagination);
 
     /**
+     * 获取指定条件的Entity集合
+     * @param ids
+     * @return
+     */
+    List<T> getEntityListByIds(List ids);
+
+    /**
+     * 获取entity某个属性值
+     * @param idVal id值
+     * @param getterFn 返回属性getter
+     * @return
+     */
+    <FT> FT getValueOfField(Serializable idVal, SFunction<T, FT> getterFn);
+
+    /**
      * 获取指定条件的Entity ID集合
      * @param queryWrapper
      * @param getterFn
@@ -258,13 +281,6 @@ public interface BaseService<T> {
      * @throws Exception
      */
     <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn);
-
-    /**
-     * 获取指定条件的Entity集合
-     * @param ids
-     * @return
-     */
-    List<T> getEntityListByIds(List ids);
 
     /**
      * 获取指定数量的entity记录
@@ -288,7 +304,7 @@ public interface BaseService<T> {
      * @param value 需要检查的值
      * @return
      */
-    boolean exists(IGetter<T> getterFn, Object value);
+    <FT> boolean exists(SFunction<T, FT> getterFn, Object value);
 
     /**
      * 是否存在符合条件的记录
@@ -327,14 +343,14 @@ public interface BaseService<T> {
      * @param <ID>
      * @return
      */
-    <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn);
+    <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, SFunction<T,?> getterFn);
 
     /**
      * 获取指定条件的id-Entity 映射map
-     * @param getterFn
+     * @param getterFns
      * @return
      */
-    Map<String, T> getId2EntityMap(List entityIds, IGetter<T>... getterFn);
+    Map<String, T> getId2EntityMap(List entityIds, SFunction<T,?>... getterFns);
 
     /**
      * 获取Map
@@ -342,14 +358,6 @@ public interface BaseService<T> {
      * @return
      */
     Map<String, Object> getMap(Wrapper<T> queryWrapper);
-
-    /**
-     * 获取View Object对象
-     * @param id 主键
-     * @param voClass vo类
-     * @return entity
-     */
-    <VO> VO getViewObject(Serializable id, Class<VO> voClass);
 
     /**
      * 根据查询条件获取vo列表
@@ -370,6 +378,14 @@ public interface BaseService<T> {
      * @throws Exception
      */
     <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass, SFunction<T, String> getParentIdsPath, @Nullable SFunction<T, Comparable<?>> getSortId);
+
+    /**
+     * 获取View Object对象
+     * @param id 主键
+     * @param voClass vo类
+     * @return entity
+     */
+    <VO> VO getViewObject(Serializable id, Class<VO> voClass);
 
     /**
      * list 排序

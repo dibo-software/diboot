@@ -338,7 +338,7 @@ public class BaseServiceTest {
 
     @Test
     public void testGetValueOfField(){
-        String val = dictionaryService.getValueOfField(Dictionary::getId, 2L, Dictionary::getItemValue);
+        String val = dictionaryService.getValueOfField(2L, Dictionary::getItemValue);
         Assert.assertTrue("M".equals(val));
         System.out.println(val);
 

@@ -135,7 +135,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
      * @return
      */
     @Override
-    protected void beforeCreateEntity(IamAccount iamAccount){
+    public void beforeCreate(IamAccount iamAccount){
         if(isAccountExists(iamAccount)){
             String errorMsg = "账号 "+ iamAccount.getAuthAccount() +" 已存在，请重新设置！";
             log.warn("保存账号异常: {}", errorMsg);
@@ -149,8 +149,8 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
      * @return
      */
     @Override
-    protected void beforeUpdateEntity(IamAccount iamAccount){
-        beforeCreateEntity(iamAccount);
+    public void beforeUpdate(IamAccount iamAccount){
+        beforeCreate(iamAccount);
     }
 
 }

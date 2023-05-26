@@ -116,10 +116,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn) {
-		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
-				.select(idGetterFn, getterFn)
-				.eq(idGetterFn, idVal);
+	public <FT> FT getValueOfField(Serializable idVal, SFunction<T, FT> getterFn) {
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		String fetchCol = propInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
+				.select(propInfo.getIdColumn(), fetchCol)
+				.eq(propInfo.getIdColumn(), idVal);
 		T entity = getSingleEntity(queryWrapper);
 		if(entity == null){
 			return null;
@@ -138,14 +140,19 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean save(T entity) {
-		beforeCreateEntity(entity);
-		return super.save(entity);
+		this.beforeCreate(entity);
+		boolean success = super.save(entity);
+		if(success) {
+			this.afterCreate(entity);
+		}
+		return success;
 	}
 
 	/**
 	 * 用于创建之前的自动填充等场景调用
 	 */
-	protected void beforeCreateEntity(T entity){
+	@Override
+	public void beforeCreate(T entity) {
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
 		}
@@ -165,9 +172,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		Class relatedEntityClass = relatedEntities.get(0).getClass();
 		// 获取主键
 		Object pkValue = getPrimaryKeyValue(entity);
-		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
+		String relatedEntitySetterFld = BeanUtils.convertToFieldName(relatedEntitySetter);
 		// 填充关联关系
-		relatedEntities.forEach(relatedEntity-> BeanUtils.setProperty(relatedEntity, attributeName, pkValue));
+		relatedEntities.forEach(relatedEntity-> BeanUtils.setProperty(relatedEntity, relatedEntitySetterFld, pkValue));
 		// 获取关联对象对应的Service
 		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService != null){
@@ -205,26 +212,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public boolean saveBatch(Collection<T> entityList, int batchSize){
 		// 批量插入
-		beforeCreateEntities(entityList);
-		return super.saveBatch(entityList, batchSize);
+		this.beforeBatchCreate(entityList);
+		boolean success = super.saveBatch(entityList, batchSize);
+		this.afterBatchCreate(entityList);
+		return success;
 	}
 
-	/**
-	 * 用于创建之前的自动填充等场景调用
-	 */
-	protected void beforeCreateEntities(Collection<T> entityList){
-		if(V.isEmpty(entityList)){
-			return;
-		}
-		for(T entity : entityList){
-			beforeCreateEntity(entity);
-		}
-	}
 
 	/**
 	 * 用于更新之前的自动填充等场景调用
 	 */
-	protected void beforeUpdateEntity(T entity){
+	@Override
+	public void beforeUpdate(T entity){
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
 		}
@@ -237,15 +236,21 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean updateEntity(T entity) {
-		beforeUpdateEntity(entity);
+		this.beforeUpdate(entity);
 		boolean success = super.updateById(entity);
+		if(success) {
+			this.afterUpdate(entity);
+		}
 		return success;
 	}
 
 	@Override
 	public boolean updateEntity(T entity, Wrapper updateWrapper) {
-		beforeUpdateEntity(entity);
+		this.beforeUpdate(entity);
 		boolean success = super.update(entity, updateWrapper);
+		if(success) {
+			this.afterUpdate(entity);
+		}
 		return success;
 	}
 
@@ -262,9 +267,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return false;
 		}
 		for(T entity : entityList){
-			beforeUpdateEntity(entity);
+			this.beforeUpdate(entity);
 		}
 		boolean success = super.updateBatchById(entityList);
+		if(success) {
+			for(T entity : entityList){
+				this.afterUpdate(entity);
+			}
+		}
 		return success;
 	}
 
@@ -273,8 +283,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
 		}
-		boolean success = super.saveOrUpdate(entity);
-		return success;
+		Object id = getPrimaryKeyValue(entity);
+		if(id == null) {
+			return createEntity(entity);
+		}
+		return updateEntity(entity);
 	}
 
 	/**
@@ -303,7 +316,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean createOrUpdateEntities(Collection entityList) {
+	public boolean createOrUpdateEntities(Collection<T> entityList) {
 		if(V.isEmpty(entityList)){
 			warning("createOrUpdateEntities", "参数entityList为空!");
 			return false;
@@ -312,7 +325,23 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
 	}
 
-    @Override
+	@Override
+	public boolean deleteEntity(Class<T> entityClass, Serializable id) {
+		String pk = ContextHolder.getIdFieldName(entityClass);
+		this.beforeDelete(pk, id);
+		boolean success = deleteEntity(id);
+		if(success) {
+			this.afterDelete(pk, id);
+		}
+		return success;
+	}
+
+	@Override
+	public boolean deleteEntities(Class<T> entityClass, Collection<? extends Serializable> entityIds) {
+		return deleteEntities(entityIds);
+	}
+
+	@Override
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
                                                   SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList) {
         return createOrUpdateN2NRelations(driverIdGetter, driverId, followerIdGetter, followerIdList, null, null);
@@ -494,35 +523,42 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public <RE,R> boolean deleteEntityAndRelatedEntities(Serializable id, Class<RE> relatedEntityClass, ISetter<RE,R> relatedEntitySetter) {
+	public <RE,R> boolean deleteEntityAndRelatedEntities(Serializable id, Class<RE> relatedEntityClass, ISetter<RE, R> relatedEntitySetter) {
 		boolean success = deleteEntity(id);
 		if(!success){
 			log.warn("删除Entity失败: {}",id);
 			return false;
 		}
-		// 获取关联对象对应的Service
 		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
 		if(relatedEntityService == null){
-			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass.getName());
+			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass);
 			return false;
 		}
 		// 获取主键的关联属性
-		String attributeName = BeanUtils.convertToFieldName(relatedEntitySetter);
-		QueryWrapper<RE> queryWrapper = new QueryWrapper<RE>().eq(S.toSnakeCase(attributeName), id);
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		String relatedEntitySetterFld = BeanUtils.convertToFieldName(relatedEntitySetter);
+		QueryWrapper<RE> queryWrapper = new QueryWrapper<RE>().eq(propInfo.getColumnByField(relatedEntitySetterFld), id);
 		// 删除关联子表数据
 		return relatedEntityService.deleteEntities(queryWrapper);
 	}
 
 	@Override
 	public boolean deleteEntity(Serializable id) {
+		Class<T> entityClass = getEntityClass();
 		// 树结构，仅允许叶子节点进行删除操作
-		if(BaseTreeEntity.class.isAssignableFrom(getEntityClass())) {
+		if(BaseTreeEntity.class.isAssignableFrom(entityClass)) {
 			QueryWrapper<T> wrapper = new QueryWrapper<T>().eq(Cons.ColumnName.parent_id.name(), id);
 			if(exists(wrapper)) {
 				throw new BusinessException(Status.FAIL_VALIDATION, "当前节点下存在下级节点，不允许被删除！");
 			}
 		}
-		return super.removeById(id);
+		String pk = ContextHolder.getIdFieldName(entityClass);
+		this.beforeDelete(pk, id);
+		boolean success = super.removeById(id);
+		if(success) {
+			this.afterDelete(pk, id);
+		}
+		return success;
 	}
 
     @Override
@@ -537,7 +573,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityIds)){
 			return false;
 		}
-		return super.removeByIds(entityIds);
+		String pk = ContextHolder.getIdFieldName(entityClass);
+		this.beforeDelete(pk, entityIds);
+		boolean success = super.removeByIds(entityIds);
+		if(success) {
+			this.afterDelete(pk, entityIds);
+		}
+		return success;
 	}
 
 	@Override
@@ -661,10 +703,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public boolean exists(IGetter<T> getterFn, Object value) {
+	public <FT> boolean exists(SFunction<T, FT> getterFn, Object value) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String field = BeanUtils.convertToFieldName(getterFn);
-		String column = BindingCacheManager.getEntityInfoByClass(getEntityClass()).getColumnByField(field);
+		String column = this.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
 		queryWrapper.select(column).eq(column, value);
 		return exists(queryWrapper);
 	}
@@ -766,13 +807,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, IGetter<T> getterFn) {
+	public <ID> Map<ID, String> getId2NameMap(List<ID> entityIds, SFunction<T,?> getterFn) {
 		if(V.isEmpty(entityIds)){
 			return Collections.emptyMap();
 		}
-		String fieldName = BeanUtils.convertToFieldName(getterFn);
 		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
-		String columnName = entityInfo.getColumnByField(fieldName);
+		String columnName = entityInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
 		QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(
 				entityInfo.getIdColumn(),
 				columnName
@@ -792,17 +832,17 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public Map<String, T> getId2EntityMap(List entityIds, IGetter<T>... selectFlds) {
+	public Map<String, T> getId2EntityMap(List entityIds, SFunction<T,?>... getterFns) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
 		String pk = ContextHolder.getIdColumnName(getEntityClass());
-		if(V.notEmpty(selectFlds)) {
-			List<String> columns = new ArrayList<>();
+		if(V.notEmpty(getterFns)) {
+			List<String> columns = new ArrayList<>(getterFns.length+1);
 			columns.add(pk);
 			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
-			for(IGetter<T> getter : selectFlds) {
-				String fieldName = BeanUtils.convertToFieldName(getter);
+			for(SFunction<T,?> getter : getterFns) {
+				String fieldName = BeanUtils.convertSFunctionToFieldName(getter);
 				String columnName = entityInfo.getColumnByField(fieldName);
-				if(columnName != null) {
+				if(!columns.contains(columnName)) {
 					columns.add(columnName);
 				}
 			}
@@ -1019,11 +1059,20 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	/**
+	 * 获取字段对应的列名
+	 * @return
+	 */
+	protected String getColumnByField(String fieldName) {
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		return propInfo.getColumnByField(fieldName);
+	}
+
+	/**
 	 * 获取主键值
 	 * @param entity
 	 * @return
 	 */
-	private Object getPrimaryKeyValue(Object entity){
+	protected Object getPrimaryKeyValue(Object entity){
 		String pk = ContextHolder.getIdFieldName(entity.getClass());
 		return BeanUtils.getProperty(entity, pk);
 	}

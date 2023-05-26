@@ -17,10 +17,13 @@ package com.diboot.core.data.query;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.config.Cons;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.IGetter;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
@@ -70,6 +73,10 @@ public class QueryCondition implements Serializable {
     }
 
     public QueryCondition(Map<String, Object> queryParamMap) {
+        initQueryParamMap(queryParamMap);
+    }
+
+    private void initQueryParamMap(Map<String, Object> queryParamMap) {
         if(V.notEmpty(queryParamMap)) {
             for(Map.Entry<String, Object> entry : queryParamMap.entrySet()) {
                 if(Pagination.isPaginationParam(entry.getKey())) {
@@ -78,6 +85,241 @@ public class QueryCondition implements Serializable {
                 addCriteria(new CriteriaItem(entry.getKey(), Comparison.EQ, entry.getValue()));
             }
         }
+    }
+
+    public <T,FT> QueryCondition selectFields(SFunction<T,FT> ... fieldGetters) {
+        if(selectFields == null) {
+            selectFields = new ArrayList<>();
+        }
+        for(SFunction<T,FT> getter : fieldGetters) {
+            selectFields.add(BeanUtils.convertSFunctionToFieldName(getter));
+        }
+        return this;
+    }
+
+    public QueryCondition selectFields(String... fieldNames) {
+        if(selectFields == null) {
+            selectFields = new ArrayList<>();
+        }
+        selectFields.addAll(Arrays.asList(fieldNames));
+        return this;
+    }
+
+    public <T,FT> QueryCondition eq(SFunction<T,FT> fieldGetter, Object value) {
+        if(value != null && value instanceof Collection) {
+            return in(fieldGetter, value);
+        }
+        appendCriteria(fieldGetter, Comparison.EQ, value);
+        return this;
+    }
+
+    public QueryCondition eq(String fieldName, Object value) {
+        if(value != null && value instanceof Collection) {
+            return in(fieldName, value);
+        }
+        appendCriteria(fieldName, Comparison.EQ, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition ge(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.GE, value);
+        return this;
+    }
+
+    public QueryCondition ge(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.GE, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition gt(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.GT, value);
+        return this;
+    }
+
+    public QueryCondition gt(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.GT, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition between(SFunction<T,FT> fieldGetter, Object beginValue, Object endValue) {
+        appendCriteria(fieldGetter, Comparison.BETWEEN, Arrays.asList(beginValue, endValue));
+        return this;
+    }
+
+    public QueryCondition between(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.BETWEEN, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition in(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.IN, value);
+        return this;
+    }
+
+    public QueryCondition in(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.IN, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition isNull(SFunction<T,FT> fieldGetter) {
+        appendCriteria(fieldGetter, Comparison.IS_NULL, null);
+        return this;
+    }
+
+    public QueryCondition isNull(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.IS_NULL, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition isNotNull(SFunction<T,FT> fieldGetter) {
+        appendCriteria(fieldGetter, Comparison.IS_NOT_NULL, null);
+        return this;
+    }
+
+    public QueryCondition isNotNull(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.IS_NOT_NULL, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition le(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.LE, value);
+        return this;
+    }
+
+    public QueryCondition le(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.LE, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition lt(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.LT, value);
+        return this;
+    }
+
+    public QueryCondition lt(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.LT, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition like(SFunction<T,FT> fieldGetter, Object value) {
+        return contains(fieldGetter, value);
+    }
+
+    public QueryCondition like(String fieldName, Object value) {
+        return contains(fieldName, value);
+    }
+
+    public <T,FT> QueryCondition contains(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.CONTAINS, value);
+        return this;
+    }
+
+    public QueryCondition contains(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.CONTAINS, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition endsWith(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.ENDSWITH, value);
+        return this;
+    }
+
+    public QueryCondition endsWith(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.ENDSWITH, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition startsWith(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.STARTSWITH, value);
+        return this;
+    }
+
+    public QueryCondition startsWith(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.STARTSWITH, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition ne(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.NOT_EQ, value);
+        return this;
+    }
+
+    public QueryCondition ne(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.NOT_EQ, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition notIn(SFunction<T,FT> fieldGetter, Object value) {
+        appendCriteria(fieldGetter, Comparison.NOT_IN, value);
+        return this;
+    }
+
+    public QueryCondition notIn(String fieldName, Object value) {
+        appendCriteria(fieldName, Comparison.NOT_IN, value);
+        return this;
+    }
+
+    public <T,FT> QueryCondition orderByDesc(SFunction<T,FT> fieldGetter) {
+        return this.orderByDesc(BeanUtils.convertSFunctionToFieldName(fieldGetter));
+    }
+
+    public <T> QueryCondition orderByDesc(String fieldName) {
+        if(this.orderItems == null) {
+            this.orderItems = new ArrayList<>();
+        }
+        this.orderItems.add(fieldName + Cons.SEPARATOR_COLON + Cons.ORDER_DESC);
+        return this;
+    }
+
+    public <T,FT> QueryCondition orderByAsc(SFunction<T,FT> fieldGetter) {
+        return this.orderByAsc(BeanUtils.convertSFunctionToFieldName(fieldGetter));
+    }
+
+    public <T> QueryCondition orderByAsc(String fieldName) {
+        if(this.orderItems == null) {
+            this.orderItems = new ArrayList<>();
+        }
+        this.orderItems.add(fieldName);
+        return this;
+    }
+
+    public QueryCondition orderBy(String fieldName) {
+        if(this.orderItems == null) {
+            this.orderItems = new ArrayList<>();
+        }
+        this.orderItems.add(fieldName);
+        return this;
+    }
+
+    public <T,FT> void appendCriteria(SFunction<T,FT> fieldGetter, Comparison comparison, Object value) {
+        appendCriteria(BeanUtils.convertSFunctionToFieldName(fieldGetter), comparison, value);
+    }
+
+    public <T,FT> void appendCriteria(String fieldName, Comparison comparison, Object value) {
+        if(criteriaList == null) {
+            criteriaList = new ArrayList<>();
+        }
+        criteriaList.add(new CriteriaItem(fieldName, comparison, value));
+    }
+
+    /**
+     * 更新查询条件
+     * @param fieldGetter
+     * @return
+     */
+    public <T,FT> QueryCondition updateCriteria(SFunction<T,FT> fieldGetter, Comparison comparison, Object value) {
+        this.updateCriteria(BeanUtils.convertSFunctionToFieldName(fieldGetter), comparison, value);
+        return this;
+    }
+
+    /**
+     * 移除查询条件
+     * @param fieldGetter
+     * @return
+     */
+    public <T,FT> QueryCondition removeCriteria(SFunction<T,FT> fieldGetter) {
+        this.removeCriteria(BeanUtils.convertSFunctionToFieldName(fieldGetter));
+        return this;
     }
 
     public QueryCondition addCriteria(CriteriaItem... criteriaItems) {
@@ -138,14 +380,6 @@ public class QueryCondition implements Serializable {
         return this;
     }
 
-    public QueryCondition selectFields(String... fieldNames) {
-        if(selectFields == null) {
-            selectFields = new ArrayList<>();
-        }
-        selectFields.addAll(Arrays.asList(fieldNames));
-        return this;
-    }
-
     /**
      * 获取查询参数值
      * @param field
@@ -185,11 +419,6 @@ public class QueryCondition implements Serializable {
         this.criteriaList = null;
         this.orderItems = null;
         this.queryParamMap = null;
-        return this;
-    }
-
-    public QueryCondition orderBy(String orderItem) {
-        this.orderItems = Arrays.asList(orderItem);
         return this;
     }
 

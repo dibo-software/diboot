@@ -33,6 +33,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class BaseTreeEntity extends BaseEntity {
+    private static final long serialVersionUID = 10205L;
 
     /**
      * 父级ID
