@@ -16,7 +16,9 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -59,8 +61,8 @@ public class TestCountBinder {
     @Test
     public void testSimpleBinder(){
         // 加载测试数据
-        LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Department::getId, 10001L, 10003L);
+        LambdaQueryWrapper<Department> queryWrapper = Wrappers.<Department>lambdaQuery()
+                .in(Department::getId, 10001L, 10003L);
         List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
         List<CountSimpleVO> voList = Binder.convertAndBindRelations(entityList, CountSimpleVO.class);

@@ -87,7 +87,7 @@ public class QueryCondition implements Serializable {
         }
     }
 
-    public <T,FT> QueryCondition selectFields(SFunction<T,FT> ... fieldGetters) {
+    public <T,FT> QueryCondition select(SFunction<T,FT> ... fieldGetters) {
         if(selectFields == null) {
             selectFields = new ArrayList<>();
         }
@@ -97,7 +97,7 @@ public class QueryCondition implements Serializable {
         return this;
     }
 
-    public QueryCondition selectFields(String... fieldNames) {
+    public QueryCondition select(String... fieldNames) {
         if(selectFields == null) {
             selectFields = new ArrayList<>();
         }
@@ -451,7 +451,7 @@ public class QueryCondition implements Serializable {
      * @param <T>
      * @return
      */
-    public <T> QueryWrapper<T> buildQueryWrapper(Class<T> entityClass) {
+    public <T> QueryWrapper<T> toQueryWrapper(Class<T> entityClass) {
         EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
         QueryWrapper<T> query = Wrappers.query();
         // 指定查询字段

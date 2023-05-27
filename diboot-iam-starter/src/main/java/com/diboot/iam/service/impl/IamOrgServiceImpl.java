@@ -145,14 +145,14 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
 
     @Override
     public List<String> getOrgIdsByManagerId(String managerId) {
-        LambdaQueryWrapper<IamOrg> queryWrapper = new LambdaQueryWrapper<IamOrg>()
+        LambdaQueryWrapper<IamOrg> queryWrapper = Wrappers.<IamOrg>lambdaQuery()
                 .eq(IamOrg::getManagerId, managerId);
         return getValuesOfField(queryWrapper, IamOrg::getId);
     }
 
     @Override
     public Map<String, LabelValue> getLabelValueMap(List<String> ids) {
-        LambdaQueryWrapper<IamOrg> queryWrapper = new QueryWrapper<IamOrg>().lambda()
+        LambdaQueryWrapper<IamOrg> queryWrapper = Wrappers.<IamOrg>lambdaQuery()
                 .select(IamOrg::getName, IamOrg::getId, IamOrg::getCode)
                 .in(IamOrg::getId, ids);
         // 返回构建条件

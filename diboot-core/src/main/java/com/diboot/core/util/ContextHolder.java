@@ -148,16 +148,6 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
     }
 
     /**
-     * 根据Entity获取对应的Service (已废弃，请调用getBaseServiceByEntity)
-     * @param entity
-     * @return
-     */
-    @Deprecated
-    public static IService getServiceByEntity(Class entity){
-        return getIServiceByEntity(entity);
-    }
-
-    /**
      * 根据Entity获取对应的IService实现
      * @param entity
      * @return

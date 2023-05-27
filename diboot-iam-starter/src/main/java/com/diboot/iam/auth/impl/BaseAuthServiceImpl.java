@@ -17,6 +17,7 @@ package com.diboot.iam.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -156,7 +157,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
      */
     protected void lockAccountIfRequired(IamAccount latestAccount) {
         // 查询最新1天内的失败记录
-        LambdaQueryWrapper<IamLoginTrace> queryWrapper = new LambdaQueryWrapper<IamLoginTrace>()
+        LambdaQueryWrapper<IamLoginTrace> queryWrapper = Wrappers.<IamLoginTrace>lambdaQuery()
                 .select(IamLoginTrace::isSuccess)
                 .eq(IamLoginTrace::getUserType, latestAccount.getUserType())
                 .eq(IamLoginTrace::getAuthType, latestAccount.getAuthType())

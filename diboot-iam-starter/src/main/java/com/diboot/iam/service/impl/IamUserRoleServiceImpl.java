@@ -257,7 +257,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
      */
     private String getSuperAdminRoleId(){
         if(ROLE_ID_SUPER_ADMIN == null){
-            LambdaQueryWrapper<IamRole> queryWrapper = new LambdaQueryWrapper<IamRole>()
+            LambdaQueryWrapper<IamRole> queryWrapper = Wrappers.<IamRole>lambdaQuery()
                     .select(IamRole::getId)
                     .eq(IamRole::getCode, Cons.ROLE_SUPER_ADMIN);
             IamRole admin = iamRoleService.getSingleEntity(queryWrapper);

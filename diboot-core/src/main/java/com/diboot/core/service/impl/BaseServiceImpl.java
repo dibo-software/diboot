@@ -193,20 +193,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean createEntities(Collection<T> entityList){
+	public boolean createEntities(Collection entityList){
 		if(V.isEmpty(entityList)){
 			return false;
 		}
-		if(DbType.SQL_SERVER.getDb().equalsIgnoreCase(ContextHolder.getDatabaseType())){
-			for(T entity : entityList){
-				createEntity(entity);
-			}
-			return true;
-		}
-		else{
-			// 批量插入
-			return saveBatch(entityList, BaseConfig.getBatchSize());
-		}
+		// 批量插入
+		return saveBatch(entityList, BaseConfig.getBatchSize());
 	}
 
 	@Override
@@ -217,7 +209,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		this.afterBatchCreate(entityList);
 		return success;
 	}
-
 
 	/**
 	 * 用于更新之前的自动填充等场景调用
@@ -262,17 +253,17 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean updateEntities(Collection<T> entityList) {
+	public boolean updateEntities(Collection entityList) {
 		if(V.isEmpty(entityList)){
 			return false;
 		}
-		for(T entity : entityList){
-			this.beforeUpdate(entity);
+		for(Object entity : entityList){
+			this.beforeUpdate((T)entity);
 		}
 		boolean success = super.updateBatchById(entityList);
 		if(success) {
-			for(T entity : entityList){
-				this.afterUpdate(entity);
+			for(Object entity : entityList){
+				this.afterUpdate((T)entity);
 			}
 		}
 		return success;
@@ -316,7 +307,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public boolean createOrUpdateEntities(Collection<T> entityList) {
+	public boolean createOrUpdateEntities(Collection entityList) {
 		if(V.isEmpty(entityList)){
 			warning("createOrUpdateEntities", "参数entityList为空!");
 			return false;

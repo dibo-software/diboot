@@ -17,6 +17,7 @@ package com.diboot.iam.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
@@ -73,7 +74,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
     @Override
     protected Wrapper buildQueryWrapper(IamAuthToken iamAuthToken) {
         // 查询最新的记录
-        LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
+        LambdaQueryWrapper<IamAccount> queryWrapper = Wrappers.<IamAccount>lambdaQuery()
                 .select(IamAccount::getAuthAccount, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(V.notEmpty(iamAuthToken.getTenantId()) ,IamAccount::getTenantId, iamAuthToken.getTenantId())

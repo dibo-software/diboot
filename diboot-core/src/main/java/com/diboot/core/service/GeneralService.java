@@ -1,21 +1,7 @@
 package com.diboot.core.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.diboot.core.dto.SortParamDTO;
-import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.IGetter;
-import com.diboot.core.util.ISetter;
-import com.diboot.core.vo.LabelValue;
-import com.diboot.core.vo.Pagination;
-import org.springframework.lang.Nullable;
-
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * 通用服务接口Service
@@ -37,7 +23,7 @@ public interface GeneralService<T> {
      * @param entityList 实体对象列表
      * @return true:成功, false: 失败
      */
-    boolean createEntities(Collection<T> entityList);
+    boolean createEntities(Collection entityList);
 
     /**
      * 更新Entity实体
@@ -51,7 +37,7 @@ public interface GeneralService<T> {
      * @param entityList
      * @return
      */
-    boolean updateEntities(Collection<T> entityList);
+    boolean updateEntities(Collection entityList);
 
     /***
      * 创建或更新entity（entity.id存在则新建，否则更新）
@@ -65,7 +51,7 @@ public interface GeneralService<T> {
      * @param entityList
      * @return
      */
-    boolean createOrUpdateEntities(Collection<T> entityList);
+    boolean createOrUpdateEntities(Collection entityList);
 
     /**
      * 根据主键删除实体

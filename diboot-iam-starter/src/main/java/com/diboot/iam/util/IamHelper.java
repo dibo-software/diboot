@@ -37,15 +37,6 @@ import java.util.Map;
 @Slf4j
 public class IamHelper {
 
-    /***
-     * 构建请求参数Map
-     * @return
-     */
-    @Deprecated
-    public static Map<String, Object> buildParamsMap(HttpServletRequest request) {
-        return HttpHelper.buildParamsMap(request);
-    }
-
     /**
      * 构建role-permission角色权限数据格式(合并role等)，用于前端适配
      * @param roleVOList

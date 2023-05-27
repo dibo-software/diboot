@@ -17,6 +17,7 @@ package com.diboot.iam.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.util.Encryptor;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
@@ -49,7 +50,7 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
     @Override
     protected Wrapper buildQueryWrapper(IamAuthToken iamAuthToken) {
         // 查询最新的记录
-        LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
+        LambdaQueryWrapper<IamAccount> queryWrapper = Wrappers.<IamAccount>lambdaQuery()
                 .select(IamAccount::getId, IamAccount::getAuthAccount, IamAccount::getAuthSecret, IamAccount::getSecretSalt, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(IamAccount::getAuthType, iamAuthToken.getAuthType())

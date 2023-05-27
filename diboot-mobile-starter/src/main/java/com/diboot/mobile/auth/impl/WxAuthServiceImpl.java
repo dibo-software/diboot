@@ -17,6 +17,7 @@ package com.diboot.mobile.auth.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.iam.auth.impl.BaseAuthServiceImpl;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.AuthCredential;
@@ -46,7 +47,7 @@ public class WxAuthServiceImpl extends BaseAuthServiceImpl {
     @Override
     protected Wrapper buildQueryWrapper(IamAuthToken iamAuthToken) {
         // 查询最新的记录
-        LambdaQueryWrapper<IamAccount> queryWrapper = new LambdaQueryWrapper<IamAccount>()
+        LambdaQueryWrapper<IamAccount> queryWrapper = Wrappers.<IamAccount>lambdaQuery()
                 .select(IamAccount::getAuthAccount, IamAccount::getUserType, IamAccount::getUserId, IamAccount::getStatus)
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(IamAccount::getAuthType, iamAuthToken.getAuthType())
