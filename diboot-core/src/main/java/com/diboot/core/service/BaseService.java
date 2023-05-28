@@ -274,6 +274,15 @@ public interface BaseService<T> extends GeneralService<T>{
     <FT> FT getValueOfField(Serializable idVal, SFunction<T, FT> getterFn);
 
     /**
+     * 获取entity某个属性值
+     * @param idFieldFn 查询字段
+     * @param idVal 查询字段值
+     * @param getterFn 返回属性getter
+     * @return
+     */
+    <FT> FT getValueOfField(SFunction<T, ?> idFieldFn, Serializable idVal, SFunction<T, FT> getterFn);
+
+    /**
      * 获取指定条件的Entity ID集合
      * @param queryWrapper
      * @param getterFn

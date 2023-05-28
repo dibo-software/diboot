@@ -130,6 +130,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public <FT> FT getValueOfField(SFunction<T, ?> queryFieldFn, Serializable queryFieldVal, SFunction<T, FT> getterFn) {
+		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
+				.select(queryFieldFn, getterFn)
+				.eq(queryFieldFn, queryFieldVal);
+		T entity = getSingleEntity(queryWrapper);
+		if(entity == null){
+			return null;
+		}
+		return getterFn.apply(entity);
+	}
+
+	@Override
 	public boolean createEntity(T entity) {
 		if(entity == null){
 			warning("createEntity", "参数entity为null");
