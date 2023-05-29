@@ -1,6 +1,5 @@
 package com.diboot.core.service;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -52,20 +51,5 @@ public interface GeneralService<T> {
      * @return
      */
     boolean createOrUpdateEntities(Collection entityList);
-
-    /**
-     * 根据主键删除实体
-     * @param id 主键
-     * @return true:成功, false:失败
-     */
-    boolean deleteEntity(Class<T> entityClass, Serializable id);
-
-    /**
-     * 批量删除指定id的实体
-     * @param entityIds
-     * @return
-     * @throws Exception
-     */
-    boolean deleteEntities(Class<T> entityClass, Collection<? extends Serializable> entityIds);
 
 }

@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.diboot.core.dto.SortParamDTO;
-import com.diboot.core.util.*;
+import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import org.springframework.lang.Nullable;
@@ -168,72 +168,20 @@ public interface BaseService<T> extends GeneralService<T>{
     boolean deleteEntity(Serializable id);
 
     /**
+     * 根据主键删除实体
+     * @param fieldKey 字段名
+     * @param fieldVal 字段值
+     * @return true:成功, false:失败
+     */
+    boolean deleteEntity(String fieldKey, Object fieldVal);
+
+    /**
      * 批量删除指定id的实体
      * @param entityIds
      * @return
      * @throws Exception
      */
     boolean deleteEntities(Collection<? extends Serializable> entityIds);
-
-    /**
-     * 创建数据的前拦截
-     * @param entity
-     */
-    default void beforeCreate(T entity) {
-    }
-    /**
-     * 创建数据的后拦截
-     * @param entity
-     */
-    default void afterCreate(T entity) {
-    }
-    /**
-     * 批量创建数据的前拦截
-     * @param entityList
-     */
-    default void beforeBatchCreate(Collection<T> entityList) {
-        if(V.isEmpty(entityList)){
-            return;
-        }
-        for(T entity : entityList){
-            beforeCreate(entity);
-        }
-    }
-    /**
-     * 批量创建数据的后拦截
-     * @param entityList
-     */
-    default void afterBatchCreate(Collection<T> entityList) {
-        for(T entity : entityList){
-            afterCreate(entity);
-        }
-    }
-    /**
-     * 更新数据的前拦截
-     * @param entity
-     */
-    default void beforeUpdate(T entity) {
-    }
-    /**
-     * 更新数据的后拦截
-     * @param entity
-     */
-    default void afterUpdate(T entity) {
-    }
-    /**
-     * 删除数据的前拦截，值可能为单值或集合
-     * @param fieldKey
-     * @param fieldVal
-     */
-    default void beforeDelete(String fieldKey, Object fieldVal) {
-    }
-    /**
-     * 删除数据的后拦截，值可能为单值或集合
-     * @param fieldKey
-     * @param fieldVal
-     */
-    default void afterDelete(String fieldKey, Object fieldVal) {
-    }
 
     /**
      * 获取符合条件的entity记录总数

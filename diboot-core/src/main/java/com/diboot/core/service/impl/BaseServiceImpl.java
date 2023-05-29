@@ -15,7 +15,6 @@
  */
 package com.diboot.core.service.impl;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -163,11 +162,48 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	/**
 	 * 用于创建之前的自动填充等场景调用
 	 */
-	@Override
-	public void beforeCreate(T entity) {
+	protected void beforeCreate(T entity) {
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
 		}
+	}
+	/**
+	 * 创建数据的后拦截
+	 * @param entity
+	 */
+	protected void afterCreate(T entity) {
+	}
+	/**
+	 * 批量创建数据的前拦截
+	 * @param entityList
+	 */
+	protected void beforeBatchCreate(Collection<T> entityList) {
+	}
+	/**
+	 * 批量创建数据的后拦截
+	 * @param entityList
+	 */
+	protected void afterBatchCreate(Collection<T> entityList) {
+	}
+	/**
+	 * 更新数据的后拦截
+	 * @param entity
+	 */
+	protected void afterUpdate(T entity) {
+	}
+	/**
+	 * 删除数据的前拦截，值可能为单值或集合
+	 * @param fieldKey
+	 * @param fieldVal
+	 */
+	protected void beforeDelete(String fieldKey, Object fieldVal) {
+	}
+	/**
+	 * 删除数据的后拦截，值可能为单值或集合
+	 * @param fieldKey
+	 * @param fieldVal
+	 */
+	protected void afterDelete(String fieldKey, Object fieldVal) {
 	}
 
 	@Override
@@ -225,8 +261,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	/**
 	 * 用于更新之前的自动填充等场景调用
 	 */
-	@Override
-	public void beforeUpdate(T entity){
+	protected void beforeUpdate(T entity){
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
 		}
@@ -329,19 +364,21 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public boolean deleteEntity(Class<T> entityClass, Serializable id) {
-		String pk = ContextHolder.getIdFieldName(entityClass);
-		this.beforeDelete(pk, id);
-		boolean success = deleteEntity(id);
+	public boolean deleteEntity(String fieldKey, Object fieldVal) {
+		// 获取主键的关联属性
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		String column = propInfo.getColumnByField(fieldKey);
+		if(column == null) {
+			column = fieldKey;
+		}
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
+				.eq(column, fieldVal);
+		this.beforeDelete(fieldKey, fieldVal);
+		boolean success = super.remove(queryWrapper);
 		if(success) {
-			this.afterDelete(pk, id);
+			this.afterDelete(fieldKey, fieldVal);
 		}
 		return success;
-	}
-
-	@Override
-	public boolean deleteEntities(Class<T> entityClass, Collection<? extends Serializable> entityIds) {
-		return deleteEntities(entityIds);
 	}
 
 	@Override
