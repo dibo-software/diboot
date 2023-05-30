@@ -62,7 +62,7 @@ public class TestCountBinder {
     public void testSimpleBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = Wrappers.<Department>lambdaQuery()
-                .in(Department::getId, 10001L, 10003L);
+                .in(Department::getId, "10001", "10003");
         List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
         List<CountSimpleVO> voList = Binder.convertAndBindRelations(entityList, CountSimpleVO.class);
@@ -82,7 +82,7 @@ public class TestCountBinder {
     public void testComplexBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexVO.class);

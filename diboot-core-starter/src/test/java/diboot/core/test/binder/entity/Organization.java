@@ -34,7 +34,7 @@ public class Organization extends BaseEntity {
     private static final long serialVersionUID = -5889309041570465909L;
 
     @TableField
-    private Long parentId;
+    private String parentId;
 
     //@TableField
     private String name;
@@ -43,6 +43,6 @@ public class Organization extends BaseEntity {
     private String telphone;
 
     @TableField
-    private Long managerId;
+    private String managerId;
 
 }

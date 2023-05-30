@@ -39,7 +39,7 @@ import java.util.List;
 public class ComplexSplitVO extends Organization {
 
     // ，拆分的id值绑定 （中间表1-n主键绑定）
-    @BindEntityList(entity = TestUploadFile.class, condition="this.manager_id=user.id AND user.`character`=uuid",
+    @BindEntityList(entity = TestUploadFile.class, condition="this.manager_id=user.id AND user.`character`=id",
             splitBy= Cons.SEPARATOR_COMMA)
 //    @BindEntityList(entity = TestUploadFile.class, condition="this.manager_id=\"user\".id AND \"user\".character=uuid",
 //            splitBy= Cons.SEPARATOR_COMMA)
@@ -47,7 +47,7 @@ public class ComplexSplitVO extends Organization {
 
     // ，拆分的id值绑定
     @BindFieldList(entity = TestUploadFile.class, field = "fileName",
-            condition="this.manager_id=user.id AND user.`character`=uuid", splitBy= Cons.SEPARATOR_COMMA)
+            condition="this.manager_id=user.id AND user.`character`=id", splitBy= Cons.SEPARATOR_COMMA)
 //    @BindFieldList(entity = TestUploadFile.class, field = "fileName",
 //            condition="this.manager_id=\"user\".id AND \"user\".character=uuid", splitBy= Cons.SEPARATOR_COMMA)
     private List<String> managerPhotoNames;

@@ -151,6 +151,11 @@ public class TestFieldBinder {
         QueryWrapper<Organization> queryWrapper = new QueryWrapper<>();
         queryWrapper.isNotNull("manager_id");
 
+        List<Organization> organizations = organizationService.getEntityList(queryWrapper);
+        List<OrganizationVO> vos = Binder.convertAndBindRelations(organizations, OrganizationVO.class);
+        for(OrganizationVO vo : vos) {
+            System.out.println(JSON.stringify(vo));
+        }
         List<OrganizationVO> voList = organizationService.getViewObjectList(queryWrapper, null, OrganizationVO.class);
         for(OrganizationVO vo : voList){
             System.out.println(vo.getManagerGenderLabel());
