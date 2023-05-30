@@ -45,11 +45,11 @@ public class Department extends BaseEntity {
 
     @BindQuery(comparison = Comparison.EQ, strategy = Strategy.INCLUDE_NULL)
     @TableField
-    private Long parentId;
+    private String parentId;
 
     @TableField
     @DataAccessCheckpoint()
-    private Long orgId;
+    private String orgId;
 
     @BindQuery(comparison = Comparison.STARTSWITH)
     @TableField

@@ -47,8 +47,6 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class IamPluginInitializer implements ApplicationRunner {
     @Autowired
-    private IamProperties iamProperties;
-    @Autowired
     private Environment environment;
 
     @Override
@@ -88,6 +86,7 @@ public class IamPluginInitializer implements ApplicationRunner {
             // 插入数据字典
             for(String dictJson : DICT_INIT_DATA){
                 DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
+                dictVo.setParentId(Cons.ID_PREVENT_NULL);
                 dictionaryService.createDictAndChildren(dictVo);
             }
             DICT_INIT_DATA = null;

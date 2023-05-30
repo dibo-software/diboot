@@ -38,16 +38,16 @@ import java.util.List;
 public class DepartmentVO {
     private static final long serialVersionUID = -4849732665419794547L;
     @TableField
-    private Long id;
+    private String id;
 
     @TableField
-    private Long parentId;
+    private String parentId;
 
     @TableField(exist = false)
     private String name;
 
     @TableField
-    private Long orgId;
+    private String orgId;
 
     // 关联Entity
     @BindEntity(entity = Department.class, condition = "this.parent_id=id") // AND ...

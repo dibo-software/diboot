@@ -59,7 +59,7 @@ public class JsonTest {
         user = new User();
         user.setId("123");
         user.setUsername("zhangs").setCreateTime(LocalDateTime.now());
-        user.setBirthdate(LocalDate.parse("1988-09-12 12:34"));
+        user.setBirthdate(LocalDate.parse("1988-09-12"));
         user.setCreateTime(LocalDateTime.now());
         String jsonStr = JSON.stringify(user);
         Assert.assertTrue(jsonStr != null);
@@ -86,7 +86,7 @@ public class JsonTest {
         User user = new User();
         user.setId("123");
         user.setUsername("zhangs").setCreateTime(LocalDateTime.now());
-        user.setBirthdate(LocalDate.parse("1988-09-12 12:34"));
+        user.setBirthdate(LocalDate.parse("1988-09-12"));
         List<User> userList = new ArrayList<>();
         userList.add(user);
 

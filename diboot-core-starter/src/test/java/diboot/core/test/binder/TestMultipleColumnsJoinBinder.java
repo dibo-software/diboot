@@ -17,6 +17,7 @@ package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.V;
@@ -53,7 +54,7 @@ public class TestMultipleColumnsJoinBinder {
     public void testBinder(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
-        queryWrapper.isNotNull("parent_id");
+        queryWrapper.isNotNull("parent_id").ne("parent_id", Cons.ID_PREVENT_NULL);
         List<String> ids = dictionaryService.getValuesOfField(queryWrapper, Dictionary::getId);
         // 加载测试数据
         List<MulColJoinVO> voList = new ArrayList<>();

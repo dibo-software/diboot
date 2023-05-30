@@ -1,5 +1,6 @@
 package diboot.core.test.binder.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.entity.BaseTreeEntity;
 import lombok.Getter;
 import lombok.Setter;

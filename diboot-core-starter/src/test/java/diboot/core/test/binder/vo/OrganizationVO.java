@@ -36,13 +36,13 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrganizationVO {
 
-    private Long id;
+    private String id;
 
-    private Long parentId;
+    private String parentId;
 
     private String name;
 
-    private Long managerId;
+    private String managerId;
 
     // 关联Entity
     @BindEntity(entity = Organization.class, condition = "this.parent_id=id") // AND ...

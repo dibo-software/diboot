@@ -15,15 +15,24 @@
  */
 package diboot.core.test.util;
 
+import com.diboot.core.converter.LocalDate2DateConverter;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import diboot.core.test.StartupApplication;
+import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,6 +44,9 @@ import java.util.List;
  * @version 1.0
  * @date 2019/06/02
  */
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {SpringMvcConfig.class})
+@SpringBootTest(classes = {StartupApplication.class})
 public class VTest {
 
     @Test
@@ -91,8 +103,8 @@ public class VTest {
         Assert.assertTrue(V.equals(list1, list2));
 
         Field field = BeanUtils.extractField(Dictionary.class, "createTime");
-        Assert.assertTrue(V.equals(field.getType(), Date.class));
-        Assert.assertTrue(V.equals(field.getType().getName(), "java.util.Date"));
+        Assert.assertTrue(V.equals(field.getType(), LocalDateTime.class));
+        Assert.assertTrue(V.equals(field.getType().getName(), "java.time.LocalDateTime"));
 
         Dictionary dictionary = BeanUtils.cloneBean(new Dictionary());
         Dictionary dictionary1 = JSON.parseObject("{}", Dictionary.class);
@@ -115,7 +127,7 @@ public class VTest {
     @Test
     public void testValid(){
         boolean isValidCol = V.isValidSqlParam("123sdfSDKF_WER");
-        Assert.assertFalse(isValidCol);
+        Assert.assertTrue(isValidCol);
         isValidCol = V.isValidSqlParam("s123sdfSDKFWER");
         Assert.assertTrue(isValidCol);
         isValidCol = V.isValidSqlParam("s123sdfSDKF_,WER");

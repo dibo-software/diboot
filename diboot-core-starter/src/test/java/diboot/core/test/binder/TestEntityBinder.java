@@ -53,7 +53,7 @@ public class TestEntityBinder {
     public void testBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityBinderVO> voList = Binder.convertAndBindRelations(userList, EntityBinderVO.class);
@@ -67,7 +67,7 @@ public class TestEntityBinder {
             Assert.assertNotNull(vo.getOrganizationVO());
             System.out.println(JSON.stringify(vo.getOrganizationVO()));
             System.out.println(JSON.stringify(vo));
-            if(vo.getId().equals(1004L)){
+            if(vo.getId().equals("1004")){
                 Assert.assertNotNull(vo.getDepartment().getExtjsonarr());
             }
         }

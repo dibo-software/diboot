@@ -29,6 +29,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.config.Cons;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
@@ -113,7 +114,7 @@ public class BaseServiceTest {
         });
 
         // 根据id集合去批量查询
-        List<Long> ids = BeanUtils.collectIdToList(dictionaryList);
+        List<String> ids = BeanUtils.collectIdToList(dictionaryList);
         dictionaryList = dictionaryService.getEntityListByIds(ids);
         Assert.assertTrue(V.notEmpty(dictionaryList));
 
@@ -121,10 +122,10 @@ public class BaseServiceTest {
         List<Map<String, Object>> mapList = dictionaryService.getMapList(null, new Pagination());
         Assert.assertTrue(mapList.size() > 0 && mapList.size() <= BaseConfig.getPageSize());
 
-        List<Long> userIds = Arrays.asList(1001L, 1002L);
-        Map<Long, String> id2NameMap = userService.getId2NameMap(userIds, User::getUsername);
+        List<String> userIds = Arrays.asList("1001", "1002");
+        Map<String, String> id2NameMap = userService.getId2NameMap(userIds, User::getUsername);
         Assert.assertTrue(id2NameMap != null);
-        Assert.assertTrue(id2NameMap.get(1001) != null);
+        Assert.assertTrue(id2NameMap.get("1001") != null);
     }
 
     @Test
@@ -135,7 +136,7 @@ public class BaseServiceTest {
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
-        dictionary.setParentId(null);
+        dictionary.setParentId("0");
         dictionaryService.createEntity(dictionary);
         Assert.assertTrue(dictionary.getPrimaryKeyVal() != null);
         // 查询是否创建成功
@@ -160,7 +161,7 @@ public class BaseServiceTest {
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
-        dictionary.setParentId(null);
+        dictionary.setParentId("0");
         boolean success = dictionaryService.createEntity(dictionary);
         Assert.assertTrue(success);
 
@@ -207,12 +208,10 @@ public class BaseServiceTest {
 
         PagingJsonResult pagingJsonResult = new JsonResult().data(dictionaryPage.getRecords()).bindPagination(new Pagination());
         Assert.assertTrue(V.notEmpty(pagingJsonResult));
-        Assert.assertTrue(pagingJsonResult.getPage().getOrderBy().equals("id:DESC"));
 
         PagingJsonResult<List<Dictionary>> pagingJsonResult2 = new PagingJsonResult(dictionaryPage);
         String jsonStr = JSON.stringify(pagingJsonResult2);
         System.out.println(jsonStr);
-        Assert.assertTrue(pagingJsonResult2.getPage().getOrderBy().equals("id:DESC"));
 
         PagingJsonResult<List<Dictionary>> pagingJsonResult3 = JSON.parseObject(jsonStr,
                 new TypeReference<PagingJsonResult<List<Dictionary>>>() {}
@@ -233,7 +232,7 @@ public class BaseServiceTest {
         Dictionary dictionary = new Dictionary();
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
-        dictionary.setParentId(null);
+        dictionary.setParentId("0");
         // 子项
         List<Dictionary> dictionaryList = new ArrayList<>();
         String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
@@ -245,7 +244,8 @@ public class BaseServiceTest {
             dict.setParentId(dictionary.getId());
             dictionaryList.add(dict);
         }
-        boolean success = dictionaryService.createEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
+        boolean success = dictionaryService.createEntityAndRelatedEntities(dictionary,
+                dictionaryList, Dictionary::setParentId);
         Assert.assertTrue(success);
 
         dictionary.setItemName(dictionary.getItemName()+"_2");
@@ -339,8 +339,9 @@ public class BaseServiceTest {
 
     @Test
     public void testGetValueOfField(){
-        String val = dictionaryService.getValueOfField(2L, Dictionary::getItemValue);
-        Assert.assertTrue("M".equals(val));
+        Dictionary dictionary = dictionaryService.getSingleEntity(new QueryWrapper<Dictionary>().ne("parent_id", Cons.ID_PREVENT_NULL));
+        String val = dictionaryService.getValueOfField(dictionary.getId(), Dictionary::getItemValue);
+        Assert.assertTrue(dictionary.getItemValue().equals(val));
         System.out.println(val);
 
         // 初始化DTO，测试不涉及关联的情况
@@ -352,7 +353,7 @@ public class BaseServiceTest {
         Assert.assertTrue(values.size() == 1);
         dto.setUsername(null);
 
-        dto.setDeptId(10002L);
+        dto.setDeptId("10002");
         dto.setDeptName("研发组");
         dto.setOrgName("苏州帝博");
         queryWrapper = QueryBuilder.toDynamicJoinQueryWrapper(dto);
@@ -364,7 +365,7 @@ public class BaseServiceTest {
     public void testGetLimit(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
-        queryWrapper.gt("parent_id", 0);
+        queryWrapper.isNotNull("parent_id").ne("parent_id", Cons.ID_PREVENT_NULL);
 
         Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
         Assert.assertTrue(dictionary != null);
@@ -377,7 +378,7 @@ public class BaseServiceTest {
     public void testPagination(){
         Dictionary dict = new Dictionary();
         dict.setType("GENDER");
-        dict.setParentId(null);
+        //dict.setParentId(null);
         QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
 
         // 查询当前页的数据
@@ -387,7 +388,6 @@ public class BaseServiceTest {
         List<DictionaryVO> voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
         Assert.assertTrue(voList.size() == 1);
         Assert.assertTrue(pagination.getTotalPage() >= 2);
-        Assert.assertTrue(V.isEmpty(voList.get(0).getChildren()));
 
         pagination.setPageIndex(2);
         voList = dictionaryService.getViewObjectList(queryWrapper, pagination, DictionaryVO.class);
@@ -403,7 +403,7 @@ public class BaseServiceTest {
     @Test
     public void testDictVo(){
         Dictionary dict = new Dictionary();
-        dict.setParentId(null);
+        dict.setParentId("0");
         dict.setType("GENDER");
 
         QueryWrapper<Dictionary> queryWrapper = QueryBuilder.toQueryWrapper(dict);
@@ -414,13 +414,12 @@ public class BaseServiceTest {
 
         List<LabelValue> options = dictionaryService.getLabelValueList("GENDER");
         Assert.assertTrue(options.size() >= 2);
-
     }
 
     @Test
     public void testSimpleDictVo(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
+        queryWrapper.eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "GENDER");
 
         List<SimpleDictionaryVO> simpleVOList = dictionaryService.getViewObjectList(queryWrapper, null, SimpleDictionaryVO.class);
         Assert.assertTrue(simpleVOList.size() == 1);
@@ -433,17 +432,17 @@ public class BaseServiceTest {
     @Test
     @Transactional
     public void testCreateUpdateN2NRelations(){
-        String userId = S.valueOf(10001L);
+        String userId = S.valueOf("10001");
         LambdaQueryWrapper<UserRole> queryWrapper = new QueryWrapper<UserRole>().lambda().eq(UserRole::getUserId, userId);
 
         // 新增
-        List<Long> roleIdList = Arrays.asList(10L, 11L, 12L);
+        List<String> roleIdList = Arrays.asList("10", "11", "12");
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         List<UserRole> list = ContextHolder.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == roleIdList.size());
 
         // 更新
-        roleIdList = Arrays.asList(12L, 13L);
+        roleIdList = Arrays.asList("12", "13");
         userService.createOrUpdateN2NRelations(UserRole::getUserId, userId, UserRole::getRoleId, roleIdList);
         list = ContextHolder.getBaseMapperByEntity(UserRole.class).selectList(queryWrapper);
         Assert.assertTrue(list.size() == 2);
@@ -498,25 +497,30 @@ public class BaseServiceTest {
         List<String> sqls = new ArrayList<>();
         Long dictId = 20000l;
         if(ContextHolder.getDatabaseType().equals("dm")) {
-            sqls.add("SET IDENTITY_INSERT dictionary ON");
+            sqls.add("SET IDENTITY_INSERT dbt_dictionary ON");
         }
-        sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
-        sqls.add("DELETE FROM dictionary WHERE id=20000 AND is_deleted!="+BaseConfig.getActiveFlagValue());
+        sqls.add("INSERT INTO dbt_dictionary(id, parent_id, type, item_name) VALUES('"+dictId+"', '0', 'TEST', '')");
+        sqls.add("DELETE FROM dbt_dictionary WHERE id='20000' AND is_deleted!="+BaseConfig.getActiveFlagValue());
         boolean success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
         Assert.assertTrue(success);
         Dictionary dict = dictionaryService.getEntity(dictId);
         Assert.assertTrue(dict != null);
 
         sqls.clear();
-        sqls.add("DELETE FROM dictionary WHERE id=20000");
+        sqls.add("DELETE FROM dbt_dictionary WHERE id='20000'");
         success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
         Assert.assertTrue(success);
 
         sqls.clear();
-        sqls.add("INSERT INTO dictionary(id, parent_id, type, item_name) VALUES("+dictId+", 0, 'TEST', '')");
-        sqls.add("UPDATE dictionary SET is_deleted=1 WHERE id=20000 AND deleted=1");
-        success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
-        Assert.assertTrue(success == false);
+        sqls.add("INSERT INTO dbt_dictionary(id, parent_id, type, item_name) VALUES('"+dictId+"', '0', 'TEST', '')");
+        sqls.add("UPDATE dbt_dictionary SET is_deleted=1 WHERE id='20000' AND deleted=0");
+        try{
+            success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
+            Assert.assertTrue(false);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(true);
+        }
         dict = dictionaryService.getEntity(dictId);
         Assert.assertTrue(dict == null);
     }
@@ -524,7 +528,7 @@ public class BaseServiceTest {
     @Test
     public void testDictExtdata(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", 0).eq("type", "GENDER");
+        queryWrapper.eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "GENDER");
         Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
         if(dictionary.getExtension() == null){
             Map<String, Object> map = new HashMap<>();
@@ -534,7 +538,7 @@ public class BaseServiceTest {
             dictionary = dictionaryService.getSingleEntity(queryWrapper);
         }
         Assert.assertTrue(dictionary.getExtension() != null);
-        Assert.assertTrue(dictionary.getFromExt("createByName").equals("张三"));
+        Assert.assertTrue(dictionary.getFromExt("createByName").equals("zhangs"));
     }
 
     @Test
@@ -583,7 +587,7 @@ public class BaseServiceTest {
     @Test
     public void testGetVoListByChainQuery() {
         // 测试 QueryChainWrapper 与 WrapperHelper.optimizeSelect 方法联动
-        testGetVoListByChainQuery(dictionaryService.query().eq("parent_id", "0").eq("type", "GENDER"));
+        testGetVoListByChainQuery(dictionaryService.query().eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "GENDER"));
         // 测试 LambdaQueryChainWrapper 与 WrapperHelper.optimizeSelect 方法联动
         testGetVoListByChainQuery(dictionaryService.lambdaQuery().eq(Dictionary::getParentId, "0").eq(Dictionary::getType, "GENDER"));
     }

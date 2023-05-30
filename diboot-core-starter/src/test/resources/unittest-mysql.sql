@@ -1,7 +1,7 @@
 -- create schema diboot_example collate utf8_general_ci;
 -- 建表
 CREATE TABLE `dictionary` (
-    `id` bigint unsigned NOT NULL  COMMENT 'ID',
+    `id` varchar(32) NOT NULL  COMMENT 'ID',
     `parent_id` bigint unsigned NOT NULL COMMENT '父ID',
     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
     `app_module`  varchar(50)   null comment '应用模块',
@@ -17,7 +17,6 @@ CREATE TABLE `dictionary` (
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COMMENT '数据字典';
-
 
 create table department
 (
@@ -36,7 +35,7 @@ create table department
 
 create table organization
 (
-    id int  comment 'ID'
+    id varchar(32)  comment 'ID'
         primary key,
     parent_id int default 0 not null comment '上级单位ID',
     name varchar(100) not null comment '名称',
@@ -49,7 +48,7 @@ create table organization
 
 create table role
 (
-    id int  comment 'ID' primary key,
+    id varchar(32)  comment 'ID' primary key,
     name varchar(20) null,
     code varchar(20) null,
     is_deleted tinyint(1) default 0 null,
@@ -58,8 +57,8 @@ create table role
 
 create table user
 (
-    id int  comment 'ID' primary key,
-    department_id int default 0 not null,
+    id varchar(32)  comment 'ID' primary key,
+    department_id varchar(32) default 0 not null,
     username varchar(20) null,
     gender varchar(20) null,
     birthdate date null,
@@ -72,16 +71,16 @@ create table user
 create table user_role
 (
     user_type varchar(20) not null comment '用户类型',
-    user_id int not null comment '用户ID',
-    role_id int not null comment '角色ID',
+    user_id varchar(32) not null comment '用户ID',
+    role_id varchar(32) not null comment '角色ID',
     primary key (user_id, role_id)
 ) comment '用户角色' charset=utf8mb4;
 
 create table cc_city_info
 (
-    id          int  primary key,
-    parent_id   int          null,
-    region_id   int          not null,
+    id          varchar(32)  primary key,
+    parent_id   varchar(32)          null,
+    region_id   varchar(32)          not null,
     region_name varchar(100) null
 ) comment '行政区划' charset=utf8mb4;
 
@@ -112,7 +111,7 @@ CREATE TABLE `db_purchase_form_plan` (
 
 -- 上传文件表
 CREATE TABLE test_upload_file (
-                                  uuid varchar(32) NOT NULL COMMENT '编号' primary key,
+                                  id varchar(32) NOT NULL COMMENT '编号' primary key,
                                   rel_obj_type varchar(50) DEFAULT NULL COMMENT '关联对象类',
                                   rel_obj_id varchar(32) DEFAULT NULL COMMENT '关联对象ID',
                                   rel_obj_field varchar(50) DEFAULT NULL COMMENT '关联对象属性名称',
@@ -127,7 +126,7 @@ CREATE TABLE test_upload_file (
 -- playground.demo_test definition
 
 CREATE TABLE `demo_test` (
-                             `id` bigint unsigned NOT NULL  COMMENT 'ID' primary key,
+                             `id` varchar(32) NOT NULL  COMMENT 'ID' primary key,
                              `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
                              `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
                              `age` bigint NOT NULL COMMENT '年龄',
@@ -148,7 +147,7 @@ CREATE TABLE `demo_test` (
 -- playground.demo_test_join definition
 
 CREATE TABLE `demo_test_join` (
-                                  `id` bigint unsigned NOT NULL  COMMENT 'ID' primary key,
+                                  `id` varchar(32) NOT NULL  COMMENT 'ID' primary key,
                                   `demo_test_id` bigint DEFAULT NULL COMMENT 'Demo测试',
                                   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
                                   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
@@ -158,7 +157,7 @@ CREATE TABLE `demo_test_join` (
 
 create table customer
 (
-    id bigint unsigned not null comment 'ID' primary key,
+    id varchar(32) not null comment 'ID' primary key,
     realname varchar(50) not null comment '名称',
     cellphone varchar(50) not null comment '电话',
     extjsonarr JSON null comment '扩展json对象',
@@ -169,10 +168,11 @@ create table customer
 
 -- playground.region definition
 CREATE TABLE `region` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(20) NOT NULL COMMENT '名称',
   `code` varchar(20) NOT NULL COMMENT '编码',
-  `parent_id` bigint NOT NULL COMMENT '父级',
+  `parent_id` varchar(32) NOT NULL COMMENT '父级',
+  `parent_ids_path` varchar(200) NOT NULL COMMENT '父级path',
   `level` smallint NOT NULL DEFAULT '0' COMMENT '层级',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

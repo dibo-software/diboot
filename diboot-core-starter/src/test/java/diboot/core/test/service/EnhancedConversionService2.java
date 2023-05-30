@@ -17,8 +17,11 @@ package diboot.core.test.service;
 
 import com.diboot.core.converter.*;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * 扩展的转换service 测试覆盖
@@ -31,8 +34,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class EnhancedConversionService2 extends EnhancedConversionService {
 
-    public EnhancedConversionService2(){
-        super();
+    public EnhancedConversionService2(List<Converter> converters){
+        super(converters);
         //添加扩展
         //addConverter(new String2DateConverter());
     }

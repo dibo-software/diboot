@@ -68,7 +68,7 @@ public class TestFieldListBinder {
     public void testSimpleBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Department::getId, 10001L);
+        queryWrapper.eq(Department::getId, "10001");
         List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
         List<EntityListSimpleVO> voList = Binder.convertAndBindRelations(entityList, EntityListSimpleVO.class);
@@ -91,7 +91,7 @@ public class TestFieldListBinder {
     public void testComplexBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexVO.class);
@@ -131,7 +131,7 @@ public class TestFieldListBinder {
     public void testSplitBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Department::getParentId, 10001L);
+        queryWrapper.eq(Department::getParentId, "10001");
         List<Department> departmentList = departmentService.list(queryWrapper);
         // 自动绑定
         List<SimpleSplitVO> voList = Binder.convertAndBindRelations(departmentList,
@@ -166,7 +166,7 @@ public class TestFieldListBinder {
     public void testUUIDSplitBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<SimpleUuidSplitVO> voList = Binder.convertAndBindRelations(userList, SimpleUuidSplitVO.class);
@@ -174,7 +174,7 @@ public class TestFieldListBinder {
         Assert.assertTrue(V.notEmpty(voList));
         for(SimpleUuidSplitVO vo : voList){
             // 验证通过中间表间接关联的绑定
-            if(vo.getId().equals(1002L)){
+            if(vo.getId().equals("1002")){
                 Assert.assertTrue(vo.getPhotos().size() == 2);
                 Assert.assertTrue(vo.getPhotoNames().size() == 2);
             }
@@ -198,7 +198,7 @@ public class TestFieldListBinder {
         Assert.assertTrue(V.notEmpty(voList));
         for(ComplexSplitVO vo : voList){
             // 验证通过中间表间接关联的绑定
-            if(vo.getManagerId().equals(1001L)){
+            if(vo.getManagerId().equals("1001")){
                 Assert.assertTrue(vo.getManagerPhotoNames().size() == 1);
             }
             else{

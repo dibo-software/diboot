@@ -38,13 +38,6 @@ import java.time.LocalDateTime;
 public class TestUploadFile extends BaseEntity {
     private static final long serialVersionUID = -1391001660726027258L;
 
-    // 废弃默认主键
-    @TableField(exist = false)
-    private String id;
-    // 声明新主键uuid
-    @TableId(type = IdType.ASSIGN_UUID)
-    private String uuid;
-
     @NotNull(message = "关联对象类不能为空！")
     @TableField
     private String relObjType = null;

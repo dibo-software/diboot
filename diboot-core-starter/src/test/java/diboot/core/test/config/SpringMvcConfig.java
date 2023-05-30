@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.converter.*;
+import com.diboot.core.data.ProtectFieldHandler;
+import com.diboot.core.data.encrypt.ProtectInterceptor;
 import com.diboot.core.handler.DataAccessControlHandler;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
@@ -35,6 +37,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -42,6 +45,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -65,6 +69,7 @@ import java.util.TimeZone;
 @MapperScan({"com.diboot.core.mapper", "diboot.core.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
+
 
     @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
     private String defaultDatePattern;
@@ -120,31 +125,49 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public HttpMessageConverters jacksonHttpMessageConverters() {
-        return new HttpMessageConverters(jacksonMessageConverter());
+    public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
+        Jackson2ObjectMapperBuilder objectMapperBuilder = new Jackson2ObjectMapperBuilder();
+        jsonCustomizer().customize(objectMapperBuilder);
+        log.info("启用diboot默认的Jackson自定义配置");
+        return objectMapperBuilder;
     }
 
     @Bean
     @ConditionalOnMissingBean
     public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        // 优先使用全局默认ObjectMapper, 保证ObjectMapper全局配置相同
-        ObjectMapper objectMapper = ContextHolder.getBean(ObjectMapper.class);
-        if (objectMapper == null) {
-            objectMapper = converter.getObjectMapper();
-        }
-        converter.setObjectMapper(objectMapper);
-        return converter;
+        return new MappingJackson2HttpMessageConverter(jackson2ObjectMapperBuilder().build());
     }
 
+    /**
+     * 数据保护拦截器
+     * <p>
+     * 默认不注入，diboot.core.enable-data-protect=true可开启
+     */
+    @Bean
+    @ConditionalOnBean(ProtectFieldHandler.class)
+    public ProtectInterceptor protectInterceptor() {
+        return new ProtectInterceptor();
+    }
+
+    /**
+     * 默认支持String-Date类型转换
+     *
+     * @param registry registry
+     */
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new Date2LocalDateConverter());
         registry.addConverter(new Date2LocalDateTimeConverter());
+        registry.addConverter(new LocalDate2DateConverter());
+        registry.addConverter(new LocalDateTime2DateConverter());
+        registry.addConverter(new LocalDateTime2StringConverter());
+        registry.addConverter(new SqlDate2LocalDateConverter());
+        registry.addConverter(new SqlDate2LocalDateTimeConverter());
         registry.addConverter(new String2DateConverter());
         registry.addConverter(new String2LocalDateConverter());
         registry.addConverter(new String2LocalDateTimeConverter());
         registry.addConverter(new String2BooleanConverter());
+        registry.addConverter(new String2MapConverter());
         registry.addConverter(new Timestamp2LocalDateTimeConverter());
     }
 

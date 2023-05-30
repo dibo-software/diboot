@@ -67,7 +67,7 @@ public class TestFieldBinder {
     public void testBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<FieldBinderVO> voList = Binder.convertAndBindRelations(userList, FieldBinderVO.class);
@@ -89,7 +89,7 @@ public class TestFieldBinder {
     public void testBinderWithMoreCondition(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);
@@ -104,7 +104,7 @@ public class TestFieldBinder {
     public void testBinderWithEscCol(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1003L);
+        queryWrapper.in(User::getId, "1003");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserEscVO> voList = Binder.convertAndBindRelations(userList, UserEscVO.class);
@@ -121,7 +121,7 @@ public class TestFieldBinder {
     public void testDictVoBind(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", "GENDER");
-        queryWrapper.gt("parent_id", 0);
+        queryWrapper.gt("parent_id", "0");
 
         List<Dictionary> list = dictionaryService.getEntityList(queryWrapper);
 

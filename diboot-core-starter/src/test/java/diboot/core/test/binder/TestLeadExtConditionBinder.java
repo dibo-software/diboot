@@ -69,7 +69,7 @@ public class TestLeadExtConditionBinder {
                 Assert.assertNull(vo.getDeptNameLike());
                 Assert.assertNull(vo.getDeptNameIn());
             }
-            if(vo.getDepartmentId().equals(10002l)) {
+            if(vo.getDepartmentId().equals("10002")) {
                 Assert.assertNotNull(vo.getDeptId());
                 Assert.assertNotNull(vo.getRoleCodes());
             }

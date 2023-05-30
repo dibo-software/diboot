@@ -36,6 +36,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.util.ReflectionUtils;
 
@@ -219,7 +220,8 @@ public class BeanUtils {
             if(conversionService == null) {
                 conversionService = ContextHolder.getBean(DefaultConversionService.class);
                 if(conversionService == null) {
-                    conversionService = new EnhancedConversionService();
+                    List<Converter> converterList = ContextHolder.getBeans(Converter.class);
+                    conversionService = new EnhancedConversionService(converterList);
                     log.debug("new ConversionService instance: {}", EnhancedConversionService.class.getName());
                 }
                 else {

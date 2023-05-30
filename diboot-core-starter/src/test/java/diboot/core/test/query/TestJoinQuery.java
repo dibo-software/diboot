@@ -98,9 +98,9 @@ public class TestJoinQuery {
     @Test
     public void testSingleTableQuery(){
         Department entity = new Department();
-        entity.setParentId(10001L);
+        entity.setParentId("10001");
         entity.setName("测试组");
-        entity.setOrgId(100001L);
+        entity.setOrgId("100001");
 
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(entity);
         System.out.println(queryWrapper.getExpression());
@@ -206,7 +206,7 @@ public class TestJoinQuery {
         // 初始化DTO，测试不涉及关联的情况
         UserDTO dto = new UserDTO();
         dto.setDeptName("研发组");
-        dto.setDeptId(10002L);
+        dto.setDeptId("10002");
 
         // builder直接查询，不分页 3条结果
         List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
@@ -315,12 +315,12 @@ public class TestJoinQuery {
     public void testNullEmptyQuery() {
         Department entity = new Department();
         entity.setName("测试组");
-        entity.setOrgId(100001L);
+        entity.setOrgId("100001");
         QueryWrapper<Department> queryWrapper = QueryBuilder.toQueryWrapper(entity);
         System.out.println(queryWrapper.getExpression());
         Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id IS NULL"));
 
-        entity.setParentId(10001L);
+        entity.setParentId("10001");
         queryWrapper = QueryBuilder.toQueryWrapper(entity);
         Assert.assertTrue(queryWrapper.getSqlSegment().contains("parent_id = #{"));
     }

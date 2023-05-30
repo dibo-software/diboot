@@ -59,27 +59,27 @@ public class TestDeepBinder {
         // 验证绑定结果
         Assert.assertTrue(V.notEmpty(voList));
         for(DeepBindVO vo : voList) {
-            if(vo.getParentId().equals(0L)){
+            if(vo.getParentId().equals("0")){
                 Assert.assertTrue(vo.getParentDept() == null);
             }
             else{
                 Assert.assertTrue(vo.getParentDept() != null);
                 Assert.assertTrue(vo.getParentDept().getOrganizationVO() != null);
-                if(vo.getParentId().equals(10001L)){
+                if(vo.getParentId().equals("10001")){
                     Assert.assertTrue(vo.getParentDept().getChildren().size() == 3);
                 }
-                else if(vo.getParentId().equals(10003L)){
+                else if(vo.getParentId().equals("10003")){
                     Assert.assertTrue(vo.getParentDept().getChildren().size() == 2);
                 }
             }
-            if(vo.getOrgId().equals(100001L)){
+            if(vo.getOrgId().equals("100001")){
                 Assert.assertTrue(vo.getOrganizationVO().getParentOrg() == null);
             }
             else{
                 Assert.assertTrue(vo.getOrganizationVO().getParentOrg() != null);
                 Assert.assertTrue(vo.getOrganizationVO().getParentOrgName() != null);
             }
-            if(vo.getId().equals(10001L)){
+            if(vo.getId().equals("10001")){
                 Assert.assertTrue(vo.getChildren().size() == 3);
                 // 验证深度绑定
                 List<DepartmentVO> children = vo.getChildren();
@@ -89,12 +89,12 @@ public class TestDeepBinder {
                 Assert.assertTrue(children.get(0).getOrganizationVO().getManagerGenderLabel() != null);
                 Assert.assertTrue(children.get(1).getOrganizationVO().getManagerGenderLabel() != null);
             }
-            else if(vo.getId().equals(10003L)){
+            else if(vo.getId().equals("10003")){
                 Assert.assertTrue(vo.getChildren().size() == 2);
                 // 验证深度绑定
                 Assert.assertTrue(vo.getChildren().get(0).getOrganizationVO() != null);
             }
-            else if(vo.getId().equals(10005L)){
+            else if(vo.getId().equals("10005")){
                 Assert.assertTrue(V.isEmpty(vo.getChildren()));
             }
             System.out.println(JSON.stringify(vo));

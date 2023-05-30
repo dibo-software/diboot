@@ -1,7 +1,7 @@
 -- 字典表
 CREATE TABLE `dbt_dictionary` (
   `id` varchar(32) NOT NULL COMMENT 'ID',
-  `parent_id` varchar(32) NULL COMMENT '父ID',
+  `parent_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '父ID',
   `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   `type` varchar(50) NOT NULL COMMENT '字典类型',
   `item_name` varchar(100) NOT NULL COMMENT '显示名',

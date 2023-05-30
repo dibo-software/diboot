@@ -33,11 +33,10 @@ import java.util.List;
 @Slf4j
 public class EnhancedConversionService extends DefaultConversionService {
 
-    public EnhancedConversionService(){
+    public EnhancedConversionService(List<Converter> converters){
         super();
-        List<Converter> converterList = ContextHolder.getBeans(Converter.class);
-        if(V.notEmpty(converterList)) {
-            for(Converter converter : converterList) {
+        if(V.notEmpty(converters)) {
+            for(Converter converter : converters) {
                 addConverter(converter);
                 log.debug("addConverter {}", converter.getClass().getSimpleName());
             }

@@ -59,7 +59,7 @@ public class TestDictBinder {
     public void testBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, 1001L, 1002L);
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<UserVO> voList = Binder.convertAndBindRelations(userList, UserVO.class);

@@ -312,7 +312,7 @@ public class ExcelHelper {
      */
     public static List<TableHead> getTableHeads(Class<?> clazz) {
         TreeMap<Integer, Field> sortedAllFiledMap = new TreeMap<>();
-        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
+        //ClassUtils.declaredFields(clazz, sortedAllFiledMap);
         TreeMap<Integer, List<String>> headNameMap = new TreeMap<>();
         HashMap<Integer, String> fieldNameMap = new HashMap<>();
         sortedAllFiledMap.forEach((index, field) -> {

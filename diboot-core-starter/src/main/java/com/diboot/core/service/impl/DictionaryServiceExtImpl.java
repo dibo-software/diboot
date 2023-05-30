@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
@@ -57,7 +58,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
-                .isNotNull(Dictionary::getParentId)
+                .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
         return getEntityList(queryDictionary).stream()
@@ -72,7 +73,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
-                .isNotNull(Dictionary::getParentId);
+                .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
                 Collectors.toMap(dict -> dict.getItemName(),
@@ -85,7 +86,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
-                .isNotNull(Dictionary::getParentId);
+                .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
                 Collectors.toMap(dict -> dict.getItemValue(),
@@ -225,18 +226,18 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             if (V.isEmpty(value)) {
                 continue;
             }
-            LabelValue matchedItem = map.get((String)value);
-            if (matchedItem != null) {
-                if (isLabelValueClass) {
-                    BeanUtils.setProperty(item, setFieldName, matchedItem);
-                }
-                else {
-                    BeanUtils.setProperty(item, setFieldName, matchedItem.getLabel());
-                }
-                continue;
-            }
             // 直接匹配无结果
             if(value instanceof String) {
+                LabelValue matchedItem = map.get((String)value);
+                if (matchedItem != null) {
+                    if (isLabelValueClass) {
+                        BeanUtils.setProperty(item, setFieldName, matchedItem);
+                    }
+                    else {
+                        BeanUtils.setProperty(item, setFieldName, matchedItem.getLabel());
+                    }
+                    continue;
+                }
                 if(((String)value).contains(S.SEPARATOR)) {
                     List labelList = new ArrayList<>();
                     for (String key : ((String)value).split(S.SEPARATOR)) {

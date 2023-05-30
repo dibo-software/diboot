@@ -43,7 +43,7 @@ public class UserDTO extends User {
 
     // 字段关联
     @BindQuery(entity= Department.class, column = "id", condition="this.department_id=id") // AND parent_id >= 0
-    private Long deptId;
+    private String deptId;
 
     // 通过中间表关联Entity
     @BindQuery(comparison = Comparison.ENDSWITH, entity = Organization.class, column = "name",
