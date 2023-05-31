@@ -120,7 +120,7 @@ const currentDate = ref(new Date())
               <StarFilled />
             </el-icon>
             <span>Stars</span>
-            <span class="ml-5">1.8k</span>
+            <span class="ml-5">2.0k</span>
           </a>
         </el-card>
         <el-card style="flex: 1" shadow="hover">
