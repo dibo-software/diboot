@@ -53,7 +53,7 @@ public class SchedulerJobInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        String initDetectSql = "SELECT id FROM dbt_schedule_job WHERE id='0'";
+        String initDetectSql = "SELECT id FROM schedule_job WHERE id='0'";
         if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
             return;
         }
