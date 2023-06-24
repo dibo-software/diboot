@@ -27,19 +27,19 @@ const router = createRouter({
           name: 'CrudList',
           component: () => import('@/views/crud/list.vue'),
           meta: { title: 'CRUD-列表页', showTabbar: true }
-        },
-        {
-          path: '/form/:id',
-          name: 'CrudForm',
-          component: () => import('@/views/crud/form.vue'),
-          meta: { title: 'CRUD-表单页', showTabbar: true }
-        },
-        {
-          path: '/detail/:id',
-          name: 'CrudDetail',
-          component: () => import('@/views/crud/detail.vue'),
-          meta: { title: 'CRUD-详情页', showTabbar: true }
         }
+        // {
+        //   path: '/form/:id',
+        //   name: 'CrudForm',
+        //   component: () => import('@/views/crud/form.vue'),
+        //   meta: { title: 'CRUD-表单页', showTabbar: true }
+        // },
+        // {
+        //   path: '/detail/:id',
+        //   name: 'CrudDetail',
+        //   component: () => import('@/views/crud/detail.vue'),
+        //   meta: { title: 'CRUD-详情页', showTabbar: true }
+        // }
       ]
     },
     {
