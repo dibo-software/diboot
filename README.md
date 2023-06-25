@@ -22,7 +22,7 @@
 > [diboot-workflow 工作流版本，看这里->](https://www.diboot.com/guide/diboot-workflow/introduce.html)
 
 ## 1. 配套VUE3前端框架预览（diboot-admin-ui）
-> 基于 Vue3 + Vite + Pinia + Element-plsu + TypeScript 的自研中后台管理框架
+> 基于 Vue3 + Vite + Pinia + Element-plus + TypeScript 的自研中后台管理框架
 
 ![菜单资源配置](http://v3.diboot.com/img/permission.png)
 
