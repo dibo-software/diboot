@@ -24,22 +24,29 @@ const router = createRouter({
       children: [
         {
           path: '',
-          name: 'CrudList',
-          component: () => import('@/views/crud/list.vue'),
-          meta: { title: 'CRUD-列表页', showTabbar: true }
+          name: 'Crud',
+          component: () => import('@/views/crud/index.vue'),
+          meta: { title: '组件', showTabbar: true }
+        },
+        {
+          path: '/list',
+          name: 'ListExample',
+          component: () => import('@/views/crud/example/listExample.vue'),
+          meta: { title: '列表示例' }
+        },
+        {
+          path: '/form',
+          name: 'FormExample',
+          component: () => import('@/views/crud/example/formExample.vue'),
+          meta: { title: '表单示例' }
+        },
+        {
+          path: '/detail',
+          name: 'DetailExample',
+          component: () => import('@/views/crud/example/detailExample.vue'),
+          meta: { title: '详情示例' }
         }
-        // {
-        //   path: '/form/:id',
-        //   name: 'CrudForm',
-        //   component: () => import('@/views/crud/form.vue'),
-        //   meta: { title: 'CRUD-表单页', showTabbar: true }
-        // },
-        // {
-        //   path: '/detail/:id',
-        //   name: 'CrudDetail',
-        //   component: () => import('@/views/crud/detail.vue'),
-        //   meta: { title: 'CRUD-详情页', showTabbar: true }
-        // }
+        // 业务 相关页面 (相对路由)
       ]
     },
     {
