@@ -185,9 +185,10 @@ public class IamSecurityUtils extends SecurityUtils {
         if(Cons.DICTCODE_AUTH_TYPE.PWD.name().equals(iamAccount.getAuthType())){
             if(iamAccount.getSecretSalt() == null){
                 String salt = S.cut(S.newUuid(), 8);
-                String encryptedPwd = encryptPwd(iamAccount.getAuthSecret(), iamAccount.getSecretSalt());
-                iamAccount.setSecretSalt(salt).setAuthSecret(encryptedPwd);
+                iamAccount.setSecretSalt(salt);
             }
+            String encryptedPwd = encryptPwd(iamAccount.getAuthSecret(), iamAccount.getSecretSalt());
+            iamAccount.setAuthSecret(encryptedPwd);
         }
     }
 
