@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Message } from '@/views/system/message/type'
 import { Loading } from '@element-plus/icons-vue'
+import auth from '@/utils/auth'
 
 const baseApi = '/message'
 
@@ -27,6 +28,7 @@ watch(total, value => emit('total', value))
 const unreadIds = computed(() => dataList.value.filter(e => e.status !== 'READ').map(e => e.id))
 
 const loadData = (reset = false) => {
+  if (!auth.getToken()) return
   loading.value = true
   api
     .get<Message[]>(`${baseApi}/own`, queryParam.value)
