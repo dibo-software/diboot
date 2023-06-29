@@ -1,7 +1,7 @@
 <script setup>
 import { areaList } from '@vant/area-data'
 
-const name = ref('帝博科技')
+const name = ref('帝博软件')
 const type = ref('1')
 const contacts = ref('张三')
 const telephone = ref('')

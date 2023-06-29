@@ -25,10 +25,10 @@ const onLoad = () => {
     for (let i = 0; i < 10; i++) {
       list.value.push({
         title: `来访客户${list.value.length + 1}`,
-        name: '帝博科技',
+        name: '帝博软件',
         contacts: '张三',
         telephone: '18889889878',
-        department: '技术部',
+        department: '研发部',
         date: '2023-05-20'
       })
       if (list.value.length === 20) error.value = true
