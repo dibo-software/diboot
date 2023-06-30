@@ -65,7 +65,7 @@ public class BeanUtilsTest {
 
     @Test
     public void testClass() {
-        List<TestService> services = ContextHolder.getBeans(TestService.class);
+        List<TestService> services = ContextHelper.getBeans(TestService.class);
         Class class1 = BeanUtils.getGenericityClass(services.get(0), 0);
         Assert.assertTrue(class1.getName().equals(Dictionary.class.getName()));
 

@@ -276,7 +276,6 @@ public class SqlExecutor {
                 }
             }
             return stmt.execute();
-            //return rs >= 0;
         }
         catch(Exception e){
             String sqlInfo = S.substring(sql, 0, 50) + "...";
