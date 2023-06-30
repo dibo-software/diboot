@@ -47,6 +47,8 @@ public class CriteriaItem implements Serializable {
 
     private Object value;
 
+    private CriteriaItem or;
+
     public CriteriaItem() {
     }
 
@@ -74,6 +76,29 @@ public class CriteriaItem implements Serializable {
         this.joinTable = joinTable;
         this.onLink = onLink;
         this.onWhere = onWhere;
+        return this;
+    }
+
+    /**
+     * 追加or条件
+     * @param field
+     * @param value
+     * @return
+     */
+    public CriteriaItem or(String field, Object value) {
+        this.or = new CriteriaItem(field, value);
+        return this;
+    }
+
+    /**
+     * 追加or条件
+     * @param field
+     * @param comparison
+     * @param value
+     * @return
+     */
+    public CriteriaItem or(String field, Comparison comparison, Object value) {
+        this.or = new CriteriaItem(field, comparison, value);
         return this;
     }
 
