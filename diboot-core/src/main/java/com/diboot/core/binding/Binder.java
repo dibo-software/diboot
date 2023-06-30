@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class Binder {
 
+    public static final String COUNT_COL = "_cnt";
+
     /**
      * 关联查询一条主表数据
      * @param queryWrapper

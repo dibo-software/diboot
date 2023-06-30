@@ -15,22 +15,21 @@
  */
 package com.diboot.core.binding.binder;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.annotation.BindCount;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
-import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.BeanUtils;
+import com.diboot.core.service.BaseService;
+import com.diboot.core.util.MapUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 关联子项count计数绑定
@@ -50,7 +49,6 @@ public class CountBinder<T> extends EntityListBinder<T> {
         super(annotation.entity(), voList);
     }
 
-
     @Override
     public void bind() {
         if(V.isEmpty(annoObjectList)){
@@ -59,7 +57,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
         if(V.isEmpty(refObjJoinCols)){
             throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
-        Map<String, Integer> valueListCountMap;
+        Map<String, Long> valueListCountMap;
         if(middleTable == null){
             this.simplifySelectColumns();
             super.buildQueryWrapperJoinOn();
@@ -67,18 +65,19 @@ public class CountBinder<T> extends EntityListBinder<T> {
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
             }
-            List<T> entityList = null;
+            queryWrapper.groupBy(refObjJoinCols);
+            List<Map<String, Object>> countMapList = null;
             // 查询entity列表: List<Role>
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
-                entityList = getEntityList(queryWrapper);
+                countMapList = this.getCountMapList(queryWrapper);
             }
             else{
                 // 远程调用获取
-                entityList = RemoteBindingManager.fetchEntityList(module, remoteBindDTO, referencedEntityClass);
+                countMapList = RemoteBindingManager.fetchMapList(module, remoteBindDTO);
             }
-            if(V.notEmpty(entityList)){
-                valueListCountMap = this.buildMatchKey2ListCountMap(entityList);
+            if(V.notEmpty(countMapList)){
+                valueListCountMap = this.buildMatchKey2ListCountMap(countMapList);
                 ResultAssembler.bindPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueListCountMap, null);
             }
         }
@@ -88,18 +87,17 @@ public class CountBinder<T> extends EntityListBinder<T> {
             }
             // 提取注解条件中指定的对应的列表
             Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();
-            Map<String, List> middleTableResultMap = middleTable.executeOneToManyQuery(trunkObjCol2ValuesMap);
-            if(V.isEmpty(middleTableResultMap)){
+            Map<String, Long> middleTableCountResultMap = middleTable.executeOneToManyCountQuery(trunkObjCol2ValuesMap);
+            if(V.isEmpty(middleTableCountResultMap)){
                 return;
             }
             valueListCountMap = new HashMap<>();
-            for(Map.Entry<String, List> entry : middleTableResultMap.entrySet()){
-                // List<roleId>
-                List annoObjFKList = entry.getValue();
-                if(V.isEmpty(annoObjFKList)){
-                    continue;
+            for(Map.Entry<String, Long> entry : middleTableCountResultMap.entrySet()){
+                // count <roleId>
+                Long count = entry.getValue();
+                if(V.isEmpty(count)){
+                    count = 0l;
                 }
-                Integer count = entry.getValue() != null? entry.getValue().size() : 0;
                 valueListCountMap.put(entry.getKey(), count);
             }
             // 绑定结果
@@ -113,9 +111,8 @@ public class CountBinder<T> extends EntityListBinder<T> {
     @Override
     protected void simplifySelectColumns() {
         List<String> selectColumns = new ArrayList<>(8);
-        String idCol = BindingCacheManager.getPropInfoByClass(referencedEntityClass).getIdColumn();
-        selectColumns.add(idCol);
         selectColumns.addAll(refObjJoinCols);
+        selectColumns.add("count(*) AS "+ Binder.COUNT_COL);
         String[] selectColsArray = S.toStringArray(selectColumns);
         if(remoteBindDTO != null){
             remoteBindDTO.setSelectColumns(selectColsArray);
@@ -123,20 +120,35 @@ public class CountBinder<T> extends EntityListBinder<T> {
         this.queryWrapper.select(selectColsArray);
     }
 
+    /**
+     * 获取EntityList
+     * @param queryWrapper
+     * @return
+     */
+    private List<Map<String, Object>> getCountMapList(Wrapper queryWrapper) {
+        if(referencedService instanceof BaseService){
+            return ((BaseService)referencedService).getMapList(queryWrapper);
+        }
+        else{
+            return referencedService.listMaps(queryWrapper);
+        }
+    }
 
     /**
      * 构建匹配key-count目标的map
-     * @param list
+     * @param mapCountList
      * @return
      */
-    private Map<String, Integer> buildMatchKey2ListCountMap(List<T> list){
-        Map<String, Integer> key2TargetCountMap = new HashMap<>(list.size());
+    private Map<String, Long> buildMatchKey2ListCountMap(List<Map<String, Object>> mapCountList){
+        Map<String, Long> key2TargetCountMap = new HashMap<>(mapCountList.size());
+        if(V.isEmpty(mapCountList)) {
+            return Collections.emptyMap();
+        }
         StringBuilder sb = new StringBuilder();
-        for(T entity : list){
+        for(Map<String, Object> countMap : mapCountList) {
             sb.setLength(0);
-            for(int i=0; i<refObjJoinCols.size(); i++){
-                String refObjJoinOnCol = refObjJoinCols.get(i);
-                String pkValue = BeanUtils.getStringProperty(entity, toRefObjField(refObjJoinOnCol));
+            for(int i=0; i<refObjJoinCols.size(); i++) {
+                Object pkValue = MapUtils.getIgnoreCase(countMap, refObjJoinCols.get(i));
                 if(i > 0){
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
@@ -145,11 +157,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
             // 查找匹配Key
             String matchKey = sb.toString();
             // 获取list
-            Integer entityCount = key2TargetCountMap.get(matchKey);
-            if(entityCount == null){
-                entityCount = 0;
-            }
-            entityCount++;
+            Long entityCount = (Long) MapUtils.getIgnoreCase(countMap, Binder.COUNT_COL);
             key2TargetCountMap.put(matchKey, entityCount);
         }
         sb.setLength(0);
