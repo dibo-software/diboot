@@ -141,12 +141,28 @@ public class JSON {
     /***
      * 将JSON字符串转换为list对象
      * @param jsonStr
+     * @param clazz
      * @return
      */
     public static <T> List<T> parseArray(String jsonStr, Class<T> clazz) {
         try {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(List.class, clazz);
             return getObjectMapper().readValue(jsonStr, javaType);
+        } catch (Exception e) {
+            log.error("Json转Java异常", e);
+            return null;
+        }
+    }
+
+    /***
+     * 将JSON字符串转换为list对象
+     * @param jsonStr
+     * @param typeReference
+     * @return
+     */
+    public static <T> List<T> parseArray(String jsonStr, TypeReference<List<T>> typeReference) {
+        try {
+            return getObjectMapper().readValue(jsonStr, typeReference);
         } catch (Exception e) {
             log.error("Json转Java异常", e);
             return null;
