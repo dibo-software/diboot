@@ -39,6 +39,7 @@ service.interceptors.response.use(
     // 如果返回的自定义状态码为 4001， 则token过期，需要清理掉token并跳转至登录页面重新登录
     if (response.data && response.data.code === 4001) {
       auth.clearToken()
+      clearTimeout(pingTimer)
       const route = router.currentRoute.value
       router.push({ name: 'Login', query: { redirect: route.path, ...route.query } }).finally()
       throw new Error('登录过期，请重新登录')
@@ -86,8 +87,8 @@ resetPingTimer()
 function resetPingTimer() {
   clearTimeout(pingTimer)
   pingTimer = setTimeout(() => {
-    service.get('/auth/ping').then()
     resetPingTimer()
+    service.get('/auth/ping').then()
   }, TOKEN_REFRESH_EXPIRE * 60 * 1000)
 }
 
