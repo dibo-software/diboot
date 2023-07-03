@@ -17,7 +17,7 @@ Object.keys(locales).reduce((all: Record<string, unknown>, path: string) => {
 const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: navigator.language,
+  locale: 'zh-CN', // navigator.language,
   fallbackLocale: 'zh-CN',
   messages
 })
