@@ -130,10 +130,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <FT> FT getValueOfField(SFunction<T, ?> queryFieldFn, Serializable queryFieldVal, SFunction<T, FT> getterFn) {
-		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
-				.select(queryFieldFn, getterFn)
-				.eq(queryFieldFn, queryFieldVal);
-		T entity = getSingleEntity(queryWrapper);
+		return getValueOfField(Wrappers.<T>lambdaQuery().eq(queryFieldFn, queryFieldVal), getterFn);
+	}
+
+	@Override
+	public <FT> FT getValueOfField(LambdaQueryWrapper<T> queryWrapper, SFunction<T, FT> getterFn) {
+		T entity = getSingleEntity(queryWrapper.select(getterFn));
 		if(entity == null){
 			return null;
 		}
@@ -716,6 +718,21 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public <ST, FT> Map<ST, FT> getValueMapOfField(SFunction<T, ST> idFieldFn, List<ST> idValList, SFunction<T, FT> getterFn) {
+		if (idValList != null && idValList.isEmpty()) {
+			return Collections.emptyMap();
+		}
+		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
+				.select(idFieldFn, getterFn)
+				.in(idValList != null, idFieldFn, idValList);
+		List<T> entityList = getEntityList(queryWrapper);
+		if (entityList == null) {
+			return Collections.emptyMap();
+		}
+		return entityList.stream().collect(Collectors.toMap(idFieldFn, getterFn));
+	}
+
+	@Override
 	public List<T> getEntityListLimit(Wrapper queryWrapper, int limitCount) {
 		// 如果是动态join，则调用JoinsBinder
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
@@ -909,6 +926,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public <VO> VO getViewObject(Serializable id, Class<VO> voClass){
 		T entity = getEntity(id);
+		if(entity == null){
+			return null;
+		}
+		// 绑定
+		return Binder.convertAndBindRelations(entity, voClass);
+	}
+
+	@Override
+	public <VO> VO getViewObject(Wrapper queryWrapper, Class<VO> voClass) {
+		T entity = getSingleEntity(queryWrapper);
 		if(entity == null){
 			return null;
 		}
