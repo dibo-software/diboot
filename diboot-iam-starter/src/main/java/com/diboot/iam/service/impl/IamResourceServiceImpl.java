@@ -126,12 +126,6 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (V.notEmpty(updatePermissionList)) {
             this.updateEntities(updatePermissionList);
         }
-        // 检测是否有脏数据存在
-        if (hasDirtyData()) {
-            throw new BusinessException(Status.FAIL_OPERATION, "父级节点不可设置在自己的子节点上");
-        }
-        // 清理脏数据
-        //this.clearDirtyData();
     }
 
     @Override
@@ -210,75 +204,4 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         }
     }
 
-    /***
-     * 检测是否具有脏数据存在
-     * @return
-     */
-    private boolean hasDirtyData() {
-        List<IamResource> list = this.getEntityList(null);
-        if (V.isEmpty(list)) {
-            return false;
-        }
-        Map<String, IamResource> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResource::getId));
-        List<String> deleteIdList = new ArrayList<>();
-        for (IamResource item : list) {
-            if (!hasTopRootNode(idObjectMap, item, null)) {
-                deleteIdList.add(item.getId());
-            }
-        }
-        return V.notEmpty(deleteIdList);
-    }
-
-    /***
-     * 清理没有关联关系的
-     */
-    private void clearDirtyData() {
-        List<IamResource> list = this.getEntityList(null);
-        if (V.isEmpty(list)) {
-            return;
-        }
-        Map<String, IamResource> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResource::getId));
-        List<String> deleteIdList = new ArrayList<>();
-        for (IamResource item : list) {
-            if (!hasTopRootNode(idObjectMap, item, null)) {
-                deleteIdList.add(item.getId());
-            }
-        }
-        if (V.notEmpty(deleteIdList)) {
-            LambdaQueryWrapper deleteWrapper = Wrappers.<IamResource>lambdaQuery()
-                    .in(IamResource::getId, deleteIdList);
-            long count = this.getEntityListCount(deleteWrapper);
-            if (count > 0) {
-                this.deleteEntities(deleteWrapper);
-                log.info("共清理掉{}条无用数据", count);
-            }
-        }
-    }
-
-    /***
-     * 是否拥有顶级节点
-     * @param idObjectMap
-     * @param item
-     * @return
-     */
-    private boolean hasTopRootNode(Map<String, IamResource> idObjectMap, IamResource item, List<String> existIdList) {
-        if (V.equals(item.getParentId(), "0")) {
-            return true;
-        }
-        if (existIdList == null) {
-            existIdList = new ArrayList<>();
-        }
-        if (existIdList.contains(item.getId())) {
-            return false;
-        }
-        // 如果不是顶级节点，则以此向上查找顶级节点，如果没有找到父级节点，则认为没有顶级节点，如果找到，则继续查找父级节点是否具有顶级节点
-        IamResource parentItem = idObjectMap.get(String.valueOf(item.getParentId()));
-        if (parentItem == null) {
-            return false;
-        }
-
-        // 记录下当前检查的id，以免循环调用
-        existIdList.add(item.getId());
-        return hasTopRootNode(idObjectMap, parentItem, existIdList);
-    }
 }
