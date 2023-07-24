@@ -32,13 +32,13 @@ public class BaseModel extends BaseEntity {
     /**
      * 创建人
      */
-    @TableField()
+    @TableField(fill = FieldFill.INSERT)
     private String createBy;
 
     /**
      * 更新人
      */
-    @TableField()
+    @TableField(fill = FieldFill.UPDATE)
     private String updateBy;
 
 }
