@@ -938,7 +938,7 @@ public class BeanUtils {
     public static Class getGenericityClass(Object instance, int index){
         Class hostClass = getTargetClass(instance);
         ResolvableType resolvableType = ResolvableType.forClass(hostClass);
-        if(resolvableType.getSuperType().getType().getTypeName().equals(Object.class.getName())) {
+        if(resolvableType.getSuperType().getType().getTypeName().equals(Object.class.getName()) && V.notEmpty(resolvableType.getInterfaces())) {
             resolvableType = resolvableType.getInterfaces()[0];
         }
         else {
