@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.cache;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -76,7 +77,7 @@ public class IamCacheManager {
                     codePrefix = entityClazz.getSimpleName();
                 }
                 else{
-                    log.warn("无法获取{}相关的Entity，请指定注解BindPermission.code参数！", controllerClass.getName());
+                    throw new InvalidUsageException("注解@BindPermission注解无法自动提取code：{} 类无泛型Entity参数，请手动指定code值！", controllerClass.getName());
                 }
             }
         }
