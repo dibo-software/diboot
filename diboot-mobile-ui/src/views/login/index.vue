@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import useAuthStore from '@/stores/auth'
+import JSEncrypt from 'jsencrypt'
+
+const encryptor = new JSEncrypt()
+encryptor.setPublicKey(`MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzPy1UcwzgRT8dRUpAW0H
+eyVvIi4icqiwdBZMrh85+tJEZ/AXjELRzl89m2ZKoMHfoMDkajoxJeaL5IV9UpUl
++1RqWvWqgYL0r859FyDeNg9kiMAfApyIowqFqctDx7k77jDopBvcX8F0shl6SUtE
+Vu96tc7+FrjP4OGwXJeB+b04O2SCV4mHxs8TRn7YsLoA10mjPNnsX0TiYkzSGUP/
+E5OEYt/ixNwO/lC6TdFM9PXRaTjF76e5qHw6ksJU74mb3A9/ZQCb4nzVw15xTxIa
+AnDX7+FqnCgpu26yXMLtVXyEa6CUvBjLLBleJ/cyHuUir7GYutf5LyuIEJPEWgnZ
+BwIDAQAB`)
 
 const authStore = useAuthStore()
 const loading = ref(false)
@@ -29,7 +39,7 @@ const redirect = () => {
 const onSubmit = () => {
   loading.value = true
   authStore
-    .login(model)
+    .login({ ...model, password: encryptor.encrypt(model.password) })
     .then(() => {
       redirect()
       loading.value = false
