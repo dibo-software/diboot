@@ -1,6 +1,6 @@
 <script setup lang="ts" name="DiInput">
 import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
-import type { FormItem, Upload } from './type'
+import type { FormItem, Select, Upload } from './type'
 import type { UploadRawFile, UploadFile, FormItemRule } from 'element-plus'
 
 const props = defineProps<{
@@ -43,7 +43,9 @@ watch(
 const requiredRule = {
   required: true,
   message: '不能为空',
-  ...(props.config.type === 'input-number' ? {} : { whitespace: true })
+  ...(props.config.type === 'input-number' || props.config.type === 'checkbox' || (props.config as Select).multiple
+    ? {}
+    : { whitespace: true })
 }
 const checkUniqueRule = {
   validator: (rule: unknown, value: unknown, callback: (error?: string | Error) => void) => {
