@@ -42,6 +42,19 @@ public class PropertiesUtils {
      * @param key
      * @return
      */
+    public static String get(String key, String defaultValue){
+        String value = get(key);
+        if(value != null) {
+            return value;
+        }
+        return defaultValue;
+    }
+
+    /***
+     *  读取配置项的值
+     * @param key
+     * @return
+     */
     public static String get(String key){
         if(environment == null){
             try{
