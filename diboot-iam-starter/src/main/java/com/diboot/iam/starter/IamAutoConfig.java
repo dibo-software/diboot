@@ -177,7 +177,6 @@ public class IamAutoConfig {
         Map<String, String> filterChainMap = new LinkedHashMap<>();
         // 设置url
         filterChainMap.put("/static/**", "anon");
-        filterChainMap.put("/diboot/**", "anon");
         filterChainMap.put("/error/**", "anon");
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
