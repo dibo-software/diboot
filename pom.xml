@@ -28,7 +28,7 @@
 
     <properties>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
-        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
         <okhttp.version>4.11.0</okhttp.version>
         <aspectjweaver.version>1.9.19</aspectjweaver.version>
         <commons-io.version>2.12.0</commons-io.version>
