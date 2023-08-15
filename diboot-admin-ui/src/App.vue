@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as locales from 'element-plus/lib/locale/index'
+import * as locales from 'element-plus/es/locale/index'
 import { colorPrimary, isSmall } from '@/utils/theme'
 import useAppStore from './store/app'
 import { useI18n } from 'vue-i18n'
