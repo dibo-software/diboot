@@ -25,6 +25,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @version v3.0.0
  * @date 2022-10-12
  */
+@Deprecated
 @Mapper
 public interface I18nConfigMapper extends BaseCrudMapper<I18nConfig> {
 
