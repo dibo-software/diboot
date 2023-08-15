@@ -134,9 +134,12 @@ create table ${SCHEMA}.dbt_iam_resource
     display_type VARCHAR2(20) not null,
     display_name VARCHAR2(100) not null,
     display_name_i18n VARCHAR2(200) null,
+    route_path        varchar2(200) null,
     resource_code VARCHAR2(100)   null,
     permission_code VARCHAR2(200)   null,
+    meta              varchar2(300) null,
     sort_id NUMBER(20) DEFAULT 0  not null,
+    status            varchar(10) default 'A',
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP  null,
@@ -151,6 +154,9 @@ comment on column ${SCHEMA}.dbt_iam_resource.display_name is '显示名称';
 comment on column ${SCHEMA}.dbt_iam_resource.display_name is '显示名称国际化资源标识';
 comment on column ${SCHEMA}.dbt_iam_resource.resource_code is '前端编码';
 comment on column ${SCHEMA}.dbt_iam_resource.permission_code is '权限码';
+comment on column ${SCHEMA}.dbt_iam_resource.route_path is '路由地址';
+comment on column ${SCHEMA}.dbt_iam_resource.meta is 'meta配置';
+comment on column ${SCHEMA}.dbt_iam_resource.status is '状态';
 comment on column ${SCHEMA}.dbt_iam_resource.sort_id is '排序号';
 comment on column ${SCHEMA}.dbt_iam_resource.is_deleted is '是否删除';
 comment on column ${SCHEMA}.dbt_iam_resource.create_time is '创建时间';

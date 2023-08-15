@@ -5,7 +5,7 @@ create table dbt_dictionary (
      tenant_id            VARCHAR(32)   not null default '0',
      type                 VARCHAR(50)   not null,
      item_name            VARCHAR(100)  not null,
-     item_name_18n        VARCHAR(200),
+     item_name_i18n        VARCHAR(200),
      item_value           VARCHAR(100)  null,
      description          VARCHAR(100)  null,
      extension            VARCHAR(200)  null,
@@ -22,7 +22,7 @@ comment on column dbt_dictionary.parent_id is '父ID';
 comment on column dbt_dictionary.tenant_id is '租户ID';
 comment on column dbt_dictionary.type is '字典类型';
 comment on column dbt_dictionary.item_name is '显示名';
-comment on column dbt_dictionary.item_name_18n is '显示名国际化资源标识';
+comment on column dbt_dictionary.item_name_i18n is '显示名国际化资源标识';
 comment on column dbt_dictionary.item_value is '存储值';
 comment on column dbt_dictionary.description is '描述说明';
 comment on column dbt_dictionary.extension is '扩展JSON';
