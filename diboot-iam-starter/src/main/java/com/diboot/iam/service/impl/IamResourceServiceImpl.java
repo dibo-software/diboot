@@ -21,12 +21,15 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.mapper.IamResourceMapper;
 import com.diboot.iam.service.IamResourceService;
+import com.diboot.iam.service.MenuService;
 import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,7 +48,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
+public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService, MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -202,6 +205,16 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (V.notEmpty(subMenuIdList)) {
             deleteMenuResources(subMenuIdList);
         }
+    }
+
+    @Override
+    public List<LabelValue> getMenuCatalogues() {
+        LambdaQueryWrapper<IamResource> queryWrapper = new LambdaQueryWrapper<IamResource>()
+                .select(IamResource::getDisplayName, IamResource::getId, IamResource::getRoutePath, IamResource::getParentId)
+        .in(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.CATALOGUE.name())
+        .orderByAsc(IamResource::getSortId);
+        List<LabelValue> treeList = this.getLabelValueList(queryWrapper);
+        return treeList;
     }
 
 }
