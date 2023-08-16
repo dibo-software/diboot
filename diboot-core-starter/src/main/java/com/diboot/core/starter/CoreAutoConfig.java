@@ -180,6 +180,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         registry.addConverter(new String2LocalDateConverter());
         registry.addConverter(new String2LocalDateTimeConverter());
         registry.addConverter(new String2BooleanConverter());
+        registry.addConverter(new String2ListConverter());
         registry.addConverter(new String2MapConverter());
         registry.addConverter(new Timestamp2LocalDateTimeConverter());
     }
