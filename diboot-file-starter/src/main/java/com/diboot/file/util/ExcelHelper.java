@@ -17,15 +17,17 @@ package com.diboot.file.util;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.enums.CacheLocationEnum;
+import com.alibaba.excel.metadata.FieldWrapper;
+import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.util.ClassUtils;
-import com.alibaba.excel.util.FieldUtils;
 import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -42,7 +44,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -311,27 +312,18 @@ public class ExcelHelper {
      * @return excel表头映射
      */
     public static List<TableHead> getTableHeads(Class<?> clazz) {
-        TreeMap<Integer, Field> sortedAllFiledMap = new TreeMap<>();
-        //ClassUtils.declaredFields(clazz, sortedAllFiledMap);
+        WriteSheetHolder ws = new WriteSheetHolder();
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setFiledCacheLocation(CacheLocationEnum.MEMORY);
+        ws.setGlobalConfiguration(configuration);
+        Map<Integer, FieldWrapper> sortedFieldMap = ClassUtils.declaredFields(clazz, ws).getSortedFieldMap();;
         TreeMap<Integer, List<String>> headNameMap = new TreeMap<>();
         HashMap<Integer, String> fieldNameMap = new HashMap<>();
-        sortedAllFiledMap.forEach((index, field) -> {
-            fieldNameMap.put(index, field.getName());
-            headNameMap.put(index, getHeadColumnName(field));
+        sortedFieldMap.forEach((index, field) -> {
+            fieldNameMap.put(index, field.getFieldName());
+            headNameMap.put(index, Arrays.asList(field.getHeads()));
         });
         return buildTableHeads(headNameMap, fieldNameMap);
-    }
-
-    /**
-     * 获取表头列名称
-     *
-     * @param field 列字段
-     * @return 列名称列表
-     */
-    public static List<String> getHeadColumnName(Field field) {
-        ExcelProperty excelProperty = field.getAnnotation(ExcelProperty.class);
-        return excelProperty == null ? Collections.singletonList(FieldUtils.resolveCglibFieldName(field))
-                : Arrays.asList(excelProperty.value());
     }
 
     /**
