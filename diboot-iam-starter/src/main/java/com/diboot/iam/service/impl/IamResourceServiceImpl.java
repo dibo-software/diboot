@@ -221,19 +221,18 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
 
     @Override
     public void createOrUpdateMenuResources(IamResourceDTO resourceDTO) {
-        if (V.isEmpty(resourceDTO.getParentId())) {
+        if (V.notEmpty(resourceDTO.getParentId())) {
             // 检索已创建的菜单
             LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.<IamResource>lambdaQuery()
-                    .select(IamResource::getId).eq(IamResource::getResourceCode, resourceDTO.getResourceCode());
+                    .select(IamResource::getId).eq(IamResource::getResourceCode, resourceDTO.getResourceCode()).eq(IamResource::getParentId, resourceDTO.getParentId());
             String resourceId = this.getValueOfField(queryWrapper, IamResource::getId);
-            resourceDTO.setId(resourceId);
+            if(resourceId != null) {
+                resourceDTO.setId(resourceId);
+                this.updateMenuResources(resourceDTO);
+                return;
+            }
         }
-        if (V.isEmpty(resourceDTO.getId())) {
-            this.createMenuResources(resourceDTO);
-        }
-        else {
-            this.updateMenuResources(resourceDTO);
-        }
+        this.createMenuResources(resourceDTO);
     }
 
 }
