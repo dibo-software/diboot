@@ -1,6 +1,7 @@
 package com.diboot.iam.service;
 
 import com.diboot.core.vo.LabelValue;
+import com.diboot.iam.dto.IamResourceDTO;
 
 import java.util.List;
 
@@ -17,5 +18,11 @@ public interface MenuService {
      * @return
      */
     List<LabelValue> getMenuCatalogues();
+
+    /**
+     * 创建或者更新菜单资源
+     * @param resourceDTO
+     */
+    void createOrUpdateMenuResources(IamResourceDTO resourceDTO);
 
 }

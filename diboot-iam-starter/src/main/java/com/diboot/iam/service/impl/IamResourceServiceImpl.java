@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.LabelValue;
@@ -27,6 +28,7 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
+import com.diboot.iam.entity.route.RouteMeta;
 import com.diboot.iam.mapper.IamResourceMapper;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.MenuService;
@@ -215,6 +217,23 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         .orderByAsc(IamResource::getSortId);
         List<LabelValue> treeList = this.getLabelValueList(queryWrapper);
         return treeList;
+    }
+
+    @Override
+    public void createOrUpdateMenuResources(IamResourceDTO resourceDTO) {
+        if (V.isEmpty(resourceDTO.getParentId())) {
+            // 检索已创建的菜单
+            LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.<IamResource>lambdaQuery()
+                    .select(IamResource::getId).eq(IamResource::getResourceCode, resourceDTO.getResourceCode());
+            String resourceId = this.getValueOfField(queryWrapper, IamResource::getId);
+            resourceDTO.setId(resourceId);
+        }
+        if (V.isEmpty(resourceDTO.getId())) {
+            this.createMenuResources(resourceDTO);
+        }
+        else {
+            this.updateMenuResources(resourceDTO);
+        }
     }
 
 }
