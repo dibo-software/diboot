@@ -13,7 +13,7 @@ CREATE TABLE ${SCHEMA}.dbt_file_record
     thumbnail_url VARCHAR2(200),
     description   VARCHAR2(100),
     is_deleted    NUMBER(1) DEFAULT 0 not null,
-    create_by     varchar2(32)  NOT NULL DEFAULT '0',
+    create_by     varchar2(32)  DEFAULT '0' NOT NULL,
     create_time   timestamp DEFAULT CURRENT_TIMESTAMP not null,
     constraint PK_dbt_file_record primary key (id)
 );
