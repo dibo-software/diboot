@@ -39,6 +39,8 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     private RedisTemplate redisTemplate;
     private String cacheName;
+
+    private static final String SUFFIX_KEYS = "_KEYS";
     private int tokenExpireMinutes;
 
     public ShiroRedisCache(String cacheName, RedisTemplate redisTemplate, int tokenExpireMinutes) {
@@ -66,6 +68,9 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
         String key = this.getKey(k.toString());
         log.debug("put key : {}, value: {}", key, v);
         redisTemplate.opsForValue().set(key, v, tokenExpireMinutes, TimeUnit.MINUTES);
+        // 添加keys
+        redisTemplate.opsForSet().add(this.cacheName + SUFFIX_KEYS, key);
+        log.debug("redis缓存新增key：{}", key);
         return v;
     }
 
@@ -78,6 +83,9 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
         V value = get(k);
         log.debug("remove key : {}", key);
         redisTemplate.delete(key);
+        // 从keys缓存中移除
+        redisTemplate.opsForSet().remove(this.cacheName + SUFFIX_KEYS, key);
+        log.debug("redis缓存移除key：{}", key);
         return value;
     }
 
@@ -93,7 +101,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public Set<K> keys() {
-        return redisTemplate.keys(getKey("*"));
+        return (Set<K>) redisTemplate.opsForSet().members(this.cacheName + SUFFIX_KEYS);
     }
 
     @Override
