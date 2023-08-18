@@ -39,6 +39,11 @@
             <version>${diboot.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- redis可选依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
