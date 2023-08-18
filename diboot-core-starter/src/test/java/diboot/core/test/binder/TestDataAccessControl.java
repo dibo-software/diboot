@@ -1,5 +1,6 @@
 package diboot.core.test.binder;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.util.ContextHelper;
 import diboot.core.test.StartupApplication;
@@ -34,7 +35,7 @@ public class TestDataAccessControl {
     public void testDataControl(){
         DataAccessInterface checkImpl = ContextHelper.getBean(DataAccessInterface.class);
         Assert.assertNotNull(checkImpl);
-        List<CcCityInfo> ccCityInfoList = ccCityInfoService.list(null);
+        List<CcCityInfo> ccCityInfoList = ccCityInfoService.list(new QueryWrapper<>());
         Assert.assertEquals(2, ccCityInfoList.size());
     }
 }
