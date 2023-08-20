@@ -141,7 +141,7 @@ public class MiddleTable {
             String sql = toSQL(trunkObjCol2ValuesMap, paramValueList);
             // 执行查询并合并结果
             try {
-                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList);
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList.toArray());
                 return ResultAssembler.convertToOneToOneResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
@@ -205,7 +205,7 @@ public class MiddleTable {
             String sql = toSQL(trunkObjCol2ValuesMap, paramValueList);
             // 执行查询并合并结果
             try {
-                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList);
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList.toArray());
                 return ResultAssembler.convertToOneToManyResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
