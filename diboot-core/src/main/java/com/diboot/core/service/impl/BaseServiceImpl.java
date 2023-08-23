@@ -142,6 +142,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return getterFn.apply(entity);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean createEntity(T entity) {
 		if(entity == null){
@@ -151,6 +152,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return save(entity);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean save(T entity) {
 		this.beforeCreate(entity);
@@ -251,6 +253,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return saveBatch(entityList, BaseConfig.getBatchSize());
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean saveBatch(Collection<T> entityList, int batchSize){
 		// 批量插入
@@ -269,11 +272,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateById(T entity) {
 		return updateEntity(entity);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateEntity(T entity) {
 		this.beforeUpdate(entity);
@@ -284,6 +289,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateEntity(T entity, Wrapper updateWrapper) {
 		this.beforeUpdate(entity);
@@ -296,8 +302,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean updateEntity(Wrapper updateWrapper) {
-		boolean success = super.update(null, updateWrapper);
-		return success;
+		return super.update(null, updateWrapper);
 	}
 
 	@Override
@@ -318,6 +323,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean createOrUpdateEntity(T entity) {
 		if(entity instanceof BaseTreeEntity) {
@@ -365,6 +371,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean deleteEntity(String fieldKey, Object fieldVal) {
 		// 获取主键的关联属性
@@ -383,6 +390,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
                                                   SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList) {
@@ -584,6 +592,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return relatedEntityService.deleteEntities(queryWrapper);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean deleteEntity(Serializable id) {
 		Class<T> entityClass = getEntityClass();
@@ -948,8 +957,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
-		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
-		return voList;
+		return Binder.convertAndBindRelations(entityList, voClass);
 	}
 
 	@Override
@@ -988,6 +996,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return sort(sortParam, sortField, null, null);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField) {
 		Serializable id = sortParam.getId();
