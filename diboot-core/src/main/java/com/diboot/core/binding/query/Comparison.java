@@ -28,7 +28,7 @@ public enum Comparison {
     STARTSWITH, //以xx起始
     ENDSWITH, //以xx结尾
     LIKE, // LIKE
-    CONTAINS, //包含，非集合等同LIKE，集合匹配数组中包含
+    CONTAINS, //包含（用于JsonArray是否包含某个值）
 
     GT, // 大于
     GE, // 大于等于
