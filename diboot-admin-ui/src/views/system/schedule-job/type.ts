@@ -15,7 +15,7 @@ export interface ScheduleJob {
   initStrategy: string
   initStrategyLabel: string
   // 状态
-  jobStatus: boolean
+  jobStatus: string
   // 是否保存日志，默认true
   saveLog: boolean
   // 备注
@@ -57,7 +57,7 @@ export interface ScheduleJobLog {
   triggerMode: string
   triggerModeLabel: string
   // 执行状态
-  runStatus: boolean
+  runStatus: string
   // 执行结果信息
   executeMsg?: string
   // 创建时间
