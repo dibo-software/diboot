@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.util;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
@@ -62,6 +63,27 @@ public class IamSecurityUtils extends SecurityUtils {
         Subject subject = getSubject();
             if(subject != null){
             return (T)subject.getPrincipal();
+        }
+        return null;
+    }
+
+    /**
+     * 基于 accessToken 获取登录用户信息
+     */
+    public static BaseLoginUser getLoginUserByToken(String accessToken){
+        CacheManager cacheManager = ContextHolder.getBean(CacheManager.class);
+        if(cacheManager != null && cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME) != null){
+            SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo)cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).get(accessToken);
+            if(authInfo != null) {
+                SimplePrincipalCollection principalCollection = (SimplePrincipalCollection) authInfo.getPrincipals();
+                return (BaseLoginUser) principalCollection.getPrimaryPrincipal();
+            }
+            else {
+                log.warn("缓存中不存在的无效token: {}", accessToken);
+            }
+        }
+        else {
+            throw new InvalidUsageException("无法获取登录用户缓存，请检查依赖环境！");
         }
         return null;
     }
@@ -198,17 +220,7 @@ public class IamSecurityUtils extends SecurityUtils {
      * @param salt
      */
     public static String encryptPwd(String password, String salt){
-        String encryptedPassword = new SimpleHash(ALGORITHM, password, ByteSource.Util.bytes(salt), ITERATIONS).toHex();
-        return encryptedPassword;
+        return new SimpleHash(ALGORITHM, password, ByteSource.Util.bytes(salt), ITERATIONS).toHex();
     }
 
-    /***
-     * 获取客户ip地址
-     * @param request
-     * @return
-     */
-    @Deprecated
-    public static String getRequestIp(HttpServletRequest request) {
-        return HttpHelper.getRequestIp(request);
-    }
 }
