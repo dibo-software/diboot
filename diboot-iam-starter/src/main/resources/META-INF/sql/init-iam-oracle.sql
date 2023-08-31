@@ -36,8 +36,8 @@ comment on table ${SCHEMA}.dbt_iam_user is '系统用户';
 -- 索引
 create index idx_dbt_iam_user_1 on ${SCHEMA}.dbt_iam_user (org_id);
 create index idx_dbt_iam_user_2 on ${SCHEMA}.dbt_iam_user (mobile_phone);
-create index idx_iam_user_num on ${SCHEMA}.dbt_iam_user (user_num);
-create index idx_iam_user_tenant on ${SCHEMA}.dbt_iam_user (tenant_id);
+create index idx_dbt_iam_usernum on ${SCHEMA}.dbt_iam_user (user_num);
+create index idx_dbt_iam_user_tenant on ${SCHEMA}.dbt_iam_user (tenant_id);
 
 -- 账号表
 create table ${SCHEMA}.dbt_iam_account
@@ -84,7 +84,7 @@ create table ${SCHEMA}.dbt_iam_role
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   null,
     update_time timestamp   default CURRENT_TIMESTAMP null,
-    constraint PK_iam_role primary key (id)
+    constraint PK_iam_rl primary key (id)
 );
 comment on column ${SCHEMA}.dbt_iam_role.id is 'ID';
 comment on column ${SCHEMA}.dbt_iam_role.tenant_id is '租户ID';
@@ -143,7 +143,7 @@ create table ${SCHEMA}.dbt_iam_resource
     is_deleted NUMBER(1) DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP  null,
-    constraint PK_iam_permission primary key (id)
+    constraint PK_iam_res primary key (id)
 );
 comment on column ${SCHEMA}.dbt_iam_resource.id is 'ID';
 comment on column ${SCHEMA}.dbt_iam_resource.tenant_id is '租户ID';
@@ -186,8 +186,8 @@ comment on column ${SCHEMA}.dbt_iam_role_resource.is_deleted is '是否删除';
 comment on column ${SCHEMA}.dbt_iam_role_resource.create_time is '创建时间';
 comment on table ${SCHEMA}.dbt_iam_role_resource is '角色权限';
 -- 索引
-create index idx_dbt_iam_role_resource on ${SCHEMA}.dbt_iam_role_resource (role_id, resource_id);
-create index idx_dbt_iam_role_resource_tenant on ${SCHEMA}.dbt_iam_role_resource (tenant_id);
+create index idx_dbt_iam_role_res on ${SCHEMA}.dbt_iam_role_resource (role_id, resource_id);
+create index idx_dbt_iam_role_res_tenant on ${SCHEMA}.dbt_iam_role_resource (tenant_id);
 
 -- 登录日志表
 create table ${SCHEMA}.dbt_iam_login_trace
@@ -261,8 +261,8 @@ comment on column ${SCHEMA}.dbt_iam_operation_log.is_deleted is '是否删除';
 comment on column ${SCHEMA}.dbt_iam_operation_log.create_time is '创建时间';
 comment on table ${SCHEMA}.dbt_iam_operation_log is '操作日志';
 -- 创建索引
-create index idx_dbt_iam_operation_log on ${SCHEMA}.dbt_iam_operation_log (user_type, user_id);
-create index idx_dbt_iam_operation_log_tenant on ${SCHEMA}.dbt_iam_operation_log (tenant_id);
+create index idx_dbt_iam_oper_log on ${SCHEMA}.dbt_iam_operation_log (user_type, user_id);
+create index idx_dbt_iam_oper_log_tenant on ${SCHEMA}.dbt_iam_operation_log (tenant_id);
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.dbt_iam_org (

@@ -23,7 +23,7 @@ defineExpose({
         {{ model.endTime }}
       </el-descriptions-item>
       <el-descriptions-item label="执行状态">
-        <el-tag v-if="model.runStatus">成功</el-tag>
+        <el-tag v-if="model.runStatus === 'S'">成功</el-tag>
         <el-tag v-else type="danger">失败</el-tag>
       </el-descriptions-item>
       <el-descriptions-item label="触发方式">
