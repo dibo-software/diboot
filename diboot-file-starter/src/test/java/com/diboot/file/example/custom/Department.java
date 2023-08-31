@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  * @date 2020/02/19
  */
 @Getter @Setter @Accessors(chain = true)
-public class Department extends BaseEntity {
+public class Department extends BaseEntity<String> {
 
     @NotNull(message = "父ID不能为空")
     private Long parentId;

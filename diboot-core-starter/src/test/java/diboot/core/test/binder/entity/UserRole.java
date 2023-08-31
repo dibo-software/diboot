@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class UserRole extends BaseEntity {
+public class UserRole extends BaseEntity<String> {
     private static final long serialVersionUID = 3030761344045195972L;
 
     @TableField(exist = false)

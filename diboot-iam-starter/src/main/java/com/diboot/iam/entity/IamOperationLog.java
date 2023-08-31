@@ -28,6 +28,7 @@ import org.hibernate.validator.constraints.Length;
 
 /**
  * 操作日志
+ *
  * @author mazc@dibo.ltd
  * @version v2.1.2
  * @date 2020/09/21
@@ -36,7 +37,7 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_iam_operation_log")
-public class IamOperationLog extends BaseEntity {
+public class IamOperationLog extends BaseEntity<String> {
     private static final long serialVersionUID = 8928160564300882271L;
 
     /**
@@ -48,7 +49,7 @@ public class IamOperationLog extends BaseEntity {
 
     /**
      * 应用模块
-      */
+     */
     @TableField
     private String appModule;
 
@@ -127,8 +128,8 @@ public class IamOperationLog extends BaseEntity {
     @TableField()
     private String errorMsg;
 
-    public IamOperationLog setRequestParams(String requestParams){
-        if(V.notEmpty(requestParams) && requestParams.length() > 950){
+    public IamOperationLog setRequestParams(String requestParams) {
+        if (V.notEmpty(requestParams) && requestParams.length() > 950) {
             requestParams = S.cut(requestParams, 950);
         }
         this.requestParams = requestParams;

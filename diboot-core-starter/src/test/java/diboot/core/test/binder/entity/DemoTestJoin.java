@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class DemoTestJoin extends BaseEntity {
+public class DemoTestJoin extends BaseEntity<String> {
 
     Long demoTestId;
 

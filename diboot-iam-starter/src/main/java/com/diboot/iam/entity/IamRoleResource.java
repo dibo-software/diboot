@@ -26,19 +26,23 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 
 /**
-* 角色权限关联 Entity定义
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
-*/
-@Getter @Setter @Accessors(chain = true)
+ * 角色权限关联 Entity定义
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-03
+ */
+@Getter
+@Setter
+@Accessors(chain = true)
 @TableName("dbt_iam_role_resource")
-public class IamRoleResource extends BaseEntity {
+public class IamRoleResource extends BaseEntity<String> {
     private static final long serialVersionUID = -8228772361638435896L;
 
-    public IamRoleResource(){
+    public IamRoleResource() {
     }
-    public IamRoleResource(String roleId, String resourceId){
+
+    public IamRoleResource(String roleId, String resourceId) {
         this.roleId = roleId;
         this.resourceId = resourceId;
     }
@@ -59,5 +63,6 @@ public class IamRoleResource extends BaseEntity {
     @NotNull(message = "资源ID不能为空")
     @TableField()
     private String resourceId;
+
 
 }

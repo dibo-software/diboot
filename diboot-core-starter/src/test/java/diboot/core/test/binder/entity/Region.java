@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Getter @Setter @Accessors(chain = true)
-public class Region extends BaseTreeEntity {
+public class Region extends BaseTreeEntity<String> {
 
     String name;
 

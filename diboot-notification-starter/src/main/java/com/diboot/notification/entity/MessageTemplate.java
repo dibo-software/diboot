@@ -45,7 +45,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_message_template")
-public class MessageTemplate extends BaseEntity {
+public class MessageTemplate extends BaseEntity<String> {
     private static final long serialVersionUID = 5255165821023367198L;
 
     /**
@@ -108,7 +108,6 @@ public class MessageTemplate extends BaseEntity {
      */
     @TableField(exist = false)
     private Map<String, Object> extDataMap;
-
 
     public Map<String, Object> getExtDataMap() {
         return V.isEmpty(this.extData) ? new HashMap<>(16) : JSON.toMap(this.extData);

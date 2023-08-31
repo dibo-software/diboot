@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 
 /**
  * 组织机构 Entity定义
+ *
  * @author mazc@dibo.ltd
  * @version 2.2
  * @date 2019-12-03
@@ -38,7 +39,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_iam_org")
-public class IamOrg extends BaseEntity {
+public class IamOrg extends BaseEntity<String> {
 
     private static final long serialVersionUID = 8942911223090443934L;
 

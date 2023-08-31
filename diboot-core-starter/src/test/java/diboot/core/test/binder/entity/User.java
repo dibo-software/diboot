@@ -38,7 +38,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 //@TableName("\"user\"")
-public class User extends BaseEntity {
+public class User extends BaseEntity<String> {
     private static final long serialVersionUID = 3050761344045195972L;
 
     @TableField

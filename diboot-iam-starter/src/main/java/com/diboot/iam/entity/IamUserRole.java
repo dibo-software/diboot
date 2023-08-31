@@ -26,18 +26,23 @@ import lombok.experimental.Accessors;
 import javax.validation.constraints.NotNull;
 
 /**
-* 用户角色关联 Entity定义
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-17
-*/
-@Getter @Setter @Accessors(chain = true)
+ * 用户角色关联 Entity定义
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-17
+ */
+@Getter
+@Setter
+@Accessors(chain = true)
 @TableName("dbt_iam_user_role")
-public class IamUserRole extends BaseEntity {
+public class IamUserRole extends BaseEntity<String> {
     private static final long serialVersionUID = 7716603553049083815L;
 
-    public IamUserRole(){}
-    public IamUserRole(String userType, String userId, String roleId){
+    public IamUserRole() {
+    }
+
+    public IamUserRole(String userType, String userId, String roleId) {
         this.userType = userType;
         this.userId = userId;
         this.roleId = roleId;

@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_i18n_config")
-public class I18nConfig extends BaseEntity {
+public class I18nConfig extends BaseEntity<String> {
     private static final long serialVersionUID = 11501L;
 
     /**

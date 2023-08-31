@@ -40,7 +40,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @TableName(autoResultMap = true)
-public class Department extends BaseEntity {
+public class Department extends BaseEntity<String> {
     private static final long serialVersionUID = -4849732665419794547L;
 
     @BindQuery(comparison = Comparison.EQ, strategy = Strategy.INCLUDE_NULL)

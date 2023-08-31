@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Role extends BaseEntity {
+public class Role extends BaseEntity<String> {
     private static final long serialVersionUID = 3701095453152116088L;
 
     private String name;
