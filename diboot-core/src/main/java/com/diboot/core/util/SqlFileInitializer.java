@@ -41,14 +41,12 @@ public class SqlFileInitializer {
     private static final Logger log = LoggerFactory.getLogger(SqlFileInitializer.class);
 
     private static String CURRENT_SCHEMA = null;
-    private static Environment environment;
 
     /**
      * 初始化
      * @param env
      */
     public static void init(Environment env) {
-        environment = env;
     }
 
     /**
@@ -268,7 +266,8 @@ public class SqlFileInitializer {
             return false;
         }
         SqlSession session = sqlSessionFactory.openSession(false);
-        try(Connection conn = session.getConnection()){
+        Connection conn = session.getConnection();
+        try {
             conn.setAutoCommit(false);
             for(String sqlStatement : sqlStatementList){
                 SqlExecutor.executeUpdate(conn, sqlStatement, null);
@@ -278,13 +277,12 @@ public class SqlFileInitializer {
         }
         catch (Exception e){
             log.error("SQL执行异常，请检查：", e);
-            session.rollback();
-            session.close();
+            conn.rollback();
             throw e;
         }
         finally {
-            if(session != null){
-                session.close();
+            if(conn != null){
+                conn.close();
             }
         }
     }
