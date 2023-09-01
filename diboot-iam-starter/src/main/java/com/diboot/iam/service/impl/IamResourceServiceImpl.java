@@ -16,6 +16,7 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
@@ -79,7 +80,6 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
         }
-
         // 批量创建按钮/权限列表
         List<IamResource> permissionList = iamResourceDTO.getPermissionList();
         if (V.isEmpty(permissionList)) {
@@ -215,24 +215,52 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
                 .select(IamResource::getDisplayName, IamResource::getId, IamResource::getRoutePath, IamResource::getParentId)
         .in(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.CATALOGUE.name())
         .orderByAsc(IamResource::getSortId);
-        List<LabelValue> treeList = this.getLabelValueList(queryWrapper);
-        return treeList;
+        return this.getLabelValueList(queryWrapper);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createOrUpdateMenuResources(IamResourceDTO resourceDTO) {
-        if (V.notEmpty(resourceDTO.getParentId())) {
-            // 检索已创建的菜单
-            LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.<IamResource>lambdaQuery()
-                    .select(IamResource::getId).eq(IamResource::getResourceCode, resourceDTO.getResourceCode()).eq(IamResource::getParentId, resourceDTO.getParentId());
-            String resourceId = this.getValueOfField(queryWrapper, IamResource::getId);
-            if(resourceId != null) {
-                resourceDTO.setId(resourceId);
-                this.updateMenuResources(resourceDTO);
-                return;
+        // 如果dto的id存在，则更新
+        if(V.isEmpty(resourceDTO.getId())) {
+            this.createMenuResources(resourceDTO);
+            return;
+        }
+        // 更新 menu
+        this.updateEntity(resourceDTO);
+        List<IamResource> permissionList = resourceDTO.getPermissionList();
+        List<String> resourceCodes = new ArrayList<>();
+        permissionList.forEach(p -> {
+            p.setParentId(resourceDTO.getId());
+            p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
+            resourceCodes.add(p.getResourceCode());
+        });
+        // 查询本次涉及的资源
+        LambdaQueryWrapper<IamResource> oldPermissionsQuery = new QueryWrapper<IamResource>().lambda()
+                .eq(IamResource::getParentId, resourceDTO.getId()).eq(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
+                .in(IamResource::getResourceCode, resourceCodes);
+        List<IamResource> oldPermissionList = this.getEntityList(oldPermissionsQuery);
+        Map<String, IamResource> oldPermissionMap = oldPermissionList.stream().collect(Collectors.toMap(IamResource::getResourceCode, p->p));
+        // 需要更新的列表
+        List<IamResource> updatePermissionList = new ArrayList<>();
+        List<IamResource> createPermissionList = new ArrayList<>();
+        for(IamResource current : permissionList) {
+            IamResource originRes = oldPermissionMap.get(current.getResourceCode());
+            if(originRes != null) {
+                originRes.setMeta(current.getMeta()).setPermissionCode(current.getPermissionCode()).setDisplayName(current.getDisplayName());
+                updatePermissionList.add(originRes);
+            }
+            else {
+                createPermissionList.add(current);
             }
         }
-        this.createMenuResources(resourceDTO);
+        // 批量新建按钮/权限列表
+        if (V.notEmpty(createPermissionList)) {
+            this.createEntities(createPermissionList);
+        }
+        // 批量更新按钮/权限列表
+        if (V.notEmpty(updatePermissionList)) {
+            this.updateEntities(updatePermissionList);
+        }
     }
-
 }
