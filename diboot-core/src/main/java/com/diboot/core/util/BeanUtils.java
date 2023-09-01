@@ -212,8 +212,8 @@ public class BeanUtils {
      * @param obj
      */
     private static ConversionService conversionService;
-    private static Map<String, BeanWrapper> beanWrapperCacheMap = new ConcurrentHashMap<>();
-    public static BeanWrapper getBeanWrapper(Object obj) {
+    private static final Map<String, BeanWrapper> beanWrapperCacheMap = new ConcurrentHashMap<>();
+    public synchronized static BeanWrapper getBeanWrapper(Object obj) {
         BeanWrapper wrapper = beanWrapperCacheMap.get(obj.getClass().getName());
         if(wrapper == null) {
             wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);

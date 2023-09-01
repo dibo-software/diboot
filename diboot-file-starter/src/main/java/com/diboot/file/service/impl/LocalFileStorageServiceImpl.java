@@ -56,7 +56,6 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
 
     @Override
     public FileRecord save(InputStream inputStream, String fileName, long size) throws Exception {
-        long length = new File("").length();
         // 文件后缀
         String fileUid = S.newUuid();
         String ext = FileHelper.getFileExtByName(fileName);

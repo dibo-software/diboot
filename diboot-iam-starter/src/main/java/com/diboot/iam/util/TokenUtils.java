@@ -161,7 +161,7 @@ public class TokenUtils {
         // 获取当前token的过期时间
         long issuedAt = Long.parseLong(userFields[ISSUED_AT_INDEX]);
         // 获取当前token的过期时间
-        long expiredBefore = issuedAt + expiresInMinutes * 60000;
+        long expiredBefore = issuedAt + expiresInMinutes * 60000L;
         return System.currentTimeMillis() > expiredBefore;
     }
 
@@ -179,12 +179,12 @@ public class TokenUtils {
         // 当前token是否临近过期
         long current = System.currentTimeMillis();
         long issuedAt = Long.parseLong(userFields[ISSUED_AT_INDEX]);
-        long expiration = issuedAt + expiresInMinutes*60000;
+        long expiration = issuedAt + expiresInMinutes* 60000L;
         long remaining = expiration - current;
         if(remaining > 0){
             long elapsed = current - issuedAt;
             // 小于1/4 则更新
-            double past = (elapsed / remaining);
+            double past = ((double) elapsed / remaining);
             return past > 3.0;
         }
         return false;

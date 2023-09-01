@@ -286,9 +286,6 @@ public class ResultAssembler {
         if(V.isEmpty(resultSetMapList)){
             return Collections.emptyMap();
         }
-        // 获取valueName
-        String valueName = branchObjColMapping.entrySet().iterator().next().getKey();
-        valueName = S.removeEsc(valueName);
         // 合并list为map
         Map<String, Long> resultMap = new HashMap<>();
         StringBuilder sb = new StringBuilder();
@@ -308,7 +305,7 @@ public class ResultAssembler {
             String matchKeys = sb.toString();
             Long valueObj = (Long)getValueIgnoreKeyCase(row, Binder.COUNT_COL);
             if(valueObj == null){
-                valueObj = 0l;
+                valueObj = 0L;
             }
             resultMap.put(matchKeys, valueObj);
         }
