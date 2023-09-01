@@ -31,6 +31,7 @@ import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthToken;
+import com.diboot.iam.starter.IamProperties;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
@@ -60,6 +61,8 @@ public abstract class BaseAuthServiceImpl implements AuthService {
     private HttpServletRequest request;
     @Autowired
     private IamLoginTraceService loginTraceService;
+    @Autowired
+    private IamProperties iamProperties;
 
     @Override
     public String getAuthType() {
@@ -164,8 +167,10 @@ public abstract class BaseAuthServiceImpl implements AuthService {
                 .eq(IamLoginTrace::getAuthAccount, latestAccount.getAuthAccount())
                 .gt(IamLoginTrace::getCreateTime, LocalDateTime.now().minusDays(1))
                 .eq(V.notEmpty(latestAccount.getTenantId()) ,IamLoginTrace::getTenantId, latestAccount.getTenantId());
-        List<IamLoginTrace> loginList = loginTraceService.getEntityListLimit(queryWrapper, Cons.LOGIN_MAX_ATTEMPTS);
-        if(V.notEmpty(loginList) && loginList.size() >= Cons.LOGIN_MAX_ATTEMPTS) {
+        // 检查是否超出最大次数
+        int maxLoginAttempts = iamProperties.getMaxLoginAttempts();
+        List<IamLoginTrace> loginList = loginTraceService.getEntityListLimit(queryWrapper, maxLoginAttempts);
+        if(V.notEmpty(loginList) && loginList.size() >= maxLoginAttempts) {
             int failCount = 0;
             for(IamLoginTrace loginTrace : loginList) {
                 if(loginTrace.isSuccess()) {
@@ -173,7 +178,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
                 }
                 failCount++;
             }
-            if(failCount >= Cons.LOGIN_MAX_ATTEMPTS) {
+            if(failCount >= maxLoginAttempts) {
                 latestAccount.setStatus(Cons.DICTCODE_ACCOUNT_STATUS.L.name());
                 log.warn("用户登录失败次数超过最大限值，账号 {} 已被锁定！", latestAccount.getAuthAccount());
                 accountService.updateAccountStatus(latestAccount.getId(), Cons.DICTCODE_ACCOUNT_STATUS.L.name());
