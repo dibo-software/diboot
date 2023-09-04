@@ -128,7 +128,7 @@ public class IamResource extends BaseEntity<String> {
     }
 
     @Override
-    public IamResource setId(String id) {
+    public BaseEntity<String> setId(String id) {
         super.setId(id);
         return this;
     }
