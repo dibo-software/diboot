@@ -976,12 +976,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if (entity == null) {
 			return Collections.emptyList();
 		}
-		String parentPath = getParentIdsPath.apply(entity);
-		if (V.isEmpty(parentPath)) {
-			// parentPath格式：/([0-9a-f]+,)+/g
-			parentPath = rootNodeId + Cons.SEPARATOR_COMMA;
+		if (getParentIdsPath != null) {
+			String parentPath = getParentIdsPath.apply(entity);
+			if (V.isEmpty(parentPath)) {
+				// parentPath格式：/([0-9a-f]+,)+/g
+				parentPath = rootNodeId + Cons.SEPARATOR_COMMA;
+			}
+			queryWrapper.likeRight(getParentIdsPath, parentPath);
 		}
-		queryWrapper.likeRight(getParentIdsPath, parentPath);
 		List<T> entityList = getEntityList(queryWrapper);
 		if (V.notEmpty(rootNodeId)) {
 			entityList.add(entity);

@@ -60,10 +60,11 @@ public class BaseTreeEntity<T extends Serializable> extends BaseEntity<T> {
     @JsonIgnore
     private String parentIdsPath;
 
-    public void setParentIdsPath(String parentIdsPath) {
+    public BaseTreeEntity<T> setParentIdsPath(String parentIdsPath) {
         if (V.notEmpty(parentIdsPath) && !S.endsWith(parentIdsPath, Cons.SEPARATOR_COMMA)) {
             parentIdsPath += Cons.SEPARATOR_COMMA;
         }
         this.parentIdsPath = parentIdsPath;
+        return this;
     }
 }
