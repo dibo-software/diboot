@@ -20,6 +20,7 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.springframework.beans.BeanWrapper;
 
 import java.lang.reflect.Field;
@@ -71,29 +72,17 @@ public class AcceptAnnoCopier {
             return;
         }
         BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(target);
-        for(CopyInfo annoDef : acceptAnnos){
-            if(!annoDef.isOverride()){
-                Object targetValue = BeanUtils.getProperty(target, annoDef.getTo());
+        for(CopyInfo copyInfo : acceptAnnos){
+            if(!copyInfo.isOverride()){
+                Object targetValue = BeanUtils.getProperty(target, copyInfo.getTo());
                 if(targetValue != null){
                     log.debug("目标对象{}已有值{}，copyAcceptProperties将忽略.", key, targetValue);
                     continue;
                 }
             }
-            String fieldName = annoDef.getForm();
-            String deepFieldName = null;
-            if(fieldName.contains(Cons.SEPARATOR_DOT)) {
-                deepFieldName = S.substringAfter(fieldName, Cons.SEPARATOR_DOT);
-                fieldName = S.substringBefore(fieldName, Cons.SEPARATOR_DOT);
-            }
-            Field sourceField = BeanUtils.extractField(source.getClass(), fieldName);
-            if(sourceField != null) {
-                Object sourceValue = BeanUtils.getProperty(source, fieldName);
-                if(sourceValue != null && deepFieldName != null) {
-                    sourceValue = BeanUtils.getProperty(sourceValue, deepFieldName);
-                }
-                if(sourceValue != null) {
-                    beanWrapper.setPropertyValue(annoDef.getTo(), sourceValue);
-                }
+            Object sourceValue = SystemMetaObject.forObject(source).getValue(copyInfo.getForm());
+            if(sourceValue != null) {
+                beanWrapper.setPropertyValue(copyInfo.getTo(), sourceValue);
             }
         }
     }
