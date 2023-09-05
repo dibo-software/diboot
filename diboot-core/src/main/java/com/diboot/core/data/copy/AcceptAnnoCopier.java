@@ -15,7 +15,9 @@
  */
 package com.diboot.core.data.copy;
 
+import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
@@ -38,9 +40,7 @@ public class AcceptAnnoCopier {
     /**
      * 注解缓存
      */
-    private static final Map<String, List<String[]>> CLASS_ACCEPT_ANNO_CACHE_MAP = new ConcurrentHashMap<>();
-    // 下标
-    private static final int IDX_TARGET_FIELD = 0, IDX_SOURCE_FIELD = 1, IDX_OVERRIDE = 2;
+    private static final Map<String, List<CopyInfo>> CLASS_ACCEPT_ANNO_CACHE_MAP = new ConcurrentHashMap<>();
 
     /**
      * 基于注解拷贝属性
@@ -56,35 +56,43 @@ public class AcceptAnnoCopier {
                 CLASS_ACCEPT_ANNO_CACHE_MAP.put(key, Collections.EMPTY_LIST);
             }
             else{
-                List<String[]> annoDefList = new ArrayList<>(annoFieldList.size());
+                List<CopyInfo> annoDefList = new ArrayList<>(annoFieldList.size());
                 for(Field fld : annoFieldList){
                     Accept accept = fld.getAnnotation(Accept.class);
-                    String[] annoDef = {fld.getName(), accept.name(), accept.override()? "1":"0"};
-                    annoDefList.add(annoDef);
+                    CopyInfo copyInfo = new CopyInfo(accept.name(), fld.getName(), accept.override());
+                    annoDefList.add(copyInfo);
                 }
                 CLASS_ACCEPT_ANNO_CACHE_MAP.put(key, annoDefList);
             }
         }
         // 解析copy
-        List<String[]> acceptAnnos = CLASS_ACCEPT_ANNO_CACHE_MAP.get(key);
+        List<CopyInfo> acceptAnnos = CLASS_ACCEPT_ANNO_CACHE_MAP.get(key);
         if(V.isEmpty(acceptAnnos)){
             return;
         }
         BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(target);
-        for(String[] annoDef : acceptAnnos){
-            boolean override = !"0".equals(annoDef[IDX_OVERRIDE]);
-            if(!override){
-                Object targetValue = BeanUtils.getProperty(target, annoDef[IDX_TARGET_FIELD]);
+        for(CopyInfo annoDef : acceptAnnos){
+            if(!annoDef.isOverride()){
+                Object targetValue = BeanUtils.getProperty(target, annoDef.getTo());
                 if(targetValue != null){
                     log.debug("目标对象{}已有值{}，copyAcceptProperties将忽略.", key, targetValue);
                     continue;
                 }
             }
-            Field sourceField = BeanUtils.extractField(source.getClass(), annoDef[IDX_SOURCE_FIELD]);
-            if(sourceField != null){
-                Object sourceValue = BeanUtils.getProperty(source, annoDef[IDX_SOURCE_FIELD]);
-                if(sourceValue != null){
-                    beanWrapper.setPropertyValue(annoDef[IDX_TARGET_FIELD], sourceValue);
+            String fieldName = annoDef.getForm();
+            String deepFieldName = null;
+            if(fieldName.contains(Cons.SEPARATOR_DOT)) {
+                deepFieldName = S.substringAfter(fieldName, Cons.SEPARATOR_DOT);
+                fieldName = S.substringBefore(fieldName, Cons.SEPARATOR_DOT);
+            }
+            Field sourceField = BeanUtils.extractField(source.getClass(), fieldName);
+            if(sourceField != null) {
+                Object sourceValue = BeanUtils.getProperty(source, fieldName);
+                if(sourceValue != null && deepFieldName != null) {
+                    sourceValue = BeanUtils.getProperty(sourceValue, deepFieldName);
+                }
+                if(sourceValue != null) {
+                    beanWrapper.setPropertyValue(annoDef.getTo(), sourceValue);
                 }
             }
         }
