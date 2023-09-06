@@ -78,12 +78,11 @@
 * 支持 账号密码登录、微信小程序登录（自动注册）微信公众号登录（自动注册）
 > 详细文档: [diboot-mobile文档](http://v3.diboot.com/pages/diboot_mobile/).
 
-## 3. devtools开发助理（v2）
+## 3. devtools开发助理
 * 极简易用（引入依赖jar，配置参数后，即可随应用启动运行）
-* 功能强大（数据结构与代码同步、前后端代码一键生成、前端面板组件编排）
-* 配置灵活（可按需配置生成代码路径及启用`Lombok`、`Swagger`等）
+* 功能强大（数据结构与代码同步、前后端代码一键生成、彻底摆脱CRUD）
 * 代码标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
-* 支持多库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
+* 支持多库（MySQL、MariaDB、PostgreSQL等）
 
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/introduce.html).
 
