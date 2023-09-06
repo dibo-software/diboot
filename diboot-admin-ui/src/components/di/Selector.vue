@@ -4,7 +4,7 @@ import type { RelatedData } from '@/hooks/use-option'
 
 type ModelValue = string | string[]
 
-interface ListSelectorProps extends Omit<ListSelector, keyof Omit<Input, 'placeholder'> | 'type'> {
+interface ListSelectorProps extends /* @vue-ignore */ Omit<ListSelector, keyof Omit<Input, 'placeholder'> | 'type'> {
   modelValue?: ModelValue
   placeholder?: string
   disabled?: boolean

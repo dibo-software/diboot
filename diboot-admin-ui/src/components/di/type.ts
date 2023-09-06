@@ -86,7 +86,7 @@ export interface RichText extends Input {
 }
 
 export interface InputNumber extends Input {
-  type: 'input-number'
+  type: 'input-number' | 'input-number-range' // 数字区间用于列表过滤
   min?: number
   max?: number
   // 精度（未指定则为整数）

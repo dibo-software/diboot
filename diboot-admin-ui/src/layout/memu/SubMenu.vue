@@ -17,7 +17,7 @@ defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean }>()
       <sub-menu :menu-tree="item.children" />
     </el-sub-menu>
     <el-tooltip v-else :disabled="!collapse" :content="item.meta?.title" placement="right" :show-after="200">
-      <el-menu-item :index="item.path">
+      <el-menu-item :index="item.path" style="width: 188px">
         <el-icon v-if="item.meta?.icon" :size="iconSizeNumber">
           <icon :name="item.meta?.icon" />
         </el-icon>
@@ -33,5 +33,8 @@ defineProps<{ menuTree: RouteRecordRaw[]; collapse?: boolean }>()
 }
 .menu-text {
   font-size: var(--el-font-size-dynamic);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

@@ -44,8 +44,8 @@ create table ${SCHEMA}.dbt_iam_account
     id varchar(32) not null primary key,
     tenant_id varchar(32) default '0' not null,
     user_type VARCHAR(100) default 'IamUser'   not null,
-    user_id varchar(32)   not null,
-    auth_type VARCHAR(50) default 'PWD'   not null,
+    user_id varchar(32)   DEFAULT '0' not null,
+    auth_type VARCHAR(50) default 'PWD' not null,
     auth_account VARCHAR(200)   not null,
     auth_secret VARCHAR(100)   null,
     secret_salt VARCHAR(50)   null,
@@ -129,9 +129,12 @@ create table ${SCHEMA}.dbt_iam_resource
     display_type VARCHAR(60) not null,
     display_name VARCHAR(100) not null,
     display_name_i18n VARCHAR(200) null,
+    route_path varchar(200) null,
     resource_code VARCHAR(100)   null,
     permission_code VARCHAR(300)   null,
+    meta varchar(300) null,
     sort_id bigint DEFAULT 0  not null,
+    status varchar(10) default 'A',
     is_deleted BIT DEFAULT 0   not null,
     create_time timestamp default CURRENT_TIMESTAMP   not null,
     update_time timestamp default CURRENT_TIMESTAMP  null
@@ -145,6 +148,9 @@ comment on column ${SCHEMA}.dbt_iam_resource.display_name is '显示名称';
 comment on column ${SCHEMA}.dbt_iam_resource.display_name is '显示名称国际化资源标识';
 comment on column ${SCHEMA}.dbt_iam_resource.resource_code is '前端编码';
 comment on column ${SCHEMA}.dbt_iam_resource.permission_code is '权限码';
+comment on column ${SCHEMA}.dbt_iam_resource.route_path is '路由地址';
+comment on column ${SCHEMA}.dbt_iam_resource.meta is 'meta配置';
+comment on column ${SCHEMA}.dbt_iam_resource.status is '状态';
 comment on column ${SCHEMA}.dbt_iam_resource.sort_id is '排序号';
 comment on column ${SCHEMA}.dbt_iam_resource.is_deleted is '是否删除';
 comment on column ${SCHEMA}.dbt_iam_resource.create_time is '创建时间';
@@ -251,21 +257,21 @@ create index idx_dbt_iam_operation_log_tenant on ${SCHEMA}.dbt_iam_operation_log
 
 -- 部门表
 CREATE TABLE ${SCHEMA}.dbt_iam_org (
-                                       id varchar(32) not null primary key,
-                                       tenant_id varchar(32) default '0' not null,
-                                       parent_id varchar(32) DEFAULT '0' NOT NULL,
-                                       parent_ids_path varchar(500) NULL,
-                                       root_org_id varchar(32) DEFAULT '0' NOT NULL,
-                                       name VARCHAR(100) NOT NULL,
-                                       type        VARCHAR(100) DEFAULT 'DEPT' NOT NULL,
-                                       code        VARCHAR(50)  NOT NULL,
-                                       manager_id varchar(32)  DEFAULT '0' NOT NULL,
-                                       sort_id bigint DEFAULT 1 NOT NULL,
-                                       status      VARCHAR(10)  DEFAULT 'A' NOT NULL,
-                                       org_comment VARCHAR(500)   null,
-                                       is_deleted BIT DEFAULT 0    not null,
-                                       create_time timestamp default CURRENT_TIMESTAMP   not null,
-                                       update_time timestamp   default CURRENT_TIMESTAMP null
+   id varchar(32) not null primary key,
+   tenant_id varchar(32) default '0' not null,
+   parent_id varchar(32) DEFAULT '0' NOT NULL,
+   parent_ids_path varchar(500) NULL,
+   root_org_id varchar(32) DEFAULT '0' NOT NULL,
+   name VARCHAR(100) NOT NULL,
+   type        VARCHAR(100) DEFAULT 'DEPT' NOT NULL,
+   code        VARCHAR(50)  NOT NULL,
+   manager_id varchar(32)  DEFAULT '0' NOT NULL,
+   sort_id bigint DEFAULT 1 NOT NULL,
+   status      VARCHAR(10)  DEFAULT 'A' NOT NULL,
+   org_comment VARCHAR(500)   null,
+   is_deleted BIT DEFAULT 0    not null,
+   create_time timestamp default CURRENT_TIMESTAMP   not null,
+   update_time timestamp   default CURRENT_TIMESTAMP null
 );
 comment on column ${SCHEMA}.dbt_iam_org.id is 'ID';
 comment on column ${SCHEMA}.dbt_iam_org.tenant_id is '租户ID';

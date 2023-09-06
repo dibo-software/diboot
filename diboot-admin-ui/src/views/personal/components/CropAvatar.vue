@@ -14,7 +14,7 @@ const props = defineProps<{
 }>()
 const dialogVisible = ref<boolean | undefined>(false)
 const imgSrc = ref<string | undefined>('')
-const filename = ref<string | undefined>('')
+const filenameInner = ref<string | undefined>('')
 watch(
   () => props.showSetAvatarDialog,
   val => {
@@ -30,7 +30,7 @@ watch(
 watch(
   () => props.filename,
   val => {
-    filename.value = val
+    filenameInner.value = val
   }
 )
 
@@ -59,7 +59,7 @@ const loading = ref(false)
 const authStore = useAuthStore()
 const getPickAvatar = () => {
   loading.value = true
-  const file = dataURLtoFile(imgSrc.value ?? '', filename.value ?? '') as File
+  const file = dataURLtoFile(imgSrc.value ?? '', filenameInner.value ?? '') as File
   const formData = new FormData()
   formData.set('file', file)
   api

@@ -35,10 +35,10 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_file_record")
-public class FileRecord extends BaseEntity {
+public class FileRecord extends BaseEntity<String> {
     private static final long serialVersionUID = -202L;
 
-    public FileRecord(){
+    public FileRecord() {
     }
 
     public FileRecord(String id) {
@@ -111,6 +111,7 @@ public class FileRecord extends BaseEntity {
 
     /**
      * 文件大小格式化
+     *
      * @return
      */
     public String getFileSizeLabel() {

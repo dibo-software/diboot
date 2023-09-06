@@ -17,6 +17,7 @@ package com.diboot.iam.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.BaseModel;
 import com.diboot.iam.config.Cons;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -35,7 +36,7 @@ import java.time.LocalDateTime;
  */
 @Getter @Setter @Accessors(chain = true)
 @TableName("dbt_iam_account")
-public class IamAccount extends BaseEntity {
+public class IamAccount extends BaseEntity<String> {
     private static final long serialVersionUID = -6825516429612507644L;
 
     /**

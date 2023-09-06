@@ -177,7 +177,6 @@ public class IamAutoConfig {
         Map<String, String> filterChainMap = new LinkedHashMap<>();
         // 设置url
         filterChainMap.put("/static/**", "anon");
-        filterChainMap.put("/diboot/**", "anon");
         filterChainMap.put("/error/**", "anon");
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
@@ -207,9 +206,9 @@ public class IamAutoConfig {
      * 用户token缓存管理器
      * @return
      */
-    @Bean
+    @Bean(name = "iamCacheManager")
     @ConditionalOnMissingBean
-    public BaseCacheManager baseCacheManager(){
+    public BaseCacheManager iamCacheManager(){
         log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
             put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());

@@ -74,9 +74,9 @@ public class IamRedisAutoConfig {
      * 验证码的缓存管理
      * @return
      */
-    @Bean
+    @Bean(name = "iamCacheManager")
     @ConditionalOnMissingBean
-    public BaseCacheManager baseCacheManager(){
+    public BaseCacheManager iamCacheManager(){
         log.info("初始化IAM Redis缓存: DynamicRedisCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
                 put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());

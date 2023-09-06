@@ -17,6 +17,7 @@ package com.diboot.core.binding.parser;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.diboot.core.binding.Binder;
 import com.diboot.core.binding.binder.BaseBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
@@ -140,8 +141,40 @@ public class MiddleTable {
             String sql = toSQL(trunkObjCol2ValuesMap, paramValueList);
             // 执行查询并合并结果
             try {
-                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList);
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList.toArray());
                 return ResultAssembler.convertToOneToOneResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
+            }
+            catch (Exception e) {
+                log.error("中间表查询异常: " + sql, e);
+                return Collections.emptyMap();
+            }
+        }
+    }
+
+    /**
+     * 执行1-N count计数关联查询，得到关联映射Map
+     * @param trunkObjCol2ValuesMap
+     * @return
+     */
+    public Map<String, Long> executeOneToManyCountQuery(Map<String, List> trunkObjCol2ValuesMap){
+        if(V.isEmpty(trunkObjCol2ValuesMap)){
+            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
+        }
+        //user_id //role_id
+        EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
+        // 有定义mapper，首选mapper
+        if(linkage != null){
+            List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap, true);
+            return ResultAssembler.convertToOneToManyCountResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
+        }
+        else{
+            // 提取中间表查询SQL: SELECT user_id, role_id FROM user_role WHERE user_id IN(?)
+            List paramValueList = new ArrayList();
+            String sql = toSQL(trunkObjCol2ValuesMap, paramValueList, true);
+            // 执行查询并合并结果
+            try {
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList.toArray());
+                return ResultAssembler.convertToOneToManyCountResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
                 log.error("中间表查询异常: " + sql, e);
@@ -172,7 +205,7 @@ public class MiddleTable {
             String sql = toSQL(trunkObjCol2ValuesMap, paramValueList);
             // 执行查询并合并结果
             try {
-                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList);
+                List<Map<String, Object>> resultSetMapList = SqlExecutor.executeQuery(sql, paramValueList.toArray());
                 return ResultAssembler.convertToOneToManyResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
@@ -189,10 +222,25 @@ public class MiddleTable {
      * @return
      */
     private List<Map<String, Object>> queryByMapper(EntityInfoCache linkage, Map<String, List> trunkObjCol2ValuesMap){
+        return queryByMapper(linkage, trunkObjCol2ValuesMap, false);
+    }
+
+    /**
+     * 通过定义的Mapper查询结果
+     * @param linkage
+     * @param trunkObjCol2ValuesMap
+     * @return
+     */
+    private List<Map<String, Object>> queryByMapper(EntityInfoCache linkage, Map<String, List> trunkObjCol2ValuesMap, boolean isCount){
         QueryWrapper queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(linkage.getEntityClass());
         // select所需字段
-        queryWrapper.select(getSelectColumns());
+        if(isCount) {
+            queryWrapper.select(getSelectColumns4Count(true));
+        }
+        else {
+            queryWrapper.select(getSelectColumns());
+        }
         for(Map.Entry<String, List> entry : trunkObjCol2ValuesMap.entrySet()){
             String column = entry.getKey();
             if(column != null && V.notEmpty(entry.getValue())){
@@ -203,6 +251,9 @@ public class MiddleTable {
             for(String condition : additionalConditions){
                 queryWrapper.apply(condition);
             }
+        }
+        if(isCount) {
+            queryWrapper.groupBy(getSelectColumns4Count(false));
         }
         // 查询条件为空时不进行查询
         if (queryWrapper.isEmptyOfNormal()) {
@@ -219,23 +270,34 @@ public class MiddleTable {
      * @return
      */
     private String toSQL(Map<String, List> trunkObjCol2ValuesMap, List paramValueList){
+        return toSQL(trunkObjCol2ValuesMap, paramValueList, false);
+    }
+
+    /**
+     * 转换查询SQL
+     * @param trunkObjCol2ValuesMap 注解外键值的列表，用于拼接SQL查询
+     * @return
+     */
+    private String toSQL(Map<String, List> trunkObjCol2ValuesMap, List paramValueList, boolean isCount){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
             return null;
         }
-        // select所需字段
-        String selectColumns = S.join(getSelectColumns());
         // 构建SQL
         return new SQL(){{
-            SELECT(selectColumns);
+            // select所需字段
+            SELECT(isCount? S.join(getSelectColumns4Count(true)) : S.join(getSelectColumns()));
             FROM(table);
             for(Map.Entry<String, List> entry : trunkObjCol2ValuesMap.entrySet()){
                 String column = entry.getKey();
                 if(column != null && V.notEmpty(entry.getValue())){
                     List values = (List)entry.getValue().stream().distinct().collect(Collectors.toList());
                     String params = S.repeat("?", ",", values.size());
-                    WHERE(column + " IN (" + params + ")");
+                    WHERE(column + " IN ("+ params +")");
                     paramValueList.addAll(values);
                 }
+            }
+            if(isCount) {
+                GROUP_BY(S.toStringArray(getSelectColumns4Count(false)));
             }
             // 添加删除标记
             boolean appendDeleteFlag = true;
@@ -271,6 +333,20 @@ public class MiddleTable {
             }
         }
         return S.toStringArray(columns);
+    }
+
+    private List<String> getSelectColumns4Count(boolean appendCount){
+        List<String> columns = new ArrayList<>(8);
+        // select所需字段
+        if(V.notEmpty(trunkObjColMapping)){
+            for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
+                columns.add(entry.getValue());
+            }
+        }
+        if(appendCount) {
+            columns.add("count(*) AS " + Binder.COUNT_COL);
+        }
+        return columns;
     }
 
 }

@@ -83,6 +83,7 @@ declare module '@vue/runtime-core' {
     I18nSelector: typeof import('@/components/i18n/Selector.vue')['default']
     Icon: typeof import('@/components/icon/index.vue')['default']
     IconSelect: typeof import('@/components/icon/Select.vue')['default']
+    NumberRange: typeof import('@/components/number-range/index.vue')['default']
     QrCode: typeof import('@/components/qr-code/index.vue')['default']
     RichEditor: typeof import('@/components/rich/Editor.vue')['default']
     RichRead: typeof import('@/components/rich/Read.vue')['default']

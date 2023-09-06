@@ -13,7 +13,7 @@ const jobList: ScheduleJob[] = [
     cron: '0 0 1 * * ?',
     initStrategy: 'FIRE_AND_PROCEED',
     initStrategyLabel: '立即执行一次，并周期执行',
-    jobStatus: true,
+    jobStatus: 'A',
     saveLog: true,
     createByName: 'Diboot',
     createTime: '2022-05-23 22:22:22',
@@ -70,7 +70,7 @@ export default [
           elapsedSeconds: String(Math.round(natural / 1000)),
           triggerMode: 'MANUAL',
           triggerModeLabel: '手动',
-          runStatus: Random.boolean(),
+          runStatus: Random.pick(['S', 'F']),
           createTime: endTime
         })
       }, natural)

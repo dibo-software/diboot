@@ -40,6 +40,9 @@ public class MapUtils {
      * @param <T>
      */
     public static <T> T getIgnoreCase(Map<String, T> map, String key) {
+        if(map == null) {
+            return null;
+        }
         if(map.containsKey(key)) {
             return map.get(key);
         }
@@ -47,6 +50,20 @@ public class MapUtils {
             return map.get(key.toLowerCase());
         }
         return map.get(key.toUpperCase());
+    }
+
+    /**
+     * 忽略key大小写，兼容多库等场景
+     * @param map
+     * @param key
+     * @return
+     * @param <T>
+     */
+    public static <T> T getIgnoreCase(Map<String, T> map, String key, T defaultVal) {
+        if(map == null) {
+            return defaultVal;
+        }
+        return getIgnoreCase(map, key);
     }
 
     /**

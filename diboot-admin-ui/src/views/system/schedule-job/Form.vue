@@ -24,7 +24,7 @@ defineExpose({
       title.value = '更新'
     } else {
       title.value = '新建'
-      model.value.jobStatus = true
+      model.value.jobStatus = 'A'
       model.value.saveLog = true
       if (relatedData.initStrategyOptions?.length) model.value.initStrategy = relatedData.initStrategyOptions[0].value
     }
@@ -116,8 +116,8 @@ const jobChange = (jobKey: string) => {
         <el-col :span="12">
           <el-form-item prop="jobStatus" label="状态">
             <el-radio-group v-model="model.jobStatus" size="small">
-              <el-radio-button :label="true">启用</el-radio-button>
-              <el-radio-button :label="false">停用</el-radio-button>
+              <el-radio-button label="A">启用</el-radio-button>
+              <el-radio-button label="I">停用</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>

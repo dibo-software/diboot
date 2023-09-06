@@ -3,7 +3,7 @@ import { Plus, Delete, Search, ArrowUp, ArrowDown } from '@element-plus/icons-vu
 import { buildOptionProps, buildGetRelatedData } from './utils'
 import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
-interface ListProps extends ListConfig {
+interface ListProps extends /* @vue-ignore */ ListConfig {
   // 模型名
   model: string
   // 左树父级ID

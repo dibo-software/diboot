@@ -130,16 +130,19 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <FT> FT getValueOfField(SFunction<T, ?> queryFieldFn, Serializable queryFieldVal, SFunction<T, FT> getterFn) {
-		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
-				.select(queryFieldFn, getterFn)
-				.eq(queryFieldFn, queryFieldVal);
-		T entity = getSingleEntity(queryWrapper);
+		return getValueOfField(Wrappers.<T>lambdaQuery().eq(queryFieldFn, queryFieldVal), getterFn);
+	}
+
+	@Override
+	public <FT> FT getValueOfField(LambdaQueryWrapper<T> queryWrapper, SFunction<T, FT> getterFn) {
+		T entity = getSingleEntity(queryWrapper.select(getterFn));
 		if(entity == null){
 			return null;
 		}
 		return getterFn.apply(entity);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean createEntity(T entity) {
 		if(entity == null){
@@ -149,6 +152,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return save(entity);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean save(T entity) {
 		this.beforeCreate(entity);
@@ -249,6 +253,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return saveBatch(entityList, BaseConfig.getBatchSize());
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean saveBatch(Collection<T> entityList, int batchSize){
 		// 批量插入
@@ -267,11 +272,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateById(T entity) {
 		return updateEntity(entity);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateEntity(T entity) {
 		this.beforeUpdate(entity);
@@ -282,6 +289,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean updateEntity(T entity, Wrapper updateWrapper) {
 		this.beforeUpdate(entity);
@@ -294,8 +302,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean updateEntity(Wrapper updateWrapper) {
-		boolean success = super.update(null, updateWrapper);
-		return success;
+		return super.update(null, updateWrapper);
 	}
 
 	@Override
@@ -316,6 +323,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean createOrUpdateEntity(T entity) {
 		if(entity instanceof BaseTreeEntity) {
@@ -363,6 +371,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return super.saveOrUpdateBatch(entityList, BaseConfig.getBatchSize());
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean deleteEntity(String fieldKey, Object fieldVal) {
 		// 获取主键的关联属性
@@ -381,6 +390,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
                                                   SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList) {
@@ -582,6 +592,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return relatedEntityService.deleteEntities(queryWrapper);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean deleteEntity(Serializable id) {
 		Class<T> entityClass = getEntityClass();
@@ -713,6 +724,21 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			return Collections.emptyList();
 		}
 		return entityList.stream().filter(Objects::nonNull).map(getterFn).distinct().collect(Collectors.toList());
+	}
+
+	@Override
+	public <ST, FT> Map<ST, FT> getValueMapOfField(SFunction<T, ST> idFieldFn, List<ST> idValList, SFunction<T, FT> getterFn) {
+		if (idValList != null && idValList.isEmpty()) {
+			return Collections.emptyMap();
+		}
+		LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<T>()
+				.select(idFieldFn, getterFn)
+				.in(idValList != null, idFieldFn, idValList);
+		List<T> entityList = getEntityList(queryWrapper);
+		if (entityList == null) {
+			return Collections.emptyMap();
+		}
+		return entityList.stream().collect(Collectors.toMap(idFieldFn, getterFn));
 	}
 
 	@Override
@@ -917,12 +943,21 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public <VO> VO getViewObject(Wrapper queryWrapper, Class<VO> voClass) {
+		T entity = getSingleEntity(queryWrapper);
+		if(entity == null){
+			return null;
+		}
+		// 绑定
+		return Binder.convertAndBindRelations(entity, voClass);
+	}
+
+	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
 		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
-		List<VO> voList = Binder.convertAndBindRelations(entityList, voClass);
-		return voList;
+		return Binder.convertAndBindRelations(entityList, voClass);
 	}
 
 	@Override
@@ -941,12 +976,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if (entity == null) {
 			return Collections.emptyList();
 		}
-		String parentPath = getParentIdsPath.apply(entity);
-		if (V.isEmpty(parentPath)) {
-			// parentPath格式：/([0-9a-f]+,)+/g
-			parentPath = rootNodeId + Cons.SEPARATOR_COMMA;
+		if (getParentIdsPath != null) {
+			String parentPath = getParentIdsPath.apply(entity);
+			if (V.isEmpty(parentPath)) {
+				// parentPath格式：/([0-9a-f]+,)+/g
+				parentPath = rootNodeId + Cons.SEPARATOR_COMMA;
+			}
+			queryWrapper.likeRight(getParentIdsPath, parentPath);
 		}
-		queryWrapper.likeRight(getParentIdsPath, parentPath);
 		List<T> entityList = getEntityList(queryWrapper);
 		if (V.notEmpty(rootNodeId)) {
 			entityList.add(entity);
@@ -961,6 +998,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return sort(sortParam, sortField, null, null);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField, SFunction<T, Serializable> parentIdField, SFunction<T, String> parentIdsField) {
 		Serializable id = sortParam.getId();

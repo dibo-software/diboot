@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
  * @version v3.0.0
  * @date 2022-10-12
  */
+@Deprecated
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "diboot.core", name = "i18n", havingValue = "true")

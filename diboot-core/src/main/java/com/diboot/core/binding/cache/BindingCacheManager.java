@@ -250,7 +250,7 @@ public class BindingCacheManager {
                 for (Class<?> mapperClass : mappers) {
                     Type[] types = mapperClass.getGenericInterfaces();
                     try {
-                        if (types.length > 0 && types[0] != null) {
+                        if (types.length > 0 && types[0] != null && types[0] instanceof ParameterizedType) {
                             ParameterizedType genericType = (ParameterizedType) types[0];
                             Type[] superTypes = genericType.getActualTypeArguments();
                             if (superTypes != null && superTypes.length > 0 && superTypes[0] != null) {

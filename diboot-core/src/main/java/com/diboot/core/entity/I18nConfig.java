@@ -31,11 +31,12 @@ import javax.validation.constraints.NotNull;
  * @version v3.0.0
  * @date 2022-10-12
  */
+@Deprecated
 @Getter
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_i18n_config")
-public class I18nConfig extends BaseEntity {
+public class I18nConfig extends BaseEntity<String> {
     private static final long serialVersionUID = 11501L;
 
     /**

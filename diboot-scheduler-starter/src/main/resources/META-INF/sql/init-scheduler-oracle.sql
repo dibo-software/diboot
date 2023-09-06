@@ -29,7 +29,7 @@ comment on column ${SCHEMA}.dbt_schedule_job.save_log is '是否记录日志';
 comment on column ${SCHEMA}.dbt_schedule_job.is_deleted is '是否删除';
 comment on column ${SCHEMA}.dbt_schedule_job.create_by is '创建人';
 comment on column ${SCHEMA}.dbt_schedule_job.create_time is '创建时间';
-comment on column ${SCHEMA}.dbt_schedule_job.update_time is '更新时间';;
+comment on column ${SCHEMA}.dbt_schedule_job.update_time is '更新时间';
 comment on table ${SCHEMA}.dbt_schedule_job is '定时任务';
 create index idx_dbt_schedule_job on ${SCHEMA}.dbt_schedule_job (job_key);
 create index idx_dbt_schedule_job_tenant on ${SCHEMA}.dbt_schedule_job (tenant_id);

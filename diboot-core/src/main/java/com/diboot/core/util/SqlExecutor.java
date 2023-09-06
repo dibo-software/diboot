@@ -86,7 +86,7 @@ public class SqlExecutor {
      * @param sqlStatement
      * @return
      */
-    public static List<Map<String,Object>> executeQuery(String sqlStatement, List params) throws Exception{
+    public static List<Map<String,Object>> executeQuery(String sqlStatement, Object... params) throws Exception{
         if(V.isEmpty(sqlStatement)){
             return null;
         }

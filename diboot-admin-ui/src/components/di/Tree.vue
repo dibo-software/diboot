@@ -5,7 +5,7 @@ import type { ElTreeInstanceType } from 'element-plus'
 
 // vue语法限制导致只能在当前文件中再次定义 Props
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
-interface TreeProps extends TreeConfig {
+interface TreeProps extends /* @vue-ignore */ TreeConfig {
   type: string
   label: string
   ext?: string

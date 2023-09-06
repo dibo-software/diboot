@@ -57,7 +57,7 @@ const logListPermission = checkPermission('logList')
             </el-descriptions-item>
           </el-descriptions>
           <div class="bottom">
-            <el-tag v-if="item.jobStatus"> 准备就绪</el-tag>
+            <el-tag v-if="item.jobStatus === 'A'"> 准备就绪</el-tag>
             <el-tag v-else type="info"> 停用</el-tag>
 
             <div style="margin-left: auto">

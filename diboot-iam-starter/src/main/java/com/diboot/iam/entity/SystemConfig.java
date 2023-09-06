@@ -36,7 +36,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_system_config")
-public class SystemConfig extends BaseEntity {
+public class SystemConfig extends BaseEntity<String> {
     private static final long serialVersionUID = 2862339898530606166L;
 
     /**

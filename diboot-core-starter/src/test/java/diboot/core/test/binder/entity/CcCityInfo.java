@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class CcCityInfo extends BaseEntity {
+public class CcCityInfo extends BaseEntity<String> {
     private static final long serialVersionUID = 3701095453152116088L;
 
     @DataAccessCheckpoint

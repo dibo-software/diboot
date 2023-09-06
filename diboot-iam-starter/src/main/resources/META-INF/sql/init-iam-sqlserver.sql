@@ -134,9 +134,12 @@ create table ${SCHEMA}.dbt_iam_resource
     display_type varchar(20) not null,
     display_name varchar(100) not null,
     display_name_i18n varchar(200) null,
+    route_path        varchar(200) null,
     resource_code varchar(100)   null,
     permission_code varchar(200)   null,
+    meta              varchar(300) null,
     sort_id bigint  default 0 not null,
+    status            varchar(10) default 'A',
     is_deleted tinyint default 0 not null,
     create_time datetime default CURRENT_TIMESTAMP not null,
     update_time datetime default CURRENT_TIMESTAMP null,
@@ -151,6 +154,9 @@ execute sp_addextendedproperty 'MS_Description', N'显示名称', 'SCHEMA', '${S
 execute sp_addextendedproperty 'MS_Description', N'显示名称国际化资源标识', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'display_name';
 execute sp_addextendedproperty 'MS_Description', N'前端编码', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'resource_code';
 execute sp_addextendedproperty 'MS_Description', N'权限码', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'permission_code';
+execute sp_addextendedproperty 'MS_Description', N'路由地址', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'route_path';
+execute sp_addextendedproperty 'MS_Description', N'meta配置', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'meta';
+execute sp_addextendedproperty 'MS_Description', N'状态', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'status';
 execute sp_addextendedproperty 'MS_Description', N'排序号', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'sort_id';
 execute sp_addextendedproperty 'MS_Description', N'是否删除', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'is_deleted';
 execute sp_addextendedproperty 'MS_Description', N'创建时间', 'SCHEMA', '${SCHEMA}', 'table', dbt_iam_resource, 'column', 'create_time';

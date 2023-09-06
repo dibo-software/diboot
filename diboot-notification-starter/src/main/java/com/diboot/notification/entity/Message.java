@@ -36,6 +36,7 @@ import java.util.Map;
 
 /**
  * 消息 Entity定义
+ *
  * @author : uu
  * @version : v2.0
  * @Date 2021/2/25  09:39
@@ -45,7 +46,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_message")
-public class Message extends BaseEntity {
+public class Message extends BaseEntity<String> {
 
     private static final long serialVersionUID = -2648761257152687435L;
 
@@ -276,6 +277,7 @@ public class Message extends BaseEntity {
 
     /**
      * 是否有关联模板
+     *
      * @return
      */
     public boolean hasTemplate() {

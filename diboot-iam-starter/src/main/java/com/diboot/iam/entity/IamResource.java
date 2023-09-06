@@ -18,7 +18,6 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -37,15 +36,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
-* 前端资源权限 Entity定义
-* @author yangzhao
-* @version 2.0.0
-* @date 2020-02-27
-* Copyright © diboot.com
-*/
-@Getter @Setter @Accessors(chain = true)
+ * 前端资源权限 Entity定义
+ *
+ * @author yangzhao
+ * @version 2.0.0
+ * @date 2020-02-27
+ * Copyright © diboot.com
+ */
+@Getter
+@Setter
+@Accessors(chain = true)
 @TableName("dbt_iam_resource")
-public class IamResource extends BaseEntity {
+public class IamResource extends BaseEntity<String> {
     private static final long serialVersionUID = -6133621123987747250L;
 
     /**
@@ -67,13 +69,13 @@ public class IamResource extends BaseEntity {
 
     // 展现类型
     @NotNull(message = "展现类型不能为空")
-    @Length(max=20, message="展现类型长度应小于20")
+    @Length(max = 20, message = "展现类型长度应小于20")
     @TableField()
     private String displayType;
 
     // 显示名称
     @NotNull(message = "显示名称不能为空")
-    @Length(max=100, message="显示名称长度应小于100")
+    @Length(max = 100, message = "显示名称长度应小于100")
     @BindQuery(comparison = Comparison.LIKE)
     // @BindI18n("displayNameI18n")
     private String displayName;
@@ -84,28 +86,28 @@ public class IamResource extends BaseEntity {
     private String displayNameI18n;
 
     // 权限编码
-    @Length(max=200, message="路由地址长度应小于200")
+    @Length(max = 200, message = "路由地址长度应小于200")
     @TableField()
     private String routePath;
 
     // 前端资源编码
     @NotNull(message = "前端资源编码不能为空")
-    @Length(max=50, message="前端资源编码长度应小于50")
+    @Length(max = 50, message = "前端资源编码长度应小于50")
     @TableField()
     private String resourceCode;
 
     // 权限编码
-    @Length(max=200, message="权限编码长度应小于200")
+    @Length(max = 200, message = "权限编码长度应小于200")
     @TableField()
     private String permissionCode;
 
     // meta配置
-    @Length(max=200, message="meta配置应小于300")
+    @Length(max = 200, message = "meta配置应小于300")
     @TableField()
     private String meta;
 
     // 状态
-    @Length(max=10, message="状态长度应小于10")
+    @Length(max = 10, message = "状态长度应小于10")
     @TableField()
     private String status;
 
@@ -119,6 +121,17 @@ public class IamResource extends BaseEntity {
 
     @TableField(exist = false)
     private RouteMeta routeMeta;
+
+    @Override
+    public String getId() {
+        return super.getId();
+    }
+
+    @Override
+    public BaseEntity<String> setId(String id) {
+        super.setId(id);
+        return this;
+    }
 
     public RouteMeta getRouteMeta() {
         if (V.notEmpty(routeMeta)) {
@@ -141,7 +154,7 @@ public class IamResource extends BaseEntity {
      * @return
      */
     public String[] getPermissionCodes() {
-        if (V.isEmpty(permissionCode)){
+        if (V.isEmpty(permissionCode)) {
             return null;
         }
         return S.split(permissionCode);
@@ -152,7 +165,7 @@ public class IamResource extends BaseEntity {
      * @param permissionCodes
      */
     public void setPermissionCodes(List<String> permissionCodes) {
-        if (V.isEmpty(permissionCodes)){
+        if (V.isEmpty(permissionCodes)) {
             this.setPermissionCode(null);
         }
         this.setPermissionCode(S.join(permissionCodes));

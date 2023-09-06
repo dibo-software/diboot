@@ -1,6 +1,7 @@
 package com.diboot.core.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.util.D;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BaseTreeModel extends BaseTreeEntity {
+public class BaseTreeModel extends BaseTreeEntity<String> {
     private static final long serialVersionUID = 10206L;
 
     /**
@@ -40,5 +42,4 @@ public class BaseTreeModel extends BaseTreeEntity {
      */
     @TableField()
     private String updateBy;
-
 }

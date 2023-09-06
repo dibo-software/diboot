@@ -173,7 +173,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
         }
         long currentTimestamp = System.currentTimeMillis();
         int expiredMinutes = CACHE_EXPIREDMINUTES_CACHE.get(cacheName);
-        return (currentTimestamp - cacheTimestamp) > (expiredMinutes*60000);
+        return (currentTimestamp - cacheTimestamp) > (expiredMinutes* 60000L);
     }
 
     private void clearOutOfDateDataIfNeeded(String cacheName){

@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -206,7 +207,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     }
 
     @Override
-    public List<IamRoleVO> getAllRoleVOList(BaseEntity userObject) {
+    public List<IamRoleVO> getAllRoleVOList(BaseLoginUser userObject) {
         List<IamRole> roleList = getUserRoleList(userObject.getClass().getSimpleName(), userObject.getId());
         if (V.isEmpty(roleList)){
             return null;

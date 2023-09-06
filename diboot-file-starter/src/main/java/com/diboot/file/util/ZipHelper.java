@@ -126,14 +126,20 @@ public class ZipHelper {
             //判断压缩文件保存的路径是否存在，如果不存在，则创建目录
             File zipDir = new File(zipPath);  
             if (!zipDir.exists() || !zipDir.isDirectory()) {
-                zipDir.mkdirs();  
+                boolean success = zipDir.mkdirs();
+				if(!success) {
+					log.warn("创建文件夹: {} 失败", zipPath);
+				}
             }  
              //创建压缩文件保存的文件对象
              String zipFilePath = zipPath + "/" + zipFileName;
              File zipFile = new File(zipFilePath);
              if (zipFile.exists()){
-                 //删除已存在的目标文件  
-                 zipFile.delete();  
+                 //删除已存在的目标文件
+				 boolean success = zipFile.delete();
+				 if(!success) {
+					 log.warn("删除文件夹: {} 失败", zipFilePath);
+				 }
              }
              cos = new CheckedOutputStream(new FileOutputStream(zipFile), new CRC32());
              zos = new ZipOutputStream(cos);

@@ -15,7 +15,9 @@
  */
 package com.diboot.iam.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -29,18 +31,23 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
-* 角色 Entity定义
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
-*/
-@Getter @Setter @Accessors(chain = true)
+ * 角色 Entity定义
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-03
+ */
+@Getter
+@Setter
+@Accessors(chain = true)
 @TableName("dbt_iam_role")
-public class IamRole extends BaseEntity {
+public class IamRole extends BaseEntity<String> {
     private static final long serialVersionUID = -1186305888909118267L;
 
-    public IamRole(){}
-    public IamRole(String name, String code){
+    public IamRole() {
+    }
+
+    public IamRole(String name, String code) {
         this.name = name;
         this.code = code;
     }
@@ -54,14 +61,14 @@ public class IamRole extends BaseEntity {
 
     // 名称
     @NotNull(message = "名称不能为空")
-    @Length(max=50, message="名称长度应小于50")
+    @Length(max = 50, message = "名称长度应小于50")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String name;
 
     // 编码
     @NotNull(message = "编码不能为空")
-    @Length(max=50, message="编码长度应小于50")
+    @Length(max = 50, message = "编码长度应小于50")
     @TableField()
     private String code;
 
