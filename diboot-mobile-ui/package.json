@@ -1,6 +1,6 @@
 {
   "name": "diboot-mobile-ui",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
-    "@vant/area-data": "^1.4.1",
-    "@vant/use": "^1.5.1",
+    "@vant/area-data": "^1.5.0",
+    "@vant/use": "^1.6.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.3.5",
@@ -23,7 +23,7 @@
     "pinia": "~2.0.34",
     "pinia-plugin-persist": "^1.0.0",
     "qs": "^6.11.1",
-    "vant": "^4.2.0",
+    "vant": "^4.6.7",
     "vue": "~3.2.47",
     "vue-router": "^4.1.6"
   },
