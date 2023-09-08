@@ -17,6 +17,7 @@ package com.diboot.iam.util;
 
 import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.config.BaseConfig;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -93,8 +94,7 @@ public class TokenUtils {
      * @param userInfoStr
      */
     public static void cacheAccessToken(String accessToken, String userInfoStr) {
-        BaseCacheManager baseCacheManager = ContextHolder.getBean(BaseCacheManager.class);
-        baseCacheManager.putCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken, userInfoStr);
+        getIamCacheManager().putCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken, userInfoStr);
     }
 
     /**
@@ -102,8 +102,7 @@ public class TokenUtils {
      * @param accessToken
      */
     public static void removeAccessTokens(String accessToken) {
-        BaseCacheManager baseCacheManager = ContextHolder.getBean(BaseCacheManager.class);
-        baseCacheManager.removeCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken);
+        getIamCacheManager().removeCacheObj(Cons.CACHE_TOKEN_USERINFO, accessToken);
     }
 
     /**
@@ -112,8 +111,7 @@ public class TokenUtils {
      * @return
      */
     public static String getCachedUserInfoStr(String accessToken) {
-        BaseCacheManager baseCacheManager = ContextHolder.getBean(BaseCacheManager.class);
-        String userInfoStr = baseCacheManager.getCacheString(Cons.CACHE_TOKEN_USERINFO, accessToken);
+        String userInfoStr = getIamCacheManager().getCacheString(Cons.CACHE_TOKEN_USERINFO, accessToken);
         if(userInfoStr == null){
             log.info("token {} 缓存信息不存在", accessToken);
         }
@@ -163,7 +161,7 @@ public class TokenUtils {
         // 获取当前token的过期时间
         long issuedAt = Long.parseLong(userFields[ISSUED_AT_INDEX]);
         // 获取当前token的过期时间
-        long expiredBefore = issuedAt + expiresInMinutes * 60000;
+        long expiredBefore = issuedAt + expiresInMinutes * 60000L;
         return System.currentTimeMillis() > expiredBefore;
     }
 
@@ -181,15 +179,26 @@ public class TokenUtils {
         // 当前token是否临近过期
         long current = System.currentTimeMillis();
         long issuedAt = Long.parseLong(userFields[ISSUED_AT_INDEX]);
-        long expiration = issuedAt + expiresInMinutes*60000;
+        long expiration = issuedAt + expiresInMinutes* 60000L;
         long remaining = expiration - current;
         if(remaining > 0){
             long elapsed = current - issuedAt;
             // 小于1/4 则更新
-            double past = (elapsed / remaining);
+            double past = ((double) elapsed / remaining);
             return past > 3.0;
         }
         return false;
+    }
+
+    private static BaseCacheManager iamCacheManager;
+    private static BaseCacheManager getIamCacheManager() {
+        if(iamCacheManager == null) {
+            iamCacheManager = (BaseCacheManager)ContextHolder.getBean("iamCacheManager");
+            if(iamCacheManager == null) {
+                throw new InvalidUsageException("无法识别到iamCacheManager实现类，请在配置类中声明@Bean(name = \"iamCacheManager\")");
+            }
+        }
+        return iamCacheManager;
     }
 
     /**

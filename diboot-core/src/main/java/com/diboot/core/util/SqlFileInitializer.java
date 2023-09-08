@@ -263,8 +263,8 @@ public class SqlFileInitializer {
         }
         catch (Exception e){
             log.error("SQL执行异常，请检查：", e);
-            if(session != null) {
-                session.rollback();
+            if(conn != null) {
+                conn.rollback();
             }
             throw e;
         }

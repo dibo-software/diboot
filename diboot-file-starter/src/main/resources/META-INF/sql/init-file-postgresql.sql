@@ -15,7 +15,7 @@ CREATE TABLE dbt_file_record
     is_deleted    BOOLEAN      NOT NULL DEFAULT FALSE,
     create_by     varchar(32)  NOT NULL DEFAULT '0',
     create_time   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    constraint PK_dbt_file_record primary key (uuid)
+    constraint PK_dbt_file_record primary key (id)
 );
 -- 添加备注
 comment on column dbt_file_record.id is 'ID';

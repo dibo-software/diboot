@@ -41,7 +41,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_schedule_job_log")
-public class ScheduleJobLog extends BaseEntity {
+public class ScheduleJobLog extends BaseEntity<String> {
     private static final long serialVersionUID = -1854961913574904234L;
 
     /**
@@ -121,5 +121,4 @@ public class ScheduleJobLog extends BaseEntity {
     @Length(max = 500, message = "执行结果信息长度应小于500")
     @TableField()
     private String executeMsg;
-
 }

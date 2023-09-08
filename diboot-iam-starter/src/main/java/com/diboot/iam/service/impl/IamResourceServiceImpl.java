@@ -16,17 +16,23 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.core.vo.JsonResult;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
+import com.diboot.iam.entity.route.RouteMeta;
 import com.diboot.iam.mapper.IamResourceMapper;
 import com.diboot.iam.service.IamResourceService;
+import com.diboot.iam.service.MenuService;
 import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
+public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService, MenuService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -74,7 +80,6 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (!success) {
             throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
         }
-
         // 批量创建按钮/权限列表
         List<IamResource> permissionList = iamResourceDTO.getPermissionList();
         if (V.isEmpty(permissionList)) {
@@ -126,12 +131,6 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (V.notEmpty(updatePermissionList)) {
             this.updateEntities(updatePermissionList);
         }
-        // 检测是否有脏数据存在
-        if (hasDirtyData()) {
-            throw new BusinessException(Status.FAIL_OPERATION, "父级节点不可设置在自己的子节点上");
-        }
-        // 清理脏数据
-        //this.clearDirtyData();
     }
 
     @Override
@@ -210,75 +209,58 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         }
     }
 
-    /***
-     * 检测是否具有脏数据存在
-     * @return
-     */
-    private boolean hasDirtyData() {
-        List<IamResource> list = this.getEntityList(null);
-        if (V.isEmpty(list)) {
-            return false;
-        }
-        Map<String, IamResource> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResource::getId));
-        List<String> deleteIdList = new ArrayList<>();
-        for (IamResource item : list) {
-            if (!hasTopRootNode(idObjectMap, item, null)) {
-                deleteIdList.add(item.getId());
-            }
-        }
-        return V.notEmpty(deleteIdList);
+    @Override
+    public List<LabelValue> getMenuCatalogues() {
+        LambdaQueryWrapper<IamResource> queryWrapper = new LambdaQueryWrapper<IamResource>()
+                .select(IamResource::getDisplayName, IamResource::getId, IamResource::getRoutePath, IamResource::getParentId)
+        .in(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.CATALOGUE.name())
+        .orderByAsc(IamResource::getSortId);
+        return this.getLabelValueList(queryWrapper);
     }
 
-    /***
-     * 清理没有关联关系的
-     */
-    private void clearDirtyData() {
-        List<IamResource> list = this.getEntityList(null);
-        if (V.isEmpty(list)) {
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void createOrUpdateMenuResources(IamResourceDTO resourceDTO) {
+        // 如果dto的id存在，则更新
+        if(V.isEmpty(resourceDTO.getId())) {
+            this.createMenuResources(resourceDTO);
             return;
         }
-        Map<String, IamResource> idObjectMap = BeanUtils.convertToStringKeyObjectMap(list, BeanUtils.convertToFieldName(IamResource::getId));
-        List<String> deleteIdList = new ArrayList<>();
-        for (IamResource item : list) {
-            if (!hasTopRootNode(idObjectMap, item, null)) {
-                deleteIdList.add(item.getId());
+        // 更新 menu
+        this.updateEntity(resourceDTO);
+        List<IamResource> permissionList = resourceDTO.getPermissionList();
+        List<String> resourceCodes = new ArrayList<>();
+        permissionList.forEach(p -> {
+            p.setParentId(resourceDTO.getId());
+            p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
+            resourceCodes.add(p.getResourceCode());
+        });
+        // 查询本次涉及的资源
+        LambdaQueryWrapper<IamResource> oldPermissionsQuery = new QueryWrapper<IamResource>().lambda()
+                .eq(IamResource::getParentId, resourceDTO.getId()).eq(IamResource::getDisplayType, Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name())
+                .in(IamResource::getResourceCode, resourceCodes);
+        List<IamResource> oldPermissionList = this.getEntityList(oldPermissionsQuery);
+        Map<String, IamResource> oldPermissionMap = oldPermissionList.stream().collect(Collectors.toMap(IamResource::getResourceCode, p->p));
+        // 需要更新的列表
+        List<IamResource> updatePermissionList = new ArrayList<>();
+        List<IamResource> createPermissionList = new ArrayList<>();
+        for(IamResource current : permissionList) {
+            IamResource originRes = oldPermissionMap.get(current.getResourceCode());
+            if(originRes != null) {
+                originRes.setMeta(current.getMeta()).setPermissionCode(current.getPermissionCode()).setDisplayName(current.getDisplayName());
+                updatePermissionList.add(originRes);
+            }
+            else {
+                createPermissionList.add(current);
             }
         }
-        if (V.notEmpty(deleteIdList)) {
-            LambdaQueryWrapper deleteWrapper = Wrappers.<IamResource>lambdaQuery()
-                    .in(IamResource::getId, deleteIdList);
-            long count = this.getEntityListCount(deleteWrapper);
-            if (count > 0) {
-                this.deleteEntities(deleteWrapper);
-                log.info("共清理掉{}条无用数据", count);
-            }
+        // 批量新建按钮/权限列表
+        if (V.notEmpty(createPermissionList)) {
+            this.createEntities(createPermissionList);
         }
-    }
-
-    /***
-     * 是否拥有顶级节点
-     * @param idObjectMap
-     * @param item
-     * @return
-     */
-    private boolean hasTopRootNode(Map<String, IamResource> idObjectMap, IamResource item, List<String> existIdList) {
-        if (V.equals(item.getParentId(), "0")) {
-            return true;
+        // 批量更新按钮/权限列表
+        if (V.notEmpty(updatePermissionList)) {
+            this.updateEntities(updatePermissionList);
         }
-        if (existIdList == null) {
-            existIdList = new ArrayList<>();
-        }
-        if (existIdList.contains(item.getId())) {
-            return false;
-        }
-        // 如果不是顶级节点，则以此向上查找顶级节点，如果没有找到父级节点，则认为没有顶级节点，如果找到，则继续查找父级节点是否具有顶级节点
-        IamResource parentItem = idObjectMap.get(String.valueOf(item.getParentId()));
-        if (parentItem == null) {
-            return false;
-        }
-
-        // 记录下当前检查的id，以免循环调用
-        existIdList.add(item.getId());
-        return hasTopRootNode(idObjectMap, parentItem, existIdList);
     }
 }

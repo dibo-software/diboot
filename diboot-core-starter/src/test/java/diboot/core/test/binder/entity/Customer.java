@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -34,7 +35,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @TableName(autoResultMap = true)
-public class Customer extends BaseEntity {
+public class Customer extends BaseModel {
     private static final long serialVersionUID = 5650761344045195972L;
 
     @TableField

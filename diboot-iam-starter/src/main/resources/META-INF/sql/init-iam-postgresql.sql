@@ -72,7 +72,7 @@ create index idx_iam_account on dbt_iam_account(auth_account, auth_type, user_ty
 create index idx_iam_account_tenant on dbt_iam_account(tenant_id);
 
 -- 角色表
-create table iam_role
+create table dbt_iam_role
 (
   id varchar(32) not null primary key,
   tenant_id  varchar(32) not null default '0',
@@ -93,7 +93,7 @@ comment on column dbt_iam_role.create_time is '创建时间';
 comment on column dbt_iam_role.update_time is '更新时间';
 comment on table iam_role is '角色';
 -- 创建索引
-create index idx_iam_role_tenant on iam_role(tenant_id);
+create index idx_iam_role_tenant on dbt_iam_role(tenant_id);
 
 -- 用户角色表
 create table dbt_iam_user_role
@@ -130,9 +130,12 @@ create table dbt_iam_resource
   display_type varchar(20) not null,
   display_name varchar(100) not null,
   display_name_i18n varchar(200) null,
+  route_path        varchar(200) null,
   resource_code varchar(100)   null,
   permission_code varchar(200)   null,
+  meta              varchar(300) null,
   sort_id bigint  default 0  not null,
+  status            varchar(10) default 'A',
   is_deleted BOOLEAN default FALSE not null,
   create_time timestamp default CURRENT_TIMESTAMP not null,
   update_time timestamp default CURRENT_TIMESTAMP null,
@@ -147,6 +150,9 @@ comment on column dbt_iam_resource.display_name is '显示名称';
 comment on column dbt_iam_resource.display_name is '显示名称国际化资源标识';
 comment on column dbt_iam_resource.resource_code is '前端编码';
 comment on column dbt_iam_resource.permission_code is '权限码';
+comment on column dbt_iam_resource.route_path is '路由地址';
+comment on column dbt_iam_resource.meta is 'meta配置';
+comment on column dbt_iam_resource.status is '状态';
 comment on column dbt_iam_resource.sort_id is '排序号';
 comment on column dbt_iam_resource.is_deleted is '是否删除';
 comment on column dbt_iam_resource.create_time is '创建时间';
@@ -251,7 +257,8 @@ create index idx_dbt_iam_operation_log on dbt_iam_operation_log (user_type, user
 create index idx_dbt_iam_operation_log_tenant on dbt_iam_operation_log(tenant_id);
 
 -- 部门表
-CREATE TABLE dbt_iam_org (
+CREATE TABLE dbt_iam_org
+(
     id varchar(32) not null primary key,
     tenant_id varchar(32) default '0' not null,
     parent_id varchar(32) DEFAULT '0' NOT NULL,

@@ -48,6 +48,11 @@ public class IamProperties {
     private int tokenExpiresMinutes = 60;
 
     /**
+     * 登录失败最大尝试次数
+     */
+    private int maxLoginAttempts = 5;
+
+    /**
      * 匿名的url，以,逗号分隔
      */
     private Set<String> anonUrls;

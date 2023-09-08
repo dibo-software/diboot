@@ -16,7 +16,9 @@
 package com.diboot.core.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 /**
  * 配置文件工具类
@@ -24,17 +26,29 @@ import org.springframework.core.env.Environment;
  * @version v2.0
  * @date 2019/01/01
  */
+@Component
 @Slf4j
-public class PropertiesUtils {
+public class PropertiesUtils implements EnvironmentAware {
 
     private static Environment environment;
 
-    /**
-     * 绑定Environment
-     * @param env
-     */
-    public static void bindEnvironment(Environment env){
+    @Override
+    public void setEnvironment(Environment env) {
         environment = env;
+        log.trace("Environment 已设置");
+    }
+
+    /***
+     *  读取配置项的值
+     * @param key
+     * @return
+     */
+    public static String get(String key, String defaultValue){
+        String value = get(key);
+        if(value != null) {
+            return value;
+        }
+        return defaultValue;
     }
 
     /***
@@ -46,6 +60,7 @@ public class PropertiesUtils {
         if(environment == null){
             try{
                 environment = ContextHolder.getApplicationContext().getEnvironment();
+                log.trace("通过Context获取Environment");
             }
             catch (Exception e){
                 log.warn("无法获取Environment，参数配置可能不生效");
@@ -104,4 +119,5 @@ public class PropertiesUtils {
         }
         return false;
     }
+
 }

@@ -42,7 +42,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_schedule_job")
-public class ScheduleJob extends BaseEntity {
+public class ScheduleJob extends BaseEntity<String> {
     private static final long serialVersionUID = 2238760903350953170L;
 
     /**

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.BaseModel;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,7 +39,7 @@ import java.time.LocalDateTime;
 */
 @Getter @Setter @Accessors(chain = true)
 @TableName("dbt_iam_login_trace")
-public class IamLoginTrace extends BaseEntity {
+public class IamLoginTrace extends BaseEntity<String> {
     private static final long serialVersionUID = -6166037224391478085L;
 
     /**

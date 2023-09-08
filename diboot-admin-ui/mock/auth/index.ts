@@ -24,7 +24,7 @@ export default [
     timeout: Random.natural(50, 300),
     method: 'post',
     response: ({ body }: ApiRequest) => {
-      if (body.username === 'admin' && body.password === '123456') {
+      if (body.username === 'admin' && body.password != null) {
         return JsonResult.OK(Random.string('lower', 32, 32))
       }
       return JsonResult.FAIL_OPERATION('用户名或密码错误')

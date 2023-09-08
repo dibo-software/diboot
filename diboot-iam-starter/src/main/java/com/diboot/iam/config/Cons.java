@@ -155,8 +155,4 @@ public class Cons extends com.diboot.core.config.Cons {
      */
     public static final String CACHE_TOKEN_USERINFO = "TOKEN_USERINFO";
 
-    /**
-     * 登录最大失败次数
-     */
-    public static final int LOGIN_MAX_ATTEMPTS = 5;
 }

@@ -152,6 +152,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
         }
         expressList.add(between);
     }
+
+    @Override
+    public void visit(OverlapsCondition overlapsCondition) {
+
+    }
+
     @Override
     public void visit(LikeExpression likeExpression) {
         if(!(likeExpression.getLeftExpression() instanceof Column)){
@@ -223,6 +229,11 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
 
     @Override
     public void visit(TryCastExpression tryCastExpression) {
+
+    }
+
+    @Override
+    public void visit(SafeCastExpression safeCastExpression) {
 
     }
 

@@ -54,8 +54,8 @@ const openDetail = (id: string) => {
           <el-col :md="12" :sm="24">
             <el-form-item label="执行结果">
               <el-select v-model="queryParam.runStatus" clearable @change="onSearch">
-                <el-option label="成功" :value="true" />
-                <el-option label="失败" :value="false" />
+                <el-option label="成功" value="S" />
+                <el-option label="失败" value="F" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -103,7 +103,7 @@ const openDetail = (id: string) => {
         <el-table-column prop="triggerModeLabel" align="center" label="触发方式" />
         <el-table-column prop="runStatus" align="center" label="执行结果">
           <template #default="{ row }">
-            <el-tag v-if="row.runStatus">成功</el-tag>
+            <el-tag v-if="row.runStatus === 'S'">成功</el-tag>
             <el-tag v-else type="danger">失败</el-tag>
           </template>
         </el-table-column>

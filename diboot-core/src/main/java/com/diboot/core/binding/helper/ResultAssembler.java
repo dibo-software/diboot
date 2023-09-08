@@ -15,6 +15,7 @@
  */
 package com.diboot.core.binding.helper;
 
+import com.diboot.core.binding.Binder;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -274,6 +275,45 @@ public class ResultAssembler {
     }
 
     /**
+     * 合并为1-count的map结果
+     * @param resultSetMapList
+     * @param trunkObjColMapping
+     * @param branchObjColMapping
+     * @param <E>
+     * @return
+     */
+    public static <E> Map<String, Long> convertToOneToManyCountResult(List<Map<String, E>> resultSetMapList, Map<String, String> trunkObjColMapping, Map<String, String> branchObjColMapping){
+        if(V.isEmpty(resultSetMapList)){
+            return Collections.emptyMap();
+        }
+        // 合并list为map
+        Map<String, Long> resultMap = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        for(Map<String, E> row : resultSetMapList){
+            boolean appendComma = false;
+            sb.setLength(0);
+            for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
+                Object keyObj = getValueIgnoreKeyCase(row, entry.getValue());
+                if(appendComma){
+                    sb.append(Cons.SEPARATOR_COMMA);
+                }
+                sb.append(S.valueOf(keyObj));
+                if(appendComma == false){
+                    appendComma = true;
+                }
+            }
+            String matchKeys = sb.toString();
+            Long valueObj = (Long)getValueIgnoreKeyCase(row, Binder.COUNT_COL);
+            if(valueObj == null){
+                valueObj = 0L;
+            }
+            resultMap.put(matchKeys, valueObj);
+        }
+        sb.setLength(0);
+        return resultMap;
+    }
+
+    /**
      * 合并为1-n的map结果
      * @param resultSetMapList
      * @param trunkObjColMapping
@@ -318,7 +358,6 @@ public class ResultAssembler {
         sb.setLength(0);
         return resultMap;
     }
-
 
     /**
      * 从map中取值，如直接取为null尝试转换大写后再取，以支持ORACLE等大写命名数据库

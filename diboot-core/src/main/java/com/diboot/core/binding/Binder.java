@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class Binder {
 
+    public static final String COUNT_COL = "_cnt";
+
     /**
      * 关联查询一条主表数据
      * @param queryWrapper
@@ -65,7 +67,7 @@ public class Binder {
     /**
      * 自动转换和绑定单个VO中的注解关联（禁止循环调用，多个对象请调用convertAndBind(voList, voClass)）
      * @param voClass 需要转换的VO class
-     * @param <E>
+     * @param <T>
      * @param <VO>
      * @return
      */

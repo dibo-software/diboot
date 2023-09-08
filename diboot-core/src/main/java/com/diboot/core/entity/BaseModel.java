@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BaseModel extends BaseEntity {
+public class BaseModel extends BaseEntity<String> {
     private static final long serialVersionUID = 10204L;
 
     /**
@@ -32,13 +33,13 @@ public class BaseModel extends BaseEntity {
     /**
      * 创建人
      */
-    @TableField()
+    @TableField(fill = FieldFill.INSERT)
     private String createBy;
 
     /**
      * 更新人
      */
-    @TableField()
+    @TableField(fill = FieldFill.UPDATE)
     private String updateBy;
 
 }

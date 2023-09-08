@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus'
 import useAuthStore from '@/store/auth'
+import JSEncrypt from 'jsencrypt'
+
+const encryptor = new JSEncrypt()
+encryptor.setPublicKey(`MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzPy1UcwzgRT8dRUpAW0H
+eyVvIi4icqiwdBZMrh85+tJEZ/AXjELRzl89m2ZKoMHfoMDkajoxJeaL5IV9UpUl
++1RqWvWqgYL0r859FyDeNg9kiMAfApyIowqFqctDx7k77jDopBvcX8F0shl6SUtE
+Vu96tc7+FrjP4OGwXJeB+b04O2SCV4mHxs8TRn7YsLoA10mjPNnsX0TiYkzSGUP/
+E5OEYt/ixNwO/lC6TdFM9PXRaTjF76e5qHw6ksJU74mb3A9/ZQCb4nzVw15xTxIa
+AnDX7+FqnCgpu26yXMLtVXyEa6CUvBjLLBleJ/cyHuUir7GYutf5LyuIEJPEWgnZ
+BwIDAQAB`)
 
 const authStore = useAuthStore()
 const loading = ref(false)
@@ -37,7 +47,7 @@ const submitForm = async () => {
     if (valid) {
       loading.value = true
       authStore
-        .login(form)
+        .login({ ...form, password: encryptor.encrypt(form.password) })
         .then(() => {
           redirect()
           loading.value = false
@@ -137,7 +147,7 @@ const submitForm = async () => {
     width: 330px;
     padding: 20px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--el-color-primary-light-9);
     backdrop-filter: blur(10px);
     box-shadow: 3px 3px 6px rgb(100, 100, 100, 0.1);
   }

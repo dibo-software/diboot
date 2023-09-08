@@ -22,22 +22,27 @@
 > [diboot-workflow 工作流版本，看这里->](https://www.diboot.com/guide/diboot-workflow/introduce.html)
 
 ## 1. 配套VUE3前端框架预览（diboot-admin-ui）
+> 基于 Vue3 + Vite + Pinia + Element-plus + TypeScript 的自研中后台管理框架
+
+![菜单资源配置](http://v3.diboot.com/img/permission.png)
+
+![角色权限配置](http://v3.diboot.com/img/role-permission.png)
 
 ## 2. diboot 后端基础组件
 
 ### 2-1、diboot-core: 精简优化内核：写的更少，性能更好
 主要特性：
-* 单表CRUD无SQL
-* 关联绑定无SQL（注解自动绑定）
-* 数据字典无SQL（注解自动绑定）
-* 跨表查询无SQL（自动构建QueryWrapper与查询）
+* 单表CRUD无SQL （基于mybatis-plus实现通用Mapper）
+* 关联数据绑定无SQL（注解自动绑定）
+* 关联字典无SQL（注解自动绑定）
+* 查询条件构建无SQL（查询条件自动构建）
 * BaseService扩展增强，支持常规的单表及关联开发场景接口
-* 其他常用工具类、状态码、异常处理的更优实践封装
+* 数据范围权限、字段保护、及常用工具类的最佳实践封装
 
-基于diboot-core的CRUD和常规关联的功能实现，代码量比传统Mybatis项目减少80%+，且性能更好更易维护。
-> 详细文档: [diboot-core文档](https://www.diboot.com/guide/diboot-core/introduce.html).
+基于diboot-core的CRUD和常规关联的功能实现，代码量比传统Mybatis项目减少90%+，且性能更好更易维护。
+> 详细文档: [diboot-core文档](http://v3.diboot.com/pages/core_introduce/).
 
-### 2-2、IAM 身份认证基础组件 
+### 2-2、IAM 身份认证基础组件
 
 * 开箱即用的RBAC角色权限模型与预置组织人员岗位模型
 * 基于JWT的认证授权，支持申请token、刷新token、无状态认证
@@ -46,39 +51,38 @@
 * 无缝适配redis，引入redis依赖即可启用shiro的redis缓存
 * 支持基于注解的数据权限实现、简化的Log注解记录操作日志等
 * 支持灵活的扩展能力（扩展多种登录方式、灵活替换用户实体类、自定义缓存等）
-> 详细文档: [diboot-iam文档](https://www.diboot.com/guide/diboot-iam/introduce.html).
+> 详细文档: [diboot-iam文档](http://v3.diboot.com/pages/iam_introduce/).
 
 ### 2-3、diboot-file 文件相关处理组件
 
 * EasyExcel轻量封装，支持Java注解校验与@ExcelBind*注解实现字典及关联字段的name-value转换，并提供完善的校验错误提示
-* 文件存储接口化，预置本地存储，简单扩展OSS、分布式存储等实现
+* 文件存储接口化，预置本地存储，阿里OSS存储，简单扩展即可支持其他存储实现
 * 封装常用的文件上传下载、图片压缩水印等常用处理
-> 详细文档: [diboot-file文档](https://www.diboot.com/guide/diboot-file/introduce.html).
+> 详细文档: [diboot-file文档](http://v3.diboot.com/pages/file_introduce/).
 
 ### 2-4、diboot-scheduler 定时任务组件
 
 * Quartz定时任务统一管理及日志的最佳实践封装
 * @CollectThisJob注解提供定时任务定义，自动收集供前端选择
-> 详细文档: [diboot-scheduler文档](https://www.diboot.com/guide/diboot-scheduler/introduce.html).
+> 详细文档: [diboot-scheduler文档](http://v3.diboot.com/pages/diboot_scheduler/).
 
-### 2-5. diboot-message 消息通知组件
+### 2-5. diboot-notification 消息通知组件
 
 * 通用的消息模板&模板变量的设计方案
 * 支持多通道的消息通知发送
-> 详细文档: [diboot-message文档](https://www.diboot.com/guide/diboot-message/introduce.html).
+> 详细文档: [diboot-notification文档](http://v3.diboot.com/pages/notification/).
 
 ### 2-6. diboot-mobile 移动端组件
 
 * 提供了配套的 [diboot-mobile-ui](https://gitee.com/dibo_software/diboot-mobile-ui) ，内置了多种登录方式
 * 支持 账号密码登录、微信小程序登录（自动注册）微信公众号登录（自动注册）
-> 详细文档: [diboot-mobile文档](https://www.diboot.com/guide/diboot-mobile/introduce.html).
+> 详细文档: [diboot-mobile文档](http://v3.diboot.com/pages/diboot_mobile/).
 
 ## 3. devtools开发助理
 * 极简易用（引入依赖jar，配置参数后，即可随应用启动运行）
-* 功能强大（数据结构与代码同步、前后端代码一键生成、前端面板组件编排）
-* 配置灵活（可按需配置生成代码路径及启用`Lombok`、`Swagger`等）
+* 功能强大（数据结构与代码同步、前后端代码一键生成、彻底摆脱CRUD）
 * 代码标准（devtools标准化了数据结构定义与代码实现，降低维护成本）
-* 支持多库（MySQL、MariaDB、ORACLE、SQLServer、PostgreSQL）
+* 支持多库（MySQL、MariaDB、PostgreSQL等）
 
 > 详细文档: [diboot-devtools文档](https://www.diboot.com/guide/diboot-devtools/introduce.html).
 

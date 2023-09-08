@@ -15,6 +15,7 @@
  */
 package com.diboot.core.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -22,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * 树形结构实体父类
@@ -32,13 +35,22 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BaseTreeEntity extends BaseEntity {
+public class BaseTreeEntity<T extends Serializable> extends BaseEntity<T> {
     private static final long serialVersionUID = 10205L;
 
     /**
      * 父级ID
      */
-    private String parentId;
+    private T parentId;
+
+    public BaseTreeEntity<T> setParentId(T parentId) {
+        this.parentId = parentId;
+        return this;
+    }
+
+    public T getParentId() {
+        return this.parentId;
+    }
 
     /**
      * 父级ID的全路径
@@ -48,10 +60,11 @@ public class BaseTreeEntity extends BaseEntity {
     @JsonIgnore
     private String parentIdsPath;
 
-    public void setParentIdsPath(String parentIdsPath) {
+    public BaseTreeEntity<T> setParentIdsPath(String parentIdsPath) {
         if (V.notEmpty(parentIdsPath) && !S.endsWith(parentIdsPath, Cons.SEPARATOR_COMMA)) {
             parentIdsPath += Cons.SEPARATOR_COMMA;
         }
         this.parentIdsPath = parentIdsPath;
+        return this;
     }
 }

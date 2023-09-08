@@ -18,7 +18,6 @@ package com.diboot.core.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,7 +40,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @TableName(value = "dbt_dictionary", autoResultMap = true)
-public class Dictionary extends BaseEntity {
+public class Dictionary extends BaseEntity<String> {
     private static final long serialVersionUID = 11301L;
 
     /**

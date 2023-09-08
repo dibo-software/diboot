@@ -46,6 +46,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -92,6 +93,8 @@ public class CoreAutoConfig implements WebMvcConfigurer {
             builder.serializerByType(Long.class, ToStringSerializer.instance);
             builder.serializerByType(Long.TYPE, ToStringSerializer.instance);
             builder.serializerByType(BigInteger.class, ToStringSerializer.instance);
+            // BigDecimal转换成String避免JS超长问题
+            builder.serializerByType(BigDecimal.class, ToStringSerializer.instance);
 
             // 支持java8时间类型
             // LocalDateTime
@@ -177,6 +180,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         registry.addConverter(new String2LocalDateConverter());
         registry.addConverter(new String2LocalDateTimeConverter());
         registry.addConverter(new String2BooleanConverter());
+        registry.addConverter(new String2ListConverter());
         registry.addConverter(new String2MapConverter());
         registry.addConverter(new Timestamp2LocalDateTimeConverter());
     }

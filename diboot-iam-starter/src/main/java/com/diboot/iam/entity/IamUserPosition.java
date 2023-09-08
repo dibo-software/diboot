@@ -29,16 +29,17 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
-* 用户岗位关联 Entity定义
-* @author mazc@dibo.ltd
-* @version 2.2
-* @date 2019-12-17
-*/
+ * 用户岗位关联 Entity定义
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.2
+ * @date 2019-12-17
+ */
 @Getter
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_iam_user_position")
-public class IamUserPosition extends BaseEntity {
+public class IamUserPosition extends BaseEntity<String> {
     private static final long serialVersionUID = -8470407660973877945L;
 
     /**
@@ -50,7 +51,7 @@ public class IamUserPosition extends BaseEntity {
 
     // 用户类型
     @NotNull(message = "用户类型不能为空")
-    @Length(max=100, message="用户类型长度应小于100")
+    @Length(max = 100, message = "用户类型长度应小于100")
     @TableField()
     private String userType;
 

@@ -21,18 +21,18 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.DictionaryVO;
+import com.diboot.core.vo.LabelValue;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.TestRegion;
 import diboot.core.test.binder.entity.TestUploadFile;
 import diboot.core.test.binder.entity.User;
+import diboot.core.test.binder.entity.UserImportModel;
 import diboot.core.test.binder.service.RegionService;
 import diboot.core.test.binder.vo.RegionVO;
+import diboot.core.test.binder.vo.UserVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,6 +46,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -65,6 +66,16 @@ public class BeanUtilsTest {
 
     @Autowired
     private RegionService regionService;
+
+    @Test
+    public void testClass() {
+        List<TestService> services = ContextHolder.getBeans(TestService.class);
+        Class class1 = BeanUtils.getGenericityClass(services.get(0), 0);
+        Assert.assertTrue(class1.getName().equals(Dictionary.class.getName()));
+
+        Class class2 = BeanUtils.getGenericityClass(dictionaryService, 1);
+        Assert.assertTrue(class2.getName().equals(Dictionary.class.getName()));
+    }
 
     @Test
     public void testFields(){
@@ -113,6 +124,20 @@ public class BeanUtilsTest {
         user.setGender("123");
         BeanUtils.copyProperties(dictionary3, user);
         Assert.assertTrue(user.getGender().equals("123"));
+    }
+
+    /**
+     * 测试注解拷贝
+     */
+    @Test
+    public void testAcceptAnnoCopy() {
+        // Accept注解拷贝
+        UserVO user = new UserVO().setGenderLabel(new LabelValue("男", "M"));
+        user.setBirthdate(LocalDate.now());
+        UserImportModel importModel = new UserImportModel();
+        BeanUtils.copyProperties(user, importModel);
+        Assert.assertTrue(importModel.getLabel().equals("男"));
+        Assert.assertTrue(importModel.getDate() != null);
     }
 
     @Test

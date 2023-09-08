@@ -28,6 +28,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -40,19 +41,8 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public abstract class BaseEntity extends AbstractEntity<String> {
+public abstract class BaseEntity<T extends Serializable> extends AbstractEntity<T> {
     private static final long serialVersionUID = 10203L;
-
-    @Override
-    public BaseEntity setId(String id){
-        super.setId(id);
-        return this;
-    }
-
-    @Override
-    public String getId(){
-        return super.getId();
-    }
 
     /**
      * 默认逻辑删除标记，is_deleted=0有效

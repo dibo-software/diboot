@@ -15,7 +15,6 @@
  */
 package com.diboot.iam.service;
 
-import com.diboot.core.entity.BaseEntity;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamRole;
@@ -25,15 +24,17 @@ import com.diboot.iam.vo.IamRoleVO;
 import java.util.List;
 
 /**
-* 用户角色关联相关Service
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-17
-*/
+ * 用户角色关联相关Service
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-17
+ */
 public interface IamUserRoleService extends BaseIamService<IamUserRole> {
 
     /**
      * 获取用户所有的全部角色
+     *
      * @param userType
      * @param userId
      * @return
@@ -42,6 +43,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
 
     /**
      * 获取用户所有的全部角色
+     *
      * @param userType
      * @param userId
      * @param extensionObjId 岗位等扩展对象id
@@ -51,6 +53,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
 
     /**
      * 批量创建用户-角色的关系
+     *
      * @param userType
      * @param userId
      * @param roleIds
@@ -81,16 +84,18 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param userObject
      * @return
      */
-    List<IamRoleVO> getAllRoleVOList(BaseEntity userObject);
+    List<IamRoleVO> getAllRoleVOList(BaseLoginUser userObject);
 
     /**
      * 获取Iam扩展实现
+     *
      * @return
      */
     IamExtensible getIamExtensible();
 
     /**
      * 构建role-permission角色权限数据格式(合并role等)，用于前端适配
+     *
      * @param loginUser 登录用户
      * @return 角色VO
      */
@@ -98,6 +103,7 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
 
     /**
      * 根据角色获取用户ids
+     *
      * @param roleIds
      * @return
      */

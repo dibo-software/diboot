@@ -15,6 +15,8 @@
  */
 package com.diboot.core.util;
 
+import com.diboot.core.data.query.CriteriaItem;
+import com.diboot.core.data.query.QueryCondition;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.Status;
 import org.hibernate.validator.HibernateValidator;
@@ -389,6 +391,31 @@ public class V {
         for (Object param : paramValues) {
             if (!V.isValidSqlParam(param)) {
                 throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数: " + param);
+            }
+        }
+    }
+
+    /**
+     * SQL注入关键字过滤
+     */
+    private static final Pattern SQL_INJECT_PATTERN = Pattern.compile("(?:')|(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|and|or|delete|insert|trancate|char|into|substr|ascii|declare|exec|count|master|into|drop|execute)\\b)", Pattern.CASE_INSENSITIVE);
+    /**
+     * SQL查询条件安全检查
+     * @param queryCondition
+     * @throws BusinessException
+     */
+    public static void securityCheck(QueryCondition queryCondition) throws BusinessException {
+        if(V.isEmpty(queryCondition.getCriteriaList())){
+            return;
+        }
+        for (CriteriaItem entry: queryCondition.getCriteriaList()) {
+            securityCheck(entry.getField());
+            if(entry.getValue() != null && entry.getValue() instanceof String){
+                String value = (String)entry.getValue();
+                if(SQL_INJECT_PATTERN.matcher(value.toLowerCase()).find()){
+                    log.warn("非法的参数值: {}", entry.getValue());
+                    throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数值: {}", entry.getValue());
+                }
             }
         }
     }

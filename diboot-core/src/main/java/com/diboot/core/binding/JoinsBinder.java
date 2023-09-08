@@ -123,9 +123,12 @@ public class JoinsBinder {
         }
         else{
             // 格式化orderBy
+            String originOrderBy = pagination.getOrderBy();
             formatOrderBy(dynamicJoinWrapper, entityClazz, pagination);
             IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(pagination.toPage(entityClazz), dynamicJoinWrapper);
             pagination.setTotalCount(pageResult.getTotal());
+            // 还原orderBy
+            pagination.setOrderBy(originOrderBy);
             mapList = pageResult.getRecords();
         }
         long ms = (System.currentTimeMillis() - begin);

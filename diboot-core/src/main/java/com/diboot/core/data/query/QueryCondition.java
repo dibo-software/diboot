@@ -82,7 +82,7 @@ public class QueryCondition implements Serializable {
                 if(Pagination.isPaginationParam(entry.getKey())) {
                     continue;
                 }
-                addCriteria(new CriteriaItem(entry.getKey(), Comparison.EQ, entry.getValue()));
+                addCriteria(entry.getKey(), Comparison.EQ, entry.getValue());
             }
         }
     }
@@ -291,15 +291,16 @@ public class QueryCondition implements Serializable {
         return this;
     }
 
-    public <T,FT> void appendCriteria(SFunction<T,FT> fieldGetter, Comparison comparison, Object value) {
-        appendCriteria(BeanUtils.convertSFunctionToFieldName(fieldGetter), comparison, value);
+    public <T,FT> QueryCondition appendCriteria(SFunction<T,FT> fieldGetter, Comparison comparison, Object value) {
+        return appendCriteria(BeanUtils.convertSFunctionToFieldName(fieldGetter), comparison, value);
     }
 
-    public <T,FT> void appendCriteria(String fieldName, Comparison comparison, Object value) {
+    public <T,FT> QueryCondition appendCriteria(String fieldName, Comparison comparison, Object value) {
         if(criteriaList == null) {
             criteriaList = new ArrayList<>();
         }
         criteriaList.add(new CriteriaItem(fieldName, comparison, value));
+        return this;
     }
 
     /**

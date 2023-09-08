@@ -20,7 +20,7 @@ CREATE TABLE `dictionary` (
 
 create table department
 (
-    id varchar(32) unsigned not null comment 'ID' primary key,
+    id varchar(32) not null comment 'ID' primary key,
     parent_id varchar(32) default 0 not null comment '上级部门ID',
     org_id varchar(32) not null comment '单位ID',
     name varchar(50) not null comment '名称',

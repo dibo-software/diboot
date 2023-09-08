@@ -1,19 +1,33 @@
 <script setup lang="ts" name="DiInput">
 import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
-import type { FormItem, Upload } from './type'
+import type { FormItem, Select, Upload } from './type'
 import type { UploadRawFile, UploadFile, FormItemRule } from 'element-plus'
 
-const props = defineProps<{
-  config: FormItem
-  modelValue?: unknown
-  disabled?: boolean
-  baseApi?: string
-  getId?: () => string | undefined
-  relatedDatas?: LabelValue[]
-  lazyLoading?: boolean
-  fileList?: FileRecord[]
-  lazyLoad?: (parentId: string) => Promise<LabelValue[]>
-}>()
+const props = withDefaults(
+  defineProps<{
+    config: FormItem
+    modelValue?: unknown
+    disabled?: boolean
+    baseApi?: string
+    getId?: () => string | undefined
+    relatedDatas?: LabelValue<string | never>[]
+    lazyLoading?: boolean
+    fileList?: FileRecord[]
+    lazyLoad?: (parentId: string) => Promise<LabelValue[]>
+    teleported?: boolean
+    formPropPrefix?: string
+  }>(),
+  {
+    modelValue: undefined,
+    baseApi: undefined,
+    getId: undefined,
+    relatedDatas: undefined,
+    fileList: undefined,
+    lazyLoad: undefined,
+    teleported: true,
+    formPropPrefix: ''
+  }
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value?: unknown): void
@@ -43,7 +57,9 @@ watch(
 const requiredRule = {
   required: true,
   message: '不能为空',
-  ...(props.config.type === 'input-number' ? {} : { whitespace: true })
+  ...(props.config.type === 'input-number' || props.config.type === 'checkbox' || (props.config as Select).multiple
+    ? {}
+    : { whitespace: true })
 }
 const checkUniqueRule = {
   validator: (rule: unknown, value: unknown, callback: (error?: string | Error) => void) => {
@@ -60,7 +76,7 @@ const checkUniqueRule = {
         .catch(err => {
           callback(err.msg || err)
         })
-    }
+    } else callback()
   },
   trigger: 'blur'
 }
@@ -99,11 +115,9 @@ const previewFile = (file: UploadFile) =>
 
 const beforeUpload = (rawFile: UploadRawFile) => {
   const fileConfig: Upload = props.config as any
-  if (
-    fileConfig.accept &&
-    !fileConfig.accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.')))
-  ) {
-    ElMessage.error(`请上传${fileConfig.accept.replace(/,/g, '/')}格式的文件！`)
+  const accept = convert2accept(fileConfig?.accept)
+  if (accept && !accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.')))) {
+    ElMessage.error(`请上传${accept.replace(/,/g, '/')}格式的文件！`)
     return false
   }
   if (fileConfig.size && rawFile.size / 1024 / 1024 > fileConfig.size) {
@@ -112,16 +126,32 @@ const beforeUpload = (rawFile: UploadRawFile) => {
   }
   return true
 }
+// 获取可用的accept列表
+const convert2accept = (accept?: string) => {
+  if (!accept) {
+    return undefined
+  }
+  return accept
+    .split(',')
+    .map((item: string) => {
+      if (item.indexOf('.') !== 0) {
+        return `.${item}`
+      } else {
+        return item
+      }
+    })
+    .join(',')
+}
 </script>
 
 <template>
-  <el-form-item :prop="config.prop" :label="config.label" :rules="rules">
+  <el-form-item :prop="`${formPropPrefix}${config.prop}`" :label="config.label" :rules="rules">
     <el-input
       v-if="config.type === 'input'"
       v-model="value"
-      :placeholder="config.placeholder"
+      :placeholder="config.placeholder ?? '请输入'"
       clearable
-      :maxlength="config.maxlength"
+      :maxlength="config.maxlength as number"
       :show-word-limit="!!config.maxlength"
       :disabled="config.disabled || disabled"
       @change="handleChange"
@@ -132,14 +162,18 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :placeholder="config.placeholder"
       clearable
       type="textarea"
-      :autosize="config.autosize"
-      :maxlength="config.maxlength"
+      :autosize="config.autosize as boolean"
+      :maxlength="config.maxlength as number"
       :show-word-limit="!!config.maxlength"
       :disabled="config.disabled || disabled"
       @change="handleChange"
     />
     <template v-else-if="config.type === 'rich'">
-      <rich-read v-if="config.disabled || disabled" :value="value" :style="{ flex: 1, height: config.height }" />
+      <rich-read
+        v-if="config.disabled || disabled"
+        :value="`${value ?? ''}`"
+        :style="{ flex: 1, height: config.height }"
+      />
       <rich-editor
         v-else
         v-model="value"
@@ -157,8 +191,17 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :precision="config.precision"
       :step-strictly="!config.precision"
       :controls="config.controls === false ? false : undefined"
-      :controls-position="config.controls === 'right' ? 'right' : undefined"
+      :controls-position="config.controls === 'right' ? 'right' : ''"
       :disabled="config.disabled || disabled"
+      @change="handleChange"
+    />
+    <number-range
+      v-if="config.type === 'input-number-range'"
+      v-model="value"
+      :min="config.min"
+      :max="config.max"
+      :precision="config.precision"
+      :controls="config.controls"
       @change="handleChange"
     />
     <template v-if="config.type === 'boolean'">
@@ -179,9 +222,15 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :remote-method="config.remote ? remoteFilter : undefined"
       :loading="lazyLoading"
       :disabled="config.disabled || disabled"
+      :teleported="teleported"
       @change="handleChange"
     >
-      <el-option v-for="(item, index) in relatedDatas" :key="index" v-bind="item" />
+      <el-option v-for="item in relatedDatas" :key="item.value" v-bind="item">
+        <div v-if="typeof item.ext === 'string'" class="option">
+          {{ item.label }}
+          <span class="ext">（{{ item.ext }}）</span>
+        </div>
+      </el-option>
     </el-select>
     <el-cascader
       v-if="config.type === 'cascader'"
@@ -189,8 +238,10 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :placeholder="config.placeholder"
       clearable
       filterable
+      :teleported="teleported"
       :options="relatedDatas"
       :props="{
+        emitPath: false,
         lazy: config.lazy,
         lazyLoad: config.lazy ? lazyLoad : undefined,
         multiple: config.multiple,
@@ -211,6 +262,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :default-expand-all="!config.lazy"
       :multiple="config.multiple"
       :disabled="config.disabled || disabled"
+      :teleported="teleported"
       clearable
       @change="handleChange"
     />
@@ -256,6 +308,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :value-format="config.format ? config.format : getDateFormtDef(config.type)"
       :placeholder="config.placeholder"
       :disabled="config.disabled || disabled"
+      :teleported="teleported"
       @change="handleChange"
     />
     <el-time-select
@@ -273,6 +326,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       v-if="['daterange', 'datetimerange'].includes(config.type)"
       v-model="value"
       :type="config.type"
+      :teleported="teleported"
       @change="handleChange"
     />
     <el-upload
@@ -284,7 +338,7 @@ const beforeUpload = (rawFile: UploadRawFile) => {
       :on-remove="onRemove"
       :limit="config.limit"
       :accept="config.accept"
-      :list-type="config.listType"
+      :list-type="config.listType ?? 'text'"
       :multiple="(config.limit ?? 2) > 1"
       :before-upload="beforeUpload"
       :on-preview="previewFile"
@@ -328,6 +382,16 @@ const beforeUpload = (rawFile: UploadRawFile) => {
 </template>
 
 <style scoped>
+.option {
+  display: flex;
+  justify-content: space-between;
+
+  .ext {
+    font-size: var(--el-font-size-extra-small);
+    color: var(--el-text-color-secondary);
+  }
+}
+
 .upload-plus-hide :deep(.el-upload--picture-card) {
   display: none;
 }

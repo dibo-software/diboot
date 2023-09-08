@@ -68,7 +68,7 @@ comment on column dbt_message.ext_data is '扩展数据';
 comment on column dbt_message.is_deleted is '是否删除';
 comment on column dbt_message.update_time is '更新时间';
 comment on column dbt_message.create_time is '创建时间';
-comment on table message is '消息';
+comment on table dbt_message is '消息';
 create index idx_dbt_msg_tenant on dbt_message (tenant_id);
 create index idx_dbt_msg_template on dbt_message (template_id);
 create index idx_dbt_msg_receiver on dbt_message (receiver);
