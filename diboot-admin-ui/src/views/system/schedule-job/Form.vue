@@ -95,7 +95,7 @@ const jobChange = (jobKey: string) => {
             </el-tooltip>
           </template>
           <template #append>
-            <el-link type="primary" href="http://cron.ciding.cc/" target="_blank"> 在线编辑器</el-link>
+            <el-link type="primary" href="https://www.pppet.net" target="_blank"> 在线编辑器</el-link>
           </template>
         </el-input>
       </el-form-item>
