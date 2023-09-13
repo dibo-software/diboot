@@ -237,6 +237,7 @@ create table product
 create table product_rel
 (
     id bigint unsigned not null comment 'ID' primary key,
+    loc_id bigint not null,
     orig_product_id bigint not null,
     tmr_product_id bigint not null,
     is_deleted tinyint(1) default 0 not null comment '已删除',
@@ -245,4 +246,4 @@ create table product_rel
 
 INSERT INTO stock(id, product_id, loc_id, title) VALUES (1001, 3001, 5, '记录1'),(1002,3002, 5, '记录2');
 INSERT INTO product(id, product_name) VALUES (2001, 'A4纸'),(2002,'签字笔');
-INSERT INTO product_rel(id, orig_product_id, tmr_product_id) VALUES (3001, 3001, 2001),(3002, 3002, 2002);
+INSERT INTO product_rel(id, loc_id, orig_product_id, tmr_product_id)VALUES (3001, 5, 3001, 2001),(3002, 5, 3002, 2002),(3003, 6, 3001, 2001),(3004, 6, 3002, 2002),(3005, 5, 3003, 2003);
