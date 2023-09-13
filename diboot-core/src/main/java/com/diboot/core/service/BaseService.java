@@ -294,6 +294,24 @@ public interface BaseService<T> extends GeneralService<T>{
     boolean exists(Wrapper queryWrapper);
 
     /**
+     * 检查值是否唯一
+     * @param getterFn
+     * @param value
+     * @param id
+     * @return
+     */
+    <FT> boolean isValueUnique(SFunction<T, FT> getterFn, String value, Serializable id);
+
+    /**
+     * 检查值是否唯一
+     * @param field
+     * @param value
+     * @param id
+     * @return
+     */
+    boolean isValueUnique(String field, String value, Serializable id);
+
+    /**
      * 获取指定属性的Map列表
      * @param queryWrapper
      * @return

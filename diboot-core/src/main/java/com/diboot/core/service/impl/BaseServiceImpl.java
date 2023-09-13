@@ -787,6 +787,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public <FT> boolean isValueUnique(SFunction<T, FT> getterFn, String value, Serializable id) {
+		String field = BeanUtils.convertSFunctionToFieldName(getterFn);
+		return isValueUnique(field, value, id);
+	}
+
+	@Override
+	public boolean isValueUnique(String field, String value, Serializable id) {
+		if (V.isEmpty(value)) {
+			throw new BusinessException(Status.FAIL_VALIDATION, "待检查字段值不能为空");
+		}
+		QueryWrapper<Object> wrapper = Wrappers.query().eq(field, value);
+		if (V.notEmpty(id)) {
+			String pk = ContextHolder.getIdColumnName(getEntityClass());
+			wrapper.ne(pk, id);
+		}
+		return !exists(wrapper);
+	}
+
+	@Override
 	public List<T> getEntityListByIds(List ids) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
 		String pk = ContextHolder.getIdColumnName(getEntityClass());
