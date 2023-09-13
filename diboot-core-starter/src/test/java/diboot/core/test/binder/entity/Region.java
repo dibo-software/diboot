@@ -15,9 +15,7 @@
  */
 package diboot.core.test.binder.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
