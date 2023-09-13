@@ -242,11 +242,6 @@ public class FieldBinder<T> extends BaseBinder<T> {
         for(Map.Entry<String, String> entry : middleTable.getTrunkObjColMapping().entrySet()){
             String getterField = toAnnoObjField(entry.getKey());
             String fieldValue = BeanUtils.getStringProperty(annoObject, getterField);
-            // 通过中间结果Map转换得到OrgId
-            if(V.notEmpty(middleTableResultMap)){
-                Object value = getValueIgnoreKeyCase(middleTableResultMap, fieldValue);
-                fieldValue = String.valueOf(value);
-            }
             if(appendComma){
                 sb.append(Cons.SEPARATOR_COMMA);
             }
@@ -255,8 +250,15 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 appendComma = true;
             }
         }
-        // 查找匹配Key
-        return sb.toString();
+        String matchKey = sb.toString();
+        // 通过中间结果Map转换得到关联id
+        if(V.notEmpty(middleTableResultMap)){
+            if(middleTableResultMap.containsKey(matchKey)) {
+                Object value = middleTableResultMap.get(matchKey);
+                matchKey = S.valueOf(value);
+            }
+        }
+        return matchKey;
     }
 
     @Override
