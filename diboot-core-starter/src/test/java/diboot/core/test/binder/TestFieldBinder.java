@@ -18,6 +18,7 @@ package diboot.core.test.binder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.util.JSON;
@@ -25,6 +26,7 @@ import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
 import diboot.core.test.binder.entity.Organization;
+import diboot.core.test.binder.entity.Stock;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.OrganizationService;
@@ -156,6 +158,18 @@ public class TestFieldBinder {
             System.out.println(vo.getManagerGenderLabel());
             Assert.assertTrue("男".equals(vo.getManagerGenderLabel()) || "女".equals(vo.getManagerGenderLabel()) );
         }
+    }
+
+    @Test
+    public void testIssue() {
+        Stock stock = new Stock();
+        stock.setLocId(5L);
+        stock.setProductId(3001L);
+
+        RelationsBinder.bind(stock);
+
+        Assert.assertTrue(stock.getProduct() != null);
+        Assert.assertTrue(stock.getNewProductName() != null);
     }
 
 }

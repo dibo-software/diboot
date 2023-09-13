@@ -7,6 +7,8 @@ import lombok.Setter;
 @Getter @Setter
 public class ProductRel extends BaseEntity {
 
+    private Long locId;
+
     private Long origProductId;
 
     private Long tmrProductId;

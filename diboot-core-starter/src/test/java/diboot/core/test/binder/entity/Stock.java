@@ -1,5 +1,6 @@
 package diboot.core.test.binder.entity;
 
+import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.entity.BaseEntity;
@@ -18,7 +19,13 @@ public class Stock extends BaseEntity {
     @BindQuery(entity = Product.class, field = "productName",
             condition = "this.product_id=product_rel.orig_product_id and product_rel.tmr_product_id=id")
     @BindField(entity = Product.class, field = "productName",
-            condition = "this.product_id=product_rel.orig_product_id and product_rel.tmr_product_id=id")
+            condition = "this.product_id=product_rel.orig_product_id and product_rel.loc_id=this.loc_id and product_rel.tmr_product_id=id")
     private String newProductName;
+
+
+    @BindEntity(entity = Product.class,
+            condition = "this.product_id=product_rel.orig_product_id and product_rel.loc_id=this.loc_id and product_rel.tmr_product_id=id")
+    private Product product;
+
 
 }
