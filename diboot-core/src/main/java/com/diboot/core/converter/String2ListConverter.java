@@ -17,9 +17,11 @@ package com.diboot.core.converter;
 
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,6 +36,15 @@ public class String2ListConverter implements Converter<String, List> {
 
     @Override
     public List convert(String source) {
-        return V.notEmpty(source)? JSON.parseArray(source, String.class) : null;
+        if(V.notEmpty(source)) {
+            boolean isArray = S.startsWith(source,"[\"");
+            if(isArray) {
+                return JSON.parseArray(source, String.class);
+            }
+            else {
+                return Arrays.asList(source);
+            }
+        }
+        return null;
     }
 }
