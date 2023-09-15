@@ -60,6 +60,31 @@ public class DTest {
     }
 
     @Test
+    public void testAutoFormat() {
+        String[] dateStrArray = {
+                "2019-06-02 13:35:02",
+                "2019-06-02 13:35:02",
+                "2019-06-02 13:35:02:000",
+                "2019-06-02T13:35:02:000",
+                "2019年6月2日 13:35:02",
+                "2019/6/2 13:35:02:000",
+                "06/02/2019 13:35:02",
+                "06/02/2019 13:35:02:000",
+                "06/02/2019",
+        };
+        for(String date : dateStrArray) {
+            String format = D.formatDateString(date);
+            if(date.length() == "06/02/2019".length()) {
+                Assert.assertTrue(format.equals("2019-06-02"));
+            }
+            else {
+                Assert.assertTrue(format.equals("2019-06-02 13:35:02"));
+            }
+        }
+
+    }
+
+    @Test
     public void testJsonResult(){
         String token = "token";
         JsonResult j1 = new JsonResult(token);
@@ -75,4 +100,5 @@ public class DTest {
         System.out.println(j5.getData());
         Assert.assertTrue(j6.getMsg().contains("xxx验证错误"));
     }
+
 }

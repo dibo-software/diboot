@@ -52,6 +52,9 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_SLASH_Y4MD = "yyyy/MM/dd";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHM = "yyyy/MM/dd HH:mm";
 	public static final String FORMAT_DATETIME_SLASH_Y4MDHMS = "yyyy/MM/dd HH:mm:ss";
+	public static final String FORMAT_DATE_SLASH_MDY4 = "MM/dd/yyyy";
+	public static final String FORMAT_DATETIME_SLASH_MDY4HM = "MM/dd/yyyy HH:mm";
+	public static final String FORMAT_DATETIME_SLASH_MDY4HMS = "MM/dd/yyyy HH:mm:ss";
 	public static final String FORMAT_DATETIME_Y4MD_T_HMS = "yyyy-MM-ddTHH:mm:ss";
 	/**
 	 * 星期（中文）
@@ -471,6 +474,13 @@ public class D extends DateUtils{
 		String[] parts = (dateString.contains("T") && !dateString.contains(" "))? dateString.split("T") : dateString.split(" ");
 		String[] ymd = parts[0].split("-");
 		if(ymd.length >= 3){
+			if(ymd[2].length() == 4) { //MM/dd/yyyy
+				String yyyy = ymd[2], month = ymd[0], day = ymd[1];
+				ymd[0] = yyyy;
+				ymd[1] = month;
+				ymd[2] = day;
+			}
+			// 补齐位数
 			if(ymd[0].length() == 2){
 				ymd[0] = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)).substring(0, 2) + ymd[0];
 			}
@@ -513,5 +523,7 @@ public class D extends DateUtils{
 		parts[1] = S.join(hmsArray, ":");
 		return S.join(parts, " ");
 	}
+//
+//	public static String autoDetect
 
 }
