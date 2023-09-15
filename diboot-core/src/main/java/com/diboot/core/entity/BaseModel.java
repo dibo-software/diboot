@@ -26,7 +26,6 @@ public class BaseModel extends BaseEntity<String> {
     /**
      * 更新时间
      */
-    @DateTimeFormat(pattern = D.FORMAT_DATETIME_Y4MDHMS)
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
