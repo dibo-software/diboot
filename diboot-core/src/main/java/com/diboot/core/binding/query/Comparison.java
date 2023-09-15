@@ -28,7 +28,7 @@ public enum Comparison {
     STARTSWITH, //以xx起始
     ENDSWITH, //以xx结尾
     LIKE, // LIKE
-    CONTAINS, //包含，等同LIKE
+    CONTAINS, //包含，非集合等同LIKE，集合匹配数组中包含
 
     GT, // 大于
     GE, // 大于等于
