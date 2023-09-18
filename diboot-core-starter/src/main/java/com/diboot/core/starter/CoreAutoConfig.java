@@ -21,11 +21,11 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.diboot.core.converter.*;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.encrypt.ProtectInterceptor;
+import com.diboot.core.deserializer.StringLocalDateTimeDeserializer;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -74,7 +74,7 @@ import java.util.TimeZone;
 public class CoreAutoConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(CoreAutoConfig.class);
 
-    @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
+    @Value("${spring.jackson.date-format:" + D.FORMAT_DATETIME_Y4MDHMS + "}")
     private String defaultDatePattern;
 
     @Value("${spring.jackson.time-zone:GMT+8}")
@@ -103,7 +103,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
             // LocalDateTime
             DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(localDateTimeFormatter));
+            builder.deserializerByType(LocalDateTime.class, new StringLocalDateTimeDeserializer());
             // LocalDate
             DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD);
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(localDateFormatter));
@@ -139,7 +139,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
         return new MappingJackson2HttpMessageConverter(jackson2ObjectMapperBuilder().build());
     }
 
