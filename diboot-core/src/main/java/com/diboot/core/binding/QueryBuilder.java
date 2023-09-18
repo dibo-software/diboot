@@ -302,7 +302,7 @@ public class QueryBuilder {
                 }
                 break;
             case CONTAINS:
-                boolean isString = S.startsWith(JSON.toJSONString(value), "[\"");
+                boolean isString = S.contains(JSON.toJSONString(value), "\"");
                 BiConsumer<QueryWrapper<?>,String> basicTypeProtection = (query, val) -> {
                     query.or().likeRight(columnName, "[" + val + ",");
                     query.or().like(columnName, "," + val + ",");
