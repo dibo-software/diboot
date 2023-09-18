@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -56,6 +57,20 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATETIME_SLASH_MDY4HM = "MM/dd/yyyy HH:mm";
 	public static final String FORMAT_DATETIME_SLASH_MDY4HMS = "MM/dd/yyyy HH:mm:ss";
 	public static final String FORMAT_DATETIME_Y4MD_T_HMS = "yyyy-MM-ddTHH:mm:ss";
+
+	/**
+	 * LocalDate 日期 格式化定义
+	 */
+	public static final DateTimeFormatter FORMATTER_DATE_Y4MD = DateTimeFormatter.ofPattern(FORMAT_DATE_Y4MD);
+	/**
+	 * LocalDateTime 日期时间 格式化定义（不含秒）
+	 */
+	public static final DateTimeFormatter FORMATTER_DATETIME_Y4MDHM = DateTimeFormatter.ofPattern(FORMAT_DATETIME_Y4MDHM);
+	/**
+	 * LocalDateTime 日期时间 格式化定义
+	 */
+	public static final DateTimeFormatter FORMATTER_DATETIME_Y4MDHMS = DateTimeFormatter.ofPattern(FORMAT_DATETIME_Y4MDHMS);
+
 	/**
 	 * 星期（中文）
 	 */

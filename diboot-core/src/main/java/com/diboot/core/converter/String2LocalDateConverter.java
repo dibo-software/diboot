@@ -39,7 +39,7 @@ public class String2LocalDateConverter implements Converter<String, LocalDate> {
             return null;
         }
         dateString = D.formatDateString(dateString);
-        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD));
+        return LocalDate.parse(dateString, D.FORMATTER_DATE_Y4MD);
     }
 
 }

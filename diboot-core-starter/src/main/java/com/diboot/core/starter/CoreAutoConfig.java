@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.diboot.core.converter.*;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.encrypt.ProtectInterceptor;
-import com.diboot.core.deserializer.StringLocalDateTimeDeserializer;
+import com.diboot.core.deserializer.LocalDateTimeDeserializer;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -103,7 +103,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
             // LocalDateTime
             DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
-            builder.deserializerByType(LocalDateTime.class, new StringLocalDateTimeDeserializer());
+            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer());
             // LocalDate
             DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD);
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(localDateFormatter));
