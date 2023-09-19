@@ -1,7 +1,7 @@
 
 <div align="center">
 
-![logo](http://v3.diboot.com/img/logo.png)
+![logo](public/logo.png)
 
 <h1>Diboot Admin UI</h1>
 
