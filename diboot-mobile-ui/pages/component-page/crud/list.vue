@@ -1,6 +1,7 @@
 <template>
 	<view class="h100 page-bg-color" :style="{paddingTop: diStatusBarHeight + 44 + 'px'}">
 		<u-navbar title="列表" height="44" :immersive="true" :background="{background: '#f8f8f8'}" :border-bottom="false">
+			<u-icon @click="handleSearch" style="margin-right: 40rpx;" slot="right" name="search" size="28" label="搜索" color="#007aff" label-color="#007aff"/>
 			<u-icon @click="handleCreate" style="margin-right: 40rpx;" slot="right" name="plus" size="28" label="新建" color="#19be6b" label-color="#19be6b"/>
 		</u-navbar>
 		<scroll-view class="di-scroll" scroll-y  @scrolltolower="handleOnreachBottom" :refresher-triggered="triggered"
@@ -33,18 +34,24 @@
 		 @confirm="handleConfirmDel"
 		 @cancel="handleCancelDel">
 		</u-modal>
+    s
 	</view>
 </template>
 
 <script>
 	import list from '@/mixins/list'
+	import search from './search'
 	export default {
 		mixins: [list],
+    components: {
+      search
+    },
 		methods: {
 			/**
 			 * 获取数据列表 (重写函数)
 			 */
 			async getList(replace = false) {
+        console.log(this.queryParam)
 				let count = 10000
 				setTimeout(() => {
 					let list = []

@@ -72,6 +72,12 @@ export default {
 		/**
 		 * 新增
 		 */
+		handleSearch() {
+			this.$refs.searchRef.open()
+		},
+		/**
+		 * 新增
+		 */
 		handleCreate() {
 			uni.navigateTo({
 				url: './form'
