@@ -39,7 +39,7 @@ public class WebApiFilter implements Filter {
         chain.doFilter(request, response);
         long elapsedTime = System.currentTimeMillis() - startTime;
         if (elapsedTime > 5000) {
-            log.debug("请求接口: {}，耗时：{} ms，请及时检查优化。", ((HttpServletRequest) request).getRequestURI(), elapsedTime);
+            log.warn("请求接口: {}，耗时：{} ms，请及时检查优化。", ((HttpServletRequest) request).getRequestURI(), elapsedTime);
         }
     }
 
