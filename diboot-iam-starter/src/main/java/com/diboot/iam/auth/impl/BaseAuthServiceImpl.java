@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 用户名密码认证的service实现
@@ -156,19 +157,26 @@ public abstract class BaseAuthServiceImpl implements AuthService {
     protected void lockAccountIfRequired(IamAccount latestAccount) {
         // 查询最新1天内的失败记录
         LambdaQueryWrapper<IamLoginTrace> queryWrapper = new LambdaQueryWrapper<IamLoginTrace>()
-                .select(IamLoginTrace::getId)
+                .select(IamLoginTrace::isSuccess)
                 .eq(IamLoginTrace::getUserType, latestAccount.getUserType())
                 .eq(IamLoginTrace::getAuthType, latestAccount.getAuthType())
                 .eq(IamLoginTrace::getAuthAccount, latestAccount.getAuthAccount())
-                .eq(IamLoginTrace::isSuccess, false)
                 .gt(IamLoginTrace::getCreateTime, LocalDateTime.now().minusDays(1))
                 .eq(V.notEmpty(latestAccount.getTenantId()) ,IamLoginTrace::getTenantId, latestAccount.getTenantId());
-
-        long failedCount = loginTraceService.getEntityListCount(queryWrapper);
-        if(failedCount >= Cons.LOGIN_MAX_ATTEMPTS) {
-            latestAccount.setStatus(Cons.DICTCODE_ACCOUNT_STATUS.L.name());
-            log.warn("用户登录失败次数超过最大限值，账号 {} 已被锁定！", latestAccount.getAuthAccount());
-            accountService.updateAccountStatus(latestAccount.getId(), Cons.DICTCODE_ACCOUNT_STATUS.L.name());
+        List<IamLoginTrace> loginList = loginTraceService.getEntityListLimit(queryWrapper, Cons.LOGIN_MAX_ATTEMPTS);
+        if(V.notEmpty(loginList) && loginList.size() >= Cons.LOGIN_MAX_ATTEMPTS) {
+            int failCount = 0;
+            for(IamLoginTrace loginTrace : loginList) {
+                if(loginTrace.isSuccess()) {
+                    break;
+                }
+                failCount++;
+            }
+            if(failCount >= Cons.LOGIN_MAX_ATTEMPTS) {
+                latestAccount.setStatus(Cons.DICTCODE_ACCOUNT_STATUS.L.name());
+                log.warn("用户登录失败次数超过最大限值，账号 {} 已被锁定！", latestAccount.getAuthAccount());
+                accountService.updateAccountStatus(latestAccount.getId(), Cons.DICTCODE_ACCOUNT_STATUS.L.name());
+            }
         }
     }
 }

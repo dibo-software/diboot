@@ -20,6 +20,7 @@ import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -58,6 +59,26 @@ public class RemoteBindingManager {
             log.debug("获取到绑定数据: {}", jsonResult.getData());
             List<T> entityList = JSON.parseArray(jsonResult.getData(), entityClass);
             return entityList;
+        }
+        else{
+            log.warn("获取绑定数据失败: {}", jsonResult.getMsg());
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    /**
+     * 从远程接口抓取 Map List
+     * @param module
+     * @param remoteBindDTO
+     * @return
+     */
+    public static List<Map<String, Object>> fetchMapList(String module, RemoteBindDTO remoteBindDTO) {
+        remoteBindDTO.setResultType("Entity");
+        RemoteBindingProvider bindingProvider = getRemoteBindingProvider(module);
+        JsonResult<String> jsonResult = bindingProvider.loadBindingData(remoteBindDTO);
+        if(V.equals(jsonResult.getCode(), 0)){
+            log.debug("获取到绑定数据: {}", jsonResult.getData());
+            return JSON.parseArray(jsonResult.getData(), new TypeReference<List<Map<String, Object>>>(){});
         }
         else{
             log.warn("获取绑定数据失败: {}", jsonResult.getMsg());

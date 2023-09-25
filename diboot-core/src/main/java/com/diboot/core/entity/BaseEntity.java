@@ -15,7 +15,7 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.Cons;
@@ -64,7 +64,7 @@ public abstract class BaseEntity extends AbstractEntity<Long> {
     /**
      * 默认记录创建时间字段，新建时由数据库赋值
      */
-    @TableField(insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /***

@@ -16,6 +16,7 @@
 package com.diboot.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
@@ -85,6 +86,16 @@ public interface BaseService<T> {
      * @return
      */
     <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn);
+
+    /**
+     * 获取entity某个属性值
+     *
+     * @param queryWrapper
+     * @param getterFn
+     * @return
+     * @param <FT>
+     */
+    <FT> FT getValueOfField(LambdaQueryWrapper<T> queryWrapper, SFunction<T, FT> getterFn);
 
     /**
      * 创建Entity实体
@@ -265,6 +276,18 @@ public interface BaseService<T> {
     <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn);
 
     /**
+     * 获取指定ID集合，获取映射map
+     *
+     * @param idFieldFn
+     * @param idValList
+     * @param getterFn
+     * @return
+     * @param <ST>
+     * @param <FT>
+     */
+    <ST, FT> Map<ST, FT> getValueMapOfField(SFunction<T, ST> idFieldFn, List<ST> idValList, SFunction<T, FT> getterFn);
+
+    /**
      * 获取指定条件的Entity集合
      * @param ids
      * @return
@@ -355,6 +378,16 @@ public interface BaseService<T> {
      * @return entity
      */
     <VO> VO getViewObject(Serializable id, Class<VO> voClass);
+
+    /**
+     * 获取View Object对象
+     *
+     * @param queryWrapper
+     * @param voClass
+     * @return
+     * @param <VO>
+     */
+    <VO> VO getViewObject(Wrapper queryWrapper, Class<VO> voClass);
 
     /**
      * 根据查询条件获取vo列表

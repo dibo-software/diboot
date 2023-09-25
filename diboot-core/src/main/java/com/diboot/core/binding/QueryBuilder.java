@@ -29,10 +29,7 @@ import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
 import com.diboot.core.data.ProtectFieldHandler;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHelper;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +39,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -302,6 +302,41 @@ public class QueryBuilder {
                 }
                 break;
             case CONTAINS:
+                boolean isString = S.contains(JSON.toJSONString(value), "\"");
+                BiConsumer<QueryWrapper<?>,String> basicTypeProtection = (query, val) -> {
+                    query.or().likeRight(columnName, "[" + val + ",");
+                    query.or().like(columnName, "," + val + ",");
+                    query.or().likeLeft(columnName, "," + val + "]");
+                    query.or().eq(columnName, "[" + val + "]");
+                };
+                if (value instanceof Collection) {
+                    wrapper.and(query -> {
+                        for (Object val : (Collection<?>) value) {
+                            if (isString) {
+                                query.or().like(columnName, "\"" + val + "\"");
+                            } else {
+                                basicTypeProtection.accept(query, S.valueOf(val));
+                            }
+                        }
+                    });
+                } else if (value.getClass().isArray()) {
+                    wrapper.and(query -> {
+                        for (Object val : (Object[]) value) {
+                            if (isString) {
+                                query.or().like(columnName, "\"" + val + "\"");
+                            } else {
+                                basicTypeProtection.accept(query, S.valueOf(val));
+                            }
+                        }
+                    });
+                } else {
+                    if (isString) {
+                        wrapper.like(columnName, "\"" + value + "\"");
+                    } else {
+                        wrapper.and(query -> basicTypeProtection.accept(query, S.valueOf(value)));
+                    }
+                }
+                break;
             case LIKE:
                 wrapper.like(columnName, value);
                 break;
@@ -377,7 +412,7 @@ public class QueryBuilder {
             // 非指定属性，非逻辑删除字段，跳过；
             if (V.notContains(fields, fieldName)) {
                 //Date 属性放过
-                if (!V.equals(field.getType(), Date.class)) {
+                if (!V.equals(field.getType(), Date.class) && !V.equals(field.getType(), LocalDate.class) && !V.equals(field.getType(), LocalDateTime.class)) {
                     continue;
                 }
             }
@@ -481,7 +516,7 @@ public class QueryBuilder {
             return Collections.emptyList();
         }
         // 解析排序
-        // orderBy=shortName:DESC,age:ASC,birthdate
+        // orderBy=name:DESC,age:ASC,birthdate
         String[] orderByFields = S.split(pagination.getOrderBy());
         List<String> orderFields = new ArrayList<>(orderByFields.length);
         for (String field : orderByFields) {

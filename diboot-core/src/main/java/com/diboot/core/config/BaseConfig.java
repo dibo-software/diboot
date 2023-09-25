@@ -143,6 +143,18 @@ public class BaseConfig {
 		return ACTIVE_FLAG_VALUE;
 	}
 
+	/**
+	 * 获取删除标记的值
+	 * @return
+	 */
+	public static Object getDeletedFlagValue(){
+		Object activeObj = getActiveFlagValue();
+		if(activeObj instanceof Boolean){
+			return true;
+		}
+		return 1;
+	}
+
 	public static void setActiveFlagValue(String value) {
 		if(getActiveFlagValue() == null) {
 			ACTIVE_FLAG_VALUE = value;

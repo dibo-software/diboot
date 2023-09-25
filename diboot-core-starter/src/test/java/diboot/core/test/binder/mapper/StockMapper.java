@@ -13,32 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.query;
+package diboot.core.test.binder.mapper;
+
+import com.diboot.core.mapper.BaseCrudMapper;
+import diboot.core.test.binder.entity.Stock;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 比较条件枚举类
+ * 仓库Mapper
  * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/08/06
+ * @version 2023/09/14
  */
-public enum Comparison {
-    EQ, // 相等，默认
-    IN, // IN
+@Mapper
+public interface StockMapper extends BaseCrudMapper<Stock> {
 
-    STARTSWITH, //以xx起始
-    ENDSWITH, //以xx结尾
-    LIKE, // LIKE
-    CONTAINS, //包含（用于JsonArray是否包含某个值）
-
-    GT, // 大于
-    GE, // 大于等于
-    LT, // 小于
-    LE, // 小于等于
-
-    BETWEEN, //介于-之间
-    BETWEEN_BEGIN, //介于之后
-    BETWEEN_END, //介于之前
-
-    NOT_EQ,  //不等于
-    NOT_IN // 不在...内
 }
+

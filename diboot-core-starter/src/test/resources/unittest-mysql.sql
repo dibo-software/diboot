@@ -214,3 +214,36 @@ VALUES(10000081, 10000074, '111', 'L9vrF7wJBKbbLRZChI33WA=='),
       (10000089, 10000075, '119', 'VVnnuR7fXzsIHCMilEsgLw=='),
       (10000091, 10000075, '112', 'BqAefnSadfixkCebXakUDg=='),
       (10000093, 10000075, '114', 'A2Y6CZ4tv0V7QxPbq9EYkg==');
+
+-- TEST issue R09
+create table stock
+(
+    id bigint unsigned not null comment 'ID' primary key,
+    product_id bigint not null,
+    loc_id bigint not null,
+    title varchar(100) not null,
+    is_deleted tinyint(1) default 0 not null comment '已删除',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+) comment '库存' charset=utf8mb4;
+
+create table product
+(
+    id bigint unsigned not null comment 'ID' primary key,
+    product_name varchar(50) not null comment '名称',
+    is_deleted tinyint(1) default 0 not null comment '已删除',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+) comment '产品' charset=utf8mb4;
+
+create table product_rel
+(
+    id bigint unsigned not null comment 'ID' primary key,
+    loc_id bigint not null,
+    orig_product_id bigint not null,
+    tmr_product_id bigint not null,
+    is_deleted tinyint(1) default 0 not null comment '已删除',
+    create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
+) comment '产品关联' charset=utf8mb4;
+
+INSERT INTO stock(id, product_id, loc_id, title) VALUES (1001, 3001, 5, '记录1'),(1002,3002, 5, '记录2');
+INSERT INTO product(id, product_name) VALUES (2001, 'A4纸'),(2002,'签字笔');
+INSERT INTO product_rel(id, loc_id, orig_product_id, tmr_product_id)VALUES (3001, 5, 3001, 2001),(3002, 5, 3002, 2002),(3003, 6, 3001, 2001),(3004, 6, 3002, 2002),(3005, 5, 3003, 2003);

@@ -21,10 +21,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.DictionaryService;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.JSON;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.core.util.*;
 import com.diboot.core.vo.DictionaryVO;
 import com.sun.management.OperatingSystemMXBean;
 import diboot.core.test.StartupApplication;
@@ -65,6 +62,16 @@ public class BeanUtilsTest {
 
     @Autowired
     private RegionService regionService;
+
+    @Test
+    public void testClass() {
+        List<TestService> services = ContextHelper.getBeans(TestService.class);
+        Class class1 = BeanUtils.getGenericityClass(services.get(0), 0);
+        Assert.assertTrue(class1.getName().equals(Dictionary.class.getName()));
+
+        Class class2 = BeanUtils.getGenericityClass(dictionaryService, 1);
+        Assert.assertTrue(class2.getName().equals(Dictionary.class.getName()));
+    }
 
     @Test
     public void testFields(){

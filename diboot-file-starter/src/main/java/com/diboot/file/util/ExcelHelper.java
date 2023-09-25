@@ -18,6 +18,9 @@ package com.diboot.file.util;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.enums.CacheLocationEnum;
+import com.alibaba.excel.metadata.FieldWrapper;
+import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.util.ClassUtils;
@@ -26,6 +29,7 @@ import com.alibaba.excel.write.builder.ExcelWriterBuilder;
 import com.alibaba.excel.write.builder.ExcelWriterSheetBuilder;
 import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
@@ -449,13 +453,16 @@ public class ExcelHelper {
      * @return excel表头映射
      */
     public static List<TableHead> getTableHead(Class<?> clazz) {
-        TreeMap<Integer, Field> sortedAllFiledMap = new TreeMap<>();
-        ClassUtils.declaredFields(clazz, sortedAllFiledMap, false, null);
+        WriteSheetHolder ws = new WriteSheetHolder();
+        GlobalConfiguration configuration = new GlobalConfiguration();
+        configuration.setFiledCacheLocation(CacheLocationEnum.MEMORY);
+        ws.setGlobalConfiguration(configuration);
+        Map<Integer, FieldWrapper> sortedFieldMap = ClassUtils.declaredFields(clazz, ws).getSortedFieldMap();;
         TreeMap<Integer, List<String>> headNameMap = new TreeMap<>();
         HashMap<Integer, String> fieldNameMap = new HashMap<>();
-        sortedAllFiledMap.forEach((index, field) -> {
-            fieldNameMap.put(index, field.getName());
-            headNameMap.put(index, getHeadColumnName(field));
+        sortedFieldMap.forEach((index, field) -> {
+            fieldNameMap.put(index, field.getFieldName());
+            headNameMap.put(index, Arrays.asList(field.getHeads()));
         });
         return buildTableHead(headNameMap, fieldNameMap);
     }

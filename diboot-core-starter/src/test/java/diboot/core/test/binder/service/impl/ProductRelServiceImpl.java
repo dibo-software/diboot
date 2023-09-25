@@ -13,32 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.binding.query;
+package diboot.core.test.binder.service.impl;
+
+import com.diboot.core.service.impl.BaseServiceImpl;
+import diboot.core.test.binder.entity.ProductRel;
+import diboot.core.test.binder.mapper.ProductRelMapper;
+import diboot.core.test.binder.service.ProductRelService;
+import org.springframework.stereotype.Service;
 
 /**
- * 比较条件枚举类
+ * 产品关联相关Service
  * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/08/06
+ * @version 2023/09/14
  */
-public enum Comparison {
-    EQ, // 相等，默认
-    IN, // IN
+@Service
+public class ProductRelServiceImpl extends BaseServiceImpl<ProductRelMapper, ProductRel> implements ProductRelService {
 
-    STARTSWITH, //以xx起始
-    ENDSWITH, //以xx结尾
-    LIKE, // LIKE
-    CONTAINS, //包含（用于JsonArray是否包含某个值）
-
-    GT, // 大于
-    GE, // 大于等于
-    LT, // 小于
-    LE, // 小于等于
-
-    BETWEEN, //介于-之间
-    BETWEEN_BEGIN, //介于之后
-    BETWEEN_END, //介于之前
-
-    NOT_EQ,  //不等于
-    NOT_IN // 不在...内
 }
