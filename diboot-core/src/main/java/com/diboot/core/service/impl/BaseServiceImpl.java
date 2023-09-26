@@ -393,14 +393,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Transactional(rollbackFor = Exception.class)
 	@Override
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                                  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList) {
+                                                  SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList) {
         return createOrUpdateN2NRelations(driverIdGetter, driverId, followerIdGetter, followerIdList, null, null);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                                  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                                  SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList,
                                                   Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer) {
 		if (driverId == null) {
 			throw new InvalidUsageException("主动ID值不能为空！");

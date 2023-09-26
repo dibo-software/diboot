@@ -99,7 +99,7 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+                                           SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList);
 
     /**
      * 创建或更新n-n关联
@@ -117,7 +117,7 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                           SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList,
                                            Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer);
 
     /**
