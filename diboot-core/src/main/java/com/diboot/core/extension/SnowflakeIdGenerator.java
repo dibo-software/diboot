@@ -15,7 +15,6 @@
  */
 package com.diboot.core.extension;
 
-import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.IdGenerator;
 import com.diboot.core.vo.LabelValue;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class SnowflakeIDGenerator implements SerialNumberGenerator {
+public class SnowflakeIdGenerator implements SerialNumberGenerator {
 
     @Override
     public LabelValue definition() {
