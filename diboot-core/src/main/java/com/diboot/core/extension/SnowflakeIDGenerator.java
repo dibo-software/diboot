@@ -21,6 +21,8 @@ import com.diboot.core.vo.LabelValue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * 序列号生成器的雪花id字符串生成实现
  * @author mazc@dibo.ltd
@@ -37,7 +39,7 @@ public class SnowflakeIDGenerator implements SerialNumberGenerator {
     }
 
     @Override
-    public String generate(BaseEntity entityData) {
+    public String generate(Map<String, Object> entityDataMap) {
         return IdGenerator.nextIdStr();
     }
 

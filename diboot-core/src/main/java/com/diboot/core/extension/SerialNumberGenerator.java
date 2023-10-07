@@ -18,6 +18,8 @@ package com.diboot.core.extension;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.vo.LabelValue;
 
+import java.util.Map;
+
 /**
  * 序列号生成器的接口定义
  * @author mazc@dibo.ltd
@@ -37,6 +39,15 @@ public interface SerialNumberGenerator {
      * @param entityData
      * @return
      */
-    String generate(BaseEntity entityData);
+    default String generate(BaseEntity entityData) {
+        return generate(entityData.toMap());
+    }
+
+    /**
+     * 生成序列号
+     * @param entityDataMap
+     * @return
+     */
+    String generate(Map<String, Object> entityDataMap);
 
 }
