@@ -18,7 +18,7 @@ package com.diboot.core.handler;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.data.access.DataAccessAnnoCache;
-import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
@@ -76,7 +76,7 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
      */
     private Expression buildDataAccessExpression(Table mainTable, Class<?> entityClass) {
         return DataAccessAnnoCache.getDataPermissionMap(entityClass).entrySet().stream().map(entry -> {
-            DataAccessInterface checkImpl = ContextHolder.getBean(DataAccessInterface.class);
+            DataScopeManager checkImpl = ContextHolder.getBean(DataScopeManager.class);
             if (checkImpl == null) {
                 throw new InvalidUsageException("无法从上下文中获取数据权限的接口实现：DataAccessInterface");
             }

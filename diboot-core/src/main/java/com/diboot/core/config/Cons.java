@@ -287,4 +287,15 @@ public class Cons {
         }
     }
 
+    /**
+     * 数据范围权限类型 的 字典编码
+     */
+    public enum DATA_PERMISSION_TYPE {
+        SELF,
+        SELF_AND_SUB,
+        DEPT,
+        DEPT_AND_SUB,
+        ALL
+    }
+
 }
