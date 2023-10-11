@@ -573,7 +573,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
-		LambdaQueryWrapper query = null;
+		LambdaQueryWrapper<T> query = null;
 		List<T> entityList = null;
 		// 支持 ChainQuery
 		if (queryWrapper instanceof ChainQuery) {
