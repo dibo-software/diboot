@@ -72,7 +72,7 @@ public class IamUserPosition extends BaseEntity {
     private Boolean isPrimaryPosition = true;
 
     // 更新时间
-    @TableField(fill = FieldFill.UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
 }
