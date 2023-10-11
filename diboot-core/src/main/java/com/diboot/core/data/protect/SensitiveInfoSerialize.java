@@ -74,9 +74,9 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
             }
         }
         if (value instanceof List) {
-            gen.writeObject(((List<String>) value).stream().map(e -> dataMaskHandler.mask(clazz, fieldName, e)).collect(Collectors.toList()));
+            gen.writeObject(((List<String>) value).stream().map(e -> dataMaskHandler.mask(e)).collect(Collectors.toList()));
         } else {
-            gen.writeObject(dataMaskHandler.mask(clazz, fieldName, (String) value));
+            gen.writeObject(dataMaskHandler.mask((String) value));
         }
     }
 
