@@ -13,10 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data.mask;
+package com.diboot.core.data.protect;
 
-import com.diboot.core.data.ProtectFieldHandler;
-import com.diboot.core.data.annotation.ProtectField;
+import com.diboot.core.data.annotation.DataMask;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -46,7 +45,7 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
     /**
      * 保护字段处理器
      */
-    private ProtectFieldHandler protectFieldHandler;
+    private DataMaskHandler dataMaskHandler;
 
     /**
      * Class类型
@@ -62,20 +61,22 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
     }
 
     public SensitiveInfoSerialize(Class<?> clazz, String fieldName) {
-        this.protectFieldHandler = ContextHolder.getBean(ProtectFieldHandler.class);
-        if (protectFieldHandler == null) {
-            throw new InvalidUsageException("未注入 ProtectFieldHandler 实现");
-        }
         this.clazz = clazz;
         this.fieldName = fieldName;
     }
 
     @Override
     public void serialize(E value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        if(this.dataMaskHandler == null) {
+            this.dataMaskHandler = ContextHolder.getBean(DataMaskHandler.class);
+            if(this.dataMaskHandler == null) {
+                throw new InvalidUsageException("无法获取 DataMaskHandler 数据脱敏的实现类，请检查！");
+            }
+        }
         if (value instanceof List) {
-            gen.writeObject(((List<String>) value).stream().map(e -> protectFieldHandler.mask(clazz, fieldName, e)).collect(Collectors.toList()));
+            gen.writeObject(((List<String>) value).stream().map(e -> dataMaskHandler.mask(clazz, fieldName, e)).collect(Collectors.toList()));
         } else {
-            gen.writeObject(protectFieldHandler.mask(clazz, fieldName, (String) value));
+            gen.writeObject(dataMaskHandler.mask(clazz, fieldName, (String) value));
         }
     }
 
@@ -86,15 +87,15 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
         }
         Class<?> rawClass = property.getType().getRawClass();
         if (rawClass == String.class || (rawClass == List.class && property.getType().getContentType().getRawClass() == String.class)) {
-            ProtectField protect = property.getAnnotation(ProtectField.class);
+            DataMask protect = property.getAnnotation(DataMask.class);
             if (null == protect) {
-                protect = property.getContextAnnotation(ProtectField.class);
+                protect = property.getContextAnnotation(DataMask.class);
             }
             if (null != protect) {
                 return new SensitiveInfoSerialize(property.getMember().getDeclaringClass(), property.getName());
             }
         } else {
-            log.error("`@ProtectField` 只支持 String 与 List<String> 类型脱敏！");
+            log.error("`@DataMask` 只支持 String 与 List<String> 类型脱敏！");
         }
         return prov.findValueSerializer(property.getType(), property);
     }

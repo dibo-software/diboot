@@ -23,7 +23,6 @@ import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.IGetter;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;

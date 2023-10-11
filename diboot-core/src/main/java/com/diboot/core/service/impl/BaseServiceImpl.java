@@ -38,6 +38,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
@@ -269,6 +270,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	protected void beforeUpdate(T entity){
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
+		}
+		List<String> maskFields = ParserCache.getDataMaskFieldList(entityClass);
+		if(V.notEmpty(maskFields)) {
+			for(String maskField : maskFields) {
+				Object value = BeanUtils.getProperty(entity, maskField);
+				if(value != null && S.valueOf(value).contains("*")) {
+					BeanUtils.setProperty(entity, maskField, null);
+					log.debug("更新操作中提交了 {} 的脱敏值 :{}，忽略该字段以避免误更新", maskField, value);
+				}
+			}
 		}
 	}
 

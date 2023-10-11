@@ -28,7 +28,7 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.ProtectFieldHandler;
+import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
@@ -197,7 +197,7 @@ public class QueryBuilder {
         // 获取属性名类型
         BiFunction<BindQuery, String, String> getFieldName = (bindQuery, defFieldName) -> bindQuery == null || S.isEmpty(bindQuery.column()) ? defFieldName : bindQuery.column();
         // 保护字段处理器
-        ProtectFieldHandler protectFieldHandler = ContextHolder.getBean(ProtectFieldHandler.class);
+        DataEncryptHandler protectFieldHandler = ContextHolder.getBean(DataEncryptHandler.class);
         // 构建QueryWrapper
         for (Map.Entry<String, FieldAndValue> entry : fieldValuesMap.entrySet()) {
             FieldAndValue fieldAndValue = entry.getValue();
@@ -218,13 +218,15 @@ public class QueryBuilder {
             if (queryList != null) {
                 List<BindQuery> bindQueryList = Arrays.stream(queryList.value()).filter(e -> !ignoreEmpty.test(value, e)).collect(Collectors.toList());
                 wrapper.and(V.notEmpty(bindQueryList), queryWrapper -> {
+                    Class<?> clazz = getClass.apply(query);
+                    List<String> encryptFields = ParserCache.getProtectFieldList(clazz);
                     for (BindQuery bindQuery : bindQueryList) {
                         String columnName = buildColumnName.apply(bindQuery, field);
                         if (protectFieldHandler != null) {
-                            Class<?> clazz = getClass.apply(query);
                             String fieldName = getFieldName.apply(query, entry.getKey());
-                            if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
-                                buildQuery(queryWrapper.or(), bindQuery, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                            if (encryptFields.contains(fieldName)) {
+                                log.debug("查询条件中包含加密字段 {}:{}，将加密后匹配密文", fieldName, value);
+                                buildQuery(queryWrapper.or(), bindQuery, columnName, protectFieldHandler.encrypt(value.toString()));
                                 continue;
                             }
                         }
@@ -243,7 +245,8 @@ public class QueryBuilder {
                     Class<?> clazz = getClass.apply(query);
                     String fieldName = getFieldName.apply(query, entry.getKey());
                     if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
-                        buildQuery(wrapper, query, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                        log.debug("查询条件中包含加密字段 {}:{}，将加密后匹配密文", fieldName, value);
+                        buildQuery(wrapper, query, columnName, protectFieldHandler.encrypt(value.toString()));
                         continue;
                     }
                 }

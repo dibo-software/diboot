@@ -19,8 +19,10 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.converter.*;
-import com.diboot.core.data.ProtectFieldHandler;
-import com.diboot.core.data.encrypt.ProtectInterceptor;
+import com.diboot.core.data.protect.DataEncryptHandler;
+import com.diboot.core.data.protect.DataMaskHandler;
+import com.diboot.core.data.protect.DefaultDataEncryptHandler;
+import com.diboot.core.data.protect.DefaultDataMaskHandler;
 import com.diboot.core.handler.DataAccessControlHandler;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
@@ -139,14 +141,21 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 数据保护拦截器
-     * <p>
-     * 默认不注入，diboot.core.enable-data-protect=true可开启
+     * 数据加密解密处理器
      */
     @Bean
-    @ConditionalOnBean(ProtectFieldHandler.class)
-    public ProtectInterceptor protectInterceptor() {
-        return new ProtectInterceptor();
+    @ConditionalOnMissingBean(DataEncryptHandler.class)
+    public DataEncryptHandler dataEncryptHandler() {
+        return new DefaultDataEncryptHandler();
+    }
+
+    /**
+     * 数据脱敏处理器
+     */
+    @Bean
+    @ConditionalOnMissingBean(DataMaskHandler.class)
+    public DataMaskHandler dataMaskHandler() {
+        return new DefaultDataMaskHandler();
     }
 
     /**

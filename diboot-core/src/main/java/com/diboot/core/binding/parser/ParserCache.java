@@ -15,23 +15,28 @@
  */
 package com.diboot.core.binding.parser;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.diboot.core.binding.annotation.*;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
-import com.diboot.core.data.annotation.ProtectField;
+import com.diboot.core.data.annotation.DataMask;
+import com.diboot.core.data.protect.DataEncryptHandler;
+import com.diboot.core.data.protect.DefaultEncryptTypeHandler;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.type.TypeHandler;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -59,7 +64,11 @@ public class ParserCache {
     /**
      * 保护字段缓存
      */
-    private static final Map<String, List<String>> PROTECT_FIELD_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, List<String>> ENCRYPT_FIELD_MAP = new ConcurrentHashMap<>();
+    /**
+     * 脱敏字段缓存
+     */
+    private static final Map<String, List<String>> DATA_MASK_FIELD_MAP = new ConcurrentHashMap<>();
 
     /**
      * 用于查询注解是否是Bind相关注解
@@ -270,16 +279,44 @@ public class ParserCache {
      */
     @NonNull
     public static List<String> getProtectFieldList(@NonNull Class<?> clazz) {
-        return PROTECT_FIELD_MAP.computeIfAbsent(clazz.getName(), k -> {
+        return ENCRYPT_FIELD_MAP.computeIfAbsent(clazz.getName(), k -> {
             List<String> protectFieldList = new ArrayList<>(4);
-            for (Field field : BeanUtils.extractFields(clazz, ProtectField.class)) {
+            for (Field field : BeanUtils.extractFields(clazz, TableField.class)) {
                 if (!field.getType().isAssignableFrom(String.class)) {
-                    log.error("`@ProtectField` 仅支持 String 类型字段。");
                     continue;
                 }
-                protectFieldList.add(field.getName());
+                TableField tableField = field.getAnnotation(TableField.class);
+                if(tableField.typeHandler() == null) {
+                    continue;
+                }
+                Class<? extends TypeHandler> typeHandler = tableField.typeHandler();
+                if(typeHandler.isAssignableFrom(DefaultEncryptTypeHandler.class)) {
+                    protectFieldList.add(field.getName());
+                    log.debug("监测到加密保护字段：{}.{}", clazz.getSimpleName(), field.getName());
+                }
             }
             return protectFieldList.isEmpty() ? Collections.emptyList() : protectFieldList;
         });
     }
+
+    /**
+     * 获取该类脱敏字段属性名列表
+     *
+     * @param clazz 类型
+     * @return 属性名列表
+     */
+    @NonNull
+    public static List<String> getDataMaskFieldList(@NonNull Class<?> clazz) {
+        return DATA_MASK_FIELD_MAP.computeIfAbsent(clazz.getName(), k -> {
+            List<String> maskFieldList = new ArrayList<>(4);
+            for (Field field : BeanUtils.extractFields(clazz, DataMask.class)) {
+                if (!field.getType().isAssignableFrom(String.class)) {
+                    throw new InvalidUsageException("`@DataMask` 仅支持 String 类型字段。");
+                }
+                maskFieldList.add(field.getName());
+            }
+            return maskFieldList.isEmpty() ? Collections.emptyList() : maskFieldList;
+        });
+    }
+
 }
