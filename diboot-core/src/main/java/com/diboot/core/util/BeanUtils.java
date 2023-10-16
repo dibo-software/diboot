@@ -87,7 +87,7 @@ public class BeanUtils {
      * @param target
      */
     @SuppressWarnings("UnusedReturnValue")
-    public static Object copyProperties(Object source, Object target){
+    public static <T> T copyProperties(Object source, T target){
         // 链式调用无法使用BeanCopier拷贝，换用BeanUtils
         org.springframework.beans.BeanUtils.copyProperties(source, target);
         // 处理Accept注解标识的不同字段名拷贝

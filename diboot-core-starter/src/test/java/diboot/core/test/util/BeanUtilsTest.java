@@ -102,8 +102,7 @@ public class BeanUtilsTest {
         dictionary1.setType("STATUS");
         dictionary1.setItemName(itemName);
 
-        Dictionary dictionary2 = new Dictionary();
-        BeanUtils.copyProperties(dictionary1, dictionary2);
+        Dictionary dictionary2 = BeanUtils.copyProperties(dictionary1, new Dictionary());
         Assert.assertTrue(dictionary2.getItemName().equals(itemName));
 
         Map<String, Object> map = new HashMap<>();
