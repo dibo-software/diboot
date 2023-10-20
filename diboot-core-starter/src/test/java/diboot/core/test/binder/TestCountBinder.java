@@ -18,6 +18,7 @@ package diboot.core.test.binder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.entity.Dictionary;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -25,8 +26,7 @@ import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
 import diboot.core.test.binder.service.UserService;
-import diboot.core.test.binder.vo.CountSimpleVO;
-import diboot.core.test.binder.vo.EntityListComplexVO;
+import diboot.core.test.binder.vo.*;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,6 +62,7 @@ public class TestCountBinder {
     public void testSimpleBinder(){
         // 加载测试数据
         LambdaQueryWrapper<Department> queryWrapper = Wrappers.<Department>lambdaQuery();
+        //        .in(Department::getId, "10001", "10003");
         List<Department> entityList = departmentService.list(queryWrapper);
         // 自动绑定
         List<CountSimpleVO> voList = Binder.convertAndBindRelations(entityList, CountSimpleVO.class);
@@ -86,6 +87,7 @@ public class TestCountBinder {
     public void testComplexBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexVO.class);
@@ -93,7 +95,7 @@ public class TestCountBinder {
         Assert.assertTrue(V.notEmpty(voList));
         for(EntityListComplexVO vo : voList){
             // 验证通过中间表间接关联的绑定
-            if(V.equals(vo.getId(), 1001l)) {
+            if(V.equals(vo.getId(), "1001")) {
                 Assert.assertTrue(vo.getRoleCount() == 2);
             }
             else {
