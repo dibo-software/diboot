@@ -24,6 +24,7 @@ import java.lang.annotation.*;
  * @version v3.0.0
  * @date 2022-10-12
  */
+@Deprecated
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
