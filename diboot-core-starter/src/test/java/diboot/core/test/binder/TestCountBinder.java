@@ -87,7 +87,6 @@ public class TestCountBinder {
     public void testComplexBinder(){
         // 加载测试数据
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(User::getId, "1001", "1002");
         List<User> userList = userService.getEntityList(queryWrapper);
         // 自动绑定
         List<EntityListComplexVO> voList = Binder.convertAndBindRelations(userList, EntityListComplexVO.class);
