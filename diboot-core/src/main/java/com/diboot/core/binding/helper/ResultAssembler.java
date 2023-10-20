@@ -42,6 +42,64 @@ public class ResultAssembler {
      * @param valueMatchMap
      * @param <E>
      */
+    public static <E> void bindCountPropValue(String setterFieldName, List<E> fromList, String[] getterFields, Map valueMatchMap){
+        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
+            return;
+        }
+        try{
+            for(E object : fromList){
+                List matchKeys = null;
+                BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
+                for(int i=0; i<getterFields.length; i++){
+                    Object fieldValueObj = BeanUtils.getProperty(object, getterFields[i]);
+                    if(fieldValueObj == null) {
+                        continue;
+                    }
+                    if(fieldValueObj instanceof Collection) {
+                        if(matchKeys == null) {
+                            matchKeys = new ArrayList();
+                        }
+                        matchKeys.addAll((Collection) fieldValueObj);
+                    }
+                    else {
+                        if(matchKeys == null) {
+                            matchKeys = new ArrayList(getterFields.length);
+                        }
+                        matchKeys.add(S.clearNonConst(S.valueOf(fieldValueObj)));
+                    }
+                }
+                if(matchKeys == null) {
+                    continue;
+                }
+                // 查找匹配Key
+                String matchKey = S.join(matchKeys);
+                if(valueMatchMap.containsKey(matchKey)){
+                    // 赋值
+                    beanWrapper.setPropertyValue(setterFieldName, valueMatchMap.get(matchKey));
+                }
+                else {
+                    Object matchedValue = valueMatchMap.get(matchKey);
+                    if(matchedValue == null) {
+                        matchedValue = 0l;
+                    }
+                    // 赋值
+                    beanWrapper.setPropertyValue(setterFieldName, matchedValue);
+                }
+            }
+        }
+        catch (Exception e){
+            log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+        }
+    }
+
+    /***
+     * 从对象集合提取某个属性值到list中
+     * @param setterFieldName
+     * @param fromList
+     * @param getterFields
+     * @param valueMatchMap
+     * @param <E>
+     */
     public static <E> void bindPropValue(String setterFieldName, List<E> fromList, String[] getterFields, Map valueMatchMap, String splitBy){
         if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
             return;
