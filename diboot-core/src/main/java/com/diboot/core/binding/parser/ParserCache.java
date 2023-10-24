@@ -87,7 +87,7 @@ public class ParserCache {
             // 获取注解并缓存
             BindAnnotationGroup group = new BindAnnotationGroup();
             // 获取当前VO的所有字段
-            List<Field> fields = BeanUtils.extractAllFields(voClass);
+            List<Field> fields = BeanUtils.extractAllFields(voClass, true);
             if(V.notEmpty(fields)){
                 //遍历属性
                 for (Field field : fields) {

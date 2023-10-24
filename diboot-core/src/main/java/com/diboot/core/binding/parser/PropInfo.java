@@ -75,7 +75,7 @@ public class PropInfo implements Serializable {
      * @param isEntityClass 是否为entity实体类（数据库表对应实体）
      */
     public PropInfo(Class<?> beanClass, boolean isEntityClass) {
-        List<Field> fields = BeanUtils.extractAllFields(beanClass);
+        List<Field> fields = BeanUtils.extractAllFields(beanClass, true);
         if(V.notEmpty(fields)){
             for(Field fld : fields){
                 String fldName = fld.getName();

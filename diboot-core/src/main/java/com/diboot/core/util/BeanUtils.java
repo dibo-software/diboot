@@ -43,10 +43,7 @@ import org.springframework.util.ReflectionUtils;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -879,7 +876,16 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractAllFields(Class clazz){
-        return extractClassFields(clazz, null);
+        return extractClassFields(clazz, true,null);
+    }
+
+    /**
+     * 获取类所有属性（包含父类中属性）
+     * @param clazz
+     * @return
+     */
+    public static List<Field> extractAllFields(Class clazz, boolean excludeSpecial){
+        return extractClassFields(clazz, excludeSpecial,null);
     }
 
     /**
@@ -888,7 +894,7 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractFields(Class<?> clazz, Class<? extends Annotation> annotation){
-        return extractClassFields(clazz, annotation);
+        return extractClassFields(clazz, false, annotation);
     }
 
     /**
@@ -1125,10 +1131,10 @@ public class BeanUtils {
      * @param beanClazz
      * @return
      */
-    private static List<Field> extractClassFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+    private static List<Field> extractClassFields(Class<?> beanClazz, boolean excludeStaticFinal, Class<? extends Annotation> annotation){
         List<Field> fieldList = new ArrayList<>();
         Set<String> fieldNameSet = new HashSet<>();
-        loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
+        loopFindFields(beanClazz, excludeStaticFinal, annotation, fieldList, fieldNameSet);
         return fieldList;
     }
 
@@ -1139,7 +1145,7 @@ public class BeanUtils {
      * @param fieldList
      * @param fieldNameSet
      */
-    private static void loopFindFields(Class<?> beanClazz, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
+    private static void loopFindFields(Class<?> beanClazz, boolean excludeSpecial, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
         if(beanClazz == null) {
             return;
         }
@@ -1150,12 +1156,19 @@ public class BeanUtils {
                 if (!fieldNameSet.add(field.getName())) {
                     continue;
                 }
+                if(excludeSpecial) {
+                    //忽略static，以及final，transient
+                    int modifiers = field.getModifiers();
+                    if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isTransient(modifiers)) {
+                        continue;
+                    }
+                }
                 if (annotation == null || field.getAnnotation(annotation) != null) {
                     fieldList.add(field);
                 }
             }
         }
-        loopFindFields(beanClazz.getSuperclass(), annotation, fieldList, fieldNameSet);
+        loopFindFields(beanClazz.getSuperclass(), excludeSpecial, annotation, fieldList, fieldNameSet);
     }
 
 }

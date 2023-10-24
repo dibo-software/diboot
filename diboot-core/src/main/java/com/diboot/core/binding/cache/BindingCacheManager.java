@@ -184,7 +184,7 @@ public class BindingCacheManager {
      * @return
      */
     public static List<Field> getFields(Class<?> beanClazz) {
-        return getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), () -> BeanUtils.extractAllFields(beanClazz));
+        return getCacheManager().getCacheObj(CACHE_NAME_CLASS_FIELDS, beanClazz.getName(), () -> BeanUtils.extractAllFields(beanClazz, true));
     }
 
     /**

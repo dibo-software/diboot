@@ -412,7 +412,7 @@ public class QueryBuilder {
     private static <DTO> LinkedHashMap<String, FieldAndValue> extractNotNullValues(DTO dto, Collection<String> fields, Pagination pagination){
         Class<?> dtoClass = dto.getClass();
         // 转换
-        List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
+        List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass, true);
         List<String> extractOrderFieldNames = extractOrderFieldNames(pagination);
         // 结果map：<字段名,字段对象和值>
         LinkedHashMap<String, FieldAndValue> resultMap = new LinkedHashMap<>(declaredFields.size());
@@ -424,14 +424,6 @@ public class QueryBuilder {
                 if (!V.equals(field.getType(), Date.class) && !V.equals(field.getType(), LocalDate.class) && !V.equals(field.getType(), LocalDateTime.class)) {
                     continue;
                 }
-            }
-            //忽略static，以及final，transient
-            int modifiers = field.getModifiers();
-            boolean isStatic = Modifier.isStatic(modifiers);
-            boolean isFinal = Modifier.isFinal(modifiers);
-            boolean isTransient = Modifier.isTransient(modifiers);
-            if (isStatic || isFinal || isTransient) {
-                continue;
             }
             //打开私有访问 获取值
             field.setAccessible(true);
