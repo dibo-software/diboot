@@ -25,6 +25,7 @@ import com.diboot.core.data.copy.Accept;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,22 +233,40 @@ public class EntityBinder<T> extends BaseBinder<T> {
         if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
             PropInfo propInfo = BindingCacheManager.getPropInfoByClass(referencedEntityClass);
             List<Field> fieldList = BindingCacheManager.getFields(annoObjectFieldClass);
-            List<String> columns = new ArrayList<>();
+            List<String> selectColumns = new ArrayList<>(refObjJoinCols);
             for(Field field : fieldList) {
                 Accept accept = field.getAnnotation(Accept.class);
                 String fieldName = accept == null ? field.getName() : accept.name();
-                String column = propInfo.getColumnByField(fieldName);
-                if(column != null && V.notEquals(column, propInfo.getDeletedColumn())) {
-                    columns.add(column);
+                String colName = propInfo.getColumnByField(fieldName);
+                if(colName != null && V.notEquals(colName, propInfo.getDeletedColumn())) {
+                    if(!selectColumns.contains(colName)){
+                        selectColumns.add(colName);
+                    }
                 }
             }
-            if(V.notEmpty(columns)) {
-                this.queryWrapper.select(columns);
+            // 添加orderBy排序
+            if(V.notEmpty(this.orderBy)){
+                // 解析排序
+                String[] orderByFields = S.split(this.orderBy);
+                for(String field : orderByFields){
+                    String colName = field.toLowerCase();
+                    if(colName.contains(":")){
+                        colName = S.split(colName, ":")[0];
+                    }
+                    colName = toRefObjColumn(colName);
+                    if(!selectColumns.contains(colName)){
+                        selectColumns.add(colName);
+                    }
+                }
+            }
+            if(V.notEmpty(selectColumns)) {
+                this.queryWrapper.select(selectColumns);
                 if(remoteBindDTO != null){
-                    remoteBindDTO.setSelectColumns(columns);
+                    remoteBindDTO.setSelectColumns(selectColumns);
                 }
             }
         }
+
     }
 
 }
