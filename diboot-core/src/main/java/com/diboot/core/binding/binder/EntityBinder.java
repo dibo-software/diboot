@@ -29,12 +29,9 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Entity实体绑定Binder，用于绑定当前一个entity到目标对象的属性
@@ -234,17 +231,21 @@ public class EntityBinder<T> extends BaseBinder<T> {
     protected void simplifySelectColumns() {
         if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
             PropInfo propInfo = BindingCacheManager.getPropInfoByClass(referencedEntityClass);
-            List<String> fieldList = BindingCacheManager.getFields(annoObjectFieldClass).stream().flatMap(field -> {
+            List<Field> fieldList = BindingCacheManager.getFields(annoObjectFieldClass);
+            List<String> columns = new ArrayList<>();
+            for(Field field : fieldList) {
                 Accept accept = field.getAnnotation(Accept.class);
-                return accept == null ? Stream.of(field.getName()) : accept.override() ? Stream.of(accept.name()) : Stream.of(field.getName(), accept.name());
-            }).collect(Collectors.toList());
-            List<String> columns = fieldList.stream().filter(fld -> {
-                String column = propInfo.getColumnByField(fld);
-                return column != null && V.notEquals(column, propInfo.getDeletedColumn());
-            }).collect(Collectors.toList());
-            this.queryWrapper.select(columns);
-            if(remoteBindDTO != null){
-                remoteBindDTO.setSelectColumns(columns);
+                String fieldName = accept == null ? field.getName() : accept.name();
+                String column = propInfo.getColumnByField(fieldName);
+                if(column != null && V.notEquals(column, propInfo.getDeletedColumn())) {
+                    columns.add(column);
+                }
+            }
+            if(V.notEmpty(columns)) {
+                this.queryWrapper.select(columns);
+                if(remoteBindDTO != null){
+                    remoteBindDTO.setSelectColumns(columns);
+                }
             }
         }
     }
