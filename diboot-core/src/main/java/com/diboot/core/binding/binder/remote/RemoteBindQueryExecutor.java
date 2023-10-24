@@ -69,10 +69,12 @@ public class RemoteBindQueryExecutor {
         PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
         Class idFieldType = propInfo.getFieldTypeByColumn(refJoinCol);
         Collection<?> formatInValues = BeanUtils.convertIdValuesToType(inConditionValues, idFieldType);
-        // 构建queryWrpper
+        // 构建queryWrapper
         QueryWrapper<?> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(entityClass);
-        queryWrapper.select(remoteBindDTO.getSelectColumns());
+        if(V.notEmpty(remoteBindDTO.getSelectColumns())) {
+            queryWrapper.select(remoteBindDTO.getSelectColumns());
+        }
         // 构建查询条件
         queryWrapper.in(refJoinCol, formatInValues);
         queryWrapper.and(V.notEmpty(remoteBindDTO.getAdditionalConditions()), e -> remoteBindDTO.getAdditionalConditions().forEach(e::apply));

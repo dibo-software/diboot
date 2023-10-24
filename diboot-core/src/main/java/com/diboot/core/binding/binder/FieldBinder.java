@@ -288,11 +288,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 }
             }
         }
-        String[] selectColsArray = S.toStringArray(selectColumns);
         if(remoteBindDTO != null){
-            remoteBindDTO.setSelectColumns(selectColsArray);
+            remoteBindDTO.setSelectColumns(selectColumns);
         }
-        this.queryWrapper.select(selectColsArray);
+        this.queryWrapper.select(selectColumns);
     }
 
 }

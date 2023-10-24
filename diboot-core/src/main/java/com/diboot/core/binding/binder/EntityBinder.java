@@ -17,9 +17,11 @@ package com.diboot.core.binding.binder;
 
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
-import com.diboot.core.binding.helper.WrapperHelper;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.Cons;
+import com.diboot.core.data.copy.Accept;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
@@ -32,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Entity实体绑定Binder，用于绑定当前一个entity到目标对象的属性
@@ -230,7 +233,19 @@ public class EntityBinder<T> extends BaseBinder<T> {
     @Override
     protected void simplifySelectColumns() {
         if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
-            WrapperHelper.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
+            PropInfo propInfo = BindingCacheManager.getPropInfoByClass(referencedEntityClass);
+            List<String> fieldList = BindingCacheManager.getFields(annoObjectFieldClass).stream().flatMap(field -> {
+                Accept accept = field.getAnnotation(Accept.class);
+                return accept == null ? Stream.of(field.getName()) : accept.override() ? Stream.of(accept.name()) : Stream.of(field.getName(), accept.name());
+            }).collect(Collectors.toList());
+            List<String> columns = fieldList.stream().filter(fld -> {
+                String column = propInfo.getColumnByField(fld);
+                return column != null && V.notEquals(column, propInfo.getDeletedColumn());
+            }).collect(Collectors.toList());
+            this.queryWrapper.select(columns);
+            if(remoteBindDTO != null){
+                remoteBindDTO.setSelectColumns(columns);
+            }
         }
     }
 

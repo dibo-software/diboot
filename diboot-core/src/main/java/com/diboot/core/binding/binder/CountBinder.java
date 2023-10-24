@@ -113,11 +113,10 @@ public class CountBinder<T> extends EntityListBinder<T> {
         List<String> selectColumns = new ArrayList<>(8);
         selectColumns.addAll(refObjJoinCols);
         selectColumns.add("count(*) AS "+ Binder.COUNT_COL);
-        String[] selectColsArray = S.toStringArray(selectColumns);
         if(remoteBindDTO != null){
-            remoteBindDTO.setSelectColumns(selectColsArray);
+            remoteBindDTO.setSelectColumns(selectColumns);
         }
-        this.queryWrapper.select(selectColsArray);
+        this.queryWrapper.select(selectColumns);
     }
 
     /**

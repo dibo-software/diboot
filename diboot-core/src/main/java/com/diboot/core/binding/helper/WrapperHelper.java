@@ -72,14 +72,16 @@ public class WrapperHelper {
      * @param voClass
      */
     public static void optimizeSelect(Wrapper<?> query, Class<?> entityClass, Class<?> voClass) {
-        // 支持 ChainQuery
-        if (query instanceof ChainQuery<?>) {
-            query = ((ChainQuery<?>) query).getWrapper();
-        }
-        if (!(query instanceof Query) || query.getSqlSelect() != null) {
+        if (query.getSqlSelect() != null) {
             return;
         }
-        ((Query) query).select(entityClass, buildSelectPredicate(voClass));
+        if(query instanceof Query) {
+            ((Query)query).select(entityClass, WrapperHelper.buildSelectPredicate(voClass));
+        }
+        else if(query instanceof ChainQuery) {
+            Wrapper<?> queryWrapper = ((ChainQuery<?>)query).getWrapper();
+            ((Query)queryWrapper).select(entityClass, WrapperHelper.buildSelectPredicate(voClass));
+        }
     }
 
     /**

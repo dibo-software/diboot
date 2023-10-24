@@ -984,7 +984,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		if(queryWrapper.getSqlSelect() == null) {
+			WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		}
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
 		return Binder.convertAndBindRelations(entityList, voClass);
@@ -994,7 +996,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass, SFunction<T, String> getParentIdsPath,
 										   @Nullable SFunction<T, Comparable<?>> getSortId) {
 		LambdaQueryWrapper<T> queryWrapper = Wrappers.lambdaQuery();
-		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		queryWrapper.select(getEntityClass(), WrapperHelper.buildSelectPredicate(voClass));
 		// 排序
 		queryWrapper.orderByAsc(getSortId != null, getSortId);
 
