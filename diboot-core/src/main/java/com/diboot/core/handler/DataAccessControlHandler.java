@@ -15,8 +15,9 @@
  */
 package com.diboot.core.handler;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
-import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.exception.InvalidUsageException;
@@ -58,13 +59,13 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
         if (noCheckpointCache.contains(mappedStatementId)) {
             return null;
         }
-        Class<?> entityClass = BindingCacheManager.getEntityClassByTable(S.removeEsc(table.getName()));
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(S.removeEsc(table.getName()));
         // 无权限检查点注解，不处理
-        if (entityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(entityClass)) {
+        if (tableInfo == null || tableInfo.getEntityType() == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(tableInfo.getEntityType())) {
             noCheckpointCache.add(mappedStatementId);
             return null;
         }
-        return buildDataAccessExpression(table, entityClass);
+        return buildDataAccessExpression(table, tableInfo.getEntityType());
     }
 
     /**
