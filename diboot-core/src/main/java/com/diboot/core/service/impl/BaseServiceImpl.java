@@ -235,7 +235,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		else{
 			// 查找mapper
-			BaseMapper mapper = ContextHolder.getBaseMapperByEntity(entity.getClass());
+			BaseMapper mapper = ContextHolder.getBaseMapperByEntity(relatedEntityClass);
 			// 新增关联，无service只能循环插入
 			for(RE relation : relatedEntities){
 				mapper.insert(relation);
