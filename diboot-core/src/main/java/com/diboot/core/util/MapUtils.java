@@ -17,10 +17,7 @@ package com.diboot.core.util;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Map相关工具类
@@ -93,15 +90,7 @@ public class MapUtils {
         if(V.isEmpty(dataMap)){
             return null;
         }
-        T entityInstance = null;
-        try {
-            entityInstance = entityClass.newInstance();
-        }
-        catch (Exception e){
-            log.warn("实例化Entity {} 异常: {}", entityClass.getSimpleName(), e.getMessage());
-        }
-        BeanUtils.bindProperties(entityInstance, dataMap);
-        return entityInstance;
+        return JSON.parseObject(JSON.stringify(dataMap), entityClass);
     }
 
     /**
@@ -115,21 +104,7 @@ public class MapUtils {
         if(V.isEmpty(resultListMap)){
             return Collections.emptyList();
         }
-        List<T> entityList = new ArrayList<>(resultListMap.size());
-        for(Map<String, Object> resultMap : resultListMap){
-            T entityInstance = null;
-            try {
-                entityInstance = entityClass.newInstance();
-            }
-            catch (Exception e){
-                log.warn("实例化Entity {} 异常: {}", entityClass.getSimpleName(), e.getMessage());
-            }
-            if(entityInstance != null) {
-                buildEntity(resultMap, entityInstance);
-                entityList.add(entityInstance);
-            }
-        }
-        return entityList;
+        return JSON.parseArray(JSON.stringify(resultListMap), entityClass);
     }
 
 }
