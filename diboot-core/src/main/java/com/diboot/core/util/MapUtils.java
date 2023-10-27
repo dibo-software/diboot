@@ -66,21 +66,6 @@ public class MapUtils {
     /**
      * 构建ResultMap为实体
      * @param dataMap
-     * @param model
-     * @return
-     * @param <T>
-     */
-    public static <T> void buildEntity(Map<String, Object> dataMap, T model){
-        // 字段映射
-        if(V.isEmpty(dataMap)){
-            return;
-        }
-        BeanUtils.bindProperties(model, dataMap);
-    }
-
-    /**
-     * 构建ResultMap为实体
-     * @param dataMap
      * @param entityClass
      * @return
      * @param <T>
