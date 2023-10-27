@@ -146,6 +146,50 @@ public class BeanUtils {
         return resultList;
     }
 
+    /**
+     * 构建Map为Bean
+     * @param dataMap
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
+    public static <T> T convertMap2Bean(Map<String, Object> dataMap, Class<T> entityClass) {
+        // 字段映射
+        if(V.isEmpty(dataMap)){
+            return null;
+        }
+        T entityInstance = null;
+        try {
+            entityInstance = entityClass.newInstance();
+        }
+        catch (Exception e){
+            log.warn("实例化Bean {} 异常: {}", entityClass.getSimpleName(), e.getMessage());
+        }
+        bindProperties(entityInstance, dataMap);
+        return entityInstance;
+    }
+
+    /**
+     * 构建MapList为Bean列表
+     * @param resultListMap
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
+    public static <T> List<T> convertMap2BeanList(List<Map<String, Object>> resultListMap, Class<T> entityClass) {
+        if(V.isEmpty(resultListMap)){
+            return Collections.emptyList();
+        }
+        List<T> entityList = new ArrayList<>(resultListMap.size());
+        for(Map<String, Object> resultMap : resultListMap){
+            T entityInstance = convertMap2Bean(resultMap, entityClass);
+            if(entityInstance != null) {
+                entityList.add(entityInstance);
+            }
+        }
+        return entityList;
+    }
+
     /***
      * 附加Map中的属性值到Model
      * @param model
