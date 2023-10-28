@@ -857,8 +857,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String sqlSelect = queryWrapper.getSqlSelect();
 		// 最少2个属性：label, value , (ext , parentId)
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) < 1){
-			log.error("调用错误: getLabelValueList必须用select依次指定返回的 label,value,ext 键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
-			return Collections.emptyList();
+			throw new InvalidUsageException("调用错误: getLabelValueList必须用select依次指定返回的 label,value(,ext)键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 		}
 		List<T> entityList = getEntityList(queryWrapper);
 		if(entityList == null){
