@@ -3,8 +3,7 @@ import type { DefineComponent, VNode } from 'vue'
 import { RouterView } from 'vue-router'
 import { KeepAlive, h } from 'vue'
 import useViewTabs from '@/store/view-tabs'
-import Layout from '@/layout/index.vue'
-
+const Layout = () => import('@/layout/index.vue')
 // 加载所有组件
 const modules = import.meta.glob<Record<string, DefineComponent>>('@/views/**/*.{vue,tsx,jsx}')
 

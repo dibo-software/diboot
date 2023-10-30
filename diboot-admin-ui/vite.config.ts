@@ -1,17 +1,35 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 // import checker from 'vite-plugin-checker'
 import eslintPlugin from 'vite-plugin-eslint'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { viteMockServe } from 'vite-plugin-mock'
-import { fileURLToPath, URL } from 'url'
-import fs from 'fs'
-
+import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
+import {viteMockServe} from 'vite-plugin-mock'
+import {fileURLToPath, URL} from 'url'
+import fs from "fs";
+const optimizeDepsElementPlusIncludes = [
+  'vue',
+  'vue-router',
+  'pinia',
+  '@vueuse/core',
+  'axios',
+  'echarts',
+  '@wangeditor/editor',
+  '@wangeditor/editor-for-vue',
+  'sortablejs',
+  'vue-clipboard3'
+]
+fs.readdirSync(`./node_modules/element-plus/es/components`).map(dirname => {
+  fs.access(`./node_modules/element-plus/es/components/${dirname}/style/css.mjs`, err => {
+    if (!err) {
+      optimizeDepsElementPlusIncludes.push(`element-plus/es/components/${dirname}/style/css`)
+    }
+  })
+})
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   return {
     plugins: [
       vue(),
@@ -77,19 +95,24 @@ export default defineConfig(({ command }) => {
           additionalData: `@use "@/styles/theme/index.scss" as *;`
         }
       }
-    },
+    }
+      ,
+      // 预加载项目必需的组件
+      optimizeDeps: {
+    include: optimizeDepsElementPlusIncludes
+  },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '#': fileURLToPath(new URL('./types', import.meta.url)),
         'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
       }
+    },
+    server: {
+      host: true,
+      proxy: {
+        '/api': 'http://localhost:8080'
+      }
     }
-    // server: {
-    //   host: true,
-    //   proxy: {
-    //     '/api': 'http://localhost:8080'
-    //   }
-    // }
   }
 })
