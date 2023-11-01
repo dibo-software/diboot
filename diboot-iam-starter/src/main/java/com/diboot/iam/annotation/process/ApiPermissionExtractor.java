@@ -21,7 +21,7 @@ import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.ApiUri;
 import com.diboot.iam.annotation.BindPermission;
-import com.diboot.iam.cache.IamCacheManager;
+import com.diboot.iam.cache.IamPermissionCacheManager;
 import com.diboot.iam.config.Cons;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -84,7 +84,7 @@ public class ApiPermissionExtractor {
                continue;
             }
             UNIQUE_KEY_SET.add(controllerClass.getName());
-            ApiPermissionWrapper wrapper = IamCacheManager.getPermissionCodeWrapper(controllerClass);
+            ApiPermissionWrapper wrapper = IamPermissionCacheManager.getPermissionCodeWrapper(controllerClass);
             buildApiPermissionsInClass(wrapper, controllerClass);
             if(wrapper.notEmpty()){
                 API_PERMISSION_CACHE.add(wrapper);

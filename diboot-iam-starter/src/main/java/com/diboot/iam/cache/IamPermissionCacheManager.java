@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Copyright © diboot.com
  */
 @Slf4j
-public class IamCacheManager {
+public class IamPermissionCacheManager {
 
     /**
      * controller-权限码 缓存

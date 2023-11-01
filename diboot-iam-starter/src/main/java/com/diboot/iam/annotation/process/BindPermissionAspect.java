@@ -19,7 +19,7 @@ import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.BindPermission;
-import com.diboot.iam.cache.IamCacheManager;
+import com.diboot.iam.cache.IamPermissionCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.exception.PermissionException;
@@ -76,7 +76,7 @@ public class BindPermissionAspect {
         BindPermission methodAnno = AnnotationUtils.getAnnotation(method, BindPermission.class);
         String permissionCode = methodAnno.code();
         Class<?> controllerClass = joinPoint.getTarget().getClass();
-        ApiPermissionWrapper classAnno = IamCacheManager.getPermissionCodeWrapper(controllerClass);
+        ApiPermissionWrapper classAnno = IamPermissionCacheManager.getPermissionCodeWrapper(controllerClass);
         if(classAnno != null && V.notEmpty(classAnno.getCode())){
             permissionCode = classAnno.getCode() + ":" + permissionCode;
         }
