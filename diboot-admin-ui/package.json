@@ -21,7 +21,7 @@
     "axios": "^1.2.2",
     "docx-preview": "^0.1.14",
     "echarts": "^5.4.1",
-    "element-plus": "^2.2.27",
+    "element-plus": "^2.3.9",
     "element-resize-detector": "^1.2.4",
     "fuse.js": "^6.6.2",
     "jsencrypt": "^3.3.2",
