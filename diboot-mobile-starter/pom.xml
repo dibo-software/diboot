@@ -6,12 +6,12 @@
     <parent>
         <artifactId>diboot-root</artifactId>
         <groupId>com.diboot</groupId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-mobile-spring-boot-starter</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <packaging>jar</packaging>
     <description>diboot mobile starter project</description>
 
