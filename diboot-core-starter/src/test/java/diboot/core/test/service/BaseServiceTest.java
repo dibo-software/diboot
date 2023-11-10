@@ -616,4 +616,12 @@ public class BaseServiceTest {
         }
     }
 
+    @Transactional
+    @Test
+    public void testBeforeDelete() {
+        LambdaQueryWrapper<Customer> queryWrapper = new LambdaQueryWrapper<Customer>().eq(Customer::getRealname, "李四");
+        CustomerService service = ContextHolder.getBean(CustomerService.class);
+        service.deleteEntities(queryWrapper);
+    }
+
 }

@@ -606,7 +606,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean deleteEntity(Serializable id) {
-		Class<T> entityClass = getEntityClass();
 		// 树结构，仅允许叶子节点进行删除操作
 		if(BaseTreeEntity.class.isAssignableFrom(entityClass)) {
 			QueryWrapper<T> wrapper = new QueryWrapper<T>().eq(Cons.ColumnName.parent_id.name(), id);
@@ -623,10 +622,27 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
     @Override
 	public boolean deleteEntities(Wrapper queryWrapper){
-		// 执行
-		return super.remove(queryWrapper);
+		// 执行查询获取匹配ids
+		// 优化SQL，只查询id字段
+		if(queryWrapper instanceof QueryWrapper){
+			String idCol = ContextHolder.getIdColumnName(entityClass);
+			((QueryWrapper)queryWrapper).select(idCol);
+		}
+		List<T> entityList = getEntityList(queryWrapper);
+		if(V.isEmpty(entityList)){
+			return false;
+		}
+		String pk = ContextHolder.getIdFieldName(entityClass);
+		List<String> entityIds = BeanUtils.collectToList(entityList, pk);
+		this.beforeDelete(pk, entityIds);
+		boolean success = super.removeByIds(entityIds);
+		if(success) {
+			this.afterDelete(pk, entityIds);
+		}
+		return success;
 	}
 
 	@Override
@@ -810,7 +826,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		QueryWrapper<Object> wrapper = Wrappers.query().eq(field, value);
 		if (V.notEmpty(id)) {
-			String pk = ContextHolder.getIdColumnName(getEntityClass());
+			String pk = ContextHolder.getIdColumnName(entityClass);
 			wrapper.ne(pk, id);
 		}
 		return !exists(wrapper);
@@ -819,7 +835,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public List<T> getEntityListByIds(List ids) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHolder.getIdColumnName(getEntityClass());
+		String pk = ContextHolder.getIdColumnName(entityClass);
 		queryWrapper.in(pk, ids);
 		return getEntityList(queryWrapper);
 	}
@@ -906,7 +922,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityIds)){
 			return Collections.emptyMap();
 		}
-		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
+		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
 		String columnName = entityInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
 		QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(
 				entityInfo.getIdColumn(),
@@ -929,11 +945,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public Map<String, T> getId2EntityMap(List entityIds, SFunction<T,?>... getterFns) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHolder.getIdColumnName(getEntityClass());
+		String pk = ContextHolder.getIdColumnName(entityClass);
 		if(V.notEmpty(getterFns)) {
 			List<String> columns = new ArrayList<>(getterFns.length+1);
 			columns.add(pk);
-			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
+			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
 			for(SFunction<T,?> getter : getterFns) {
 				String fieldName = BeanUtils.convertSFunctionToFieldName(getter);
 				String columnName = entityInfo.getColumnByField(fieldName);
@@ -984,7 +1000,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
 		if(queryWrapper.getSqlSelect() == null) {
-			WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+			WrapperHelper.optimizeSelect(queryWrapper, entityClass, voClass);
 		}
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
@@ -995,7 +1011,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass, SFunction<T, String> getParentIdsPath,
 										   @Nullable SFunction<T, Comparable<?>> getSortId) {
 		LambdaQueryWrapper<T> queryWrapper = Wrappers.lambdaQuery();
-		queryWrapper.select(getEntityClass(), WrapperHelper.buildSelectPredicate(voClass));
+		queryWrapper.select(entityClass, WrapperHelper.buildSelectPredicate(voClass));
 		// 排序
 		queryWrapper.orderByAsc(getSortId != null, getSortId);
 
