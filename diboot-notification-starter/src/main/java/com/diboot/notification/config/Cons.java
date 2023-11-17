@@ -28,7 +28,6 @@ public class Cons extends com.diboot.core.config.Cons {
      * 数据字典类型定义
      */
     public enum MESSAGE_STATUS {
-        // 发送中 和 异常 是所有信息都具有的状态；
         /**
          * 发送中
          */
