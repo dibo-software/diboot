@@ -63,4 +63,11 @@ public interface DataScopeManager {
 
     List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName);
 
+    /**
+     * 显示标题
+     * @return
+     */
+    default String getTitle() {
+        return this.getClass().getSimpleName();
+    }
 }
