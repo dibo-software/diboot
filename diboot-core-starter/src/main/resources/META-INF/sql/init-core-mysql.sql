@@ -3,6 +3,7 @@ CREATE TABLE `dbt_dictionary` (
   `id` varchar(32) NOT NULL COMMENT 'ID',
   `parent_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '父ID',
   `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
+  `app_module`  varchar(50)   null comment '应用模块',
   `type` varchar(50) NOT NULL COMMENT '字典类型',
   `item_name` varchar(100) NOT NULL COMMENT '显示名',
   `item_name_i18n` varchar(200) NULL COMMENT '显示名国际化资源标识',

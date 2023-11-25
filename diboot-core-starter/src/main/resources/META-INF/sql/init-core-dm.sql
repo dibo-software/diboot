@@ -3,6 +3,7 @@ create table ${SCHEMA}.dbt_dictionary (
     id                 varchar(32) NOT NULL primary key,
     parent_id          varchar(32) NULL,
     tenant_id          varchar(32) NOT NULL DEFAULT '0',
+    app_module         VARCHAR(150),
     type               VARCHAR(150)          not null,
     item_name          VARCHAR(300)         not null,
     item_name_i18      VARCHAR(300),
@@ -19,6 +20,7 @@ create table ${SCHEMA}.dbt_dictionary (
 comment on column ${SCHEMA}.dbt_dictionary.id is 'ID';
 comment on column ${SCHEMA}.dbt_dictionary.parent_id is '父ID';
 comment on column ${SCHEMA}.dbt_dictionary.tenant_id is '租户ID';
+comment on column ${SCHEMA}.dbt_dictionary.app_module is '应用模块';
 comment on column ${SCHEMA}.dbt_dictionary.type is '字典类型';
 comment on column ${SCHEMA}.dbt_dictionary.item_name is '显示名';
 comment on column ${SCHEMA}.dbt_dictionary.item_name_18n is '显示名国际化资源标识';
