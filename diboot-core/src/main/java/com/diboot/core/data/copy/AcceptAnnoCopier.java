@@ -15,9 +15,7 @@
  */
 package com.diboot.core.data.copy;
 
-import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.SystemMetaObject;

@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
@@ -34,6 +35,7 @@ public class SqlExecutor {
     private static final Logger log = LoggerFactory.getLogger(SqlExecutor.class);
 
     private static JdbcTemplate jdbcTemplate;
+    private static String CURRENT_SCHEMA = null;
 
     /**
      * 获取 JdbcTemplate 实例
@@ -44,6 +46,33 @@ public class SqlExecutor {
             jdbcTemplate = ContextHolder.getBean(JdbcTemplate.class);
         }
         return jdbcTemplate;
+    }
+
+    /**
+     * 获取数据库名
+     * @return
+     */
+    public static String getDatabase() {
+        if(CURRENT_SCHEMA == null) {
+            JdbcTemplate jdbcTemplate = getJdbcTemplate();
+            DataSource dataSource = jdbcTemplate.getDataSource();
+            if(dataSource == null) {
+                throw new InvalidUsageException("当前运行环境无获取数据源配置！");
+            }
+            try {
+                Connection connection = dataSource.getConnection();
+                if (connection.getCatalog() != null) {
+                    CURRENT_SCHEMA = connection.getCatalog();
+                } else if (connection.getSchema() != null) {
+                    CURRENT_SCHEMA = connection.getSchema();
+                }
+                connection.close();
+            } catch (Exception e) {
+                log.error("获取数据库名异常：{}", e.getMessage());
+                return null;
+            }
+        }
+        return CURRENT_SCHEMA;
     }
 
     /**

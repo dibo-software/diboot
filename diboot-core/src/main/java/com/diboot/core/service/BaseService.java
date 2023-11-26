@@ -99,7 +99,7 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList);
+                                           SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList);
 
     /**
      * 创建或更新n-n关联
@@ -117,7 +117,7 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                           SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                           SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList,
                                            Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer);
 
     /**
@@ -292,6 +292,24 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     boolean exists(Wrapper queryWrapper);
+
+    /**
+     * 检查值是否唯一
+     * @param getterFn
+     * @param value
+     * @param id
+     * @return
+     */
+    <FT> boolean isValueUnique(SFunction<T, FT> getterFn, String value, Serializable id);
+
+    /**
+     * 检查值是否唯一
+     * @param field
+     * @param value
+     * @param id
+     * @return
+     */
+    boolean isValueUnique(String field, String value, Serializable id);
 
     /**
      * 获取指定属性的Map列表

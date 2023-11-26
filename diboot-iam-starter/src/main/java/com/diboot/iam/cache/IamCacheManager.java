@@ -30,63 +30,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * IAM缓存manager
+ * IAM缓存manager (已废弃，请替换为 IamPermissionCacheManager)
+ * @see com.diboot.iam.cache.IamPermissionCacheManager
  * @author JerryMa
  * @version v2.2.1
  * @date 2021/4/22
  * Copyright © diboot.com
  */
+@Deprecated
 @Slf4j
-public class IamCacheManager {
-
-    /**
-     * controller-权限码 缓存
-     */
-    private static Map<String, ApiPermissionWrapper> CLASS_PERMISSIONCODE_CACHE = new ConcurrentHashMap<>();
-
-    /**
-     * 返回全部接口权限码ApiPermission
-     * @return
-     */
-    public static List<ApiPermissionWrapper> getApiPermissionVoList(){
-        return ApiPermissionExtractor.extractAllApiPermissions();
-    }
-
-    /**
-     * 缓存全部permissions
-     */
-    public static ApiPermissionWrapper getPermissionCodeWrapper(Class<?> controllerClass){
-        // 优先从缓存中读取
-        ApiPermissionWrapper wrapper = CLASS_PERMISSIONCODE_CACHE.get(controllerClass.getName());
-        if(wrapper != null){
-            return wrapper;
-        }
-        // 从controller中解析
-        String name = null;
-        // 提取类信息
-        String codePrefix = null;
-        // 注解
-        BindPermission bindPermission = AnnotationUtils.findAnnotation(controllerClass, BindPermission.class);
-        if(bindPermission != null){
-            // 当前资源权限
-            name = bindPermission.name();
-            codePrefix = bindPermission.code();
-            if(V.isEmpty(codePrefix)){
-                Class<?> entityClazz = BeanUtils.getGenericityClass(controllerClass, 0);
-                if(entityClazz != null){
-                    codePrefix = entityClazz.getSimpleName();
-                }
-                else{
-                    throw new InvalidUsageException("注解@BindPermission注解无法自动提取code：{} 类无泛型Entity参数，请手动指定code值！", controllerClass.getName());
-                }
-            }
-        }
-        else{
-            name = S.substringBeforeLast(controllerClass.getSimpleName(), "Controller");
-        }
-        wrapper = new ApiPermissionWrapper(name, codePrefix);
-        CLASS_PERMISSIONCODE_CACHE.put(controllerClass.getName(), wrapper);
-        return wrapper;
-    }
+public class IamCacheManager extends IamPermissionCacheManager {
 
 }

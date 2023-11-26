@@ -36,7 +36,7 @@ public class RemoteBindDTO implements Serializable {
     private static final long serialVersionUID = -3339006060332345228L;
 
     private String entityClassName;
-    private String[] selectColumns;
+    private List<String> selectColumns;
     private String refJoinCol;
     private Collection<?> inConditionValues;
     private List<String> additionalConditions;

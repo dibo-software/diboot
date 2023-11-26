@@ -28,6 +28,7 @@ import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.SQL;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,11 +123,13 @@ public class DynamicSqlProvider {
                     if(isDeletedCol != null && QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection) == false){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
-                    if(segments.getOrderBy() != null && !segments.getOrderBy().isEmpty()){
-                        String orderBySql = segments.getOrderBy().getSqlSegment();
-                        int beginIndex = S.indexOfIgnoreCase(orderBySql,"ORDER BY ");
-                        if(beginIndex >= 0){
-                            orderBySql = S.substring(orderBySql, beginIndex+"ORDER BY ".length());
+                    if (page != null && V.notEmpty(page.orders())) {
+                        List<String> orderByList = new ArrayList<>(page.orders().size());
+                        page.orders().forEach(orderItem -> {
+                            orderByList.add(S.format("%s %s", orderItem.getColumn(), orderItem.isAsc() ? "ASC" : "DESC"));
+                        });
+                        if (orderByList.size() > 0) {
+                            String orderBySql = S.join(orderByList);
                             ORDER_BY(orderBySql);
                         }
                     }

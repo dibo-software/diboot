@@ -15,7 +15,7 @@
  */
 package diboot.core.test.binder;
 
-import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.data.access.DataScopeManager;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -29,10 +29,10 @@ import java.util.List;
  * @date 2020/04/24
  */
 @Component
-public class DataAccessPermissionTestImpl implements DataAccessInterface {
+public class DataAccessPermissionTestImpl implements DataScopeManager {
 
     @Override
-    public List<Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
+    public List<Serializable> getAccessibleIds(String entityClass, String fieldName) {
         // 提取其可访问ids
         List<Serializable> accessibleIds = new ArrayList<>();
         if("parentId".equals(fieldName)){

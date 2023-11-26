@@ -66,6 +66,11 @@ public class JsonTest {
         System.out.println(jsonStr);
         User user2 = JSON.toJavaObject(jsonStr, User.class);
         Assert.assertTrue(LocalDate.parse("1988-09-12").equals(user2.getBirthdate()));
+
+        // 测试反序列化日期-LocalDateTime
+        json = "{\"id\":123,\"birthdate\":\"1988-09-12\", \"localDatetime\":\"1998-09-12\"}";
+        user = JSON.toJavaObject(json, User.class);
+        Assert.assertTrue("1998-09-12".equals(user.getLocalDatetime().toLocalDate().format(D.FORMATTER_DATE_Y4MD)));
     }
 
     @Test

@@ -70,8 +70,8 @@ public class NotificationPluginInitializer implements ApplicationRunner {
         if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MESSAGE_CHANNEL")){
             // 插入iam组件所需的数据字典
             String[] DICT_INIT_DATA = {
-                    "{\"type\":\"MESSAGE_STATUS\", \"itemName\":\"消息状态\", \"description\":\"message消息状态\", \"children\":[{\"itemName\":\"发送中\", \"itemValue\":\"SENDING\", \"sortId\":1},{\"itemName\":\"发送异常\", \"itemValue\":\"EXCEPTION\", \"sortId\":2},{\"itemName\":\"已送达\", \"itemValue\":\"DELIVERY\", \"sortId\":3},{\"itemName\":\"未读\", \"itemValue\":\"UNREAD\", \"sortId\":4},{\"itemName\":\"已读\", \"itemValue\":\"READ\", \"sortId\":5}]}",
-                    "{\"type\":\"MESSAGE_CHANNEL\", \"itemName\":\"发送通道\", \"description\":\"message发送通道\", \"children\":[{\"itemName\":\"站内信\", \"itemValue\":\"WEBSOCKET\", \"sortId\":1},{\"itemName\":\"短信\", \"itemValue\":\"TEXT_MESSAGE\", \"sortId\":2},{\"itemName\":\"邮件\", \"itemValue\":\"EMAIL\", \"sortId\":3}]}"
+                    "{\"type\":\"MESSAGE_STATUS\", \"itemName\":\"消息状态\", \"description\":\"message消息状态\", \"children\":[{\"itemName\":\"发送中\", \"itemValue\":\"PENDING\", \"sortId\":1},{\"itemName\":\"发送失败\", \"itemValue\":\"FAILED\", \"sortId\":2},{\"itemName\":\"已送达\", \"itemValue\":\"DELIVERY\", \"sortId\":3},{\"itemName\":\"已读\", \"itemValue\":\"READ\", \"sortId\":4}]}",
+                    "{\"type\":\"MESSAGE_CHANNEL\", \"itemName\":\"发送通道\", \"description\":\"message发送通道\", \"children\":[{\"itemName\":\"短信\", \"itemValue\":\"SMS\", \"sortId\":1},{\"itemName\":\"系统消息\", \"itemValue\":\"SYS_MSG\", \"sortId\":2},{\"itemName\":\"站内信\", \"itemValue\":\"WEBSOCKET\", \"sortId\":3},{\"itemName\":\"邮件\", \"itemValue\":\"EMAIL\", \"sortId\":4}]}"
             };
             // 插入数据字典
             for (String dictJson : DICT_INIT_DATA) {

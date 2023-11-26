@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @TableName(autoResultMap = true)
-public class Customer extends BaseModel {
+public class Customer extends BaseEntity<String> {
     private static final long serialVersionUID = 5650761344045195972L;
 
     @TableField

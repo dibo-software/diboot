@@ -15,7 +15,6 @@
  */
 package diboot.core.test.service;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,7 +29,7 @@ import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.service.impl.DictionaryServiceExtImpl;
 import com.diboot.core.util.*;
@@ -543,7 +542,7 @@ public class BaseServiceTest {
 
     @Test
     public void testGetEntityList(){
-        DataAccessInterface checkImpl = ContextHolder.getBean(DataAccessInterface.class);
+        DataScopeManager checkImpl = ContextHolder.getBean(DataScopeManager.class);
         Assert.assertTrue(checkImpl != null);
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id", "item_name", "item_value")
@@ -615,6 +614,14 @@ public class BaseServiceTest {
                 Assert.assertTrue(vo.getChildren().size() > 1);
             }
         }
+    }
+
+    @Transactional
+    @Test
+    public void testBeforeDelete() {
+        LambdaQueryWrapper<Customer> queryWrapper = new LambdaQueryWrapper<Customer>().eq(Customer::getRealname, "李四");
+        CustomerService service = ContextHolder.getBean(CustomerService.class);
+        service.deleteEntities(queryWrapper);
     }
 
 }

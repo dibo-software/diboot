@@ -38,6 +38,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.EntityInfoCache;
+import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.config.BaseConfig;
@@ -234,7 +235,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		else{
 			// 查找mapper
-			BaseMapper mapper = ContextHolder.getBaseMapperByEntity(entity.getClass());
+			BaseMapper mapper = ContextHolder.getBaseMapperByEntity(relatedEntityClass);
 			// 新增关联，无service只能循环插入
 			for(RE relation : relatedEntities){
 				mapper.insert(relation);
@@ -269,6 +270,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	protected void beforeUpdate(T entity){
 		if(entity instanceof BaseTreeEntity) {
 			fillTreeNodeParentPath(entity);
+		}
+		List<String> maskFields = ParserCache.getDataMaskFieldList(entityClass);
+		if(V.notEmpty(maskFields)) {
+			for(String maskField : maskFields) {
+				Object value = BeanUtils.getProperty(entity, maskField);
+				if(value != null && S.valueOf(value).contains("*")) {
+					BeanUtils.setProperty(entity, maskField, null);
+					log.debug("更新操作中提交了 {} 的脱敏值 :{}，忽略该字段以避免误更新", maskField, value);
+				}
+			}
 		}
 	}
 
@@ -393,14 +404,14 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Transactional(rollbackFor = Exception.class)
 	@Override
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                                  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList) {
+                                                  SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList) {
         return createOrUpdateN2NRelations(driverIdGetter, driverId, followerIdGetter, followerIdList, null, null);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public <R> boolean createOrUpdateN2NRelations(SFunction<R, ?> driverIdGetter, Object driverId,
-                                                  SFunction<R, ?> followerIdGetter, List<? extends Serializable> followerIdList,
+                                                  SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList,
                                                   Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer) {
 		if (driverId == null) {
 			throw new InvalidUsageException("主动ID值不能为空！");
@@ -595,7 +606,6 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean deleteEntity(Serializable id) {
-		Class<T> entityClass = getEntityClass();
 		// 树结构，仅允许叶子节点进行删除操作
 		if(BaseTreeEntity.class.isAssignableFrom(entityClass)) {
 			QueryWrapper<T> wrapper = new QueryWrapper<T>().eq(Cons.ColumnName.parent_id.name(), id);
@@ -612,10 +622,27 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return success;
 	}
 
+	@Transactional(rollbackFor = Exception.class)
     @Override
 	public boolean deleteEntities(Wrapper queryWrapper){
-		// 执行
-		return super.remove(queryWrapper);
+		// 执行查询获取匹配ids
+		// 优化SQL，只查询id字段
+		if(queryWrapper instanceof QueryWrapper){
+			String idCol = ContextHolder.getIdColumnName(entityClass);
+			((QueryWrapper)queryWrapper).select(idCol);
+		}
+		List<T> entityList = getEntityList(queryWrapper);
+		if(V.isEmpty(entityList)){
+			return false;
+		}
+		String pk = ContextHolder.getIdFieldName(entityClass);
+		List<String> entityIds = BeanUtils.collectToList(entityList, pk);
+		this.beforeDelete(pk, entityIds);
+		boolean success = super.removeByIds(entityIds);
+		if(success) {
+			this.afterDelete(pk, entityIds);
+		}
+		return success;
 	}
 
 	@Override
@@ -696,7 +723,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
-		LambdaQueryWrapper query = null;
+		LambdaQueryWrapper<T> query = null;
 		List<T> entityList = null;
 		// 支持 ChainQuery
 		if (queryWrapper instanceof ChainQuery) {
@@ -787,9 +814,28 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
+	public <FT> boolean isValueUnique(SFunction<T, FT> getterFn, String value, Serializable id) {
+		String field = BeanUtils.convertSFunctionToFieldName(getterFn);
+		return isValueUnique(field, value, id);
+	}
+
+	@Override
+	public boolean isValueUnique(String field, String value, Serializable id) {
+		if (V.isEmpty(value)) {
+			throw new BusinessException(Status.FAIL_VALIDATION, "待检查字段值不能为空");
+		}
+		QueryWrapper<Object> wrapper = Wrappers.query().eq(field, value);
+		if (V.notEmpty(id)) {
+			String pk = ContextHolder.getIdColumnName(entityClass);
+			wrapper.ne(pk, id);
+		}
+		return !exists(wrapper);
+	}
+
+	@Override
 	public List<T> getEntityListByIds(List ids) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHolder.getIdColumnName(getEntityClass());
+		String pk = ContextHolder.getIdColumnName(entityClass);
 		queryWrapper.in(pk, ids);
 		return getEntityList(queryWrapper);
 	}
@@ -827,8 +873,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String sqlSelect = queryWrapper.getSqlSelect();
 		// 最少2个属性：label, value , (ext , parentId)
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) < 1){
-			log.error("调用错误: getLabelValueList必须用select依次指定返回的 label,value,ext 键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
-			return Collections.emptyList();
+			throw new InvalidUsageException("调用错误: getLabelValueList必须用select依次指定返回的 label,value(,ext)键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 		}
 		List<T> entityList = getEntityList(queryWrapper);
 		if(entityList == null){
@@ -877,7 +922,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityIds)){
 			return Collections.emptyMap();
 		}
-		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
+		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
 		String columnName = entityInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
 		QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(
 				entityInfo.getIdColumn(),
@@ -900,11 +945,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	@Override
 	public Map<String, T> getId2EntityMap(List entityIds, SFunction<T,?>... getterFns) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
-		String pk = ContextHolder.getIdColumnName(getEntityClass());
+		String pk = ContextHolder.getIdColumnName(entityClass);
 		if(V.notEmpty(getterFns)) {
 			List<String> columns = new ArrayList<>(getterFns.length+1);
 			columns.add(pk);
-			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(this.getEntityClass());
+			EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
 			for(SFunction<T,?> getter : getterFns) {
 				String fieldName = BeanUtils.convertSFunctionToFieldName(getter);
 				String columnName = entityInfo.getColumnByField(fieldName);
@@ -954,7 +999,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		if(queryWrapper.getSqlSelect() == null) {
+			WrapperHelper.optimizeSelect(queryWrapper, entityClass, voClass);
+		}
 		List<T> entityList = getEntityList(queryWrapper, pagination);
 		// 自动转换为VO并绑定关联对象
 		return Binder.convertAndBindRelations(entityList, voClass);
@@ -964,7 +1011,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <VO> List<VO> getViewObjectTree(Serializable rootNodeId, Class<VO> voClass, SFunction<T, String> getParentIdsPath,
 										   @Nullable SFunction<T, Comparable<?>> getSortId) {
 		LambdaQueryWrapper<T> queryWrapper = Wrappers.lambdaQuery();
-		WrapperHelper.optimizeSelect(queryWrapper, getEntityClass(), voClass);
+		queryWrapper.select(entityClass, WrapperHelper.buildSelectPredicate(voClass));
 		// 排序
 		queryWrapper.orderByAsc(getSortId != null, getSortId);
 

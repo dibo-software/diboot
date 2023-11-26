@@ -23,7 +23,7 @@ const active = ref<string>(firstLevelPath === 'mine' ? 'Mine' : firstLevelPath =
   </div>
 
   <van-tabbar v-model="active" v-show="$route.meta?.showTabbar">
-    <van-tabbar-item name="Home" icon="home-o" @click="$router.push({ name: 'Dashboard' })">
+    <van-tabbar-item name="Home" icon="home-o" @click="$router.push({ name: 'Crud' })">
       <template #icon>
         <Icon>
           <component :is="active === 'Home' ? HomeActive : Home" />

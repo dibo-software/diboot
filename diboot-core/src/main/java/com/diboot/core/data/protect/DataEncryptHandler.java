@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,39 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data;
+package com.diboot.core.data.protect;
 
 /**
- * 保护字段处理器
+ * 加密，解密 处理器接口
  *
- * @author wind
- * @version v2.5.0
- * @date 2022/03/25
+ * @author JerryMa
+ * @version v3.1.1
+ * @date 2023/10/10
  */
-public interface ProtectFieldHandler {
+public interface DataEncryptHandler {
 
     /**
      * 加密
-     *
-     * @param content 内容
-     * @return 密文
+     * @param fieldVal
+     * @return
      */
-    String encrypt(Class<?> clazz, String fieldName, String content);
+    String encrypt(String fieldVal);
 
     /**
      * 解密
-     *
-     * @param content 内容
-     * @return 明文
+     * @param encryptedStr
+     * @return
      */
-    String decrypt(Class<?> clazz, String fieldName, String content);
-
-    /**
-     * 脱敏处理
-     *
-     * @param content 字符串
-     * @return 脱敏之后的字符串
-     */
-    String mask(Class<?> clazz, String fieldName, String content);
+    String decrypt(String encryptedStr);
 
 }

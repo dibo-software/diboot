@@ -24,7 +24,7 @@ import java.util.List;
  * @version v2.1
  * @date 2020/04/24
  */
-public interface DataAccessInterface {
+public interface DataScopeManager {
 
     /**
      * <h3>可访问的对象ID</h3>
@@ -57,6 +57,17 @@ public interface DataAccessInterface {
      * </tr>
      * </table>
      */
-    List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName);
+    default List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
+        return getAccessibleIds(entityClass.getSimpleName(), fieldName);
+    }
 
+    List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName);
+
+    /**
+     * 显示标题
+     * @return
+     */
+    default String getTitle() {
+        return this.getClass().getSimpleName();
+    }
 }

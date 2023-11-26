@@ -156,7 +156,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
         IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
         if(iService == null){
-            log.info("未能识别到Entity: "+entity.getName()+" 的IService实现！");
+            log.debug("未能识别到Entity: "+entity.getName()+" 的IService实现！");
         }
         return iService;
     }
@@ -170,7 +170,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
         IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
         if(iService == null){
-            log.info("未能识别到Entity: "+entity.getName()+" 的Service实现！");
+            log.debug("未能识别到Entity: "+entity.getName()+" 的Service实现！");
         }
         if(iService instanceof BaseService){
             return (BaseService)iService;

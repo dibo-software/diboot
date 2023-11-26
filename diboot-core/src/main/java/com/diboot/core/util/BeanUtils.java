@@ -43,10 +43,7 @@ import org.springframework.util.ReflectionUtils;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,7 +84,7 @@ public class BeanUtils {
      * @param target
      */
     @SuppressWarnings("UnusedReturnValue")
-    public static Object copyProperties(Object source, Object target){
+    public static <T> T copyProperties(Object source, T target){
         // 链式调用无法使用BeanCopier拷贝，换用BeanUtils
         org.springframework.beans.BeanUtils.copyProperties(source, target);
         // 处理Accept注解标识的不同字段名拷贝
@@ -147,6 +144,50 @@ public class BeanUtils {
             return Collections.emptyList();
         }
         return resultList;
+    }
+
+    /**
+     * 构建Map为Bean
+     * @param dataMap
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
+    public static <T> T convertMap2Bean(Map<String, Object> dataMap, Class<T> entityClass) {
+        // 字段映射
+        if(V.isEmpty(dataMap)){
+            return null;
+        }
+        T entityInstance = null;
+        try {
+            entityInstance = entityClass.newInstance();
+        }
+        catch (Exception e){
+            log.warn("实例化Bean {} 异常: {}", entityClass.getSimpleName(), e.getMessage());
+        }
+        bindProperties(entityInstance, dataMap);
+        return entityInstance;
+    }
+
+    /**
+     * 构建MapList为Bean列表
+     * @param resultListMap
+     * @param entityClass
+     * @return
+     * @param <T>
+     */
+    public static <T> List<T> convertMap2BeanList(List<Map<String, Object>> resultListMap, Class<T> entityClass) {
+        if(V.isEmpty(resultListMap)){
+            return Collections.emptyList();
+        }
+        List<T> entityList = new ArrayList<>(resultListMap.size());
+        for(Map<String, Object> resultMap : resultListMap){
+            T entityInstance = convertMap2Bean(resultMap, entityClass);
+            if(entityInstance != null) {
+                entityList.add(entityInstance);
+            }
+        }
+        return entityList;
     }
 
     /***
@@ -879,7 +920,16 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractAllFields(Class clazz){
-        return extractClassFields(clazz, null);
+        return extractClassFields(clazz, true,null);
+    }
+
+    /**
+     * 获取类所有属性（包含父类中属性）
+     * @param clazz
+     * @return
+     */
+    public static List<Field> extractAllFields(Class clazz, boolean excludeSpecial){
+        return extractClassFields(clazz, excludeSpecial,null);
     }
 
     /**
@@ -888,7 +938,7 @@ public class BeanUtils {
      * @return
      */
     public static List<Field> extractFields(Class<?> clazz, Class<? extends Annotation> annotation){
-        return extractClassFields(clazz, annotation);
+        return extractClassFields(clazz, false, annotation);
     }
 
     /**
@@ -1125,10 +1175,10 @@ public class BeanUtils {
      * @param beanClazz
      * @return
      */
-    private static List<Field> extractClassFields(Class<?> beanClazz, Class<? extends Annotation> annotation){
+    private static List<Field> extractClassFields(Class<?> beanClazz, boolean excludeStaticFinal, Class<? extends Annotation> annotation){
         List<Field> fieldList = new ArrayList<>();
         Set<String> fieldNameSet = new HashSet<>();
-        loopFindFields(beanClazz, annotation, fieldList, fieldNameSet);
+        loopFindFields(beanClazz, excludeStaticFinal, annotation, fieldList, fieldNameSet);
         return fieldList;
     }
 
@@ -1139,7 +1189,7 @@ public class BeanUtils {
      * @param fieldList
      * @param fieldNameSet
      */
-    private static void loopFindFields(Class<?> beanClazz, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
+    private static void loopFindFields(Class<?> beanClazz, boolean excludeSpecial, Class<? extends Annotation> annotation, List<Field> fieldList, Set<String> fieldNameSet){
         if(beanClazz == null) {
             return;
         }
@@ -1150,12 +1200,19 @@ public class BeanUtils {
                 if (!fieldNameSet.add(field.getName())) {
                     continue;
                 }
+                if(excludeSpecial) {
+                    //忽略static，以及final，transient
+                    int modifiers = field.getModifiers();
+                    if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isTransient(modifiers)) {
+                        continue;
+                    }
+                }
                 if (annotation == null || field.getAnnotation(annotation) != null) {
                     fieldList.add(field);
                 }
             }
         }
-        loopFindFields(beanClazz.getSuperclass(), annotation, fieldList, fieldNameSet);
+        loopFindFields(beanClazz.getSuperclass(), excludeSpecial, annotation, fieldList, fieldNameSet);
     }
 
 }

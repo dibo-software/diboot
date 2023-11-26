@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.2</version>
     </parent>
 
     <artifactId>diboot-core</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.2</version>
     <packaging>jar</packaging>
     <description>diboot core project</description>
 
@@ -61,6 +61,13 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+        </dependency>
+
+        <!-- redis可选依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

@@ -29,4 +29,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerServiceImpl extends BaseServiceImpl<CustomerMapper, Customer> implements CustomerService {
 
+    @Override
+    protected void beforeDelete(String fieldKey, Object fieldVal) {
+        System.out.println(fieldKey + " -> " + fieldVal);
+    }
+
 }

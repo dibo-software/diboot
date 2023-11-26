@@ -55,7 +55,6 @@ public abstract class BaseEntity<T extends Serializable> extends AbstractEntity<
     /**
      * 默认记录创建时间字段，新建时由数据库赋值
      */
-    @DateTimeFormat(pattern = D.FORMAT_DATETIME_Y4MDHMS)
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 

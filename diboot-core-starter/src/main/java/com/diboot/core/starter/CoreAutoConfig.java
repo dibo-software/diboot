@@ -15,20 +15,25 @@
  */
 package com.diboot.core.starter;
 
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.converter.*;
-import com.diboot.core.data.ProtectFieldHandler;
-import com.diboot.core.data.encrypt.ProtectInterceptor;
+import com.diboot.core.data.protect.DataEncryptHandler;
+import com.diboot.core.data.protect.DataMaskHandler;
+import com.diboot.core.data.protect.DefaultDataEncryptHandler;
+import com.diboot.core.data.protect.DefaultDataMaskHandler;
+import com.diboot.core.deserializer.LocalDateTimeDeserializer;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.LocalDateTypeHandler;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +76,7 @@ import java.util.TimeZone;
 public class CoreAutoConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(CoreAutoConfig.class);
 
-    @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
+    @Value("${spring.jackson.date-format:" + D.FORMAT_DATETIME_Y4MDHMS + "}")
     private String defaultDatePattern;
 
     @Value("${spring.jackson.time-zone:GMT+8}")
@@ -100,7 +105,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
             // LocalDateTime
             DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(localDateTimeFormatter));
+            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer());
             // LocalDate
             DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD);
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(localDateFormatter));
@@ -136,7 +141,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
         return new MappingJackson2HttpMessageConverter(jackson2ObjectMapperBuilder().build());
     }
 
@@ -152,14 +157,23 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 数据保护拦截器
-     * <p>
-     * 默认不注入，diboot.core.enable-data-protect=true可开启
+     * 数据加密解密处理器
      */
     @Bean
-    @ConditionalOnBean(ProtectFieldHandler.class)
-    public ProtectInterceptor protectInterceptor() {
-        return new ProtectInterceptor();
+    @ConditionalOnMissingBean(DataEncryptHandler.class)
+    public DataEncryptHandler dataEncryptHandler() {
+        log.debug("初始化默认的DataEncryptHandler");
+        return new DefaultDataEncryptHandler();
+    }
+
+    /**
+     * 数据脱敏处理器
+     */
+    @Bean
+    @ConditionalOnMissingBean(DataMaskHandler.class)
+    public DataMaskHandler dataMaskHandler() {
+        log.debug("初始化默认的DataMaskHandler");
+        return new DefaultDataMaskHandler();
     }
 
     /**
@@ -183,6 +197,15 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         registry.addConverter(new String2ListConverter());
         registry.addConverter(new String2MapConverter());
         registry.addConverter(new Timestamp2LocalDateTimeConverter());
+    }
+
+    /**
+     * 扩展Mybatis 类型转换，支持日期类型转为LocalDate等
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigurationCustomizer typeHandlerRegistry() {
+        return configuration -> configuration.getTypeHandlerRegistry().register(java.sql.Date.class, JdbcType.DATE, LocalDateTypeHandler.class);
     }
 
 }

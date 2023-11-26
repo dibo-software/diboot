@@ -41,9 +41,9 @@ public class String2LocalDateTimeConverter implements Converter<String, LocalDat
         }
         dateString = D.formatDateString(dateString);
         if(dateString.length() <= D.FORMAT_DATE_Y4MD.length()) {
-            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD)).atStartOfDay();
+            return LocalDate.parse(dateString, D.FORMATTER_DATE_Y4MD).atStartOfDay();
         }
-        return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS));
+        return LocalDateTime.parse(dateString, D.FORMATTER_DATETIME_Y4MDHMS);
     }
 
 }

@@ -17,20 +17,21 @@ package com.diboot.core.binding.binder;
 
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.binder.remote.RemoteBindingManager;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ResultAssembler;
-import com.diboot.core.binding.helper.WrapperHelper;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.Cons;
+import com.diboot.core.data.copy.Accept;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ISetter;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -230,8 +231,42 @@ public class EntityBinder<T> extends BaseBinder<T> {
     @Override
     protected void simplifySelectColumns() {
         if(!referencedEntityClass.getName().equals(annoObjectFieldClass.getName())){
-            WrapperHelper.optimizeSelect(queryWrapper, referencedEntityClass, annoObjectFieldClass);
+            PropInfo propInfo = BindingCacheManager.getPropInfoByClass(referencedEntityClass);
+            List<Field> fieldList = BindingCacheManager.getFields(annoObjectFieldClass);
+            List<String> selectColumns = new ArrayList<>(refObjJoinCols);
+            for(Field field : fieldList) {
+                Accept accept = field.getAnnotation(Accept.class);
+                String fieldName = accept == null ? field.getName() : accept.name();
+                String colName = propInfo.getColumnByField(fieldName);
+                if(colName != null && V.notEquals(colName, propInfo.getDeletedColumn())) {
+                    if(!selectColumns.contains(colName)){
+                        selectColumns.add(colName);
+                    }
+                }
+            }
+            // 添加orderBy排序
+            if(V.notEmpty(this.orderBy)){
+                // 解析排序
+                String[] orderByFields = S.split(this.orderBy);
+                for(String field : orderByFields){
+                    String colName = field.toLowerCase();
+                    if(colName.contains(":")){
+                        colName = S.split(colName, ":")[0];
+                    }
+                    colName = toRefObjColumn(colName);
+                    if(!selectColumns.contains(colName)){
+                        selectColumns.add(colName);
+                    }
+                }
+            }
+            if(V.notEmpty(selectColumns)) {
+                this.queryWrapper.select(selectColumns);
+                if(remoteBindDTO != null){
+                    remoteBindDTO.setSelectColumns(selectColumns);
+                }
+            }
         }
+
     }
 
 }

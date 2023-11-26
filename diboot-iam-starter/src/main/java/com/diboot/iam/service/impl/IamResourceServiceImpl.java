@@ -29,10 +29,8 @@ import com.diboot.core.vo.Status;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
-import com.diboot.iam.entity.route.RouteMeta;
 import com.diboot.iam.mapper.IamResourceMapper;
 import com.diboot.iam.service.IamResourceService;
-import com.diboot.iam.service.MenuService;
 import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,7 +49,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService, MenuService {
+public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)

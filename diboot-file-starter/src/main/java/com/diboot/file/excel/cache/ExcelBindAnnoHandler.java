@@ -57,7 +57,7 @@ public class ExcelBindAnnoHandler {
         String modelClassName = modelClass.getName();
         Map<String, Annotation> field2AnnoMap = MODEL_BINDANNO_CACHE.get(modelClassName);
         if(field2AnnoMap == null){
-            List<Field> fieldList = BeanUtils.extractAllFields(modelClass);
+            List<Field> fieldList = BeanUtils.extractAllFields(modelClass, true);
             for(Field field : fieldList){
                 ExcelBindDict excelBindDict = field.getAnnotation(ExcelBindDict.class);
                 BindDict bindDict = field.getAnnotation(BindDict.class);

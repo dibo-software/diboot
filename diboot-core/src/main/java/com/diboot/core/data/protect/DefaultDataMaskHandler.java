@@ -13,32 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.data;
+package com.diboot.core.data.protect;
 
-import com.diboot.core.util.Encryptor;
 import com.diboot.core.util.S;
 
 /**
- * 保护字段默认处理器
+ * 数据脱敏默认处理器
  *
  * @author wind
  * @version v2.5.0
  * @date 2022/03/25
  */
-public class DefaultProtectFieldHandler implements ProtectFieldHandler {
+public class DefaultDataMaskHandler implements DataMaskHandler {
 
     @Override
-    public String encrypt(Class<?> clazz, String fieldName, String content) {
-        return Encryptor.encrypt(content, fieldName);
-    }
-
-    @Override
-    public String decrypt(Class<?> clazz, String fieldName, String content) {
-        return Encryptor.decrypt(content, fieldName);
-    }
-
-    @Override
-    public String mask(Class<?> clazz, String fieldName, String content) {
+    public String mask(String content) {
         if (S.isBlank(content)) {
             return S.EMPTY;
         }
@@ -55,4 +44,5 @@ public class DefaultProtectFieldHandler implements ProtectFieldHandler {
                 return S.replace(content, 0, length - 4, '*');
         }
     }
+
 }

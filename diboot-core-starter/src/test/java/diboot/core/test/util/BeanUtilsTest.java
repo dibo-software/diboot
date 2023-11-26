@@ -102,8 +102,7 @@ public class BeanUtilsTest {
         dictionary1.setType("STATUS");
         dictionary1.setItemName(itemName);
 
-        Dictionary dictionary2 = new Dictionary();
-        BeanUtils.copyProperties(dictionary1, dictionary2);
+        Dictionary dictionary2 = BeanUtils.copyProperties(dictionary1, new Dictionary());
         Assert.assertTrue(dictionary2.getItemName().equals(itemName));
 
         Map<String, Object> map = new HashMap<>();
@@ -392,6 +391,43 @@ public class BeanUtilsTest {
         Collection list2 = BeanUtils.convertIdValuesToType(list, Long.class);
         Assert.assertTrue(list2.size() == 2);
         Assert.assertTrue(V.equals(list2.iterator().next(), 123l));
+    }
+
+    @Test
+    public void testMap2BeanConvert() throws Exception {
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("name", "苏州");
+        dataMap.put("level", 2);
+        dataMap.put("code", "SZ");
+        dataMap.put("parentId", "1");
+
+        Map<String, Object> children1 = new HashMap<>();
+        dataMap.put("name", "工业园区");
+        dataMap.put("level", 3);
+        dataMap.put("code", "GYYQ");
+        dataMap.put("parentId", "2");
+
+        Map<String, Object> children2 = new HashMap<>();
+        dataMap.put("name", "姑苏区");
+        dataMap.put("level", 3);
+        dataMap.put("code", "GSQ");
+        dataMap.put("parentId", "2");
+
+        List<Map<String, Object>> children = new ArrayList<>();
+        children.add(children1);
+        children.add(children2);
+        dataMap.put("children",  children);
+
+        TestRegion testRegion2 = MapUtils.buildEntity(dataMap, TestRegion.class);
+        Assert.assertEquals(2, testRegion2.getChildren().size());
+
+        List<Map<String, Object>> entityMapList = new ArrayList<>();
+        entityMapList.add(dataMap);
+        entityMapList.add(dataMap);
+
+        List<TestRegion> testRegions = MapUtils.buildEntityList(entityMapList, TestRegion.class);
+        Assert.assertEquals(2, testRegions.size());
+        Assert.assertEquals(2, testRegions.get(0).getChildren().size());
     }
 
 }

@@ -37,7 +37,7 @@ public class LocalDateTime2StringConverter implements Converter<LocalDateTime, S
         if (source == null) {
             return null;
         }
-        return source.format(DateTimeFormatter.ofPattern (D.FORMAT_DATETIME_Y4MDHMS));
+        return source.format(D.FORMATTER_DATETIME_Y4MDHMS);
     }
 
 }

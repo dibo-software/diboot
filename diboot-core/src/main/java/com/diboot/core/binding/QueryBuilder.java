@@ -28,7 +28,7 @@ import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.ProtectFieldHandler;
+import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
@@ -197,7 +197,7 @@ public class QueryBuilder {
         // 获取属性名类型
         BiFunction<BindQuery, String, String> getFieldName = (bindQuery, defFieldName) -> bindQuery == null || S.isEmpty(bindQuery.column()) ? defFieldName : bindQuery.column();
         // 保护字段处理器
-        ProtectFieldHandler protectFieldHandler = ContextHolder.getBean(ProtectFieldHandler.class);
+        DataEncryptHandler protectFieldHandler = ContextHolder.getBean(DataEncryptHandler.class);
         // 构建QueryWrapper
         for (Map.Entry<String, FieldAndValue> entry : fieldValuesMap.entrySet()) {
             FieldAndValue fieldAndValue = entry.getValue();
@@ -218,13 +218,15 @@ public class QueryBuilder {
             if (queryList != null) {
                 List<BindQuery> bindQueryList = Arrays.stream(queryList.value()).filter(e -> !ignoreEmpty.test(value, e)).collect(Collectors.toList());
                 wrapper.and(V.notEmpty(bindQueryList), queryWrapper -> {
+                    Class<?> clazz = getClass.apply(query);
+                    List<String> encryptFields = ParserCache.getProtectFieldList(clazz);
                     for (BindQuery bindQuery : bindQueryList) {
                         String columnName = buildColumnName.apply(bindQuery, field);
                         if (protectFieldHandler != null) {
-                            Class<?> clazz = getClass.apply(query);
                             String fieldName = getFieldName.apply(query, entry.getKey());
-                            if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
-                                buildQuery(queryWrapper.or(), bindQuery, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                            if (encryptFields.contains(fieldName)) {
+                                log.debug("查询条件中包含加密字段 {}:{}，将加密后匹配密文", fieldName, value);
+                                buildQuery(queryWrapper.or(), bindQuery, columnName, protectFieldHandler.encrypt(value.toString()));
                                 continue;
                             }
                         }
@@ -243,7 +245,8 @@ public class QueryBuilder {
                     Class<?> clazz = getClass.apply(query);
                     String fieldName = getFieldName.apply(query, entry.getKey());
                     if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
-                        buildQuery(wrapper, query, columnName, protectFieldHandler.encrypt(clazz, fieldName, value.toString()));
+                        log.debug("查询条件中包含加密字段 {}:{}，将加密后匹配密文", fieldName, value);
+                        buildQuery(wrapper, query, columnName, protectFieldHandler.encrypt(value.toString()));
                         continue;
                     }
                 }
@@ -302,7 +305,7 @@ public class QueryBuilder {
                 }
                 break;
             case CONTAINS:
-                boolean isString = S.startsWith(JSON.toJSONString(value), "[\"");
+                boolean isString = S.contains(JSON.toJSONString(value), "\"");
                 BiConsumer<QueryWrapper<?>,String> basicTypeProtection = (query, val) -> {
                     query.or().likeRight(columnName, "[" + val + ",");
                     query.or().like(columnName, "," + val + ",");
@@ -409,7 +412,7 @@ public class QueryBuilder {
     private static <DTO> LinkedHashMap<String, FieldAndValue> extractNotNullValues(DTO dto, Collection<String> fields, Pagination pagination){
         Class<?> dtoClass = dto.getClass();
         // 转换
-        List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass);
+        List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass, true);
         List<String> extractOrderFieldNames = extractOrderFieldNames(pagination);
         // 结果map：<字段名,字段对象和值>
         LinkedHashMap<String, FieldAndValue> resultMap = new LinkedHashMap<>(declaredFields.size());
@@ -421,14 +424,6 @@ public class QueryBuilder {
                 if (!V.equals(field.getType(), Date.class) && !V.equals(field.getType(), LocalDate.class) && !V.equals(field.getType(), LocalDateTime.class)) {
                     continue;
                 }
-            }
-            //忽略static，以及final，transient
-            int modifiers = field.getModifiers();
-            boolean isStatic = Modifier.isStatic(modifiers);
-            boolean isFinal = Modifier.isFinal(modifiers);
-            boolean isTransient = Modifier.isTransient(modifiers);
-            if (isStatic || isFinal || isTransient) {
-                continue;
             }
             //打开私有访问 获取值
             field.setAccessible(true);

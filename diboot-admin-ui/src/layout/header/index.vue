@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { UserFilled, ArrowDown, Moon, Sunny } from '@element-plus/icons-vue'
+import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
 import { isDark, isSmall, toggleTheme } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
+import LightIcon from '@/assets/icon/light.vue'
+import DarkIcon from '@/assets/icon/dark.vue'
 
 withDefaults(defineProps<{ showLogo?: boolean }>(), { showLogo: true })
 
@@ -33,9 +35,12 @@ const goPersonal = () => {
         <slot name="topNav" />
       </div>
       <menu-search class="item" />
-      <el-icon class="item" :size="22" @click="toggleTheme()">
-        <component :is="isDark ? Sunny : Moon" />
-      </el-icon>
+      <el-switch
+        v-model="isDark"
+        class="dark-switch"
+        :active-action-icon="DarkIcon"
+        :inactive-action-icon="LightIcon"
+      />
       <!--      <el-dropdown @command="(command: string) => $i18n.locale = command">-->
       <!--        <div class="item">-->
       <!--          <el-icon :size="22">-->
@@ -111,5 +116,24 @@ const goPersonal = () => {
   &:hover {
     color: var(--el-color-primary);
   }
+}
+:deep(.el-switch__core) {
+  --el-switch-on-color: #2c2c2c;
+  --el-switch-off-color: #f2f2f2;
+  --el-switch-border-color: none;
+
+  .el-switch__action {
+    width: 14px;
+    height: 14px;
+  }
+}
+:deep(.dark-icon) {
+  border-radius: 50%;
+  color: #cfd3dc;
+  background-color: #141414;
+}
+
+:deep(.light-icon) {
+  color: #606266;
 }
 </style>

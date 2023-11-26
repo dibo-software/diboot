@@ -1,6 +1,10 @@
 > 用上diboot，告别常规SQL和CRUD，写的更少，性能更好！
 
-> 新用户指南: [手把手来体验](https://www.diboot.com/guide/beginner/bootstrap.html) 、[看视频了解我](https://www.bilibili.com/video/BV17P4y1p7L4) 、[如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
+> 新用户指南:
+- [开发一个CRM模块，不用手写一行代码](https://www.bilibili.com/video/BV1xF411S7eF/)
+- [手把手来体验](http://v3.diboot.com/pages/bootstrap/) 
+- [看视频了解 Diboot](https://www.bilibili.com/video/BV17P4y1p7L4) 
+- [了解 Diboot内核如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <hr>

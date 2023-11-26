@@ -16,6 +16,7 @@
 package com.diboot.iam.service;
 
 
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.vo.IamResourceListVO;
@@ -77,5 +78,17 @@ public interface IamResourceService extends BaseIamService<IamResource> {
      * @return
      */
     List<IamResourceListVO> getMenuResources(String application);
+
+    /**
+     * 获取系统中的所有菜单目录
+     * @return
+     */
+    List<LabelValue> getMenuCatalogues();
+
+    /**
+     * 创建或者更新菜单资源
+     * @param resourceDTO
+     */
+    void createOrUpdateMenuResources(IamResourceDTO resourceDTO);
 
 }

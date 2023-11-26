@@ -1,7 +1,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.util.ContextHolder;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.entity.CcCityInfo;
@@ -33,7 +33,7 @@ public class TestDataAccessControl {
 
     @Test
     public void testDataControl(){
-        DataAccessInterface checkImpl = ContextHolder.getBean(DataAccessInterface.class);
+        DataScopeManager checkImpl = ContextHolder.getBean(DataScopeManager.class);
         Assert.assertNotNull(checkImpl);
         List<CcCityInfo> ccCityInfoList = ccCityInfoService.list(new QueryWrapper<>());
         Assert.assertEquals(2, ccCityInfoList.size());

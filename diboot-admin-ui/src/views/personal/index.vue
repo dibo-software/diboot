@@ -47,7 +47,7 @@ const filename = ref('')
 const selectFile = (e: any) => {
   const filepath = e.target.value
   const file = e.target.files[0]
-  const fileTypes = ['.jpg', '.png']
+  const fileTypes = ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
   const fileEnd = filepath.substring(filepath.lastIndexOf('.'))
   if (fileTypes.indexOf(fileEnd) > -1) {
     filename.value = file.name
@@ -69,7 +69,7 @@ const cropDialog = (val: boolean) => {
 
 <template>
   <el-container class="page-user">
-    <input id="avatarFile" type="file" hidden accept=".jpg,.png" @change="selectFile" />
+    <input id="avatarFile" type="file" hidden accept=".jpg,.jpeg,.png,.gif,.bmp" @change="selectFile" />
     <crop-avatar
       :show-set-avatar-dialog="showSetAvatarDialog"
       :avatar-base64="avatarBase64"

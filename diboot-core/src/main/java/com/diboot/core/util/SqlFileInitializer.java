@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
 public class SqlFileInitializer {
     private static final Logger log = LoggerFactory.getLogger(SqlFileInitializer.class);
 
-    private static String CURRENT_SCHEMA = null;
     private static Environment environment;
 
     /**
@@ -200,7 +199,7 @@ public class SqlFileInitializer {
         sqlStatement = clearComments(sqlStatement);
         // 替换sqlStatement中的变量，如{SCHEMA}
         if(sqlStatement.contains("${SCHEMA}")){
-            String schema = getCurrentSchema();
+            String schema = SqlExecutor.getDatabase();;
             if (V.isEmpty(schema)) {
                 sqlStatement = S.replace(sqlStatement, "${SCHEMA}.", "");
             }
@@ -332,28 +331,6 @@ public class SqlFileInitializer {
             return removeMultipleLineComments(inputSql);
         }
         return inputSql;
-    }
-
-    /**
-     * 获取当前schema
-     * @return
-     */
-    public static String getCurrentSchema() {
-        if(CURRENT_SCHEMA == null) {
-            DataSource dataSource = ContextHolder.getBean(DataSource.class);
-            try{
-                Connection connection = dataSource.getConnection();
-                CURRENT_SCHEMA = connection.getSchema();
-                connection.close();
-            }
-            catch (Exception e){
-                log.warn("获取schema异常: {}", e.getMessage());
-            }
-            if(CURRENT_SCHEMA == null) {
-                CURRENT_SCHEMA = "";
-            }
-        }
-        return CURRENT_SCHEMA;
     }
 
     /**

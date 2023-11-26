@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.data;
 
-import com.diboot.core.data.access.DataAccessInterface;
+import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
@@ -37,10 +37,10 @@ import java.util.List;
  * @date 2022/02/15
  */
 @Slf4j
-public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
+public class UserOrgDataAccessScopeManager implements DataScopeManager {
 
     @Override
-    public List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
+    public List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName) {
         // 获取当前登录用户
         IamUser currentUser = null;
         try {
@@ -58,10 +58,10 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         LabelValue extensionObj = currentUser.getExtensionObj();
         if(extensionObj == null || extensionObj.getExt() == null){
             // 提取其可访问ids
-            if(isOrgFieldName(fieldName)){
+            if(isOrgFieldName(entityClassName, fieldName)){
                 return buildOrgIdsScope(currentUser);
             }
-            else if(isUserFieldName(fieldName)){
+            else if(isUserFieldName(entityClassName, fieldName)){
                 return buildUserIdsScope(currentUser);
             }
             else{
@@ -77,7 +77,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         }
         // 本人数据
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isUserFieldName(fieldName)){
+            if(isUserFieldName(entityClassName, fieldName)){
                 return buildUserIdsScope(currentUser);
             }
             else{// 忽略无关字段
@@ -86,7 +86,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         }
         // 按user过滤，本人及下属
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isUserFieldName(fieldName)){
+            if(isUserFieldName(entityClassName, fieldName)){
                 return positionDataScope.getAccessibleUserIds();
             }
             else{// 忽略无关字段
@@ -95,7 +95,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         }
         // 按部门过滤，本部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isOrgFieldName(fieldName)){
+            if(isOrgFieldName(entityClassName, fieldName)){
                 return Arrays.asList(positionDataScope.getOrgId());
             }
             else{// 忽略无关字段
@@ -104,7 +104,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
         }
         // 按部门过滤，本部门及下属部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isOrgFieldName(fieldName)){
+            if(isOrgFieldName(entityClassName, fieldName)){
                 return positionDataScope.getAccessibleOrgIds();
             }
             else{// 忽略无关字段
@@ -148,7 +148,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
      * @param fieldName
      * @return
      */
-    protected boolean isUserFieldName(String fieldName){
+    protected boolean isUserFieldName(String entityClassName, String fieldName){
         return (Cons.FieldName.userId.name().equals(fieldName) || Cons.FieldName.createBy.name().equals(fieldName));
     }
 
@@ -157,7 +157,7 @@ public class DataAccessPermissionUserOrgImpl implements DataAccessInterface {
      * @param fieldName
      * @return
      */
-    protected boolean isOrgFieldName(String fieldName){
+    protected boolean isOrgFieldName(String entityClassName, String fieldName){
         return Cons.FieldName.orgId.name().equals(fieldName);
     }
 
