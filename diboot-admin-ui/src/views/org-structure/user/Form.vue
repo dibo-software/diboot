@@ -113,6 +113,7 @@ const rules: FormRules = {
   ],
   gender: { required: true, message: '不能为空', whitespace: true },
   status: { required: true, message: '不能为空', whitespace: true },
+  roleIdList: { type: 'array', required: true, message: '不能为空', trigger: 'change' },
   email: {
     type: 'email',
     message: '请输入正确的邮箱地址',
