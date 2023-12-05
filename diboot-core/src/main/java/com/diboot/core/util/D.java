@@ -70,6 +70,10 @@ public class D extends DateUtils{
 	 * LocalDateTime 日期时间 格式化定义
 	 */
 	public static final DateTimeFormatter FORMATTER_DATETIME_Y4MDHMS = DateTimeFormatter.ofPattern(FORMAT_DATETIME_Y4MDHMS);
+	/**
+	 * Time 时间 格式化定义
+	 */
+	public static final DateTimeFormatter FORMATTER_TIME_HM = DateTimeFormatter.ofPattern(FORMAT_TIME_HHmm);
 
 	/**
 	 * 星期（中文）
