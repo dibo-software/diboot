@@ -515,13 +515,13 @@ public class BaseServiceTest {
         sqls.add("UPDATE dbt_dictionary SET is_deleted=1 WHERE id='20000' AND deleted=0");
         try{
             success = SqlFileInitializer.executeMultipleUpdateSqlsWithTransaction(sqls);
-            Assert.assertTrue(false);
+            Assert.fail();
         }
         catch (Exception e) {
             Assert.assertTrue(true);
         }
         dict = dictionaryService.getEntity(dictId);
-        Assert.assertTrue(dict == null);
+        Assert.assertNull(dict);
     }
 
     @Test
