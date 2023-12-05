@@ -107,4 +107,16 @@ public class JsonTest {
         Assert.assertTrue(userList1 != null && userList1.size() == 1);
     }
 
+    @Test
+    public void testThrowException(){
+        String json = "{\"label\":\"123\", value: ''}";
+        try {
+            JSON.parseObject(json);
+            Assert.fail();
+        }
+        catch (Exception e) {
+            Assert.assertTrue(true);
+        }
+    }
+
 }
