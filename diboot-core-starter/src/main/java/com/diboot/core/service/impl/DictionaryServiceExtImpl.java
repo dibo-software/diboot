@@ -112,14 +112,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         List<Dictionary> children = dictVO.getChildren();
         this.buildSortId(children);
         if(V.notEmpty(children)){
-            Set<String> itemValues = new HashSet<>();
+            // 检查选项重复
+            checkDuplicate(children);
             for(Dictionary dict : children){
-                if(itemValues.contains(dict.getItemValue())) {
-                    throw new BusinessException(Status.FAIL_OPERATION, "字典选项: {} 重复", dict.getItemValue());
-                }
-                else {
-                    itemValues.add(dict.getItemValue());
-                }
                 dict.setParentId(dictVO.getId())
                     .setType(dictVO.getType())
                     .setIsDeletable(dictVO.getIsDeletable())
@@ -172,6 +167,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         Set<String> dictItemIds = new HashSet<>();
         this.buildSortId(newDictList);
         if(V.notEmpty(newDictList)){
+            // 检查选项重复
+            checkDuplicate(newDictList);
             for(Dictionary dict : newDictList){
                 dict.setType(dictVO.getType())
                     .setParentId(dictVO.getId())
@@ -203,6 +200,23 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             }
         }
         return true;
+    }
+
+    /**
+     * 检查duplicate
+     * @param dictList
+     */
+    private void checkDuplicate(List<Dictionary> dictList) {
+        Set<String> itemNames = new HashSet<>(), itemValues = new HashSet<>();
+        dictList.forEach(dict -> {
+            if (itemValues.contains(dict.getItemValue())) {
+                throw new BusinessException(Status.FAIL_OPERATION, "字典选项值: {} 重复", dict.getItemValue());
+            } else if (itemNames.contains(dict.getItemName())) {
+                throw new BusinessException(Status.FAIL_OPERATION, "字典选项名: {} 重复", dict.getItemName());
+            }
+            itemNames.add(dict.getItemName());
+            itemValues.add(dict.getItemValue());
+        });
     }
 
     @Override
