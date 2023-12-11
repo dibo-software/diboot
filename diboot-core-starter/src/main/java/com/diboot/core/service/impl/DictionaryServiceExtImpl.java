@@ -62,7 +62,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
         return getEntityList(queryDictionary).stream()
-                .map(e -> new LabelValue(e.getItemName(), e.getItemValue()).setExt(e.getExtension()))
+                .map(Dictionary::toLabelValue)
                 .collect(Collectors.toList());
     }
 
@@ -76,8 +76,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
-                Collectors.toMap(Dictionary::getItemName,
-                        dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
+                Collectors.toMap(Dictionary::getItemName, Dictionary::toLabelValue));
     }
 
     @Override
@@ -89,8 +88,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
-                Collectors.toMap(Dictionary::getItemValue,
-                                dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
+                Collectors.toMap(Dictionary::getItemValue, Dictionary::toLabelValue));
     }
 
     @Override
