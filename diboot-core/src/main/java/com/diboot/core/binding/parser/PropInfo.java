@@ -10,6 +10,7 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -25,6 +26,7 @@ import java.util.Map;
  * @date 2021/4/20
  * Copyright © diboot.com
  */
+@Slf4j
 @Getter
 public class PropInfo implements Serializable {
     private static final long serialVersionUID = 5921667308129991326L;
@@ -166,7 +168,17 @@ public class PropInfo implements Serializable {
         if(V.isEmpty(this.fieldToColumnMap)){
             return null;
         }
-        return this.fieldToColumnMap.get(fieldName);
+        String column = this.fieldToColumnMap.get(fieldName);
+        if(column == null) {
+            // 忽略大小写模糊查找
+            for (Map.Entry<String, String> entry : fieldToColumnMap.entrySet()) {
+                if(S.equalsIgnoreCase(entry.getKey(), fieldName)) {
+                    return entry.getValue();
+                }
+            }
+            log.warn("未找到字段 {} 对应的 列名，请检查！", fieldName);
+        }
+        return column;
     }
 
 
