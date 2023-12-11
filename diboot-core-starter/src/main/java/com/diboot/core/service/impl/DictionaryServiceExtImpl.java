@@ -76,7 +76,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
-                Collectors.toMap(dict -> dict.getItemName(),
+                Collectors.toMap(Dictionary::getItemName,
                         dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
     }
 
@@ -89,7 +89,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
-                Collectors.toMap(dict -> dict.getItemValue(),
+                Collectors.toMap(Dictionary::getItemValue,
                                 dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
     }
 
@@ -101,14 +101,13 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean createDictAndChildren(DictionaryVO dictVO) {
-        Dictionary dictionary = dictVO;
-        if (dictionary.getIsEditable() == null){
-            dictionary.setIsEditable(true);
+        if (dictVO.getIsEditable() == null){
+            dictVO.setIsEditable(true);
         }
-        if (dictionary.getIsDeletable() == null) {
-            dictionary.setIsDeletable(true);
+        if (dictVO.getIsDeletable() == null) {
+            dictVO.setIsDeletable(true);
         }
-        if(!super.createEntity(dictionary)){
+        if(!super.createEntity(dictVO)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
             return false;
         }
@@ -123,10 +122,10 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 else {
                     itemValues.add(dict.getItemValue());
                 }
-                dict.setParentId(dictionary.getId())
-                    .setType(dictionary.getType())
-                    .setIsDeletable(dictionary.getIsDeletable())
-                    .setIsEditable(dictionary.getIsEditable());
+                dict.setParentId(dictVO.getId())
+                    .setType(dictVO.getType())
+                    .setIsDeletable(dictVO.getIsDeletable())
+                    .setIsEditable(dictVO.getIsEditable());
             }
             // 批量保存
             boolean success = super.createEntities(children);
@@ -160,16 +159,15 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public boolean updateDictAndChildren(DictionaryVO dictVO) {
         Dictionary oldDictionary = super.getEntity(dictVO.getId());
         //将DictionaryVO转化为Dictionary
-        Dictionary dictionary = dictVO;
-        dictionary
+        dictVO
                 .setIsDeletable(oldDictionary.getIsDeletable())
                 .setIsEditable(oldDictionary.getIsEditable());
-        if(!super.updateEntity(dictionary)){
+        if(!super.updateEntity(dictVO)){
             log.warn("更新数据字典定义失败，type="+dictVO.getType());
             return false;
         }
         //获取原 子数据字典list
-        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper();
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dictionary::getParentId, dictVO.getId());
         List<Dictionary> oldDictList = super.getEntityList(queryWrapper);
         List<Dictionary> newDictList = dictVO.getChildren();
@@ -179,8 +177,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             for(Dictionary dict : newDictList){
                 dict.setType(dictVO.getType())
                     .setParentId(dictVO.getId())
-                    .setIsDeletable(dictionary.getIsDeletable())
-                    .setIsEditable(dictionary.getIsEditable());
+                    .setIsDeletable(dictVO.getIsDeletable())
+                    .setIsEditable(dictVO.getIsEditable());
                 if(V.notEmpty(dict.getId())){
                     dictItemIds.add(dict.getId());
                     if(!super.updateEntity(dict)){
