@@ -16,9 +16,7 @@
 package com.diboot.core.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 /**
  * 配置文件工具类
@@ -26,17 +24,10 @@ import org.springframework.stereotype.Component;
  * @version v2.0
  * @date 2019/01/01
  */
-@Component
 @Slf4j
-public class PropertiesUtils implements EnvironmentAware {
+public class PropertiesUtils {
 
     private static Environment environment;
-
-    @Override
-    public void setEnvironment(Environment env) {
-        environment = env;
-        log.trace("Environment 已设置");
-    }
 
     /***
      *  读取配置项的值
