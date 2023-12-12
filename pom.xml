@@ -30,9 +30,9 @@
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.4</mybatis-plus.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <aspectjweaver.version>1.9.20.1</aspectjweaver.version>
-        <commons-io.version>2.14.0</commons-io.version>
-        <easyexcel.version>3.3.2</easyexcel.version>
+        <aspectjweaver.version>1.9.21</aspectjweaver.version>
+        <commons-io.version>2.15.1</commons-io.version>
+        <easyexcel.version>3.3.3</easyexcel.version>
         <diboot.version>3.2.0-beta1</diboot.version>
     </properties>
 
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.1.0</version>
+            <version>8.2.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
