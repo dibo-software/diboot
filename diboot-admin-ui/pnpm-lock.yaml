@@ -22,7 +22,7 @@ specifiers:
   axios: ^1.2.2
   docx-preview: ^0.1.14
   echarts: ^5.4.1
-  element-plus: ^2.2.27
+  element-plus: ^2.3.9
   element-resize-detector: ^1.2.4
   eslint: ^8.30.0
   eslint-plugin-cypress: ^2.12.1
@@ -70,7 +70,7 @@ dependencies:
   axios: registry.npmmirror.com/axios/1.2.2
   docx-preview: registry.npmmirror.com/docx-preview/0.1.14
   echarts: registry.npmmirror.com/echarts/5.4.1
-  element-plus: registry.npmmirror.com/element-plus/2.2.27_vue@3.2.45
+  element-plus: registry.npmmirror.com/element-plus/2.4.3_vue@3.2.45
   element-resize-detector: registry.npmmirror.com/element-resize-detector/1.2.4
   fuse.js: registry.npmmirror.com/fuse.js/6.6.2
   jsencrypt: registry.npmmirror.com/jsencrypt/3.3.2
@@ -191,6 +191,17 @@ packages:
     id: registry.npmmirror.com/@element-plus/icons-vue/2.0.10
     name: '@element-plus/icons-vue'
     version: 2.0.10
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      vue: registry.npmmirror.com/vue/3.2.45
+    dev: false
+
+  registry.npmmirror.com/@element-plus/icons-vue/2.3.1_vue@3.2.45:
+    resolution: {integrity: sha512-XxVUZv48RZAd87ucGS48jPf6pKu0yV5UCg9f4FFwtrYxXOwWuVJo6wOvSLKEoMQKjv8GsX/mhP6UsC1lRwbUWg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@element-plus/icons-vue/-/icons-vue-2.3.1.tgz}
+    id: registry.npmmirror.com/@element-plus/icons-vue/2.3.1
+    name: '@element-plus/icons-vue'
+    version: 2.3.1
     peerDependencies:
       vue: ^3.2.0
     dependencies:
@@ -2149,16 +2160,16 @@ packages:
     version: 1.1.1
     dev: true
 
-  registry.npmmirror.com/element-plus/2.2.27_vue@3.2.45:
-    resolution: {integrity: sha512-P04HDOZBYDdvlYuleuCZRULzAc5xJVOBfLDK9xWxVo0vyo8ntdaXS5sTU+/76vrNzuO3FhLn9kvrsbiJEVa1jg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/element-plus/-/element-plus-2.2.27.tgz}
-    id: registry.npmmirror.com/element-plus/2.2.27
+  registry.npmmirror.com/element-plus/2.4.3_vue@3.2.45:
+    resolution: {integrity: sha512-b3q26j+lM4SBqiyzw8HybybGnP2pk4MWgrnzzzYW5qKQUgV6EG1Zg7nMCfgCVccI8tNvZoTiUHb2mFaiB9qT8w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/element-plus/-/element-plus-2.4.3.tgz}
+    id: registry.npmmirror.com/element-plus/2.4.3
     name: element-plus
-    version: 2.2.27
+    version: 2.4.3
     peerDependencies:
       vue: ^3.2.0
     dependencies:
       '@ctrl/tinycolor': registry.npmmirror.com/@ctrl/tinycolor/3.5.0
-      '@element-plus/icons-vue': registry.npmmirror.com/@element-plus/icons-vue/2.0.10_vue@3.2.45
+      '@element-plus/icons-vue': registry.npmmirror.com/@element-plus/icons-vue/2.3.1_vue@3.2.45
       '@floating-ui/dom': registry.npmmirror.com/@floating-ui/dom/1.1.0
       '@popperjs/core': registry.npmmirror.com/@sxzz/popperjs-es/2.11.7
       '@types/lodash': registry.npmmirror.com/@types/lodash/4.14.191
