@@ -890,6 +890,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
 		boolean hasParentNode = propInfo.containsField(Cons.FieldName.parentId.name());
 		for(T entity : entityList){
+			if (V.isEmpty(entity)) {
+				log.warn("getLabelValueList查询指定字段 {} 在数据库当前记录所有字段均为空值，已自动忽略", sqlSelect);
+				continue;
+			}
 			String label = propInfo.getFieldByColumn(selectArray[0]), value = propInfo.getFieldByColumn(selectArray[1]), ext;
 			Object labelVal = BeanUtils.getProperty(entity, label);
 			Object valueVal = BeanUtils.getProperty(entity, value);

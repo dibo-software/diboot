@@ -110,7 +110,7 @@ const treeNodeClass = (data: Resource) => {
 <template>
   <div class="tree-container">
     <el-skeleton v-if="loading" :rows="5" animated />
-    <el-space v-else :fill="true" wrap>
+    <el-space v-else :fill="true" wrap style="width: 100%">
       <div class="tree-search">
         <el-button v-has-permission="'create'" :icon="Plus" style="margin-right: 2px" @click="addChildNode()">
           目录
@@ -174,7 +174,11 @@ const treeNodeClass = (data: Resource) => {
   height: 100%;
   position: relative;
   border-right: 1px solid var(--el-border-color-lighter);
-
+  .custom-tree-node {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .tree-search {
     display: flex;
     padding: 5px 5px 0;
