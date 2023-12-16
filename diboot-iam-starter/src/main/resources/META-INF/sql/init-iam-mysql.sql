@@ -10,7 +10,7 @@ create table dbt_iam_user
   birthdate    date        null comment '出生日期',
   mobile_phone varchar(20) null comment '手机号',
   email        varchar(50) null comment 'Email',
-  avatar_url   varchar(200)                          null comment '头像地址',
+  avatar_url   varchar(1000)                          null comment '头像地址',
   status       varchar(10) default 'A'               not null comment '状态',
   is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
   create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间',

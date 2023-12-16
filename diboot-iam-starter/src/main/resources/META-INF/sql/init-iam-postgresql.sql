@@ -10,7 +10,7 @@ create table dbt_iam_user
   birthdate date null,
   mobile_phone varchar(20) null,
   email varchar(50) null,
-  avatar_url varchar(200) null,
+  avatar_url varchar(1000) null,
   status varchar(10) not null default 'A',
   is_deleted BOOLEAN not null DEFAULT FALSE,
   create_time  timestamp   not null default CURRENT_TIMESTAMP,
