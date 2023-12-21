@@ -10,7 +10,7 @@ create table ${SCHEMA}.dbt_iam_user
     birthdate date   null,
     mobile_phone VARCHAR2(20)   null,
     email VARCHAR2(50)   null,
-    avatar_url VARCHAR2(200)   null,
+    avatar_url VARCHAR2(1000)   null,
     status VARCHAR2(10)   default 'A' not null,
     is_deleted NUMBER(1)   DEFAULT 0 not null,
     create_time timestamp   default CURRENT_TIMESTAMP not null,
