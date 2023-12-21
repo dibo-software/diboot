@@ -38,4 +38,8 @@ public class GlobalProperties {
      */
     private boolean initSql = false;
 
+    /**
+     * 启用多租户，默认false不启用
+     */
+    private boolean enableTenant = false;
 }
