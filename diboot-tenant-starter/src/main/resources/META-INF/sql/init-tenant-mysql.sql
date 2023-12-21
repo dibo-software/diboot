@@ -13,8 +13,9 @@ create table if not exists dbt_iam_tenant
     is_deleted  tinyint(1)  default 0                 not null comment '删除标记',
     create_by   bigint      default 0                 null comment '创建人',
     create_time datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
-    update_time datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间'
-    ) comment '租户';
+    update_time datetime    default CURRENT_TIMESTAMP null comment '更新时间'
+) comment '租户';
+create index idx_iam_tenant_code on dbt_iam_tenant (code);
 
 -- 租户资源
 create table if not exists dbt_iam_tenant_resource
@@ -24,7 +25,5 @@ create table if not exists dbt_iam_tenant_resource
     resource_id varchar(32)                               not null comment '资源ID',
     is_deleted  tinyint(1) default 0                 not null comment '删除标记',
     create_time datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
-    ) comment '租户资源';
-
-create index idx_iam_tenant_resource_tid_rid
-    on iam_tenant_resource (tenant_id, resource_id);
+) comment '租户资源';
+create index idx_iam_tenant_res_tid_rid on dbt_iam_tenant_resource (tenant_id, resource_id);
