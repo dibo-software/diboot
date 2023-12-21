@@ -21,6 +21,7 @@ const downloadExample = () => {
 
 const uploadDisabled = ref(true)
 const previewDisabled = ref(true)
+const completeLoading = ref(false)
 const description = ref('')
 const fileList: UploadUserFile[] = reactive([])
 
@@ -62,6 +63,7 @@ const sendRequest = (url: string, formData: FormData) => {
   }
   uploadDisabled.value = true
   previewDisabled.value = true
+  completeLoading.value = true
   api
     .upload<ExcelPreview & ExcelImport>(url, formData)
     .then(res => {
@@ -75,6 +77,7 @@ const sendRequest = (url: string, formData: FormData) => {
     })
     .finally(() => {
       previewDisabled.value = false
+      completeLoading.value = false
     })
 }
 
@@ -151,6 +154,7 @@ const TableColumn = defineComponent({
         <el-col :md="6">
           <el-upload
             :key="fileList.length && fileList[0].uid"
+            v-loading.fullscreen.lock="completeLoading"
             action=""
             :limti="1"
             accept=".xlsx,.xls,.csv"
