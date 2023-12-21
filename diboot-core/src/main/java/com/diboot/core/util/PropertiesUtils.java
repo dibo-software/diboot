@@ -77,12 +77,22 @@ public class PropertiesUtils {
      * @return
      */
     public static Integer getInteger(String key){
+        return getInteger(key, null);
+    }
+
+    /***
+     *  读取int型的配置项，未配置返回默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static Integer getInteger(String key, Integer defaultValue){
         // 获取配置值
         String value = get(key);
         if(V.notEmpty(value)){
             return Integer.parseInt(value);
         }
-        return null;
+        return defaultValue;
     }
 
     /***
@@ -91,24 +101,44 @@ public class PropertiesUtils {
      * @return
      */
     public static Long getLong(String key){
+        return getLong(key, null);
+    }
+
+    /***
+     *  读取Long型的配置项，未配置返回默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static Long getLong(String key, Long defaultValue){
         // 获取配置值
         String value = get(key);
         if(V.notEmpty(value)){
             return Long.parseLong(value);
         }
-        return null;
+        return defaultValue;
     }
 
     /***
      * 读取boolean值的配置项
      */
     public static boolean getBoolean(String key) {
+        return getBoolean(key, false);
+    }
+
+    /**
+     * 读取boolean值的配置项，未配置返回默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static boolean getBoolean(String key, boolean defaultValue) {
         // 获取配置值
         String value = get(key);
         if(V.notEmpty(value)){
             return V.isTrue(value);
         }
-        return false;
+        return defaultValue;
     }
 
 }
