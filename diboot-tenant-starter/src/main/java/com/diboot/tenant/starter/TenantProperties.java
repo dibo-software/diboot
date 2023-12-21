@@ -15,12 +15,9 @@
  */
 package com.diboot.tenant.starter;
 
-import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.List;
 
 /**
  * diboot-tenant 配置文件类
