@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2023, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,41 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.dto;
+package com.diboot.tenant.vo;
 
-import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.IamUser;
-import com.diboot.iam.entity.IamUserPosition;
+import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.tenant.entity.IamTenant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
 /**
- * 用户表单信息接收类
+ * 租户 ListVO定义
  *
- * @author mazc@dibo.ltd
- * @version v2.0
- * @date 2019/12/18
+ * @author : uu
+ * @version : v3.2.0
+ * @Date 2023/12/18
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class IamUserFormDTO extends IamUser {
+public class IamTenantListVO extends IamTenant {
+    private static final long serialVersionUID = -7968832444801805449L;
 
-    // 认证方式
-    private String authType = Cons.DICTCODE_AUTH_TYPE.PWD.name();
+    /**
+     * 关联字典：TENANT_STATUS
+     */
+    @BindDict(type = DICT_TENANT_STATUS, field = "status")
+    private String statusLabel;
 
-    private String username;
-
-    private String password;
-
-    private String accountStatus;
-
-    private String accountId;
-
-    private List<String> roleIdList;
-
-    private List<IamUserPosition> userPositionList;
 }

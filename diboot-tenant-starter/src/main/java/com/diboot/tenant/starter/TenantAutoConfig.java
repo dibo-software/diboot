@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2023, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,8 +15,18 @@
  */
 package com.diboot.tenant.starter;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
+import com.diboot.core.starter.CoreAutoConfig;
+import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,8 +39,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
+@EnableConfigurationProperties({TenantProperties.class})
 @ComponentScan(basePackages = {"com.diboot.tenant"})
 @MapperScan(basePackages = {"com.diboot.tenant.mapper"})
+@AutoConfigureAfter({CoreAutoConfig.class})
 public class TenantAutoConfig {
 
 }

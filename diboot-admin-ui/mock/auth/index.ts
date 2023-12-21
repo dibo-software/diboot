@@ -240,6 +240,18 @@ const authMenu = [
         }
       },
       {
+        path: 'tenant',
+        name: 'Tenant',
+        meta: {
+          title: '租户信息管理',
+          icon: 'Element:Platform',
+          componentPath: prefix + 'system/tenant/List.vue',
+          sort: 2,
+          keepAlive: false,
+          permissions: ['detail', 'create', 'update', 'delete']
+        }
+      },
+      {
         path: 'role',
         name: 'Role',
         meta: {
