@@ -41,6 +41,12 @@ public abstract class BaseLoginUser extends BaseEntity<String> {
      */
     public abstract String getUserType();
 
+    /***
+     * 获取当前用户租户id
+     * @return
+     */
+    public abstract String getTenantId();
+
     /**
      * 附加对象，当前auth-token
      */

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
+import com.diboot.iam.auth.IamTenantPermission;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.tenant.entity.IamTenantResource;
@@ -40,7 +41,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class IamTenantResourceServiceImpl extends BaseServiceImpl<IamTenantResourceMapper, IamTenantResource> implements IamTenantResourceService {
+public class IamTenantResourceServiceImpl extends BaseServiceImpl<IamTenantResourceMapper, IamTenantResource> implements IamTenantResourceService, IamTenantPermission {
 
     @Override
     public List<String> filterPermission(List<String> resourceIds) {
@@ -61,6 +62,13 @@ public class IamTenantResourceServiceImpl extends BaseServiceImpl<IamTenantResou
         }
         LambdaQueryWrapper<IamTenantResource> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(IamTenantResource::getTenantId, tenantId).in(IamTenantResource::getResourceId, resourceIds);
+        return getValuesOfField(queryWrapper, IamTenantResource::getResourceId);
+    }
+
+    @Override
+    public List<String> findAllPermissions(String tenantId) {
+        LambdaQueryWrapper<IamTenantResource> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(IamTenantResource::getTenantId, tenantId);
         return getValuesOfField(queryWrapper, IamTenantResource::getResourceId);
     }
 }

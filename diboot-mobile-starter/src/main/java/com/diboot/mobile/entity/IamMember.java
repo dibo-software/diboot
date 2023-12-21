@@ -175,4 +175,8 @@ public class IamMember extends BaseLoginUser {
     public String getUserType() {
         return this.userType;
     }
+
+    public String getTenantId() {
+        return tenantId;
+    }
 }

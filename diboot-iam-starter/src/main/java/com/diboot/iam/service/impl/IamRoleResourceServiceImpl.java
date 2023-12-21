@@ -20,9 +20,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
+import com.diboot.iam.auth.IamTenantPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamResource;
@@ -90,24 +92,37 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             return Collections.emptyList();
         }
         boolean isAdmin = false;
+        boolean isTenantAdmin = false;
         for (IamRole iamRole : roleList) {
             if (Cons.ROLE_SUPER_ADMIN.equalsIgnoreCase(iamRole.getCode())) {
                 isAdmin = true;
                 break;
             }
+            if (Cons.ROLE_TENANT_ADMIN.equalsIgnoreCase(iamRole.getCode())) {
+                isTenantAdmin = true;
+                break;
+            }
+        }
+        List<String> permissionIds = null;
+        // 如果是租户管理员，直接查询租户表
+        if (isTenantAdmin) {
+            IamTenantPermission iamTenantPermission = ContextHolder.getBean(IamTenantPermission.class);
+            if (V.isEmpty(iamTenantPermission)) {
+                throw new BusinessException(Status.FAIL_OPERATION, "当前租户未配置权限");
+            }
+            permissionIds = iamTenantPermission.findAllPermissions(currentUser.getTenantId());
         }
         LambdaQueryWrapper<IamResource> wrapper = Wrappers.<IamResource>lambdaQuery()
                 .eq(IamResource::getStatus, Cons.DICTCODE_RESOURCE_STATUS.A.name());
-        if (!isAdmin) {
+        if (!isAdmin && !isTenantAdmin) {
             List<String> roleIds = roleList.stream().map(IamRole::getId).collect(Collectors.toList());
             // 获取角色对应的菜单权限
-            List<String> permissionIds = getPermissionIdsByRoleIds(roleIds);
-            if (V.isEmpty(permissionIds)) {
-                return Collections.emptyList();
-            }
-            wrapper.in(IamResource::getId, permissionIds);
-
+            permissionIds = getPermissionIdsByRoleIds(roleIds);
         }
+        if (V.isEmpty(permissionIds)) {
+            return Collections.emptyList();
+        }
+        wrapper.in(IamResource::getId, permissionIds);
         List<IamResource> menuPermissionList = iamResourceService.getEntityList(wrapper);
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
