@@ -96,7 +96,7 @@ public class PropInfo implements Serializable {
                         if (FieldFill.UPDATE.equals(fill) || FieldFill.INSERT_UPDATE.equals(fill)) {
                             fillUpdateFieldList.add(fldName);
                         }
-                    }
+                    } else continue;
                 }
                 // 主键
                 TableId tableId = fld.getAnnotation(TableId.class);
