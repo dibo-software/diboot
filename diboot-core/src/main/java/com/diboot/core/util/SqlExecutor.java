@@ -17,6 +17,7 @@ package com.diboot.core.util;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,9 @@ public class SqlExecutor {
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return false;
         }
-        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sqlStatement)){
+        SqlSession sqlSession = SqlSessionUtils.getSqlSession(sqlSessionFactory);
+        try{
+            PreparedStatement stmt = sqlSession.getConnection().prepareStatement(sqlStatement);
             ResultSet rs = stmt.executeQuery();
             rs.close();
             log.debug("==> {}", sqlStatement);
@@ -59,6 +62,11 @@ public class SqlExecutor {
         catch(Exception e){
             log.trace("执行验证SQL:{} 失败:{}", sqlStatement, e.getMessage());
             return false;
+        } finally {
+            boolean sqlSessionTransactional = SqlSessionUtils.isSqlSessionTransactional(sqlSession, sqlSessionFactory);
+            if (!sqlSessionTransactional) {
+                sqlSession.close();
+            }
         }
     }
 
@@ -86,7 +94,9 @@ public class SqlExecutor {
                 log.warn("查询参数集合数量过多, size={}，请检查调用是否合理！", params.size());
             }
         }
-        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+        SqlSession sqlSession = SqlSessionUtils.getSqlSession(sqlSessionFactory);
+        try{
+            PreparedStatement stmt = sqlSession.getConnection().prepareStatement(sql);
             if(V.notEmpty(params)){
                 for(int i=0; i<params.size(); i++){
                     stmt.setObject(i+1, params.get(i));
@@ -111,6 +121,11 @@ public class SqlExecutor {
         catch(Exception e){
             log.error("执行Sql查询异常", e);
             throw e;
+        } finally {
+            boolean sqlSessionTransactional = SqlSessionUtils.isSqlSessionTransactional(sqlSession, sqlSessionFactory);
+            if (!sqlSessionTransactional) {
+                sqlSession.close();
+            }
         }
     }
 
@@ -237,7 +252,9 @@ public class SqlExecutor {
                 log.warn("更新参数集合数量过多, size={}，请检查调用是否合理！", params.size());
             }
         }
-        try(SqlSession session = sqlSessionFactory.openSession(); Connection conn = session.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+        SqlSession sqlSession = SqlSessionUtils.getSqlSession(sqlSessionFactory);
+        try{
+            PreparedStatement stmt = sqlSession.getConnection().prepareStatement(sql);
             if (V.notEmpty(params)){
                 for (int i=0; i<params.size(); i++){
                     stmt.setObject(i + 1, params.get(i));
@@ -249,6 +266,11 @@ public class SqlExecutor {
             String sqlInfo = S.substring(sql, 0, 50) + "...";
             log.error("执行sql查询异常: "+sqlInfo, e);
             throw e;
+        } finally {
+            boolean sqlSessionTransactional = SqlSessionUtils.isSqlSessionTransactional(sqlSession, sqlSessionFactory);
+            if (!sqlSessionTransactional) {
+                sqlSession.close();
+            }
         }
     }
 
