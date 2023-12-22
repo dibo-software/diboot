@@ -119,10 +119,10 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             // 获取角色对应的菜单权限
             permissionIds = getPermissionIdsByRoleIds(roleIds);
         }
-        if (V.isEmpty(permissionIds)) {
+        if (!isAdmin && V.isEmpty(permissionIds)) {
             return Collections.emptyList();
         }
-        wrapper.in(IamResource::getId, permissionIds);
+        wrapper.in(V.notEmpty(permissionIds), IamResource::getId, permissionIds);
         List<IamResource> menuPermissionList = iamResourceService.getEntityList(wrapper);
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
