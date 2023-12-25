@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.starter;
+package com.diboot.core.init;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -49,11 +49,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RedisOperations.class)
 @ConditionalOnResource(resources = "org/springframework/data/redis")
-public class RedisAutoConfig {
+public class CoreRedisAutoConfig {
 
-
-    public RedisAutoConfig() {
-        log.info("初始化RedisAutoConfig 配置！");
+    public CoreRedisAutoConfig() {
+        log.info("初始化 {} 配置", this.getClass().getSimpleName());
     }
 
     @Bean

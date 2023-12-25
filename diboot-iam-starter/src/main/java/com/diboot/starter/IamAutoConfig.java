@@ -21,6 +21,7 @@ import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.data.UserOrgDataAccessScopeManager;
+import com.diboot.iam.init.IamRedisAutoConfig;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
@@ -41,6 +42,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
@@ -62,14 +64,15 @@ import java.util.Set;
 @SuppressWarnings("JavaDoc")
 @Slf4j
 @Order(912)
-@Configuration()
+@Configuration
+@AutoConfigureAfter(IamRedisAutoConfig.class)
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
 public class IamAutoConfig {
 
     public IamAutoConfig() {
-        log.info("初始化IamAutoConfig 配置！");
+        log.info("初始化 {} 配置", this.getClass().getSimpleName());
     }
 
     @Autowired

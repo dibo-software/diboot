@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.starter;
+package com.diboot.iam.init;
 
 import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.redis.ShiroRedisCacheManager;
 import com.diboot.iam.config.IamProperties;
+import com.diboot.starter.IamAutoConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -60,7 +62,7 @@ public class IamRedisAutoConfig {
     private RedisTemplate<String, Object> redisTemplate;
 
     public IamRedisAutoConfig() {
-        log.info("初始化IamRedisAutoConfig 配置！");
+        log.info("初始化 {} 配置", this.getClass().getSimpleName());
     }
 
     /**

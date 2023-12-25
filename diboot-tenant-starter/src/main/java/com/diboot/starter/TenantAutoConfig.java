@@ -41,7 +41,7 @@ import org.springframework.core.annotation.Order;
 public class TenantAutoConfig {
 
     public TenantAutoConfig() {
-        log.info("初始化TenantAutoConfig 配置！");
+        log.info("初始化 {} 配置", this.getClass().getSimpleName());
     }
 
 }
