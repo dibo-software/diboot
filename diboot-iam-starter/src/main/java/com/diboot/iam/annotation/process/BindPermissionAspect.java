@@ -23,7 +23,7 @@ import com.diboot.iam.cache.IamPermissionCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.exception.PermissionException;
-import com.diboot.iam.starter.IamProperties;
+import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthenticatedException;

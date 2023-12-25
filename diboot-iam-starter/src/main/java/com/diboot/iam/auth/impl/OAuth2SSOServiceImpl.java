@@ -28,7 +28,7 @@ import com.diboot.iam.dto.AuthCredential;
 import com.diboot.iam.dto.OAuth2SSOCredential;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.shiro.IamAuthToken;
-import com.diboot.iam.starter.IamProperties;
+import com.diboot.iam.config.IamProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

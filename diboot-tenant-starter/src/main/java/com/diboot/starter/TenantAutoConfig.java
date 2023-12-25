@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2023, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,22 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.file.example;
+package com.diboot.starter;
 
-import com.diboot.file.config.FileProperties;
+import com.diboot.tenant.config.TenantProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 /**
- * Servlet初始化
+ * 多租户组件自动初始化
+ *
  * @author mazc@dibo.ltd
+ * @version v3.2.0
+ * @date 2023/12/15
  */
-@TestConfiguration
-@EnableConfigurationProperties(FileProperties.class)
-@ComponentScan(basePackages = {"com.diboot.file"})
-@MapperScan(basePackages = {"com.diboot.file.example.custom.mapper"})
-public class ServletInitializer{
+@Order(991)
+@Slf4j
+@Configuration
+@EnableConfigurationProperties({TenantProperties.class})
+@ComponentScan(basePackages = {"com.diboot.tenant"})
+@MapperScan(basePackages = {"com.diboot.tenant.mapper"})
+@AutoConfigureAfter({CoreAutoConfig.class})
+public class TenantAutoConfig {
+
+    public TenantAutoConfig() {
+        log.info("初始化TenantAutoConfig 配置！");
+    }
 
 }

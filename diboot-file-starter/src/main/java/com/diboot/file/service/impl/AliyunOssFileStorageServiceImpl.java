@@ -23,7 +23,7 @@ import com.aliyun.oss.model.OSSObject;
 import com.diboot.core.util.S;
 import com.diboot.file.entity.FileRecord;
 import com.diboot.file.service.FileStorageService;
-import com.diboot.file.starter.FileProperties;
+import com.diboot.file.config.FileProperties;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
 import com.diboot.iam.config.Cons;

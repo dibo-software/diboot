@@ -13,22 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.file.example;
+package com.diboot.core.config;
 
-import com.diboot.file.config.FileProperties;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Servlet初始化
+ * diboot-core配置文件类
  * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2019/08/06
  */
-@TestConfiguration
-@EnableConfigurationProperties(FileProperties.class)
-@ComponentScan(basePackages = {"com.diboot.file"})
-@MapperScan(basePackages = {"com.diboot.file.example.custom.mapper"})
-public class ServletInitializer{
-
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "diboot.core")
+public class CoreProperties {
+    /**
+     * 每页记录数量
+     */
+    private int pageSize = 20;
+    /**
+     * 每批次数量
+     */
+    private int batchSize = 1000;
+    /**
+     * 是否开启国际化
+     */
+    private boolean i18n = false;
 }
