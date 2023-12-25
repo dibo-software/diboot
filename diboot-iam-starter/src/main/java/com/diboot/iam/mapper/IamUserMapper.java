@@ -15,9 +15,14 @@
  */
 package com.diboot.iam.mapper;
 
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamUser;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
+
+import java.io.Serializable;
 
 /**
 * 系统用户Mapper
@@ -28,4 +33,19 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface IamUserMapper extends BaseCrudMapper<IamUser> {
 
+    @InterceptorIgnore(tenantLine = "true")
+    @Override
+    IamUser selectById(Serializable id);
+
+    /**
+     * 更新租户管理员用户信息
+     *
+     * @param user
+     * @return
+     */
+    @InterceptorIgnore(tenantLine = "true")
+    @Update({"UPDATE dbt_iam_user SET realname = #{user.realname}, gender = #{user.gender}, birthdate = #{user.birthdate}, ",
+            "mobile_phone = #{user.mobilePhone}, email = #{user.email}, status = #{user.status} ",
+            "WHERE id = #{user.id} AND is_deleted = #{deleted}"})
+    boolean updateTenantAdmin(@Param("user") IamUser user, @Param("deleted") Object deleted);
 }

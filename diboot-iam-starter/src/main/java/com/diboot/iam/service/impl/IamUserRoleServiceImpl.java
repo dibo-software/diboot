@@ -74,18 +74,17 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private static String ROLE_ID_SUPER_ADMIN = null;
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, String userId) {
-        return getUserRoleList(userType, userId, null);
+    public List<IamRole> getUserRoleList(String tenantId, String userType, String userId) {
+        return getUserRoleList(tenantId, userType, userId, null);
     }
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId) {
-        String currentTenantId = IamSecurityUtils.getCurrentTenantId();
+    public List<IamRole> getUserRoleList(String tenantId, String userType, String userId, String extensionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
                 .eq(IamUserRole::getUserId, userId)
-                .eq(IamUserRole::getTenantId, currentTenantId)
+                .eq(IamUserRole::getTenantId, tenantId)
         );
         if(V.isEmpty(userRoleList)){
             return Collections.emptyList();
@@ -211,7 +210,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRoleVO> getAllRoleVOList(BaseLoginUser userObject) {
-        List<IamRole> roleList = getUserRoleList(userObject.getClass().getSimpleName(), userObject.getId());
+        List<IamRole> roleList = getUserRoleList(userObject.getTenantId(), userObject.getClass().getSimpleName(), userObject.getId());
         if (V.isEmpty(roleList)){
             return null;
         }

@@ -17,6 +17,7 @@ package com.diboot.tenant.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
@@ -26,7 +27,12 @@ import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.*;
-import com.diboot.iam.service.*;
+import com.diboot.iam.mapper.IamAccountMapper;
+import com.diboot.iam.mapper.IamUserMapper;
+import com.diboot.iam.mapper.IamUserRoleMapper;
+import com.diboot.iam.service.IamOrgService;
+import com.diboot.iam.service.IamRoleService;
+import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.tenant.entity.IamTenant;
 import com.diboot.tenant.entity.IamTenantResource;
 import com.diboot.tenant.mapper.IamTenantMapper;
@@ -57,15 +63,15 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
     @Autowired
     private IamOrgService iamOrgService;
     @Autowired
-    private IamUserService iamUserService;
+    private IamUserMapper iamUserMapper;
     @Autowired
     private IamRoleService iamRoleService;
     @Autowired
     private IamTenantResourceService iamTenantResourceService;
     @Autowired
-    private IamUserRoleService iamUserRoleService;
+    private IamUserRoleMapper iamUserRoleMapper;
     @Autowired
-    private IamAccountService iamAccountService;
+    private IamAccountMapper iamAccountMapper;
     @Autowired
     private IamCustomize iamCustomize;
 
@@ -98,22 +104,14 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
             iamRoleService.createEntity(new IamRole().setCode(Cons.ROLE_TENANT_ADMIN).setName("租户管理员"));
         } else {
             // 获取绑定租户管理员的用户ID
-            String userId = iamUserRoleService.getValueOfField(
-                    Wrappers.<IamUserRole>lambdaQuery()
-                            .select(IamUserRole::getUserId)
-                            .eq(IamUserRole::getTenantId, tenantId)
-                            .eq(IamUserRole::getRoleId, iamRole.getId())
-                    , IamUserRole::getUserId);
+            String userId = iamUserRoleMapper.findUserIdByTenantIdAndRoleId(tenantId, iamRole.getId(), BaseConfig.getActiveFlagValue());
             // 存在绑定关系，获取用户并返回
             if (userId != null) {
-                IamUser iamUser = iamUserService.getEntity(userId);
+                IamUser iamUser = iamUserMapper.selectById(userId);
                 TenantAdminUserVO tenantAdminUserVO = BeanUtils.convert(iamUser, TenantAdminUserVO.class);
-                IamAccount iamAccount = iamAccountService.getSingleEntity(
-                        Wrappers.<IamAccount>lambdaQuery()
-                                .eq(IamAccount::getTenantId, tenantId)
-                                .eq(IamAccount::getUserType, IamUser.class.getSimpleName())
-                                .eq(IamAccount::getUserId, userId)
-                );
+
+                IamAccount iamAccount = iamAccountMapper.findByExplicitTenant(tenantId, userId, IamUser.class.getSimpleName(), BaseConfig.getActiveFlagValue());
+
                 tenantAdminUserVO.setUsername(iamAccount.getAuthAccount())
                         .setAccountId(iamAccount.getId())
                         .setAccountStatus(iamAccount.getStatus());
@@ -140,17 +138,17 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
                 .setId(iamUserFormDTO.getAccountId());
         if (V.isEmpty(iamUserFormDTO.getId())) {
             // 创建管理员信息
-            iamUserService.createEntity(iamUserFormDTO);
+            iamUserMapper.insert(iamUserFormDTO);
             // 创建租户管理员角色和用户的关系
             createIamRole(iamUserFormDTO);
             // 创建管理员账号信息
             iamAccount.setUserId(iamUserFormDTO.getId());
-            iamAccountService.createEntity(iamAccount);
+            iamAccountMapper.insert(iamAccount);
         } else {
             // 更新管理员信息
-            iamUserService.updateEntity(iamUserFormDTO);
+            iamUserMapper.updateTenantAdmin(iamUserFormDTO, BaseConfig.getActiveFlagValue());
             // 更新管理员账号信息
-            iamAccountService.updateEntity(iamAccount);
+            iamAccountMapper.updateTenantAccount(iamAccount, BaseConfig.getActiveFlagValue());
         }
         return true;
     }
@@ -175,7 +173,7 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
                 .setUserId(iamUserFormDTO.getId())
                 .setTenantId(iamUserFormDTO.getTenantId())
                 .setUserType(IamUser.class.getSimpleName());
-        iamUserRoleService.createEntity(iamUserRole);
+        iamUserRoleMapper.insert(iamUserRole);
     }
 
     /**

@@ -87,7 +87,7 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
             extensionObjId = ((PositionDataScope) extensionObj.getExt()).getPositionId();
         }
         // 获取当前用户的角色列表
-        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
+        List<IamRole> roleList = iamUserRoleService.getUserRoleList(currentUser.getTenantId(), currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
         if (V.isEmpty(roleList)) {
             return Collections.emptyList();
         }

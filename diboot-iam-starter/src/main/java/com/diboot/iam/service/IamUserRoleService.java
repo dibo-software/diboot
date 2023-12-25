@@ -35,21 +35,23 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
     /**
      * 获取用户所有的全部角色
      *
+     * @param tenantId
      * @param userType
      * @param userId
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, String userId);
+    List<IamRole> getUserRoleList(String tenantId, String userType, String userId);
 
     /**
      * 获取用户所有的全部角色
      *
+     * @param tenantId
      * @param userType
      * @param userId
      * @param extensionObjId 岗位等扩展对象id
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId);
+    List<IamRole> getUserRoleList(String tenantId, String userType, String userId, String extensionObjId);
 
     /**
      * 批量创建用户-角色的关系

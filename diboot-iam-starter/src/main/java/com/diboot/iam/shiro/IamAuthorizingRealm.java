@@ -142,7 +142,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
             }
         }
         // 获取角色列表
-        List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
+        List<IamRole> roleList = getIamUserRoleService().getUserRoleList(currentUser.getTenantId(), currentUser.getClass().getSimpleName(), currentUser.getId(), extensionObjId);
         // 如果没有任何角色，返回
         if (V.isEmpty(roleList)){
             return authorizationInfo;
