@@ -158,6 +158,15 @@ public class IamSecurityUtils extends SecurityUtils {
     }
 
     /**
+     * 获取用户 "tenantId" 的值
+     * @return
+     */
+    public static String getCurrentTenantId(){
+        BaseLoginUser user = getCurrentUser();
+        return user != null? user.getTenantId() : "0";
+    }
+
+    /**
      * 获取用户 "类型:ID" 的值
      * @return
      */

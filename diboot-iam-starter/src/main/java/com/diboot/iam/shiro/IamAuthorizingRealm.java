@@ -23,6 +23,7 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.auth.AuthService;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.auth.IamExtensible;
+import com.diboot.iam.auth.IamTenantPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
@@ -58,6 +59,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
 
     private IamUserRoleService iamUserRoleService;
     private IamRoleResourceService iamRoleResourceService;
+    private IamTenantPermission iamTenantPermission;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -155,7 +157,12 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         });
         authorizationInfo.setRoles(allRoleCodes);
         // 整理所有权限许可列表，从缓存匹配
-        List<String> allPermissionCodes = getIamRoleResourceService().getPermissionCodeList(Cons.APPLICATION, roleIds);
+        List<String> allPermissionCodes = null;
+        if (allRoleCodes.contains(Cons.ROLE_TENANT_ADMIN)) {
+            allPermissionCodes = getIamTenantPermission().findAllPermissionCodes(currentUser.getTenantId());
+        } else {
+            allPermissionCodes = getIamRoleResourceService().getPermissionCodeList(Cons.APPLICATION, roleIds);
+        }
         Set<String> permissionCodesSet = new HashSet<>();
         if(V.notEmpty(allPermissionCodes)){
             allPermissionCodes.forEach(permCodeStr -> {
@@ -187,6 +194,13 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
             iamRoleResourceService = ContextHolder.getBean(IamRoleResourceService.class);
         }
         return iamRoleResourceService;
+    }
+
+    private IamTenantPermission getIamTenantPermission(){
+        if(iamTenantPermission == null){
+            iamTenantPermission = ContextHolder.getBean(IamTenantPermission.class);
+        }
+        return iamTenantPermission;
     }
 
 }

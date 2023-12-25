@@ -20,12 +20,15 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamTenantPermission;
+import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.tenant.entity.IamTenantResource;
 import com.diboot.tenant.mapper.IamTenantResourceMapper;
 import com.diboot.tenant.service.IamTenantResourceService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -42,6 +45,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class IamTenantResourceServiceImpl extends BaseServiceImpl<IamTenantResourceMapper, IamTenantResource> implements IamTenantResourceService, IamTenantPermission {
+
+    @Autowired
+    private IamResourceService iamResourceService;
 
     @Override
     public List<String> filterPermission(List<String> resourceIds) {
@@ -70,5 +76,22 @@ public class IamTenantResourceServiceImpl extends BaseServiceImpl<IamTenantResou
         LambdaQueryWrapper<IamTenantResource> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(IamTenantResource::getTenantId, tenantId);
         return getValuesOfField(queryWrapper, IamTenantResource::getResourceId);
+    }
+
+    @Override
+    public List<String> findAllPermissionCodes(String tenantId) {
+        List<String> permissionIds = findAllPermissions(tenantId);
+        if (V.isEmpty(permissionIds)) {
+            return Collections.emptyList();
+        }
+        // 查询权限
+        LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.<IamResource>lambdaQuery()
+                .select(IamResource::getPermissionCode)
+                .in(IamResource::getId, permissionIds)
+                .isNotNull(IamResource::getPermissionCode);
+        // 仅查询PermissionCode字段
+        return iamResourceService.getValuesOfField(
+                queryWrapper, IamResource::getPermissionCode
+        );
     }
 }

@@ -12,10 +12,18 @@ import java.util.List;
 public interface IamTenantPermission {
 
     /**
-     * 过滤出当前租户的所有权限
+     * 过滤出当前租户的所有权限id
      *
      * @param tenantId
      * @return
      */
     List<String> findAllPermissions(String tenantId);
+
+    /**
+     * 过滤出当前租户的所有权限code
+     *
+     * @param tenantId
+     * @return
+     */
+    List<String> findAllPermissionCodes(String tenantId);
 }

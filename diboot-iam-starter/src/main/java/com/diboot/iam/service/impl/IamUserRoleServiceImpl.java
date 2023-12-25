@@ -32,6 +32,7 @@ import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamHelper;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +80,12 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId) {
+        String currentTenantId = IamSecurityUtils.getCurrentTenantId();
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
                 .eq(IamUserRole::getUserId, userId)
+                .eq(IamUserRole::getTenantId, currentTenantId)
         );
         if(V.isEmpty(userRoleList)){
             return Collections.emptyList();
