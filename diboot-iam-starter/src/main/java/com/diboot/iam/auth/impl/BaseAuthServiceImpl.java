@@ -31,7 +31,7 @@ import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthToken;
-import com.diboot.iam.starter.IamProperties;
+import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;

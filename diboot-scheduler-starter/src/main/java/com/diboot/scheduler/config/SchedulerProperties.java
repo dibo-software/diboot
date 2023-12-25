@@ -13,22 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.file.example;
+package com.diboot.scheduler.config;
 
-import com.diboot.file.config.FileProperties;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Servlet初始化
+ * 定时任务相关的配置参数
  * @author mazc@dibo.ltd
+ * @version v2.0
+ * @date 2020/11/28
  */
-@TestConfiguration
-@EnableConfigurationProperties(FileProperties.class)
-@ComponentScan(basePackages = {"com.diboot.file"})
-@MapperScan(basePackages = {"com.diboot.file.example.custom.mapper"})
-public class ServletInitializer{
+@Getter @Setter
+@ConfigurationProperties(prefix = "diboot.scheduler")
+public class SchedulerProperties {
 
 }

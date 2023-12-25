@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.diboot.notification.starter.NotificationAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.diboot.starter.NotificationAutoConfig
