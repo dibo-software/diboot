@@ -17,7 +17,6 @@ package com.diboot.scheduler.init;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
-import com.diboot.core.util.SqlFileInitializer;
 import com.diboot.core.util.V;
 import com.diboot.scheduler.entity.ScheduleJob;
 import com.diboot.scheduler.service.QuartzSchedulerService;
@@ -27,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -40,6 +40,7 @@ import java.util.List;
  * @version v2.3.1
  * @date 2021/08/29
  */
+@Order(952)
 @Slf4j
 @Component
 @ConditionalOnProperty(prefix = "spring.quartz", name = "job-store-type", havingValue = "MEMORY", matchIfMissing = true)
@@ -53,10 +54,6 @@ public class SchedulerJobInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        String initDetectSql = "SELECT id FROM dbt_schedule_job WHERE id='0'";
-        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
-            return;
-        }
         List<ScheduleJob> jobList = scheduleJobService.getEntityList(
             Wrappers.<ScheduleJob>lambdaQuery().eq(ScheduleJob::getJobStatus, Cons.ENABLE_STATUS.A.name())
         );

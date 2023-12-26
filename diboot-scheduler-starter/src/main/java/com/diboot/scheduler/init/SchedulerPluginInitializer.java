@@ -51,7 +51,7 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
         SqlFileInitializer.init(environment);
         // 验证SQL
         String initDetectSql = "SELECT id FROM dbt_schedule_job WHERE id='0'";
-        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+        if(!SqlFileInitializer.checkSqlExecutable(initDetectSql)){
             log.info("diboot-scheduler 初始化SQL ...");
             // 执行初始化SQL
             SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "scheduler");
