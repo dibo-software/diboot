@@ -40,7 +40,7 @@ public interface IamOrgMapper extends BaseCrudMapper<IamOrg> {
      */
     @InterceptorIgnore(tenantLine = "true")
     @Select({"SELECT id FROM dbt_iam_org WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId}"})
-    String selectRootOrgIdByTenantId(String tenantId, Object deleted);
+    String getTenantRootOrgId(String tenantId, Object deleted);
 
 }
 
