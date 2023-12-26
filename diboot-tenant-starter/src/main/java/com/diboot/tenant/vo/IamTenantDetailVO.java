@@ -33,19 +33,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class IamTenantDetailVO extends IamTenant {
+public class IamTenantDetailVO extends IamTenantListVO {
     private static final long serialVersionUID = -1741724363993208360L;
-
-    /**
-     * 关联字典：TENANT_STATUS
-     */
-    @BindDict(type = DICT_TENANT_STATUS, field = "status")
-    private String statusLabel;
-
-    /**
-     * 关联IamUser#realname
-     */
-    @BindField(entity = IamUser.class, field = "realname", condition = "this.create_by = id")
-    private String createName;
 
 }

@@ -16,6 +16,9 @@
 package com.diboot.tenant.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.vo.LabelValue;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.tenant.entity.IamTenant;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +41,12 @@ public class IamTenantListVO extends IamTenant {
      * 关联字典：TENANT_STATUS
      */
     @BindDict(type = DICT_TENANT_STATUS, field = "status")
-    private String statusLabel;
+    private LabelValue statusLabel;
+
+    /**
+     * 关联IamUser#realname
+     */
+    @BindField(entity = IamUser.class, field = "realname", condition = "this.create_by = id")
+    private String createName;
 
 }
