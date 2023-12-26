@@ -32,7 +32,6 @@ import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.service.IamRoleService;
-import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.tenant.entity.IamTenant;
 import com.diboot.tenant.entity.IamTenantResource;
 import com.diboot.tenant.mapper.IamTenantMapper;

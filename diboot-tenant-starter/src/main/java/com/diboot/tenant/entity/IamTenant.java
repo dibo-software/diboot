@@ -85,7 +85,6 @@ public class IamTenant extends BaseEntity<String> {
     /**
      * 负责人
      */
-    @NotNull(message = "负责人不能为空")
     @Length(max = 50, message = "负责人长度应小于50")
     @BindQuery(comparison = Comparison.LIKE)
     private String manager;
@@ -93,7 +92,6 @@ public class IamTenant extends BaseEntity<String> {
     /**
      * 联系电话
      */
-    @NotNull(message = "联系电话不能为空")
     @Length(max = 20, message = "联系电话长度应小于20")
     @TableField()
     private String phone;
