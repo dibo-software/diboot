@@ -28,6 +28,7 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamUserFormDTO;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.mapper.IamAccountMapper;
+import com.diboot.iam.mapper.IamRoleMapper;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamOrgService;
@@ -66,6 +67,8 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
     @Autowired
     private IamRoleService iamRoleService;
     @Autowired
+    private IamRoleMapper iamRoleMapper;
+    @Autowired
     private IamTenantResourceService iamTenantResourceService;
     @Autowired
     private IamUserRoleMapper iamUserRoleMapper;
@@ -97,7 +100,7 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
     @Override
     public TenantAdminUserVO getTenantAdminUserVO(String tenantId) throws Exception {
         // 获取当前租户管理员的角色id
-        IamRole iamRole = iamRoleService.getSingleEntity(Wrappers.<IamRole>lambdaQuery().eq(IamRole::getCode, Cons.ROLE_TENANT_ADMIN));
+        IamRole iamRole = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
         if (iamRole == null) {
             // 如果不存在租户管理员则自动创建
             iamRoleService.createEntity(new IamRole().setCode(Cons.ROLE_TENANT_ADMIN).setName("租户管理员"));
@@ -166,7 +169,7 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void createIamRole(IamUserFormDTO iamUserFormDTO) {
-        IamRole iamRole = iamRoleService.getSingleEntity(Wrappers.<IamRole>lambdaQuery().eq(IamRole::getCode, Cons.ROLE_TENANT_ADMIN));
+        IamRole iamRole = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
         IamUserRole iamUserRole = new IamUserRole()
                 .setRoleId(iamRole.getId())
                 .setUserId(iamUserFormDTO.getId())

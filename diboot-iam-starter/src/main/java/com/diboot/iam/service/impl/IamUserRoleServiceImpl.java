@@ -18,6 +18,7 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -26,6 +27,7 @@ import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.exception.PermissionException;
+import com.diboot.iam.mapper.IamRoleMapper;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourceService;
@@ -56,6 +58,8 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Autowired
     private IamRoleService iamRoleService;
+    @Autowired
+    private IamRoleMapper iamRoleMapper;
     @Autowired
     private IamAccountService iamAccountService;
     @Autowired
@@ -91,9 +95,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         }
         List<String> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
         // 查询当前角色
-        List<IamRole> roles = iamRoleService.getEntityList(Wrappers.<IamRole>lambdaQuery()
-                .select(IamRole::getId, IamRole::getName, IamRole::getCode)
-                .in(IamRole::getId, roleIds));
+        List<IamRole> roles = iamRoleMapper.findByIds(roleIds, BaseConfig.getActiveFlagValue());
         // 加载扩展角色
         if(getIamExtensible() != null){
             List<IamRole> extRoles = getIamExtensible().getExtensionRoles(userType, userId, extensionObjId);
