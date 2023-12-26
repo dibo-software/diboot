@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamTenantPermission;
+import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.service.IamResourceService;
@@ -63,7 +64,7 @@ public class IamTenantResourceServiceImpl extends BaseServiceImpl<IamTenantResou
     @Override
     public List<String> filterPermission(String tenantId, List<String> resourceIds) {
         // 平台端无需权限过滤
-        if (V.equals(tenantId, "0")) {
+        if (V.equals(tenantId, Cons.ID_PREVENT_NULL)) {
             return resourceIds;
         }
         LambdaQueryWrapper<IamTenantResource> queryWrapper = Wrappers.lambdaQuery();

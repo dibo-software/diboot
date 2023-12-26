@@ -163,7 +163,7 @@ public class IamSecurityUtils extends SecurityUtils {
      */
     public static String getCurrentTenantId(){
         BaseLoginUser user = getCurrentUser();
-        return user != null? user.getTenantId() : "0";
+        return user != null? user.getTenantId() : Cons.ID_PREVENT_NULL;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.diboot.tenant.annotation.process;
 
 import com.diboot.core.util.V;
+import com.diboot.iam.config.Cons;
 
 
 /**
@@ -20,9 +21,9 @@ public class TenantContext implements Context<String> {
     public String get() {
         String tenantId = TENANT_ID.get();
         if (V.isEmpty(tenantId)) {
-            tenantId = "0";
+            tenantId = Cons.ID_PREVENT_NULL;
         }
-        return V.isEmpty(tenantId) ? "0" : tenantId;
+        return tenantId;
     }
 
     @Override

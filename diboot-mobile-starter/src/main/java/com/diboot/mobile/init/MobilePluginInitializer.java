@@ -91,11 +91,11 @@ public class MobilePluginInitializer implements ApplicationRunner {
         IamMemberService iamMemberService = ContextHolder.getBean(IamMemberService.class);
         if(iamMemberService != null && iamMemberService.getEntityListCount(null) == 0){
             IamMember iamMember = new IamMember();
-            iamMember.setOrgId("0")
+            iamMember.setOrgId(Cons.ID_PREVENT_NULL)
                     .setNickname("DIBOOT-Mobile")
                     .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name())
                     .setUserType(IamMember.class.getSimpleName())
-                    .setUserId("0")
+                    .setUserId(Cons.ID_PREVENT_NULL)
                     .setGender("M")
                     .setOpenid(S.newUuid());
             iamMemberService.createEntity(iamMember);

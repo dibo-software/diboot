@@ -81,7 +81,7 @@ public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
         }
         // 创建微信用户基本信息
         IamMember wxMember = maInfo2IamMemberEntity(wxInfoDTO)
-                .setUserId("0").setOrgId("0")
+                .setUserId(Cons.ID_PREVENT_NULL).setOrgId(Cons.ID_PREVENT_NULL)
                 .setUserType(IamMember.class.getSimpleName());
         boolean success = iamMemberService.createEntity(wxMember);
         if (!success) {
