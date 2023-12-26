@@ -78,11 +78,6 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private static String ROLE_ID_SUPER_ADMIN = null;
 
     @Override
-    public List<IamRole> getUserRoleList(String tenantId, String userType, String userId) {
-        return getUserRoleList(tenantId, userType, userId, null);
-    }
-
-    @Override
     public List<IamRole> getUserRoleList(String tenantId, String userType, String userId, String extensionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
