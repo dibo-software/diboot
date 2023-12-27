@@ -82,9 +82,14 @@ public abstract class BaseAuthServiceImpl implements AuthService {
 
     @Override
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
-        IamAccount latestAccount = iamAccountMapper.findLoginAccount(iamAuthToken.getTenantId(),
-                iamAuthToken.getAuthAccount(), iamAuthToken.getUserType(), iamAuthToken.getAuthType(),
-                BaseConfig.getActiveFlagValue());
+        IamAccount latestAccount = null;
+        if (BaseConfig.isEnableTenant()) {
+            latestAccount = iamAccountMapper.findLoginAccount(iamAuthToken.getTenantId(),
+                    iamAuthToken.getAuthAccount(), iamAuthToken.getUserType(), iamAuthToken.getAuthType(),
+                    BaseConfig.getActiveFlagValue());
+        } else {
+            latestAccount = accountService.getSingleEntity(buildQueryWrapper(iamAuthToken));
+        }
         if(latestAccount == null){
             return null;
         }
