@@ -168,4 +168,18 @@ public class BaseConfig {
 		}
 		return dataCenterId;
 	}
+
+	private static Boolean enableTenant = null;
+	/**
+	 * 是否启用多租户
+	 * @return
+	 */
+	public static boolean isEnableTenant() {
+		if(enableTenant != null) {
+			return enableTenant;
+		}
+		enableTenant = PropertiesUtils.getBoolean("diboot.enable-tenant", false);
+		return enableTenant;
+	}
+
 }
