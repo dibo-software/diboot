@@ -51,6 +51,14 @@
     border-bottom: 1px solid var(--el-border-color);
   }
 
+  .top-filter {
+    margin: 8px 8px -8px;
+
+    .el-button {
+      border-width: 0 !important;
+    }
+  }
+
   .list-search {
     .el-row {
       margin: 9px 0 -9px !important;
