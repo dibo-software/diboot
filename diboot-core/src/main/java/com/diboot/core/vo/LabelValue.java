@@ -15,6 +15,7 @@
  */
 package com.diboot.core.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -62,6 +63,7 @@ public class LabelValue implements Serializable {
      * 父级ID
      * (用于构建tree结构)
      */
+    @JsonIgnore
     private Object parentId;
 
     /**
