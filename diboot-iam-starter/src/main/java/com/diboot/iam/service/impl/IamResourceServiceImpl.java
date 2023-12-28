@@ -65,6 +65,9 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (V.notEmpty(children)) {
             for (IamResourceListVO vo : children) {
                 vo.setParentId(iamResource.getId());
+                if(V.isEmpty(vo.getId())) {
+                    vo.setTenantId(iamResource.getTenantId());
+                }
                 this.deepCreateResourceAndChildren(vo);
             }
         }
@@ -86,6 +89,7 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         // 设置每一条按钮/权限的parentId与接口列表
         permissionList.forEach(p -> {
             p.setParentId(iamResourceDTO.getId());
+            p.setTenantId(iamResourceDTO.getTenantId());
             p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
         });
         this.createEntities(permissionList);
@@ -103,6 +107,9 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         List<IamResource> permissionList = iamResourceDTO.getPermissionList();
         permissionList.forEach(p -> {
             p.setParentId(iamResourceDTO.getId());
+            if(V.isEmpty(p.getId())) {
+                p.setTenantId(iamResourceDTO.getTenantId());
+            }
             p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
         });
         // 需要更新的列表
@@ -249,6 +256,7 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
                 updatePermissionList.add(originRes);
             }
             else {
+                current.setTenantId(resourceDTO.getTenantId());
                 createPermissionList.add(current);
             }
         }
