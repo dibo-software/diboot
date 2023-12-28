@@ -110,7 +110,6 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
         if (level == 1) {
           route.children = [_.cloneDeep(route)]
           route.component = Layout
-          route.name = undefined
           route.meta = undefined
         }
       }
