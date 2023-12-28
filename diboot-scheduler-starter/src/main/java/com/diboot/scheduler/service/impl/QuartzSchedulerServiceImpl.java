@@ -330,7 +330,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
             }
             return jobClass;
         } catch (Exception e) {
-            throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！", e);
         }
     }
 }
