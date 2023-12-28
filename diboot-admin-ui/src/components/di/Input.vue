@@ -2,6 +2,7 @@
 import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
 import type { FormItem, Select, Upload } from './type'
 import type { UploadRawFile, UploadFile, FormItemRule } from 'element-plus'
+import { checkValue } from '@/utils/validate-form'
 
 const props = withDefaults(
   defineProps<{
@@ -39,7 +40,11 @@ const emit = defineEmits<{
 const instance = getCurrentInstance()
 
 const value = ref(
-  props.config.type === 'input-number' && props.modelValue ? Number(`${props.modelValue}`) : props.modelValue
+  props.config.type === 'input-number' && props.modelValue
+    ? Number(`${props.modelValue}`)
+    : props.config.type === 'boolean' && props.modelValue
+    ? Boolean(`${props.modelValue}`)
+    : props.modelValue
 )
 watch(
   value,
@@ -61,23 +66,14 @@ const requiredRule = {
     ? {}
     : { whitespace: true })
 }
+
 const checkUniqueRule = {
-  validator: (rule: unknown, value: unknown, callback: (error?: string | Error) => void) => {
-    if (value) {
-      api
-        .get(`${props.baseApi}/check-unique`, {
-          id: props.getId ? props.getId() : undefined,
-          field: props.config.prop,
-          value
-        })
-        .then(() => {
-          callback()
-        })
-        .catch(err => {
-          callback(err.msg || err)
-        })
-    } else callback()
-  },
+  validator: checkValue(
+    `${props.baseApi}/check-unique`,
+    'value',
+    () => (props.getId ? props.getId() : undefined),
+    () => ({ field: props.config.prop })
+  ),
   trigger: 'blur'
 }
 
