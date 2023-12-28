@@ -288,6 +288,10 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
         validateOrConvertDictAndRefField(dataList, true);
         // 自定义校验
         additionalValidate(dataList, requestParams);
+        // 有错误 抛出异常
+        if (V.notEmpty(this.exceptionMsgs)) {
+            throw new BusinessException(Status.FAIL_VALIDATION, S.join(this.exceptionMsgs, "; "));
+        }
         dataList.stream().collect(Collectors.groupingBy(this::isProper)).forEach((proper, list) -> {
             if (proper) {
                 if (!preview) {
