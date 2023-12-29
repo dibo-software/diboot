@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -33,6 +34,7 @@ import com.diboot.iam.mapper.IamResourceMapper;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,11 +53,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
 
+    @Autowired(required = false)
+    private TenantContext<String> tenantContext;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deepCreateResourceAndChildren(IamResourceListVO iamResource) {
         if (iamResource == null) {
             return;
+        }
+        if (TenantContext.hasContextImpl()) {
+            iamResource.setTenantId(tenantContext.get());
         }
         if (!super.createEntity(iamResource)) {
             log.warn("新建资源权限失败，displayType=" + iamResource.getDisplayType());
@@ -76,6 +83,9 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createMenuResources(IamResourceDTO iamResourceDTO) {
+        if (TenantContext.hasContextImpl()) {
+            iamResourceDTO.setTenantId(tenantContext.get());
+        }
         // 创建menu
         boolean success = this.createEntity(iamResourceDTO);
         if (!success) {
@@ -101,6 +111,9 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         // 检查是否设置了自身id为parentId，如果设置parentId与自身id相同，将会导致非常严重的潜在隐患
         if (V.equals(iamResourceDTO.getId(), iamResourceDTO.getParentId())) {
             throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单资源为自身");
+        }
+        if (TenantContext.hasContextImpl()) {
+            iamResourceDTO.setTenantId(tenantContext.get());
         }
         // 更新 menu
         this.updateEntity(iamResourceDTO);
@@ -226,6 +239,9 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void createOrUpdateMenuResources(IamResourceDTO resourceDTO) {
+        if (TenantContext.hasContextImpl()) {
+            resourceDTO.setTenantId(tenantContext.get());
+        }
         // 如果dto的id存在，则更新
         if(V.isEmpty(resourceDTO.getId())) {
             this.createMenuResources(resourceDTO);
