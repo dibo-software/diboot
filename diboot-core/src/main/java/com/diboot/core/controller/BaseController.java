@@ -78,6 +78,7 @@ public class BaseController {
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
 	 */
+	@Deprecated
     protected <DTO> QueryWrapper<DTO> buildQueryWrapperByQueryParams(DTO entityOrDto) throws Exception{
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams());
 	}
@@ -88,6 +89,7 @@ public class BaseController {
 	 * @param pagination 分页，如按关联表中的字段排序时需传入pagination
 	 * @return
 	 */
+	@Deprecated
 	protected <DTO> QueryWrapper<DTO> buildQueryWrapperByQueryParams(DTO entityOrDto, Pagination pagination) throws Exception{
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams(), pagination);
 	}
