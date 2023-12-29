@@ -180,6 +180,25 @@ CREATE TABLE `region` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='行政区划';
 
+CREATE TABLE `problem` (
+   `id` varchar(32) NOT NULL COMMENT 'ID',
+   `title` varchar(20) DEFAULT NULL,
+   `remark` varchar(500) DEFAULT NULL,
+   `is_deleted` tinyint(1) DEFAULT '0',
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='问题';
+CREATE TABLE `status_info` (
+   `id` varchar(32) NOT NULL COMMENT 'ID',
+   `user_id` varchar(32) DEFAULT NULL,
+   `problem_id` varchar(32) DEFAULT NULL,
+   `remark` varchar(500) DEFAULT NULL,
+   `is_deleted` tinyint(1) DEFAULT '0',
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='问题状态';
+
+
 INSERT INTO customer (id, realname, cellphone, extjsonarr)
 VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');
 
@@ -218,3 +237,11 @@ VALUES(10000081, 10000074, '111', 'L9vrF7wJBKbbLRZChI33WA=='),
       (10000089, 10000075, '119', 'VVnnuR7fXzsIHCMilEsgLw=='),
       (10000091, 10000075, '112', 'BqAefnSadfixkCebXakUDg=='),
       (10000093, 10000075, '114', 'A2Y6CZ4tv0V7QxPbq9EYkg==');
+
+INSERT INTO problem (id, title, remark, create_time)
+VALUES  ('1', '问题1', '问题1秒杀失效', '2023-12-29 12:40:44'),
+        ('2', '问题2', '问题2提款失败', '2023-12-29 12:40:44');
+
+INSERT INTO status_info (id, user_id, problem_id, remark, create_time)
+VALUES('1', '1001', '1', '状态备注1', '2023-12-29 12:42:14'),
+      ('2', '1003', '2', '状态备注2', '2023-12-29 12:42:14');

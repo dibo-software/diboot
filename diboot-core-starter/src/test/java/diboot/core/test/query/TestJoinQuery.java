@@ -25,11 +25,14 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.vo.Pagination;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.DepartmentDTO;
+import diboot.core.test.binder.dto.ProblemDTO;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.Department;
+import diboot.core.test.binder.entity.Problem;
 import diboot.core.test.binder.entity.StrIdTest;
 import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.service.DepartmentService;
+import diboot.core.test.binder.service.ProblemService;
 import diboot.core.test.binder.service.StrIdTestService;
 import diboot.core.test.binder.service.UserService;
 import diboot.core.test.binder.vo.DepartmentVO;
@@ -66,6 +69,9 @@ public class TestJoinQuery {
 
     @Autowired
     StrIdTestService strIdTestService;
+
+    @Autowired
+    ProblemService problemService;
 
     @Test
     public void testDateCompaire(){
@@ -357,5 +363,14 @@ public class TestJoinQuery {
                 LIMIT(1);
             }
         }.toString();
+    }
+
+    @Test
+    public void testJoinAttachRef(){
+        ProblemDTO problemDTO = new ProblemDTO();
+        problemDTO.setUserId("1001");
+        QueryWrapper<Problem> queryWrapper = QueryBuilder.toQueryWrapper(problemDTO);
+        List<Problem> list = problemService.getEntityList(queryWrapper);
+        Assert.assertTrue(list.size() >= 1);
     }
 }
