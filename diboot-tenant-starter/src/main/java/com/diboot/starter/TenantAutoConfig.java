@@ -15,9 +15,9 @@
  */
 package com.diboot.starter;
 
-import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.tenant.TenantIdValue;
+import com.diboot.core.data.tenant.TenantContext;
+import com.diboot.core.util.V;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.tenant.config.TenantProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -55,8 +55,8 @@ public class TenantAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public TenantIdValue<String> tenantIdValue() {
-        return new TenantIdValue<String>() {
+    public TenantContext<String> tenantContext() {
+        return new TenantContext<String>() {
             @Override
             public String get() {
                 return IamSecurityUtils.getCurrentTenantId();

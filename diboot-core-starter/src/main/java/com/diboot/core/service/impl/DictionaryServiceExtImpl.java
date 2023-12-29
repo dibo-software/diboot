@@ -19,16 +19,14 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.tenant.TenantIdValue;
+import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
@@ -57,14 +55,14 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceExtImpl.class);
 
     @Autowired(required = false)
-    private TenantIdValue tenantIdValue;
+    private TenantContext tenantContext;
     @Override
     public List<LabelValue> getLabelValueList(String type) {
         ;
         // 构建查询条件
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .in(TenantIdValue.validEnabled(), Dictionary::getTenantId, tenantIdValue.gets())
+                .in(TenantContext.hasContextImpl(), Dictionary::getTenantId, tenantContext.gets())
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
@@ -80,7 +78,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         // 构建查询条件
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .in(TenantIdValue.validEnabled(), Dictionary::getTenantId, tenantIdValue.gets())
+                .in(TenantContext.hasContextImpl(), Dictionary::getTenantId, tenantContext.gets())
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
@@ -93,7 +91,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         // 构建查询条件
         Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .in(TenantIdValue.validEnabled(), Dictionary::getTenantId, tenantIdValue.gets())
+                .in(TenantContext.hasContextImpl(), Dictionary::getTenantId, tenantContext.gets())
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
@@ -104,7 +102,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public boolean existsDictType(String dictType) {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .in(TenantIdValue.validEnabled(), Dictionary::getTenantId, tenantIdValue.gets())
+                .in(TenantContext.hasContextImpl(), Dictionary::getTenantId, tenantContext.gets())
                 .eq(Dictionary::getType, dictType);
         return exists(queryWrapper);
     }
@@ -118,8 +116,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         if (dictVO.getIsDeletable() == null) {
             dictVO.setIsDeletable(true);
         }
-        if (TenantIdValue.validEnabled()) {
-            dictVO.setTenantId(String.valueOf(tenantIdValue.get()));
+        if (TenantContext.hasContextImpl()) {
+            dictVO.setTenantId(String.valueOf(tenantContext.get()));
         }
         if(!super.createEntity(dictVO)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
@@ -135,7 +133,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     .setType(dictVO.getType())
                     .setIsDeletable(dictVO.getIsDeletable())
                     .setIsEditable(dictVO.getIsEditable());
-                if (TenantIdValue.validEnabled()) {
+                if (TenantContext.hasContextImpl()) {
                     dict.setTenantId(dictVO.getTenantId());
                 }
             }
@@ -153,7 +151,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<Dictionary> getDictDefinitionList() {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .in(TenantIdValue.validEnabled(), Dictionary::getTenantId, tenantIdValue.gets())
+                .in(TenantContext.hasContextImpl(), Dictionary::getTenantId, tenantContext.gets())
                 .and(wrapper -> {
                     wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
                 })
@@ -164,7 +162,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<DictionaryVO> getDictDefinitionVOList() {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .in(TenantIdValue.validEnabled(), Dictionary::getTenantId, tenantIdValue.gets())
+                .in(TenantContext.hasContextImpl(), Dictionary::getTenantId, tenantContext.gets())
                 .and(wrapper -> {
                     wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
                 });
@@ -206,7 +204,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     }
                 }
                 else{
-                    if (TenantIdValue.validEnabled()) {
+                    if (TenantContext.hasContextImpl()) {
                         dict.setTenantId(dictVO.getTenantId());
                     }
                     if(!super.createEntity(dict)){

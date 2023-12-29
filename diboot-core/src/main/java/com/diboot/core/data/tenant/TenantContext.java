@@ -15,7 +15,7 @@ import java.util.List;
  * @version : v3.2
  * @Date 2023/12/27
  */
-public interface TenantIdValue<T> {
+public interface TenantContext<T> {
 
     /**
      * 获取当前登录用户租户id
@@ -33,11 +33,11 @@ public interface TenantIdValue<T> {
     List<T> gets();
 
     /**
-     * 检查是否启用
+     * 检查可以使用上下文
      * @return
      */
-    static boolean validEnabled() {
-        if (BaseConfig.isEnableTenant() && V.isEmpty(ContextHolder.getBean(TenantIdValue.class))) {
+    static boolean hasContextImpl() {
+        if (BaseConfig.isEnableTenant() && V.isEmpty(ContextHolder.getBean(TenantContext.class))) {
             throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "租户未启用相关实现");
         }
         return BaseConfig.isEnableTenant();
