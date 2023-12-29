@@ -80,7 +80,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @throws Exception
      */
     protected <VO> JsonResult<List<VO>> getViewObjectList(E entity, Pagination pagination, Class<VO> voClass) throws Exception {
-        QueryWrapper<E> queryWrapper = super.buildQueryWrapperByQueryParams(entity);
+        QueryWrapper<E> queryWrapper = super.buildQueryWrapperByDTO(entity);
         // 设置默认排序
         if(pagination != null && V.isEmpty(pagination.getOrderBy())) {
             pagination.setOrderBy(Pagination.ORDER_BY_ID_DESC);
@@ -99,6 +99,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
      * @return JsonResult
      * @throws Exception
      */
+    @Deprecated
     protected <VO> JsonResult<List<VO>> getViewObjectList(E entity, Pagination pagination, Class<VO> voClass, boolean buildQueryWrapperByDTO) throws Exception {
         //DTO全部属性参与构建时调用
         QueryWrapper<E> queryWrapper = buildQueryWrapperByDTO ? super.buildQueryWrapperByDTO(entity) : super.buildQueryWrapperByQueryParams(entity);
