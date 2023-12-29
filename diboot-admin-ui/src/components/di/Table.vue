@@ -65,12 +65,8 @@ const dataLabel = inject<string>('data-label', 'label')
 
 const single = ref<string>()
 
-// 无效选择触发（避免组件内调用递归错误）
-let invalidSelectionTrigger = false
-
 // 选中的数据
 const selected = (arr: Array<Record<string, unknown>>) => {
-  if (invalidSelectionTrigger) return
   onSelectionChange(arr)
   emit(
     'selectedKeys',
@@ -120,6 +116,7 @@ if (selectedRows.value) {
       () => props.dataList,
       value => {
         const ids = selectedRows.value?.map(e => e.value) ?? []
+        tableRef.value?.clearSelection()
         value?.forEach(item => {
           if (ids.includes(item[props.primaryKey] as string)) tableRef.value?.toggleRowSelection(item, true)
         })
@@ -134,11 +131,9 @@ if (selectedRows.value) {
       if (props.multiple)
         if (ids.length === 0) tableRef.value?.clearSelection()
         else {
-          invalidSelectionTrigger = true
           props.dataList?.forEach(item =>
             tableRef.value?.toggleRowSelection(item, ids.includes(item[props.primaryKey] as string))
           )
-          invalidSelectionTrigger = false
         }
       else single.value = value?.length ? value[0].value : undefined
     },
