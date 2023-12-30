@@ -277,6 +277,9 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
             if(DATABASE_TYPE.startsWith(DbType.SQL_SERVER.getDb())){
                 DATABASE_TYPE = DbType.SQL_SERVER.getDb();
             }
+            else if(DATABASE_TYPE.startsWith(DbType.ORACLE_12C.getDb())){
+                DATABASE_TYPE = DbType.ORACLE.getDb();
+            }
         }
         if(DATABASE_TYPE == null){
             log.warn("无法识别数据库类型，请检查数据源配置:spring.datasource.url等");
