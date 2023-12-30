@@ -46,19 +46,15 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class IamPluginInitializer implements ApplicationRunner {
-    @Autowired
-    private Environment environment;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // 检查数据库字典是否已存在
-        SqlFileInitializer.init(environment);
-        // 验证SQL
+        // 检查数据库表是否已存在
         String initDetectSql = "SELECT id FROM dbt_iam_role WHERE id='0'";
-        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
+        if(!SqlFileInitializer.checkSqlExecutable(initDetectSql)){
             log.info("diboot-IAM 初始化SQL ...");
             // 执行初始化SQL
-            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "iam");
+            SqlFileInitializer.initBootstrapSql(this.getClass(), "iam");
             // 插入相关数据：Dict，Role等
             insertInitData();
             log.info("diboot-IAM 初始化SQL完成.");

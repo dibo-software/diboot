@@ -37,16 +37,12 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class FilePluginInitializer implements ApplicationRunner {
 
-    @Autowired
-    private Environment environment;
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库文件记录表是否已存在
-        SqlFileInitializer.init(environment);
         String initDetectSql = "SELECT id FROM dbt_file_record WHERE id='0'";
-        if(SqlFileInitializer.checkSqlExecutable(initDetectSql) == false){
-            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "file");
+        if(!SqlFileInitializer.checkSqlExecutable(initDetectSql)){
+            SqlFileInitializer.initBootstrapSql(this.getClass(), "file");
             log.info("diboot-file 初始化SQL完成.");
         }
     }
