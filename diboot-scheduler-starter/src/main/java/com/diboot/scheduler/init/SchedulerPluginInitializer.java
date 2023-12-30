@@ -22,12 +22,10 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.SqlFileInitializer;
 import com.diboot.core.vo.DictionaryVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,19 +40,14 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class SchedulerPluginInitializer implements ApplicationRunner {
 
-    @Autowired
-    private Environment environment;
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // 检查数据库是否已存在
-        SqlFileInitializer.init(environment);
-        // 验证SQL
+        // 检查数据库表是否已存在
         String initDetectSql = "SELECT id FROM dbt_schedule_job WHERE id='0'";
         if(!SqlFileInitializer.checkSqlExecutable(initDetectSql)){
             log.info("diboot-scheduler 初始化SQL ...");
             // 执行初始化SQL
-            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "scheduler");
+            SqlFileInitializer.initBootstrapSql(this.getClass(), "scheduler");
             // 插入相关数据：Dict等
             insertInitData();
             log.info("diboot-scheduler 初始化SQL完成.");

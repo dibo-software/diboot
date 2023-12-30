@@ -26,12 +26,9 @@ import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -45,17 +42,13 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
 public class TenantPluginInitializer implements ApplicationRunner {
-    @Autowired
-    private Environment environment;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        // 初始化SCHEMA
-        SqlFileInitializer.init(environment);
         // 检查数据库租户是否已存在
         String initDetectSql = "SELECT id FROM dbt_iam_tenant WHERE id='0'";
         if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
-            SqlFileInitializer.initBootstrapSql(this.getClass(), environment, "tenant");
+            SqlFileInitializer.initBootstrapSql(this.getClass(), "tenant");
             // 插入相关数据
             insertInitData();
             log.info("diboot-tenant 初始化SQL完成.");
