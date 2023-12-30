@@ -16,17 +16,16 @@
 package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.sql.DMTranslator;
+import com.diboot.core.util.sql.OracleTranslator;
+import com.diboot.core.util.sql.PostgresSqlTranslator;
+import com.diboot.core.util.sql.SqlServerTranslator;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionManager;
-import org.springframework.transaction.TransactionStatus;
 
-import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -34,7 +33,6 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * SQL文件初始化处理类
@@ -45,42 +43,22 @@ import java.util.stream.Collectors;
 public class SqlFileInitializer {
     private static final Logger log = LoggerFactory.getLogger(SqlFileInitializer.class);
 
-    private static Environment environment;
-
-    /**
-     * 初始化
-     * @param env
-     */
-    public static void init(Environment env) {
-        environment = env;
-    }
-
     /**
      * 获取初始化SQL路径
-     * @param dbType
      * @param module
      * @return
      */
-    public static String getBootstrapSqlPath(String dbType, String module) {
-        if (DbType.MARIADB.getDb().equalsIgnoreCase(dbType)) {
-            dbType = "mysql";
-        }
-        else if(DbType.KINGBASE_ES.getDb().equalsIgnoreCase(dbType)) {
-            dbType = DbType.POSTGRE_SQL.getDb();
-        }
-        String sqlPath = "META-INF/sql/init-" + module + "-" + dbType + ".sql";
-        return sqlPath;
+    public static String getBootstrapSqlPath(String module) {
+        return "META-INF/sql/init-" + module + "-mysql.sql";
     }
 
     /***
      * 初始化安装SQL
      * @return
      */
-    public static void initBootstrapSql(Class inst, Environment environment, String module){
-        init(environment);
-        String dbType = getDbType();
-        String sqlPath = getBootstrapSqlPath(dbType, module);
-        extractAndExecuteSqls(inst, sqlPath);
+    public static void initBootstrapSql(Class inst, String module){
+        String mysqlPath = getBootstrapSqlPath(module);
+        extractAndExecuteSqls(inst, mysqlPath);
     }
 
     /**
@@ -93,60 +71,55 @@ public class SqlFileInitializer {
         return SqlExecutor.validateQuery(sqlStatement);
     }
 
-    /***
-     * 从SQL文件读出的行内容中 提取SQL语句并执行
+    /**
+     * 从sql文件中提取sql语句
+     * @param inst 入口执行类
      * @param sqlPath
      * @return
      */
-    public static boolean extractAndExecuteSqls(Class inst, String sqlPath) {
-        return extractAndExecuteSqls(inst, sqlPath, Collections.emptyList(), Collections.emptyList());
+    public static List<String> extractSqlStatements(Class inst, String sqlPath) {
+        List<String> sqlFileReadLines = readLinesFromResource(inst, sqlPath);
+        if(V.isEmpty(sqlFileReadLines)){
+            return Collections.emptyList();
+        }
+        // 解析SQL
+        List<String> sqlStatements = extractSqlStatements(sqlFileReadLines);
+        String dbType = getDbType();
+        if (DbType.MYSQL.getDb().equalsIgnoreCase(dbType) || DbType.MARIADB.getDb().equalsIgnoreCase(dbType)) {
+            return sqlStatements;
+        }
+        // PostgresSql
+        else if(DbType.POSTGRE_SQL.getDb().equalsIgnoreCase(dbType) || DbType.KINGBASE_ES.getDb().equalsIgnoreCase(dbType)) {
+            return new PostgresSqlTranslator().translate(sqlStatements);
+        }
+        // SqlServer
+        else if(DbType.SQL_SERVER.getDb().equalsIgnoreCase(dbType)) {
+            return new SqlServerTranslator().translate(sqlStatements);
+        }
+        // DM
+        else if(DbType.DM.getDb().equalsIgnoreCase(dbType)) {
+            return new DMTranslator().translate(sqlStatements);
+        }
+        // Oracle
+        else if(DbType.ORACLE.getDb().equalsIgnoreCase(dbType) || DbType.ORACLE_12C.getDb().equalsIgnoreCase(dbType)) {
+            return new OracleTranslator().translate(sqlStatements);
+        }
+        else {
+            throw new InvalidUsageException("暂不支持 {} 数据库自动初始化", dbType);
+        }
     }
 
     /***
      * 从SQL文件读出的行内容中 提取SQL语句并执行
      * @param sqlPath
-     * @param includes
-     * @param excludes
      * @return
      */
-    public static boolean extractAndExecuteSqls(Class inst, String sqlPath, List<String> includes, List<String> excludes){
-        List<String> sqlFileReadLines = readLinesFromResource(inst, sqlPath);
-        if(V.isEmpty(sqlFileReadLines)){
+    public static boolean extractAndExecuteSqls(Class inst, String sqlPath){
+        // 解析SQL
+        List<String> sqlStatementList = extractSqlStatements(inst, sqlPath);
+        if(V.isEmpty(sqlStatementList)){
             return false;
         }
-        // 解析SQL
-        List<String> sqlStatementList = extractSqlStatements(sqlFileReadLines);
-        // 过滤sql语句
-        sqlStatementList = sqlStatementList.stream()
-                .filter(sql -> {
-                    if (V.isEmpty(includes)) {
-                        return true;
-                    } else {
-                        boolean exist = false;
-                        for (String includeStr : includes) {
-                            if (V.notEmpty(sql) && sql.contains(includeStr)) {
-                                exist = true;
-                                break;
-                            }
-                        }
-                        return exist;
-                    }
-                })
-                .filter(sql -> {
-                    if (V.isEmpty(excludes)) {
-                        return true;
-                    } else {
-                        boolean exist = true;
-                        for (String excludeStr : excludes) {
-                            if (V.notEmpty(sql) && sql.contains(excludeStr)) {
-                                exist = false;
-                                break;
-                            }
-                        }
-                        return exist;
-                    }
-                })
-                .collect(Collectors.toList());
         // 返回解析后的SQL语句
         return executeMultipleUpdateSqls(sqlStatementList);
     }
