@@ -38,6 +38,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import diboot.core.test.StartupApplication;
 import diboot.core.test.binder.dto.UserDTO;
 import diboot.core.test.binder.entity.*;
+import diboot.core.test.binder.mapper.UserRoleMapper;
 import diboot.core.test.binder.service.*;
 import diboot.core.test.binder.vo.RegionVO;
 import diboot.core.test.binder.vo.SimpleDictionaryVO;
@@ -83,6 +84,8 @@ public class BaseServiceTest {
 
     @Autowired
     RegionService regionService;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     @Test
     public void testGet(){
@@ -624,4 +627,24 @@ public class BaseServiceTest {
         service.deleteEntities(queryWrapper);
     }
 
+    @Transactional
+    @Test
+    public void testDeleteEntityAndRelations() {
+        Long userId = 1001L;
+        // 删除前，确认数据存在
+        User user = userService.getEntity(userId);
+        Assert.assertNotNull(user);
+        LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId);
+        List<UserRole> userRoles = userRoleMapper.selectList(queryWrapper);
+        Assert.assertNotNull(userRoles);
+
+        // 执行删除
+        userService.deleteEntityAndRelatedEntities(userId, UserRole.class, UserRole::setUserId);
+
+        // 删除后确认结果
+        user = userService.getEntity(userId);
+        Assert.assertNull(user);
+        userRoles = userRoleMapper.selectList(queryWrapper);
+        Assert.assertTrue(V.isEmpty(userRoles));
+    }
 }

@@ -590,17 +590,17 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			log.warn("删除Entity失败: {}",id);
 			return false;
 		}
-		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
-		if(relatedEntityService == null){
-			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass);
-			return false;
-		}
 		// 获取主键的关联属性
-		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(relatedEntityClass);
 		String relatedEntitySetterFld = BeanUtils.convertToFieldName(relatedEntitySetter);
 		QueryWrapper<RE> queryWrapper = new QueryWrapper<RE>().eq(propInfo.getColumnByField(relatedEntitySetterFld), id);
 		// 删除关联子表数据
-		return relatedEntityService.deleteEntities(queryWrapper);
+		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
+		if(relatedEntityService != null){
+			return relatedEntityService.deleteEntities(queryWrapper);
+		}
+		BaseMapper relatedMapper = ContextHolder.getBaseMapperByEntity(relatedEntityClass);
+		return relatedMapper.delete(queryWrapper) >= 0;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
