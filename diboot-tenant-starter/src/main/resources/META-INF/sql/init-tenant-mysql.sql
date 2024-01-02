@@ -1,7 +1,7 @@
 -- 租户表
-create table if not exists dbt_iam_tenant
+create table dbt_iam_tenant
 (
-    id           varchar(32) NOT NULL comment 'ID'  primary key,
+    id          varchar(32) NOT NULL comment 'ID'  primary key,
     name        varchar(100)                          not null comment '租户名称',
     code        varchar(20)                           not null comment '租户编码',
     start_date  date                                  not null comment '有效开始日期',
@@ -27,3 +27,23 @@ create table if not exists dbt_iam_tenant_resource
     create_time datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
 ) comment '租户资源';
 create index idx_iam_tenant_res_tid_rid on dbt_iam_tenant_resource (tenant_id, resource_id);
+
+create index idx_dbt_directory_tenant on dbt_dictionary(tenant_id);
+create index idx_dbt_iam_user_tenant on dbt_iam_user (tenant_id);
+create index idx_dbt_iam_account_tenant on dbt_iam_account (tenant_id);
+create index idx_dbt_iam_role_tenant on dbt_iam_role (tenant_id);
+create index idx_dbt_iam_u_r_tenant on dbt_iam_user_role (tenant_id);
+create index idx_dbt_iam_res_tenant on dbt_iam_resource (tenant_id);
+create index idx_dbt_iam_role_res_tenant on dbt_iam_role_resource (tenant_id);
+create index idx_dbt_iam_login_trace_tenant on dbt_iam_login_trace (tenant_id);
+create index idx_dbt_iam_oper_log_tenant on dbt_iam_operation_log (tenant_id);
+create index idx_dbt_iam_org_tenant on dbt_iam_org (tenant_id);
+create index idx_dbt_iam_pos_tenant on dbt_iam_position (tenant_id);
+create index idx_dbt_sys_cfg_tenant on dbt_system_config (tenant_id);
+create index idx_dbt_iam_u_p_tenant on dbt_iam_user_position (tenant_id);
+create index idx_dbt_mem_tenant on iam_member (tenant_id);
+create index idx_dbt_file_record_tenant on dbt_file_record (tenant_id);
+create index idx_dbt_msg_tmpl_tenant on dbt_message_template (tenant_id);
+create index idx_dbt_msg_tenant on dbt_message (tenant_id);
+create index idx_dbt_sch_job_tenant on dbt_schedule_job (tenant_id);
+create index idx_dbt_sch_job_log_tenant on dbt_schedule_job_log (tenant_id);
