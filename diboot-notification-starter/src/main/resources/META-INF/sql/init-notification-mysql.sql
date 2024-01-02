@@ -13,7 +13,6 @@ CREATE TABLE `dbt_message_template` (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8 COMMENT '消息模版';
 -- 索引
-create index idx_dbt_msg_tmpl_tenant on dbt_message_template (tenant_id);
 create index idx_dbt_msg_tmpl_code ON dbt_message_template(code);
 -- 消息表
 CREATE TABLE `dbt_message` (
@@ -37,6 +36,5 @@ CREATE TABLE `dbt_message` (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8 COMMENT '消息';
 -- 索引
-create index idx_dbt_msg_tenant on dbt_message (tenant_id);
 create index idx_dbt_msg_template on dbt_message (template_id);
 create index idx_dbt_msg_receiver on dbt_message (receiver);
