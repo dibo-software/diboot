@@ -15,6 +15,11 @@
  */
 package com.diboot.core.util.sql;
 
+import com.diboot.core.util.S;
+import com.diboot.core.util.SqlFileInitializer;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.util.List;
 
 /**
@@ -25,9 +30,14 @@ import java.util.List;
  */
 public class OracleTranslator extends BaseTranslator {
 
-
     @Override
     protected String translateColDefineSql(String colDefineSql) {
-        return null;
+        colDefineSql = S.replaceEach(colDefineSql,
+                new String[]{" tinyint(1)", "varchar(", " datetime ", " bigint "},
+                new String[]{" NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) "}
+        );
+        colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime", " on update CURRENT_TIMESTAMP", "ON UPDATE CURRENT_TIMESTAMP"}, new String[]{"timestamp", "", ""});
+        return colDefineSql;
     }
+
 }

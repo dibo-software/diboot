@@ -16,11 +16,6 @@
 package com.diboot.core.util.sql;
 
 import com.diboot.core.util.S;
-import com.diboot.core.util.SqlFileInitializer;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * PostgresSql SQL翻译器
@@ -45,16 +40,4 @@ public class PostgresSqlTranslator extends BaseTranslator {
         return colDefineSql;
     }
 
-    public static void main(String[] args) {
-        try {
-            List<String> lines = FileUtils.readLines(new File("/Users/mazc/Workspace/public/diboot/diboot-tenant-starter/src/main/resources/META-INF/sql/init-tenant-mysql.sql"));
-            List<String> sqlStatements = SqlFileInitializer.extractSqlStatements(lines);
-            List<String> newLines = new PostgresSqlTranslator().translate(sqlStatements);
-            newLines.forEach(l->System.out.println(l));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }

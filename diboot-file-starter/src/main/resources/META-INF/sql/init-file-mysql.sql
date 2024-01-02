@@ -18,4 +18,3 @@ create table dbt_file_record
 ) comment '文件存储' charset = utf8mb4;
 -- 索引
 create index idx_dbt_file_record_md5 on dbt_file_record (md5);
-create index idx_dbt_file_record_tenant on dbt_file_record (tenant_id);

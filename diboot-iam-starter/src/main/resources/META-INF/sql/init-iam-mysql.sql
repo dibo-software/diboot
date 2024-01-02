@@ -20,13 +20,12 @@ create table dbt_iam_user
 create index idx_dbt_iam_user_1 on dbt_iam_user (org_id);
 create index idx_dbt_iam_user_2 on dbt_iam_user (mobile_phone);
 create index idx_dbt_iam_user_num on dbt_iam_user (user_num);
-create index idx_dbt_iam_user_tenant on dbt_iam_user (tenant_id);
 
 -- 账号表
 create table dbt_iam_account
 (
   id           varchar(32) NOT NULL COMMENT 'ID' primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   user_type    varchar(100) default 'IamUser'         not null comment '用户类型',
   user_id      varchar(32) NOT NULL DEFAULT '0' comment '用户ID',
   auth_type    varchar(20)  default 'PWD'             not null comment '认证方式',
@@ -40,7 +39,6 @@ create table dbt_iam_account
 ) DEFAULT CHARSET=utf8 COMMENT '登录账号';
 -- 创建索引
 create index idx_dbt_iam_account on dbt_iam_account(auth_account, auth_type, user_type);
-create index idx_dbt_iam_account_tenant on dbt_iam_account (tenant_id);
 
 -- 角色表
 create table dbt_iam_role
@@ -55,7 +53,7 @@ create table dbt_iam_role
   update_time  datetime null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP comment '更新时间'
 )DEFAULT CHARSET=utf8 COMMENT '角色';
 -- 创建索引
-create index idx_dbt_iam_role_tenant on dbt_iam_role (tenant_id);
+create index idx_dbt_iam_role_code on dbt_iam_role (code);
 
 -- 用户角色表
 create table dbt_iam_user_role
@@ -71,7 +69,6 @@ create table dbt_iam_user_role
 )DEFAULT CHARSET=utf8 COMMENT '用户角色关联';
 -- 索引
 create index idx_dbt_iam_user_role on dbt_iam_user_role (user_type, user_id);
-create index idx_dbt_iam_user_role_tenant on dbt_iam_user_role (tenant_id);
 
 -- 前端资源权限表
 create table dbt_iam_resource
@@ -95,13 +92,12 @@ create table dbt_iam_resource
 )DEFAULT CHARSET=utf8 COMMENT '资源权限';
 -- 索引
 create index idx_dbt_iam_resource on dbt_iam_resource (parent_id);
-create index idx_dbt_iam_resource_tenant on dbt_iam_resource (tenant_id);
 
 -- 角色-权限
 create table dbt_iam_role_resource
 (
   id  varchar(32) NOT NULL comment 'ID' primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   role_id   varchar(32) not null comment '角色ID',
   resource_id varchar(32) not null comment '资源ID',
   is_deleted    tinyint(1) default 0 not null comment '是否删除',
@@ -109,13 +105,12 @@ create table dbt_iam_role_resource
 )DEFAULT CHARSET=utf8 COMMENT '角色权限';
 -- 索引
 create index idx_dbt_iam_role_resource on dbt_iam_role_resource (role_id, resource_id);
-create index idx_dbt_iam_role_resource_tenant on dbt_iam_role_resource (tenant_id);
 
 -- 登录日志表
 create table dbt_iam_login_trace
 (
   id           varchar(32) NOT NULL comment 'ID'   primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   user_type    varchar(100) default 'IamUser'         not null comment '用户类型',
   user_id      varchar(32) NOT NULL  comment '用户ID',
   auth_type    varchar(20)  default 'PWD'             not null comment '认证方式',
@@ -129,13 +124,12 @@ create table dbt_iam_login_trace
 -- 创建索引
 create index idx_dbt_iam_login_trace on dbt_iam_login_trace (user_type, user_id);
 create index idx_dbt_iam_login_trace_2 on dbt_iam_login_trace (auth_account);
-create index idx_dbt_iam_login_trace_tenant on dbt_iam_login_trace (tenant_id);
 
 -- 操作日志表
 create table dbt_iam_operation_log
 (
   id        varchar(32) NOT NULL comment 'ID'   primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   app_module  varchar(50)   null comment '应用模块',
   business_obj    varchar(100)  not null comment '业务对象',
   operation   varchar(100)  not null comment '操作描述',
@@ -154,13 +148,12 @@ create table dbt_iam_operation_log
   DEFAULT CHARSET=utf8 COMMENT '操作日志';
 -- 创建索引
 create index idx_dbt_iam_operation_log on dbt_iam_operation_log (user_type, user_id);
-create index idx_dbt_iam_operation_log_tenant on dbt_iam_operation_log (tenant_id);
 
 -- 组织表
 create table dbt_iam_org
 (
     id              varchar(32)  NOT NULL comment 'ID' primary key,
-    tenant_id       varchar(32)  NOT NULL DEFAULT 0 COMMENT '租户ID',
+    tenant_id       varchar(32)  NOT NULL DEFAULT '0' COMMENT '租户ID',
     parent_id       varchar(32)  NOT NULL default '0' comment '上级ID',
     parent_ids_path varchar(500) comment '上级ID路径',
     root_org_id     varchar(32)  NOT NULL default '0' comment '企业ID',
@@ -177,14 +170,13 @@ create table dbt_iam_org
 )
   comment '组织';
 create index idx_dbt_iam_org on dbt_iam_org (parent_id);
-create index idx_dbt_iam_org_tenant on dbt_iam_org (tenant_id);
 create index idx_dbt_iam_org_parent_path on dbt_iam_org (parent_ids_path);
 
 -- 岗位
 create table dbt_iam_position
 (
   id        varchar(32) NOT NULL comment 'ID' primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   name                 varchar(100)                          not null comment '名称',
   code                 varchar(50) not null comment '编码',
   is_virtual           tinyint(1)  default 0                 not null comment '是否虚拟岗',
@@ -197,13 +189,12 @@ create table dbt_iam_position
 )
 comment '岗位';
 create index idx_dbt_iam_position on dbt_iam_position (code);
-create index idx_dbt_iam_position_tenant on dbt_iam_position (tenant_id);
 
 -- 用户岗位
 create table dbt_iam_user_position
 (
   id        varchar(32) NOT NULL comment 'ID' primary key,
-  tenant_id varchar(32) NOT NULL DEFAULT 0 COMMENT '租户ID',
+  tenant_id varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
   user_type           varchar(100) default 'IamUser' not null comment '用户类型',
   user_id   varchar(32) NOT NULL comment '用户ID',
   org_id    varchar(32) NOT NULL default '0' comment '组织ID',
@@ -230,5 +221,4 @@ CREATE TABLE `dbt_system_config`
     `create_time` datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 )COMMENT = '系统配置';
-create index idx_dbt_system_config_tenant_id on dbt_system_config (tenant_id);
 create index idx_dbt_system_config on dbt_system_config (`category`, `prop_key`);

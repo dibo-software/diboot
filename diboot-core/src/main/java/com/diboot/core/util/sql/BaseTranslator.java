@@ -77,17 +77,19 @@ public abstract class BaseTranslator {
         List<String> newColComments = new ArrayList<>();
         List<String> columns = S.splitToList(body);
         columns.forEach(col -> {
-            if(!S.containsIgnoreCase(col, "PRIMARY KEY")) {
-                col = S.replace(col, "\n", "").trim();
-                //\n id varchar(32) NOT NULL COMMENT 'ID'
-                String colName = S.substringBefore(col, " ");
-                String comment = S.substringAfter(col, "COMMENT");
-                col = S.substringBefore(col, "COMMENT").trim();
-                if(colName.equals("id")) {
-                    col += " PRIMARY KEY";
-                }
+            col = S.replace(col, "\n", "").trim();
+            //\n id varchar(32) NOT NULL COMMENT 'ID'
+            String colName = S.substringBefore(col, " ");
+            String comment = S.substringAfter(col, "COMMENT");
+            col = S.substringBefore(col, "COMMENT").trim();
+            if(colName.equals("id")) {
+                col += " PRIMARY KEY";
+            }
+            if(S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (`id`)")
+            || S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (id)")) {
+            }
+            else {
                 // 数据类型替换
-                // 替换
                 newColDefines.add(translateColDefineSql(col));
                 newColComments.add(buildColumnCommentSql(table, colName, comment));
             }
