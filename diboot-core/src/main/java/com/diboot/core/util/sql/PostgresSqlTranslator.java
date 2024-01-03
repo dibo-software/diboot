@@ -28,14 +28,17 @@ public class PostgresSqlTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         // boolean 类型
-        if(S.containsIgnoreCase(colDefineSql, "tinyint(1)")) {
+        if(S.containsIgnoreCase(colDefineSql, "tinyint")) {
             return S.replaceEach(colDefineSql,
-                    new String[]{"tinyint(1)", "DEFAULT '1'", "DEFAULT 1", "default 1", "DEFAULT '0'", "default 0", "DEFAULT 0"},
-                    new String[]{"BOOLEAN", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT FALSE", "DEFAULT FALSE", "DEFAULT FALSE"}
+                    new String[]{"tinyint(1)", "tinyint", "DEFAULT '1'", "DEFAULT 1", "default 1", "DEFAULT '0'", "default 0", "DEFAULT 0"},
+                    new String[]{"BOOLEAN", "BOOLEAN", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT FALSE", "DEFAULT FALSE", "DEFAULT FALSE"}
             );
         }
         if(S.containsIgnoreCase(colDefineSql, "datetime")) {
-            return S.replaceEach(colDefineSql, new String[] {"datetime", " on update CURRENT_TIMESTAMP", "ON UPDATE CURRENT_TIMESTAMP"}, new String[]{"timestamp", "", ""});
+            return S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
+        }
+        if(colDefineSql.contains("`")) {
+            colDefineSql = S.replace(colDefineSql, "`", "\"");
         }
         return colDefineSql;
     }

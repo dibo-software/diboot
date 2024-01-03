@@ -31,7 +31,7 @@ public class SqlServerTranslator extends BaseTranslator {
             new String[]{"tinyint(1)"},
             new String[]{"tinyint"}
         );
-        return S.replaceEach(colDefineSql, new String[] {" on update CURRENT_TIMESTAMP", " ON UPDATE CURRENT_TIMESTAMP"}, new String[]{"", ""});
+        return colDefineSql;
     }
 
     @Override

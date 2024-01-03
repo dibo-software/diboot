@@ -49,6 +49,9 @@ public abstract class BaseTranslator {
             else if(S.containsIgnoreCase(stmt, "CREATE INDEX ")) {
                 postgresStatements.add(this.translateCreateIndexDDL(stmt));
             }
+            else if(S.containsIgnoreCase(stmt, "INSERT INTO ")) {
+                postgresStatements.add(this.translateInsertValues(stmt));
+            }
             else {
                 throw new InvalidUsageException("暂不支持该SQL翻译：{}", stmt);
             }
@@ -78,12 +81,19 @@ public abstract class BaseTranslator {
         List<String> columns = S.splitToList(body);
         columns.forEach(col -> {
             col = S.replace(col, "\n", "").trim();
+            if(S.containsIgnoreCase(col, "unsigned")) {
+                col = S.replaceIgnoreCase(col, " unsigned ", " ");
+            }
+            if(S.containsIgnoreCase(col, "AUTO_INCREMENT")) {
+                col = S.replaceIgnoreCase(col, " AUTO_INCREMENT ", " ");
+            }
+            col = S.replaceIgnoreCase(col, " ON UPDATE CURRENT_TIMESTAMP", "");
             //\n id varchar(32) NOT NULL COMMENT 'ID'
             String colName = S.substringBefore(col, " ");
             // 提取列备注
             String comment = extractCommentLabel(col);
             col = S.substringBefore(col, "COMMENT").trim();
-            if(colName.equals("id")) {
+            if(colName.equals("id") && !S.containsIgnoreCase(col, "PRIMARY KEY")) {
                 col += " PRIMARY KEY";
             }
             if(S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (`id`)")
@@ -92,7 +102,9 @@ public abstract class BaseTranslator {
             else {
                 // 数据类型替换
                 newColDefines.add(translateColDefineSql(col));
-                newColComments.add(buildColumnCommentSql(table, colName, comment));
+                if(V.notEmpty(comment)) {
+                    newColComments.add(buildColumnCommentSql(table, colName, comment));
+                }
             }
         });
         String comment = S.substringAfterLast(newSql, ")");
@@ -101,8 +113,9 @@ public abstract class BaseTranslator {
 
         newSqls.add(sb.toString());
         newSqls.addAll(newColComments);
-        newSqls.add(buildTableCommentSql(table, comment));
-
+        if(V.notEmpty(comment)) {
+            newSqls.add(buildTableCommentSql(table, comment));
+        }
         return newSqls;
     }
 
@@ -119,6 +132,10 @@ public abstract class BaseTranslator {
             createIndex += ";";
         }
         return createIndex;
+    }
+
+    protected String translateInsertValues(String insertSql) {
+        return S.removeDuplicateBlank(insertSql).trim() + ";";
     }
 
     protected String buildColumnCommentSql(String table, String colName, String comment) {

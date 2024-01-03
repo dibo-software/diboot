@@ -33,10 +33,10 @@ public class OracleTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-                new String[]{" tinyint(1)", "varchar(", " datetime ", " bigint "},
-                new String[]{" NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) "}
+                new String[]{" tinyint(1)", " tinyint", "varchar(", " datetime ", " bigint "},
+                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) "}
         );
-        colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime", " on update CURRENT_TIMESTAMP", "ON UPDATE CURRENT_TIMESTAMP"}, new String[]{"timestamp", "", ""});
+        colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
         return colDefineSql;
     }
 

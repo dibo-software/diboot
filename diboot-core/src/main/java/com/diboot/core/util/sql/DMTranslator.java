@@ -28,10 +28,9 @@ public class DMTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-                new String[]{" tinyint(1) ", " bigint ", " smallint ", " int "},
-                new String[]{" BIT ", " NUMBER(20) ", " NUMBER(6) ", " NUMBER(9) "}
+                new String[]{" tinyint(1) ", " tinyint", " bigint ", " smallint ", " int "},
+                new String[]{" BIT ", " BIT", " NUMBER(20) ", " NUMBER(6) ", " NUMBER(9) "}
         );
-        colDefineSql = S.replaceEach(colDefineSql, new String[] {"on update CURRENT_TIMESTAMP", "ON UPDATE CURRENT_TIMESTAMP"}, new String[]{"", ""});
         return colDefineSql;
     }
 
