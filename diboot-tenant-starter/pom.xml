@@ -9,7 +9,6 @@
     <groupId>com.diboot</groupId>
     <artifactId>diboot-tenant-spring-boot-starter</artifactId>
     <name>diboot-tenant-starter</name>
-
     <dependencies>
         <!-- 依赖core -->
         <dependency>
