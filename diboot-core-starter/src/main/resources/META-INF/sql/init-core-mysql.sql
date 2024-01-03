@@ -18,7 +18,7 @@ CREATE TABLE `dbt_dictionary` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COMMENT '数据字典';
 -- 创建索引
-create index idx_dbt_directory on dbt_dictionary(type, item_value);
+create index idx_dbt_directory on dbt_dictionary(type);
 
 -- 国际化表
 create table dbt_i18n_config
