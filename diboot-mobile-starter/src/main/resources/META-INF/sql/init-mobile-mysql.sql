@@ -22,8 +22,7 @@ CREATE TABLE `dbt_iam_member` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4 COMMENT='移动端用户';
 -- 索引
-create index idx_dbt_member_tenant on dbt_iam_member (tenant_id);
 create index idx_dbt_member_orgid on dbt_iam_member (org_id);
 create index idx_dbt_member_openid on dbt_iam_member (openid);
 create index idx_dbt_member_phone on dbt_iam_member (mobile_phone);
-create index idx_dbt_member_user on dbt_iam_member (user_id, user_type);
+create index idx_dbt_member_user on dbt_iam_member (user_type, user_id);
