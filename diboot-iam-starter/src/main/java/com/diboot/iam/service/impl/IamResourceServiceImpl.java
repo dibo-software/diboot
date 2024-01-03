@@ -53,16 +53,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
 
-    @Autowired(required = false)
-    private TenantContext<String> tenantContext;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deepCreateResourceAndChildren(IamResourceListVO iamResource) {
         if (iamResource == null) {
             return;
         }
-        if (TenantContext.hasContextImpl()) {
-            iamResource.setTenantId(tenantContext.get());
+        if (TenantContext.isEnabled()) {
+            iamResource.setTenantId(TenantContext.get());
         }
         if (!super.createEntity(iamResource)) {
             log.warn("新建资源权限失败，displayType=" + iamResource.getDisplayType());
@@ -83,8 +81,8 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createMenuResources(IamResourceDTO iamResourceDTO) {
-        if (TenantContext.hasContextImpl()) {
-            iamResourceDTO.setTenantId(tenantContext.get());
+        if (TenantContext.isEnabled()) {
+            iamResourceDTO.setTenantId(TenantContext.get());
         }
         // 创建menu
         boolean success = this.createEntity(iamResourceDTO);
@@ -112,8 +110,8 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         if (V.equals(iamResourceDTO.getId(), iamResourceDTO.getParentId())) {
             throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单资源为自身");
         }
-        if (TenantContext.hasContextImpl()) {
-            iamResourceDTO.setTenantId(tenantContext.get());
+        if (TenantContext.isEnabled()) {
+            iamResourceDTO.setTenantId(TenantContext.get());
         }
         // 更新 menu
         this.updateEntity(iamResourceDTO);
@@ -239,8 +237,8 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void createOrUpdateMenuResources(IamResourceDTO resourceDTO) {
-        if (TenantContext.hasContextImpl()) {
-            resourceDTO.setTenantId(tenantContext.get());
+        if (TenantContext.isEnabled()) {
+            resourceDTO.setTenantId(TenantContext.get());
         }
         // 如果dto的id存在，则更新
         if(V.isEmpty(resourceDTO.getId())) {

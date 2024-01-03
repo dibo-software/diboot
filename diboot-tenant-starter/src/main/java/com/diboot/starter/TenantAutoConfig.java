@@ -58,13 +58,13 @@ public class TenantAutoConfig {
     public TenantContext<String> tenantContext() {
         return new TenantContext<String>() {
             @Override
-            public String get() {
+            public String getTenantId() {
                 return IamSecurityUtils.getCurrentTenantId();
             }
 
             @Override
-            public List<String> gets() {
-                return Arrays.asList(get(), Cons.ID_PREVENT_NULL);
+            public List<String> getTenantIds() {
+                return Arrays.asList(getTenantId(), Cons.ID_PREVENT_NULL);
             }
         };
     }

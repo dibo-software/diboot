@@ -23,23 +23,60 @@ public interface TenantContext<T> {
      *
      * @return
      */
-    T get();
+    T getTenantId();
 
     /**
      * 获取当前登录用户租户id 和 平台租户id
      *
      * @return
      */
-    List<T> gets();
+    List<T> getTenantIds();
 
     /**
-     * 检查可以使用上下文
+     * 检查是否开启
+     *
      * @return
      */
-    static boolean hasContextImpl() {
-        if (BaseConfig.isEnableTenant() && V.isEmpty(ContextHolder.getBean(TenantContext.class))) {
+    static boolean isEnabled() {
+        return BaseConfig.isEnableTenant();
+    }
+
+    /**
+     * 获取当前登录用户租户id
+     *
+     * @return
+     */
+    static <R> R get() {
+        TenantContext<R> context = ContextHolder.getBean(TenantContext.class);
+        if (V.isEmpty(context)) {
             throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "租户未启用相关实现");
         }
-        return BaseConfig.isEnableTenant();
+        return context.getTenantId();
+    }
+
+    /**
+     * 获取当前登录用户租户id
+     * <p>
+     * 如果没有（值不存在，或者没有实现上下文，返回0）
+     *
+     * @return
+     */
+    static <R> R getOrDefault(R defaultVal) {
+        TenantContext<R> tenantContext = ContextHolder.getBean(TenantContext.class);
+        return V.isEmpty(tenantContext) || V.isEmpty(tenantContext.getTenantId())
+                ? defaultVal : tenantContext.getTenantId();
+    }
+
+    /**
+     * 获取当前登录用户租户id 和 平台租户id
+     *
+     * @return
+     */
+    static <R> List<R> gets() {
+        TenantContext<R> context = ContextHolder.getBean(TenantContext.class);
+        if (V.isEmpty(context)) {
+            throw new BusinessException(Status.FAIL_SERVICE_UNAVAILABLE, "租户未启用相关实现");
+        }
+        return context.getTenantIds();
     }
 }
