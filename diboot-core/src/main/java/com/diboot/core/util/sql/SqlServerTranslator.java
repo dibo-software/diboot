@@ -15,7 +15,7 @@
  */
 package com.diboot.core.util.sql;
 
-import java.util.List;
+import com.diboot.core.util.S;
 
 /**
  * SqlServer SQL翻译器
@@ -25,9 +25,29 @@ import java.util.List;
  */
 public class SqlServerTranslator extends BaseTranslator {
 
-
     @Override
     protected String translateColDefineSql(String colDefineSql) {
-        return null;
+        colDefineSql = S.replaceEach(colDefineSql,
+            new String[]{"tinyint(1)"},
+            new String[]{"tinyint"}
+        );
+        return S.replaceEach(colDefineSql, new String[] {" on update CURRENT_TIMESTAMP", " ON UPDATE CURRENT_TIMESTAMP"}, new String[]{"", ""});
     }
+
+    @Override
+    protected String translateCreateIndexDDL(String mysqlDDL) {
+        String createIndex = super.translateCreateIndexDDL(mysqlDDL);
+        return createIndex.replace(" index ", " nonclustered index ");
+    }
+
+    @Override
+    protected String buildColumnCommentSql(String table, String colName, String comment) {
+        return "execute sp_addextendedproperty 'MS_Description', N"+comment.trim()+", 'SCHEMA', '${SCHEMA}', 'table', "+table+", 'column', '"+colName+"';";
+    }
+
+    @Override
+    protected String buildTableCommentSql(String table, String comment) {
+        return "execute sp_addextendedproperty 'MS_Description', N'"+comment.trim()+"','SCHEMA', '${SCHEMA}', 'table', "+table+", null, null;";
+    }
+
 }

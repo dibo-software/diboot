@@ -16,7 +16,7 @@ CREATE TABLE `dbt_iam_member` (
     `gender` varchar(10) COMMENT '性别',
     `status` varchar(20) NOT NULL DEFAULT 'NORMAL' COMMENT '状态',
     `description` varchar(200) DEFAULT NULL COMMENT '备注',
-    `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+    `is_deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标记',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`)
