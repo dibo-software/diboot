@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     DiTree: typeof import('@/components/di/Tree.vue')['default']
     DocumentPdf: typeof import('@/components/document/Pdf.vue')['default']
     DocumentWord: typeof import('@/components/document/Word.vue')['default']
+    Download: typeof import('@/components/download/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
