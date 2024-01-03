@@ -80,7 +80,8 @@ public abstract class BaseTranslator {
             col = S.replace(col, "\n", "").trim();
             //\n id varchar(32) NOT NULL COMMENT 'ID'
             String colName = S.substringBefore(col, " ");
-            String comment = S.substringAfter(col, "COMMENT");
+            // 提取列备注
+            String comment = extractCommentLabel(col);
             col = S.substringBefore(col, "COMMENT").trim();
             if(colName.equals("id")) {
                 col += " PRIMARY KEY";
@@ -95,8 +96,7 @@ public abstract class BaseTranslator {
             }
         });
         String comment = S.substringAfterLast(newSql, ")");
-        comment = S.substringAfter(comment, "COMMENT").trim();
-        comment = S.substringBetween(comment, "'", "'").trim();
+        comment = extractCommentLabel(comment);
         sb.append(S.join(newColDefines, ", ")).append(");");
 
         newSqls.add(sb.toString());
@@ -122,11 +122,19 @@ public abstract class BaseTranslator {
     }
 
     protected String buildColumnCommentSql(String table, String colName, String comment) {
-        return "comment on column "+ table +"."+colName+" is "+comment+";";
+        return "comment on column "+ table +"."+colName+" is '"+comment+"';";
     }
 
     protected String buildTableCommentSql(String table, String comment) {
         return "comment on table "+ table +" is '"+comment+"';";
+    }
+
+    private String extractCommentLabel(String comment) {
+        if(!S.containsIgnoreCase(comment, "COMMENT")) {
+            return null;
+        }
+        comment = S.substringAfter(comment, "COMMENT").trim();
+        return S.substringBetween(comment, "'", "'").trim();
     }
 
 }

@@ -42,7 +42,7 @@ public class SqlServerTranslator extends BaseTranslator {
 
     @Override
     protected String buildColumnCommentSql(String table, String colName, String comment) {
-        return "execute sp_addextendedproperty 'MS_Description', N"+comment.trim()+", 'SCHEMA', '${SCHEMA}', 'table', "+table+", 'column', '"+colName+"';";
+        return "execute sp_addextendedproperty 'MS_Description', N'"+comment.trim()+"', 'SCHEMA', '${SCHEMA}', 'table', "+table+", 'column', '"+colName+"';";
     }
 
     @Override
