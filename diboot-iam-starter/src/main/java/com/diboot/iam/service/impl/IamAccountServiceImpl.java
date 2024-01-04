@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -36,11 +37,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
-* 认证用户相关Service实现
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
-*/
+ * 认证用户相关Service实现
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-03
+ */
 @Service
 @Slf4j
 public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, IamAccount> implements IamAccountService {
@@ -51,7 +53,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
     @Override
     public boolean createEntity(IamAccount iamAccount) {
         // 生成加密盐并加密
-        if (V.notEmpty(iamAccount.getAuthSecret())){
+        if (V.notEmpty(iamAccount.getAuthSecret())) {
             iamCustomize.encryptPwd(iamAccount);
         }
         // 保存
@@ -60,13 +62,13 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createEntities(List<IamAccount> accountList){
-        if(V.isEmpty(accountList)){
+    public boolean createEntities(List<IamAccount> accountList) {
+        if (V.isEmpty(accountList)) {
             return true;
         }
-        for(IamAccount account : accountList){
+        for (IamAccount account : accountList) {
             // 生成加密盐并加密
-            if (V.notEmpty(account.getAuthSecret())){
+            if (V.notEmpty(account.getAuthSecret())) {
                 iamCustomize.encryptPwd(account);
             }
         }
@@ -76,20 +78,20 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
     @Override
     public boolean changePwd(ChangePwdDTO changePwdDTO, IamAccount iamAccount) throws Exception {
         // 验证账号信息是否存在
-        if (iamAccount == null){
+        if (iamAccount == null) {
             throw new BusinessException(Status.FAIL_OPERATION, "账号信息不存在");
         }
         // 验证当前账号登录方式
-        if (!Cons.DICTCODE_AUTH_TYPE.PWD.name().equals(iamAccount.getAuthType())){
+        if (!Cons.DICTCODE_AUTH_TYPE.PWD.name().equals(iamAccount.getAuthType())) {
             throw new BusinessException(Status.FAIL_OPERATION, "该账号登录方式不支持更改密码");
         }
         // 验证密码一致性
-        if (V.notEquals(changePwdDTO.getPassword(), changePwdDTO.getConfirmPassword())){
+        if (V.notEquals(changePwdDTO.getPassword(), changePwdDTO.getConfirmPassword())) {
             throw new BusinessException(Status.FAIL_OPERATION, "密码与确认密码不一致，请重新输入");
         }
         // 验证旧密码是否正确
         String oldAuthSecret = iamCustomize.encryptPwd(changePwdDTO.getOldPassword(), iamAccount.getSecretSalt());
-        if (V.notEquals(oldAuthSecret, iamAccount.getAuthSecret())){
+        if (V.notEquals(oldAuthSecret, iamAccount.getAuthSecret())) {
             throw new BusinessException(Status.FAIL_OPERATION, "旧密码错误，请重新输入");
         }
 
@@ -108,7 +110,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
                 .eq(IamAccount::getUserType, userType)
                 .eq(IamAccount::getUserId, userId);
         IamAccount account = getSingleEntity(queryWrapper);
-        return account!=null? account.getAuthAccount() : null;
+        return account != null ? account.getAuthAccount() : null;
     }
 
     @Override
@@ -117,7 +119,6 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
                 .eq(IamAccount::getAuthAccount, iamAccount.getAuthAccount())
                 .eq(IamAccount::getAuthType, iamAccount.getAuthType())
                 .eq(IamAccount::getUserType, iamAccount.getUserType())
-                .eq(IamAccount::getTenantId, iamAccount.getTenantId())
                 .ne(V.notEmpty(iamAccount.getUserId()), IamAccount::getUserId, iamAccount.getUserId());
         return exists(queryWrapper);
     }
@@ -132,13 +133,14 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
 
     /**
      * 判断账号是否存在
+     *
      * @param iamAccount
      * @return
      */
     @Override
-    public void beforeCreate(IamAccount iamAccount){
-        if(isAccountExists(iamAccount)){
-            String errorMsg = "账号 "+ iamAccount.getAuthAccount() +" 已存在，请重新设置！";
+    public void beforeCreate(IamAccount iamAccount) {
+        if (isAccountExists(iamAccount)) {
+            String errorMsg = "账号 " + iamAccount.getAuthAccount() + " 已存在，请重新设置！";
             log.warn("保存账号异常: {}", errorMsg);
             throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
         }
@@ -146,11 +148,12 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
 
     /**
      * 判断账号是否存在
+     *
      * @param iamAccount
      * @return
      */
     @Override
-    public void beforeUpdate(IamAccount iamAccount){
+    public void beforeUpdate(IamAccount iamAccount) {
         beforeCreate(iamAccount);
     }
 
