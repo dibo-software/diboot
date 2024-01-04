@@ -14,8 +14,8 @@ export const checkValue =
       params.id = id()
       params[prop] = value
       api
-        .get<boolean>(validateApi, params)
-        .then(res => callback(res.data ? void 0 : `内容重复，${value} 已存在!`))
+        .get<boolean | undefined>(validateApi, params)
+        .then(res => callback(res.data !== false ? void 0 : `内容重复，${value} 已存在!`))
         .catch(err => callback(err.msg || err))
     }
   }
