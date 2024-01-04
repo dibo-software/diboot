@@ -29,6 +29,12 @@ public class PropertiesUtils {
 
     private static Environment environment;
 
+    public static void setEnvironment(Environment env) {
+        if(environment == null) {
+            environment = env;
+        }
+    }
+
     /***
      *  读取配置项的值
      * @param key

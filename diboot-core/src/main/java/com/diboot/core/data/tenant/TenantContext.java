@@ -3,8 +3,10 @@ package com.diboot.core.data.tenant;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.PropertiesUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
+import org.springframework.core.env.Environment;
 
 import java.util.List;
 
@@ -38,6 +40,16 @@ public interface TenantContext<T> {
      * @return
      */
     static boolean isEnabled() {
+        return BaseConfig.isEnableTenant();
+    }
+
+    /**
+     * 检查是否开启
+     * @param environment 预先填充 environment 避免从environment中获取配置值异常
+     * @return
+     */
+    static boolean isEnabled(Environment environment) {
+        PropertiesUtils.setEnvironment(environment);
         return BaseConfig.isEnableTenant();
     }
 
