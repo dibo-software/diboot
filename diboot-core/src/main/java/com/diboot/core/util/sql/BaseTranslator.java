@@ -31,6 +31,8 @@ import java.util.*;
 @Slf4j
 public abstract class BaseTranslator {
 
+    private Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
+
     /**
      * 执行ddl翻译
      * @param mysqlStatements
@@ -79,6 +81,8 @@ public abstract class BaseTranslator {
         List<String> newColDefines = new ArrayList<>();
         List<String> newColComments = new ArrayList<>();
         List<String> columns = S.splitToList(body);
+
+        Map<String, String> column2TypeMap = new HashMap<>();
         columns.forEach(col -> {
             col = S.replace(col, "\n", "").trim();
             if(S.containsIgnoreCase(col, "unsigned")) {
@@ -93,18 +97,20 @@ public abstract class BaseTranslator {
             // 提取列备注
             String comment = extractCommentLabel(col);
             col = S.substringBefore(col, "COMMENT").trim();
-            if(colName.equals("id") && !S.containsIgnoreCase(col, "PRIMARY KEY")) {
-                col += " PRIMARY KEY";
-            }
             if(S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (`id`)")
             || S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (id)")) {
             }
             else {
-                // 数据类型替换
-                newColDefines.add(translateColDefineSql(col));
+                if(colName.equals("id") && !S.containsIgnoreCase(col, "PRIMARY KEY")) {
+                    col += " PRIMARY KEY";
+                }
+                String colDefineStmt = translateColDefineSql(col);
+                newColDefines.add(colDefineStmt);
                 if(V.notEmpty(comment)) {
                     newColComments.add(buildColumnCommentSql(table, colName, comment));
                 }
+                // 数据类型替换
+                column2TypeMap.put(colName, colDefineStmt);
             }
         });
         String comment = S.substringAfterLast(newSql, ")");
@@ -116,6 +122,7 @@ public abstract class BaseTranslator {
         if(V.notEmpty(comment)) {
             newSqls.add(buildTableCommentSql(table, comment));
         }
+        table2ColumnTypeMap.put(table, column2TypeMap);
         return newSqls;
     }
 
@@ -127,15 +134,74 @@ public abstract class BaseTranslator {
      * @return
      */
     protected String translateCreateIndexDDL(String mysqlDDL) {
-        String createIndex = S.removeDuplicateBlank(mysqlDDL).replace("`", "");
+        String createIndex = S.removeDuplicateBlank(mysqlDDL).trim().replace("`", "");
         if(!createIndex.endsWith(";")) {
             createIndex += ";";
         }
         return createIndex;
     }
 
-    protected String translateInsertValues(String insertSql) {
-        return S.removeDuplicateBlank(insertSql).trim() + ";";
+    private String translateInsertValues(String insertSql) {
+        insertSql = S.removeDuplicateBlank(insertSql).trim().replace("`", "");
+        String prefix = S.substringBefore(insertSql, "VALUES");
+        StringBuilder sb = new StringBuilder(prefix).append("VALUES");
+        String cols = S.substringBetween(prefix, "(", ")");
+        String[] columns = S.split(cols, ",");
+
+        String table = S.substringBetween(prefix, " INTO ", "(").trim();
+        Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
+
+        String suffix = S.substringAfter(insertSql, "VALUES");
+        while (S.contains(suffix, "(")) {
+            suffix = S.substringAfter(suffix, "(");
+            sb.append("(");
+            List<Object> newValues = new ArrayList<>(columns.length);
+            List<String> colValues = new ArrayList<>(columns.length);
+            String record = S.substringBefore(suffix, ")");
+            while (S.contains(record, ",")) {
+                record = record.trim();
+                String value = null;
+                if(record.startsWith("'")) {
+                    value = S.substringBetween(record, "'", "'");
+                    value = "'" + value + "'";
+                    record = S.substringAfter(record,"'");
+                    record = S.substringAfter(record, "'");
+                }
+                else {
+                    value = S.substringBefore(record, ",").trim();
+                }
+                record = S.substringAfter(record, ",").trim();
+                colValues.add(value);
+                // last one
+                if(!S.contains(record, ",")) {
+                    if(record.startsWith("'")) {
+                        value = S.substringBetween(record, "'", "'");
+                        value = "'" + value + "'";
+                    }
+                    else {
+                        value = record.trim();
+                    }
+                    colValues.add(value);
+                }
+            }
+            for(int i=0; i<columns.length; i++) {
+                String colType = col2TypeMap.get(columns[i].trim());
+                newValues.add(translateValue(colType, colValues.get(i)));
+            }
+            sb.append(S.join(newValues));
+            sb.append(")");
+            if(S.contains(suffix, "(")) {
+                sb.append(",");
+            }
+            else {
+                sb.append(";");
+            }
+        }
+        return sb.toString();
+    }
+
+    protected Object translateValue(String colDefine, String value) {
+        return value;
     }
 
     protected String buildColumnCommentSql(String table, String colName, String comment) {

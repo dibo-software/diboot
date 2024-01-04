@@ -247,7 +247,7 @@ public class SqlFileInitializer {
      * @param inst
      * @return
      */
-    protected static List<String> readLinesFromResource(Class inst, String sqlPath){
+    public static List<String> readLinesFromResource(Class inst, String sqlPath){
         List<String> lines = null;
         try{
             InputStream is = inst.getClassLoader().getResourceAsStream(sqlPath);
