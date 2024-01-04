@@ -16,6 +16,7 @@
 package com.diboot.core.util.sql;
 
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 
 /**
  * PostgresSql SQL翻译器
@@ -41,6 +42,14 @@ public class PostgresSqlTranslator extends BaseTranslator {
             colDefineSql = S.replace(colDefineSql, "`", "\"");
         }
         return colDefineSql;
+    }
+
+    @Override
+    protected Object translateValue(String colDefine, String value) {
+        if(S.containsIgnoreCase(colDefine," BOOLEAN ")) {
+            return V.isTrue(value);
+        }
+        return value;
     }
 
 }
