@@ -31,7 +31,7 @@ import java.util.*;
 @Slf4j
 public abstract class BaseTranslator {
 
-    private Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
+    private static Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
 
     /**
      * 执行ddl翻译
@@ -123,6 +123,7 @@ public abstract class BaseTranslator {
             newSqls.add(buildTableCommentSql(table, comment));
         }
         table2ColumnTypeMap.put(table, column2TypeMap);
+        System.out.println("缓存 table keys = " + table2ColumnTypeMap.keySet());
         return newSqls;
     }
 
