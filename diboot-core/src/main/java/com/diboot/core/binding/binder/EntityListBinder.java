@@ -209,7 +209,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
                 key2TargetListMap.put(matchKey, entityList);
             }
             Object target = entity;
-            if(target instanceof Map == false){
+            if(!(target instanceof Map)){
                 target = cloneOrConvertBean(entity);
             }
             entityList.add(target);

@@ -187,7 +187,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
                         sb.append(Cons.SEPARATOR_COMMA);
                     }
                     sb.append(fieldValue);
-                    if(appendComma == false){
+                    if(!appendComma){
                         appendComma = true;
                     }
                 }

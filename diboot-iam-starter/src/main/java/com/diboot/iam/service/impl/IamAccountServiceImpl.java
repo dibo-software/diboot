@@ -75,6 +75,7 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
         return super.createEntities(accountList);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean changePwd(ChangePwdDTO changePwdDTO, IamAccount iamAccount) throws Exception {
         // 验证账号信息是否存在

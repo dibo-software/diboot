@@ -200,7 +200,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             // 查找匹配Key
             String matchKey = sb.toString();
             Object target = entity;
-            if(target instanceof Map == false){
+            if(!(target instanceof Map)){
                 target = cloneOrConvertBean(entity);
             }
             key2TargetMap.put(matchKey, target);

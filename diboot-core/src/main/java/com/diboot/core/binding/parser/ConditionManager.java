@@ -160,7 +160,7 @@ public class ConditionManager extends BaseConditionManager{
             else if(operator instanceof IsNullExpression){
                 IsNullExpression express = (IsNullExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     binder.andIsNull(annoColumn);
                 }
                 else{
@@ -170,7 +170,7 @@ public class ConditionManager extends BaseConditionManager{
             else if(operator instanceof InExpression){
                 InExpression express = (InExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     // this.xx in ('abc')
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
                         List<Object> consValues = extractConsValues(express.getRightItemsList());
@@ -194,7 +194,7 @@ public class ConditionManager extends BaseConditionManager{
             else if(operator instanceof Between){
                 Between express = (Between)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     binder.andBetween(annoColumn, express.getBetweenExpressionStart().toString(), express.getBetweenExpressionEnd().toString());
                 }
                 else{
@@ -205,7 +205,7 @@ public class ConditionManager extends BaseConditionManager{
                 LikeExpression express = (LikeExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 String value = express.getRightExpression().toString();
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     // this.xx != 'abc'
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
                         StringValue valueObj = (StringValue) express.getRightExpression();

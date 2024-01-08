@@ -242,6 +242,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         });
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteDictAndChildren(Serializable id) {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.lambdaQuery();

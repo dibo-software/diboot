@@ -94,7 +94,7 @@ public class JoinsBinder {
      */
     private static <DTO,T> List<T> executeJoinQuery(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz, Pagination pagination, boolean limit1){
         // 非动态查询，走BaseService
-        if(queryWrapper instanceof DynamicJoinQueryWrapper == false){
+        if(!(queryWrapper instanceof DynamicJoinQueryWrapper)){
             IService iService = ContextHolder.getIServiceByEntity(entityClazz);
             if(iService != null){
                 return ServiceAdaptor.queryList(iService, (QueryWrapper)queryWrapper, pagination, entityClazz);

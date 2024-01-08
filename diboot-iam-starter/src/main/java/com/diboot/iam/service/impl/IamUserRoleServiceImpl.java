@@ -186,6 +186,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         return success;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteUserRoleRelations(String userType, String userId) {
         String superAdminRoleId = getSuperAdminRoleId();

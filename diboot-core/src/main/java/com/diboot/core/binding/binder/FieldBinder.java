@@ -246,7 +246,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
                 sb.append(Cons.SEPARATOR_COMMA);
             }
             sb.append(fieldValue);
-            if(appendComma == false){
+            if(!appendComma){
                 appendComma = true;
             }
         }

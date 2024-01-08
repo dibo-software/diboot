@@ -196,7 +196,7 @@ public class ResultAssembler {
                         sb.append(Cons.SEPARATOR_COMMA);
                     }
                     sb.append(fieldValue);
-                    if(appendComma == false){
+                    if(!appendComma){
                         appendComma = true;
                     }
                 }
@@ -321,7 +321,7 @@ public class ResultAssembler {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append(S.valueOf(keyObj));
-                if(appendComma == false){
+                if(!appendComma){
                     appendComma = true;
                 }
             }
@@ -356,7 +356,7 @@ public class ResultAssembler {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append(S.valueOf(keyObj));
-                if(appendComma == false){
+                if(!appendComma){
                     appendComma = true;
                 }
             }
@@ -398,18 +398,14 @@ public class ResultAssembler {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append(S.valueOf(keyObj));
-                if(appendComma == false){
+                if(!appendComma){
                     appendComma = true;
                 }
             }
             String matchKeys = sb.toString();
             Object valueObj = row.containsKey(valueName)? row.get(valueName) : row.get(valueName.toUpperCase());
             if(valueObj != null){
-                List valueList = resultMap.get(matchKeys);
-                if(valueList == null){
-                    valueList = new ArrayList();
-                    resultMap.put(matchKeys, valueList);
-                }
+                List valueList = resultMap.computeIfAbsent(matchKeys, k -> new ArrayList());
                 valueList.add(valueObj);
             }
         }

@@ -33,6 +33,7 @@ import com.diboot.notification.utils.TemplateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +73,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         return send(message, null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean send(Message message, Object variableData) {
         // 获取发送通道

@@ -110,7 +110,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 if(joiner.getMiddleTable() != null && left.startsWith(joiner.getMiddleTableAlias() + ".")){
                     currentSegments = middleTableOnSegments;
                 }
-                if(expression.isNot() == false){
+                if(!expression.isNot()){
                     currentSegments.add(left + " IS NULL");
                 }
                 else{
@@ -124,7 +124,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 if(joiner.getMiddleTable() != null && left.startsWith(joiner.getMiddleTableAlias() + ".")){
                     currentSegments = middleTableOnSegments;
                 }
-                if(expression.isNot() == false){
+                if(!expression.isNot()){
                     currentSegments.add(left + " IN " + expression.getRightItemsList().toString());
                 }
                 else{
@@ -138,7 +138,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 if(joiner.getMiddleTable() != null && left.startsWith(joiner.getMiddleTableAlias() + ".")){
                     currentSegments = middleTableOnSegments;
                 }
-                if(expression.isNot() == false){
+                if(!expression.isNot()){
                     currentSegments.add(left + " BETWEEN " + expression.getBetweenExpressionStart().toString() + " AND " + expression.getBetweenExpressionEnd().toString());
                 }
                 else{
@@ -152,7 +152,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 if(joiner.getMiddleTable() != null && left.startsWith(joiner.getMiddleTableAlias() + ".")){
                     currentSegments = middleTableOnSegments;
                 }
-                if(expression.isNot() == false){
+                if(!expression.isNot()){
                     currentSegments.add(left + " LIKE " + expression.getRightExpression().toString());
                 }
                 else{
@@ -177,7 +177,7 @@ public class JoinConditionManager extends BaseConditionManager {
      * @return
      */
     private static String formatColumn(Expression expression, AnnoJoiner joiner){
-        if(expression instanceof Column == false){
+        if(!(expression instanceof Column)){
             return expression.toString();
         }
         // 其他表列

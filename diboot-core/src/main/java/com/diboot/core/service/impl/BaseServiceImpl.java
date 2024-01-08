@@ -1044,6 +1044,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.buildTree(voList, rootNodeId);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField) {
 		return sort(sortParam, sortField, null, null);
