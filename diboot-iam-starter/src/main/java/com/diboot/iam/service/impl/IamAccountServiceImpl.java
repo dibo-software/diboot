@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
@@ -122,6 +123,11 @@ public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, 
                 .eq(IamAccount::getUserType, iamAccount.getUserType())
                 .ne(V.notEmpty(iamAccount.getUserId()), IamAccount::getUserId, iamAccount.getUserId());
         return exists(queryWrapper);
+    }
+
+    @Override
+    public boolean isAccountExists(String tenantId, String userType, String username, String userId) {
+        return baseMapper.checkUsernameDuplicate(tenantId, userType, username, userId, BaseConfig.getActiveFlagValue());
     }
 
     @Override

@@ -21,14 +21,16 @@ import com.diboot.iam.entity.IamAccount;
 import java.util.List;
 
 /**
-* 认证用户相关Service
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
-*/
+ * 认证用户相关Service
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-03
+ */
 public interface IamAccountService extends BaseIamService<IamAccount> {
     /**
      * 保存账号（密码存储前加密）
+     *
      * @param iamAccount
      * @return
      */
@@ -37,6 +39,7 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
 
     /**
      * 批量创建Entity
+     *
      * @param accountList
      * @return
      */
@@ -53,6 +56,7 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
 
     /**
      * 获取认证账号username
+     *
      * @param userType
      * @param userId
      * @return
@@ -61,13 +65,26 @@ public interface IamAccountService extends BaseIamService<IamAccount> {
 
     /**
      * 账号是否已存在
+     *
      * @param iamAccount
      * @return
      */
     boolean isAccountExists(IamAccount iamAccount);
 
     /**
+     * 账号是否已存在
+     *
+     * @param tenantId
+     * @param userType
+     * @param username
+     * @param userId
+     * @return
+     */
+    boolean isAccountExists(String tenantId, String userType, String username, String userId);
+
+    /**
      * 更新账号状态
+     *
      * @param accountId
      * @return
      */
