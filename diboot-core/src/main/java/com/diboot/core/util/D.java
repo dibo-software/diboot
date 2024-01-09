@@ -45,6 +45,7 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_y4 = "yyyy";
 	public static final String FORMAT_DATE_y4Md = "yyyyMMdd";
 	public static final String FORMAT_TIMESTAMP = "yyMMddHHmmss";
+	public static final String FORMAT_TIMESTAMP_Y4MDHM = "yyMMddHHmm";
 	public static final String FORMAT_TIME_HHmm = "HH:mm";
 	public static final String FORMAT_TIME_HHmmss = "HH:mm:ss";
 	public static final String FORMAT_DATE_Y4MD = "yyyy-MM-dd";
