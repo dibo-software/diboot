@@ -68,6 +68,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         MessageTemplateServiceImpl.extractVariablesFrom(variableObjectClasses);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean send(Message message) {
         return send(message, null);

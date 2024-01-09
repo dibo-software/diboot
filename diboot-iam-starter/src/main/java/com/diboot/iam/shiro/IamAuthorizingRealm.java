@@ -170,9 +170,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
                     permissionCodesSet.add(permCodeStr);
                 }
                 else{
-                    for(String permCode : S.split(permCodeStr)){
-                        permissionCodesSet.add(permCode);
-                    }
+                    permissionCodesSet.addAll(S.splitToList(permCodeStr));
                 }
             });
         }

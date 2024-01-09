@@ -34,9 +34,6 @@ public class LocalDateTime2StringConverter implements Converter<LocalDateTime, S
 
     @Override
     public String convert(LocalDateTime source) {
-        if (source == null) {
-            return null;
-        }
         return source.format(D.FORMATTER_DATETIME_Y4MDHMS);
     }
 

@@ -269,7 +269,7 @@ public class FileHelper{
 	 * @return
 	 */
 	public static String formatFileSize(Long bytes) {
-		if(bytes == null || bytes.equals(0l)) {
+		if(bytes == null || bytes.equals(0L)) {
 			return "-";
 		}
 		int index = (int) (Math.floor(Math.log(bytes) / Math.log(1024)));

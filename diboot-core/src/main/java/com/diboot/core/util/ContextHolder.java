@@ -142,9 +142,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         if(V.isEmpty(map)){
             return null;
         }
-        List<Object> beanList = new ArrayList<>();
-        beanList.addAll(map.values());
-        return beanList;
+        return new ArrayList<>(map.values());
     }
 
     /**
@@ -170,13 +168,16 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entity);
         IService iService = entityInfoCache != null? entityInfoCache.getService() : null;
         if(iService == null){
-            log.debug("未能识别到Entity: "+entity.getName()+" 的Service实现！");
+            log.debug("未能识别到Entity: {} 的Service实现！", entity.getName());
+            return null;
         }
         if(iService instanceof BaseService){
             return (BaseService)iService;
         }
-        log.warn("Entity的service实现类: {} 非BaseService实现！", entityInfoCache.getService());
-        return null;
+        else {
+            log.warn("Entity的service实现类: {} 非BaseService实现！", entityInfoCache.getService());
+            return null;
+        }
     }
 
     /**
@@ -224,7 +225,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         if (applicationContext == null) {
             return null;
         }
-        String jdbcUrl = null;
+        String jdbcUrl;
         try{
             DataSource dataSource = applicationContext.getBean(DataSource.class);
             Connection connection = dataSource.getConnection();

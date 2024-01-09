@@ -387,7 +387,7 @@ public class BaseController {
 			for(Map.Entry<String, String[]> entry : params.entrySet()){
 				String[] values = entry.getValue();
 				if(values != null && values.length > 0){
-					sb.append(entry.getKey() + "=" + S.join(values)+"; ");
+					sb.append(entry.getKey()).append("=").append(S.join(values)).append("; ");
 				}
 			}
 			log.debug(sb.toString());

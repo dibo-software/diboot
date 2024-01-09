@@ -405,11 +405,9 @@ public class QueryCondition implements Serializable {
         if(V.isEmpty(this.criteriaList)) {
             return null;
         }
-        if(criteriaList != null) {
-            for(CriteriaItem item : criteriaList) {
-                if(item.getField().equals(field)) {
-                    return item;
-                }
+        for(CriteriaItem item : criteriaList) {
+            if(item.getField().equals(field)) {
+                return item;
             }
         }
         return null;

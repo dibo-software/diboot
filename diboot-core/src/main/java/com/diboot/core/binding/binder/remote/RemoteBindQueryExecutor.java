@@ -49,7 +49,7 @@ public class RemoteBindQueryExecutor {
      * @throws Exception
      */
     public static JsonResult execute(RemoteBindDTO remoteBindDTO){
-        Class entityClass = null;
+        Class entityClass;
         try{
             entityClass = Class.forName(remoteBindDTO.getEntityClassName());
         }

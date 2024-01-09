@@ -107,7 +107,7 @@ public class JoinsBinder {
         // 转换为queryWrapper
         DynamicJoinQueryWrapper dynamicJoinWrapper = (DynamicJoinQueryWrapper)queryWrapper;
         dynamicJoinWrapper.setMainEntityClass(entityClazz);
-        List<Map<String, Object>> mapList = null;
+        List<Map<String, Object>> mapList;
         if(pagination == null){
             if(limit1){
                 Page page = new Page<>(1, 1);

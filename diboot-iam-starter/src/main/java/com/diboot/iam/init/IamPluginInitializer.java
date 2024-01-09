@@ -103,7 +103,7 @@ public class IamPluginInitializer implements ApplicationRunner {
                 }
                 RESOURCE_PERMISSION_DATA = null;
             } catch (BusinessException e){
-                log.error("初始化资源权限数据出错，请手动配置前端资源初始的权限数据", e.getMessage());
+                log.error("初始化资源权限数据出错: {}，请手动配置前端资源初始的权限数据", e.getMessage());
             }
         }
 

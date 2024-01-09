@@ -80,7 +80,7 @@ public class ResultAssembler {
                 else {
                     Object matchedValue = valueMatchMap.get(matchKey);
                     if(matchedValue == null) {
-                        matchedValue = 0l;
+                        matchedValue = 0L;
                     }
                     // 赋值
                     beanWrapper.setPropertyValue(setterFieldName, matchedValue);
@@ -278,9 +278,7 @@ public class ResultAssembler {
                             }
                         }
                     }
-                    if(matchedValues != null){
-                        entityList = matchedValues;
-                    }
+                    entityList = matchedValues;
                 }
                 // 赋值
                 BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);

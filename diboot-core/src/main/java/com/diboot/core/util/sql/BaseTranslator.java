@@ -161,7 +161,7 @@ public abstract class BaseTranslator {
             String record = S.substringBefore(suffix, ")");
             while (S.contains(record, ",")) {
                 record = record.trim();
-                String value = null;
+                String value;
                 if(record.startsWith("'")) {
                     value = S.substringBetween(record, "'", "'");
                     value = "'" + value + "'";

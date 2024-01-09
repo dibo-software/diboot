@@ -62,7 +62,7 @@ public class BindPermissionAspect {
      */
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-        if(iamProperties.isEnablePermissionCheck() == false){
+        if(!iamProperties.isEnablePermissionCheck()){
             log.debug("BindPermission权限检查已停用，如需启用请删除配置项: diboot.iam.enable-permission-check=false");
             return;
         }

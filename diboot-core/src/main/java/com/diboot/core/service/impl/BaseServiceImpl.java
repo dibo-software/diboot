@@ -452,7 +452,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 删除失效关联
 		List<Serializable> delIds = new ArrayList<>();
 		for (R entity : oldEntityList) {
-			if (V.notEmpty(followerIdList) && followerIdList.remove(BeanUtils.getProperty(entity, followerFieldName))) {
+			Object followerId = BeanUtils.getProperty(entity, followerFieldName);
+			if (V.notEmpty(followerIdList) && followerIdList.contains(followerId)) {
+				followerIdList.remove(followerId);
 				continue;
 			}
 			Serializable id = (Serializable) BeanUtils.getProperty(entity, isExistPk ? entityInfo.getPropInfo().getIdFieldName() : followerFieldName);
@@ -723,8 +725,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
-		LambdaQueryWrapper<T> query = null;
-		List<T> entityList = null;
+		LambdaQueryWrapper<T> query;
+		List<T> entityList;
 		// 支持 ChainQuery
 		if (queryWrapper instanceof ChainQuery) {
 			queryWrapper = ((ChainQuery<?>) queryWrapper).getWrapper();
@@ -1107,7 +1109,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 		List<T> collect = new ArrayList<>();
 		Function<Object,T> addEntity = idValue ->{
-			T entity = null;
+			T entity;
 			try {
 				entity = entityClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {

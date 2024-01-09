@@ -66,7 +66,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
                 return;
             }
             queryWrapper.groupBy(refObjJoinCols);
-            List<Map<String, Object>> countMapList = null;
+            List<Map<String, Object>> countMapList;
             // 查询entity列表: List<Role>
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
@@ -96,7 +96,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
                 // count <roleId>
                 Long count = entry.getValue();
                 if(V.isEmpty(count)){
-                    count = 0l;
+                    count = 0L;
                 }
                 valueListCountMap.put(entry.getKey(), count);
             }

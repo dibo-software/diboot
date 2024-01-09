@@ -182,7 +182,7 @@ public class JoinConditionManager extends BaseConditionManager {
         }
         // 其他表列
         String annoColumn = S.toSnakeCase(expression.toString());
-        if(annoColumn.contains(".")){
+        if(S.contains(annoColumn,".")){
             String tableName = S.substringBefore(annoColumn, ".");
             // 当前表替换别名
             if(tableName.equals("this")){

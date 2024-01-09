@@ -47,7 +47,7 @@ public class TenantPluginInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库租户是否已存在
         String initDetectSql = "SELECT id FROM dbt_iam_tenant WHERE id='0'";
-        if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
+        if (!SqlFileInitializer.checkSqlExecutable(initDetectSql)) {
             SqlFileInitializer.initBootstrapSql(this.getClass(), "tenant");
             // 插入相关数据
             insertInitData();
@@ -104,7 +104,7 @@ public class TenantPluginInitializer implements ApplicationRunner {
                 }
                 RESOURCE_PERMISSION_DATA = null;
             } catch (BusinessException e){
-                log.error("初始化资源权限数据出错，请手动配置前端资源初始的权限数据", e.getMessage());
+                log.error("初始化资源权限数据出错: {}，请手动配置前端资源初始的权限数据", e.getMessage());
             }
         }
     }

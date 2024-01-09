@@ -58,7 +58,7 @@ public class TokenUtils {
             log.warn("请求未指定token: {}", authtoken);
             return null;
         }
-        if(isActiveAccessToken(authtoken) == false){
+        if(!isActiveAccessToken(authtoken)){
             log.warn("已过期或非系统颁发的token: {}", authtoken);
             return null;
         }

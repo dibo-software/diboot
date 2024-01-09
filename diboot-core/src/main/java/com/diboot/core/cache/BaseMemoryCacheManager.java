@@ -15,6 +15,7 @@
  */
 package com.diboot.core.cache;
 
+import com.diboot.core.exception.InvalidUsageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -86,10 +87,15 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
     @Override
     public void putCacheObj(String cacheName, Object objKey, Object obj){
         Cache cache = getCache(cacheName);
-        cache.put(objKey, obj);
-        if(log.isDebugEnabled()){
-            ConcurrentMapCache mapCache = (ConcurrentMapCache)cache;
-            log.debug("缓存: {} 新增-> {} , 当前size={}", cacheName, objKey, mapCache.getNativeCache().size());
+        if(cache != null) {
+            cache.put(objKey, obj);
+            if(log.isDebugEnabled()){
+                ConcurrentMapCache mapCache = (ConcurrentMapCache)cache;
+                log.debug("缓存: {} 新增-> {} , 当前size={}", cacheName, objKey, mapCache.getNativeCache().size());
+            }
+        }
+        else {
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
     }
 
@@ -101,10 +107,15 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
     @Override
     public void removeCacheObj(String cacheName, Object objKey){
         Cache cache = getCache(cacheName);
-        cache.evict(objKey);
-        if(log.isDebugEnabled()){
-            ConcurrentMapCache mapCache = (ConcurrentMapCache)cache;
-            log.debug("缓存删除: {}.{} , 当前size={}", cacheName, objKey, mapCache.getNativeCache().size());
+        if(cache != null) {
+            cache.evict(objKey);
+            if(log.isDebugEnabled()){
+                ConcurrentMapCache mapCache = (ConcurrentMapCache)cache;
+                log.debug("缓存删除: {}.{} , 当前size={}", cacheName, objKey, mapCache.getNativeCache().size());
+            }
+        }
+        else {
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
     }
 
@@ -116,7 +127,10 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
     @Override
     public boolean isUninitializedCache(String cacheName){
         ConcurrentMapCache cache = (ConcurrentMapCache)getCache(cacheName);
-        return cache.getNativeCache().isEmpty();
+        if(cache != null) {
+            return cache.getNativeCache().isEmpty();
+        }
+        return true;
     }
 
 }

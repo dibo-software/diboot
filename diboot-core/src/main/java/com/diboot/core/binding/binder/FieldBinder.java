@@ -111,7 +111,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
             }
-            List<T> entityList = null;
+            List<T> entityList;
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
                 entityList = getEntityList(queryWrapper);
@@ -148,7 +148,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
             // 获取匹配结果的mapList
-            List<T> entityList = null;
+            List<T> entityList;
             if(V.isEmpty(this.module)){
                 queryWrapper.in(refObjJoinOnCol, refObjValues);
                 // 本地查询获取匹配结果的entityList

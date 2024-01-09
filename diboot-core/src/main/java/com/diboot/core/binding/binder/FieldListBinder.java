@@ -77,7 +77,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             }
             //处理orderBy，附加排序
             this.appendOrderBy(remoteBindDTO);
-            List<T> entityList = null;
+            List<T> entityList;
             // 查询entity列表: List<Role>
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
@@ -117,7 +117,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             }
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
-            List<T> entityList = null;
+            List<T> entityList;
             // 查询entity列表: List<Role>
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList

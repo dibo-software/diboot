@@ -67,7 +67,7 @@ public class PwdAuthServiceImpl extends BaseAuthServiceImpl {
         if (latestAccount == null){
             throw new AuthenticationException("用户名或密码错误!");
         }
-        if(iamAuthToken.isValidPassword() && isPasswordMatched(latestAccount, iamAuthToken) == false) {
+        if(iamAuthToken.isValidPassword() && !isPasswordMatched(latestAccount, iamAuthToken)) {
             // 查询是否锁定账号
             super.lockAccountIfRequired(latestAccount);
             throw new AuthenticationException("用户名或密码错误!");

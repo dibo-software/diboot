@@ -46,7 +46,7 @@ public class NotificationPluginInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         // 检查数据库表是否已存在
         String initDetectSql = "SELECT id FROM dbt_message_template WHERE id='0'";
-        if (SqlFileInitializer.checkSqlExecutable(initDetectSql) == false) {
+        if (!SqlFileInitializer.checkSqlExecutable(initDetectSql)) {
             SqlFileInitializer.initBootstrapSql(this.getClass(), "notification");
             // 插入相关数据：Dict等
             insertInitData();

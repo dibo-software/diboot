@@ -374,7 +374,7 @@ public class ConditionManager extends BaseConditionManager{
      * @return
      */
     private static Object extractConsValue(Expression expression) {
-        Object consValue = null;
+        Object consValue;
         if(expression instanceof StringValue) {
             consValue = ((StringValue)expression).getValue();
         }
