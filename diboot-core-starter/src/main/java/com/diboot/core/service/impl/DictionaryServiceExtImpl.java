@@ -58,12 +58,14 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public List<LabelValue> getLabelValueList(String type) {
         ;
         // 构建查询条件
-        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .in(TenantContext.isEnabled(), Dictionary::getTenantId, TenantContext.gets())
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
+        if (TenantContext.isEnabled()) {
+            queryDictionary.in(Dictionary::getTenantId, TenantContext.gets());
+        }
         // 返回构建条件
         return getEntityList(queryDictionary).stream()
                 .map(Dictionary::toLabelValue)
@@ -74,11 +76,13 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public Map<String, LabelValue> getLabel2ItemMap(String type) {
         // 构建查询条件
-        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .in(TenantContext.isEnabled(), Dictionary::getTenantId, TenantContext.gets())
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
+        if (TenantContext.isEnabled()) {
+            queryDictionary.in(Dictionary::getTenantId, TenantContext.gets());
+        }
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
                 Collectors.toMap(Dictionary::getItemName, Dictionary::toLabelValue));
@@ -87,11 +91,13 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public Map<String, LabelValue> getValue2ItemMap(String type) {
         // 构建查询条件
-        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .in(TenantContext.isEnabled(), Dictionary::getTenantId, TenantContext.gets())
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
+        if (TenantContext.isEnabled()) {
+            queryDictionary.in(Dictionary::getTenantId, TenantContext.gets());
+        }
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
                 Collectors.toMap(Dictionary::getItemValue, Dictionary::toLabelValue));
@@ -100,8 +106,10 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public boolean existsDictType(String dictType) {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .in(TenantContext.isEnabled(), Dictionary::getTenantId, TenantContext.gets())
                 .eq(Dictionary::getType, dictType);
+        if (TenantContext.isEnabled()) {
+            queryWrapper.in(Dictionary::getTenantId, TenantContext.gets());
+        }
         return exists(queryWrapper);
     }
 
@@ -149,21 +157,25 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<Dictionary> getDictDefinitionList() {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .in(TenantContext.isEnabled(), Dictionary::getTenantId, TenantContext.gets())
                 .and(wrapper -> {
                     wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
                 })
                 .orderByDesc(Dictionary::getId);
+        if (TenantContext.isEnabled()) {
+            queryWrapper.in(Dictionary::getTenantId, TenantContext.gets());
+        }
         return getEntityList(queryWrapper);
     }
 
     @Override
     public List<DictionaryVO> getDictDefinitionVOList() {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .in(TenantContext.isEnabled(), Dictionary::getTenantId, TenantContext.gets())
                 .and(wrapper -> {
                     wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
                 });
+        if (TenantContext.isEnabled()) {
+            queryWrapper.in(Dictionary::getTenantId, TenantContext.gets());
+        }
         return getViewObjectList(queryWrapper, null, DictionaryVO.class);
     }
 
