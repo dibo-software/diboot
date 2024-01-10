@@ -197,6 +197,7 @@ public class BaseConfig {
 			return enableTenant;
 		}
 		enableTenant = PropertiesUtils.getBoolean("diboot.enable-tenant", false);
+		log.debug("多租户模式 {}", enableTenant? "已启用" : "未开启");
 		return enableTenant;
 	}
 
