@@ -178,9 +178,7 @@ public class LogAspect {
                 log.warn("@Log(operation='{}') 注解未识别到class泛型参数，请指定 businessObj", logAnno.operation());
             }
         }
-        String appModule = null;
-        // 自动识别appModule
-        operationLog.setAppModule(appModule).setBusinessObj(businessObj).setOperation(logAnno.operation());
+        operationLog.setBusinessObj(businessObj).setOperation(logAnno.operation());
 
         return operationLog;
     }
@@ -194,9 +192,8 @@ public class LogAspect {
         Class<?> clazz = arg.getClass();
         if (arg instanceof Collection) {
             Collection collection = (Collection) arg;
-            for (Iterator iter = collection.iterator(); iter.hasNext();) {
-                return isSimpleClassType(iter.next().getClass());
-            }
+            Object firstElement = collection.stream().findFirst().orElse(null);
+            return isSimpleClassType(firstElement);
         }
         else if (clazz.isArray()) {
             return isSimpleClassType(clazz.getComponentType());
@@ -205,8 +202,12 @@ public class LogAspect {
             Map map = (Map)arg;
             for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                return isSimpleClassType(entry.getValue().getClass());
+                boolean isSimple = isSimpleClassType(entry.getValue().getClass());
+                if(!isSimple) {
+                    return false;
+                }
             }
+            return true;
         }
         return isSimpleClassType(arg);
     }

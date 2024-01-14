@@ -75,9 +75,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 // 中间表条件
                 if(joiner.getMiddleTable() != null &&
                         (left.startsWith(joiner.getMiddleTableAlias() + ".") || right.startsWith(joiner.getMiddleTableAlias() + "."))){
-                    if(left.startsWith(joiner.getAlias()+".") || right.startsWith(joiner.getAlias()+".")){
-                    }
-                    else{
+                    if(!left.startsWith(joiner.getAlias()+".") && !right.startsWith(joiner.getAlias()+".")){
                         currentSegments = middleTableOnSegments;
                     }
                 }
@@ -98,6 +96,15 @@ public class JoinConditionManager extends BaseConditionManager {
                 }
                 else if(operator instanceof MinorThanEquals){
                     currentSegments.add(left + " <= " + right);
+                }
+                else if(operator instanceof LikeExpression){
+                    LikeExpression likeExpression = (LikeExpression)expression;
+                    if(!likeExpression.isNot()){
+                        currentSegments.add(left + " LIKE " + expression.getRightExpression().toString());
+                    }
+                    else{
+                        currentSegments.add(left + " NOT LIKE " + expression.getRightExpression().toString());
+                    }
                 }
                 else{
                     log.warn("暂不支持的条件: "+ expression.toString());
@@ -143,20 +150,6 @@ public class JoinConditionManager extends BaseConditionManager {
                 }
                 else{
                     currentSegments.add(left + " NOT BETWEEN " + expression.getBetweenExpressionStart().toString() + " AND " + expression.getBetweenExpressionEnd().toString());
-                }
-            }
-            else if(operator instanceof LikeExpression){
-                LikeExpression expression = (LikeExpression)operator;
-                String left = formatColumn(expression.getLeftExpression(), joiner);
-                // 中间表条件
-                if(joiner.getMiddleTable() != null && left.startsWith(joiner.getMiddleTableAlias() + ".")){
-                    currentSegments = middleTableOnSegments;
-                }
-                if(!expression.isNot()){
-                    currentSegments.add(left + " LIKE " + expression.getRightExpression().toString());
-                }
-                else{
-                    currentSegments.add(left + " NOT LIKE " + expression.getRightExpression().toString());
                 }
             }
             else{

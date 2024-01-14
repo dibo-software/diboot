@@ -263,17 +263,10 @@ public class ResultAssembler {
                     for(Object key : matchKeys){
                         Object value = valueMatchMap.get(S.valueOf(key));
                         if(value != null){
-                            if(value instanceof Collection){
-                                Collection valueList = (Collection)value;
-                                for(Object obj : valueList){
-                                    if(!matchedValues.contains(obj)){
-                                        matchedValues.add(obj);
-                                    }
-                                }
-                            }
-                            else{
-                                if(!matchedValues.contains(value)){
-                                    matchedValues.add(value);
+                            Collection valueList = (Collection)value;
+                            for(Object obj : valueList){
+                                if(!matchedValues.contains(obj)){
+                                    matchedValues.add(obj);
                                 }
                             }
                         }

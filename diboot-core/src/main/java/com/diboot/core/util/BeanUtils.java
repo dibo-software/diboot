@@ -253,24 +253,20 @@ public class BeanUtils {
      * @param obj
      */
     private static ConversionService conversionService;
-    private static final Map<String, BeanWrapper> beanWrapperCacheMap = new ConcurrentHashMap<>();
     public synchronized static BeanWrapper getBeanWrapper(Object obj) {
-        BeanWrapper wrapper = beanWrapperCacheMap.get(obj.getClass().getName());
-        if(wrapper == null) {
-            wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
+        if(conversionService == null) {
+            conversionService = ContextHolder.getBean(DefaultConversionService.class);
             if(conversionService == null) {
-                conversionService = ContextHolder.getBean(DefaultConversionService.class);
-                if(conversionService == null) {
-                    List<Converter> converterList = ContextHolder.getBeans(Converter.class);
-                    conversionService = new EnhancedConversionService(converterList);
-                    log.debug("new ConversionService instance: {}", EnhancedConversionService.class.getName());
-                }
-                else {
-                    log.debug("get ConversionService instance: {} by getBean", conversionService.getClass().getName());
-                }
+                List<Converter> converterList = ContextHolder.getBeans(Converter.class);
+                conversionService = new EnhancedConversionService(converterList);
+                log.debug("new ConversionService instance: {}", EnhancedConversionService.class.getName());
             }
-            wrapper.setConversionService(conversionService);
+            else {
+                log.debug("get ConversionService instance: {} by getBean", conversionService.getClass().getName());
+            }
         }
+        wrapper.setConversionService(conversionService);
         return wrapper;
     }
 
