@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
+import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.ParserCache;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
@@ -272,134 +273,8 @@ public class QueryBuilder {
             }
             return;
         }
-        switch (comparison) {
-            case EQ:
-                wrapper.eq(columnName, value);
-                break;
-            case IN:
-                if (value.getClass().isArray()) {
-                    Object[] valueArray = (Object[]) value;
-                    if (valueArray.length == 1) {
-                        wrapper.eq(columnName, valueArray[0]);
-                    } else if (valueArray.length >= 2) {
-                        wrapper.in(columnName, valueArray);
-                    }
-                } else if (value instanceof Collection) {
-                    wrapper.in(!((Collection) value).isEmpty(), columnName, (Collection<?>) value);
-                } else {
-                    log.warn("字段类型错误：IN仅支持List及数组.");
-                }
-                break;
-            case NOT_IN:
-                if (value.getClass().isArray()) {
-                    Object[] valueArray = (Object[]) value;
-                    if (valueArray.length == 1) {
-                        wrapper.ne(columnName, valueArray[0]);
-                    } else if (valueArray.length >= 2) {
-                        wrapper.notIn(columnName, valueArray);
-                    }
-                } else if (value instanceof Collection) {
-                    wrapper.notIn(!((Collection) value).isEmpty(), columnName, (Collection<?>) value);
-                } else {
-                    log.warn("字段类型错误：NOT_IN仅支持List及数组.");
-                }
-                break;
-            case CONTAINS:
-                boolean isString = S.contains(JSON.toJSONString(value), "\"");
-                BiConsumer<QueryWrapper<?>,String> basicTypeProtection = (query, val) -> {
-                    query.or().likeRight(columnName, "[" + val + ",");
-                    query.or().like(columnName, "," + val + ",");
-                    query.or().likeLeft(columnName, "," + val + "]");
-                    query.or().eq(columnName, "[" + val + "]");
-                };
-                if (value instanceof Collection) {
-                    wrapper.and(query -> {
-                        for (Object val : (Collection<?>) value) {
-                            if (isString) {
-                                query.or().like(columnName, "\"" + val + "\"");
-                            } else {
-                                basicTypeProtection.accept(query, S.valueOf(val));
-                            }
-                        }
-                    });
-                } else if (value.getClass().isArray()) {
-                    wrapper.and(query -> {
-                        for (Object val : (Object[]) value) {
-                            if (isString) {
-                                query.or().like(columnName, "\"" + val + "\"");
-                            } else {
-                                basicTypeProtection.accept(query, S.valueOf(val));
-                            }
-                        }
-                    });
-                } else {
-                    if (isString) {
-                        wrapper.like(columnName, "\"" + value + "\"");
-                    } else {
-                        wrapper.and(query -> basicTypeProtection.accept(query, S.valueOf(value)));
-                    }
-                }
-                break;
-            case LIKE:
-                wrapper.like(columnName, value);
-                break;
-            case STARTSWITH:
-                wrapper.likeRight(columnName, value);
-                break;
-            case ENDSWITH:
-                wrapper.likeLeft(columnName, value);
-                break;
-            case GT:
-                wrapper.gt(columnName, value);
-                break;
-            case BETWEEN_BEGIN:
-            case GE:
-                wrapper.ge(columnName, value);
-                break;
-            case LT:
-                wrapper.lt(columnName, value);
-                break;
-            case BETWEEN_END:
-            case LE:
-                wrapper.le(columnName, value);
-                break;
-            case BETWEEN:
-                if (value.getClass().isArray()) {
-                    Object[] valueArray = (Object[]) value;
-                    if (valueArray.length == 1) {
-                        wrapper.ge(columnName, valueArray[0]);
-                    } else if (valueArray.length >= 2) {
-                        wrapper.between(columnName, valueArray[0], valueArray[1]);
-                    }
-                } else if (value instanceof List) {
-                    List<?> valueList = (List<?>) value;
-                    if (valueList.size() == 1) {
-                        wrapper.ge(columnName, valueList.get(0));
-                    } else if (valueList.size() >= 2) {
-                        wrapper.between(columnName, valueList.get(0), valueList.get(1));
-                    }
-                }
-                // 支持逗号分隔的字符串
-                else if (value instanceof String && ((String) value).contains(Cons.SEPARATOR_COMMA)) {
-                    Object[] valueArray = ((String) value).split(Cons.SEPARATOR_COMMA);
-                    wrapper.between(columnName, valueArray[0], valueArray[1]);
-                } else {
-                    wrapper.ge(columnName, value);
-                }
-                break;
-            // 不等于
-            case NOT_EQ:
-                wrapper.ne(columnName, value);
-                break;
-            case IS_NULL:
-                wrapper.isNull(columnName);
-                break;
-            case IS_NOT_NULL:
-                wrapper.isNotNull(columnName);
-                break;
-            default:
-                break;
-        }
+        // 根据匹配方式构建查询
+        WrapperHelper.buildQueryCriteria(wrapper, comparison, columnName, value);
     }
 
     /**
