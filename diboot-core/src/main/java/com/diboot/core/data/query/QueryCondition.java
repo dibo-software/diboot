@@ -72,13 +72,21 @@ public class QueryCondition implements Serializable {
     }
 
     public QueryCondition(Map<String, Object> queryParamMap) {
-        initQueryParamMap(queryParamMap);
+        initQueryParamMap(queryParamMap, false);
     }
 
-    private void initQueryParamMap(Map<String, Object> queryParamMap) {
+    public QueryCondition(Map<String, Object> queryParamMap, boolean includeEmpty) {
+        initQueryParamMap(queryParamMap, includeEmpty);
+    }
+
+    private void initQueryParamMap(Map<String, Object> queryParamMap, boolean includeEmpty) {
         if(V.notEmpty(queryParamMap)) {
             for(Map.Entry<String, Object> entry : queryParamMap.entrySet()) {
                 if(Pagination.isPaginationParam(entry.getKey())) {
+                    continue;
+                }
+                if(V.isEmpty(entry.getValue()) && !includeEmpty) {
+                    log.debug("忽略空的参数: {}", entry.getKey());
                     continue;
                 }
                 addCriteria(entry.getKey(), Comparison.EQ, entry.getValue());
