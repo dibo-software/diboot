@@ -20,7 +20,21 @@ export interface RelatedData {
   // 懒加载（默认：true ；为 false 时会同步加载下一级，且当为树时会加载整个树）
   lazyChild?: boolean
   // 附加条件
+  conditions?: Array<ConditionItem>
+  /**
+   * 附加条件
+   * @Deprecated 3.3移除，使用 conditions?: Array<ConditionItem> 代替
+   */
   condition?: Record<string, boolean | string | number | (string | number)[] | null | undefined>
+}
+
+/**
+ * 条件项
+ */
+export interface ConditionItem {
+  field: string
+  comparison?: string // def EQ =
+  value?: unknown
 }
 
 /**
@@ -192,8 +206,8 @@ export default ({
     const execute = async ({ prop, loader, condition, autoLoad }: LinkageControl) => {
       const relatedDataLoader = findAsyncLoader(loader)
       relatedDataLoader.disabled = isNull
-      if (relatedDataLoader.condition == null) relatedDataLoader.condition = {}
-      relatedDataLoader.condition[condition] = value
+      if (relatedDataLoader.conditions == null) relatedDataLoader.conditions = []
+      relatedDataLoader.conditions.push({ field: condition, value })
       if (form) form[prop] = undefined
       relatedData[loader] = autoLoad === false || isNull ? [] : await loadRelatedData(relatedDataLoader)
     }

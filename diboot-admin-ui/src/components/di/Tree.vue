@@ -2,6 +2,7 @@
 import { Search } from '@element-plus/icons-vue'
 import type { TreeConfig } from '@/components/di/type'
 import type { ElTreeInstanceType } from 'element-plus'
+import type { ConditionItem } from '@/hooks/use-option'
 
 // vue语法限制导致只能在当前文件中再次定义 Props
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
@@ -13,6 +14,11 @@ interface TreeProps extends /* @vue-ignore */ TreeConfig {
   parent: string
   parentPath?: string
   lazyChild?: boolean
+  conditions?: Array<ConditionItem>
+  /**
+   * 附加条件
+   * @Deprecated 3.3移除，使用 conditions?: Array<ConditionItem> 代替
+   */
   condition?: Record<string, boolean | string | number | (string | number)[] | null>
   sortApi?: string
 }
@@ -22,6 +28,7 @@ const props = withDefaults(defineProps<TreeProps>(), {
   orderBy: undefined,
   parentPath: undefined,
   lazyChild: true,
+  conditions: undefined,
   condition: undefined,
   sortApi: undefined
 })
