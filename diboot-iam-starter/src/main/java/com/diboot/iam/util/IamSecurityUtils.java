@@ -162,8 +162,16 @@ public class IamSecurityUtils extends SecurityUtils {
      * @return
      */
     public static String getCurrentTenantId(){
-        BaseLoginUser user = getCurrentUser();
-        return user != null? user.getTenantId() : Cons.ID_PREVENT_NULL;
+        try {
+            BaseLoginUser user = getCurrentUser();
+            if(user != null) {
+                return user.getTenantId();
+            }
+        }
+        catch (Exception e) {
+            log.debug("当前调用链路无登录用户信息：{}", e.getMessage());
+        }
+        return Cons.ID_PREVENT_NULL;
     }
 
     /**
