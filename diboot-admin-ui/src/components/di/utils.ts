@@ -37,20 +37,22 @@ export const buildOptionProps = (formItemList?: FormItem[]) => {
         // 未完全配置，则不生效
         return option
       }
-      let isAsyncLoad = true
       const asyncLoad = option.asyncLoad ? option.asyncLoad : (option.asyncLoad = {})
+      let isAsyncLoad = !(asyncLoad[e.prop] ?? {}).parent
       if ((option.load ?? {})[e.prop]) {
         isAsyncLoad = false
         asyncLoad[e.prop] = (option.load ?? {})[e.prop]
         delete (option.load ?? {})[e.prop]
       }
+      ;(asyncLoad[e.prop] ?? {}).disabled = true // 选项受控 阻止自动加载
+      ;(asyncLoad[e.prop] ?? {}).lazyChild = false // tree结构选项受控不支持懒加载
       const linkageControl = option.linkageControl ? option.linkageControl : (option.linkageControl = {})
-      const controls = linkageControl[e.prop]
-        ? (linkageControl[e.prop] as LinkageControl[])
-        : (linkageControl[e.prop] = [])
+      const controls = linkageControl[control.prop]
+        ? (linkageControl[control.prop] as LinkageControl[])
+        : (linkageControl[control.prop] = [])
       controls.push({
-        prop: control.prop,
-        loader: control.prop,
+        prop: e.prop,
+        loader: e.prop,
         condition: control.condition,
         autoLoad: !isAsyncLoad
       })
@@ -60,7 +62,7 @@ export const buildOptionProps = (formItemList?: FormItem[]) => {
   return optionProps
 }
 
-// snake_case 转 CamelCase
+// snake_case 转 camelCase
 const line2Hump = (value: string) => {
   if (!value) return value
   if (!/[_-]/.test(value))
