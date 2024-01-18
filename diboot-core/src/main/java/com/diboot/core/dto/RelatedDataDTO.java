@@ -89,7 +89,6 @@ public class RelatedDataDTO implements Serializable {
         return S.capFirst(S.toLowerCaseCamel(this.type));
     }
 
-    @JsonIgnore
     public List<BaseCriteria> getConditions() {
         if(V.isEmpty(conditions) && V.notEmpty(condition)) {
             this.conditions = new ArrayList<>();
