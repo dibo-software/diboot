@@ -50,7 +50,7 @@ import java.util.List;
 public class TenantAutoConfig {
 
     public TenantAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 tenant 组件自动配置");
     }
 
     @Bean

@@ -72,7 +72,7 @@ import java.util.Set;
 public class IamAutoConfig {
 
     public IamAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 IAM 组件 自动配置");
     }
 
     @Autowired

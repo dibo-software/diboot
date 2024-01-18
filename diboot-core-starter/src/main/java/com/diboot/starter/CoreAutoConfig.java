@@ -92,7 +92,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     private JsonInclude.Include defaultPropertyInclusion;
 
     public CoreAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 core 内核 自动配置");
     }
 
     /**

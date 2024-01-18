@@ -52,7 +52,7 @@ public class FileAutoConfig {
     private FileProperties fileProperties;
 
     public FileAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 file 组件自动配置");
     }
 
     /**

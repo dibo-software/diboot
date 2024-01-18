@@ -49,7 +49,7 @@ import java.util.Arrays;
 public class NotificationAutoConfig {
 
     public NotificationAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 notification 组件自动配置");
     }
 
     /**

@@ -52,7 +52,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class CoreRedisAutoConfig {
 
     public CoreRedisAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 core 内核 Redis 自动配置");
     }
 
     @Bean

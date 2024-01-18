@@ -43,7 +43,7 @@ import org.springframework.core.annotation.Order;
 public class SchedulerAutoConfig {
 
     public SchedulerAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 scheduler 组件自动配置");
     }
 
     /**

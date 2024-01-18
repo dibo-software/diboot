@@ -42,7 +42,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MobileAutoConfig implements WebMvcConfigurer {
 
     public MobileAutoConfig() {
-        log.info("初始化 {} 配置", this.getClass().getSimpleName());
+        log.info("初始化 mobile 组件自动配置");
     }
 
     @Bean
