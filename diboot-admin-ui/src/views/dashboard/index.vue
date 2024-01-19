@@ -116,11 +116,7 @@ const currentDate = ref(new Date())
           </div>
           <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
           <a class="gitee" href="https://gitee.com/dibo_software/diboot" target="_blank">
-            <el-icon size="16">
-              <StarFilled />
-            </el-icon>
-            <span>Stars</span>
-            <span class="ml-5">2.0k</span>
+            <img src="http://gitee.com/dibo_software/diboot/badge/star.svg?theme=dark" />
           </a>
         </el-card>
         <el-card style="flex: 1" shadow="hover">
