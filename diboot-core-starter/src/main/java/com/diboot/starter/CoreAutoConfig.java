@@ -23,10 +23,11 @@ import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
 import com.diboot.core.data.protect.DefaultDataMaskHandler;
-import com.diboot.core.deserializer.LocalDateTimeDeserializer;
+import com.diboot.core.serial.deserializer.LocalDateTimeDeserializer;
 import com.diboot.core.config.CoreProperties;
 import com.diboot.core.config.GlobalProperties;
 import com.diboot.core.init.CoreRedisAutoConfig;
+import com.diboot.core.serial.serializer.BigDecimal2StringSerializer;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -108,8 +109,8 @@ public class CoreAutoConfig implements WebMvcConfigurer {
             builder.serializerByType(Long.class, ToStringSerializer.instance);
             builder.serializerByType(Long.TYPE, ToStringSerializer.instance);
             builder.serializerByType(BigInteger.class, ToStringSerializer.instance);
-            // BigDecimal转换成String避免JS超长问题
-            builder.serializerByType(BigDecimal.class, ToStringSerializer.instance);
+            // BigDecimal转换成String避免JS超长问题，以及格式化数值
+            builder.serializerByType(BigDecimal.class, BigDecimal2StringSerializer.instance);
 
             // 支持java8时间类型
             // LocalDateTime
