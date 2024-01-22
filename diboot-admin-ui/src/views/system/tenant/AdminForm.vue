@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UserModel } from '@/views/org-structure/user/type'
-import { checkValue } from '@diboot/common/utils/validate-form'
+import { checkValue } from '@/utils/validate-form'
 import type { FormRules } from 'element-plus'
 
 const baseApi = '/iam/tenant/admin'

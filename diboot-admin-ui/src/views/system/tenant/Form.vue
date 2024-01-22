@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Tenant } from './type'
-import { checkValue } from '@diboot/common/utils/validate-form'
+import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/tenant'
 
