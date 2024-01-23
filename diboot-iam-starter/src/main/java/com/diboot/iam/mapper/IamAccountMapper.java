@@ -16,6 +16,8 @@
 package com.diboot.iam.mapper;
 
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamAccount;
 import org.apache.ibatis.annotations.Mapper;
@@ -35,19 +37,13 @@ public interface IamAccountMapper extends BaseCrudMapper<IamAccount> {
     /**
      * 查找登录用户
      *
-     * @param tenantId
-     * @param username
-     * @param userType
+     * @param queryWrapper
      * @param deleted
      * @return
      */
     @InterceptorIgnore(tenantLine = "true")
-    @Select({"SELECT id, tenant_id, user_type, user_id, auth_account, auth_secret, secret_salt, status FROM dbt_iam_account ",
-            "WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND auth_account = #{username} AND auth_type = #{authType} AND user_type = #{userType} ",
-            "LIMIT 1"})
-    IamAccount findLoginAccount(@Param("tenantId") String tenantId, @Param("username") String username,
-                                @Param("userType") String userType, @Param("authType") String authType,
-                                @Param("deleted") Object deleted);
+    @Select({"SELECT id, tenant_id, user_type, user_id, auth_account, auth_secret, secret_salt, status FROM dbt_iam_account WHERE is_deleted = #{deleted} AND ${ew.sqlSegment} LIMIT 1"})
+    IamAccount findLoginAccount(@Param(Constants.WRAPPER) Wrapper<IamAccount> queryWrapper, @Param("deleted") Object deleted);
 
     /**
      * 重置密码

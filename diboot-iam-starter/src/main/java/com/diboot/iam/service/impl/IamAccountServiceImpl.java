@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;

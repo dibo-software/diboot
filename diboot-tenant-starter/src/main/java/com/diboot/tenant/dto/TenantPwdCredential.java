@@ -15,13 +15,22 @@
  */
 package com.diboot.tenant.dto;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.PwdCredential;
+import com.diboot.tenant.config.TenantProperties;
+import com.diboot.tenant.entity.IamTenant;
+import com.diboot.tenant.service.IamTenantService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * 登录凭证
@@ -54,6 +63,27 @@ public class TenantPwdCredential extends PwdCredential {
 
     @NotNull(message = "租户编码不能为空")
     private String tenantCode;
+
+    @Override
+    public String getTenantId() {
+        if (V.notEmpty(super.getTenantId())) return super.getTenantId();
+        if (V.equals(tenantCode, Objects.requireNonNull(ContextHolder.getBean(TenantProperties.class)).getPlatformCode())) {
+            setTenantId(Cons.ID_PREVENT_NULL);
+            return super.getTenantId();
+        }
+        // 获取租户id
+        LambdaQueryWrapper<IamTenant> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(IamTenant::getCode, tenantCode);
+        IamTenant tenant = Objects.requireNonNull(ContextHolder.getBean(IamTenantService.class)).getSingleEntity(queryWrapper);
+        if (tenant == null) {
+            throw new BusinessException("租户不存在");
+        }
+        if (!Cons.DICTCODE_ACCOUNT_STATUS.A.name().equals(tenant.getStatus())) {
+            throw new BusinessException("租户不可用");
+        }
+        setTenantId(tenant.getId());
+        return super.getTenantId();
+    }
 
     @Override
     public String getAuthAccount() {

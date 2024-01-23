@@ -15,9 +15,12 @@
  */
 package com.diboot.tenant.config;
 
+import com.diboot.core.util.S;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 /**
  * diboot-tenant 配置文件类
@@ -30,5 +33,28 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @ConfigurationProperties(prefix = "diboot.tenant")
 public class TenantProperties {
+
+    /**
+     * 平台端Code
+     */
+    private String platformCode = "00000";
+
+
+    /**
+     * 租户忽略表
+     */
+    private List<String> ignoreTable;
+
+
+    /**
+     * 租户忽略表前缀
+     */
+    private List<String> ignoreTablePrefix;
+
+
+    public boolean isIgnoreTable(String tableName) {
+        if (ignoreTable != null && ignoreTable.stream().anyMatch(e -> e.equalsIgnoreCase(tableName))) return true;
+        return ignoreTablePrefix != null && ignoreTablePrefix.stream().anyMatch(e -> S.startsWithIgnoreCase(tableName, e));
+    }
 
 }

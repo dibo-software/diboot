@@ -15,23 +15,14 @@
  */
 package com.diboot.starter;
 
-import com.diboot.core.config.Cons;
-import com.diboot.core.data.tenant.TenantContext;
-import com.diboot.core.util.V;
-import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.tenant.config.TenantProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 多租户组件自动初始化
@@ -51,22 +42,6 @@ public class TenantAutoConfig {
 
     public TenantAutoConfig() {
         log.info("初始化 tenant 组件自动配置");
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public TenantContext<String> tenantContext() {
-        return new TenantContext<String>() {
-            @Override
-            public String getTenantId() {
-                return IamSecurityUtils.getCurrentTenantId();
-            }
-
-            @Override
-            public List<String> getTenantIds() {
-                return Arrays.asList(getTenantId(), Cons.ID_PREVENT_NULL);
-            }
-        };
     }
 
 }

@@ -15,12 +15,10 @@
  */
 package com.diboot.core.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.Cons;
-import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
@@ -34,7 +32,6 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,9 +60,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
-        if (TenantContext.isEnabled()) {
-            queryDictionary.in(Dictionary::getTenantId, TenantContext.gets());
-        }
         // 返回构建条件
         return getEntityList(queryDictionary).stream()
                 .map(Dictionary::toLabelValue)
@@ -80,9 +74,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
-        if (TenantContext.isEnabled()) {
-            queryDictionary.in(Dictionary::getTenantId, TenantContext.gets());
-        }
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
                 Collectors.toMap(Dictionary::getItemName, Dictionary::toLabelValue));
@@ -95,9 +86,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
-        if (TenantContext.isEnabled()) {
-            queryDictionary.in(Dictionary::getTenantId, TenantContext.gets());
-        }
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
                 Collectors.toMap(Dictionary::getItemValue, Dictionary::toLabelValue));
@@ -107,9 +95,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public boolean existsDictType(String dictType) {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
                 .eq(Dictionary::getType, dictType);
-        if (TenantContext.isEnabled()) {
-            queryWrapper.in(Dictionary::getTenantId, TenantContext.gets());
-        }
         return exists(queryWrapper);
     }
 
@@ -121,9 +106,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         }
         if (dictVO.getIsDeletable() == null) {
             dictVO.setIsDeletable(true);
-        }
-        if (TenantContext.isEnabled()) {
-            dictVO.setTenantId(TenantContext.get());
         }
         if(!super.createEntity(dictVO)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
@@ -139,9 +121,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     .setType(dictVO.getType())
                     .setIsDeletable(dictVO.getIsDeletable())
                     .setIsEditable(dictVO.getIsEditable());
-                if (TenantContext.isEnabled()) {
-                    dict.setTenantId(dictVO.getTenantId());
-                }
             }
             // 批量保存
             boolean success = super.createEntities(children);
@@ -161,9 +140,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
                 })
                 .orderByDesc(Dictionary::getId);
-        if (TenantContext.isEnabled()) {
-            queryWrapper.in(Dictionary::getTenantId, TenantContext.gets());
-        }
         return getEntityList(queryWrapper);
     }
 
@@ -173,9 +149,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .and(wrapper -> {
                     wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
                 });
-        if (TenantContext.isEnabled()) {
-            queryWrapper.in(Dictionary::getTenantId, TenantContext.gets());
-        }
         return getViewObjectList(queryWrapper, null, DictionaryVO.class);
     }
 
@@ -214,9 +187,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     }
                 }
                 else{
-                    if (TenantContext.isEnabled()) {
-                        dict.setTenantId(dictVO.getTenantId());
-                    }
                     if(!super.createEntity(dict)){
                         log.warn("新建字典子项失败，itemName=" + dict.getItemName());
                         throw new BusinessException(Status.FAIL_EXCEPTION, "新建字典子项异常");

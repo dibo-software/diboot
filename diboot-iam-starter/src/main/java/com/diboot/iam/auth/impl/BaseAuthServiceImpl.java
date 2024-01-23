@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.data.tenant.TenantContext;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -83,14 +82,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
 
     @Override
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
-        IamAccount latestAccount = null;
-        if (TenantContext.isEnabled()) {
-            latestAccount = iamAccountMapper.findLoginAccount(iamAuthToken.getTenantId(),
-                    iamAuthToken.getAuthAccount(), iamAuthToken.getUserType(), iamAuthToken.getAuthType(),
-                    BaseConfig.getActiveFlagValue());
-        } else {
-            latestAccount = accountService.getSingleEntity(buildQueryWrapper(iamAuthToken));
-        }
+        IamAccount latestAccount = iamAccountMapper.findLoginAccount(buildQueryWrapper(iamAuthToken), BaseConfig.getActiveFlagValue());
         if(latestAccount == null){
             return null;
         }
