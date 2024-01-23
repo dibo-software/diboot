@@ -22,6 +22,8 @@ import com.diboot.tenant.config.TenantProperties;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,6 +34,21 @@ import java.util.Objects;
  * @Date 2024/01/23
  */
 public class TenantHandler implements TenantLineHandler {
+
+    /**
+     * 租户拦截器忽略表
+     */
+    protected static final List<String> TENANT_IGNORE_TABLE = Arrays.asList(
+            "dbt_iam_tenant",
+            "dbt_iam_resource",
+            "dbt_iam_tenant_resource",
+            "dbt_iam_role_resource",
+            "dbt_iam_role",
+            "dbt_dictionary",
+            "dbt_schedule_job",
+            "dbt_schedule_job_log"
+    );
+
     @Override
     public Expression getTenantId() {
         return new StringValue(IamSecurityUtils.getCurrentTenantId());
@@ -39,6 +56,6 @@ public class TenantHandler implements TenantLineHandler {
 
     @Override
     public boolean ignoreTable(String tableName) {
-        return Objects.requireNonNull(ContextHolder.getBean(TenantProperties.class)).isIgnoreTable(tableName);
+        return TENANT_IGNORE_TABLE.contains(tableName) || Objects.requireNonNull(ContextHolder.getBean(TenantProperties.class)).isIgnoreTable(tableName);
     }
 }
