@@ -28,7 +28,7 @@ defineExpose({
           :url="model.accessUrl ?? ''"
           style="white-space: break-spaces; overflow-wrap: anywhere; user-select: auto"
         >
-          {{ model.accessUrl }}{{ model.accessUrl }}{{ model.accessUrl }}{{ model.accessUrl }}{{ model.accessUrl }}
+          {{ model.accessUrl }}
         </download>
       </el-descriptions-item>
       <el-descriptions-item label="备注" :span="2">
