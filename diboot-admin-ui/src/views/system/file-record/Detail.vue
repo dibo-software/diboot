@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { fileDownload } from '@/utils/file'
-
 const { model, loadData, loading } = useDetail<FileRecord>('/file-record')
 
 const visible = ref(false)
@@ -24,9 +22,14 @@ defineExpose({
       </el-descriptions-item>
       <el-descriptions-item label="文件大小"> {{ model.fileSizeLabel }} </el-descriptions-item>
       <el-descriptions-item label="访问地址">
-        <el-link type="primary" @click="model.accessUrl && fileDownload(model.accessUrl)">
-          {{ model.accessUrl }}
-        </el-link>
+        <download
+          type="primary"
+          link
+          :url="model.accessUrl ?? ''"
+          style="white-space: break-spaces; overflow-wrap: anywhere; user-select: auto"
+        >
+          {{ model.accessUrl }}{{ model.accessUrl }}{{ model.accessUrl }}{{ model.accessUrl }}{{ model.accessUrl }}
+        </download>
       </el-descriptions-item>
       <el-descriptions-item label="备注" :span="2">
         {{ model.description }}
