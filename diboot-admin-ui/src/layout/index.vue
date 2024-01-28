@@ -193,7 +193,7 @@ const vDrag: Directive<HTMLElement> = {
     <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header>
         <template #topNav>
-          <app-menu :menu-tree="menuTree" mode="horizontal" />
+          <app-menu :menu-tree="menuTree" mode="horizontal" style="justify-content: flex-end" />
         </template>
       </app-header>
     </el-header>
@@ -266,7 +266,7 @@ const vDrag: Directive<HTMLElement> = {
 
     .el-sub-menu.is-active,
     .el-menu-item.is-active {
-      background-color: rgba(100, 89, 89, 0.2) !important;
+      background-color: #3a4979 !important;
     }
 
     // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）
