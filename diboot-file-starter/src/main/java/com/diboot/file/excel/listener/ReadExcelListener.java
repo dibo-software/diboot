@@ -29,6 +29,7 @@ import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -413,8 +414,15 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                     if (V.isEmpty(valList)) {
                         if (name.contains(S.SEPARATOR)) {
                             valList = new LinkedList<>();
+                            List<String> errDictArr = new ArrayList<>();
                             for (String item : name.split(S.SEPARATOR)) {
-                                valList.addAll(map.get(item));
+                                List list = map.get(item);
+                                if (list == null) errDictArr.add(item);
+                                else valList.addAll(list);
+                            }
+                            if (!errDictArr.isEmpty()){
+                                data.addComment(entry.getKey(), JSON.stringify(errDictArr).replaceAll("[\\[\\]]", "") + "无匹配字典");
+                                continue;
                             }
                             if (valList.size() > 0) {
                                 valList.add(0, S.join(valList));
