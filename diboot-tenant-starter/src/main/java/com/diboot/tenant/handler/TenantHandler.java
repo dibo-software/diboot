@@ -17,6 +17,7 @@ package com.diboot.tenant.handler;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.S;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.tenant.config.TenantProperties;
 import net.sf.jsqlparser.expression.Expression;
@@ -56,6 +57,6 @@ public class TenantHandler implements TenantLineHandler {
 
     @Override
     public boolean ignoreTable(String tableName) {
-        return TENANT_IGNORE_TABLE.contains(tableName) || Objects.requireNonNull(ContextHolder.getBean(TenantProperties.class)).isIgnoreTable(tableName);
+        return TENANT_IGNORE_TABLE.contains(tableName) || S.startsWithIgnoreCase(tableName, "dbtlc_") || Objects.requireNonNull(ContextHolder.getBean(TenantProperties.class)).isIgnoreTable(tableName);
     }
 }
