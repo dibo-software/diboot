@@ -36,8 +36,12 @@ const submit = async () => {
   submitting.value = true
   try {
     const res = await api.post(`${baseApi}/${tenantId.value}`, selectedIdList.value)
-    if (res.code === 0) ElMessage.success('权限配置成功')
-    else ElMessage.error('权限配置失败')
+    if (res.code === 0) {
+      ElMessage.success('权限配置成功')
+      visible.value = false
+    } else {
+      ElMessage.error(res.msg)
+    }
   } finally {
     submitting.value = false
   }

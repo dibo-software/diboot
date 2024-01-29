@@ -5,9 +5,8 @@ import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/tenant'
 
-const { loadData, loading, model } = useDetail<Tenant>(baseApi, {
-  status: 'A'
-})
+const { loadData, loading, model } = useDetail<Tenant & { validDate: string[] }>(baseApi, { status: 'A' })
+
 const { relatedData, initRelatedData } = useOption({
   dict: ['TENANT_STATUS']
 })
@@ -16,7 +15,10 @@ const visible = ref(false)
 defineExpose({
   open: (id?: string) => {
     title.value = id ? '更新' : '新建'
-    loadData(id)
+    loadData(id).then(() => {
+      if (model.value.startDate && model.value.endDate)
+        model.value.validDate = [model.value.startDate, model.value.endDate]
+    })
     initRelatedData()
     visible.value = true
   }
@@ -59,12 +61,8 @@ const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code',
 const rule = { required: true, message: '不能为空', whitespace: true }
 const rules: FormRules = {
   name: [rule],
-  shortName: [rule],
   code: [rule, { validator: checkCodeDuplicate, trigger: 'blur' }],
-  startDate: [rule],
-  endDate: [rule],
-  manager: [rule],
-  phone: [rule],
+  validDate: [{ required: true, message: '不能为空', whitespace: true, type: 'array' }],
   status: [rule]
 }
 </script>
@@ -84,43 +82,6 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="startDate" label="有效开始日期">
-            <el-date-picker
-              v-model="model.startDate"
-              clearable
-              type="date"
-              value-format="YYYY-MM-DD"
-              placeholder="请选择 有效开始日期"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="endDate" label="有效结束日期">
-            <el-date-picker
-              v-model="model.endDate"
-              clearable
-              type="date"
-              value-format="YYYY-MM-DD"
-              placeholder="请选择 有效结束日期"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="manager" label="负责人">
-            <el-input v-model="model.manager" placeholder="请输入 负责人" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="phone" label="联系电话">
-            <el-input v-model="model.phone" placeholder="请输入 联系电话" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="24" :sm="24">
-          <el-form-item prop="description" label="描述">
-            <el-input v-model="model.description" type="textarea" placeholder="请输入 描述" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="24" :sm="24">
           <el-form-item prop="status" label="租户状态">
             <el-select v-model="model.status" filterable placeholder="请选择 租户状态" clearable>
               <el-option
@@ -130,6 +91,38 @@ const rules: FormRules = {
                 :value="item.value"
               />
             </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="validDate" label="有效日期">
+            <el-date-picker
+              v-model="model.validDate"
+              type="daterange"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+              unlink-panels
+              start-placeholder="有效开始日期"
+              end-placeholder="有效结束日期"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="manager" label="负责人">
+            <el-input v-model="model.manager" placeholder="请输入 负责人" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item
+            prop="phone"
+            label="联系电话"
+            :rules="[{ pattern: /^1[0-9][0-9]\d{8}$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }]"
+          >
+            <el-input v-model="model.phone" placeholder="请输入 联系电话" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="24" :sm="24">
+          <el-form-item prop="description" label="描述">
+            <el-input v-model="model.description" type="textarea" placeholder="请输入 描述" />
           </el-form-item>
         </el-col>
       </el-row>

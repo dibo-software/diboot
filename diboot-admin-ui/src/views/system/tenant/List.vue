@@ -21,6 +21,11 @@ getList()
 // 搜索区折叠
 const searchState = ref(false)
 
+const { relatedData, initRelatedData } = useOption({
+  dict: ['TENANT_STATUS']
+})
+initRelatedData()
+
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)
@@ -52,13 +57,20 @@ const deletePermission = checkPermission('delete')
           </el-form-item>
         </el-col>
         <el-col :lg="6" :sm="12">
-          <el-form-item label="租户简称">
-            <el-input v-model="queryParam.shortName" clearable placeholder="租户简称" @change="onSearch" />
+          <el-form-item label="租户编码">
+            <el-input v-model="queryParam.code" clearable placeholder="租户编码" @change="onSearch" />
           </el-form-item>
         </el-col>
         <el-col :lg="6" :sm="12">
-          <el-form-item label="租户code">
-            <el-input v-model="queryParam.code" clearable placeholder="租户code" @change="onSearch" />
+          <el-form-item label="租户状态">
+            <el-select v-model="queryParam.status" filterable placeholder="请选择租户状态" clearable>
+              <el-option
+                v-for="item in relatedData.tenantStatusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>

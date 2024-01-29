@@ -28,6 +28,8 @@ const setOrgId = async () => {
   const res = await api.get(`/iam/tenant/org/${tenantId.value}`)
   if (res.code === 0) {
     model.value.userNum = '000'
+    model.value.status = 'A'
+    model.value.gender = 'M'
     model.value.orgId = res.data
   } else {
     throw new Error(res.msg)
@@ -37,15 +39,24 @@ const createOrUpdate = async (title: string) => {
   submitting.value = true
   try {
     const res = await api.post(`${baseApi}/${tenantId.value}`, model.value)
-    if (res.code === 0) ElMessage.success(`${title}租户管理员成功`)
-    else ElMessage.error('权限配置失败')
+    if (res.code === 0) {
+      ElMessage.success(`${title}租户管理员成功`)
+      visible.value = false
+    } else {
+      ElMessage.error(res.msg)
+    }
   } finally {
     submitting.value = false
-    visible.value = false
   }
 }
 
 const visible = ref(false)
+const formRef = ref()
+watch(visible, value => {
+  if (!value) {
+    formRef.value?.resetFields()
+  }
+})
 const hidePassword = ref(false)
 defineExpose({
   open: async (id?: string) => {
@@ -66,8 +77,6 @@ const rules: FormRules = {
   ],
   accountStatus: { required: true, message: '不能为空', whitespace: true },
   realname: { required: true, message: '不能为空', whitespace: true },
-  gender: { required: true, message: '不能为空', whitespace: true },
-  status: { required: true, message: '不能为空', whitespace: true },
   email: {
     type: 'email',
     message: '请输入正确的邮箱地址',
@@ -114,23 +123,6 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="gender" label="性别">
-            <el-select v-model="model.gender" placeholder="请选择性别">
-              <el-option
-                v-for="item in relatedData.genderOptions"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="birthday" label="生日">
-            <el-date-picker v-model="model.birthdate" value-format="YYYY-MM-DD" type="date" placeholder="请选择生日" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
           <el-form-item prop="mobilePhone" label="电话">
             <el-input v-model="model.mobilePhone" placeholder="请输入电话" />
           </el-form-item>
@@ -138,14 +130,6 @@ const rules: FormRules = {
         <el-col :md="12" :sm="24">
           <el-form-item prop="email" label="邮箱">
             <el-input v-model="model.email" placeholder="请输入邮箱" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="status" label="状态">
-            <el-radio-group v-model="model.status">
-              <el-radio label="A">在职</el-radio>
-              <el-radio label="I">离职</el-radio>
-            </el-radio-group>
           </el-form-item>
         </el-col>
       </el-row>
