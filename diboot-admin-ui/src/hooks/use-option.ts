@@ -1,4 +1,5 @@
 import type { ApiData } from '@/utils/request'
+import qs from 'qs'
 
 /**
  * 绑定对象
@@ -20,15 +21,27 @@ export interface RelatedData {
   // 懒加载（默认：true ；为 false 时会同步加载下一级，且当为树时会加载整个树）
   lazyChild?: boolean
   // 附加条件
+  conditions?: Array<ConditionItem>
+  /**
+   * 附加条件
+   * @Deprecated 3.3移除，使用 conditions?: Array<ConditionItem> 代替
+   */
   condition?: Record<string, boolean | string | number | (string | number)[] | null | undefined>
+}
+
+/**
+ * 条件项
+ */
+export interface ConditionItem {
+  field: string
+  comparison?: string // def EQ =
+  value?: unknown
 }
 
 /**
  * 异步绑定对象
  */
 export interface AsyncRelatedData extends RelatedData {
-  // 远程过滤的关键字
-  keyword?: string
   // 禁止加载数据（用于联动的远程过滤）
   disabled?: boolean
 }
@@ -88,7 +101,7 @@ export default ({
     if ((dict ?? []).length > 0)
       reqList.push(api.post('/common/load-related-dict', Array.isArray(dict) ? dict : [dict]))
     // 通用获取关联绑定的数据
-    if (Object.keys(load ?? {}).length > 0) reqList.push(api.post(`${baseApi}/load-related-data`, load))
+    if (Object.keys(load ?? {}).length > 0) reqList.push(api.post(`${baseApi}/batch-load-related-data`, load))
 
     return new Promise<void>((resolve, reject) => {
       if (reqList.length > 0) {
@@ -115,14 +128,20 @@ export default ({
    *
    * @param relatedDataLoader 加载器
    * @param parentId 父节点ID
+   * @param keyword 搜索关键字
    */
-  const loadRelatedData = (relatedDataLoader: AsyncRelatedData, parentId?: string) => {
+  const loadRelatedData = (relatedDataLoader: AsyncRelatedData, parentId?: string, keyword?: string) => {
     const empty = [] as LabelValue[]
     if (relatedDataLoader.disabled) return Promise.reject<LabelValue[]>(empty)
     asyncLoading.value = true
     return new Promise<LabelValue[]>(resolve => {
       api
-        .get<LabelValue[]>(`${baseApi}/load-related-data${parentId ? `/${parentId}` : ''}`, relatedDataLoader)
+        .post<LabelValue[]>(
+          `${baseApi}/load-related-data${parentId ? `/${parentId}` : ''}${
+            keyword ? '?' + qs.stringify({ keyword }) : ''
+          }`,
+          relatedDataLoader
+        )
         .then(res => resolve(res.data))
         .catch(err => {
           ElNotification.error(err?.msg || err?.message || (err?.length ? err : '获取选项数据失败'))
@@ -159,9 +178,7 @@ export default ({
       relatedData[loader] = []
       return
     }
-    const relatedDataLoader = _.cloneDeep(findAsyncLoader(loader))
-    relatedDataLoader.keyword = value
-    relatedData[loader] = await loadRelatedData(relatedDataLoader)
+    relatedData[loader] = await loadRelatedData(findAsyncLoader(loader), void 0, value)
   }
 
   /**
@@ -190,10 +207,11 @@ export default ({
     }
     const isNull = value == null || value.length === 0
     const execute = async ({ prop, loader, condition, autoLoad }: LinkageControl) => {
-      const relatedDataLoader = findAsyncLoader(loader)
+      let relatedDataLoader = findAsyncLoader(loader)
       relatedDataLoader.disabled = isNull
-      if (relatedDataLoader.condition == null) relatedDataLoader.condition = {}
-      relatedDataLoader.condition[condition] = value
+      relatedDataLoader = _.cloneDeep(relatedDataLoader)
+      if (relatedDataLoader.conditions == null) relatedDataLoader.conditions = []
+      relatedDataLoader.conditions.push({ field: condition, value })
       if (form) form[prop] = undefined
       relatedData[loader] = autoLoad === false || isNull ? [] : await loadRelatedData(relatedDataLoader)
     }

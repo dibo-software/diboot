@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
-import { isDark, isSmall, toggleTheme } from '@/utils/theme'
+import { isDark, isSmall } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'
 import useAuthStore from '@/store/auth'
@@ -27,11 +27,11 @@ const goPersonal = () => {
 <template>
   <div style="height: 100%; display: flex; align-items: center">
     <img v-if="showLogo" :src="Logo" alt="Logo" style="height: 39px" />
-    <div :style="$slots.dock ? { width: '50vw' } : {}" style="margin-left: 20px">
+    <div v-if="$slots.dock" class="top-menu">
       <slot name="dock" />
     </div>
     <div style="position: absolute; right: 1.5rem; display: flex; align-items: center">
-      <div :class="$slots.topNav ? 'top-nav' : ''">
+      <div v-if="$slots.topNav" class="top-menu">
         <slot name="topNav" />
       </div>
       <menu-search class="item" />
@@ -97,12 +97,13 @@ const goPersonal = () => {
 </template>
 
 <style scoped lang="scss">
-.top-nav {
-  max-width: 50vw;
-  margin-right: 25px;
+.top-menu {
+  width: calc(100vw - 500px);
+  margin-left: 25px;
 
   :deep(.el-menu) {
     height: 50px;
+    width: calc(100vw - 500px);
   }
 }
 
@@ -117,6 +118,7 @@ const goPersonal = () => {
     color: var(--el-color-primary);
   }
 }
+
 :deep(.el-switch__core) {
   --el-switch-on-color: #2c2c2c;
   --el-switch-off-color: #f2f2f2;
@@ -127,6 +129,7 @@ const goPersonal = () => {
     height: 14px;
   }
 }
+
 :deep(.dark-icon) {
   border-radius: 50%;
   color: #cfd3dc;

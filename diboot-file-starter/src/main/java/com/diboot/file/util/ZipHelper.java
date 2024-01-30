@@ -154,9 +154,7 @@ public class ZipHelper {
              //调用递归压缩方法进行目录或文件压缩
              zipFile(srcRootDir, srcFile, zos, excludeKeyword);  
              zos.flush();
-             if(zos != null){
-            	 zos.close();
-        	 } 
+			 zos.close();
              return true;
         }
         else {

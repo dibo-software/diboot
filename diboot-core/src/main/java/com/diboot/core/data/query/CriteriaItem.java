@@ -20,10 +20,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-import java.util.Collection;
-
-
 /**
  * 查询条件条目
  * @author JerryMa
@@ -32,7 +28,7 @@ import java.util.Collection;
  * Copyright © diboot.com
  */
 @Getter @Setter @Accessors(chain = true)
-public class CriteriaItem implements Serializable {
+public class CriteriaItem extends BaseCriteria {
     private static final long serialVersionUID = -2342876399137671211L;
 
     private String joinTable;
@@ -41,29 +37,17 @@ public class CriteriaItem implements Serializable {
 
     private String onWhere;
 
-    private String field;
-
-    private String comparison = Comparison.EQ.name();
-
-    private Object value;
-
     private CriteriaItem or;
 
     public CriteriaItem() {
     }
 
     public CriteriaItem(String field, Object value) {
-        this.field = field;
-        if(value != null && value instanceof Collection) {
-            this.comparison = Comparison.IN.name();
-        }
-        this.value = value;
+        super(field, value);
     }
 
     public CriteriaItem(String field, Comparison comparison, Object value) {
-        this.field = field;
-        this.comparison = comparison.name();
-        this.value = value;
+        super(field, comparison, value);
     }
 
     public CriteriaItem update(Comparison comparison, Object value) {
@@ -102,11 +86,4 @@ public class CriteriaItem implements Serializable {
         return this;
     }
 
-    public Comparison getComparison() {
-        return Comparison.valueOf(comparison);
-    }
-
-    public String getComparisonName() {
-        return comparison;
-    }
 }

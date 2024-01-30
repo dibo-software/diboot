@@ -24,6 +24,7 @@ import com.diboot.core.binding.helper.WrapperHelper;
 import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.data.query.BaseCriteria;
 import com.diboot.core.dto.RelatedDataDTO;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.BaseService;
@@ -78,6 +79,7 @@ public class BaseController {
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
 	 */
+	@Deprecated
     protected <DTO> QueryWrapper<DTO> buildQueryWrapperByQueryParams(DTO entityOrDto) throws Exception{
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams());
 	}
@@ -88,6 +90,7 @@ public class BaseController {
 	 * @param pagination 分页，如按关联表中的字段排序时需传入pagination
 	 * @return
 	 */
+	@Deprecated
 	protected <DTO> QueryWrapper<DTO> buildQueryWrapperByQueryParams(DTO entityOrDto, Pagination pagination) throws Exception{
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams(), pagination);
 	}
@@ -267,9 +270,21 @@ public class BaseController {
 			Function<String, Serializable> parentIdTypeConversion = pid -> V.isEmpty(pid) ? null : parentFieldType == Long.class ? Long.valueOf(pid) : pid;
 			String parentPathColumn = field2column.apply(relatedDataDTO.getParentPath());
 			// 动态根点 限制（需同时指定parentPath属性）
-			Serializable rootId = relatedDataDTO.getCondition() == null ? null :
-					parentIdTypeConversion.apply(S.valueOf(relatedDataDTO.getCondition().remove(relatedDataDTO.getParent())));
-			boolean isDynamicRoot = !parentIdTypeConversion.apply(Cons.TREE_ROOT_ID).equals(rootId) && V.isNoneEmpty(rootId, parentPathColumn);
+			Serializable rootId;
+			if(V.notEmpty(relatedDataDTO.getConditions())) {
+				Optional<BaseCriteria> parentCriteriaOpt = relatedDataDTO.getConditions().stream().filter(criteria -> criteria.getField().equals(relatedDataDTO.getParent())).findFirst();
+				if(parentCriteriaOpt.isPresent()) {
+					rootId = parentIdTypeConversion.apply(S.valueOf(parentCriteriaOpt.get().getValue()));
+					relatedDataDTO.removeCondition(relatedDataDTO.getParent());
+				}
+				else {
+                    rootId = null;
+                }
+            }
+			else {
+                rootId = null;
+            }
+            boolean isDynamicRoot = !parentIdTypeConversion.apply(Cons.TREE_ROOT_ID).equals(rootId) && V.isNoneEmpty(rootId, parentPathColumn);
 			if (isDynamicRoot) {
 				Object rootNode = baseService.getEntity(rootId);
 				if (rootNode == null) {
@@ -357,22 +372,14 @@ public class BaseController {
 	 * @param field2column relatedData.type对象的属性名转列名
 	 */
 	protected void buildRelatedDataCondition(RelatedDataDTO relatedDataDTO, QueryWrapper<?> queryWrapper, Function<String, String> field2column) {
-		if (relatedDataDTO.getCondition() == null) {
+		if (V.isEmpty(relatedDataDTO.getConditions())) {
 			return;
 		}
-		for (Map.Entry<String, Object> item : relatedDataDTO.getCondition().entrySet()) {
-			String columnName = field2column.apply(item.getKey());
-			Object itemValue = item.getValue();
-			if (V.isEmpty(itemValue)) {
-				queryWrapper.isNull(columnName);
-			} else if (itemValue instanceof Collection) {
-				queryWrapper.in(columnName, (Collection<?>) itemValue);
-			} else if (itemValue.getClass().isArray()) {
-				queryWrapper.in(columnName, (Object[]) itemValue);
-			} else {
-				queryWrapper.eq(columnName, itemValue);
-			}
-		}
+		relatedDataDTO.getConditions().forEach(criteria -> {
+			String columnName = field2column.apply(criteria.getField());
+			// 根据匹配方式构建查询
+			WrapperHelper.buildQueryCriteria(queryWrapper, criteria.getComparison(), columnName, criteria.getValue());
+		});
 	}
 
 	/***
@@ -385,7 +392,7 @@ public class BaseController {
 			for(Map.Entry<String, String[]> entry : params.entrySet()){
 				String[] values = entry.getValue();
 				if(values != null && values.length > 0){
-					sb.append(entry.getKey() + "=" + S.join(values)+"; ");
+					sb.append(entry.getKey()).append("=").append(S.join(values)).append("; ");
 				}
 			}
 			log.debug(sb.toString());

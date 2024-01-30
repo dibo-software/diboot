@@ -32,9 +32,6 @@ public class SqlDate2LocalDateConverter implements Converter<Date, LocalDate> {
 
     @Override
     public LocalDate convert(Date source) {
-        if (source == null) {
-            return null;
-        }
         return source.toLocalDate();
     }
 

@@ -149,7 +149,7 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserAndRelatedInfo(String id) {
-        if (exists(IamUser::getId, id) == false){
+        if (!exists(IamUser::getId, id)){
             throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
         }
         // 删除用户信息

@@ -94,7 +94,7 @@ public class ValidList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return list.containsAll(c);
+        return new HashSet<>(list).containsAll(c);
     }
 
     @Override

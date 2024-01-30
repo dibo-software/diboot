@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.diboot.scheduler.starter.SchedulerAutoConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.diboot.starter.SchedulerAutoConfig

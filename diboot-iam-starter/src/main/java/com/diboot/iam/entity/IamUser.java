@@ -111,4 +111,9 @@ public class IamUser extends BaseLoginUser {
         return IamUser.class.getSimpleName();
     }
 
+    @Override
+    public String getTenantId() {
+        return this.tenantId;
+    }
+
 }

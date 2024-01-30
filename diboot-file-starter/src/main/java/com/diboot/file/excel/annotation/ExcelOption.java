@@ -62,13 +62,13 @@ public @interface ExcelOption {
     String dict() default "";
 
     /**
-     * 行数
+     * 默认填充行数
      * <p>
      * 当 rows <= 0 时为个整列
      * <p>
-     * 默认值 10,000
+     * 默认值 1000
      */
-    int rows() default 10_000;
+    int rows() default 1000;
 
     /**
      * 错误框样式

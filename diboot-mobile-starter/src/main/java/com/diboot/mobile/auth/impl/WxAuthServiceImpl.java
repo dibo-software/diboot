@@ -18,6 +18,7 @@ package com.diboot.mobile.auth.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.util.V;
 import com.diboot.iam.auth.impl.BaseAuthServiceImpl;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.AuthCredential;
@@ -52,6 +53,7 @@ public class WxAuthServiceImpl extends BaseAuthServiceImpl {
                 .eq(IamAccount::getUserType, iamAuthToken.getUserType())
                 .eq(IamAccount::getAuthType, iamAuthToken.getAuthType())
                 .eq(IamAccount::getAuthAccount, iamAuthToken.getAuthAccount())
+                .eq(V.notEmpty(iamAuthToken.getTenantId()) ,IamAccount::getTenantId, iamAuthToken.getTenantId())
                 .orderByDesc(IamAccount::getId);
         return queryWrapper;
     }
@@ -68,6 +70,7 @@ public class WxAuthServiceImpl extends BaseAuthServiceImpl {
         token.setAuthAccount(wxMpCredential.getAuthAccount());
         token.setRememberMe(wxMpCredential.isRememberMe());
         token.setExpiresInMinutes(getExpiresInMinutes());
+        token.setTenantId(wxMpCredential.getTenantId());
         // 生成token
         return token.generateAuthtoken();
     }

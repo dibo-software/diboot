@@ -18,6 +18,7 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
@@ -159,6 +160,11 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
         return getEntityList(queryWrapper).stream().collect(
                 Collectors.toMap(ent -> ent.getId(),
                         ent -> new LabelValue(ent.getName(), ent.getId()).setExt(ent.getCode())));
+    }
+
+    @Override
+    public String getTenantRootOrgId(String tenantId) {
+        return getMapper().getTenantRootOrgId(tenantId, BaseConfig.getActiveFlagValue());
     }
 
 }

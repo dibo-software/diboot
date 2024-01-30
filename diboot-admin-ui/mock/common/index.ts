@@ -68,6 +68,10 @@ const dictList: Record<string, LabelValue<string>[]> = {
     { label: '高级', value: 'E3' },
     { label: '专家', value: 'E4' },
     { label: '公司领导', value: 'M4' }
+  ],
+  TENANT_STATUS: [
+    { label: '有效', value: 'A' },
+    { label: '无效', value: 'I' }
   ]
 }
 

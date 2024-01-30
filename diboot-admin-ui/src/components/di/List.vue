@@ -97,7 +97,7 @@ const updateOrDeletePermission = checkPermission(['update', 'delete'], false, fa
 
 const multiple = inject<boolean | undefined>(
   'multiple',
-  deletePermission && props.operation?.batchRemove ? true : undefined
+  (deletePermission && props.operation?.batchRemove) || exportPermission ? true : undefined
 )
 </script>
 
@@ -143,7 +143,7 @@ const multiple = inject<boolean | undefined>(
       />
       <excel-export
         v-if="operation?.exportData && exportPermission"
-        :build-param="buildQueryParam"
+        :build-param="() => ({ ...buildQueryParam(), ids: selectedKeys })"
         :export-url="`${baseApi}/excel/export`"
         :table-head-url="`${baseApi}/excel/export-table-head`"
       />

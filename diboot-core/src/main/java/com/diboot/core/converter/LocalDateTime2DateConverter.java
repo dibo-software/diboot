@@ -35,9 +35,6 @@ public class LocalDateTime2DateConverter implements Converter<LocalDateTime, Dat
 
     @Override
     public Date convert(LocalDateTime source) {
-        if (source == null) {
-            return null;
-        }
         Instant instant = source.atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(instant);
     }

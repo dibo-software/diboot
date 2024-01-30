@@ -150,12 +150,12 @@ public class HttpHelper {
             Response response = call.execute();
             // 判断状态码
             if(response.code() >= 400){
-                log.warn("请求调用异常 : " + url);
+                log.warn("请求调用异常 : {}", url);
                 return null;
             }
             return response;
         } catch (IOException e) {
-            log.warn("请求调用解析异常 : " + url, e);
+            log.warn("请求调用解析异常 : {}", url, e);
             return null;
         }
     }
@@ -233,12 +233,12 @@ public class HttpHelper {
             Response response = call.execute();
             // 判断状态码
             if(response.code() >= 400){
-                log.warn("请求调用异常 : " + url);
+                log.warn("请求调用异常 : {}", url);
                 return null;
             }
             return response.body().string();
         } catch (IOException e) {
-            log.warn("请求调用解析异常 : " + url, e);
+            log.warn("请求调用解析异常 : {}", url, e);
             return null;
         }
     }

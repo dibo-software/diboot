@@ -31,7 +31,11 @@ export type ListOperation = Partial<
 export interface TableColumn {
   hide?: boolean
   prop: string
+  // 存储列属性
+  column?: string
   label: string
+  // 小数位数 （默认：2）
+  number?: number
   width?: string | number
   sortable?: false | 'custom'
   fixed?: boolean

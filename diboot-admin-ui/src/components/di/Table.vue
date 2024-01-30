@@ -52,8 +52,11 @@ const columns = () => {
 }
 const visible = ref<boolean>()
 const tableConfigKey = 'table-config-' + props.model
-const config = ref<TableConfig>(getCache(tableConfigKey, { border: false, stripe: false, columns: columns() }))
-const resetTableConfig = () => (config.value = { border: false, stripe: false, columns: columns() })
+const config = ref<TableConfig>(getCache(tableConfigKey, { border: false, stripe: true, columns: columns() }))
+const resetTableConfig = () => {
+  localStorage.removeItem(tableConfigKey)
+  config.value = { border: false, stripe: true, columns: columns() }
+}
 const saveColumnChange = () => {
   visible.value = false
   setCache(tableConfigKey, config.value)
@@ -78,8 +81,7 @@ const onSelectionChange = (rows: Array<Record<string, unknown>>) => {
   if (!selectedRows.value) return
   const ids = selectedRows.value.map(e => e.value)
   const rowIds = rows.map(e => e[props.primaryKey])
-  const delIds =
-    props.dataList?.filter(e => !rowIds.includes(e[props.primaryKey])).map(e => e[props.primaryKey] as string) ?? []
+  const delIds = props.dataList?.map(e => e[props.primaryKey] as string).filter(e => !rowIds.includes(e)) ?? []
   const allSelectedRows = selectedRows.value.filter(e => !delIds.includes(e.value))
   allSelectedRows.push(
     ...rows
@@ -117,6 +119,7 @@ if (selectedRows.value) {
       () => props.dataList,
       value => {
         const ids = selectedRows.value?.map(e => e.value) ?? []
+        tableRef.value?.clearSelection()
         value?.forEach(item => {
           if (ids.includes(item[props.primaryKey] as string)) tableRef.value?.toggleRowSelection(item, true)
         })
@@ -129,11 +132,20 @@ if (selectedRows.value) {
     value => {
       const ids = value?.map(e => e.value) ?? []
       if (props.multiple)
-        props.dataList?.forEach(item =>
-          tableRef.value?.toggleRowSelection(item, ids.includes(item[props.primaryKey] as string))
-        )
+        if (ids.length === 0) tableRef.value?.clearSelection()
+        else {
+          props.dataList?.forEach(item =>
+            tableRef.value?.toggleRowSelection(item, ids.includes(item[props.primaryKey] as string))
+          )
+        }
       else single.value = value?.length ? value[0].value : undefined
     },
+    { deep: true, immediate: true }
+  )
+} else {
+  watch(
+    () => props.dataList,
+    () => tableRef.value?.clearSelection(),
     { deep: true, immediate: true }
   )
 }
@@ -151,8 +163,11 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     default:
       orderBy = undefined
   }
-  emit('order', prop, orderBy)
+  emit('order', props.columns.find(e => e.prop === prop)?.column ?? prop, orderBy)
 }
+
+const headerDragend = (newWidth: number, oldWidth: number, column: { property: string }) =>
+  (config.value.columns.find(e => e.prop === column.property)!.width = Math.trunc(newWidth))
 </script>
 
 <template>
@@ -167,6 +182,7 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     @row-click="rowClick"
     @selection-change="selected"
     @sort-change="sortChange"
+    @header-dragend="headerDragend"
   >
     <el-table-column v-if="multiple === false" type="index" width="55" fixed>
       <template #default="{ row }">
@@ -188,6 +204,29 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
         :filters="item.filters"
         :show-overflow-tooltip="item.showOverflowTooltip ?? true"
       >
+        <template v-if="item.number" #header>
+          <el-tooltip v-if="item.number" placement="bottom">
+            <template #content>
+              当前页总和：{{
+                Number(
+                  (dataList ?? [])
+                    .map(e => Number(e[item.prop] ?? 0))
+                    .reduce((e1, e2) => e1 + e2, 0)
+                    .toFixed(item.number)
+                )
+              }}<br />
+              当前页平均：{{
+                Number(
+                  (
+                    (dataList ?? []).map(e => Number(e[item.prop] ?? 0)).reduce((e1, e2) => e1 + e2, 0) /
+                    (dataList ?? []).length
+                  ).toFixed(item.number + 1)
+                )
+              }}
+            </template>
+            {{ item.label }}
+          </el-tooltip>
+        </template>
         <template #default="scope">
           <slot :name="item.prop" v-bind="scope">
             <span v-if="Array.isArray(scope.row[item.prop])">
@@ -201,6 +240,10 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
             >
               {{ scope.row[item.prop].label }}
             </el-tag>
+            <template v-else-if="typeof scope.row[item.prop] === 'boolean'">
+              <template v-if="scope.row[item.prop]"> 是 </template>
+              <template v-else> 否 </template>
+            </template>
             <span v-else>
               {{ scope.row[item.prop] }}
             </span>
@@ -210,11 +253,12 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
     </template>
   </el-table>
 
-  <div style="display: flex; justify-content: space-between">
+  <div v-if="$slots.pagination" style="display: flex; justify-content: space-between">
     <div>
       <slot name="pagination" />
     </div>
     <el-space v-if="!selectedRows" :size="20" style="height: 38px">
+      <slot name="operation" />
       <el-popover :visible="visible" :width="500" trigger="click" placement="top-start">
         <template #reference>
           <el-button :icon="SetUp" size="default" text bg circle />
@@ -278,12 +322,19 @@ const sortChange = ({ prop, order }: { prop: string; order: string }) => {
 
 <style scoped lang="scss">
 .sortable-table {
+  display: block;
+  overflow-y: auto;
   text-align: center;
+  max-height: calc(100vh - 200px);
   border-bottom: solid 1px var(--el-menu-border-color);
   margin-bottom: 8px;
 
   thead {
     border-bottom: solid 1px var(--el-menu-border-color);
+    background-color: var(--el-bg-color-overlay);
+    position: sticky;
+    z-index: 2;
+    top: 0;
   }
 }
 

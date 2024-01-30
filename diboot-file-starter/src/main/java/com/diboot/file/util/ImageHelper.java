@@ -82,7 +82,7 @@ public class ImageHelper {
 	 */
 	public static String saveImage(MultipartFile file){
 		String fileName = file.getOriginalFilename();
-		String ext = fileName.substring(fileName.lastIndexOf(".")+1);
+		String ext = S.substringAfterLast(fileName,".");
 		String newFileName = S.newUuid() + "." + ext;
 		return saveImage(file, newFileName);
 	}

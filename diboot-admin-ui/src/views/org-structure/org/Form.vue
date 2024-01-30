@@ -116,8 +116,11 @@ defineExpose({ open })
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="code" label="编码">
-            <el-input v-model="model.code" />
+          <el-form-item prop="type" label="类型">
+            <el-radio-group v-model="model.type">
+              <el-radio label="COMP">公司</el-radio>
+              <el-radio label="DEPT">部门</el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
@@ -126,11 +129,8 @@ defineExpose({ open })
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="type" label="类型">
-            <el-radio-group v-model="model.type">
-              <el-radio label="COMP">公司</el-radio>
-              <el-radio label="DEPT">部门</el-radio>
-            </el-radio-group>
+          <el-form-item prop="code" label="编码">
+            <el-input v-model="model.code" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">

@@ -41,7 +41,7 @@ public class HttpHelper {
      */
     public static Map<String, Object> buildParamsMap(HttpServletRequest request) {
         Enumeration paramNames = request.getParameterNames();
-        if(paramNames.hasMoreElements() == false){
+        if(!paramNames.hasMoreElements()){
             return Collections.emptyMap();
         }
         Map<String, Object> result = new HashMap<>();

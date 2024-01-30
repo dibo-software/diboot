@@ -57,7 +57,7 @@ public class AuthServiceFactory {
         }
         AuthService service = AUTHTYPE_SERVICE_CACHE.get(authType);
         if(service == null){
-            log.warn("无法找到认证类型: {} 的AccountAuthService实现，请检查！");
+            log.warn("无法找到认证类型: {} 的AccountAuthService实现，请检查！", authType);
         }
         return service;
     }

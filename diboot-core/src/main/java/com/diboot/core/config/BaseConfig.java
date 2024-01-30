@@ -16,6 +16,8 @@
 package com.diboot.core.config;
 
 import com.diboot.core.util.PropertiesUtils;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,21 +123,37 @@ public class BaseConfig {
 		return batchSize;
 	}
 
-	private static String ACTIVE_FLAG_VALUE = null;
+	private static Object ACTIVE_FLAG_VALUE = null;
 	/**
 	 * 获取有效记录的标记值，如 0
 	 * @return
 	 */
-	public static String getActiveFlagValue(){
-		if(ACTIVE_FLAG_VALUE == null){
-			ACTIVE_FLAG_VALUE = getProperty("mybatis-plus.global-config.db-config.logic-not-delete-value", "0");
-		}
+	public static Object getActiveFlagValue(){
+		String activeValue = getProperty("mybatis-plus.global-config.db-config.logic-not-delete-value");
+		initActiveFlagValue(activeValue);
 		return ACTIVE_FLAG_VALUE;
 	}
 
 	public static void setActiveFlagValue(String value) {
-		if(getActiveFlagValue() == null) {
-			ACTIVE_FLAG_VALUE = value;
+		initActiveFlagValue(value);
+	}
+
+	private static void initActiveFlagValue(String activeValue) {
+		if(ACTIVE_FLAG_VALUE == null){
+			if(V.notEmpty(activeValue)) {
+				if(S.equalsIgnoreCase(activeValue, "false")) {
+					ACTIVE_FLAG_VALUE = false;
+				}
+				else if(S.containsIgnoreCase(activeValue, "true")) {
+					ACTIVE_FLAG_VALUE = true;
+				}
+				else {
+					ACTIVE_FLAG_VALUE = Integer.parseInt(activeValue);
+				}
+			}
+		}
+		if(ACTIVE_FLAG_VALUE == null){
+			ACTIVE_FLAG_VALUE = 0;
 		}
 	}
 
@@ -168,4 +186,5 @@ public class BaseConfig {
 		}
 		return dataCenterId;
 	}
+
 }

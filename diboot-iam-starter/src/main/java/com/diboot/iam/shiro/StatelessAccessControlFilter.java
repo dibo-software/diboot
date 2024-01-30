@@ -64,7 +64,7 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
         }
         log.debug("token: {} 验证通过", currentToken);
         String cachedUserInfo = TokenUtils.getCachedUserInfoStr(currentToken);
-        if(IamSecurityUtils.getSubject().isAuthenticated() == false && cachedUserInfo != null){
+        if(!IamSecurityUtils.getSubject().isAuthenticated() && cachedUserInfo != null){
             IamAuthToken authToken = new IamAuthToken(cachedUserInfo);
             authToken.setAuthtoken(currentToken);
             authToken.setValidPassword(false);

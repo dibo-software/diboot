@@ -34,9 +34,6 @@ public class Timestamp2LocalDateTimeConverter implements Converter<Timestamp, Lo
 
     @Override
     public LocalDateTime convert(Timestamp source) {
-        if (source == null) {
-            return null;
-        }
         return source.toLocalDateTime();
     }
 }

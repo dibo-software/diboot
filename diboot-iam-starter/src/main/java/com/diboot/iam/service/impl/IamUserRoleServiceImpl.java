@@ -18,6 +18,7 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.BaseEntity;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -26,12 +27,14 @@ import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.exception.PermissionException;
+import com.diboot.iam.mapper.IamRoleMapper;
 import com.diboot.iam.mapper.IamUserRoleMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamHelper;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,8 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     @Autowired
     private IamRoleService iamRoleService;
     @Autowired
+    private IamRoleMapper iamRoleMapper;
+    @Autowired
     private IamAccountService iamAccountService;
     @Autowired
     private IamResourceService iamResourceService;
@@ -73,25 +78,19 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
     private static String ROLE_ID_SUPER_ADMIN = null;
 
     @Override
-    public List<IamRole> getUserRoleList(String userType, String userId) {
-        return getUserRoleList(userType, userId, null);
-    }
-
-    @Override
-    public List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId) {
+    public List<IamRole> getUserRoleList(String tenantId, String userType, String userId, String extensionObjId) {
         List<IamUserRole> userRoleList = getEntityList(Wrappers.<IamUserRole>lambdaQuery()
                 .select(IamUserRole::getRoleId)
                 .eq(IamUserRole::getUserType, userType)
                 .eq(IamUserRole::getUserId, userId)
+                .eq(IamUserRole::getTenantId, tenantId)
         );
         if(V.isEmpty(userRoleList)){
             return Collections.emptyList();
         }
         List<String> roleIds = BeanUtils.collectToList(userRoleList, IamUserRole::getRoleId);
         // 查询当前角色
-        List<IamRole> roles = iamRoleService.getEntityList(Wrappers.<IamRole>lambdaQuery()
-                .select(IamRole::getId, IamRole::getName, IamRole::getCode)
-                .in(IamRole::getId, roleIds));
+        List<IamRole> roles = iamRoleMapper.findByIds(roleIds, BaseConfig.getActiveFlagValue());
         // 加载扩展角色
         if(getIamExtensible() != null){
             List<IamRole> extRoles = getIamExtensible().getExtensionRoles(userType, userId, extensionObjId);
@@ -187,6 +186,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
         return success;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteUserRoleRelations(String userType, String userId) {
         String superAdminRoleId = getSuperAdminRoleId();
@@ -208,7 +208,7 @@ public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper
 
     @Override
     public List<IamRoleVO> getAllRoleVOList(BaseLoginUser userObject) {
-        List<IamRole> roleList = getUserRoleList(userObject.getClass().getSimpleName(), userObject.getId());
+        List<IamRole> roleList = getUserRoleList(userObject.getTenantId(), userObject.getClass().getSimpleName(), userObject.getId());
         if (V.isEmpty(roleList)){
             return null;
         }

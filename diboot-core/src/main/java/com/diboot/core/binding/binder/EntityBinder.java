@@ -110,7 +110,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             if (queryWrapper.isEmptyOfNormal()) {
                 return;
             }
-            List<T> entityList = null;
+            List<T> entityList;
             // 查询entity列表: List<T>
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
@@ -144,7 +144,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             // 构建查询条件
             String refObjJoinOnCol = refObjJoinCols.get(0);
             // 查询entity列表
-            List<T> entityList = null;
+            List<T> entityList;
             // 查询entity列表: List<T>
             if(V.isEmpty(this.module)){
                 queryWrapper.in(refObjJoinOnCol, refObjValues);
@@ -200,7 +200,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
             // 查找匹配Key
             String matchKey = sb.toString();
             Object target = entity;
-            if(target instanceof Map == false){
+            if(!(target instanceof Map)){
                 target = cloneOrConvertBean(entity);
             }
             key2TargetMap.put(matchKey, target);
@@ -215,7 +215,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
      */
     protected Object cloneOrConvertBean(T value){
         if(value == null){
-            return value;
+            return null;
         }
         if(value.getClass().getName().equals(annoObjectFieldClass.getName())){
             return BeanUtils.cloneBean(value);

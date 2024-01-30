@@ -23,7 +23,7 @@ import com.diboot.iam.cache.IamPermissionCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.exception.PermissionException;
-import com.diboot.iam.starter.IamProperties;
+import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.util.IamSecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -62,7 +62,7 @@ public class BindPermissionAspect {
      */
     @Before("pointCut()")
     public void before(JoinPoint joinPoint) {
-        if(iamProperties.isEnablePermissionCheck() == false){
+        if(!iamProperties.isEnablePermissionCheck()){
             log.debug("BindPermission权限检查已停用，如需启用请删除配置项: diboot.iam.enable-permission-check=false");
             return;
         }

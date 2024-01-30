@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.vo.LabelValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -148,6 +149,14 @@ public class Dictionary extends BaseEntity<String> {
         }
         this.extension.put(extAttrName, extAttrValue);
         return this;
+    }
+
+    /**
+     * 转换为选项
+     * @return
+     */
+    public LabelValue toLabelValue() {
+        return new LabelValue(this.getItemName(), this.getItemValue()).setExt(this.getExtension());
     }
 
 }

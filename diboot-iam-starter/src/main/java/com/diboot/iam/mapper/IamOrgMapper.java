@@ -15,18 +15,32 @@
  */
 package com.diboot.iam.mapper;
 
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamOrg;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
-* 组织机构Mapper
-* @author mazc@dibo.ltd
-* @version 2.2
-* @date 2019-12-03
-*/
+ * 组织机构Mapper
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.2
+ * @date 2019-12-03
+ */
 @Mapper
 public interface IamOrgMapper extends BaseCrudMapper<IamOrg> {
+
+    /**
+     * 查询租户的根部门id
+     *
+     * @param tenantId
+     * @param deleted
+     * @return
+     */
+    @InterceptorIgnore(tenantLine = "true")
+    @Select({"SELECT id FROM dbt_iam_org WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND (parent_id = '0' or parent_id is null)"})
+    String getTenantRootOrgId(String tenantId, Object deleted);
 
 }
 

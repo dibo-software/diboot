@@ -18,7 +18,7 @@ create table dbt_schedule_job
 )
 DEFAULT CHARSET=utf8 COMMENT '定时任务';
 -- 创建索引
-create index idx_dbt_schedule_job_tenant on dbt_schedule_job (tenant_id);
+create index idx_dbt_schedule_job_key on dbt_schedule_job (job_key);
 
 -- 定时任务日志表
 create table dbt_schedule_job_log
@@ -41,4 +41,3 @@ create table dbt_schedule_job_log
   DEFAULT CHARSET=utf8 COMMENT '定时任务日志';
 -- 创建索引
 create index idx_sch_job_log_1 on dbt_schedule_job_log (job_id);
-create index idx_sch_job_log_tenant on dbt_schedule_job_log (tenant_id);

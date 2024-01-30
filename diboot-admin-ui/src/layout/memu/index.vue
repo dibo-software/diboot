@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { RouteRecordRaw } from 'vue-router'
 import SubMenu from './SubMenu.vue'
-
 import { Fold, Expand } from '@element-plus/icons-vue'
 
 const props = withDefaults(
@@ -16,11 +15,15 @@ const toggleState = () => emits('update:collapse', !props.collapse)
 
 <template>
   <el-menu v-if="mode === 'horizontal'" router :default-active="$route.path" mode="horizontal">
-    <sub-menu :menu-tree="menuTree" />
+    <template v-for="(item, index) in menuTree" :key="index">
+      <sub-menu :item="item" />
+    </template>
   </el-menu>
   <el-scrollbar v-else-if="height" :height="height">
     <el-menu router :default-active="$route.path" :style="{ minHeight: height }">
-      <sub-menu :menu-tree="menuTree" />
+      <template v-for="(item, index) in menuTree" :key="index">
+        <sub-menu :item="item" />
+      </template>
     </el-menu>
   </el-scrollbar>
   <div v-else>
@@ -34,7 +37,9 @@ const toggleState = () => emits('update:collapse', !props.collapse)
         :collapse="collapse"
         :style="{ minHeight: collapse && $slots.title ? 'calc(100vh - 39px)' : 'calc(100vh - 89px)' }"
       >
-        <sub-menu :menu-tree="menuTree" :collapse="collapse" />
+        <template v-for="(item, index) in menuTree" :key="index">
+          <sub-menu :item="item" :collapse="collapse" />
+        </template>
       </el-menu>
     </el-scrollbar>
     <div class="collapse" @click="toggleState()">

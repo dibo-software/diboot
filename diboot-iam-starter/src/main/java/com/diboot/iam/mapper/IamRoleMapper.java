@@ -15,18 +15,48 @@
  */
 package com.diboot.iam.mapper;
 
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.diboot.core.mapper.BaseCrudMapper;
 import com.diboot.iam.entity.IamRole;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
-* 角色Mapper
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-03
-*/
+ * 角色Mapper
+ *
+ * @author mazc@dibo.ltd
+ * @version 2.0
+ * @date 2019-12-03
+ */
 @Mapper
 public interface IamRoleMapper extends BaseCrudMapper<IamRole> {
 
+    /**
+     * 根据code查询角色 查询租户id = 0
+     *
+     * @param code
+     * @param deleted
+     * @return
+     */
+    @InterceptorIgnore(tenantLine = "true")
+    @Select("SELECT * FROM dbt_iam_role WHERE is_deleted = #{deleted} AND tenant_id = '0' AND code = #{code} LIMIT 1")
+    IamRole findByCode(@Param("code") String code, @Param("deleted") Object deleted);
+
+    /**
+     * 根据角色id列表查询角色
+     *
+     * @param ids
+     * @param deleted
+     * @return
+     */
+    @InterceptorIgnore(tenantLine = "true")
+    @Select({"<script>",
+            "SELECT * FROM dbt_iam_role WHERE is_deleted = #{deleted} ",
+            "AND id in <foreach collection = \"ids\" item = \"id\" open = '(' close = ')' separator = ','>#{id}</foreach>",
+            "</script>"})
+    List<IamRole> findByIds(@Param("ids") List<String> ids, @Param("deleted") Object deleted);
 }
 

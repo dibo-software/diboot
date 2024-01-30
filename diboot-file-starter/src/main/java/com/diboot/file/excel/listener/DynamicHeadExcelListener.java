@@ -36,7 +36,6 @@ import java.util.*;
 @Slf4j
 public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map<Integer, String>> {
     // 表头
-    @Getter
     Map<Integer, String> headMap = new HashMap<>();
     /**
      * 是否为预览模式

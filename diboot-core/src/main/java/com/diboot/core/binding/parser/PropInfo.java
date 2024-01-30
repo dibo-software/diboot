@@ -10,6 +10,8 @@ import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -25,6 +27,7 @@ import java.util.Map;
  * @date 2021/4/20
  * Copyright © diboot.com
  */
+@Slf4j
 @Getter
 public class PropInfo implements Serializable {
     private static final long serialVersionUID = 5921667308129991326L;
@@ -47,7 +50,7 @@ public class PropInfo implements Serializable {
     /**
      * 字段-列的映射
      */
-    private final Map<String, String> fieldToColumnMap = new HashMap<>();
+    private final Map<String, String> fieldToColumnMap = new LinkedCaseInsensitiveMap<>();
     /**
      * 列-字段的映射
      */
@@ -82,10 +85,7 @@ public class PropInfo implements Serializable {
                 String columnName = null;
                 TableField tableField = fld.getAnnotation(TableField.class);
                 if(tableField != null){
-                    if(tableField.exist() == false){
-                        columnName = null;
-                    }
-                    else {
+                    if(tableField.exist()){
                         if (V.notEmpty(tableField.value())){
                             columnName = tableField.value();
                         }
@@ -96,7 +96,7 @@ public class PropInfo implements Serializable {
                         if (FieldFill.UPDATE.equals(fill) || FieldFill.INSERT_UPDATE.equals(fill)) {
                             fillUpdateFieldList.add(fldName);
                         }
-                    }
+                    } else continue;
                 }
                 // 主键
                 TableId tableId = fld.getAnnotation(TableId.class);
@@ -134,7 +134,7 @@ public class PropInfo implements Serializable {
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){
                     this.columnToFieldMap.put(columnName, fldName);
-                    if(this.idColumn != null && columnName.equals(this.idColumn) && beanClass.isAssignableFrom(BaseEntity.class)) {
+                    if(columnName.equals(this.idColumn) && beanClass.isAssignableFrom(BaseEntity.class)) {
                         this.columnToFieldTypeMap.put(columnName, Long.class);
                     }
                     else {
@@ -166,7 +166,11 @@ public class PropInfo implements Serializable {
         if(V.isEmpty(this.fieldToColumnMap)){
             return null;
         }
-        return this.fieldToColumnMap.get(fieldName);
+        String column = this.fieldToColumnMap.get(fieldName);
+        if(column == null) {
+            log.warn("未找到字段 {} 对应的 列名，请检查！", fieldName);
+        }
+        return column;
     }
 
 

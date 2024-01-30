@@ -15,6 +15,7 @@
  */
 package com.diboot.core.cache;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
@@ -138,6 +139,9 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     @Override
     public synchronized void clearOutOfDateData(String cacheName) {
         Cache cache = getCache(cacheName);
+        if(cache == null) {
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
+        }
         ConcurrentMap<Object, Object> cacheMap = (ConcurrentMap<Object, Object>)cache.getNativeCache();
         if(V.isEmpty(cacheMap)){
             log.debug("暂无缓存数据: {}", cacheName);

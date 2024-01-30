@@ -1,4 +1,5 @@
-import { createRouter, createWebHashHistory, RouterView, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, RouterView } from 'vue-router'
+import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
 import { createRouterGuard } from '@/router/router-guards'
 import auth from '@/utils/auth'
 
@@ -105,7 +106,7 @@ export default router
 export const resetRouter = () => {
   router
     .getRoutes()
-    .map(e => String(e.name))
+    .map(e => e.name as RouteRecordName)
     .forEach(router.removeRoute)
   constantRoutes.forEach(router.addRoute)
 }

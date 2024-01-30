@@ -4,6 +4,8 @@ const en: Locale = {
   language: 'English',
   operation: {
     create: 'Create',
+    createTenantAdmin: 'Admin Config',
+    createTenantResource: 'Resource Config',
     detail: 'Detail',
     update: 'Update',
     delete: 'Delete',

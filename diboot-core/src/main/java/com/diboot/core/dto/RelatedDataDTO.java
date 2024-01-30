@@ -2,7 +2,9 @@ package com.diboot.core.dto;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.diboot.core.controller.BaseController;
+import com.diboot.core.data.query.BaseCriteria;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,8 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -46,9 +50,15 @@ public class RelatedDataDTO implements Serializable {
 
     /**
      * <h3>筛选条件</h3>
-     * 可重写{@link BaseController#buildRelatedDataCondition(RelatedDataDTO, QueryWrapper, Function)}进行自定义筛选条件规则
+     * 可重写{@link BaseController#buildRelatedDataCondition(RelatedDataDTO, QueryWrapper, Function)} (RelatedDataDTO, QueryWrapper, Function)}进行自定义筛选条件规则
      */
+    @Deprecated
     private Map<String, Object> condition;
+
+    /**
+     * 筛选条件
+     */
+    private List<BaseCriteria> conditions;
 
     /**
      * <h3>排序</h3>
@@ -77,6 +87,28 @@ public class RelatedDataDTO implements Serializable {
     @JsonIgnore
     public String getTypeClassName(){
         return S.capFirst(S.toLowerCaseCamel(this.type));
+    }
+
+    public List<BaseCriteria> getConditions() {
+        if(V.isEmpty(conditions) && V.notEmpty(condition)) {
+            this.conditions = new ArrayList<>();
+            for (Map.Entry<String, Object> item : condition.entrySet()) {
+                this.conditions.add(new BaseCriteria(item.getKey(), item.getValue()));
+            }
+        }
+        return conditions;
+    }
+
+    /**
+     * 移除条件
+     * @param field
+     */
+    public void removeCondition(String field) {
+        List<BaseCriteria> criteriaList = getConditions();
+        if(V.isEmpty(criteriaList)) {
+            return;
+        }
+        criteriaList.removeIf(criteria -> criteria.getField().equals(field));
     }
 
 }

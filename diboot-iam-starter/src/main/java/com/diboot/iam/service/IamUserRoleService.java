@@ -19,6 +19,7 @@ import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.entity.IamUserRole;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 
 import java.util.List;
@@ -39,17 +40,32 @@ public interface IamUserRoleService extends BaseIamService<IamUserRole> {
      * @param userId
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, String userId);
+    default List<IamRole> getUserRoleList(String userType, String userId) {
+        return getUserRoleList(IamSecurityUtils.getCurrentTenantId(), userType, userId);
+    }
 
     /**
      * 获取用户所有的全部角色
      *
+     * @param tenantId
+     * @param userType
+     * @param userId
+     * @return
+     */
+    default List<IamRole> getUserRoleList(String tenantId, String userType, String userId) {
+        return getUserRoleList(tenantId, userType, userId, null);
+    }
+
+    /**
+     * 获取用户所有的全部角色
+     *
+     * @param tenantId
      * @param userType
      * @param userId
      * @param extensionObjId 岗位等扩展对象id
      * @return
      */
-    List<IamRole> getUserRoleList(String userType, String userId, String extensionObjId);
+    List<IamRole> getUserRoleList(String tenantId, String userType, String userId, String extensionObjId);
 
     /**
      * 批量创建用户-角色的关系

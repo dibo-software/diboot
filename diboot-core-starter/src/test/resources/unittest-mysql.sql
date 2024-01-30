@@ -18,8 +18,7 @@ CREATE TABLE `dictionary` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COMMENT '数据字典';
 
-create table department
-(
+create table department(
     id varchar(32) not null comment 'ID' primary key,
     parent_id varchar(32) default 0 not null comment '上级部门ID',
     org_id varchar(32) not null comment '单位ID',
@@ -30,21 +29,18 @@ create table department
     `character` varchar(100) null comment '关键字',
     is_deleted tinyint(1) default 0 not null comment '已删除',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
-)
-    comment '部门' charset=utf8mb4;
+) comment '部门' charset=utf8mb4;
 
 create table organization
 (
-    id varchar(32)  comment 'ID'
-        primary key,
+    id varchar(32)  comment 'ID' primary key,
     parent_id int default 0 not null comment '上级单位ID',
     name varchar(100) not null comment '名称',
     telphone varchar(20) null comment '电话',
     manager_id varchar(32) not null comment '负责人id',
     is_deleted tinyint(1) default 0 not null comment '是否有效',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
-)
-    comment '单位' charset=utf8mb4;
+) comment '单位' charset=utf8mb4;
 
 create table role
 (
@@ -72,8 +68,7 @@ create table user_role
 (
     user_type varchar(20) not null comment '用户类型',
     user_id varchar(32) not null comment '用户ID',
-    role_id varchar(32) not null comment '角色ID',
-    primary key (user_id, role_id)
+    role_id varchar(32) not null comment '角色ID'
 ) comment '用户角色' charset=utf8mb4;
 
 create table cc_city_info
@@ -85,74 +80,70 @@ create table cc_city_info
 ) comment '行政区划' charset=utf8mb4;
 
 CREATE TABLE `db_goods_goods_info` (
-                                       `goods_id` bigint DEFAULT NULL,
-                                       `goods_nm` varchar(10) DEFAULT NULL,
-                                       `create_ts` datetime default CURRENT_TIMESTAMP null,
-                                       `update_ts`  datetime null,
-                                       `is_del` tinyint DEFAULT '0'
+   `goods_id` bigint DEFAULT NULL,
+   `goods_nm` varchar(10) DEFAULT NULL,
+   `create_ts` datetime default CURRENT_TIMESTAMP null,
+   `update_ts`  datetime null,
+   `is_del` tinyint DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `db_purchase_rel_plan_goods` (
-                                              `rel_id` bigint DEFAULT NULL,
-                                              `purchase_form_plan_id` bigint DEFAULT NULL,
-                                              `goods_id` bigint DEFAULT NULL,
-                                              `create_ts` datetime default CURRENT_TIMESTAMP null,
-                                              `update_ts`  datetime null,
-                                              `is_del` tinyint DEFAULT '0'
+  `rel_id` bigint DEFAULT NULL,
+  `purchase_form_plan_id` bigint DEFAULT NULL,
+  `goods_id` bigint DEFAULT NULL,
+  `create_ts` datetime default CURRENT_TIMESTAMP null,
+  `update_ts`  datetime null,
+  `is_del` tinyint DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `db_purchase_form_plan` (
-                                         `purchase_form_plan_id` bigint DEFAULT NULL,
-                                         `name` varchar(100) DEFAULT NULL,
-                                         `is_del` tinyint DEFAULT '0',
-                                         `create_ts` datetime default CURRENT_TIMESTAMP null,
-                                         `update_ts`  datetime null
+ `purchase_form_plan_id` bigint DEFAULT NULL,
+ `name` varchar(100) DEFAULT NULL,
+ `is_del` tinyint DEFAULT '0',
+ `create_ts` datetime default CURRENT_TIMESTAMP null,
+ `update_ts`  datetime null
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 上传文件表
 CREATE TABLE test_upload_file (
-                                  id varchar(32) NOT NULL COMMENT '编号' primary key,
-                                  rel_obj_type varchar(50) DEFAULT NULL COMMENT '关联对象类',
-                                  rel_obj_id varchar(32) DEFAULT NULL COMMENT '关联对象ID',
-                                  rel_obj_field varchar(50) DEFAULT NULL COMMENT '关联对象属性名称',
-                                  file_name varchar(100) NOT NULL COMMENT '文件名',
-                                  storage_path varchar(200) NOT NULL COMMENT '存储路径',
-                                  access_url varchar(200) NULL COMMENT '访问地址',
-                                  file_type varchar(20) DEFAULT NULL COMMENT '文件类型',
-                                  is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
-                                  create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
+  id varchar(32) NOT NULL COMMENT '编号' primary key,
+  rel_obj_type varchar(50) DEFAULT NULL COMMENT '关联对象类',
+  rel_obj_id varchar(32) DEFAULT NULL COMMENT '关联对象ID',
+  rel_obj_field varchar(50) DEFAULT NULL COMMENT '关联对象属性名称',
+  file_name varchar(100) NOT NULL COMMENT '文件名',
+  storage_path varchar(200) NOT NULL COMMENT '存储路径',
+  access_url varchar(200) NULL COMMENT '访问地址',
+  file_type varchar(20) DEFAULT NULL COMMENT '文件类型',
+  is_deleted   tinyint(1)  default 0                 not null comment '是否删除',
+  create_time  datetime   default CURRENT_TIMESTAMP not null comment '创建时间'
 ) DEFAULT CHARSET=utf8 COMMENT='测试uuid';
 
--- playground.demo_test definition
-
 CREATE TABLE `demo_test` (
-                             `id` varchar(32) NOT NULL  COMMENT 'ID' primary key,
-                             `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-                             `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
-                             `age` bigint NOT NULL COMMENT '年龄',
-                             `id_card` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '身份证号',
-                             `mobile_phone` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '手机号',
-                             `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
-                             `sex` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '性别',
-                             `birthday` date DEFAULT NULL COMMENT '生日',
-                             `sss_img` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单图片',
-                             `mmm_img` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '多图片',
-                             `data_file` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据文件',
-                             `file_test` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单文件',
-                             `create_by` bigint DEFAULT '0' COMMENT '创建人',
-                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                             `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+ `id` varchar(32) NOT NULL  COMMENT 'ID' primary key,
+ `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+ `name` varchar(100) NOT NULL COMMENT '名称',
+ `age` bigint NOT NULL COMMENT '年龄',
+ `id_card` varchar(100) DEFAULT NULL COMMENT '身份证号',
+ `mobile_phone` varchar(100) DEFAULT NULL COMMENT '手机号',
+ `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
+ `sex` varchar(100) DEFAULT NULL COMMENT '性别',
+ `birthday` date DEFAULT NULL COMMENT '生日',
+ `sss_img` varchar(200) DEFAULT NULL COMMENT '单图片',
+ `mmm_img` varchar(1000) DEFAULT NULL COMMENT '多图片',
+ `data_file` varchar(1000) DEFAULT NULL COMMENT '数据文件',
+ `file_test` varchar(200) DEFAULT NULL COMMENT '单文件',
+ `create_by` bigint DEFAULT '0' COMMENT '创建人',
+ `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+ `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Demo测试';
 
--- playground.demo_test_join definition
-
 CREATE TABLE `demo_test_join` (
-                                  `id` varchar(32) NOT NULL  COMMENT 'ID' primary key,
-                                  `demo_test_id` bigint DEFAULT NULL COMMENT 'Demo测试',
-                                  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '名称',
-                                  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '邮箱',
-                                  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+  `id` varchar(32) NOT NULL  COMMENT 'ID' primary key,
+  `demo_test_id` bigint DEFAULT NULL COMMENT 'Demo测试',
+  `name` varchar(100) DEFAULT NULL COMMENT '名称',
+  `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
+  `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='关联测试';
 
 create table customer
@@ -163,8 +154,7 @@ create table customer
     extjsonarr JSON null comment '扩展json对象',
     is_deleted tinyint(1) default 0 not null comment '已删除',
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
-)
-    comment '客户' charset=utf8mb4;
+) comment '客户' charset=utf8mb4;
 
 -- playground.region definition
 CREATE TABLE `region` (
@@ -180,6 +170,24 @@ CREATE TABLE `region` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='行政区划';
 
+CREATE TABLE `problem` (
+   `id` varchar(32) NOT NULL COMMENT 'ID',
+   `title` varchar(20) DEFAULT NULL,
+   `remark` varchar(500) DEFAULT NULL,
+   `is_deleted` tinyint(1) DEFAULT '0',
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='问题';
+CREATE TABLE `status_info` (
+   `id` varchar(32) NOT NULL COMMENT 'ID',
+   `user_id` varchar(32) DEFAULT NULL,
+   `problem_id` varchar(32) DEFAULT NULL,
+   `remark` varchar(500) DEFAULT NULL,
+   `is_deleted` tinyint(1) DEFAULT '0',
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='问题状态';
+
 INSERT INTO customer (id, realname, cellphone, extjsonarr)
 VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');
 
@@ -189,8 +197,7 @@ VALUES (10001, 0, 100001, '产品部', 'WW', null, null), (10002, 10001, 100001,
        (10003, 10001, 100001, '测试组', '[1001,1002]', '{"id": 1001, "name": "TEST"}', '[1001,1002]'), (10004, 10001, 100001, '市场部', '1001,1002', '{"id": 1001, "name": "TEST"}', '[1001,1002]'),
        (10005, 10003, 100001, '自动化测试', null, null, null), (10006, 10003, 100001, '功能测试', null, null, null);
 INSERT INTO dictionary (id, parent_id, app_module, type, item_name, item_value) VALUES (1, 0, '', 'GENDER', '性别', null), (2, 1, '', 'GENDER', '男', 'M'), (3, 1, '', 'GENDER', '女', 'F');
-INSERT INTO dictionary
-(id, parent_id, tenant_id, app_module, `type`, item_name, item_value, description, extdata, sort_id, is_editable, is_deletable)
+INSERT INTO dictionary (id, parent_id, tenant_id, app_module, `type`, item_name, item_value, description, extdata, sort_id, is_editable, is_deletable)
 VALUES(10050, 0, 0, NULL, 'MESSAGE_CHANNEL', '发送通道', NULL, 'message发送通道', NULL, 99, 1, 1),
       (10051, 10050, 0, NULL, 'MESSAGE_CHANNEL', '站内信', 'WEBSOCKET', NULL, NULL, 0, 1, 1),
       (10052, 10050, 0, NULL, 'MESSAGE_CHANNEL', '短信', 'TEXT_MESSAGE', NULL, NULL, 1, 1, 1),
@@ -203,12 +210,11 @@ INSERT INTO cc_city_info (id, parent_id, region_id, region_name) VALUES (10000, 
 INSERT INTO db_goods_goods_info (goods_id, goods_nm, is_del) VALUES(1001, 'abcde', 0), (1002, 'abcd', 0);
 INSERT INTO db_purchase_rel_plan_goods(rel_id, purchase_form_plan_id, goods_id, is_del)VALUES(1, 1, 1001, 0), (2, 1, 1002, 0);
 INSERT INTO db_purchase_form_plan(purchase_form_plan_id, name, is_del)VALUES(1, '5月份采购计划', 0);
-INSERT INTO test_upload_file(uuid, rel_obj_type, rel_obj_id, file_name, access_url, storage_path)
-values ('test123456', 'IamUser', 1001, '123456.jpg', 'http://www.baidu.com', '/temp'),
+INSERT INTO test_upload_file(id, rel_obj_type, rel_obj_id, file_name, access_url, storage_path)
+VALUES ('test123456', 'IamUser', 1001, '123456.jpg', 'http://www.baidu.com', '/temp'),
        ('test234567', 'IamUser', 1001, '234567.jpg', 'http://www.baidu.com', '/temp');
 
-INSERT INTO demo_test
-(id, is_deleted, name, age, id_card, mobile_phone, email, sex, birthday, sss_img, mmm_img, data_file, file_test, create_by)
+INSERT INTO demo_test(id, is_deleted, name, age, id_card, mobile_phone, email, sex, birthday, sss_img, mmm_img, data_file, file_test, create_by)
 VALUES(10000074, 0, '666', 666, 'kdt3kHX4lAEshODwXMaqAg==', 'dI7AKyanaPYiWL0c5CfuPQ==', 'kdt3kHX4lAEshODwXMaqAg==', NULL, NULL, NULL, NULL, NULL, NULL, 0),
       (10000075, 0, '1', 111, 'kBzIU3XgeowKFQnyeGZfZZHbd5B1+JQBLITg8FzGqgI=', 'AYdMZnNVJwYmpHh8VmC11A==', '5tEbe9Q9hti2Z0spAE5fsA==', NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
@@ -218,3 +224,11 @@ VALUES(10000081, 10000074, '111', 'L9vrF7wJBKbbLRZChI33WA=='),
       (10000089, 10000075, '119', 'VVnnuR7fXzsIHCMilEsgLw=='),
       (10000091, 10000075, '112', 'BqAefnSadfixkCebXakUDg=='),
       (10000093, 10000075, '114', 'A2Y6CZ4tv0V7QxPbq9EYkg==');
+
+INSERT INTO problem (id, title, remark, create_time)
+VALUES  ('1', '问题1', '问题1秒杀失效', '2023-12-29 12:40:44'),
+        ('2', '问题2', '问题2提款失败', '2023-12-29 12:40:44');
+
+INSERT INTO status_info (id, user_id, problem_id, remark, create_time)
+VALUES('1', '1001', '1', '状态备注1', '2023-12-29 12:42:14'),
+      ('2', '1003', '2', '状态备注2', '2023-12-29 12:42:14');

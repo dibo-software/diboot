@@ -56,7 +56,7 @@ const checkPropKeyDuplicate = checkValue(
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" width="700">
+  <el-dialog v-model="visible" :title="title" width="765">
     <el-form ref="formRef" v-loading="loading" :model="model" label-width="80px">
       <el-row>
         <el-col :span="12">
@@ -91,7 +91,11 @@ const checkPropKeyDuplicate = checkValue(
             <el-input v-if="model.dataType === 'text'" v-model="model.propValue" />
             <el-input v-if="model.dataType === 'textarea'" v-model="model.propValue" type="textarea" />
             <el-input-number v-if="model.dataType === 'number'" v-model="model.propValue" type="textarea" />
-            <el-switch v-if="model.dataType === 'boolean'" v-model="model.propValue" />
+            <el-switch
+              v-if="model.dataType === 'boolean'"
+              :model-value="JSON.parse(`${model.propValue ?? false}`)"
+              @change="val => (model.propValue = val)"
+            />
           </el-form-item>
         </el-col>
       </el-row>

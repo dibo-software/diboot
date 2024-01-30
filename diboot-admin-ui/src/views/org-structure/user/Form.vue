@@ -62,7 +62,7 @@ defineExpose({
     if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
     model.value.username = await loadAccountInfo('authAccount', id)
     // 判定是否属于系统用户
-    model.value.isSysAccount = !!model.value.username
+    model.value.isSysAccount = id ? !!model.value.username : true
     if (model.value.isSysAccount) model.value.hidePassword = true
     // 加载树结构数据
     await initRelatedData()
@@ -113,6 +113,7 @@ const rules: FormRules = {
   ],
   gender: { required: true, message: '不能为空', whitespace: true },
   status: { required: true, message: '不能为空', whitespace: true },
+  roleIdList: { type: 'array', required: true, message: '不能为空', trigger: 'change' },
   email: {
     type: 'email',
     message: '请输入正确的邮箱地址',

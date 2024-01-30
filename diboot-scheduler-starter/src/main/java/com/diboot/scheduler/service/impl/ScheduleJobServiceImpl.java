@@ -77,9 +77,9 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
                 || V.notEquals(oldJob.getInitStrategy(), entity.getInitStrategy()))
         ) {
             quartzSchedulerService.deleteJob(entity.getId());
-        }
-        if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
-            quartzSchedulerService.addJob(entity);
+            if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
+                quartzSchedulerService.addJob(entity);
+            }
         }
         return true;
     }

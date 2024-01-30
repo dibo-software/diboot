@@ -72,4 +72,11 @@ public interface IamOrgService extends BaseIamService<IamOrg> {
      */
     Map<String, LabelValue> getLabelValueMap(List<String> orgIds);
 
+    /**
+     * 获取租户的根节点id
+     * @param tenantId
+     * @return
+     */
+    String getTenantRootOrgId(String tenantId);
+
 }

@@ -100,7 +100,7 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
         String[] fields = userInfoStr.split(Cons.SEPARATOR_COMMA);
         this.tenantId = fields[0];
         this.authAccount = fields[1];
-        if(IamUser.class.getSimpleName().equals(fields[2]) != true){
+        if(!IamUser.class.getSimpleName().equals(fields[2])){
             try {
                 this.userTypeClass = Class.forName(fields[2]);
             }

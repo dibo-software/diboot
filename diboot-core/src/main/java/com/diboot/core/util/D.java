@@ -45,6 +45,7 @@ public class D extends DateUtils{
 	public static final String FORMAT_DATE_y4 = "yyyy";
 	public static final String FORMAT_DATE_y4Md = "yyyyMMdd";
 	public static final String FORMAT_TIMESTAMP = "yyMMddHHmmss";
+	public static final String FORMAT_TIMESTAMP_Y4MDHM = "yyMMddHHmm";
 	public static final String FORMAT_TIME_HHmm = "HH:mm";
 	public static final String FORMAT_TIME_HHmmss = "HH:mm:ss";
 	public static final String FORMAT_DATE_Y4MD = "yyyy-MM-dd";
@@ -70,6 +71,10 @@ public class D extends DateUtils{
 	 * LocalDateTime 日期时间 格式化定义
 	 */
 	public static final DateTimeFormatter FORMATTER_DATETIME_Y4MDHMS = DateTimeFormatter.ofPattern(FORMAT_DATETIME_Y4MDHMS);
+	/**
+	 * Time 时间 格式化定义
+	 */
+	public static final DateTimeFormatter FORMATTER_TIME_HM = DateTimeFormatter.ofPattern(FORMAT_TIME_HHmm);
 
 	/**
 	 * 星期（中文）
@@ -466,7 +471,7 @@ public class D extends DateUtils{
 			return null;
 		}
 		dateString = formatDateString(dateString);
-		if(!dateString.contains(" ")) {
+		if(!S.contains(dateString," ")) {
 			return convert2FormatDate(dateString, FORMAT_DATE_Y4MD);
 		}
 		return convert2FormatDate(dateString, FORMAT_DATETIME_Y4MDHMS);

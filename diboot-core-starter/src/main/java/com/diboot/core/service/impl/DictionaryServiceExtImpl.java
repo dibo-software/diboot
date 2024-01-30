@@ -15,7 +15,6 @@
  */
 package com.diboot.core.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -54,15 +53,16 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
 
     @Override
     public List<LabelValue> getLabelValueList(String type) {
+        ;
         // 构建查询条件
-        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
                 .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
         // 返回构建条件
         return getEntityList(queryDictionary).stream()
-                .map(e -> new LabelValue(e.getItemName(), e.getItemValue()).setExt(e.getExtension()))
+                .map(Dictionary::toLabelValue)
                 .collect(Collectors.toList());
     }
 
@@ -70,63 +70,57 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public Map<String, LabelValue> getLabel2ItemMap(String type) {
         // 构建查询条件
-        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
-                Collectors.toMap(dict -> dict.getItemName(),
-                        dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
+                Collectors.toMap(Dictionary::getItemName, Dictionary::toLabelValue));
     }
 
     @Override
     public Map<String, LabelValue> getValue2ItemMap(String type) {
         // 构建查询条件
-        Wrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
                 .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
                 .eq(Dictionary::getType, type)
                 .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
         // 返回构建条件
         return getEntityList(queryDictionary).stream().collect(
-                Collectors.toMap(dict -> dict.getItemValue(),
-                                dict -> new LabelValue(dict.getItemName(), dict.getItemValue()).setExt(dict.getExtension())));
+                Collectors.toMap(Dictionary::getItemValue, Dictionary::toLabelValue));
     }
 
     @Override
     public boolean existsDictType(String dictType) {
-        return exists(Dictionary::getType, dictType);
+        LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
+                .eq(Dictionary::getType, dictType);
+        return exists(queryWrapper);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean createDictAndChildren(DictionaryVO dictVO) {
-        Dictionary dictionary = dictVO;
-        if (dictionary.getIsEditable() == null){
-            dictionary.setIsEditable(true);
+        if (dictVO.getIsEditable() == null){
+            dictVO.setIsEditable(true);
         }
-        if (dictionary.getIsDeletable() == null) {
-            dictionary.setIsDeletable(true);
+        if (dictVO.getIsDeletable() == null) {
+            dictVO.setIsDeletable(true);
         }
-        if(!super.createEntity(dictionary)){
+        if(!super.createEntity(dictVO)){
             log.warn("新建数据字典定义失败，type="+dictVO.getType());
             return false;
         }
         List<Dictionary> children = dictVO.getChildren();
         this.buildSortId(children);
         if(V.notEmpty(children)){
-            Set<String> itemValues = new HashSet<>();
+            // 检查选项重复
+            checkDuplicate(children);
             for(Dictionary dict : children){
-                if(itemValues.contains(dict.getItemValue())) {
-                    throw new BusinessException(Status.FAIL_OPERATION, "字典选项: {} 重复", dict.getItemValue());
-                }
-                else {
-                    itemValues.add(dict.getItemValue());
-                }
-                dict.setParentId(dictionary.getId())
-                    .setType(dictionary.getType())
-                    .setIsDeletable(dictionary.getIsDeletable())
-                    .setIsEditable(dictionary.getIsEditable());
+                dict.setParentId(dictVO.getId())
+                    .setType(dictVO.getType())
+                    .setIsDeletable(dictVO.getIsDeletable())
+                    .setIsEditable(dictVO.getIsEditable());
             }
             // 批量保存
             boolean success = super.createEntities(children);
@@ -142,7 +136,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<Dictionary> getDictDefinitionList() {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
+                .and(wrapper -> {
+                    wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
+                })
                 .orderByDesc(Dictionary::getId);
         return getEntityList(queryWrapper);
     }
@@ -150,8 +146,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<DictionaryVO> getDictDefinitionVOList() {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.<Dictionary>lambdaQuery()
-                .isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
-                .orderByDesc(Dictionary::getId);
+                .and(wrapper -> {
+                    wrapper.isNull(Dictionary::getParentId).or().eq(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
+                });
         return getViewObjectList(queryWrapper, null, DictionaryVO.class);
     }
 
@@ -160,27 +157,28 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public boolean updateDictAndChildren(DictionaryVO dictVO) {
         Dictionary oldDictionary = super.getEntity(dictVO.getId());
         //将DictionaryVO转化为Dictionary
-        Dictionary dictionary = dictVO;
-        dictionary
+        dictVO
                 .setIsDeletable(oldDictionary.getIsDeletable())
                 .setIsEditable(oldDictionary.getIsEditable());
-        if(!super.updateEntity(dictionary)){
+        if(!super.updateEntity(dictVO)){
             log.warn("更新数据字典定义失败，type="+dictVO.getType());
             return false;
         }
         //获取原 子数据字典list
-        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper();
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Dictionary::getParentId, dictVO.getId());
         List<Dictionary> oldDictList = super.getEntityList(queryWrapper);
         List<Dictionary> newDictList = dictVO.getChildren();
         Set<String> dictItemIds = new HashSet<>();
         this.buildSortId(newDictList);
         if(V.notEmpty(newDictList)){
+            // 检查选项重复
+            checkDuplicate(newDictList);
             for(Dictionary dict : newDictList){
                 dict.setType(dictVO.getType())
                     .setParentId(dictVO.getId())
-                    .setIsDeletable(dictionary.getIsDeletable())
-                    .setIsEditable(dictionary.getIsEditable());
+                    .setIsDeletable(dictVO.getIsDeletable())
+                    .setIsEditable(dictVO.getIsEditable());
                 if(V.notEmpty(dict.getId())){
                     dictItemIds.add(dict.getId());
                     if(!super.updateEntity(dict)){
@@ -209,6 +207,24 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         return true;
     }
 
+    /**
+     * 检查duplicate
+     * @param dictList
+     */
+    private void checkDuplicate(List<Dictionary> dictList) {
+        Set<String> itemNames = new HashSet<>(), itemValues = new HashSet<>();
+        dictList.forEach(dict -> {
+            if (itemValues.contains(dict.getItemValue())) {
+                throw new BusinessException(Status.FAIL_OPERATION, "字典选项值: {} 重复", dict.getItemValue());
+            } else if (itemNames.contains(dict.getItemName())) {
+                throw new BusinessException(Status.FAIL_OPERATION, "字典选项名: {} 重复", dict.getItemName());
+            }
+            itemNames.add(dict.getItemName());
+            itemValues.add(dict.getItemValue());
+        });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteDictAndChildren(Serializable id) {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.lambdaQuery();

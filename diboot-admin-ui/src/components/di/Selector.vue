@@ -26,7 +26,7 @@ const config = { tree: props.tree, list: props.list }
 const specifyRootNode = () => {
   if (!config.tree || !props.rootId) return
   const tree = (config.tree = _.cloneDeep(config.tree))
-  ;(tree.condition ?? (tree.condition = {}))[tree.parent] = props.rootId
+  ;(tree.conditions ?? (tree.conditions = [])).push({ field: tree.parent, value: props.rootId })
 }
 
 // if (!config.list) {
@@ -111,7 +111,7 @@ watch(
           selectedRows.value = list
           confirm()
         } else {
-          selected.condition = { [config.list?.primaryKey || 'id']: newValue }
+          selected.conditions = [{ field: config.list?.primaryKey || 'id', value: newValue }]
           loadRelatedData(selected).then(list => {
             selectedRows.value = list.sort((e1, e2) => values.indexOf(e1.value) - values.indexOf(e2.value))
             confirm()
@@ -185,7 +185,7 @@ const clickNode = (id?: string) => (parent.value = id ?? props.rootId)
 
       <div class="bottom-operation">
         <el-button size="default" @click="cancel">取消</el-button>
-        <el-button size="default" type="primary" @click="confirm">保存</el-button>
+        <el-button size="default" type="primary" @click="confirm">确认</el-button>
       </div>
     </div>
   </el-dialog>

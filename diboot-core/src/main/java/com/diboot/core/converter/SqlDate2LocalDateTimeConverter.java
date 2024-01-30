@@ -34,9 +34,6 @@ public class SqlDate2LocalDateTimeConverter implements Converter<Date, LocalDate
 
     @Override
     public LocalDateTime convert(Date source) {
-        if (source == null) {
-            return null;
-        }
         Timestamp timestamp = new Timestamp(source.getTime());
         return timestamp.toLocalDateTime();
     }

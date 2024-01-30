@@ -47,7 +47,7 @@ public class ImageThumbnailHelper extends ImageHelper {
             return targetFile;
         }
         catch (IOException e1) {
-            log.error("压缩图片异常(image=" + imageFileDirectory + "): ", e1);
+            log.error("压缩图片异常: image={} ", imageFileDirectory, e1);
         }
         return imgUrl;
     }

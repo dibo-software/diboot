@@ -141,6 +141,11 @@ public class Cons extends com.diboot.core.config.Cons {
      */
     public static final String ROLE_SUPER_ADMIN = "SUPER_ADMIN";
 
+    /**
+     * 租户管理员
+     */
+    public static final String ROLE_TENANT_ADMIN = "TENANT_ADMIN";
+
     public static final String AUTHENTICATION_CAHCE_NAME = IamAuthorizingRealm.class.getName() + ".authenticationCache";
 
     public static final String AUTHORIZATION_CAHCE_NAME = IamAuthorizingRealm.class.getName() + ".authorizationCache";

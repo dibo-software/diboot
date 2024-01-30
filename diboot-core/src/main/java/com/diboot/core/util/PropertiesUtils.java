@@ -16,9 +16,7 @@
 package com.diboot.core.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 /**
  * 配置文件工具类
@@ -26,16 +24,15 @@ import org.springframework.stereotype.Component;
  * @version v2.0
  * @date 2019/01/01
  */
-@Component
 @Slf4j
-public class PropertiesUtils implements EnvironmentAware {
+public class PropertiesUtils {
 
     private static Environment environment;
 
-    @Override
-    public void setEnvironment(Environment env) {
-        environment = env;
-        log.trace("Environment 已设置");
+    public static void setEnvironment(Environment env) {
+        if(environment == null) {
+            environment = env;
+        }
     }
 
     /***
@@ -86,12 +83,22 @@ public class PropertiesUtils implements EnvironmentAware {
      * @return
      */
     public static Integer getInteger(String key){
+        return getInteger(key, null);
+    }
+
+    /***
+     *  读取int型的配置项，未配置返回默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static Integer getInteger(String key, Integer defaultValue){
         // 获取配置值
         String value = get(key);
         if(V.notEmpty(value)){
             return Integer.parseInt(value);
         }
-        return null;
+        return defaultValue;
     }
 
     /***
@@ -100,24 +107,44 @@ public class PropertiesUtils implements EnvironmentAware {
      * @return
      */
     public static Long getLong(String key){
+        return getLong(key, null);
+    }
+
+    /***
+     *  读取Long型的配置项，未配置返回默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static Long getLong(String key, Long defaultValue){
         // 获取配置值
         String value = get(key);
         if(V.notEmpty(value)){
             return Long.parseLong(value);
         }
-        return null;
+        return defaultValue;
     }
 
     /***
      * 读取boolean值的配置项
      */
     public static boolean getBoolean(String key) {
+        return getBoolean(key, false);
+    }
+
+    /**
+     * 读取boolean值的配置项，未配置返回默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public static boolean getBoolean(String key, boolean defaultValue) {
         // 获取配置值
         String value = get(key);
         if(V.notEmpty(value)){
             return V.isTrue(value);
         }
-        return false;
+        return defaultValue;
     }
 
 }

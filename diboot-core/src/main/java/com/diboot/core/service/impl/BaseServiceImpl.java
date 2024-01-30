@@ -452,7 +452,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 删除失效关联
 		List<Serializable> delIds = new ArrayList<>();
 		for (R entity : oldEntityList) {
-			if (V.notEmpty(followerIdList) && followerIdList.remove(BeanUtils.getProperty(entity, followerFieldName))) {
+			Object followerId = BeanUtils.getProperty(entity, followerFieldName);
+			if (V.notEmpty(followerIdList) && followerIdList.contains(followerId)) {
+				followerIdList.remove(followerId);
 				continue;
 			}
 			Serializable id = (Serializable) BeanUtils.getProperty(entity, isExistPk ? entityInfo.getPropInfo().getIdFieldName() : followerFieldName);
@@ -590,17 +592,17 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			log.warn("删除Entity失败: {}",id);
 			return false;
 		}
-		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
-		if(relatedEntityService == null){
-			log.error("未能识别到Entity: {} 的Service实现，请检查！", relatedEntityClass);
-			return false;
-		}
 		// 获取主键的关联属性
-		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(relatedEntityClass);
 		String relatedEntitySetterFld = BeanUtils.convertToFieldName(relatedEntitySetter);
 		QueryWrapper<RE> queryWrapper = new QueryWrapper<RE>().eq(propInfo.getColumnByField(relatedEntitySetterFld), id);
 		// 删除关联子表数据
-		return relatedEntityService.deleteEntities(queryWrapper);
+		BaseService relatedEntityService = ContextHolder.getBaseServiceByEntity(relatedEntityClass);
+		if(relatedEntityService != null){
+			return relatedEntityService.deleteEntities(queryWrapper);
+		}
+		BaseMapper relatedMapper = ContextHolder.getBaseMapperByEntity(relatedEntityClass);
+		return relatedMapper.delete(queryWrapper) >= 0;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -723,8 +725,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
-		LambdaQueryWrapper<T> query = null;
-		List<T> entityList = null;
+		LambdaQueryWrapper<T> query;
+		List<T> entityList;
 		// 支持 ChainQuery
 		if (queryWrapper instanceof ChainQuery) {
 			queryWrapper = ((ChainQuery<?>) queryWrapper).getWrapper();
@@ -890,6 +892,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
 		boolean hasParentNode = propInfo.containsField(Cons.FieldName.parentId.name());
 		for(T entity : entityList){
+			if (V.isEmpty(entity)) {
+				log.warn("getLabelValueList查询指定字段 {} 在数据库当前记录所有字段均为空值，已自动忽略", sqlSelect);
+				continue;
+			}
 			String label = propInfo.getFieldByColumn(selectArray[0]), value = propInfo.getFieldByColumn(selectArray[1]), ext;
 			Object labelVal = BeanUtils.getProperty(entity, label);
 			Object valueVal = BeanUtils.getProperty(entity, value);
@@ -1040,6 +1046,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.buildTree(voList, rootNodeId);
 	}
 
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean sort(SortParamDTO<?> sortParam, SFunction<T, Number> sortField) {
 		return sort(sortParam, sortField, null, null);
@@ -1102,7 +1109,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 		List<T> collect = new ArrayList<>();
 		Function<Object,T> addEntity = idValue ->{
-			T entity = null;
+			T entity;
 			try {
 				entity = entityClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {

@@ -80,7 +80,7 @@ public class ResultAssembler {
                 else {
                     Object matchedValue = valueMatchMap.get(matchKey);
                     if(matchedValue == null) {
-                        matchedValue = 0l;
+                        matchedValue = 0L;
                     }
                     // 赋值
                     beanWrapper.setPropertyValue(setterFieldName, matchedValue);
@@ -196,7 +196,7 @@ public class ResultAssembler {
                         sb.append(Cons.SEPARATOR_COMMA);
                     }
                     sb.append(fieldValue);
-                    if(appendComma == false){
+                    if(!appendComma){
                         appendComma = true;
                     }
                 }
@@ -263,24 +263,15 @@ public class ResultAssembler {
                     for(Object key : matchKeys){
                         Object value = valueMatchMap.get(S.valueOf(key));
                         if(value != null){
-                            if(value instanceof Collection){
-                                Collection valueList = (Collection)value;
-                                for(Object obj : valueList){
-                                    if(!matchedValues.contains(obj)){
-                                        matchedValues.add(obj);
-                                    }
-                                }
-                            }
-                            else{
-                                if(!matchedValues.contains(value)){
-                                    matchedValues.add(value);
+                            Collection valueList = (Collection)value;
+                            for(Object obj : valueList){
+                                if(!matchedValues.contains(obj)){
+                                    matchedValues.add(obj);
                                 }
                             }
                         }
                     }
-                    if(matchedValues != null){
-                        entityList = matchedValues;
-                    }
+                    entityList = matchedValues;
                 }
                 // 赋值
                 BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(object);
@@ -321,7 +312,7 @@ public class ResultAssembler {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append(S.valueOf(keyObj));
-                if(appendComma == false){
+                if(!appendComma){
                     appendComma = true;
                 }
             }
@@ -356,7 +347,7 @@ public class ResultAssembler {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append(S.valueOf(keyObj));
-                if(appendComma == false){
+                if(!appendComma){
                     appendComma = true;
                 }
             }
@@ -398,18 +389,14 @@ public class ResultAssembler {
                     sb.append(Cons.SEPARATOR_COMMA);
                 }
                 sb.append(S.valueOf(keyObj));
-                if(appendComma == false){
+                if(!appendComma){
                     appendComma = true;
                 }
             }
             String matchKeys = sb.toString();
             Object valueObj = row.containsKey(valueName)? row.get(valueName) : row.get(valueName.toUpperCase());
             if(valueObj != null){
-                List valueList = resultMap.get(matchKeys);
-                if(valueList == null){
-                    valueList = new ArrayList();
-                    resultMap.put(matchKeys, valueList);
-                }
+                List valueList = resultMap.computeIfAbsent(matchKeys, k -> new ArrayList());
                 valueList.add(valueObj);
             }
         }

@@ -15,7 +15,7 @@
  */
 package com.diboot.file.example;
 
-import com.diboot.file.starter.FileProperties;
+import com.diboot.file.config.FileProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;

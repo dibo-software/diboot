@@ -18,6 +18,7 @@ package com.diboot.iam.auth.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -28,10 +29,11 @@ import com.diboot.iam.dto.AuthCredential;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamLoginTrace;
+import com.diboot.iam.mapper.IamAccountMapper;
 import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthToken;
-import com.diboot.iam.starter.IamProperties;
+import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
@@ -64,6 +66,9 @@ public abstract class BaseAuthServiceImpl implements AuthService {
     @Autowired
     private IamProperties iamProperties;
 
+    @Autowired
+    private IamAccountMapper iamAccountMapper;
+
     @Override
     public String getAuthType() {
         return Cons.DICTCODE_AUTH_TYPE.PWD.name();
@@ -77,7 +82,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
 
     @Override
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
-        IamAccount latestAccount = accountService.getSingleEntity(buildQueryWrapper(iamAuthToken));
+        IamAccount latestAccount = iamAccountMapper.findLoginAccount(buildQueryWrapper(iamAuthToken), BaseConfig.getActiveFlagValue());
         if(latestAccount == null){
             return null;
         }
