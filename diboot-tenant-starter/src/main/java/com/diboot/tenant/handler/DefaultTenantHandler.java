@@ -34,7 +34,7 @@ import java.util.Objects;
  * @version : v3.2.0
  * @Date 2024/01/23
  */
-public class TenantHandler implements TenantLineHandler {
+public class DefaultTenantHandler implements TenantLineHandler {
 
     /**
      * 租户拦截器忽略表
