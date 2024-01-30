@@ -8,9 +8,9 @@ export interface Tenant {
   name?: string
   // 租户编码
   code?: string
-  // 有效开始日期
+  // 有效期始
   startDate?: string
-  // 有效结束日期
+  // 有效期止
   endDate?: string
   // 负责人
   manager?: string

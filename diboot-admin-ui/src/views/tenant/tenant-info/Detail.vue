@@ -22,10 +22,10 @@ defineExpose({
       <el-descriptions-item label="租户编码">
         {{ model.code }}
       </el-descriptions-item>
-      <el-descriptions-item label="有效开始日期">
+      <el-descriptions-item label="有效期起始">
         {{ model.startDate }}
       </el-descriptions-item>
-      <el-descriptions-item label="有效结束日期">
+      <el-descriptions-item label="有效期截止">
         {{ model.endDate }}
       </el-descriptions-item>
       <el-descriptions-item label="负责人">

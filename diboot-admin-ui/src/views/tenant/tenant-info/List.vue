@@ -103,8 +103,8 @@ const deletePermission = checkPermission('delete')
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="name" label="租户名称" />
       <el-table-column prop="code" label="租户编码" />
-      <el-table-column prop="startDate" label="有效开始日期" />
-      <el-table-column prop="endDate" label="有效结束日期" />
+      <el-table-column prop="startDate" label="有效期起始" />
+      <el-table-column prop="endDate" label="有效期截止" />
       <el-table-column prop="manager" label="负责人" />
       <el-table-column prop="phone" label="联系电话" />
       <el-table-column prop="statusLabel" label="租户状态">
