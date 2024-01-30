@@ -93,8 +93,8 @@ public class JSON {
             T model = getObjectMapper().readValue(jsonStr, clazz);
             return model;
         } catch (Exception e) {
-            log.error("Json转Java异常: {}", e.getMessage());
-            throw new BusinessException("Json转Java异常", e);
+            log.error("Json: {} 转Java异常: {}", jsonStr, e.getMessage());
+            throw new BusinessException("Json: {} 转Java异常：{}", jsonStr, e.getMessage());
         }
     }
 
@@ -108,8 +108,8 @@ public class JSON {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(Map.class, String.class, Object.class);
             return getObjectMapper().readValue(jsonStr, javaType);
         } catch (Exception e) {
-            log.error("Json转Map异常: {}", e.getMessage());
-            throw new BusinessException("Json转Map异常", e);
+            log.error("Json: {} 转Map异常: {}", jsonStr, e.getMessage());
+            throw new BusinessException("Json: {} 转Map异常: {}", jsonStr, e.getMessage());
         }
     }
 
@@ -134,8 +134,8 @@ public class JSON {
             T model = getObjectMapper().readValue(jsonStr, typeReference);
             return model;
         } catch (Exception e) {
-            log.error("Json转Java异常: {}", e.getMessage());
-            throw new BusinessException("Json转Java异常", e);
+            log.error("Json: {} 转Java异常: {}", jsonStr, e.getMessage());
+            throw new BusinessException("Json: {} 转Java异常: {}", jsonStr, e.getMessage());
         }
     }
 
@@ -151,8 +151,8 @@ public class JSON {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(List.class, clazz);
             return getObjectMapper().readValue(jsonStr, javaType);
         } catch (Exception e) {
-            log.error("Json转List异常: {}", e.getMessage());
-            throw new BusinessException("Json转List异常", e);
+            log.error("Json: {} 转List异常: {}", jsonStr, e.getMessage());
+            throw new BusinessException("Json: {} 转List异常", jsonStr, e.getMessage());
         }
     }
 
@@ -166,8 +166,8 @@ public class JSON {
         try {
             return getObjectMapper().readValue(jsonStr, typeReference);
         } catch (Exception e) {
-            log.error("Json转List异常: {}", e.getMessage());
-            throw new BusinessException("Json转List异常", e);
+            log.error("Json: {} 转List异常: {}", jsonStr, e.getMessage());
+            throw new BusinessException("Json: {} 转List异常: {}", jsonStr, e.getMessage());
         }
     }
 

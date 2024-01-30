@@ -186,7 +186,7 @@ public class SqlExecutor {
         }
         catch(Exception e){
             String sqlInfo = S.substring(sql, 0, 50) + "...";
-            log.error("执行sql查询异常: "+sqlInfo, e);
+            log.error("执行sql查询异常: {}", sqlInfo, e);
             throw e;
         }
     }
