@@ -79,7 +79,7 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean createIamTenantAndTenantOrgAndTenantAdminRole(IamTenant iamTenant) throws Exception {
+    public boolean createTenantAndInitData(IamTenant iamTenant) throws Exception {
         boolean success = this.createEntity(iamTenant);
         if (!success) {
             log.error("创建租户失败！");

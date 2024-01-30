@@ -42,7 +42,7 @@ public interface IamTenantService extends BaseService<IamTenant> {
      * @return
      * @throws Exception
      */
-    boolean createIamTenantAndTenantOrgAndTenantAdminRole(IamTenant tenant) throws Exception;
+    boolean createTenantAndInitData(IamTenant tenant) throws Exception;
 
     /**
      * 获取租户管理员
