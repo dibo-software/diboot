@@ -54,6 +54,10 @@ const { submitting, submit } = useForm({
 // 保存之前判断是否确认并继续添加
 const beforeSubmit = (value: boolean) => {
   isContinueAdd.value = value
+  if (model.value.validDate && model.value.validDate.length > 0) {
+    model.value.startDate = model.value.validDate[0]
+    model.value.endDate = model.value.validDate[1]
+  }
   submit(model.value, formRef.value)
 }
 const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
