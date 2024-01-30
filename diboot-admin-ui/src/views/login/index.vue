@@ -59,6 +59,7 @@ const submitForm = async () => {
     }
   })
 }
+const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
 </script>
 
 <template>
@@ -66,6 +67,18 @@ const submitForm = async () => {
     <div class="form">
       <h1 style="text-align: center">Diboot Admin UI</h1>
       <el-form ref="formRef" :model="form" :rules="rules" size="large">
+        <el-form-item
+          v-if="enableTenant"
+          prop="tenantCode"
+          label=""
+          :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
+        >
+          <el-input v-model="form.tenantCode">
+            <template #prefix>
+              <span style="width: 60px">租户编码</span>
+            </template>
+          </el-input>
+        </el-form-item>
         <el-form-item prop="username" label="">
           <el-input v-model="form.username">
             <template #prefix>
