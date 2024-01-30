@@ -21,14 +21,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
-import com.diboot.core.util.D;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -70,17 +69,15 @@ public class IamTenant extends BaseEntity<String> {
      * 有效开始日期
      */
     @NotNull(message = "有效开始日期不能为空")
-    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     @TableField()
-    private Date startDate;
+    private LocalDate startDate;
 
     /**
      * 有效结束日期
      */
     @NotNull(message = "有效结束日期不能为空")
-    @JsonFormat(pattern = D.FORMAT_DATE_Y4MD)
     @TableField()
-    private Date endDate;
+    private LocalDate endDate;
 
     /**
      * 负责人

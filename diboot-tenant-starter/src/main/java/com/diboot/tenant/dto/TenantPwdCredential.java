@@ -30,14 +30,17 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
  * 登录凭证
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/12/18
  */
+
 /**
  * 租户登录凭证
  *
@@ -51,11 +54,11 @@ import java.util.Objects;
 public class TenantPwdCredential extends PwdCredential {
     private static final long serialVersionUID = -5020652642432896556L;
 
-    public TenantPwdCredential(){
+    public TenantPwdCredential() {
         setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name());
     }
 
-    public TenantPwdCredential(String username, String password, String tenantCode){
+    public TenantPwdCredential(String username, String password, String tenantCode) {
         super(username, password);
         this.tenantCode = tenantCode;
         setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name());
@@ -80,6 +83,17 @@ public class TenantPwdCredential extends PwdCredential {
         }
         if (!Cons.DICTCODE_ACCOUNT_STATUS.A.name().equals(tenant.getStatus())) {
             throw new BusinessException("租户不可用");
+        }
+        LocalDate startDate = tenant.getStartDate();
+        LocalDate endDate = tenant.getEndDate();
+        if (V.isEmpty(startDate) || V.isEmpty(endDate)) {
+            throw new BusinessException("租户无效");
+        }
+        startDate = startDate.minusDays(1L);
+        endDate = endDate.plusDays(1L);
+        LocalDate now = LocalDate.now();
+        if (!(now.isAfter(startDate) && now.isBefore(endDate))) {
+            throw new BusinessException("租户不在有效期内");
         }
         setTenantId(tenant.getId());
         return super.getTenantId();
