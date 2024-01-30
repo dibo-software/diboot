@@ -82,18 +82,19 @@ public class TenantPwdCredential extends PwdCredential {
             throw new BusinessException("租户不存在");
         }
         if (!Cons.DICTCODE_ACCOUNT_STATUS.A.name().equals(tenant.getStatus())) {
-            throw new BusinessException("租户不可用");
+            throw new BusinessException("租户账户不可用，无法登录");
         }
         LocalDate startDate = tenant.getStartDate();
         LocalDate endDate = tenant.getEndDate();
         if (V.isEmpty(startDate) || V.isEmpty(endDate)) {
-            throw new BusinessException("租户无效");
+            throw new BusinessException("租户账户配置错误，无法登录");
         }
-        startDate = startDate.minusDays(1L);
-        endDate = endDate.plusDays(1L);
         LocalDate now = LocalDate.now();
-        if (!(now.isAfter(startDate) && now.isBefore(endDate))) {
-            throw new BusinessException("租户不在有效期内");
+        if (now.isBefore(startDate)) {
+            throw new BusinessException("租户账户尚未生效，无法登录");
+        }
+        if (now.isAfter(endDate)) {
+            throw new BusinessException("租户账户已过期，无法登录");
         }
         setTenantId(tenant.getId());
         return super.getTenantId();
@@ -108,4 +109,6 @@ public class TenantPwdCredential extends PwdCredential {
     public String getAuthSecret() {
         return this.getPassword();
     }
+
+
 }

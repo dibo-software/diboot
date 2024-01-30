@@ -68,14 +68,14 @@ public class IamTenant extends BaseEntity<String> {
     /**
      * 有效开始日期
      */
-    @NotNull(message = "有效开始日期不能为空")
+    @NotNull(message = "起始日期不能为空")
     @TableField()
     private LocalDate startDate;
 
     /**
      * 有效结束日期
      */
-    @NotNull(message = "有效结束日期不能为空")
+    @NotNull(message = "截止日期不能为空")
     @TableField()
     private LocalDate endDate;
 
