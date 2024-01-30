@@ -200,7 +200,7 @@ public class SqlFileInitializer {
                 }
             }
             catch (Exception e){
-                log.error("SQL执行异常，请检查或手动执行。SQL => "+sqlStatement, e);
+                log.error("SQL执行异常，请检查或手动执行。SQL => {}", sqlStatement, e);
             }
         }
         return true;
@@ -254,10 +254,10 @@ public class SqlFileInitializer {
             lines = S.readLines(is, "UTF-8");
         }
         catch (FileNotFoundException fe){
-            log.warn("暂未发现数据库SQL: "+sqlPath + "， 请参考其他数据库定义DDL手动初始化。");
+            log.warn("暂未发现数据库SQL: {}， 请参考其他数据库定义DDL手动初始化。", sqlPath);
         }
         catch (Exception e){
-            log.warn("读取SQL文件异常: "+sqlPath, e);
+            log.warn("读取SQL文件异常: {}", sqlPath, e);
         }
         return lines;
     }

@@ -109,7 +109,7 @@ public class BeanUtils {
             copyProperties(source, target);
         }
         catch (Exception e){
-            log.warn("对象转换异常, class="+clazz.getName());
+            log.warn("对象转换异常, class={}", clazz.getName());
         }
         return target;
     }
@@ -770,7 +770,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("提取属性值异常, getterPropName="+getterPropName, e);
+            log.warn("提取属性值异常, getterPropName={}", getterPropName, e);
         }
         return fieldValueList;
     }
@@ -800,7 +800,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("提取属性值异常, getterPropName="+getterPropName, e);
+            log.warn("提取属性值异常, getterPropName={}", getterPropName, e);
         }
         return fieldValueList;
     }
@@ -856,7 +856,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+            log.warn("设置属性值异常, setterFieldName={}", setterFieldName, e);
         }
     }
 
@@ -1051,7 +1051,7 @@ public class BeanUtils {
             lambda = (SerializedLambda) method.invoke(fn);
         }
         catch (Exception e){
-            log.error("获取SerializedLambda异常, class="+fn.getClass().getSimpleName(), e);
+            log.error("获取SerializedLambda异常, class={}", fn.getClass().getSimpleName(), e);
         }
         return lambda;
     }
