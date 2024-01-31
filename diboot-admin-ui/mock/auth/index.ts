@@ -166,6 +166,25 @@ const authMenu = [
     ]
   },
   {
+    path: 'tenant',
+    name: 'TenantMgt ',
+    meta: { title: '租户管理', icon: 'Element:Platform' },
+    children: [
+      {
+        path: 'tenant-info',
+        name: 'TenantInfo',
+        meta: {
+          title: '租户信息管理',
+          icon: 'Element:Platform',
+          componentPath: prefix + 'tenant/tenant-info/List.vue',
+          sort: 2,
+          keepAlive: false,
+          permissions: ['detail', 'create', 'update', 'delete']
+        }
+      },
+    ]
+  },
+  {
     path: 'org-structure',
     name: 'OrgStructure ',
     redirect: '/org-structure/user',
@@ -237,18 +256,6 @@ const authMenu = [
           sort: 2,
           keepAlive: false,
           permissions: ['create', 'update', 'delete']
-        }
-      },
-      {
-        path: 'tenant',
-        name: 'Tenant',
-        meta: {
-          title: '租户信息管理',
-          icon: 'Element:Platform',
-          componentPath: prefix + 'system/tenant/List.vue',
-          sort: 2,
-          keepAlive: false,
-          permissions: ['detail', 'create', 'update', 'delete']
         }
       },
       {

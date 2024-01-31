@@ -46,5 +46,13 @@ export default [
       const isExistence = dataList.filter(item => item.id !== id).some(item => item.code === query.code)
       return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
     }
+  },
+  {
+    url: `${crud.baseUrl}/admin/:id`,
+    timeout: Random.natural(50, 300),
+    method: 'get',
+    response: ({ query }: ApiRequest) => {
+      return JsonResult.OK()
+    }
   }
 ] as MockMethod[]
