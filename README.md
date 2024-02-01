@@ -7,6 +7,9 @@
 
 - [了解 Diboot内核如何做到高性能](https://www.bilibili.com/video/BV1tL411p7CD)
 
+> 上手体验:
+- [开始体验，从这里开始](https://www.diboot.com/guide/beginner/bootstrap.html)
+
 # diboot - 基础组件化繁为简，高效工具以简驭繁
 <hr>
 <p align="center">
