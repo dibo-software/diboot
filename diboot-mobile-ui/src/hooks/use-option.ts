@@ -1,4 +1,5 @@
 import type { ApiData } from '@/utils/request'
+import qs from 'qs'
 
 /**
  * 绑定对象
@@ -22,15 +23,27 @@ export interface RelatedData {
   // 懒加载（默认：true ；为 false 时会同步加载下一级，且当为树时会加载整个树）
   lazyChild?: boolean
   // 附加条件
+  conditions?: Array<ConditionItem>
+  /**
+   * 附加条件
+   * @Deprecated 3.3移除，使用 conditions?: Array<ConditionItem> 代替
+   */
   condition?: Record<string, boolean | string | number | (string | number)[] | null | undefined>
+}
+
+/**
+ * 条件项
+ */
+export interface ConditionItem {
+  field: string
+  comparison?: string // def EQ =
+  value?: unknown
 }
 
 /**
  * 异步绑定对象
  */
 export interface AsyncRelatedData extends RelatedData {
-  // 远程过滤的关键字
-  keyword?: string
   // 禁止加载数据（用于联动的远程过滤）
   disabled?: boolean
 }
@@ -105,7 +118,7 @@ export default ({
         ;(loadMap[module] ? loadMap[module] : (loadMap[module] = {}))[key] = load[key]
       }
       for (const key in loadMap) {
-        reqList.push(api.post(`${buildUriPrefix(key)}${baseApi}/load-related-data`, loadMap[key]))
+        reqList.push(api.post(`${buildUriPrefix(key)}${baseApi}/batch-load-related-data`, loadMap[key]))
       }
     }
 
@@ -137,16 +150,19 @@ export default ({
    *
    * @param relatedDataLoader 加载器
    * @param parentId 父节点ID
+   * @param keyword 搜索关键字
    */
-  const loadRelatedData = (relatedDataLoader: AsyncRelatedData, parentId?: string) => {
+  const loadRelatedData = (relatedDataLoader: AsyncRelatedData, parentId?: string, keyword?: string) => {
     const empty = [] as LabelValue[]
     if (relatedDataLoader.disabled) return Promise.reject<LabelValue[]>(empty)
     asyncLoading.value = true
     return new Promise<LabelValue[]>(resolve => {
       const appModule = relatedDataLoader.appModule ?? defModule
       api
-        .get<LabelValue[]>(
-          `${buildUriPrefix(appModule)}${baseApi}/load-related-data${buildUriPrefix(parentId)}`,
+        .post<LabelValue[]>(
+          `${buildUriPrefix(appModule)}${baseApi}/load-related-data${buildUriPrefix(parentId)}${
+            keyword ? '?' + qs.stringify({ keyword }) : ''
+          }`,
           relatedDataLoader
         )
         .then(res => resolve(res.data))
@@ -185,9 +201,7 @@ export default ({
       relatedData[loader] = []
       return
     }
-    const relatedDataLoader = _.cloneDeep(findAsyncLoader(loader))
-    relatedDataLoader.keyword = value
-    relatedData[loader] = await loadRelatedData(relatedDataLoader)
+    relatedData[loader] = await loadRelatedData(findAsyncLoader(loader), void 0, value)
   }
 
   /**
@@ -216,10 +230,11 @@ export default ({
     }
     const isNull = value == null || value.length === 0
     const execute = async ({ prop, loader, condition, autoLoad }: LinkageControl) => {
-      const relatedDataLoader = findAsyncLoader(loader)
+      let relatedDataLoader = findAsyncLoader(loader)
       relatedDataLoader.disabled = isNull
-      if (relatedDataLoader.condition == null) relatedDataLoader.condition = {}
-      relatedDataLoader.condition[condition] = value
+      relatedDataLoader = _.cloneDeep(relatedDataLoader)
+      if (relatedDataLoader.conditions == null) relatedDataLoader.conditions = []
+      relatedDataLoader.conditions.push({ field: condition, value })
       if (form) form[prop] = undefined
       relatedData[loader] = autoLoad === false || isNull ? [] : await loadRelatedData(relatedDataLoader)
     }
