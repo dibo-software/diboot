@@ -16,6 +16,7 @@
 package diboot.core.test.util;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
@@ -331,7 +332,7 @@ public class BeanUtilsTest {
      */
     @Test
     public void testBuildTreePerformance() {
-        List<RegionVO> regions = regionService.getViewObjectList(null, null, RegionVO.class);
+        List<RegionVO> regions = regionService.getViewObjectList(Wrappers.query(), null, RegionVO.class);
         long begin = System.currentTimeMillis();
         // List<RegionVO> topLevel = BeanUtils.buildTree(regions);
         List<RegionVO> topLevel = BeanUtils.buildTree(regions, RegionVO::getId, RegionVO::getParentId, RegionVO::setChildren);

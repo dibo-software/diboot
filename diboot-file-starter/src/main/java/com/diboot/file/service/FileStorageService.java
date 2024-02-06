@@ -18,7 +18,7 @@ package com.diboot.file.service;
 import com.diboot.file.entity.FileRecord;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 /**

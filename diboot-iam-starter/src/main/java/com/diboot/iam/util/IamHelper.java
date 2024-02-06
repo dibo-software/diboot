@@ -22,10 +22,8 @@ import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * IAM相关辅助类
@@ -39,11 +37,12 @@ public class IamHelper {
 
     /**
      * 构建role-permission角色权限数据格式(合并role等)，用于前端适配
+     *
      * @param roleVOList
      * @return
      */
     public static IamRoleVO buildRoleVo4FrontEnd(List<IamRoleVO> roleVOList) {
-        if (V.isEmpty(roleVOList)){
+        if (V.isEmpty(roleVOList)) {
             return null;
         }
         // 对RoleList做聚合处理，以适配前端
@@ -53,7 +52,7 @@ public class IamHelper {
         roleVOList.forEach(vo -> {
             nameList.add(vo.getName());
             codeList.add(vo.getCode());
-            if (V.notEmpty(vo.getPermissionList())){
+            if (V.notEmpty(vo.getPermissionList())) {
                 allPermissionList.addAll(vo.getPermissionList());
             }
         });

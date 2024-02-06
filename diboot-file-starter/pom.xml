@@ -29,12 +29,6 @@
             <version>${diboot.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- 文件上传 -->
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.5</version>
-        </dependency>
         <!-- Excel处理 -->
         <dependency>
             <groupId>com.alibaba</groupId>

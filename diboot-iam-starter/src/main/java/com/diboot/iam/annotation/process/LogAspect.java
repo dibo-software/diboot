@@ -31,13 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -137,7 +138,8 @@ public class LogAspect {
         IamOperationLog operationLog = new IamOperationLog();
         // 当前请求信息
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
+        ((ServletRequestAttributes) ra).getRequest().var
+
         operationLog.setRequestMethod(request.getMethod())
                 .setRequestUri(request.getRequestURI())
                 .setRequestIp(HttpHelper.getRequestIp(request));

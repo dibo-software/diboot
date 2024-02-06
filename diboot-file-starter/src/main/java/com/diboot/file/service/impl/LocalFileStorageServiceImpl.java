@@ -25,7 +25,7 @@ import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;

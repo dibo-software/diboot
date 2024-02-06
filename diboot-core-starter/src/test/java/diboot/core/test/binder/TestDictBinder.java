@@ -16,6 +16,7 @@
 package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.JSON;
@@ -81,7 +82,7 @@ public class TestDictBinder {
     @Test
     @Transactional
     public void testDictList() {
-        List<CustomerVO> customers = customerService.getViewObjectList(null, null, CustomerVO.class);
+        List<CustomerVO> customers = customerService.getViewObjectList(Wrappers.lambdaQuery(), null, CustomerVO.class);
         for(CustomerVO customerVO : customers) {
             if(V.notEmpty(customerVO.getExtjsonarr())){
                 Assert.assertTrue(customerVO.getChannelLabels().size() == customerVO.getExtjsonarr().size());

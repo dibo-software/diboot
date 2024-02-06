@@ -28,9 +28,11 @@ import com.diboot.core.binding.query.Strategy;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.binding.query.dynamic.DynamicJoinQueryWrapper;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
-import com.diboot.core.config.Cons;
 import com.diboot.core.data.protect.DataEncryptHandler;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.Pagination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +41,9 @@ import javax.lang.model.type.NullType;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 
 /**
  * QueryWrapper构建器
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2019/07/27
@@ -61,92 +62,100 @@ public class QueryBuilder {
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param <DTO>
      * @return
      */
-    public static <DTO> QueryWrapper toQueryWrapper(DTO dto){
+    public static <DTO> QueryWrapper toQueryWrapper(DTO dto) {
         return dtoToWrapper(dto, null, null);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param pagination 分页
      * @param <DTO>
      * @return
      */
-    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Pagination pagination){
+    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Pagination pagination) {
         return dtoToWrapper(dto, null, pagination);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param fields 指定参与转换的属性值
      * @param <DTO>
      * @return
      */
-    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Collection<String> fields){
+    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Collection<String> fields) {
         return dtoToWrapper(dto, fields, null);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
-     * @param fields 指定参与转换的属性值
+     * @param fields     指定参与转换的属性值
      * @param pagination 分页
      * @param <DTO>
      * @return
      */
-    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination){
+    public static <DTO> QueryWrapper toQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination) {
         return dtoToWrapper(dto, fields, pagination);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param <DTO>
      * @return
      */
-    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto){
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto) {
         return toDynamicJoinQueryWrapper(dto, null, null);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param pagination 分页
      * @param <DTO>
      * @return
      */
-    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Pagination pagination){
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Pagination pagination) {
         return toDynamicJoinQueryWrapper(dto, null, pagination);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param <DTO>
      * @return
      */
-    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields){
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields) {
         return toDynamicJoinQueryWrapper(dto, fields, null);
     }
 
     /**
      * Entity或者DTO对象转换为QueryWrapper
+     *
      * @param dto
      * @param fields 指定参与转换的属性值
      * @param <DTO>
      * @return
      */
-    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination){
+    public static <DTO> ExtQueryWrapper toDynamicJoinQueryWrapper(DTO dto, Collection<String> fields, Pagination pagination) {
         QueryWrapper queryWrapper = dtoToWrapper(dto, fields, pagination);
-        if(!(queryWrapper instanceof DynamicJoinQueryWrapper)){
-            return (ExtQueryWrapper)queryWrapper;
+        if (!(queryWrapper instanceof DynamicJoinQueryWrapper)) {
+            return (ExtQueryWrapper) queryWrapper;
         }
-        return (DynamicJoinQueryWrapper)queryWrapper;
+        return (DynamicJoinQueryWrapper) queryWrapper;
     }
 
     /**
@@ -235,14 +244,14 @@ public class QueryBuilder {
                     }
                 });
             } else {
-                if(query == null && V.isEmpty(value)) {
+                if (query == null && V.isEmpty(value)) {
                     continue;
                 }
                 if (ignoreEmpty.test(value, query)) {
                     continue;
                 }
                 String columnName = buildColumnName.apply(query, field);
-                if (protectFieldHandler != null){
+                if (protectFieldHandler != null) {
                     Class<?> clazz = getClass.apply(query);
                     String fieldName = getFieldName.apply(query, entry.getKey());
                     if (ParserCache.getProtectFieldList(clazz).contains(fieldName)) {
@@ -261,14 +270,14 @@ public class QueryBuilder {
      * 建立条件
      *
      * @param wrapper    条件包装器
-     * @param bindQuery 注解
+     * @param bindQuery  注解
      * @param columnName 列名
      * @param value      值
      */
     private static void buildQuery(QueryWrapper<?> wrapper, BindQuery bindQuery, String columnName, Object value) {
         Comparison comparison = bindQuery != null ? bindQuery.comparison() : Comparison.EQ;
-        if(value == null) {
-            if(bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL) && comparison.equals(Comparison.EQ)) {
+        if (value == null) {
+            if (bindQuery != null && bindQuery.strategy().equals(Strategy.INCLUDE_NULL) && comparison.equals(Comparison.EQ)) {
                 wrapper.isNull(columnName);
             }
             return;
@@ -279,12 +288,13 @@ public class QueryBuilder {
 
     /**
      * 提取非空字段及值
+     *
      * @param dto
      * @param fields
      * @param <DTO>
      * @return
      */
-    private static <DTO> LinkedHashMap<String, FieldAndValue> extractNotNullValues(DTO dto, Collection<String> fields, Pagination pagination){
+    private static <DTO> LinkedHashMap<String, FieldAndValue> extractNotNullValues(DTO dto, Collection<String> fields, Pagination pagination) {
         Class<?> dtoClass = dto.getClass();
         // 转换
         List<Field> declaredFields = BeanUtils.extractAllFields(dtoClass, true);
@@ -302,11 +312,11 @@ public class QueryBuilder {
             }
             BindQuery bindQuery = field.getAnnotation(BindQuery.class);
             // 忽略指定ignore的字段
-            if(bindQuery != null && bindQuery.ignore()) {
+            if (bindQuery != null && bindQuery.ignore()) {
                 continue;
             }
             // 有默认值的boolean类型，提示
-            if(field.getType().getName().equals("boolean")) {
+            if (field.getType().getName().equals("boolean")) {
                 log.warn("{}.{} 字段类型为 boolean，其默认值将参与构建查询条件，可能导致结果与预期不符，建议调整为 Boolean 类型 或 指定 @BindQuery(ignore=true)", dtoClass.getSimpleName(), field.getName());
             }
             //打开私有访问 获取值
@@ -315,7 +325,7 @@ public class QueryBuilder {
             try {
                 value = field.get(dto);
                 if (V.isEmpty(value)) {
-                    String prefix = V.equals(boolean.class, field.getType()) ?  "is" : "get";
+                    String prefix = V.equals(boolean.class, field.getType()) ? "is" : "get";
                     Method method = dtoClass.getMethod(prefix + S.capFirst(fieldName));
                     value = method.invoke(dto);
                 }
@@ -331,19 +341,16 @@ public class QueryBuilder {
                 continue;
             }
 
-            Strategy strategy = bindQuery != null? bindQuery.strategy() : Strategy.IGNORE_EMPTY;
+            Strategy strategy = bindQuery != null ? bindQuery.strategy() : Strategy.IGNORE_EMPTY;
             boolean collectThisField = false;
             // INCLUDE_NULL策略，包含null也收集
-            if(strategy.equals(Strategy.INCLUDE_NULL)) {
+            if (strategy.equals(Strategy.INCLUDE_NULL)) {
                 collectThisField = true;
-            }
-            else if(strategy.equals(Strategy.IGNORE_EMPTY) && V.notEmpty(value)) {
+            } else if (strategy.equals(Strategy.IGNORE_EMPTY) && V.notEmpty(value)) {
                 collectThisField = true;
-            }
-            else if(strategy.equals(Strategy.INCLUDE_EMPTY) && value != null) {
+            } else if (strategy.equals(Strategy.INCLUDE_EMPTY) && value != null) {
                 collectThisField = true;
-            }
-            else if(extractOrderFieldNames.contains(fieldName)) {
+            } else if (extractOrderFieldNames.contains(fieldName)) {
                 collectThisField = true;
             }
             if (collectThisField) {
@@ -376,14 +383,15 @@ public class QueryBuilder {
 
     /**
      * 检查是否包含列
+     *
      * @param segments
      * @param idCol
      * @return
      */
-    public static boolean checkHasColumn(NormalSegmentList segments, String idCol){
-        if(segments.size() > 0){
+    public static boolean checkHasColumn(NormalSegmentList segments, String idCol) {
+        if (segments.size() > 0) {
             for (ISqlSegment segment : segments) {
-                if(segment.getSqlSegment().equalsIgnoreCase(idCol)){
+                if (segment.getSqlSegment().equalsIgnoreCase(idCol)) {
                     return true;
                 }
             }
@@ -393,6 +401,7 @@ public class QueryBuilder {
 
     /**
      * 是否为排序字段
+     *
      * @param pagination
      * @return
      */
