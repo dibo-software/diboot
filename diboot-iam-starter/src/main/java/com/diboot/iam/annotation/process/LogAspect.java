@@ -138,7 +138,7 @@ public class LogAspect {
         IamOperationLog operationLog = new IamOperationLog();
         // 当前请求信息
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-        ((ServletRequestAttributes) ra).getRequest().var
+        HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
 
         operationLog.setRequestMethod(request.getMethod())
                 .setRequestUri(request.getRequestURI())
