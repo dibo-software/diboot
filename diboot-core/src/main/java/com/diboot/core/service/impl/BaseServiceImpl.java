@@ -1005,7 +1005,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <VO> List<VO> getViewObjectList(Wrapper queryWrapper, Pagination pagination, Class<VO> voClass) {
-		if(queryWrapper.getSqlSelect() == null) {
+		if(queryWrapper != null && queryWrapper.getSqlSelect() == null) {
 			WrapperHelper.optimizeSelect(queryWrapper, entityClass, voClass);
 		}
 		List<T> entityList = getEntityList(queryWrapper, pagination);
