@@ -149,8 +149,8 @@ public class IamAutoConfig {
      *
      * @return
      */
-    @Bean
-    @ConditionalOnMissingBean
+//    @Bean
+//    @ConditionalOnMissingBean
     public AccessControlFilter shiroFilter() {
         return new StatelessAccessControlFilter();
     }
