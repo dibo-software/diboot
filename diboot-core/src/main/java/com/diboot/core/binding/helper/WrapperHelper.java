@@ -100,7 +100,10 @@ public class WrapperHelper {
                     wrapper.and(query -> {
                         for (Object val : (Collection<?>) value) {
                             if (isString) {
-                                query.or().like(columnName, "\"" + val + "\"");
+                                if(!S.valueOf(val).contains("\"")) {
+                                    val = "\"" + val + "\"";
+                                }
+                                query.or().like(columnName, val);
                             } else {
                                 basicTypeProtection.accept(query, S.valueOf(val));
                             }
@@ -110,7 +113,10 @@ public class WrapperHelper {
                     wrapper.and(query -> {
                         for (Object val : (Object[]) value) {
                             if (isString) {
-                                query.or().like(columnName, "\"" + val + "\"");
+                                if(!S.valueOf(val).contains("\"")) {
+                                    val = "\"" + val + "\"";
+                                }
+                                query.or().like(columnName, val);
                             } else {
                                 basicTypeProtection.accept(query, S.valueOf(val));
                             }
@@ -118,7 +124,7 @@ public class WrapperHelper {
                     });
                 } else {
                     if (isString) {
-                        wrapper.like(columnName, "\"" + value + "\"");
+                        wrapper.like(columnName, value);
                     } else {
                         wrapper.and(query -> basicTypeProtection.accept(query, S.valueOf(value)));
                     }
