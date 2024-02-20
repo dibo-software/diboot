@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
  * @date 2021/08/27
  */
 @Getter @Setter @Accessors(chain = true)
-public class TestUploadFile extends BaseEntity {
+public class TestUploadFile extends BaseEntity<String> {
     private static final long serialVersionUID = -1391001660726027258L;
 
     @NotNull(message = "关联对象类不能为空！")

@@ -18,6 +18,7 @@ package diboot.core.test.binder.vo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindEntity;
 import com.diboot.core.binding.annotation.BindEntityList;
+import com.diboot.core.data.copy.Accept;
 import diboot.core.test.binder.entity.Department;
 import diboot.core.test.binder.entity.Organization;
 import lombok.Getter;
@@ -37,6 +38,8 @@ import java.util.List;
 @Accessors(chain = true)
 public class DepartmentVO {
     private static final long serialVersionUID = -4849732665419794547L;
+
+    @Accept(name = "id")
     @TableField
     private String id;
 

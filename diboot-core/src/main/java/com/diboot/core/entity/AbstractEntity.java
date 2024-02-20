@@ -21,6 +21,9 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHolder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -30,6 +33,7 @@ import java.io.Serializable;
  * @version v2.0
  * Copyright © diboot.com
  */
+@Getter @Setter @Accessors(chain = true)
 public abstract class AbstractEntity<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = 10202L;
 
@@ -38,15 +42,6 @@ public abstract class AbstractEntity<T extends Serializable> implements Serializ
      */
     @TableId(type = IdType.ASSIGN_ID)
     private T id;
-
-    public AbstractEntity<T> setId(T id){
-        this.id = id;
-        return this;
-    }
-
-    public T getId(){
-        return this.id;
-    }
 
     /**
      * 获取主键值

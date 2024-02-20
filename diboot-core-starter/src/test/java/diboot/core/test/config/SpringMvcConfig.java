@@ -24,13 +24,14 @@ import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
 import com.diboot.core.data.protect.DefaultDataMaskHandler;
 import com.diboot.core.handler.DataAccessControlHandler;
+import com.diboot.core.serial.deserializer.LocalDateTimeDeserializer;
+import com.diboot.core.serial.serializer.BigDecimal2StringSerializer;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -51,6 +52,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -95,12 +97,14 @@ public class SpringMvcConfig implements WebMvcConfigurer {
             builder.serializerByType(Long.class, ToStringSerializer.instance);
             builder.serializerByType(Long.TYPE, ToStringSerializer.instance);
             builder.serializerByType(BigInteger.class, ToStringSerializer.instance);
+            // BigDecimal转换成String避免JS超长问题，以及格式化数值
+            builder.serializerByType(BigDecimal.class, BigDecimal2StringSerializer.instance);
 
             // 支持java8时间类型
             // LocalDateTime
             DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATETIME_Y4MDHMS);
             builder.serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(localDateTimeFormatter));
-            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(localDateTimeFormatter));
+            builder.deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer());
             // LocalDate
             DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern(D.FORMAT_DATE_Y4MD);
             builder.serializerByType(LocalDate.class, new LocalDateSerializer(localDateFormatter));

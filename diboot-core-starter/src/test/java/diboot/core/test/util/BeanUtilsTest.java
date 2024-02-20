@@ -33,6 +33,7 @@ import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.entity.UserImportModel;
 import diboot.core.test.binder.service.RegionService;
 import diboot.core.test.binder.vo.RegionVO;
+import diboot.core.test.binder.vo.SimpleDictionaryVO;
 import diboot.core.test.binder.vo.UserVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -429,6 +430,14 @@ public class BeanUtilsTest {
         List<TestRegion> testRegions = MapUtils.buildEntityList(entityMapList, TestRegion.class);
         Assert.assertEquals(2, testRegions.size());
         Assert.assertEquals(2, testRegions.get(0).getChildren().size());
+    }
+
+    @Test
+    public void testBeanConvert() throws Exception {
+        Dictionary dictionary = new Dictionary();
+        dictionary.setId("1");
+        SimpleDictionaryVO vo = BeanUtils.convert(dictionary, SimpleDictionaryVO.class);
+        Assert.assertEquals(vo.getId(), "1");
     }
 
 }

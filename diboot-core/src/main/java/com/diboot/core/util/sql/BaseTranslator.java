@@ -123,7 +123,6 @@ public abstract class BaseTranslator {
             newSqls.add(buildTableCommentSql(table, comment));
         }
         table2ColumnTypeMap.put(table, column2TypeMap);
-        System.out.println("缓存 table keys = " + table2ColumnTypeMap.keySet());
         return newSqls;
     }
 

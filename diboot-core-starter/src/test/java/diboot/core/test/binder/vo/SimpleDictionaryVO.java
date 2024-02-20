@@ -17,11 +17,13 @@ package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindFieldList;
+import com.diboot.core.data.copy.Accept;
 import com.diboot.core.entity.Dictionary;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -30,9 +32,13 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SimpleDictionaryVO {
+public class SimpleDictionaryVO implements Serializable {
+    private static final long serialVersionUID = 3735816815598485413L;
 
+    @Accept(name = "id")
     private String id;
+
+    private String parentId;
 
     private String type;
 

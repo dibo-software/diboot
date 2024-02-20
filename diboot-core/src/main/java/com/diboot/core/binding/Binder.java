@@ -79,7 +79,7 @@ public class Binder {
      * 自动转换和绑定多个VO中的注解关联
      * @param entityList 需要转换的VO list
      * @param voClass VO class
-     * @param <E>
+     * @param <T>
      * @param <VO>
      * @return
      */
