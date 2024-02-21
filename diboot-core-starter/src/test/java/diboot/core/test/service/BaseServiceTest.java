@@ -531,7 +531,7 @@ public class BaseServiceTest {
     @Test
     public void testDictExtdata(){
         QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "I18N_TYPE");
+        queryWrapper.eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "GENDER");
         Dictionary dictionary = dictionaryService.getSingleEntity(queryWrapper);
         if(dictionary.getExtension() == null){
             Map<String, Object> map = new HashMap<>();
