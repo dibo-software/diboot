@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Oracle SQL翻译器
@@ -30,10 +31,10 @@ import java.util.List;
  */
 public class OracleTranslator extends BaseTranslator {
 
-//    @Override
-//    protected String getSchema() {
-//        return SqlExecutor.getDatabase();
-//    }
+    @Override
+    protected List<String> formatStatements(List<String> otherStatements) {
+        return otherStatements.stream().map(s -> S.substringBefore(s, ";")).collect(Collectors.toList());
+    }
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {

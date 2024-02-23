@@ -42,28 +42,28 @@ public abstract class BaseTranslator {
         if(V.isEmpty(mysqlStatements)) {
             return Collections.emptyList();
         }
-        List<String> postgresStatements = new ArrayList<>();
+        List<String> otherStatements = new ArrayList<>();
         mysqlStatements.forEach(stmt -> {
             if(S.containsIgnoreCase(stmt, "CREATE TABLE ")) {
                 List<String> createTableStatements = this.translateCreateTableDDL(stmt);
-                postgresStatements.addAll(createTableStatements);
+                otherStatements.addAll(createTableStatements);
             }
             else if(S.containsIgnoreCase(stmt, "CREATE INDEX ")) {
-                postgresStatements.add(this.translateCreateIndexDDL(stmt));
+                otherStatements.add(this.translateCreateIndexDDL(stmt));
             }
             else if(S.containsIgnoreCase(stmt, "INSERT INTO ")) {
-                postgresStatements.add(this.translateInsertValues(stmt));
+                otherStatements.add(this.translateInsertValues(stmt));
             }
             else if(V.notEmpty(stmt)){
                 throw new InvalidUsageException("暂不支持该SQL翻译：{}", stmt);
             }
         });
-        log.debug("转换初始化SQL：{}", postgresStatements);
-        return postgresStatements;
+        log.debug("转换初始化SQL：{}", otherStatements);
+        return formatStatements(otherStatements);
     }
 
-    protected String getSchema() {
-        return null;
+    protected List<String> formatStatements(List<String> otherStatements) {
+        return otherStatements;
     }
 
     /**
@@ -77,9 +77,6 @@ public abstract class BaseTranslator {
         String newSql = S.removeDuplicateBlank(mysqlDDL).replace("`", "").replaceAll(" comment ", " COMMENT ");
         String begin = S.substringBefore(newSql, "(").trim();
         String table = S.substringAfterLast(begin, " ");
-        if(V.notEmpty(getSchema())) {
-            begin = S.replace(begin, table, getSchema()+"."+table);
-        }
         sb.append(begin).append("(");
 
         String body = S.substringAfter(newSql, "(");
