@@ -54,12 +54,16 @@ public abstract class BaseTranslator {
             else if(S.containsIgnoreCase(stmt, "INSERT INTO ")) {
                 postgresStatements.add(this.translateInsertValues(stmt));
             }
-            else {
+            else if(V.notEmpty(stmt)){
                 throw new InvalidUsageException("暂不支持该SQL翻译：{}", stmt);
             }
         });
         log.debug("转换初始化SQL：{}", postgresStatements);
         return postgresStatements;
+    }
+
+    protected String getSchema() {
+        return null;
     }
 
     /**
@@ -73,6 +77,9 @@ public abstract class BaseTranslator {
         String newSql = S.removeDuplicateBlank(mysqlDDL).replace("`", "").replaceAll(" comment ", " COMMENT ");
         String begin = S.substringBefore(newSql, "(").trim();
         String table = S.substringAfterLast(begin, " ");
+        if(V.notEmpty(getSchema())) {
+            begin = S.replace(begin, table, getSchema()+"."+table);
+        }
         sb.append(begin).append("(");
 
         String body = S.substringAfter(newSql, "(");

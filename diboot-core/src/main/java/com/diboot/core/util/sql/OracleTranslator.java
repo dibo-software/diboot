@@ -30,13 +30,34 @@ import java.util.List;
  */
 public class OracleTranslator extends BaseTranslator {
 
+//    @Override
+//    protected String getSchema() {
+//        return SqlExecutor.getDatabase();
+//    }
+
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-                new String[]{" tinyint(1)", " tinyint", "varchar(", " datetime ", " bigint "},
-                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) "}
+                new String[]{" tinyint(1)", " tinyint", "varchar(", " datetime ", " bigint ", " json ", " JSON "},
+                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) ", " VARCHAR2(1000) ", " VARCHAR2(1000) "}
         );
         colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
+        colDefineSql = S.replace(colDefineSql," default ", " DEFAULT ");
+        if(S.contains(colDefineSql, " DEFAULT ")) {
+            String prefix = S.substringBefore(colDefineSql, " DEFAULT ") + " ";
+            String suffix = S.substringAfter(colDefineSql, " DEFAULT ");
+            String defValue = S.substringBefore(suffix.trim(), " ");
+            suffix = S.substringAfter(suffix.trim(), " ");
+            prefix = S.replaceEach(prefix, new String[]{" not null ", " null "}, new String[]{" NOT NULL ", " NULL "});
+            if(S.contains(prefix, " NOT NULL ")) {
+                return S.substringBefore(prefix, " NOT NULL ") + " DEFAULT " + defValue + " NOT NULL " + S.substringAfter(prefix, " NOT NULL ")
+                        + suffix;
+            }
+            else if(S.contains(prefix, " NULL ")) {
+                return S.substringBefore(prefix, " NULL ") + " DEFAULT " + defValue + " NULL " + S.substringAfter(prefix, " NULL ")
+                        + suffix;
+            }
+        }
         return colDefineSql;
     }
 
