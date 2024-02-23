@@ -18,7 +18,7 @@ create table dbt_iam_tenant
 create index idx_iam_tenant_code on dbt_iam_tenant (code);
 
 -- 租户资源
-create table if not exists dbt_iam_tenant_resource
+create table dbt_iam_tenant_resource
 (
     id          varchar(32) NOT NULL comment 'ID'  primary key,
     tenant_id   varchar(32)     default 0                 not null comment '租户ID',
