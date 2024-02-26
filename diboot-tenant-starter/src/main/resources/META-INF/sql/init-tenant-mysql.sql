@@ -46,4 +46,4 @@ create index idx_dbt_msg_tmpl_tenant on dbt_message_template (tenant_id);
 create index idx_dbt_msg_tenant on dbt_message (tenant_id);
 create index idx_dbt_sch_job_tenant on dbt_schedule_job (tenant_id);
 create index idx_dbt_sch_job_log_tenant on dbt_schedule_job_log (tenant_id);
-create index idx_dbt_mem_tenant on dbt_iam_member (tenant_id);
+-- create index idx_dbt_mem_tenant on dbt_iam_member (tenant_id);
