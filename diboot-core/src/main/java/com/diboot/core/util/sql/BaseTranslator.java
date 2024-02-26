@@ -31,7 +31,7 @@ import java.util.*;
 @Slf4j
 public abstract class BaseTranslator {
 
-    private static Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
+    protected static Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
 
     /**
      * 执行ddl翻译
@@ -52,7 +52,7 @@ public abstract class BaseTranslator {
                 otherStatements.add(this.translateCreateIndexDDL(stmt));
             }
             else if(S.containsIgnoreCase(stmt, "INSERT INTO ")) {
-                otherStatements.add(this.translateInsertValues(stmt));
+                otherStatements.addAll(this.translateInsertValues(stmt));
             }
             else if(V.notEmpty(stmt)){
                 throw new InvalidUsageException("暂不支持该SQL翻译：{}", stmt);
@@ -113,7 +113,7 @@ public abstract class BaseTranslator {
                 String colDefineStmt = translateColDefineSql(col);
                 newColDefines.add(colDefineStmt);
                 if(V.notEmpty(comment)) {
-                    newColComments.add(buildColumnCommentSql(cleanTableName, cleanColName, comment));
+                    newColComments.add(buildColumnCommentSql(cleanTableName, colName, comment));
                 }
                 // 数据类型替换
                 column2TypeMap.put(cleanColName, colDefineStmt);
@@ -151,7 +151,7 @@ public abstract class BaseTranslator {
         return input.replace("`", "");
     }
 
-    private String translateInsertValues(String insertSql) {
+    protected List<String> translateInsertValues(String insertSql) {
         insertSql = S.removeDuplicateBlank(insertSql).trim();
         String prefix = S.substringBefore(insertSql, "VALUES");
         StringBuilder sb = new StringBuilder(escapeKeyword(prefix)).append("VALUES");
@@ -208,7 +208,7 @@ public abstract class BaseTranslator {
                 sb.append(";");
             }
         }
-        return sb.toString();
+        return Collections.singletonList(sb.toString());
     }
 
     protected Object translateValue(String colDefine, String value) {
@@ -216,7 +216,7 @@ public abstract class BaseTranslator {
     }
 
     protected String buildColumnCommentSql(String table, String colName, String comment) {
-        return "comment on column "+ table +"."+colName+" is '"+comment+"';";
+        return "comment on column "+ table +"."+escapeKeyword(colName)+" is '"+comment+"';";
     }
 
     protected String buildTableCommentSql(String table, String comment) {

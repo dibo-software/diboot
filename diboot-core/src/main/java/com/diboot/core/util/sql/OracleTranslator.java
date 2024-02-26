@@ -20,7 +20,10 @@ import com.diboot.core.util.SqlFileInitializer;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +34,8 @@ import java.util.stream.Collectors;
  */
 public class OracleTranslator extends BaseTranslator {
 
+    private List<String> ESCAPE_KEYWORDS = Arrays.asList("level");
+
     @Override
     protected List<String> formatStatements(List<String> otherStatements) {
         return otherStatements.stream().map(s -> S.substringBefore(s, ";")).collect(Collectors.toList());
@@ -39,8 +44,8 @@ public class OracleTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-                new String[]{" tinyint(1)", " tinyint", "varchar(", " datetime ", " bigint ", " json ", " JSON "},
-                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) ", " VARCHAR2(1000) ", " VARCHAR2(1000) "}
+                new String[]{" tinyint(1)", " tinyint", "varchar(", " datetime ", " bigint ", " json ", " JSON ", " text"},
+                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) ", " VARCHAR2(1000) ", " VARCHAR2(1000) ", " BLOB"}
         );
         colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
         colDefineSql = S.replace(colDefineSql," default ", " DEFAULT ");
@@ -51,11 +56,11 @@ public class OracleTranslator extends BaseTranslator {
             suffix = S.substringAfter(suffix.trim(), " ");
             prefix = S.replaceEach(prefix, new String[]{" not null ", " null "}, new String[]{" NOT NULL ", " NULL "});
             if(S.contains(prefix, " NOT NULL ")) {
-                return S.substringBefore(prefix, " NOT NULL ") + " DEFAULT " + defValue + " NOT NULL " + S.substringAfter(prefix, " NOT NULL ")
+                colDefineSql = S.substringBefore(prefix, " NOT NULL ") + " DEFAULT " + defValue + " NOT NULL " + S.substringAfter(prefix, " NOT NULL ")
                         + suffix;
             }
             else if(S.contains(prefix, " NULL ")) {
-                return S.substringBefore(prefix, " NULL ") + " DEFAULT " + defValue + " NULL " + S.substringAfter(prefix, " NULL ")
+                colDefineSql = S.substringBefore(prefix, " NULL ") + " DEFAULT " + defValue + " NULL " + S.substringAfter(prefix, " NULL ")
                         + suffix;
             }
         }
@@ -63,8 +68,80 @@ public class OracleTranslator extends BaseTranslator {
     }
 
     @Override
+    protected List<String> translateInsertValues(String insertSql) {
+        List<String> batchInsertSqls = new ArrayList<>();
+        insertSql = S.removeDuplicateBlank(insertSql).trim();
+        String insertIntoPrefix = S.substringBefore(insertSql, "VALUES") + "VALUES";
+        if(insertIntoPrefix.contains("`")) {
+            for(String key : ESCAPE_KEYWORDS) {
+                if(insertIntoPrefix.contains("`"+key+"`")) {
+                    insertIntoPrefix = S.replace(insertIntoPrefix, "`"+key+"`", "\"" + key.toUpperCase() + "\"");
+                }
+            }
+        }
+        insertIntoPrefix = escapeKeyword(insertIntoPrefix);
+        String cols = S.substringBetween(insertIntoPrefix, "(", ")").replace("`", "");
+        String[] columns = S.split(cols, ",");
+
+        String table = S.substringBetween(insertIntoPrefix, " INTO ", "(").trim().replace("`", "");
+
+        Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
+
+        String suffix = S.substringAfter(insertSql, "VALUES");
+        while (S.contains(suffix, "(")) {
+            suffix = S.substringAfter(suffix, "(");
+            StringBuilder rowSqlSb = new StringBuilder(insertIntoPrefix).append("(");
+            List<Object> newValues = new ArrayList<>(columns.length);
+            List<String> colValues = new ArrayList<>(columns.length);
+            String record = S.substringBefore(suffix, ")");
+            while (S.contains(record, ",")) {
+                record = record.trim();
+                String value;
+                if(record.startsWith("'")) {
+                    value = S.substringBetween(record, "'", "'");
+                    value = "'" + value + "'";
+                    record = S.substringAfter(record,"'");
+                    record = S.substringAfter(record, "'");
+                }
+                else {
+                    value = S.substringBefore(record, ",").trim();
+                }
+                record = S.substringAfter(record, ",").trim();
+                colValues.add(value);
+                // last one
+                if(!S.contains(record, ",")) {
+                    if(record.startsWith("'")) {
+                        value = S.substringBetween(record, "'", "'");
+                        value = "'" + value + "'";
+                    }
+                    else {
+                        value = record.trim();
+                    }
+                    colValues.add(value);
+                }
+            }
+            for(int i=0; i<columns.length; i++) {
+                String colType = col2TypeMap.get(columns[i].trim());
+                newValues.add(translateValue(colType, colValues.get(i)));
+            }
+            rowSqlSb.append(S.join(newValues)).append(")");
+            batchInsertSqls.add(rowSqlSb.toString());
+        }
+        return batchInsertSqls;
+    }
+
+    @Override
     protected String escapeKeyword(String input) {
-        return S.replace(input, "`", "");
+        if(input.contains("`")) {
+            String key = S.substringBetween(input, "`", "`");
+            if(ESCAPE_KEYWORDS.contains(key)) {
+                return S.replace(input, "`"+key+"`", "\"" + key.toUpperCase() + "\"");
+            }
+            else {
+                return S.replace(input, "`", "");
+            }
+        }
+        return input;
     }
 
 }

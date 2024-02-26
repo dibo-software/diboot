@@ -23,7 +23,7 @@ import com.diboot.core.util.S;
  * @version v3.2.0
  * @date 2023/12/28
  */
-public class SqlServerTranslator extends BaseTranslator {
+public final class SqlServerTranslator extends BaseTranslator {
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {

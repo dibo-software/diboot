@@ -18,6 +18,9 @@ package com.diboot.core.util.sql;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * PostgresSql SQL翻译器
  * @author mazc@dibo.ltd
@@ -25,6 +28,8 @@ import com.diboot.core.util.V;
  * @date 2023/12/28
  */
 public class PostgresSqlTranslator extends BaseTranslator {
+
+    private List<String> ESCAPE_KEYWORDS = Arrays.asList("level");
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {
@@ -43,7 +48,16 @@ public class PostgresSqlTranslator extends BaseTranslator {
 
     @Override
     protected String escapeKeyword(String input) {
-        return S.replace(input, "`", "\"");
+        if(input.contains("`")) {
+            String key = S.substringBetween(input, "`", "`");
+            if(ESCAPE_KEYWORDS.contains(key)) {
+                return S.replace(input, "`"+key+"`", "\"" + key + "\"");
+            }
+            else {
+                return S.replace(input, "`", "");
+            }
+        }
+        return input;
     }
 
     @Override
