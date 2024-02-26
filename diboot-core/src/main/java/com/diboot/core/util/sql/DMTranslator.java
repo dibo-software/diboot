@@ -31,7 +31,12 @@ public class DMTranslator extends BaseTranslator {
                 new String[]{" tinyint(1) ", " tinyint", " bigint ", " smallint ", " int "},
                 new String[]{" BIT ", " BIT", " NUMBER(20) ", " NUMBER(6) ", " NUMBER(9) "}
         );
-        return colDefineSql;
+        return escapeKeyword(colDefineSql);
+    }
+
+    @Override
+    protected String escapeKeyword(String input) {
+        return S.replace(input, "`", "");
     }
 
 }

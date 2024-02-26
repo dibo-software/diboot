@@ -59,7 +59,12 @@ public class OracleTranslator extends BaseTranslator {
                         + suffix;
             }
         }
-        return colDefineSql;
+        return escapeKeyword(colDefineSql);
+    }
+
+    @Override
+    protected String escapeKeyword(String input) {
+        return S.replace(input, "`", "");
     }
 
 }

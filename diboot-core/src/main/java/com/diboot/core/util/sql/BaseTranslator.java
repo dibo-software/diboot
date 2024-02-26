@@ -74,10 +74,11 @@ public abstract class BaseTranslator {
     private List<String> translateCreateTableDDL(String mysqlDDL) {
         List<String> newSqls = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        String newSql = S.removeDuplicateBlank(mysqlDDL).replace("`", "").replaceAll(" comment ", " COMMENT ");
+        String newSql = S.removeDuplicateBlank(mysqlDDL).replaceAll(" comment ", " COMMENT ");
         String begin = S.substringBefore(newSql, "(").trim();
         String table = S.substringAfterLast(begin, " ");
-        sb.append(begin).append("(");
+        String cleanTableName = table.replace("`", "");
+        sb.append(escapeKeyword(begin)).append("(");
 
         String body = S.substringAfter(newSql, "(");
         body = S.substringBeforeLast(body, ")");
@@ -101,20 +102,21 @@ public abstract class BaseTranslator {
             // 提取列备注
             String comment = extractCommentLabel(col);
             col = S.substringBefore(col, "COMMENT").trim();
-            if(S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (`id`)")
-            || S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (id)")) {
+            String cleanCol = S.removeDuplicateBlank(S.removeDuplicateBlank(col)).replace("`", "");
+            if(S.containsIgnoreCase(cleanCol, "PRIMARY KEY (id)")) {
             }
             else {
-                if(colName.equals("id") && !S.containsIgnoreCase(col, "PRIMARY KEY")) {
+                String cleanColName = colName.replace("`", "");
+                if(cleanColName.equals("id") && !S.containsIgnoreCase(cleanCol, "PRIMARY KEY")) {
                     col += " PRIMARY KEY";
                 }
                 String colDefineStmt = translateColDefineSql(col);
                 newColDefines.add(colDefineStmt);
                 if(V.notEmpty(comment)) {
-                    newColComments.add(buildColumnCommentSql(table, colName, comment));
+                    newColComments.add(buildColumnCommentSql(cleanTableName, cleanColName, comment));
                 }
                 // 数据类型替换
-                column2TypeMap.put(colName, colDefineStmt);
+                column2TypeMap.put(cleanColName, colDefineStmt);
             }
         });
         String comment = S.substringAfterLast(newSql, ")");
@@ -126,7 +128,7 @@ public abstract class BaseTranslator {
         if(V.notEmpty(comment)) {
             newSqls.add(buildTableCommentSql(table, comment));
         }
-        table2ColumnTypeMap.put(table, column2TypeMap);
+        table2ColumnTypeMap.put(cleanTableName, column2TypeMap);
         return newSqls;
     }
 
@@ -138,21 +140,26 @@ public abstract class BaseTranslator {
      * @return
      */
     protected String translateCreateIndexDDL(String mysqlDDL) {
-        String createIndex = S.removeDuplicateBlank(mysqlDDL).trim().replace("`", "");
+        String createIndex = S.removeDuplicateBlank(mysqlDDL).trim();
         if(!createIndex.endsWith(";")) {
             createIndex += ";";
         }
-        return createIndex;
+        return escapeKeyword(createIndex);
+    }
+
+    protected String escapeKeyword(String input) {
+        return input.replace("`", "");
     }
 
     private String translateInsertValues(String insertSql) {
-        insertSql = S.removeDuplicateBlank(insertSql).trim().replace("`", "");
+        insertSql = S.removeDuplicateBlank(insertSql).trim();
         String prefix = S.substringBefore(insertSql, "VALUES");
-        StringBuilder sb = new StringBuilder(prefix).append("VALUES");
-        String cols = S.substringBetween(prefix, "(", ")");
+        StringBuilder sb = new StringBuilder(escapeKeyword(prefix)).append("VALUES");
+        String cols = S.substringBetween(prefix, "(", ")").replace("`", "");
         String[] columns = S.split(cols, ",");
 
-        String table = S.substringBetween(prefix, " INTO ", "(").trim();
+        String table = S.substringBetween(prefix, " INTO ", "(").trim().replace("`", "");
+
         Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
 
         String suffix = S.substringAfter(insertSql, "VALUES");
@@ -213,7 +220,7 @@ public abstract class BaseTranslator {
     }
 
     protected String buildTableCommentSql(String table, String comment) {
-        return "comment on table "+ table +" is '"+comment+"';";
+        return "comment on table "+ escapeKeyword(table) +" is '"+comment+"';";
     }
 
     private String extractCommentLabel(String comment) {

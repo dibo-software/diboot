@@ -38,10 +38,12 @@ public class PostgresSqlTranslator extends BaseTranslator {
         if(S.containsIgnoreCase(colDefineSql, "datetime")) {
             return S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
         }
-        if(colDefineSql.contains("`")) {
-            colDefineSql = S.replace(colDefineSql, "`", "\"");
-        }
-        return colDefineSql;
+        return escapeKeyword(colDefineSql);
+    }
+
+    @Override
+    protected String escapeKeyword(String input) {
+        return S.replace(input, "`", "\"");
     }
 
     @Override
