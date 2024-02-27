@@ -82,10 +82,11 @@ public abstract class BaseAuthServiceImpl implements AuthService {
 
     @Override
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
-        IamAccount latestAccount = iamAccountMapper.findLoginAccount(buildQueryWrapper(iamAuthToken), BaseConfig.getActiveFlagValue());
-        if(latestAccount == null){
+        List<IamAccount> latestAccounts = iamAccountMapper.findLoginAccount(buildQueryWrapper(iamAuthToken), BaseConfig.getActiveFlagValue());
+        if(V.isEmpty(latestAccounts)){
             return null;
         }
+        IamAccount latestAccount = latestAccounts.get(0);
         if (Cons.DICTCODE_ACCOUNT_STATUS.I.name().equals(latestAccount.getStatus())) {
             throw new AuthenticationException("用户账号已禁用! account="+iamAuthToken.getAuthAccount());
         }
