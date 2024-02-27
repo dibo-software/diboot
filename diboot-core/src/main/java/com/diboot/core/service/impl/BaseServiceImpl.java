@@ -528,18 +528,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		// 如果是动态join，则调用JoinsBinder
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
-			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, getEntityClass(), pagination);
 		}
 		else if(queryWrapper instanceof QueryWrapper) {
 			QueryWrapper mpQueryWrapper = ((QueryWrapper)queryWrapper);
 			if(mpQueryWrapper.getEntityClass() == null) {
-				mpQueryWrapper.setEntityClass(entityClass);
+				mpQueryWrapper.setEntityClass(getEntityClass());
 			}
 		}
 		else if(queryWrapper instanceof LambdaQueryWrapper) {
 			LambdaQueryWrapper mpQueryWrapper = ((LambdaQueryWrapper)queryWrapper);
 			if(mpQueryWrapper.getEntityClass() == null) {
-				mpQueryWrapper.setEntityClass(entityClass);
+				mpQueryWrapper.setEntityClass(getEntityClass());
 			}
 		}
 		// 否则，调用MP默认实现
@@ -590,7 +590,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 如果是动态join，则调用JoinsBinder
 		query.select(getterFn);
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
-			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, entityClass, null);
+			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, getEntityClass(), null);
 		} else{
 			entityList = getEntityList(query);
 		}
@@ -621,7 +621,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
 			Pagination pagination = new Pagination();
 			pagination.setPageIndex(1).setPageSize(limitCount);
-			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, getEntityClass(), pagination);
 		}
 		Page<T> page = new Page<>(1, limitCount);
 		page.setSearchCount(false);
@@ -633,7 +633,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public T getSingleEntity(Wrapper queryWrapper) {
 		// 如果是动态join，则调用JoinsBinder
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
-			return (T)Binder.joinQueryOne((DynamicJoinQueryWrapper)queryWrapper, entityClass);
+			return (T)Binder.joinQueryOne((DynamicJoinQueryWrapper)queryWrapper, getEntityClass());
 		}
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		if(V.notEmpty(entityList)){
@@ -717,7 +717,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 是否有ext字段
 		boolean hasExt = selectArray.length > 2;
 		List<LabelValue> labelValueList = new ArrayList<>(entityList.size());
+		Class<?> entityClass = getEntityClass();
 		for(T entity : entityList){
+			if (V.isEmpty(entity)) {
+				log.warn("getLabelValueList查询指定字段 {} 在数据库当前记录所有字段均为空值，已自动忽略", sqlSelect);
+				continue;
+			}
 			PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
 			String label = propInfo.getFieldByColumn(selectArray[0]), value = propInfo.getFieldByColumn(selectArray[1]), ext;
 			Object labelVal = BeanUtils.getProperty(entity, label);
@@ -833,7 +838,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	protected Page<T> convertToIPage(Wrapper queryWrapper, Pagination pagination){
-		return ServiceAdaptor.convertToIPage(pagination, entityClass);
+		return ServiceAdaptor.convertToIPage(pagination, getEntityClass());
 	}
 
 	/**

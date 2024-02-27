@@ -101,6 +101,9 @@ public class IamResourcePermissionServiceImpl extends BaseIamServiceImpl<IamReso
         // 更新menu
         this.updateEntity(iamResourcePermissionDTO);
         List<IamResourcePermissionDTO> permissionList = iamResourcePermissionDTO.getPermissionList();
+        if(V.isEmpty(permissionList)) {
+            return;
+        }
         permissionList.forEach(p -> {
             p.setParentId(iamResourcePermissionDTO.getId());
             p.setDisplayType(Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name());
