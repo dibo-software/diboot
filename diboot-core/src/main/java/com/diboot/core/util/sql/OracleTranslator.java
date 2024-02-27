@@ -16,10 +16,8 @@
 package com.diboot.core.util.sql;
 
 import com.diboot.core.util.S;
-import com.diboot.core.util.SqlFileInitializer;
-import org.apache.commons.io.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +30,7 @@ import java.util.stream.Collectors;
  * @version v3.2.0
  * @date 2023/12/28
  */
+@Slf4j
 public class OracleTranslator extends BaseTranslator {
 
     private List<String> ESCAPE_KEYWORDS = Arrays.asList("level");
@@ -82,11 +81,8 @@ public class OracleTranslator extends BaseTranslator {
         insertIntoPrefix = escapeKeyword(insertIntoPrefix);
         String cols = S.substringBetween(insertIntoPrefix, "(", ")").replace("`", "");
         String[] columns = S.split(cols, ",");
-
         String table = S.substringBetween(insertIntoPrefix, " INTO ", "(").trim().replace("`", "");
-
         Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
-
         String suffix = S.substringAfter(insertSql, "VALUES");
         while (S.contains(suffix, "(")) {
             suffix = S.substringAfter(suffix, "(");
@@ -128,6 +124,17 @@ public class OracleTranslator extends BaseTranslator {
             batchInsertSqls.add(rowSqlSb.toString());
         }
         return batchInsertSqls;
+    }
+
+    @Override
+    protected Object translateValue(String colType, String value) {
+        if(S.containsIgnoreCase(colType, " BLOB")) {
+            return "rawtohex(" + value + ")";
+        }
+        else if(S.containsIgnoreCase(colType, " TIMESTAMP")) {
+            return "CURRENT_TIMESTAMP";
+        }
+        return value;
     }
 
     @Override
