@@ -234,7 +234,7 @@ public class SqlFileInitializer {
             return true;
         }
         catch (Exception e){
-            log.error("SQL执行异常，请检查：", e);
+            log.error("SQL执行异常，请检查：{}", sqlStatementList, e);
             if(conn != null) {
                 conn.rollback();
             }
