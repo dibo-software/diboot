@@ -44,7 +44,7 @@ public class OracleTranslator extends BaseTranslator {
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
                 new String[]{" tinyint(1)", " tinyint", "varchar(", " datetime ", " bigint ", " json ", " JSON ", " text"},
-                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) ", " VARCHAR2(1000) ", " VARCHAR2(1000) ", " BLOB"}
+                new String[]{" NUMBER(1)", " NUMBER(1)", "VARCHAR2(", " TIMESTAMP ", " NUMBER(20) ", " VARCHAR2(1000) ", " VARCHAR2(1000) ", " CLOB"}
         );
         colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
         colDefineSql = S.replace(colDefineSql," default ", " DEFAULT ");
