@@ -68,8 +68,8 @@ public interface IamAccountMapper extends BaseCrudMapper<IamAccount> {
      * @return
      */
     @InterceptorIgnore(tenantLine = "true")
-    @Select("SELECT * FROM dbt_iam_account WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND user_id = #{userId} AND user_type = #{userType} LIMIT 1")
-    IamAccount findByExplicitTenant(@Param("tenantId") String tenantId, @Param("userId") String userId,
+    @Select("SELECT * FROM dbt_iam_account WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND user_id = #{userId} AND user_type = #{userType}")
+    List<IamAccount> findByExplicitTenant(@Param("tenantId") String tenantId, @Param("userId") String userId,
                                     @Param("userType") String userType, @Param("deleted") Object deleted);
 
     /**

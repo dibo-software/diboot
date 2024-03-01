@@ -100,20 +100,22 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
     @Override
     public TenantAdminUserVO getTenantAdminUserVO(String tenantId) throws Exception {
         // 获取当前租户管理员的角色id
-        IamRole iamRole = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
-        if (iamRole == null) {
+        List<IamRole> iamRoles = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
+        if (V.isEmpty(iamRoles)) {
             // 如果不存在租户管理员则自动创建
             iamRoleService.createEntity(new IamRole().setCode(Cons.ROLE_TENANT_ADMIN).setName("租户管理员"));
         } else {
+            IamRole iamRole = iamRoles.get(0);
             // 获取绑定租户管理员的用户ID
-            String userId = iamUserRoleMapper.findUserIdByTenantIdAndRoleId(tenantId, iamRole.getId(), BaseConfig.getActiveFlagValue());
+            List<String> userIds = iamUserRoleMapper.findUserIdByTenantIdAndRoleId(tenantId, iamRole.getId(), BaseConfig.getActiveFlagValue());
             // 存在绑定关系，获取用户并返回
-            if (userId != null) {
+            if (V.notEmpty(userIds)) {
+                String userId = userIds.get(0);
                 IamUser iamUser = iamUserMapper.selectById(userId);
                 TenantAdminUserVO tenantAdminUserVO = BeanUtils.convert(iamUser, TenantAdminUserVO.class);
 
-                IamAccount iamAccount = iamAccountMapper.findByExplicitTenant(tenantId, userId, IamUser.class.getSimpleName(), BaseConfig.getActiveFlagValue());
-
+                List<IamAccount> iamAccounts = iamAccountMapper.findByExplicitTenant(tenantId, userId, IamUser.class.getSimpleName(), BaseConfig.getActiveFlagValue());
+                IamAccount iamAccount = iamAccounts.get(0);
                 tenantAdminUserVO.setUsername(iamAccount.getAuthAccount())
                         .setAccountId(iamAccount.getId())
                         .setAccountStatus(iamAccount.getStatus());
@@ -169,7 +171,8 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void createIamRole(IamUserFormDTO iamUserFormDTO) {
-        IamRole iamRole = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
+        List<IamRole> iamRoles = iamRoleMapper.findByCode(Cons.ROLE_TENANT_ADMIN, BaseConfig.getActiveFlagValue());
+        IamRole iamRole = iamRoles.get(0);
         IamUserRole iamUserRole = new IamUserRole()
                 .setRoleId(iamRole.getId())
                 .setUserId(iamUserFormDTO.getId())
