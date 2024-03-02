@@ -39,11 +39,7 @@ public class String2LocalDateTimeConverter implements Converter<String, LocalDat
         if(V.isEmpty(dateString)){
             return null;
         }
-        dateString = D.formatDateString(dateString);
-        if(dateString.length() <= D.FORMAT_DATE_Y4MD.length()) {
-            return LocalDate.parse(dateString, D.FORMATTER_DATE_Y4MD).atStartOfDay();
-        }
-        return LocalDateTime.parse(dateString, D.FORMATTER_DATETIME_Y4MDHMS);
+        return D.convert2LocalDateTime(dateString);
     }
 
 }
