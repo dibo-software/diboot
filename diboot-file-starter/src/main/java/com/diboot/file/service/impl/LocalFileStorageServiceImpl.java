@@ -23,9 +23,9 @@ import com.diboot.file.entity.FileRecord;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -67,6 +67,23 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
                 .setFileSize(size)
                 .setStoragePath(fileFullPath)
                 .setAccessUrl(buildAccessUrl(fileUid,ext));
+    }
+
+    @Override
+    public FileRecord save(String diskFilePath, String fileName) throws Exception {
+        File file = new File(diskFilePath);
+        if(!file.exists()) {
+            throw new BusinessException("文件: {} 不存在！", diskFilePath);
+        }
+        // 文件后缀
+        String fileUid = S.newUuid();
+        String ext = FileHelper.getFileExtByName(fileName);
+        return new FileRecord(fileUid)
+                .setFileName(fileName)
+                .setFileType(ext)
+                .setFileSize(file.length())
+                .setStoragePath(diskFilePath)
+                .setAccessUrl(buildAccessUrl(fileUid, ext));
     }
 
     @Override

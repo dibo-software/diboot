@@ -15,10 +15,11 @@
  */
 package com.diboot.file.service;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.file.entity.FileRecord;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 
 /**
@@ -60,6 +61,18 @@ public interface FileStorageService {
      * @throws Exception
      */
     FileRecord save(InputStream inputStream, String fileName, long size) throws Exception;
+
+    /**
+     * 上传文件
+     *
+     * @param diskFilePath 磁盘中已存在的临时文件
+     * @param fileName 文件名
+     * @return
+     * @throws Exception
+     */
+    default FileRecord save(String diskFilePath, String fileName) throws Exception {
+        throw new InvalidUsageException("当前存储实现暂不支持该方法");
+    }
 
     /**
      * 获取文件
