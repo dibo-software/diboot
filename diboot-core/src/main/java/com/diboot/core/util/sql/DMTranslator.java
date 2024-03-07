@@ -28,8 +28,8 @@ public final class DMTranslator extends BaseTranslator {
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-            new String[]{" tinyint(1) ", " tinyint", " bigint ", " smallint ", " int "},
-            new String[]{" BIT ", " BIT", " NUMBER(20) ", " NUMBER(6) ", " NUMBER(9) "}
+            new String[]{" tinyint(1)", " tinyint", " bigint", " smallint", " int "},
+            new String[]{" BIT", " BIT", " NUMBER(20)", " NUMBER(6)", " NUMBER(9) "}
         );
         return escapeKeyword(colDefineSql);
     }
