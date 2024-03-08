@@ -128,7 +128,7 @@ const messageInfo = ref<Message>()
           <template #header>
             <div class="header">
               <span class="title">{{ item.title }} <el-badge v-show="item.status !== 'READ'" is-dot /></span>
-              <span class="source">来源：{{ item.sender }}</span>
+              <span class="source">来源：{{ item.senderName }}</span>
             </div>
           </template>
           <div class="content">
