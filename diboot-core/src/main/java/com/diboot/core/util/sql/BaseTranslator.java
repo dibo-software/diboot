@@ -113,7 +113,10 @@ public abstract class BaseTranslator {
                 String colDefineStmt = translateColDefineSql(col);
                 newColDefines.add(colDefineStmt);
                 if(V.notEmpty(comment)) {
-                    newColComments.add(buildColumnCommentSql(cleanTableName, colName, comment));
+                    String columnCommentSql = buildColumnCommentSql(cleanTableName, colName, comment);
+                    if(columnCommentSql != null) {
+                        newColComments.add(columnCommentSql);
+                    }
                 }
                 // 数据类型替换
                 column2TypeMap.put(cleanColName, colDefineStmt);
@@ -126,7 +129,10 @@ public abstract class BaseTranslator {
         newSqls.add(sb.toString());
         newSqls.addAll(newColComments);
         if(V.notEmpty(comment)) {
-            newSqls.add(buildTableCommentSql(table, comment));
+            String tableCommentSql = buildTableCommentSql(table, comment);
+            if(tableCommentSql != null) {
+                newSqls.add(tableCommentSql);
+            }
         }
         table2ColumnTypeMap.put(cleanTableName, column2TypeMap);
         return newSqls;
