@@ -17,6 +17,8 @@ package com.diboot.core.util.sql;
 
 import com.diboot.core.util.S;
 
+import java.util.List;
+
 /**
  * DM SQL翻译器
  * @author mazc@dibo.ltd
@@ -24,6 +26,11 @@ import com.diboot.core.util.S;
  * @date 2023/12/28
  */
 public final class DMTranslator extends BaseTranslator {
+
+    public DMTranslator(){}
+    public DMTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {

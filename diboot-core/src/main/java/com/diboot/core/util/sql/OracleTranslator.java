@@ -33,7 +33,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OracleTranslator extends BaseTranslator {
 
-    private List<String> ESCAPE_KEYWORDS = Arrays.asList("level");
+    public OracleTranslator(){}
+
+    public OracleTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
 
     @Override
     protected List<String> formatStatements(List<String> otherStatements) {

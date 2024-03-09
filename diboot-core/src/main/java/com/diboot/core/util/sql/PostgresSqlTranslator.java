@@ -29,7 +29,10 @@ import java.util.List;
  */
 public class PostgresSqlTranslator extends BaseTranslator {
 
-    private List<String> ESCAPE_KEYWORDS = Arrays.asList("level");
+    public PostgresSqlTranslator(){}
+    public PostgresSqlTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {
