@@ -356,6 +356,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(treeEntity.getParentId())) {
 			return;
 		}
+		// 上级设置为自身，抛出异常
+		if(V.equals(treeEntity.getParentId(), treeEntity.getId())) {
+			throw new BusinessException(Status.FAIL_VALIDATION, "不可设置上级节点为自身！");
+		}
 		BaseTreeEntity parentNode = (BaseTreeEntity) getEntity(treeEntity.getParentId());
 		if(parentNode != null) {
 			String parentIdsPath = parentNode.getParentIdsPath();

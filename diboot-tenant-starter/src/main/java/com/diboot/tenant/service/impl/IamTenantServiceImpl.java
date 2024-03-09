@@ -188,12 +188,14 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
      * @return
      */
     private IamOrg buildRootOrgByTenant(IamTenant tenant) {
-        return new IamOrg().setCode(tenant.getCode())
+        IamOrg iamOrg = new IamOrg();
+        iamOrg.setParentId(IamOrg.VIRTUAL_ROOT_ID);
+        iamOrg.setCode(tenant.getCode())
                 .setTenantId(tenant.getId())
                 .setName(tenant.getName())
-                .setParentId(IamOrg.VIRTUAL_ROOT_ID)
                 .setRootOrgId(IamOrg.VIRTUAL_ROOT_ID)
                 .setType(Cons.DICTCODE_ORG_TYPE.COMP.name());
+        return iamOrg;
     }
 
 }
