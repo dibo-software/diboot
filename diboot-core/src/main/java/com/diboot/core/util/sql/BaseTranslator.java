@@ -15,6 +15,7 @@
  */
 package com.diboot.core.util.sql;
 
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -30,6 +31,8 @@ import java.util.*;
  */
 @Slf4j
 public abstract class BaseTranslator {
+
+    protected List<String> ESCAPE_KEYWORDS = Arrays.asList("key", "level");
 
     protected static Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
 
@@ -167,7 +170,9 @@ public abstract class BaseTranslator {
         String table = S.substringBetween(prefix, " INTO ", "(").trim().replace("`", "");
 
         Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
-
+        if(col2TypeMap == null) {
+            throw new BusinessException(table +" 无缓存信息！");
+        }
         String suffix = S.substringAfter(insertSql, "VALUES");
         while (S.contains(suffix, "(")) {
             suffix = S.substringAfter(suffix, "(");

@@ -27,7 +27,11 @@ import java.util.List;
  * @date 2023/12/28
  */
 public final class SqlServerTranslator extends BaseTranslator {
-    private List<String> ESCAPE_KEYWORDS = Arrays.asList("level");
+
+    public SqlServerTranslator(){}
+    public SqlServerTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {
