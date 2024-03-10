@@ -111,8 +111,8 @@ public class IamPluginInitializer implements ApplicationRunner {
         IamOrgService iamOrgService = ContextHolder.getBean(IamOrgService.class);
         IamOrg iamOrg = new IamOrg();
         if(iamOrgService != null && iamOrgService.getEntityListCount(null) == 0){
-            iamOrg.setParentId(Cons.ID_PREVENT_NULL).setCode("ROOT").setRootOrgId("1").setName("我的公司")
-                    .setType(Cons.DICTCODE_ORG_TYPE.COMP.name()).setOrgComment("初始根节点，请按需修改").setId("1");
+            iamOrg.setCode("ROOT").setRootOrgId("1").setName("我的公司")
+                    .setType(Cons.DICTCODE_ORG_TYPE.COMP.name()).setOrgComment("初始根节点，请按需修改").setParentId(Cons.ID_PREVENT_NULL).setId("1");
             iamOrgService.createEntity(iamOrg);
         }
 
