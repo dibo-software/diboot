@@ -103,7 +103,7 @@ public class SqlFileInitializer {
             return new OracleTranslator().translate(sqlStatements);
         }
         // SqlLite
-        else if(dbType.startsWith(DbType.SQLITE.getDb())) {
+        else if(DbType.SQLITE.getDb().equals(dbType)) {
             return new SqlLiteTranslator().translate(sqlStatements);
         }
         else {

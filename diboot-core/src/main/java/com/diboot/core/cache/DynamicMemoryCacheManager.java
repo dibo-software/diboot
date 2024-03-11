@@ -197,11 +197,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
      * 刷新缓存时间戳
      */
     private void refreshCacheTimestamp(String cacheName, Object objKey) {
-        ConcurrentHashMap<Object, Long> timestampCache = CACHE_TIMESTAMP_CACHE.get(cacheName);
-        if(timestampCache == null){
-            timestampCache = new ConcurrentHashMap<>();
-            CACHE_TIMESTAMP_CACHE.put(cacheName, timestampCache);
-        }
+        ConcurrentHashMap<Object, Long> timestampCache = CACHE_TIMESTAMP_CACHE.computeIfAbsent(cacheName, k -> new ConcurrentHashMap<>());
         timestampCache.put(objKey, System.currentTimeMillis());
     }
 }
