@@ -102,6 +102,10 @@ public class SqlFileInitializer {
         else if(dbType.startsWith(DbType.ORACLE.getDb())) {
             return new OracleTranslator().translate(sqlStatements);
         }
+        // SqlLite
+        else if(dbType.startsWith(DbType.SQLITE.getDb())) {
+            return new SqlLiteTranslator().translate(sqlStatements);
+        }
         else {
             throw new InvalidUsageException("暂不支持 {} 数据库自动初始化", dbType);
         }
