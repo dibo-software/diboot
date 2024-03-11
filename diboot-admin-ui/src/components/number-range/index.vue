@@ -69,7 +69,7 @@ const clearable = () => {
     </el-icon>
     <el-input-number
       v-model="dataRange.end"
-      :placeholder="startPlaceholder"
+      :placeholder="endPlaceholder"
       :min="dataRange.begin ?? min"
       :max="max"
       :precision="precision"
