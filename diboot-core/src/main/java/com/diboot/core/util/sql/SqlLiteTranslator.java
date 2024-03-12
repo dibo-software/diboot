@@ -52,7 +52,7 @@ public class SqlLiteTranslator extends BaseTranslator {
         if(input.contains("`")) {
             String key = S.substringBetween(input, "`", "`");
             if(ESCAPE_KEYWORDS.contains(key)) {
-                return S.replace(input, "`"+key+"`", "\"" + key + "\"");
+                return S.replace(input, "`"+key+"`", "/" + key + "/");
             }
             else {
                 return S.replace(input, "`", "");
