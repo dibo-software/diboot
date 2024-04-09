@@ -32,6 +32,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 /**
@@ -50,6 +51,39 @@ public class FileAutoConfig {
 
     @Autowired
     private FileProperties fileProperties;
+
+
+    /**
+     * 需要文件上传，开启此配置
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public MultipartResolver multipartResolver() {
+        CommonsMultipartResolver bean = new CommonsMultipartResolver();
+        bean.setDefaultEncoding(Cons.CHARSET_UTF8);
+        Long maxUploadSize = 10L * 1024 * 1024;
+        // 兼容 servlet 配置参数
+        String servletMaxUploadSize = BaseConfig.getProperty("spring.servlet.multipart.max-request-size");
+        if(V.notEmpty(servletMaxUploadSize)){
+            if(S.containsIgnoreCase(servletMaxUploadSize, "M")){
+                int index = S.indexOfIgnoreCase(servletMaxUploadSize,"M");
+                maxUploadSize = Long.parseLong(S.substring(servletMaxUploadSize, 0, index));
+                maxUploadSize = maxUploadSize * 1024 * 1024;
+            }
+            else if(S.containsIgnoreCase(servletMaxUploadSize, "K")){
+                int index = S.indexOfIgnoreCase(servletMaxUploadSize,"K");
+                maxUploadSize = Long.parseLong(S.substring(servletMaxUploadSize, 0, index));
+                maxUploadSize = maxUploadSize * 1024;
+            }
+            else{
+                maxUploadSize = Long.parseLong(servletMaxUploadSize);
+            }
+        }
+        bean.setMaxUploadSize(maxUploadSize);
+        return bean;
+    }
 
     public FileAutoConfig() {
         log.info("初始化 file 组件自动配置");
