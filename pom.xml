@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>2.7.18</version>
         <relativePath/>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>3.3.0</version>
+    <version>3.3.0-jdk8</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -28,14 +28,14 @@
     </modules>
 
     <properties>
-        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <okhttp.version>4.12.0</okhttp.version>
         <aspectjweaver.version>1.9.21</aspectjweaver.version>
         <commons-io.version>2.16.0</commons-io.version>
         <easyexcel.version>3.3.4</easyexcel.version>
         <shiro.version>2.0.0</shiro.version>
-        <diboot.version>3.3.0</diboot.version>
+        <diboot.version>3.3.0-jdk8</diboot.version>
     </properties>
 
     <dependencies>

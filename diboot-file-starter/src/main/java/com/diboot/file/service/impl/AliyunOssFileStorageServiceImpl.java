@@ -27,9 +27,9 @@ import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
 import com.diboot.iam.config.Cons;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -124,7 +125,7 @@ public class AliyunOssFileStorageServiceImpl implements FileStorageService {
         // 截取云储存的文件完整路径
         String filename = S.substringAfter(S.substringBefore(filePath, "?"), aliyun.getEndpoint() + "/");
         // 调用ossClient.getObject返回一个OSSObject实例，该实例包含文件内容及文件元信息
-        OSSObject ossObject = ossClient.getObject(aliyun.getBucketName(), URLDecoder.decode(filename, StandardCharsets.UTF_8)); //bucketName需要自己设置
+        OSSObject ossObject = ossClient.getObject(aliyun.getBucketName(), URLDecoder.decode(filename, StandardCharsets.UTF_8.name())); //bucketName需要自己设置
         return ossObject.getObjectContent();
     }
 
@@ -143,7 +144,11 @@ public class AliyunOssFileStorageServiceImpl implements FileStorageService {
     public boolean delete(String filePath) {
         FileProperties.OSS.Aliyun aliyun = fileProperties.getOss().getAliyun();
         String filename = S.substringAfter(S.substringBefore(filePath, "?"), aliyun.getEndpoint() + "/");
-        ossClient.deleteObject(aliyun.getBucketName(), URLDecoder.decode(filename, StandardCharsets.UTF_8));
+        try {
+            ossClient.deleteObject(aliyun.getBucketName(), URLDecoder.decode(filename, StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         return true;
     }
 

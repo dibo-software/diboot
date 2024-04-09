@@ -23,7 +23,7 @@ import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
