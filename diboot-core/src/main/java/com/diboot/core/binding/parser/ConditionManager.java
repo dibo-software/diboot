@@ -173,21 +173,21 @@ public class ConditionManager extends BaseConditionManager{
                 if(!express.isNot()){
                     // this.xx in ('abc')
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
-                        List<Object> consValues = extractConsValues(express.getRightItemsList());
+                        List<Object> consValues = extractConsValues(express.getRightExpression());
                         binder.joinOnFieldComparison(annoColumn, Comparison.IN, consValues);
                     }
                     else {
-                        binder.andApply(annoColumn + " IN " + express.getRightItemsList().toString());
+                        binder.andApply(annoColumn + " IN " + express.getRightExpression().toString());
                     }
                 }
                 else{
                     // this.xx not in ('abc')
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
-                        List<Object> consValues = extractConsValues(express.getRightItemsList());
+                        List<Object> consValues = extractConsValues(express.getRightExpression());
                         binder.joinOnFieldComparison(annoColumn, Comparison.NOT_IN, consValues);
                     }
                     else {
-                        binder.andApply(annoColumn + " NOT IN " + express.getRightItemsList().toString());
+                        binder.andApply(annoColumn + " NOT IN " + express.getRightExpression().toString());
                     }
                 }
             }
@@ -394,7 +394,7 @@ public class ConditionManager extends BaseConditionManager{
      * @param itemsList
      * @return
      */
-    private static List<Object> extractConsValues(ItemsList itemsList) {
+    private static List<Object> extractConsValues(Expression itemsList) {
         if(itemsList instanceof ExpressionList) {
             List<Expression> expressions = ((ExpressionList)itemsList).getExpressions();
             List list = new ArrayList();
