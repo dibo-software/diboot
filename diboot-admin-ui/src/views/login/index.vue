@@ -2,6 +2,8 @@
 import type { FormInstance } from 'element-plus'
 import useAuthStore from '@/store/auth'
 import JSEncrypt from 'jsencrypt'
+import useSso from '@/hooks/use-sso'
+import auth from '@/utils/auth'
 
 const encryptor = new JSEncrypt()
 encryptor.setPublicKey(`MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzPy1UcwzgRT8dRUpAW0H
@@ -60,10 +62,23 @@ const submitForm = async () => {
   })
 }
 const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
+
+// 单点登录集成
+const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
+  callback: (token: string) => {
+    auth.setToken(token)
+    ElMessage.success('登录成功')
+    redirect()
+  }
+})
+
+onMounted(() => {
+  initSsoParams()
+})
 </script>
 
 <template>
-  <div class="content">
+  <div v-loading="ssoLoading" element-loading-text="登录中..." class="content">
     <div class="form">
       <h1 style="text-align: center">Diboot Admin UI</h1>
       <el-form ref="formRef" :model="form" :rules="rules" size="large">
@@ -110,6 +125,12 @@ const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
         </el-form-item>
         <el-form-item>
           <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">登 录</el-button>
+        </el-form-item>
+        <el-form-item v-if="authorizeInfoMap['CAS_SERVER']">
+          <el-button style="width: 100%" type="primary" @click="redirectTo('CAS_SERVER')">CAS 单点登录</el-button>
+        </el-form-item>
+        <el-form-item v-if="authorizeInfoMap['OAuth2']">
+          <el-button style="width: 100%" type="primary" @click="redirectTo('OAuth2')">OAuth2 单点登录</el-button>
         </el-form-item>
       </el-form>
     </div>
