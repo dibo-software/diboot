@@ -37,7 +37,7 @@ const initTreeData = async () => (relatedData[treeDataKey] = await lazyLoadRelat
 
 if (!props.lazyChild) initTreeData()
 
-const loadNodes = ({ data }: { data: LabelValue }, resolve: (options: LabelValue[]) => void) =>
+const loadNodes = ({ data }: { data: Record<string, any> }, resolve: (options: Record<string, any>[]) => void) =>
   lazyLoadRelatedData(treeDataKey, data.value).then(lsit => {
     resolve(lsit)
     treeRef.value?.setCurrentKey(activateNode.value)
@@ -58,7 +58,7 @@ watch(searchValue, val => {
     remoteRelatedDataFilter(treeDataKey, val).then(() => treeRef.value?.setCurrentKey(activateNode.value))
 })
 
-const filterNode = (value: string, data: Partial<LabelValue>) => !value || data.label?.includes(value)
+const filterNode = (value: string, data: Record<string, any>) => !value || data.label?.includes(value)
 
 const activateNode = ref<string>()
 const clickNode = (data: LabelValue) => {

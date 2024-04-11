@@ -97,7 +97,7 @@ watch(
         const values = Array.isArray(newValue) ? newValue : [newValue]
 
         const buildList = () => {
-          const list = []
+          const list = [] as LabelValue[]
           for (const id of values) {
             const item = selectedList.value.find(e => e.value === id)
             if (item) list.push(item)
@@ -181,7 +181,18 @@ const clickNode = (id?: string) => (parent.value = id ?? props.rootId)
     <div class="body-container">
       <di-tree v-if="config.tree" v-bind="config.tree" :sort-api="undefined" @click-node="clickNode" />
 
-      <di-list v-bind="config.list" :model="dataType" :operation="undefined" :parent="parent" style="width: 0" />
+      <di-list
+        v-if="config.list"
+        :base-api="config.list.baseApi as string"
+        :primary-key="config.list.primaryKey"
+        :related-key="config.list.relatedKey"
+        :search-area="config.list.searchArea"
+        :columns="config.list.columns"
+        :model="dataType"
+        :operations="[]"
+        :parent="parent"
+        style="width: 0"
+      />
 
       <div class="bottom-operation">
         <el-button size="default" @click="cancel">取消</el-button>
@@ -196,8 +207,7 @@ const clickNode = (id?: string) => (parent.value = id ?? props.rootId)
   height: 80vh;
   display: flex;
   position: relative;
-  margin-top: -39px;
-  margin-bottom: -20px;
+  margin-top: -18px;
 
   .bottom-operation {
     position: absolute;

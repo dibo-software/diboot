@@ -82,10 +82,7 @@ const dragend = (e: DragEvent) => {
             <el-switch v-model="appStore.enableTabs" />
           </el-form-item>
           <el-form-item label="主题色">
-            <el-color-picker
-              v-model="colorPrimary"
-              @update:model-value="(value: string) => (appStore.colorPrimary = value)"
-            />
+            <el-color-picker v-model="colorPrimary" @update:model-value="appStore.colorPrimary = $event as string" />
           </el-form-item>
           <el-form-item label="开启水印">
             <el-switch v-model="appStore.enableWatermark" />

@@ -67,7 +67,7 @@ export default [
     url: `${baseUrl}`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       return JsonResult.OK(
         getConfigItems().filter(
           e => e.category === query.category || (!e.category?.length && !!e.category === !!query.category)
@@ -80,13 +80,16 @@ export default [
     url: `${baseUrl}/value`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       const map = getConfigItems()
         .filter(e => e.category === query.category || (!e.category?.length && !!e.category === !!query.category))
-        .reduce((map, e) => {
-          map[e.propKey] = map.propValue
-          return map
-        }, {} as Record<string, unknown>)
+        .reduce(
+          (map, e) => {
+            map[e.propKey] = map.propValue
+            return map
+          },
+          {} as Record<string, unknown>
+        )
       return JsonResult.OK(query.propKey ? map[query.propKey] : map)
     }
   },
@@ -95,7 +98,7 @@ export default [
     url: `${baseUrl}/check-prop-key-duplicate`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       if (!query.propKey) {
         return JsonResult.OK()
       }
@@ -117,7 +120,7 @@ export default [
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       return JsonResult.OK(getConfigItems().find(e => e.id === query.id))
     }
   },
@@ -126,7 +129,7 @@ export default [
     url: `${baseUrl}`,
     timeout: Random.natural(50, 300),
     method: 'post',
-    response: ({ body }: ApiRequest<SystemConfig>) => {
+    response: (that: unknown, { body }: ApiRequest<SystemConfig>) => {
       body.id = `${configItems.length}`
       configItems.push(body)
       return JsonResult.OK()
@@ -137,7 +140,7 @@ export default [
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'put',
-    response: ({ query, body }: ApiRequest<SystemConfig>) => {
+    response: (that: unknown, { query, body }: ApiRequest<SystemConfig>) => {
       configItems.splice(Number(query.id) - 1, 1, body)
       return JsonResult.OK()
     }
@@ -147,7 +150,7 @@ export default [
     url: `${baseUrl}`,
     timeout: Random.natural(50, 300),
     method: 'put',
-    response: ({ body }: ApiRequest<SystemConfig[]>) => {
+    response: (that: unknown, { body }: ApiRequest<SystemConfig[]>) => {
       body.forEach(e => configItems.splice(Number(e.id) - 1, 1, e))
       return JsonResult.OK()
     }
@@ -157,7 +160,7 @@ export default [
     url: `${baseUrl}/:id`,
     timeout: Random.natural(50, 300),
     method: 'delete',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       if (!deleteIds.includes(query.id)) deleteIds.push(query.id)
       return JsonResult.OK()
     }

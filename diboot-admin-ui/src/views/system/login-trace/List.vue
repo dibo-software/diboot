@@ -31,7 +31,11 @@ getList()
         </el-col>
         <el-col :lg="8" :sm="12">
           <el-form-item label="登录时间">
-            <date-range v-model="dateRangeQuery.createTime" @change="onSearch" />
+            <date-range
+              :model-value="dateRangeQuery.createTime as [string, string]"
+              @update:model-value="dateRangeQuery.createTime = $event as [string, string]"
+              @change="onSearch"
+            />
           </el-form-item>
         </el-col>
       </el-row>

@@ -34,7 +34,7 @@ const visible = ref(false)
 
 const oldUsername = ref<string>()
 
-const switchType = (type: boolean | number | string) => {
+const switchType = (type?: boolean | number | string) => {
   if (type) {
     model.value.username = oldUsername.value
     return

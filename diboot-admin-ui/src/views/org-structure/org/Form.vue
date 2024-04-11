@@ -2,6 +2,7 @@
 import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { checkValue } from '@/utils/validate-form'
+import type { Select } from '@/components/di/type'
 
 const baseApi = '/iam/org'
 
@@ -145,7 +146,7 @@ defineExpose({ open })
                   propList: [
                     { prop: 'realname', label: '姓名', type: 'input' },
                     { prop: 'userNum', label: '编号', type: 'input' },
-                    { prop: 'gender', label: '性别', type: 'select', loader: 'GENDER' }
+                    { prop: 'gender', label: '性别', type: 'select', loader: 'GENDER' } as Select
                   ]
                 },
                 columns: [

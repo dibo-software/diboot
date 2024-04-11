@@ -1,4 +1,4 @@
-import type { MockMethod } from 'vite-plugin-mock'
+import { type MockMethod } from 'vite-plugin-mock'
 import type { ApiRequest } from './index'
 import { JsonResult } from './index'
 import { Random } from 'mockjs'
@@ -48,7 +48,7 @@ export interface Api {
  *
  * @param option
  */
-export default <T extends {}>(option: Option<T>) => {
+export default <T = Record<string, unknown>>(option: Option<T>) => {
   const baseUrl = '/api' + option.baseApi
   const primaryKey = option.primaryKey || 'id'
   const dataList = option.dataList ?? []
@@ -65,7 +65,7 @@ export default <T extends {}>(option: Option<T>) => {
         url: `${baseUrl}`,
         timeout: Random.natural(50, 300),
         method: 'get',
-        response: ({ query }: ApiRequest) => {
+        response: (that: unknown, { query }: ApiRequest) => {
           // 过滤逻辑删除数据
           let list = dataList.filter(e => !deleteDataIds.includes(`${e[primaryKey as keyof T]}`))
           const keys = Object.keys(query ?? {})
@@ -115,19 +115,19 @@ export default <T extends {}>(option: Option<T>) => {
             ? JsonResult.OK(list)
             : JsonResult.PAGINATION(query.pageIndex, query.pageSize, list)
         }
-      },
+      } as MockMethod,
       listByIds: {
         url: `${baseUrl}/ids`,
         timeout: Random.natural(50, 300),
         method: 'post',
-        response: ({ body }: ApiRequest<string[]>) => {
+        response: (that: unknown, { body }: ApiRequest<string[]>) => {
           if (!body || body.length) return JsonResult.OK()
           const validList = dataList.filter(item => {
             return body.includes(item[primaryKey as keyof typeof item] as string)
           })
           return JsonResult.OK(validList)
         }
-      },
+      } as MockMethod,
       attachMore: {
         url: `${baseUrl}/attachMore`,
         timeout: Random.natural(50, 300),
@@ -135,33 +135,33 @@ export default <T extends {}>(option: Option<T>) => {
         response: () => {
           return JsonResult.OK(attachMore)
         }
-      },
+      } as MockMethod,
       getById: {
         url: `${baseUrl}/:id`,
         timeout: Random.natural(50, 300),
         method: 'get',
-        response: ({ query }: ApiRequest) => {
+        response: (that: unknown, { query }: ApiRequest) => {
           return JsonResult.OK(dataList.find(e => e[primaryKey as keyof T] === query.id))
         }
-      },
+      } as MockMethod,
       create: {
         url: `${baseUrl}`,
         timeout: Random.natural(50, 300),
         method: 'post',
-        response: ({ body }: ApiRequest<T>) => {
+        response: (that: unknown, { body }: ApiRequest<T>) => {
           const id = String(dataList.length + 1)
           const now = Random.now('yyyy-MM-DD HH:mm:ss')
-          Object.assign(body, { [primaryKey]: id, createTime: now, updateTime: now })
+          Object.assign(body as Record<string, unknown>, { [primaryKey]: id, createTime: now, updateTime: now })
           dataList.unshift(body)
           return JsonResult.OK(id)
         }
-      },
+      } as MockMethod,
       update: {
         url: `${baseUrl}/:id`,
         timeout: Random.natural(50, 300),
         method: 'put',
-        response: ({ body, query }: ApiRequest<T>) => {
-          Object.assign(body, { updateTime: Random.now('yyyy-MM-DD HH:mm:ss') })
+        response: (that: unknown, { body, query }: ApiRequest<T>) => {
+          Object.assign(body as Record<string, unknown>, { updateTime: Random.now('yyyy-MM-DD HH:mm:ss') })
           dataList.splice(
             dataList.findIndex(e => e[primaryKey as keyof T] === query[primaryKey as keyof T]),
             1,
@@ -169,25 +169,25 @@ export default <T extends {}>(option: Option<T>) => {
           )
           return JsonResult.OK()
         }
-      },
+      } as MockMethod,
       remove: {
         url: `${baseUrl}/:id`,
         timeout: Random.natural(50, 300),
         method: 'delete',
-        response: ({ query }: ApiRequest) => {
+        response: (that: unknown, { query }: ApiRequest) => {
           deleteDataIds.push(query.id)
           return JsonResult.OK()
         }
-      },
+      } as MockMethod,
       batchRemove: {
         url: `${baseUrl}/batch-delete`,
         timeout: Random.natural(50, 300),
         method: 'post',
-        response: ({ body }: ApiRequest<Array<string>>) => {
+        response: (that: unknown, { body }: ApiRequest<Array<string>>) => {
           deleteDataIds.push(...body)
           return JsonResult.OK()
         }
-      }
+      } as MockMethod
     }
   }
 }

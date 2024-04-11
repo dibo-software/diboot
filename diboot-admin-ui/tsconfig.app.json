@@ -2,6 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    "noImplicitAny": false,
     "composite": true,
     "baseUrl": ".",
     "paths": {
@@ -24,6 +25,7 @@
     "src/**/*.vue",
     "types/**/*.ts",
     "types/**/*.d.ts",
-    "mock/**/*.ts"
+    "mock/**/*.ts",
+    "node_modules/**/*.d.ts"
   ]
 }

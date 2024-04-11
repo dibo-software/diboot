@@ -61,7 +61,7 @@ const searchWord = ref('')
 watch(searchWord, val => {
   treeRef.value?.filter(val)
 })
-const filterNode = (value: string, data: Partial<Resource>) => !value || data.displayName?.includes(value)
+const filterNode = (value: string, data: Record<string, any>) => !value || data.displayName?.includes(value)
 
 /**
  * 添加子菜单
@@ -97,7 +97,7 @@ const { nodeDrag } = useSort({
   }
 })
 
-const treeNodeClass = (data: Resource) => {
+const treeNodeClass = (data: Record<string, any>) => {
   if (data.status !== 'A') {
     // 非可用
     return 'through'
@@ -105,8 +105,10 @@ const treeNodeClass = (data: Resource) => {
     // 隐藏
     return 'hidden'
   }
+  return {}
 }
 </script>
+
 <template>
   <div class="tree-container">
     <el-skeleton v-if="loading" :rows="5" animated />

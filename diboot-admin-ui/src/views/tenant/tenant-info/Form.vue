@@ -5,7 +5,7 @@ import { checkValue } from '@/utils/validate-form'
 
 const baseApi = '/iam/tenant'
 
-const { loadData, loading, model } = useDetail<Tenant & { validDate: string[] }>(baseApi, { status: 'A' })
+const { loadData, loading, model } = useDetail<Tenant & { validDate: [string, string] }>(baseApi, { status: 'A' })
 
 const { relatedData, initRelatedData } = useOption({
   dict: ['TENANT_STATUS']

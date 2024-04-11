@@ -90,11 +90,15 @@ const checkPropKeyDuplicate = checkValue(
           <el-form-item prop="propValue" label="属性值">
             <el-input v-if="model.dataType === 'text'" v-model="model.propValue" />
             <el-input v-if="model.dataType === 'textarea'" v-model="model.propValue" type="textarea" />
-            <el-input-number v-if="model.dataType === 'number'" v-model="model.propValue" type="textarea" />
+            <el-input-number
+              v-if="model.dataType === 'number'"
+              :model-value="Number(model.propValue)"
+              @update:model-value="model.propValue = `${$event}`"
+            />
             <el-switch
               v-if="model.dataType === 'boolean'"
               :model-value="JSON.parse(`${model.propValue ?? false}`)"
-              @change="val => (model.propValue = val)"
+              @change="model.propValue = `${$event}`"
             />
           </el-form-item>
         </el-col>

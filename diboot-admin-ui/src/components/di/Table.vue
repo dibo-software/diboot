@@ -43,7 +43,7 @@ interface TableConfig {
 // 表列
 const getTableConfig = () => {
   const columns = _.cloneDeep(props.columns)
-  const tableConfig = getCache<TableConfig>(tableConfigKey, { border: false, stripe: true, columns: list })
+  const tableConfig = getCache<TableConfig>(tableConfigKey, { border: false, stripe: true, columns })
   if (tableConfig.columns !== columns) {
     for (let i = 0; i < columns?.length; i++) {
       const column = tableConfig.columns.find(e => e.prop === columns[i].prop)
@@ -176,7 +176,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
 <template>
   <el-table
     ref="tableRef"
-    v-loading="loading"
+    v-loading="!!loading"
     class="list-body"
     :data="dataList"
     height="100%"
@@ -204,7 +204,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
         :width="item.width"
         :sortable="item.sortable"
         :fixed="item.fixed"
-        :filters="item.filters"
+        :filters="item.filters as any"
         :show-overflow-tooltip="item.showOverflowTooltip ?? true"
       >
         <template v-if="item.number" #header>

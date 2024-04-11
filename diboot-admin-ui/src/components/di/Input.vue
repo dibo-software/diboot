@@ -1,7 +1,7 @@
 <script setup lang="ts" name="DiInput">
 import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
 import type { FormItem, Select, Upload } from './type'
-import type { UploadRawFile, UploadFile, FormItemRule } from 'element-plus'
+import type { UploadRawFile, UploadFile, FormItemRule, CascaderNode, CascaderOption } from 'element-plus'
 import { checkValue } from '@/utils/validate-form'
 
 const props = withDefaults(
@@ -91,8 +91,8 @@ const handleChange = (value?: unknown) => emit('change', value)
 
 const remoteFilter = (value?: unknown) => emit('remoteFilter', value as string | undefined)
 
-const lazyLoad = ({ data }: { data: LabelValue }, resolve: (data: LabelValue[]) => void) =>
-  props.lazyLoad ? props.lazyLoad(data.value).then(list => resolve(list)) : resolve([])
+const lazyLoad = ({ data }: CascaderNode, resolve: (data: CascaderOption[]) => void) =>
+  props.lazyLoad ? props.lazyLoad(data!.value as string).then(list => resolve(list as CascaderOption[])) : resolve([])
 
 const DEFAULT_DATE_FORMAT: Record<string, string> = { date: 'YYYY-MM-DD', datetime: 'YYYY-MM-DD HH:mm:ss' }
 const getDateFormtDef = (type: string) => DEFAULT_DATE_FORMAT[type]
@@ -141,20 +141,22 @@ const convert2accept = (accept?: string) => {
 </script>
 
 <template>
+  <!-- @ts-nocheck -->
   <el-form-item :prop="`${formPropPrefix}${config.prop}`" :label="config.label" :rules="rules">
     <el-input
       v-if="config.type === 'input'"
-      v-model="value"
+      :model-value="value as string"
       :placeholder="config.placeholder ?? '请输入'"
       clearable
       :maxlength="config.maxlength as number"
       :show-word-limit="!!config.maxlength"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <el-input
       v-else-if="config.type === 'textarea'"
-      v-model="value"
+      :model-value="value as string"
       :placeholder="config.placeholder"
       clearable
       type="textarea"
@@ -163,6 +165,7 @@ const convert2accept = (accept?: string) => {
       :show-word-limit="!!config.maxlength"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <template v-else-if="config.type === 'rich'">
       <rich-read
@@ -172,15 +175,16 @@ const convert2accept = (accept?: string) => {
       />
       <rich-editor
         v-else
-        v-model="value"
+        :model-value="value as string"
         :placeholder="config.placeholder"
         :mode="config.mode"
         :style="{ height: config.height }"
+        @update:model-value="value = $event"
       />
     </template>
     <el-input-number
       v-if="config.type === 'input-number'"
-      v-model="value"
+      :model-value="value as number"
       :placeholder="config.placeholder"
       :min="config.min"
       :max="config.max"
@@ -190,26 +194,39 @@ const convert2accept = (accept?: string) => {
       :controls-position="config.controls === 'right' ? 'right' : ''"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <number-range
       v-if="config.type === 'input-number-range'"
-      v-model="value"
+      :model-value="value as [number, number]"
       :min="config.min"
       :max="config.max"
       :precision="config.precision"
       :controls="config.controls"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <template v-if="config.type === 'boolean'">
-      <el-switch v-if="config.mode === 'switch'" v-model="value" :disabled="config.disabled || disabled" />
-      <el-select v-else v-model="value" clearable :disabled="config.disabled || disabled">
+      <el-switch
+        v-if="config.mode === 'switch'"
+        :model-value="value as boolean"
+        :disabled="config.disabled || disabled"
+        @update:model-value="value = $event"
+      />
+      <el-select
+        v-else
+        :model-value="value as boolean"
+        clearable
+        :disabled="config.disabled || disabled"
+        @update:model-value="value = $event"
+      >
         <el-option label="是" :value="true" />
         <el-option label="否" :value="false" />
       </el-select>
     </template>
     <el-select
       v-if="config.type === 'select'"
-      v-model="value"
+      :model-value="value as string[]"
       clearable
       filterable
       :placeholder="config.placeholder"
@@ -220,6 +237,7 @@ const convert2accept = (accept?: string) => {
       :disabled="config.disabled || disabled"
       :teleported="teleported"
       @change="handleChange"
+      @update:model-value="value = $event"
     >
       <el-option v-for="item in relatedDatas" :key="item.value" v-bind="item">
         <div v-if="typeof item.ext === 'string'" class="option">
@@ -230,12 +248,12 @@ const convert2accept = (accept?: string) => {
     </el-select>
     <el-cascader
       v-if="config.type === 'cascader'"
-      v-model="value"
+      :model-value="value as string[]"
       :placeholder="config.placeholder"
       clearable
       filterable
       :teleported="teleported"
-      :options="relatedDatas"
+      :options="relatedDatas as CascaderOption[]"
       :props="{
         emitPath: false,
         lazy: config.lazy,
@@ -245,6 +263,7 @@ const convert2accept = (accept?: string) => {
       }"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <el-tree-select
       v-if="config.type === 'tree-select'"
@@ -264,23 +283,25 @@ const convert2accept = (accept?: string) => {
     />
     <el-checkbox-group
       v-if="config.type === 'checkbox'"
-      v-model="value"
+      :model-value="value as string[]"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     >
       <el-checkbox v-for="(item, index) in relatedDatas" :key="index" :label="item.value">{{ item.label }}</el-checkbox>
     </el-checkbox-group>
     <el-radio-group
       v-if="config.type === 'radio'"
-      v-model="value"
+      :model-value="value as string"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     >
       <el-radio v-for="(item, index) in relatedDatas" :key="index" :label="item.value">{{ item.label }}</el-radio>
     </el-radio-group>
     <di-selector
       v-if="config.type === 'list-selector'"
-      v-model="value"
+      :model-value="value as string[]"
       :tree="config.tree"
       :list="config.list"
       :multiple="config.multiple"
@@ -289,6 +310,7 @@ const convert2accept = (accept?: string) => {
       :placeholder="config.placeholder"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <el-date-picker
       v-if="
@@ -298,7 +320,7 @@ const convert2accept = (accept?: string) => {
         config.type === 'datetime' ||
         config.type === 'week'
       "
-      v-model="value"
+      :model-value="value as string"
       clearable
       :type="config.type"
       :value-format="config.format ? config.format : getDateFormtDef(config.type)"
@@ -306,10 +328,11 @@ const convert2accept = (accept?: string) => {
       :disabled="config.disabled || disabled"
       :teleported="teleported"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <el-time-select
       v-if="config.type === 'time'"
-      v-model="value"
+      :model-value="value as string"
       clearable
       :placeholder="config.placeholder"
       start="00:00"
@@ -317,13 +340,15 @@ const convert2accept = (accept?: string) => {
       end="23:59"
       :disabled="config.disabled || disabled"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <date-range
       v-if="['daterange', 'datetimerange'].includes(config.type)"
-      v-model="value"
-      :type="config.type"
+      :model-value="value as [string, string]"
+      :type="config.type as 'datetimerange'"
       :teleported="teleported"
       @change="handleChange"
+      @update:model-value="value = $event"
     />
     <el-upload
       v-if="config.type === 'upload'"

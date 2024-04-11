@@ -75,11 +75,14 @@ const dictList: Record<string, LabelValue<string>[]> = {
   ]
 }
 
-const remoteRelatedDataFilter: MockMethod = {
+const remoteRelatedDataFilter = {
   url: `${baseUrl}/load-related-data`,
   timeout: Random.natural(50, 300),
   method: 'get',
-  response: ({ query }: ApiRequest<AsyncRelatedData & { parentValue?: string; parentType?: string }>) => {
+  response: (
+    that: unknown,
+    { query }: ApiRequest<AsyncRelatedData & { parentValue?: string; parentType?: string; keyword?: string }>
+  ) => {
     const labelValueList = objectDataListMap[query.type]
       ?.filter(e => (query.keyword ? `${e[query.label]}`.match(query.keyword) : true))
       .map(
@@ -88,11 +91,11 @@ const remoteRelatedDataFilter: MockMethod = {
             value: item.id,
             label: item[query.label],
             ext: buildExtData(item, query.ext)
-          } as LabelValue<Record<string, unknown>>)
+          }) as LabelValue<Record<string, unknown>>
       )
     return JsonResult.OK(labelValueList)
   }
-}
+} as MockMethod
 
 export default [
   // 绑定字典接口
@@ -121,7 +124,7 @@ export default [
               value: item.id,
               label: item[bindData.label],
               ext: buildExtData(item, bindData.ext)
-            } as LabelValue<Record<string, unknown>>)
+            }) as LabelValue<Record<string, unknown>>
         ) as Array<LabelValue>
       })
       return JsonResult.OK(more)

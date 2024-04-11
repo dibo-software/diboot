@@ -11,10 +11,11 @@ const dataList: LoginTrace[] = Array.from({ length: 100 }).map((_, index) => {
     userType: Random.pick(['User', 'Mobile']),
     authType: Random.pick(['PWD', 'WX', 'SSO']),
     authAccount: Random.first(),
-    success: Random.boolean(),
+    isSuccess: Random.boolean(),
     ipAddress: Random.ip(),
     userAgent: 'headers',
-    createTime: Random.datetime('yyyy-MM-dd HH:mm:ss')
+    createTime: Random.datetime('yyyy-MM-dd HH:mm:ss'),
+    logoutTime: Random.datetime('yyyy-MM-dd HH:mm:ss')
   } as LoginTrace
 })
 

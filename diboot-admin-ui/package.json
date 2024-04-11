@@ -73,7 +73,7 @@
     "vite": "^5.1.6",
     "vite-plugin-checker": "^0.6.2",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-mock": "^3.0.1",
+    "vite-plugin-mock": "^2.9.8",
     "vite-plugin-vue-setup-extend": "^0.4.0",
     "vitest": "^0.26.2",
     "vue-tsc": "^2.0.6"

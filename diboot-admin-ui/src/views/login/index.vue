@@ -17,7 +17,7 @@ BwIDAQAB`)
 const authStore = useAuthStore()
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const form = reactive({ username: 'admin', password: '123456', captcha: '', traceId: '' })
+const form = reactive({ username: 'admin', password: '123456', captcha: '', traceId: '', tenantCode: '' })
 const rules = {
   username: { required: true, message: '不能为空', trigger: 'blur' },
   password: { required: true, message: '不能为空', trigger: 'blur' }

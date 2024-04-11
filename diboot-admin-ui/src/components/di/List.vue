@@ -113,19 +113,21 @@ const multiple = inject<boolean | undefined>(
         >
           <di-input
             v-if="['daterange', 'datetimerange'].includes(item.type)"
-            v-model="dateRangeQuery[item.prop]"
+            :model-value="dateRangeQuery[item.prop] as any"
             :config="item"
             @change="onSearch"
+            @update:model-value="dateRangeQuery[item.prop] = $event as [string, string]"
           />
           <di-input
             v-else
-            v-model="queryParam[item.prop]"
+            :model-value="queryParam[item.prop] as any"
             :config="item"
             :related-datas="getRelatedData(item)"
             :loading="asyncLoading"
             :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
             @change="onSearch"
             @remote-filter="(value?: string) => remoteRelatedDataFilter(item.prop, value)"
+            @update:model-value="queryParam[item.prop] = $event as unknown"
           />
         </el-col>
       </el-row>
@@ -162,19 +164,21 @@ const multiple = inject<boolean | undefined>(
           <template v-for="item in [searchArea.propList[0]]" :key="item.prop">
             <di-input
               v-if="['daterange', 'datetimerange'].includes(item.type)"
-              v-model="dateRangeQuery[item.prop]"
+              :model-value="dateRangeQuery[item.prop] as any"
               :config="{ ...item, label: '' }"
               @change="onSearch"
+              @update:model-value="dateRangeQuery[item.prop] = $event as [string, string]"
             />
             <di-input
               v-else
-              v-model="queryParam[item.prop]"
+              :model-value="queryParam[item.prop] as any"
               :config="{ ...item, label: '', placeholder: item.placeholder ?? item.label }"
               :related-datas="getRelatedData(item)"
               :loading="asyncLoading"
               :lazy-load="async (parentId: string) => await lazyLoadRelatedData(item.prop, parentId)"
               @change="onSearch"
               @remote-filter="(value?: string) => remoteRelatedDataFilter(item.prop, value)"
+              @update:model-value="queryParam[item.prop] = $event"
             />
           </template>
         </span>

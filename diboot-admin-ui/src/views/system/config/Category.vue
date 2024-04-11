@@ -34,7 +34,11 @@ const save = () => {
       <el-form-item v-for="config in configList" :key="config.id" :label="config.propKey">
         <el-input v-if="config.dataType === 'text'" v-model="config.propValue" />
         <el-input v-if="config.dataType === 'textarea'" v-model="config.propValue" type="textarea" />
-        <el-input-number v-if="config.dataType === 'number'" v-model="config.propValue" type="textarea" />
+        <el-input-number
+          v-if="config.dataType === 'number'"
+          :model-value="Number(config.propValue)"
+          @update:model-value="config.propValue = `${$event}`"
+        />
         <el-switch v-if="config.dataType === 'boolean'" v-model="config.propValue" />
       </el-form-item>
     </el-form>
