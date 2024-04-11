@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.dto.ChangePwdDTO;
 import com.diboot.iam.entity.IamAccount;
 
@@ -27,7 +28,7 @@ import java.util.List;
  * @version 2.0
  * @date 2019-12-03
  */
-public interface IamAccountService extends BaseIamService<IamAccount> {
+public interface IamAccountService extends BaseService<IamAccount> {
     /**
      * 保存账号（密码存储前加密）
      *

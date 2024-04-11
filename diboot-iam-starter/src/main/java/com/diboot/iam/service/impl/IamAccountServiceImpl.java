@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
@@ -45,7 +46,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class IamAccountServiceImpl extends BaseIamServiceImpl<IamAccountMapper, IamAccount> implements IamAccountService {
+public class IamAccountServiceImpl extends BaseServiceImpl<IamAccountMapper, IamAccount> implements IamAccountService {
 
     @Autowired(required = false)
     private IamCustomize iamCustomize;

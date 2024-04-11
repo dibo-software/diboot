@@ -119,7 +119,7 @@ const rules: FormRules = {
           <el-form-item
             prop="phone"
             label="联系电话"
-            :rules="[{ pattern: /^1[0-9][0-9]\d{8}$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }]"
+            :rules="[{ pattern: /^1[3-9]\d{9}$|^0\d{2,3}-\d{7,8}$|^(\+[1-9]{1}[0-9]{3,14})?([0-9]{9,14})$/, message: '请输入正确的联系电话', trigger: ['blur', 'change'] }]"
           >
             <el-input v-model="model.phone" placeholder="请输入 联系电话" />
           </el-form-item>

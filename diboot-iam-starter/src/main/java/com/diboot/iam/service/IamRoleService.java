@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.entity.IamRole;
 
 /**
@@ -23,6 +24,6 @@ import com.diboot.iam.entity.IamRole;
 * @version 2.0
 * @date 2019-12-03
 */
-public interface IamRoleService extends BaseIamService<IamRole> {
+public interface IamRoleService extends BaseService<IamRole> {
 
 }

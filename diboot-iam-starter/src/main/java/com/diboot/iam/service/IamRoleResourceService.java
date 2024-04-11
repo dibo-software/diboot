@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamRoleResource;
 import com.diboot.iam.entity.route.RouteRecord;
@@ -30,7 +31,7 @@ import java.util.List;
  * @version 2.0
  * @date 2019-12-03
  */
-public interface IamRoleResourceService extends BaseIamService<IamRoleResource> {
+public interface IamRoleResourceService extends BaseService<IamRoleResource> {
 
 
     /***
@@ -100,6 +101,13 @@ public interface IamRoleResourceService extends BaseIamService<IamRoleResource> 
      * @return
      */
     boolean updateRoleResourceRelations(String roleId, List<String> resourceIdList);
+
+    /**
+     * 删除角色下的资源
+     * @param roleId
+     * @return
+     */
+    boolean deleteRoleResourceRelations(String roleId);
 
     /**
      * 获取RoleService实例

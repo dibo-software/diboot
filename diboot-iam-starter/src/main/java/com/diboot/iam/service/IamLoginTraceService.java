@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.entity.IamLoginTrace;
 
 /**
@@ -23,7 +24,7 @@ import com.diboot.iam.entity.IamLoginTrace;
 * @version 2.0
 * @date 2019-12-17
 */
-public interface IamLoginTraceService extends BaseIamService<IamLoginTrace> {
+public interface IamLoginTraceService extends BaseService<IamLoginTrace> {
 
     /**
      * 更新退出时间等信息

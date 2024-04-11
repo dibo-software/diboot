@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.entity.IamUserPosition;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
  * @version v2.6.0
  * @date 2022-06-23
  */
-public interface IamUserPositionService extends BaseIamService<IamUserPosition> {
+public interface IamUserPositionService extends BaseService<IamUserPosition> {
 
     /**
      * 获取当前用户的任职岗位列表

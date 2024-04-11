@@ -16,17 +16,16 @@
 package com.diboot.iam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamOrg;
-import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.mapper.IamOrgMapper;
 import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.vo.IamOrgVO;
@@ -46,7 +45,7 @@ import java.util.stream.Collectors;
 */
 @Service
 @Slf4j
-public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> implements IamOrgService{
+public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> implements IamOrgService {
 
     @Override
     public boolean createEntity(IamOrg iamOrg){

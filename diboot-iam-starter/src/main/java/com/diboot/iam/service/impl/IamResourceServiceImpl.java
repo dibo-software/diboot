@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -47,7 +48,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
+public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)

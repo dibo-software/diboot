@@ -223,7 +223,7 @@ public interface BaseService<T> extends GeneralService<T>{
     boolean deleteEntity(Serializable id);
 
     /**
-     * 根据主键删除实体
+     * 根据指定字段及匹配值删除实体
      * @param fieldKey 字段名
      * @param fieldVal 字段值
      * @return true:成功, false:失败
@@ -237,6 +237,16 @@ public interface BaseService<T> extends GeneralService<T>{
      * @throws Exception
      */
     boolean deleteEntities(Collection<? extends Serializable> entityIds);
+
+    /**
+     * 根据指定字段及值的条件删除匹配记录
+     * @param fldGetterFn
+     * @param fieldValue
+     * @return
+     * @param <T>
+     * @param <FT>
+     */
+    <T,FT> boolean deleteEntities(SFunction<T, FT> fldGetterFn, Object fieldValue);
 
     /**
      * 获取符合条件的entity记录总数

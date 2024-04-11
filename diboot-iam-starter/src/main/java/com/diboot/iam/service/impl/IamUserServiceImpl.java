@@ -22,6 +22,7 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.event.OperationEvent;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("JavaDoc")
 @Service
 @Slf4j
-public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUser> implements IamUserService {
+public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> implements IamUserService {
 
     @Autowired
     private IamUserRoleService iamUserRoleService;

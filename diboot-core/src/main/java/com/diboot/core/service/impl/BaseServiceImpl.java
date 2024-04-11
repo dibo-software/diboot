@@ -449,8 +449,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(column == null) {
 			column = fieldKey;
 		}
-		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
-				.eq(column, fieldVal);
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>();
+		if(fieldVal instanceof Collection) {
+			queryWrapper.in(column, (Collection)fieldVal);
+		}
+		else {
+			queryWrapper.eq(column, fieldVal);
+		}
 		this.beforeDelete(fieldKey, fieldVal);
 		boolean success = super.remove(queryWrapper);
 		if(success) {
@@ -779,6 +784,16 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			this.afterDelete(pk, entityIds);
 		}
 		return success;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public <T, ST> boolean deleteEntities(SFunction<T, ST> fldGetterFn, Object fieldValue) {
+		if (fieldValue == null) {
+			return false;
+		}
+		String fieldName = BeanUtils.convertSFunctionToFieldName(fldGetterFn);
+		return deleteEntity(fieldName, fieldValue);
 	}
 
 	@Override

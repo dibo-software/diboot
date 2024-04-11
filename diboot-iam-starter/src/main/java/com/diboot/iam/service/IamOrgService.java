@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.vo.IamOrgVO;
@@ -28,7 +29,7 @@ import java.util.Map;
 * @version 2.2
 * @date 2019-12-03
 */
-public interface IamOrgService extends BaseIamService<IamOrg> {
+public interface IamOrgService extends BaseService<IamOrg> {
 
     /**
      * 获取全部子节点ID

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.mapper.IamLoginTraceMapper;
 import com.diboot.iam.service.IamLoginTraceService;
@@ -35,7 +36,7 @@ import java.time.LocalDateTime;
 */
 @Service
 @Slf4j
-public class IamLoginTraceServiceImpl extends BaseIamServiceImpl<IamLoginTraceMapper, IamLoginTrace> implements IamLoginTraceService {
+public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMapper, IamLoginTrace> implements IamLoginTraceService {
 
     @Override
     public boolean updateLogoutInfo(String userType, String userId) {

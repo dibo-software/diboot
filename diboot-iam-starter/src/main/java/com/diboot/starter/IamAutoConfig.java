@@ -20,13 +20,15 @@ import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.data.UserOrgDataAccessScopeManager;
 import com.diboot.iam.init.IamRedisAutoConfig;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
-import com.diboot.iam.config.IamProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.event.EventBus;
@@ -35,7 +37,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
@@ -44,13 +45,17 @@ import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.task.TaskDecorator;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
@@ -141,7 +146,7 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    public DefaultWebSubjectFactory subjectFactory(){
+    public DefaultWebSubjectFactory subjectFactory() {
         StatelessSubjectFactory subjectFactory = new StatelessSubjectFactory();
         return subjectFactory;
     }
@@ -149,7 +154,7 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    public DefaultSessionManager sessionManager(){
+    public DefaultSessionManager sessionManager() {
         DefaultSessionManager sessionManager = new DefaultSessionManager();
         sessionManager.setSessionValidationSchedulerEnabled(false);
         return sessionManager;
@@ -223,21 +228,24 @@ public class IamAutoConfig {
         chainDefinition.addPathDefinitions(filterChainMap);
         return chainDefinition;
     }
+
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     public EventBus eventBus() {
         return new DefaultEventBus();
     }
+
     /**
      * 用户token缓存管理器
+     *
      * @return
      */
     @Bean(name = "iamCacheManager")
     @ConditionalOnMissingBean
-    public BaseCacheManager iamCacheManager(){
+    public BaseCacheManager iamCacheManager() {
         log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
-        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>() {{
             put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
             put(Cons.CACHE_CAPTCHA, 5);
         }};
@@ -246,12 +254,37 @@ public class IamAutoConfig {
 
     /**
      * 数据访问控制实现，默认基于用户和部门过滤
+     *
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public DataScopeManager dataAccessInterface(){
+    public DataScopeManager dataAccessInterface() {
         return new UserOrgDataAccessScopeManager();
+    }
+
+    @Configuration
+    private class ThreadPoolTaskExecutorConfig {
+        public ThreadPoolTaskExecutorConfig(@Qualifier("applicationTaskExecutor") ObjectProvider<ThreadPoolTaskExecutor> taskExecutorObjectProvider) {
+            taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextDecorator()));
+        }
+    }
+
+    /**
+     * shiro上下文装饰器，传递shiro上下文
+     */
+    private class ShiroContextDecorator implements TaskDecorator {
+
+        @Override
+        public Runnable decorate(Runnable runnable) {
+            try {
+                // 向下传递当前线程的用户信息
+                return SecurityUtils.getSubject().associateWith(runnable);
+            } catch (UnavailableSecurityManagerException e) {
+                // 用户信息不存在，直接执行
+                return runnable;
+            }
+        }
     }
 
 }

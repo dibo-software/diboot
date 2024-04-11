@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
 import com.diboot.core.config.BaseConfig;
-import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.iam.auth.IamCustomize;
@@ -34,14 +34,12 @@ import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
 import com.diboot.iam.util.IamHelper;
-import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.IamRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +52,7 @@ import java.util.List;
 */
 @Service
 @Slf4j
-public class IamUserRoleServiceImpl extends BaseIamServiceImpl<IamUserRoleMapper, IamUserRole> implements IamUserRoleService {
+public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, IamUserRole> implements IamUserRoleService {
 
     @Autowired
     private IamRoleService iamRoleService;

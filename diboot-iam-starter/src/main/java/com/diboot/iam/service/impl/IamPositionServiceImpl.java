@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamPosition;
@@ -38,7 +39,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class IamPositionServiceImpl extends BaseIamServiceImpl<IamPositionMapper, IamPosition> implements IamPositionService {
+public class IamPositionServiceImpl extends BaseServiceImpl<IamPositionMapper, IamPosition> implements IamPositionService {
 
     @Autowired
     private IamUserPositionService iamUserPositionService;
