@@ -58,6 +58,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.6.4</version>
+        </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
