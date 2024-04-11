@@ -57,8 +57,8 @@ public interface IamUserRoleMapper extends BaseCrudMapper<IamUserRole> {
      * @return 用户ID
      */
     @InterceptorIgnore(tenantLine = "true")
-    @Select("SELECT user_id FROM dbt_iam_user_role WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND role_id = #{roleId} LIMIT 1")
-    String findUserIdByTenantIdAndRoleId(@Param("tenantId") String tenantId, @Param("roleId") String roleId, @Param("deleted") Object deleted);
+    @Select("SELECT user_id FROM dbt_iam_user_role WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND role_id = #{roleId}")
+    List<String> findUserIdByTenantIdAndRoleId(@Param("tenantId") String tenantId, @Param("roleId") String roleId, @Param("deleted") Object deleted);
 
 }
 

@@ -86,10 +86,13 @@ resetPingTimer()
  */
 function resetPingTimer() {
   clearTimeout(pingTimer)
-  pingTimer = setTimeout(() => {
-    resetPingTimer()
-    service.get('/auth/ping').then()
-  }, TOKEN_REFRESH_EXPIRE * 60 * 1000)
+  pingTimer = setTimeout(
+    () => {
+      resetPingTimer()
+      service.get('/auth/ping').then()
+    },
+    TOKEN_REFRESH_EXPIRE * 60 * 1000
+  )
 }
 
 export interface ApiData<T = never> {

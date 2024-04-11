@@ -38,8 +38,7 @@ public class String2LocalDateConverter implements Converter<String, LocalDate> {
         if(V.isEmpty(dateString)){
             return null;
         }
-        dateString = D.formatDateString(dateString);
-        return LocalDate.parse(dateString, D.FORMATTER_DATE_Y4MD);
+        return D.convert2LocalDate(dateString);
     }
 
 }

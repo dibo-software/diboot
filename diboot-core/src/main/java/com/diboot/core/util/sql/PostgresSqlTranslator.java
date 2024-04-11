@@ -18,6 +18,9 @@ package com.diboot.core.util.sql;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * PostgresSql SQL翻译器
  * @author mazc@dibo.ltd
@@ -26,22 +29,38 @@ import com.diboot.core.util.V;
  */
 public class PostgresSqlTranslator extends BaseTranslator {
 
+    public PostgresSqlTranslator(){}
+    public PostgresSqlTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
+
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         // boolean 类型
         if(S.containsIgnoreCase(colDefineSql, "tinyint")) {
-            return S.replaceEach(colDefineSql,
-                    new String[]{"tinyint(1)", "tinyint", "DEFAULT '1'", "DEFAULT 1", "default 1", "DEFAULT '0'", "default 0", "DEFAULT 0"},
-                    new String[]{"BOOLEAN", "BOOLEAN", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT FALSE", "DEFAULT FALSE", "DEFAULT FALSE"}
+            colDefineSql = S.replaceEach(colDefineSql,
+                new String[]{"tinyint(1)", "tinyint", "DEFAULT '1'", "DEFAULT 1", "default 1", "DEFAULT '0'", "default 0", "DEFAULT 0"},
+                new String[]{"BOOLEAN", "BOOLEAN", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT TRUE", "DEFAULT FALSE", "DEFAULT FALSE", "DEFAULT FALSE"}
             );
         }
-        if(S.containsIgnoreCase(colDefineSql, "datetime")) {
-            return S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
+        else if(S.containsIgnoreCase(colDefineSql, "datetime")) {
+            colDefineSql = S.replaceEach(colDefineSql, new String[] {"datetime"}, new String[]{"timestamp"});
         }
-        if(colDefineSql.contains("`")) {
-            colDefineSql = S.replace(colDefineSql, "`", "\"");
+        return escapeKeyword(colDefineSql);
+    }
+
+    @Override
+    protected String escapeKeyword(String input) {
+        if(input.contains("`")) {
+            String key = S.substringBetween(input, "`", "`");
+            if(ESCAPE_KEYWORDS.contains(key)) {
+                return S.replace(input, "`"+key+"`", "\"" + key + "\"");
+            }
+            else {
+                return S.replace(input, "`", "");
+            }
         }
-        return colDefineSql;
+        return input;
     }
 
     @Override

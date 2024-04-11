@@ -15,11 +15,6 @@ interface TreeProps extends /* @vue-ignore */ TreeConfig {
   parentPath?: string
   lazyChild?: boolean
   conditions?: Array<ConditionItem>
-  /**
-   * 附加条件
-   * @Deprecated 3.3移除，使用 conditions?: Array<ConditionItem> 代替
-   */
-  condition?: Record<string, boolean | string | number | (string | number)[] | null>
   sortApi?: string
 }
 
@@ -29,7 +24,6 @@ const props = withDefaults(defineProps<TreeProps>(), {
   parentPath: undefined,
   lazyChild: true,
   conditions: undefined,
-  condition: undefined,
   sortApi: undefined
 })
 

@@ -29,10 +29,13 @@ import com.diboot.iam.config.IamProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
@@ -42,6 +45,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -69,6 +73,7 @@ import java.util.Set;
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class IamAutoConfig {
 
     public IamAutoConfig() {
@@ -85,6 +90,7 @@ public class IamAutoConfig {
      */
     @Bean(name = "shiroCacheManager")
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public CacheManager shiroCacheManager() {
         return new MemoryConstrainedCacheManager();
     }
@@ -92,6 +98,7 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     @DependsOn({"shiroCacheManager"})
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public Realm realm() {
         IamAuthorizingRealm realm = new IamAuthorizingRealm();
         CacheManager cacheManager = shiroCacheManager();
@@ -110,6 +117,7 @@ public class IamAutoConfig {
      */
     @Bean(name = "shiroSecurityManager")
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DefaultWebSecurityManager shiroSecurityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSubjectFactory(subjectFactory());
@@ -123,6 +131,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected SessionStorageEvaluator sessionStorageEvaluator() {
         DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         sessionStorageEvaluator.setSessionStorageEnabled(false);
@@ -131,6 +140,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DefaultWebSubjectFactory subjectFactory(){
         StatelessSubjectFactory subjectFactory = new StatelessSubjectFactory();
         return subjectFactory;
@@ -138,6 +148,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DefaultSessionManager sessionManager(){
         DefaultSessionManager sessionManager = new DefaultSessionManager();
         sessionManager.setSessionValidationSchedulerEnabled(false);
@@ -149,14 +160,15 @@ public class IamAutoConfig {
      *
      * @return
      */
-    @Bean
-    @ConditionalOnMissingBean
+//    @Bean
+//    @ConditionalOnMissingBean
     public AccessControlFilter shiroFilter() {
         return new StatelessAccessControlFilter();
     }
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Lazy SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);
@@ -165,6 +177,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(SessionsSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 设置过滤器
@@ -181,6 +194,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
         Map<String, String> filterChainMap = new LinkedHashMap<>();
         // 设置url
@@ -209,7 +223,12 @@ public class IamAutoConfig {
         chainDefinition.addPathDefinitions(filterChainMap);
         return chainDefinition;
     }
-
+    @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    @ConditionalOnMissingBean
+    public EventBus eventBus() {
+        return new DefaultEventBus();
+    }
     /**
      * 用户token缓存管理器
      * @return

@@ -8,3 +8,10 @@ defineProps<{ value?: string }>()
 <template>
   <editor :model-value="value" :default-config="{ readOnly: true, autoFocus: false }" style="height: auto" />
 </template>
+
+<style scoped lang="scss">
+:deep(.w-e-textarea-video-container > :first-child) {
+  max-height: 100%;
+  max-width: 100%;
+}
+</style>

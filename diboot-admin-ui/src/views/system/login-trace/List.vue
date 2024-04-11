@@ -23,7 +23,7 @@ getList()
         </el-col>
         <el-col :lg="6" :sm="12">
           <el-form-item label="登录状态">
-            <el-select v-model="queryParam.success" clearable @change="onSearch">
+            <el-select v-model="queryParam.isSuccess" clearable @change="onSearch">
               <el-option label="成功" :value="true" />
               <el-option label="失败" :value="false" />
             </el-select>
@@ -67,7 +67,7 @@ getList()
       <el-table-column prop="authType" label="登录方式" />
       <el-table-column prop="success" label="登录状态">
         <template #default="{ row }">
-          <el-tag v-if="row.success">成功</el-tag>
+          <el-tag v-if="row.isSuccess">成功</el-tag>
           <el-tag v-else type="danger">失败</el-tag>
         </template>
       </el-table-column>

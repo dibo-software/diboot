@@ -178,7 +178,7 @@ public class PropInfo implements Serializable {
         }
         String column = this.fieldToColumnMap.get(fieldName);
         if(column == null) {
-            log.warn("未找到字段 {} 对应的 列名，请检查！", fieldName);
+            log.debug("未找到字段 {} 对应的 列名", fieldName);
         }
         return column;
     }

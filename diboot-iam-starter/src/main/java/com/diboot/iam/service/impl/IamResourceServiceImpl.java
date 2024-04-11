@@ -232,6 +232,9 @@ public class IamResourceServiceImpl extends BaseIamServiceImpl<IamResourceMapper
         // 更新 menu
         this.updateEntity(resourceDTO);
         List<IamResource> permissionList = resourceDTO.getPermissionList();
+        if(V.isEmpty(permissionList)) {
+            return;
+        }
         List<String> resourceCodes = new ArrayList<>();
         permissionList.forEach(p -> {
             p.setParentId(resourceDTO.getId());

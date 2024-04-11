@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0-jdk8</version>
     </parent>
 
     <artifactId>diboot-core</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0-jdk8</version>
     <packaging>jar</packaging>
     <description>diboot core project</description>
 
@@ -19,7 +19,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,6 +50,11 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
             <version>${mybatis-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>2.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

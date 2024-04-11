@@ -17,13 +17,21 @@ package com.diboot.core.util.sql;
 
 import com.diboot.core.util.S;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * SqlServer SQL翻译器
  * @author mazc@dibo.ltd
  * @version v3.2.0
  * @date 2023/12/28
  */
-public class SqlServerTranslator extends BaseTranslator {
+public final class SqlServerTranslator extends BaseTranslator {
+
+    public SqlServerTranslator(){}
+    public SqlServerTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {
@@ -31,23 +39,40 @@ public class SqlServerTranslator extends BaseTranslator {
             new String[]{"tinyint(1)"},
             new String[]{"tinyint"}
         );
-        return colDefineSql;
+        return escapeKeyword(colDefineSql);
     }
 
     @Override
     protected String translateCreateIndexDDL(String mysqlDDL) {
         String createIndex = super.translateCreateIndexDDL(mysqlDDL);
-        return createIndex.replace(" index ", " nonclustered index ");
+        return S.replaceIgnoreCase(createIndex, " index ", " nonclustered index ");
     }
 
     @Override
     protected String buildColumnCommentSql(String table, String colName, String comment) {
-        return "execute sp_addextendedproperty 'MS_Description', N'"+comment.trim()+"', 'SCHEMA', '${SCHEMA}', 'table', "+table+", 'column', '"+colName+"';";
+        table = S.replace(table, "`", "");
+        colName = S.replace(colName, "`", "");
+        return "execute sp_addextendedproperty 'MS_Description', N'"+comment.trim()+"', 'SCHEMA', 'dbo', 'table', '"+table+"', 'column', '"+colName+"';";
     }
 
     @Override
     protected String buildTableCommentSql(String table, String comment) {
-        return "execute sp_addextendedproperty 'MS_Description', N'"+comment.trim()+"','SCHEMA', '${SCHEMA}', 'table', "+table+", null, null;";
+        table = S.replace(table, "`", "");
+        return "execute sp_addextendedproperty 'MS_Description', N'"+comment.trim()+"','SCHEMA', 'dbo', 'table', '"+table+"', null, null;";
+    }
+
+    @Override
+    protected String escapeKeyword(String input) {
+        if(input.contains("`")) {
+            String key = S.substringBetween(input, "`", "`");
+            if(ESCAPE_KEYWORDS.contains(key)) {
+                return S.replace(input, "`"+key+"`", "[" + key + "]");
+            }
+            else {
+                return S.replace(input, "`", "");
+            }
+        }
+        return input;
     }
 
 }

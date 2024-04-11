@@ -25,6 +25,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 /**
 * 认证用户Mapper
 * @author mazc@dibo.ltd
@@ -42,8 +44,8 @@ public interface IamAccountMapper extends BaseCrudMapper<IamAccount> {
      * @return
      */
     @InterceptorIgnore(tenantLine = "true")
-    @Select({"SELECT id, tenant_id, user_type, user_id, auth_account, auth_secret, secret_salt, status FROM dbt_iam_account WHERE is_deleted = #{deleted} AND ${ew.sqlSegment} LIMIT 1"})
-    IamAccount findLoginAccount(@Param(Constants.WRAPPER) Wrapper<IamAccount> queryWrapper, @Param("deleted") Object deleted);
+    @Select({"SELECT id, tenant_id, user_type, user_id, auth_account, auth_secret, secret_salt, status FROM dbt_iam_account WHERE is_deleted = #{deleted} AND ${ew.sqlSegment}"})
+    List<IamAccount> findLoginAccount(@Param(Constants.WRAPPER) Wrapper<IamAccount> queryWrapper, @Param("deleted") Object deleted);
 
     /**
      * 重置密码
@@ -66,8 +68,8 @@ public interface IamAccountMapper extends BaseCrudMapper<IamAccount> {
      * @return
      */
     @InterceptorIgnore(tenantLine = "true")
-    @Select("SELECT * FROM dbt_iam_account WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND user_id = #{userId} AND user_type = #{userType} LIMIT 1")
-    IamAccount findByExplicitTenant(@Param("tenantId") String tenantId, @Param("userId") String userId,
+    @Select("SELECT * FROM dbt_iam_account WHERE is_deleted = #{deleted} AND tenant_id = #{tenantId} AND user_id = #{userId} AND user_type = #{userType}")
+    List<IamAccount> findByExplicitTenant(@Param("tenantId") String tenantId, @Param("userId") String userId,
                                     @Param("userType") String userType, @Param("deleted") Object deleted);
 
     /**

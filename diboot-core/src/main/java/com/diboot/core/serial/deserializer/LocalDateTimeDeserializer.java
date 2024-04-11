@@ -16,6 +16,7 @@
 package com.diboot.core.serial.deserializer;
 
 import com.diboot.core.util.D;
+import com.diboot.core.util.V;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -40,7 +41,10 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
         String dateString = p.readValueAs(String.class);
-        dateString = D.formatDateString(dateString);
+        if(V.isEmpty(dateString)) {
+            return null;
+        }
+        dateString = D.formatDateTimeString(dateString);
         if(dateString.length() <= D.FORMAT_DATE_Y4MD.length()) {
             return LocalDate.parse(dateString, D.FORMATTER_DATE_Y4MD).atStartOfDay();
         }

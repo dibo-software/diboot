@@ -26,7 +26,8 @@ import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.AllTableColumns;
-import net.sf.jsqlparser.statement.select.SubSelect;
+import net.sf.jsqlparser.statement.select.ParenthesedSelect;
+import net.sf.jsqlparser.statement.select.Select;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/3/30
  */
-public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
+public class ConditionParser implements ExpressionVisitor {
 
     public ConditionParser() {
     }
@@ -91,6 +92,27 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
         }
         expressList.add(notEqualsTo);
     }
+
+    @Override
+    public void visit(DoubleAnd doubleAnd) {
+
+    }
+
+    @Override
+    public void visit(Contains contains) {
+
+    }
+
+    @Override
+    public void visit(ContainedBy containedBy) {
+
+    }
+
+    @Override
+    public void visit(ParenthesedSelect parenthesedSelect) {
+
+    }
+
     @Override
     public void visit(GreaterThan greaterThan) {
         if(!(greaterThan.getLeftExpression() instanceof Column)){
@@ -181,21 +203,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(Column tableColumn) {
     }
-    @Override
-    public void visit(SubSelect subSelect) {
-    }
 
     @Override
     public void visit(ExpressionList expressionList) {
     }
 
-    @Override
-    public void visit(NamedExpressionList namedExpressionList) {
-    }
 
-    @Override
-    public void visit(MultiExpressionList multiExprList) {
-    }
     @Override
     public void visit(CaseExpression caseExpression) {
     }
@@ -205,6 +218,12 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     @Override
     public void visit(ExistsExpression existsExpression) {
     }
+
+    @Override
+    public void visit(MemberOfExpression memberOfExpression) {
+
+    }
+
     @Override
     public void visit(AnyComparisonExpression anyComparisonExpression) {
     }
@@ -225,16 +244,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
     @Override
     public void visit(CastExpression cast) {
-    }
-
-    @Override
-    public void visit(TryCastExpression tryCastExpression) {
-
-    }
-
-    @Override
-    public void visit(SafeCastExpression safeCastExpression) {
-
     }
 
     @Override
@@ -262,9 +271,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     public void visit(JsonOperator jsonExpr) {
     }
     @Override
-    public void visit(RegExpMySQLOperator regExpMySQLOperator) {
-    }
-    @Override
     public void visit(UserVariable var) {
     }
     @Override
@@ -275,9 +281,6 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
     }
     @Override
     public void visit(MySQLGroupConcat groupConcat) {
-    }
-    @Override
-    public void visit(ValueListExpression valueList) {
     }
     @Override
     public void visit(RowConstructor rowConstructor) {
@@ -367,6 +370,36 @@ public class ConditionParser implements ExpressionVisitor,ItemsListVisitor {
 
     @Override
     public void visit(GeometryDistance geometryDistance) {
+    }
+
+    @Override
+    public void visit(Select select) {
+
+    }
+
+    @Override
+    public void visit(TranscodingFunction transcodingFunction) {
+
+    }
+
+    @Override
+    public void visit(TrimFunction trimFunction) {
+
+    }
+
+    @Override
+    public void visit(RangeExpression rangeExpression) {
+
+    }
+
+    @Override
+    public void visit(TSQLLeftJoin tsqlLeftJoin) {
+
+    }
+
+    @Override
+    public void visit(TSQLRightJoin tsqlRightJoin) {
+
     }
 
     @Override

@@ -95,6 +95,22 @@ public interface IamUserService extends BaseIamService<IamUser> {
     List<IamUser> getUsersByRoleIds(List<String> roleIds);
 
     /**
+     * 获取指定角色code下的用户
+     *
+     * @param roleCode
+     * @return
+     */
+    List<IamUser> getUsersByRoleCode(String roleCode);
+
+    /**
+     * 获取指定角色code下的用户
+     *
+     * @param roleCodes
+     * @return
+     */
+    List<IamUser> getUsersByRoleCodes(List<String> roleCodes);
+
+    /**
      * 获取id值-选项的映射Map
      * @param ids
      * @return

@@ -85,7 +85,8 @@ public class TemplateUtils {
             // 执行方法，获取变量值
             for(Field field : fields){
                 BindVariable bindVariable = field.getAnnotation(BindVariable.class);
-                if(variable.equals(bindVariable.name())) {
+                String fileName = "${" + field.getName() + "}";
+                if(variable.equals(bindVariable.name()) || variable.equals(fileName)) {
                     Object value = BeanUtils.getProperty(variableData, field.getName());
                     if (value != null) {
                         variableValueList.add(String.valueOf(value));

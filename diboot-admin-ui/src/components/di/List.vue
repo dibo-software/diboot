@@ -198,7 +198,7 @@ const multiple = inject<boolean | undefined>(
       :data-list="dataList"
       :multiple="multiple"
       :primary-key="primaryKey"
-      @selected-keys="(v:string[]) => (selectedKeys = v)"
+      @selected-keys="(v: string[]) => (selectedKeys = v)"
       @order="orderBy"
     >
       <el-table-column

@@ -58,7 +58,7 @@ public class IamLoginTrace extends BaseEntity<String> {
     // 用户ID
     @NotNull(message = "用户ID不能为空")
     @TableField()
-    private String userId = Cons.ID_PREVENT_NULL;
+    private String userId;
 
     // 认证方式
     @NotNull(message = "认证方式不能为空")
@@ -74,7 +74,7 @@ public class IamLoginTrace extends BaseEntity<String> {
 
     // 是否成功
     @TableField("is_success")
-    private boolean success = false;
+    private Boolean isSuccess;
 
     @Length(max=50, message="IP长度应小于50")
     @TableField()

@@ -73,7 +73,7 @@ public class DTest {
                 "06/02/2019",
         };
         for(String date : dateStrArray) {
-            String format = D.formatDateString(date);
+            String format = D.formatDateTimeString(date);
             if(date.length() == "06/02/2019".length()) {
                 Assert.assertTrue(format.equals("2019-06-02"));
             }

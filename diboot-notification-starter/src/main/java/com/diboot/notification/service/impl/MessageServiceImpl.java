@@ -60,8 +60,8 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
     private Map<String, MessageChannel> typeToChannelMap = new HashMap<>();
 
     public MessageServiceImpl(List<MessageChannel> messageChannels, List<Class<?>> variableObjectClasses) {
-        if(messageChannels != null) {
-            for(MessageChannel channel : messageChannels) {
+        if (messageChannels != null) {
+            for (MessageChannel channel : messageChannels) {
                 typeToChannelMap.put(channel.type(), channel);
             }
         }
@@ -84,7 +84,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
             throw new InvalidUsageException("获取发送通道失败! " + message.getChannel());
         }
         String content = message.getContent();
-        if(message.hasTemplate()) {
+        if (message.hasTemplate()) {
             // 是否根据模板构建邮件内容
             LambdaQueryWrapper<MessageTemplate> queryWrapper = Wrappers.<MessageTemplate>lambdaQuery()
                     .eq(V.notEmpty(message.getTemplateId()), MessageTemplate::getId, message.getTemplateId())
@@ -105,24 +105,29 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
                 content = messageTemplate.getContent();
             }
         }
-        if(V.notEmpty(content)){
+        if (V.notEmpty(content)) {
             try {
                 // 设置模版内容
-                content = TemplateUtils.parseTemplateContent(content, variableData);
-                message.setContent(content);
+                if (V.notEmpty(variableData)) {
+                    content = TemplateUtils.parseTemplateContent(content, variableData);
+                    message.setContent(content);
+                    // 将变量内容存储到数据库
+                    Map<String, Object> extDataMap = message.getExtDataMap();
+                    extDataMap = V.isEmpty(extDataMap) ? new HashMap<>() : extDataMap;
+                    extDataMap.put(Message.VARIABLES, variableData);
+                    message.setExtDataMap(extDataMap);
+                }
             } catch (Exception e) {
                 log.error("[消息解析失败]，消息体为：{}", message);
                 throw new BusinessException(Status.FAIL_OPERATION, "消息解析失败!");
             }
-        }
-        else {
+        } else {
             throw new BusinessException("消息内容不能为 null");
         }
         // 设置定时发送，则等待定时任务发送
         if (V.notEmpty(message.getScheduleTime())) {
             message.setStatus("SCHEDULE");
-        }
-        else if(V.isEmpty(message.getStatus())){
+        } else if (V.isEmpty(message.getStatus())) {
             message.setStatus(Cons.MESSAGE_STATUS.PENDING.name());
         }
         // 创建Message

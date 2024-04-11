@@ -18,6 +18,7 @@ export interface UserModel {
   birthday?: string
   mobilePhone?: string
   email?: string
+  sortId?: number
   status: string
   statusLabel?: LabelValue<{ color?: string }>
   createTime?: string

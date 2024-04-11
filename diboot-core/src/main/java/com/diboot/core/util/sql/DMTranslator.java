@@ -17,21 +17,33 @@ package com.diboot.core.util.sql;
 
 import com.diboot.core.util.S;
 
+import java.util.List;
+
 /**
  * DM SQL翻译器
  * @author mazc@dibo.ltd
  * @version v3.2.0
  * @date 2023/12/28
  */
-public class DMTranslator extends BaseTranslator {
+public final class DMTranslator extends BaseTranslator {
+
+    public DMTranslator(){}
+    public DMTranslator(List<String> keywords) {
+        ESCAPE_KEYWORDS.addAll(keywords);
+    }
 
     @Override
     protected String translateColDefineSql(String colDefineSql) {
         colDefineSql = S.replaceEach(colDefineSql,
-                new String[]{" tinyint(1) ", " tinyint", " bigint ", " smallint ", " int "},
-                new String[]{" BIT ", " BIT", " NUMBER(20) ", " NUMBER(6) ", " NUMBER(9) "}
+            new String[]{" tinyint(1)", " tinyint", " bigint", " smallint", " int "},
+            new String[]{" BIT", " BIT", " NUMBER(20)", " NUMBER(6)", " NUMBER(9) "}
         );
-        return colDefineSql;
+        return escapeKeyword(colDefineSql);
+    }
+
+    @Override
+    protected String escapeKeyword(String input) {
+        return S.replace(input, "`", "");
     }
 
 }

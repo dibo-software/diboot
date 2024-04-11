@@ -82,10 +82,11 @@ public abstract class BaseAuthServiceImpl implements AuthService {
 
     @Override
     public IamAccount getAccount(IamAuthToken iamAuthToken) throws AuthenticationException {
-        IamAccount latestAccount = iamAccountMapper.findLoginAccount(buildQueryWrapper(iamAuthToken), BaseConfig.getActiveFlagValue());
-        if(latestAccount == null){
+        List<IamAccount> latestAccounts = iamAccountMapper.findLoginAccount(buildQueryWrapper(iamAuthToken), BaseConfig.getActiveFlagValue());
+        if(V.isEmpty(latestAccounts)){
             return null;
         }
+        IamAccount latestAccount = latestAccounts.get(0);
         if (Cons.DICTCODE_ACCOUNT_STATUS.I.name().equals(latestAccount.getStatus())) {
             throw new AuthenticationException("用户账号已禁用! account="+iamAuthToken.getAuthAccount());
         }
@@ -147,7 +148,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
      */
     protected void saveLoginTrace(IamAuthToken authToken, boolean isSuccess){
         IamLoginTrace loginTrace = new IamLoginTrace();
-        loginTrace.setAuthType(getAuthType()).setAuthAccount(authToken.getAuthAccount()).setUserType(authToken.getUserType()).setSuccess(isSuccess);
+        loginTrace.setAuthType(getAuthType()).setAuthAccount(authToken.getAuthAccount()).setUserType(authToken.getUserType()).setIsSuccess(isSuccess);
         BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
         if(currentUser != null){
             loginTrace.setUserId(currentUser.getId());
@@ -166,7 +167,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
     protected void lockAccountIfRequired(IamAccount latestAccount) {
         // 查询最新1天内的失败记录
         LambdaQueryWrapper<IamLoginTrace> queryWrapper = Wrappers.<IamLoginTrace>lambdaQuery()
-                .select(IamLoginTrace::isSuccess)
+                .select(IamLoginTrace::getIsSuccess)
                 .eq(IamLoginTrace::getUserType, latestAccount.getUserType())
                 .eq(IamLoginTrace::getAuthType, latestAccount.getAuthType())
                 .eq(IamLoginTrace::getAuthAccount, latestAccount.getAuthAccount())
@@ -178,7 +179,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
         if(V.notEmpty(loginList) && loginList.size() >= maxLoginAttempts) {
             int failCount = 0;
             for(IamLoginTrace loginTrace : loginList) {
-                if(loginTrace.isSuccess()) {
+                if(loginTrace.getIsSuccess()) {
                     break;
                 }
                 failCount++;

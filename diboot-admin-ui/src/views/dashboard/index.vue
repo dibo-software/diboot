@@ -1,6 +1,5 @@
 <script setup lang="ts" name="Dashboard">
 import type { EChartsOption } from 'echarts'
-import { StarFilled } from '@element-plus/icons-vue'
 import logoSrc from '@/assets/logo.png'
 
 const tags: Array<{ label: string; type: '' | 'success' | 'info' | 'warning' | 'danger' }> = [

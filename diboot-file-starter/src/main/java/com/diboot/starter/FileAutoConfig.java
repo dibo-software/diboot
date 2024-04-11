@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 /**
  * 组件初始化
@@ -51,9 +52,6 @@ public class FileAutoConfig {
     @Autowired
     private FileProperties fileProperties;
 
-    public FileAutoConfig() {
-        log.info("初始化 file 组件自动配置");
-    }
 
     /**
      * 需要文件上传，开启此配置
@@ -65,7 +63,7 @@ public class FileAutoConfig {
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver bean = new CommonsMultipartResolver();
         bean.setDefaultEncoding(Cons.CHARSET_UTF8);
-        Long maxUploadSize = null;
+        Long maxUploadSize = 10L * 1024 * 1024;
         // 兼容 servlet 配置参数
         String servletMaxUploadSize = BaseConfig.getProperty("spring.servlet.multipart.max-request-size");
         if(V.notEmpty(servletMaxUploadSize)){
@@ -83,12 +81,14 @@ public class FileAutoConfig {
                 maxUploadSize = Long.parseLong(servletMaxUploadSize);
             }
         }
-        else{
-            maxUploadSize = fileProperties.getMaxUploadSize();
-        }
         bean.setMaxUploadSize(maxUploadSize);
         return bean;
     }
+
+    public FileAutoConfig() {
+        log.info("初始化 file 组件自动配置");
+    }
+
     /**
      * 默认使用本地存储
      *

@@ -43,8 +43,8 @@ const value = ref(
   props.config.type === 'input-number' && props.modelValue
     ? Number(`${props.modelValue}`)
     : props.config.type === 'boolean' && props.modelValue
-    ? Boolean(`${props.modelValue}`)
-    : props.modelValue
+      ? Boolean(`${props.modelValue}`)
+      : props.modelValue
 )
 watch(
   value,
@@ -81,10 +81,10 @@ const rules = (
   (props.config.required && props.config.unique
     ? [requiredRule, checkUniqueRule]
     : props.config.required
-    ? [requiredRule]
-    : props.config.unique
-    ? [checkUniqueRule]
-    : []) as FormItemRule[]
+      ? [requiredRule]
+      : props.config.unique
+        ? [checkUniqueRule]
+        : []) as FormItemRule[]
 ).concat(...(props.config.rules ?? []))
 
 const handleChange = (value?: unknown) => emit('change', value)

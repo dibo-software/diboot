@@ -42,8 +42,8 @@ public interface IamRoleMapper extends BaseCrudMapper<IamRole> {
      * @return
      */
     @InterceptorIgnore(tenantLine = "true")
-    @Select("SELECT * FROM dbt_iam_role WHERE is_deleted = #{deleted} AND tenant_id = '0' AND code = #{code} LIMIT 1")
-    IamRole findByCode(@Param("code") String code, @Param("deleted") Object deleted);
+    @Select("SELECT * FROM dbt_iam_role WHERE is_deleted = #{deleted} AND tenant_id = '0' AND code = #{code}")
+    List<IamRole> findByCode(@Param("code") String code, @Param("deleted") Object deleted);
 
     /**
      * 根据角色id列表查询角色

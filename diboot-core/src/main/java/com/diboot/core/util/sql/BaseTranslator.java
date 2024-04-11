@@ -15,6 +15,7 @@
  */
 package com.diboot.core.util.sql;
 
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -31,7 +32,9 @@ import java.util.*;
 @Slf4j
 public abstract class BaseTranslator {
 
-    private static Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
+    protected List<String> ESCAPE_KEYWORDS = Arrays.asList("key", "level");
+
+    protected static Map<String, Map<String, String>> table2ColumnTypeMap = new HashMap<>();
 
     /**
      * 执行ddl翻译
@@ -42,24 +45,28 @@ public abstract class BaseTranslator {
         if(V.isEmpty(mysqlStatements)) {
             return Collections.emptyList();
         }
-        List<String> postgresStatements = new ArrayList<>();
+        List<String> otherStatements = new ArrayList<>();
         mysqlStatements.forEach(stmt -> {
             if(S.containsIgnoreCase(stmt, "CREATE TABLE ")) {
                 List<String> createTableStatements = this.translateCreateTableDDL(stmt);
-                postgresStatements.addAll(createTableStatements);
+                otherStatements.addAll(createTableStatements);
             }
             else if(S.containsIgnoreCase(stmt, "CREATE INDEX ")) {
-                postgresStatements.add(this.translateCreateIndexDDL(stmt));
+                otherStatements.add(this.translateCreateIndexDDL(stmt));
             }
             else if(S.containsIgnoreCase(stmt, "INSERT INTO ")) {
-                postgresStatements.add(this.translateInsertValues(stmt));
+                otherStatements.addAll(this.translateInsertValues(stmt));
             }
-            else {
+            else if(V.notEmpty(stmt)){
                 throw new InvalidUsageException("暂不支持该SQL翻译：{}", stmt);
             }
         });
-        log.debug("转换初始化SQL：{}", postgresStatements);
-        return postgresStatements;
+        log.debug("转换初始化SQL：{}", otherStatements);
+        return formatStatements(otherStatements);
+    }
+
+    protected List<String> formatStatements(List<String> otherStatements) {
+        return otherStatements;
     }
 
     /**
@@ -70,10 +77,11 @@ public abstract class BaseTranslator {
     private List<String> translateCreateTableDDL(String mysqlDDL) {
         List<String> newSqls = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        String newSql = S.removeDuplicateBlank(mysqlDDL).replace("`", "").replaceAll(" comment ", " COMMENT ");
+        String newSql = S.removeDuplicateBlank(mysqlDDL).replaceAll(" comment ", " COMMENT ");
         String begin = S.substringBefore(newSql, "(").trim();
         String table = S.substringAfterLast(begin, " ");
-        sb.append(begin).append("(");
+        String cleanTableName = table.replace("`", "");
+        sb.append(escapeKeyword(begin)).append("(");
 
         String body = S.substringAfter(newSql, "(");
         body = S.substringBeforeLast(body, ")");
@@ -97,20 +105,24 @@ public abstract class BaseTranslator {
             // 提取列备注
             String comment = extractCommentLabel(col);
             col = S.substringBefore(col, "COMMENT").trim();
-            if(S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (`id`)")
-            || S.containsIgnoreCase(S.removeDuplicateBlank(col), "PRIMARY KEY (id)")) {
+            String cleanCol = S.removeDuplicateBlank(S.removeDuplicateBlank(col)).replace("`", "");
+            if(S.containsIgnoreCase(cleanCol, "PRIMARY KEY (id)")) {
             }
             else {
-                if(colName.equals("id") && !S.containsIgnoreCase(col, "PRIMARY KEY")) {
+                String cleanColName = colName.replace("`", "");
+                if(cleanColName.equals("id") && !S.containsIgnoreCase(cleanCol, "PRIMARY KEY")) {
                     col += " PRIMARY KEY";
                 }
                 String colDefineStmt = translateColDefineSql(col);
                 newColDefines.add(colDefineStmt);
                 if(V.notEmpty(comment)) {
-                    newColComments.add(buildColumnCommentSql(table, colName, comment));
+                    String columnCommentSql = buildColumnCommentSql(cleanTableName, colName, comment);
+                    if(columnCommentSql != null) {
+                        newColComments.add(columnCommentSql);
+                    }
                 }
                 // 数据类型替换
-                column2TypeMap.put(colName, colDefineStmt);
+                column2TypeMap.put(cleanColName, colDefineStmt);
             }
         });
         String comment = S.substringAfterLast(newSql, ")");
@@ -120,9 +132,12 @@ public abstract class BaseTranslator {
         newSqls.add(sb.toString());
         newSqls.addAll(newColComments);
         if(V.notEmpty(comment)) {
-            newSqls.add(buildTableCommentSql(table, comment));
+            String tableCommentSql = buildTableCommentSql(table, comment);
+            if(tableCommentSql != null) {
+                newSqls.add(tableCommentSql);
+            }
         }
-        table2ColumnTypeMap.put(table, column2TypeMap);
+        table2ColumnTypeMap.put(cleanTableName, column2TypeMap);
         return newSqls;
     }
 
@@ -134,23 +149,30 @@ public abstract class BaseTranslator {
      * @return
      */
     protected String translateCreateIndexDDL(String mysqlDDL) {
-        String createIndex = S.removeDuplicateBlank(mysqlDDL).trim().replace("`", "");
+        String createIndex = S.removeDuplicateBlank(mysqlDDL).trim();
         if(!createIndex.endsWith(";")) {
             createIndex += ";";
         }
-        return createIndex;
+        return escapeKeyword(createIndex);
     }
 
-    private String translateInsertValues(String insertSql) {
-        insertSql = S.removeDuplicateBlank(insertSql).trim().replace("`", "");
+    protected String escapeKeyword(String input) {
+        return input.replace("`", "");
+    }
+
+    protected List<String> translateInsertValues(String insertSql) {
+        insertSql = S.removeDuplicateBlank(insertSql).trim();
         String prefix = S.substringBefore(insertSql, "VALUES");
-        StringBuilder sb = new StringBuilder(prefix).append("VALUES");
-        String cols = S.substringBetween(prefix, "(", ")");
+        StringBuilder sb = new StringBuilder(escapeKeyword(prefix)).append("VALUES");
+        String cols = S.substringBetween(prefix, "(", ")").replace("`", "");
         String[] columns = S.split(cols, ",");
 
-        String table = S.substringBetween(prefix, " INTO ", "(").trim();
-        Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
+        String table = S.substringBetween(prefix, " INTO ", "(").trim().replace("`", "");
 
+        Map<String, String> col2TypeMap = table2ColumnTypeMap.get(table);
+        if(col2TypeMap == null) {
+            throw new BusinessException(table +" 无缓存信息！");
+        }
         String suffix = S.substringAfter(insertSql, "VALUES");
         while (S.contains(suffix, "(")) {
             suffix = S.substringAfter(suffix, "(");
@@ -197,7 +219,7 @@ public abstract class BaseTranslator {
                 sb.append(";");
             }
         }
-        return sb.toString();
+        return Collections.singletonList(sb.toString());
     }
 
     protected Object translateValue(String colDefine, String value) {
@@ -205,11 +227,11 @@ public abstract class BaseTranslator {
     }
 
     protected String buildColumnCommentSql(String table, String colName, String comment) {
-        return "comment on column "+ table +"."+colName+" is '"+comment+"';";
+        return "comment on column "+ table +"."+escapeKeyword(colName)+" is '"+comment+"';";
     }
 
     protected String buildTableCommentSql(String table, String comment) {
-        return "comment on table "+ table +" is '"+comment+"';";
+        return "comment on table "+ escapeKeyword(table) +" is '"+comment+"';";
     }
 
     private String extractCommentLabel(String comment) {

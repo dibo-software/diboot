@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0-jdk8</version>
     </parent>
 
     <artifactId>diboot-core-spring-boot-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0-jdk8</version>
     <packaging>jar</packaging>
     <description>diboot core starter project</description>
 
@@ -26,6 +26,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>

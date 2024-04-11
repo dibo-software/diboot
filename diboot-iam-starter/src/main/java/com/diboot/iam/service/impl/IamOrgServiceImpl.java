@@ -101,6 +101,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
             String parentIds = parentOrg.getParentIdsPath() == null ? rootOrgId : S.joinWith(Cons.SEPARATOR_COMMA, parentOrg.getParentIdsPath(), rootOrgId);
             select.likeRight(IamOrg::getParentIdsPath, parentIds);
         }
+        select.orderByAsc(IamOrg::getSortId);
         return getValuesOfField(select, IamOrg::getId);
     }
 
@@ -147,7 +148,7 @@ public class IamOrgServiceImpl extends BaseIamServiceImpl<IamOrgMapper, IamOrg> 
     @Override
     public List<String> getOrgIdsByManagerId(String managerId) {
         LambdaQueryWrapper<IamOrg> queryWrapper = Wrappers.<IamOrg>lambdaQuery()
-                .eq(IamOrg::getManagerId, managerId);
+                .eq(IamOrg::getManagerId, managerId).orderByAsc(IamOrg::getSortId);
         return getValuesOfField(queryWrapper, IamOrg::getId);
     }
 

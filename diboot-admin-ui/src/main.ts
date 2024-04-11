@@ -14,6 +14,9 @@ import directives from './directives'
 import i18n from './i18n'
 import { initFunction } from './utils/initFunction'
 
+import { initFunction } from './utils/initFunction'
+
+
 const app = createApp(AppView)
 app.use(router)
 app.use(pinia)

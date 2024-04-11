@@ -91,6 +91,10 @@ public class IamUser extends BaseLoginUser {
     @TableField()
     private String status;
 
+    // 排序号
+    @TableField()
+    private Long sortId;
+
     // 头像
     @TableField()
     private String avatarUrl;

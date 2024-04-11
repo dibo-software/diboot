@@ -39,23 +39,26 @@ interface TableConfig {
   stripe: boolean
   columns: TableColumn[]
 }
+
 // 表列
-const columns = () => {
-  const list = _.cloneDeep(props.columns)
-  const cacheList = (getCache<TableConfig>(tableConfigKey) ?? { columns: [] }).columns
-  for (let i = 0; i < list?.length; i++) {
-    const tableColumn = list[i]
-    const find = cacheList.find(e => e.prop === tableColumn.prop)
-    if (find) list[i] = find
+const getTableConfig = () => {
+  const columns = _.cloneDeep(props.columns)
+  const tableConfig = getCache<TableConfig>(tableConfigKey, { border: false, stripe: true, columns: list })
+  if (tableConfig.columns !== columns) {
+    for (let i = 0; i < columns?.length; i++) {
+      const column = tableConfig.columns.find(e => e.prop === columns[i].prop)
+      if (column) columns[i] = column
+    }
+    tableConfig.columns = columns
   }
-  return list
+  return tableConfig
 }
 const visible = ref<boolean>()
 const tableConfigKey = 'table-config-' + props.model
-const config = ref<TableConfig>(getCache(tableConfigKey, { border: false, stripe: true, columns: columns() }))
+const config = ref<TableConfig>(getTableConfig())
 const resetTableConfig = () => {
   localStorage.removeItem(tableConfigKey)
-  config.value = { border: false, stripe: true, columns: columns() }
+  config.value = { border: false, stripe: true, columns: _.cloneDeep(props.columns) }
 }
 const saveColumnChange = () => {
   visible.value = false
@@ -91,7 +94,7 @@ const onSelectionChange = (rows: Array<Record<string, unknown>>) => {
           ({
             value: item[props.primaryKey],
             label: item[dataLabel as keyof typeof item]
-          } as LabelValue)
+          }) as LabelValue
       )
   )
   selectedRows.value = allSelectedRows

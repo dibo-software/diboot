@@ -7,13 +7,16 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0-jdk8</version>
     </parent>
 
     <artifactId>diboot-iam-spring-boot-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0-jdk8</version>
     <packaging>jar</packaging>
     <description>diboot IAM project</description>
+    <properties>
+        <shiro.version>1.13.0</shiro.version>
+    </properties>
 
     <dependencies>
         <!-- 依赖core -->
@@ -21,6 +24,7 @@
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core-spring-boot-starter</artifactId>
             <version>${diboot.version}</version>
+
         </dependency>
         <!-- 依赖shiro -->
         <dependency>
@@ -55,7 +59,30 @@
         </dependency>
 
     </dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <resources>
             <resource>

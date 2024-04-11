@@ -109,5 +109,4 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
             log.error("处理异步请求异常", e);
         }
     }
-
 }

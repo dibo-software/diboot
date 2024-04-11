@@ -44,7 +44,7 @@ public class IamLoginTraceServiceImpl extends BaseIamServiceImpl<IamLoginTraceMa
                 .select(IamLoginTrace::getId)
                 .eq(IamLoginTrace::getUserType, userType)
                 .eq(IamLoginTrace::getUserId, userId)
-                .eq(IamLoginTrace::isSuccess, true)
+                .eq(IamLoginTrace::getIsSuccess, true)
                 .orderByDesc(IamLoginTrace::getId);
         IamLoginTrace latestTrace = getSingleEntity(queryWrapper);
         if(latestTrace != null) {
