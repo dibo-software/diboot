@@ -82,7 +82,11 @@ const rules: FormRules = {
     message: '请输入正确的邮箱地址',
     trigger: ['blur', 'change']
   },
-  mobilePhone: { pattern: /^1[3-9]\d{9}$|^0\d{2,3}-\d{7,8}$|^(\+[1-9]{1}[0-9]{3,14})?([0-9]{9,14})$/, message: '请输入正确的手机号', trigger: ['blur', 'change'] }
+  mobilePhone: {
+    pattern: /^1[3-9]\d{9}$|^0\d{2,3}-\d{7,8}$|^(\+[1-9]{1}[0-9]{3,14})?([0-9]{9,14})$/,
+    message: '请输入正确的手机号',
+    trigger: ['blur', 'change']
+  }
 }
 </script>
 <template>
