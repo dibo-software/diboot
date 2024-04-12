@@ -19,8 +19,8 @@
 package org.apache.shiro.subject;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

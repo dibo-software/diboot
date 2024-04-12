@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, www.dibo.ltd (service@dibo.ltd).
+ * Copyright (c) 2015-2029, www.dibo.ltd (service@dibo.ltd).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,16 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.service;
+package com.diboot.core.converter;
 
-import com.diboot.core.service.BaseService;
+import com.diboot.core.converter.annotation.CollectThisConvertor;
+import org.springframework.core.convert.converter.Converter;
 
 /**
-* 自定义BaseService接口
-* @author mazc@dibo.ltd
-* @version 2.0
-* @date 2019-12-17
-*/
-public interface BaseIamService<T> extends BaseService<T> {
+ * Integer - Boolean 转换器
+ *
+ * @author JerryMa
+ * @version v3.3.0
+ * @date 2024/2/28
+ * Copyright © diboot.com
+ */
+@CollectThisConvertor
+public class Integer2BooleanConverter implements Converter<Integer, Boolean> {
+
+    @Override
+    public Boolean convert(Integer source) {
+        return source > 0;
+    }
 
 }

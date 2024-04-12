@@ -149,12 +149,12 @@ export default [
     url: `${baseUrl}/check-code-duplicate`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       const id = query.id
       const isExistence = tree2List(dbDataList)
         .filter(item => item.id !== id)
         .some(item => item.resourceCode === query.code)
       return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
     }
-  }
+  } as MockMethod
 ] as MockMethod[]

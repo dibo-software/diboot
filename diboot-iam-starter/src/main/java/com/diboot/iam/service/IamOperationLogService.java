@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.entity.IamOperationLog;
 
 /**
@@ -23,6 +24,6 @@ import com.diboot.iam.entity.IamOperationLog;
  * @version v2.1.2
  * @date 2020/09/21
  */
-public interface IamOperationLogService extends BaseIamService<IamOperationLog> {
+public interface IamOperationLogService extends BaseService<IamOperationLog> {
 
 }

@@ -1,12 +1,11 @@
 <script setup lang="ts" name="Dashboard">
 import type { EChartsOption } from 'echarts'
-import { StarFilled } from '@element-plus/icons-vue'
 import logoSrc from '@/assets/logo.png'
 
-const tags: Array<{ label: string; type: '' | 'success' | 'info' | 'warning' | 'danger' }> = [
+const tags: Array<{ label: string; type?: 'success' | 'info' | 'warning' | 'danger' }> = [
   {
     label: '低代码',
-    type: ''
+    type: void 0
   },
   {
     label: '代码生成器',

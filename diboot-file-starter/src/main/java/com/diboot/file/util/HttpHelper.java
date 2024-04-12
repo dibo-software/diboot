@@ -21,17 +21,18 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -347,7 +348,7 @@ public class HttpHelper {
             throw new BusinessException(Status.FAIL_VALIDATION, "未指定文件名！");
         }
         // 解析上传文件
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        boolean isMultipart = request.getContentType() != null && request.getContentType().contains("multipart");
         if(!isMultipart){
             throw new BusinessException(Status.FAIL_VALIDATION, "无有效的上传文件！");
         }

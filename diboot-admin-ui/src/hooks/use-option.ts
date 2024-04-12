@@ -22,11 +22,6 @@ export interface RelatedData {
   lazyChild?: boolean
   // 附加条件
   conditions?: Array<ConditionItem>
-  /**
-   * 附加条件
-   * @Deprecated 3.3移除，使用 conditions?: Array<ConditionItem> 代替
-   */
-  condition?: Record<string, boolean | string | number | (string | number)[] | null | undefined>
 }
 
 /**

@@ -18,6 +18,7 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.entity.IamUserPosition;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class IamUserPositionServiceImpl extends BaseIamServiceImpl<IamUserPositionMapper, IamUserPosition> implements IamUserPositionService {
+public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionMapper, IamUserPosition> implements IamUserPositionService {
 
     @Override
     public List<IamUserPosition> getUserPositionListByUser(String userType, String userId) {

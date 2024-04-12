@@ -21,7 +21,7 @@ const arrList: any[][] = [
 
 const dataList = initOrgList(arrList)
 
-const crud = crudTemplate({
+const crud = crudTemplate<OrgModel>({
   baseApi: '/iam/org',
   dataList,
   keywordsKeys: ['name', 'code'],
@@ -33,7 +33,7 @@ const mockMethods: MockMethod[] = [
     url: `${baseUrl}/tree`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: any) => {
+    response: () => {
       const { deleteDataIds } = crud
       const validList = dataList.filter((item: OrgModel) => {
         if (!deleteDataIds || deleteDataIds.length === 0) {
@@ -52,12 +52,12 @@ const mockMethods: MockMethod[] = [
     url: `${crud.baseUrl}/check-code-duplicate`,
     timeout: Random.natural(50, 300),
     method: 'get',
-    response: ({ query }: ApiRequest) => {
+    response: (that: unknown, { query }: ApiRequest) => {
       const id = query.id
       const isExistence = dataList.filter(item => item.id !== id).some(item => item.code === query.code)
       return isExistence ? JsonResult.FAIL_VALIDATION('该编码已存在') : JsonResult.OK()
     }
-  }
+  } as MockMethod
 ]
 mockMethods.push(...Object.values(crud.api))
 

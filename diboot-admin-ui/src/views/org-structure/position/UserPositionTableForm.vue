@@ -60,7 +60,7 @@ const clearDataList = () => {
 // 表单校验
 const formRef = ref<FormInstance>()
 const validate = () => {
-  if (!formRef) return
+  if (!formRef.value) return
   return new Promise((resolve, reject) => {
     formRef.value?.validate((valid, fields) => {
       if (valid) {

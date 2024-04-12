@@ -32,12 +32,6 @@ public class FileProperties {
      */
     private String storageDirectory;
 
-    /**
-     * 最大上传大小（默认10M），推荐用spring.servlet.multipart.max-request-size
-     */
-    @Deprecated
-    private Long maxUploadSize = 10 * 1024 * 1024L;
-
     private OSS oss;
 
     @Getter

@@ -7,13 +7,16 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
     </parent>
 
     <artifactId>diboot-iam-spring-boot-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
     <packaging>jar</packaging>
     <description>diboot IAM project</description>
+    <properties>
+        <shiro.version>2.0.0</shiro.version>
+    </properties>
 
     <dependencies>
         <!-- 依赖core -->
@@ -21,12 +24,63 @@
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core-spring-boot-starter</artifactId>
             <version>${diboot.version}</version>
+
         </dependency>
         <!-- 依赖shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${shiro.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-web-starter</artifactId>
-            <version>1.13.0</version>
+            <classifier>jakarta</classifier>
+            <version>${shiro.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring-boot-starter</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${shiro.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <classifier>jakarta</classifier>
+            <version>${shiro.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -54,8 +108,37 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.6.4</version>
+        </dependency>
 
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <resources>
             <resource>
@@ -74,9 +157,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.0</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>17</source>
+                    <target>17</target>
+                    <release>17</release>
                 </configuration>
             </plugin>
         </plugins>

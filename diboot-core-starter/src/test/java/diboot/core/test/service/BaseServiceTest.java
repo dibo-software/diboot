@@ -426,6 +426,7 @@ public class BaseServiceTest {
         List<SimpleDictionaryVO> simpleVOList = dictionaryService.getViewObjectList(queryWrapper, null, SimpleDictionaryVO.class);
         Assert.assertTrue(simpleVOList.size() == 1);
         Assert.assertTrue(simpleVOList.get(0).getChildren().size() >= 2);
+        Assert.assertEquals(simpleVOList.get(0).getChildren().size(), simpleVOList.get(0).getChildrenItemNames().size());
     }
 
     /**
@@ -589,9 +590,9 @@ public class BaseServiceTest {
     @Test
     public void testGetVoListByChainQuery() {
         // 测试 QueryChainWrapper 与 WrapperHelper.optimizeSelect 方法联动
-        testGetVoListByChainQuery(dictionaryService.query().eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "GENDER"));
+        testGetVoListByChainQuery(new QueryWrapper<Dictionary>().eq("parent_id", Cons.ID_PREVENT_NULL).eq("type", "GENDER"));
         // 测试 LambdaQueryChainWrapper 与 WrapperHelper.optimizeSelect 方法联动
-        testGetVoListByChainQuery(dictionaryService.lambdaQuery().eq(Dictionary::getParentId, "0").eq(Dictionary::getType, "GENDER"));
+        testGetVoListByChainQuery(new LambdaQueryWrapper<Dictionary>().eq(Dictionary::getParentId, "0").eq(Dictionary::getType, "GENDER"));
     }
 
     private void testGetVoListByChainQuery(Wrapper<?> query) {
@@ -604,17 +605,11 @@ public class BaseServiceTest {
 
     @Test
     public void test() {
-        List<RegionVO> tree = regionService.getViewObjectTree("0", RegionVO.class, Region::getParentIdsPath, null);
+        List<RegionVO> tree = regionService.getViewObjectTree("1", RegionVO.class, Region::getParentIdsPath, null);
         Assert.assertTrue(tree != null);
         for (RegionVO vo : tree) {
-            if (vo.getId().equals("800")) {
-                Assert.assertTrue(vo.getChildren().size() > 1);
-            }
-        }
-        tree = regionService.getViewObjectTree("800", RegionVO.class, Region::getParentIdsPath, null );
-        for (RegionVO vo : tree) {
-            if(vo.getId().equals("839")) {
-                Assert.assertTrue(vo.getChildren().size() > 1);
+            if (vo.getId().equals("2")) {
+                Assert.assertTrue(vo.getChildren().size() > 8);
             }
         }
     }

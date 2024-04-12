@@ -17,12 +17,10 @@ package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.diboot.core.exception.InvalidUsageException;
-import com.diboot.core.util.sql.DMTranslator;
-import com.diboot.core.util.sql.OracleTranslator;
-import com.diboot.core.util.sql.PostgresSqlTranslator;
-import com.diboot.core.util.sql.SqlServerTranslator;
+import com.diboot.core.util.sql.*;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,8 +99,12 @@ public class SqlFileInitializer {
             return new DMTranslator().translate(sqlStatements);
         }
         // Oracle
-        else if(DbType.ORACLE.getDb().equalsIgnoreCase(dbType) || DbType.ORACLE_12C.getDb().equalsIgnoreCase(dbType)) {
+        else if(dbType.startsWith(DbType.ORACLE.getDb())) {
             return new OracleTranslator().translate(sqlStatements);
+        }
+        // Sqlite
+        else if(DbType.SQLITE.getDb().equals(dbType)) {
+            return new SqliteTranslator().translate(sqlStatements);
         }
         else {
             throw new InvalidUsageException("暂不支持 {} 数据库自动初始化", dbType);
@@ -221,20 +223,18 @@ public class SqlFileInitializer {
             log.warn("无法获取SqlSessionFactory实例，SQL将不被执行。");
             return false;
         }
-        SqlSession session = sqlSessionFactory.openSession();
+        SqlSession session = SqlSessionUtils.getSqlSession(sqlSessionFactory);
         Connection conn = session.getConnection();
         try{
-            conn.setAutoCommit(false);
             for(String sqlStatement : sqlStatementList){
                 PreparedStatement stmt = conn.prepareStatement(sqlStatement);
                 stmt.execute();
                 stmt.close();
             }
-            conn.commit();
             return true;
         }
         catch (Exception e){
-            log.error("SQL执行异常，请检查：", e);
+            log.error("SQL执行异常，请检查：{}", sqlStatementList, e);
             if(conn != null) {
                 conn.rollback();
             }

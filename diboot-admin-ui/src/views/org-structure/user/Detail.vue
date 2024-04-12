@@ -51,6 +51,9 @@ defineExpose({
           {{ item.name }}
         </el-tag>
       </el-descriptions-item>
+      <el-descriptions-item label="排序号">
+        {{ model.sortId }}
+      </el-descriptions-item>
       <el-descriptions-item label="创建时间">
         {{ model.createTime }}
       </el-descriptions-item>

@@ -16,6 +16,7 @@
 package com.diboot.iam.service;
 
 
+import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
@@ -31,7 +32,7 @@ import java.util.List;
  * @date 2020-02-27
  * Copyright © diboot.com
  */
-public interface IamResourceService extends BaseIamService<IamResource> {
+public interface IamResourceService extends BaseService<IamResource> {
 
     /***
      * 深度创建资源权限及其所有子列表

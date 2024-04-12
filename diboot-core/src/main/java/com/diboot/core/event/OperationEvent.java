@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationEvent;
  * @date 2023/05/24
  */
 public class OperationEvent extends ApplicationEvent {
+    private static final long serialVersionUID = 8508501973156800727L;
 
     /**
      * 事件类型

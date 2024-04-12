@@ -62,7 +62,12 @@ const goPersonal = () => {
       <!--      </el-dropdown>-->
       <message-bell class="item" />
       <el-dropdown
-        @command="(command: 'small' | 'large' | 'default') => { appStore.globalSize = command; isSmall = command === 'small' }"
+        @command="
+          (command: 'small' | 'large' | 'default') => {
+            appStore.globalSize = command
+            isSmall = command === 'small'
+          }
+        "
       >
         <div class="item">
           <el-icon :size="22">

@@ -69,7 +69,11 @@ const openDetail = (id: string) => {
           </el-col>
           <el-col :md="12" :sm="24">
             <el-form-item label="执行时间">
-              <date-range v-model="dateRangeQuery.startTime" @change="onSearch" />
+              <date-range
+                :model-value="dateRangeQuery.startTime as [string, string]"
+                @update:model-value="dateRangeQuery.startTime = $event as [string, string]"
+                @change="onSearch"
+              />
             </el-form-item>
           </el-col>
           <el-col :md="12" :sm="24" style="margin-left: auto">

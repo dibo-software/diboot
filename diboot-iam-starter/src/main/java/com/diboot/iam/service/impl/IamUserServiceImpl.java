@@ -22,16 +22,14 @@ import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.event.OperationEvent;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamCustomize;
 import com.diboot.iam.dto.IamUserFormDTO;
-import com.diboot.iam.entity.IamAccount;
-import com.diboot.iam.entity.IamOrg;
-import com.diboot.iam.entity.IamUser;
-import com.diboot.iam.entity.IamUserPosition;
+import com.diboot.iam.entity.*;
 import com.diboot.iam.mapper.IamUserMapper;
 import com.diboot.iam.service.*;
 import com.diboot.iam.util.IamSecurityUtils;
@@ -54,7 +52,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("JavaDoc")
 @Service
 @Slf4j
-public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUser> implements IamUserService {
+public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> implements IamUserService {
 
     @Autowired
     private IamUserRoleService iamUserRoleService;
@@ -64,6 +62,9 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Autowired
     private IamOrgService iamOrgService;
+
+    @Autowired
+    private IamRoleService iamRoleService;
 
     @Autowired
     private IamUserPositionService iamUserPositionService;
@@ -227,6 +228,31 @@ public class IamUserServiceImpl extends BaseIamServiceImpl<IamUserMapper, IamUse
 
     @Override
     public List<IamUser> getUsersByRoleIds(List<String> roleIds) {
+        List<String> ids = iamUserRoleService.getUserIdsByRoleIds(roleIds);
+        return getEntityListByIds(ids);
+    }
+
+    @Override
+    public List<IamUser> getUsersByRoleCode(String roleCode) {
+        if (V.isEmpty(roleCode)) {
+            return Collections.emptyList();
+        }
+        return getUsersByRoleCodes(Arrays.asList(roleCode));
+    }
+
+    @Override
+    public List<IamUser> getUsersByRoleCodes(List<String> roleCodes) {
+        if (V.isEmpty(roleCodes)) {
+            return Collections.emptyList();
+        }
+        List<String> roleIds = iamRoleService.getValuesOfField(
+                Wrappers.<IamRole>lambdaQuery().select(IamRole::getId)
+                        .in(IamRole::getCode, roleCodes),
+                IamRole::getId
+        );
+        if (V.isEmpty(roleIds)) {
+            return Collections.emptyList();
+        }
         List<String> ids = iamUserRoleService.getUserIdsByRoleIds(roleIds);
         return getEntityListByIds(ids);
     }

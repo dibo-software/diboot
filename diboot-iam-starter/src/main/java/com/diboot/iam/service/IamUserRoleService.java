@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.service;
 
+import com.diboot.core.service.BaseService;
 import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamRole;
@@ -31,7 +32,7 @@ import java.util.List;
  * @version 2.0
  * @date 2019-12-17
  */
-public interface IamUserRoleService extends BaseIamService<IamUserRole> {
+public interface IamUserRoleService extends BaseService<IamUserRole> {
 
     /**
      * 获取用户所有的全部角色

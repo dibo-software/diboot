@@ -381,9 +381,12 @@ public class S extends StringUtils{
 	 */
 	public static String uncapFirst(String input){
 		if(input != null){
-			return Character.toLowerCase(input.charAt(0)) + input.substring(1);
+			char firstChar = input.charAt(0);
+			if(Character.isUpperCase(firstChar)) {
+				return Character.toLowerCase(firstChar) + input.substring(1);
+			}
 		}
-		return null;
+		return input;
 	}
 
 	/***
@@ -392,9 +395,12 @@ public class S extends StringUtils{
 	 */
 	public static String capFirst(String input){
 		if(input != null){
-			return Character.toUpperCase(input.charAt(0)) + input.substring(1);
+			char firstChar = input.charAt(0);
+			if(Character.isLowerCase(firstChar)) {
+				return Character.toUpperCase(firstChar) + input.substring(1);
+			}
 		}
-		return null;
+		return input;
 	}
 
 	/**

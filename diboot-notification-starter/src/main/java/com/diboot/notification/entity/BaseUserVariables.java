@@ -58,6 +58,6 @@ public class BaseUserVariables implements Serializable {
      * 验证码
      */
     @BindVariable(name = "${验证码}")
-    private String verificationCode;
+    private String code;
 
 }

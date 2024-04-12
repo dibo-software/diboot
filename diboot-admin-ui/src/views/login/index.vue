@@ -2,6 +2,8 @@
 import type { FormInstance } from 'element-plus'
 import useAuthStore from '@/store/auth'
 import JSEncrypt from 'jsencrypt'
+import useSso from '@/hooks/use-sso'
+import auth from '@/utils/auth'
 
 const encryptor = new JSEncrypt()
 encryptor.setPublicKey(`MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzPy1UcwzgRT8dRUpAW0H
@@ -15,7 +17,7 @@ BwIDAQAB`)
 const authStore = useAuthStore()
 const loading = ref(false)
 const formRef = ref<FormInstance>()
-const form = reactive({ username: 'admin', password: '123456', captcha: '', traceId: '' })
+const form = reactive({ username: 'admin', password: '123456', captcha: '', traceId: '', tenantCode: '' })
 const rules = {
   username: { required: true, message: '不能为空', trigger: 'blur' },
   password: { required: true, message: '不能为空', trigger: 'blur' }
@@ -60,10 +62,23 @@ const submitForm = async () => {
   })
 }
 const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
+
+// 单点登录集成
+const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
+  callback: (token: string) => {
+    auth.setToken(token)
+    ElMessage.success('登录成功')
+    redirect()
+  }
+})
+
+onMounted(() => {
+  initSsoParams()
+})
 </script>
 
 <template>
-  <div class="content">
+  <div v-loading="ssoLoading" element-loading-text="登录中..." class="content">
     <div class="form">
       <h1 style="text-align: center">Diboot Admin UI</h1>
       <el-form ref="formRef" :model="form" :rules="rules" size="large">
@@ -111,6 +126,12 @@ const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
         <el-form-item>
           <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">登 录</el-button>
         </el-form-item>
+        <el-form-item v-if="authorizeInfoMap['CAS_SERVER']">
+          <el-button style="width: 100%" type="primary" @click="redirectTo('CAS_SERVER')">CAS 单点登录</el-button>
+        </el-form-item>
+        <el-form-item v-if="authorizeInfoMap['OAuth2']">
+          <el-button style="width: 100%" type="primary" @click="redirectTo('OAuth2')">OAuth2 单点登录</el-button>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -128,31 +149,81 @@ const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
     radial-gradient(closest-side, rgb(143, 173, 210), rgba(235, 105, 78, 0)),
     radial-gradient(closest-side, rgb(129, 199, 211), rgba(243, 11, 164, 0)),
     radial-gradient(closest-side, rgb(137, 196, 148), rgba(254, 234, 131, 0));
-  background-size: 130vmax 130vmax, 80vmax 80vmax, 90vmax 90vmax, 110vmax 110vmax, 90vmax 9vmax;
-  background-position: -80vmax -80vmax, 60vmax - 30vmax, 10vmax 10vmax, -30vmax - 10vmax, 50vmax 50vmax;
+  background-size:
+    130vmax 130vmax,
+    80vmax 80vmax,
+    90vmax 90vmax,
+    110vmax 110vmax,
+    90vmax 9vmax;
+  background-position:
+    -80vmax -80vmax,
+    60vmax - 30vmax,
+    10vmax 10vmax,
+    -30vmax - 10vmax,
+    50vmax 50vmax;
   background-repeat: no-repeat;
   animation: 12s movement linear infinite;
 
   @keyframes movement {
     0%,
     100% {
-      background-size: 130vmax 130vmax, 80vmax 80vmax, 90vmax 90vmax, 110vmax 110vmax, 90vmax 90vmax;
-      background-position: -80vmax - 80vmax, 60vmax -30vmax, 10vmax 10vmax, -30vmax -10vmax, 50vmax 50vmax;
+      background-size:
+        130vmax 130vmax,
+        80vmax 80vmax,
+        90vmax 90vmax,
+        110vmax 110vmax,
+        90vmax 90vmax;
+      background-position:
+        -80vmax - 80vmax,
+        60vmax -30vmax,
+        10vmax 10vmax,
+        -30vmax -10vmax,
+        50vmax 50vmax;
     }
 
     25% {
-      background-size: 100vmax 100vmax, 90vmax 90vmax, 100vmax 100vmax, 90vmax 90vmax, 60vmax 60vmax;
-      background-position: -60vmax -90vmax, 50vmax -40vmax, 0vmax -20vmax, -40vmax -20vmax, 40vmax 60vmax;
+      background-size:
+        100vmax 100vmax,
+        90vmax 90vmax,
+        100vmax 100vmax,
+        90vmax 90vmax,
+        60vmax 60vmax;
+      background-position:
+        -60vmax -90vmax,
+        50vmax -40vmax,
+        0vmax -20vmax,
+        -40vmax -20vmax,
+        40vmax 60vmax;
     }
 
     50% {
-      background-size: 80vmax 80vmax, 110vmax 110vmax, 80vmax 80vmax, 60vmax 60vmax, 80vmax 80vmax;
-      background-position: -50vmax -70vmax, 40vmax -30vmax, 10vmax 0vmax, 20vmax 10vmax, 30vmax 70vmax;
+      background-size:
+        80vmax 80vmax,
+        110vmax 110vmax,
+        80vmax 80vmax,
+        60vmax 60vmax,
+        80vmax 80vmax;
+      background-position:
+        -50vmax -70vmax,
+        40vmax -30vmax,
+        10vmax 0vmax,
+        20vmax 10vmax,
+        30vmax 70vmax;
     }
 
     75% {
-      background-size: 90vmax 90vmax, 90vmax 90vmax, 100vmax 100vmax, 90vmax 90vmax, 70vmax 70vmax;
-      background-position: -50vmax - 40vmax, 50vmax - 30vmax, 20vmax 0vmax, -10vmax 19vmax, 40vmax 60vmax;
+      background-size:
+        90vmax 90vmax,
+        90vmax 90vmax,
+        100vmax 100vmax,
+        90vmax 90vmax,
+        70vmax 70vmax;
+      background-position:
+        -50vmax - 40vmax,
+        50vmax - 30vmax,
+        20vmax 0vmax,
+        -10vmax 19vmax,
+        40vmax 60vmax;
     }
   }
 

@@ -23,7 +23,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;

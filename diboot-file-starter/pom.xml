@@ -7,11 +7,11 @@
     <parent>
         <artifactId>diboot-root</artifactId>
         <groupId>com.diboot</groupId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
     </parent>
 
     <artifactId>diboot-file-spring-boot-starter</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
     <packaging>jar</packaging>
     <description>diboot file component project</description>
 
@@ -29,12 +29,6 @@
             <version>${diboot.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- 文件上传 -->
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.5</version>
-        </dependency>
         <!-- Excel处理 -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -50,7 +44,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.25.0</version>
+            <version>1.26.1</version>
         </dependency>
 
         <!-- http -->
@@ -108,8 +102,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

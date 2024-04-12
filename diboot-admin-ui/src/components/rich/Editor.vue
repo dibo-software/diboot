@@ -195,5 +195,10 @@ const editorConfig: IEditorConfig = {
       }
     }
   }
+
+  :deep(.w-e-textarea-video-container > :first-child) {
+    max-height: 100%;
+    max-width: 100%;
+  }
 }
 </style>

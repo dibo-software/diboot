@@ -93,9 +93,14 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
         } else if (route.meta?.url) {
           const url = route.meta?.url
           if (route.meta?.iframe) {
-            // iframe
+            /// iframe
+            const urlInst = new URL(url)
             route.component = renderComponent((route.name ?? '').toString(), () =>
-              h('iframe', { src: url, style: { border: 0, width: '100%', height: `calc(100% - 4px)` } })
+              h('iframe', {
+                src: url,
+                id: `iframe_${urlInst.origin.replace('://', '_').replace(':', '_').replace(/\./g, '_')}`,
+                style: { border: 0, width: '100%', height: `calc(100% - 4px)` }
+              })
             )
           } else {
             // 外部链接（打开新窗口；阻止路由）

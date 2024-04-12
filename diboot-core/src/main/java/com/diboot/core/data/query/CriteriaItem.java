@@ -42,6 +42,12 @@ public class CriteriaItem extends BaseCriteria {
     public CriteriaItem() {
     }
 
+    public CriteriaItem(BaseCriteria baseCriteria) {
+        this.field = baseCriteria.field;
+        this.comparison = baseCriteria.comparison;
+        this.value = baseCriteria.value;
+    }
+
     public CriteriaItem(String field, Object value) {
         super(field, value);
     }

@@ -18,7 +18,9 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.event.OperationEvent;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
@@ -26,10 +28,7 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.auth.IamTenantPermission;
 import com.diboot.iam.config.Cons;
-import com.diboot.iam.entity.BaseLoginUser;
-import com.diboot.iam.entity.IamResource;
-import com.diboot.iam.entity.IamRole;
-import com.diboot.iam.entity.IamRoleResource;
+import com.diboot.iam.entity.*;
 import com.diboot.iam.entity.route.RouteMeta;
 import com.diboot.iam.entity.route.RouteRecord;
 import com.diboot.iam.mapper.IamRoleResourceMapper;
@@ -44,6 +43,7 @@ import com.diboot.iam.vo.PositionDataScope;
 import com.diboot.iam.vo.ResourceRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResourceMapper, IamRoleResource> implements IamRoleResourceService {
+public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceMapper, IamRoleResource> implements IamRoleResourceService {
 
     @Autowired
     private IamRoleService iamRoleService;
@@ -72,6 +72,9 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
 
     @Autowired
     private IamUserRoleService iamUserRoleService;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public List<RouteRecord> getRouteRecords() {
@@ -207,6 +210,8 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         }
         boolean success = createEntities(roleResourceList);
         IamSecurityUtils.clearAllAuthorizationCache();
+        // 对外发布角色资源变更事件
+        applicationEventPublisher.publishEvent(new OperationEvent(IamRoleResource.class.getSimpleName(), roleId));
         return success;
     }
 
@@ -231,6 +236,20 @@ public class IamRoleResourceServiceImpl extends BaseIamServiceImpl<IamRoleResour
         }
         boolean success = createEntities(roleResourceList);
         IamSecurityUtils.clearAllAuthorizationCache();
+        // 对外发布角色资源变更事件
+        applicationEventPublisher.publishEvent(new OperationEvent(IamRoleResource.class.getSimpleName(), roleId));
+        return success;
+    }
+
+    @Override
+    public boolean deleteRoleResourceRelations(String roleId) {
+        if (roleId == null) {
+            return false;
+        }
+        boolean success = deleteEntities(IamRoleResource::getRoleId, roleId);
+        IamSecurityUtils.clearAllAuthorizationCache();
+        // 对外发布角色资源变更事件
+        applicationEventPublisher.publishEvent(new OperationEvent(IamRoleResource.class.getSimpleName(), roleId));
         return success;
     }
 

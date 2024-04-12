@@ -30,4 +30,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "diboot.notification")
 public class NotificationProperties {
 
+    private Sms sms;
+
+    /**
+     * 短信配置
+     */
+    @Getter@Setter
+    public static class Sms {
+
+        /**
+         * keyId
+         */
+        private String accessKeyId;
+
+        /**
+         * secret
+         */
+        private String accessKeySecret;
+        /**
+         * 服务地址
+         */
+        private String endpoint;
+    }
+
 }

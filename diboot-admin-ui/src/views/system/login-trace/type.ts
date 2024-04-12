@@ -12,7 +12,7 @@ export interface LoginTrace {
   // 用户名
   authAccount: string
   // 是否成功
-  success: boolean
+  isSuccess: boolean
   // IP地址
   ipAddress: string
   // 客户端信息

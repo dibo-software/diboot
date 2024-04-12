@@ -15,7 +15,7 @@
  */
 package com.diboot.core.entity;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 /**

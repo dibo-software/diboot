@@ -16,6 +16,7 @@
 package diboot.core.test.util;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.config.Cons;
@@ -32,6 +33,7 @@ import diboot.core.test.binder.entity.User;
 import diboot.core.test.binder.entity.UserImportModel;
 import diboot.core.test.binder.service.RegionService;
 import diboot.core.test.binder.vo.RegionVO;
+import diboot.core.test.binder.vo.SimpleDictionaryVO;
 import diboot.core.test.binder.vo.UserVO;
 import diboot.core.test.config.SpringMvcConfig;
 import org.junit.Assert;
@@ -331,7 +333,7 @@ public class BeanUtilsTest {
      */
     @Test
     public void testBuildTreePerformance() {
-        List<RegionVO> regions = regionService.getViewObjectList(null, null, RegionVO.class);
+        List<RegionVO> regions = regionService.getViewObjectList(Wrappers.query(), null, RegionVO.class);
         long begin = System.currentTimeMillis();
         // List<RegionVO> topLevel = BeanUtils.buildTree(regions);
         List<RegionVO> topLevel = BeanUtils.buildTree(regions, RegionVO::getId, RegionVO::getParentId, RegionVO::setChildren);
@@ -428,6 +430,14 @@ public class BeanUtilsTest {
         List<TestRegion> testRegions = MapUtils.buildEntityList(entityMapList, TestRegion.class);
         Assert.assertEquals(2, testRegions.size());
         Assert.assertEquals(2, testRegions.get(0).getChildren().size());
+    }
+
+    @Test
+    public void testBeanConvert() throws Exception {
+        Dictionary dictionary = new Dictionary();
+        dictionary.setId("1");
+        SimpleDictionaryVO vo = BeanUtils.convert(dictionary, SimpleDictionaryVO.class);
+        Assert.assertEquals(vo.getId(), "1");
     }
 
 }

@@ -266,7 +266,7 @@ const vDrag: Directive<HTMLElement> = {
 
     .el-sub-menu.is-active,
     .el-menu-item.is-active {
-      background-color: #3a4979 !important;
+      background-color: var(--menu-active-background-color) !important;
     }
 
     // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）

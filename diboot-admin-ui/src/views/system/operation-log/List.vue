@@ -10,7 +10,7 @@ getList()
 
 const tagMap = {
   GET: 'success',
-  POST: '',
+  POST: void 0,
   PUT: 'warning',
   DELETE: 'danger',
   PATCH: 'info'
@@ -24,8 +24,8 @@ const openDetail = (id: string) => {
   detailRef.value?.open(id)
 }
 
-const getTagType = (val: string, map: Record<string, string>) => {
-  return map[val as keyof typeof map]
+const getTagType = (val: string, map: Record<string, unknown>) => {
+  return map[val as keyof typeof map] as 'success' | 'warning' | 'info' | 'primary' | 'danger' | undefined
 }
 </script>
 

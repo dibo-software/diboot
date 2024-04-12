@@ -355,6 +355,19 @@ public class QueryCondition implements Serializable {
     }
 
     /**
+     * 添加 BaseCriteria 简单查询条件
+     * @param criteria
+     * @return
+     */
+    public QueryCondition addCriteria(BaseCriteria criteria) {
+        if(criteriaList == null) {
+            criteriaList = new ArrayList<>();
+        }
+        criteriaList.add(new CriteriaItem(criteria));
+        return this;
+    }
+
+    /**
      * 更新查询条件
      * @param field
      * @return
@@ -405,6 +418,23 @@ public class QueryCondition implements Serializable {
     }
 
     /**
+     * 是否包含某字段的条件
+     * @param field
+     * @return
+     */
+    public boolean containsCriteria(String field) {
+        if(V.isEmpty(this.criteriaList)) {
+            return false;
+        }
+        for(CriteriaItem item : criteriaList) {
+            if(item.getField().equals(field)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 获取查询条件
      * @param field
      * @return
@@ -444,7 +474,7 @@ public class QueryCondition implements Serializable {
                 this.orderItems = S.splitToList(orderByStr, Cons.SEPARATOR_COMMA);
             }
             else {
-                this.orderItems = Arrays.asList(Cons.FieldName.id.name()+":DESC");
+                this.orderItems = Collections.singletonList(Pagination.ORDER_BY_ID_DESC);
             }
         }
         return this;
@@ -568,4 +598,14 @@ public class QueryCondition implements Serializable {
         return query;
     }
 
+    /**
+     * 是否为默认排序
+     * @return
+     */
+    public boolean isDefaultOrder() {
+        if (V.notEmpty(orderItems) && orderItems.size() == 1 && orderItems.get(0).equals(Pagination.ORDER_BY_ID_DESC)) {
+            return true;
+        }
+        return false;
+    }
 }

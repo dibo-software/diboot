@@ -21,7 +21,7 @@ const searchWord = ref('')
 watch(searchWord, val => {
   treeRef.value?.filter(val)
 })
-const filterNode = (value: string, data: Partial<OrgModel>) => !value || data.name?.includes(value)
+const filterNode = (value: string, data: Record<string, any>) => !value || data.name?.includes(value)
 
 const emit = defineEmits<{
   (e: 'clickNode', currentKey?: string): void

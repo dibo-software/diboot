@@ -19,13 +19,14 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.BaseTreeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -39,7 +40,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_iam_org")
-public class IamOrg extends BaseEntity<String> {
+public class IamOrg extends BaseTreeEntity<String> {
 
     private static final long serialVersionUID = 8942911223090443934L;
 
@@ -54,18 +55,6 @@ public class IamOrg extends BaseEntity<String> {
     @JsonIgnore
     @TableField
     private String tenantId;
-
-    /**
-     * 上级ID
-     */
-    @TableField()
-    private String parentId;
-
-    /**
-     * 上级ID路径
-     */
-    @TableField()
-    private String parentIdsPath;
 
     /**
      * 企业ID

@@ -132,10 +132,10 @@ public class JoinConditionManager extends BaseConditionManager {
                     currentSegments = middleTableOnSegments;
                 }
                 if(!expression.isNot()){
-                    currentSegments.add(left + " IN " + expression.getRightItemsList().toString());
+                    currentSegments.add(left + " IN " + expression.getRightExpression().toString());
                 }
                 else{
-                    currentSegments.add(left + " NOT IN " + expression.getRightItemsList().toString());
+                    currentSegments.add(left + " NOT IN " + expression.getRightExpression().toString());
                 }
             }
             else if(operator instanceof Between){

@@ -23,12 +23,12 @@ import com.diboot.core.util.D;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,6 +81,11 @@ public class Message extends BaseEntity<String> {
      * 附件
      */
     public final static String ATTACHMENTS = "attachments";
+
+    /**
+     * 变量
+     */
+    public final static String VARIABLES = "variables";
 
 
     /**
@@ -273,6 +278,19 @@ public class Message extends BaseEntity<String> {
         }
         String attachments = (String) extDataMap.get(ATTACHMENTS);
         return attachments.split(",");
+    }
+
+    /**
+     * 获取当前消息的变量json
+     *
+     * @return
+     */
+    public String getVariables() {
+        if (V.isEmpty(extDataMap) || V.isEmpty(extDataMap.get(VARIABLES))) {
+            return "";
+        }
+        Object variables =  extDataMap.get(VARIABLES);
+        return JSON.stringify(variables);
     }
 
     /**

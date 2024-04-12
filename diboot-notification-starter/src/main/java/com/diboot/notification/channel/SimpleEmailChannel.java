@@ -29,8 +29,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeUtility;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeUtility;
 import java.util.Date;
 
 /**

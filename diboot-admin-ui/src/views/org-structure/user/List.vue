@@ -5,6 +5,8 @@ import type { UserModel } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 import type { Role } from '@/views/system/role/type'
+import ExcelImport from '@/components/excel/Import.vue'
+import ExcelExport from '@/components/excel/Export.vue'
 
 const baseApi = '/iam/user'
 
@@ -40,7 +42,7 @@ const openDetail = (id: string) => {
 
 const formRef = ref()
 const openForm = (id?: string) => {
-  formRef.value?.open(id, props.orgId)
+  formRef.value?.open(id)
 }
 
 const loadListByOrgId = (orgId: string) => {
@@ -88,16 +90,11 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('�
         :export-url="`${baseApi}/excel/export`"
         :table-head-url="`${baseApi}/excel/export-table-head`"
       />
-      <excel-import
-        v-has-permission="'import'"
-        :excel-base-api="`${baseApi}/excel`"
-        :attach="() => ({ orgId })"
-        @complete="onSearch"
-      />
+      <excel-import :excel-base-api="`${baseApi}/excel`" :attach="() => ({ orgId })" @complete="onSearch" />
       <el-space>
         <el-input v-show="!searchState" v-model="queryParam.realname" clearable placeholder="姓名" @change="onSearch" />
         <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
+        <el-button title="重置查询条件" @click="resetFilter">重置</el-button>
         <el-button
           :icon="searchState ? ArrowUp : ArrowDown"
           :title="searchState ? '收起' : '展开'"
@@ -145,7 +142,8 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('�
           <span>{{ row.accountStatusLabel || '-' }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="updateTime" label="更新时间" width="175" />
+      <el-table-column prop="sortId" label="排序号" width="90" />
+      <el-table-column prop="updateTime" label="更新时间" width="150" />
       <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>

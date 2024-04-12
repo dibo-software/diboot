@@ -16,11 +16,9 @@
 package com.diboot.core.util;
 
 import com.diboot.core.config.Cons;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -28,6 +26,7 @@ import java.util.Map;
 
 /**
  * HTTP请求相关工具类
+ *
  * @author mazc@dibo.ltd
  * @version v2.0
  * @date 2020/02/18
@@ -41,38 +40,37 @@ public class HttpHelper {
      */
     public static Map<String, Object> buildParamsMap(HttpServletRequest request) {
         Enumeration paramNames = request.getParameterNames();
-        if(!paramNames.hasMoreElements()){
+        if (!paramNames.hasMoreElements()) {
             return Collections.emptyMap();
         }
         Map<String, Object> result = new HashMap<>();
-        try{
-            while (paramNames.hasMoreElements()){
+        try {
+            while (paramNames.hasMoreElements()) {
                 String paramName = (String) paramNames.nextElement();
                 String[] values = request.getParameterValues(paramName);
-                if(V.notEmpty(values)){
-                    if(values.length == 1){
-                        if(V.notEmpty(values[0])){
+                if (V.notEmpty(values)) {
+                    if (values.length == 1) {
+                        if (V.notEmpty(values[0])) {
                             String paramValue = java.net.URLDecoder.decode(values[0], com.diboot.core.config.Cons.CHARSET_UTF8);
                             result.put(paramName, paramValue);
                         }
-                    }
-                    else{
+                    } else {
                         String[] valueArray = new String[values.length];
-                        for(int i=0; i<values.length; i++){
+                        for (int i = 0; i < values.length; i++) {
                             valueArray[i] = java.net.URLDecoder.decode(values[i], com.diboot.core.config.Cons.CHARSET_UTF8);
                         }
                         result.put(paramName, valueArray);
                     }
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.warn("构建请求参数异常", e);
         }
         return result;
     }
 
     private static final String USER_AGENT_FLAG = "user-agent";
+
     /***
      * 获取user-agent
      * @param request
@@ -84,13 +82,14 @@ public class HttpHelper {
 
     private static final String[] HEADER_IP_KEYWORDS = {"X-Forwarded-For", "Proxy-Client-IP",
             "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "X-Real-IP"};
+
     /***
      * 获取客户ip地址
      * @param request
      * @return
      */
     public static String getRequestIp(HttpServletRequest request) {
-        for(String header : HEADER_IP_KEYWORDS){
+        for (String header : HEADER_IP_KEYWORDS) {
             String ipAddresses = request.getHeader(header);
             if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
                 continue;
@@ -101,26 +100,4 @@ public class HttpHelper {
         }
         return request.getRemoteAddr();
     }
-
-    /**
-     * 构建TrustManager
-     * @return
-     */
-    private static TrustManager[] buildTrustManagers() {
-        return new TrustManager[]{
-            new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
-                }
-                @Override
-                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
-                }
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new java.security.cert.X509Certificate[]{};
-                }
-            }
-        };
-    }
-
 }

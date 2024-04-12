@@ -34,7 +34,7 @@ const visible = ref(false)
 
 const oldUsername = ref<string>()
 
-const switchType = (type: boolean | number | string) => {
+const switchType = (type?: boolean | number | string) => {
   if (type) {
     model.value.username = oldUsername.value
     return
@@ -54,10 +54,9 @@ const loadAccountInfo = async (type: string, id?: string) => {
 }
 
 defineExpose({
-  open: async (id?: string, orgId?: string) => {
+  open: async (id?: string) => {
     title.value = id ? '更新用户信息' : '新建用户'
     visible.value = true
-    model.value.orgId = orgId
     await loadData(id)
     if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
     model.value.username = await loadAccountInfo('authAccount', id)
@@ -113,7 +112,6 @@ const rules: FormRules = {
   ],
   gender: { required: true, message: '不能为空', whitespace: true },
   status: { required: true, message: '不能为空', whitespace: true },
-  roleIdList: { type: 'array', required: true, message: '不能为空', trigger: 'change' },
   email: {
     type: 'email',
     message: '请输入正确的邮箱地址',
@@ -148,37 +146,7 @@ const rules: FormRules = {
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row v-if="model.isSysAccount" :gutter="18">
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="username" label="用户名">
-            <el-input v-model="model.username" placeholder="请输入用户名" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item
-            prop="password"
-            label="密码"
-            :rules="model.hidePassword ? [] : { required: true, message: '不能为空', whitespace: true }"
-            @click="model.hidePassword = false"
-          >
-            <el-button v-if="model.hidePassword">修改密码</el-button>
-            <el-input v-else v-model="model.password" placeholder="请输入密码" />
-          </el-form-item>
-        </el-col>
-      </el-row>
       <el-row :gutter="18">
-        <el-col v-if="model.isSysAccount" :md="12" :sm="24">
-          <el-form-item prop="accountStatus" label="账号状态">
-            <el-select v-model="model.accountStatus" placeholder="请选择账号状态">
-              <el-option
-                v-for="item in relatedData.accountStatusOptions"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="realname" label="姓名">
             <el-input v-model="model.realname" placeholder="请输入姓名" />
@@ -189,43 +157,32 @@ const rules: FormRules = {
             <el-input v-model="model.userNum" placeholder="请输入员工编号" />
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-row v-if="model.isSysAccount" :gutter="18">
         <el-col :md="12" :sm="24">
-          <el-form-item prop="gender" label="性别">
-            <el-select v-model="model.gender" placeholder="请选择性别">
-              <el-option
-                v-for="item in relatedData.genderOptions"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
+          <el-form-item prop="username" label="用户名">
+            <el-input v-model="model.username" placeholder="请输入用户名" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="birthday" label="生日">
-            <el-date-picker v-model="model.birthday" value-format="YYYY-MM-DD" type="date" placeholder="请选择生日" />
+          <el-form-item
+            prop="password"
+            label="密码"
+            :rules="
+              model.hidePassword && model.id && model.isSysAccount
+                ? []
+                : { required: true, message: '不能为空', whitespace: true }
+            "
+            @click="model.hidePassword = false"
+          >
+            <el-button v-if="model.hidePassword && model.id && model.isSysAccount">修改密码</el-button>
+            <el-input v-else v-model="model.password" placeholder="请输入密码" />
           </el-form-item>
         </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="mobilePhone" label="电话">
-            <el-input v-model="model.mobilePhone" placeholder="请输入电话" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="email" label="邮箱">
-            <el-input v-model="model.email" placeholder="请输入邮箱" />
-          </el-form-item>
-        </el-col>
-        <el-col :md="12" :sm="24">
-          <el-form-item prop="status" label="状态">
-            <el-radio-group v-model="model.status">
-              <el-radio label="A">在职</el-radio>
-              <el-radio label="I">离职</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
+      </el-row>
+      <el-row :gutter="18">
         <el-col v-if="model.isSysAccount" :md="12" :sm="24">
-          <el-form-item prop="roleIdList" label="角色">
+          <el-form-item prop="roleIdList" label="角色" required>
             <di-selector
               v-model="model.roleIdList"
               multiple
@@ -246,6 +203,59 @@ const rules: FormRules = {
               data-type="IamRole"
               placeholder="选择角色"
             />
+          </el-form-item>
+        </el-col>
+        <el-col v-if="model.isSysAccount" :md="12" :sm="24">
+          <el-form-item prop="accountStatus" label="账号状态">
+            <el-select v-model="model.accountStatus" placeholder="请选择账号状态">
+              <el-option
+                v-for="item in relatedData.accountStatusOptions"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="gender" label="性别">
+            <el-radio-group v-model="model.gender">
+              <el-radio
+                v-for="item in relatedData.genderOptions"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label"
+              />
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="status" label="状态">
+            <el-radio-group v-model="model.status">
+              <el-radio label="A">在职</el-radio>
+              <el-radio label="I">离职</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="birthday" label="生日">
+            <el-date-picker v-model="model.birthday" value-format="YYYY-MM-DD" type="date" placeholder="请选择生日" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="mobilePhone" label="电话">
+            <el-input v-model="model.mobilePhone" placeholder="请输入电话" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="email" label="邮箱">
+            <el-input v-model="model.email" placeholder="请输入邮箱" />
+          </el-form-item>
+        </el-col>
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="sortId" label="排序号">
+            <el-input v-model="model.sortId" type="number" placeholder="排序号" />
           </el-form-item>
         </el-col>
       </el-row>

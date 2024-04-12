@@ -20,15 +20,20 @@ import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.data.UserOrgDataAccessScopeManager;
 import com.diboot.iam.init.IamRedisAutoConfig;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
-import com.diboot.iam.config.IamProperties;
+import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.Realm;
@@ -41,14 +46,18 @@ import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.task.TaskDecorator;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -69,6 +78,7 @@ import java.util.Set;
 @EnableConfigurationProperties({IamProperties.class})
 @ComponentScan(basePackages = {"com.diboot.iam"})
 @MapperScan(basePackages = {"com.diboot.iam.mapper"})
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class IamAutoConfig {
 
     public IamAutoConfig() {
@@ -85,6 +95,7 @@ public class IamAutoConfig {
      */
     @Bean(name = "shiroCacheManager")
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public CacheManager shiroCacheManager() {
         return new MemoryConstrainedCacheManager();
     }
@@ -92,6 +103,7 @@ public class IamAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     @DependsOn({"shiroCacheManager"})
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public Realm realm() {
         IamAuthorizingRealm realm = new IamAuthorizingRealm();
         CacheManager cacheManager = shiroCacheManager();
@@ -110,6 +122,7 @@ public class IamAutoConfig {
      */
     @Bean(name = "shiroSecurityManager")
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DefaultWebSecurityManager shiroSecurityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSubjectFactory(subjectFactory());
@@ -123,6 +136,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected SessionStorageEvaluator sessionStorageEvaluator() {
         DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         sessionStorageEvaluator.setSessionStorageEnabled(false);
@@ -131,14 +145,16 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public DefaultWebSubjectFactory subjectFactory(){
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public DefaultWebSubjectFactory subjectFactory() {
         StatelessSubjectFactory subjectFactory = new StatelessSubjectFactory();
         return subjectFactory;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public DefaultSessionManager sessionManager(){
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public DefaultSessionManager sessionManager() {
         DefaultSessionManager sessionManager = new DefaultSessionManager();
         sessionManager.setSessionValidationSchedulerEnabled(false);
         return sessionManager;
@@ -149,14 +165,15 @@ public class IamAutoConfig {
      *
      * @return
      */
-    @Bean
-    @ConditionalOnMissingBean
+//    @Bean
+//    @ConditionalOnMissingBean
     public AccessControlFilter shiroFilter() {
         return new StatelessAccessControlFilter();
     }
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Lazy SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);
@@ -165,6 +182,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(SessionsSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 设置过滤器
@@ -181,6 +199,7 @@ public class IamAutoConfig {
 
     @Bean
     @ConditionalOnMissingBean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
         Map<String, String> filterChainMap = new LinkedHashMap<>();
         // 设置url
@@ -210,15 +229,23 @@ public class IamAutoConfig {
         return chainDefinition;
     }
 
+    @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    @ConditionalOnMissingBean
+    public EventBus eventBus() {
+        return new DefaultEventBus();
+    }
+
     /**
      * 用户token缓存管理器
+     *
      * @return
      */
     @Bean(name = "iamCacheManager")
     @ConditionalOnMissingBean
-    public BaseCacheManager iamCacheManager(){
+    public BaseCacheManager iamCacheManager() {
         log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
-        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>() {{
             put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
             put(Cons.CACHE_CAPTCHA, 5);
         }};
@@ -227,12 +254,37 @@ public class IamAutoConfig {
 
     /**
      * 数据访问控制实现，默认基于用户和部门过滤
+     *
      * @return
      */
     @Bean
     @ConditionalOnMissingBean
-    public DataScopeManager dataAccessInterface(){
+    public DataScopeManager dataAccessInterface() {
         return new UserOrgDataAccessScopeManager();
+    }
+
+    @Configuration
+    private class ThreadPoolTaskExecutorConfig {
+        public ThreadPoolTaskExecutorConfig(@Qualifier("applicationTaskExecutor") ObjectProvider<ThreadPoolTaskExecutor> taskExecutorObjectProvider) {
+            taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextDecorator()));
+        }
+    }
+
+    /**
+     * shiro上下文装饰器，传递shiro上下文
+     */
+    private class ShiroContextDecorator implements TaskDecorator {
+
+        @Override
+        public Runnable decorate(Runnable runnable) {
+            try {
+                // 向下传递当前线程的用户信息
+                return SecurityUtils.getSubject().associateWith(runnable);
+            } catch (UnavailableSecurityManagerException e) {
+                // 用户信息不存在，直接执行
+                return runnable;
+            }
+        }
     }
 
 }

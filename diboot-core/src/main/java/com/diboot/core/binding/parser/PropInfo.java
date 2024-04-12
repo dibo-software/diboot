@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.BaseModel;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -134,8 +135,17 @@ public class PropInfo implements Serializable {
                 this.fieldToColumnMap.put(fldName, columnName);
                 if(V.notEmpty(columnName)){
                     this.columnToFieldMap.put(columnName, fldName);
-                    if(columnName.equals(this.idColumn) && beanClass.isAssignableFrom(BaseEntity.class)) {
-                        this.columnToFieldTypeMap.put(columnName, Long.class);
+                    if(columnName.equals(this.idColumn)) {
+                        if(beanClass.isAssignableFrom(BaseModel.class)) {
+                            this.columnToFieldTypeMap.put(columnName, String.class);
+                        }
+                        else {
+                            Class idType = BeanUtils.getGenericityClass(beanClass, 0);
+                            if(idType == null) {
+                                idType = fld.getType();
+                            }
+                            this.columnToFieldTypeMap.put(columnName, idType);
+                        }
                     }
                     else {
                         this.columnToFieldTypeMap.put(columnName, fld.getType());
@@ -168,7 +178,7 @@ public class PropInfo implements Serializable {
         }
         String column = this.fieldToColumnMap.get(fieldName);
         if(column == null) {
-            log.warn("未找到字段 {} 对应的 列名，请检查！", fieldName);
+            log.debug("未找到字段 {} 对应的 列名", fieldName);
         }
         return column;
     }

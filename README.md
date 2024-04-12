@@ -25,9 +25,9 @@
 
 ![diboot平台体系架构图](https://www.diboot.com/img/diboot_structure.png)
 
-> [低代码 微服务版本，看这里->](https://www.diboot.com/guide/cloud/introduce.html)
-
 > [低代码 工作流版本，看这里->](https://www.diboot.com/guide/workflow/introduce.html)
+
+> [低代码 微服务版本，看这里->](https://www.diboot.com/guide/cloud/introduce.html)
 
 ## 1. Diboot 优势特性
 
@@ -36,12 +36,16 @@
 - Diboot基础封装的内部实现，确保运行高效率高性能，帮你规避常见的坑。
 
 ### 低代码能力 ～ 卓越
-- 基于devtools的代码生成能力，后端、前端、关联、复杂页面全支持；
+- 基于devtools的代码生成能力，后端、前端、关联、复杂页面、非覆盖式更新代码 全支持；
 - 零代码不能满足的复杂场景，基于生成后的代码快速扩展，无任何扩展局限性。
 
 ### 零代码能力 ～ 强大
 - 模型设计、页面设计、表单设计、流程设计、数据大屏 等能力全支持，多数功能直接配；
-- 表单与流程解耦，表单灵活复用，页面设计零代码与生成代码自由切换，灵活选择。
+- 表单与流程解耦，流程挂载多表单，表单灵活复用，。
+
+### 零/低/纯代码之间顺畅融合，自由切换
+- 多数常规功能零代码搭建即用；
+- 复杂功能支持集成自定义手写页面、支持生成前后端代码自由扩展；
 
 ## 2. 配套前端框架部分页面预览（diboot-admin-ui）
 > 基于 Vue3 + Vite + Pinia + Element-plus + TypeScript 的自研中后台管理框架

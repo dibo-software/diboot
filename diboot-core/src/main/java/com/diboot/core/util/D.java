@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -470,7 +472,7 @@ public class D extends DateUtils{
 		if(V.isEmpty(dateString)){
 			return null;
 		}
-		dateString = formatDateString(dateString);
+		dateString = formatDateTimeString(dateString);
 		if(!S.contains(dateString," ")) {
 			return convert2FormatDate(dateString, FORMAT_DATE_Y4MD);
 		}
@@ -478,21 +480,79 @@ public class D extends DateUtils{
 	}
 
 	/**
-	 * 格式化日期字符串
+	 * 模糊转换日期
 	 */
-	public static String formatDateString(String dateString){
+	public static LocalDate convert2LocalDate(String dateString){
 		if(V.isEmpty(dateString)){
 			return null;
 		}
-		// 清洗
-		if(dateString.contains("月")){
-			dateString = dateString.replaceAll("年", "-").replaceAll("月", "-").replaceAll("日", "").replaceAll("号", "");
+		dateString = formatDatePartString(dateString);
+		return LocalDate.parse(dateString, FORMATTER_DATE_Y4MD);
+	}
+
+	/**
+	 * 模糊转换日期时间
+	 */
+	public static LocalDateTime convert2LocalDateTime(String dateTimeString){
+		if(V.isEmpty(dateTimeString)){
+			return null;
 		}
-		else{
-			dateString = dateString.replaceAll("/", "-").replaceAll("\\.", "-");
+		dateTimeString = formatDateTimeString(dateTimeString);
+		if(dateTimeString.length() <= D.FORMAT_DATE_Y4MD.length()) {
+			dateTimeString += " 00:00:00";
+		}
+		return LocalDateTime.parse(dateTimeString, D.FORMATTER_DATETIME_Y4MDHMS);
+	}
+
+	/**
+	 * @see #formatDateTimeString(String)
+	 * @param dateTimeString
+	 * @return
+	 */
+	@Deprecated
+	public static String formatDateString(String dateTimeString){
+		return formatDateTimeString(dateTimeString);
+	}
+
+	/**
+	 * 格式化日期字符串
+	 */
+	public static String formatDateTimeString(String dateString){
+		if(V.isEmpty(dateString)){
+			return null;
 		}
 		String[] parts = (dateString.contains("T") && !dateString.contains(" "))? dateString.split("T") : dateString.split(" ");
-		String[] ymd = parts[0].split("-");
+		String datePart = formatDatePartString(parts[0]);
+		if(parts.length > 1) {
+			String timePart = formatTimePartString(parts[1]);
+			return datePart + " " + timePart;
+		}
+		return datePart;
+	}
+
+	/**
+	 * 格式化日期部分字符串
+	 */
+	private static String[] FORMAT_SEARCH_LIST = {"年", "月", "日", "/", "\\."}, FORMAT_REPLACEMENT_LIST = {"-", "-", "", "-", "-"};
+	private static String formatDatePartString(String datePartStr){
+		if(V.isEmpty(datePartStr)){
+			return null;
+		}
+		if(S.contains(datePartStr, " ")) {
+			datePartStr = S.substringBefore(datePartStr, " ");
+		}
+		if(S.contains(datePartStr, "-")) {
+			String[] ymd = datePartStr.split("-");
+			if(ymd.length == 3 && ymd[0].length() == 4) {
+				// 标准格式
+				return datePartStr;
+			}
+		}
+		else {
+			// 格式化
+			datePartStr = S.replaceEach(datePartStr, FORMAT_SEARCH_LIST, FORMAT_REPLACEMENT_LIST);
+		}
+		String[] ymd = datePartStr.split("-");
 		if(ymd.length >= 3){
 			if(ymd[2].length() == 4) { //MM/dd/yyyy
 				String yyyy = ymd[2], month = ymd[0], day = ymd[1];
@@ -511,13 +571,22 @@ public class D extends DateUtils{
 				ymd[2] = "0" + ymd[2];
 			}
 		}
-		parts[0] = S.join(ymd, "-");
-		if(parts.length == 1){
-			return parts[0];
+		return S.join(ymd, "-");
+	}
+
+	/**
+	 * 格式化时间部分字符串
+	 */
+	private static String formatTimePartString(String timePartStr){
+		if(V.isEmpty(timePartStr)){
+			return null;
 		}
 		// 18:20:30:103
+		String[] hms = timePartStr.split(":");
+		if(hms.length == 3) {
+			return timePartStr;
+		}
 		String[] hmsArray = new String[3];
-		String[] hms = parts[1].split(":");
 		if(hms[0].length() == 1){
 			hms[0] = "0" + hms[0];
 		}
@@ -540,10 +609,7 @@ public class D extends DateUtils{
 		else{
 			hmsArray[2] = "00";
 		}
-		parts[1] = S.join(hmsArray, ":");
-		return S.join(parts, " ");
+		return S.join(hmsArray, ":");
 	}
-//
-//	public static String autoDetect
 
 }

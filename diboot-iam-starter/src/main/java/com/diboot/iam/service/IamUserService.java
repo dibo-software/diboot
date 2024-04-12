@@ -16,6 +16,7 @@
 package com.diboot.iam.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.diboot.core.service.BaseService;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
 import com.diboot.iam.dto.IamUserFormDTO;
@@ -31,7 +32,7 @@ import java.util.Map;
 * @version 2.0
 * @date 2019-12-17
 */
-public interface IamUserService extends BaseIamService<IamUser> {
+public interface IamUserService extends BaseService<IamUser> {
 
     /**
      * 添加用户及相关信息
@@ -93,6 +94,22 @@ public interface IamUserService extends BaseIamService<IamUser> {
      * @return
      */
     List<IamUser> getUsersByRoleIds(List<String> roleIds);
+
+    /**
+     * 获取指定角色code下的用户
+     *
+     * @param roleCode
+     * @return
+     */
+    List<IamUser> getUsersByRoleCode(String roleCode);
+
+    /**
+     * 获取指定角色code下的用户
+     *
+     * @param roleCodes
+     * @return
+     */
+    List<IamUser> getUsersByRoleCodes(List<String> roleCodes);
 
     /**
      * 获取id值-选项的映射Map

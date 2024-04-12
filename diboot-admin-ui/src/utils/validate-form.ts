@@ -17,5 +17,5 @@ export const checkValue =
         .get<boolean | undefined>(validateApi, params)
         .then(res => callback(res.data !== false ? void 0 : `内容重复，${value} 已存在!`))
         .catch(err => callback(err.msg || err))
-    }
+    } else callback()
   }

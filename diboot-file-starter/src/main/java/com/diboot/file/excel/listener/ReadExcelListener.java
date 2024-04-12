@@ -48,8 +48,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;

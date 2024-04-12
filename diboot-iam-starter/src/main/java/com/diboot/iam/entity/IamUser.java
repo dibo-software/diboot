@@ -24,7 +24,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -90,6 +90,10 @@ public class IamUser extends BaseLoginUser {
     @Length(max=10, message="状态长度应小于10")
     @TableField()
     private String status;
+
+    // 排序号
+    @TableField()
+    private Long sortId;
 
     // 头像
     @TableField()
