@@ -4,7 +4,7 @@ import { AUTH_HEADER_KEY } from '@/utils/auth'
 import { isDark, colorPrimary } from '@/utils/theme'
 
 export const loadIframeOriginList = () => {
-  const iframeOriginListStr: string = import.meta.env.VITE_IFRME_ORIGIN_LIST
+  const iframeOriginListStr: string = import.meta.env.VITE_IFRAME_ORIGIN_LIST
   let iframeOriginList: string[] = [window.origin]
   if (iframeOriginListStr) {
     iframeOriginList = iframeOriginListStr.split(',')
