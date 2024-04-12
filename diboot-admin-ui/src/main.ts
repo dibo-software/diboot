@@ -22,4 +22,5 @@ app.use(directives)
 app.use(i18n)
 app.mount('#app')
 
-initFunction()
+// 若需要iframe授权信息注入，可打开下方注释
+// initFunction()
