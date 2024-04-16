@@ -104,6 +104,7 @@ const rules: FormRules = {
     { required: true, message: '不能为空', whitespace: true },
     { validator: checkUsernameDuplicate, trigger: 'blur' }
   ],
+  roleIdList: { required: true, message: '不能为空' },
   accountStatus: { required: true, message: '不能为空', whitespace: true },
   realname: { required: true, message: '不能为空', whitespace: true },
   userNum: [
@@ -182,7 +183,7 @@ const rules: FormRules = {
       </el-row>
       <el-row :gutter="18">
         <el-col v-if="model.isSysAccount" :md="12" :sm="24">
-          <el-form-item prop="roleIdList" label="角色" required>
+          <el-form-item prop="roleIdList" label="角色">
             <di-selector
               v-model="model.roleIdList"
               multiple
