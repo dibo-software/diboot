@@ -1,7 +1,6 @@
 import type { RouteRecord, RouteRecordName, RouteRecordRaw } from 'vue-router'
 import type { DefineComponent, VNode } from 'vue'
-import { RouterView } from 'vue-router'
-import { KeepAlive, h } from 'vue'
+import { h } from 'vue'
 import useViewTabs from '@/store/view-tabs'
 const Layout = () => import('@/layout/index.vue')
 // 加载所有组件
@@ -72,11 +71,11 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           route.component = Layout
         } else {
           // 视图嵌套
-          route.component = renderComponent('ParentView', cachedViews =>
-            h(RouterView, ({ Component }: { Component: DefineComponent }) =>
-              h(KeepAlive, { include: cachedViews }, Component)
-            )
-          )
+          // route.component = renderComponent('ParentView', cachedViews =>
+          //   h(RouterView, ({ Component }: { Component: DefineComponent }) =>
+          //     h(KeepAlive, { include: cachedViews }, Component)
+          //   )
+          // )
         }
         // 父级目录重定向首个子菜单
         if (!route.redirect) route.redirect = buildFullPath(route.children[0].path, fullPath)

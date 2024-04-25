@@ -42,7 +42,6 @@ public class IamUser extends BaseLoginUser {
     /**
      * 租户ID
      */
-    @JsonIgnore
     @TableField
     private String tenantId;
 

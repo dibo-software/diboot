@@ -115,7 +115,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
             // 清空当前用户缓存
             this.clearCachedAuthorizationInfo(IamSecurityUtils.getSubject().getPrincipals());
             log.debug("获取用户认证信息完成 : {}", iamAuthToken.getCredentials());
-            return new SimpleAuthenticationInfo(loginUser, iamAuthToken.getCredentials(), this.getName());
+            return new SimpleAuthenticationInfo(loginUser, iamAuthToken.getCredentials(), new CustomSimpleByteSource(), this.getName());
         }
     }
 
