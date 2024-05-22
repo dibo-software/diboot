@@ -17,6 +17,9 @@ package com.diboot.core.starter;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.diboot.core.cache.DictionaryCacheManager;
+import com.diboot.core.cache.DynamicMemoryCacheManager;
+import com.diboot.core.config.Cons;
 import com.diboot.core.converter.*;
 import com.diboot.core.data.ProtectFieldHandler;
 import com.diboot.core.data.encrypt.ProtectInterceptor;
@@ -54,6 +57,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -79,6 +84,10 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     @Value("${spring.jackson.default-property-inclusion:NON_NULL}")
     private JsonInclude.Include defaultPropertyInclusion;
+
+    public CoreAutoConfig() {
+        log.info("初始化 core 内核 自动配置");
+    }
 
     /**
      * 默认配置 ObjectMapper, 并允许用户覆盖
@@ -180,6 +189,30 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         registry.addConverter(new String2LocalDateTimeConverter());
         registry.addConverter(new String2BooleanConverter());
         registry.addConverter(new Timestamp2LocalDateTimeConverter());
+    }
+
+    /**
+     * 扩展Mybatis 类型转换，支持日期类型转为LocalDate等
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ConfigurationCustomizer typeHandlerRegistry() {
+        return configuration -> configuration.getTypeHandlerRegistry().register(java.sql.Date.class, JdbcType.DATE, LocalDateTypeHandler.class);
+    }
+
+    /**
+     * 字典等基础数据缓存管理器
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public DictionaryCacheManager dictionaryCacheManager() {
+        log.info("初始化 Dictionary 内存缓存: DynamicMemoryCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(Cons.CACHE_NAME_DICTIONARY, 24*60);
+        }};
+        DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
+        return new DictionaryCacheManager(memoryCacheManager);
     }
 
 }
