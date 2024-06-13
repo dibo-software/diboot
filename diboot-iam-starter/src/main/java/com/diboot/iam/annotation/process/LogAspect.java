@@ -212,6 +212,9 @@ public class LogAspect {
     }
 
     private boolean isSimpleClassType(Object arg){
+        if(arg == null) {
+            return false;
+        }
         Class<?> clazz = arg.getClass();
         boolean isSimple = org.springframework.beans.BeanUtils.isSimpleProperty(clazz);
         if(isSimple){
