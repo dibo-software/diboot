@@ -1,7 +1,7 @@
 {
   "name": "diboot-admin-ui",
   "private": true,
-  "version": "3.3.0",
+  "version": "3.4.0",
   "scripts": {
     "vite": "node --max_old_space_size=4096 ./node_modules/vite/bin/vite.js",
     "dev": "vite",

@@ -27,32 +27,36 @@ const login = () => {
 </script>
 
 <template>
-  <van-space class="cover">
-    <van-space style="margin-left: 100%" direction="vertical" size="10px" align="center" @click="login">
-      <van-image class="image" round width="8rem" height="8rem" :src="authStore.avatar || logo" />
-      <view>{{ authStore.realname || $t('mine.login') }}</view>
+  <div class="mine">
+    <van-space class="cover">
+      <van-space style="margin-left: 100%" direction="vertical" size="10px" align="center" @click="login">
+        <van-image class="image" round width="8rem" height="8rem" :src="authStore.avatar || logo" />
+        <view>{{ authStore.realname || $t('mine.login') }}</view>
+      </van-space>
     </van-space>
-  </van-space>
-  <van-cell-group>
-    <van-cell :title="$t('mine.userNum')" size="large" icon="user-o" :value="authStore.info?.userNum" />
-    <van-cell :title="$t('mine.orgName')" size="large" icon="cluster-o" :value="orgName" />
-    <van-cell :title="$t('mine.position')" size="large" icon="points" :value="positions" />
-    <van-cell :title="$t('mine.mobilePhone')" size="large" icon="phone-o" :value="authStore.info?.mobilePhone" />
-    <van-cell :title="$t('mine.email')" size="large" icon="envelop-o" :value="authStore.info?.email" />
-  </van-cell-group>
-  <van-button type="danger" class="footer" block @click="authStore.logout()">{{ $t('mine.logout') }}</van-button>
+    <van-cell-group>
+      <van-cell :title="$t('mine.userNum')" size="large" icon="user-o" :value="authStore.info?.userNum" />
+      <van-cell :title="$t('mine.orgName')" size="large" icon="cluster-o" :value="orgName" />
+      <van-cell :title="$t('mine.position')" size="large" icon="points" :value="positions" />
+      <van-cell :title="$t('mine.mobilePhone')" size="large" icon="phone-o" :value="authStore.info?.mobilePhone" />
+      <van-cell :title="$t('mine.email')" size="large" icon="envelop-o" :value="authStore.info?.email" />
+    </van-cell-group>
+    <van-button type="danger" class="footer" block @click="authStore.logout()">{{ $t('mine.logout') }}</van-button>
+  </div>
 </template>
 <style scoped lang="scss">
+.mine {
+  display: flex;
+  flex-direction: column;
+}
 .cover {
   width: 100%;
-  height: 40%;
+  height: 280px;
   text-align: center;
   background-color: #7fcfbb;
   color: #ffffff;
 }
 .footer {
-  position: fixed;
-  bottom: 10%;
-  width: 100%;
+  margin-top: 20px;
 }
 </style>

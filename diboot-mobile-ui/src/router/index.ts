@@ -21,12 +21,19 @@ const router = createRouter({
     {
       path: '',
       component: Layout,
+      redirect: '',
       children: [
         {
           path: '',
+          name: 'Dashboard',
+          component: () => import('@/views/dashboard/index.vue'),
+          meta: { title: '工作台', showTabbar: true }
+        },
+        {
+          path: '/crud',
           name: 'Crud',
           component: () => import('@/views/crud/index.vue'),
-          meta: { title: '组件', showTabbar: true }
+          meta: { title: '示例', showTabbar: true }
         },
         {
           path: '/list',

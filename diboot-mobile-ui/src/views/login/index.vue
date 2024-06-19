@@ -15,8 +15,8 @@ BwIDAQAB`)
 
 const authStore = useAuthStore()
 const loading = ref(false)
-const PROCESS_USERNAME = 'maql'
-const PASSWORD = 'Dibo306!'
+const PROCESS_USERNAME = ''
+const PASSWORD = ''
 const model = reactive({ username: PROCESS_USERNAME, password: PASSWORD, captcha: '', traceId: '' })
 
 const refreshTraceId = () => {
@@ -217,9 +217,6 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
   }
   .van-radio__label {
     margin-left: 0;
-  }
-  h2 {
-    margin-bottom: 50px;
   }
   .van-cell {
     padding: var(--van-padding-lg);

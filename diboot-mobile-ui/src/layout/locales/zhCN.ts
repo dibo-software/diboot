@@ -1,6 +1,7 @@
 const zhCN = {
   layout: {
-    home: '首页',
+    dashboard: '工作台',
+    example: '示例',
     mine: '我的'
   }
 }

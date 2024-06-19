@@ -7,9 +7,17 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    DiInput: typeof import('@/components/di/Input.vue')['default']
     Icon: typeof import('@/components/icon/index.vue')['default']
     IconBranches: typeof import('@/components/icon/Branches.vue')['default']
     IconNotice: typeof import('@/components/icon/Notice.vue')['default']
+    IconProcessDone: typeof import('@/components/icon/process/Done.vue')['default']
+    IconProcessInitiate: typeof import('@/components/icon/process/Initiate.vue')['default']
+    IconProcessInitiated: typeof import('@/components/icon/process/Initiated.vue')['default']
+    IconProcessStart: typeof import('@/components/icon/process/Start.vue')['default']
+    IconProcessTodo: typeof import('@/components/icon/process/Todo.vue')['default']
+    IconTabbarDashboard: typeof import('@/components/icon/tabbar/Dashboard.vue')['default']
+    IconTabbarDashboardActive: typeof import('@/components/icon/tabbar/DashboardActive.vue')['default']
     IconTabbarHome: typeof import('@/components/icon/tabbar/Home.vue')['default']
     IconTabbarHomeActive: typeof import('@/components/icon/tabbar/HomeActive.vue')['default']
     IconTabbarMine: typeof import('@/components/icon/tabbar/Mine.vue')['default']
@@ -36,6 +44,7 @@ declare module 'vue' {
     VanImage: typeof import('vant/es')['Image']
     VanList: typeof import('vant/es')['List']
     VanNavBar: typeof import('vant/es')['NavBar']
+    VanNoticeBar: typeof import('vant/es')['NoticeBar']
     VanPicker: typeof import('vant/es')['Picker']
     VanPopover: typeof import('vant/es')['Popover']
     VanPopup: typeof import('vant/es')['Popup']
@@ -50,6 +59,7 @@ declare module 'vue' {
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTag: typeof import('vant/es')['Tag']
+    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
     VanTimePicker: typeof import('vant/es')['TimePicker']
     VanUploader: typeof import('vant/es')['Uploader']
   }
