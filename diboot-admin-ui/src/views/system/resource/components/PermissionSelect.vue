@@ -182,17 +182,17 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
   <el-skeleton v-if="loading" :rows="10" animated />
   <div v-else>
     <div v-if="menuType !== 'MENU'" style="padding: 8px">
-      <el-alert title="菜单分类 可配置权限接口" type="warning" :closable="false" />
+      <el-alert :title="$t('resource.permissionSelect.title')" type="warning" :closable="false" />
     </div>
     <el-space v-else wrap :fill="true" class="permission-list-container">
       <div style="margin: 8px; zoom: 1.1">
         {{ displayName }}
-        <span style="color: var(--el-text-color-secondary); margin-left: 5px">配置权限接口</span>
+        <span style="color: var(--el-text-color-secondary); margin-left: 5px">{{}}</span>
       </div>
       <el-select
         v-model="searchVal"
         remote
-        placeholder="搜索需要设置的接口：支持标题、权限码、接口地址模糊搜索"
+        :placeholder="$t('resource.permissionSelect.searchPlaceholder')"
         filterable
         clearable
         :remote-method="handleRemoteMethod"
@@ -207,7 +207,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
       </el-select>
       <el-alert
         v-if="moduleList.length > 0 && !appModule"
-        title="选择 应用模块 后配置权限"
+        :title="$t('resource.permissionSelect.tip')"
         type="success"
         :closable="false"
       />

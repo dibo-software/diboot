@@ -298,4 +298,14 @@ public class Cons {
         ALL
     }
 
+    /**
+     * 字典的缓存key
+     */
+    public static String CACHE_NAME_DICTIONARY = "diboot:dictionary";
+
+    /**
+     * 国际化缓存
+     */
+    public static String CACHE_NAME_I18N = "diboot:i18n";
+
 }

@@ -60,15 +60,15 @@ public class IamRole extends BaseEntity<String> {
     private String tenantId;
 
     // 名称
-    @NotNull(message = "名称不能为空")
-    @Length(max = 50, message = "名称长度应小于50")
+    @NotNull(message = "{validation.iamRole.name.NotNull.message}")
+    @Length(max = 50, message = "{validation.iamRole.name.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String name;
 
     // 编码
-    @NotNull(message = "编码不能为空")
-    @Length(max = 50, message = "编码长度应小于50")
+    @NotNull(message = "{validation.iamRole.code.NotNull.message}")
+    @Length(max = 50, message = "{validation.iamRole.code.Length.message}")
     @TableField()
     private String code;
 

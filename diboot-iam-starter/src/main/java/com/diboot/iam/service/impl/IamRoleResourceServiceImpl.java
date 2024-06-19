@@ -18,6 +18,7 @@ package com.diboot.iam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.event.OperationEvent;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.service.impl.BaseServiceImpl;
@@ -80,7 +81,7 @@ public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceM
     public List<RouteRecord> getRouteRecords() {
         BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
         if (currentUser == null) {
-            throw new BusinessException(Status.FAIL_NO_PERMISSION, "请登录后获取菜单授权！");
+            throw new BusinessException(Status.FAIL_NO_PERMISSION, "exception.business.roleResourceService.fetchMenuAfterLogin");
         }
         // 获取当前用户的角色
         LabelValue extensionObj = currentUser.getExtensionObj();
@@ -111,7 +112,7 @@ public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceM
         if (isTenantAdmin) {
             IamTenantPermission iamTenantPermission = ContextHolder.getBean(IamTenantPermission.class);
             if (V.isEmpty(iamTenantPermission)) {
-                throw new BusinessException(Status.FAIL_OPERATION, "当前租户未配置权限");
+                throw new BusinessException(Status.FAIL_OPERATION, "exception.business.roleResourceService.tenantNonConfigPermission");
             }
             permissionIds = iamTenantPermission.findAllPermissions(currentUser.getTenantId());
         }
@@ -130,6 +131,7 @@ public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceM
         if (V.isEmpty(menuPermissionList)) {
             return Collections.emptyList();
         }
+        RelationsBinder.bind(menuPermissionList);
         // 绑定菜单下按钮权限，进行菜单权限分组
         Map<String, List<IamResource>> listMap = menuPermissionList.stream().collect(Collectors.groupingBy(e ->
                 Cons.RESOURCE_PERMISSION_DISPLAY_TYPE.PERMISSION.name().equals(e.getDisplayType()) ? e.getParentId() : Cons.TREE_ROOT_ID));
@@ -209,7 +211,6 @@ public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceM
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
         boolean success = createEntities(roleResourceList);
-        IamSecurityUtils.clearAllAuthorizationCache();
         // 对外发布角色资源变更事件
         applicationEventPublisher.publishEvent(new OperationEvent(IamRoleResource.class.getSimpleName(), roleId));
         return success;
@@ -235,19 +236,18 @@ public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceM
             roleResourceList.add(new IamRoleResource(roleId, resourceId));
         }
         boolean success = createEntities(roleResourceList);
-        IamSecurityUtils.clearAllAuthorizationCache();
         // 对外发布角色资源变更事件
         applicationEventPublisher.publishEvent(new OperationEvent(IamRoleResource.class.getSimpleName(), roleId));
         return success;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteRoleResourceRelations(String roleId) {
         if (roleId == null) {
             return false;
         }
         boolean success = deleteEntities(IamRoleResource::getRoleId, roleId);
-        IamSecurityUtils.clearAllAuthorizationCache();
         // 对外发布角色资源变更事件
         applicationEventPublisher.publishEvent(new OperationEvent(IamRoleResource.class.getSimpleName(), roleId));
         return success;
@@ -284,7 +284,7 @@ public class IamRoleResourceServiceImpl extends BaseServiceImpl<IamRoleResourceM
      * @param iamResourceListVOList
      */
     private void buildRouteRecordList(List<RouteRecord> routeRecordList, List<IamResourceListVO> iamResourceListVOList) {
-        RouteRecord routeRecord = null;
+        RouteRecord routeRecord;
         for (IamResourceListVO resource : iamResourceListVOList) {
             routeRecord = new RouteRecord();
             RouteMeta routeMeta = resource.getRouteMeta();

@@ -52,8 +52,10 @@ public class ConditionManager extends BaseConditionManager{
             log.warn("无法解析注解条件: {} ", condition);
             return;
         }
+        // 解析目标表表名，用于兼容表名前缀
+        String targetTableName = ParserCache.getEntityTableName(binder.getReferencedEntityClass());
         // 解析中间表关联
-        String tableName = extractMiddleTableName(expressionList);
+        String tableName = extractMiddleTableName(expressionList, targetTableName);
         if(tableName != null){
             List<Expression> additionalExpress = parseMiddleTable(binder, expressionList, tableName);
             if(V.notEmpty(additionalExpress)){

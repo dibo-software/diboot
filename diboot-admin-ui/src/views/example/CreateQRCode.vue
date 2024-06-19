@@ -17,13 +17,18 @@ const form: FormItem = reactive({
   <el-row :gutter="24" class="p-10">
     <el-col :span="6">
       <el-form :model="form" label-width="80px">
-        <el-form-item label="内容">
-          <el-input v-model="form.value" placeholder="请输入自定义内容" />
+        <el-form-item :label="$t('createQRCode.value')">
+          <el-input v-model="form.value" :placeholder="$t('createQRCode.placeholder.value')" />
         </el-form-item>
-        <el-form-item label="尺寸">
-          <el-input-number v-model="form.size" :min="1" placeholder="请输入自定义尺寸" class="w100" />
+        <el-form-item :label="$t('createQRCode.size')">
+          <el-input-number
+            v-model="form.size"
+            :min="1"
+            :placeholder="$t('createQRCode.placeholder.size')"
+            class="w100"
+          />
         </el-form-item>
-        <el-form-item label="颜色">
+        <el-form-item :label="$t('createQRCode.foreground')">
           <el-color-picker v-model="form.foreground" />
         </el-form-item>
       </el-form>

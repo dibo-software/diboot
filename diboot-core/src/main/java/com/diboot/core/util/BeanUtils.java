@@ -370,7 +370,7 @@ public class BeanUtils {
                     allListMap.put(key, model);
                 }
                 else{
-                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
+                    log.warn("{} 的属性 {} 值存在 null，转换结果需要确认!", model.getClass().getName(), fields[0]);
                 }
             }
         }
@@ -414,7 +414,7 @@ public class BeanUtils {
                     list.add(model);
                 }
                 else{
-                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
+                    log.warn("{} 的属性 {} 值存在 null，转换结果需要确认!", model.getClass().getName(), fields[0]);
                 }
             }
         } catch (Exception e){
@@ -544,7 +544,8 @@ public class BeanUtils {
         if (parentId2ListMap.size() == 1) {
             return parentId2ListMap.values().iterator().next();
         }
-        throw new BusinessException("buildTree根节点ParentId不唯一");
+        log.warn("buildTree根节点ParentId不唯一: {}", parentId2ListMap.values());
+        throw new BusinessException("exception.business.beanUtils.buildTree.rootParentIdNotUnique");
     }
 
     /**
@@ -604,7 +605,7 @@ public class BeanUtils {
             Object nodeId = getId.apply(node);
             Object parentId = getParentId.apply(node);
             if (V.equals(nodeId, parentId)) {
-                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "parentId关联自身，请检查！" + node.getClass().getSimpleName() + ":" + nodeId);
+                throw new BusinessException(Status.WARN_PERFORMANCE_ISSUE, "exception.business.beanUtils.buildTree.bindSelf", node.getClass().getSimpleName(), nodeId);
             }
             parentId2ListMap.computeIfAbsent(parentId, k -> new ArrayList<>()).add(node);
         }
@@ -877,7 +878,7 @@ public class BeanUtils {
             return cloneObj;
         }
         catch (Exception e){
-            log.warn("Clone Object "+ent.getClass().getSimpleName()+" error", e);
+            log.warn("Clone Object {} error", ent.getClass().getSimpleName(), e);
             return ent;
         }
     }
@@ -992,6 +993,15 @@ public class BeanUtils {
         }
         else {
             resolvableType = resolvableType.getSuperType();
+            ResolvableType[] types = resolvableType.getGenerics();
+            // 逐级向上找父类
+            if (V.isEmpty(types) || index >= types.length) {
+                resolvableType = resolvableType.getSuperType();
+                types = resolvableType.getGenerics();
+                if (V.isEmpty(types) || index >= types.length) {
+                    resolvableType = resolvableType.getSuperType();
+                }
+            }
         }
         ResolvableType[] types = resolvableType.getGenerics();
         if(V.isEmpty(types) || index >= types.length){
@@ -1000,7 +1010,7 @@ public class BeanUtils {
         if(V.notEmpty(types) && types.length > index){
             return types[index].resolve();
         }
-        log.debug("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
+        log.debug("无法从 {} 类定义中获取第 {} 个泛型类", hostClass.getName(), index);
         return null;
     }
 

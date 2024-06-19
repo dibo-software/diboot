@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.I18n;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import com.diboot.iam.annotation.process.IamAsyncWorker;
@@ -88,10 +89,10 @@ public abstract class BaseAuthServiceImpl implements AuthService {
         }
         IamAccount latestAccount = latestAccounts.get(0);
         if (Cons.DICTCODE_ACCOUNT_STATUS.I.name().equals(latestAccount.getStatus())) {
-            throw new AuthenticationException("用户账号已禁用! account="+iamAuthToken.getAuthAccount());
+            throw new AuthenticationException(I18n.message("exception.authentication.authService.accountForbidden", iamAuthToken.getAuthAccount()));
         }
         if (Cons.DICTCODE_ACCOUNT_STATUS.L.name().equals(latestAccount.getStatus())) {
-            throw new AuthenticationException("用户账号已锁定! account="+iamAuthToken.getAuthAccount());
+            throw new AuthenticationException(I18n.message("exception.authentication.authService.accountLocked", iamAuthToken.getAuthAccount()));
         }
         return latestAccount;
     }
@@ -114,7 +115,7 @@ public abstract class BaseAuthServiceImpl implements AuthService {
             else {
                 log.error("认证失败");
                 saveLoginTrace(authToken, false);
-                throw new BusinessException(Status.FAIL_OPERATION, "认证失败");
+                throw new BusinessException(Status.FAIL_OPERATION, "exception.business.authService.authFailed");
             }
         } catch (Exception e) {
             log.error("登录异常", e);
@@ -150,9 +151,8 @@ public abstract class BaseAuthServiceImpl implements AuthService {
         IamLoginTrace loginTrace = new IamLoginTrace();
         loginTrace.setAuthType(getAuthType()).setAuthAccount(authToken.getAuthAccount()).setUserType(authToken.getUserType()).setIsSuccess(isSuccess);
         BaseLoginUser currentUser = IamSecurityUtils.getCurrentUser();
-        if(currentUser != null){
-            loginTrace.setUserId(currentUser.getId());
-        }
+        String currentUserId = currentUser == null ? Cons.ID_PREVENT_NULL : currentUser.getId();
+        loginTrace.setUserId(currentUserId);
         // 记录客户端信息
         String userAgent = HttpHelper.getUserAgent(request);
         String ipAddress = HttpHelper.getRequestIp(request);

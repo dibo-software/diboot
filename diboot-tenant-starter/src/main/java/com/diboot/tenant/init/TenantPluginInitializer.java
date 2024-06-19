@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
  * @version : v3.2.0
  * @Date 2023/12/18
  */
+@Order(971)
 @Slf4j
 @Component
 @ConditionalOnProperty(prefix = "diboot", name = "init-sql", havingValue = "true")
@@ -72,11 +74,13 @@ public class TenantPluginInitializer implements ApplicationRunner {
                             "  \"children\": [\n" +
                             "    {\n" +
                             "      \"itemName\": \"有效\",\n" +
+                            "       \"itemNameI18n\": \"Dictionary.TENANT_STATUS.A\",\n" +
                             "      \"itemValue\": \"A\",\n" +
                             "      \"sortId\": 1\n" +
                             "    },\n" +
                             "    {\n" +
                             "      \"itemName\": \"无效\",\n" +
+                            "       \"itemNameI18n\": \"Dictionary.TENANT_STATUS.I\",\n" +
                             "      \"itemValue\": \"I\",\n" +
                             "      \"sortId\": 2\n" +
                             "    }\n" +
@@ -94,7 +98,7 @@ public class TenantPluginInitializer implements ApplicationRunner {
         IamResourceService resourcePermissionService = ContextHolder.getBean(IamResourceService.class);
         if(resourcePermissionService != null && !resourcePermissionService.exists(IamResource::getResourceCode, "TenantMgt")){
             String[] RESOURCE_PERMISSION_DATA = {
-               "{\"displayType\":\"CATALOGUE\",\"displayName\":\"租户管理\",\"routePath\":\"tenant\",\"resourceCode\":\"TenantMgt\",\"meta\":\"{\\\"icon\\\":\\\"Element:Platform\\\"}\",\"sortId\":\"91\",\"children\":[{\"displayType\":\"MENU\",\"displayName\":\"租户信息管理\",\"routePath\":\"tenant\",\"resourceCode\":\"IamTenant\",\"permissionCode\":\"IamTenant:read\",\"meta\":\"{\\\"icon\\\":\\\"Element:User\\\",\\\"componentPath\\\":\\\"@/views/tenant/tenant-info/List.vue\\\"}\",\"sortId\":\"1\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"permissionCode\":\"IamTenant:write\",\"sortId\":\"40\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"permissionCode\":\"IamTenant:write,IamTenant:read\",\"sortId\":\"39\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"permissionCode\":\"IamTenant:write\",\"sortId\":\"38\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"permissionCode\":\"IamTenant:read\",\"sortId\":\"37\"}]}]}"
+                    "{\"displayType\":\"CATALOGUE\",\"displayName\":\"租户管理\",\"displayNameI18n\":\"Resource.Tenant\",\"routePath\":\"tenant\",\"resourceCode\":\"TenantMgt\",\"meta\":\"{\\\"icon\\\":\\\"Element:Platform\\\"}\",\"sortId\":\"91\",\"children\":[{\"displayType\":\"MENU\",\"displayName\":\"租户信息管理\",\"displayNameI18n\":\"Resource.TenantInformation\",\"routePath\":\"tenant\",\"resourceCode\":\"IamTenant\",\"permissionCode\":\"IamTenant:read\",\"meta\":\"{\\\"icon\\\":\\\"Element:User\\\",\\\"componentPath\\\":\\\"@/views/tenant/tenant-info/List.vue\\\"}\",\"sortId\":\"1\",\"children\":[{\"displayType\":\"PERMISSION\",\"displayName\":\"新建\",\"resourceCode\":\"create\",\"displayNameI18n\":\"Operation.create\",\"permissionCode\":\"IamTenant:write\",\"sortId\":\"40\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"更新\",\"resourceCode\":\"update\",\"displayNameI18n\":\"Operation.update\",\"permissionCode\":\"IamTenant:write,IamTenant:read\",\"sortId\":\"39\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"删除\",\"resourceCode\":\"delete\",\"displayNameI18n\":\"Operation.delete\",\"permissionCode\":\"IamTenant:write\",\"sortId\":\"38\"},{\"displayType\":\"PERMISSION\",\"displayName\":\"详情\",\"resourceCode\":\"detail\",\"displayNameI18n\":\"Operation.detail\",\"permissionCode\":\"IamTenant:read\",\"sortId\":\"37\"}]}]}"
             };
             // 插入多层级资源权限初始数据
             try {
@@ -102,7 +106,6 @@ public class TenantPluginInitializer implements ApplicationRunner {
                     IamResourceListVO permissionListVO = JSON.toJavaObject(resourcePermissionJson, IamResourceListVO.class);
                     resourcePermissionService.deepCreateResourceAndChildren(permissionListVO);
                 }
-                RESOURCE_PERMISSION_DATA = null;
             } catch (BusinessException e){
                 log.error("初始化资源权限数据出错: {}，请手动配置前端资源初始的权限数据", e.getMessage());
             }

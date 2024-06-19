@@ -60,6 +60,7 @@ public class HttpHelper {
      * 文件扩展名-ContentType的对应关系
      */
     private static final Map<String, String> EXT_CONTENT_TYPE_MAP = new HashMap(){{
+        put("", "text/plain"); //无后缀，默认为文本
         put("xls", "application/x-msdownload");
         put("xlsx", "application/x-msdownload");
         put("doc", "application/x-msdownload");
@@ -238,7 +239,7 @@ public class HttpHelper {
                 return null;
             }
             return response.body().string();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn("请求调用解析异常 : {}", url, e);
             return null;
         }
@@ -328,7 +329,7 @@ public class HttpHelper {
      * @return
      */
     public static String getContextType(String fileName){
-        String ext = S.substringAfterLast(fileName, ".");
+        String ext = FileHelper.getFileExtByName(fileName);
         String contentType = EXT_CONTENT_TYPE_MAP.get(ext);
         if(contentType == null){
             contentType = DEFAULT_CONTEXT_TYPE;
@@ -345,12 +346,12 @@ public class HttpHelper {
     public static List<MultipartFile> getFilesFromRequest(HttpServletRequest request, String fileInputName){
         // 获取附件文件名
         if(fileInputName == null){
-            throw new BusinessException(Status.FAIL_VALIDATION, "未指定文件名！");
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.httpHelper.noFilename");
         }
         // 解析上传文件
         boolean isMultipart = request.getContentType() != null && request.getContentType().contains("multipart");
         if(!isMultipart){
-            throw new BusinessException(Status.FAIL_VALIDATION, "无有效的上传文件！");
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.httpHelper.invalidFiles");
         }
         // 解析上传文件
         List<MultipartFile> files = ((MultipartHttpServletRequest)request).getFiles(fileInputName);

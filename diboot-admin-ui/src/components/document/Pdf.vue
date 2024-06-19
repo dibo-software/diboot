@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import VuePdfEmbed from 'vue-pdf-embed'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const props = defineProps<{
   // string: 文件链接 ;  Blob | ArrayBuffer: 文件流
   value?: string | Blob | ArrayBuffer
@@ -21,7 +22,7 @@ const pdfInit = (value: string | Blob | ArrayBuffer) => {
         fileName.value = res.filename
         objectURL.value = URL.createObjectURL(new Blob([res.data]))
       })
-      .catch(err => ElMessage.error(err.msg || err.message || '获取文件失败'))
+      .catch(err => ElMessage.error(err.msg || err.message || i18n.t('components.document.fetchFileFailed')))
   } else {
     revoke()
     objectURL.value = URL.createObjectURL(value instanceof Blob ? value : new Blob([value]))
@@ -53,7 +54,7 @@ defineExpose({
     } else pdfEmbed.value?.print()
   },
   download: (filename: string) => {
-    if (!objectURL.value) return ElMessage.error('文件内容为空')
+    if (!objectURL.value) return ElMessage.error(i18n.t('components.document.emptyContent'))
     const elink = document.createElement('a')
     const date = new Date()
     elink.download =

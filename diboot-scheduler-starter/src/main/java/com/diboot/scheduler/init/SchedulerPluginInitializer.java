@@ -58,12 +58,11 @@ public class SchedulerPluginInitializer implements ApplicationRunner {
      * 插入初始化数据
      */
     private void insertInitData() {
-        // 插入iam组件所需的数据字典
+        // 插入scheduler组件所需的数据字典
         DictionaryService dictionaryService = ContextHolder.getBean(DictionaryService.class);
         if (dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "INIT_STRATEGY")) {
-            // 插入iam组件所需的数据字典
             final String[] DICT_INIT_DATA = {
-                    "{\"type\":\"INIT_STRATEGY\",\"itemName\":\"定时任务初始化策略\",\"description\":\"定时任务初始化策略定义\",\"isEditable\":true,\"children\":[{\"itemName\":\"周期执行\",\"itemValue\":\"DO_NOTHING\",\"sortId\":1},{\"itemName\":\"立即执行一次，并周期执行\",\"itemValue\":\"EFIRE_AND_PROCEED2\",\"sortId\":2},{\"itemName\":\"超期立即执行，并周期执行\",\"itemValue\":\"IGNORE_MISFIRES\",\"sortId\":3}]}"
+                    "{\"type\":\"INIT_STRATEGY\", \"itemName\":\"定时任务初始化策略\", \"description\":\"定时任务初始化策略定义\", \"isEditable\":true, \"children\":[{\"itemName\":\"周期执行\", \"itemNameI18n\":\"Dictionary.INIT_STRATEGY.DO_NOTHING\", \"itemValue\":\"DO_NOTHING\", \"sortId\":1},{\"itemName\":\"立即执行一次，并周期执行\", \"itemNameI18n\":\"Dictionary.INIT_STRATEGY.EFIRE_AND_PROCEED2\", \"itemValue\":\"EFIRE_AND_PROCEED2\", \"sortId\":2},{\"itemName\":\"超期立即执行，并周期执行\", \"itemNameI18n\":\"Dictionary.INIT_STRATEGY.IGNORE_MISFIRES\", \"itemValue\":\"IGNORE_MISFIRES\", \"sortId\":3}]}"
             };
             // 插入数据字典
             for (String dictJson : DICT_INIT_DATA) {

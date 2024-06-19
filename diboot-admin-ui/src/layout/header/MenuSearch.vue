@@ -85,7 +85,7 @@ const go = (name: string) => {
 
 <template>
   <span class="menu-search">
-    <el-tooltip effect="light" content="ctrl + k" placement="bottom" :show-after="300">
+    <el-tooltip effect="dark" :content="$t('layout.header.menuSearch')" placement="bottom" :show-after="300">
       <el-icon :size="22" @click="open">
         <Search />
       </el-icon>
@@ -96,7 +96,7 @@ const go = (name: string) => {
           ref="inputRef"
           v-model="value"
           autofocus
-          placeholder="搜索菜单"
+          :placeholder="$t('layout.header.menuSearch')"
           @update:model-value="(v: string) => (search = v)"
         >
           <template #prefix>

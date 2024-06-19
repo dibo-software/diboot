@@ -79,7 +79,7 @@ public class AnnotationUtils extends org.springframework.core.annotation.Annotat
             url = getNotEmptyStr(anno.value(), anno.path());
         }
         else{
-            log.warn("无法识别到URL Mapping相关注解: "+method.getName());
+            log.warn("无法识别到URL Mapping相关注解: {}", method.getName());
         }
         return new ApiUri(requestMethod, url);
     }

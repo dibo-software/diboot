@@ -59,7 +59,7 @@ public class SimpleEmailChannel implements MessageChannel {
         String status = Cons.MESSAGE_STATUS.DELIVERY.name();
         JavaMailSender javaMailSender = ContextHolder.getBean(JavaMailSender.class);
         if(javaMailSender == null) {
-            throw new InvalidUsageException("邮件无法发送：无JavaMailSender实例，请检查相关配置及依赖环境。");
+            throw new InvalidUsageException("exception.invalidUsage.simpleEmailChannel.send.message");
         }
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();

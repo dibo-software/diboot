@@ -67,7 +67,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
+            throw new InvalidUsageException("exception.invalidUsage.binder.parseConditionFailed");
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
         if(middleTable == null){

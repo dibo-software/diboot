@@ -47,7 +47,7 @@ public class CasSSOManager implements SSOManager {
             callback = this.callback;
         }
         if (V.isEmpty(callback)) {
-            throw new BusinessException("回调地址为空");
+            throw new BusinessException("exception.business.SSOManager.nullCallback");
         }
         try {
             callback = URLEncoder.encode(callback, "UTF-8");
@@ -77,7 +77,7 @@ public class CasSSOManager implements SSOManager {
             return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.CAS_SERVER.name()).applyToken(credential);
         } catch (TicketValidationException e) {
             log.error("CAS Ticket 验证失败", e);
-            throw new BusinessException("Ticket验证失败");
+            throw new BusinessException("exception.business.casSSOManager.validTicketFailed");
         }
     }
 }

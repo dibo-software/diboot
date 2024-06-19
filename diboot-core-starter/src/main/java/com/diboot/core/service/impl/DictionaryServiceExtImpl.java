@@ -18,6 +18,8 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.binding.RelationsBinder;
+import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
 import com.diboot.core.exception.BusinessException;
@@ -32,6 +34,7 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,43 +54,84 @@ import java.util.stream.Collectors;
 public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService, DictionaryServiceExtProvider {
     private static final Logger log = LoggerFactory.getLogger(DictionaryServiceExtImpl.class);
 
+    @Autowired
+    private DictionaryCacheManager dictionaryCacheManager;
+
+    /**
+     * 数据变动前先清空缓存
+     * @param entity
+     */
+    protected void beforeUpdate(Dictionary entity) {
+        dictionaryCacheManager.removeCachedItems(entity.getType());
+        log.debug("字典 {}:{} 的缓存已被移除", entity.getItemName(), entity.getType());
+    }
+
+    /**
+     * 数据变动前先清空缓存
+     * @param fieldKey
+     * @param fieldVal
+     */
+    protected void beforeDelete(String fieldKey, Object fieldVal) {
+        List<String> types = getValuesOfField(fieldKey, fieldVal, Dictionary::getType);
+        if(V.isEmpty(types)){
+            return;
+        }
+        types.forEach(type -> {
+            dictionaryCacheManager.removeCachedItems(type);
+            log.debug("字典 {} 的缓存已被移除", type);
+        });
+    }
+
+    /**
+     * 根据type查询字典选项（支持缓存）
+     * @param type
+     * @return
+     */
+    protected List<Dictionary> getEntityListByType(String type) {
+        List<Dictionary> dictList = dictionaryCacheManager.getCachedItems(type);
+        if(dictList == null) {
+            // 构建查询条件
+            LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
+                    .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getItemNameI18n, Dictionary::getExtension)
+                    .eq(Dictionary::getType, type)
+                    .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
+                    .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
+            dictList = super.getEntityList(queryDictionary);
+            log.debug("查询到字典 {} 的选项数据", type);
+            // 缓存字典选项数据
+            dictionaryCacheManager.cacheItems(type, dictList);
+        }
+        else {
+            log.debug("从缓存中获取 {} 的选项数据", type);
+        }
+        return dictList;
+    }
+
     @Override
     public List<LabelValue> getLabelValueList(String type) {
-        ;
-        // 构建查询条件
-        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .eq(Dictionary::getType, type)
-                .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL)
-                .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
-        // 返回构建条件
-        return getEntityList(queryDictionary).stream()
+        // 根据类型查询并返回
+        List<Dictionary> dictionaryList = getEntityListByType(type);
+        RelationsBinder.bind(dictionaryList);
+        return dictionaryList.stream()
                 .map(Dictionary::toLabelValue)
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public Map<String, LabelValue> getLabel2ItemMap(String type) {
-        // 构建查询条件
-        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .eq(Dictionary::getType, type)
-                .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
-        // 返回构建条件
-        return getEntityList(queryDictionary).stream().collect(
+        // 根据类型查询并返回
+        List<Dictionary> dictionaryList = getEntityListByType(type);
+        RelationsBinder.bind(dictionaryList);
+        return dictionaryList.stream().collect(
                 Collectors.toMap(Dictionary::getItemName, Dictionary::toLabelValue));
     }
 
     @Override
     public Map<String, LabelValue> getValue2ItemMap(String type) {
-        // 构建查询条件
-        LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
-                .eq(Dictionary::getType, type)
-                .isNotNull(Dictionary::getParentId).ne(Dictionary::getParentId, Cons.ID_PREVENT_NULL);
-        // 返回构建条件
-        return getEntityList(queryDictionary).stream().collect(
+        // 根据类型查询并返回
+        List<Dictionary> dictionaryList = getEntityListByType(type);
+        RelationsBinder.bind(dictionaryList);
+        return dictionaryList.stream().collect(
                 Collectors.toMap(Dictionary::getItemValue, Dictionary::toLabelValue));
     }
 
@@ -108,7 +152,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             dictVO.setIsDeletable(true);
         }
         if(!super.createEntity(dictVO)){
-            log.warn("新建数据字典定义失败，type="+dictVO.getType());
+            log.warn("新建数据字典定义失败，type={}", dictVO.getType());
             return false;
         }
         List<Dictionary> children = dictVO.getChildren();
@@ -125,9 +169,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             // 批量保存
             boolean success = super.createEntities(children);
             if(!success){
-                String errorMsg = "新建数据字典子项失败，type="+dictVO.getType();
-                log.warn(errorMsg);
-                throw new BusinessException(Status.FAIL_OPERATION, errorMsg);
+                log.warn("新建数据字典子项失败， type= {}", dictVO.getType());
+                throw new BusinessException(Status.FAIL_OPERATION, "exception.business.dictionaryService.createDictAndChildren.message", dictVO.getType());
             }
         }
         return true;
@@ -161,7 +204,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 .setIsDeletable(oldDictionary.getIsDeletable())
                 .setIsEditable(oldDictionary.getIsEditable());
         if(!super.updateEntity(dictVO)){
-            log.warn("更新数据字典定义失败，type="+dictVO.getType());
+            log.warn("更新数据字典定义失败，type={}", dictVO.getType());
             return false;
         }
         //获取原 子数据字典list
@@ -182,14 +225,14 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                 if(V.notEmpty(dict.getId())){
                     dictItemIds.add(dict.getId());
                     if(!super.updateEntity(dict)){
-                        log.warn("更新字典子项失败，itemName=" + dict.getItemName());
-                        throw new BusinessException(Status.FAIL_EXCEPTION, "更新字典子项异常");
+                        log.warn("更新字典子项失败，itemName={}", dict.getItemName());
+                        throw new BusinessException(Status.FAIL_EXCEPTION, "exception.business.dictionaryService.updateItem");
                     }
                 }
                 else{
                     if(!super.createEntity(dict)){
-                        log.warn("新建字典子项失败，itemName=" + dict.getItemName());
-                        throw new BusinessException(Status.FAIL_EXCEPTION, "新建字典子项异常");
+                        log.warn("新建字典子项失败，itemName={}", dict.getItemName());
+                        throw new BusinessException(Status.FAIL_EXCEPTION, "exception.business.dictionaryService.createItem");
                     }
                 }
             }
@@ -198,8 +241,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             for(Dictionary dict : oldDictList){
                 if(!dictItemIds.contains(dict.getId())){
                     if(!super.deleteEntity(dict.getId())){
-                        log.warn("删除子数据字典失败，itemName="+dict.getItemName());
-                        throw new BusinessException(Status.FAIL_EXCEPTION, "删除字典子项异常");
+                        log.warn("删除子数据字典失败，itemName={}", dict.getItemName());
+                        throw new BusinessException(Status.FAIL_EXCEPTION, "exception.business.dictionaryService.deleteItem");
                     }
                 }
             }
@@ -215,9 +258,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         Set<String> itemNames = new HashSet<>(), itemValues = new HashSet<>();
         dictList.forEach(dict -> {
             if (itemValues.contains(dict.getItemValue())) {
-                throw new BusinessException(Status.FAIL_OPERATION, "字典选项值: {} 重复", dict.getItemValue());
+                throw new BusinessException(Status.FAIL_OPERATION, "exception.business.dictionaryService.repeatItemValue", dict.getItemValue());
             } else if (itemNames.contains(dict.getItemName())) {
-                throw new BusinessException(Status.FAIL_OPERATION, "字典选项名: {} 重复", dict.getItemName());
+                throw new BusinessException(Status.FAIL_OPERATION, "exception.business.dictionaryService.repeatItemName", dict.getItemName());
             }
             itemNames.add(dict.getItemName());
             itemValues.add(dict.getItemValue());
@@ -229,7 +272,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public boolean deleteDictAndChildren(Serializable id) {
         LambdaQueryWrapper<Dictionary> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Dictionary::getId, id).or().eq(Dictionary::getParentId, id);
-        return deleteEntities(queryWrapper);
+        super.deleteEntities(queryWrapper);
+        return true;
     }
 
     @Override

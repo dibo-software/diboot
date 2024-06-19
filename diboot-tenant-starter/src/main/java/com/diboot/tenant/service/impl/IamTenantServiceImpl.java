@@ -83,14 +83,14 @@ public class IamTenantServiceImpl extends BaseServiceImpl<IamTenantMapper, IamTe
         boolean success = this.createEntity(iamTenant);
         if (!success) {
             log.error("创建租户失败！");
-            throw new BusinessException(Status.FAIL_EXCEPTION, "创建租户信息失败！");
+            throw new BusinessException(Status.FAIL_EXCEPTION, "exception.business.tenantService.createFailed");
         }
         // 创建组织机构
         IamOrg iamOrg = buildRootOrgByTenant(iamTenant);
         success = iamOrgService.createEntity(iamOrg);
         if (!success) {
             log.error("创建租户默认IamOrg失败！");
-            throw new BusinessException(Status.FAIL_EXCEPTION, "创建租户默认IamOrg失败！");
+            throw new BusinessException(Status.FAIL_EXCEPTION, "exception.business.tenantService.createDefaultIamOrgFailed");
         }
         // 将顶级id更新为自身的id
         iamOrgService.updateEntity(iamOrg.setRootOrgId(iamOrg.getId()));

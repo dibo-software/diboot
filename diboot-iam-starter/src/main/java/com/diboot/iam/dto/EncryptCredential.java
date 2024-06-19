@@ -30,7 +30,7 @@ public class EncryptCredential implements Serializable {
     /**
      * 密文
      */
-    @NotNull(message = "认证信息不能为空")
+    @NotNull(message = "{validation.encryptCredential.ciphertext.NotNull.message}")
     private String ciphertext;
 
     /**

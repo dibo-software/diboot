@@ -139,7 +139,7 @@ provide('update-tab-title', (title: string) => title && viewTabsStore.updateTabT
                   :class="{ 'is-active': $route.name === element.name }"
                   @click="$router.push(element.fullPath)"
                 >
-                  {{ element.meta.title }}
+                  {{ $t(element.meta.title) }}
                   <el-icon v-show="allowClose(element)" :size="15" @click.stop="closeTab(element)">
                     <Close />
                   </el-icon>
@@ -147,18 +147,20 @@ provide('update-tab-title', (title: string) => title && viewTabsStore.updateTabT
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item :disabled="findTabIndex(element) === 0" @click="closeLeftTabs(element)">
-                      关闭左侧页签
+                      {{ $t('layout.tabs.closeLeft') }}
                     </el-dropdown-item>
                     <el-dropdown-item
                       :disabled="findTabIndex(element) === viewTabsStore.tabList.length - 1"
                       @click="closeRightTabs(element)"
                     >
-                      关闭右侧页签
+                      {{ $t('layout.tabs.closeRight') }}
                     </el-dropdown-item>
                     <el-dropdown-item :disabled="viewTabsStore.tabList.length === 1" @click="closeOtherTabs(element)">
-                      关闭其他页签
+                      {{ $t('layout.tabs.closeOther') }}
                     </el-dropdown-item>
-                    <el-dropdown-item divided @click="fullScreenTabView(element)">当前页全屏</el-dropdown-item>
+                    <el-dropdown-item divided @click="fullScreenTabView(element)">{{
+                      $t('layout.tabs.fullScreen')
+                    }}</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -187,16 +189,21 @@ provide('update-tab-title', (title: string) => title && viewTabsStore.updateTabT
         </el-icon>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item :icon="Close" @click="closeAllTabs()">关闭所有页签</el-dropdown-item>
+            <el-dropdown-item :icon="Close" @click="closeAllTabs()">{{ $t('layout.tabs.closeAll') }}</el-dropdown-item>
             <el-dropdown-item :icon="FullScreen" @click="fullScreenTabsView()">
-              {{ fullScreen ? '关闭' : '开启' }}全屏
+              {{ fullScreen ? $t('layout.tabs.closeFullScreen') : $t('layout.tabs.openFullScreen') }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </div>
     <div :class="fullScreen === true ? 'full-screen' : ''">
-      <div v-show="fullScreen === true" class="full-screen-close" title="关闭全屏" @click="fullScreenTabView()">
+      <div
+        v-show="fullScreen === true"
+        class="full-screen-close"
+        :title="$t('layout.tabs.closeFullScreen')"
+        @click="fullScreenTabView()"
+      >
         <el-icon :size="20">
           <close-bold />
         </el-icon>

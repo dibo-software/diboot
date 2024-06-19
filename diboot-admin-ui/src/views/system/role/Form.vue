@@ -3,7 +3,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { Resource } from '@/views/system/resource/type'
 import { checkValue } from '@/utils/validate-form'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/iam/role'
 
 const { loadData, loading, model } = useDetail<Role & { permissionIdList?: string[] }>(baseApi)
@@ -31,7 +32,7 @@ getTree()
 
 defineExpose({
   open: (id?: string) => {
-    title.value = id ? '更新' : '新建'
+    title.value = id ? i18n.t('title.update') : i18n.t('title.create')
     loadData(id).then(() => {
       // 设置选中权限
       selectedIdList.value = (model.value.permissionList?.map(item => item.id) as string[]) ?? []
@@ -75,9 +76,9 @@ const beforeSubmit = (value: boolean) => {
 const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
 
 const rules: FormRules = {
-  name: { required: true, message: '不能为空', whitespace: true },
+  name: { required: true, message: i18n.t('rules.notnull'), whitespace: true },
   code: [
-    { required: true, message: '不能为空', whitespace: true },
+    { required: true, message: i18n.t('rules.notnull'), whitespace: true },
     { validator: checkCodeDuplicate, trigger: 'blur' }
   ]
 }
@@ -89,17 +90,23 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
 
 <template>
   <el-dialog v-model="visible" :title="title" top="10vh">
-    <el-form ref="formRef" v-loading="loading" :model="model" :rules="rules" label-width="80px">
-      <el-form-item prop="name" label="名称">
+    <el-form
+      ref="formRef"
+      v-loading="loading"
+      :model="model"
+      :rules="rules"
+      :label-width="$i18n.locale === 'en' ? '150px' : '80px'"
+    >
+      <el-form-item prop="name" :label="$t('role.name')">
         <el-input v-model="model.name" />
       </el-form-item>
-      <el-form-item prop="code" label="编码">
+      <el-form-item prop="code" :label="$t('role.code')">
         <el-input v-model="model.code" />
       </el-form-item>
-      <el-form-item prop="description" label="备注">
+      <el-form-item prop="description" :label="$t('role.description')">
         <el-input v-model="model.description" type="textarea" />
       </el-form-item>
-      <el-form-item prop="permissionList" label="角色授权">
+      <el-form-item prop="permissionList" :label="$t('role.permissionList')">
         <el-scrollbar height="calc(80vh - 350px)">
           <el-tree
             ref="treeRef"
@@ -118,11 +125,11 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
     </el-form>
 
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
       <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
-        >保存并继续
+        >{{ $t('button.continueAdd') }}
       </el-button>
-      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">保存</el-button>
+      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">{{ $t('button.save') }}</el-button>
     </template>
   </el-dialog>
 </template>

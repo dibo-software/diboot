@@ -65,12 +65,12 @@ public class ImageHelper {
 			FileHelper.makeDirectory(fullPath);
 			FileUtils.writeByteArrayToFile(new File(fullPath), file.getBytes());
 			if(log.isDebugEnabled()){
-				log.debug("保存图片成功！路径为: " + accessPath);
+				log.debug("保存图片成功！路径为: {}", accessPath);
 			}
 			return accessPath;
 		}
 		catch (IOException e1) {
-			log.error("保存原图片失败(image=" + accessPath + "): ", e1);
+			log.error("保存原图片失败: image={}", accessPath, e1);
 			return null;
 		}
 	}
@@ -102,7 +102,7 @@ public class ImageHelper {
 			FileHelper.makeDirectory(fullPath);
 			FileUtils.copyFile(new File(fullPath), file);
 			if(log.isDebugEnabled()){
-				log.debug("保存图片成功！路径为: " + accessPath);
+				log.debug("保存图片成功！路径为: {}", accessPath);
 			}
 			// 如果原文件与目标文件不相等且不保留原文件，则删除原文件
 			if (!reserve && !StringUtils.equals(file.getAbsolutePath(), fullPath)){
@@ -110,7 +110,7 @@ public class ImageHelper {
 			}
 			return accessPath;
 		} catch (Exception e){
-			log.error("保存原图片失败(image=" + accessPath + "): ", e);
+			log.error("保存原图片失败: image={}", accessPath, e);
 			return null;
 		}
 	}
@@ -146,7 +146,6 @@ public class ImageHelper {
 			byte[] data = Base64.getDecoder().decode(base64Str);
 			File file = new File(fullFilePath);
 			FileUtils.writeByteArrayToFile(file, data);
-			data = null;
 			return true;
 		}
 		catch(Exception e){

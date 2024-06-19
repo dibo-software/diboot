@@ -1,6 +1,6 @@
 <script setup name="OrgList" lang="ts">
 import type { OrgModel } from '@/views/org-structure/org/type'
-import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, Plus } from '@element-plus/icons-vue'
 import OrgForm from './Form.vue'
 
 const props = defineProps<{ parentId?: string }>()
@@ -22,9 +22,6 @@ const { queryParam, onSearch, getList, loading, dataList, pagination, remove, re
     emit('reload')
   }
 })
-
-// 搜索区折叠
-const searchState = ref(false)
 
 watch(
   () => props.parentId,
@@ -48,34 +45,15 @@ const onFormComplete = () => {
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="8" :sm="12">
-          <el-form-item label="名称">
-            <el-input v-model="queryParam.name" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="8" :sm="12">
-          <el-form-item label="编码">
-            <el-input v-model="queryParam.code" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
       <el-space>
-        <el-input v-show="!searchState" v-model="queryParam.name" clearable placeholder="名称" @change="onSearch" />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
-        />
+        <el-input v-model="queryParam.name" clearable :placeholder="$t('org.name')" @change="onSearch" />
+        <el-input v-model="queryParam.code" clearable :placeholder="$t('org.code')" @change="onSearch" />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
@@ -88,12 +66,12 @@ const onFormComplete = () => {
       stripe
       height="100%"
     >
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="code" label="编码" />
-      <el-table-column prop="managerName" label="负责人" />
-      <el-table-column prop="sortId" label="排序号" />
-      <el-table-column prop="updateTime" label="更新时间" width="185" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column prop="name" :label="$t('org.name')" />
+      <el-table-column prop="code" :label="$t('org.code')" />
+      <el-table-column prop="managerName" :label="$t('org.managerName')" />
+      <el-table-column prop="sortId" :label="$t('org.sortId')" />
+      <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="185" />
+      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
         <template #default="{ row }">
           <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
             {{ $t('operation.update') }}

@@ -151,7 +151,7 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserAndRelatedInfo(String id) {
         if (!exists(IamUser::getId, id)){
-            throw new BusinessException(Status.FAIL_OPERATION, "删除的记录不存在");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.userService.deleteRecordNonExist");
         }
         // 删除用户信息
         this.deleteEntity(id);
@@ -353,7 +353,7 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
 
     private void deleteAccount(String userId) {
         if (V.equals(userId, IamSecurityUtils.getCurrentUserId())) {
-            throw new BusinessException("不可删除自己的账号");
+            throw new BusinessException("exception.business.userService.deleteSelfAccount");
         }
         // 删除账号信息
         iamAccountService.deleteEntities(
@@ -382,9 +382,8 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
     @Override
     public void beforeCreate(IamUser iamUser){
         if(isUserNumExists(null, iamUser.getUserNum())){
-            String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
-            log.warn("保存用户异常:{}", errorMsg);
-            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+            log.warn("保存用户异常: 员工编号{} 已存在，请重新设置！", iamUser.getUserNum());
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.userService.userNumExist", iamUser.getUserNum());
         }
     }
 
@@ -396,9 +395,8 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
     @Override
     public void beforeUpdate(IamUser iamUser){
         if(isUserNumExists(iamUser.getId(), iamUser.getUserNum())){
-            String errorMsg = "员工编号 "+ iamUser.getUserNum() +" 已存在，请重新设置！";
-            log.warn("保存用户异常:{}", errorMsg);
-            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+            log.warn("保存用户异常: 员工编号{} 已存在，请重新设置！", iamUser.getUserNum());
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.userService.userNumExist");
         }
     }
 

@@ -194,7 +194,7 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
                         .eq(IamUserRole::getRoleId, superAdminRoleId))
         ) {
             if(!iamCustomize.checkCurrentUserHasRole(Cons.ROLE_SUPER_ADMIN)){
-                throw new PermissionException("非超级管理员用户不可删除超级管理员用户权限！");
+                throw new PermissionException("exception.permission.userRoleService.deleteUserRoleRelations.noPermission");
             }
         }
         return deleteEntities(
@@ -272,7 +272,7 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
      */
     private void checkSuperAdminIdentity(){
         if(!iamCustomize.checkCurrentUserHasRole(Cons.ROLE_SUPER_ADMIN)){
-            throw new PermissionException("非超级管理员用户不可授予其他用户超级管理员权限！");
+            throw new PermissionException("exception.permission.userRoleService.checkSuperAdminIdentity.noPermission");
         }
     }
 
@@ -282,10 +282,7 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
      * @param userId
      */
     private void clearUserAuthCache(String userType, String userId){
-        String username = iamAccountService.getAuthAccount(userType, userId);
-        if(V.notEmpty(username)){
-            iamCustomize.clearAuthorizationCache(username);
-        }
+        iamCustomize.clearAuthorizationCache(userType, userId);
     }
 
 }

@@ -52,7 +52,7 @@ public class WxMaUserAuthServiceImpl extends WxMaMemberAuthServiceImpl {
     public IamMember bindWxMa(WxMemberDTO wxInfoDTO) throws Exception {
         IamUser iamUser = IamSecurityUtils.getCurrentUser();
         if (V.isEmpty(iamUser)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "请登录后绑定");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.bindAfterLogin");
         }
         // 获取用户信息
         IamMember iamMember = iamMemberService.getSingleEntity(
@@ -61,7 +61,7 @@ public class WxMaUserAuthServiceImpl extends WxMaMemberAuthServiceImpl {
                         .eq(IamMember::getUserId, iamUser.getId())
         );
         if (V.notEmpty(iamMember)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "用户已经绑定");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.bindAgain");
         }
         iamMember = maInfo2IamMemberEntity(wxInfoDTO)
                 .setUserId(iamUser.getId())
@@ -69,13 +69,13 @@ public class WxMaUserAuthServiceImpl extends WxMaMemberAuthServiceImpl {
                 .setUserType(IamUser.class.getSimpleName());
         boolean success = iamMemberService.createEntity(iamMember);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "绑定用户信息失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.bindMemberFailed");
         }
         // 创建当前用户的账户
         IamAccount iamAccount = createIamAccountEntity(iamMember, iamMember.getUserId(), IamUser.class);
         success = iamAccountService.createEntity(iamAccount);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "创建系统账户失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.createAccountFailed");
         }
         return iamMember;
     }
@@ -90,7 +90,7 @@ public class WxMaUserAuthServiceImpl extends WxMaMemberAuthServiceImpl {
         );
         // 账户存在，直接登录
         if (V.isEmpty(iamMember)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请登录后绑定再使用快捷登录");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wx.shortcutLogin");
         }
         return Binder.convertAndBindRelations(iamMember, IamMemberUserVO.class);
     }

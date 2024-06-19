@@ -46,34 +46,34 @@ public class IamUser extends BaseLoginUser {
     private String tenantId;
 
     // 组织ID
-    @NotNull(message = "组织ID不能为空")
+    @NotNull(message = "{validation.iamUser.orgId.NotNull.message}")
     @TableField()
     private String orgId;
 
-    @NotNull(message = "用户编号不能为空")
-    @Length(max=20, message="用户编号长度应小于50")
+    @NotNull(message = "{validation.iamUser.userNum.NotNull.message}")
+    @Length(max=20, message="{validation.iamUser.userNum.Length.message}")
     @TableField()
     private String userNum;
 
     // 真实姓名
-    @NotNull(message = "真实姓名不能为空")
-    @Length(max=50, message="真实姓名长度应小于50")
+    @NotNull(message = "{validation.iamUser.realname.NotNull.message}")
+    @Length(max=50, message="{validation.iamUser.realname.Length.message}")
     @TableField()
     private String realname;
 
     // 性别
-    @NotNull(message = "性别不能为空")
-    @Length(max=10, message="性别长度应小于10")
+    @NotNull(message = "{validation.iamUser.gender.NotNull.message}")
+    @Length(max=10, message="{validation.iamUser.gender.Length.message}")
     @TableField()
     private String gender;
 
     // 手机号
-    @Length(max=20, message="手机号长度应小于20")
+    @Length(max=20, message="{validation.iamUser.mobilePhone.Length.message}")
     @TableField()
     private String mobilePhone;
 
     // Email
-    @Length(max=50, message="Email长度应小于50")
+    @Length(max=50, message="{validation.iamUser.email.Length.message}")
     @TableField()
     private String email;
 
@@ -85,8 +85,8 @@ public class IamUser extends BaseLoginUser {
     private LocalDate birthdate;
 
     // 状态
-    @NotNull(message = "状态不能为空")
-    @Length(max=10, message="状态长度应小于10")
+    @NotNull(message = "{validation.iamUser.status.NotNull.message}")
+    @Length(max=10, message="{validation.iamUser.status.Length.message}")
     @TableField()
     private String status;
 

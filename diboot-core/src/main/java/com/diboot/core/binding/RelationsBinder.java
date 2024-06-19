@@ -133,8 +133,7 @@ public class RelationsBinder {
                 CompletableFuture.allOf(binderFutures.toArray(new CompletableFuture[0])).join();
             }
             for(FieldAnnotation annotation : dictAnnoList){
-                CompletableFuture<Boolean> bindDictFuture = parallelBindingManager.doBindingDict(voList, annotation);
-                binderFutures.add(bindDictFuture);
+                parallelBindingManager.doBindingDict(voList, annotation);
             }
         }
         // 绑定Entity实体
@@ -179,8 +178,7 @@ public class RelationsBinder {
         if(i18nAnnoList != null){
             for(FieldAnnotation anno : i18nAnnoList){
                 // 绑定关联对象count计数
-                CompletableFuture<Boolean> bindCountFuture = parallelBindingManager.doBindingI18n(voList, anno);
-                binderFutures.add(bindCountFuture);
+                parallelBindingManager.doBindingI18n(voList, anno);
             }
         }
         // 执行绑定

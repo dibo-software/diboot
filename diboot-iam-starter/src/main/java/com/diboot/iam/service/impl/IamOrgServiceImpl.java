@@ -75,7 +75,7 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
                     iamOrg.setRootOrgId(parentOrg.getId());
                 } else {
                     if (Cons.DICTCODE_ORG_TYPE.COMP.name().equals(iamOrg.getType())) {
-                        throw new BusinessException("部门下不应有公司");
+                        throw new BusinessException("exception.business.orgService.deptHasComp");
                     }
                     iamOrg.setRootOrgId(parentOrg.getRootOrgId());
                 }

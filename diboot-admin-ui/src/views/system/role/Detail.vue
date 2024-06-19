@@ -50,18 +50,18 @@ const getIcon = (val: string) => {
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="详情" width="65vw" top="10vh">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw" top="10vh">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item label="名称">
+      <el-descriptions-item :label="$t('role.name')">
         {{ model.name }}
       </el-descriptions-item>
-      <el-descriptions-item label="编码">
+      <el-descriptions-item :label="$t('role.code')">
         {{ model.code }}
       </el-descriptions-item>
-      <el-descriptions-item label="备注" :span="2">
+      <el-descriptions-item :label="$t('role.description')" :span="2">
         {{ model.description }}
       </el-descriptions-item>
-      <el-descriptions-item label="授权权限" :span="2">
+      <el-descriptions-item :label="$t('role.grantPermission')" :span="2">
         <el-scrollbar height="calc(80vh - 300px)">
           <el-tree
             style="width: 100%"
@@ -82,15 +82,15 @@ const getIcon = (val: string) => {
           </el-tree>
         </el-scrollbar>
       </el-descriptions-item>
-      <el-descriptions-item label="创建时间">
+      <el-descriptions-item :label="$t('baseField.createTime')">
         {{ model.createTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="更新时间">
+      <el-descriptions-item :label="$t('baseField.updateTime')">
         {{ model.updateTime }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="visible = false">{{ $t('button.close') }}</el-button>
     </template>
   </el-dialog>
 </template>

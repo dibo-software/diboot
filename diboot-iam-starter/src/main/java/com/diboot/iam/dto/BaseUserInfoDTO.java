@@ -14,18 +14,18 @@ import java.io.Serializable;
 public class BaseUserInfoDTO implements Serializable {
     private static final long serialVersionUID = 10302L;
 
-    @NotNull(message = "真实姓名不能为空")
-    @Length(max = 50, message = "真实姓名长度应小于50")
+    @NotNull(message = "{validation.baseUserInfoDTO.realname.NotNull.message}")
+    @Length(max = 50, message = "{validation.baseUserInfoDTO.realname.Length.message}")
     private String realname;
 
-    @NotNull(message = "性别不能为空")
-    @Length(max = 10, message = "性别长度应小于10")
+    @NotNull(message = "{validation.baseUserInfoDTO.gender.NotNull.message}")
+    @Length(max = 10, message = "{validation.baseUserInfoDTO.gender.Length.message}")
     private String gender;
 
-    @Length(max = 20, message = "手机号长度应小于20")
+    @Length(max = 20, message = "{validation.baseUserInfoDTO.mobilePhone.Length.message}")
     private String mobilePhone;
 
-    @Length(max = 50, message = "Email长度应小于50")
+    @Length(max = 50, message = "{validation.baseUserInfoDTO.email.Length.message}")
     private String email;
 
 }

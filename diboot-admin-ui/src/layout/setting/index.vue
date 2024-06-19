@@ -60,39 +60,43 @@ const dragend = (e: DragEvent) => {
     </el-icon>
   </div>
   <div class="setting">
-    <el-drawer v-model="openSetting" title="布局实时演示" :size="360">
+    <el-drawer v-model="openSetting" :title="$t('layout.setting.title')" :size="360">
       <el-scrollbar max-height="100%">
         <el-alert
-          title="以下配置可实时预览"
-          description="开发者可在 `src/store/app.ts` 中修改默认值。"
+          :title="$t('layout.setting.alertTitle')"
+          :description="$t('layout.setting.alertDescription')"
           type="warning"
           :closable="false"
         />
         <el-divider />
         <el-form :model="appStore">
-          <el-form-item label="布局切换">
+          <el-form-item :label="$t('layout.setting.layout')">
             <el-select v-model="appStore.layout">
-              <el-option label="分栏" value="default" />
-              <el-option label="通栏" value="dock" />
-              <el-option label="经典" value="menu" />
-              <el-option label="顶导航" value="topNav" />
+              <el-option :label="$t('layout.setting.layoutOptions.default')" value="default" />
+              <el-option :label="$t('layout.setting.layoutOptions.dock')" value="dock" />
+              <el-option :label="$t('layout.setting.layoutOptions.menu')" value="menu" />
+              <el-option :label="$t('layout.setting.layoutOptions.topNav')" value="topNav" />
             </el-select>
           </el-form-item>
-          <el-form-item label="开启 Tabs">
+          <el-form-item :label="$t('layout.setting.enableTabs')">
             <el-switch v-model="appStore.enableTabs" />
           </el-form-item>
-          <el-form-item label="主题色">
+          <el-form-item :label="$t('layout.setting.colorPrimary')">
             <el-color-picker v-model="colorPrimary" @update:model-value="appStore.colorPrimary = $event as string" />
           </el-form-item>
-          <el-form-item label="开启水印">
+          <el-form-item :label="$t('layout.setting.enableWatermark')">
             <el-switch v-model="appStore.enableWatermark" />
           </el-form-item>
         </el-form>
       </el-scrollbar>
       <template #footer>
         <el-space direction="vertical" style="align-items: stretch; width: 100%; margin-bottom: -10px">
-          <el-button type="primary" :icon="CopyDocument" @click="copyConfig"> 一键复制配置 </el-button>
-          <el-button text bg :icon="RefreshLeft" @click="appStore.$reset()"> 一键恢复默认 </el-button>
+          <el-button type="primary" :icon="CopyDocument" @click="copyConfig">
+            {{ $t('layout.setting.copyConfig') }}
+          </el-button>
+          <el-button text bg :icon="RefreshLeft" @click="appStore.$reset()">
+            {{ $t('layout.setting.reset') }}
+          </el-button>
         </el-space>
       </template>
     </el-drawer>

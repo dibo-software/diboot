@@ -4,7 +4,8 @@ import Draggable from 'vuedraggable'
 import { Sort } from '@element-plus/icons-vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
 import { checkValue } from '@/utils/validate-form'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/dictionary'
 
 type Props = {
@@ -26,7 +27,7 @@ const { loadData, loading, model } = useDetail<Dictionary>(baseApi)
 const title = ref('')
 const visible = ref(false)
 const open = async (id?: string) => {
-  title.value = id ? '更新' : '新建'
+  title.value = id ? i18n.t('title.update') : i18n.t('title.create')
   visible.value = true
   await loadData(id)
   if (!model.value?.children) {
@@ -40,9 +41,9 @@ const predefineColors = ref(['#ff4500', '#ff8c00', '#ffd700', '#90ee90', '#00ced
 const checkTypeDuplicate = checkValue(`${baseApi}/check-type-duplicate`, 'type', () => model.value?.id)
 
 const rules = reactive<FormRules>({
-  itemName: [{ required: true, message: '请输入字典名称', trigger: 'change' }],
+  itemName: [{ required: true, message: i18n.t('dictionary.rules.itemName'), trigger: 'change' }],
   type: [
-    { required: true, message: '请输入字典编码', trigger: 'change' },
+    { required: true, message: i18n.t('dictionary.rules.type'), trigger: 'change' },
     { validator: checkTypeDuplicate, trigger: 'blur' }
   ]
 })
@@ -100,17 +101,17 @@ const removeItem = (index: number) => {
 const validateChildren = () => {
   if (!model || !model.value) {
     ElMessage({
-      message: '参数错误',
+      message: i18n.t('dictionary.paramsError'),
       grouping: true,
       type: 'warning'
     })
-    throw new Error('参数错误')
+    throw new Error(i18n.t('dictionary.paramsError'))
   }
   if (model.value?.children == null) {
     model.value.children = []
   }
 }
-
+const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 defineExpose({ open })
 </script>
 <template>
@@ -118,34 +119,40 @@ defineExpose({ open })
     <el-form v-if="model" ref="formRef" v-loading="loading" :model="model" :rules="rules" label-position="top">
       <el-row :gutter="16">
         <el-col :span="12">
-          <el-form-item label="字典名称" prop="itemName" :label-width="formLabelWidth">
+          <el-form-item :label="$t('dictionary.itemName')" prop="itemName" :label-width="formLabelWidth">
             <el-input v-model="model.itemName" autocomplete="off" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="字典编码" prop="type" :label-width="formLabelWidth">
+          <el-form-item :label="$t('dictionary.type')" prop="type" :label-width="formLabelWidth">
             <el-input v-model="model.type" autocomplete="off" />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="字典备注" :label-width="formLabelWidth">
-        <el-input v-model="model.description" :rows="2" type="textarea" placeholder="请输入备注" />
+      <el-form-item :label="$t('dictionary.description')" :label-width="formLabelWidth">
+        <el-input
+          v-model="model.description"
+          :rows="2"
+          type="textarea"
+          :placeholder="`${$t('placeholder.input')} ${$t('dictionary.description')}`"
+        />
       </el-form-item>
       <br />
       <template v-if="model?.children">
         <table class="children-table">
           <thead>
             <tr>
-              <th>排序</th>
-              <th><span class="required-flag">*</span> 条目名称</th>
-              <th><span class="required-flag">*</span> 条目编码</th>
-              <th>条目颜色</th>
-              <!--              <th>国际化</th>-->
+              <th>{{ $t('dictionary.item.sort') }}</th>
+              <th><span class="required-flag">*</span> {{ $t('dictionary.item.itemName') }}</th>
+              <th><span class="required-flag">*</span> {{ $t('dictionary.item.itemValue') }}</th>
+              <th>{{ $t('dictionary.item.color') }}</th>
+              <th v-if="enableI18n">{{ $t('dictionary.item.internationalization') }}</th>
               <th>
-                <el-button size="small" type="primary" @click="addItem">添加</el-button>
+                <el-button size="small" type="primary" @click="addItem">{{ $t('operation.add') }}</el-button>
               </th>
             </tr>
           </thead>
+          <div style="height: 10px" />
           <draggable
             v-model="model.children"
             tag="tbody"
@@ -163,11 +170,11 @@ defineExpose({ open })
                     :prop="`children.${index}.itemName`"
                     :rules="{
                       required: true,
-                      message: '请输入条目名称',
+                      message: $t('dictionary.item.rules.itemName'),
                       trigger: 'blur'
                     }"
                   >
-                    <el-input v-model="element.itemName" placeholder="条目名称" />
+                    <el-input v-model="element.itemName" :placeholder="$t('dictionary.item.itemName')" />
                   </el-form-item>
                 </td>
                 <td>
@@ -175,24 +182,26 @@ defineExpose({ open })
                     :prop="`children.${index}.itemValue`"
                     :rules="{
                       required: true,
-                      message: '请输入条目编码',
+                      message: $t('dictionary.item.rules.itemValue'),
                       trigger: 'blur'
                     }"
                   >
-                    <el-input v-model="element.itemValue" placeholder="条目编码" />
+                    <el-input v-model="element.itemValue" :placeholder="$t('dictionary.item.itemValue')" />
                   </el-form-item>
                 </td>
-                <td class="color-picker-td">
+                <td>
                   <el-color-picker
                     v-model="(element.extension ? element.extension : (element.extension = {})).color"
                     :predefine="predefineColors"
                   />
                 </td>
-                <!--                <td>-->
-                <!--                  <i18n-selector v-model="element.itemNameI18n" style="position: relative; top: -8px" />-->
-                <!--                </td>-->
+                <td v-if="enableI18n">
+                  <i18n-selector v-model="element.itemNameI18n" style="position: relative; top: -8px" />
+                </td>
                 <td>
-                  <el-button size="small" type="danger" @click="removeItem(index)">删除</el-button>
+                  <el-button size="small" type="danger" @click="removeItem(index)">{{
+                    $t('operation.delete')
+                  }}</el-button>
                 </td>
               </tr>
             </template>
@@ -202,11 +211,11 @@ defineExpose({ open })
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
+        <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
         <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)">
-          保存并继续
+          {{ $t('button.continueAdd') }}
         </el-button>
-        <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">保存</el-button>
+        <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">{{ $t('button.save') }}</el-button>
       </span>
     </template>
   </el-dialog>
@@ -231,13 +240,7 @@ defineExpose({ open })
   }
 
   td > * {
-    margin-top: 2px;
     margin-bottom: 18px;
-  }
-
-  .color-picker-td {
-    padding-top: 2px;
-    padding-bottom: 18px;
   }
 
   .drag-handle {

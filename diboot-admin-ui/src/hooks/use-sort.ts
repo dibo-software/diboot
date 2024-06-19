@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 interface SortOption {
   sortApi: string
   callback?: () => void
@@ -24,7 +25,7 @@ export default ({ sortApi, callback, idKey = 'id', parentIdKey = 'parentId', sor
     api
       .patch(sortApi, param)
       .catch(err => {
-        ElMessage.error(err.msg || err.message || '排序失败')
+        ElMessage.error(err.msg || err.message || i18n.global.t('hooks.sortFailed'))
       })
       .finally(callback)
   }

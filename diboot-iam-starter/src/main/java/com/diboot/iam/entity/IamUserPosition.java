@@ -50,23 +50,23 @@ public class IamUserPosition extends BaseEntity<String> {
     private String tenantId;
 
     // 用户类型
-    @NotNull(message = "用户类型不能为空")
-    @Length(max = 100, message = "用户类型长度应小于100")
+    @NotNull(message = "{validation.iamUserPosition.userType.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamUserPosition.userType.Length.message}")
     @TableField()
     private String userType;
 
     // 用户ID
-    @NotNull(message = "用户ID不能为空")
+    @NotNull(message = "{validation.iamUserPosition.userId.NotNull.message}")
     @TableField()
     private String userId;
 
     // 组织ID
-    @NotNull(message = "组织ID不能为空")
+    @NotNull(message = "{validation.iamUserPosition.orgId.NotNull.message}")
     @TableField()
     private String orgId;
 
     // 岗位ID
-    @NotNull(message = "岗位ID不能为空")
+    @NotNull(message = "{validation.iamUserPosition.positionId.NotNull.message}")
     @TableField()
     private String positionId;
 

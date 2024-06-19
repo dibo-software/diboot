@@ -81,20 +81,20 @@ public class IamAccountServiceImpl extends BaseServiceImpl<IamAccountMapper, Iam
     public boolean changePwd(ChangePwdDTO changePwdDTO, IamAccount iamAccount) throws Exception {
         // 验证账号信息是否存在
         if (iamAccount == null) {
-            throw new BusinessException(Status.FAIL_OPERATION, "账号信息不存在");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.account.nonExist");
         }
         // 验证当前账号登录方式
         if (!Cons.DICTCODE_AUTH_TYPE.PWD.name().equals(iamAccount.getAuthType())) {
-            throw new BusinessException(Status.FAIL_OPERATION, "该账号登录方式不支持更改密码");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.account.nonSupportModifyPwd");
         }
         // 验证密码一致性
         if (V.notEquals(changePwdDTO.getPassword(), changePwdDTO.getConfirmPassword())) {
-            throw new BusinessException(Status.FAIL_OPERATION, "密码与确认密码不一致，请重新输入");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.account.pwdInconformable");
         }
         // 验证旧密码是否正确
         String oldAuthSecret = iamCustomize.encryptPwd(changePwdDTO.getOldPassword(), iamAccount.getSecretSalt());
         if (V.notEquals(oldAuthSecret, iamAccount.getAuthSecret())) {
-            throw new BusinessException(Status.FAIL_OPERATION, "旧密码错误，请重新输入");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.account.oldPwdError");
         }
 
         // 更改密码
@@ -147,9 +147,8 @@ public class IamAccountServiceImpl extends BaseServiceImpl<IamAccountMapper, Iam
     @Override
     public void beforeCreate(IamAccount iamAccount) {
         if (isAccountExists(iamAccount)) {
-            String errorMsg = "账号 " + iamAccount.getAuthAccount() + " 已存在，请重新设置！";
-            log.warn("保存账号异常: {}", errorMsg);
-            throw new BusinessException(Status.FAIL_VALIDATION, errorMsg);
+            log.warn("保存账号异常: 账号 {} 已存在", iamAccount.getAuthAccount());
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.account.exist", iamAccount.getAuthAccount());
         }
     }
 

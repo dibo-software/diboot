@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -35,6 +36,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 public class IamUserFormDTO extends IamUser {
+    private static final long serialVersionUID = -3201792449485186314L;
 
     // 认证方式
     private String authType = Cons.DICTCODE_AUTH_TYPE.PWD.name();

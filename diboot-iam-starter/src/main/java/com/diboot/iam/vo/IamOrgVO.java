@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindEntityList;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,7 +47,7 @@ public class IamOrgVO extends IamOrg  {
 
     // 数据字典关联
     @BindDict(type="ORG_TYPE", field = "type")
-    private String typeLabel;
+    private LabelValue typeLabel;
 
     // 字段关联：this.parent_id=id
     @BindField(entity = IamOrg.class, field = "name", condition = "this.parent_id=id")

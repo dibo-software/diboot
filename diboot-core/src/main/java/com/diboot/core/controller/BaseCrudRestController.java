@@ -155,7 +155,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
             // 返回ID
             return JsonResult.OK(entity.getPrimaryKeyVal());
         } else {
-            log.warn("创建操作未成功，entity=" + entity.getClass().getSimpleName());
+            log.warn("创建操作未成功，entity={}", entity.getClass().getSimpleName());
             // 组装返回结果
             return failOperation();
         }

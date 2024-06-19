@@ -78,8 +78,8 @@ const openDetail = (id: string) => {
           </el-col>
           <el-col :md="12" :sm="24" style="margin-left: auto">
             <el-form-item>
-              <el-button type="primary" @click="onSearch">搜索</el-button>
-              <el-button @click="resetFilter">重置</el-button>
+              <el-button type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+              <el-button @click="resetFilter">{{ $t('operation.reset') }}</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -111,9 +111,11 @@ const openDetail = (id: string) => {
             <el-tag v-else type="danger">失败</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="130" fixed="right">
+        <el-table-column :label="$t('operation.label')" align="center" width="130" fixed="right">
           <template #default="{ row }">
-            <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
+            <el-button text bg type="primary" size="small" @click="openDetail(row.id)"
+              >{{ $t('title.detail') }}
+            </el-button>
             <el-button v-has-permission="'logDelete'" text bg type="primary" size="small" @click="remove(row.id)">
               删除
             </el-button>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const props = defineProps<{
   // 是否禁用
   disable?: boolean
@@ -54,7 +56,7 @@ const create = () => {
   canvas.height = props.height || 300
   //绘制图片/文字
   const ctx = canvas.getContext('2d')
-  if (!ctx) return ElMessage?.warning('浏览器不支持水印功能')
+  if (!ctx) return ElMessage?.warning(i18n.t('components.watermark'))
   ctx.translate(canvas.width / 2, canvas.height / 2)
   // 逆时针旋转45度
   ctx.rotate(((props.rotate ? props.rotate : 0) * Math.PI) / 180)

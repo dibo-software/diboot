@@ -17,6 +17,7 @@ package com.diboot.notification.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamUser;
 import com.diboot.notification.entity.Message;
 import lombok.Getter;
@@ -42,13 +43,13 @@ public class MessageListVO extends Message {
      * 关联字典：DICT_MESSAGE_CHANNEL
      */
     @BindDict(type = DICT_MESSAGE_CHANNEL, field = "channel")
-    private String channelLabel;
+    private LabelValue channelLabel;
 
     /**
      * 关联字典：DICT_MESSAGE_STATUS
      */
     @BindDict(type = DICT_MESSAGE_STATUS, field = "status")
-    private String statusLabel;
+    private LabelValue statusLabel;
 
     /**
      * 发送人姓名

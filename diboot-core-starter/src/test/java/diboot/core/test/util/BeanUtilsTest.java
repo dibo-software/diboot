@@ -77,6 +77,13 @@ public class BeanUtilsTest {
 
         Class class2 = BeanUtils.getGenericityClass(dictionaryService, 1);
         Assert.assertTrue(class2.getName().equals(Dictionary.class.getName()));
+
+        Class class3 = BeanUtils.getGenericityClass(dictionaryService, 2);
+        Assert.assertTrue(class3 == null);
+
+        Class class4 = BeanUtils.getGenericityClass(new D(), 1);
+        Assert.assertTrue(class4 == null);
+
     }
 
     @Test

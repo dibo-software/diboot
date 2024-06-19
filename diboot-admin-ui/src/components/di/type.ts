@@ -20,6 +20,7 @@ export interface ListConfig {
   searchArea?: FormConfig
   columns: TableColumn[]
   operation?: ListOperation
+  indexColumn?: boolean
 }
 
 // 列表操作

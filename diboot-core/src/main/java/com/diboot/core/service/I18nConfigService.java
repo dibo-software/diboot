@@ -29,7 +29,6 @@ import java.util.List;
  * @version v3.0.0
  * @date 2022-10-12
  */
-@Deprecated
 public interface I18nConfigService extends BaseService<I18nConfig> {
 
     /**

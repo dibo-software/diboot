@@ -71,8 +71,8 @@ public class IamCustomizeImpl implements IamCustomize {
     }
 
     @Override
-    public void clearAuthorizationCache(String username) {
-        IamSecurityUtils.clearAuthorizationCache(username);
+    public void clearAuthorizationCache(String userType, String userId) {
+        IamSecurityUtils.clearAuthorizationCache(userType, userId);
     }
 
 }

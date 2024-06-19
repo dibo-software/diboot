@@ -18,7 +18,6 @@ package com.diboot.core.converter;
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
 
 /**
  * String - boolean 转换器

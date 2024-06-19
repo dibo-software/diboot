@@ -73,20 +73,20 @@ export default defineConfig(({ command, mode }) => {
         // 导入路径变换
         importPathTransform: path => path.replace(/^.+\/src/g, '@')
       }),
-      viteMockServe({
-        // 忽略以_开头的文件及目录
-        ignore: /^_|\/_/,
-        // 开发打包开关(默认开启)
-        localEnabled: command === 'serve',
-        // 生产打包开关(默认不打包)
-        prodEnabled: command !== 'serve',
-        // 注入代码(用于生产需要mock)
-        injectCode: `
-        import { setupProdMockServer } from '../mock/server-config/_prod';
-
-        setupProdMockServer();
-        `
-      })
+      // viteMockServe({
+      //   // 忽略以_开头的文件及目录
+      //   ignore: /^_|\/_/,
+      //   // 开发打包开关(默认开启)
+      //   localEnabled: command === 'serve',
+      //   // 生产打包开关(默认不打包)
+      //   prodEnabled: command !== 'serve',
+      //   // 注入代码(用于生产需要mock)
+      //   injectCode: `
+      //   import { setupProdMockServer } from '../mock/server-config/_prod';
+      //
+      //   setupProdMockServer();
+      //   `
+      // })
     ],
     css: {
       preprocessorOptions: {

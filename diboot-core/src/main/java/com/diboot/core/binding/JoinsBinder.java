@@ -100,7 +100,7 @@ public class JoinsBinder {
                 return ServiceAdaptor.queryList(iService, (QueryWrapper)queryWrapper, pagination, entityClazz);
             }
             else{
-                throw new InvalidUsageException("单表查询对象无BaseService/IService实现: "+entityClazz.getSimpleName());
+                throw new InvalidUsageException("exception.invalidUsage.joinsBinder.executeJoinQuery.message", entityClazz.getSimpleName());
             }
         }
         long begin = System.currentTimeMillis();

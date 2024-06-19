@@ -14,32 +14,34 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" :width="720" title="详情">
+  <el-dialog v-model="visible" :width="720" :title="$t('title.detail')">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item label="名称">
+      <el-descriptions-item :label="$t('position.name')">
         {{ model.name }}
       </el-descriptions-item>
-      <el-descriptions-item label="编码">
+      <el-descriptions-item :label="$t('position.code')">
         {{ model.code }}
       </el-descriptions-item>
-      <el-descriptions-item label="职级">
+      <el-descriptions-item :label="$t('position.gradeName')">
         {{ model.gradeName }}
       </el-descriptions-item>
-      <el-descriptions-item label="数据权限">
-        {{ model.dataPermissionTypeLabel }}
+      <el-descriptions-item :label="$t('position.dataPermissionType')">
+        <el-tag :color="model.dataPermissionTypeLabel?.ext?.color" effect="dark" type="info">
+          {{ model.dataPermissionTypeLabel?.label }}
+        </el-tag>
       </el-descriptions-item>
-      <el-descriptions-item label="虚拟岗位">
-        {{ model.isVirtual ? '是' : '否' }}
+      <el-descriptions-item :label="$t('position.isVirtual')">
+        {{ model.isVirtual ? $t('bool.yes') : $t('bool.no') }}
       </el-descriptions-item>
-      <el-descriptions-item label="创建时间">
+      <el-descriptions-item :label="$t('baseField.createTime')">
         {{ model.createTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="更新时间">
+      <el-descriptions-item :label="$t('baseField.updateTime')">
         {{ model.updateTime }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="visible = false">{{ $t('button.close') }}</el-button>
     </template>
   </el-dialog>
 </template>

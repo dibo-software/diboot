@@ -22,6 +22,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * 组织DTO
  * @author mazc@dibo.ltd
@@ -32,6 +34,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class IamOrgDTO extends IamOrg {
+    private static final long serialVersionUID = 6256952961426919467L;
 
     @BindQuery(comparison = Comparison.LIKE, column = "name")
     private String name;

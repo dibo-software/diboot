@@ -47,42 +47,42 @@ public class IamAccount extends BaseEntity<String> {
     private String tenantId;
 
     // 用户类型
-    @NotNull(message = "用户类型不能为空")
-    @Length(max = 100, message = "用户类型长度应小于100")
+    @NotNull(message = "{validation.iamAccount.userType.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamAccount.userType.Length.message}")
     @TableField()
     private String userType;
 
     // 用户ID
-    @NotNull(message = "用户ID不能为空")
+    @NotNull(message = "{validation.iamAccount.userId.NotNull.message}")
     @TableField()
     private String userId;
 
     // 认证方式
-    @NotNull(message = "认证方式不能为空")
-    @Length(max = 20, message = "认证方式长度应小于20")
+    @NotNull(message = "{validation.iamAccount.authType.NotNull.message}")
+    @Length(max = 20, message = "{validation.iamAccount.authType.Length.message}")
     @TableField()
     private String authType = Cons.DICTCODE_AUTH_TYPE.PWD.name();
 
     // 用户名
-    @NotNull(message = "用户名不能为空")
-    @Length(max = 100, message = "用户名长度应小于100")
+    @NotNull(message = "{validation.iamAccount.authAccount.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamAccount.authAccount.Length.message}")
     @TableField()
     private String authAccount;
 
     // 密码
     @JsonIgnore
-    @Length(max = 32, message = "密码长度应小于32")
+    @Length(max = 32, message = "{validation.iamAccount.authSecret.Length.message}")
     @TableField()
     private String authSecret;
 
     // 加密盐
     @JsonIgnore
-    @Length(max = 32, message = "加密盐长度应小于32")
+    @Length(max = 32, message = "{validation.iamAccount.secretSalt.Length.message}")
     @TableField()
     private String secretSalt;
 
     // 加密盐
-    @Length(max = 10, message = "状态长度应小于10")
+    @Length(max = 10, message = "{validation.iamAccount.status.Length.message}")
     @TableField()
     private String status;
 

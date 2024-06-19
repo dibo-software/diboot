@@ -98,10 +98,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
+            throw new InvalidUsageException("exception.invalidUsage.binder.parseConditionFailed");
         }
         if(referencedGetterFieldNameList == null){
-            throw new InvalidUsageException("调用错误：字段绑定必须指定字段field");
+            throw new InvalidUsageException("exception.invalidUsage.binder.bindField.nonField");
         }
         // 直接关联
         if(middleTable == null){
@@ -114,7 +114,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             List<T> entityList;
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
-                entityList = getEntityList(queryWrapper);
+                entityList = getEntityList(queryWrapper, true);
             }
             else{
                 // 远程调用获取
@@ -152,7 +152,7 @@ public class FieldBinder<T> extends BaseBinder<T> {
             if(V.isEmpty(this.module)){
                 queryWrapper.in(refObjJoinOnCol, refObjValues);
                 // 本地查询获取匹配结果的entityList
-                entityList = getEntityList(queryWrapper);
+                entityList = getEntityList(queryWrapper, true);
             }
             else{
                 // 远程调用获取

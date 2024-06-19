@@ -1,6 +1,6 @@
 import type { ApiData } from '@/utils/request'
 import qs from 'qs'
-
+import i18n from '@/i18n'
 /**
  * 绑定对象
  */
@@ -107,7 +107,9 @@ export default ({
             resolve()
           })
           .catch(err => {
-            ElNotification.error(err?.msg || err?.message || (err?.length ? err : '初始化选项数据失败'))
+            ElNotification.error(
+              err?.msg || err?.message || (err?.length ? err : i18n.global.t('hooks.initOptionFailed'))
+            )
             reject(err)
           })
           .finally(() => (initLoading.value = false))
@@ -139,7 +141,7 @@ export default ({
         )
         .then(res => resolve(res.data))
         .catch(err => {
-          ElNotification.error(err?.msg || err?.message || (err?.length ? err : '获取选项数据失败'))
+          ElNotification.error(err?.msg || err?.message || (err?.length ? err : i18n.t('hooks.fetchOptionFailed')))
           resolve(empty)
         })
         .finally(() => (asyncLoading.value = false))

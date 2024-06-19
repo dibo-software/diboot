@@ -5,7 +5,8 @@ import Account from './components/Account.vue'
 import Password from './components/Password.vue'
 import CropAvatar from './components/CropAvatar.vue'
 import type { Role } from '@/views/system/role/type'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 useAuthStore().getInfo(true)
 const authStore = useAuthStore()
 
@@ -15,13 +16,13 @@ tagNameList.value = roles.map((role: Role) => role.name)
 
 const menu = shallowRef([
   {
-    title: '个人信息',
+    title: i18n.t('personal.info'),
     key: 'account',
     icon: 'Postcard',
     component: Account
   },
   {
-    title: '密码',
+    title: i18n.t('user.password'),
     key: 'password',
     icon: 'Lock',
     component: Password
@@ -58,7 +59,7 @@ const selectFile = (e: any) => {
       showSetAvatarDialog.value = true
     }
   } else {
-    ElMessage.error('请上传图片文件！')
+    ElMessage.error(i18n.t('personal.uploadImg'))
   }
 }
 const cropDialog = (val: boolean) => {
@@ -80,7 +81,7 @@ const cropDialog = (val: boolean) => {
       <el-container>
         <el-header style="height: auto; display: block">
           <div class="user-info-top">
-            <el-tooltip content="修改头像">
+            <el-tooltip :content="$t('personal.modifyAvatar')">
               <el-avatar :size="70" :icon="UserFilled" :src="authStore.avatar" @click="getFile" />
             </el-tooltip>
 

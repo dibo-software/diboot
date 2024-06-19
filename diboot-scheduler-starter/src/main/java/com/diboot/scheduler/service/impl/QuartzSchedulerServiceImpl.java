@@ -185,7 +185,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
-            throw new BusinessException(Status.FAIL_OPERATION, e, "添加定时任务异常");
+            throw new BusinessException(Status.FAIL_OPERATION, e, "exception.business.quartzSchedulerService.addTaskFailed");
         }
     }
 
@@ -209,7 +209,7 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
             log.error("添加定时任务异常", e);
-            throw new BusinessException(Status.FAIL_OPERATION, e, "添加定时任务异常");
+            throw new BusinessException(Status.FAIL_OPERATION, e, "exception.business.quartzSchedulerService.addTaskFailed");
         }
     }
 
@@ -326,11 +326,12 @@ public class QuartzSchedulerServiceImpl implements QuartzSchedulerService {
                     .findAny()
                     .orElse(null);
             if (jobClass == null) {
-                throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法的定时任务!" + jobKey);
+                throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.quartzSchedulerService.illegalTask", jobKey);
             }
             return jobClass;
         } catch (Exception e) {
-            throw new BusinessException(Status.FAIL_OPERATION, "定时任务加载失败！", e);
+            log.error("定时任务加载失败", e);
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.quartzSchedulerService.loadFailed");
         }
     }
 }

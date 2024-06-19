@@ -483,10 +483,10 @@ public class D extends DateUtils{
 	 * 模糊转换日期
 	 */
 	public static LocalDate convert2LocalDate(String dateString){
+		dateString = formatDatePartString(dateString);
 		if(V.isEmpty(dateString)){
 			return null;
 		}
-		dateString = formatDatePartString(dateString);
 		return LocalDate.parse(dateString, FORMATTER_DATE_Y4MD);
 	}
 

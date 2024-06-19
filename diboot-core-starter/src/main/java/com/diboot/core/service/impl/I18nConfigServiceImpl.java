@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.diboot.core.cache.DictionaryCacheManager;
+import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.entity.I18nConfig;
 import com.diboot.core.mapper.I18nConfigMapper;
 import com.diboot.core.service.I18nConfigService;
@@ -28,6 +30,7 @@ import com.diboot.core.util.V;
 import com.diboot.core.vo.I18nConfigVO;
 import com.diboot.core.vo.Pagination;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -42,11 +45,13 @@ import java.util.stream.Collectors;
  * @version v3.0.0
  * @date 2022-10-12
  */
-@Deprecated
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "diboot.core", name = "i18n", havingValue = "true")
+@ConditionalOnProperty(prefix = "diboot", name = "i18n", havingValue = "true")
 public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18nConfig> implements I18nConfigService {
+
+    @Autowired
+    private I18nCacheManager i18nCacheManager;
 
     @Override
     public Collection<List<I18nConfigVO>> getI18nList(I18nConfig entity, Pagination pagination) {
@@ -60,7 +65,8 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
             return Collections.emptyList();
         }
         QueryWrapper<I18nConfig> query = Wrappers.query();
-        for (OrderItem order : pagination.toPage(entityClass).orders()) {
+
+        for (OrderItem order : pagination.toPage(I18nConfig.class).orders()) {
             query.orderBy(true, order.isAsc(), order.getColumn());
         }
         List<I18nConfigVO> entityList = getViewObjectList(query.lambda().in(I18nConfig::getCode, codes), null, I18nConfigVO.class);
@@ -72,30 +78,45 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
         if (V.isEmpty(voList)) {
             return;
         }
+        Locale locale = LocaleContextHolder.getLocale();
+        String language = locale.toString();
+        // 获取当前语言的缓存数据
+        Map<String, String> languageCached = i18nCacheManager.getLanguageCached(language);
         Set<String> codes = new HashSet<>();
         for (Object item : voList) {
             Object i18nCode = BeanUtils.getProperty(item, getI18nCodeField);
+            // 缓存中已经存在的数据直接赋值，不存在的进行数据库查询
             if (V.notEmpty(i18nCode)) {
-                codes.add(S.valueOf(i18nCode));
+                if (V.notEmpty(languageCached) && V.notEmpty(languageCached.get(i18nCode))) {
+                    BeanUtils.setProperty(item, setI18nContentField, languageCached.get(i18nCode));
+                    log.debug("语言环境 {} 从缓存中获取 {} 的选项数据", language, i18nCode);
+                } else {
+                    codes.add(S.valueOf(i18nCode));
+                }
             }
         }
         if(V.isEmpty(codes)){
             return;
         }
-        Locale locale = LocaleContextHolder.getLocale();
         LambdaQueryWrapper<I18nConfig> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.select(I18nConfig::getLanguage,I18nConfig::getCode,I18nConfig::getContent);
         queryWrapper.in(I18nConfig::getCode,codes);
-        queryWrapper.in(I18nConfig::getLanguage, locale.toString(), locale.getLanguage(), Locale.getDefault().toString());
+        queryWrapper.eq(I18nConfig::getLanguage, language);
         Map<String, List<I18nConfig>> map = getEntityList(queryWrapper).stream().collect(Collectors.groupingBy(I18nConfig::getLanguage));
-        List<I18nConfig> list = map.get(locale.toString());
-        if (list == null && (list = map.get(locale.toString())) == null && (list = map.get(Locale.getDefault().toString())) == null) {
+        List<I18nConfig> list = map.get(language);
+        if (list == null && (list = map.get(language)) == null) {
             return;
         }
         Map<String, String> i18nMap = list.stream().collect(Collectors.toMap(I18nConfig::getCode, I18nConfig::getContent));
+        // 将查询的数据缓存
+        i18nCacheManager.cacheLanguage(language, i18nMap);
+        // 将剩下的国际化数据进行赋值
         for (Object item : voList) {
             Object i18nCode = BeanUtils.getProperty(item, getI18nCodeField);
             if (V.notEmpty(i18nCode)) {
+                if (!codes.contains(i18nCode)) {
+                    continue;
+                }
                 String content = i18nMap.get(S.valueOf(i18nCode));
                 if (V.notEmpty(content)) {
                     BeanUtils.setProperty(item, setI18nContentField, content);

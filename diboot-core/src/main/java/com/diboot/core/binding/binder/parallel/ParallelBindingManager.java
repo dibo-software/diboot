@@ -19,7 +19,6 @@ import com.diboot.core.binding.annotation.*;
 import com.diboot.core.binding.binder.*;
 import com.diboot.core.binding.parser.ConditionManager;
 import com.diboot.core.binding.parser.FieldAnnotation;
-import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.service.I18nConfigService;
 import com.diboot.core.util.S;
@@ -55,8 +54,7 @@ public class ParallelBindingManager {
      * @param fieldAnno
      * @return
      */
-    @Async
-    public CompletableFuture<Boolean> doBindingDict(List voList, FieldAnnotation fieldAnno){
+    public void doBindingDict(List voList, FieldAnnotation fieldAnno){
         if(dictionaryServiceExtProvider != null){
             BindDict annotation = (BindDict) fieldAnno.getAnnotation();
             String dictValueField = annotation.field();
@@ -70,7 +68,6 @@ public class ParallelBindingManager {
         else{
             log.warn("BindDictService未实现，无法使用BindDict注解！");
         }
-        return CompletableFuture.completedFuture(true);
     }
 
     /***
@@ -160,8 +157,7 @@ public class ParallelBindingManager {
      * @param voList
      * @param fieldAnnotation
      */
-    @Async
-    public CompletableFuture<Boolean> doBindingI18n(List voList, FieldAnnotation fieldAnnotation) {
+    public void doBindingI18n(List voList, FieldAnnotation fieldAnnotation) {
         BindI18n annotation = (BindI18n) fieldAnnotation.getAnnotation();
         String i18nCodeField = annotation.value();
         if (i18nConfigService != null) {
@@ -170,7 +166,6 @@ public class ParallelBindingManager {
         } else {
             log.warn("I18nConfigService未实现，无法翻译I18n注解: {}", i18nCodeField);
         }
-        return CompletableFuture.completedFuture(true);
     }
 
     /**

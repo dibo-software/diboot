@@ -18,6 +18,11 @@ package com.diboot.starter;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.diboot.core.cache.DictionaryCacheManager;
+import com.diboot.core.cache.DynamicMemoryCacheManager;
+import com.diboot.core.cache.I18nCacheManager;
+import com.diboot.core.config.Cons;
+import com.diboot.core.config.MessageSourceBeanPostProcessor;
 import com.diboot.core.converter.*;
 import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
@@ -44,8 +49,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +61,10 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.filter.RequestContextFilter;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -63,8 +73,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Diboot Core自动配置类
@@ -217,6 +226,69 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     public ConfigurationCustomizer typeHandlerRegistry() {
         return configuration -> configuration.getTypeHandlerRegistry().register(java.sql.Date.class, JdbcType.DATE, LocalDateTypeHandler.class);
+    }
+
+    /**
+     * 字典等基础数据缓存管理器
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public DictionaryCacheManager dictionaryCacheManager() {
+        log.info("初始化 Dictionary 内存缓存: DynamicMemoryCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(Cons.CACHE_NAME_DICTIONARY, 24*60);
+        }};
+        DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
+        return new DictionaryCacheManager(memoryCacheManager);
+    }
+
+    /**
+     * 国际化等基础数据缓存管理器
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public I18nCacheManager i18nCacheManager() {
+        log.info("初始化 I18n 内存缓存: DynamicMemoryCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(Cons.CACHE_NAME_I18N, 24*60);
+        }};
+        DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
+        return new I18nCacheManager(memoryCacheManager);
+    }
+
+
+    /**
+     * 国际化默认环境配置
+     * @return
+     */
+    @Bean
+    public LocaleResolver localeResolver() {
+        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+        localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        return localeResolver;
+    }
+
+    /**
+     * Request上下文允许子线程使用
+     * @return
+     */
+    @Bean
+    public static RequestContextFilter requestContextFilter() {
+        OrderedRequestContextFilter orderedRequestContextFilter = new OrderedRequestContextFilter();
+        orderedRequestContextFilter.setThreadContextInheritable(true);
+        return orderedRequestContextFilter;
+    }
+
+    /**
+     * 国际化文件配置
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public MessageSourceBeanPostProcessor messageSourceBeanPostProcessor() {
+        return new MessageSourceBeanPostProcessor();
     }
 
 }

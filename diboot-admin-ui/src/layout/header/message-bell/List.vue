@@ -2,7 +2,8 @@
 import type { Message } from '@/views/system/message/type'
 import { Loading } from '@element-plus/icons-vue'
 import auth from '@/utils/auth'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/message'
 
 const props = defineProps<{ unread?: boolean }>()
@@ -45,7 +46,7 @@ const loadData = (reset = false) => {
       total.value = res.page?.totalCount ? Number(res.page.totalCount) : 0
     })
     .catch(err => {
-      ElMessage.error('获取消息列表异常' + (err.msg || err.message || err))
+      ElMessage.error(i18n.t('layout.messageBell.fetchListError') + (err.msg || err.message || err))
     })
     .finally(() => (loading.value = false))
 }
@@ -131,7 +132,7 @@ const messageInfo = ref<Message>()
           <template #header>
             <div class="header">
               <span class="title">{{ item.title }} <el-badge v-show="item.status !== 'READ'" is-dot /></span>
-              <span class="source">来源：{{ item.senderName }}</span>
+              <span class="source">{{ $t('layout.messageBell.from') }}：{{ item.senderName }}</span>
             </div>
           </template>
           <div class="content">
@@ -142,7 +143,7 @@ const messageInfo = ref<Message>()
           </div>
         </el-card>
       </TransitionGroup>
-      <el-empty v-if="!dataList.length" description="暂无消息" />
+      <el-empty v-if="!dataList.length" :description="$t('layout.messageBell.noMessagesYet')" />
       <div v-if="disabled" class="bottom-blank">
         <el-icon v-if="loading" size="24">
           <Loading />
@@ -152,7 +153,7 @@ const messageInfo = ref<Message>()
   </el-scrollbar>
 
   <el-button type="primary" ghost :disabled="unreadIds.length === 0" style="width: 100%" @click="markRead(unreadIds)">
-    全标记已读
+    {{ $t('layout.messageBell.allMarkRead') }}
   </el-button>
 
   <el-dialog v-model="dialogVisible" :title="messageInfo?.title" append-to-body>

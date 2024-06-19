@@ -4,7 +4,8 @@ import useAuthStore from '@/store/auth'
 import JSEncrypt from 'jsencrypt'
 import useSso from '@/hooks/use-sso'
 import auth from '@/utils/auth'
-
+import i18nStore from '@/utils/i18n'
+import { useI18n } from 'vue-i18n'
 const encryptor = new JSEncrypt()
 encryptor.setPublicKey(`MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzPy1UcwzgRT8dRUpAW0H
 eyVvIi4icqiwdBZMrh85+tJEZ/AXjELRzl89m2ZKoMHfoMDkajoxJeaL5IV9UpUl
@@ -18,9 +19,10 @@ const authStore = useAuthStore()
 const loading = ref(false)
 const formRef = ref<FormInstance>()
 const form = reactive({ username: 'admin', password: '123456', captcha: '', traceId: '', tenantCode: '' })
+const i18n = useI18n()
 const rules = {
-  username: { required: true, message: '不能为空', trigger: 'blur' },
-  password: { required: true, message: '不能为空', trigger: 'blur' }
+  username: { required: true, message: i18n.t('rules.notnull'), trigger: 'blur' },
+  password: { required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }
   // captcha: { required: true, message: '不能为空', trigger: 'blur' }
 }
 
@@ -63,11 +65,13 @@ const submitForm = async () => {
 }
 const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
 
+const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
+
 // 单点登录集成
 const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
   callback: (token: string) => {
     auth.setToken(token)
-    ElMessage.success('登录成功')
+    ElMessage.success(i18n.t('login.success'))
     redirect()
   }
 })
@@ -78,40 +82,68 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-loading="ssoLoading" element-loading-text="登录中..." class="content">
+  <div v-loading="ssoLoading" :element-loading-text="i18n.t('login.loading')" class="content">
     <div class="form">
       <h1 style="text-align: center">Diboot Admin UI</h1>
+      <div v-if="enableI18n" style="text-align: right; margin-bottom: 5px">
+        <el-dropdown
+          @command="
+            (command: string) => {
+              i18nStore.set(command)
+              $i18n.locale = command
+            }
+          "
+        >
+          <div class="item">
+            <el-icon :size="22">
+              <icon name="Local:Language" />
+            </el-icon>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="item in $i18n.availableLocales"
+                :key="item"
+                :command="item"
+                :disabled="$i18n.locale === item"
+              >
+                {{ $t('language', {}, { locale: item }) }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
       <el-form ref="formRef" :model="form" :rules="rules" size="large">
         <el-form-item
           v-if="enableTenant"
           prop="tenantCode"
           label=""
-          :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
+          :rules="{ required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }"
         >
           <el-input v-model="form.tenantCode">
             <template #prefix>
-              <span style="width: 60px">租户编码</span>
+              <span style="width: 85px">{{ $t('login.tenantCode') }}</span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="username" label="">
           <el-input v-model="form.username">
             <template #prefix>
-              <span style="width: 50px">用户名</span>
+              <span style="width: 85px">{{ $t('login.username') }}</span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input v-model="form.password" show-password>
             <template #prefix>
-              <span style="width: 50px">密 码</span>
+              <span style="width: 85px">{{ $t('login.password') }}</span>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="captcha">
           <el-input v-model="form.captcha" @keyup.enter="submitForm">
             <template #prefix>
-              <span style="width: 50px">验证码</span>
+              <span style="width: 85px">{{ $t('login.captcha') }}</span>
             </template>
             <template #suffix>
               <img
@@ -124,13 +156,19 @@ onMounted(() => {
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">登 录</el-button>
+          <el-button style="width: 100%" type="primary" :loading="loading" @click="submitForm">{{
+            $t('login.submit')
+          }}</el-button>
         </el-form-item>
         <el-form-item v-if="authorizeInfoMap['CAS_SERVER']">
-          <el-button style="width: 100%" type="primary" @click="redirectTo('CAS_SERVER')">CAS 单点登录</el-button>
+          <el-button style="width: 100%" type="primary" @click="redirectTo('CAS_SERVER')">{{
+            $t('login.cas')
+          }}</el-button>
         </el-form-item>
         <el-form-item v-if="authorizeInfoMap['OAuth2']">
-          <el-button style="width: 100%" type="primary" @click="redirectTo('OAuth2')">OAuth2 单点登录</el-button>
+          <el-button style="width: 100%" type="primary" @click="redirectTo('OAuth2')">{{
+            $t('login.oauth2')
+          }}</el-button>
         </el-form-item>
       </el-form>
     </div>

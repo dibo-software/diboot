@@ -31,19 +31,19 @@ const router = createRouter({
         {
           path: '/list',
           name: 'ListExample',
-          component: () => import('@/views/crud/example/listExample.vue'),
+          component: () => import('@/views/crud/example/List.vue'),
           meta: { title: '列表示例' }
         },
         {
           path: '/form',
           name: 'FormExample',
-          component: () => import('@/views/crud/example/formExample.vue'),
+          component: () => import('@/views/crud/example/Form.vue'),
           meta: { title: '表单示例' }
         },
         {
           path: '/detail',
           name: 'DetailExample',
-          component: () => import('@/views/crud/example/detailExample.vue'),
+          component: () => import('@/views/crud/example/Detail.vue'),
           meta: { title: '详情示例' }
         }
         // 业务 相关页面 (相对路由)

@@ -31,7 +31,7 @@ import org.springframework.core.annotation.Order;
  * @version v3.2.0
  * @date 2023/12/15
  */
-@Order(991)
+@Order(971)
 @Slf4j
 @Configuration
 @EnableConfigurationProperties({TenantProperties.class})

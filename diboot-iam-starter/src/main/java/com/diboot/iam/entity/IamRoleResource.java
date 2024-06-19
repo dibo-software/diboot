@@ -55,12 +55,12 @@ public class IamRoleResource extends BaseEntity<String> {
     private String tenantId;
 
     // 角色ID
-    @NotNull(message = "角色ID不能为空")
+    @NotNull(message = "{validation.iamRoleResource.roleId.NotNull.message}")
     @TableField()
     private String roleId;
 
     // 权限ID
-    @NotNull(message = "资源ID不能为空")
+    @NotNull(message = "{validation.iamRoleResource.resourceId.NotNull.message}")
     @TableField()
     private String resourceId;
 

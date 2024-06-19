@@ -41,10 +41,10 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     @Override
     public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
         String dateString = p.readValueAs(String.class);
+        dateString = D.formatDateTimeString(dateString);
         if(V.isEmpty(dateString)) {
             return null;
         }
-        dateString = D.formatDateTimeString(dateString);
         if(dateString.length() <= D.FORMAT_DATE_Y4MD.length()) {
             return LocalDate.parse(dateString, D.FORMATTER_DATE_Y4MD).atStartOfDay();
         }

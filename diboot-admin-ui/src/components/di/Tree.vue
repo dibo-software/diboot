@@ -97,7 +97,7 @@ const { nodeDrag } = useSort({
         v-if="!lazyChild || !!parentPath"
         v-model.lazy.trim="searchValue"
         :prefix-icon="Search"
-        placeholder="搜索过滤"
+        :placeholder="$t('components.di.tree.searchFilter')"
         clearable
       />
     </div>

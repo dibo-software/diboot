@@ -18,6 +18,7 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.entity.BaseEntity;
@@ -68,16 +69,16 @@ public class IamResource extends BaseEntity<String> {
     private String parentId;
 
     // 展现类型
-    @NotNull(message = "展现类型不能为空")
-    @Length(max = 20, message = "展现类型长度应小于20")
+    @NotNull(message = "{validation.iamResource.displayType.NotNull.message}")
+    @Length(max = 20, message = "{validation.iamResource.displayType.Length.message}")
     @TableField()
     private String displayType;
 
     // 显示名称
-    @NotNull(message = "显示名称不能为空")
-    @Length(max = 100, message = "显示名称长度应小于100")
+    @NotNull(message = "{validation.iamResource.displayName.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamResource.displayName.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
-    // @BindI18n("displayNameI18n")
+    @BindI18n("displayNameI18n")
     private String displayName;
 
     /**
@@ -86,28 +87,28 @@ public class IamResource extends BaseEntity<String> {
     private String displayNameI18n;
 
     // 权限编码
-    @Length(max = 200, message = "路由地址长度应小于200")
+    @Length(max = 200, message = "{validation.iamResource.routePath.Length.message}")
     @TableField()
     private String routePath;
 
     // 前端资源编码
-    @NotNull(message = "前端资源编码不能为空")
-    @Length(max = 50, message = "前端资源编码长度应小于50")
+    @NotNull(message = "{validation.iamResource.resourceCode.NotNull.message}")
+    @Length(max = 50, message = "{validation.iamResource.resourceCode.Length.message}")
     @TableField()
     private String resourceCode;
 
     // 权限编码
-    @Length(max = 200, message = "权限编码长度应小于200")
+    @Length(max = 200, message = "{validation.iamResource.permissionCode.Length.message}")
     @TableField()
     private String permissionCode;
 
     // meta配置
-    @Length(max = 200, message = "meta配置应小于300")
+    @Length(max = 200, message = "{validation.iamResource.meta.Length.message}")
     @TableField()
     private String meta;
 
     // 状态
-    @Length(max = 10, message = "状态长度应小于10")
+    @Length(max = 10, message = "{validation.iamResource.status.Length.message}")
     @TableField()
     private String status;
 

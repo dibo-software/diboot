@@ -55,15 +55,15 @@ public class ScheduleJob extends BaseEntity<String> {
     /**
      * job key
      */
-    @NotNull(message = "任务不能为空")
+    @NotNull(message = "{validation.scheduleJob.jobKey.NotNull.message}")
     @TableField()
     private String jobKey;
 
     /**
      * job名称
      */
-    @NotNull(message = "名称不能为空")
-    @Length(max = 50, message = "名称长度应小于50")
+    @NotNull(message = "{validation.scheduleJob.jobName.NotNull.message}")
+    @Length(max = 50, message = "{validation.scheduleJob.jobName.Length.message}")
     @TableField()
     @BindQuery(comparison = Comparison.LIKE)
     private String jobName;
@@ -71,8 +71,8 @@ public class ScheduleJob extends BaseEntity<String> {
     /**
      * 定时执行表达式
      */
-    @NotNull(message = "定时表达式不能为空")
-    @Length(max = 100, message = "定时表达式长度应小于100")
+    @NotNull(message = "{validation.scheduleJob.cron.NotNull.message}")
+    @Length(max = 100, message = "{validation.scheduleJob.cron.Length.message}")
     @TableField()
     private String cron;
 
@@ -91,8 +91,8 @@ public class ScheduleJob extends BaseEntity<String> {
     /**
      * 状态
      */
-    @NotNull(message = "状态不能为空")
-    @Length(max = 10, message = "状态长度应小于10")
+    @NotNull(message = "{validation.scheduleJob.jobStatus.NotNull.message}")
+    @Length(max = 10, message = "{validation.scheduleJob.jobStatus.Length.message}")
     @TableField()
     private String jobStatus;
 
@@ -105,7 +105,7 @@ public class ScheduleJob extends BaseEntity<String> {
     /**
      * 备注
      */
-    @Length(max = 200, message = "备注长度应小于200")
+    @Length(max = 200, message = "{validation.scheduleJob.jobComment.Length.message}")
     @TableField()
     private String jobComment;
 

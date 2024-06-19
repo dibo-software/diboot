@@ -1,25 +1,27 @@
 import { createI18n } from 'vue-i18n'
+import I18nUtils from '@/utils/i18n'
 import type { Locale } from './locales/zhCN'
 
-const locales = import.meta.glob<Locale>('./locales/**', {
+const locales = import.meta.glob<Locale>('@/**/locales/**', {
   import: 'default',
   eager: true
 })
 
 const messages: Record<string, Locale> = {}
 
-Object.keys(locales).reduce((all: Record<string, unknown>, path: string) => {
+Object.keys(locales).forEach((path: string) => {
   const name = path.replace(/.*\/(.+)\.ts/, '$1').replace(/([a-z]+)([A-Z]+)/, '$1-$2')
-  all[name] = locales[path]
-  return all
-}, messages)
+  const localeData = messages[name]
 
+  if (localeData) messages[name] = _.merge(localeData, locales[path])
+  else messages[name] = locales[path]
+  return messages
+})
 const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: 'zh-CN', // navigator.language,
-  fallbackLocale: 'zh-CN',
+  locale: I18nUtils.get() || navigator.language,
+  fallbackLocale: I18nUtils.get(),
   messages
 })
-
 export default i18n

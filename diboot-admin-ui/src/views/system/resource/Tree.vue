@@ -3,7 +3,8 @@ import { Search, Plus, Delete } from '@element-plus/icons-vue'
 import type { ElTreeInstanceType } from 'element-plus'
 import type { Resource } from './type'
 import type { WatchStopHandle } from 'vue'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/iam/resource'
 
 // tree实例
@@ -73,7 +74,7 @@ const addChildNode = (parent?: Resource) => {
     parentId: parent?.id ?? '0',
     parentDisplayName: parent?.displayName,
     displayType: parent ? 'MENU' : 'CATALOGUE',
-    displayName: '新建',
+    displayName: i18n.t('operation.create'),
     resourceCode: '',
     sortId: (children?.length ? Number(children[children.length - 1].sortId ?? children.length) : 0) + 1 + '',
     status: 'A',
@@ -115,9 +116,9 @@ const treeNodeClass = (data: Record<string, any>) => {
     <el-space v-else :fill="true" wrap style="width: 100%">
       <div class="tree-search">
         <el-button v-has-permission="'create'" :icon="Plus" style="margin-right: 2px" @click="addChildNode()">
-          目录
+          {{ $t('resource.displayTypeOptions.catalogue') }}
         </el-button>
-        <el-input v-model="searchWord" placeholder="请输入内容过滤" clearable :prefix-icon="Search" />
+        <el-input v-model="searchWord" :placeholder="$t('placeholder.filter')" clearable :prefix-icon="Search" />
       </div>
       <el-scrollbar height="calc(100vh - 139px)">
         <el-tree
@@ -142,7 +143,7 @@ const treeNodeClass = (data: Record<string, any>) => {
                 <span :style="data.routeMeta.icon ? '' : 'margin-left: 19px'">{{ node.label }}</span>
               </span>
               <span class="operation-container">
-                <el-tooltip :show-after="1000" content="添加子菜单">
+                <el-tooltip :show-after="1000" :content="$t('resource.addChild')">
                   <el-button
                     v-show="data.displayType === 'CATALOGUE'"
                     v-has-permission="'create'"
@@ -152,7 +153,7 @@ const treeNodeClass = (data: Record<string, any>) => {
                     @click.stop="addChildNode(data)"
                   />
                 </el-tooltip>
-                <el-tooltip :show-after="1000" content="删除">
+                <el-tooltip :show-after="1000" :content="$t('operation.delete')">
                   <el-button
                     v-show="(data.children ?? []).length === 0"
                     v-has-permission="'delete'"

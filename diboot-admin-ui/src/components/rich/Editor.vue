@@ -4,7 +4,8 @@ import type { IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/edit
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { buildImgSrc } from '@/utils/file'
 import { isExternal } from '@/utils/validate'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 interface PropsType {
   // 模型值
   modelValue?: string
@@ -20,7 +21,7 @@ interface PropsType {
 
 const props = withDefaults(defineProps<PropsType>(), {
   modelValue: '',
-  placeholder: '请输入内容...',
+  // placeholder: i18n.t('components.rich.placeholder'),
   mode: 'simple',
   doc: false,
   title: ''
@@ -71,7 +72,7 @@ function customUpload<InsertFn>(uploadInsert: (file: FileRecord, insertFn: Inser
         uploadInsert(data, insertFn)
       })
       .catch(err => {
-        ElMessage.error(err.msg || err.message || '上传异常，请稍后重试！')
+        ElMessage.error(err.msg || err.message || i18n.t('components.rich.uploadError'))
       })
   }
 }
@@ -84,7 +85,7 @@ watch(
   { immediate: true }
 )
 const editorConfig: IEditorConfig = {
-  placeholder: props.placeholder,
+  placeholder: props.placeholder || i18n.t('components.rich.placeholder'),
   scroll: true,
   readOnly: false,
   autoFocus: false,
@@ -199,6 +200,9 @@ const editorConfig: IEditorConfig = {
   :deep(.w-e-textarea-video-container > :first-child) {
     max-height: 100%;
     max-width: 100%;
+  }
+  :deep(.w-e-scroll) {
+    overflow-y: unset !important;
   }
 }
 </style>

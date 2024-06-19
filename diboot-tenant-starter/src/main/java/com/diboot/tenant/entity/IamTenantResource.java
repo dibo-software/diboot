@@ -41,14 +41,14 @@ public class IamTenantResource extends BaseEntity<String> {
     /**
      * 租户ID
      */
-    @NotNull(message = "租户ID不能为空")
+    @NotNull(message = "{validation.iamTenantResource.tenantId.NotNull.message}")
     @TableField()
     private String tenantId;
 
     /**
      * 资源ID
      */
-    @NotNull(message = "资源ID不能为空")
+    @NotNull(message = "{validation.iamTenantResource.resourceId.NotNull.message}")
     @TableField()
     private String resourceId;
 

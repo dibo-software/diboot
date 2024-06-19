@@ -24,10 +24,10 @@ export interface Message {
   extDataMap?: Record<string, unknown>
   // 通道
   channel: string
-  channelLabel?: string
+  channelLabel?: LabelValue<{ color?: string }>
   // 状态
   status: string
-  statusLabel?: string
+  statusLabel?: LabelValue<{ color?: string }>
   // 结果
   result?: string
   // 定时

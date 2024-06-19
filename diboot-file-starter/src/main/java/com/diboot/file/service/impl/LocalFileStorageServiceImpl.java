@@ -24,6 +24,7 @@ import com.diboot.file.service.FileStorageService;
 import com.diboot.file.util.FileHelper;
 import com.diboot.file.util.HttpHelper;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -38,13 +39,14 @@ import java.nio.file.Paths;
  * @version : v2.0
  * @Date 2021/1/11  11:58
  */
+@Slf4j
 public class LocalFileStorageServiceImpl implements FileStorageService {
 
     @Override
     public FileRecord save(MultipartFile file) throws Exception {
         String fileUid = S.newUuid();
         String ext = FileHelper.getFileExtByName(file.getOriginalFilename());
-        String newFileName = fileUid + "." + ext;
+        String newFileName = V.notEmpty(ext)? fileUid + "." + ext : fileUid;
         String fileFullPath = FileHelper.saveFile(file, newFileName);
        return new FileRecord(fileUid)
                .setFileName(file.getOriginalFilename())
@@ -59,7 +61,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
         // 文件后缀
         String fileUid = S.newUuid();
         String ext = FileHelper.getFileExtByName(fileName);
-        String newFileName = fileUid + "." + ext;
+        String newFileName = V.notEmpty(ext)? fileUid + "." + ext : fileUid;
         String fileFullPath = FileHelper.saveFile(inputStream, newFileName);
         return new FileRecord(fileUid)
                 .setFileName(fileName)
@@ -73,7 +75,8 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
     public FileRecord save(String diskFilePath, String fileName) throws Exception {
         File file = new File(diskFilePath);
         if(!file.exists()) {
-            throw new BusinessException("文件: {} 不存在！", diskFilePath);
+            log.error("文件: {} 不存在！", diskFilePath);
+            throw new BusinessException("exception.business.file.nonexist");
         }
         // 文件后缀
         String fileUid = S.newUuid();
@@ -98,7 +101,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
     @Override
     public void download(FileRecord uploadFile, HttpServletResponse response) throws Exception {
         if (V.isEmpty(uploadFile)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "文件不存在");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.fileStorageService.nonexist");
         }
         HttpHelper.downloadLocalFile(uploadFile.getStoragePath(), uploadFile.getFileName(), response);
     }

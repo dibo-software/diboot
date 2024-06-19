@@ -88,7 +88,7 @@ public class ResultAssembler {
             }
         }
         catch (Exception e){
-            log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+            log.warn("设置属性值异常, setterFieldName={}", setterFieldName, e);
         }
     }
 
@@ -164,7 +164,7 @@ public class ResultAssembler {
             }
         }
         catch (Exception e){
-            log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+            log.warn("设置属性值异常, setterFieldName={}", setterFieldName, e);
         }
     }
 
@@ -210,7 +210,7 @@ public class ResultAssembler {
             sb.setLength(0);
         }
         catch (Exception e){
-            log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+            log.warn("设置属性值异常, setterFieldName={}", setterFieldName, e);
         }
     }
 

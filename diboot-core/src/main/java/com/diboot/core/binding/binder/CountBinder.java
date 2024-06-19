@@ -24,7 +24,6 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.MapUtils;
-import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
+            throw new InvalidUsageException("exception.invalidUsage.binder.parseConditionFailed");
         }
         Map<String, Long> valueListCountMap;
         if(middleTable == null){

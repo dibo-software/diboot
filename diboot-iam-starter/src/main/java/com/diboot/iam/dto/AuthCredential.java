@@ -51,7 +51,7 @@ public abstract class AuthCredential implements Serializable {
      */
     private String userType;
 
-    @NotNull(message = "认证方式不能为空")
+    @NotNull(message = "{validation.authCredential.authType.NotNull.message}")
     private String authType;
     /**
      * 记住我

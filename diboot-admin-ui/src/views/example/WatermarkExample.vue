@@ -24,15 +24,15 @@ const createImageWatermark = () => {
 
 <template>
   <el-card shadow="hover">
-    <el-button @click="createTextWatermark">创建文字水印</el-button>
-    <el-button @click="createImageWatermark">创建图片水印</el-button>
-    <el-button @click="watermarkRef.clear()">清除水印</el-button>
+    <el-button @click="createTextWatermark">{{ $t('watermark.createTextWatermark') }}</el-button>
+    <el-button @click="createImageWatermark">{{ $t('watermark.createImageWatermark') }}</el-button>
+    <el-button @click="watermarkRef.clear()">{{ $t('watermark.watermarkRef') }}</el-button>
     <watermark ref="watermarkRef" :text="text" :image-url="imageUrl" :image-opacity="0.2">
       <el-table ref="tableRef" class="list-body" :data="dataList" stripe height="100%">
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="code" label="编码" />
-        <el-table-column prop="createTime" label="创建时间" />
-        <el-table-column prop="updateTime" label="更新时间" />
+        <el-table-column prop="name" :label="$t('watermark.name')" />
+        <el-table-column prop="code" :label="$t('watermark.code')" />
+        <el-table-column prop="createTime" :label="$t('baseField.createTime')" />
+        <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" />
       </el-table>
     </watermark>
   </el-card>

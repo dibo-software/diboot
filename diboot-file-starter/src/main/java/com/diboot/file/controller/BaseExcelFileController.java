@@ -105,7 +105,7 @@ public abstract class BaseExcelFileController extends BaseController {
     public JsonResult<Map<String, Object>> excelPreviewSave(Map<String, Object> params) throws Exception {
         String uuid = params.get("id").toString();
         if (V.isEmpty(uuid)) {
-            throw new BusinessException("未知的预览保存");
+            throw new BusinessException("exception.business.excel.unknownPreviewSave");
         }
         FileRecord uploadFile = fileRecordService.getEntity(uuid);
         uploadFile.setDescription(params.compute("description", (k, v) -> S.defaultIfEmpty(S.valueOf(v), "Excel预览后导入数据")).toString());
@@ -208,16 +208,16 @@ public abstract class BaseExcelFileController extends BaseController {
      */
     protected void checkIsExcel(MultipartFile file) {
         if (V.isEmpty(file)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "未获取待处理的excel文件！");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.excel.noFile");
         }
         String fileName = file.getOriginalFilename();
         if (V.isEmpty(fileName) || !FileHelper.isExcel(fileName)) {
             log.debug("非Excel类型: {}", fileName);
-            throw new BusinessException(Status.FAIL_VALIDATION, "请上传合法的Excel格式文件！");
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.excel.formatError");
         }
         if (file.isEmpty()) {
             log.debug("空文件：{}", fileName);
-            throw new BusinessException(Status.FAIL_VALIDATION, "该文件无内容！");
+            throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.excel.emptyContent");
         }
     }
 }

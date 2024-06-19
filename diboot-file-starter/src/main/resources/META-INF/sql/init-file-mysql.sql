@@ -5,7 +5,7 @@ create table dbt_file_record
     tenant_id     varchar(32)  default '0' not null comment '租户ID',
     app_module    varchar(50)  null comment '应用模块',
     md5           varchar(32)  null comment 'MD5标识',
-    file_name     varchar(100) not null comment '文件名称',
+    file_name     varchar(200) not null comment '文件名称',
     file_type     varchar(20)  null comment '文件类型',
     file_size     bigint       not null comment '文件大小',
     storage_path  varchar(1000) not null comment '存储路径',

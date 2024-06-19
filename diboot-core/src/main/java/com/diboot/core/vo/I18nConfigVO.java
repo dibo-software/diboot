@@ -32,6 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class I18nConfigVO extends I18nConfig {
+    private static final long serialVersionUID = 5679642618572762054L;
 
     @BindDict(field = "type", type = DICT_I18N_TYPE)
     private LabelValue typeLabel;

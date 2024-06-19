@@ -1,7 +1,8 @@
 <script setup lang="ts" name="I18nConfig">
-import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, Plus } from '@element-plus/icons-vue'
 import type { I18nConfig } from './type'
 import Form from './Form.vue'
+import { useI18n } from 'vue-i18n'
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, batchRemove } = useList<
   I18nConfig[],
@@ -15,11 +16,8 @@ const openForm = (code?: string) => {
   formRef.value?.open(code)
 }
 
-// 搜索区折叠
-const searchState = ref(false)
-
 // 用于选择
-const props = defineProps<{ modelValue?: string; select?: boolean }>()
+const props = defineProps<{ modelValue?: string; select?: boolean; tableHeight?: string }>()
 const emits = defineEmits<{
   (e: 'update:modelValue', code: string): void
   (e: 'change', list: Array<I18nConfig>): void
@@ -36,53 +34,57 @@ const singleRow = (row: Array<I18nConfig>) => {
   emits('update:modelValue', single.value as string)
   emits('change', row)
 }
+
+// 国际化
+const i18n = useI18n()
+const locales = i18n.availableLocales.map(e => e.replace(/-/g, '_'))
+
+const initI18nData = () => {
+  const initData: Partial<I18nConfig>[] = Array.of(...locales).map(locale => ({ language: locale }))
+  const zh = initData.find(item => item.language === 'zh_CN')
+  const en = initData.find(item => item.language === 'en')
+  const rest = initData.filter(item => item.language !== 'zh_CN' && item.language !== 'en')
+  const arr: Partial<I18nConfig>[] = []
+  if (zh) arr.push(zh)
+  if (en) arr.push(en)
+  if (rest && rest.length > 0) rest.forEach(item => arr.push(item))
+  return arr
+}
 </script>
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="资源标识">
-            <el-input v-model="queryParam.code" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="翻译内容">
-            <el-input v-model="queryParam.content" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
       <el-space>
-        <el-input v-show="!searchState" v-model="queryParam.code" placeholder="资源标识" clearable @change="onSearch" />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
-        />
+        <el-input v-model="queryParam.code" :placeholder="$t('i18nConfig.i18nCode')" clearable @change="onSearch" />
+        <el-input v-model="queryParam.content" :placeholder="$t('i18nConfig.content')" clearable @change="onSearch" />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
-    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
+    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" :height="tableHeight || '100%'">
       <el-table-column v-if="select" fixed width="36px">
         <template #default="{ row }">
           <el-radio v-model="single" :label="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="资源标识" fixed show-overflow-tooltip min-width="180px">
+      <el-table-column prop="code" :label="$t('i18nConfig.i18nCode')" fixed show-overflow-tooltip min-width="180px">
         <template #default="{ row }">
           <span>{{ row[0].code }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="!select" prop="typeLabel" label="类型" fixed show-overflow-tooltip width="90px">
+      <el-table-column
+        v-if="!select"
+        prop="typeLabel"
+        :label="$t('i18nConfig.type')"
+        fixed
+        show-overflow-tooltip
+        width="90px"
+      >
         <template #default="{ row }">
           <el-tag :color="row[0].typeLabel?.ext?.color" effect="dark" type="info">
             {{ row[0].typeLabel?.label }}
@@ -90,21 +92,21 @@ const singleRow = (row: Array<I18nConfig>) => {
         </template>
       </el-table-column>
       <el-table-column
-        v-for="locale in $i18n.availableLocales.map(e => e.replace(/-/g, '_'))"
-        :key="locale"
-        :prop="locale"
-        :label="$t('language', {}, { locale: locale.replace(/_/g, '-') })"
+        v-for="item in initI18nData()"
+        :key="item?.language"
+        :prop="item?.language"
+        :label="$t('language', {}, { locale: item?.language?.replace(/_/g, '-') })"
         show-overflow-tooltip
         min-width="180px"
       >
         <template #default="{ row }">
-          <span>{{ row.find((e: I18nConfig) => e.language === locale)?.content }}</span>
+          <span>{{ row.find((e: I18nConfig) => e.language === item?.language)?.content }}</span>
         </template>
       </el-table-column>
       <el-table-column
         v-if="!select"
         v-has-permission="['update', 'delete']"
-        label="操作"
+        :label="$t('operation.label')"
         width="160px"
         header-align="center"
         fixed="right"

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Resource } from '@/views/system/resource/type'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const visible = ref(false)
 
 // 权限树相关
@@ -37,7 +38,7 @@ const submit = async () => {
   try {
     const res = await api.post(`${baseApi}/${tenantId.value}`, selectedIdList.value)
     if (res.code === 0) {
-      ElMessage.success('权限配置成功')
+      ElMessage.success(i18n.t('tenantInfo.resourceForm.success'))
       visible.value = false
     } else {
       ElMessage.error(res.msg)
@@ -55,7 +56,7 @@ defineExpose({
 })
 </script>
 <template>
-  <el-dialog v-model="visible" width="60%" title="权限配置">
+  <el-dialog v-model="visible" width="60%" :title="$t('tenantInfo.resourceForm.title')">
     <el-scrollbar height="calc(80vh - 350px)">
       <el-tree
         ref="treeRef"
@@ -71,7 +72,7 @@ defineExpose({
       />
     </el-scrollbar>
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
       <el-button type="primary" :loading="submitting" @click="submit()"> 确定 </el-button>
     </template>
   </el-dialog>

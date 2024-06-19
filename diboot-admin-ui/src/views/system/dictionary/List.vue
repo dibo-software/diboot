@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Dictionary">
-import { ArrowUp, ArrowDown, Search, Plus } from '@element-plus/icons-vue'
+import { ArrowDown, Search, Plus } from '@element-plus/icons-vue'
 import FormPage from './Form.vue'
 import DetailPage from './Detail.vue'
 import type { Dictionary } from '@/views/system/dictionary/type'
@@ -11,9 +11,6 @@ interface DictionarySearch extends Dictionary {
 type DictionaryTableExpand = Dictionary & {
   isExpand?: boolean | undefined
 }
-
-// 搜索区折叠
-const searchState = ref(false)
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, remove, resetFilter } = useList<
   DictionaryTableExpand,
@@ -46,40 +43,15 @@ function rowClick(row: DictionaryTableExpand) {
 </script>
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="类型名称">
-            <el-input v-model="queryParam.itemName" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="类型编码">
-            <el-input v-model="queryParam.type" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
       <el-space>
-        <el-input
-          v-show="!searchState"
-          v-model="queryParam.itemName"
-          clearable
-          placeholder="类型名称"
-          @change="onSearch"
-        />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
-        />
+        <el-input v-model="queryParam.itemName" clearable :placeholder="$t('dictionary.itemName')" @change="onSearch" />
+        <el-input v-model="queryParam.type" clearable :placeholder="$t('dictionary.type')" @change="onSearch" />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
@@ -112,8 +84,8 @@ function rowClick(row: DictionaryTableExpand) {
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="itemName" label="类型名称" />
-      <el-table-column label="类型编码">
+      <el-table-column prop="itemName" :label="$t('dictionary.itemName')" />
+      <el-table-column :label="$t('dictionary.type')">
         <template #default="{ row }">
           <template v-if="row.parentId && row.parentId !== '0'"> {{ row.itemValue }} </template>
           <template v-else>
@@ -121,9 +93,9 @@ function rowClick(row: DictionaryTableExpand) {
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="description" label="备注" />
-      <el-table-column prop="createTime" label="创建时间" width="185" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column prop="description" :label="$t('dictionary.description')" />
+      <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="185" />
+      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
         <template #default="{ row }">
           <template v-if="!row.parentId || row.parentId === '0'">
             <el-space>

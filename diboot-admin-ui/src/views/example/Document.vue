@@ -22,7 +22,7 @@ const pdfPreview = ref()
   <el-main class="fullHeight">
     <el-card shadow="never" class="cardHeight">
       <el-tabs tab-position="top" class="fullHeight">
-        <el-tab-pane label="word预览打印" lazy class="fullHeight">
+        <el-tab-pane :label="$t('document.wordPreviewPrint')" lazy class="fullHeight">
           <div class="fullHeight" style="display: flex; flex-direction: column">
             <div>
               <el-upload
@@ -32,15 +32,15 @@ const pdfPreview = ref()
                 style="display: inline-block; margin-right: 10px"
                 :on-change="fileChange"
               >
-                <el-button> 选择文件</el-button>
+                <el-button> {{ $t('document.selectFile') }}</el-button>
               </el-upload>
-              <el-button @click="wordPreview?.print()">打印</el-button>
-              <el-button @click="wordPreview?.download()">下载</el-button>
+              <el-button @click="wordPreview?.print()">{{ $t('document.print') }}</el-button>
+              <el-button @click="wordPreview?.download()">{{ $t('document.download') }}</el-button>
             </div>
             <document-word ref="wordPreview" :value="fileValue" style="flex: 1" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="pdf预览打印" lazy class="fullHeight">
+        <el-tab-pane :label="$t('document.pdfPreviewPrint')" lazy class="fullHeight">
           <div class="fullHeight" style="display: flex; flex-direction: column">
             <div>
               <el-upload
@@ -50,16 +50,16 @@ const pdfPreview = ref()
                 style="display: inline-block; margin-right: 10px"
                 :on-change="fileChange"
               >
-                <el-button> 选择文件</el-button>
+                <el-button> {{ $t('document.selectFile') }}</el-button>
               </el-upload>
-              <el-button @click="pdfPreview?.print()">打印</el-button>
-              <el-button @click="pdfPreview?.download()">下载</el-button>
+              <el-button @click="pdfPreview?.print()">{{ $t('document.print') }}</el-button>
+              <el-button @click="pdfPreview?.download()">{{ $t('document.download') }}</el-button>
             </div>
             <document-pdf ref="pdfPreview" :value="fileValue" style="flex: 1" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="页面元素打印">
-          <el-button type="primary" @click="primaryPrint">打印</el-button>
+        <el-tab-pane :label="$t('document.pageElementPrint')">
+          <el-button type="primary" @click="primaryPrint">{{ $t('document.print') }}</el-button>
           <div style="height: 20px" />
           <div ref="printOne" class="printMain">
             <div class="item">

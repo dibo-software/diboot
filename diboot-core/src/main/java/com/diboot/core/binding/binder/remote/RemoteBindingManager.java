@@ -97,7 +97,7 @@ public class RemoteBindingManager {
         return MODULE_PROVIDER_MAP.computeIfAbsent(module, key -> {
             RemoteBindingProviderFactory factory = ContextHolder.getBean(RemoteBindingProviderFactory.class);
             if(factory == null) {
-                throw new InvalidUsageException("RemoteBindingProviderFactory 未实现，无法使用远程绑定功能！");
+                throw new InvalidUsageException("exception.invalidUsage.remoteBindingManager.getRemoteBindingProvider.message");
             }
             return factory.create(module);
         });

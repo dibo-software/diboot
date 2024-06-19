@@ -23,7 +23,6 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.dynamic.AnnoJoiner;
 import com.diboot.core.data.annotation.DataMask;
-import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DefaultEncryptTypeHandler;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.BeanUtils;
@@ -36,7 +35,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -140,6 +138,10 @@ public class ParserCache {
      * @return
      */
     public static String getEntityTableName(Class<?> entityClass){
+        if(entityClass == null) {
+            log.warn("entityClass 未指定！");
+            return null;
+        }
         EntityInfoCache entityInfoCache = BindingCacheManager.getEntityInfoByClass(entityClass);
         if(entityInfoCache != null){
             return entityInfoCache.getTableName();
@@ -172,7 +174,7 @@ public class ParserCache {
     public static BaseMapper getMapperInstance(Class<?> entityClass){
         BaseMapper mapper = BindingCacheManager.getMapperByClass(entityClass);
         if(mapper == null){
-            throw new InvalidUsageException("未找到 "+entityClass.getName()+" 的Mapper定义！");
+            throw new InvalidUsageException("exception.invalidUsage.parserCache.getMapperInstance.message", entityClass.getName());
         }
         return mapper;
     }
@@ -311,7 +313,7 @@ public class ParserCache {
             List<String> maskFieldList = new ArrayList<>(4);
             for (Field field : BeanUtils.extractFields(clazz, DataMask.class)) {
                 if (!field.getType().isAssignableFrom(String.class)) {
-                    throw new InvalidUsageException("`@DataMask` 仅支持 String 类型字段。");
+                    throw new InvalidUsageException("exception.invalidUsage.parserCache.getDataMaskFieldList.message");
                 }
                 maskFieldList.add(field.getName());
             }

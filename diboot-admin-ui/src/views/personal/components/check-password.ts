@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 /**
  * 数字
  */
@@ -42,7 +43,7 @@ export const checkPasswordRule = (password: string) => {
   if (password === '' || password.length < 8 || password.length > 32) {
     // console.log("长度小于8，或大于32");
     // return '密码长度应大于8小于32'
-    return '密码长度应大于8位'
+    return i18n.global.t('personal.passwordLength')
   }
   let i = 0
   if (password.match(REG_NUMBER)) i++
@@ -51,7 +52,7 @@ export const checkPasswordRule = (password: string) => {
   // if (password.match(REG_SYMBOL)) i++;
   if (i < 2) {
     // console.log(("数字、小写字母、大写字母、特殊字符，至少包含两种"));
-    return '数字、小写字母、大写字母，至少包含两种'
+    return i18n.global.t('personal.passwordRule')
   }
   // console.log(i);
   return '校验通过'

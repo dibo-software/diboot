@@ -22,8 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 原生SQL执行类
@@ -57,7 +60,7 @@ public class SqlExecutor {
             JdbcTemplate jdbcTemplate = getJdbcTemplate();
             DataSource dataSource = jdbcTemplate.getDataSource();
             if(dataSource == null) {
-                throw new InvalidUsageException("当前运行环境无获取数据源配置！");
+                throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.getDatabase.message");
             }
             try {
                 Connection connection = dataSource.getConnection();
@@ -95,7 +98,7 @@ public class SqlExecutor {
             }
         }
         else {
-            throw new InvalidUsageException("无法获取JdbcTemplate实例");
+            throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.fetchJdbcTemplateFailed");
         }
     }
 
@@ -124,7 +127,7 @@ public class SqlExecutor {
             }
         }
         else {
-            throw new InvalidUsageException("无法获取JdbcTemplate实例");
+            throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.fetchJdbcTemplateFailed");
         }
     }
 
@@ -155,7 +158,7 @@ public class SqlExecutor {
             }
         }
         else {
-            throw new InvalidUsageException("无法获取JdbcTemplate实例");
+            throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.fetchJdbcTemplateFailed");
         }
     }
 
@@ -168,7 +171,7 @@ public class SqlExecutor {
      * @throws Exception
      */
     public static boolean executeUpdate(Connection conn, String sql, List params) throws Exception{
-        log.debug("==>  SQL: "+sql);
+        log.debug("==>  SQL: {}", sql);
         // 替换单个?参数为多个，用于拼接IN参数
         if(V.notEmpty(params)){
             log.debug("==>  Params: {}", JSON.stringify(params));

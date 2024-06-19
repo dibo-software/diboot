@@ -6,7 +6,8 @@ import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
 import RouteSelect from './components/RouteSelect.vue'
 import PermissionSelect from './components/PermissionSelect.vue'
 import { checkValue } from '@/utils/validate-form'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 // 监听客户端宽度
 const clientWidth = ref(window.innerWidth)
 const erd = elementResizeDetectorMaker()
@@ -19,9 +20,11 @@ const props = defineProps<{ formValue?: Resource }>()
 
 const model = ref<Resource>()
 
+const reloadFormItem = ref(false)
 watch(
   () => props.formValue,
   value => {
+    reloadFormItem.value = !reloadFormItem.value
     model.value = _.clone(value)
     configResource.value = model.value ?? {}
   }
@@ -70,7 +73,7 @@ const NEW_PERMISSION_ITEM: Resource = {
   id: undefined,
   parentId: '',
   displayType: 'PERMISSION',
-  displayName: '新按钮权限',
+  displayName: i18n.t('resource.newButtonPermission'),
   resourceCode: '',
   permissionCodes: [],
   routeMeta: {}
@@ -119,53 +122,65 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
   permission.resourceCode = ''
   permission.displayName = ''
 }
+const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 </script>
 
 <template>
   <div v-loading="submitting" class="form-container">
-    <el-empty v-if="!model" description="选择左侧菜单后操作" style="flex: 1" />
+    <el-empty v-if="!model" :description="$t('resource.selectMenuAndOperate')" style="flex: 1" />
     <el-scrollbar v-show="model" style="flex: 1">
       <el-row :gutter="5" style="width: 100%">
         <el-col :md="24" :lg="10">
-          <div style="margin: 8px; zoom: 1.1">菜单配置</div>
+          <div style="margin: 8px; zoom: 1.1">{{ $t('resource.menuConfig') }}</div>
           <el-scrollbar :style="clientWidth >= 1200 ? { height: 'calc(100vh - 168px)' } : {}">
-            <el-form v-if="model" ref="formRef" :model="model" label-width="90px" style="margin-right: 8px">
-              <el-form-item label="上级目录" prop="parentId">
-                <el-input :model-value="model.parentId === '0' ? '顶级目录' : model.parentDisplayName" disabled />
+            <el-form
+              v-if="model"
+              ref="formRef"
+              :model="model"
+              :label-width="$i18n.locale === 'en' ? '150px' : '90px'"
+              style="margin-right: 8px"
+            >
+              <el-form-item :label="$t('resource.parentId')" prop="parentId">
+                <el-input
+                  :model-value="model.parentId === '0' ? $t('resource.parentId0') : model.parentDisplayName"
+                  disabled
+                />
               </el-form-item>
-              <el-form-item label="菜单分类" prop="displayType">
+              <el-form-item :label="$t('resource.displayType')" prop="displayType">
                 <el-radio-group v-model="model.displayType">
-                  <el-radio-button label="CATALOGUE">目录</el-radio-button>
-                  <el-radio-button label="MENU">菜单</el-radio-button>
-                  <el-radio-button label="OUTSIDE_URL">外链</el-radio-button>
+                  <el-radio-button label="CATALOGUE">{{ $t('resource.displayTypeOptions.catalogue') }}</el-radio-button>
+                  <el-radio-button label="MENU">{{ $t('resource.displayTypeOptions.menu') }}</el-radio-button>
+                  <el-radio-button label="OUTSIDE_URL">{{
+                    $t('resource.displayTypeOptions.outsideUrl')
+                  }}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item
-                label="菜单名称"
+                :label="$t('resource.displayName')"
                 prop="displayName"
-                :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
+                :rules="{ required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }"
               >
-                <el-input v-model="model.displayName" placeholder="请输入菜单名称" clearable>
-                  <!--                  <template #append>-->
-                  <!--                    <i18n-selector v-model="model.displayNameI18n" />-->
-                  <!--                  </template>-->
+                <el-input v-model="model.displayName" :placeholder="$t('resource.placeholder.displayName')" clearable>
+                  <template v-if="enableI18n" #append>
+                    <i18n-selector v-model="model.displayNameI18n" />
+                  </template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="菜单图标">
+              <el-form-item :label="$t('resource.routeMetaIcon')">
                 <icon-select v-model="model.routeMeta.icon" />
               </el-form-item>
               <el-form-item
-                label="路由路径"
+                :label="$t('resource.routePath')"
                 prop="routePath"
-                :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
+                :rules="{ required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }"
               >
-                <el-input v-model="model.routePath" placeholder="请输入路由地址（例：route-path）" clearable />
+                <el-input v-model="model.routePath" :placeholder="$t('resource.placeholder.routePath')" clearable />
               </el-form-item>
               <el-form-item
-                label="路由名称"
+                :label="$t('resource.resourceCode')"
                 prop="resourceCode"
                 :rules="[
-                  { required: true, message: '不能为空', trigger: 'blur' },
+                  { required: true, message: i18n.t('rules.notnull'), trigger: 'blur' },
                   { validator: checkCodeDuplicate, trigger: 'blur' }
                 ]"
               >
@@ -178,36 +193,44 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                 <el-input
                   v-show="model.displayType !== 'MENU'"
                   v-model="model.resourceCode"
-                  placeholder="请输入路由名称（例：RouteName）"
+                  :placeholder="$t('resource.placeholder.resourceCode')"
                   clearable
                 />
               </el-form-item>
-              <el-form-item v-if="model.displayType === 'CATALOGUE'" label="重定向">
-                <el-input v-model="model.routeMeta.redirectPath" placeholder="请输入重定向" clearable />
+              <el-form-item v-if="model.displayType === 'CATALOGUE'" :label="$t('resource.redirectPath')">
+                <el-input
+                  v-model="model.routeMeta.redirectPath"
+                  :placeholder="$t('resource.placeholder.redirectPath')"
+                  clearable
+                />
               </el-form-item>
               <el-form-item
                 v-if="model.displayType === 'OUTSIDE_URL'"
-                label="外部链接"
+                :label="$t('resource.routeMetaUrl')"
                 prop="routeMeta.url"
-                :rules="{ required: true, message: '不能为空', trigger: 'blur' }"
+                :rules="{ required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }"
               >
-                <el-input v-model="model.routeMeta.url" placeholder="请输入外部链接" clearable>
+                <el-input
+                  v-model="model.routeMeta.url"
+                  :placeholder="$t('resource.placeholder.routeMetaUrl')"
+                  clearable
+                >
                   <template #suffix>
                     <el-checkbox v-model="model.routeMeta.iframe" label="iframe" />
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item v-if="model.displayType === 'MENU' && moduleList.length" label="应用模块">
-                <el-select v-model="model.appModule" placeholder="应用模块" clearable>
+              <el-form-item v-if="model.displayType === 'MENU' && moduleList.length" :label="$t('resource.appModule')">
+                <el-select v-model="model.appModule" :placeholder="$t('resource.appModule')" clearable>
                   <el-option v-for="item in moduleList" :key="item" :label="item" :value="item" />
                 </el-select>
               </el-form-item>
-              <el-form-item v-if="model.displayType === 'MENU'" label="菜单权限">
+              <el-form-item v-if="model.displayType === 'MENU'" :label="$t('resource.permissionCodes')">
                 <el-select
                   v-model="model.permissionCodes"
                   multiple
                   popper-class="hide"
-                  placeholder="点击聚焦后在权限列表中选择"
+                  :placeholder="$t('resource.placeholder.permissionCodes')"
                   @focus="openPermissionConfig(model)"
                 >
                   <el-option v-for="item in model.permissionCodes" :key="item" :label="item" :value="item" />
@@ -216,13 +239,13 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
               <el-form-item>
                 <template #label>
                   <div style="display: flex; align-items: center; justify-content: end">
-                    <span>其他配置</span>
+                    <span>{{ $t('resource.otherConfig') }}</span>
                     <el-tooltip effect="dark" placement="top-start">
                       <template #content>
-                        可用：控制菜单是否生效；<br />
-                        隐藏：隐藏时菜单栏不会显示，但地址可以访问；<br />
-                        缓存：页面开启keepAlive，缓存当前页面；<br />
-                        <!-- 忽略认证：当前页面访问不需要权限认证。<br /> -->
+                        {{ $t('resource.otherConfigDesc.status') }}<br />
+                        {{ $t('resource.otherConfigDesc.hidden') }}<br />
+                        {{ $t('resource.otherConfigDesc.keepAlive') }}<br />
+                        <!--{{$t('resource.otherConfigDesc.ignoreAuth')}}<br /> -->
                       </template>
                       <el-icon>
                         <InfoFilled />
@@ -230,16 +253,26 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                     </el-tooltip>
                   </div>
                 </template>
-                <el-checkbox v-model="model.status" true-label="A" false-label="I" label="可用" />
-                <el-checkbox v-model="model.routeMeta.hidden" label="隐藏" />
-                <el-checkbox v-model="model.routeMeta.keepAlive" label="缓存" />
-                <!-- <el-checkbox v-model="model.routeMeta.ignoreAuth" label="忽略认证" /> -->
+                <el-checkbox
+                  :key="reloadFormItem"
+                  v-model="model.status"
+                  true-label="A"
+                  false-label="I"
+                  :label="$t('resource.status')"
+                />
+                <el-checkbox :key="reloadFormItem" v-model="model.routeMeta.hidden" :label="$t('resource.hidden')" />
+                <el-checkbox
+                  :key="reloadFormItem"
+                  v-model="model.routeMeta.keepAlive"
+                  :label="$t('resource.keepAlive')"
+                />
+                <!-- <el-checkbox v-model="model.routeMeta.ignoreAuth" :label="$t('resource.ignoreAuth')" /> -->
               </el-form-item>
 
               <div v-show="model.displayType === 'MENU'">
                 <el-divider style="margin: 12px 0" />
                 <div style="display: flex; justify-content: space-between; margin: 0 12px">
-                  <span>按钮权限配置</span>
+                  <span> {{ $t('resource.buttonPermission') }}</span>
                   <el-button :icon="Plus" circle type="success" size="small" @click="handleAddTab" />
                 </div>
                 <el-tabs
@@ -257,13 +290,13 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                     :name="`${index}`"
                   >
                     <el-descriptions :column="1" style="margin-left: 8px">
-                      <el-descriptions-item label="按钮权限编码">
+                      <el-descriptions-item :label="$t('resource.buttonPermissionConfig.resourceCode')">
                         <el-row type="flex" align="middle" :gutter="16">
                           <el-col :span="16">
                             <el-input
                               v-if="permission._customCode"
                               v-model="permission.resourceCode"
-                              placeholder="请输入按钮权限编码"
+                              :placeholder="$t('resource.placeholder.buttonPermissionConfig._customCode')"
                               @input="(value: string) => changeBtnResourceCode(permission, value)"
                             />
                             <el-select
@@ -271,7 +304,7 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                               v-model="permission.resourceCode"
                               filterable
                               allow-create
-                              placeholder="请选取当前按钮权限编码"
+                              :placeholder="$t('resource.placeholder.buttonPermissionConfig.resourceCode')"
                               @change="(value: string) => changeBtnResourceCode(permission, value)"
                             >
                               <el-option
@@ -289,24 +322,28 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
                               size="small"
                               @click="toggleBtnResourceCodeSelect(permission)"
                             >
-                              输入/选择 切换
+                              {{ $t('resource.switchButton') }}
                             </el-button>
                           </el-col>
                         </el-row>
                       </el-descriptions-item>
-                      <el-descriptions-item label="按钮权限名称">
+                      <el-descriptions-item :label="$t('resource.buttonPermissionConfig.displayName')">
                         <el-input
                           v-model="permission.displayName"
-                          placeholder="请输入按钮权限名称"
+                          :placeholder="$t('resource.placeholder.buttonPermissionConfig.displayName')"
                           @input="(value: string) => changeBtnPermissionName(permission, value)"
-                        />
+                        >
+                          <template v-if="enableI18n" #append>
+                            <i18n-selector v-model="permission.displayNameI18n" />
+                          </template>
+                        </el-input>
                       </el-descriptions-item>
-                      <el-descriptions-item label="按钮权限接口">
+                      <el-descriptions-item :label="$t('resource.buttonPermissionConfig.permissionCodes')">
                         <el-select
                           v-model="permission.permissionCodes"
                           multiple
                           popper-class="hide"
-                          placeholder="点击聚焦后在权限列表中选择"
+                          :placeholder="$t('resource.placeholder.permissionCodes')"
                           @focus="openPermissionConfig(permission)"
                         >
                           <el-option
@@ -340,8 +377,10 @@ const toggleBtnResourceCodeSelect = (permission: Resource) => {
       </el-row>
     </el-scrollbar>
     <div v-show="model" class="form-button">
-      <el-button size="default" type="primary" @click="model && submit(model, formRef)">保存</el-button>
-      <el-button size="default" @click="resetForm()">重置</el-button>
+      <el-button size="default" type="primary" @click="model && submit(model, formRef)">{{
+        $t('button.save')
+      }}</el-button>
+      <el-button size="default" @click="resetForm()">{{ $t('operation.reset') }}</el-button>
     </div>
   </div>
 </template>

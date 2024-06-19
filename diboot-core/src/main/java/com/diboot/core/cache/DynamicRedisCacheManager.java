@@ -19,14 +19,13 @@ import com.diboot.core.exception.InvalidUsageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.SimpleCacheManager;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -92,7 +91,7 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
     public void putCacheObj(String cacheName, Object objKey, Object obj) {
         Cache cache = redisCacheManager.getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
+            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
         }
         if(log.isDebugEnabled()){
             log.debug("缓存: {} 新增-> {}", cacheName, objKey);
@@ -104,7 +103,7 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
     public void removeCacheObj(String cacheName, Object objKey) {
         Cache cache = redisCacheManager.getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
+            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
         }
         if(log.isDebugEnabled()){
             log.debug("缓存: {} 移除-> {}", cacheName, objKey);

@@ -34,14 +34,14 @@ const { submitting, submit } = useForm({
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="编辑备注">
+  <el-dialog v-model="visible" :title="$t('fileRecord.editDescription')">
     <el-form ref="formRef" v-loading="loading" :model="model" label-width="80px">
-      <el-form-item label="备注">
+      <el-form-item :label="$t('fileRecord.description')">
         <el-input
           v-model="model.description"
           type="textarea"
           :autosize="{ minRows: 3 }"
-          placeholder="请输入备注"
+          :placeholder="$t('fileRecord.placeholder.description')"
           :maxlength="100"
           show-word-limit
         />
@@ -49,8 +49,10 @@ const { submitting, submit } = useForm({
     </el-form>
 
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">保存</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">{{
+        $t('button.save')
+      }}</el-button>
     </template>
   </el-dialog>
 </template>

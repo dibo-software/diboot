@@ -15,8 +15,8 @@
  */
 package com.diboot.core.exception;
 
+import com.diboot.core.util.I18n;
 import com.diboot.core.util.S;
-import com.diboot.core.vo.Status;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +29,7 @@ import java.util.Map;
  * @date 2021/08/23
  */
 public class InvalidUsageException extends RuntimeException {
+    private static final long serialVersionUID = -1203618387183809985L;
 
     /**
      * 自定义内容提示
@@ -36,7 +37,7 @@ public class InvalidUsageException extends RuntimeException {
      * @param msg
      */
     public InvalidUsageException(String msg, Object... args) {
-        super(S.format(msg, args));
+        super(S.format(I18n.message(msg, args), args));
     }
 
     /**
@@ -45,7 +46,7 @@ public class InvalidUsageException extends RuntimeException {
      * @param msg
      */
     public InvalidUsageException(Throwable ex, String msg, Object... args) {
-        super(S.format(msg, args), ex);
+        super(S.format(I18n.message(msg, args), args), ex);
     }
 
     /**

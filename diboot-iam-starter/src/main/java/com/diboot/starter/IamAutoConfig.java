@@ -27,6 +27,7 @@ import com.diboot.iam.shiro.IamAuthorizingRealm;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
 import jakarta.servlet.Filter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
@@ -54,6 +55,8 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -244,7 +247,7 @@ public class IamAutoConfig {
     @Bean(name = "iamCacheManager")
     @ConditionalOnMissingBean
     public BaseCacheManager iamCacheManager() {
-        log.info("初始化IAM本地缓存: DynamicMemoryCacheManager");
+        log.info("初始化 IAM 内存缓存: DynamicMemoryCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>() {{
             put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
             put(Cons.CACHE_CAPTCHA, 5);
@@ -278,6 +281,7 @@ public class IamAutoConfig {
         @Override
         public Runnable decorate(Runnable runnable) {
             try {
+                LocaleContextHolder.setLocale(LocaleContextHolder.getLocale(), true);
                 // 向下传递当前线程的用户信息
                 return SecurityUtils.getSubject().associateWith(runnable);
             } catch (UnavailableSecurityManagerException e) {

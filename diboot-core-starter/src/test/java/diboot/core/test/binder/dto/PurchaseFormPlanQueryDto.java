@@ -4,7 +4,9 @@ import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import diboot.core.test.binder.entity.DbGoodsGoodsInfo;
 import diboot.core.test.binder.entity.DbPurchaseFormPlan;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * @author JerryMa
@@ -12,7 +14,7 @@ import lombok.Data;
  * @date 2021/4/29
  * Copyright © diboot.com
  */
-@Data
+@Getter @Setter @Accessors(chain = true)
 public class PurchaseFormPlanQueryDto extends DbPurchaseFormPlan {
 
     private Long purchaseFormPlanId;

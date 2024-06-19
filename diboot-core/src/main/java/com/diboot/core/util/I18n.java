@@ -2,6 +2,7 @@ package com.diboot.core.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
@@ -16,8 +17,12 @@ public class I18n {
         if(messageSource == null) {
             messageSource = ContextHolder.getBean(MessageSource.class);
         }
-        String content = messageSource.getMessage(code, args, locale);
-        return content;
+        try {
+            String content = messageSource.getMessage(code, args, locale);
+            return content;
+        } catch (NoSuchMessageException e) {
+            return code;
+        }
     }
 
 }

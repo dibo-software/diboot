@@ -5,7 +5,7 @@ export interface Position {
   gradeName: string
   gradeValue: string
   dataPermissionType: string
-  dataPermissionTypeLabel: string
+  dataPermissionTypeLabel: LabelValue<{ color?: string }>
   isVirtual: boolean
   description: string
   createTime: string

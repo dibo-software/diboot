@@ -51,7 +51,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
     public boolean createEntity(ScheduleJob entity) {
         boolean success = super.createEntity(entity);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "创建定时任务失败!");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.scheduleJobService.createFailed");
         }
         // 只有启用情况才加入任务队列
         if (V.equals(entity.getJobStatus(), Cons.ENABLE_STATUS.A.name())) {
@@ -66,7 +66,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
         ScheduleJob oldJob = getEntity(entity.getId());
         boolean success = super.updateEntity(entity);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "更新定时任务失败!");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.scheduleJobService.updateFailed");
         }
         // job如果存在且参数发生了变化，那么先触发删除原来的job
         if (quartzSchedulerService.existJob(entity.getId()) &&
@@ -96,7 +96,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
         if (!quartzSchedulerService.existJob(jobId)) {
             ScheduleJob entity = this.getEntity(jobId);
             if (V.isEmpty(entity)) {
-                throw new BusinessException(Status.FAIL_OPERATION, "当前任务无效！");
+                throw new BusinessException(Status.FAIL_OPERATION, "exception.business.scheduleJobService.invalidTask");
             }
             quartzSchedulerService.addJobExecuteOnce(entity);
         } else {
@@ -114,7 +114,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
                         .eq(ScheduleJob::getId, jobId)
         );
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "更新状态失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.scheduleJobService.updateStatusFailed");
         }
         // 恢复
         if (Cons.ENABLE_STATUS.A.name().equals(jobStatus)) {
@@ -124,7 +124,7 @@ public class ScheduleJobServiceImpl extends BaseServiceImpl<ScheduleJobMapper, S
             } else {
                 ScheduleJob entity = this.getEntity(jobId);
                 if (V.isEmpty(entity)) {
-                    throw new BusinessException(Status.FAIL_OPERATION, "当前任务无效！");
+                    throw new BusinessException(Status.FAIL_OPERATION, "exception.business.scheduleJobService.invalidTask");
                 }
                 quartzSchedulerService.addJob(entity);
             }

@@ -72,7 +72,7 @@ public class IamMember extends BaseLoginUser {
      * 默认绑定用户类型
      */
     @TableField()
-    @NotNull(message = "用户类型不能为空")
+    @NotNull(message = "{validation.iamMember.userType.NotNull.message}")
     private String userType;
 
     /**
@@ -85,13 +85,13 @@ public class IamMember extends BaseLoginUser {
      * openid
      */
     @TableField()
-    @NotNull(message = "openid不能为空")
+    @NotNull(message = "{validation.iamMember.openid.NotNull.message}")
     private String openid;
 
     /**
      * 昵称
      */
-    @Length(max = 100, message = "昵称长度应小于100")
+    @Length(max = 100, message = "{validation.iamMember.nickname.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String nickname;
@@ -99,64 +99,64 @@ public class IamMember extends BaseLoginUser {
     /**
      * 头像
      */
-    @Length(max = 255, message = "头像长度应小于255")
+    @Length(max = 255, message = "{validation.iamMember.avatarUrl.Length.message}")
     @TableField()
     private String avatarUrl;
 
     /**
      * 城市
      */
-    @Length(max = 50, message = "国家长度应小于50")
+    @Length(max = 50, message = "{validation.iamMember.country.Length.message}")
     @TableField()
     private String country;
 
     /**
      * 省份
      */
-    @Length(max = 50, message = "省份长度应小于50")
+    @Length(max = 50, message = "{validation.iamMember.province.Length.message}")
     @TableField()
     private String province;
 
     /**
      * 城市
      */
-    @Length(max = 100, message = "城市长度应小于100")
+    @Length(max = 100, message = "{validation.iamMember.city.Length.message}")
     @TableField()
     private String city;
 
     /**
      * 手机号
      */
-    @Length(max = 20, message = "手机号长度应小于20")
+    @Length(max = 20, message = "{validation.iamMember.mobilePhone.Length.message}")
     @TableField()
     private String mobilePhone;
 
     /**
      * 邮箱
      */
-    @Length(max = 100, message = "邮箱长度应小于100")
+    @Length(max = 100, message = "{validation.iamMember.email.Length.message}")
     @TableField()
     private String email;
 
     /**
      * 当前状态
      */
-    @NotNull(message = "当前状态不能为空")
-    @Length(max = 20, message = "当前状态长度应小于20")
+    @NotNull(message = "{validation.iamMember.status.NotNull.message}")
+    @Length(max = 20, message = "{validation.iamMember.status.Length.message}")
     @TableField()
     private String status;
 
     /**
      * 性别
      */
-    @Length(max = 10, message = "性别长度应小于10")
+    @Length(max = 10, message = "{validation.iamMember.gender.Length.message}")
     @TableField()
     private String gender;
 
     /**
      * 备注
      */
-    @Length(max = 200, message = "用户备注应小于200")
+    @Length(max = 200, message = "{validation.iamMember.description.Length.message}")
     @TableField()
     private String description;
 

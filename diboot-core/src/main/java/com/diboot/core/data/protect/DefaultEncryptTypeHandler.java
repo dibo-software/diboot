@@ -46,7 +46,7 @@ public class DefaultEncryptTypeHandler extends BaseTypeHandler<String> {
         if(this.dataEncryptHandler == null) {
             this.dataEncryptHandler = ContextHolder.getBean(DataEncryptHandler.class);
             if(this.dataEncryptHandler == null) {
-                throw new InvalidUsageException("无法获取 DataEncryptHandler 数据加解密的实现类，请检查！");
+                throw new InvalidUsageException("exception.invalidUsage.defaultEncryptTypeHandler.getDataEncryptHandler.message");
             }
         }
         return this.dataEncryptHandler;

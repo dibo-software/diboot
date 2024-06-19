@@ -93,7 +93,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
                 throw new AuthenticationException("用户账号或密码错误！");
             }
             // 获取当前user对象并缓存
-            BaseLoginUser loginUser = null;
+            BaseLoginUser loginUser;
             BaseService userService = ContextHolder.getBaseServiceByEntity(iamAuthToken.getUserTypeClass());
             if(userService != null){
                 loginUser = (BaseLoginUser)userService.getEntity(account.getUserId());
@@ -152,7 +152,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         });
         authorizationInfo.setRoles(allRoleCodes);
         // 整理所有权限许可列表，从缓存匹配
-        List<String> allPermissionCodes = null;
+        List<String> allPermissionCodes;
         if (allRoleCodes.contains(Cons.ROLE_TENANT_ADMIN)) {
             allPermissionCodes = getIamTenantPermission().findAllPermissionCodes(currentUser.getTenantId());
         } else {

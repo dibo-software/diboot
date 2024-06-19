@@ -79,7 +79,7 @@ public class Encryptor {
 			return Base64.getEncoder().encodeToString(enBytes);
 		}
 		catch(Exception e){
-			log.error("加密出错:"+input, e);
+			log.error("加密出错: {}", input, e);
 			return input;
 		}
 	}
@@ -102,7 +102,7 @@ public class Encryptor {
 			return new String(cipher.doFinal(deBytes));
 		}
 		catch(Exception e){
-			log.error("解密出错:"+input, e);
+			log.error("解密出错: {}", input, e);
 			return input;
 		}
 	}

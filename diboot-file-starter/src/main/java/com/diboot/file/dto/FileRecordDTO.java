@@ -17,7 +17,6 @@ package com.diboot.file.dto;
 
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
-import com.diboot.core.util.D;
 import com.diboot.file.entity.FileRecord;
 import lombok.Getter;
 
@@ -32,6 +31,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 public class FileRecordDTO extends FileRecord {
+    private static final long serialVersionUID = -7388146735066760480L;
 
     /**
      * 创建时间-起始

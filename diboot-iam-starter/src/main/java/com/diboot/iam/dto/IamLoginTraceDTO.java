@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 /**
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 public class IamLoginTraceDTO extends IamLoginTrace {
+    private static final long serialVersionUID = 2694245822574591716L;
 
     @BindQuery(column= "create_time", comparison = Comparison.GE)
     private LocalDateTime createTimeBegin;

@@ -1,6 +1,7 @@
 import type { ElTree } from 'element-plus'
 import { tree2List } from '@/utils/list'
 import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
+import i18n from '@/i18n'
 export interface DataType<T> {
   selectedIdList: string[]
   treeDataList: T[]
@@ -95,7 +96,7 @@ export default <T>(option: TreeOption<T>) => {
       }
     } catch (err: any) {
       ElNotification.error({
-        title: '获取树列表数据失败',
+        title: i18n.global.t('hooks.fetchTreeFailed'),
         message: err.msg || err.message
       })
     } finally {
@@ -202,7 +203,7 @@ export default <T>(option: TreeOption<T>) => {
         throw new Error(result.msg)
       }
     } catch (err: any) {
-      ElMessage.error(err.msg || err.message || '添加数据失败！')
+      ElMessage.error(err.msg || err.message || i18n.global.t('hooks.addDataFailed'))
     }
   }
 
@@ -212,20 +213,20 @@ export default <T>(option: TreeOption<T>) => {
    */
   const removeTreeNode = async () => {
     if (!(dataState.selectedIdList && dataState.selectedIdList.length)) {
-      ElMessage.warning('未选择数据')
+      ElMessage.warning(i18n.global.t('hooks.nonChooseData'))
       return
     }
 
-    ElMessageBox.confirm('确认删除节点吗？', '删除节点', { type: 'warning' })
+    ElMessageBox.confirm(i18n.global.t('hooks.confirmDeleteNode'), i18n.global.t('hooks.delete'), { type: 'warning' })
       .then(() => {
         api
           .post(`${baseApi}/batch-delete`, dataState.selectedIdList)
           .then(() => {
-            ElMessage.success('删除节点成功！')
+            ElMessage.success(i18n.global.t('hooks.deleteSuccess'))
             getTree().then(() => setSelectNode())
           })
           .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败！')
+            ElMessage.error(err.msg || err.message || i18n.global.t('hooks.deleteFailed'))
           })
       })
       .catch(() => null)
@@ -302,13 +303,13 @@ export default <T>(option: TreeOption<T>) => {
     try {
       const result = await api.put<T[]>(`${baseApi}${sortApi}`, submitData)
       if (result && result.code === 0) {
-        getTree().then(() => ElMessage?.success('排序成功'))
+        getTree().then(() => ElMessage?.success(i18n.global.t('hooks.sortSuccess')))
       } else {
         throw new Error(result.msg)
       }
     } catch (err: any) {
       ElNotification.error({
-        title: '获取树列表数据失败',
+        title: i18n.global.t('hooks.fetchTreeFailed'),
         message: err.msg || err.message
       })
     } finally {

@@ -15,7 +15,6 @@
  */
 package com.diboot.core.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;

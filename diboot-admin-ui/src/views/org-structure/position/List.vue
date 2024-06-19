@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Position">
-import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, Plus } from '@element-plus/icons-vue'
 import type { Position } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
@@ -13,9 +13,6 @@ const { queryParam, onSearch, getList, loading, dataList, pagination, remove, re
 >({
   baseApi: '/iam/position'
 })
-
-// 搜索区折叠
-const searchState = ref(false)
 
 getList()
 
@@ -34,44 +31,31 @@ const deletePermission = checkPermission('delete')
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="名称">
-            <el-input v-model="queryParam.name" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="编码">
-            <el-input v-model="queryParam.code" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
       <el-space>
-        <el-input v-show="!searchState" v-model="queryParam.name" clearable placeholder="名称" @change="onSearch" />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
-        />
+        <el-input v-model="queryParam.name" clearable :placeholder="$t('position.name')" @change="onSearch" />
+        <el-input v-model="queryParam.code" clearable :placeholder="$t('position.code')" @change="onSearch" />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column prop="name" label="名称" />
-      <el-table-column prop="code" label="编码" />
-      <el-table-column prop="gradeName" label="职级" />
-      <el-table-column prop="dataPermissionTypeLabel" label="数据权限" />
-      <el-table-column prop="updateTime" label="更新时间" width="165" />
-      <el-table-column label="操作" width="180" fixed="right">
+      <el-table-column prop="name" :label="$t('position.name')" />
+      <el-table-column prop="code" :label="$t('position.code')" />
+      <el-table-column prop="gradeName" :label="$t('position.gradeName')" />
+      <el-table-column :label="$t('position.dataPermissionType')">
+        <template #default="{ row }">
+          <el-tag :color="row.dataPermissionTypeLabel?.ext?.color" effect="dark" type="info">
+            {{ row.dataPermissionTypeLabel?.label }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="165" />
+      <el-table-column :label="$t('operation.label')" width="180" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">

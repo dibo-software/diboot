@@ -16,7 +16,9 @@ const doc = ref(false)
           https://github.com/wangeditor-team/wangEditor
         </el-link>
       </el-alert>
-      <el-button type="primary" @click="doc = !doc"> 切换为：{{ doc ? '富文本编辑器' : '文档编辑器' }} </el-button>
+      <el-button type="primary" @click="doc = !doc">
+        {{ $t('richText.switch') }}：{{ doc ? $t('richText.rich') : $t('richText.doc') }}
+      </el-button>
     </el-space>
     <!-- 富文本编辑器 -->
     <rich-editor v-model="value" v-model:title="title" :doc="doc && 'title'" style="flex: 1" />

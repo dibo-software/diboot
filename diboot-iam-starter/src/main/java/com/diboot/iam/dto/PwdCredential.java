@@ -45,11 +45,11 @@ public class PwdCredential extends AuthCredential {
     }
 
     // 用户名，同authAccount
-    @NotNull(message = "用户名不能为空")
+    @NotNull(message = "{validation.pwdCredential.username.NotNull.message}")
     private String username;
 
     // 密码
-    @NotNull(message = "密码不能为空")
+    @NotNull(message = "{validation.pwdCredential.password.NotNull.message}")
     private String password;
 
     // 登录的验证码

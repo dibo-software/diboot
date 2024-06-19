@@ -23,7 +23,6 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -140,7 +139,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     public synchronized void clearOutOfDateData(String cacheName) {
         Cache cache = getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
+            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
         }
         ConcurrentMap<Object, Object> cacheMap = (ConcurrentMap<Object, Object>)cache.getNativeCache();
         if(V.isEmpty(cacheMap)){

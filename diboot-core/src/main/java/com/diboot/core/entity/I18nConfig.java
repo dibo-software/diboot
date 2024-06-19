@@ -18,11 +18,10 @@ package com.diboot.core.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import jakarta.validation.constraints.NotNull;
 
 /**
  * 国际化配置
@@ -31,7 +30,6 @@ import jakarta.validation.constraints.NotNull;
  * @version v3.0.0
  * @date 2022-10-12
  */
-@Deprecated
 @Getter
 @Setter
 @Accessors(chain = true)

@@ -70,7 +70,7 @@ public class SensitiveInfoSerialize<E> extends JsonSerializer<E> implements Cont
         if(this.dataMaskHandler == null) {
             this.dataMaskHandler = ContextHolder.getBean(DataMaskHandler.class);
             if(this.dataMaskHandler == null) {
-                throw new InvalidUsageException("无法获取 DataMaskHandler 数据脱敏的实现类，请检查！");
+                throw new InvalidUsageException("exception.invalidUsage.sensitiveInfoSerialize.serialize.message");
             }
         }
         if (value instanceof List) {

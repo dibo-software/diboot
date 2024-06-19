@@ -16,6 +16,7 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamLoginTrace;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +35,6 @@ public class IamLoginTraceVO extends IamLoginTrace  {
     private static final long serialVersionUID = -753084580143028183L;
 
     @BindDict(type="AUTH_TYPE", field = "authType")
-    private String authTypeLabel;
+    private LabelValue authTypeLabel;
 
 }

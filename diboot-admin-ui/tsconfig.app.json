@@ -4,6 +4,7 @@
   "compilerOptions": {
     "noImplicitAny": false,
     "composite": true,
+    "moduleResolution": "Node",
     "baseUrl": ".",
     "paths": {
       "@/*": [

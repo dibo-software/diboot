@@ -14,29 +14,29 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="消息模板详情" width="65vw">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item label="业务模块">
+      <el-descriptions-item :label="$t('messageTemplate.appModule')">
         {{ model.appModule }}
       </el-descriptions-item>
-      <el-descriptions-item label="标题">
+      <el-descriptions-item :label="$t('messageTemplate.title')">
         {{ model.title }}
       </el-descriptions-item>
-      <el-descriptions-item label="内容">
+      <el-descriptions-item :label="$t('messageTemplate.content')">
         {{ model.content }}
       </el-descriptions-item>
-      <el-descriptions-item label="创建人">
+      <el-descriptions-item :label="$t('baseField.createBy')">
         <span>{{ model.createByName }}</span>
       </el-descriptions-item>
-      <el-descriptions-item label="创建时间">
+      <el-descriptions-item :label="$t('baseField.createTime')">
         {{ model.createTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="更新时间">
+      <el-descriptions-item :label="$t('baseField.updateTime')">
         {{ model.updateTime }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="visible = false">{{ $t('button.close') }}</el-button>
     </template>
   </el-dialog>
 </template>

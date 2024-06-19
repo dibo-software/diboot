@@ -37,8 +37,4 @@ public class CoreProperties {
      * 每批次数量
      */
     private int batchSize = 1000;
-    /**
-     * 是否开启国际化
-     */
-    private boolean i18n = false;
 }

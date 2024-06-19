@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { CircleClose } from '@element-plus/icons-vue'
-
 type ModelValue = [number | undefined, number | undefined]
-
 const props = withDefaults(
   defineProps<{
     modelValue?: ModelValue
@@ -16,8 +14,6 @@ const props = withDefaults(
   }>(),
   {
     modelValue: undefined,
-    startPlaceholder: '起始',
-    endPlaceholder: '截止',
     min: undefined,
     max: undefined,
     precision: undefined,
@@ -53,7 +49,7 @@ const clearable = () => {
   <div class="date-range">
     <el-input-number
       v-model="dataRange.begin"
-      :placeholder="startPlaceholder"
+      :placeholder="startPlaceholder || $t('components.numberRange.startPlaceholder')"
       :min="min"
       :max="dataRange.end ?? max"
       :precision="precision"
@@ -69,7 +65,7 @@ const clearable = () => {
     </el-icon>
     <el-input-number
       v-model="dataRange.end"
-      :placeholder="endPlaceholder"
+      :placeholder="endPlaceholder || $t('components.numberRange.endPlaceholder')"
       :min="dataRange.begin ?? min"
       :max="max"
       :precision="precision"

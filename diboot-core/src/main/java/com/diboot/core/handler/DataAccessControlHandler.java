@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHan
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.holder.ThreadLocalHolder;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import net.sf.jsqlparser.JSQLParserException;
@@ -59,6 +60,10 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
         if (noCheckpointCache.contains(mappedStatementId)) {
             return null;
         }
+        // 如果忽略此来源
+        if(ThreadLocalHolder.ignoreInterceptor()) {
+            return null;
+        }
         TableInfo tableInfo = TableInfoHelper.getTableInfo(S.removeEsc(table.getName()));
         // 无权限检查点注解，不处理
         if (tableInfo == null || tableInfo.getEntityType() == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(tableInfo.getEntityType())) {
@@ -79,7 +84,7 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
         return DataAccessAnnoCache.getDataPermissionMap(entityClass).entrySet().stream().map(entry -> {
             DataScopeManager checkImpl = ContextHolder.getBean(DataScopeManager.class);
             if (checkImpl == null) {
-                throw new InvalidUsageException("无法从上下文中获取数据权限的接口实现：DataAccessInterface");
+                throw new InvalidUsageException("exception.invalidUsage.dataAccessControlHandler.buildDataAccessExpression.message");
             }
             List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
             if (idValues == null) {
@@ -110,7 +115,7 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
                 try {
                     return CCJSqlParserUtil.parseCondExpression(conditionExpr);
                 } catch (JSQLParserException e) {
-                    log.warn("解析condition异常: " + conditionExpr, e);
+                    log.warn("解析condition异常: {}", conditionExpr, e);
                 }
             }
             return null;

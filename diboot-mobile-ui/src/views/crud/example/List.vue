@@ -1,12 +1,11 @@
-<script setup lang='ts'>
-
+<script setup lang="ts">
 interface CustomInfo {
-  title: string,
-  name: string,
-  contacts: string,
-  telephone: string,
-  department: string,
-  date: string,
+  title: string
+  name: string
+  contacts: string
+  telephone: string
+  department: string
+  date: string
 }
 
 const list = ref<CustomInfo[]>([])
@@ -72,30 +71,34 @@ const resetFilter = () => {
 
 <template>
   <van-search
-    v-model='searchName'
+    v-model="searchName"
     show-action
-    shape='round'
-    placeholder='请输入搜索关键词'
-    @search='onSearch'
-    @blur='onSearch'
-    @clear='resetFilter'
-    @cancel='resetFilter'
+    shape="round"
+    placeholder="请输入搜索关键词"
+    @search="onSearch"
+    @blur="onSearch"
+    @clear="resetFilter"
+    @cancel="resetFilter"
   />
-  <van-pull-refresh class='bgcolor' v-model='refreshing' @refresh='onRefresh'
-                    :style="{ height: 'calc(100vh - 150px)', overflowY: 'auto' }">
+  <van-pull-refresh
+    class="bgcolor"
+    v-model="refreshing"
+    @refresh="onRefresh"
+    :style="{ height: 'calc(100vh - 150px)', overflowY: 'auto' }"
+  >
     <van-list
-      v-model:loading='loading'
-      :finished='finished'
-      finished-text='没有更多了'
-      v-model:error='error'
-      error-text='请求失败，点击重新加载'
-      @load='onLoad'
+      v-model:loading="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      v-model:error="error"
+      error-text="请求失败，点击重新加载"
+      @load="onLoad"
     >
-      <van-swipe-cell v-for='item in list' :key='item'>
-        <van-cell-group inset style='margin-top: 10px'>
-          <van-cell :border='false' :title='item.title' @click="$router.push({ name: 'DetailExample' })">
+      <van-swipe-cell v-for="item in list" :key="item">
+        <van-cell-group inset style="margin-top: 10px">
+          <van-cell :border="false" :title="item.title" @click="$router.push({ name: 'DetailExample' })">
             <template #value>
-              <van-tag plain type='success'>查看详情</van-tag>
+              <van-tag plain type="success">查看详情</van-tag>
             </template>
             <template #label>
               <div>来访客户：{{ `${item.name}-${item.contacts}` }}</div>
@@ -106,19 +109,25 @@ const resetFilter = () => {
           </van-cell>
         </van-cell-group>
         <template #right>
-          <van-button square plain type="primary" text='编辑' class='fh' @click="$router.push({ name: 'FormExample' })" />
-          <van-button square type='danger' text='删除' class='fh' @click='handleRemove(item.title)' />
+          <van-button
+            square
+            plain
+            type="primary"
+            text="编辑"
+            class="fh"
+            @click="$router.push({ name: 'FormExample' })"
+          />
+          <van-button square type="danger" text="删除" class="fh" @click="handleRemove(item.title)" />
         </template>
       </van-swipe-cell>
     </van-list>
   </van-pull-refresh>
-  <van-button icon='plus' type='primary' class='footer' round block @click="$router.push({ name: 'FormExample' })">新增
+  <van-button icon="plus" type="primary" class="footer" round block @click="$router.push({ name: 'FormExample' })"
+    >新增
   </van-button>
-
-
 </template>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .footer {
   position: fixed;
   bottom: 5px;
@@ -130,6 +139,6 @@ const resetFilter = () => {
 }
 
 .bgcolor {
-  background: var(--van-gray-3)
+  background: var(--van-gray-3);
 }
 </style>

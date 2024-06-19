@@ -17,7 +17,9 @@ package diboot.core.test.binder.vo;
 
 import com.diboot.core.binding.annotation.BindField;
 import diboot.core.test.binder.entity.CcCityInfo;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <Description>
@@ -26,7 +28,7 @@ import lombok.Data;
  * @version v1.0
  * @date 2020/09/29
  */
-@Data
+@Getter @Setter @Accessors(chain = true)
 public class CcCityInfoVO extends CcCityInfo {
 
     @BindField(entity = CcCityInfo.class, field = "regionName", condition = "this.parent_id=cc_city_info.region_id AND cc_city_info.parent_id=region_id")

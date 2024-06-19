@@ -25,7 +25,7 @@ refresh()
         </el-tab-pane>
       </template>
 
-      <el-tab-pane name="_ext_" label="扩展配置">
+      <el-tab-pane name="_ext_" :label="$t('config.ext')">
         <List :category-list="categoryList" @refresh="refresh" />
       </el-tab-pane>
     </el-tabs>

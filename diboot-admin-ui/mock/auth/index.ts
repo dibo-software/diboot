@@ -349,19 +349,19 @@ const authMenu = [
           componentPath: prefix + 'system/login-trace/List.vue',
           sort: 10
         }
+      },
+      {
+        path: 'i18n-config',
+        name: 'I18nConfig',
+        meta: {
+          title: '国际化管理',
+          icon: 'Element:Setting',
+          componentPath: prefix + 'system/i18n-config/List.vue',
+          keepAlive: false,
+          sort: 11,
+          permissions: ['update']
+        }
       }
-      // {
-      //   path: 'i18n-config',
-      //   name: 'I18nConfig',
-      //   meta: {
-      //     title: '国际化管理',
-      //     icon: 'Element:Setting',
-      //     componentPath: prefix + 'system/i18n-config/List.vue',
-      //     keepAlive: false,
-      //     sort: 11,
-      //     permissions: ['update']
-      //   }
-      // }
     ]
   }
 ]

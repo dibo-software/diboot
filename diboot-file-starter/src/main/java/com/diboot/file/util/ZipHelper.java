@@ -68,7 +68,7 @@ public class ZipHelper {
 			    while ((count = bis.read(data, 0, bufferLen)) != -1) {
 			        zos.write(data, 0, count);
 			    }
-			    log.info("[Zip]压缩成功：" + file.getName());
+			    log.info("[Zip]压缩成功：{}", file.getName());
 			    bis.close();
 			    zos.closeEntry();
 		    }
@@ -76,7 +76,7 @@ public class ZipHelper {
 		else {
 	    	//压缩目录中的文件或子目录
         	File[] childFileList = file.listFiles();
-        	String filePath = "";
+        	String filePath;
         	if(childFileList != null) {
         		for (int n=0; n<childFileList.length; n++)
             	{
@@ -114,8 +114,8 @@ public class ZipHelper {
 	    	log.error("[Zip]压缩文件名为空，压缩失败！");
 			return false;
 	    }
-	    CheckedOutputStream cos = null;
-	    ZipOutputStream zos = null;
+	    CheckedOutputStream cos;
+	    ZipOutputStream zos;
         File srcFile = new File(srcPath);
         if (srcFile.exists()) {
         	//判断压缩文件保存的路径是否为源文件路径的子文件夹，如果是，则终止压缩
@@ -158,7 +158,7 @@ public class ZipHelper {
              return true;
         }
         else {
-        	log.error("[Zip]当前源目录不存在，压缩失败！" + srcPath);
+        	log.error("[Zip]当前源目录不存在，压缩失败！path={}", srcPath);
         	return false;
         }
 	}

@@ -86,7 +86,7 @@ public class Pagination implements Serializable {
 
     public void setPageSize(int pageSize) {
         if (pageSize > 1000) {
-            log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize=" + pageSize);
+            log.warn("分页pageSize过大，将被调整为默认限值，请检查调用是否合理！pageSize={}", pageSize);
             pageSize = 1000;
         }
         this.pageSize = pageSize;

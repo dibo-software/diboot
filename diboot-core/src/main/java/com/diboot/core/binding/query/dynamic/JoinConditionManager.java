@@ -46,10 +46,10 @@ public class JoinConditionManager extends BaseConditionManager {
         List<Expression> expressionList = getExpressionList(joiner.getCondition());
         if(V.isEmpty(expressionList)){
             log.warn("无法解析注解条件: {} ", joiner.getCondition());
-            throw new InvalidUsageException("无法解析注解条件: " + joiner.getCondition());
+            throw new InvalidUsageException("exception.invalidUsage.joinConditionManager.parseJoinCondition.message", joiner.getCondition());
         }
         // 解析中间表关联
-        String tableName = extractMiddleTableName(expressionList);
+        String tableName = extractMiddleTableName(expressionList, joiner.getJoin());
         if(tableName != null){
             joiner.setMiddleTable(tableName);
         }
@@ -107,7 +107,7 @@ public class JoinConditionManager extends BaseConditionManager {
                     }
                 }
                 else{
-                    log.warn("暂不支持的条件: "+ expression.toString());
+                    log.warn("暂不支持的条件: {}", expression);
                 }
             }
             else if(operator instanceof IsNullExpression){
@@ -153,7 +153,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 }
             }
             else{
-                log.warn("不支持的条件: "+operator.toString());
+                log.warn("不支持的条件: {}", operator.toString());
             }
         }
         if(segments.isEmpty() && middleTableOnSegments.isEmpty()){
@@ -182,6 +182,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 annoColumn = "self." + S.substringAfter(annoColumn, "this.");
             }
             else if(tableName.equals("self")){
+                return annoColumn;
             }
             else if(tableName.equals(joiner.getMiddleTable())){
                 annoColumn = joiner.getMiddleTableAlias() + "." + S.substringAfter(annoColumn, ".");

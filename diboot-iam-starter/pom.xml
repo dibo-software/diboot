@@ -7,15 +7,15 @@
     <parent>
         <groupId>com.diboot</groupId>
         <artifactId>diboot-root</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.0</version>
     </parent>
 
     <artifactId>diboot-iam-spring-boot-starter</artifactId>
-    <version>3.3.0</version>
+    <version>3.4.0</version>
     <packaging>jar</packaging>
     <description>diboot IAM project</description>
     <properties>
-        <shiro.version>2.0.0</shiro.version>
+        <shiro.version>2.0.1</shiro.version>
     </properties>
 
     <dependencies>
@@ -26,12 +26,28 @@
             <version>${diboot.version}</version>
 
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
+        </dependency>
         <!-- 依赖shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
             <classifier>jakarta</classifier>
             <version>${shiro.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+<!--                <exclusion>-->
+<!--                    <groupId>commons-beanutils</groupId>-->
+<!--                    <artifactId>commons-beanutils</artifactId>-->
+<!--                </exclusion>-->
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -112,6 +128,7 @@
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
             <version>3.6.4</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

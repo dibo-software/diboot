@@ -15,6 +15,7 @@
  */
 package com.diboot.core.binding.parser;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class BaseConditionManager {
      * @param expressionList
      * @return
      */
-    protected static String extractMiddleTableName(List<Expression> expressionList){
+    protected static String extractMiddleTableName(List<Expression> expressionList, String targetTableName){
         Set<String> tableNameSet = new HashSet<>();
         for(Expression operator : expressionList){
             if(operator instanceof EqualsTo){
@@ -81,10 +82,10 @@ public class BaseConditionManager {
                 if(express.getLeftExpression() instanceof Column && express.getRightExpression() instanceof Column){
                     // 统计左侧列中出现的表名
                     String leftColumn = express.getLeftExpression().toString();
-                    collectTableName(tableNameSet, leftColumn);
+                    collectTableName(tableNameSet, leftColumn, targetTableName);
                     // 统计右侧列中出现的表名
                     String rightColumn = express.getRightExpression().toString();
-                    collectTableName(tableNameSet, rightColumn);
+                    collectTableName(tableNameSet, rightColumn, targetTableName);
                 }
             }
         }
@@ -92,7 +93,7 @@ public class BaseConditionManager {
             return null;
         }
         if(tableNameSet.size() > 1){
-            log.warn("中间表关联条件暂只支持1张中间表！");
+            throw new InvalidUsageException("exception.invalidUsage.baseConditionManager.extractMiddleTableName.message", tableNameSet);
         }
         return tableNameSet.iterator().next();
     }
@@ -102,14 +103,16 @@ public class BaseConditionManager {
      * @param tableNameSet
      * @param columnStr
      */
-    private static void collectTableName(Set<String> tableNameSet, String columnStr) {
+    private static void collectTableName(Set<String> tableNameSet, String columnStr, String targetTableName) {
         if(!columnStr.contains(".")){
             return;
         }
         // 如果是中间表(非this,self标识的当前表)
         if(!isCurrentObjColumn(columnStr)){
             String tempTableName = S.substringBefore(columnStr, ".");
-            tableNameSet.add(tempTableName);
+            if(V.isEmpty(targetTableName) || V.notEquals(targetTableName, tempTableName)) {
+                tableNameSet.add(tempTableName);
+            }
         }
     }
 

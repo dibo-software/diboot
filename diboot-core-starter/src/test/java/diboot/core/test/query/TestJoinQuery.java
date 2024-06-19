@@ -242,6 +242,22 @@ public class TestJoinQuery {
     public void testDynamicSqlQueryWithMiddleTable2() {
         // 初始化DTO，测试不涉及关联的情况
         UserDTO dto = new UserDTO();
+        List<String> roleCodes = new ArrayList<>();
+        roleCodes.add("ADMIN");
+        roleCodes.add("OTHER");
+        dto.setRoleCodes(roleCodes);
+
+        List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
+        Assert.assertTrue(builderResultList.size() == 1);
+    }
+
+    /**
+     * 测试有中间表的动态sql join
+     */
+    @Test
+    public void testDynamicSqlQueryWithMiddleTable3() {
+        // 初始化DTO，测试不涉及关联的情况
+        UserDTO dto = new UserDTO();
         dto.setRoleId(101L);
         List<User> builderResultList = QueryBuilder.toDynamicJoinQueryWrapper(dto).queryList(User.class);
         Assert.assertTrue(builderResultList.size() == 1);

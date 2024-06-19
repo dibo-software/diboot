@@ -18,16 +18,17 @@ package com.diboot.core.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.vo.LabelValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -66,18 +67,18 @@ public class Dictionary extends BaseEntity<String> {
     /***
      * 数据字典类型
      */
-    @NotNull(message = "数据字典类型不能为空！")
-    @Length(max = 50, message = "数据字典类型长度超长！")
+    @NotNull(message = "{validation.dictionary.type.NotNull.message}")
+    @Length(max = 50, message = "{validation.dictionary.type.Length.message}")
     @TableField
     private String type;
 
     /***
      * 数据字典项的显示名称
      */
-    @NotNull(message = "数据字典项名称不能为空！")
-    @Length(max = 100, message = "数据字典项名称长度超长！")
+    @NotNull(message = "{validation.dictionary.itemName.NotNull.message}")
+    @Length(max = 100, message = "{validation.dictionary.itemName.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
-    // @BindI18n("itemNameI18n")
+    @BindI18n("itemNameI18n")
     private String itemName;
 
     /**
@@ -88,14 +89,14 @@ public class Dictionary extends BaseEntity<String> {
     /***
      * 数据字典项的存储值（编码）
      */
-    @Length(max = 100, message = "数据字典项编码长度超长！")
+    @Length(max = 100, message = "{validation.dictionary.itemValue.Length.message}")
     @TableField
     private String itemValue;
 
     /***
      * 备注信息
      */
-    @Length(max = 200, message = "数据字典备注长度超长！")
+    @Length(max = 200, message = "{validation.dictionary.description.Length.message}")
     @TableField
     private String description;
 

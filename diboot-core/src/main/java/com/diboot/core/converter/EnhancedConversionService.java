@@ -15,7 +15,6 @@
  */
 package com.diboot.core.converter;
 
-import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;

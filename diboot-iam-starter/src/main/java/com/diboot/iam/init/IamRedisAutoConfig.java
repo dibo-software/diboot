@@ -83,7 +83,7 @@ public class IamRedisAutoConfig {
     @Bean(name = "iamCacheManager")
     @ConditionalOnMissingBean
     public BaseCacheManager iamCacheManager(){
-        log.info("初始化IAM Redis缓存: DynamicRedisCacheManager");
+        log.info("初始化 IAM Redis缓存: DynamicRedisCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
                 put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
                 put(Cons.CACHE_CAPTCHA, 5);

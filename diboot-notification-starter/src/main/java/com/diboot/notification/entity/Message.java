@@ -97,7 +97,7 @@ public class Message extends BaseEntity<String> {
     /**
      * 应用模块
      */
-    @Length(max = 50, message = "应用模块长度应小于50")
+    @Length(max = 50, message = "{validation.message.appModule.Length.message}")
     @TableField()
     private String appModule;
 
@@ -116,62 +116,62 @@ public class Message extends BaseEntity<String> {
     /**
      * 业务类型
      */
-    @NotNull(message = "业务类型不能为空")
-    @Length(max = 32, message = "业务类型长度应小于32")
+    @NotNull(message = "{validation.message.businessType.NotNull.message}")
+    @Length(max = 32, message = "{validation.message.businessType.Length.message}")
     @TableField()
     private String businessType;
 
     /**
      * 业务标识
      */
-    @NotNull(message = "业务标识不能为空")
-    @Length(max = 32, message = "业务标识长度应小于32")
+    @NotNull(message = "{validation.message.businessCode.NotNull.message}")
+    @Length(max = 32, message = "{validation.message.businessCode.Length.message}")
     @TableField()
     private String businessCode;
 
     /**
      * 标题
      */
-    @Length(max = 100, message = "标题长度应小于100")
+    @Length(max = 100, message = "{validation.message.title.Length.message}")
     @TableField()
     private String title;
 
     /**
      * 内容
      */
-    @NotNull(message = "内容不能为空")
+    @NotNull(message = "{validation.message.content.NotNull.message}")
     @TableField()
     private String content;
 
     /**
      * 发送方
      */
-    @NotNull(message = "发送方不能为空")
-    @Length(max = 100, message = "发送方长度应小于100")
+    @NotNull(message = "{validation.message.sender.NotNull.message}")
+    @Length(max = 100, message = "{validation.message.sender.Length.message}")
     @TableField()
     private String sender;
 
     /**
      * 接收方
      */
-    @NotNull(message = "接收方不能为空")
-    @Length(max = 100, message = "接收方长度应小于100")
+    @NotNull(message = "{validation.message.receiver.NotNull.message}")
+    @Length(max = 100, message = "{validation.message.receiver.Length.message}")
     @TableField()
     private String receiver;
 
     /**
      * 发送通道
      */
-    @NotNull(message = "发送通道不能为空")
-    @Length(max = 30, message = "发送通道长度应小于30")
+    @NotNull(message = "{validation.message.channel.NotNull.message}")
+    @Length(max = 30, message = "{validation.message.channel.Length.message}")
     @TableField()
     private String channel;
 
     /**
      * 消息状态
      */
-    @NotNull(message = "消息状态不能为空")
-    @Length(max = 30, message = "消息状态长度应小于30")
+    @NotNull(message = "{validation.message.status.NotNull.message}")
+    @Length(max = 30, message = "{validation.message.status.Length.message}")
     @TableField()
     private String status;
 
@@ -191,7 +191,7 @@ public class Message extends BaseEntity<String> {
     /**
      * 扩展数据
      */
-    @Length(max = 500, message = "扩展数据长度应小于500")
+    @Length(max = 500, message = "{validation.message.extData.Length.message}")
     @TableField()
     private String extData;
 

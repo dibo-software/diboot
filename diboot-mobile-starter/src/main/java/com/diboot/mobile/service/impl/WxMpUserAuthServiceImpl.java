@@ -53,15 +53,15 @@ public class WxMpUserAuthServiceImpl extends WxMpMemberAuthServiceImpl {
     public IamMember bindWxMp(String code, String state) throws Exception {
         // 校验STATE
         if (V.notEmpty(STATE) && !STATE.equals(state)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法来源");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wxMp.illegalState");
         }
         if (V.isEmpty(code)) {
             log.error("请求参数有误: code = null");
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请求参数有误: code is null");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wxMp.nullcode");
         }
         IamUser iamUser = IamSecurityUtils.getCurrentUser();
         if (V.isEmpty(iamUser)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "请登录后绑定");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.bindAfterLogin");
         }
         WxOAuth2AccessToken accessToken = wxMpService.getOAuth2Service().getAccessToken(code);
         // 获取用户信息
@@ -71,7 +71,7 @@ public class WxMpUserAuthServiceImpl extends WxMpMemberAuthServiceImpl {
                         .eq(IamMember::getUserId, iamUser.getId())
         );
         if (V.notEmpty(iamMember)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "请勿重新绑定");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.bindAgain");
         }
         // 创建绑定
         WxOAuth2UserInfo userInfo = wxMpService.getOAuth2Service().getUserInfo(accessToken, null);
@@ -91,11 +91,11 @@ public class WxMpUserAuthServiceImpl extends WxMpMemberAuthServiceImpl {
     public String applyToken(String code, String state) throws Exception {
         // 校验STATE
         if (V.notEmpty(STATE) && !STATE.equals(state)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法来源");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wxMp.illegalState");
         }
         if (V.isEmpty(code)) {
             log.error("请求参数有误: code = null");
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请求参数有误: code is null");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wxMp.nullcode");
         }
         WxOAuth2AccessToken accessToken = wxMpService.getOAuth2Service().getAccessToken(code);
         // 获取用户信息
@@ -108,7 +108,7 @@ public class WxMpUserAuthServiceImpl extends WxMpMemberAuthServiceImpl {
         credential.setAuthType(Cons.DICTCODE_AUTH_TYPE.WX_MP.name());
         // 账户存在，直接登录
         if (V.isEmpty(account)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请登录后绑定再使用快捷登录");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wx.shortcutLogin");
         }
         return AuthServiceFactory.getAuthService(Cons.DICTCODE_AUTH_TYPE.WX_MP.name()).applyToken(credential);
     }

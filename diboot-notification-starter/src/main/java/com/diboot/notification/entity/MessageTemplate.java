@@ -57,23 +57,23 @@ public class MessageTemplate extends BaseEntity<String> {
     /**
      * 应用模块
      */
-    @Length(max = 50, message = "应用模块长度应小于50")
+    @Length(max = 50, message = "{validation.messageTemplate.appModule.Length.message}")
     @TableField()
     private String appModule;
 
     /**
      * 模版编码
      */
-    @NotNull(message = "模版编码不能为空")
-    @Length(max = 20, message = "模版编码长度应小于20")
+    @NotNull(message = "{validation.messageTemplate.code.NotNull.message}")
+    @Length(max = 20, message = "{validation.messageTemplate.code.Length.message}")
     @TableField()
     private String code;
 
     /**
      * 模版标题
      */
-    @NotNull(message = "模版标题不能为空")
-    @Length(max = 100, message = "模版标题长度应小于100")
+    @NotNull(message = "{validation.messageTemplate.title.NotNull.message}")
+    @Length(max = 100, message = "{validation.messageTemplate.title.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String title;
@@ -81,7 +81,7 @@ public class MessageTemplate extends BaseEntity<String> {
     /**
      * 模版内容
      */
-    @NotNull(message = "模版内容不能为空")
+    @NotNull(message = "{validation.messageTemplate.content.NotNull.message}")
     @TableField()
     private String content;
 

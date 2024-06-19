@@ -14,23 +14,25 @@ defineExpose({
 })
 </script>
 <template>
-  <el-dialog v-model="visible" :width="650" title="详情">
+  <el-dialog v-model="visible" :width="650" :title="$t('title.detail')">
     <el-descriptions v-if="model" v-loading="loading" class="margin-top" :column="2" border>
-      <el-descriptions-item label="字典名称"> {{ model.itemName }} </el-descriptions-item>
-      <el-descriptions-item label="字典编码"> {{ model.type }} </el-descriptions-item>
-      <el-descriptions-item :span="2" label="字典备注"> {{ model.description }} </el-descriptions-item>
+      <el-descriptions-item :label="$t('dictionary.itemName')"> {{ model.itemName }} </el-descriptions-item>
+      <el-descriptions-item :label="$t('dictionary.type')"> {{ model.type }} </el-descriptions-item>
+      <el-descriptions-item :span="2" :label="$t('dictionary.description')">
+        {{ model.description }}
+      </el-descriptions-item>
     </el-descriptions>
-    <h3>字典条目</h3>
+    <h3>{{ $t('dictionary.item.label') }}</h3>
     <el-table v-if="model?.children" :data="model.children" style="width: 100%">
       <el-table-column width="250">
-        <template #header> 条目名称 </template>
+        <template #header> {{ $t('dictionary.item.itemName') }} </template>
         <template #default="scope"> {{ scope.row.itemName }} </template>
       </el-table-column>
       <el-table-column width="250">
-        <template #header> 条目编码 </template>
+        <template #header> {{ $t('dictionary.item.itemValue') }} </template>
         <template #default="scope"> {{ scope.row.itemValue }} </template>
       </el-table-column>
-      <el-table-column label="条目颜色" width="100">
+      <el-table-column :label="$t('dictionary.item.color')" width="100">
         <template #default="scope">
           <template v-if="scope.row.extension?.color">
             <span class="color-block" :style="{ background: scope.row.extension?.color }" />
@@ -41,7 +43,7 @@ defineExpose({
     </el-table>
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="visible = false">关闭</el-button>
+        <el-button type="primary" @click="visible = false">{{ $t('button.close') }}</el-button>
       </span>
     </template>
   </el-dialog>

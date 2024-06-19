@@ -30,6 +30,8 @@ import java.util.List;
  * @date 2020/04/16
  */
 public class DynamicJoinQueryWrapper<DTO,T> extends ExtQueryWrapper<T> {
+    private static final long serialVersionUID = 5557355990471769264L;
+
     public DynamicJoinQueryWrapper(Class<DTO> dtoClass, Collection<String> fields){
         this.dtoClass = dtoClass;
         this.fields = fields;

@@ -15,6 +15,7 @@
  */
 package com.diboot.core.exception;
 
+import com.diboot.core.util.I18n;
 import com.diboot.core.util.S;
 import com.diboot.core.vo.Status;
 
@@ -24,11 +25,13 @@ import java.util.Map;
 /**
  * 通用的业务异常类 BusinessException
  * (json形式返回值同JsonResult，便于前端统一处理)
+ *
  * @author : wee
  * @version : v2.0
  * @Date 2019-07-11  11:10
  */
 public class BusinessException extends RuntimeException {
+    private static final long serialVersionUID = 6947618826898130771L;
 
     private Integer code;
 
@@ -65,7 +68,7 @@ public class BusinessException extends RuntimeException {
      * 自定义状态码和内容提示
      */
     public BusinessException(Status status, String msg, Object... args) {
-        super(status.label() + ": "+ S.format(msg, args));
+        super(status.label() + ": " + S.format(I18n.message(msg, args), args));
         this.status = status;
     }
 
@@ -73,7 +76,7 @@ public class BusinessException extends RuntimeException {
      * 自定义状态码和内容提示
      */
     public BusinessException(int code, String msg) {
-        super(msg);
+        super(I18n.message(msg));
         this.code = code;
     }
 
@@ -81,7 +84,7 @@ public class BusinessException extends RuntimeException {
      * 自定义内容提示
      */
     public BusinessException(String msg, Object... args) {
-        super(S.format(msg, args));
+        super(S.format(I18n.message(msg, args), args));
         this.status = Status.FAIL_OPERATION;
     }
 
@@ -89,7 +92,7 @@ public class BusinessException extends RuntimeException {
      * 自定义内容提示
      */
     public BusinessException(Status status, Throwable ex, String msg, Object... args) {
-        super(status.label() + ": "+ S.format(msg, args), ex);
+        super(status.label() + ": " + S.format(I18n.message(msg, args), args), ex);
         this.status = status;
     }
 
@@ -97,14 +100,14 @@ public class BusinessException extends RuntimeException {
      * 自定义内容提示
      */
     public BusinessException(int code, Throwable ex, String msg, Object... args) {
-        super(S.format(msg, args), ex);
+        super(S.format(I18n.message(msg, args), args), ex);
         this.code = code;
     }
 
     /**
      * 转换为Map
      */
-    public Map<String, Object> toMap(){
+    public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>(8);
         map.put("code", getCode());
         map.put("msg", getMessage());
@@ -114,12 +117,12 @@ public class BusinessException extends RuntimeException {
     /**
      * 获取status，以便复用
      */
-    public Status getStatus(){
+    public Status getStatus() {
         return this.status;
     }
 
-    private Integer getCode(){
-        if(this.code == null && this.status != null){
+    private Integer getCode() {
+        if (this.code == null && this.status != null) {
             this.code = this.status.code();
         }
         return this.code;

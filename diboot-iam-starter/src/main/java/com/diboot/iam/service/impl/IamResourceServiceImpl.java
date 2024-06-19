@@ -57,8 +57,8 @@ public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, I
             return;
         }
         if (!super.createEntity(iamResource)) {
-            log.warn("新建资源权限失败，displayType=" + iamResource.getDisplayType());
-            throw new BusinessException(Status.FAIL_OPERATION, "新建资源权限失败");
+            log.warn("新建资源权限失败，displayType = {}", iamResource.getDisplayType());
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.resourceService.createFailed");
         }
         List<IamResourceListVO> children = iamResource.getChildren();
         if (V.notEmpty(children)) {
@@ -78,7 +78,7 @@ public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, I
         // 创建menu
         boolean success = this.createEntity(iamResourceDTO);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "创建菜单资源失败");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.resourceService.createFailed");
         }
         // 批量创建按钮/权限列表
         List<IamResource> permissionList = iamResourceDTO.getPermissionList();
@@ -99,7 +99,7 @@ public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, I
     public void updateMenuResources(IamResourceDTO iamResourceDTO) {
         // 检查是否设置了自身id为parentId，如果设置parentId与自身id相同，将会导致非常严重的潜在隐患
         if (V.equals(iamResourceDTO.getId(), iamResourceDTO.getParentId())) {
-            throw new BusinessException(Status.FAIL_OPERATION, "不可设置父级菜单资源为自身");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.resourceService.setParentIdEqId");
         }
         // 更新 menu
         this.updateEntity(iamResourceDTO);
@@ -141,7 +141,7 @@ public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, I
     @Transactional(rollbackFor = Exception.class)
     public void deleteMenuResources(String id) {
         if (V.isEmpty(id)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "参数错误");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.resourceService.paramsError");
         }
         // 删除该菜单
         this.deleteEntity(id);
@@ -190,7 +190,7 @@ public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, I
     @Transactional(rollbackFor = Exception.class)
     public void deleteMenuResources(List<String> idList) {
         if (V.isEmpty(idList)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "id列表不能为空");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.resourceService.nullIdList");
         }
         // 删除所有idList权限
         this.deleteEntities(

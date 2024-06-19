@@ -3,6 +3,8 @@ import { Plus, Upload as UploadIcon } from '@element-plus/icons-vue'
 import type { FormItem, Select, Upload } from './type'
 import type { UploadRawFile, UploadFile, FormItemRule, CascaderNode, CascaderOption } from 'element-plus'
 import { checkValue } from '@/utils/validate-form'
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 
 const props = withDefaults(
   defineProps<{
@@ -56,13 +58,16 @@ watch(
 )
 watch(
   () => props.modelValue,
-  val => (value.value = props.config.type === 'input-number' && val ? Number(val as string) : val)
+  val => {
+    value.value = val && ['input-number', 'boolean'].includes(props.config.type) ? JSON.parse(`${val}`) : val
+    if (!val) fileList.value.length = 0
+  }
 )
 
 const requiredRule = {
   required: true,
-  message: '不能为空',
-  ...(props.config.type === 'input-number' || props.config.type === 'checkbox' || (props.config as Select).multiple
+  message: i18n.t('rules.notnull'),
+  ...(['input-number', 'checkbox', 'boolean'].includes(props.config.type) || (props.config as Select).multiple
     ? {}
     : { whitespace: true })
 }
@@ -113,11 +118,11 @@ const beforeUpload = (rawFile: UploadRawFile) => {
   const fileConfig: Upload = props.config as any
   const accept = convert2accept(fileConfig?.accept)
   if (accept && !accept.split(',').includes(rawFile.name.substring(rawFile.name.lastIndexOf('.')))) {
-    ElMessage.error(`请上传${accept.replace(/,/g, '/')}格式的文件！`)
+    ElMessage.error(i18n.t('components.di.input.uploadFormatError', [accept.replace(/,/g, '/')]))
     return false
   }
   if (fileConfig.size && rawFile.size / 1024 / 1024 > fileConfig.size) {
-    ElMessage.error(`文件过大，超出了限制${fileConfig.size}MB，请调整您的文件!`)
+    ElMessage.error(i18n.t('components.di.input.fileLarge', [fileConfig.size]))
     return false
   }
   return true
@@ -146,7 +151,7 @@ const convert2accept = (accept?: string) => {
     <el-input
       v-if="config.type === 'input'"
       :model-value="value as string"
-      :placeholder="config.placeholder ?? '请输入'"
+      :placeholder="config.placeholder ?? $t('placeholder.input')"
       clearable
       :maxlength="config.maxlength as number"
       :show-word-limit="!!config.maxlength"
@@ -220,8 +225,8 @@ const convert2accept = (accept?: string) => {
         :disabled="config.disabled || disabled"
         @update:model-value="value = $event"
       >
-        <el-option label="是" :value="true" />
-        <el-option label="否" :value="false" />
+        <el-option :label="$t('bool.yes')" :value="true" />
+        <el-option :label="$t('bool.no')" :value="false" />
       </el-select>
     </template>
     <el-select
@@ -378,7 +383,7 @@ const convert2accept = (accept?: string) => {
         :icon="UploadIcon"
         :disabled="config.disabled || disabled"
       >
-        上传文件
+        {{ $t('components.di.input.uploadFile') }}
       </el-button>
       <template #tip>
         <el-button
@@ -386,16 +391,21 @@ const convert2accept = (accept?: string) => {
           :icon="UploadIcon"
           disabled
         >
-          上传文件
+          {{ $t('components.di.input.uploadFile') }}
         </el-button>
         <div v-if="config.placeholder" class="el-upload__tip">
           {{ config.placeholder }}
         </div>
         <div v-else-if="config.limit || config.accept || config.size" class="el-upload__tip">
-          可上传<span v-if="config.limit">{{ ' ' }}{{ config.limit }} 个<span v-if="!config.accept">文件</span></span>
-          <span v-if="config.accept">类型为 {{ config.accept.replace(/,/g, '/') }} 的文件</span>
+          {{ $t('components.di.input.limit.prefix')
+          }}<span v-if="config.limit"
+            >{{ ' ' }}{{ config.limit }} 个<span v-if="!config.accept">{{
+              $t('components.di.input.limit.suffix')
+            }}</span></span
+          >
+          <span v-if="config.accept">{{ $t('components.di.input.accept', [config.accept.replace(/,/g, '/')]) }}</span>
           <span v-if="config.size && (config.limit || config.accept)">，</span>
-          <span v-if="config.size">单文件需小于 {{ config.size }} MB</span>。
+          <span v-if="config.size">{{ $t('components.di.input.size') }} {{ config.size }} MB</span>。
         </div>
       </template>
     </el-upload>

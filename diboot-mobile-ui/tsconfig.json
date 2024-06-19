@@ -11,6 +11,7 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "Node",
     "lib": [
       "ESNext",
       "DOM",

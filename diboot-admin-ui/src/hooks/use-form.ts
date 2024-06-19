@@ -1,5 +1,5 @@
 import type { FormInstance } from 'element-plus'
-
+import i18n from '@/i18n'
 interface FormOption {
   // 主键属性名（默认值：id）
   primaryKey?: string
@@ -31,7 +31,7 @@ export default (option: FormOption) => {
         if (valid) {
           resolve(fields)
         } else {
-          reject('校验不通过')
+          reject(i18n.global.t('rules.nonpass'))
         }
       })
     })
@@ -60,7 +60,7 @@ export default (option: FormOption) => {
       successCallback(res.data ?? (id as string))
       return true
     } catch (e: any) {
-      ElMessage.error(e.msg || e.message || (e.length ? e : '保存失败'))
+      ElMessage.error(e.msg || e.message || (e.length ? e : i18n.global.t('hooks.saveFailed')))
       return false
     } finally {
       submitting.value = false
@@ -84,7 +84,7 @@ export default (option: FormOption) => {
       successCallback(res.data)
       return true
     } catch (e: any) {
-      ElMessage.error(e.msg || e.message || (e.length ? e : '保存失败'))
+      ElMessage.error(e.msg || e.message || (e.length ? e : i18n.global.t('hooks.saveFailed')))
       return false
     } finally {
       submitting.value = false

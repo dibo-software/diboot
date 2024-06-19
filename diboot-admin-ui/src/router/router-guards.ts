@@ -22,7 +22,6 @@ export function createRouterGuard(router: Router) {
 
       try {
         await userStore.getInfo()
-
         // 加载异步路由
         const res = await api.get<Array<RouteRecordRaw>>('/auth/route')
         if (res.data?.length) {
@@ -39,7 +38,7 @@ export function createRouterGuard(router: Router) {
     }
 
     // You can access without permissions. You need to set the routing meta.ignoreAuth to true
-    if (to.meta.ignoreAuth) {
+    if (to.meta.ignoreAuth && to.name !== '404') {
       return
     }
 
@@ -49,6 +48,7 @@ export function createRouterGuard(router: Router) {
       replace: true,
       query: to.query
     }
+    if (to.name === '404') return redirectData
     redirectData.query.redirect = to.path
     return redirectData
   })

@@ -16,6 +16,7 @@
 package com.diboot.file.service;
 
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.V;
 import com.diboot.file.entity.FileRecord;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,7 @@ public interface FileStorageService {
      * @return 访问地址
      */
     default String buildAccessUrl(String fileUid, String ext) {
-        return "/file/" + fileUid + "." + ext;
+        return "/file/" + fileUid + (V.notEmpty(ext)? "." + ext : "");
     }
 
     /**
@@ -71,7 +72,7 @@ public interface FileStorageService {
      * @throws Exception
      */
     default FileRecord save(String diskFilePath, String fileName) throws Exception {
-        throw new InvalidUsageException("当前存储实现暂不支持该方法");
+        throw new InvalidUsageException("exception.invalidUsage.fileStorageService.save.message");
     }
 
     /**

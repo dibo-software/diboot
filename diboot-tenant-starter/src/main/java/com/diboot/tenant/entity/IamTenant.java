@@ -41,7 +41,8 @@ import java.util.Date;
 @Setter
 @Accessors(chain = true)
 @TableName("dbt_iam_tenant")
-public class IamTenant extends BaseEntity<String> {
+public class
+IamTenant extends BaseEntity<String> {
     private static final long serialVersionUID = 8712006740734247869L;
 
     /**
@@ -52,58 +53,58 @@ public class IamTenant extends BaseEntity<String> {
     /**
      * 租户名称
      */
-    @NotNull(message = "租户名称不能为空")
-    @Length(max = 100, message = "租户名称长度应小于100")
+    @NotNull(message = "{validation.iamTenant.name.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamTenant.name.Length.message}")
     @TableField()
     private String name;
 
     /**
      * 租户code
      */
-    @NotNull(message = "租户编码不能为空")
-    @Length(max = 20, message = "租户编码长度应小于20")
+    @NotNull(message = "{validation.iamTenant.code.NotNull.message}")
+    @Length(max = 20, message = "{validation.iamTenant.code.Length.message}")
     @TableField()
     private String code;
 
     /**
      * 有效开始日期
      */
-    @NotNull(message = "起始日期不能为空")
+    @NotNull(message = "{validation.iamTenant.startDate.NotNull.message}")
     @TableField()
     private LocalDate startDate;
 
     /**
      * 有效结束日期
      */
-    @NotNull(message = "截止日期不能为空")
+    @NotNull(message = "{validation.iamTenant.endDate.NotNull.message}")
     @TableField()
     private LocalDate endDate;
 
     /**
      * 负责人
      */
-    @Length(max = 50, message = "负责人长度应小于50")
+    @Length(max = 50, message = "{validation.iamTenant.manager.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     private String manager;
 
     /**
      * 联系电话
      */
-    @Length(max = 20, message = "联系电话长度应小于20")
+    @Length(max = 20, message = "{validation.iamTenant.phone.Length.message}")
     @TableField()
     private String phone;
 
     /**
      * 描述
      */
-    @Length(max = 100, message = "描述长度应小于100")
+    @Length(max = 100, message = "{validation.iamTenant.description.Length.message}")
     @TableField()
     private String description;
 
     /**
      * 租户状态
      */
-    @Length(max = 10, message = "租户状态长度应小于10")
+    @Length(max = 10, message = "{validation.iamTenant.status.Length.message}")
     @TableField()
     private String status;
 

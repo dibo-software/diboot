@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Loading, Download } from '@element-plus/icons-vue'
-import { ElCheckbox, ElTableColumn } from 'element-plus'
-import type { TableColumnCtx } from 'element-plus/es/components/table/src/table-column/defaults'
-import type { PropType, VNode } from 'vue'
 import type { TableHead } from './type'
 import { fileDownload } from '@/utils/file'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const props = defineProps<{
   // 导出数据接口
   exportUrl: string
@@ -16,8 +14,12 @@ const props = defineProps<{
   // 自定义列导出
   // 示例：[{'导出用户联系方式':['name','userNum','mobilePhone']}]
   options?: Record<string, string[]>
-  // 对话框宽度（默认50%）
+  // 对话框宽度（默认 600px）
   width?: string
+  // 类型
+  type?: string
+  // 按钮标题（默认：导出）
+  title?: string
 }>()
 
 const exportLoadingData = ref(false)
@@ -46,6 +48,8 @@ const handleCommand = (columns?: string[]) => {
         .get<TableHead[]>(props.tableHeadUrl)
         .then(res => {
           tableHeadList.value = res.data
+          const cache = localStorage.getItem(props.tableHeadUrl)
+          checkedList.value = cache ? JSON.parse(cache) : tableHeadList.value?.map(e => e.key)
           tableLoading.value = false
         })
         .catch(res => {
@@ -55,55 +59,12 @@ const handleCommand = (columns?: string[]) => {
   }
 }
 
-// 嵌套表头组件
-const TableColumn = defineComponent({
-  name: 'TableColumn',
-  props: {
-    column: { type: Object as PropType<TableHead>, required: true }
-  },
-  setup(props) {
-    const buildColumn = (column: TableHead): VNode => {
-      const children = (column.children ?? []).map(e => buildColumn(e))
-      return h(
-        ElTableColumn,
-        { label: column.title, prop: column.key, align: 'center', formatter },
-        children.length ? { default: () => children } : {}
-      )
-    }
-    return () => buildColumn(props.column)
-  }
-})
-
-const checkAll = ref(true)
-const isIndeterminate = ref(false)
 const checkedList = ref<string[]>([])
-const allList = ref<string[]>([])
-
-// 列全选处理
-const handleCheckAllChange = (val: string | number | boolean) => {
-  checkedList.value = val ? allList.value : []
-  isIndeterminate.value = false
-}
-
-// 复选框渲染
-function formatter(row: TableHead, column: TableColumnCtx<TableHead>) {
-  const property = column.property
-  if (!allList.value.includes(property)) {
-    allList.value.push(property)
-    checkedList.value.push(property)
-  }
-  return h(ElCheckbox, { label: property }, { default: () => '' })
-}
-
-// 复选框组变化
-const handleCheckedCitiesChange = (value: (string | number | boolean)[]) => {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === allList.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < allList.value.length
-}
 
 // 自定义表头确认导出
 const confirm = () => {
+  if (!checkedList.value.length) return ElMessage.warning(i18n.t('components.excel.exportColumnNull'))
+  localStorage.setItem(props.tableHeadUrl, JSON.stringify(checkedList.value))
   handleCommand(checkedList.value)
   dialogVisible.value = false
 }
@@ -112,14 +73,22 @@ const confirm = () => {
 <template>
   <span>
     <!-- 可选列导出 -->
-    <el-dropdown v-if="tableHeadUrl || options" split-button @click="exportData()" @command="handleCommand">
-      <el-icon>
+    <el-dropdown
+      v-if="tableHeadUrl || options"
+      split-button
+      :type="type"
+      @click="exportData()"
+      @command="handleCommand"
+    >
+      <el-icon style="margin-right: 5px">
         <component :is="exportLoadingData ? Loading : Download" />
       </el-icon>
-      导出
+      {{ title ?? $t('operation.export') }}
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item v-if="tableHeadUrl" command="select">选择列导出</el-dropdown-item>
+          <el-dropdown-item v-if="tableHeadUrl" command="select">{{
+            $t('components.excel.selectColumnExport')
+          }}</el-dropdown-item>
           <el-dropdown-item v-for="(value, key, index) in options" :key="index" :divided="index === 0" :command="value">
             {{ key }}
           </el-dropdown-item>
@@ -128,31 +97,21 @@ const confirm = () => {
     </el-dropdown>
 
     <!-- 固定模板导出 -->
-    <el-button v-else :icon="exportLoadingData ? Loading : Download" type="default" @click="exportData()">
-      导出
+    <el-button v-else :icon="exportLoadingData ? Loading : Download" :type="type" @click="exportData()">
+      {{ title ?? $t('operation.export') }}
     </el-button>
 
     <!-- 导出列选择 -->
-    <el-dialog v-model="dialogVisible" :width="width">
-      <template #header>
-        选择导出列
-        <el-checkbox
-          v-model="checkAll"
-          :indeterminate="isIndeterminate"
-          style="margin-left: 25px"
-          @change="handleCheckAllChange"
-        >
-          全选
-        </el-checkbox>
-      </template>
-      <el-checkbox-group v-model="checkedList" @change="handleCheckedCitiesChange">
-        <el-table v-loading="tableLoading" border :data="[{}]" style="width: 100%">
-          <table-column v-for="(item, index) in tableHeadList" :key="index" :column="item" />
-        </el-table>
-      </el-checkbox-group>
+    <el-dialog v-model="dialogVisible" :width="width ?? '600px'" :title="$t('components.excel.selectExportColumn')">
+      <el-transfer
+        v-model="checkedList"
+        :data="tableHeadList"
+        :titles="[$t('components.excel.ignoreColumn'), $t('components.excel.exportColumn')]"
+        :props="{ key: 'key', label: 'title' }"
+      />
       <template #footer>
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirm">确 定</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('button.cancel') }}</el-button>
+        <el-button type="primary" @click="confirm">{{ $t('button.confirm') }}</el-button>
       </template>
     </el-dialog>
   </span>

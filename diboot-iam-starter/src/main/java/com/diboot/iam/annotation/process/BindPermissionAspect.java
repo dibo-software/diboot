@@ -67,7 +67,7 @@ public class BindPermissionAspect {
             return;
         }
         // 超级管理员 权限放过
-        if (IamSecurityUtils.getSubject().hasRole(Cons.ROLE_SUPER_ADMIN)) {
+        if (IamSecurityUtils.isSuperAdmin()) {
             return;
         }
         // 需要验证
@@ -77,7 +77,7 @@ public class BindPermissionAspect {
         String permissionCode = methodAnno.code();
         Class<?> controllerClass = joinPoint.getTarget().getClass();
         ApiPermissionWrapper classAnno = IamPermissionCacheManager.getPermissionCodeWrapper(controllerClass);
-        if(classAnno != null && V.notEmpty(classAnno.getCode())){
+        if(V.notEmpty(classAnno.getCode())){
             permissionCode = classAnno.getCode() + ":" + permissionCode;
         }
         try{

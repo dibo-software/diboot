@@ -38,13 +38,13 @@ public class SortParamDTO<ID extends Serializable> implements Serializable {
     /**
      * 操作对象ID
      */
-    @NotNull(message = "id 不能为空")
+    @NotNull(message = "{validation.id.NotNull.message}")
     private ID id;
 
     /**
      * 新序号
      */
-    @NotNull(message = "newSortId 不能为空")
+    @NotNull(message = "{validation.newSortId.NotNull.message}")
     private Long newSortId;
 
     /**

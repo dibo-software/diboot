@@ -212,14 +212,16 @@ public class QueryBuilder {
         for (Map.Entry<String, FieldAndValue> entry : fieldValuesMap.entrySet()) {
             FieldAndValue fieldAndValue = entry.getValue();
             Field field = fieldAndValue.getField();
-            //忽略注解 @TableField(exist = false) 的字段
-            TableField tableField = field.getAnnotation(TableField.class);
-            if (tableField != null && !tableField.exist()) {
-                continue;
-            }
             //忽略字段
             BindQuery query = field.getAnnotation(BindQuery.class);
-            if (query != null && query.ignore()) {
+            if(query == null) {// 不存在BindQuery注解
+                TableField tableField = field.getAnnotation(TableField.class);
+                //忽略注解 @TableField(exist = false) 的字段
+                if (tableField != null && !tableField.exist()) {
+                    continue;
+                }
+            }
+            else if(query.ignore()){
                 continue;
             }
             BindQuery.List queryList = field.getAnnotation(BindQuery.List.class);

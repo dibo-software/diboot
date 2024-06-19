@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { level } from './check-password'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const props = defineProps<{
   password?: string
 }>()
@@ -21,15 +22,15 @@ watch(
       if (res == '弱') {
         barColor.value = 'red'
         width.value = '35'
-        strength.value = '弱'
+        strength.value = i18n.t('password.weak')
       } else if (res == '一般') {
         barColor.value = 'orange'
         width.value = '65'
-        strength.value = '一般'
+        strength.value = i18n.t('password.general')
       } else if (res == '强') {
         barColor.value = '#1B8EF8'
         width.value = '100'
-        strength.value = '强'
+        strength.value = i18n.t('password.strong')
       }
     }
   }
@@ -37,7 +38,7 @@ watch(
 </script>
 
 <template>
-  <el-form ref="ruleFormRef" label-width="120px">
+  <el-form ref="ruleFormRef" :label-width="$i18n.locale === 'en' ? '150px' : '120px'">
     <el-form-item v-if="password !== '' && password !== undefined" label="" align="center" style="height: 25px">
       <!-- 展示长度条 -->
       <div

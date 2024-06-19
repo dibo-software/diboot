@@ -95,7 +95,7 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
             }
         }
         else {
-            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
+            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class BaseMemoryCacheManager extends SimpleCacheManager implemen
             }
         }
         else {
-            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
+            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
         }
     }
 

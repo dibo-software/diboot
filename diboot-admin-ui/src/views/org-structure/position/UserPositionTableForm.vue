@@ -2,6 +2,8 @@
 import type { UserPosition } from './type'
 import _ from 'lodash'
 import type { FormInstance } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 
 type Props = {
   userId?: string
@@ -66,7 +68,7 @@ const validate = () => {
       if (valid) {
         resolve(fields)
       } else {
-        reject('校验不通过')
+        reject(i18n.t('rules.nonpass'))
       }
     })
   })
@@ -82,14 +84,14 @@ defineExpose({
       <el-table-column width="250">
         <template #header>
           <span class="required-flag">*</span>
-          岗位
+          {{ $t('position.label') }}
         </template>
         <template #default="scope">
           <el-form-item
             :prop="`${scope.$index}.positionId`"
             :rules="{
               required: true,
-              message: '请选择岗位',
+              message: `${$t('placeholder.select')} ${$t('position.label')}`,
               trigger: 'blur'
             }"
           >
@@ -99,20 +101,20 @@ defineExpose({
                 baseApi: '/iam/position',
                 searchArea: {
                   propList: [
-                    { prop: 'name', label: '名称', type: 'input' },
-                    { prop: 'code', label: '编码', type: 'input' }
+                    { prop: 'name', label: $t('position.name'), type: 'input' },
+                    { prop: 'code', label: $t('position.code'), type: 'input' }
                   ]
                 },
                 columns: [
-                  { prop: 'name', label: '姓名' },
-                  { prop: 'code', label: '编号' },
-                  { prop: 'gradeValue', label: '职级' },
-                  { prop: 'gradeName', label: '职级头衔' },
-                  { prop: 'createTime', label: '创建时间' }
+                  { prop: 'name', label: $t('position.name') },
+                  { prop: 'code', label: $t('position.code') },
+                  { prop: 'gradeValue', label: $t('position.gradeValue') },
+                  { prop: 'gradeName', label: $t('position.gradeNameAlias') },
+                  { prop: 'createTime', label: $t('baseField.createTime') }
                 ]
               }"
               data-type="IamPosition"
-              placeholder="选择岗位"
+              :placeholder="$t('position.placeholder.label')"
             />
           </el-form-item>
         </template>
@@ -120,20 +122,20 @@ defineExpose({
       <el-table-column width="250">
         <template #header>
           <span class="required-flag">*</span>
-          组织部门
+          {{ $t('org.label') }}
         </template>
         <template #default="scope">
           <el-form-item
             :prop="`${scope.$index}.orgId`"
             :rules="{
               required: true,
-              message: '请选择部门',
+              message: `${$t('placeholder.select')} ${$t('org.dept')}`,
               trigger: 'blur'
             }"
           >
             <el-tree-select
               v-model="scope.row.orgId"
-              placeholder="请选择部门"
+              :placeholder="`${$t('placeholder.select')} ${$t('org.dept')}`"
               class="tree-selector"
               :data="orgTree"
               :default-expand-all="true"
@@ -142,7 +144,7 @@ defineExpose({
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column label="主岗" width="100">
+      <el-table-column :label="$t('org.primaryPosition')" width="100">
         <template #default="scope">
           <el-form-item :prop="`${scope.$index}.isPrimaryPosition`">
             <el-switch v-model="scope.row.isPrimaryPosition" @change="isPrimaryPositionChange(scope.$index)" />
@@ -151,10 +153,12 @@ defineExpose({
       </el-table-column>
       <el-table-column>
         <template #header>
-          <el-button size="small" type="primary" @click="addItem">添加</el-button>
+          <el-button size="small" type="primary" @click="addItem">{{ $t('operation.add') }}</el-button>
         </template>
         <template #default="scope">
-          <el-button size="small" type="danger" @click="removeItem(scope.$index)">删除</el-button>
+          <el-button size="small" type="danger" @click="removeItem(scope.$index)">{{
+            $t('operation.delete')
+          }}</el-button>
         </template>
       </el-table-column>
     </el-table>

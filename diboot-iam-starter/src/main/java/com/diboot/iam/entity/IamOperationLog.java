@@ -56,21 +56,21 @@ public class IamOperationLog extends BaseEntity<String> {
     /**
      * 业务对象
      */
-    @Length(max = 100, message = "业务对象长度应小于100")
+    @Length(max = 100, message = "{validation.iamOperationLog.businessObj.Length.message}")
     @TableField()
     private String businessObj;
 
     /**
      * 操作
      */
-    @Length(max = 100, message = "操作长度应小于100")
+    @Length(max = 100, message = "{validation.iamOperationLog.operation.Length.message}")
     @TableField()
     private String operation;
 
     /**
      * 用户类型
      */
-    @Length(max = 100, message = "用户类型长度应小于100")
+    @Length(max = 100, message = "{validation.iamOperationLog.userType.Length.message}")
     @TableField()
     private String userType;
 
@@ -83,35 +83,35 @@ public class IamOperationLog extends BaseEntity<String> {
     /**
      * 用户显示名
      */
-    @Length(max = 100, message = "用户类型长度应小于100")
+    @Length(max = 100, message = "{validation.iamOperationLog.userRealname.Length.message}")
     @TableField()
     private String userRealname;
 
     /**
      * 请求uri
      */
-    @Length(max = 500, message = "用户类型长度应小于500")
+    @Length(max = 500, message = "{validation.iamOperationLog.requestUri.Length.message}")
     @TableField()
     private String requestUri;
 
     /**
      * 请求method
      */
-    @Length(max = 20, message = "用户类型长度应小于20")
+    @Length(max = 20, message = "{validation.iamOperationLog.requestMethod.Length.message}")
     @TableField()
     private String requestMethod;
 
     /**
      * 请求参数
      */
-    @Length(max = 1000, message = "用户类型长度应小于1000")
+    @Length(max = 1000, message = "{validation.iamOperationLog.requestParams.Length.message}")
     @TableField()
     private String requestParams;
 
     /**
      * 请求IP
      */
-    @Length(max = 50, message = "用户类型长度应小于50")
+    @Length(max = 50, message = "{validation.iamOperationLog.requestIp.Length.message}")
     @TableField()
     private String requestIp;
 
@@ -124,7 +124,7 @@ public class IamOperationLog extends BaseEntity<String> {
     /**
      * 异常信息
      */
-    @Length(max = 1000, message = "用户类型长度应小于1000")
+    @Length(max = 1000, message = "{validation.iamOperationLog.errorMsg.Length.message}")
     @TableField()
     private String errorMsg;
 

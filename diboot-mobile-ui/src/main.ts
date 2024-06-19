@@ -9,11 +9,12 @@ import 'vant/es/toast/style'
 import 'vant/es/dialog/style'
 import 'vant/es/notify/style'
 import 'vant/es/image-preview/style'
-
+import i18n from './i18n'
 const app = createApp(App)
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 
 app.use(Toast)
 app.use(Dialog)

@@ -69,7 +69,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
 
     @Override
     public IamMember bindWxMp(String code, String state) throws Exception {
-        throw new BusinessException(Status.FAIL_OPERATION, "当前业务不支持绑定");
+        throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.notSupportBind");
     }
 
     @Override
@@ -77,11 +77,11 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
     public String applyToken(String code, String state) throws Exception {
         // 校验STATE
         if (V.notEmpty(STATE) && !STATE.equals(state)) {
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "非法来源");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wxMp.illegalState");
         }
         if (V.isEmpty(code)) {
             log.error("请求参数有误: code = null");
-            throw new BusinessException(Status.FAIL_INVALID_PARAM, "请求参数有误: code is null");
+            throw new BusinessException(Status.FAIL_INVALID_PARAM, "exception.business.wxMp.nullcode");
         }
         WxOAuth2AccessToken accessToken = wxMpService.getOAuth2Service().getAccessToken(code);
         // 获取用户信息
@@ -143,7 +143,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
      * @return
      */
     protected String sex2gender(Integer sex) {
-        String gender = null;
+        String gender;
         if (V.equals(sex, 1)) {
             gender = "M";
         } else if (V.equals(sex, 2)) {

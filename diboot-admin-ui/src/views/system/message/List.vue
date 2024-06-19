@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Message">
-import { Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import type { Message } from './type'
 import Detail from '@/views/system/message/Detail.vue'
 
@@ -7,9 +7,6 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilte
   baseApi: '/message'
 })
 getList()
-
-// 搜索区折叠
-const searchState = ref(false)
 
 const detailRef = ref()
 const openDetail = (id: string) => {
@@ -22,85 +19,74 @@ initRelatedData()
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="发送通道">
-            <el-select v-model="queryParam.channel" placeholder="请选择发送通道" clearable @change="onSearch">
-              <el-option
-                v-for="item in relatedData.messageChannelOptions || []"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="标题">
-            <el-input v-model="queryParam.title" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="消息状态">
-            <el-select v-model="queryParam.status" clearable placeholder="请选择消息状态" @change="onSearch">
-              <el-option
-                v-for="item in relatedData.messageStatusOptions || []"
-                :key="item.value"
-                :value="item.value"
-                :label="item.label"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="queryParam.createTime"
-              clearable
-              type="date"
-              value-format="YYYY-MM-DD"
-              @change="onSearch"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-space>
-        <el-input v-show="!searchState" v-model="queryParam.title" clearable @change="onSearch" />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
+        <el-input
+          v-model="queryParam.title"
+          clearable
+          :placeholder="$t('message.placeholder.title')"
+          @change="onSearch"
         />
+        <el-select
+          v-model="queryParam.channel"
+          :placeholder="$t('message.placeholder.channel')"
+          clearable
+          @change="onSearch"
+        >
+          <el-option
+            v-for="item in relatedData.messageChannelOptions || []"
+            :key="item.value"
+            :value="item.value"
+            :label="item.label"
+          />
+        </el-select>
+        <el-select
+          v-model="queryParam.status"
+          clearable
+          :placeholder="$t('message.placeholder.channel')"
+          @change="onSearch"
+        >
+          <el-option
+            v-for="item in relatedData.messageStatusOptions || []"
+            :key="item.value"
+            :value="item.value"
+            :label="item.label"
+          />
+        </el-select>
+        <el-date-picker
+          v-model="queryParam.createTime"
+          :placeholder="$t('message.placeholder.createTime')"
+          clearable
+          type="date"
+          value-format="YYYY-MM-DD"
+          @change="onSearch"
+        />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" height="100%">
-      <el-table-column prop="businessType" label="业务类型" />
-      <el-table-column prop="title" label="标题" />
-      <el-table-column prop="senderName" label="发送方" />
-      <el-table-column prop="receiverName" label="接收方" />
-      <el-table-column prop="channelLabel" label="发送通道">
+      <el-table-column prop="businessType" :label="$t('message.businessType')" />
+      <el-table-column prop="title" :label="$t('message.title')" />
+      <el-table-column prop="senderName" :label="$t('message.senderName')" />
+      <el-table-column prop="receiverName" :label="$t('message.receiverName')" />
+      <el-table-column prop="channelLabel" :label="$t('message.channel')">
         <template #default="{ row }">
-          <el-tag type="info" effect="dark">{{ row.channelLabel }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="statusLabel" label="发送状态">
-        <template #default="{ row }">
-          <el-tag v-if="row.status === 'FAILED'" type="danger">{{ row.statusLabel }}</el-tag>
-          <el-tag v-else-if="row.status === 'DELIVERY' || row.status === 'READ'" type="success">
-            {{ row.statusLabel }}
+          <el-tag :color="row.channelLabel?.ext?.color" effect="dark" type="info">
+            {{ row.channelLabel?.label }}
           </el-tag>
-          <el-tag v-else type="info" effect="dark">{{ row.statusLabel }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="165" />
-      <el-table-column label="操作" width="70" fixed="right">
+      <el-table-column prop="statusLabel" :label="$t('message.status')">
+        <template #default="{ row }">
+          <el-tag :color="row.statusLabel?.ext?.color" effect="dark" type="info">
+            {{ row.statusLabel?.label }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createTime" :label="$t('message.createTime')" width="165" />
+      <el-table-column :label="$t('operation.label')" width="90" fixed="right">
         <template #default="{ row }">
           <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
             {{ $t('operation.detail') }}

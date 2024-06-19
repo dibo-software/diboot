@@ -38,4 +38,9 @@ public class GlobalProperties {
      */
     private boolean initSql = false;
 
+    /**
+     * 是否启用国际化，默认false不启用
+     */
+    private boolean i18n = false;
+
 }

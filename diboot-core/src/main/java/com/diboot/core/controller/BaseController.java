@@ -31,12 +31,12 @@ import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
@@ -233,11 +233,11 @@ public class BaseController {
 		String entityClassName = relatedDataDTO.getTypeClassName();
 		Class<?> entityClass = BindingCacheManager.getEntityClassBySimpleName(entityClassName);
 		if (V.isEmpty(entityClass)) {
-			throw new BusinessException("relatedData: " + relatedDataDTO.getType() + " 不存在");
+			throw new BusinessException("exception.business.baseController.loadRelatedData.nullEntityClass");
 		}
 		BaseService<?> baseService = ContextHolder.getBaseServiceByEntity(entityClass);
 		if (baseService == null) {
-			throw new BusinessException("relatedData: " + relatedDataDTO.getType() + " 的Service不存在 ");
+			throw new BusinessException("exception.business.baseController.loadRelatedData.nullServiceClass");
 		}
 		PropInfo propInfoCache = BindingCacheManager.getPropInfoByClass(entityClass);
 		Function<String, String> field2column = field -> {
@@ -246,7 +246,7 @@ public class BaseController {
 				if (V.notEmpty(column)) {
 					return column;
 				} else {
-					throw new BusinessException("relatedData: " + relatedDataDTO.getType() + " 无 `" + field + "` 属性");
+					throw new BusinessException("exception.business.baseController.loadRelatedData.noField");
 				}
 			}
 			return null;

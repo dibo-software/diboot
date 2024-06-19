@@ -19,15 +19,15 @@ import com.diboot.core.data.query.CriteriaItem;
 import com.diboot.core.data.query.QueryCondition;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.vo.Status;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -376,7 +376,7 @@ public class V {
         }
         for (String param : paramValues) {
             if (!V.isValidSqlParam(param)) {
-                throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数: " + param);
+                throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.v.securityCheck.param", param);
             }
         }
     }
@@ -390,7 +390,7 @@ public class V {
         }
         for (Object param : paramValues) {
             if (!V.isValidSqlParam(param)) {
-                throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数: " + param);
+                throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.v.securityCheck.param", param);
             }
         }
     }
@@ -414,7 +414,7 @@ public class V {
                 String value = (String)entry.getValue();
                 if(SQL_INJECT_PATTERN.matcher(value.toLowerCase()).find()){
                     log.warn("非法的参数值: {}", entry.getValue());
-                    throw new BusinessException(Status.FAIL_VALIDATION, "非法的参数值: {}", entry.getValue());
+                    throw new BusinessException(Status.FAIL_VALIDATION, "exception.business.v.securityCheck.paramValue", entry.getValue());
                 }
             }
         }
@@ -605,7 +605,7 @@ public class V {
         else if (source.getClass() != target.getClass() && !(source instanceof Map && target instanceof Map)) {
             // 根据equals设计原则，类型不一致，直接false（仅允许HashMap、LinkedHashMap的差异）
             // 避免子类与父类、子类与子类比较时可能出现的问题
-            log.warn("source和target类型不匹配：" + source.getClass() + " 和 " + target.getClass());
+            log.warn("source: {} 和 target: {} 类型不匹配", source.getClass(), target.getClass());
             return false;
         } else if (source instanceof Class) {
             return ((Class<?>) source).getName().equals(((Class<?>) target).getName());
@@ -656,7 +656,7 @@ public class V {
             }
             return true;
         } else {
-            log.warn("暂未实现类型 " + source.getClass().getName() + "-" + target.getClass().getName() + " 的比对！");
+            log.warn("暂未实现类型 {} - {} 的比对！", source.getClass().getName(), target.getClass().getName());
             return false;
         }
     }

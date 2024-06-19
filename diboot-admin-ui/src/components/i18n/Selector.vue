@@ -45,7 +45,13 @@ watch(
 
 <template>
   <span>
-    <el-popover :title="`语言标识：${value}`" width="auto" trigger="hover" :disabled="!value" :show-after="150">
+    <el-popover
+      :title="`${$t('components.i18n.language')}：${value}`"
+      width="auto"
+      trigger="hover"
+      :disabled="!value"
+      :show-after="150"
+    >
       <template #reference>
         <span style="cursor: pointer" @click="visible = true">
           <el-icon
@@ -73,19 +79,19 @@ watch(
     <el-dialog v-model="visible" top="10vh" width="1000px" append-to-body>
       <template #header>
         <div style="display: flex; justify-content: space-between; margin-right: 30px">
-          <span class="el-dialog__title">国际化配置</span>
-          <el-button v-show="modelValue" text type="danger" size="small" @click="value = undefined">取消选择</el-button>
+          <span class="el-dialog__title">{{ $t('components.i18n.config') }}</span>
+          <el-button v-show="modelValue" text type="danger" size="small" @click="value = undefined"
+            >{{ $t('button.cancel') }}{{ $t('button.select') }}</el-button
+          >
         </div>
       </template>
-      <i18n-list v-model="value" select class="i18n-list" @change="list => (dataList = list)" />
+      <i18n-list v-model="value" table-height="500" select class="i18n-list" @change="list => (dataList = list)" />
     </el-dialog>
   </span>
 </template>
 
 <style scoped lang="scss">
 .i18n-list {
-  margin: -30px 0 -20px;
-
   :deep(.el-row) {
     margin: 0 !important;
 

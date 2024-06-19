@@ -61,10 +61,10 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
+            throw new InvalidUsageException("exception.invalidUsage.binder.parseConditionFailed");
         }
         if(referencedGetterFieldNameList == null){
-            throw new InvalidUsageException("调用错误：字段绑定必须指定字段field.");
+            throw new InvalidUsageException("exception.invalidUsage.binder.bindField.nonField");
         }
         Map<String, List> valueEntityListMap = new HashMap<>();
         // 直接关联
@@ -81,7 +81,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             // 查询entity列表: List<Role>
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
-                entityList = getEntityList(queryWrapper);
+                entityList = getEntityList(queryWrapper, true);
             }
             else{
                 // 远程调用获取
@@ -122,7 +122,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
             if(V.isEmpty(this.module)){
                 // 本地查询获取匹配结果的entityList
                 queryWrapper.in(refObjJoinOnCol, entityIdList);
-                entityList = getEntityList(queryWrapper);
+                entityList = getEntityList(queryWrapper, true);
             }
             else{
                 // 远程调用获取

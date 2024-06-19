@@ -37,24 +37,24 @@ const refresh = () => {
         <el-select v-model="queryParam.category" filterable clearable @change="onSearch">
           <el-option v-for="item in categoryList" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column prop="propKey" label="属性名" show-overflow-tooltip />
-      <el-table-column prop="propValue" label="属性值" show-overflow-tooltip />
-      <el-table-column prop="createTime" label="创建时间" width="185" />
-      <el-table-column prop="updateTime" label="更新时间" width="185" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column prop="propKey" :label="$t('config.propKey')" show-overflow-tooltip />
+      <el-table-column prop="propValue" :label="$t('config.propValue')" show-overflow-tooltip />
+      <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="185" />
+      <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="185" />
+      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
-              编辑
+              {{ $t('operation.update') }}
             </el-button>
             <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)">
-              删除
+              {{ $t('operation.delete') }}
             </el-button>
           </el-space>
         </template>

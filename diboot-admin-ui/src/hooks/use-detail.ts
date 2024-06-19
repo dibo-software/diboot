@@ -1,5 +1,5 @@
 import type { UnwrapRef } from 'vue'
-
+import i18n from '@/i18n'
 /**
  * 获取详情
  *
@@ -27,7 +27,7 @@ export default <T>(baseApi: string, init: Partial<T> = {}) => {
         })
         .catch(err => {
           reject(err)
-          ElMessage.error(err.msg ?? err.message ?? '获取详情失败')
+          ElMessage.error(err.msg ?? err.message ?? i18n.global.t('hooks.fetchDetailFailed'))
         })
         .finally(() => (loading.value = false))
     })

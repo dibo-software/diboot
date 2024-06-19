@@ -25,7 +25,7 @@ const allMessages = ref()
       <el-tabs v-model="activeKey" style="width: 360px">
         <el-tab-pane name="unreadMessage">
           <template #label>
-            未读消息
+            {{ $t('layout.messageBell.unRead') }}
             <el-badge class="custom-badge" :value="countMap.unreadMessage" :hidden="countMap.unreadMessage === 0" />
           </template>
           <message-list
@@ -36,7 +36,7 @@ const allMessages = ref()
             @total="value => (countMap.unreadMessage = value)"
           />
         </el-tab-pane>
-        <el-tab-pane name="allMessages" label="全部消息" lazy>
+        <el-tab-pane name="allMessages" :label="$t('layout.messageBell.all')" lazy>
           <message-list ref="allMessages" :unread="false" @reset="unreadMessage?.refresh()" @close="visible = false" />
         </el-tab-pane>
       </el-tabs>

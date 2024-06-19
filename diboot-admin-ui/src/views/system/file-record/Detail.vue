@@ -12,16 +12,16 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="文件详情" width="65vw">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item v-if="model.appModule" label="业务模块">
+      <el-descriptions-item v-if="model.appModule" :label="$t('fileRecord.appModule')">
         {{ model.appModule }}
       </el-descriptions-item>
-      <el-descriptions-item label="文件名称">
+      <el-descriptions-item :label="$t('fileRecord.fileName')">
         {{ model.fileName }}
       </el-descriptions-item>
-      <el-descriptions-item label="文件大小"> {{ model.fileSizeLabel }} </el-descriptions-item>
-      <el-descriptions-item label="访问地址">
+      <el-descriptions-item :label="$t('fileRecord.fileSize')"> {{ model.fileSizeLabel }} </el-descriptions-item>
+      <el-descriptions-item :label="$t('fileRecord.accessUrl')">
         <download
           type="primary"
           link
@@ -31,18 +31,18 @@ defineExpose({
           {{ model.accessUrl }}
         </download>
       </el-descriptions-item>
-      <el-descriptions-item label="备注" :span="2">
+      <el-descriptions-item :label="$t('fileRecord.description')" :span="2">
         {{ model.description }}
       </el-descriptions-item>
-      <el-descriptions-item label="创建人">
+      <el-descriptions-item :label="$t('baseField.createBy')">
         {{ model.createByName }}
       </el-descriptions-item>
-      <el-descriptions-item label="创建时间">
+      <el-descriptions-item :label="$t('baseField.createTime')">
         {{ model.createTime }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="visible = false">{{ $t('button.close') }}</el-button>
     </template>
   </el-dialog>
 </template>

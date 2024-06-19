@@ -306,6 +306,16 @@ public interface BaseService<T> extends GeneralService<T>{
     <FT> FT getValueOfField(LambdaQueryWrapper<T> queryWrapper, SFunction<T, FT> getterFn);
 
     /**
+     * 根据指定的字段和值，获取匹配的结果字段值
+     * @param fieldKey
+     * @param fieldVal
+     * @param getterFn
+     * @return
+     * @param <FT>
+     */
+    <FT> List<FT> getValuesOfField(String fieldKey, Object fieldVal, SFunction<T, FT> getterFn);
+
+    /**
      * 获取指定条件的Entity ID集合
      * @param queryWrapper
      * @param getterFn

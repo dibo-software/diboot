@@ -3,7 +3,8 @@ import type { FormInstance } from 'element-plus'
 import { checkPasswordRule } from './check-password'
 import PasswordStrength from './PasswordStrength.vue'
 import useAuthStore from '@/store/auth'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/iam/user'
 const authStore = useAuthStore()
 
@@ -27,7 +28,7 @@ const validateNewPassword = (rule: unknown, value: string, callback: (error?: st
 
 const validateCheckPassword = (rule: unknown, value: string, callback: (error?: string | Error) => void) => {
   if (value !== form.password) {
-    callback(new Error('两次输入密码不一致!'))
+    callback(new Error(i18n.t('personal.passwordDifferent')))
   } else {
     callback()
   }
@@ -35,13 +36,13 @@ const validateCheckPassword = (rule: unknown, value: string, callback: (error?: 
 
 // 注册表单校验规则
 const rules = reactive({
-  oldPassword: [{ required: true, message: '请输入原密码', trigger: 'blur' }],
+  oldPassword: [{ required: true, message: i18n.t('personal.rules.oldPassword'), trigger: 'blur' }],
   password: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { required: true, message: i18n.t('personal.rules.password'), trigger: 'blur' },
     { validator: validateNewPassword, trigger: 'blur' }
   ],
   confirmPassword: [
-    { required: true, message: '请再次输入原密码', trigger: 'blur' },
+    { required: true, message: i18n.t('personal.rules.confirmPassword'), trigger: 'blur' },
     { validator: validateCheckPassword, trigger: 'blur' }
   ]
 })
@@ -61,7 +62,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             authStore.logout()
           }
         })
-        .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
+        .catch(err => ElMessage.error(err.msg || err.message || i18n.t('personal.updateFailed')))
         .finally(() => (loading.value = false))
     } else loading.value = false
   })
@@ -69,20 +70,28 @@ const submitForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-  <el-card shadow="never" header="修改密码">
-    <el-form ref="ruleFormRef" :model="form" :rules="rules" label-width="120px" style="margin-top: 20px; width: 50%">
-      <el-form-item label="当前密码" prop="oldPassword">
+  <el-card shadow="never" :header="$t('user.modifyPassword')">
+    <el-form
+      ref="ruleFormRef"
+      :model="form"
+      :rules="rules"
+      :label-width="$i18n.locale === 'en' ? '150px' : '120px'"
+      style="margin-top: 20px; width: 50%"
+    >
+      <el-form-item :label="$t('personal.oldPassword')" prop="oldPassword">
         <el-input v-model="form.oldPassword" type="password" show-password />
       </el-form-item>
-      <el-form-item label="新密码" prop="password">
+      <el-form-item :label="$t('personal.newPassword')" prop="password">
         <el-input v-model="form.password" type="password" show-password />
       </el-form-item>
       <password-strength :password="form.password" />
-      <el-form-item label="确认密码" prop="confirmPassword">
+      <el-form-item :label="$t('personal.confirmPassword')" prop="confirmPassword">
         <el-input v-model="form.confirmPassword" type="password" show-password />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">保存</el-button>
+        <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">{{
+          $t('button.save')
+        }}</el-button>
       </el-form-item>
     </el-form>
   </el-card>

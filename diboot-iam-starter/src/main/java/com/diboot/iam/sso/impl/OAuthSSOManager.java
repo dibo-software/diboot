@@ -81,7 +81,7 @@ public class OAuthSSOManager implements SSOManager {
             callback = this.callback;
         }
         if (V.isEmpty(callback)) {
-            throw new BusinessException("回调地址为空");
+            throw new BusinessException("exception.business.SSOManager.nullCallback");
         }
         try {
             callback = URLEncoder.encode(callback, "UTF-8");
@@ -140,7 +140,7 @@ public class OAuthSSOManager implements SSOManager {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         if(S.isBlank(this.clientSecret)){
-            throw new BusinessException("未配置{}客户端密钥", clientId);
+            throw new BusinessException("exception.business.oauthSSOManager.nonConfigClientSecret", clientId);
         }
 
         byte[] authorization = (clientId + ":" + clientSecret).getBytes(StandardCharsets.UTF_8);
@@ -160,7 +160,7 @@ public class OAuthSSOManager implements SSOManager {
         HttpHeaders headers = new HttpHeaders();
 
         if(S.isBlank(accessToken)){
-            throw new BusinessException("accessToken为空");
+            throw new BusinessException("exception.business.oauthSSOManager.nullAccessToken");
         }
 
         headers.add(HttpHeaders.AUTHORIZATION, tokenType + " " + accessToken);
@@ -177,7 +177,7 @@ public class OAuthSSOManager implements SSOManager {
             if (V.equals(String.valueOf(responseBody.get("code")), "0") && responseBody.get("data") != null) {
                 return JSON.toMap(JSON.stringify(responseBody.get("data")));
             } else {
-                throw new BusinessException("单点登录验证失败");
+                throw new BusinessException("exception.business.oauthSSOManager.ssoLoginFailed");
             }
         }
         return response.getBody();
@@ -190,7 +190,7 @@ public class OAuthSSOManager implements SSOManager {
      */
     protected IamUser syncUserInfo(Map userInfoMap) {
         if (V.isEmpty(userInfoMap)) {
-            throw new BusinessException("获取用户信息失败");
+            throw new BusinessException("exception.business.oauthSSOManager.fetchUserInfoFailed");
         }
         // 将Map转换为IamUser
         IamUser userInfo = JSON.parseObject(JSON.toJSONString(userInfoMap), IamUser.class);

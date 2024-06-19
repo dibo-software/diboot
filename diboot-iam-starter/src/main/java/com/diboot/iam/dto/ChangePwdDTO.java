@@ -28,12 +28,12 @@ import java.io.Serializable;
 public class ChangePwdDTO implements Serializable {
     private static final long serialVersionUID = 8027129084861679777L;
 
-    @NotNull(message = "旧密码不能为空")
+    @NotNull(message = "{validation.changePwdDTO.oldPassword.NotNull.message}")
     private String oldPassword;
 
-    @NotNull(message = "新密码不能为空")
+    @NotNull(message = "{validation.changePwdDTO.password.NotNull.message}")
     private String password;
 
-    @NotNull(message = "确认密码不能为空")
+    @NotNull(message = "{validation.changePwdDTO.confirmPassword.NotNull.message}")
     private String confirmPassword;
 }

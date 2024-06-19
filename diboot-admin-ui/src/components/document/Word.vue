@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { renderAsync } from 'docx-preview'
 import print from '@/utils/print'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const props = defineProps<{
   // string: 文件链接 ;  Blob | ArrayBuffer: 文件流
   value?: string | Blob | ArrayBuffer
@@ -35,7 +36,7 @@ const wordInit = (value: string | Blob | ArrayBuffer) => {
           resolve(wordPreview((context.value = res.data)))
         })
         .catch(err => {
-          ElMessage.error(err.msg || err.message || '获取文件失败')
+          ElMessage.error(err.msg || err.message || i18n.t('components.document.fetchFileFailed'))
           reject()
         })
     })
@@ -61,7 +62,7 @@ defineExpose({
     } else contextDom.value && print(contextDom.value)
   },
   download: (filename?: string) => {
-    if (!context.value) return ElMessage.error('文件内容为空')
+    if (!context.value) return ElMessage.error(i18n.t('components.document.emptyContent'))
     const elink = document.createElement('a')
     const date = new Date()
     elink.download =

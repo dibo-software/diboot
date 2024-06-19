@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SystemConfig } from '@/views/system/config/type'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baesApi = '/system-config'
 
 const editable = checkPermission('update')
@@ -14,7 +15,7 @@ const loading = ref(false)
 api
   .get(`${baesApi}`, props)
   .then(res => (configList.value = res.data))
-  .catch(err => ElMessage.error(err.message || err.msg || '获取配置信息异常'))
+  .catch(err => ElMessage.error(err.message || err.msg || i18n.t('config.fetchException')))
   .finally(() => (loading.value = false))
 
 const submitting = ref(false)
@@ -23,7 +24,7 @@ const save = () => {
   api
     .put(`${baesApi}`, configList.value)
     .then(res => ElMessage.success(res.msg))
-    .catch(err => ElMessage.error(err.message || err.msg || '保存配置信息异常'))
+    .catch(err => ElMessage.error(err.message || err.msg || i18n.t('config.saveException')))
     .finally(() => (submitting.value = false))
 }
 </script>
@@ -43,7 +44,7 @@ const save = () => {
       </el-form-item>
     </el-form>
     <div v-if="editable" style="margin-left: 150px">
-      <el-button type="primary" :loading="submitting" @click="save">保存</el-button>
+      <el-button type="primary" :loading="submitting" @click="save">{{ $t('button.save') }}</el-button>
     </div>
   </el-scrollbar>
 </template>

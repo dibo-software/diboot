@@ -26,6 +26,7 @@
 .el-input-number,
 .el-cascader {
   width: 100% !important;
+  min-width: 90px;
 
   .el-input__wrapper {
     width: -moz-available;
@@ -45,6 +46,7 @@
   display: flex;
   flex-direction: column;
 
+
   .el-header {
     height: auto;
     padding: 10px;
@@ -60,6 +62,10 @@
   }
 
   .list-search {
+    &.el-form:not(.top-filter) {
+      background-color: var(--el-fill-color-lighter);
+    }
+
     .el-row {
       margin: 9px 0 -9px !important;
     }
@@ -67,7 +73,7 @@
 
   .list-operation {
     margin-bottom: 0;
-    padding: 10px 0 10px 12px;
+    padding: 10px;
     width: 100%;
     box-sizing: border-box;
 
@@ -75,13 +81,13 @@
       margin-left: auto;
     }
 
+    .el-select {
+      min-width: 160px !important;
+    }
+
     .search-input {
       width: 200px;
     }
-  }
-
-  .el-pagination {
-    margin: 7px;
   }
 }
 
@@ -120,4 +126,33 @@
 
 .el-tag {
   border-width: 0 !important;
+}
+
+
+.el-dropdown {
+  .el-button:focus-visible {
+    outline: none !important;
+  }
+}
+
+.el-table th {
+  background-color: var(--el-fill-color-light) !important;
+}
+
+.el-dialog {
+  padding: unset !important;
+  .el-dialog__header ,.el-dialog__footer{
+    padding: 10px;
+    background-color: var(--el-fill-color-light);
+  }
+
+  .el-dialog__body {
+    padding: 10px ;
+  }
+}
+
+.el-pagination {
+  margin: 7px;
+  display: flex;
+  justify-content: flex-end;
 }

@@ -42,7 +42,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
     @Override
     public List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName) {
         // 获取当前登录用户
-        IamUser currentUser = null;
+        IamUser currentUser;
         try {
             currentUser = IamSecurityUtils.getCurrentUser();
         }

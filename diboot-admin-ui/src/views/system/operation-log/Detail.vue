@@ -14,42 +14,42 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" title="详情" width="65vw">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item label="用户姓名">
+      <el-descriptions-item :label="$t('operationLog.userRealname')">
         {{ model.userRealname }}
       </el-descriptions-item>
-      <el-descriptions-item label="用户类型:ID">
+      <el-descriptions-item :label="$t('operationLog.userTypeAndId')">
         <span>{{ model.userType }} : {{ model.userId }}</span>
       </el-descriptions-item>
-      <el-descriptions-item label="业务对象">
+      <el-descriptions-item :label="$t('operationLog.businessObj')">
         {{ model.businessObj }}
       </el-descriptions-item>
-      <el-descriptions-item label="操作事项">
+      <el-descriptions-item :label="$t('operationLog.operation')">
         {{ model.operation }}
       </el-descriptions-item>
-      <el-descriptions-item label="请求URL">
+      <el-descriptions-item :label="$t('operationLog.requestUri')">
         <span>{{ model.requestMethod }} : {{ model.requestUri }}</span>
       </el-descriptions-item>
-      <el-descriptions-item label="客户端IP">
+      <el-descriptions-item :label="$t('operationLog.requestIp')">
         {{ model.requestIp }}
       </el-descriptions-item>
-      <el-descriptions-item label="状态码">
+      <el-descriptions-item :label="$t('operationLog.statusCode')">
         <el-tag v-if="model.statusCode === 0">{{ model.statusCode }}</el-tag>
         <el-tag v-else type="danger">{{ model.statusCode }}</el-tag>
       </el-descriptions-item>
-      <el-descriptions-item label="操作时间">
+      <el-descriptions-item :label="$t('operationLog.createTime')">
         {{ model.createTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="请求参数" :span="2" class-name="long-text">
+      <el-descriptions-item :label="$t('operationLog.requestParams')" :span="2" class-name="long-text">
         {{ model.requestParams }}
       </el-descriptions-item>
-      <el-descriptions-item label="错误信息" :span="2" class-name="long-text">
+      <el-descriptions-item :label="$t('operationLog.errorMsg')" :span="2" class-name="long-text">
         {{ model.errorMsg }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="visible = false">{{ $t('button.close') }}</el-button>
     </template>
   </el-dialog>
 </template>

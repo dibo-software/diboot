@@ -1,5 +1,5 @@
 <script setup lang="ts" name="MessageTemplate">
-import { Search, ArrowDown, ArrowUp, Plus } from '@element-plus/icons-vue'
+import { Search, ArrowDown, Plus } from '@element-plus/icons-vue'
 import type { MessageTemplate } from './type'
 import Detail from '@/views/system/message-template/Detail.vue'
 import Form from './Form.vue'
@@ -8,9 +8,6 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilte
   baseApi: '/message-template'
 })
 getList()
-
-// 搜索区折叠
-const searchState = ref(false)
 
 const detailRef = ref()
 const openDetail = (id: string) => {
@@ -28,68 +25,38 @@ const deletePermission = checkPermission('delete')
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="模版编码">
-            <el-input v-model="queryParam.code" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="模版标题">
-            <el-input v-model="queryParam.title" clearable placeholder="" @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="创建时间">
-            <el-date-picker
-              v-model="queryParam.createTime"
-              clearable
-              type="date"
-              value-format="YYYY-MM-DD"
-              @change="onSearch"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
       <el-space>
-        <el-input v-show="!searchState" v-model="queryParam.code" clearable placeholder="模版编码" @change="onSearch" />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
-        />
+        <el-input v-model="queryParam.code" clearable :placeholder="$t('messageTemplate.code')" @change="onSearch" />
+        <el-input v-model="queryParam.title" clearable :placeholder="$t('messageTemplate.title')" @change="onSearch" />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column prop="code" label="模版编码">
+      <el-table-column prop="code" :label="$t('messageTemplate.code')">
         <template #default="{ row }">
           <el-tag type="info" effect="dark">{{ row.code }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="title" label="模版标题" show-overflow-tooltip>
+      <el-table-column prop="title" :label="$t('messageTemplate.title')" show-overflow-tooltip>
         <template #default="{ row }">
           <span>{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="content" label="模版内容" show-overflow-tooltip>
+      <el-table-column prop="content" :label="$t('messageTemplate.content')" show-overflow-tooltip>
         <template #default="{ row }">
           <span>{{ row.content }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createByName" label="创建人" width="120" />
-      <el-table-column prop="createTime" label="创建时间" width="165" />
-      <el-table-column prop="updateTime" label="更新时间" width="165" />
-      <el-table-column label="操作" width="160" fixed="right">
+      <el-table-column prop="createByName" :label="$t('baseField.createBy')" width="120" />
+      <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="165" />
+      <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="165" />
+      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
         <template #default="{ row }">
           <el-space>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">

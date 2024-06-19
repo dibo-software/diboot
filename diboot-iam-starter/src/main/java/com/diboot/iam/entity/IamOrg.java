@@ -63,20 +63,20 @@ public class IamOrg extends BaseTreeEntity<String> {
     private String rootOrgId;
 
     // 名称
-    @NotNull(message = "名称不能为空")
-    @Length(max = 100, message = "名称长度应小于100")
+    @NotNull(message = "{validation.iamOrg.name.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamOrg.name.Length.message}")
     @TableField()
     private String name;
 
     // 权限类别
-    @NotNull(message = "组织类别不能为空")
-    @Length(max = 100, message = "组织类别长度应小于100")
+    @NotNull(message = "{validation.iamOrg.type.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamOrg.type.Length.message}")
     @TableField()
     private String type;
 
     // 编码
-    @NotNull(message = "编码不能为空")
-    @Length(max = 50, message = "编码长度应小于50")
+    @NotNull(message = "{validation.iamOrg.code.NotNull.message}")
+    @Length(max = 50, message = "{validation.iamOrg.code.Length.message}")
     @TableField()
     private String code;
 

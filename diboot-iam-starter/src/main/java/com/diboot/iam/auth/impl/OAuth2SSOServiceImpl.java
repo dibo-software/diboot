@@ -89,7 +89,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
         parseCode(credential);
         OAuth2SSOCredential ssoCredential = (OAuth2SSOCredential) credential;
         if(V.isEmpty(ssoCredential.getAuthAccount())){
-            throw new BusinessException(Status.FAIL_OPERATION, "认证中心验证失败");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.oauth2SSOService.authCenterValidFailed");
         }
         return super.applyToken(credential);
     }
@@ -117,7 +117,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
      */
     protected void parseCode(AuthCredential credential) {
         if(restTemplate == null){
-            throw new InvalidUsageException("请初始化 RestTemplate !");
+            throw new InvalidUsageException("exception.invalidUsage.userService.initRestTemplate");
         }
         OAuth2SSOCredential ssoCredential = (OAuth2SSOCredential) credential;
         IamProperties.Oauth2ClientProperties oauth2Client = iamProperties.getOauth2Client();

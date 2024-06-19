@@ -61,15 +61,15 @@ public class IamPosition extends BaseEntity<String> {
     private String tenantId;
 
     // 名称
-    @NotNull(message = "名称不能为空")
-    @Length(max = 100, message = "名称长度应小于100")
+    @NotNull(message = "{validation.iamPosition.name.NotNull.message}")
+    @Length(max = 100, message = "{validation.iamPosition.name.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String name;
 
     // 编码
-    @NotNull(message = "编码不能为空")
-    @Length(max = 50, message = "编码长度应小于50")
+    @NotNull(message = "{validation.iamPosition.code.NotNull.message}")
+    @Length(max = 50, message = "{validation.iamPosition.code.Length.message}")
     @TableField()
     private String code;
 

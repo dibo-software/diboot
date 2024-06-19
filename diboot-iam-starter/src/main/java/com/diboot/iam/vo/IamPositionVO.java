@@ -16,6 +16,7 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamPosition;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,6 @@ public class IamPositionVO extends IamPosition {
 
     // 字典关联
     @BindDict(type="DATA_PERMISSION_TYPE", field = "dataPermissionType")
-    private String dataPermissionTypeLabel;
+    private LabelValue dataPermissionTypeLabel;
 
 }

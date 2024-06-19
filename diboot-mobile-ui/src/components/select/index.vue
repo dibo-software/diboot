@@ -96,13 +96,21 @@ const keywordChange = (value: string) => props.remoteMethod?.(value)
   <div style="height: 100%; display: flex; flex-direction: column">
     <PickerToolbar v-if="props.showToolbar && !parent" v-bind="props" @cancel="onCancel" @confirm="onConfirm" />
 
-    <van-search v-show="notTree" v-model="keyword" placeholder="输入关键字" @update:model-value="keywordChange" />
+    <van-search
+      v-show="notTree"
+      v-model="keyword"
+      :placeholder="$t('components.select.keyword')"
+      @update:model-value="keywordChange"
+    />
 
     <div style="flex: 1; overflow-y: auto">
       <van-checkbox-group v-model="checked" v-if="multiple">
         <template v-for="item in props.columns" :key="item">
           <Column
-            v-show="!keyword || `${item[(props.columnsFieldNames?.text ?? 'text') as keyof typeof item]}`.includes(keyword as string)"
+            v-show="
+              !keyword ||
+              `${item[(props.columnsFieldNames?.text ?? 'text') as keyof typeof item]}`.includes(keyword as string)
+            "
             :column="item"
             :columns-field-names="props.columnsFieldNames"
             square
@@ -113,7 +121,10 @@ const keywordChange = (value: string) => props.remoteMethod?.(value)
       <van-radio-group v-model="checked" v-else>
         <template v-for="item in props.columns" :key="item">
           <Column
-            v-show="!keyword || `${item[(props.columnsFieldNames?.text ?? 'text') as keyof typeof item]}`.includes(keyword as string)"
+            v-show="
+              !keyword ||
+              `${item[(props.columnsFieldNames?.text ?? 'text') as keyof typeof item]}`.includes(keyword as string)
+            "
             :column="item"
             :columns-field-names="props.columnsFieldNames"
           />
@@ -123,11 +134,15 @@ const keywordChange = (value: string) => props.remoteMethod?.(value)
       <template
         v-if="
           !props.columns?.length ||
-          !props.columns?.filter(e => !keyword || `${e[(props.columnsFieldNames?.text ?? 'text') as keyof typeof e]}`.includes(keyword as string))?.length
+          !props.columns?.filter(
+            e =>
+              !keyword ||
+              `${e[(props.columnsFieldNames?.text ?? 'text') as keyof typeof e]}`.includes(keyword as string)
+          )?.length
         "
       >
-        <van-empty v-if="remoteMethod && !keyword" image="search" description="搜索选项" />
-        <van-empty v-else description="无选项" />
+        <van-empty v-if="remoteMethod && !keyword" image="search" :description="$t('components.select.searchOption')" />
+        <van-empty v-else :description="$t('components.select.noOption')" />
       </template>
     </div>
   </div>

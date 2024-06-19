@@ -63,8 +63,9 @@ public interface IamCustomize {
 
     /**
      * 清空缓存
-     * @param username
+     * @param userType
+     * @param userId
      */
-    void clearAuthorizationCache(String username);
+    void clearAuthorizationCache(String userType, String userId);
 
 }

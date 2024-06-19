@@ -33,6 +33,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class FileRecordVO extends FileRecord {
+    private static final long serialVersionUID = 1708826189614674165L;
 
     /**
      * 创建人姓名

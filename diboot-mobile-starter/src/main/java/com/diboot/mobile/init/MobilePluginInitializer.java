@@ -68,18 +68,16 @@ public class MobilePluginInitializer implements ApplicationRunner {
      */
     private synchronized void insertInitData(){
         // 插入mobile组件所需的数据字典
-        // 插入iam组件所需的数据字典
         DictionaryService dictionaryService = ContextHolder.getBean(DictionaryService.class);
         if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MEMBER_STATUS")){
             String[] DICT_INIT_DATA = {
-                    "{\"type\":\"MEMBER_STATUS\", \"itemName\":\"用户状态\", \"description\":\"Member用户状态\", \"children\":[{\"itemName\":\"有效\", \"itemValue\":\"A\", \"sortId\":1},{\"itemName\":\"无效\", \"itemValue\":\"I\", \"sortId\":2}]}",
+                    "{\"type\":\"MEMBER_STATUS\", \"itemName\":\"用户状态\", \"description\":\"Member用户状态\", \"children\":[{\"itemName\":\"有效\", \"itemNameI18n\":\"Dictionary.MEMBER_STATUS.A\", \"itemValue\":\"A\", \"sortId\":1},{\"itemName\":\"无效\", \"itemNameI18n\":\"Invalid\", \"Dictionary.MEMBER_STATUS.I\":\"I\", \"sortId\":2}]}",
             };
             // 插入数据字典
             for(String dictJson : DICT_INIT_DATA){
                 DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
                 dictionaryService.createDictAndChildren(dictVo);
             }
-            DICT_INIT_DATA = null;
         }
         IamMemberService iamMemberService = ContextHolder.getBean(IamMemberService.class);
         if(iamMemberService != null && iamMemberService.getEntityListCount(null) == 0){

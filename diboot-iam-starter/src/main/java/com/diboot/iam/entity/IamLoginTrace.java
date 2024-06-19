@@ -50,25 +50,25 @@ public class IamLoginTrace extends BaseEntity<String> {
     private String tenantId;
 
     // 用户类型
-    @NotNull(message = "用户类型不能为空")
-    @Length(max=100, message="用户类型长度应小于100")
+    @NotNull(message = "{validation.iamLoginTrace.userType.NotNull.message}")
+    @Length(max=100, message="{validation.iamLoginTrace.userType.Length.message}")
     @TableField()
     private String userType;
 
     // 用户ID
-    @NotNull(message = "用户ID不能为空")
+    @NotNull(message = "{validation.iamLoginTrace.userId.NotNull.message}")
     @TableField()
     private String userId;
 
     // 认证方式
-    @NotNull(message = "认证方式不能为空")
-    @Length(max=20, message="认证方式长度应小于20")
+    @NotNull(message = "{validation.iamLoginTrace.authType.NotNull.message}")
+    @Length(max=20, message="{validation.iamLoginTrace.authType.Length.message}")
     @TableField()
     private String authType;
 
     // 用户名
-    @NotNull(message = "用户名不能为空")
-    @Length(max=100, message="用户名长度应小于100")
+    @NotNull(message = "{validation.iamLoginTrace.authAccount.NotNull.message}")
+    @Length(max=100, message="{validation.iamLoginTrace.authAccount.Length.message}")
     @TableField()
     private String authAccount;
 
@@ -76,11 +76,11 @@ public class IamLoginTrace extends BaseEntity<String> {
     @TableField("is_success")
     private Boolean isSuccess;
 
-    @Length(max=50, message="IP长度应小于50")
+    @Length(max=50, message="{validation.iamLoginTrace.ipAddress.Length.message}")
     @TableField()
     private String ipAddress;
 
-    @Length(max=200, message="User-Agent长度应小于200")
+    @Length(max=200, message="{validation.iamLoginTrace.userAgent.Length.message}")
     @TableField()
     private String userAgent;
 

@@ -29,6 +29,7 @@ import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.diboot.core.util.I18n;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
@@ -278,7 +279,7 @@ public class ExcelHelper {
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
             try {
-                response.getWriter().println(JsonResult.FAIL_OPERATION("下载文件失败"));
+                response.getWriter().println(JsonResult.FAIL_OPERATION(I18n.message("exception.business.excel.downloadFailed")));
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

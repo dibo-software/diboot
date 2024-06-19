@@ -6,6 +6,7 @@ import com.diboot.iam.entity.IamRole;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Getter @Setter
 public class ResourceRoleVO extends IamResource {
+    private static final long serialVersionUID = 7155540339001886956L;
 
     @BindFieldList(entity = IamRole.class, field = "code", condition = "this.id=dbt_iam_role_resource.resource_id AND dbt_iam_role_resource.role_id=id")
     private List<String> roleCodes;

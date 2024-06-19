@@ -62,7 +62,7 @@ public class IamPermissionCacheManager {
             return wrapper;
         }
         // 从controller中解析
-        String name = null;
+        String name;
         // 提取类信息
         String codePrefix = null;
         // 注解
@@ -77,7 +77,7 @@ public class IamPermissionCacheManager {
                     codePrefix = entityClazz.getSimpleName();
                 }
                 else{
-                    throw new InvalidUsageException("注解@BindPermission注解无法自动提取code：{} 类无泛型Entity参数，请手动指定code值！", controllerClass.getName());
+                    throw new InvalidUsageException("exception.invalidUsage.permissionCacheManager.getPermissionCodeWrapper.message", controllerClass.getName());
                 }
             }
         }

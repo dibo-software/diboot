@@ -24,6 +24,7 @@ import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.holder.ThreadLocalHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
@@ -130,6 +131,8 @@ public class MiddleTable {
         }
         //id //org_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
+        // 中间表查询忽略数据权限拦截
+        ThreadLocalHolder.setIgnoreInterceptor();
         // 有定义mapper，首选mapper
         if(linkage != null){
             List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap);
@@ -145,7 +148,7 @@ public class MiddleTable {
                 return ResultAssembler.convertToOneToOneResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
-                log.error("中间表查询异常: " + sql, e);
+                log.error("中间表查询异常: {}", sql, e);
                 return Collections.emptyMap();
             }
         }
@@ -158,7 +161,7 @@ public class MiddleTable {
      */
     public Map<String, Long> executeOneToManyCountQuery(Map<String, List> trunkObjCol2ValuesMap){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
-            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
+            throw new InvalidUsageException("exception.invalidUsage.middleTable.nonFilterCondition");
         }
         //user_id //role_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
@@ -177,7 +180,7 @@ public class MiddleTable {
                 return ResultAssembler.convertToOneToManyCountResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
-                log.error("中间表查询异常: " + sql, e);
+                log.error("中间表查询异常: {}", sql, e);
                 return Collections.emptyMap();
             }
         }
@@ -190,7 +193,7 @@ public class MiddleTable {
      */
     public Map<String, List> executeOneToManyQuery(Map<String, List> trunkObjCol2ValuesMap){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
-            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
+            throw new InvalidUsageException("exception.invalidUsage.middleTable.nonFilterCondition");
         }
         //user_id //role_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
@@ -209,7 +212,7 @@ public class MiddleTable {
                 return ResultAssembler.convertToOneToManyResult(resultSetMapList, trunkObjColMapping, branchObjColMapping);
             }
             catch (Exception e) {
-                log.error("中间表查询异常: " + sql, e);
+                log.error("中间表查询异常: {}", sql, e);
                 return Collections.emptyMap();
             }
         }

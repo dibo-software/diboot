@@ -84,7 +84,7 @@ public class IamUserPositionServiceImpl extends BaseServiceImpl<IamUserPositionM
     @Override
     public boolean updateUserPositionRelations(String userType, String userId, List<IamUserPosition> userPositionList) {
         if (V.isEmpty(userType) || V.isEmpty(userId)) {
-            throw new BusinessException(Status.FAIL_OPERATION, "参数错误");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.paramsError");
         }
         // 校验用户ID是否存在
         if (V.notEmpty(userPositionList)) {

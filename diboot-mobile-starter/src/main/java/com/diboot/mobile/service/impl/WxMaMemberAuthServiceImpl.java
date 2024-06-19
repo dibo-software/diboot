@@ -65,7 +65,7 @@ public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
 
     @Override
     public IamMember bindWxMa(WxMemberDTO wxInfoDTO) throws Exception {
-        throw new BusinessException(Status.FAIL_OPERATION, "当前业务不支持绑定");
+        throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.notSupportBind");
     }
 
     @Override
@@ -85,13 +85,13 @@ public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
                 .setUserType(IamMember.class.getSimpleName());
         boolean success = iamMemberService.createEntity(wxMember);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "创建用户信息失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.bindMemberFailed");
         }
         // 创建当前用户的账户
         IamAccount iamAccount = createIamAccountEntity(wxMember, wxMember.getId(), IamMember.class);
         success = iamAccountService.createEntity(iamAccount);
         if (!success) {
-            throw new BusinessException(Status.FAIL_OPERATION, "创建系统账户失败！");
+            throw new BusinessException(Status.FAIL_OPERATION, "exception.business.wx.createAccountFailed");
         }
         return Binder.convertAndBindRelations(wxMember, IamMemberVO.class);
     }
@@ -132,7 +132,7 @@ public class WxMaMemberAuthServiceImpl implements WxMaAuthService {
      * @return
      */
     protected String sex2gender(Integer sex) {
-        String gender = null;
+        String gender;
         if (V.equals(sex, 1)) {
             gender = "M";
         } else if (V.equals(sex, 2)) {

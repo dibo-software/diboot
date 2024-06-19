@@ -195,7 +195,7 @@ public class TokenUtils {
         if(iamCacheManager == null) {
             iamCacheManager = (BaseCacheManager)ContextHolder.getBean("iamCacheManager");
             if(iamCacheManager == null) {
-                throw new InvalidUsageException("无法识别到iamCacheManager实现类，请在配置类中声明@Bean(name = \"iamCacheManager\")");
+                throw new InvalidUsageException("exception.invalidUsage.tokenUtils.getIamCacheManager.message");
             }
         }
         return iamCacheManager;

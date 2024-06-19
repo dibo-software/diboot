@@ -3,7 +3,8 @@ import type { OrgModel } from './type'
 import type { FormInstance, FormRules } from 'element-plus'
 import { checkValue } from '@/utils/validate-form'
 import type { Select } from '@/components/di/type'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/iam/org'
 
 const { loadData, loading, model } = useDetail<OrgModel>(baseApi)
@@ -34,7 +35,7 @@ const setFormInitialValue = () => {
 }
 
 const open = async (id?: string) => {
-  title.value = id ? '更新' : '新建'
+  title.value = id ? i18n.t('title.update') : i18n.t('title.create')
   // 当新建模式时，设置系列初始值
   if (!id) {
     setFormInitialValue()
@@ -90,10 +91,10 @@ const beforeSubmit = (value: boolean) => {
 const checkCodeDuplicate = checkValue(`${baseApi}/check-code-duplicate`, 'code', () => model.value?.id)
 
 const rules: FormRules = {
-  parentId: { required: true, message: '不能为空', whitespace: true },
-  name: { required: true, message: '不能为空', whitespace: true },
+  parentId: { required: true, message: i18n.t('rules.notnull'), whitespace: true },
+  name: { required: true, message: i18n.t('rules.notnull'), whitespace: true },
   code: [
-    { required: true, message: '不能为空', whitespace: true },
+    { required: true, message: i18n.t('rules.notnull'), whitespace: true },
     { validator: checkCodeDuplicate, trigger: 'blur' }
   ]
 }
@@ -103,10 +104,16 @@ defineExpose({ open })
 
 <template>
   <el-dialog v-model="visible" :title="title">
-    <el-form ref="formRef" v-loading="loading" :model="model" :rules="rules" label-width="80px">
+    <el-form
+      ref="formRef"
+      v-loading="loading"
+      :model="model"
+      :rules="rules"
+      :label-width="$i18n.locale === 'en' ? '120px' : '80px'"
+    >
       <el-row :gutter="18">
         <el-col :md="12" :sm="24">
-          <el-form-item prop="parentId" label="上级部门">
+          <el-form-item prop="parentId" :label="$t('org.parentId')">
             <el-tree-select
               v-model="model.parentId"
               class="tree-selector"
@@ -117,25 +124,25 @@ defineExpose({ open })
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="type" label="类型">
+          <el-form-item prop="type" :label="$t('org.type')">
             <el-radio-group v-model="model.type">
-              <el-radio label="COMP">公司</el-radio>
-              <el-radio label="DEPT">部门</el-radio>
+              <el-radio label="COMP">{{ $t('org.comp') }}</el-radio>
+              <el-radio label="DEPT">{{ $t('org.dept') }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="name" label="名称">
+          <el-form-item prop="name" :label="$t('org.name')">
             <el-input v-model="model.name" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="code" label="编码">
+          <el-form-item prop="code" :label="$t('org.code')">
             <el-input v-model="model.code" />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="managerId" label="负责人">
+          <el-form-item prop="managerId" :label="$t('org.managerName')">
             <di-selector
               v-model="model.managerId"
               :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
@@ -144,40 +151,45 @@ defineExpose({ open })
                 relatedKey: 'orgId',
                 searchArea: {
                   propList: [
-                    { prop: 'realname', label: '姓名', type: 'input' },
-                    { prop: 'userNum', label: '编号', type: 'input' },
-                    { prop: 'gender', label: '性别', type: 'select', loader: 'GENDER' } as Select
+                    { prop: 'realname', label: $t('user.realname'), type: 'input' },
+                    { prop: 'userNum', label: $t('user.userNum'), type: 'input' },
+                    { prop: 'gender', label: $t('user.gender'), type: 'select', loader: 'GENDER' } as Select
                   ]
                 },
                 columns: [
-                  { prop: 'realname', label: '姓名' },
-                  { prop: 'userNum', label: '编号' },
-                  { prop: 'genderLabel', label: '性别' },
-                  { prop: 'email', label: '邮箱' }
+                  { prop: 'userNum', label: $t('user.userNum') },
+                  { prop: 'realname', label: $t('user.realname') },
+                  { prop: 'genderLabel', label: $t('user.gender') },
+                  { prop: 'mobilePhone', label: $t('user.mobilePhone') },
+                  { prop: 'sortId', label: $t('user.sortId') }
                 ]
               }"
               data-type="IamUser"
-              placeholder="选择负责人"
             />
           </el-form-item>
         </el-col>
         <el-col :md="12" :sm="24">
-          <el-form-item prop="sortId" label="排序">
+          <el-form-item prop="sortId" :label="$t('org.sortId')">
             <el-input v-model="model.sortId" :min="1" type="number" />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item prop="orgComment" label="备注">
-        <el-input v-model="model.orgComment" :rows="2" type="textarea" placeholder="请输入备注" />
+      <el-form-item prop="orgComment" :label="$t('org.orgComment')">
+        <el-input
+          v-model="model.orgComment"
+          :rows="2"
+          type="textarea"
+          :placeholder="`${$t('placeholder.input')} ${$t('org.orgComment')}`"
+        />
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
+      <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
       <el-button v-if="!model.id" type="primary" :loading="submitting" @click="beforeSubmit(true)"
-        >保存并继续
+        >{{ $t('button.continueAdd') }}
       </el-button>
-      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">保存</el-button>
+      <el-button type="primary" :loading="submitting" @click="beforeSubmit(false)">{{ $t('button.save') }}</el-button>
     </template>
   </el-dialog>
 </template>

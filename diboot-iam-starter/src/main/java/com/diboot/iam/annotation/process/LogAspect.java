@@ -100,10 +100,10 @@ public class LogAspect {
                 errorMsg = jsonResult.getMsg();
             }
         }
-
         operationLog.setStatusCode(statusCode).setErrorMsg(errorMsg);
         // 异步保存操作日志
         iamAsyncWorker.saveOperationLog(operationLog, currentUser);
+        threadLocal.remove();
     }
 
     /**
@@ -215,6 +215,9 @@ public class LogAspect {
     }
 
     private boolean isSimpleClassType(Object arg){
+        if(arg == null) {
+            return false;
+        }
         Class<?> clazz = arg.getClass();
         boolean isSimple = org.springframework.beans.BeanUtils.isSimpleProperty(clazz);
         if(isSimple){

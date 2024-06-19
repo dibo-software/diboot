@@ -64,7 +64,7 @@ public class TenantPwdCredential extends PwdCredential {
         setAuthType(Cons.DICTCODE_AUTH_TYPE.PWD.name());
     }
 
-    @NotNull(message = "租户编码不能为空")
+    @NotNull(message = "{validation.tenantPwdCredential.tenantCode.NotNull.message}")
     private String tenantCode;
 
     @Override
@@ -79,22 +79,22 @@ public class TenantPwdCredential extends PwdCredential {
         queryWrapper.eq(IamTenant::getCode, tenantCode);
         IamTenant tenant = Objects.requireNonNull(ContextHolder.getBean(IamTenantService.class)).getSingleEntity(queryWrapper);
         if (tenant == null) {
-            throw new BusinessException("租户不存在");
+            throw new BusinessException("exception.business.tenantPwdCredential.tenant.nonexistent");
         }
         if (!Cons.DICTCODE_ACCOUNT_STATUS.A.name().equals(tenant.getStatus())) {
-            throw new BusinessException("租户账户不可用，无法登录");
+            throw new BusinessException("exception.business.tenantPwdCredential.tenant.unusable");
         }
         LocalDate startDate = tenant.getStartDate();
         LocalDate endDate = tenant.getEndDate();
         if (V.isEmpty(startDate) || V.isEmpty(endDate)) {
-            throw new BusinessException("租户账户配置错误，无法登录");
+            throw new BusinessException("exception.business.tenantPwdCredential.tenant.configFailed");
         }
         LocalDate now = LocalDate.now();
         if (now.isBefore(startDate)) {
-            throw new BusinessException("租户账户尚未生效，无法登录");
+            throw new BusinessException("exception.business.tenantPwdCredential.tenant.invalid");
         }
         if (now.isAfter(endDate)) {
-            throw new BusinessException("租户账户已过期，无法登录");
+            throw new BusinessException("exception.business.tenantPwdCredential.tenant.expired");
         }
         setTenantId(tenant.getId());
         return super.getTenantId();

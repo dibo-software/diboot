@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
  * @date 2021/4/29
  * Copyright © diboot.com
  */
-@Data
+@Getter @Setter @Accessors(chain = true)
 public abstract class MyBaseEntity implements Serializable {
     private static final long serialVersionUID = 3766706110662091336L;
 

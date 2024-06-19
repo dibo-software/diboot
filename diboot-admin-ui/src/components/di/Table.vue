@@ -1,5 +1,5 @@
 <script setup lang="ts" name="DiTable">
-import { SetUp, Sort } from '@element-plus/icons-vue'
+import { Sort } from '@element-plus/icons-vue'
 import Draggable from 'vuedraggable'
 import type { TableColumn } from './type'
 import type { Ref } from 'vue'
@@ -30,6 +30,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'selectedKeys', ids: string[]): void
+  (e: 'rowDblclick', row: Record<string, unknown>): void
   (e: 'order', prop: string, order?: 'ASC' | 'DESC'): void
 }>()
 
@@ -114,6 +115,8 @@ const rowClick = (row: Record<string, unknown>) => {
   } else selectedRows.value.splice(index as number, 1)
 }
 
+const rowDblclick = (row: Record<string, unknown>) => emit('rowDblclick', row)
+
 const tableRef = ref<InstanceType<typeof ElTable>>()
 
 if (selectedRows.value) {
@@ -183,6 +186,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
     :row-key="primaryKey"
     v-bind="config"
     @row-click="rowClick"
+    @row-dblclick="rowDblclick"
     @selection-change="selected"
     @sort-change="sortChange"
     @header-dragend="headerDragend"
@@ -194,7 +198,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
     </el-table-column>
     <el-table-column v-else-if="multiple" type="selection" width="55" fixed />
 
-    <slot />
+    <slot v-bind="{ openConfig: () => (visible = true) }" />
     <template v-for="(item, index) in config.columns" :key="index">
       <el-table-column
         v-if="!item.hide"
@@ -210,7 +214,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
         <template v-if="item.number" #header>
           <el-tooltip v-if="item.number" placement="bottom">
             <template #content>
-              当前页总和：{{
+              {{ $t('components.di.table.total') }}：{{
                 Number(
                   (dataList ?? [])
                     .map(e => Number(e[item.prop] ?? 0))
@@ -218,7 +222,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
                     .toFixed(item.number)
                 )
               }}<br />
-              当前页平均：{{
+              {{ $t('components.di.table.avg') }}：{{
                 Number(
                   (
                     (dataList ?? []).map(e => Number(e[item.prop] ?? 0)).reduce((e1, e2) => e1 + e2, 0) /
@@ -244,8 +248,8 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
               {{ scope.row[item.prop].label }}
             </el-tag>
             <template v-else-if="typeof scope.row[item.prop] === 'boolean'">
-              <template v-if="scope.row[item.prop]"> 是 </template>
-              <template v-else> 否 </template>
+              <template v-if="scope.row[item.prop]"> {{ $t('bool.yes') }} </template>
+              <template v-else> {{ $t('bool.no') }} </template>
             </template>
             <span v-else>
               {{ scope.row[item.prop] }}
@@ -256,71 +260,71 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
     </template>
   </el-table>
 
-  <div v-if="$slots.pagination" style="display: flex; justify-content: space-between">
+  <div v-if="$slots.pagination">
     <div>
       <slot name="pagination" />
     </div>
     <el-space v-if="!selectedRows" :size="20" style="height: 38px">
       <slot name="operation" />
-      <el-popover :visible="visible" :width="500" trigger="click" placement="top-start">
-        <template #reference>
-          <el-button :icon="SetUp" size="default" text bg circle />
-        </template>
-        <table class="sortable-table">
-          <thead>
-            <tr>
-              <th />
-              <th style="width: 60px">显示</th>
-              <th style="width: 160px">名称</th>
-              <th style="width: 100px">宽度</th>
-              <th style="width: 60px">排序</th>
-              <th style="width: 60px">固定</th>
-            </tr>
-          </thead>
-          <draggable
-            v-model="config.columns"
-            tag="tbody"
-            item-key="prop"
-            ghost-class="sortable-ghost"
-            handle=".drag-handle"
-          >
-            <template #item="{ element }">
-              <tr>
-                <td>
-                  <el-button class="drag-handle" plain :icon="Sort" size="small" />
-                </td>
-                <td>
-                  <el-switch v-model="element.hide" :active-value="false" :inactive-value="true" />
-                </td>
-                <td>
-                  {{ element.label }}
-                </td>
-                <td>
-                  <el-input-number v-model="element.width" size="small" :min="50" step-strictly />
-                </td>
-                <td>
-                  <el-switch v-model="element.sortable" active-value="custom" :inactive-value="false" />
-                </td>
-                <td>
-                  <el-switch v-model="element.fixed" />
-                </td>
-              </tr>
-            </template>
-          </draggable>
-        </table>
-        <div style="display: flex; align-items: center; justify-content: space-between">
-          <div>
-            <el-checkbox v-model="config.border" label="纵向边框" size="small" />
-            <el-checkbox v-model="config.stripe" label="斑马纹" size="small" />
-          </div>
-          <div>
-            <el-button size="small" @click="resetTableConfig">重置</el-button>
-            <el-button size="small" type="primary" @click="saveColumnChange"> 保存 </el-button>
-          </div>
-        </div>
-      </el-popover>
     </el-space>
   </div>
+
+  <el-dialog v-model="visible" :width="500" :title="$t('components.di.table.config.title')">
+    <table class="sortable-table">
+      <thead>
+        <tr>
+          <th />
+          <th style="width: 60px">{{ $t('components.di.table.config.show') }}</th>
+          <th style="width: 160px">{{ $t('components.di.table.config.name') }}</th>
+          <th style="width: 100px">{{ $t('components.di.table.config.width') }}</th>
+          <th style="width: 60px">{{ $t('components.di.table.config.sort') }}</th>
+          <th style="width: 60px">{{ $t('components.di.table.config.fixed') }}</th>
+        </tr>
+      </thead>
+      <draggable
+        v-model="config.columns"
+        tag="tbody"
+        item-key="prop"
+        ghost-class="sortable-ghost"
+        handle=".drag-handle"
+      >
+        <template #item="{ element }">
+          <tr>
+            <td>
+              <el-button class="drag-handle" plain :icon="Sort" size="small" />
+            </td>
+            <td>
+              <el-switch v-model="element.hide" :active-value="false" :inactive-value="true" />
+            </td>
+            <td>
+              {{ element.label }}
+            </td>
+            <td>
+              <el-input-number v-model="element.width" size="small" :min="50" step-strictly />
+            </td>
+            <td>
+              <el-switch v-model="element.sortable" active-value="custom" :inactive-value="false" />
+            </td>
+            <td>
+              <el-switch v-model="element.fixed" />
+            </td>
+          </tr>
+        </template>
+      </draggable>
+    </table>
+    <template #footer>
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <div>
+          <el-checkbox v-model="config.border" :label="$t('components.di.table.border')" size="small" />
+          <el-checkbox v-model="config.stripe" :label="$t('components.di.table.stripe')" size="small" />
+        </div>
+        <div>
+          <el-button size="small" @click="resetTableConfig">{{ $t('operation.reset') }}</el-button>
+          <el-button size="small" type="primary" @click="saveColumnChange"> {{ $t('button.save') }} </el-button>
+        </div>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -329,8 +333,6 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
   overflow-y: auto;
   text-align: center;
   max-height: calc(100vh - 200px);
-  border-bottom: solid 1px var(--el-menu-border-color);
-  margin-bottom: 8px;
 
   thead {
     border-bottom: solid 1px var(--el-menu-border-color);

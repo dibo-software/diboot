@@ -15,12 +15,16 @@
  */
 package com.diboot.file.util;
 
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.diboot.core.util.PropertiesUtils;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.Status;
 import com.diboot.file.config.Cons;
 import com.diboot.file.service.FileStorageService;
+import com.diboot.file.service.impl.AliyunOssFileStorageServiceImpl;
 import com.diboot.file.service.impl.LocalFileStorageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -105,7 +109,8 @@ public class FileHelper{
      */
     public static boolean isLocalStorage() {
         if (isLocalStorage == null) {
-            isLocalStorage = LocalFileStorageServiceImpl.class.equals(ContextHolder.getBean(FileStorageService.class).getClass());
+			FileStorageService fileStorageService = ContextHolder.getBean(FileStorageService.class);
+            isLocalStorage = fileStorageService instanceof LocalFileStorageServiceImpl;
         }
         return Boolean.TRUE.equals(isLocalStorage);
     }
@@ -132,12 +137,12 @@ public class FileHelper{
 			makeDirectory(fullPath);
 			FileUtils.writeByteArrayToFile(new File(fullPath), file.getBytes());
 			if(log.isDebugEnabled()){
-				log.debug("保存文件成功！路径为: " + fullPath);
+				log.debug("保存文件成功！路径为: {}", fullPath);
 			}
 			return fullPath;
 		}
 		catch (IOException e1) {
-			log.error("保存文件失败(file=" + fullPath + "): ", e1);
+			log.error("保存文件失败: file={}",  fullPath, e1);
 			return null;
 		}
 	}
@@ -156,12 +161,12 @@ public class FileHelper{
 			makeDirectory(fullPath);
 			FileUtils.copyInputStreamToFile(inputStream, new File(fullPath));
 			if(log.isDebugEnabled()){
-				log.debug("保存文件成功！路径为: " + fullPath);
+				log.debug("保存文件成功！路径为: {}", fullPath);
 			}
 			return fullPath;
 		}
 		catch (IOException e1) {
-			log.error("保存文件失败(file=" + fullPath + "): ", e1);
+			log.error("保存文件失败: file={}", fullPath, e1);
 			return null;
 		}
 	}
@@ -172,13 +177,16 @@ public class FileHelper{
 	 * @return
 	 */
 	public static String getFileExtByName(String fileName){
+		if(V.isEmpty(fileName)) {
+			throw new BusinessException(Status.FAIL_INVALID_PARAM, "文件名为空：{}", fileName);
+		}
 		if(fileName.startsWith(HTTP) && fileName.contains(Cons.FILE_PATH_SEPARATOR)){
 			fileName = getFileName(fileName);
 		}
 		if(fileName.lastIndexOf(POINT) > 0){
 			return fileName.substring(fileName.lastIndexOf(POINT)+1).toLowerCase();
 		}
-		log.warn("检测到没有后缀的文件名:" + fileName);
+		log.debug("检测到没有后缀的文件名: {}", fileName);
 		return "";
 	}
 
@@ -224,7 +232,7 @@ public class FileHelper{
 		if(fileStorageDirectory == null){
 			fileStorageDirectory = PropertiesUtils.get(FILE_STORAGE_DIRECTORY);
 			if(fileStorageDirectory == null){
-				throw new InvalidUsageException("文件存储路径参数 "+FILE_STORAGE_DIRECTORY+" 未配置.");
+				throw new InvalidUsageException("exception.invalidUsage.fileHelper.getFileStorageDirectory.message", FILE_STORAGE_DIRECTORY);
 			}
 		}
 		return fileStorageDirectory;

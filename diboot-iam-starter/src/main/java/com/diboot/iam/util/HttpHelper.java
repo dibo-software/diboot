@@ -132,7 +132,7 @@ public class HttpHelper extends com.diboot.core.util.HttpHelper {
                 return null;
             }
             return response.body().string();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn("请求调用解析异常 : {}", url, e);
             return null;
         }

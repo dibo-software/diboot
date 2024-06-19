@@ -21,6 +21,8 @@ import com.diboot.core.entity.BaseModel;
 import com.diboot.core.util.S;
 import com.diboot.core.vo.LabelValue;
 
+import java.io.Serial;
+
 /**
  * 可登录用户Base类定义
  * @author mazc@dibo.ltd
@@ -28,6 +30,7 @@ import com.diboot.core.vo.LabelValue;
  * @date 2020/06/28
  */
 public abstract class BaseLoginUser extends BaseEntity<String> {
+    private static final long serialVersionUID = 1689461104601728468L;
 
     /**
      * 获取显示名称

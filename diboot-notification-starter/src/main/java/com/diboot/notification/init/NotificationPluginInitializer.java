@@ -61,17 +61,17 @@ public class NotificationPluginInitializer implements ApplicationRunner {
         // 插入iam组件所需的数据字典
         DictionaryService dictionaryService = ContextHolder.getBean(DictionaryService.class);
         if(dictionaryService != null && !dictionaryService.exists(Dictionary::getType, "MESSAGE_CHANNEL")){
-            // 插入iam组件所需的数据字典
+            // 插入notification组件所需的数据字典
             String[] DICT_INIT_DATA = {
-                    "{\"type\":\"MESSAGE_STATUS\", \"itemName\":\"消息状态\", \"description\":\"message消息状态\", \"children\":[{\"itemName\":\"发送中\", \"itemValue\":\"PENDING\", \"sortId\":1},{\"itemName\":\"发送失败\", \"itemValue\":\"FAILED\", \"sortId\":2},{\"itemName\":\"已送达\", \"itemValue\":\"DELIVERY\", \"sortId\":3},{\"itemName\":\"已读\", \"itemValue\":\"READ\", \"sortId\":4}]}",
-                    "{\"type\":\"MESSAGE_CHANNEL\", \"itemName\":\"发送通道\", \"description\":\"message发送通道\", \"children\":[{\"itemName\":\"短信\", \"itemValue\":\"SMS\", \"sortId\":1},{\"itemName\":\"系统消息\", \"itemValue\":\"SYS_MSG\", \"sortId\":2},{\"itemName\":\"站内信\", \"itemValue\":\"WEBSOCKET\", \"sortId\":3},{\"itemName\":\"邮件\", \"itemValue\":\"EMAIL\", \"sortId\":4}]}"
+                    "{\"type\":\"MESSAGE_STATUS\", \"itemName\":\"消息状态\", \"description\":\"message消息状态\", \"children\":[{\"itemName\":\"发送中\", \"itemNameI18n\":\"Dictionary.MESSAGE_STATUS.PENDING\", \"itemValue\":\"PENDING\", \"sortId\":1},{\"itemName\":\"发送失败\", \"itemNameI18n\":\"Dictionary.MESSAGE_STATUS.FAILED\", \"itemValue\":\"FAILED\", \"sortId\":2},{\"itemName\":\"已送达\", \"itemNameI18n\":\"Dictionary.MESSAGE_STATUS.DELIVERY\", \"itemValue\":\"DELIVERY\", \"sortId\":3},{\"itemName\":\"已读\", \"itemNameI18n\":\"Dictionary.MESSAGE_STATUS.READ\", \"itemValue\":\"READ\", \"sortId\":4}]}",
+
+                    "{\"type\":\"MESSAGE_CHANNEL\", \"itemName\":\"发送通道\", \"description\":\"message发送通道\", \"children\":[{\"itemName\":\"短信\", \"itemNameI18n\":\"Dictionary.MESSAGE_CHANNEL.SMS\", \"itemValue\":\"SMS\", \"sortId\":1},{\"itemName\":\"系统消息\", \"itemNameI18n\":\"Dictionary.MESSAGE_CHANNEL.SYS_MSG\", \"itemValue\":\"SYS_MSG\", \"sortId\":2},{\"itemName\":\"站内信\", \"itemNameI18n\":\"Dictionary.MESSAGE_CHANNEL.WEBSOCKET\", \"itemValue\":\"WEBSOCKET\", \"sortId\":3},{\"itemName\":\"邮件\", \"itemNameI18n\":\"Dictionary.MESSAGE_CHANNEL.EMAIL\", \"itemValue\":\"EMAIL\", \"sortId\":4}]}"
             };
             // 插入数据字典
             for (String dictJson : DICT_INIT_DATA) {
                 DictionaryVO dictVo = JSON.toJavaObject(dictJson, DictionaryVO.class);
                 dictionaryService.createDictAndChildren(dictVo);
             }
-            DICT_INIT_DATA = null;
         }
     }
 }

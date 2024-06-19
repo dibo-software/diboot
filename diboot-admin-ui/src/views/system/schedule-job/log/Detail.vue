@@ -14,34 +14,36 @@ defineExpose({
 </script>
 
 <template>
-  <el-drawer v-model="visible" title="日志详情" size="650px">
+  <el-drawer v-model="visible" :title="$t('title.detail')" size="650px">
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
-      <el-descriptions-item label="开始时间">
+      <el-descriptions-item :label="$t('scheduleJobLog.startTime')">
         {{ model.startTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="结束时间">
+      <el-descriptions-item :label="$t('scheduleJobLog.endTime')">
         {{ model.endTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="执行状态">
-        <el-tag v-if="model.runStatus === 'S'">成功</el-tag>
-        <el-tag v-else type="danger">失败</el-tag>
+      <el-descriptions-item :label="$t('scheduleJobLog.runStatus')">
+        <el-tag v-if="model.runStatus === 'S'">{{ $t('scheduleJobLog.success') }}</el-tag>
+        <el-tag v-else type="danger">{{ $t('scheduleJobLog.fail') }}</el-tag>
       </el-descriptions-item>
-      <el-descriptions-item label="触发方式">
+      <el-descriptions-item :label="$t('scheduleJobLog.triggerMode')">
         {{ model.triggerModeLabel }}
       </el-descriptions-item>
-      <el-descriptions-item label="耗时"> {{ model.elapsedSeconds }} s </el-descriptions-item>
-      <el-descriptions-item label="创建时间">
+      <el-descriptions-item :label="$t('scheduleJobLog.elapsedSeconds')">
+        {{ model.elapsedSeconds }} s
+      </el-descriptions-item>
+      <el-descriptions-item :label="$t('baseField.createTime')">
         {{ model.createTime }}
       </el-descriptions-item>
-      <el-descriptions-item label="参数" :span="2" class-name="long-text">
+      <el-descriptions-item :label="$t('scheduleJobLog.paramJson')" :span="2" class-name="long-text">
         {{ model.paramJson }}
       </el-descriptions-item>
-      <el-descriptions-item label="执行结果信息" :span="2" class-name="long-text">
+      <el-descriptions-item :label="$t('scheduleJobLog.executeMsg')" :span="2" class-name="long-text">
         {{ model.executeMsg }}
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>
-      <el-button @click="visible = false">关闭</el-button>
+      <el-button @click="visible = false">{{ $t('button.close') }}</el-button>
     </template>
   </el-drawer>
 </template>

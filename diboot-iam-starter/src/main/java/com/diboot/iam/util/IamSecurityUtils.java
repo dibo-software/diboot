@@ -22,16 +22,15 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.service.IamLoginTraceService;
-import com.diboot.iam.shiro.IamAuthorizingRealm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.lang.util.ByteSource;
-import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
@@ -80,13 +79,13 @@ public class IamSecurityUtils extends SecurityUtils {
                 log.warn("缓存中不存在的无效token: {}", accessToken);
             }
         } else {
-            throw new InvalidUsageException("无法获取登录用户缓存，请检查依赖环境！");
+            throw new InvalidUsageException("exception.invalidUsage.iamSecurityUtils.getLoginUserByToken.message");
         }
         return null;
     }
 
     /**
-     * 退出 注销用户
+     * 退出 当前登录用户
      */
     public static void logout() {
         BaseLoginUser user = getCurrentUser();
@@ -104,7 +103,7 @@ public class IamSecurityUtils extends SecurityUtils {
     }
 
     /**
-     * 退出 注销指定用户
+     * 退出 指定用户
      */
     public static void logout(String userTypeAndId) {
         CacheManager cacheManager = ContextHolder.getBean(CacheManager.class);
@@ -112,6 +111,7 @@ public class IamSecurityUtils extends SecurityUtils {
             log.warn("cacheManager 实例异常");
             return;
         }
+        IamLoginTraceService iamLoginTraceService = ContextHolder.getBean(IamLoginTraceService.class);
         Collection<Object> cacheVals = cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).values();
         for (Object obj : cacheVals) {
             SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo) obj;
@@ -122,7 +122,7 @@ public class IamSecurityUtils extends SecurityUtils {
                 TokenUtils.removeAccessTokens(principalCollection.toString());
                 log.info("强制退出用户: {}", userTypeAndId);
                 try {
-                    ContextHolder.getBean(IamLoginTraceService.class).updateLogoutInfo(user.getClass().getSimpleName(), user.getId());
+                    iamLoginTraceService.updateLogoutInfo(user.getClass().getSimpleName(), user.getId());
                 } catch (Exception e) {
                     log.warn("更新用户 {} 退出时间异常: {}", userTypeAndId, e.getMessage());
                 }
@@ -131,7 +131,7 @@ public class IamSecurityUtils extends SecurityUtils {
     }
 
     /**
-     * 基于 accessToken 退出 注销指定用户
+     * 基于 accessToken 退出 指定用户
      */
     public static void logoutByToken(String accessToken) {
         IamSecurityUtils.logout();
@@ -186,14 +186,24 @@ public class IamSecurityUtils extends SecurityUtils {
     /**
      * 清空指定用户账户的权限信息的缓存 使其立即生效
      */
-    public static void clearAuthorizationCache(String username) {
-        RealmSecurityManager rsm = (RealmSecurityManager) IamSecurityUtils.getSecurityManager();
-        IamAuthorizingRealm authorizingRealm = (IamAuthorizingRealm) rsm.getRealms().iterator().next();
-        if (authorizingRealm != null) {
-            Cache<Object, AuthorizationInfo> cache = authorizingRealm.getAuthorizationCache();
-            if (cache != null) {
-                cache.remove(username);
-                log.debug("已清空账号 {} 的权限缓存，以便新权限生效.", username);
+    public static void clearAuthorizationCache(String userType, String userId) {
+        CacheManager cacheManager = ContextHolder.getBean(CacheManager.class);
+        if (cacheManager == null || cacheManager.getCache(Cons.AUTHORIZATION_CAHCE_NAME) == null) {
+            log.warn("cacheManager 实例异常");
+            return;
+        }
+        String userTypeAndId = userType + Cons.SEPARATOR_COLON + userId;
+        Cache<Object, AuthenticationInfo> authenticationCache = cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME);
+        for (Object obj : authenticationCache.values()) {
+            SimpleAuthenticationInfo authInfo = (SimpleAuthenticationInfo) obj;
+            SimplePrincipalCollection principalCollection = (SimplePrincipalCollection) authInfo.getPrincipals();
+            BaseLoginUser user = (BaseLoginUser) principalCollection.getPrimaryPrincipal();
+            if (userTypeAndId.equals(user.getUserTypeAndId())) {
+                String accessToken = principalCollection.toString();
+                Cache<Object, AuthorizationInfo> authorizationCache = cacheManager.getCache(Cons.AUTHORIZATION_CAHCE_NAME);
+                authorizationCache.remove(accessToken);
+                log.info("清空用户权限缓存，使新权限生效: {}", userTypeAndId);
+                return;
             }
         }
     }
@@ -202,14 +212,15 @@ public class IamSecurityUtils extends SecurityUtils {
      * 清空所有权限信息的缓存 使其立即生效
      */
     public static void clearAllAuthorizationCache() {
-        RealmSecurityManager rsm = (RealmSecurityManager) IamSecurityUtils.getSecurityManager();
-        IamAuthorizingRealm authorizingRealm = (IamAuthorizingRealm) rsm.getRealms().iterator().next();
-        if (authorizingRealm != null) {
-            Cache<Object, AuthorizationInfo> cache = authorizingRealm.getAuthorizationCache();
-            if (cache != null) {
-                cache.clear();
-                log.debug("已清空全部登录用户的权限缓存，以便新权限生效.");
-            }
+        CacheManager cacheManager = ContextHolder.getBean(CacheManager.class);
+        if (cacheManager == null || cacheManager.getCache(Cons.AUTHORIZATION_CAHCE_NAME) == null) {
+            log.warn("cacheManager 实例异常");
+            return;
+        }
+        Cache<Object, AuthorizationInfo> cache = cacheManager.getCache(Cons.AUTHORIZATION_CAHCE_NAME);
+        if (cache != null) {
+            cache.clear();
+            log.debug("已清空全部登录用户的权限缓存，以便新权限生效.");
         }
     }
 
@@ -235,6 +246,18 @@ public class IamSecurityUtils extends SecurityUtils {
      */
     public static String encryptPwd(String password, String salt) {
         return new SimpleHash(ALGORITHM, password, ByteSource.Util.bytes(salt), ITERATIONS).toHex();
+    }
+
+    /**
+     * 是否为超管
+     * @return
+     */
+    public static boolean isSuperAdmin() {
+        Subject subject = getSubject();
+        if (subject != null) {
+            return subject.hasRole(Cons.ROLE_SUPER_ADMIN);
+        }
+        return false;
     }
 
 }

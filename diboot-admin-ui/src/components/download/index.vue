@@ -22,7 +22,7 @@ const download = () => {
     :class="progress === 100 ? 'download-complete' : progress < 0 ? 'download-error' : progress > 0 ? 'download' : ''"
     @click="download"
   >
-    <slot>下载</slot>
+    <slot>{{ $t('components.download') }}</slot>
   </el-button>
 </template>
 

@@ -98,7 +98,7 @@ public class ExcelBindAnnoHandler {
     public static Map<String, List> convertToNameValueMap(Annotation annotation, List<String> nameList){
         // 字典
         if(annotation instanceof ExcelBindDict || annotation instanceof BindDict){
-            String dictType = null;
+            String dictType;
             if(annotation instanceof ExcelBindDict){
                 dictType = ((ExcelBindDict)annotation).type();
             }
@@ -107,7 +107,7 @@ public class ExcelBindAnnoHandler {
             }
             DictionaryServiceExtProvider bindDictService = ContextHolder.getBean(DictionaryServiceExtProvider.class);
             if(bindDictService == null){
-                throw new InvalidUsageException("DictionaryService未实现，无法使用ExcelBindDict注解！");
+                throw new InvalidUsageException("exception.invalidUsage.excelBindAnnoHandler.convertToNameValueMap.message");
             }
             List<LabelValue> list = bindDictService.getLabelValueList(dictType);
             return convertLabelValueListToMap(list);

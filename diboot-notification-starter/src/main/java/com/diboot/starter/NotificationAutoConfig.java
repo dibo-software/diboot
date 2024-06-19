@@ -74,6 +74,7 @@ public class NotificationAutoConfig {
             );
         }
     }
+
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(Client.class)
     @EnableConfigurationProperties(NotificationProperties.class)

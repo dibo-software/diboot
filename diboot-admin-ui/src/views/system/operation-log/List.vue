@@ -1,5 +1,5 @@
 <script setup lang="ts" name="OperationLog">
-import { Search, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import type { OperationLog } from './type'
 import Detail from '@/views/system/operation-log/Detail.vue'
 
@@ -16,9 +16,6 @@ const tagMap = {
   PATCH: 'info'
 }
 
-// 搜索区折叠
-const searchState = ref(false)
-
 const detailRef = ref()
 const openDetail = (id: string) => {
   detailRef.value?.open(id)
@@ -31,72 +28,60 @@ const getTagType = (val: string, map: Record<string, unknown>) => {
 
 <template>
   <div class="list-page">
-    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
-      <el-row :gutter="18">
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="业务对象">
-            <el-input v-model="queryParam.businessObj" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="请求方式">
-            <el-select v-model="queryParam.requestMethod" clearable @change="onSearch">
-              <el-option value="GET" />
-              <el-option value="POST" />
-              <el-option value="PUT" />
-              <el-option value="DELETE" />
-              <el-option value="PATCH" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :lg="6" :sm="12">
-          <el-form-item label="状态码">
-            <el-input v-model="queryParam.statusCode" clearable @change="onSearch" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
-
     <el-space wrap class="list-operation">
       <el-space>
         <el-input
-          v-show="!searchState"
           v-model="queryParam.businessObj"
-          placeholder="业务对象"
+          :placeholder="$t('operationLog.businessObj')"
           clearable
           @change="onSearch"
         />
-        <el-button :icon="Search" type="primary" @click="onSearch">查询</el-button>
-        <el-button title="重置搜索条件" @click="resetFilter">重置</el-button>
-        <el-button
-          :icon="searchState ? ArrowUp : ArrowDown"
-          :title="searchState ? '收起' : '展开'"
-          @click="searchState = !searchState"
+        <el-select
+          v-model="queryParam.requestMethod"
+          clearable
+          :placeholder="$t('operationLog.placeholder.requestMethod')"
+          @change="onSearch"
+        >
+          <el-option value="GET" />
+          <el-option value="POST" />
+          <el-option value="PUT" />
+          <el-option value="DELETE" />
+          <el-option value="PATCH" />
+        </el-select>
+        <el-input
+          v-model="queryParam.statusCode"
+          :placeholder="$t('operationLog.statusCode')"
+          clearable
+          @change="onSearch"
         />
+        <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+        <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
       </el-space>
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column prop="userType" label="用户类型" />
-      <el-table-column prop="userRealname" label="用户姓名" />
-      <el-table-column prop="businessObj" label="业务对象" />
-      <el-table-column prop="operation" label="操作事项" />
-      <el-table-column prop="requestMethod" label="请求方式">
+      <el-table-column prop="userType" :label="$t('operationLog.userType')" />
+      <el-table-column prop="userRealname" :label="$t('operationLog.userRealname')" />
+      <el-table-column prop="businessObj" :label="$t('operationLog.businessObj')" />
+      <el-table-column prop="operation" :label="$t('operationLog.operation')" />
+      <el-table-column prop="requestMethod" :label="$t('operationLog.requestMethod')">
         <template #default="{ row }">
           <el-tag :type="getTagType(row.requestMethod, tagMap)" effect="plain">{{ row.requestMethod }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="requestUri" label="请求URI" show-overflow-tooltip />
-      <el-table-column prop="statusCode" label="状态码">
+      <el-table-column prop="requestUri" :label="$t('operationLog.requestUri')" show-overflow-tooltip />
+      <el-table-column prop="statusCode" :label="$t('operationLog.statusCode')">
         <template #default="{ row }">
           <el-tag v-if="row.statusCode === 0">{{ row.statusCode }}</el-tag>
           <el-tag v-else type="danger">{{ row.statusCode }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="165" />
-      <el-table-column label="操作" width="70" fixed="right">
+      <el-table-column prop="createTime" :label="$t('operationLog.createTime')" width="165" />
+      <el-table-column :label="$t('operation.label')" width="70" fixed="right">
         <template #default="{ row }">
-          <el-button text bg type="primary" size="small" @click="openDetail(row.id)">详情</el-button>
+          <el-button text bg type="primary" size="small" @click="openDetail(row.id)"
+            >{{ $t('title.detail') }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

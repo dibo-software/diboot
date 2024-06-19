@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 interface SsoOption {
   callback: (token: string) => void
 }
@@ -35,7 +36,7 @@ export default (option: SsoOption) => {
       if (res.code === 0 && res.data) {
         option.callback(res.data as string)
       } else {
-        ElMessage.success(res.msg || '登录失败')
+        ElMessage.success(res.msg || i18n.global.t('hooks.loginFailed'))
       }
     } finally {
       ssoLoading.value = false
@@ -62,11 +63,11 @@ export default (option: SsoOption) => {
   // 重定向到单点登录地址
   const redirectTo = (ssoType: string) => {
     if (!ssoType) {
-      ElMessage.warning('单点登录方式为空')
+      ElMessage.warning(i18n.global.t('hooks.nullSsoLoginUrl'))
       return
     }
     if (!authorizeInfoMap.value[ssoType]) {
-      ElMessage.warning('单点登录地址为空')
+      ElMessage.warning(i18n.global.t('hooks.nullSsoLoginUrl'))
       return
     }
     const info: AuthorizeInfo = authorizeInfoMap.value[ssoType]

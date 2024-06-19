@@ -3,7 +3,8 @@ import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
 import useAuthStore from '@/store/auth'
 import type { UserModel } from '@/views/org-structure/user/type'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/file'
 const updateApi = '/iam/user'
 
@@ -78,11 +79,11 @@ const getPickAvatar = () => {
               authStore.getInfo(true)
             }
           })
-          .catch(err => ElMessage.error(err.msg || err.message || '更新失败！'))
+          .catch(err => ElMessage.error(err.msg || err.message || i18n.t('personal.updateFailed')))
           .finally(() => (loading.value = false))
       }
     })
-    .catch(err => ElMessage.error(err.msg || err.message || '上传失败！'))
+    .catch(err => ElMessage.error(err.msg || err.message || i18n.t('personal.uploadFailed')))
     .finally(() => (loading.value = false))
 
   handleClose()
@@ -90,7 +91,7 @@ const getPickAvatar = () => {
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" :before-close="handleClose" title="头像设置">
+  <el-dialog v-model="dialogVisible" :before-close="handleClose" :title="$t('personal.avatarSetting')">
     <div class="cropperBox">
       <vue-cropper
         ref="cropper"
@@ -103,7 +104,7 @@ const getPickAvatar = () => {
       />
     </div>
     <div class="optionBtn">
-      <el-button type="primary" :loading="loading" @click="getPickAvatar">保存</el-button>
+      <el-button type="primary" :loading="loading" @click="getPickAvatar">{{ $t('button.save') }}</el-button>
     </div>
   </el-dialog>
 </template>

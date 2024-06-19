@@ -132,13 +132,13 @@ const TableColumn = defineComponent({
   <span>
     <span @click="visible = true">
       <slot>
-        <el-button :icon="Upload"> 批量导入 </el-button>
+        <el-button :icon="Upload" type="primary" plain> {{ $t('operation.import') }} </el-button>
       </slot>
     </span>
 
     <el-drawer v-model="visible" :size="width || '50%'">
       <template #header>
-        <span>数据上传</span>
+        <span>{{ $t('components.excel.dataUpload') }}</span>
         <el-button
           style="float: right; padding: 0 30px; zoom: 0.9"
           link
@@ -146,7 +146,7 @@ const TableColumn = defineComponent({
           :icon="downloadLoading ? Loading : Download"
           @click="downloadExample"
         >
-          下载示例文件
+          {{ $t('components.excel.downloadExample') }}
         </el-button>
       </template>
 
@@ -163,32 +163,43 @@ const TableColumn = defineComponent({
             :on-remove="removeFile"
             :on-change="fileListChange"
           >
-            <el-button :icon="Upload"> 选择文件</el-button>
+            <el-button :icon="Upload"> {{ $t('components.excel.chooseFile') }}</el-button>
           </el-upload>
         </el-col>
         <el-col :md="8">
-          <el-input v-model="description" placeholder="备注信息" />
+          <el-input v-model="description" :placeholder="$t('components.excel.description')" />
         </el-col>
         <el-col :md="10">
-          <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview">预览数据</el-button>
-          <el-button :disabled="uploadDisabled" :icon="Upload" @click="handleUpload">上传数据</el-button>
+          <el-button type="primary" :disabled="previewDisabled" :icon="View" @click="handlePreview">{{
+            $t('components.excel.previewData')
+          }}</el-button>
+          <el-button :disabled="uploadDisabled" :icon="Upload" @click="handleUpload">{{
+            $t('components.excel.uploadData')
+          }}</el-button>
         </el-col>
       </el-row>
-      <el-alert v-if="errMsg" type="error" :closable="false" title="请检查Excel文件，错误信息" :description="errMsg" />
+      <el-alert
+        v-if="errMsg"
+        type="error"
+        :closable="false"
+        :title="$t('components.excel.checkError')"
+        :description="errMsg"
+      />
       <div v-if="data">
         <el-divider />
         <el-alert type="success" :closable="false">
-          Excel文件解析成功，共有 <strong>{{ data.totalCount }}</strong> 条数据
+          {{ $t('components.excel.excelParsePrefix') }} <strong>{{ data.totalCount }}</strong>
+          {{ $t('components.excel.data') }}
           <span v-if="Number(data.errorCount ?? 0) > 0">
-            ；<strong>{{ Number(data.totalCount) - Number(data.errorCount) }}</strong> 条数据
+            ；<strong>{{ Number(data.totalCount) - Number(data.errorCount) }}</strong> {{ $t('components.excel.data') }}
           </span>
-          可上传。
+          {{ $t('components.excel.canUpload') }}
         </el-alert>
         <el-collapse v-if="Number(data.errorCount ?? 0) > 0" model-value="1">
           <el-collapse-item name="1">
             <template #title>
-              <span style="color: red; zoom: 1.2">{{ `共有 ${data.errorCount} 条数据异常` }}</span>
-              （上传数据后可
+              <span style="color: red; zoom: 1.2">{{ $t('components.excel.errorMsg', [data.errorCount]) }}</span>
+              （{{ $t('components.excel.uploadDataTipPrefix') }}
               <el-button
                 link
                 :type="data.errorUrl ? 'danger' : ''"
@@ -197,7 +208,7 @@ const TableColumn = defineComponent({
                 :disabled="!data.errorUrl"
                 @click.stop="exportErrorData(data?.errorUrl)"
               >
-                导出错误数据
+                {{ $t('components.excel.uploadDataTipSuffix') }}
               </el-button>
               ）
             </template>

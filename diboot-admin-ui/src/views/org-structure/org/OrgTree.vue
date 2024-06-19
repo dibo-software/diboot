@@ -48,7 +48,7 @@ defineExpose({
 <template>
   <div class="full-height-container">
     <el-header>
-      <el-input v-model="searchWord" placeholder="请输入内容过滤" :prefix-icon="Search" />
+      <el-input v-model="searchWord" :placeholder="$t('placeholder.filter')" :prefix-icon="Search" />
     </el-header>
     <el-scrollbar>
       <el-tree

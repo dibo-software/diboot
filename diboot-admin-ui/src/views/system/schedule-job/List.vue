@@ -3,7 +3,8 @@ import { Plus, More, CaretRight } from '@element-plus/icons-vue'
 import type { ScheduleJob } from './type'
 import Form from './Form.vue'
 import LogList from './log/List.vue'
-
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 const baseApi = '/schedule-job'
 
 const { getList, loading, dataList, remove } = useList<ScheduleJob>({ baseApi })
@@ -17,7 +18,7 @@ const executeOnce = (id: string) => {
       ElMessage.success(res.msg)
     })
     .catch(err => {
-      ElMessage.error(err.msg || err.message || '稍后重试')
+      ElMessage.error(err.msg || err.message || i18n.t('scheduleJob.retry'))
     })
 }
 
@@ -42,26 +43,26 @@ const logListPermission = checkPermission('logList')
       <el-col v-for="item in dataList" :key="item.id" :xl="6" :lg="6" :md="8" :sm="12" :xs="24">
         <el-card shadow="hover">
           <el-descriptions :column="1" :title="item.jobName" style="zoom: 0.85">
-            <el-descriptions-item label="执行类">
+            <el-descriptions-item :label="$t('scheduleJob.jobKeyAlias')">
               {{ item.jobKey }}
             </el-descriptions-item>
-            <el-descriptions-item label="定时规则">
+            <el-descriptions-item :label="$t('scheduleJob.cronAlias')">
               {{ item.cron }}
             </el-descriptions-item>
-            <el-descriptions-item label="执行策略">
+            <el-descriptions-item :label="$t('scheduleJob.initStrategyAlias')">
               {{ item.initStrategyLabel }}
             </el-descriptions-item>
-            <el-descriptions-item label="日志状态">
-              <el-tag v-if="item.saveLog"> 启用</el-tag>
-              <el-tag v-else type="info"> 停用</el-tag>
+            <el-descriptions-item :label="$t('scheduleJob.saveLogAlias')">
+              <el-tag v-if="item.saveLog"> {{ $t('scheduleJob.open') }}</el-tag>
+              <el-tag v-else type="info"> {{ $t('scheduleJob.close') }}</el-tag>
             </el-descriptions-item>
           </el-descriptions>
           <div class="bottom">
-            <el-tag v-if="item.jobStatus === 'A'"> 准备就绪</el-tag>
-            <el-tag v-else type="info"> 停用</el-tag>
+            <el-tag v-if="item.jobStatus === 'A'"> {{ $t('scheduleJob.ready') }}</el-tag>
+            <el-tag v-else type="info"> {{ $t('scheduleJob.close') }}</el-tag>
 
             <div style="margin-left: auto">
-              <el-popconfirm title="确认立即执行一次吗?" @confirm="executeOnce(item.id)">
+              <el-popconfirm :title="$t('scheduleJob.immediately')" @confirm="executeOnce(item.id)">
                 <template #reference>
                   <el-button v-has-permission="'executeOnce'" circle :icon="CaretRight" type="primary" />
                 </template>

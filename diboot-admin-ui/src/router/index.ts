@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouterView } from 'vue-router'
 import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
 import { createRouterGuard } from '@/router/router-guards'
 import auth from '@/utils/auth'
-
+import i18n from '@/i18n'
 /**
  * constantRoutes
  * a base page that does not have permission requirements
@@ -65,7 +65,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index.vue'),
-        meta: { title: '工作台', icon: 'Element:Odometer', affixTab: true, sort: -1 }
+        meta: { title: i18n.global.t('router.dashboard'), icon: 'Element:Odometer', affixTab: true, sort: -1 }
       }
     ]
   },
@@ -79,7 +79,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: '/personal',
         name: 'Personal',
         component: () => import('@/views/personal/index.vue'),
-        meta: { title: '个人中心', hidden: true }
+        meta: { title: i18n.global.t('router.personal'), hidden: true }
       }
     ]
   }

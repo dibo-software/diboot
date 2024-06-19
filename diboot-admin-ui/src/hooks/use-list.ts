@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 export interface ListOption<D> {
   // 请求接口基础路径
   baseApi: string
@@ -76,7 +77,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
         })
         .catch(err => {
           ElNotification.error({
-            title: '获取列表数据失败',
+            title: i18n.global.t('hooks.fetchListFailed'),
             message: err.msg || err.message || err
           })
           reject(err)
@@ -142,7 +143,9 @@ export const useDelete = (option: DeleteOption) => {
    * @param id
    */
   const remove = (id: string) => {
-    return ElMessageBox.confirm('确认删除该数据吗？', '删除', { type: 'warning' })
+    return ElMessageBox.confirm(i18n.global.t('hooks.confirmDelete'), i18n.global.t('hooks.delete'), {
+      type: 'warning'
+    })
       .then(() => {
         return api
           .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)
@@ -151,7 +154,7 @@ export const useDelete = (option: DeleteOption) => {
             return true
           })
           .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
+            ElMessage.error(err.msg || err.message || i18n.global.t('hooks.deleteFailed'))
           })
       })
       .catch(() => null)
@@ -164,11 +167,13 @@ export const useDelete = (option: DeleteOption) => {
    */
   const batchRemove = (ids: Array<string>) => {
     if (!(ids && ids.length)) {
-      ElMessage.warning('未选择数据')
+      ElMessage.warning(i18n.global.t('hooks.nonChooseData'))
       return Promise.resolve()
     }
 
-    return ElMessageBox.confirm('确认删除已选数据吗？', '批量删除', { type: 'warning' })
+    return ElMessageBox.confirm(i18n.global.t('hooks.confirmBatchDelete'), i18n.global.t('hooks.batchDelete'), {
+      type: 'warning'
+    })
       .then(() => {
         return api
           .post(`${option.baseApi}/batch-delete`, ids)
@@ -177,7 +182,7 @@ export const useDelete = (option: DeleteOption) => {
             return true
           })
           .catch(err => {
-            ElMessage.error(err.msg || err.message || '删除失败')
+            ElMessage.error(err.msg || err.message || i18n.global.t('hooks.deleteFailed'))
           })
       })
       .catch(() => null)
@@ -188,7 +193,7 @@ export const useDelete = (option: DeleteOption) => {
    */
   const removeSuccessHandler = () => {
     if (option.deleteCallback) option.deleteCallback()
-    ElMessage.success('数据删除成功')
+    ElMessage.success(i18n.global.t('hooks.deleteSuccess'))
   }
 
   return { remove, batchRemove }

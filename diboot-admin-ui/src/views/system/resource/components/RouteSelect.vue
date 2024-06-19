@@ -36,7 +36,7 @@ const changeComponentName = (val?: string) => {
   <div style="width: 100%">
     <el-select
       v-model="componentName"
-      placeholder="请选择组件"
+      :placeholder="$t('resource.placeholder.componentName')"
       clearable
       filterable
       :loading="viewMapLoading"
@@ -53,8 +53,8 @@ const changeComponentName = (val?: string) => {
           v-else-if="viewMap[componentName || ''] !== componentPath"
           :content="
             Object.values(viewMap).includes(componentPath || '')
-              ? '组件名称变更，以免页面缓存不生效，请重新选择！'
-              : '组件不存在，将无法加载菜单，请重新选择！'
+              ? $t('resource.componentNameChange')
+              : $t('resource.componentNonExist')
           "
         >
           <el-icon color="var(--el-color-error)">
