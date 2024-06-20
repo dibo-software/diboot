@@ -164,7 +164,7 @@ public class ParallelBindingManager {
             // 国际化绑定接口化
             i18nConfigService.bindI18nContent(voList, i18nCodeField, fieldAnnotation.getFieldName());
         } else {
-            log.warn("I18nConfigService未实现，无法翻译I18n注解: {}", i18nCodeField);
+            log.debug("I18nConfigService未初始化，无法翻译I18n注解: {}", i18nCodeField);
         }
     }
 

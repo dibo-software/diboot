@@ -138,7 +138,7 @@ public class SqlExecutor {
      * @return
      * @throws Exception
      */
-    public static boolean executeUpdate(String sqlStatement, List params) throws Exception{
+    public static boolean executeUpdate(String sqlStatement, Object... params) throws Exception{
         if (V.isEmpty(sqlStatement)){
             return false;
         }

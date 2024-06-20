@@ -25,6 +25,7 @@ const zhCN = {
   },
   scheduleJobLog: {
     startTime: '开始时间',
+    startTimeAlias: '执行时间',
     endTime: '结束时间',
     runStatus: '执行状态',
     triggerMode: '触发方式',
@@ -32,7 +33,12 @@ const zhCN = {
     paramJson: '参数',
     executeMsg: '执行结果信息',
     success: '成功',
-    fail: '失败'
+    fail: '失败',
+    title: '日志',
+    triggerModeOptions: {
+      auto: '自动',
+      manual: '手动'
+    }
   }
 }
 

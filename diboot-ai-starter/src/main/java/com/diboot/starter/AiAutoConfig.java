@@ -53,7 +53,7 @@ public class AiAutoConfig implements WebMvcConfigurer {
     private AiProperties aiProperties;
 
     public AiAutoConfig() {
-        log.info("初始化 AI 内核 自动配置");
+        log.info("初始化 AI 组件自动配置");
     }
 
     /**

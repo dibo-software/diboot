@@ -27,6 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultAiConfigurator implements AiConfigurator{
     @Override
     public void configure(AiConfiguration aiConfiguration) {
-        log.info("--------->  enabled  DefaultAiConfigurator");
+        log.info("启用 DefaultAiConfigurator");
     }
 }

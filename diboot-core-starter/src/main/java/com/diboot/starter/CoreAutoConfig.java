@@ -155,7 +155,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
         Jackson2ObjectMapperBuilder objectMapperBuilder = new Jackson2ObjectMapperBuilder();
         jsonCustomizer().customize(objectMapperBuilder);
-        log.info("启用diboot默认的Jackson自定义配置");
+        log.info("启用默认的Jackson自定义配置");
         return objectMapperBuilder;
     }
 

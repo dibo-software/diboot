@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Refresh, Search } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown, Search } from '@element-plus/icons-vue'
 import type { ScheduleJobLog } from '../type'
 import Detail from './Detail.vue'
 
@@ -47,28 +47,46 @@ const openDetail = (id: string) => {
 </script>
 
 <template>
-  <el-drawer v-model="visible" title="日志" size="850px">
+  <el-drawer v-model="visible" :title="$t('scheduleJobLog.title')" size="850px">
     <div class="list-page">
+      <el-header>
+        <el-space wrap class="list-operation">
+          <el-button v-has-permission="'logDelete'" @click="batchRemove(selectedKeys)">{{
+            $t('operation.batchDelete')
+          }}</el-button>
+          <el-space>
+            <el-select
+              v-model="queryParam.runStatus"
+              :label="$t('scheduleJobLog.runStatus')"
+              clearable
+              @change="onSearch"
+            >
+              <el-option :label="$t('scheduleJobLog.success')" value="S" />
+              <el-option :label="$t('scheduleJobLog.fail')" value="F" />
+            </el-select>
+            <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
+            <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
+            <el-button
+              :icon="searchState ? ArrowUp : ArrowDown"
+              :title="searchState ? $t('searchState.up') : $t('searchState.down')"
+              @click="searchState = !searchState"
+            />
+          </el-space>
+        </el-space>
+      </el-header>
+
       <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
         <el-row :gutter="18">
           <el-col :md="12" :sm="24">
-            <el-form-item label="执行结果">
-              <el-select v-model="queryParam.runStatus" clearable @change="onSearch">
-                <el-option label="成功" value="S" />
-                <el-option label="失败" value="F" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :md="12" :sm="24">
-            <el-form-item label="触发方式">
+            <el-form-item :label="$t('scheduleJobLog.triggerMode')">
               <el-select v-model="queryParam.triggerMode" clearable @change="onSearch">
-                <el-option label="自动" value="AUTO" />
-                <el-option label="手动" value="MANUAL" />
+                <el-option :label="$t('scheduleJobLog.triggerModeOptions.auto')" value="AUTO" />
+                <el-option :label="$t('scheduleJobLog.triggerModeOptions.manual')" value="MANUAL" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :md="12" :sm="24">
-            <el-form-item label="执行时间">
+            <el-form-item :label="$t('scheduleJobLog.startTimeAlias')">
               <date-range
                 :model-value="dateRangeQuery.startTime as [string, string]"
                 @update:model-value="dateRangeQuery.startTime = $event as [string, string]"
@@ -76,39 +94,27 @@ const openDetail = (id: string) => {
               />
             </el-form-item>
           </el-col>
-          <el-col :md="12" :sm="24" style="margin-left: auto">
-            <el-form-item>
-              <el-button type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
-              <el-button @click="resetFilter">{{ $t('operation.reset') }}</el-button>
-            </el-form-item>
-          </el-col>
         </el-row>
       </el-form>
-      <el-header>
-        <el-space wrap class="list-operation">
-          <el-button v-has-permission="'logDelete'" @click="batchRemove(selectedKeys)">批量删除</el-button>
-          <el-space>
-            <el-button :icon="Refresh" circle @click="getList()" />
-            <el-button :icon="Search" circle @click="searchState = !searchState" />
-          </el-space>
-        </el-space>
-      </el-header>
+
       <el-table
         ref="tableRef"
         v-loading="loading"
         :data="dataList"
         height="100%"
+        stripe
+        style="border-top: 1px solid var(--el-border-color-lighter)"
         @selection-change="(arr: ScheduleJobLog[]) => (selectedKeys = arr.map(e => e.id))"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="startTime" label="执行时间" align="center" width="165" />
-        <el-table-column prop="endTime" label="结束时间" align="center" width="165" />
-        <el-table-column prop="elapsedSeconds" label="耗时（s）" align="right" width="100" />
-        <el-table-column prop="triggerModeLabel" align="center" label="触发方式" />
-        <el-table-column prop="runStatus" align="center" label="执行结果">
+        <el-table-column prop="startTime" :label="$t('scheduleJobLog.startTimeAlias')" align="center" width="140" />
+        <el-table-column prop="endTime" :label="$t('scheduleJobLog.endTime')" align="center" width="140" />
+        <el-table-column prop="elapsedSeconds" :label="$t('scheduleJobLog.elapsedSeconds')" align="right" width="120" />
+        <el-table-column prop="triggerModeLabel" align="center" :label="$t('scheduleJobLog.triggerMode')" />
+        <el-table-column prop="runStatus" align="center" :label="$t('scheduleJobLog.runStatus')">
           <template #default="{ row }">
-            <el-tag v-if="row.runStatus === 'S'">成功</el-tag>
-            <el-tag v-else type="danger">失败</el-tag>
+            <el-tag v-if="row.runStatus === 'S'">{{ $t('scheduleJobLog.success') }}</el-tag>
+            <el-tag v-else type="danger">{{ $t('scheduleJobLog.fail') }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="$t('operation.label')" align="center" width="130" fixed="right">
@@ -117,7 +123,7 @@ const openDetail = (id: string) => {
               >{{ $t('title.detail') }}
             </el-button>
             <el-button v-has-permission="'logDelete'" text bg type="primary" size="small" @click="remove(row.id)">
-              删除
+              {{ $t('operation.delete') }}
             </el-button>
           </template>
         </el-table-column>

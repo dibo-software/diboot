@@ -10,9 +10,6 @@ const { queryParam, onSearch, resetFilter, getList, loading, dataList, paginatio
 
 getList()
 
-// 搜索区折叠
-const searchState = ref(false)
-
 const formRef = ref()
 const openForm = (id?: string) => {
   formRef.value?.open(id)

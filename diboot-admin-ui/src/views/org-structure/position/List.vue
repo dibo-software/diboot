@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Position">
-import { Search, Plus } from '@element-plus/icons-vue'
+import { Search, Plus, ArrowDown } from '@element-plus/icons-vue'
 import type { Position } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'

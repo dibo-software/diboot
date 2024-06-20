@@ -40,7 +40,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
         <slot name="topNav" />
       </div>
       <menu-search class="item" />
-      <div class="item">
+      <div v-if="router.hasRoute('ChatAI')" class="item">
         <el-tooltip effect="dark" :content="$t('layout.header.chatAi')" placement="bottom" :show-after="300">
           <el-icon :size="24" style="color: #21ba45">
             <icon name="Local:ChatAi" @click="openChatAi" />

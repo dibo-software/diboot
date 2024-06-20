@@ -17,6 +17,7 @@ package com.diboot.core.init;
 
 import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
+import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.config.Cons;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -109,6 +110,21 @@ public class CoreRedisAutoConfig {
         }};
         DynamicRedisCacheManager redisCacheManager = new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
         return new DictionaryCacheManager(redisCacheManager);
+    }
+
+    /**
+     * 国际化等基础数据缓存管理器
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public I18nCacheManager i18nCacheManager(RedisTemplate redisTemplate) {
+        log.info("初始化 I18n Redis缓存: DynamicRedisCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(Cons.CACHE_NAME_I18N, 24*60);
+        }};
+        DynamicRedisCacheManager memoryCacheManager = new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
+        return new I18nCacheManager(memoryCacheManager);
     }
 
 }

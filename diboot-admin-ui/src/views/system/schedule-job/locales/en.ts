@@ -26,6 +26,7 @@ const en: Locale = {
   },
   scheduleJobLog: {
     startTime: 'Start Time',
+    startTimeAlias: 'Execute Time',
     endTime: 'End Time',
     runStatus: 'Execution Status',
     triggerMode: 'Trigger Mode',
@@ -33,7 +34,12 @@ const en: Locale = {
     paramJson: 'Parameters',
     executeMsg: 'Execution Result Information',
     success: 'Success',
-    fail: 'Failure'
+    fail: 'Failure',
+    title: 'Job Log',
+    triggerModeOptions: {
+      auto: 'Auto',
+      manual: 'Manual'
+    }
   }
 }
 
