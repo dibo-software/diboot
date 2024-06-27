@@ -192,15 +192,6 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 扩展Mybatis 类型转换，支持日期类型转为LocalDate等
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public ConfigurationCustomizer typeHandlerRegistry() {
-        return configuration -> configuration.getTypeHandlerRegistry().register(java.sql.Date.class, JdbcType.DATE, LocalDateTypeHandler.class);
-    }
-
-    /**
      * 字典等基础数据缓存管理器
      * @return
      */
@@ -208,7 +199,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     public DictionaryCacheManager dictionaryCacheManager() {
         log.info("初始化 Dictionary 内存缓存: DynamicMemoryCacheManager");
-        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>() {{
             put(Cons.CACHE_NAME_DICTIONARY, 24*60);
         }};
         DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);

@@ -27,6 +27,7 @@ import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
 import com.diboot.core.binding.query.dynamic.ExtQueryWrapper;
+import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.entity.Dictionary;
@@ -68,6 +69,9 @@ public class BaseServiceTest {
 
     @Autowired
     DictionaryServiceExtImpl dictionaryService;
+
+    @Autowired
+    private DictionaryCacheManager dictionaryCacheManager;
 
     @Autowired
     UserService userService;
@@ -133,6 +137,7 @@ public class BaseServiceTest {
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
+        dictionary.setCreateTime(new Date());
         dictionaryService.createEntity(dictionary);
         Assert.assertTrue(dictionary.getPrimaryKeyVal() != null);
         // 查询是否创建成功
@@ -158,6 +163,7 @@ public class BaseServiceTest {
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
+        dictionary.setCreateTime(new Date());
         boolean success = dictionaryService.createEntity(dictionary);
         Assert.assertTrue(success);
 
@@ -170,6 +176,7 @@ public class BaseServiceTest {
             dict.setItemName(itemNames[i]);
             dict.setItemValue(itemValues[i]);
             dict.setParentId(dictionary.getId());
+            dict.setCreateTime(new Date());
             dictionaryList.add(dict);
         }
         success = dictionaryService.createEntities(dictionaryList);
@@ -184,9 +191,15 @@ public class BaseServiceTest {
 
     @Test
     public void testLabelValue(){
-        List<LabelValue> labelValueList = dictionaryService.getLabelValueList("GENDER");
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("item_name", "item_value");
+        queryWrapper.eq("type", "GENDER").gt("parent_id", 0);
+        List<LabelValue> labelValueList = dictionaryService.getLabelValueList(queryWrapper);
         Assert.assertTrue(labelValueList.size() >= 2);
-        Assert.assertTrue(labelValueList.get(0).getValue().equals("M") || labelValueList.get(1).getValue().equals("M"));
+
+        labelValueList = dictionaryService.getLabelValueList("GENDER");
+        Assert.assertTrue(labelValueList.size() >= 2);
+        Assert.assertTrue("M".equals(labelValueList.get(0).getValue()) || "M".equals(labelValueList.get(1).getValue()));
         Map<String, Object> labelValueMap = BeanUtils.convertLabelValueList2Map(labelValueList);
         Assert.assertTrue(labelValueMap.get("女").equals("F"));
     }
@@ -231,6 +244,7 @@ public class BaseServiceTest {
         dictionary.setType(TYPE);
         dictionary.setItemName("证件类型");
         dictionary.setParentId(0L);
+        dictionary.setCreateTime(new Date());
         // 子项
         List<Dictionary> dictionaryList = new ArrayList<>();
         String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
@@ -240,6 +254,7 @@ public class BaseServiceTest {
             dict.setItemName(itemNames[i]);
             dict.setItemValue(itemValues[i]);
             dict.setParentId(dictionary.getId());
+            dict.setCreateTime(new Date());
             dictionaryList.add(dict);
         }
         boolean success = dictionaryService.createEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
@@ -252,6 +267,7 @@ public class BaseServiceTest {
         dict.setType(TYPE);
         dict.setItemName("港澳通行证");
         dict.setItemValue("GATXZ");
+        dict.setCreateTime(new Date());
         dictionaryList.add(dict);
         success = dictionaryService.updateEntityAndRelatedEntities(dictionary, dictionaryList, Dictionary::setParentId);
         Assert.assertTrue(success);
@@ -589,6 +605,72 @@ public class BaseServiceTest {
         Assert.assertTrue(simpleVOList.get(0).getChildren().size() >= 2);
         Assert.assertTrue(dictionaryService.exists(query));
         Assert.assertTrue(dictionaryService.getValuesOfField(query, Dictionary::getItemValue).isEmpty());
+    }
+
+    /**
+     * 测试字典缓存
+     */
+    @Test
+    public void testDictionaryCache(){
+        // 创建
+        String TYPE = "ID_TYPE";
+        // 定义
+        DictionaryVO dictionary = new DictionaryVO();
+        dictionary.setType(TYPE);
+        dictionary.setItemName("证件类型");
+        dictionary.setParentId(0L);
+        dictionary.setCreateTime(new Date());
+        // 子项
+        List<Dictionary> dictionaryList = new ArrayList<>();
+        String[] itemNames = {"身份证", "驾照", "护照"}, itemValues = {"SFZ","JZ","HZ"};
+        for(int i=0; i<itemNames.length; i++){
+            Dictionary dict = new Dictionary();
+            dict.setType(TYPE);
+            dict.setItemName(itemNames[i]);
+            dict.setItemValue(itemValues[i]);
+            dict.setParentId(dictionary.getId());
+            dict.setCreateTime(new Date());
+            dictionaryList.add(dict);
+        }
+        dictionary.setChildren(dictionaryList);
+        dictionaryService.createDictAndChildren(dictionary);
+
+        // 查询
+        List<LabelValue> labelValueList = dictionaryService.getLabelValueList(TYPE);
+        Assert.assertTrue(labelValueList != null && labelValueList.size() == itemNames.length);
+        // 检查缓存
+        List<Dictionary> cacheList = dictionaryCacheManager.getCachedItems(TYPE);
+        Assert.assertTrue(cacheList != null && cacheList.size() == itemNames.length);
+
+        Dictionary dict = new Dictionary();
+        dict.setType(TYPE);
+        dict.setItemName("追加");
+        dict.setItemValue("ZJ");
+        dict.setParentId(dictionary.getId());
+        dict.setCreateTime(new Date());
+
+        dictionaryService.createEntity(dict);
+        // 检查缓存
+        cacheList = dictionaryCacheManager.getCachedItems(TYPE);
+        Assert.assertTrue(cacheList == null);
+
+        dict.setItemValue("追加测试");
+        dict.setItemName("ZJCS");
+        dictionary.getChildren().add(dict);
+        dictionaryService.updateDictAndChildren(dictionary);
+        // 检查缓存
+        cacheList = dictionaryCacheManager.getCachedItems(TYPE);
+        Assert.assertTrue(cacheList == null);
+
+        dictionaryService.getItemsByType(TYPE);
+        // 检查缓存
+        cacheList = dictionaryCacheManager.getCachedItems(TYPE);
+        Assert.assertTrue(cacheList != null && cacheList.size() > itemNames.length);
+
+        dictionaryService.deleteDictAndChildren(dictionary.getId());
+        // 检查缓存
+        cacheList = dictionaryCacheManager.getCachedItems(TYPE);
+        Assert.assertTrue(cacheList == null);
     }
 
 }

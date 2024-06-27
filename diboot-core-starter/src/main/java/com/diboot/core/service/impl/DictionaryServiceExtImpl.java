@@ -27,6 +27,7 @@ import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
 import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.DictionaryVO;
@@ -60,18 +61,30 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
      * 数据变动前先清空缓存
      * @param entity
      */
-    protected void beforeUpdate(Dictionary entity) {
+    @Override
+    protected void beforeCreateEntity(Dictionary entity){
         dictionaryCacheManager.removeCachedItems(entity.getType());
         log.debug("字典 {}:{} 的缓存已被移除", entity.getItemName(), entity.getType());
     }
 
     /**
      * 数据变动前先清空缓存
-     * @param fieldKey
+     * @param entity
+     */
+    @Override
+    protected void beforeUpdateEntity(Dictionary entity){
+        dictionaryCacheManager.removeCachedItems(entity.getType());
+        log.debug("字典 {}:{} 的缓存已被移除", entity.getItemName(), entity.getType());
+    }
+
+    /**
+     * 数据变动前先清空缓存
      * @param fieldVal
      */
-    protected void beforeDelete(String fieldKey, Object fieldVal) {
-        List<String> types = getValuesOfField(fieldKey, fieldVal, Dictionary::getType);
+    @Override
+    protected void beforeDelete(Object fieldVal) {
+        String pk = ContextHelper.getIdColumnName(getEntityClass());
+        List<String> types = getValuesOfField(pk, fieldVal, Dictionary::getType);
         if(V.isEmpty(types)){
             return;
         }
@@ -86,14 +99,15 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
      * @param type
      * @return
      */
-    protected List<Dictionary> getEntityListByType(String type) {
+    @Override
+    public List<Dictionary> getItemsByType(String type) {
         List<Dictionary> dictList = dictionaryCacheManager.getCachedItems(type);
         if(dictList == null) {
             // 构建查询条件
             LambdaQueryWrapper<Dictionary> queryDictionary = new QueryWrapper<Dictionary>().lambda()
-                    .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtension)
+                    .select(Dictionary::getItemName, Dictionary::getItemValue, Dictionary::getExtdata)
                     .eq(Dictionary::getType, type)
-                    .ge(Dictionary::getParentId, 0)
+                    .gt(Dictionary::getParentId, 0)
                     .orderByAsc(Arrays.asList(Dictionary::getSortId, Dictionary::getId));
             dictList = super.getEntityList(queryDictionary);
             log.debug("查询到字典 {} 的选项数据", type);
@@ -109,7 +123,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Override
     public List<LabelValue> getLabelValueList(String type) {
         // 根据类型查询并返回
-        List<Dictionary> dictionaryList = getEntityListByType(type);
+        List<Dictionary> dictionaryList = getItemsByType(type);
         return dictionaryList.stream()
                 .map(Dictionary::toLabelValue)
                 .collect(Collectors.toList());
@@ -242,7 +256,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteDictAndChildren(Long id) {
-        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper();
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
                 .eq(Dictionary::getId, id)
                 .or()
@@ -263,30 +277,54 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             if (V.isEmpty(value)) {
                 continue;
             }
-            LabelValue labelVal = map.get(value);
-            if (labelVal == null) {
-                if(value instanceof String) {
-                    if(((String)value).contains(S.SEPARATOR)) {
-                        List<String> labelList = new ArrayList<>();
-                        for (String key : ((String)value).split(S.SEPARATOR)) {
-                            labelList.add(map.get(key));
+            // 直接匹配无结果
+            if(value instanceof String) {
+                LabelValue matchedItem = map.get((String)value);
+                if (matchedItem != null) {
+                    BeanUtils.setProperty(item, setFieldName, matchedItem.getLabel());
+                    continue;
+                }
+                if(((String)value).contains(S.SEPARATOR)) {
+                    List<String> labelList = new ArrayList<>();
+                    for (String key : ((String)value).split(S.SEPARATOR)) {
+                        LabelValue labelValue = map.get(key);
+                        if(labelValue == null) {
+                            continue;
                         }
-                        label = S.join(labelList);
+                        labelList.add(labelValue.getLabel());
                     }
-                    else {
-                        log.warn("未匹配到字典选项: {}，存储值: {}", type, value);
+                    if(V.notEmpty(labelList)) {
+                        BeanUtils.setProperty(item, setFieldName, S.join(labelList));
                     }
                 }
-                else if(value instanceof Collection) {
-                    List<String> labelList = new ArrayList<>();
-                    for (Object key : (Collection)value) {
-                        labelList.add(map.get((String)key));
-                    }
-                    label = labelList;
+                else {
+                    log.warn("未匹配到字典选项: {}，存储值: {}", type, value);
                 }
             }
-            if (V.notEmpty(label)) {
-                BeanUtils.setProperty(item, setFieldName, label);
+            else if(value instanceof Collection) {
+                List<String> labelList = new ArrayList<>();
+                for (Object key : (Collection)value) {
+                    LabelValue labelValue = map.get((String)key);
+                    if(labelValue == null) {
+                        continue;
+                    }
+                    labelList.add(labelValue.getLabel());
+                }
+                BeanUtils.setProperty(item, setFieldName, labelList);
+            }
+            else if (value.getClass().isArray()) {
+                List<String> labelList = new ArrayList<>();
+                for (Object key : (Object[])value) {
+                    LabelValue labelValue = map.get((String)key);
+                    if(labelValue == null) {
+                        continue;
+                    }
+                    labelList.add(labelValue.getLabel());
+                }
+                BeanUtils.setProperty(item, setFieldName, labelList);
+            }
+            else {
+                log.warn("不支持的属性类型: {}，存储值: {}", value.getClass().getSimpleName(), value);
             }
         }
     }

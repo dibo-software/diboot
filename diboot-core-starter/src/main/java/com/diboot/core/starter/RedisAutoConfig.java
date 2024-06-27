@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
@@ -47,6 +48,7 @@ import java.util.Map;
  * @author wind
  * @version v2.3.0
  */
+@Slf4j
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RedisOperations.class)
 @ConditionalOnResource(resources = "org/springframework/data/redis")
@@ -73,6 +75,7 @@ public class RedisAutoConfig {
     }
 
     private Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer() {
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL , JsonAutoDetect.Visibility.ANY);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES , false);
@@ -83,7 +86,8 @@ public class RedisAutoConfig {
         FilterProvider filterProvider = new SimpleFilterProvider().addFilter("rewrite-bean" , SimpleBeanPropertyFilter.serializeAllExcept("realmNames"));
         objectMapper.setFilterProvider(filterProvider);
 
-        return new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
+        return jackson2JsonRedisSerializer;
     }
 
     /**
@@ -94,7 +98,7 @@ public class RedisAutoConfig {
     @ConditionalOnMissingBean
     public DictionaryCacheManager dictionaryCacheManager(RedisTemplate redisTemplate) {
         log.info("初始化 Dictionary Redis缓存: DynamicRedisCacheManager");
-        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>() {{
             put(Cons.CACHE_NAME_DICTIONARY, 24*60);
         }};
         DynamicRedisCacheManager redisCacheManager = new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);

@@ -79,25 +79,6 @@ public interface BaseService<T> {
     T getEntity(Serializable id);
 
     /**
-     * 获取entity某个属性值
-     * @param idGetterFn id getter
-     * @param idVal id值
-     * @param getterFn 返回属性getter
-     * @return
-     */
-    <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn);
-
-    /**
-     * 获取entity某个属性值
-     *
-     * @param queryWrapper
-     * @param getterFn
-     * @return
-     * @param <FT>
-     */
-    <FT> FT getValueOfField(LambdaQueryWrapper<T> queryWrapper, SFunction<T, FT> getterFn);
-
-    /**
      * 创建Entity实体
      * @param entity
      * @return true:成功, false:失败
@@ -265,6 +246,43 @@ public interface BaseService<T> {
      * @throws Exception
      */
     List<T> getEntityList(Wrapper queryWrapper, Pagination pagination);
+
+    /**
+     * 获取entity某个属性值
+     * @param idVal id值
+     * @param getterFn 返回属性getter
+     * @return
+     */
+    <FT> FT getValueOfField(Serializable idVal, SFunction<T, FT> getterFn);
+
+    /**
+     * 获取entity某个属性值
+     * @param idFieldFn 查询字段
+     * @param idVal 查询字段值
+     * @param getterFn 返回属性getter
+     * @return
+     */
+    <FT> FT getValueOfField(SFunction<T, ?> idFieldFn, Serializable idVal, SFunction<T, FT> getterFn);
+
+    /**
+     * 获取entity某个属性值
+     *
+     * @param queryWrapper
+     * @param getterFn
+     * @return
+     * @param <FT>
+     */
+    <FT> FT getValueOfField(LambdaQueryWrapper<T> queryWrapper, SFunction<T, FT> getterFn);
+
+    /**
+     * 根据指定的字段和值，获取匹配的结果字段值
+     * @param fieldKey
+     * @param fieldVal
+     * @param getterFn
+     * @return
+     * @param <FT>
+     */
+    <FT> List<FT> getValuesOfField(String fieldKey, Object fieldVal, SFunction<T, FT> getterFn);
 
     /**
      * 获取指定条件的Entity ID集合
