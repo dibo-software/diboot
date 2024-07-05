@@ -78,7 +78,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
             }
             if(V.notEmpty(countMapList)){
                 valueListCountMap = this.buildMatchKey2ListCountMap(countMapList);
-                ResultAssembler.bindPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueListCountMap, null);
+                ResultAssembler.bindCountPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueListCountMap);
             }
         }
         else{
@@ -101,7 +101,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
                 valueListCountMap.put(entry.getKey(), count);
             }
             // 绑定结果
-            ResultAssembler.bindPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueListCountMap, null);
+            ResultAssembler.bindCountPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueListCountMap);
         }
     }
 

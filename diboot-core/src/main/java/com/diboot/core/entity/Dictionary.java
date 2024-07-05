@@ -18,6 +18,7 @@ package com.diboot.core.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
+import com.diboot.core.vo.LabelValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -104,5 +105,13 @@ public class Dictionary extends BaseExtEntity {
      */
     @TableField("is_editable")
     private Boolean isEditable;
+
+    /**
+     * 转换为选项
+     * @return
+     */
+    public LabelValue toLabelValue() {
+        return new LabelValue(this.getItemName(), this.getItemValue()).setExt(this.getExtdata());
+    }
 
 }

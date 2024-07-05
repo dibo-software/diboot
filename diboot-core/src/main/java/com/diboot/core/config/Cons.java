@@ -238,10 +238,10 @@ public class Cons {
             return label;
         }
         public static String getLabel(String val){
-            if(val.equalsIgnoreCase(A.name())){
-                return A.label;
+            if(val.equalsIgnoreCase(I.name())){
+                return I.label;
             }
-            return I.label;
+            return A.label;
         }
     }
 
@@ -273,5 +273,21 @@ public class Cons {
             return F.label;
         }
     }
+
+    /**
+     * 数据范围权限类型 的 字典编码
+     */
+    public enum DATA_PERMISSION_TYPE {
+        SELF,
+        SELF_AND_SUB,
+        DEPT,
+        DEPT_AND_SUB,
+        ALL
+    }
+
+    /**
+     * 字典的缓存key
+     */
+    public static String CACHE_NAME_DICTIONARY = "diboot:dictionary";
 
 }

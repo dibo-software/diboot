@@ -110,7 +110,7 @@ public class JoinConditionManager extends BaseConditionManager {
                 if(joiner.getMiddleTable() != null && left.startsWith(joiner.getMiddleTableAlias() + ".")){
                     currentSegments = middleTableOnSegments;
                 }
-                if(expression.isNot() == false){
+                if(!expression.isNot()){
                     currentSegments.add(left + " IS NULL");
                 }
                 else{
@@ -125,10 +125,10 @@ public class JoinConditionManager extends BaseConditionManager {
                     currentSegments = middleTableOnSegments;
                 }
                 if(expression.isNot() == false){
-                    currentSegments.add(left + " IN " + expression.getRightItemsList().toString());
+                    currentSegments.add(left + " IN " + expression.getRightExpression().toString());
                 }
                 else{
-                    currentSegments.add(left + " NOT IN " + expression.getRightItemsList().toString());
+                    currentSegments.add(left + " NOT IN " + expression.getRightExpression().toString());
                 }
             }
             else if(operator instanceof Between){

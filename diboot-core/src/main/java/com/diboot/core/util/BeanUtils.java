@@ -17,6 +17,9 @@ package com.diboot.core.util;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.config.Cons;
 import com.diboot.core.converter.*;
 import com.diboot.core.data.copy.AcceptAnnoCopier;
@@ -40,6 +43,8 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,7 +109,7 @@ public class BeanUtils {
             copyProperties(source, target);
         }
         catch (Exception e){
-            log.warn("对象转换异常, class="+clazz.getName());
+            log.warn("对象转换异常, class={}", clazz.getName());
         }
         return target;
     }
@@ -135,7 +140,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.error("对象转换异常, class: {}, error: {}", clazz.getName(), e);
+            log.error("对象转换异常, class: {}, error: {}", clazz.getName(), e.getMessage());
             return Collections.emptyList();
         }
         return resultList;
@@ -156,7 +161,7 @@ public class BeanUtils {
                 beanWrapper.setPropertyValue(entry.getKey(), entry.getValue());
             }
             catch (Exception e){
-                log.warn("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
+                log.debug("复制属性{}.{}异常: {}", model.getClass().getSimpleName(), entry.getKey(), e.getMessage());
             }
         }
     }
@@ -309,7 +314,7 @@ public class BeanUtils {
                     allListMap.put(key, model);
                 }
                 else{
-                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
+                    log.warn("{} 的属性 {} 值存在 null，转换结果需要确认!", model.getClass().getName(), fields[0]);
                 }
             }
         }
@@ -353,7 +358,7 @@ public class BeanUtils {
                     list.add(model);
                 }
                 else{
-                    log.warn(model.getClass().getName() + " 的属性 "+fields[0]+" 值存在 null，转换结果需要确认!");
+                    log.warn("{} 的属性 {} 值存在 null，转换结果需要确认!", model.getClass().getName(), fields[0]);
                 }
             }
         } catch (Exception e){
@@ -625,7 +630,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("提取属性值异常, getterPropName="+getterPropName, e);
+            log.warn("提取属性值异常, getterPropName={}", getterPropName, e);
         }
         return fieldValueList;
     }
@@ -655,7 +660,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("提取属性值异常, getterPropName="+getterPropName, e);
+            log.warn("提取属性值异常, getterPropName={}", getterPropName, e);
         }
         return fieldValueList;
     }
@@ -711,7 +716,7 @@ public class BeanUtils {
             }
         }
         catch (Exception e){
-            log.warn("设置属性值异常, setterFieldName="+setterFieldName, e);
+            log.warn("设置属性值异常, setterFieldName={}", setterFieldName, e);
         }
     }
 
@@ -729,7 +734,7 @@ public class BeanUtils {
             return cloneObj;
         }
         catch (Exception e){
-            log.warn("Clone Object "+ent.getClass().getSimpleName()+" error", e);
+            log.warn("Clone Object {} error", ent.getClass().getSimpleName(), e);
             return ent;
         }
     }
@@ -752,6 +757,17 @@ public class BeanUtils {
     public static <T,R> String convertToFieldName(ISetter<T,R> fn) {
         SerializedLambda lambda = getSerializedLambda(fn);
         return PropertyNamer.methodToProperty(lambda.getImplMethodName());
+    }
+
+    /**
+     * 转换SFunction为属性名
+     * @param getterFn
+     * @param <R>
+     * @return
+     */
+    public static <R> String convertSFunctionToFieldName(SFunction<R, ?> getterFn) {
+        LambdaMeta lambdaMeta = LambdaUtils.extract(getterFn);
+        return PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName());
     }
 
      /**
@@ -832,7 +848,7 @@ public class BeanUtils {
         if(V.notEmpty(types) && types.length > index){
             return types[index].resolve();
         }
-        log.debug("无法从 {} 类定义中获取泛型类{}", hostClass.getName(), index);
+        log.debug("无法从 {} 类定义中获取第 {} 个泛型类", hostClass.getName(), index);
         return null;
     }
 
@@ -886,7 +902,7 @@ public class BeanUtils {
             lambda = (SerializedLambda) method.invoke(fn);
         }
         catch (Exception e){
-            log.error("获取SerializedLambda异常, class="+fn.getClass().getSimpleName(), e);
+            log.error("获取SerializedLambda异常, class={}", fn.getClass().getSimpleName(), e);
         }
         return lambda;
     }
@@ -963,6 +979,42 @@ public class BeanUtils {
             return Integer.parseInt(S.valueOf(value));
         }
         return value;
+    }
+
+    /**
+     * 获取字段的真实类型（集合取泛型参数）
+     * @param clazz
+     * @param fieldName
+     * @return
+     */
+    public static Class<?> getFieldActualType(Class<?> clazz, String fieldName) {
+        Field field = extractField(clazz, fieldName);
+        if (field == null) {
+            log.warn("class {} 中无字段 {}", clazz.getName(), fieldName);
+            return null;
+        }
+        return getFieldActualType(field);
+    }
+
+    /**
+     * 获取字段的真实类型（集合取泛型参数）
+     * @param field
+     * @return
+     */
+    public static Class<?> getFieldActualType(Field field) {
+        Type genericType = field.getGenericType();
+        if(genericType instanceof Class) {
+            return (Class) genericType;
+        }
+        // 得到泛型里的class类型对象
+        else if (genericType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) genericType;
+            return (Class<?>)pt.getActualTypeArguments()[0];
+        }
+        else{
+            log.warn("非预期的GenericType : {}", genericType.getTypeName());
+            return null;
+        }
     }
 
     /**

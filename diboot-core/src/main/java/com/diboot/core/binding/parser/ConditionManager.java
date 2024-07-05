@@ -170,31 +170,31 @@ public class ConditionManager extends BaseConditionManager{
             else if(operator instanceof InExpression){
                 InExpression express = (InExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     // this.xx in ('abc')
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
-                        List<Object> consValues = extractConsValues(express.getRightItemsList());
+                        List<Object> consValues = extractConsValues(express.getRightExpression());
                         binder.joinOnFieldComparison(annoColumn, Comparison.IN, consValues);
                     }
                     else {
-                        binder.andApply(annoColumn + " IN " + express.getRightItemsList().toString());
+                        binder.andApply(annoColumn + " IN " + express.getRightExpression().toString());
                     }
                 }
                 else{
                     // this.xx not in ('abc')
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
-                        List<Object> consValues = extractConsValues(express.getRightItemsList());
+                        List<Object> consValues = extractConsValues(express.getRightExpression());
                         binder.joinOnFieldComparison(annoColumn, Comparison.NOT_IN, consValues);
                     }
                     else {
-                        binder.andApply(annoColumn + " NOT IN " + express.getRightItemsList().toString());
+                        binder.andApply(annoColumn + " NOT IN " + express.getRightExpression().toString());
                     }
                 }
             }
             else if(operator instanceof Between){
                 Between express = (Between)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     binder.andBetween(annoColumn, express.getBetweenExpressionStart().toString(), express.getBetweenExpressionEnd().toString());
                 }
                 else{
@@ -205,7 +205,7 @@ public class ConditionManager extends BaseConditionManager{
                 LikeExpression express = (LikeExpression)operator;
                 String annoColumn = removeLeftAlias(express.getLeftExpression().toString());
                 String value = express.getRightExpression().toString();
-                if(express.isNot() == false){
+                if(!express.isNot()){
                     // this.xx != 'abc'
                     if(isCurrentObjColumn(express.getLeftExpression().toString())){
                         StringValue valueObj = (StringValue) express.getRightExpression();
@@ -374,7 +374,7 @@ public class ConditionManager extends BaseConditionManager{
      * @return
      */
     private static Object extractConsValue(Expression expression) {
-        Object consValue = null;
+        Object consValue;
         if(expression instanceof StringValue) {
             consValue = ((StringValue)expression).getValue();
         }
@@ -394,7 +394,7 @@ public class ConditionManager extends BaseConditionManager{
      * @param itemsList
      * @return
      */
-    private static List<Object> extractConsValues(ItemsList itemsList) {
+    private static List<Object> extractConsValues(Expression itemsList) {
         if(itemsList instanceof ExpressionList) {
             List<Expression> expressions = ((ExpressionList)itemsList).getExpressions();
             List list = new ArrayList();

@@ -20,6 +20,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.mapper.DynamicQueryMapper;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,8 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
         Class<?> entityClass = BindingCacheManager.getEntityClassByTable(S.removeEsc(table.getName()));
         // 无权限检查点注解，不处理
         if (entityClass == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(entityClass)) {
-            noCheckpointCache.add(mappedStatementId);
+            if (!S.substringBeforeLast(mappedStatementId, ".").equals(DynamicQueryMapper.class.getName()))
+                noCheckpointCache.add(mappedStatementId);
             return null;
         }
         return buildDataAccessExpression(table, entityClass);

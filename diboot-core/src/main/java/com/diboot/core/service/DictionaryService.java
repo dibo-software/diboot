@@ -29,6 +29,8 @@ import java.util.List;
  */
 public interface DictionaryService extends BaseService<Dictionary>{
 
+    List<Dictionary> getItemsByType(String type);
+
     /***
      * 获取对应类型的键值对
      * @param type

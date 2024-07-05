@@ -109,8 +109,22 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	}
 
 	@Override
-	public <FT> FT getValueOfField(SFunction<T, ?> idGetterFn, Serializable idVal, SFunction<T, FT> getterFn) {
-		return getValueOfField(Wrappers.<T>lambdaQuery().eq(idGetterFn, idVal), getterFn);
+	public <FT> FT getValueOfField(Serializable idVal, SFunction<T, FT> getterFn) {
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(getEntityClass());
+		String fetchCol = propInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>()
+				.select(propInfo.getIdColumn(), fetchCol)
+				.eq(propInfo.getIdColumn(), idVal);
+		T entity = getSingleEntity(queryWrapper);
+		if(entity == null){
+			return null;
+		}
+		return getterFn.apply(entity);
+	}
+
+	@Override
+	public <FT> FT getValueOfField(SFunction<T, ?> queryFieldFn, Serializable queryFieldVal, SFunction<T, FT> getterFn) {
+		return getValueOfField(Wrappers.<T>lambdaQuery().eq(queryFieldFn, queryFieldVal), getterFn);
 	}
 
 	@Override
@@ -122,6 +136,28 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return getterFn.apply(entity);
 	}
 
+	@Override
+	public <FT> List<FT> getValuesOfField(String fieldKey, Object fieldVal, SFunction<T, FT> getterFn) {
+		if(fieldVal == null) {
+			return null;
+		}
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(getEntityClass());
+		String fetchCol = propInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
+		String conditionCol = propInfo.getColumnByField(fieldKey);
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(fetchCol);
+		if((fieldVal instanceof Collection)){
+			queryWrapper.in(conditionCol, (Collection<?>) fieldVal);
+		}
+		else if(fieldVal.getClass().isArray()){
+			queryWrapper.in(conditionCol, (Object[]) fieldVal);
+		}
+		else {
+			queryWrapper.eq(conditionCol, fieldVal);
+		}
+		return getValuesOfField(queryWrapper, getterFn);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean createEntity(T entity) {
 		if(entity == null){
@@ -141,6 +177,13 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * 用于创建之前的自动填充等场景调用
 	 */
 	protected void beforeCreateEntity(T entity){
+	}
+
+	/**
+	 * 删除数据的前拦截，值可能为单值或集合
+	 * @param entityIds
+	 */
+	protected void beforeDelete(Object entityIds) {
 	}
 
 	@Override
@@ -485,7 +528,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public boolean deleteEntity(Serializable id) {
-		return super.removeById(id);
+		this.beforeDelete(id);
+		boolean success = super.removeById(id);
+		return success;
 	}
 
     @Override
@@ -495,10 +540,25 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
         return this.getMapper().cancelDeletedById(tableName, id) > 0;
     }
 
+	@Transactional(rollbackFor = Exception.class)
     @Override
 	public boolean deleteEntities(Wrapper queryWrapper){
-		// 执行
-		return super.remove(queryWrapper);
+		Class<?> entityClass = getEntityClass();
+		// 执行查询获取匹配ids
+		// 优化SQL，只查询id字段
+		if(queryWrapper instanceof QueryWrapper){
+			String idCol = ContextHelper.getIdColumnName(entityClass);
+			((QueryWrapper)queryWrapper).select(idCol);
+		}
+		List<T> entityList = getEntityList(queryWrapper);
+		if(V.isEmpty(entityList)){
+			return false;
+		}
+		String pk = ContextHelper.getIdFieldName(entityClass);
+		List entityIds = BeanUtils.collectToList(entityList, pk);
+		this.beforeDelete(entityIds);
+		boolean success = super.removeByIds(entityIds);
+		return success;
 	}
 
 	@Override
@@ -507,7 +567,9 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(V.isEmpty(entityIds)){
 			return false;
 		}
-		return super.removeByIds(entityIds);
+		this.beforeDelete(entityIds);
+		boolean success = super.removeByIds(entityIds);
+		return success;
 	}
 
 	@Override
@@ -528,18 +590,18 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 		// 如果是动态join，则调用JoinsBinder
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
-			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, getEntityClass(), pagination);
 		}
 		else if(queryWrapper instanceof QueryWrapper) {
 			QueryWrapper mpQueryWrapper = ((QueryWrapper)queryWrapper);
 			if(mpQueryWrapper.getEntityClass() == null) {
-				mpQueryWrapper.setEntityClass(entityClass);
+				mpQueryWrapper.setEntityClass(getEntityClass());
 			}
 		}
 		else if(queryWrapper instanceof LambdaQueryWrapper) {
 			LambdaQueryWrapper mpQueryWrapper = ((LambdaQueryWrapper)queryWrapper);
 			if(mpQueryWrapper.getEntityClass() == null) {
-				mpQueryWrapper.setEntityClass(entityClass);
+				mpQueryWrapper.setEntityClass(getEntityClass());
 			}
 		}
 		// 否则，调用MP默认实现
@@ -573,7 +635,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 */
 	@Override
 	public <FT> List<FT> getValuesOfField(Wrapper queryWrapper, SFunction<T, FT> getterFn){
-		LambdaQueryWrapper query = null;
+		LambdaQueryWrapper<T> query = null;
 		List<T> entityList = null;
 		// 支持 ChainQuery
 		if (queryWrapper instanceof ChainQuery) {
@@ -590,7 +652,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 如果是动态join，则调用JoinsBinder
 		query.select(getterFn);
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
-			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, entityClass, null);
+			entityList = Binder.joinQueryList( (DynamicJoinQueryWrapper)queryWrapper, getEntityClass(), null);
 		} else{
 			entityList = getEntityList(query);
 		}
@@ -621,7 +683,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
 			Pagination pagination = new Pagination();
 			pagination.setPageIndex(1).setPageSize(limitCount);
-			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, entityClass, pagination);
+			return Binder.joinQueryList((DynamicJoinQueryWrapper)queryWrapper, getEntityClass(), pagination);
 		}
 		Page<T> page = new Page<>(1, limitCount);
 		page.setSearchCount(false);
@@ -633,7 +695,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public T getSingleEntity(Wrapper queryWrapper) {
 		// 如果是动态join，则调用JoinsBinder
 		if(queryWrapper instanceof DynamicJoinQueryWrapper){
-			return (T)Binder.joinQueryOne((DynamicJoinQueryWrapper)queryWrapper, entityClass);
+			return (T)Binder.joinQueryOne((DynamicJoinQueryWrapper)queryWrapper, getEntityClass());
 		}
 		List<T> entityList = getEntityListLimit(queryWrapper, 1);
 		if(V.notEmpty(entityList)){
@@ -717,7 +779,12 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		// 是否有ext字段
 		boolean hasExt = selectArray.length > 2;
 		List<LabelValue> labelValueList = new ArrayList<>(entityList.size());
+		Class<?> entityClass = getEntityClass();
 		for(T entity : entityList){
+			if (V.isEmpty(entity)) {
+				log.warn("getLabelValueList查询指定字段 {} 在数据库当前记录所有字段均为空值，已自动忽略", sqlSelect);
+				continue;
+			}
 			PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
 			String label = propInfo.getFieldByColumn(selectArray[0]), value = propInfo.getFieldByColumn(selectArray[1]), ext;
 			Object labelVal = BeanUtils.getProperty(entity, label);
@@ -833,7 +900,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @return
 	 */
 	protected Page<T> convertToIPage(Wrapper queryWrapper, Pagination pagination){
-		return ServiceAdaptor.convertToIPage(pagination, entityClass);
+		return ServiceAdaptor.convertToIPage(pagination, getEntityClass());
 	}
 
 	/**
@@ -864,7 +931,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	 * @param message
 	 */
 	private void warning(String method, String message){
-		log.warn(this.getClass().getSimpleName() + ".{} 调用错误: {}, 请检查！", method, message);
+		log.warn("{}.{} 调用错误: {}, 请检查！", this.getClass().getSimpleName(), method, message);
 	}
 
 }
