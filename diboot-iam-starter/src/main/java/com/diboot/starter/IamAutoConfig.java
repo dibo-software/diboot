@@ -22,6 +22,7 @@ import com.diboot.iam.config.Cons;
 import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.init.IamRedisAutoConfig;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
+import com.diboot.iam.shiro.ShiroContextTaskDecorator;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
 import jakarta.servlet.Filter;
@@ -164,8 +165,6 @@ public class IamAutoConfig {
      *
      * @return
      */
-//    @Bean
-//    @ConditionalOnMissingBean
     public AccessControlFilter shiroFilter() {
         return new StatelessAccessControlFilter();
     }
@@ -254,25 +253,8 @@ public class IamAutoConfig {
     @Configuration
     private class ThreadPoolTaskExecutorConfig {
         public ThreadPoolTaskExecutorConfig(@Qualifier("applicationTaskExecutor") ObjectProvider<ThreadPoolTaskExecutor> taskExecutorObjectProvider) {
-            taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextDecorator()));
-        }
-    }
-
-    /**
-     * shiro上下文装饰器，传递shiro上下文
-     */
-    private class ShiroContextDecorator implements TaskDecorator {
-
-        @Override
-        public Runnable decorate(Runnable runnable) {
-            try {
-                LocaleContextHolder.setLocale(LocaleContextHolder.getLocale(), true);
-                // 向下传递当前线程的用户信息
-                return SecurityUtils.getSubject().associateWith(runnable);
-            } catch (UnavailableSecurityManagerException e) {
-                // 用户信息不存在，直接执行
-                return runnable;
-            }
+            log.info("初始化: ThreadPoolTaskExecutor 指定子线程传递用户信息");
+            taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextTaskDecorator()));
         }
     }
 
