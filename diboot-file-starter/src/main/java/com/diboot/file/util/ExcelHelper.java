@@ -38,6 +38,7 @@ import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.TableHead;
 import com.diboot.file.excel.write.ColorWriteHandler;
 import com.diboot.file.excel.write.CommentWriteHandler;
+import com.diboot.file.excel.write.MergeWriteHandler;
 import com.diboot.file.excel.write.OptionWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -214,6 +215,7 @@ public class ExcelHelper {
         writerSheet.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
         writerSheet.registerWriteHandler(new OptionWriteHandler());
         writerSheet.registerWriteHandler(new ColorWriteHandler());
+        writerSheet.registerWriteHandler(new MergeWriteHandler());
         writerSheet.registerWriteHandler(commentWriteHandler);
         for (WriteHandler handler : writeHandlers) {
             writerSheet.registerWriteHandler(handler);
