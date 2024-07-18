@@ -351,8 +351,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         + Cons.FILE_PATH_SEPARATOR + S.newUuid() + ".xlsx";
             }
             FileHelper.makeDirectory(errorDataFilePath);
-            excelWriter = EasyExcel.write(errorDataFilePath, getExcelModelClass()).build();
-            ExcelHelper.buildWriteSheet(null, (commentWriteHandler, writeSheet) -> {
+            excelWriter = EasyExcel.write(errorDataFilePath).build();
+            ExcelHelper.buildWriteSheet("Sheet1", getExcelModelClass(), null, (commentWriteHandler, writeSheet) -> {
                 this.commentWriteHandler = commentWriteHandler;
                 this.writeSheet = writeSheet;
             });

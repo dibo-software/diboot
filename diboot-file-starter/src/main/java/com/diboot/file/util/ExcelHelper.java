@@ -43,6 +43,7 @@ import com.diboot.file.excel.write.OptionWriteHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,6 +53,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /***
@@ -139,7 +141,7 @@ public class ExcelHelper {
      * @param writeHandlers  写入处理程序
      */
     public static <T> void write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
-                                    List<T> dataList, WriteHandler... writeHandlers) {
+                                 List<T> dataList, WriteHandler... writeHandlers) {
         AtomicBoolean first = new AtomicBoolean(true);
         write(outputStream, clazz, columnNameList, () -> first.getAndSet(false) ? dataList : null, writeHandlers);
     }
@@ -154,7 +156,7 @@ public class ExcelHelper {
      * @param writeHandlers
      */
     public static <T> void write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
-                                    Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
+                                 Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
         write(outputStream, clazz, columnNameList, null, dataList, writeHandlers);
     }
 
@@ -170,32 +172,61 @@ public class ExcelHelper {
      */
     public static <T> void write(OutputStream outputStream, Class<T> clazz, Collection<String> columnNameList,
                                  Boolean autoClose, Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
-        ExcelWriter writer = EasyExcel.write(outputStream, clazz).autoCloseStream(autoClose).build();
-        buildWriteSheet(columnNameList, (commentWriteHandler, writeSheet) -> {
-            List<T> list = dataList.get();
-            boolean assignableFrom = BaseExcelModel.class.isAssignableFrom(clazz);
-            do {
-                if (assignableFrom) {
-                    commentWriteHandler.setDataList((List<? extends BaseExcelModel>) list);
-                }
-                writer.write(list, writeSheet);
-            } while (V.notEmpty(list = dataList.get()));
-        }, writeHandlers);
-        writer.finish();
+        ExcelWriter excel = EasyExcel.write(outputStream).autoCloseStream(autoClose).build();
+        writeSheet(excel, "Sheet1", clazz, columnNameList, dataList, writeHandlers);
+        excel.finish();
     }
 
     /**
-     * 构建WriteSheet
-     * <p>
-     * 默认：自列适应宽、单元格下拉选项（验证）写入，批注写入
+     * Sheet 写入
      *
-     * @param columnNameList 需要导出的ExcelModel列字段名称列表，为空时导出所有列
-     * @param consumer
-     * @param writeHandlers
+     * @param excel         Excel 编写器
+     * @param sheetName     Sheet名称
+     * @param clazz         导出的ExcelModel
+     * @param dataList      数据列表
+     * @param writeHandlers 写入处理程序
+     * @param <T>           导出的ExcelModel泛型
      */
-    public static <T> void buildWriteSheet(Collection<String> columnNameList, BiConsumer<CommentWriteHandler, WriteSheet> consumer,
-                                           WriteHandler... writeHandlers) {
-        buildWriteSheet("Sheet1", columnNameList, consumer, writeHandlers);
+    public static <T> void writeSheet(ExcelWriter excel, String sheetName, Class<T> clazz, List<T> dataList, WriteHandler... writeHandlers) {
+        AtomicBoolean first = new AtomicBoolean(true);
+        writeSheet(excel, sheetName, clazz, () -> first.getAndSet(false) ? dataList : null, writeHandlers);
+    }
+
+    /**
+     * Sheet 写入
+     *
+     * @param excel         Excel 编写器
+     * @param sheetName     Sheet名称
+     * @param clazz         导出的ExcelModel
+     * @param dataList      数据列表提供者
+     * @param writeHandlers 写入处理程序
+     * @param <T>           导出的ExcelModel泛型
+     */
+    public static <T> void writeSheet(ExcelWriter excel, String sheetName, Class<T> clazz, Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
+        writeSheet(excel, sheetName, clazz, null, dataList, writeHandlers);
+    }
+
+    /**
+     * Sheet 写入
+     *
+     * @param excel          Excel 编写器
+     * @param sheetName      Sheet名称
+     * @param clazz          导出的ExcelModel
+     * @param columnNameList 需要导出的列属性名，为空时导出所有列
+     * @param dataList       数据列表提供者
+     * @param writeHandlers  写入处理程序
+     * @param <T>            导出的ExcelModel泛型
+     */
+    public static <T> void writeSheet(ExcelWriter excel, String sheetName, Class<T> clazz, Collection<String> columnNameList,
+                                 Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
+        buildWriteSheet(sheetName, clazz, columnNameList, (commentWriteHandler, writeSheet) -> {
+            List<T> list = dataList.get();
+            boolean assignableFrom = BaseExcelModel.class.isAssignableFrom(clazz);
+            do {
+                if (assignableFrom) commentWriteHandler.setDataList((List<? extends BaseExcelModel>) list);
+                excel.write(list, writeSheet);
+            } while (V.notEmpty(list = dataList.get()));
+        }, writeHandlers);
     }
 
     /**
@@ -205,12 +236,13 @@ public class ExcelHelper {
      *
      * @param sheetName      可指定sheetName
      * @param columnNameList 需要导出的ExcelModel列字段名称列表，为空时导出所有列
-     * @param consumer
-     * @param writeHandlers
+     * @param clazz          导出的ExcelModel
+     * @param consumer       分批写入
+     * @param writeHandlers  写入处理程序
      */
-    public static <T> void buildWriteSheet(String sheetName, Collection<String> columnNameList,
+    public static <T> void buildWriteSheet(String sheetName, Class<T> clazz, Collection<String> columnNameList,
                                            BiConsumer<CommentWriteHandler, WriteSheet> consumer, WriteHandler... writeHandlers) {
-        ExcelWriterSheetBuilder writerSheet = EasyExcel.writerSheet().sheetName(sheetName);
+        ExcelWriterSheetBuilder writerSheet = EasyExcel.writerSheet().sheetName(sheetName).head(clazz);
         CommentWriteHandler commentWriteHandler = new CommentWriteHandler();
         writerSheet.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy());
         writerSheet.registerWriteHandler(new OptionWriteHandler());
@@ -274,9 +306,22 @@ public class ExcelHelper {
      */
     public static <T> void exportExcel(HttpServletResponse response, String fileName, Class<T> clazz, Collection<String> columnNameList,
                                        Supplier<List<T>> dataList, WriteHandler... writeHandlers) {
+        exportExcel(response, fileName, excel -> writeSheet(excel, "Sheet1", clazz, columnNameList, dataList, writeHandlers));
+    }
+
+    /**
+     * web 导出excel 自定义Sheet写入
+     *
+     * @param response
+     * @param fileName
+     * @param writerConsumer
+     */
+    public static void exportExcel(HttpServletResponse response, String fileName, Consumer<ExcelWriter> writerConsumer) {
         setExportExcelResponseHeader(response, fileName);
         try {
-            write(response.getOutputStream(), clazz, columnNameList, Boolean.FALSE, dataList, writeHandlers);
+            ExcelWriter excel = EasyExcel.write(response.getOutputStream()).autoCloseStream(Boolean.FALSE).build();
+            writerConsumer.accept(excel);
+            excel.finish();
         } catch (Exception e) {
             log.error("下载文件失败：", e);
             response.reset();
@@ -321,7 +366,7 @@ public class ExcelHelper {
         GlobalConfiguration configuration = new GlobalConfiguration();
         configuration.setFiledCacheLocation(CacheLocationEnum.MEMORY);
         ws.setGlobalConfiguration(configuration);
-        Map<Integer, FieldWrapper> sortedFieldMap = ClassUtils.declaredFields(clazz, ws).getSortedFieldMap();;
+        Map<Integer, FieldWrapper> sortedFieldMap = ClassUtils.declaredFields(clazz, ws).getSortedFieldMap();
         TreeMap<Integer, List<String>> headNameMap = new TreeMap<>();
         HashMap<Integer, String> fieldNameMap = new HashMap<>();
         sortedFieldMap.forEach((index, field) -> {
