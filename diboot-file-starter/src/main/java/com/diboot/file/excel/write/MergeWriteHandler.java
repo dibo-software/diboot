@@ -17,8 +17,10 @@ package com.diboot.file.excel.write;
 
 import com.alibaba.excel.write.handler.CellWriteHandler;
 import com.alibaba.excel.write.handler.WorkbookWriteHandler;
+import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.handler.context.CellWriteHandlerContext;
-import com.alibaba.excel.write.handler.context.WorkbookWriteHandlerContext;
+import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
+import com.alibaba.excel.write.metadata.holder.WriteWorkbookHolder;
 import com.diboot.core.util.AnnotationUtils;
 import com.diboot.core.util.V;
 import com.diboot.file.excel.annotation.ExcelMerge;
@@ -54,12 +56,25 @@ public class MergeWriteHandler implements WorkbookWriteHandler, CellWriteHandler
     }
 
     /**
-     * 设置单元格颜色
+     * 数据填充完之后进行内容扫描合并
      */
     @Override
-    public void afterWorkbookDispose(WorkbookWriteHandlerContext context) {
+    public void afterWorkbookDispose(WriteWorkbookHolder writeWorkbookHolder) {
+        for (WriteSheetHolder sheet : writeWorkbookHolder.getHasBeenInitializedSheetNameMap().values()) {
+            for (WriteHandler handler : sheet.getWriteHandlerList()) {
+                if (handler instanceof MergeWriteHandler) {
+                    ((MergeWriteHandler) handler).afterSheetDispose(sheet);
+                }
+            }
+        }
+    }
+
+    /**
+     * 对比单元格内容进行合并
+     */
+    public void afterSheetDispose(WriteSheetHolder writeSheetHolder){
         if (columnIndexSet.isEmpty() || headerRows == null) return;
-        Sheet sheet = context.getWriteContext().writeSheetHolder().getSheet();
+        Sheet sheet = writeSheetHolder.getSheet();
         Map<Integer, Integer> map = new HashMap<>();
         Row preRow = sheet.getRow(headerRows);
         int totalRowNum = sheet.getLastRowNum() + headerRows;
@@ -94,5 +109,4 @@ public class MergeWriteHandler implements WorkbookWriteHandler, CellWriteHandler
             default -> false;
         };
     }
-
 }
