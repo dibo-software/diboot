@@ -24,6 +24,7 @@ import com.diboot.core.binding.helper.ResultAssembler;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.holder.ThreadLocalHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.SqlExecutor;
 import com.diboot.core.util.V;
@@ -130,6 +131,8 @@ public class MiddleTable {
         }
         //id //org_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
+        // 中间表查询忽略数据权限拦截
+        ThreadLocalHolder.setIgnoreInterceptor();
         // 有定义mapper，首选mapper
         if(linkage != null){
             List<Map<String, Object>> resultSetMapList = queryByMapper(linkage, trunkObjCol2ValuesMap);

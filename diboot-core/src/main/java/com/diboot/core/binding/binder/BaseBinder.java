@@ -29,6 +29,7 @@ import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.Comparison;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.holder.ThreadLocalHolder;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.util.*;
 import org.slf4j.Logger;
@@ -36,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 关系绑定Binder父类
@@ -346,6 +346,18 @@ public abstract class BaseBinder<T> {
      * @return
      */
     protected List<T> getEntityList(Wrapper queryWrapper) {
+        return getEntityList(queryWrapper, false);
+    }
+
+    /**
+     * 获取EntityList
+     * @param queryWrapper
+     * @return
+     */
+    protected List<T> getEntityList(Wrapper queryWrapper, boolean ignoreInterceptor) {
+        if(ignoreInterceptor) {
+            ThreadLocalHolder.setIgnoreInterceptor();
+        }
         if(referencedService instanceof BaseService){
             return ((BaseService)referencedService).getEntityList(queryWrapper);
         }

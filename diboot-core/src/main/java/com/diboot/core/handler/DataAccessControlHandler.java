@@ -20,6 +20,7 @@ import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataAccessInterface;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.holder.ThreadLocalHolder;
 import com.diboot.core.mapper.DynamicQueryMapper;
 import com.diboot.core.util.ContextHelper;
 import com.diboot.core.util.S;
@@ -55,6 +56,10 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
 
     @Override
     public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
+        // 如果忽略此来源
+        if(ThreadLocalHolder.ignoreInterceptor()) {
+            return null;
+        }
         if (noCheckpointCache.contains(mappedStatementId)) {
             return null;
         }
