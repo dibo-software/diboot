@@ -146,7 +146,7 @@ const handleDel = async (session: any) => {
 
       .session-operate {
         display: inline-block;
-        background: linear-gradient(to right, transparent, #fff, #fff);
+        background: linear-gradient(to right, transparent, var(--el-bg-color), var(--el-bg-color));
       }
     }
   }
