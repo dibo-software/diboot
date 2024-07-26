@@ -116,6 +116,8 @@ create table dbt_iam_login_trace
   user_id      varchar(32) NOT NULL  comment '用户ID',
   auth_type    varchar(20)  default 'PWD'             not null comment '认证方式',
   auth_account varchar(100) not null comment '用户名',
+  signature    varchar(100)  null comment '签名',
+  sign_type   varchar(100) null comment '签发方式',
   ip_address   varchar(50)  null comment 'IP',
   user_agent   varchar(200) null comment '客户端信息',
   is_success   tinyint(1)   default 0                 not null comment '是否成功',

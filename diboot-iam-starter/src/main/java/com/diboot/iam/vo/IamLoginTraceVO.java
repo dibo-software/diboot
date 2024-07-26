@@ -16,11 +16,16 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamLoginTrace;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * 登录记录 VO定义
@@ -34,7 +39,64 @@ import lombok.experimental.Accessors;
 public class IamLoginTraceVO extends IamLoginTrace  {
     private static final long serialVersionUID = -753084580143028183L;
 
+    private static final String USER_AGENT_BROWSER_REGEX = "((?:MSIE |Trident/.*?rv:|Edge/|Edg/|Firefox/|Chrome/|Safari/|Opera/|OPR/|YaBrowser/)([\\d\\.]+))";
+    private static final String USER_AGENT_OS_REGEX = "\\(([^;]*?);";
+
+    public enum ONLINE_STATUS {
+        ONLINE,
+        LOGOUT,
+        UNKNOWN,
+        INVALID,
+    }
+
     @BindDict(type="AUTH_TYPE", field = "authType")
     private LabelValue authTypeLabel;
+
+    // 在线状态
+    private String onlineStatus;
+
+    /**
+     * 获取浏览器信息
+     * @return
+     */
+    public String getBrowserInfo() {
+        String userAgent = getUserAgent();
+        if (V.isEmpty(userAgent)) {
+            return "";
+        }
+        Pattern pattern = Pattern.compile(USER_AGENT_BROWSER_REGEX, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(userAgent);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return "Unknown";
+    }
+
+    /**
+     * 获取操作系统信息
+     * @return
+     */
+    public String getOsInfo() {
+        String userAgent = getUserAgent();
+        if (V.isEmpty(userAgent)) {
+            return "";
+        }
+        Pattern pattern = Pattern.compile(USER_AGENT_OS_REGEX);
+        Matcher matcher = pattern.matcher(userAgent);
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return "Unknown";
+    }
+
+    public boolean isExpired(int expiresInMinutes) {
+        LocalDateTime expirationTime = getCreateTime().plusMinutes(expiresInMinutes);
+        LocalDateTime now = LocalDateTime.now();
+        return expirationTime.isBefore(now);
+    }
 
 }

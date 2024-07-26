@@ -19,14 +19,22 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.Encryptor;
+import com.diboot.core.util.V;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.mapper.IamLoginTraceMapper;
 import com.diboot.iam.service.IamLoginTraceService;
+import com.diboot.iam.shiro.IamAuthToken;
+import com.diboot.iam.util.TokenUtils;
+import com.diboot.iam.vo.IamLoginTraceVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
 * 登录记录相关Service实现
@@ -39,7 +47,7 @@ import java.time.LocalDateTime;
 public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMapper, IamLoginTrace> implements IamLoginTraceService {
 
     @Override
-    public boolean updateLogoutInfo(String userType, String userId) {
+    public boolean updateLogoutInfo(String token, String userType, String userId) {
         LambdaQueryWrapper<IamLoginTrace> queryWrapper = new QueryWrapper<IamLoginTrace>()
                 .lambda()
                 .select(IamLoginTrace::getId)
@@ -47,6 +55,9 @@ public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMappe
                 .eq(IamLoginTrace::getUserId, userId)
                 .eq(IamLoginTrace::getIsSuccess, true)
                 .orderByDesc(IamLoginTrace::getId);
+        if (V.notEmpty(token)) {
+            queryWrapper.eq(IamLoginTrace::getSignature, Encryptor.encrypt(token));
+        }
         IamLoginTrace latestTrace = getSingleEntity(queryWrapper);
         if(latestTrace != null) {
             LambdaUpdateWrapper<IamLoginTrace> updateWrapper = new UpdateWrapper<IamLoginTrace>().lambda()
@@ -55,5 +66,56 @@ public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMappe
             return super.update(updateWrapper);
         }
         return false;
+    }
+
+    @Override
+    public void saveTokenRefreshTrace(String refreshToken, String oldToken) {
+        String oldSignature = DigestUtils.md2Hex(oldToken);
+        IamLoginTrace loginTrace = this.getSingleEntity(
+                Wrappers.<IamLoginTrace>lambdaQuery().eq(IamLoginTrace::getSignature, oldSignature)
+        );
+        if (loginTrace == null) {
+            return;
+        }
+        String signature = Encryptor.encrypt(refreshToken);
+        loginTrace.setSignature(signature).setSignType(IamLoginTrace.SIGN_TYPE.REFRESH_TOKEN.name()).setId(null);
+        this.createEntity(loginTrace);
+    }
+
+    @Override
+    public void appendLoginStatus(List<IamLoginTraceVO> voList) {
+        if (V.isEmpty(voList)) {
+            return;
+        }
+        for (IamLoginTraceVO vo : voList) {
+            if (V.notEmpty(vo.getLogoutTime())) {
+                vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.LOGOUT.name());
+                continue;
+            }
+            if (V.isEmpty(vo.getSignature())) {
+                vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.UNKNOWN.name());
+                continue;
+            }
+            String token = null;
+            try {
+                token = Encryptor.decrypt(vo.getSignature());
+            } catch (Exception e) {
+            }
+            if (V.isEmpty(token)) {
+                vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.UNKNOWN.name());
+                continue;
+            }
+            String cachedUserInfo = TokenUtils.getCachedUserInfoStr(token);
+            if (V.isEmpty(cachedUserInfo)) {
+                vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.INVALID.name());
+                continue;
+            }
+            IamAuthToken authToken = new IamAuthToken(cachedUserInfo);
+            if (vo.isExpired(authToken.getExpiresInMinutes())) {
+                vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.INVALID.name());
+                continue;
+            }
+            vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.ONLINE.name());
+        }
     }
 }

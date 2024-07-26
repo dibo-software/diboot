@@ -42,6 +42,11 @@ import java.time.LocalDateTime;
 public class IamLoginTrace extends BaseEntity<String> {
     private static final long serialVersionUID = -6166037224391478085L;
 
+    public enum SIGN_TYPE{
+        LOGIN,
+        REFRESH_TOKEN
+    }
+
     /**
      * 租户ID
      */
@@ -71,6 +76,15 @@ public class IamLoginTrace extends BaseEntity<String> {
     @Length(max=100, message="{validation.iamLoginTrace.authAccount.Length.message}")
     @TableField()
     private String authAccount;
+
+    // 签名
+    @JsonIgnore
+    @TableField()
+    private String signature;
+
+    // 签发方式
+    @TableField()
+    private String signType;
 
     // 是否成功
     @TableField("is_success")

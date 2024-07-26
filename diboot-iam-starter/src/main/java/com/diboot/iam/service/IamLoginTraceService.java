@@ -17,6 +17,9 @@ package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
 import com.diboot.iam.entity.IamLoginTrace;
+import com.diboot.iam.vo.IamLoginTraceVO;
+
+import java.util.List;
 
 /**
 * 登录记录相关Service
@@ -28,10 +31,20 @@ public interface IamLoginTraceService extends BaseService<IamLoginTrace> {
 
     /**
      * 更新退出时间等信息
+     * @param token
      * @param userType
      * @param userId
      * @return
      */
-    boolean updateLogoutInfo(String userType, String userId);
+    boolean updateLogoutInfo(String token, String userType, String userId);
+
+    /**
+     * 保存token刷新记录
+     * @param refreshToken
+     * @param oldToken
+     */
+    void saveTokenRefreshTrace(String refreshToken, String oldToken);
+
+    void appendLoginStatus(List<IamLoginTraceVO> voList);
 
 }

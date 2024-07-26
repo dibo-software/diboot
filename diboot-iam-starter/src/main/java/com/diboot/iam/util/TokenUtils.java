@@ -78,14 +78,16 @@ public class TokenUtils {
      * @param cachedUserInfo
      * @return
      */
-    public static synchronized void responseNewTokenIfRequired(ServletResponse response, String cachedUserInfo) {
+    public static synchronized String responseNewTokenIfRequired(ServletResponse response, String cachedUserInfo) {
         if(isCloseToExpired(cachedUserInfo)){
             //将刷新的token放入response header
             String refreshToken = generateToken();
             cacheRefreshToken(refreshToken, cachedUserInfo);
             ((HttpServletResponse)response).setHeader(AUTH_HEADER, refreshToken);
             log.debug("写回刷新token :{}", refreshToken);
+            return refreshToken;
         }
+        return null;
     }
 
     /**
