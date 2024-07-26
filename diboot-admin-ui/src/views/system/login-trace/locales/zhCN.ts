@@ -9,8 +9,23 @@ const zhCN = {
       yes: '成功',
       no: '失败'
     },
+    onlineStatusLabel: '在线状态',
+    onlineStatus: {
+      online: '在线',
+      logout: '已退出',
+      unknown: '-',
+      invalid: '已失效'
+    },
+    browserInfo: '浏览器',
+    osInfo: '操作系统',
     createTime: '登录时间',
     logoutTime: '退出时间',
+    forceLogout: '强退',
+    formLogoutMessage: {
+      confirmContent: '确认强制退出该用户？',
+      success: '强退成功',
+      failed: '强退失败'
+    },
     placeholder: {
       start: '开始时间',
       end: '结束时间',

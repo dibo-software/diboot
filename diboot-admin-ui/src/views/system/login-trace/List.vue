@@ -1,6 +1,8 @@
 <script setup lang="ts" name="LoginTrace">
 import { Search } from '@element-plus/icons-vue'
 import type { LoginTrace } from './type'
+import { useI18n } from 'vue-i18n'
+const i18n = useI18n()
 
 const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSearch, resetFilter } =
   useList<LoginTrace>({
@@ -8,6 +10,21 @@ const { queryParam, dateRangeQuery, loading, dataList, pagination, getList, onSe
   })
 
 getList()
+
+// 强制退出
+const forceLogout = (id: string) => {
+  ElMessageBox.confirm(i18n.t('loginTrace.formLogoutMessage.confirmContent'), 'Warning', {
+    type: 'warning'
+  }).then(async () => {
+    const res = await api.post(`/iam/login-trace/force-logout/${id}`)
+    if (res.code === 0) {
+      ElMessage.success(i18n.t('loginTrace.formLogoutMessage.success'))
+    } else {
+      console.log('强制退出失败', res.msg)
+      ElMessage.warning(i18n.t('loginTrace.formLogoutMessage.failed'))
+    }
+  })
+}
 </script>
 
 <template>
@@ -50,14 +67,37 @@ getList()
       <el-table-column prop="authAccount" :label="$t('loginTrace.authAccount')" />
       <el-table-column prop="ipAddress" :label="$t('loginTrace.ipAddress')" />
       <el-table-column prop="authType" :label="$t('loginTrace.authType')" />
+      <el-table-column prop="osInfo" :label="$t('loginTrace.osInfo')" />
+      <el-table-column prop="browserInfo" :label="$t('loginTrace.browserInfo')" />
       <el-table-column prop="success" :label="$t('loginTrace.success')">
         <template #default="{ row }">
           <el-tag v-if="row.isSuccess">{{ $t('loginTrace.successStatus.yes') }}</el-tag>
           <el-tag v-else type="danger">{{ $t('loginTrace.successStatus.no') }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="loginStatus" :label="$t('loginTrace.onlineStatusLabel')">
+        <template #default="{ row }">
+          <el-tag v-if="row.onlineStatus === 'ONLINE'">{{ $t('loginTrace.onlineStatus.online') }}</el-tag>
+          <el-tag v-else type="danger">{{ $t(`loginTrace.onlineStatus.${row.onlineStatus?.toLowerCase()}`) }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="createTime" :label="$t('loginTrace.createTime')" />
       <el-table-column prop="logoutTime" :label="$t('loginTrace.logoutTime')" />
+      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
+        <template #default="{ row }">
+          <el-button
+            v-if="row.onlineStatus === 'ONLINE'"
+            text
+            bg
+            type="danger"
+            size="small"
+            @click="forceLogout(row.id)"
+          >
+            {{ $t('loginTrace.forceLogout') }}
+          </el-button>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       v-if="pagination.total"
