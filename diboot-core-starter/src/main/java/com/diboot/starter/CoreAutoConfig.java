@@ -23,7 +23,6 @@ import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.config.MessageSourceBeanPostProcessor;
-import com.diboot.core.converter.*;
 import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
@@ -33,6 +32,7 @@ import com.diboot.core.config.CoreProperties;
 import com.diboot.core.config.GlobalProperties;
 import com.diboot.core.init.CoreRedisAutoConfig;
 import com.diboot.core.serial.serializer.BigDecimal2StringSerializer;
+import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.D;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
@@ -57,6 +56,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -203,21 +203,11 @@ public class CoreAutoConfig implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new Date2LocalDateConverter());
-        registry.addConverter(new Date2LocalDateTimeConverter());
-        registry.addConverter(new LocalDate2DateConverter());
-        registry.addConverter(new LocalDateTime2DateConverter());
-        registry.addConverter(new LocalDateTime2StringConverter());
-        registry.addConverter(new SqlDate2LocalDateConverter());
-        registry.addConverter(new SqlDate2LocalDateTimeConverter());
-        registry.addConverter(new String2DateConverter());
-        registry.addConverter(new String2LocalDateConverter());
-        registry.addConverter(new String2LocalDateTimeConverter());
-        registry.addConverter(new String2BooleanConverter());
-        registry.addConverter(new String2ListConverter());
-        registry.addConverter(new String2MapConverter());
-        registry.addConverter(new Timestamp2LocalDateTimeConverter());
+        List<Converter> converterList = ContextHolder.getBeans(Converter.class);
+        if (converterList != null && !converterList.isEmpty())
+            converterList.forEach(registry::addConverter);
     }
+
 
     /**
      * 扩展Mybatis 类型转换，支持日期类型转为LocalDate等
@@ -230,6 +220,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     /**
      * 字典等基础数据缓存管理器
+     *
      * @return
      */
     @Bean
@@ -237,7 +228,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     public DictionaryCacheManager dictionaryCacheManager() {
         log.info("初始化 Dictionary 内存缓存: DynamicMemoryCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
-            put(Cons.CACHE_NAME_DICTIONARY, 24*60);
+            put(Cons.CACHE_NAME_DICTIONARY, 24 * 60);
         }};
         DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
         return new DictionaryCacheManager(memoryCacheManager);
@@ -245,6 +236,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     /**
      * 国际化等基础数据缓存管理器
+     *
      * @return
      */
     @Bean
@@ -252,7 +244,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     public I18nCacheManager i18nCacheManager() {
         log.info("初始化 I18n 内存缓存: DynamicMemoryCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
-            put(Cons.CACHE_NAME_I18N, 24*60);
+            put(Cons.CACHE_NAME_I18N, 24 * 60);
         }};
         DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
         return new I18nCacheManager(memoryCacheManager);
@@ -261,6 +253,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     /**
      * 国际化默认环境配置
+     *
      * @return
      */
     @Bean
@@ -272,6 +265,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     /**
      * Request上下文允许子线程使用
+     *
      * @return
      */
     @Bean
@@ -283,6 +277,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
 
     /**
      * 国际化文件配置
+     *
      * @return
      */
     @Bean

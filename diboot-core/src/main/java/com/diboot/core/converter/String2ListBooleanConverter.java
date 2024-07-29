@@ -21,31 +21,23 @@ import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * String - List 转换器
+ * String - List<Double> 转换器
  *
- * @author JerryMa
- * @version v3.0.0
- * @date 2022/10/25
+ * @author wind
+ * @version v3.5.0
+ * @date 2024/07/29
  * Copyright © diboot.com
  */
-// @Component
-@Deprecated
-public class String2ListConverter implements Converter<String, List> {
+@Component
+public class String2ListBooleanConverter implements Converter<String, List<Boolean>> {
 
     @Override
-    public List convert(String source) {
-        if (V.notEmpty(source)) {
-            boolean isArray = S.startsWith(source, "[\"");
-            if (isArray) {
-                return JSON.parseArray(source, String.class);
-            } else {
-                return Arrays.asList(source);
-            }
-        }
-        return null;
+    public List<Boolean> convert(String source) {
+        if (V.isEmpty(source)) return null;
+        if (source.matches("^\\[.*]$")) return JSON.parseArray(source, Boolean.class);
+        else return S.splitToList(source).stream().map(Boolean::valueOf).toList();
     }
 }
