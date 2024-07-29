@@ -18,6 +18,7 @@ package com.diboot.core.converter;
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +29,7 @@ import java.time.LocalDateTime;
  * @date 2022/5/11
  * Copyright © diboot.com
  */
-@CollectThisConvertor
+@Component
 public class LocalDateTime2StringConverter implements Converter<LocalDateTime, String> {
 
     @Override

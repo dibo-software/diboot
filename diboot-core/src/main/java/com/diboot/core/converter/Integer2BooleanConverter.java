@@ -17,6 +17,7 @@ package com.diboot.core.converter;
 
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 /**
  * Integer - Boolean 转换器
@@ -26,7 +27,7 @@ import org.springframework.core.convert.converter.Converter;
  * @date 2024/2/28
  * Copyright © diboot.com
  */
-@CollectThisConvertor
+@Component
 public class Integer2BooleanConverter implements Converter<Integer, Boolean> {
 
     @Override

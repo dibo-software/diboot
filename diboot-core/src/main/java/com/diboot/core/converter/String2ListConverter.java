@@ -20,6 +20,7 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
  * @date 2022/10/25
  * Copyright © diboot.com
  */
-@CollectThisConvertor
+@Component
 public class String2ListConverter implements Converter<String, List> {
 
     @Override
