@@ -3,6 +3,11 @@ import { Plus, Delete, Search, ArrowUp, ArrowDown, SetUp } from '@element-plus/i
 import { buildOptionProps, buildGetRelatedData } from './utils'
 import type { FormConfig, ListConfig, ListOperation, TableColumn } from '@/components/di/type'
 
+const ExcelImport = defineAsyncComponent(() => import('../excel/Import.vue'))
+const ExcelExport = defineAsyncComponent(() => import('../excel/Export.vue'))
+const DiInput = defineAsyncComponent(() => import('./Input.vue'))
+const DiTable = defineAsyncComponent(() => import('./Table.vue'))
+
 interface ListProps extends /* @vue-ignore */ ListConfig {
   // 模型名
   model: string
