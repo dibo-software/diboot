@@ -8,6 +8,7 @@ const zhCN = {
     routeMetaIcon: '菜单图标',
     routePath: '路由路径',
     resourceCode: '路由名称',
+    componentPath: '组件路径',
     redirectPath: '重定向',
     routeMetaUrl: '外部链接',
     appModule: '应用模块',
@@ -41,7 +42,8 @@ const zhCN = {
       redirectPath: '请输入重定向',
       routeMetaUrl: '请输入外部链接',
       permissionCodes: '点击聚焦后在权限列表中选择',
-      componentName: '请选择组件',
+      componentName: '请输入组件名称',
+      componentPath: '请输入路由组件路径',
       buttonPermissionConfig: {
         _customCode: '请输入按钮权限编码',
         resourceCode: '请选取当前按钮权限编码',

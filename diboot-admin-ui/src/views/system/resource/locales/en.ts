@@ -9,6 +9,7 @@ const en: Locale = {
     routeMetaIcon: 'Menu Icon',
     routePath: 'Route Path',
     resourceCode: 'Route Name',
+    componentPath: 'Component path',
     redirectPath: 'Redirect',
     routeMetaUrl: 'External Link',
     appModule: 'Application Module',
@@ -42,7 +43,8 @@ const en: Locale = {
       redirectPath: 'Enter redirect',
       routeMetaUrl: 'Enter external link',
       permissionCodes: 'Click to focus then select from the permission list',
-      componentName: 'Please select the component',
+      componentName: 'Please enter the component name',
+      componentPath: 'Please enter the routing component path',
       buttonPermissionConfig: {
         _customCode: 'Enter button permission code',
         resourceCode: 'Please select the current button permission code',
