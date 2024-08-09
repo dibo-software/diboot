@@ -40,6 +40,11 @@ import java.util.List;
 public class UserOrgDataAccessScopeManager implements DataScopeManager {
 
     @Override
+    public String getTitle() {
+        return "基于用户组织的数据权限控制";
+    }
+
+    @Override
     public List<? extends Serializable> getAccessibleIds(String fieldName) {
         // 获取当前登录用户
         IamUser currentUser;
