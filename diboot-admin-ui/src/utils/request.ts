@@ -3,7 +3,9 @@ import axios from 'axios'
 import auth, { AUTH_HEADER_KEY } from './auth'
 import router from '@/router'
 import qs from 'qs'
-import i18n, { LANGUAGE } from '@/utils/i18n'
+import i18nStorage, { LANGUAGE } from '@/utils/i18n'
+import i18n from '@/i18n'
+
 // baseURL
 const BASE_URL = import.meta.env.VITE_APP_BASE_URL
 // 创建 axios 实例
@@ -15,7 +17,7 @@ const service = axios.create({
 
 // 添加请求拦截器
 service.interceptors.request.use(config => {
-  ;(config.headers as AxiosRequestHeaders)[LANGUAGE] = i18n.get()
+  ;(config.headers as AxiosRequestHeaders)[LANGUAGE] = i18nStorage.get()
   // 让每个请求携带自定义 token 请根据实际情况自行修改
   const token = auth.getToken()
   if (token) (config.headers as AxiosRequestHeaders)[AUTH_HEADER_KEY] = token
@@ -43,7 +45,7 @@ service.interceptors.response.use(
       clearTimeout(pingTimer)
       const route = router.currentRoute.value
       router.push({ name: 'Login', query: { redirect: route.path, ...route.query } }).finally()
-      throw new Error('登录过期，请重新登录')
+      throw new Error(i18n.global.t('utils.request.expiredLogin'))
     }
 
     return response
@@ -53,22 +55,22 @@ service.interceptors.response.use(
     if (error && error.response && error.response.status) {
       switch (error.response.status) {
         case 500:
-          message = '服务器好像开小差了，重试下吧！'
+          message = i18n.global.t('utils.request.server500')
           break
         case 400:
-          message = '保存数据出错'
+          message = i18n.global.t('utils.request.server400')
           break
         case 401:
-          message = '没有权限'
+          message = i18n.global.t('utils.request.server401')
           break
         case 403:
-          message = '无权访问'
+          message = i18n.global.t('utils.request.server403')
           break
         case 404:
-          message = '请求资源不存在'
+          message = i18n.global.t('utils.request.server404')
           break
         default:
-          message = '网络可能出现问题'
+          message = i18n.global.t('utils.request.serverError')
       }
       console.error(message)
     }

@@ -1,5 +1,35 @@
 import type { Locale } from './zhCN'
 const en: Locale = {
+  org: {
+    name: 'Name',
+    code: 'Code',
+    type: 'Type',
+    managerName: 'Manager',
+    sortId: 'Sort ID',
+    parentId: 'Parent ID',
+    orgComment: 'Note',
+    comp: 'Company',
+    dept: 'Department',
+    primaryPosition: 'Main Position',
+    label: 'Organization Department'
+  },
+  position: {
+    name: 'Name',
+    code: 'Code',
+    gradeName: 'Grade',
+    dataPermissionType: 'Data Permission',
+    isVirtual: 'Virtual Position',
+    gradeValue: 'Grade Value',
+    gradeNameAlias: 'Grade Title',
+    label: 'Position',
+    placeholder: {
+      name: 'Enter name',
+      code: 'Enter code',
+      gradeName: 'Select grade',
+      dataPermissionType: 'Select data permission',
+      label: 'Select position'
+    }
+  },
   user: {
     type: 'User Type',
     orgId: 'Department',

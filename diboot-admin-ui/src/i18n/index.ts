@@ -1,13 +1,12 @@
 import { createI18n } from 'vue-i18n'
 import I18nUtils from '@/utils/i18n'
-import type { Locale } from './locales/zhCN'
 
-const locales = import.meta.glob<Locale>('@/**/locales/**', {
+const locales = import.meta.glob('@/**/_locales/**', {
   import: 'default',
   eager: true
 })
 
-const messages: Record<string, Locale> = {}
+const messages: Record<string, unknown> = {}
 
 Object.keys(locales).forEach((path: string) => {
   const name = path.replace(/.*\/(.+)\.ts/, '$1').replace(/([a-z]+)([A-Z]+)/, '$1-$2')
