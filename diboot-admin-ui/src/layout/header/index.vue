@@ -51,12 +51,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
         placement="bottom"
         :show-after="300"
       >
-        <el-switch
-          v-model="isDark"
-          class="dark-switch item"
-          :active-action-icon="Moon"
-          :inactive-action-icon="Sunny"
-        />
+        <el-switch v-model="isDark" class="dark-switch item" :active-action-icon="Moon" :inactive-action-icon="Sunny" />
       </el-tooltip>
       <el-dropdown
         v-if="enableI18n"

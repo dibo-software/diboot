@@ -2,7 +2,10 @@
 import type { FormItem, InputText, ListSelector, Select as SelectConfig, SelectedValue, Upload } from './type'
 import type { FieldRule } from 'vant'
 import Select from '../select/index.vue'
+import ScanCode from '../scan-code/index.vue'
 import { findLabel } from '@/components/select/optionsUtil'
+import { checkValue } from '@/utils/validate-form'
+import i18n from '@/i18n'
 
 const props = defineProps<{
   config: FormItem
@@ -34,6 +37,7 @@ const value = ref<any>(
 watch(
   value,
   value => {
+    handleChange(value)
     emit('update:modelValue', value)
     instance?.proxy?.$forceUpdate()
   },
@@ -49,28 +53,19 @@ watch(
 
 const requiredRule = {
   required: true,
-  message: '不能为空',
+  message: i18n.global.t('rules.notnull'),
   ...(['input-number', 'checkbox', 'boolean'].includes(props.config.type) || props.config['multiple' as keyof FormItem]
     ? {}
     : { whitespace: true })
 }
+
 const checkUniqueRule = {
-  validator: (rule: unknown, value: unknown, callback: (error?: string | Error) => void) => {
-    if (value) {
-      api
-        .get(`${props.baseApi}/check-unique`, {
-          id: props.getId ? props.getId() : undefined,
-          field: props.config.prop,
-          value
-        })
-        .then(() => {
-          callback()
-        })
-        .catch(err => {
-          callback(err.msg || err)
-        })
-    } else callback()
-  },
+  validator: checkValue(
+    `${props.baseApi}/check-unique`,
+    'value',
+    () => (props.getId ? props.getId() : undefined),
+    () => ({ field: props.config.prop })
+  ),
   trigger: 'blur'
 }
 
@@ -129,7 +124,31 @@ const getInitDateTime = () => {
   }
 }
 
-const datePicker = computed(() => (value.value ? `${value.value}`.split(/[ \-:]/) : getInitDateTime()))
+const dateTime = ref<string[]>(getInitDateTime())
+
+watch(
+  value,
+  val => {
+    if (!val) return
+    const split = `${val}`.split(/[ \-:]/)
+    switch (props.config.type) {
+      case 'year':
+        return dateTime.value.splice(0, 1, ...split)
+      case 'month':
+        return dateTime.value.splice(0, 2, ...split)
+      case 'date':
+        return dateTime.value.splice(0, 3, ...split)
+      case 'datetime':
+        return (dateTime.value = split)
+      case 'time':
+        return dateTime.value.splice(3, 5, ...split)
+    }
+  },
+  { immediate: true }
+)
+
+const datePicker = computed({ get: () => dateTime.value.slice(0, 3), set: val => dateTime.value.splice(0, 3, ...val) })
+const timePicker = computed({ get: () => dateTime.value.slice(3, 5), set: val => dateTime.value.splice(3, 5, ...val) })
 
 const onConfirmDatePicker = ({ selectedValues }: SelectedValue) => {
   showPicker.value = false
@@ -154,7 +173,7 @@ const { fileList, uploadFileHandle, onRemove } = useUploadFile(
   () => props.fileList
 )
 
-const onOversize = () => showFailToast(`文件大小不能超过 ${(props.config as Upload).size}MB`)
+const onOversize = () => showFailToast(i18n.global.t('di.input.fileLarge', [(props.config as Upload).size]))
 
 const checkFileHandle = (file: File | File[]) => {
   // 文件校验
@@ -180,7 +199,28 @@ const checkFileHandle = (file: File | File[]) => {
     :placeholder="config.placeholder"
     :rules="rules"
     @update:model-value="handleChange"
-  />
+  >
+    <template #button v-if="config.type === 'input' && config.scanCode">
+      <scan-code @change="val => (value = val)" />
+    </template>
+  </van-field>
+  <template v-else-if="config.type === 'rich'">
+    <van-field :name="config.prop" :label="config.label" :required="config.required" :rules="rules">
+      <template #input />
+    </van-field>
+    <rich-read
+      v-if="config.disabled || disabled"
+      :value="`${value ?? ''}`"
+      :style="{ flex: 1, height: config.height }"
+    />
+    <rich-editor
+      v-else
+      v-model="value"
+      :placeholder="config.placeholder"
+      :mode="config.mode"
+      :style="{ height: config.height }"
+    />
+  </template>
   <van-field
     v-if="config.type === 'input-number'"
     v-model="value"
@@ -275,7 +315,7 @@ const checkFileHandle = (file: File | File[]) => {
     />
     <van-popup v-model:show="showPicker" position="bottom" :style="{ height: '60%' }">
       <van-date-picker
-        :model-value="datePicker as string[]"
+        v-model="datePicker"
         :columns-type="
           config.type === 'year' ? ['year'] : config.type === 'month' ? ['year', 'month'] : ['year', 'month', 'day']
         "
@@ -299,13 +339,13 @@ const checkFileHandle = (file: File | File[]) => {
     />
     <van-popup v-model:show="showPicker" position="bottom" :style="{ height: '60%' }">
       <van-picker-group
-        :tabs="['选择日期', '选择时间']"
-        next-step-text="下一步"
+        :tabs="[$t('di.input.date'), $t('di.input.time')]"
+        :next-step-text="$t('di.input.next')"
         @confirm="onConfirmDateTimePicker"
         @cancel="showPicker = false"
       >
-        <van-date-picker :model-value="datePicker?.slice(0, 3) as string[]" />
-        <van-time-picker :model-value="datePicker?.slice(3) as string[]" :columns-type="['hour', 'minute', 'second']" />
+        <van-date-picker v-model="datePicker" />
+        <van-time-picker v-model="timePicker" :columns-type="['hour', 'minute', 'second']" />
       </van-picker-group>
     </van-popup>
   </template>
@@ -323,7 +363,7 @@ const checkFileHandle = (file: File | File[]) => {
       @click="onClick"
     />
     <van-popup v-model:show="showPicker" position="bottom" :style="{ height: '60%' }">
-      <van-time-picker :model-value="datePicker" @confirm="onConfirmTimePicker" @cancel="showPicker = false" />
+      <van-time-picker v-model="timePicker" @confirm="onConfirmTimePicker" @cancel="showPicker = false" />
     </van-popup>
   </template>
 
@@ -341,7 +381,7 @@ const checkFileHandle = (file: File | File[]) => {
         @delete="onRemove"
       >
         <template #default v-if="config.listType !== 'picture-card'">
-          <van-button icon="plus" size="small" type="primary">上传文件</van-button>
+          <van-button icon="plus" size="small" type="primary">{{ $t('di.input.uploadFile') }}</van-button>
         </template>
       </van-uploader>
     </template>

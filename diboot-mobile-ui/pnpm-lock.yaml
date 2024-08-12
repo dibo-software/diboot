@@ -23,6 +23,9 @@ dependencies:
   axios:
     specifier: ^1.6.8
     version: 1.6.8
+  html5-qrcode:
+    specifier: ^2.3.8
+    version: 2.3.8
   jsencrypt:
     specifier: ^3.3.2
     version: 3.3.2
@@ -2186,6 +2189,10 @@ packages:
 
   /html-void-elements@2.0.1:
     resolution: {integrity: sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A==}
+    dev: false
+
+  /html5-qrcode@2.3.8:
+    resolution: {integrity: sha512-jsr4vafJhwoLVEDW3n1KvPnCCXWaQfRng0/EEYk1vNcQGcG/htAdhJX0be8YyqMoSz7+hZvOZSTAepsabiuhiQ==}
     dev: false
 
   /i18next@20.6.1:
