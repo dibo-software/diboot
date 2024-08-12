@@ -16,9 +16,12 @@
 package com.diboot.iam.data;
 
 import com.diboot.core.data.access.DataScopeManager;
+import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.PositionDataScope;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +104,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
         // 按部门过滤，本部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
             if(isOrgFieldName(fieldName)){
-                return Arrays.asList(positionDataScope.getOrgId());
+                return Collections.singletonList(positionDataScope.getOrgId());
             }
             else{// 忽略无关字段
                 return null;
@@ -141,10 +144,10 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
     protected List<? extends Serializable> buildOrgIdsScope(IamUser currentUser){
         List<Serializable> accessibleIds = new ArrayList<>();
         accessibleIds.add(currentUser.getOrgId());
-        /*List<Long> childOrgIds = ContextHolder.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
+        List<String> childOrgIds = ContextHolder.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
         if(V.notEmpty(childOrgIds)){
             accessibleIds.addAll(childOrgIds);
-        }*/
+        }
         return accessibleIds;
     }
 

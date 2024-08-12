@@ -97,7 +97,18 @@ public class IamOrgServiceImpl extends BaseServiceImpl<IamOrgMapper, IamOrg> imp
         IamOrg parentOrg = getEntity(rootOrgId);
         LambdaQueryWrapper<IamOrg> select = Wrappers.lambdaQuery();
         if (parentOrg != null) {
-            String parentIds = parentOrg.getParentIdsPath() == null ? rootOrgId : S.joinWith(Cons.SEPARATOR_COMMA, parentOrg.getParentIdsPath(), rootOrgId);
+            String parentIds;
+            if(parentOrg.getParentIdsPath() == null) {
+                parentIds = rootOrgId + Cons.SEPARATOR_COMMA;
+            }
+            else {
+                if(parentOrg.getParentIdsPath().endsWith(Cons.SEPARATOR_COMMA)) {
+                    parentIds = parentOrg.getParentIdsPath() + rootOrgId;
+                }
+                else {
+                    parentIds = parentOrg.getParentIdsPath() + Cons.SEPARATOR_COMMA + rootOrgId;
+                }
+            }
             select.likeRight(IamOrg::getParentIdsPath, parentIds);
         }
         select.orderByAsc(IamOrg::getSortId);
