@@ -51,11 +51,11 @@ const progress = [
 const radarChart: EChartsOption = {
   radar: {
     indicator: [
-      { name: '代码活跃度', max: 50 },
-      { name: '社区活跃度', max: 50 },
-      { name: '团队健康', max: 50 },
-      { name: '流行趋势', max: 50 },
-      { name: '影响力', max: 50 }
+      { name: '代码活跃度', max: 100 },
+      { name: '社区活跃度', max: 100 },
+      { name: '团队健康', max: 100 },
+      { name: '流行趋势', max: 100 },
+      { name: '影响力', max: 100 }
     ],
     radius: 90
   },
@@ -65,7 +65,7 @@ const radarChart: EChartsOption = {
       areaStyle: {},
       data: [
         {
-          value: [27, 10, 44, 38, 14]
+          value: [80, 75, 80, 80, 78]
         }
       ]
     }
@@ -115,7 +115,7 @@ const currentDate = ref(new Date())
           </div>
           <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
           <a class="gitee" href="https://gitee.com/dibo_software/diboot" target="_blank">
-            <img src="http://gitee.com/dibo_software/diboot/badge/star.svg?theme=dark" />
+            <img src="https://gitee.com/dibo_software/diboot/badge/star.svg?theme=dark" />
           </a>
         </el-card>
         <el-card style="flex: 1" shadow="hover">
