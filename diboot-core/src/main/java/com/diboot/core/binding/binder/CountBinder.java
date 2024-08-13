@@ -39,7 +39,7 @@ import java.util.*;
 public class CountBinder<T> extends EntityListBinder<T> {
     private static final Logger log = LoggerFactory.getLogger(CountBinder.class);
 
-    /***
+    /**
      * 构造方法
      * @param annotation
      * @param voList

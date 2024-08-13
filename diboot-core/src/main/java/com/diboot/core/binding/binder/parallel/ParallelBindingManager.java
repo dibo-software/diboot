@@ -70,7 +70,7 @@ public class ParallelBindingManager {
         }
     }
 
-    /***
+    /**
      * 绑定Field
      * @param voList
      * @param fieldAnnotations
@@ -87,7 +87,7 @@ public class ParallelBindingManager {
         return doBinding(binder, bindAnnotation.condition());
     }
 
-    /***
+    /**
      * 绑定FieldList
      * @param voList
      * @param fieldAnnotations
@@ -104,7 +104,7 @@ public class ParallelBindingManager {
         return doBinding(binder, bindAnnotation.condition());
     }
 
-    /***
+    /**
      * 绑定Entity
      * @param voList
      * @param fieldAnnotation
@@ -120,7 +120,7 @@ public class ParallelBindingManager {
         return doBinding(binder, annotation.condition());
     }
 
-    /***
+    /**
      * 绑定EntityList
      * @param voList
      * @param fieldAnnotation
@@ -135,7 +135,7 @@ public class ParallelBindingManager {
         return doBinding(binder, annotation.condition());
     }
 
-    /***
+    /**
      * 绑定count计数
      * @param voList
      * @param fieldAnnotation

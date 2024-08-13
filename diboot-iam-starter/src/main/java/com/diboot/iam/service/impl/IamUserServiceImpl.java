@@ -317,7 +317,7 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
                 .setOrgId(latestInfo.getOrgId());
     }
 
-    /***
+    /**
      * 检查重复用户编号
      * @param userNumList
      * @return

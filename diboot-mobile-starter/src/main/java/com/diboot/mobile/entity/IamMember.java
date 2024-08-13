@@ -69,7 +69,7 @@ public class IamMember extends BaseLoginUser {
     private String userId;
 
     /**
-     * 默认绑定用户类型
+     * 默认绑定用户类型（如 IamUser）
      */
     @TableField()
     @NotNull(message = "{validation.iamMember.userType.NotNull.message}")

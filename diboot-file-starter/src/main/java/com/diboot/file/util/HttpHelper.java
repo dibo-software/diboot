@@ -52,11 +52,11 @@ import java.util.Map;
 @Slf4j
 public class HttpHelper {
 
-    /***
+    /**
      * 默认contextType
      */
     private static final String DEFAULT_CONTEXT_TYPE = "application/octet-stream";
-    /***
+    /**
      * 文件扩展名-ContentType的对应关系
      */
     private static final Map<String, String> EXT_CONTENT_TYPE_MAP = new HashMap(){{
@@ -296,7 +296,7 @@ public class HttpHelper {
         }
     }
 
-    /****
+    /**
      * HTTP下载文件
      * @param fileUrl
      * @param targetFilePath
@@ -336,7 +336,7 @@ public class HttpHelper {
         return contentType + ";charset=utf-8";
     }
 
-    /***
+    /**
      * 获取请求中的多个文件数据
      * @param request
      * @param fileInputName
@@ -357,7 +357,7 @@ public class HttpHelper {
         return files;
     }
 
-    /***
+    /**
      * 获取请求中的单个文件数据
      * @param request
      * @param fileInputName

@@ -44,7 +44,7 @@ public class IamRoleVO extends IamRole {
 
     private List<IamResourceListVO> permissionVOList;
 
-    /***
+    /**
      * 是否为超级管理员
      * @return
      */

@@ -29,13 +29,13 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface BindCount {
-    /***
+    /**
      * 绑定的Entity类
      * @return
      */
     Class entity();
 
-    /***
+    /**
      * JOIN连接条件
      * @return
      */

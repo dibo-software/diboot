@@ -48,15 +48,15 @@ public class Pagination implements Serializable {
 
     private static final long serialVersionUID = -4083929594112114522L;
 
-    /***
+    /**
      * 当前页
      */
     private int pageIndex = 1;
-    /***
+    /**
      * 默认每页数量10
      */
     private int pageSize = BaseConfig.getPageSize();
-    /***
+    /**
      * count总数
      */
     private long totalCount = 0;
@@ -77,7 +77,7 @@ public class Pagination implements Serializable {
     public Pagination() {
     }
 
-    /***
+    /**
      * 指定当前页数
      */
     public Pagination(int pageIndex) {
@@ -92,7 +92,7 @@ public class Pagination implements Serializable {
         this.pageSize = pageSize;
     }
 
-    /***
+    /**
      * 获取总的页数
      * @return
      */

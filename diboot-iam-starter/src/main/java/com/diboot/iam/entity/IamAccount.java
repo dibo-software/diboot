@@ -46,42 +46,56 @@ public class IamAccount extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    // 用户类型
+    /**
+     * 用户类型
+     */
     @NotNull(message = "{validation.iamAccount.userType.NotNull.message}")
     @Length(max = 100, message = "{validation.iamAccount.userType.Length.message}")
     @TableField()
     private String userType;
 
-    // 用户ID
+    /**
+     * 用户ID
+     */
     @NotNull(message = "{validation.iamAccount.userId.NotNull.message}")
     @TableField()
     private String userId;
 
-    // 认证方式
+    /**
+     * 认证方式 (如：密码 PWD)
+     */
     @NotNull(message = "{validation.iamAccount.authType.NotNull.message}")
     @Length(max = 20, message = "{validation.iamAccount.authType.Length.message}")
     @TableField()
     private String authType = Cons.DICTCODE_AUTH_TYPE.PWD.name();
 
-    // 用户名
+    /**
+     * 用户名
+     */
     @NotNull(message = "{validation.iamAccount.authAccount.NotNull.message}")
     @Length(max = 100, message = "{validation.iamAccount.authAccount.Length.message}")
     @TableField()
     private String authAccount;
 
-    // 密码
+    /**
+     * 密码
+     */
     @JsonIgnore
     @Length(max = 32, message = "{validation.iamAccount.authSecret.Length.message}")
     @TableField()
     private String authSecret;
 
-    // 加密盐
+    /**
+     * 加密盐
+     */
     @JsonIgnore
     @Length(max = 32, message = "{validation.iamAccount.secretSalt.Length.message}")
     @TableField()
     private String secretSalt;
 
-    // 加密盐
+    /**
+     * 状态（A: 有效，I：无效，L：锁定）
+     */
     @Length(max = 10, message = "{validation.iamAccount.status.Length.message}")
     @TableField()
     private String status;

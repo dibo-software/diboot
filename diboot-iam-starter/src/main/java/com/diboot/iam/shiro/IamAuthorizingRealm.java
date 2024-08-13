@@ -66,7 +66,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         return token != null && token instanceof IamAuthToken;
     }
 
-    /***
+    /**
      * 获取认证信息
      * @param token
      * @return
@@ -119,7 +119,7 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         }
     }
 
-    /***
+    /**
      * 获取授权信息
      * @param principals
      * @return

@@ -376,7 +376,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         }
     }
 
-    /***
+    /**
      * 构建排序编号
      * @param dictList
      */

@@ -29,7 +29,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface Module {
 
-    /***
+    /**
      * 指定模块名
      * @return
      */

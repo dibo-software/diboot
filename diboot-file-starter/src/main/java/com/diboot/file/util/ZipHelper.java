@@ -27,7 +27,7 @@ import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-/***
+/**
  * 文件压缩操作辅助类
  * @author mazc@dibo.ltd
  * @version v2.0

@@ -92,7 +92,7 @@ public class BeanUtils {
         return target;
     }
 
-    /***
+    /**
      * 将对象转换为另外的对象实例
      * @param source
      * @param clazz
@@ -114,7 +114,7 @@ public class BeanUtils {
         return target;
     }
 
-    /***
+    /**
      * 将对象转换为另外的对象实例
      * @param sourceList
      * @param clazz
@@ -190,7 +190,7 @@ public class BeanUtils {
         return entityList;
     }
 
-    /***
+    /**
      * 附加Map中的属性值到Model
      * @param model
      * @param propMap
@@ -210,7 +210,7 @@ public class BeanUtils {
         }
     }
 
-    /***
+    /**
      * 获取对象的属性值
      * @param obj
      * @param field
@@ -234,7 +234,7 @@ public class BeanUtils {
         return null;
     }
 
-    /***
+    /**
      * 获取对象的属性值并转换为String
      * @param obj
      * @param field
@@ -248,7 +248,7 @@ public class BeanUtils {
         return String.valueOf(property);
     }
 
-    /***
+    /**
      * 设置属性值
      * @param obj
      */
@@ -270,7 +270,7 @@ public class BeanUtils {
         return wrapper;
     }
 
-    /***
+    /**
      * 设置属性值
      * @param obj
      * @param field
@@ -339,7 +339,7 @@ public class BeanUtils {
         return value;
     }
 
-    /***
+    /**
      * Key-Object对象Map
      * @param allLists
      * @param getterFns
@@ -350,7 +350,7 @@ public class BeanUtils {
         return convertToStringKeyObjectMap(allLists, fields);
     }
 
-    /***
+    /**
      * Key-Object对象Map
      * @param allLists
      * @param fields
@@ -381,7 +381,7 @@ public class BeanUtils {
     }
 
 
-    /***
+    /**
      * Key-Object对象Map
      * @param allLists
      * @param getterFns
@@ -392,7 +392,7 @@ public class BeanUtils {
         return convertToStringKeyObjectListMap(allLists, fields);
     }
 
-    /***
+    /**
      * Key-Object-List列表Map
      * @param allLists
      * @param fields
@@ -646,7 +646,7 @@ public class BeanUtils {
         return nodes;
     }
 
-    /***
+    /**
      * 提取两个model的差异值
      * @param oldModel
      * @param newModel
@@ -669,7 +669,7 @@ public class BeanUtils {
         return extractDiff(oldModel, newModel, fields, IGNORE_FIELDS);
     }
 
-    /***
+    /**
      * 提取两个model的差异值，只对比指定字段
      * @param oldModel
      * @param newModel
@@ -748,7 +748,7 @@ public class BeanUtils {
         return collectToList(objectList, Cons.FieldName.id.name());
     }
 
-    /***
+    /**
      * 从list对象列表中提取指定属性值到新的List
      * @param objectList
      * @param getterPropName
@@ -779,7 +779,7 @@ public class BeanUtils {
         return fieldValueList;
     }
 
-    /***
+    /**
      * 从list对象列表中提取指定属性值到新的List
      * @param objectList
      * @param getterPropName
@@ -826,7 +826,7 @@ public class BeanUtils {
         bindPropValueOfList(setterFieldName, fromList, getterFieldName, valueMatchMap);
     }
 
-    /***
+    /**
      * 从对象集合提取某个属性值到list中
      * @param setterFieldName
      * @param fromList
@@ -883,7 +883,7 @@ public class BeanUtils {
         }
     }
 
-    /***
+    /**
      * 转换方法引用为属性名
      * @param fn
      * @return
@@ -893,7 +893,7 @@ public class BeanUtils {
         return PropertyNamer.methodToProperty(lambda.getImplMethodName());
     }
 
-    /***
+    /**
      * 转换方法引用为属性名
      * @param fn
      * @return
@@ -1051,7 +1051,7 @@ public class BeanUtils {
         return t -> seen.add(getterFn.apply(t));
     }
 
-    /***
+    /**
      * 获取类对应的Lambda
      * @param fn
      * @return

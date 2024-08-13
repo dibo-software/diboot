@@ -102,7 +102,7 @@ IamTenant extends BaseEntity<String> {
     private String description;
 
     /**
-     * 租户状态
+     * 租户状态（A: 有效，I: 无效）
      */
     @Length(max = 10, message = "{validation.iamTenant.status.Length.message}")
     @TableField()

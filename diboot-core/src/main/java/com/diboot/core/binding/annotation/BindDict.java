@@ -29,13 +29,13 @@ import java.lang.annotation.*;
 @Documented
 public @interface BindDict {
 
-    /***
+    /**
      * 绑定数据字典类型
      * @return
      */
     String type();
 
-    /***
+    /**
      * 数据字典项取值字段
      * @return
      */

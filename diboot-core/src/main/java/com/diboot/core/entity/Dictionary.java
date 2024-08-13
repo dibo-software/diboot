@@ -52,7 +52,7 @@ public class Dictionary extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    /***
+    /**
      * 上级ID
      */
     @TableField
@@ -64,7 +64,7 @@ public class Dictionary extends BaseEntity<String> {
     @TableField
     private String appModule;
 
-    /***
+    /**
      * 数据字典类型
      */
     @NotNull(message = "{validation.dictionary.type.NotNull.message}")
@@ -72,7 +72,7 @@ public class Dictionary extends BaseEntity<String> {
     @TableField
     private String type;
 
-    /***
+    /**
      * 数据字典项的显示名称
      */
     @NotNull(message = "{validation.dictionary.itemName.NotNull.message}")
@@ -86,33 +86,33 @@ public class Dictionary extends BaseEntity<String> {
      */
     private String itemNameI18n;
 
-    /***
+    /**
      * 数据字典项的存储值（编码）
      */
     @Length(max = 100, message = "{validation.dictionary.itemValue.Length.message}")
     @TableField
     private String itemValue;
 
-    /***
+    /**
      * 备注信息
      */
     @Length(max = 200, message = "{validation.dictionary.description.Length.message}")
     @TableField
     private String description;
 
-    /***
+    /**
      * 排序号
      */
     @TableField
     private Integer sortId;
 
-    /***
+    /**
      * 是否为系统预置（预置不可删除）
      */
     @TableField("is_deletable")
     private Boolean isDeletable;
 
-    /***
+    /**
      * 是否可编辑
      */
     @TableField("is_editable")
@@ -124,7 +124,7 @@ public class Dictionary extends BaseEntity<String> {
     @TableField(typeHandler = JacksonTypeHandler.class)
     private Map<String, Object> extension;
 
-    /***
+    /**
      * 从extdata JSON中提取扩展属性值
      * @param extAttrName
      * @return
@@ -136,7 +136,7 @@ public class Dictionary extends BaseEntity<String> {
         return this.extension.get(extAttrName);
     }
 
-    /***
+    /**
      * 添加扩展属性和值到extdata JSON中
      * @param extAttrName
      * @param extAttrValue

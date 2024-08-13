@@ -50,7 +50,7 @@ public class SqlFileInitializer {
         return "META-INF/sql/init-" + module + "-mysql.sql";
     }
 
-    /***
+    /**
      * 初始化安装SQL
      * @return
      */
@@ -111,7 +111,7 @@ public class SqlFileInitializer {
         }
     }
 
-    /***
+    /**
      * 从SQL文件读出的行内容中 提取SQL语句并执行
      * @param sqlPath
      * @return
@@ -185,7 +185,7 @@ public class SqlFileInitializer {
         return sqlStatement;
     }
 
-    /***
+    /**
      * 执行多条批量更新SQL（无事务，某条报错不影响后续执行）
      * @param sqlStatementList
      * @return
@@ -208,7 +208,7 @@ public class SqlFileInitializer {
         return true;
     }
 
-    /***
+    /**
      * 执行多条批量更新SQL，并在执行异常时跑出异常（支持事务，有报错即回滚）
      * @param sqlStatementList
      * @return
@@ -242,7 +242,7 @@ public class SqlFileInitializer {
         }
     }
 
-    /***
+    /**
      * 获取
      * @param inst
      * @return
@@ -262,7 +262,7 @@ public class SqlFileInitializer {
         return lines;
     }
 
-    /***
+    /**
      * 剔除SQL中的注释，提取可执行的实际SQL
      * @param inputSql
      * @return
@@ -287,7 +287,7 @@ public class SqlFileInitializer {
         return inputSql.replaceAll("\r|\n", " ");
     }
 
-    /***
+    /**
      * 去除多行注释
      * @param inputSql
      * @return

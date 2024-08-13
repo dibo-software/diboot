@@ -50,7 +50,7 @@ public interface IamUserService extends BaseService<IamUser> {
      */
     boolean updateUserRelatedInfo(IamUserFormDTO userAccountDTO) throws Exception;
 
-    /***
+    /**
      * 删除用户和关联信息（账号、岗位、角色等）
      * @param id
      * @return

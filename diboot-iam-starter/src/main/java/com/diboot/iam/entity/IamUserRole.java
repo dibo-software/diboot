@@ -55,17 +55,23 @@ public class IamUserRole extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    // 用户类型
+    /**
+     * 用户类型（如 IamUser）
+     */
     @NotNull(message = "{validation.iamUserRole.userType.NotNull.message}")
     @TableField()
     private String userType;
 
-    // 用户ID
+    /**
+     * 用户ID
+     */
     @NotNull(message = "{validation.iamUserRole.userId.NotNull.message}")
     @TableField()
     private String userId;
 
-    // 角色ID
+    /**
+     * 角色ID
+     */
     @NotNull(message = "{validation.iamUserRole.roleId.NotNull.message}")
     @TableField()
     private String roleId;

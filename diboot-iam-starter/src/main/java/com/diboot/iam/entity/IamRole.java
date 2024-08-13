@@ -59,20 +59,26 @@ public class IamRole extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    // 名称
+    /**
+     * 名称
+     */
     @NotNull(message = "{validation.iamRole.name.NotNull.message}")
     @Length(max = 50, message = "{validation.iamRole.name.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String name;
 
-    // 编码
+    /**
+     * 编码
+     */
     @NotNull(message = "{validation.iamRole.code.NotNull.message}")
     @Length(max = 50, message = "{validation.iamRole.code.Length.message}")
     @TableField()
     private String code;
 
-    // 备注
+    /**
+     * 备注
+     */
     @TableField()
     private String description;
 

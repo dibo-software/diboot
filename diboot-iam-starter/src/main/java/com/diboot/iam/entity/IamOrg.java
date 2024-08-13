@@ -57,36 +57,50 @@ public class IamOrg extends BaseTreeEntity<String> {
     private String tenantId;
 
     /**
-     * 企业ID
+     * 企业根节点ID
      */
     @TableField()
     private String rootOrgId;
 
-    // 名称
+    /**
+     * 名称
+     */
     @NotNull(message = "{validation.iamOrg.name.NotNull.message}")
     @Length(max = 100, message = "{validation.iamOrg.name.Length.message}")
     @TableField()
     private String name;
 
-    // 权限类别
+    /**
+     * 类型：公司/部门
+     */
     @NotNull(message = "{validation.iamOrg.type.NotNull.message}")
     @Length(max = 100, message = "{validation.iamOrg.type.Length.message}")
     @TableField()
     private String type;
 
-    // 编码
+    /**
+     * 编码
+     */
     @NotNull(message = "{validation.iamOrg.code.NotNull.message}")
     @Length(max = 50, message = "{validation.iamOrg.code.Length.message}")
     @TableField()
     private String code;
 
+    /**
+     * 负责人ID
+     */
     @TableField()
     private String managerId;
 
-    // 排序号
+    /**
+     * 排序号
+     */
     @TableField()
     private Long sortId;
 
+    /**
+     * 状态
+     */
     @TableField
     private String status;
 

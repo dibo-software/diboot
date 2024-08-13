@@ -31,7 +31,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
-/***
+/**
  * Spring配置文件
  * @author mazc@dibo.ltd
  * @version v2.0

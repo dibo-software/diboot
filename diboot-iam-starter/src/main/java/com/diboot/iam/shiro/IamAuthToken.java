@@ -86,7 +86,7 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
     public IamAuthToken(){
     }
 
-    /***
+    /**
      * 初始化认证token
      * @param authType 认证方式
      * @param userTypeClass 用户类型Class
@@ -112,7 +112,7 @@ public class IamAuthToken implements RememberMeAuthenticationToken {
         this.expiresInMinutes = Integer.parseInt(fields[4]);
     }
 
-    /***
+    /**
      * 验证失败的时候清空token
      */
     public void clearAuthtoken(){

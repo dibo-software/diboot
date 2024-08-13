@@ -21,7 +21,7 @@ import com.diboot.core.util.V;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/***
+/**
  * 系统默认配置
  * @author mazc@dibo.ltd
  * @version 2.0
@@ -50,7 +50,7 @@ public class BaseConfig {
 		return value != null? value : defaultValue;
 	}
 
-	/***
+	/**
 	 *  从默认的/指定的 Properties文件获取boolean值
 	 * @param key
 	 * @return
@@ -59,7 +59,7 @@ public class BaseConfig {
 		return PropertiesUtils.getBoolean(key);
 	}
 
-	/***
+	/**
 	 * 获取int类型
 	 * @param key
 	 * @return
@@ -68,7 +68,7 @@ public class BaseConfig {
 		return PropertiesUtils.getInteger(key);
 	}
 
-	/***
+	/**
 	 * 获取int类型
 	 * @param key
 	 * @return
@@ -79,7 +79,7 @@ public class BaseConfig {
 	}
 
 	private static Integer cutLength = null;
-	/***
+	/**
 	 * 获取截取长度
 	 * @return
 	 */
@@ -94,7 +94,7 @@ public class BaseConfig {
 	}
 
 	private static Integer pageSize = null;
-	/***
+	/**
 	 * 默认页数
 	 * @return
 	 */
@@ -109,7 +109,7 @@ public class BaseConfig {
     }
 
 	private static Integer batchSize = null;
-	/***
+	/**
 	 * 获取批量插入的每批次数量
  	 * @return
 	 */
@@ -159,7 +159,7 @@ public class BaseConfig {
 
 	private static Long workerId = null, dataCenterId = null;
 
-	/***
+	/**
 	 * 获取workerId
 	 * @return
 	 */
@@ -173,7 +173,7 @@ public class BaseConfig {
 		return workerId;
 	}
 
-	/***
+	/**
 	 * 获取DataCenterId
 	 * @return
 	 */
@@ -187,7 +187,7 @@ public class BaseConfig {
 		return dataCenterId;
 	}
 
-	/***
+	/**
 	 * 默认页数
 	 * @return
 	 */

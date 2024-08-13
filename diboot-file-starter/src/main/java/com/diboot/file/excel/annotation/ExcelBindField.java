@@ -28,19 +28,19 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface ExcelBindField {
-    /***
+    /**
      * 绑定的Entity类
      * @return
      */
     Class entity();
 
-    /***
+    /**
      * 绑定字段
      * @return
      */
     String field();
 
-    /***
+    /**
      * 设置ID至哪个字段，默认当前字段
      * @return
      */

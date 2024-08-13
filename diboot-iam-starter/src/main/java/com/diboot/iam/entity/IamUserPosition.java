@@ -49,32 +49,44 @@ public class IamUserPosition extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    // 用户类型
+    /**
+     * 用户类型（如 IamUser）
+     */
     @NotNull(message = "{validation.iamUserPosition.userType.NotNull.message}")
     @Length(max = 100, message = "{validation.iamUserPosition.userType.Length.message}")
     @TableField()
     private String userType;
 
-    // 用户ID
+    /**
+     * 用户ID
+     */
     @NotNull(message = "{validation.iamUserPosition.userId.NotNull.message}")
     @TableField()
     private String userId;
 
-    // 组织ID
+    /**
+     * 组织ID
+     */
     @NotNull(message = "{validation.iamUserPosition.orgId.NotNull.message}")
     @TableField()
     private String orgId;
 
-    // 岗位ID
+    /**
+     * 岗位ID
+     */
     @NotNull(message = "{validation.iamUserPosition.positionId.NotNull.message}")
     @TableField()
     private String positionId;
 
-    // 是否主岗
+    /**
+     * 是否主岗
+     */
     @TableField()
     private Boolean isPrimaryPosition = true;
 
-    // 更新时间
+    /**
+     * 更新时间
+     */
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
 

@@ -29,7 +29,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface ExcelBindDict {
 
-    /***
+    /**
      * 绑定字段
      * @return
      */

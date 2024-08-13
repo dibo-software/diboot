@@ -17,7 +17,7 @@ public interface GeneralService<T> {
      */
     boolean createEntity(T entity);
 
-    /***
+    /**
      * 批量创建Entity
      * @param entityList 实体对象列表
      * @return true:成功, false: 失败
@@ -38,7 +38,7 @@ public interface GeneralService<T> {
      */
     boolean updateEntities(Collection entityList);
 
-    /***
+    /**
      * 创建或更新entity（entity.id存在则新建，否则更新）
      * @param entity
      * @return

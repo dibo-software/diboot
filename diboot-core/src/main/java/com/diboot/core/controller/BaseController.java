@@ -43,7 +43,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/***
+/**
  * Controller的父类
  * @author mazc@dibo.ltd
  * @version 2.0
@@ -55,7 +55,7 @@ public class BaseController {
 	@Autowired
 	protected HttpServletRequest request;
 
-	/***
+	/**
 	 * 根据DTO构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
@@ -64,7 +64,7 @@ public class BaseController {
 		return QueryBuilder.toQueryWrapper(entityOrDto);
 	}
 
-	/***
+	/**
 	 * 根据DTO构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，DTO中的非空属性均参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @param pagination 分页，如按关联表中的字段排序时需传入pagination
@@ -74,7 +74,7 @@ public class BaseController {
 		return QueryBuilder.toQueryWrapper(entityOrDto, pagination);
 	}
 
-	/***
+	/**
 	 * 根据请求参数构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @return
@@ -84,7 +84,7 @@ public class BaseController {
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams());
 	}
 
-	/***
+	/**
 	 * 根据请求参数构建查询QueryWrapper (根据BindQuery注解构建相应的查询条件，url中的请求参数参与构建)
 	 * @param entityOrDto Entity对象或者DTO对象 (属性若无BindQuery注解，默认构建为为EQ相等条件)
 	 * @param pagination 分页，如按关联表中的字段排序时需传入pagination
@@ -95,7 +95,7 @@ public class BaseController {
 		return QueryBuilder.toQueryWrapper(entityOrDto, extractQueryParams(), pagination);
 	}
 
-	/***
+	/**
 	 * 获取请求参数Map
 	 * @return
 	 */
@@ -103,7 +103,7 @@ public class BaseController {
 		return getParamsMap(null);
 	}
 
-	/***
+	/**
 	 * 获取请求参数Map
 	 * @return
 	 */
@@ -138,7 +138,7 @@ public class BaseController {
 		return result;
 	}
 
-	/***
+	/**
 	 * 获取请求URI (去除contextPath)
 	 * @return
 	 */
@@ -162,7 +162,7 @@ public class BaseController {
 		return Collections.EMPTY_SET;
 	}
 
-	/***
+	/**
 	 * 将请求参数值转换为Map
 	 * @return
 	 */
@@ -382,7 +382,7 @@ public class BaseController {
 		});
 	}
 
-	/***
+	/**
 	 * 打印所有参数信息
 	 */
 	protected void dumpParams(){
@@ -437,7 +437,7 @@ public class BaseController {
 		return S.toInt(request.getParameter(param), defaultValue);
 	}
 
-	/***
+	/**
 	 * 从request中获取boolean值
 	 * @param param
 	 * @return
@@ -446,7 +446,7 @@ public class BaseController {
 		return S.toBoolean(request.getParameter(param));
 	}
 
-	/***
+	/**
 	 * 从request中获取boolean值
 	 * @param param
 	 * @param defaultBoolean
@@ -518,7 +518,7 @@ public class BaseController {
 		return null;
 	}
 
-	/***
+	/**
 	 * 从request里获取String列表
 	 * @param param
 	 * @return
@@ -531,7 +531,7 @@ public class BaseController {
 		return Arrays.asList(strArray);
 	}
 
-	/***
+	/**
 	 * 从request里获取Long列表
 	 * @param param
 	 * @return

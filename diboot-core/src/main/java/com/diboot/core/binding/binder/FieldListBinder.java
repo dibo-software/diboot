@@ -40,7 +40,7 @@ import java.util.Map;
 public class FieldListBinder<T> extends FieldBinder<T> {
     private static final Logger log = LoggerFactory.getLogger(FieldListBinder.class);
 
-    /***
+    /**
      * 构造方法
      * @param annotation
      * @param voList
@@ -164,7 +164,7 @@ public class FieldListBinder<T> extends FieldBinder<T> {
         }
     }
 
-    /***
+    /**
      * 从对象集合提取某个属性值到list中
      * @param fromList
      * @param trunkObjColMapping

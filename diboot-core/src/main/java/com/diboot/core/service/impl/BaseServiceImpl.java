@@ -69,7 +69,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/***
+/**
  * CRUD通用接口实现类
  * @author mazc@dibo.ltd
  * @param <M> mapper类
@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
 public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl<M, T> implements BaseService<T> {
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
 
-	/***
+	/**
 	 * 获取当前的Mapper对象
 	 * @return
 	 */
@@ -1357,7 +1357,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
-	/***
+	/**
 	 * 转换为IPage
 	 * @param pagination 分页
 	 * @return
@@ -1366,7 +1366,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return ServiceAdaptor.convertToIPage(pagination, getEntityClass());
 	}
 
-	/***
+	/**
 	 * 转换为IPage（已废弃）
 	 * @see #convertToIPage(Pagination)
 	 * @param queryWrapper 查询条件
@@ -1397,7 +1397,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.getProperty(entity, pk);
 	}
 
-	/***
+	/**
 	 * 打印警告信息
 	 * @param method
 	 * @param message

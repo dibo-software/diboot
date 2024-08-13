@@ -54,46 +54,66 @@ public class IamLoginTrace extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    // 用户类型
+    /**
+     * 用户类型（如 IamUser）
+     */
     @NotNull(message = "{validation.iamLoginTrace.userType.NotNull.message}")
     @Length(max=100, message="{validation.iamLoginTrace.userType.Length.message}")
     @TableField()
     private String userType;
 
-    // 用户ID
+    /**
+     * 用户ID
+     */
     @NotNull(message = "{validation.iamLoginTrace.userId.NotNull.message}")
     @TableField()
     private String userId;
 
-    // 认证方式
+    /**
+     * 认证方式
+     */
     @NotNull(message = "{validation.iamLoginTrace.authType.NotNull.message}")
     @Length(max=20, message="{validation.iamLoginTrace.authType.Length.message}")
     @TableField()
     private String authType;
 
-    // 用户名
+    /**
+     * 用户名
+     */
     @NotNull(message = "{validation.iamLoginTrace.authAccount.NotNull.message}")
     @Length(max=100, message="{validation.iamLoginTrace.authAccount.Length.message}")
     @TableField()
     private String authAccount;
 
-    // 签名
+    /**
+     * 签名
+     */
     @JsonIgnore
     @TableField()
     private String signature;
 
-    // 签发方式
+    /**
+     * 签发方式
+     */
     @TableField()
     private String signType;
 
-    // 是否成功
+    /**
+     * 是否成功
+     */
     @TableField("is_success")
     private Boolean isSuccess;
 
+    /**
+     * IP地址
+     */
     @Length(max=50, message="{validation.iamLoginTrace.ipAddress.Length.message}")
     @TableField()
     private String ipAddress;
 
+    /**
+     * 请求agent
+     */
     @Length(max=200, message="{validation.iamLoginTrace.userAgent.Length.message}")
     @TableField()
     private String userAgent;

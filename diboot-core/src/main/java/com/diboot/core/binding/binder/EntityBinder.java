@@ -43,16 +43,16 @@ import java.util.stream.Collectors;
 public class EntityBinder<T> extends BaseBinder<T> {
     private static final Logger log = LoggerFactory.getLogger(EntityBinder.class);
 
-    /***
+    /**
      * 给待绑定list中VO对象赋值的setter属性名
      */
     protected String annoObjectField;
-    /***
+    /**
      * 给待绑定list中VO对象赋值的setter属性class类型
      */
     protected Class<?> annoObjectFieldClass;
 
-    /***
+    /**
      * 构造方法
      * @param entityClass
      * @param voList
@@ -61,7 +61,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         super(entityClass, voList);
     }
 
-    /***
+    /**
      * 构造方法
      * @param annotation
      * @param voList
@@ -70,7 +70,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         super(annotation.entity(), voList);
     }
 
-    /***
+    /**
      * 指定VO绑定属性赋值的setter方法
      * @param voSetter VO中调用赋值的setter方法
      * @param <T1> VO类型
@@ -81,7 +81,7 @@ public class EntityBinder<T> extends BaseBinder<T> {
         return set(BeanUtils.convertToFieldName(voSetter), annoObjectFieldClass);
     }
 
-    /***
+    /**
      * 指定VO绑定属性赋值的set属性
      * @param annoObjectField VO中调用赋值的setter属性
      * @return

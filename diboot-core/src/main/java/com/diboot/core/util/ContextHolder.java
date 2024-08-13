@@ -55,7 +55,7 @@ import java.util.Map;
 public class ContextHolder implements ApplicationContextAware, ApplicationListener<ApplicationReadyEvent> {
     private static final Logger log = LoggerFactory.getLogger(ContextHolder.class);
 
-    /***
+    /**
      * ApplicationContext上下文
      */
     private static ApplicationContext APPLICATION_CONTEXT = null;
@@ -77,7 +77,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         log.debug("ApplicationContext已注入: {}", APPLICATION_CONTEXT.getDisplayName());
     }
 
-    /***
+    /**
      * 获取ApplicationContext上下文
      */
     public static ApplicationContext getApplicationContext() {
@@ -92,7 +92,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         return APPLICATION_CONTEXT;
     }
 
-    /***
+    /**
      * 根据beanId获取Bean实例
      * @param beanId
      * @return
@@ -101,7 +101,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         return getApplicationContext().getBean(beanId);
     }
 
-    /***
+    /**
      * 获取指定类型的单个Bean实例
      * @param clazz
      * @return
@@ -116,7 +116,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         }
     }
 
-    /***
+    /**
      * 获取指定类型的全部实现类
      * @param type
      * @param <T>
@@ -132,7 +132,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         return beanList;
     }
 
-    /***
+    /**
      * 根据注解获取beans
      * @param annotationType
      * @return
@@ -216,7 +216,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         return getIdFieldName(entity);
     }
 
-    /***
+    /**
      * 获取JdbcUrl
      * @return
      */

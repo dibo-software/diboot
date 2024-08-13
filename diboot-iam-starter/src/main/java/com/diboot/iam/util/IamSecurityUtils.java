@@ -224,7 +224,7 @@ public class IamSecurityUtils extends SecurityUtils {
         }
     }
 
-    /***
+    /**
      * 对用户密码加密
      * @param iamAccount
      */
@@ -239,7 +239,7 @@ public class IamSecurityUtils extends SecurityUtils {
         }
     }
 
-    /***
+    /**
      * 对用户密码加密
      * @param password
      * @param salt
