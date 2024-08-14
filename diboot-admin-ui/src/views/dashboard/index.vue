@@ -84,11 +84,12 @@ const currentDate = ref(new Date())
           <div class="flex flex-dir-col flex-col-center">
             <el-image class="mb-20" style="width: 100px; height: 100px" :src="logoSrc" />
             <span class="mb-20 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 14px)">
-              欢迎体验 diboot低代码开发平台
+              欢迎使用 Diboot低代码开发平台
             </span>
             <span class="mb-20">
-              写的更少, 性能更好 ->
-              为开发人员打造的低代码开发平台。Mybatis-plus关联查询，关联无SQL，性能高10倍，前后端代码可视化生成，flowable工作流，spring
+              写的更少, 性能更好 -> 为开发人员打造的低代码开发平台，生于开发框架，无扩展局限，零代码/低代码/全代码
+              顺畅融合自由切换。
+              Mybatis-plus关联查询，关联无SQL，性能高10倍，前后端代码可视化生成，Flowable工作流，Spring
               cloud微服务等全方位赋能！
             </span>
             <div class="mb-20" style="align-self: flex-start">
@@ -113,9 +114,17 @@ const currentDate = ref(new Date())
           <div class="main-color mb-10 fw-bold" style="font-size: calc(var(--el-font-size-dynamic) + 2px)">
             基础组件化繁为简，高效工具以简驭繁
           </div>
-          <div class="mb-20">基于Vue3 + Element-Plus 的中后台前端解决方案，如果喜欢就点个星星支持一下。</div>
-          <a class="gitee" href="https://gitee.com/dibo_software/diboot" target="_blank">
-            <img src="https://gitee.com/dibo_software/diboot/badge/star.svg?theme=dark" />
+          <div class="mb-20">感谢您使用Diboot，如果喜欢就点个星星支持一下我们。</div>
+          <a
+            href="http://gitee.com/dibo_software/diboot"
+            target="_blank"
+            title="Gitee 仓库 - 开源不易，star鼓励"
+            style="margin-right: 20px"
+          >
+            <img src="http://gitee.com/dibo_software/diboot/badge/star.svg?theme=dark" />
+          </a>
+          <a href="http://github.com/dibo-software/diboot" target="_blank" title="Github 仓库 - 开源不易，star鼓励">
+            <img src="https://img.shields.io/github/stars/dibo-software/diboot.svg?style=social&label=Stars" />
           </a>
         </el-card>
         <el-card style="flex: 1" shadow="hover">
