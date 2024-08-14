@@ -144,7 +144,7 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
             if (V.notEmpty(i18nCode)) {
                 if (V.notEmpty(languageCached) && V.notEmpty(languageCached.get(i18nCode))) {
                     BeanUtils.setProperty(item, setI18nContentField, languageCached.get(i18nCode));
-                    log.debug("语言环境 {} 从缓存中获取 {} 的选项数据", language, i18nCode);
+                    log.trace("语言环境 {} 从缓存中获取 {} 的选项数据", language, i18nCode);
                 } else {
                     codes.add(S.valueOf(i18nCode));
                 }
