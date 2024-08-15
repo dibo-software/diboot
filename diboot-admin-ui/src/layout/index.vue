@@ -90,7 +90,7 @@ const vDrag: Directive<HTMLElement> = {
 </script>
 
 <template>
-  <el-container v-if="isMobile" style="height: 100vh">
+  <el-container v-if="isMobile">
     <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header />
     </el-header>
