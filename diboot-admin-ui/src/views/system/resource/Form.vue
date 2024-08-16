@@ -190,8 +190,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
                 />
               </el-form-item>
               <el-form-item
-                v-if="!!model.routeMeta"
-                v-show="model.displayType === 'MENU'"
+                v-if="!!model.routeMeta && model.displayType === 'MENU'"
                 :label="$t('resource.componentPath')"
                 prop="routeMeta.componentPath"
                 :rules="[{ required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }]"
