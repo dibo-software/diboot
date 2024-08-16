@@ -23,6 +23,7 @@ const oneLevel = ref<RouteRecordRaw>()
 const openOneLevel = (menu: RouteRecordRaw) => {
   const oldOneLevel = oneLevel.value
   oneLevel.value = menu
+  if (menu.children?.length && menu.children[0].beforeEnter) return
   if (router.currentRoute.value.name !== menu.name)
     router.push(menu.path).then(navigationFailure => {
       if (navigationFailure) oneLevel.value = oldOneLevel
