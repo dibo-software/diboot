@@ -627,6 +627,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <RE, R> boolean updateRelatedEntities(Serializable entityId, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter) {
+		if(relatedEntities == null) {
+			log.debug("{}.{} 的关联数据为null，不做更新", getEntityClass().getSimpleName(), entityId);
+			return true;
+		}
 		// 获取关联entity的类
 		Class relatedEntityClass;
 		if(V.notEmpty(relatedEntities)){
