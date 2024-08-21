@@ -25,11 +25,9 @@ import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.diboot.core.dto.SortParamDTO;
-import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ISetter;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.core.vo.Pagination;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 
 import java.io.Serializable;
@@ -89,16 +87,6 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     <RE, R> boolean createEntityAndRelatedEntities(T entity, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter);
-
-    /**
-     * 创建实体和其关联数据
-     * @param formDto
-     * @return
-     * @param <DTO>
-     */
-    default <DTO> boolean createEntityAndRelatedData(DTO formDto) {
-        throw new InvalidUsageException("该方法无默认实现，请在ServiceImpl中重写该方法后调用！");
-    }
 
     /**
      * 添加entity的关联子项entities （1-n）
@@ -164,16 +152,6 @@ public interface BaseService<T> extends GeneralService<T>{
      * @return
      */
     boolean updateEntity(Wrapper updateWrapper);
-
-    /**
-     * 更新实体和其关联数据
-     * @param formDto
-     * @return
-     * @param <DTO>
-     */
-    default <DTO> boolean updateEntityAndRelatedData(DTO formDto) {
-        throw new InvalidUsageException("该方法无默认实现，请在ServiceImpl中重写该方法后调用！");
-    }
 
     /**
      * 更新entity 及 其关联子项entities
