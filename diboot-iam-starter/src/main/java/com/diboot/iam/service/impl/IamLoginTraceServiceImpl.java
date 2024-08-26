@@ -23,10 +23,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.Encryptor;
 import com.diboot.core.util.V;
+import com.diboot.iam.entity.BaseLoginUser;
 import com.diboot.iam.entity.IamLoginTrace;
 import com.diboot.iam.mapper.IamLoginTraceMapper;
 import com.diboot.iam.service.IamLoginTraceService;
 import com.diboot.iam.shiro.IamAuthToken;
+import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
 import com.diboot.iam.vo.IamLoginTraceVO;
 import lombok.extern.slf4j.Slf4j;
@@ -71,9 +73,15 @@ public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMappe
     @Override
     public void saveTokenRefreshTrace(String refreshToken, String oldToken) {
         String oldSignature = Encryptor.encrypt(oldToken);
-        IamLoginTrace loginTrace = this.getSingleEntity(
-                Wrappers.<IamLoginTrace>lambdaQuery().eq(IamLoginTrace::getSignature, oldSignature)
-        );
+        LambdaQueryWrapper<IamLoginTrace> queryWrapper = new LambdaQueryWrapper<>();
+        BaseLoginUser user = IamSecurityUtils.getCurrentUser();
+        if(user != null){
+            queryWrapper.eq(IamLoginTrace::getUserType, user.getUserType())
+                    .eq(IamLoginTrace::getUserId, user.getId())
+                    .eq(IamLoginTrace::getIsSuccess, true);
+        }
+        queryWrapper.eq(IamLoginTrace::getSignature, oldSignature).orderByDesc(IamLoginTrace::getId);
+        IamLoginTrace loginTrace = this.getSingleEntity(queryWrapper);
         if (loginTrace == null) {
             return;
         }
@@ -96,11 +104,7 @@ public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMappe
                 vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.UNKNOWN.name());
                 continue;
             }
-            String token = null;
-            try {
-                token = Encryptor.decrypt(vo.getSignature());
-            } catch (Exception e) {
-            }
+            String token = Encryptor.decrypt(vo.getSignature());
             if (V.isEmpty(token)) {
                 vo.setOnlineStatus(IamLoginTraceVO.ONLINE_STATUS.UNKNOWN.name());
                 continue;
