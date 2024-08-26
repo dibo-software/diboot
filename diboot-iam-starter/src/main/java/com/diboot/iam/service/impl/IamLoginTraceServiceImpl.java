@@ -70,7 +70,7 @@ public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMappe
 
     @Override
     public void saveTokenRefreshTrace(String refreshToken, String oldToken) {
-        String oldSignature = DigestUtils.md2Hex(oldToken);
+        String oldSignature = Encryptor.encrypt(oldToken);
         IamLoginTrace loginTrace = this.getSingleEntity(
                 Wrappers.<IamLoginTrace>lambdaQuery().eq(IamLoginTrace::getSignature, oldSignature)
         );
