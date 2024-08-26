@@ -59,7 +59,7 @@ const forceLogout = (id: string) => {
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column :label="$t('loginTrace.userTypeId')" width="260">
+      <el-table-column :label="$t('loginTrace.userTypeId')" width="220">
         <template #default="{ row }">
           <span>{{ row.userType }}:{{ row.userId }}</span>
         </template>
@@ -78,12 +78,12 @@ const forceLogout = (id: string) => {
       <el-table-column prop="loginStatus" :label="$t('loginTrace.onlineStatusLabel')">
         <template #default="{ row }">
           <el-tag v-if="row.onlineStatus === 'ONLINE'">{{ $t('loginTrace.onlineStatus.online') }}</el-tag>
-          <el-tag v-else type="danger">{{ $t(`loginTrace.onlineStatus.${row.onlineStatus?.toLowerCase()}`) }}</el-tag>
+          <el-tag v-else type="info">{{ $t(`loginTrace.onlineStatus.${row.onlineStatus?.toLowerCase()}`) }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" :label="$t('loginTrace.createTime')" />
-      <el-table-column prop="logoutTime" :label="$t('loginTrace.logoutTime')" />
-      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
+      <el-table-column prop="createTime" width="160" :label="$t('loginTrace.createTime')" />
+      <el-table-column prop="logoutTime" width="160" :label="$t('loginTrace.logoutTime')" />
+      <el-table-column :label="$t('operation.label')" width="90" fixed="right">
         <template #default="{ row }">
           <el-button
             v-if="row.onlineStatus === 'ONLINE'"
