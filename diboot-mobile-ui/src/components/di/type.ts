@@ -143,6 +143,8 @@ export interface Input {
 export interface InputText extends Input {
   type: 'input'
   maxlength?: number
+  // 扫码
+  scanCode?: boolean
 }
 
 export interface Textarea extends Omit<InputText, 'type'> {
