@@ -139,7 +139,6 @@ public class RelationsBinder {
         }
         // 绑定Entity实体
         List<FieldAnnotation> entityAnnoList = bindAnnotationGroup.getBindEntityAnnotations();
-
         if(entityAnnoList != null){
             for(FieldAnnotation anno : entityAnnoList){
                 // 绑定关联对象entity

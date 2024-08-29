@@ -87,14 +87,7 @@ public class BindAnnotationGroup {
                 bindDictAnnotations = new ArrayList<>(4);
             }
             bindDictAnnotations.add(fieldAnnotation);
-            if(!requireSequential && bindFieldGroupMap != null){
-                // 是否存在重复的字段
-                // 只要任意一个符合条件，即可结束遍历
-                requireSequential = bindFieldGroupMap.values().stream().anyMatch(list ->
-                        list.stream().anyMatch(item ->
-                                item.getFieldName().equals(fieldName) && item.getFieldClass().equals(fieldClass)
-                        ));
-            }
+            requireSequential = true;
             return;
         }
         String key = null;
@@ -126,12 +119,6 @@ public class BindAnnotationGroup {
             }
             List<FieldAnnotation> list = bindFieldGroupMap.computeIfAbsent(key, k -> new ArrayList<>(4));
             list.add(fieldAnnotation);
-            if(!requireSequential && bindDictAnnotations != null){
-                // 是否存在重复的字段
-                requireSequential = bindDictAnnotations.stream().anyMatch(item ->
-                        item.getFieldName().equals(fieldName) && item.getFieldClass().equals(fieldClass)
-                );
-            }
         }
         else if(annotation instanceof BindEntity){
             if(bindEntityAnnotations == null){
