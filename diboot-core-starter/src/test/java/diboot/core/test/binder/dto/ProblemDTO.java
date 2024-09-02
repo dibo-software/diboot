@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter @Setter
 public class ProblemDTO extends Problem {
 
-    @BindQuery(entity = StatusInfo.class, column = "user_id", condition = "this.id=problem_id")
+    @BindQuery(entity = StatusInfo.class, condition = "this.id=problem_id")
     private String userId;
 
 }

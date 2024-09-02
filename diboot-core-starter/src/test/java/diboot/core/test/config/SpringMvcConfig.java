@@ -49,6 +49,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -62,6 +63,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -75,7 +77,6 @@ import java.util.TimeZone;
 @MapperScan({"com.diboot.core.mapper", "diboot.core.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
-
 
     @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
     private String defaultDatePattern;
@@ -171,19 +172,10 @@ public class SpringMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new Date2LocalDateConverter());
-        registry.addConverter(new Date2LocalDateTimeConverter());
-        registry.addConverter(new LocalDate2DateConverter());
-        registry.addConverter(new LocalDateTime2DateConverter());
-        registry.addConverter(new LocalDateTime2StringConverter());
-        registry.addConverter(new SqlDate2LocalDateConverter());
-        registry.addConverter(new SqlDate2LocalDateTimeConverter());
-        registry.addConverter(new String2DateConverter());
-        registry.addConverter(new String2LocalDateConverter());
-        registry.addConverter(new String2LocalDateTimeConverter());
-        registry.addConverter(new String2BooleanConverter());
-        registry.addConverter(new String2MapConverter());
-        registry.addConverter(new Timestamp2LocalDateTimeConverter());
+        List<Converter> converterList = ContextHolder.getBeans(Converter.class);
+        if (converterList != null && !converterList.isEmpty()) {
+            converterList.forEach(registry::addConverter);
+        }
     }
 
     /**
@@ -193,7 +185,7 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 数据权限拦截器
-        interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataAccessControlHandler()));
+        // interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataAccessControlHandler()));
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
