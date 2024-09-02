@@ -73,15 +73,15 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 <template>
   <div class="content">
     <van-form @submit="onSubmit">
-      <h2 style="text-align: center">Diboot Mobile v3.0</h2>
-      <div style="text-align: right; margin-bottom: 5px; padding-right: 70px" v-if="enableI18n">
-        <van-popover v-model:show="showPopover" :actions="i18nActions" @select="selectI18n">
-          <template #reference>
-            <Language style="width: 22px" />
-          </template>
-        </van-popover>
-      </div>
       <van-cell-group inset>
+        <h2 style="text-align: center">Diboot Mobile v3.0</h2>
+        <div style="text-align: right; margin-bottom: 5px; padding-right: 70px" v-if="enableI18n">
+          <van-popover v-model:show="showPopover" :actions="i18nActions" @select="selectI18n">
+            <template #reference>
+              <Language style="width: 22px" />
+            </template>
+          </van-popover>
+        </div>
         <van-field
           v-model="model.username"
           name="username"
@@ -113,10 +113,10 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
             />
           </template>
         </van-field>
+        <div style="margin: 16px">
+          <van-button round block type="primary" native-type="submit"> {{ $t('login.submit') }} </van-button>
+        </div>
       </van-cell-group>
-      <div style="margin: 40px 16px 16px">
-        <van-button round block type="primary" native-type="submit"> {{ $t('login.submit') }} </van-button>
-      </div>
     </van-form>
   </div>
 </template>

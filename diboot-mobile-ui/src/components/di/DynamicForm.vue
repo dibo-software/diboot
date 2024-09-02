@@ -44,7 +44,7 @@ const activeNames = ref<string[]>([])
       <van-collapse-item
         :key="`${item[primaryKey || 'id'] ?? item._uid}`"
         :name="`${item[primaryKey || 'id'] ?? item._uid}`"
-        :title="`${index + 1}、${formName ?? ''}`"
+        :title="`${formName ?? ''} ${index + 1}、`"
         :lazy-render="false"
         v-for="(item, index) in dataList"
       >
@@ -58,37 +58,39 @@ const activeNames = ref<string[]>([])
           :disabled-props="disabledProps"
           :invisible-props="invisibleProps"
         />
-        <van-button
-          v-if="!disabled && !invisibleProps?.includes('APPEND_FLAG__')"
-          icon="description"
-          type="success"
-          size="small"
-          plain
-          style="width: 100%"
-          @click="
-            async () =>
-              dataList.splice(index + 1, 0, {
-                ...(await (item._el as any).getData()),
-                [props.primaryKey || 'id']: void 0,
-                _uid: +new Date(),
-                _el: void 0
-              })
-          "
-          :style="{ marginBottom: '8px' }"
-        >
-          {{ $t('operation.copy') }}
-        </van-button>
-        <van-button
-          v-if="!disabled && !invisibleProps?.includes('REMOVE_FLAG__')"
-          icon="delete-o"
-          type="danger"
-          size="small"
-          plain
-          style="width: 100%"
-          @click="dataList.splice(index, 1)"
-        >
-          {{ $t('operation.delete') }}
-        </van-button>
+        <div style="display: flex; justify-content: space-between">
+          <van-button
+            v-if="!disabled && !invisibleProps?.includes('REMOVE_FLAG__')"
+            icon="delete-o"
+            type="danger"
+            size="small"
+            plain
+            style="width: 33%"
+            @click="dataList.splice(index, 1)"
+          >
+            {{ $t('operation.delete') }}
+          </van-button>
+          <van-button
+            v-if="!disabled && !invisibleProps?.includes('APPEND_FLAG__')"
+            icon="description"
+            type="success"
+            size="small"
+            plain
+            style="width: 66%"
+            @click="
+              async () =>
+                dataList.splice(index + 1, 0, {
+                  ...(await (item._el as any).getData()),
+                  [props.primaryKey || 'id']: void 0,
+                  _uid: +new Date(),
+                  _el: void 0
+                })
+            "
+            :style="{ marginBottom: '8px' }"
+          >
+            {{ $t('operation.copy') }}
+          </van-button>
+        </div>
       </van-collapse-item>
     </van-collapse>
     <van-button
