@@ -39,7 +39,14 @@ public @interface BindQuery {
     /**
      * 数据库字段，默认为空，自动根据驼峰转下划线
      */
+    @Deprecated
     String column() default "";
+
+    /**
+     * entity字段名，不指定默认为当前Entity同名属性名
+     * @return
+     */
+    String field() default "";
 
     /**
      * 绑定的Entity类

@@ -17,12 +17,14 @@ package com.diboot.core.binding.query.dynamic;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.binding.parser.PropInfo;
 import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.binding.query.Comparison;
-import com.diboot.core.util.S;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.V;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.lang.model.type.NullType;
 import java.io.Serializable;
@@ -34,23 +36,33 @@ import java.lang.reflect.Field;
  * @version v2.0
  * @date 2020/04/16
  */
+@Slf4j
 @Getter @Setter
 public class AnnoJoiner implements Serializable {
     private static final long serialVersionUID = 5998965277333389063L;
 
-    public AnnoJoiner(Field field, BindQuery query){
+    public AnnoJoiner(PropInfo propInfo, Field field, BindQuery query){
         this.key = field.getName() + query;
         this.fieldName = field.getName();
         this.comparison = query.comparison();
         // 列名
-        if (V.notEmpty(query.column())) {
+        if (V.notEmpty(query.field())) {
+            this.columnName = propInfo.getColumnByField(query.field());
+            if(V.isEmpty(this.columnName)){
+                throw new InvalidUsageException("@BindQuery 注解配置异常，filed={} 无法解析出对应的列名！", query.field());
+            }
+        }
+        else if (V.notEmpty(query.column())) {
             this.columnName = query.column();
         }
         else if (field.isAnnotationPresent(TableField.class)) {
             this.columnName = field.getAnnotation(TableField.class).value();
         }
         if(V.isEmpty(this.columnName)){
-            this.columnName = S.toSnakeCase(field.getName());
+            this.columnName = propInfo.getColumnByField(field.getName());
+            if(V.isEmpty(this.columnName)){
+                throw new InvalidUsageException("@BindQuery 注解配置异常，filed={} 无法解析出对应的列名！", query.field());
+            }
         }
         // join 表名
         if(!NullType.class.equals(query.entity())){

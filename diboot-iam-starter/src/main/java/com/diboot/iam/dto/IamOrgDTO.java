@@ -36,6 +36,6 @@ import java.io.Serial;
 public class IamOrgDTO extends IamOrg {
     private static final long serialVersionUID = 6256952961426919467L;
 
-    @BindQuery(comparison = Comparison.LIKE, column = "name")
+    @BindQuery(comparison = Comparison.LIKE)
     private String name;
 }
