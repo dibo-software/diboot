@@ -16,6 +16,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@microsoft/fetch-event-source": "^2.0.1",
+    "@vue-office/excel": "^1.7.11",
     "@vueuse/core": "^10.9.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
@@ -42,7 +43,8 @@
     "vue-i18n": "^9.10.2",
     "vue-pdf-embed": "^1.1.5",
     "vue-router": "^4.3.0",
-    "vuedraggable": "4.1.0"
+    "vuedraggable": "4.1.0",
+    "xgplayer": "^3.0.20"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.1",

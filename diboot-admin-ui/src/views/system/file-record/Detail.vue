@@ -23,13 +23,12 @@ defineExpose({
       <el-descriptions-item :label="$t('fileRecord.fileSize')"> {{ model.fileSizeLabel }} </el-descriptions-item>
       <el-descriptions-item :label="$t('fileRecord.accessUrl')">
         <download
-          type="primary"
           link
+          :text-max-width="500"
           :url="model.accessUrl ?? ''"
+          :title="model.accessUrl ?? ''"
           style="white-space: break-spaces; overflow-wrap: anywhere; user-select: auto"
-        >
-          {{ model.accessUrl }}
-        </download>
+        />
       </el-descriptions-item>
       <el-descriptions-item :label="$t('fileRecord.description')" :span="2">
         {{ model.description }}
