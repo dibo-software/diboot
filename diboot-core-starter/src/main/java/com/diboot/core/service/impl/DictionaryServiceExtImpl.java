@@ -18,7 +18,6 @@ package com.diboot.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.config.Cons;
 import com.diboot.core.entity.Dictionary;
@@ -120,7 +119,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public List<LabelValue> getLabelValueList(String type) {
         // 根据类型查询并返回
         List<Dictionary> dictionaryList = getEntityListByType(type);
-        RelationsBinder.bind(dictionaryList);
         return dictionaryList.stream()
                 .map(Dictionary::toLabelValue)
                 .collect(Collectors.toList());
@@ -130,7 +128,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public Map<String, LabelValue> getLabel2ItemMap(String type) {
         // 根据类型查询并返回
         List<Dictionary> dictionaryList = getEntityListByType(type);
-        RelationsBinder.bind(dictionaryList);
         return dictionaryList.stream().collect(
                 Collectors.toMap(Dictionary::getItemName, Dictionary::toLabelValue));
     }
@@ -139,7 +136,6 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public Map<String, LabelValue> getValue2ItemMap(String type) {
         // 根据类型查询并返回
         List<Dictionary> dictionaryList = getEntityListByType(type);
-        RelationsBinder.bind(dictionaryList);
         return dictionaryList.stream().collect(
                 Collectors.toMap(Dictionary::getItemValue, Dictionary::toLabelValue));
     }
