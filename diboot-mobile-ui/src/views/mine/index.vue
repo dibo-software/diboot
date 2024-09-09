@@ -3,20 +3,11 @@ import logo from '@/assets/image/logo.png'
 import useAuthStore from '@/stores/auth'
 import router from '@/router'
 import auth from '@/utils/auth'
-import type { OrgModel } from './type'
-import { useI18n } from 'vue-i18n'
-const i18n = useI18n()
+
 const authStore = useAuthStore()
 const positions = ref()
-const orgName = ref()
 if (authStore.info) {
   positions.value = authStore.info.positionList?.map(position => position.name).toString()
-  api
-    .get<OrgModel>(`/iam/org/${authStore.info.orgId}`)
-    .then(res => {
-      orgName.value = res.data?.name
-    })
-    .catch(err => showFailToast(err.msg || err.message || i18n.t('mine.updateFailed')))
 }
 
 const login = () => {
@@ -36,7 +27,7 @@ const login = () => {
     </van-space>
     <van-cell-group>
       <van-cell :title="$t('mine.userNum')" size="large" icon="user-o" :value="authStore.info?.userNum" />
-      <van-cell :title="$t('mine.orgName')" size="large" icon="cluster-o" :value="orgName" />
+      <van-cell :title="$t('mine.orgName')" size="large" icon="cluster-o" :value="authStore.info?.orgIdLabel" />
       <van-cell :title="$t('mine.position')" size="large" icon="points" :value="positions" />
       <van-cell :title="$t('mine.mobilePhone')" size="large" icon="phone-o" :value="authStore.info?.mobilePhone" />
       <van-cell :title="$t('mine.email')" size="large" icon="envelop-o" :value="authStore.info?.email" />
