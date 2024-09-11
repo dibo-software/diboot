@@ -224,8 +224,6 @@ public class BaseController {
 	 * @return labelValue集合
 	 */
 	protected List<LabelValue> loadRelatedData(RelatedDataDTO relatedDataDTO, @Nullable String parentId,  @Nullable String keyword) {
-		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getLabel(), relatedDataDTO.getExt(),
-				relatedDataDTO.getOrderBy(), relatedDataDTO.getParent(), relatedDataDTO.getParentPath());
 		if (!relatedDataSecurityCheck(relatedDataDTO)) {
 			log.warn("relatedData安全检查不通过: {}", JSON.stringify(relatedDataDTO));
 			return Collections.emptyList();
@@ -311,7 +309,7 @@ public class BaseController {
 							.map(map -> S.split(S.valueOf(map.get(parentPathColumn)))).flatMap(Stream::of)
 							.filter(V::notEmpty).map(parentIdTypeConversion).collect(Collectors.toList()));
 				}});
-				columns.add(S.joinWith(" as ", parentColumn, Cons.FieldName.parentId.name()));
+				columns.add(parentColumn);
 			} else if (relatedDataDTO.isLazyChild()) {
 				if (isDynamicRoot) {
 					queryWrapper.eq(idColumn, rootId);
@@ -326,7 +324,7 @@ public class BaseController {
 				}
 			} else {
 				// 加载整个Tree结构数据
-				columns.add(S.joinWith(" as ", parentColumn, Cons.FieldName.parentId.name()));
+				columns.add(parentColumn);
 			}
 		} else {
 			// list 模糊搜索
@@ -361,6 +359,9 @@ public class BaseController {
      * @return 是否允许访问该类型接口
      */
     protected boolean relatedDataSecurityCheck(RelatedDataDTO relatedDataDTO) {
+		V.securityCheck(relatedDataDTO.getType(), relatedDataDTO.getLabel(), relatedDataDTO.getExt(),
+				relatedDataDTO.getOrderBy(), relatedDataDTO.getParent(), relatedDataDTO.getParentPath());
+		V.securityCheck(relatedDataDTO.getCondition(), relatedDataDTO.getConditions());
 		return true;
     }
 
