@@ -12,7 +12,7 @@ interface FormOption {
   // 校验成功后置处理函数
   afterValidate?: () => Promise<void> | void
   // 成功回调
-  successCallback: (primaryKey: string) => void
+  successCallback: (primaryKey: string, isNew?: boolean) => void
 }
 
 export default (option: FormOption) => {
@@ -50,14 +50,17 @@ export default (option: FormOption) => {
       await validate(formEl)
       if (afterValidate) await afterValidate()
       const id = data[primaryKey]
+      let isNew
       let res
       if (id) {
+        isNew = false
         res = await api.put<never>(updateApiPrefix ? `${updateApiPrefix}/${id}` : `${baseApi}/${id}`, data)
       } else {
+        isNew = true
         res = await api.post<string>(createApi ? createApi : baseApi, data)
       }
       ElMessage.success(res.msg)
-      successCallback(res.data ?? (id as string))
+      successCallback(res.data ?? (id as string), isNew)
       return true
     } catch (e: any) {
       ElMessage.error(e.msg || e.message || (e.length ? e : i18n.global.t('hooks.saveFailed')))
