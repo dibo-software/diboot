@@ -16,9 +16,11 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamLoginTrace;
+import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -49,11 +51,20 @@ public class IamLoginTraceVO extends IamLoginTrace  {
         INVALID,
     }
 
+    /**
+     * 认证方式
+     */
     @BindDict(type="AUTH_TYPE", field = "authType")
     private LabelValue authTypeLabel;
 
     // 在线状态
     private String onlineStatus;
+
+    /**
+     * 用户姓名
+     */
+    @BindField(entity = IamUser.class, field = "realname", condition = "this.user_type='IamUser' AND this.user_id=id")
+    private String userIdLabel;
 
     /**
      * 获取浏览器信息
