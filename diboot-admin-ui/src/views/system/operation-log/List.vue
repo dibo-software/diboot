@@ -60,24 +60,24 @@ const getTagType = (val: string, map: Record<string, unknown>) => {
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column prop="userType" :label="$t('operationLog.userType')" />
-      <el-table-column prop="userRealname" :label="$t('operationLog.userRealname')" />
-      <el-table-column prop="businessObj" :label="$t('operationLog.businessObj')" />
-      <el-table-column prop="operation" :label="$t('operationLog.operation')" />
-      <el-table-column prop="requestMethod" :label="$t('operationLog.requestMethod')">
+      <el-table-column prop="userType" :label="$t('operationLog.userType')" width="100" />
+      <el-table-column prop="userRealname" :label="$t('operationLog.userRealname')" width="100" />
+      <el-table-column prop="businessObj" :label="$t('operationLog.businessObj')" width="150" />
+      <el-table-column prop="operation" :label="$t('operationLog.operation')" width="120" />
+      <el-table-column prop="requestMethod" :label="$t('operationLog.requestMethod')" width="90">
         <template #default="{ row }">
           <el-tag :type="getTagType(row.requestMethod, tagMap)" effect="plain">{{ row.requestMethod }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="requestUri" :label="$t('operationLog.requestUri')" show-overflow-tooltip />
-      <el-table-column prop="statusCode" :label="$t('operationLog.statusCode')">
+      <el-table-column prop="statusCode" :label="$t('operationLog.statusCode')" width="80">
         <template #default="{ row }">
           <el-tag v-if="row.statusCode === 0">{{ row.statusCode }}</el-tag>
           <el-tag v-else type="danger">{{ row.statusCode }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" :label="$t('operationLog.createTime')" width="165" />
-      <el-table-column :label="$t('operation.label')" width="70" fixed="right">
+      <el-table-column :label="$t('operation.label')" width="80" fixed="right">
         <template #default="{ row }">
           <el-button text bg type="primary" size="small" @click="openDetail(row.id)"
             >{{ $t('title.detail') }}

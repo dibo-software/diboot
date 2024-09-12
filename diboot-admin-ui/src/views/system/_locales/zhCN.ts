@@ -60,7 +60,7 @@ const zhCN = {
     fetchDataListError: '获取列表数据失败'
   },
   loginTrace: {
-    userTypeId: '用户标识',
+    userTypeId: '姓名',
     authAccount: '用户名',
     ipAddress: '登录IP',
     authType: '登录方式',

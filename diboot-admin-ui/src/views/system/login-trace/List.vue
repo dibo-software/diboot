@@ -59,16 +59,23 @@ const forceLogout = (id: string) => {
     </el-space>
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
-      <el-table-column :label="$t('loginTrace.userTypeId')" width="220">
+      <el-table-column prop="userIdLabel" :label="$t('loginTrace.userTypeId')" width="100">
         <template #default="{ row }">
-          <span>{{ row.userType }}:{{ row.userId }}</span>
+          <el-text v-if="row.userIdLabel">{{ row.userIdLabel }}</el-text>
+          <el-text v-else truncated>{{ row.userType }}:{{ row.userId }}</el-text>
         </template>
       </el-table-column>
       <el-table-column prop="authAccount" :label="$t('loginTrace.authAccount')" />
-      <el-table-column prop="ipAddress" :label="$t('loginTrace.ipAddress')" />
-      <el-table-column prop="authType" :label="$t('loginTrace.authType')" />
-      <el-table-column prop="osInfo" :label="$t('loginTrace.osInfo')" />
-      <el-table-column prop="browserInfo" :label="$t('loginTrace.browserInfo')" />
+      <el-table-column prop="ipAddress" :label="$t('loginTrace.ipAddress')" width="120" />
+      <el-table-column prop="authTypeLabel" :label="$t('loginTrace.authType')" width="120">
+        <template #default="{ row }">
+          <el-tag :color="row.authTypeLabel?.ext?.color" type="info" effect="dark">
+            {{ row.authTypeLabel?.label }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="osInfo" :label="$t('loginTrace.osInfo')" width="100" />
+      <el-table-column prop="browserInfo" :label="$t('loginTrace.browserInfo')" width="120" />
       <el-table-column prop="success" :label="$t('loginTrace.success')">
         <template #default="{ row }">
           <el-tag v-if="row.isSuccess">{{ $t('loginTrace.successStatus.yes') }}</el-tag>
