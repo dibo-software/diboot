@@ -1,4 +1,4 @@
-> 用上diboot，告别常规SQL和CRUD，写的更少，性能更好！
+> 用上Diboot，借助强大易用的代码生成器，告别常规SQL和CRUD，写的更少，性能更好！
 
 > 新用户指南:
 - [开发一个CRM模块，不用手写一行代码](https://www.bilibili.com/video/BV1xF411S7eF/)
@@ -10,7 +10,7 @@
 > 上手体验:
 - [开始体验，从这里开始](https://www.diboot.com/guide/beginner/bootstrap.html)
 
-# diboot - 基础组件化繁为简，高效工具以简驭繁
+# Diboot - 基础组件化繁为简，高效工具以简驭繁
 <hr>
 <p align="center">
     <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">
@@ -25,9 +25,7 @@
 
 ![diboot平台体系架构图](https://www.diboot.com/img/diboot_structure.png)
 
-> [低代码 工作流版本，看这里->](https://www.diboot.com/guide/workflow/introduce.html)
-
-> [低代码 微服务版本，看这里->](https://www.diboot.com/guide/cloud/introduce.html)
+> [零代码、工作流、微服务，更强的企业版 看这里->](https://www.diboot.com/edition/enterprise.html)
 
 ## 1. Diboot 优势特性
 
@@ -36,14 +34,14 @@
 - Diboot基础封装的内部实现，确保运行高效率高性能，帮你规避常见的坑。
 
 ### 低代码能力 ～ 卓越
-- 基于devtools的代码生成能力，后端、前端、关联、复杂页面、非覆盖式更新代码 全支持；
+- 基于Devtools的代码生成能力，后端、前端、关联、复杂主子页面、移动端、非覆盖式更新代码、AI辅助命名... 全支持；
 - 零代码不能满足的复杂场景，基于生成后的代码快速扩展，无任何扩展局限性。
 
 ### 零代码能力 ～ 强大
 - 模型设计、页面设计、表单设计、流程设计、数据大屏 等能力全支持，多数功能直接配；
-- 表单与流程解耦，流程挂载多表单，表单灵活复用，。
+- 表单与流程解耦，流程挂载多表单，表单灵活复用。
 
-### 零/低/纯代码之间顺畅融合，自由切换
+### 零/低/全代码之间顺畅融合，自由切换
 - 多数常规功能零代码搭建即用；
 - 复杂功能支持集成自定义手写页面、支持生成前后端代码自由扩展；
 
@@ -55,11 +53,14 @@
 ![角色权限配置](https://www.diboot.com/img/role-permission.png)
 
 
-## 3. 技术交流
-如遇diboot相关技术问题，欢迎加群交流：
+## 3. 技术交流&支持
+### 支持Diboot：
+  * Diboot及Devtools完全公益化运营，如您想要支持我们，可通过捐助 或者 顺手点个star，感谢每一份信任与鼓励!
+  <img src="https://www.diboot.com/wechat_donate.png" width="240">
+  
+### 使用过程中，如遇相关技术问题，欢迎加群交流：
 
-* **VIP技术支持QQ群**（捐助/付费用户尊享）: [931266830]()
+  * 技术交流QQ群: [731690096]()
 
-* 技术交流QQ群: [731690096]()
-
-* 技术交流微信群 加: [wx20201024]() (备注diboot)
+  * 技术交流微信群 加微信 [wx20201024] (备注diboot): 
+  * <img src="https://www.diboot.com/add_wechat.png" width="240">
