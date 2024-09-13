@@ -182,7 +182,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(DataEncryptHandler.class)
     public DataEncryptHandler dataEncryptHandler() {
-        log.debug("初始化默认的DataEncryptHandler");
+        log.debug("初始化默认的加密实现：DataEncryptHandler");
         return new DefaultDataEncryptHandler();
     }
 
@@ -192,7 +192,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(DataMaskHandler.class)
     public DataMaskHandler dataMaskHandler() {
-        log.debug("初始化默认的DataMaskHandler");
+        log.debug("初始化默认的脱敏实现：DataMaskHandler");
         return new DefaultDataMaskHandler();
     }
 
@@ -207,7 +207,6 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         if (converterList != null && !converterList.isEmpty())
             converterList.forEach(registry::addConverter);
     }
-
 
     /**
      * 扩展Mybatis 类型转换，支持日期类型转为LocalDate等

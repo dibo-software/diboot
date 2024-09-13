@@ -216,7 +216,7 @@ public class IamAutoConfig {
         }
         filterChainMap.put("/login", "authc");
         if (V.notEmpty(anonUrls) && anonUrls.contains("/**") && !iamProperties.isEnablePermissionCheck()) {
-            log.info("权限检查已停用，该配置仅用于开发环境 !");
+            log.warn("权限检查已停用，该配置仅用于开发环境 !");
             filterChainMap.put("/**", "anon");
         } else {
             filterChainMap.put("/**", "accessControlFilter");
