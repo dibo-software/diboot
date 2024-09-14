@@ -197,7 +197,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 默认支持String-Date类型转换
+     * 默认支持各种类型转换
      *
      * @param registry registry
      */
