@@ -147,6 +147,8 @@ const convert2accept = (accept?: string) => {
     })
     .join(',')
 }
+
+defineExpose({ getFiles: () => _.cloneDeep(unref(fileList)) })
 </script>
 
 <template>

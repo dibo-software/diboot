@@ -13,7 +13,8 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
           id: e.id,
           url: imageBindSrc(e).src,
           name: e.fileName,
-          accessUrl: e.accessUrl
+          accessUrl: e.accessUrl,
+          ...e
         }))
       )
   })
