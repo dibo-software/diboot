@@ -185,7 +185,7 @@ public class SpringMvcConfig implements WebMvcConfigurer {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 数据权限拦截器
-        // interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataAccessControlHandler()));
+        interceptor.addInnerInterceptor(new DataPermissionInterceptor(new DataAccessControlHandler()));
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return interceptor;
     }
