@@ -107,13 +107,15 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
      * @return
      */
     public static <T> T getBean(Class<T> clazz){
-        try{
-            return getApplicationContext().getBean(clazz);
-        }
-        catch (Exception e){
+        List<T> clazzInstances = getBeans(clazz);
+        if(clazzInstances == null){
             log.debug("instance not found: {}", clazz.getSimpleName());
             return null;
         }
+        if(clazzInstances.size() > 1){
+            throw new InvalidUsageException("getBean({}.class) 识别到多个实例，请检查调用！", clazz.getSimpleName());
+        }
+        return clazzInstances.get(0);
     }
 
     /**
