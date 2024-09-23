@@ -226,11 +226,14 @@ public class SqlFileInitializer {
         SqlSession session = SqlSessionUtils.getSqlSession(sqlSessionFactory);
         Connection conn = session.getConnection();
         try{
+            boolean originAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
             for(String sqlStatement : sqlStatementList){
                 PreparedStatement stmt = conn.prepareStatement(sqlStatement);
                 stmt.execute();
                 stmt.close();
             }
+            conn.setAutoCommit(originAutoCommit);
             return true;
         }
         catch (Exception e){
