@@ -25,6 +25,7 @@ import com.diboot.core.exception.BusinessException;
 import com.diboot.core.mapper.DictionaryMapper;
 import com.diboot.core.service.DictionaryService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
+import com.diboot.core.service.I18nConfigService;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -55,6 +56,9 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
 
     @Autowired
     private DictionaryCacheManager dictionaryCacheManager;
+
+    @Autowired(required = false)
+    private I18nConfigService i18nConfigService;
 
     /**
      * 数据变动前先清空缓存
@@ -119,9 +123,11 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
     public List<LabelValue> getLabelValueList(String type) {
         // 根据类型查询并返回
         List<Dictionary> dictionaryList = getEntityListByType(type);
-        return dictionaryList.stream()
-                .map(Dictionary::toLabelValue)
-                .collect(Collectors.toList());
+        if(V.isEmpty(dictionaryList)){
+            log.warn("字典 {} 无任何选项定义！", type);
+            return Collections.emptyList();
+        }
+        return convertToLabelValueList(dictionaryList);
     }
 
     @Override
@@ -383,6 +389,31 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         for (int i = 0; i < dictList.size(); i++) {
             Dictionary dict = dictList.get(i);
             dict.setSortId(i);
+        }
+    }
+
+    /**
+     * 转换为 List<LabelValue>（如启用i18n，则翻译）
+     * @param dictList
+     * @return
+     */
+    private List<LabelValue> convertToLabelValueList(List<Dictionary> dictList) {
+        if(i18nConfigService == null) {
+            return dictList.stream().map(Dictionary::toLabelValue).collect(Collectors.toList());
+        }
+        else {
+            // i18n 翻译
+            List<String> itemI18nMap = dictList.stream().map(Dictionary::getItemNameI18n).collect(Collectors.toList());
+            Map<String, String> i18nKeyValMap = i18nConfigService.translate(itemI18nMap);
+            List<LabelValue> items = new ArrayList<>(dictList.size());
+            for(Dictionary dictionary : dictList){
+                LabelValue item = dictionary.toLabelValue();
+                if(i18nKeyValMap.containsKey(dictionary.getItemNameI18n())){
+                    item.setLabel(i18nKeyValMap.get(dictionary.getItemNameI18n()));
+                }
+                items.add(item);
+            }
+            return items;
         }
     }
 
