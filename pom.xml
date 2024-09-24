@@ -59,13 +59,13 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- Annotation processor -->
+        <!-- Annotation processor
         <dependency>
             <groupId>com.github.therapi</groupId>
             <artifactId>therapi-runtime-javadoc-scribe</artifactId>
             <version>0.15.0</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
 
     </dependencies>
 </project>
