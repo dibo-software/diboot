@@ -180,13 +180,13 @@ const zhCN = {
     },
     placeholder: {
       displayName: '请输入菜单名称',
-      routePath: '请输入路由地址（例：route-path）',
-      resourceCode: '请输入路由名称（例：RouteName）',
+      routePath: '路由地址（例：route-path）',
+      resourceCode: '路由名称（例：RouteName）',
       redirectPath: '请输入重定向',
       routeMetaUrl: '请输入外部链接',
       permissionCodes: '点击聚焦后在权限列表中选择',
       componentName: '请输入组件名称',
-      componentPath: '请输入路由组件路径',
+      componentPath: '路由组件路径（例: @/views/user/List.vue）',
       buttonPermissionConfig: {
         _customCode: '请输入按钮权限编码',
         resourceCode: '请选取当前按钮权限编码',
