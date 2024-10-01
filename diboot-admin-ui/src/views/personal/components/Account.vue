@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import useAuthStore from '@/store/auth'
 import type { UserModel } from '@/views/org-structure/user/type'
-import type { OrgModel } from '@/views/org-structure/org/type'
 import { useI18n } from 'vue-i18n'
+
 const i18n = useI18n()
 const baseApi = '/iam/user'
 
@@ -12,16 +12,9 @@ initRelatedData()
 
 const form = ref()
 const positions = ref()
-const orgName = ref()
 if (authStore.info) {
   form.value = _.cloneDeep(authStore.info)
   positions.value = authStore.info.positionList?.map(position => position.name).toString()
-  api
-    .get<OrgModel>(`/iam/org/${authStore.info.orgId}`)
-    .then(res => {
-      orgName.value = res.data?.name
-    })
-    .catch(err => ElMessage.error(err.msg || err.message || i18n.t('personal.updateFailed')))
 }
 
 const loading = ref(false)
@@ -62,7 +55,7 @@ const save = () => {
         <el-input v-model="form.userNum" disabled />
       </el-form-item>
       <el-form-item :label="$t('user.orgIdAlias')">
-        <el-input v-model="orgName" disabled />
+        <el-input v-model="form.orgIdLabel" disabled />
       </el-form-item>
       <el-form-item :label="$t('position.label')">
         <el-input v-model="positions" disabled />

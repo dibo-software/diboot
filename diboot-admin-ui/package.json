@@ -1,7 +1,7 @@
 {
   "name": "diboot-admin-ui",
   "private": true,
-  "version": "3.4.0",
+  "version": "3.5.0",
   "scripts": {
     "vite": "node --max_old_space_size=4096 ./node_modules/vite/bin/vite.js",
     "dev": "vite",
@@ -15,8 +15,9 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "@vueuse/core": "^10.9.0",
     "@microsoft/fetch-event-source": "^2.0.1",
+    "@vue-office/excel": "^1.7.11",
+    "@vueuse/core": "^10.9.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.6.8",
@@ -24,11 +25,10 @@
     "echarts": "^5.5.0",
     "element-plus": "^2.6.1",
     "element-resize-detector": "^1.2.4",
-    "highlight.js": "^11.9.0",
     "fuse.js": "^6.6.2",
+    "highlight.js": "^11.9.0",
     "jsencrypt": "^3.3.2",
     "lodash": "^4.17.21",
-    "mockjs": "^1.1.0",
     "marked": "^12.0.2",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
@@ -43,7 +43,8 @@
     "vue-i18n": "^9.10.2",
     "vue-pdf-embed": "^1.1.5",
     "vue-router": "^4.3.0",
-    "vuedraggable": "4.1.0"
+    "vuedraggable": "4.1.0",
+    "xgplayer": "^3.0.20"
   },
   "devDependencies": {
     "@playwright/test": "^1.42.1",
@@ -52,7 +53,6 @@
     "@types/element-resize-detector": "^1.1.6",
     "@types/jsdom": "^20.0.1",
     "@types/lodash": "^4.17.0",
-    "@types/mockjs": "^1.0.7",
     "@types/node": "^18.19.24",
     "@types/nprogress": "^0.2.3",
     "@types/qs": "^6.9.12",
@@ -76,7 +76,6 @@
     "vite": "^5.1.6",
     "vite-plugin-checker": "^0.6.2",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-mock": "^2.9.8",
     "vite-plugin-vue-setup-extend": "^0.4.0",
     "vitest": "^0.26.2",
     "vue-tsc": "^2.0.6"

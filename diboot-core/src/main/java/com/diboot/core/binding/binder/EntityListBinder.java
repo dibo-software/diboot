@@ -37,7 +37,7 @@ import java.util.*;
 public class EntityListBinder<T> extends EntityBinder<T> {
     private static final Logger log = LoggerFactory.getLogger(EntityListBinder.class);
 
-    /***
+    /**
      * 构造方法
      * @param annotation
      * @param voList
@@ -52,7 +52,7 @@ public class EntityListBinder<T> extends EntityBinder<T> {
         }
     }
 
-    /***
+    /**
      * 构造方法
      * @param entityClass
      * @param voList

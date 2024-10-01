@@ -26,7 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.*;
 
-/***
+/**
  * String 操作类
  * @author mazc@dibo.ltd
  * @version v2.0
@@ -34,12 +34,12 @@ import java.util.*;
  */
 @SuppressWarnings({"JavaDoc", "unused"})
 public class S extends StringUtils{
-	/***
+	/**
 	 * 默认分隔符 ,
  	 */
 	public static final String SEPARATOR = Cons.SEPARATOR_COMMA;
 
-	/***
+	/**
 	 * 裁剪字符串，显示前部分+...
 	 * @param input
 	 * @return
@@ -48,7 +48,7 @@ public class S extends StringUtils{
 		return cut(input, BaseConfig.getCutLength());
 	}
 
-	/***
+	/**
 	 * 裁剪字符串，显示前部分+...
 	 * @param input
 	 * @return
@@ -57,7 +57,7 @@ public class S extends StringUtils{
 		return substring(input, 0, cutLength);
 	}
 
-	/***
+	/**
 	 * 将list拼接成string，默认分隔符:,
 	 * @param stringList
 	 * @return
@@ -66,7 +66,7 @@ public class S extends StringUtils{
 		return StringUtils.join(stringList, SEPARATOR);
 	}
 
-	/***
+	/**
 	 * 将list拼接成string，默认分隔符:,
 	 * @param stringArray
 	 * @return
@@ -75,7 +75,7 @@ public class S extends StringUtils{
 		return StringUtils.join(stringArray, SEPARATOR);
 	}
 
-	/***
+	/**
 	 * 按,拆分字符串
 	 * @param joinedStr
 	 * @return
@@ -99,7 +99,7 @@ public class S extends StringUtils{
 		return S.replaceEach(inputJsonStr, SEARCH_LIST, REPLACE_LIST);
 	}
 
-	/***
+	/**
 	 * 转换为String数组（避免转型异常）
 	 * @param stringList
 	 * @return
@@ -108,7 +108,7 @@ public class S extends StringUtils{
 		return stringList.toArray(new String[0]);
 	}
 
-	/***
+	/**
 	 * 按,拆分字符串并转换为 List<String>
 	 * @param joinedStr
 	 * @return
@@ -118,7 +118,7 @@ public class S extends StringUtils{
 	}
 
 
-	/***
+	/**
 	 * 按,拆分字符串并转换为 List<String>
 	 * @param joinedStr
 	 * @return
@@ -130,7 +130,7 @@ public class S extends StringUtils{
 		return Arrays.asList(joinedStr.split(separator));
 	}
 
-	/***
+	/**
 	 * 转换成蛇形命名（用于Java属性转换为数据库列名）
 	 * @param camelCaseStrArray
 	 * @return
@@ -146,7 +146,7 @@ public class S extends StringUtils{
 		return snakeCaseArray;
 	}
 
-	/***
+	/**
 	 * 转换成蛇形命名（用于Java属性转换为数据库列名）
 	 * @param camelCaseStrArray
 	 * @return
@@ -162,7 +162,7 @@ public class S extends StringUtils{
 		return snakeCaseList;
 	}
 
-	/***
+	/**
 	 * 转换成小写蛇形命名（用于Java属性转换为小写数据库列名）
 	 * @param camelCaseStr
 	 * @return
@@ -193,7 +193,7 @@ public class S extends StringUtils{
 		return sb.toString();
 	}
 
-	/***
+	/**
 	 * 转换成首字母小写的驼峰命名（用于数据库列名转换为Java属性）
 	 * @param snakeCaseStr
 	 * @return
@@ -233,7 +233,7 @@ public class S extends StringUtils{
 		return sb != null? sb.toString() : null;
 	}
 
-	/***
+	/**
 	 * 转换为Long类型（判空，避免NPE）
 	 * @param strValue
 	 * @return
@@ -242,7 +242,7 @@ public class S extends StringUtils{
 		return toLong(strValue, null);
 	}
 
-	/***
+	/**
 	 * 转换为Long类型（判空，避免NPE）
 	 * @param strValue 字符类型值
 	 * @param defaultLong 默认值
@@ -255,7 +255,7 @@ public class S extends StringUtils{
 		return Long.parseLong(strValue);
 	}
 
-	/***
+	/**
 	 * 转换为Integer类型(判空，避免NPE)
 	 * @param strValue
 	 * @return
@@ -264,7 +264,7 @@ public class S extends StringUtils{
 		return toInt(strValue, null);
 	}
 
-	/***
+	/**
 	 * 转换为Integer类型(判空，避免NPE)
 	 * @param strValue
 	 * @param defaultInt 默认值
@@ -277,7 +277,7 @@ public class S extends StringUtils{
 		return Integer.parseInt(strValue);
 	}
 
-	/***
+	/**
 	 * 字符串转换为boolean
 	 * @param strValue
 	 * @return
@@ -286,7 +286,7 @@ public class S extends StringUtils{
 		return toBoolean(strValue, false);
 	}
 
-	/***
+	/**
 	 * 字符串转换为boolean
 	 * @param strValue
 	 * @param defaultBoolean
@@ -299,7 +299,7 @@ public class S extends StringUtils{
 		return defaultBoolean;
 	}
 
-	/***
+	/**
 	 * 将多个空格替换为一个
 	 * @param input
 	 * @return
@@ -319,7 +319,7 @@ public class S extends StringUtils{
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-	/***
+	/**
 	 * 将object转换为字符串
 	 * @param o
 	 * @return
@@ -361,7 +361,7 @@ public class S extends StringUtils{
 		return String.valueOf(o);
 	}
 
-	/***
+	/**
 	 * 生成指定位数的数字/验证码
 	 */
 	private static final String NUMBER_SET = "12345678901";
@@ -375,7 +375,7 @@ public class S extends StringUtils{
 		return sb.toString();
 	}
 
-	/***
+	/**
 	 * 将首字母转为小写
 	 * @return
 	 */
@@ -389,7 +389,7 @@ public class S extends StringUtils{
 		return input;
 	}
 
-	/***
+	/**
 	 * 将首字母转为大写
 	 * @return
 	 */

@@ -57,11 +57,37 @@ public interface DataScopeManager {
      * </tr>
      * </table>
      */
+    List<? extends Serializable> getAccessibleIds(String fieldName);
+
+    /**
+     * 已过期，since v3.4.1 替换为 getAccessibleIds(fieldName)
+     * @param entityClass
+     * @param fieldName
+     * @return
+     */
+    @Deprecated
     default List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
         return getAccessibleIds(entityClass.getSimpleName(), fieldName);
     }
 
-    List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName);
+    /**
+     * 已过期，since v3.4.1 替换为 getAccessibleIds(fieldName)
+     * @param entityClassName
+     * @param fieldName
+     * @return
+     */
+    @Deprecated
+    default List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName) {
+        return getAccessibleIds(fieldName);
+    }
+
+    /**
+     * 该数据权限涉及的实体类，默认null表示公用
+     * @return
+     */
+    default List<Class<?>> getEntityClasses() {
+        return null;
+    }
 
     /**
      * 显示标题

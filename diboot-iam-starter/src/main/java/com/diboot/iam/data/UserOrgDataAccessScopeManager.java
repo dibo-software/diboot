@@ -16,9 +16,12 @@
 package com.diboot.iam.data;
 
 import com.diboot.core.data.access.DataScopeManager;
+import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamUser;
+import com.diboot.iam.service.IamOrgService;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.vo.PositionDataScope;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +43,12 @@ import java.util.List;
 public class UserOrgDataAccessScopeManager implements DataScopeManager {
 
     @Override
-    public List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName) {
+    public String getTitle() {
+        return "基于用户组织的数据权限控制";
+    }
+
+    @Override
+    public List<? extends Serializable> getAccessibleIds(String fieldName) {
         // 获取当前登录用户
         IamUser currentUser;
         try {
@@ -58,10 +66,10 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
         LabelValue extensionObj = currentUser.getExtensionObj();
         if(extensionObj == null || extensionObj.getExt() == null){
             // 提取其可访问ids
-            if(isOrgFieldName(entityClassName, fieldName)){
+            if(isOrgFieldName(fieldName)){
                 return buildOrgIdsScope(currentUser);
             }
-            else if(isUserFieldName(entityClassName, fieldName)){
+            else if(isUserFieldName(fieldName)){
                 return buildUserIdsScope(currentUser);
             }
             else{
@@ -77,7 +85,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
         }
         // 本人数据
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isUserFieldName(entityClassName, fieldName)){
+            if(isUserFieldName(fieldName)){
                 return buildUserIdsScope(currentUser);
             }
             else{// 忽略无关字段
@@ -86,7 +94,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
         }
         // 按user过滤，本人及下属
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isUserFieldName(entityClassName, fieldName)){
+            if(isUserFieldName(fieldName)){
                 return positionDataScope.getAccessibleUserIds();
             }
             else{// 忽略无关字段
@@ -95,8 +103,8 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
         }
         // 按部门过滤，本部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isOrgFieldName(entityClassName, fieldName)){
-                return Arrays.asList(positionDataScope.getOrgId());
+            if(isOrgFieldName(fieldName)){
+                return Collections.singletonList(positionDataScope.getOrgId());
             }
             else{// 忽略无关字段
                 return null;
@@ -104,7 +112,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
         }
         // 按部门过滤，本部门及下属部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isOrgFieldName(entityClassName, fieldName)){
+            if(isOrgFieldName(fieldName)){
                 return positionDataScope.getAccessibleOrgIds();
             }
             else{// 忽略无关字段
@@ -136,10 +144,10 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
     protected List<? extends Serializable> buildOrgIdsScope(IamUser currentUser){
         List<Serializable> accessibleIds = new ArrayList<>();
         accessibleIds.add(currentUser.getOrgId());
-        /*List<Long> childOrgIds = ContextHolder.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
+        List<String> childOrgIds = ContextHolder.getBean(IamOrgService.class).getChildOrgIds(currentUser.getOrgId());
         if(V.notEmpty(childOrgIds)){
             accessibleIds.addAll(childOrgIds);
-        }*/
+        }
         return accessibleIds;
     }
 
@@ -148,7 +156,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
      * @param fieldName
      * @return
      */
-    protected boolean isUserFieldName(String entityClassName, String fieldName){
+    protected boolean isUserFieldName(String fieldName){
         return (Cons.FieldName.userId.name().equals(fieldName) || Cons.FieldName.createBy.name().equals(fieldName));
     }
 
@@ -157,7 +165,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
      * @param fieldName
      * @return
      */
-    protected boolean isOrgFieldName(String entityClassName, String fieldName){
+    protected boolean isOrgFieldName(String fieldName){
         return Cons.FieldName.orgId.name().equals(fieldName);
     }
 

@@ -38,7 +38,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-/***
+/**
  * 文件操作辅助类
  * @author mazc@dibo.ltd
  * @version v2.0
@@ -82,7 +82,7 @@ public class FileHelper{
 	 */
     private static Boolean isLocalStorage;
 
-	/***
+	/**
 	 * 是否为合法的文件类型
 	 * @param ext
 	 * @return
@@ -115,7 +115,7 @@ public class FileHelper{
         return Boolean.TRUE.equals(isLocalStorage);
     }
 
-	/***
+	/**
 	 * 获取系统临时目录
 	 * @return
 	 */
@@ -123,7 +123,7 @@ public class FileHelper{
 		return System.getProperty("java.io.tmpdir");
 	}
 
-	/***
+	/**
 	 * 上传文件
 	 * @param file 上传文件
 	 * @param fileName 文件名
@@ -147,7 +147,7 @@ public class FileHelper{
 		}
 	}
 
-	/***
+	/**
 	 * 上传文件
 	 * @param inputStream 文件流
 	 * @param fileName 文件名
@@ -171,7 +171,7 @@ public class FileHelper{
 		}
 	}
 
-	/***
+	/**
 	 * 根据名称取得后缀
 	 * @param fileName
 	 * @return
@@ -190,7 +190,7 @@ public class FileHelper{
 		return "";
 	}
 
-	/***
+	/**
 	 * 获取文件的相对路径
 	 * @param fileName 仅文件名，不含相对路径
 	 * @return
@@ -201,7 +201,7 @@ public class FileHelper{
 		return sb.toString();
 	}
 
-	/***
+	/**
 	 * 获取文件的完整存储路径
 	 * @param fileName 仅文件名，不含相对路径
 	 * @return
@@ -238,7 +238,7 @@ public class FileHelper{
 		return fileStorageDirectory;
 	}
 
-	/***
+	/**
 	 * 创建文件夹
 	 * @param dirPath
 	 * @return
@@ -259,7 +259,7 @@ public class FileHelper{
 		return false;
 	}
 
-	/****
+	/**
 	 * 删除文件
 	 * @param fileStoragePath
 	 */

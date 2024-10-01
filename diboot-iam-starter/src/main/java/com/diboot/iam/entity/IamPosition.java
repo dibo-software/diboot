@@ -48,7 +48,7 @@ public class IamPosition extends BaseEntity<String> {
      */
     public static final String GENERAL_ORG_ID = "0";
 
-    /***
+    /**
      * 最新岗位ID的KEY
      */
     public static final String LATEST_POSITION_ID_KEY = "latestPositionId";
@@ -60,32 +60,44 @@ public class IamPosition extends BaseEntity<String> {
     @TableField
     private String tenantId;
 
-    // 名称
+    /**
+     * 名称
+     */
     @NotNull(message = "{validation.iamPosition.name.NotNull.message}")
     @Length(max = 100, message = "{validation.iamPosition.name.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
     @TableField()
     private String name;
 
-    // 编码
+    /**
+     * 编码
+     */
     @NotNull(message = "{validation.iamPosition.code.NotNull.message}")
     @Length(max = 50, message = "{validation.iamPosition.code.Length.message}")
     @TableField()
     private String code;
 
-    // 是否虚拟岗
+    /**
+     * 是否虚拟岗
+     */
     @TableField()
     private Boolean isVirtual = false;
 
-    // 职级
+    /**
+     * 职级
+     */
     @TableField()
     private String gradeName;
 
-    // 职级
+    /**
+     * 职级
+     */
     @TableField()
     private String gradeValue;
 
-    // 数据权限类型
+    /**
+     * 数据权限类型（本人、本人及下属、本部门、本部门及下属部门、全部）
+     */
     @TableField()
     private String dataPermissionType;
 

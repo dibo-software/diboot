@@ -20,10 +20,13 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
 import com.diboot.core.data.access.DataAccessAnnoCache;
 import com.diboot.core.data.access.DataScopeManager;
+import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.holder.ThreadLocalHolder;
+import com.diboot.core.mapper.DynamicQueryMapper;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
+import com.diboot.core.util.V;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -38,9 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -54,6 +55,46 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
     private static final Logger log = LoggerFactory.getLogger(DataAccessControlHandler.class);
 
     private final Set<String> noCheckpointCache = new CopyOnWriteArraySet<>();
+    /**
+     * 获取全部自定义数据权限拦截器
+     */
+    private Map<Class<?>, DataScopeManager> entityClassToPermissionMap = null;
+
+    /**
+     * 获取数据权限拦截器的实现类
+     * @param entityClass
+     * @return
+     */
+    public synchronized DataScopeManager getDataScopeManager(Class<?> entityClass) {
+        if(entityClassToPermissionMap == null) {
+            entityClassToPermissionMap = new LinkedHashMap<>();
+            List<DataScopeManager> dataProtectionHandlers = ContextHolder.getBeans(DataScopeManager.class);
+            if(V.notEmpty(dataProtectionHandlers)) {
+                for (DataScopeManager protectionHandler : dataProtectionHandlers) {
+                    List<Class<?>> entityClasses = protectionHandler.getEntityClasses();
+                    if(entityClasses == null) {
+                        entityClassToPermissionMap.put(AbstractEntity.class, protectionHandler);
+                    }
+                    else if(V.notEmpty(entityClasses)) {
+                        for (Class<?> entityCls : entityClasses) {
+                            entityClassToPermissionMap.put(entityCls, protectionHandler);
+                        }
+                    }
+                }
+            }
+        }
+        DataScopeManager dataScopeManager = entityClassToPermissionMap.get(entityClass);
+        if(dataScopeManager == null) {
+            dataScopeManager = entityClassToPermissionMap.get(AbstractEntity.class);
+            if(dataScopeManager != null) {
+                log.debug("获取到全局默认的数据范围控制实现 {}: {}", entityClass.getSimpleName(), dataScopeManager.getClass().getSimpleName());
+            }
+        }
+        else {
+            log.debug("获取到 {} 类的数据范围控制实现: {}", entityClass.getSimpleName(), dataScopeManager.getClass().getSimpleName());
+        }
+        return dataScopeManager;
+    }
 
     @Override
     public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
@@ -61,13 +102,14 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
             return null;
         }
         // 如果忽略此来源
-        if(ThreadLocalHolder.ignoreInterceptor()) {
+        if (ThreadLocalHolder.ignoreInterceptor()) {
             return null;
         }
         TableInfo tableInfo = TableInfoHelper.getTableInfo(S.removeEsc(table.getName()));
         // 无权限检查点注解，不处理
         if (tableInfo == null || tableInfo.getEntityType() == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(tableInfo.getEntityType())) {
-            noCheckpointCache.add(mappedStatementId);
+            if (!S.substringBeforeLast(mappedStatementId, ".").equals(DynamicQueryMapper.class.getName()))
+                noCheckpointCache.add(mappedStatementId);
             return null;
         }
         return buildDataAccessExpression(table, tableInfo.getEntityType());
@@ -82,11 +124,12 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
      */
     private Expression buildDataAccessExpression(Table mainTable, Class<?> entityClass) {
         return DataAccessAnnoCache.getDataPermissionMap(entityClass).entrySet().stream().map(entry -> {
-            DataScopeManager checkImpl = ContextHolder.getBean(DataScopeManager.class);
+            DataScopeManager checkImpl = getDataScopeManager(entityClass);
             if (checkImpl == null) {
+                log.warn("未获取到 {} 类的数据范围控制实现，请检查DataScopeManager实现类是否正确实例化！", entityClass.getSimpleName());
                 throw new InvalidUsageException("exception.invalidUsage.dataAccessControlHandler.buildDataAccessExpression.message");
             }
-            List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
+            List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entry.getKey());
             if (idValues == null) {
                 return null;
             }

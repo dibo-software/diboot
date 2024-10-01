@@ -46,7 +46,7 @@ public interface IamAccountService extends BaseService<IamAccount> {
      */
     boolean createEntities(List<IamAccount> accountList);
 
-    /***
+    /**
      * 更改密码
      * @param changePwdDTO
      * @param iamAccount

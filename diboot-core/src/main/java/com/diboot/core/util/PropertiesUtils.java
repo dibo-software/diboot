@@ -35,7 +35,7 @@ public class PropertiesUtils {
         }
     }
 
-    /***
+    /**
      *  读取配置项的值
      * @param key
      * @return
@@ -48,7 +48,7 @@ public class PropertiesUtils {
         return defaultValue;
     }
 
-    /***
+    /**
      *  读取配置项的值
      * @param key
      * @return
@@ -77,7 +77,7 @@ public class PropertiesUtils {
         return value;
     }
 
-    /***
+    /**
      *  读取int型的配置项
      * @param key
      * @return
@@ -86,7 +86,7 @@ public class PropertiesUtils {
         return getInteger(key, null);
     }
 
-    /***
+    /**
      *  读取int型的配置项，未配置返回默认值
      * @param key
      * @param defaultValue
@@ -101,7 +101,7 @@ public class PropertiesUtils {
         return defaultValue;
     }
 
-    /***
+    /**
      *  读取Long型的配置项
      * @param key
      * @return
@@ -110,7 +110,7 @@ public class PropertiesUtils {
         return getLong(key, null);
     }
 
-    /***
+    /**
      *  读取Long型的配置项，未配置返回默认值
      * @param key
      * @param defaultValue
@@ -125,7 +125,7 @@ public class PropertiesUtils {
         return defaultValue;
     }
 
-    /***
+    /**
      * 读取boolean值的配置项
      */
     public static boolean getBoolean(String key) {

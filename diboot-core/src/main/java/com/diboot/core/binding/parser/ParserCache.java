@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.TypeHandler;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import javax.lang.model.type.NullType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -214,7 +215,8 @@ public class ParserCache {
         Map<String, String> joinOn2Alias = new HashMap<>(8);
         // 构建AnnoJoiner
         BiConsumer<Field, BindQuery> buildAnnoJoiner = (field, query) -> {
-            AnnoJoiner annoJoiner = new AnnoJoiner(field, query);
+            PropInfo propInfo = BindingCacheManager.getPropInfoByClass(query.entity() != null && !NullType.class.equals(query.entity())? query.entity() : dtoClass);
+            AnnoJoiner annoJoiner = new AnnoJoiner(propInfo, field, query);
             // 关联对象，设置别名
             if (V.notEmpty(annoJoiner.getJoin())) {
                 String key = annoJoiner.getJoin() + ":" + annoJoiner.getCondition();

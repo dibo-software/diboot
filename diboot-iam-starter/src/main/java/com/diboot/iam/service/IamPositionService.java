@@ -28,7 +28,7 @@ import java.util.List;
 */
 public interface IamPositionService extends BaseService<IamPosition> {
 
-    /***
+    /**
      * 通过用户ID获取用户的所有任职岗位集合
      * @param userType
      * @param userId

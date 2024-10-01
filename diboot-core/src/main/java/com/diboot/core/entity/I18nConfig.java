@@ -65,6 +65,7 @@ public class I18nConfig extends BaseEntity<String> {
      */
     @NotNull
     private String code;
+
     /**
      * 内容
      */

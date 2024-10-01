@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.util.Encryptor;
 import com.diboot.core.util.I18n;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
@@ -39,6 +40,8 @@ import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
@@ -157,6 +160,9 @@ public abstract class BaseAuthServiceImpl implements AuthService {
         String userAgent = HttpHelper.getUserAgent(request);
         String ipAddress = HttpHelper.getRequestIp(request);
         loginTrace.setUserAgent(userAgent).setIpAddress(ipAddress);
+        // 记录签名信息
+        String signature = Encryptor.encrypt(authToken.getAuthtoken());
+        loginTrace.setSignature(signature).setSignType(IamLoginTrace.SIGN_TYPE.LOGIN.name());
         iamAsyncWorker.saveLoginTraceLog(loginTrace);
     }
 

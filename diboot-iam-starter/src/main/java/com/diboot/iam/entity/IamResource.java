@@ -64,17 +64,23 @@ public class IamResource extends BaseEntity<String> {
     @TableField
     private String appModule;
 
-    // 父级菜单
+    /**
+     * 父级菜单
+     */
     @TableField()
     private String parentId;
 
-    // 展现类型
+    /**
+     * 展现类型
+     */
     @NotNull(message = "{validation.iamResource.displayType.NotNull.message}")
     @Length(max = 20, message = "{validation.iamResource.displayType.Length.message}")
     @TableField()
     private String displayType;
 
-    // 显示名称
+    /**
+     * 显示名称
+     */
     @NotNull(message = "{validation.iamResource.displayName.NotNull.message}")
     @Length(max = 100, message = "{validation.iamResource.displayName.Length.message}")
     @BindQuery(comparison = Comparison.LIKE)
@@ -86,37 +92,51 @@ public class IamResource extends BaseEntity<String> {
      */
     private String displayNameI18n;
 
-    // 权限编码
+    /**
+     * 权限编码
+     */
     @Length(max = 200, message = "{validation.iamResource.routePath.Length.message}")
     @TableField()
     private String routePath;
 
-    // 前端资源编码
+    /**
+     * 前端资源编码
+     */
     @NotNull(message = "{validation.iamResource.resourceCode.NotNull.message}")
     @Length(max = 50, message = "{validation.iamResource.resourceCode.Length.message}")
     @TableField()
     private String resourceCode;
 
-    // 权限编码
+    /**
+     * 权限编码
+     */
     @Length(max = 200, message = "{validation.iamResource.permissionCode.Length.message}")
     @TableField()
     private String permissionCode;
 
-    // meta配置
+    /**
+     * meta配置
+     */
     @Length(max = 200, message = "{validation.iamResource.meta.Length.message}")
     @TableField()
     private String meta;
 
-    // 状态
+    /**
+     * 状态
+     */
     @Length(max = 10, message = "{validation.iamResource.status.Length.message}")
     @TableField()
     private String status;
 
-    // 排序号
+    /**
+     * 排序号
+     */
     @TableField
     private Long sortId;
 
-    // 更新时间
+    /**
+     * 更新时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
@@ -150,7 +170,7 @@ public class IamResource extends BaseEntity<String> {
         this.setMeta(JSON.stringify(routeMeta));
     }
 
-    /***
+    /**
      * 获取权限码列表
      * @return
      */
@@ -161,7 +181,7 @@ public class IamResource extends BaseEntity<String> {
         return S.split(permissionCode);
     }
 
-    /***
+    /**
      * 设置权限码列表
      * @param permissionCodes
      */

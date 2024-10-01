@@ -45,34 +45,47 @@ public class IamUser extends BaseLoginUser {
     @TableField
     private String tenantId;
 
-    // 组织ID
+    /**
+     * 组织ID
+     */
     @NotNull(message = "{validation.iamUser.orgId.NotNull.message}")
     @TableField()
     private String orgId;
 
+    /**
+     * 用户编号
+     */
     @NotNull(message = "{validation.iamUser.userNum.NotNull.message}")
     @Length(max=20, message="{validation.iamUser.userNum.Length.message}")
     @TableField()
     private String userNum;
 
-    // 真实姓名
+    /**
+     * 姓名
+     */
     @NotNull(message = "{validation.iamUser.realname.NotNull.message}")
     @Length(max=50, message="{validation.iamUser.realname.Length.message}")
     @TableField()
     private String realname;
 
-    // 性别
+    /**
+     * 性别
+     */
     @NotNull(message = "{validation.iamUser.gender.NotNull.message}")
     @Length(max=10, message="{validation.iamUser.gender.Length.message}")
     @TableField()
     private String gender;
 
-    // 手机号
+    /**
+     * 手机号
+     */
     @Length(max=20, message="{validation.iamUser.mobilePhone.Length.message}")
     @TableField()
     private String mobilePhone;
 
-    // Email
+    /**
+     * Email
+     */
     @Length(max=50, message="{validation.iamUser.email.Length.message}")
     @TableField()
     private String email;
@@ -84,17 +97,23 @@ public class IamUser extends BaseLoginUser {
     @TableField()
     private LocalDate birthdate;
 
-    // 状态
+    /**
+     * 状态
+     */
     @NotNull(message = "{validation.iamUser.status.NotNull.message}")
     @Length(max=10, message="{validation.iamUser.status.Length.message}")
     @TableField()
     private String status;
 
-    // 排序号
+    /**
+     * 排序号
+     */
     @TableField()
     private Long sortId;
 
-    // 头像
+    /**
+     * 头像
+     */
     @TableField()
     private String avatarUrl;
 

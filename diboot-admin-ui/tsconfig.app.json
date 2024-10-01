@@ -26,7 +26,6 @@
     "src/**/*.vue",
     "types/**/*.ts",
     "types/**/*.d.ts",
-    "mock/**/*.ts",
     "node_modules/**/*.d.ts"
   ]
 }

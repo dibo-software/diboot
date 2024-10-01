@@ -4,6 +4,7 @@ import type { Position, UserPosition } from '@/views/org-structure/position/type
 export interface UserModel {
   id?: string
   orgId: string
+  orgIdLabel?: string
   username?: string
   roleList?: Role[]
   positionList?: Position[]

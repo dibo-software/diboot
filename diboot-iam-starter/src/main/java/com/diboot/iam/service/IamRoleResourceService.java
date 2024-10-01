@@ -34,7 +34,7 @@ import java.util.List;
 public interface IamRoleResourceService extends BaseService<IamRoleResource> {
 
 
-    /***
+    /**
      * 获取用户的路由信息
      *
      * @return
@@ -94,7 +94,7 @@ public interface IamRoleResourceService extends BaseService<IamRoleResource> {
      */
     boolean createRoleResourceRelations(String roleId, List<String> resourceIdList);
 
-    /***
+    /**
      * 批量更新角色与资源集的关系
      * @param roleId
      * @param resourceIdList

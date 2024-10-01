@@ -20,7 +20,7 @@ public class PurchaseFormPlanQueryDto extends DbPurchaseFormPlan {
     private Long purchaseFormPlanId;
 
     @BindQuery(comparison = Comparison.EQ,
-        entity= DbGoodsGoodsInfo.class, column ="goods_nm",
+        entity= DbGoodsGoodsInfo.class, field ="goodsNm",
         condition="this.purchase_form_plan_id = db_purchase_rel_plan_goods.purchase_form_plan_id and "
                 + "db_purchase_rel_plan_goods.goods_id=goods_id"
         )

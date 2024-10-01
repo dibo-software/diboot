@@ -152,7 +152,7 @@ const rules: FormRules = {
         :loading="submitting"
         @click="createOrUpdate(model.id ? i18n.t('title.update') : i18n.t('title.create'))"
       >
-        确定
+        {{ $t('button.confirm') }}
       </el-button>
     </template>
   </el-dialog>

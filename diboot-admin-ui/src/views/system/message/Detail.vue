@@ -26,7 +26,7 @@ defineExpose({
         {{ model.title }}
       </el-descriptions-item>
       <el-descriptions-item :label="$t('message.content')">
-        {{ model.content }}
+        <div v-html="model.content" />
       </el-descriptions-item>
       <el-descriptions-item :label="$t('message.senderName')">
         <span>{{ model.senderName }}</span>

@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ArrowDown, UserFilled } from '@element-plus/icons-vue'
+import { ArrowDown, UserFilled, Moon, Sunny } from '@element-plus/icons-vue'
 import { isDark, isSmall } from '@/utils/theme'
 import MessageBell from './message-bell/index.vue'
 import MenuSearch from './MenuSearch.vue'
 import useAuthStore from '@/store/auth'
 import Logo from '@/assets/logo.png'
 import useAppStore from '@/store/app'
-import LightIcon from '@/assets/icon/light.vue'
-import DarkIcon from '@/assets/icon/dark.vue'
 import i18n from '@/utils/i18n'
 
 withDefaults(defineProps<{ showLogo?: boolean }>(), { showLogo: true })
@@ -53,12 +51,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
         placement="bottom"
         :show-after="300"
       >
-        <el-switch
-          v-model="isDark"
-          class="dark-switch item"
-          :active-action-icon="DarkIcon"
-          :inactive-action-icon="LightIcon"
-        />
+        <el-switch v-model="isDark" class="dark-switch item" :active-action-icon="Moon" :inactive-action-icon="Sunny" />
       </el-tooltip>
       <el-dropdown
         v-if="enableI18n"

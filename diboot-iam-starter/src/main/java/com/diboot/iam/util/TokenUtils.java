@@ -41,7 +41,7 @@ public class TokenUtils {
     private static final String AUTH_HEADER = getConfigValue("diboot.iam.token-header-key", "Authorization");
     public static final int EXPIRES_IN_MINUTES = getConfigIntValue("diboot.iam.token-expires-minutes", 60);
 
-    /***
+    /**
      * 从请求头中获取客户端发来的token
      * @param request
      * @return
@@ -65,7 +65,7 @@ public class TokenUtils {
         return authtoken;
     }
 
-    /***
+    /**
      * 生成Token
      * @return
      */
@@ -78,14 +78,16 @@ public class TokenUtils {
      * @param cachedUserInfo
      * @return
      */
-    public static synchronized void responseNewTokenIfRequired(ServletResponse response, String cachedUserInfo) {
+    public static synchronized String responseNewTokenIfRequired(ServletResponse response, String cachedUserInfo) {
         if(isCloseToExpired(cachedUserInfo)){
             //将刷新的token放入response header
             String refreshToken = generateToken();
             cacheRefreshToken(refreshToken, cachedUserInfo);
             ((HttpServletResponse)response).setHeader(AUTH_HEADER, refreshToken);
             log.debug("写回刷新token :{}", refreshToken);
+            return refreshToken;
         }
+        return null;
     }
 
     /**

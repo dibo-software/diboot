@@ -50,6 +50,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.constraints.NotNull;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -202,7 +203,7 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
      */
     @Override
     public void onException(Exception exception, AnalysisContext context) throws Exception {
-        //数据类型转化异常
+        // 数据类型转化异常
         if (exception instanceof ExcelDataConvertException) {
             ExcelDataConvertException dataConvertException = (ExcelDataConvertException) exception;
 
@@ -351,8 +352,8 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                         + Cons.FILE_PATH_SEPARATOR + S.newUuid() + ".xlsx";
             }
             FileHelper.makeDirectory(errorDataFilePath);
-            excelWriter = EasyExcel.write(errorDataFilePath, getExcelModelClass()).build();
-            ExcelHelper.buildWriteSheet(null, (commentWriteHandler, writeSheet) -> {
+            excelWriter = EasyExcel.write(errorDataFilePath).build();
+            ExcelHelper.buildWriteSheet("Sheet1", getExcelModelClass(), null, (commentWriteHandler, writeSheet) -> {
                 this.commentWriteHandler = commentWriteHandler;
                 this.writeSheet = writeSheet;
             });
@@ -376,16 +377,40 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
             Field field = BeanUtils.extractField(tClass, entry.getKey());
             boolean valueNotNull = (field.getAnnotation(NotNull.class) != null);
             for (T data : dataList) {
-                String name = BeanUtils.getStringProperty(data, entry.getKey());
-                if (S.isEmpty(name)) {
+                String label = BeanUtils.getStringProperty(data, entry.getKey());
+                if (S.isEmpty(label)) {
                     continue;
                 }
-                List valList = map.get(name);
+                List valList = map.get(label);
                 if (entry.getValue() instanceof ExcelBindField) {
                     ExcelBindField excelBindField = (ExcelBindField) entry.getValue();
                     String setFieldName = S.defaultIfEmpty(excelBindField.setIdField(), entry.getKey());
                     if (V.isEmpty(valList)) {
-                        if (excelBindField.empty().equals(EmptyStrategy.SET_0)) {
+                        if (label.contains(S.SEPARATOR)) {
+                            valList = new LinkedList<>();
+                            List<String> errDictArr = new ArrayList<>();
+                            for (String item : label.split(S.SEPARATOR)) {
+                                List list = map.get(item);
+                                if (list == null) errDictArr.add(item);
+                                else valList.addAll(list);
+                            }
+                            if (!errDictArr.isEmpty()) {
+                                data.addComment(entry.getKey(), JSON.stringify(errDictArr).replaceAll("[\\[\\]]", "") + "关联值不存在");
+                                continue;
+                            }
+                        }
+                        if (V.notEmpty(valList)) {
+                            Field setField = BeanUtils.extractField(tClass, setFieldName);
+                            if (String.class.equals(setField.getType())) {
+                                if (!preview) BeanUtils.setProperty(data, setFieldName, S.join(valList));
+                            } else if (List.class.equals(setField.getType())) {
+                                if (!preview) BeanUtils.setProperty(data, setFieldName, valList);
+                            } else if (setField.getType().isArray()) {
+                                if (!preview) BeanUtils.setProperty(data, setFieldName, valList.toArray());
+                            } else {
+                                log.warn("字段 {} 类型无法匹配，仅支持 String、List、Array 类型", setFieldName);
+                            }
+                        } else if (excelBindField.empty().equals(EmptyStrategy.SET_0)) {
                             // 非预览时 赋值
                             if (!preview) {
                                 BeanUtils.setProperty(data, setFieldName, 0);
@@ -412,15 +437,15 @@ public abstract class ReadExcelListener<T extends BaseExcelModel> implements Rea
                     }
                 } else if (entry.getValue() instanceof ExcelBindDict || entry.getValue() instanceof BindDict) {
                     if (V.isEmpty(valList)) {
-                        if (name.contains(S.SEPARATOR)) {
+                        if (label.contains(S.SEPARATOR)) {
                             valList = new LinkedList<>();
                             List<String> errDictArr = new ArrayList<>();
-                            for (String item : name.split(S.SEPARATOR)) {
+                            for (String item : label.split(S.SEPARATOR)) {
                                 List list = map.get(item);
                                 if (list == null) errDictArr.add(item);
                                 else valList.addAll(list);
                             }
-                            if (!errDictArr.isEmpty()){
+                            if (!errDictArr.isEmpty()) {
                                 data.addComment(entry.getKey(), JSON.stringify(errDictArr).replaceAll("[\\[\\]]", "") + "无匹配字典");
                                 continue;
                             }

@@ -87,7 +87,6 @@ public class Message extends BaseEntity<String> {
      */
     public final static String VARIABLES = "variables";
 
-
     /**
      * 租户id
      */

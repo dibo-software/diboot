@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-/***
+/**
  * CRUD增删改查通用RestController-父类
  * @author mazc@dibo.ltd
  * @version 2.0
@@ -71,7 +71,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         return getService().getEntity(id);
     }
 
-    /***
+    /**
      * 获取某VO资源的集合，用于子类重写的方法
      * <p>
      * url参数示例: /${bindURL}?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
@@ -91,7 +91,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         return JsonResult.OK(voList).bindPagination(pagination);
     }
 
-    /***
+    /**
      * 获取某VO资源的集合，用于子类重写的方法
      * <p>
      * url参数示例: /${bindURL}?pageSize=20&pageIndex=1&orderBy=itemValue&type=GENDAR
@@ -123,7 +123,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         return JsonResult.OK(entityList);
     }
 
-    /***
+    /**
      * 获取符合查询条件的某页数据（有分页）
      * <p>
      * url参数示例: /${bindURL}?pageSize=20&pageIndex=1
@@ -138,7 +138,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         return JsonResult.OK(entityList).bindPagination(pagination);
     }
 
-    /***
+    /**
      * 创建资源对象，用于子类重写的方法
      * @param entity
      * @return JsonResult
@@ -161,7 +161,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         }
     }
 
-    /***
+    /**
      * 根据ID更新资源对象，用于子类重写的方法
      * @param entity
      * @return JsonResult
@@ -192,7 +192,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         }
     }
 
-    /***
+    /**
      * 根据id删除资源对象，用于子类重写的方法
      * @param id
      * @return
@@ -217,7 +217,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         }
     }
 
-    /***
+    /**
      * 根据id批量删除资源对象，用于子类重写的方法
      * @param ids
      * @return
@@ -274,7 +274,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
 
     //============= 供子类继承重写的方法 =================
 
-    /***
+    /**
      * 创建前的相关处理
      * @param entityOrDto
      * @return
@@ -282,7 +282,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected void beforeCreate(E entityOrDto) throws Exception {
     }
 
-    /***
+    /**
      * 创建成功后的相关处理
      * @param entityOrDto
      * @return
@@ -290,7 +290,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected void afterCreated(E entityOrDto) throws Exception {
     }
 
-    /***
+    /**
      * 更新前的相关处理
      * @param entityOrDto
      * @return
@@ -299,7 +299,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
         BeanUtils.clearFieldValue(entityOrDto, BindingCacheManager.getPropInfoByClass(getEntityClass()).getFillUpdateFieldList());
     }
 
-    /***
+    /**
      * 更新成功后的相关处理
      * @param entityOrDto
      * @return
@@ -307,7 +307,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected void afterUpdated(E entityOrDto) throws Exception {
     }
 
-    /***
+    /**
      * 是否有删除权限，如不可删除返回错误提示信息
      * @param id
      * @return
@@ -315,7 +315,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected void beforeDelete(Serializable id) throws Exception {
     }
 
-    /***
+    /**
      * 删除成功后的相关处理
      * @param id
      * @return
@@ -323,7 +323,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected void afterDeleted(Serializable id) throws Exception {
     }
 
-    /***
+    /**
      * 是否有批量删除权限，如不可删除返回错误提示信息，如 Status.FAIL_NO_PERMISSION.label()
      * @param ids
      * @return
@@ -331,7 +331,7 @@ public class BaseCrudRestController<E extends AbstractEntity> extends BaseContro
     protected void beforeBatchDelete(Collection<? extends Serializable> ids) throws Exception {
     }
 
-    /***
+    /**
      * 批量删除成功后的相关处理
      * @param ids
      * @return

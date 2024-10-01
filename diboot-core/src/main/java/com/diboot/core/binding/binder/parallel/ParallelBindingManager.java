@@ -70,7 +70,7 @@ public class ParallelBindingManager {
         }
     }
 
-    /***
+    /**
      * 绑定Field
      * @param voList
      * @param fieldAnnotations
@@ -87,7 +87,7 @@ public class ParallelBindingManager {
         return doBinding(binder, bindAnnotation.condition());
     }
 
-    /***
+    /**
      * 绑定FieldList
      * @param voList
      * @param fieldAnnotations
@@ -104,7 +104,7 @@ public class ParallelBindingManager {
         return doBinding(binder, bindAnnotation.condition());
     }
 
-    /***
+    /**
      * 绑定Entity
      * @param voList
      * @param fieldAnnotation
@@ -120,7 +120,7 @@ public class ParallelBindingManager {
         return doBinding(binder, annotation.condition());
     }
 
-    /***
+    /**
      * 绑定EntityList
      * @param voList
      * @param fieldAnnotation
@@ -135,7 +135,7 @@ public class ParallelBindingManager {
         return doBinding(binder, annotation.condition());
     }
 
-    /***
+    /**
      * 绑定count计数
      * @param voList
      * @param fieldAnnotation
@@ -164,7 +164,7 @@ public class ParallelBindingManager {
             // 国际化绑定接口化
             i18nConfigService.bindI18nContent(voList, i18nCodeField, fieldAnnotation.getFieldName());
         } else {
-            log.debug("I18nConfigService未初始化，无法翻译I18n注解: {}", i18nCodeField);
+            log.warn("I18nConfigService未初始化，无法翻译I18n注解: {}", i18nCodeField);
         }
     }
 

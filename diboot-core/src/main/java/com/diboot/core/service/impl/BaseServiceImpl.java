@@ -69,7 +69,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/***
+/**
  * CRUD通用接口实现类
  * @author mazc@dibo.ltd
  * @param <M> mapper类
@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
 public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl<M, T> implements BaseService<T> {
 	private static final Logger log = LoggerFactory.getLogger(BaseServiceImpl.class);
 
-	/***
+	/**
 	 * 获取当前的Mapper对象
 	 * @return
 	 */
@@ -145,11 +145,33 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <FT> List<FT> getValuesOfField(String fieldKey, Object fieldVal, SFunction<T, FT> getterFn) {
+		QueryWrapper<T> queryWrapper = buildQueryWrapperByFieldValue(fieldKey, fieldVal);
 		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(getEntityClass());
 		String fetchCol = propInfo.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
-		String conditionCol = propInfo.getColumnByField(fieldKey);
-		QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(fetchCol).eq(conditionCol, fieldVal);
+		queryWrapper.select(fetchCol);
 		return getValuesOfField(queryWrapper, getterFn);
+	}
+
+	/**
+	 * 基于给定的字段和值，构建 QueryWrapper
+	 * @param fieldKey
+	 * @param fieldVal
+	 * @return
+	 */
+	protected QueryWrapper<T> buildQueryWrapperByFieldValue(String fieldKey, Object fieldVal){
+		PropInfo propInfo = BindingCacheManager.getPropInfoByClass(getEntityClass());
+		String conditionCol = propInfo.getColumnByField(fieldKey);
+		QueryWrapper<T> queryWrapper = new QueryWrapper<T>();
+		if((fieldVal instanceof Collection)){
+			queryWrapper.in(conditionCol, (Collection<?>) fieldVal);
+		}
+		else if(fieldVal.getClass().isArray()){
+			queryWrapper.in(conditionCol, (Object[]) fieldVal);
+		}
+		else {
+			queryWrapper.eq(conditionCol, fieldVal);
+		}
+		return queryWrapper;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -560,7 +582,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
             List<R> n2nRelations = new ArrayList<>(followerIdList.size());
             try {
                 for (Serializable followerId : followerIdList) {
-                    R relation = middleTableClass.newInstance();
+                    R relation = middleTableClass.getConstructor().newInstance();
 					BeanWrapper beanWrapper = BeanUtils.getBeanWrapper(relation);
 					beanWrapper.setPropertyValue(driverFieldName, driverId);
 					beanWrapper.setPropertyValue(followerFieldName, followerId);
@@ -605,6 +627,10 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public <RE, R> boolean updateRelatedEntities(Serializable entityId, List<RE> relatedEntities, ISetter<RE, R> relatedEntitySetter) {
+		if(relatedEntities == null) {
+			log.debug("{}.{} 的关联数据为null，不做更新", getEntityClass().getSimpleName(), entityId);
+			return true;
+		}
 		// 获取关联entity的类
 		Class relatedEntityClass;
 		if(V.notEmpty(relatedEntities)){
@@ -1335,7 +1361,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		}
 	}
 
-	/***
+	/**
 	 * 转换为IPage
 	 * @param pagination 分页
 	 * @return
@@ -1344,7 +1370,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return ServiceAdaptor.convertToIPage(pagination, getEntityClass());
 	}
 
-	/***
+	/**
 	 * 转换为IPage（已废弃）
 	 * @see #convertToIPage(Pagination)
 	 * @param queryWrapper 查询条件
@@ -1375,7 +1401,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		return BeanUtils.getProperty(entity, pk);
 	}
 
-	/***
+	/**
 	 * 打印警告信息
 	 * @param method
 	 * @param message

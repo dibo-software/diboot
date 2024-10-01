@@ -30,6 +30,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 @Documented
+@Deprecated
 public @interface CollectThisConvertor {
 
 }

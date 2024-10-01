@@ -33,7 +33,7 @@ public interface IamCustomize {
      */
     BaseLoginUser getCurrentUser();
 
-    /***
+    /**
      * 对用户密码加密
      * @param iamAccount
      */

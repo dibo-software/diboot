@@ -38,7 +38,7 @@ public class IamCustomizeImpl implements IamCustomize {
         return IamSecurityUtils.getCurrentUser();
     }
 
-    /***
+    /**
      * 对用户密码加密
      * @param iamAccount
      */

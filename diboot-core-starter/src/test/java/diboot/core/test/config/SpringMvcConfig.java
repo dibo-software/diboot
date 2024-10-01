@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.diboot.core.converter.*;
+import com.diboot.core.data.access.DataScopeManager;
 import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
@@ -36,6 +37,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import diboot.core.test.binder.DataAccessPermissionTestImplForDepartment;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +49,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -60,9 +63,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
-/***
+/**
  * Spring配置文件
  * @author mazc@dibo.ltd
  * @version v2.0
@@ -73,7 +77,6 @@ import java.util.TimeZone;
 @MapperScan({"com.diboot.core.mapper", "diboot.core.**.mapper"})
 public class SpringMvcConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(SpringMvcConfig.class);
-
 
     @Value("${spring.jackson.date-format:"+D.FORMAT_DATETIME_Y4MDHMS+"}")
     private String defaultDatePattern;
@@ -169,19 +172,10 @@ public class SpringMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new Date2LocalDateConverter());
-        registry.addConverter(new Date2LocalDateTimeConverter());
-        registry.addConverter(new LocalDate2DateConverter());
-        registry.addConverter(new LocalDateTime2DateConverter());
-        registry.addConverter(new LocalDateTime2StringConverter());
-        registry.addConverter(new SqlDate2LocalDateConverter());
-        registry.addConverter(new SqlDate2LocalDateTimeConverter());
-        registry.addConverter(new String2DateConverter());
-        registry.addConverter(new String2LocalDateConverter());
-        registry.addConverter(new String2LocalDateTimeConverter());
-        registry.addConverter(new String2BooleanConverter());
-        registry.addConverter(new String2MapConverter());
-        registry.addConverter(new Timestamp2LocalDateTimeConverter());
+        List<Converter> converterList = ContextHolder.getBeans(Converter.class);
+        if (converterList != null && !converterList.isEmpty()) {
+            converterList.forEach(registry::addConverter);
+        }
     }
 
     /**
@@ -196,4 +190,17 @@ public class SpringMvcConfig implements WebMvcConfigurer {
         return interceptor;
     }
 
+    @Bean
+    public DataAccessControlHandler dataAccessControlHandler() {
+        return new DataAccessControlHandler();
+    }
+
+    /**
+     * 通过spring初始化一个实例
+     * @return
+     */
+    @Bean
+    public DataScopeManager dataScopeManager() {
+        return new DataAccessPermissionTestImplForDepartment();
+    }
 }

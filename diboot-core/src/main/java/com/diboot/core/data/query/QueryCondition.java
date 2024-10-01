@@ -89,7 +89,7 @@ public class QueryCondition implements Serializable {
                     log.debug("忽略空的参数: {}", entry.getKey());
                     continue;
                 }
-                addCriteria(entry.getKey(), Comparison.EQ, entry.getValue());
+                addCriteria(entry.getKey(), entry.getValue());
             }
         }
     }

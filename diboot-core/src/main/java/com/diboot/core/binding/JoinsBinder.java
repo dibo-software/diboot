@@ -167,7 +167,7 @@ public class JoinsBinder {
             }
             // 绑定map到entity
             try{
-                T entityInst = entityClazz.newInstance();
+                T entityInst = entityClazz.getConstructor().newInstance();
                 BeanUtils.bindProperties(entityInst, fieldValueMap);
                 entityList.add(entityInst);
             }

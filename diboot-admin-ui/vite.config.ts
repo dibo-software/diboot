@@ -6,7 +6,6 @@ import eslintPlugin from 'vite-plugin-eslint'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { viteMockServe } from 'vite-plugin-mock'
 import { fileURLToPath, URL } from 'url'
 import fs from 'fs'
 const optimizeDepsElementPlusIncludes = [
@@ -29,7 +28,7 @@ fs.readdirSync(`./node_modules/element-plus/es/components`).map(dirname => {
   })
 })
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(() => {
   return {
     plugins: [
       vue(),
@@ -72,21 +71,7 @@ export default defineConfig(({ command, mode }) => {
         dts: 'types/components.d.ts',
         // 导入路径变换
         importPathTransform: path => path.replace(/^.+\/src/g, '@')
-      }),
-      // viteMockServe({
-      //   // 忽略以_开头的文件及目录
-      //   ignore: /^_|\/_/,
-      //   // 开发打包开关(默认开启)
-      //   localEnabled: command === 'serve',
-      //   // 生产打包开关(默认不打包)
-      //   prodEnabled: command !== 'serve',
-      //   // 注入代码(用于生产需要mock)
-      //   injectCode: `
-      //   import { setupProdMockServer } from '../mock/server-config/_prod';
-      //
-      //   setupProdMockServer();
-      //   `
-      // })
+      })
     ],
     css: {
       preprocessorOptions: {

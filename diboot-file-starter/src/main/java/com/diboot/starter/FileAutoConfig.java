@@ -15,24 +15,17 @@
  */
 package com.diboot.starter;
 
-import com.diboot.core.config.BaseConfig;
-import com.diboot.core.config.Cons;
-import com.diboot.core.util.S;
-import com.diboot.core.util.V;
+import com.diboot.file.config.FileProperties;
 import com.diboot.file.service.FileStorageService;
 import com.diboot.file.service.impl.LocalFileStorageServiceImpl;
-import com.diboot.file.config.FileProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 /**
  * 组件初始化
@@ -47,9 +40,6 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 @ComponentScan(basePackages = {"com.diboot.file"})
 @MapperScan(basePackages = {"com.diboot.file.mapper"})
 public class FileAutoConfig {
-
-    @Autowired
-    private FileProperties fileProperties;
 
     public FileAutoConfig() {
         log.info("初始化 file 组件自动配置");

@@ -24,47 +24,47 @@ import com.diboot.core.util.I18n;
  * @date 2019/01/01
  */
 public enum Status {
-    /***
+    /**
      * 请求处理成功
      */
     OK(0, "status.ok.message"),
 
-    /***
+    /**
      * 部分成功（一般用于批量处理场景，只处理筛选后的合法数据）
      */
     WARN_PARTIAL_SUCCESS(1001, "status.warn_partial_success.message"),
 
-    /***
+    /**
      * 有潜在的性能问题
      */
     WARN_PERFORMANCE_ISSUE(1002, "status.warn_performance_issue.message"),
 
-    /***
+    /**
      * 传入参数不对
      */
     FAIL_INVALID_PARAM(4000, "status.fail_invalid_param.message"),
 
-    /***
+    /**
      * Token无效或已过期
      */
     FAIL_INVALID_TOKEN(4001, "status.fail_invalid_token.message"),
 
-    /***
+    /**
      * 没有权限执行该操作
      */
     FAIL_NO_PERMISSION(4003, "status.fail_no_permission.message"),
 
-    /***
+    /**
      * 请求资源不存在
      */
     FAIL_NOT_FOUND(4004, "status.fail_not_found.message"),
 
-    /***
+    /**
      * 数据校验不通过
      */
     FAIL_VALIDATION(4005, "status.fail_validation.message"),
 
-    /***
+    /**
      * 操作执行失败
      */
     FAIL_OPERATION(4006, "status.fail_operation.message"),
@@ -74,7 +74,7 @@ public enum Status {
      */
     FAIL_REQUEST_TIMEOUT(4008, "status.fail_request_timeout.message"),
 
-    /***
+    /**
      * 认证不通过（用户名密码错误等认证失败场景）
      */
     FAIL_AUTHENTICATION(4009, "status.fail_authentication.message"),
@@ -87,7 +87,7 @@ public enum Status {
      */
     FAIL_INVALID_ACCOUNT(4012,"status.fail_invalid_account.message"),
 
-    /***
+    /**
      * 系统异常
      */
     FAIL_EXCEPTION(5000, "status.fail_exception.message"),

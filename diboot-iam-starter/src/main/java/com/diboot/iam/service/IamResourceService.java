@@ -34,31 +34,31 @@ import java.util.List;
  */
 public interface IamResourceService extends BaseService<IamResource> {
 
-    /***
+    /**
      * 深度创建资源权限及其所有子列表
      * @param iamResourceListVO
      */
     void deepCreateResourceAndChildren(IamResourceListVO iamResourceListVO);
 
-    /***
+    /**
      * 创建菜单和按钮/权限列表
      * @param iamResourceDTO
      */
     void createMenuResources(IamResourceDTO iamResourceDTO);
 
-    /***
+    /**
      * 更新菜单和按钮/权限列表
      * @param iamResourceDTO
      */
     void updateMenuResources(IamResourceDTO iamResourceDTO);
 
-    /***
+    /**
      * 删除菜单及其包含的所有子菜单以及按钮/权限列表
      * @param id
      */
     void deleteMenuResources(String id);
 
-    /***
+    /**
      * 删除指定id的权限及其包含的所有子菜单以及按钮/权限列表
      * @param idList
      */

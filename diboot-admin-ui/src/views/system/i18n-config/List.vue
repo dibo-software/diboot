@@ -1,4 +1,4 @@
-<script setup lang="ts" name="I18nConfig">
+<script setup lang="ts">
 import { Search, Plus } from '@element-plus/icons-vue'
 import type { I18nConfig } from './type'
 import Form from './Form.vue'
@@ -30,7 +30,7 @@ if (props.select) {
   )
 }
 const singleRow = (row: Array<I18nConfig>) => {
-  // single.value = row[0].code
+  single.value = row[0].code
   emits('update:modelValue', single.value as string)
   emits('change', row)
 }
@@ -55,7 +55,7 @@ const initI18nData = () => {
 <template>
   <div class="list-page">
     <el-space wrap class="list-operation">
-      <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
+      <el-button v-has-permission:I18nConfig="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
       <el-space>
@@ -66,7 +66,14 @@ const initI18nData = () => {
       </el-space>
     </el-space>
 
-    <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" :height="tableHeight || '100%'">
+    <el-table
+      ref="tableRef"
+      v-loading="loading"
+      class="list-body"
+      :data="dataList"
+      :height="tableHeight || '100%'"
+      @row-click="singleRow"
+    >
       <el-table-column v-if="select" fixed width="36px">
         <template #default="{ row }">
           <el-radio v-model="single" :label="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>

@@ -32,7 +32,7 @@ import java.util.List;
 public class DataAccessPermissionTestImpl implements DataScopeManager {
 
     @Override
-    public List<Serializable> getAccessibleIds(String entityClass, String fieldName) {
+    public List<Serializable> getAccessibleIds(String fieldName) {
         // 提取其可访问ids
         List<Serializable> accessibleIds = new ArrayList<>();
         if("parentId".equals(fieldName)){
@@ -41,10 +41,9 @@ public class DataAccessPermissionTestImpl implements DataScopeManager {
         }
         else if("regionId".equals(fieldName)){
             return null;
-        } else if ("orgId".equals(fieldName)) {
-            accessibleIds.add(100001L);
         }
         // ... 其他类型字段
         return accessibleIds;
     }
+
 }

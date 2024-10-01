@@ -23,6 +23,7 @@ const oneLevel = ref<RouteRecordRaw>()
 const openOneLevel = (menu: RouteRecordRaw) => {
   const oldOneLevel = oneLevel.value
   oneLevel.value = menu
+  if (menu.children?.length && menu.children[0].beforeEnter) return
   if (router.currentRoute.value.name !== menu.name)
     router.push(menu.path).then(navigationFailure => {
       if (navigationFailure) oneLevel.value = oldOneLevel
@@ -90,7 +91,7 @@ const vDrag: Directive<HTMLElement> = {
 </script>
 
 <template>
-  <el-container v-if="isMobile" style="height: 100vh">
+  <el-container v-if="isMobile">
     <el-header height="50px" style="border-bottom: 1px solid var(--el-border-color-lighter)">
       <app-header />
     </el-header>
@@ -266,7 +267,7 @@ const vDrag: Directive<HTMLElement> = {
 
     .el-sub-menu.is-active,
     .el-menu-item.is-active {
-      background-color: var(--menu-active-background-color) !important;
+      background-color: #3a4979 !important;
     }
 
     // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）

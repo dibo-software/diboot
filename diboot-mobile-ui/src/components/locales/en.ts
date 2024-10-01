@@ -12,6 +12,15 @@ const en: Locale = {
         placeholder: 'Please Input Content...'
       }
     }
+  },
+  di: {
+    input: {
+      date: 'Select date',
+      time: 'Select time',
+      next: 'Next',
+      uploadFile: 'Upload file',
+      fileLarge: 'The file size cannot exceed {0}MB'
+    }
   }
 }
 

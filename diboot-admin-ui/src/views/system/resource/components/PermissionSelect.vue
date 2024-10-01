@@ -187,7 +187,9 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
     <el-space v-else wrap :fill="true" class="permission-list-container">
       <div style="margin: 8px; zoom: 1.1">
         {{ displayName }}
-        <span style="color: var(--el-text-color-secondary); margin-left: 5px">{{}}</span>
+        <span style="color: var(--el-text-color-secondary); margin-left: 5px">{{
+          $t('resource.permissionSelect.permissionApi')
+        }}</span>
       </div>
       <el-select
         v-model="searchVal"

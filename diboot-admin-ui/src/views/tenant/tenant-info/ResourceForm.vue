@@ -73,7 +73,7 @@ defineExpose({
     </el-scrollbar>
     <template #footer>
       <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit()"> 确定 </el-button>
+      <el-button type="primary" :loading="submitting" @click="submit()"> {{ $t('button.confirm') }} </el-button>
     </template>
   </el-dialog>
 </template>

@@ -53,7 +53,7 @@ watch(
       :show-after="150"
     >
       <template #reference>
-        <span style="cursor: pointer" @click="visible = true">
+        <span style="cursor: pointer" @click.stop="visible = true">
           <el-icon
             :size="18"
             style="vertical-align: middle; margin-right: 10px"
@@ -85,23 +85,7 @@ watch(
           >
         </div>
       </template>
-      <i18n-list v-model="value" table-height="500" select class="i18n-list" @change="list => (dataList = list)" />
+      <i18n-list v-model="value" table-height="500" select @change="list => (dataList = list)" />
     </el-dialog>
   </span>
 </template>
-
-<style scoped lang="scss">
-.i18n-list {
-  :deep(.el-row) {
-    margin: 0 !important;
-
-    .el-row {
-      margin-top: -9px !important;
-
-      .el-col {
-        margin-top: 9px;
-      }
-    }
-  }
-}
-</style>

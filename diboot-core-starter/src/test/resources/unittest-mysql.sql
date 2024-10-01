@@ -188,6 +188,33 @@ CREATE TABLE `status_info` (
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='问题状态';
 
+-- 宠物及领养表，验证非id的多字段关联条件绑定
+CREATE TABLE `mdl_pet` (
+   `id` varchar(32) NOT NULL COMMENT '唯一标识',
+   `category` varchar(20) DEFAULT NULL COMMENT '品类',
+   `code` varchar(100) DEFAULT NULL COMMENT '编号',
+   `remark` varchar(100) DEFAULT NULL COMMENT '备注',
+   `is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除',
+   `create_by` varchar(32) DEFAULT NULL COMMENT '创建人',
+   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+   `update_by` varchar(32) DEFAULT NULL COMMENT '更新人',
+   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='宠物';
+CREATE TABLE `mdl_pet_adopt` (
+     `id` varchar(32) NOT NULL COMMENT '唯一标识',
+     `realname` varchar(100) DEFAULT NULL COMMENT '姓名',
+     `pet_category` varchar(100) DEFAULT NULL COMMENT '宠物品类',
+     `pet_code` varchar(100) DEFAULT NULL COMMENT '宠物编号',
+     `remark` varchar(100) DEFAULT NULL COMMENT '备注',
+     `is_deleted` tinyint NOT NULL DEFAULT '0' COMMENT '是否删除',
+     `create_by` varchar(32) DEFAULT NULL COMMENT '创建人',
+     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+     `update_by` varchar(32) DEFAULT NULL COMMENT '更新人',
+     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+     PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='领养';
+
 INSERT INTO customer (id, realname, cellphone, extjsonarr)
 VALUES (10001, '张三', '13800001111', '["WEBSOCKET","EMAIL"]'), (10002, '李四', '13800002222', '["TEXT_MESSAGE"]');
 
@@ -266,3 +293,6 @@ INSERT INTO region (`id`, `name`, `code`, `parent_id`, `level`) values('3197','�
 UPDATE region SET `parent_ids_path` = '0' WHERE `parent_id` = '0';
 UPDATE region SET `parent_ids_path` = '0,1' WHERE `parent_id` = '1';
 UPDATE region SET `parent_ids_path` = '0,1,2' WHERE `parent_id` = '2';
+
+INSERT INTO mdl_pet (id, category, code, remark, is_deleted) VALUES ('1000001', 'CAT', '#1', '1号猫咪', 0), ('1000002', 'DOG', '#1', '1号狗狗', 0), ('1000003', 'CAT', '#2', '2号猫咪', 0), ('1000004', 'DOG', '#2', '2号狗狗', 0), ('1000005', 'DOG', '#3', '3号狗狗', 0);
+INSERT INTO mdl_pet_adopt (id, realname, pet_category, pet_code, remark, is_deleted) VALUES('122222221', '张三', 'CAT', '#1', '张三领养1号猫', 0), ('122222222', '张三', 'DOG', '#2', '张三领养2号狗', 0), ('122222223', '李四', 'CAT', '#2', '李四领养2号猫', 0);

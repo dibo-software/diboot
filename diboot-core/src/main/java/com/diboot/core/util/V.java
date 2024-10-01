@@ -30,6 +30,7 @@ import org.springframework.validation.ObjectError;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -722,6 +723,27 @@ public class V {
             }
         }
         return S.join(allErrors);
+    }
+
+    private static final Map<String, Boolean> CLASS_EXISTS_MAP = new ConcurrentHashMap<>();
+    /**
+     * 判断Java类是否存在
+     * @param className
+     * @return
+     */
+    public static boolean isClassExist(String className) {
+        if(CLASS_EXISTS_MAP.containsKey(className)) {
+            return CLASS_EXISTS_MAP.get(className);
+        }
+        try {
+            Class.forName(className);
+            CLASS_EXISTS_MAP.put(className, true);
+            return true;
+        }
+        catch (Exception e) {
+            CLASS_EXISTS_MAP.put(className, false);
+            return false;
+        }
     }
 
     /**

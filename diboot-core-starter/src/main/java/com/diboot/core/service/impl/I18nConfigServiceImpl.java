@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.entity.I18nConfig;
 import com.diboot.core.mapper.I18nConfigMapper;
@@ -34,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,6 +52,61 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
 
     @Autowired
     private I18nCacheManager i18nCacheManager;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean createOrUpdateEntities(Collection entityList) {
+        if(V.isEmpty(entityList)){
+            return false;
+        }
+        // 获取当前语言的缓存数据
+        for(Object entity : entityList){
+            I18nConfig i18nConfig = (I18nConfig)entity;
+            Map<String, String> languageCached = i18nCacheManager.getLanguageCached(i18nConfig.getLanguage());
+            if(V.notEmpty(languageCached)){
+                languageCached.remove(i18nConfig.getCode());
+                log.debug("I18N {}:{} 的缓存已被移除", i18nConfig.getLanguage(), i18nConfig.getCode());
+            }
+        }
+        // 批量插入
+        return super.createOrUpdateEntities(entityList);
+    }
+
+    /**
+     * 数据变动前先清空缓存
+     * @param entity
+     */
+    protected void beforeCreate(I18nConfig entity) {
+        // 获取当前语言的缓存数据
+        Map<String, String> languageCached = i18nCacheManager.getLanguageCached(entity.getLanguage());
+        if(V.notEmpty(languageCached)){
+            languageCached.remove(entity.getCode());
+            log.debug("I18N {}:{} 的缓存已被移除", entity.getLanguage(), entity.getCode());
+        }
+    }
+
+    /**
+     * 数据变动前先清空缓存
+     * @param entity
+     */
+    protected void beforeUpdate(I18nConfig entity) {
+        beforeCreate(entity);
+    }
+
+    /**
+     * 数据变动前先清空缓存
+     * @param fieldKey
+     * @param fieldVal
+     */
+    protected void beforeDelete(String fieldKey, Object fieldVal) {
+        QueryWrapper<I18nConfig> queryWrapper = buildQueryWrapperByFieldValue(fieldKey, fieldVal);
+        queryWrapper.lambda().select(I18nConfig::getLanguage, I18nConfig::getCode);
+        List<I18nConfig> i18nConfigList = getEntityList(queryWrapper);
+        if(V.isEmpty(i18nConfigList)){
+            return;
+        }
+        i18nConfigList.forEach(this::beforeCreate);
+    }
 
     @Override
     public Collection<List<I18nConfigVO>> getI18nList(I18nConfig entity, Pagination pagination) {
@@ -89,7 +144,7 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
             if (V.notEmpty(i18nCode)) {
                 if (V.notEmpty(languageCached) && V.notEmpty(languageCached.get(i18nCode))) {
                     BeanUtils.setProperty(item, setI18nContentField, languageCached.get(i18nCode));
-                    log.debug("语言环境 {} 从缓存中获取 {} 的选项数据", language, i18nCode);
+                    log.trace("语言环境 {} 从缓存中获取 {} 的选项数据", language, i18nCode);
                 } else {
                     codes.add(S.valueOf(i18nCode));
                 }
@@ -100,14 +155,14 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
         }
         LambdaQueryWrapper<I18nConfig> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.select(I18nConfig::getLanguage,I18nConfig::getCode,I18nConfig::getContent);
-        queryWrapper.in(I18nConfig::getCode,codes);
+        queryWrapper.in(I18nConfig::getCode, codes);
         queryWrapper.eq(I18nConfig::getLanguage, language);
-        Map<String, List<I18nConfig>> map = getEntityList(queryWrapper).stream().collect(Collectors.groupingBy(I18nConfig::getLanguage));
-        List<I18nConfig> list = map.get(language);
-        if (list == null && (list = map.get(language)) == null) {
+        List<I18nConfig> i18nConfigList = getEntityList(queryWrapper);
+        if(V.isEmpty(i18nConfigList)){
+            log.warn("未获取到国际化翻译 {}: {}，请检查国际化翻译配置", language, codes);
             return;
         }
-        Map<String, String> i18nMap = list.stream().collect(Collectors.toMap(I18nConfig::getCode, I18nConfig::getContent));
+        Map<String, String> i18nMap = i18nConfigList.stream().collect(Collectors.toMap(I18nConfig::getCode, I18nConfig::getContent));
         // 将查询的数据缓存
         i18nCacheManager.cacheLanguage(language, i18nMap);
         // 将剩下的国际化数据进行赋值
@@ -123,5 +178,47 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
                 }
             }
         }
+
     }
+
+    @Override
+    public Map<String, String> translate(List<String> i18nKeys) {
+        if(V.isEmpty(i18nKeys)){
+            return Collections.emptyMap();
+        }
+        Map<String, String> i18nTranslateMap = new HashMap<>(i18nKeys.size());
+        Locale locale = LocaleContextHolder.getLocale();
+        String language = locale.toString();
+        // 获取当前语言的缓存数据
+        Map<String, String> languageCached = i18nCacheManager.getLanguageCached(language);
+        Set<String> noCachedCodes = new HashSet<>();
+        for (String i18nCode : i18nKeys) {
+            if (V.notEmpty(languageCached) && V.notEmpty(languageCached.get(i18nCode))) {
+                i18nTranslateMap.put(i18nCode, languageCached.get(i18nCode));
+                log.trace("从缓存中获取国际化翻译 {}: {} ", language, i18nCode);
+            }
+            else {
+                noCachedCodes.add(i18nCode);
+            }
+        }
+        if(V.isEmpty(noCachedCodes)){
+            return i18nTranslateMap;
+        }
+        LambdaQueryWrapper<I18nConfig> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.select(I18nConfig::getLanguage, I18nConfig::getCode, I18nConfig::getContent);
+        queryWrapper.eq(I18nConfig::getLanguage, language);
+        queryWrapper.in(I18nConfig::getCode, noCachedCodes);
+        List<I18nConfig> i18nConfigList = getEntityList(queryWrapper);
+        if(V.isEmpty(i18nConfigList)){
+            log.warn("未获取到国际化翻译 {}: {}，请检查国际化翻译配置", language, noCachedCodes);
+            return i18nTranslateMap;
+        }
+        Map<String, String> i18nMap = i18nConfigList.stream().collect(Collectors.toMap(I18nConfig::getCode, I18nConfig::getContent));
+        // 将查询的数据缓存
+        i18nCacheManager.cacheLanguage(language, i18nMap);
+        i18nTranslateMap.putAll(i18nMap);
+        // 返回全部结果
+        return i18nTranslateMap;
+    }
+
 }

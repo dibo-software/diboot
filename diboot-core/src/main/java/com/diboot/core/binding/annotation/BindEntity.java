@@ -28,13 +28,13 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface BindEntity {
-    /***
+    /**
      * 对应的service类
      * @return
      */
     Class entity();
 
-    /***
+    /**
      * JOIN连接条件
      * @return
      */

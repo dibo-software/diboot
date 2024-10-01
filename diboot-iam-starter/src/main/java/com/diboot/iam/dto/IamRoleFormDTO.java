@@ -35,7 +35,7 @@ public class IamRoleFormDTO extends IamRole {
 
     private static final long serialVersionUID = 1444823850258901617L;
 
-    /***
+    /**
      * 权限id列表
      */
     private List<String> permissionIdList;

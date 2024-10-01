@@ -3,7 +3,6 @@ import elementResizeDetectorMaker from 'element-resize-detector'
 import type { FormInstance } from 'element-plus'
 import type { Resource } from './type'
 import { Plus, Refresh, InfoFilled } from '@element-plus/icons-vue'
-import RouteSelect from './components/RouteSelect.vue'
 import PermissionSelect from './components/PermissionSelect.vue'
 import { checkValue } from '@/utils/validate-form'
 import { useI18n } from 'vue-i18n'
@@ -25,7 +24,7 @@ watch(
   () => props.formValue,
   value => {
     reloadFormItem.value = !reloadFormItem.value
-    model.value = _.clone(value)
+    model.value = _.clone(value) as Resource
     configResource.value = model.value ?? {}
   }
 )
@@ -184,16 +183,21 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
                   { validator: checkCodeDuplicate, trigger: 'blur' }
                 ]"
               >
-                <route-select
-                  v-show="model.displayType === 'MENU'"
-                  v-model="model.resourceCode"
-                  v-model:component-path="model.routeMeta.componentPath"
-                  @change="formRef?.validateField('resourceCode')"
-                />
                 <el-input
-                  v-show="model.displayType !== 'MENU'"
                   v-model="model.resourceCode"
                   :placeholder="$t('resource.placeholder.resourceCode')"
+                  clearable
+                />
+              </el-form-item>
+              <el-form-item
+                v-if="!!model.routeMeta && model.displayType === 'MENU'"
+                :label="$t('resource.componentPath')"
+                prop="routeMeta.componentPath"
+                :rules="[{ required: true, message: i18n.t('rules.notnull'), trigger: 'blur' }]"
+              >
+                <el-input
+                  v-model="model.routeMeta.componentPath"
+                  :placeholder="$t('resource.placeholder.componentPath')"
                   clearable
                 />
               </el-form-item>

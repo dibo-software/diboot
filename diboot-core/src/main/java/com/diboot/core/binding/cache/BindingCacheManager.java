@@ -218,7 +218,7 @@ public class BindingCacheManager {
         Set<String> uniqueEntitySet = new HashSet<>();
         if (V.notEmpty(serviceMap)) {
             for (Map.Entry<String, IService> entry : serviceMap.entrySet()) {
-                Class entityClass = BeanUtils.getGenericityClass(entry.getValue(), 1);
+                Class entityClass = entry.getValue().getEntityClass();
                 if (entityClass != null) {
                     IService entityIService = entry.getValue();
                     if (uniqueEntitySet.contains(entityClass.getName())) {

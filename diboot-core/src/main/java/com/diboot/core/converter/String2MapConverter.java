@@ -18,6 +18,7 @@ package com.diboot.core.converter;
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.JSON;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -28,7 +29,7 @@ import java.util.Map;
  * @date 2022/11/07
  * Copyright © diboot.com
  */
-@CollectThisConvertor
+@Component
 public class String2MapConverter implements Converter<String, Map<String, Object>> {
 
     @Override

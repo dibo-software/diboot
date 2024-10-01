@@ -32,7 +32,7 @@ import java.util.List;
 public class PagingJsonResult<T> extends JsonResult<T> {
     private static final long serialVersionUID = 1002L;
 
-    /***
+    /**
      * 分页相关信息
      */
     private Pagination page;

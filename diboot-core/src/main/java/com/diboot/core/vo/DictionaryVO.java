@@ -32,6 +32,9 @@ import java.util.List;
 public class DictionaryVO extends Dictionary {
     private static final long serialVersionUID = 7702520653693628994L;
 
+    /**
+     * 字典子项
+     */
     @BindEntityList(entity= Dictionary.class, condition="this.type=type AND this.id=parent_id", orderBy = "sort_id:ASC", deepBind = true)
     private List<Dictionary> children;
 

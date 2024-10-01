@@ -28,19 +28,19 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface BindFieldList {
-    /***
+    /**
      * 绑定的Entity类
      * @return
      */
     Class entity();
 
-    /***
+    /**
      * 绑定字段
      * @return
      */
     String field();
 
-    /***
+    /**
      * JOIN连接条件
      * @return
      */

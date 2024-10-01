@@ -37,16 +37,16 @@ import java.time.LocalDateTime;
 public class IamLoginTraceDTO extends IamLoginTrace {
     private static final long serialVersionUID = 2694245822574591716L;
 
-    @BindQuery(column= "create_time", comparison = Comparison.GE)
+    @BindQuery(field= "createTime", comparison = Comparison.GE)
     private LocalDateTime createTimeBegin;
 
-    @BindQuery(column= "create_time", comparison = Comparison.LT)
+    @BindQuery(field= "createTime", comparison = Comparison.LT)
     private LocalDateTime createTimeEnd;
 
-    @BindQuery(column= "logout_time", comparison = Comparison.GE)
+    @BindQuery(field= "logoutTime", comparison = Comparison.GE)
     private LocalDateTime logoutTimeBegin;
 
-    @BindQuery(column= "logout_time", comparison = Comparison.LT)
+    @BindQuery(field= "logoutTime", comparison = Comparison.LT)
     private LocalDateTime logoutTimeEnd;
 
     public IamLoginTraceDTO setCreateTimeEnd(LocalDateTime createTimeEnd) {

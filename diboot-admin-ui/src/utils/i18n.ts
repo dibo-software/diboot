@@ -2,7 +2,7 @@ export const LOCALE_KEY = 'locale'
 export const LANGUAGE = 'Accept-Language'
 
 export default {
-  get(): string | null {
+  get(): string {
     return localStorage.getItem(LOCALE_KEY) || 'zh-CN'
   },
   set(locale: string) {

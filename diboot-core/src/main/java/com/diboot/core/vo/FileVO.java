@@ -32,11 +32,23 @@ import java.io.Serializable;
 public class FileVO implements Serializable {
     private static final long serialVersionUID = -5458566771194201567L;
 
+    /**
+     * 文件记录ID
+     */
     private String id;
 
+    /**
+     * 文件名
+     */
     private String fileName;
 
+    /**
+     * 文件下载/访问url
+     */
     private String accessUrl;
 
+    /**
+     * 缩略图url
+     */
     private String thumbnailUrl;
 }

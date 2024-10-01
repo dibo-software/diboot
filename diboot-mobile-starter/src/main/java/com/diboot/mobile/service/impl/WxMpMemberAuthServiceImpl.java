@@ -137,7 +137,7 @@ public class WxMpMemberAuthServiceImpl implements WxMpAuthService {
                 .setStatus(Cons.DICTCODE_ACCOUNT_STATUS.A.name());
     }
 
-    /***
+    /**
      * 微信公众号信息中的性别编码转化为性别数据字典编码
      * @param sex
      * @return

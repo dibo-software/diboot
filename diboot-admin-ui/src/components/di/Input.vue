@@ -4,7 +4,11 @@ import type { FormItem, Select, Upload } from './type'
 import type { UploadRawFile, UploadFile, FormItemRule, CascaderNode, CascaderOption } from 'element-plus'
 import { checkValue } from '@/utils/validate-form'
 import { useI18n } from 'vue-i18n'
+
 const i18n = useI18n()
+
+const RichEditor = defineAsyncComponent(() => import('../rich/Editor.vue'))
+const RichRead = defineAsyncComponent(() => import('../rich/Read.vue'))
 
 const props = withDefaults(
   defineProps<{
@@ -143,6 +147,8 @@ const convert2accept = (accept?: string) => {
     })
     .join(',')
 }
+
+defineExpose({ getFiles: () => _.cloneDeep(unref(fileList)) })
 </script>
 
 <template>

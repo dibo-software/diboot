@@ -107,7 +107,7 @@ public class Encryptor {
 		}
 	}
 
-	/***
+	/**
 	 * 获取指定key的加密器
 	 * @param key 加密密钥
 	 * @return
@@ -126,7 +126,7 @@ public class Encryptor {
 		return encryptor;
 	}
 
-	/***
+	/**
 	 * 获取指定key的解密器
 	 * @param key 解密密钥
 	 * @return
@@ -145,7 +145,7 @@ public class Encryptor {
 		return decryptor;
 	}
 
-	/***
+	/**
 	 * 获取key，如非16位则调整为16位
 	 * @param seed
 	 * @return

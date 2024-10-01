@@ -21,6 +21,7 @@ import com.diboot.core.vo.Pagination;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 国际化配置 Service接口
@@ -48,5 +49,12 @@ public interface I18nConfigService extends BaseService<I18nConfig> {
      * @param setI18nContentField Set翻译内容属性
      */
     void bindI18nContent(List<?> voList, String getI18nCodeField, String setI18nContentField);
+
+    /**
+     * 批量翻译
+     * @param i18nKeys
+     * @return
+     */
+    Map<String, String> translate(List<String> i18nKeys);
 
 }

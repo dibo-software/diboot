@@ -400,7 +400,7 @@ public interface BaseService<T> extends GeneralService<T>{
      */
     List<Map<String, Object>> getMapList(Wrapper queryWrapper, Pagination pagination);
 
-    /***
+    /**
      * 获取键值对的列表，用于构建select下拉选项等
      *
      * @param queryWrapper

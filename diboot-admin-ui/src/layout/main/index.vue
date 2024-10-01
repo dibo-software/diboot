@@ -9,6 +9,15 @@ const tabsHeight = computed(() => (appStore.enableTabs ? 36 : 0))
 
 const props = defineProps<{ fullScreen?: boolean | 'Tabs' }>()
 
+// 页面可见高度
+const pageHeight = ref(window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight)
+onMounted(() => {
+  window.onresize = () => {
+    return (() => {
+      pageHeight.value = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    })()
+  }
+})
 // 布局已用高度
 const layoutUsedHeight = computed(() =>
   //       是否全屏                                      (全屏包含 Tabs )  (未开启全屏 header + tabs)
@@ -35,7 +44,7 @@ const authStore = useAuthStore()
 
 <style scoped lang="scss">
 .content {
-  height: calc(100vh - v-bind('layoutUsedHeight + "px"'));
+  height: v-bind('pageHeight - layoutUsedHeight + "px"');
   background-color: var(--el-bg-color);
 }
 </style>

@@ -15,33 +15,34 @@
  */
 package com.diboot.core.converter;
 
-import com.diboot.core.converter.annotation.CollectThisConvertor;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * String - List 转换器
+ *
  * @author JerryMa
  * @version v3.0.0
  * @date 2022/10/25
  * Copyright © diboot.com
  */
-@CollectThisConvertor
+// @Component
+@Deprecated
 public class String2ListConverter implements Converter<String, List> {
 
     @Override
     public List convert(String source) {
-        if(V.notEmpty(source)) {
-            boolean isArray = S.startsWith(source,"[\"");
-            if(isArray) {
+        if (V.notEmpty(source)) {
+            boolean isArray = S.startsWith(source, "[\"");
+            if (isArray) {
                 return JSON.parseArray(source, String.class);
-            }
-            else {
+            } else {
                 return Arrays.asList(source);
             }
         }

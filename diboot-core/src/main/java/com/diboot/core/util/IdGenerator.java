@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
  */
 public class IdGenerator {
 
-    /***
+    /**
      * 生成下一个id
      * @return
      */

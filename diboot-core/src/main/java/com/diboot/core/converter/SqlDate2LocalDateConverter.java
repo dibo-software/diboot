@@ -17,6 +17,7 @@ package com.diboot.core.converter;
 
 import com.diboot.core.converter.annotation.CollectThisConvertor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,7 +29,7 @@ import java.time.LocalDate;
  * @date 2022/5/11
  * Copyright © diboot.com
  */
-@CollectThisConvertor
+@Component
 public class SqlDate2LocalDateConverter implements Converter<Date, LocalDate> {
 
     @Override

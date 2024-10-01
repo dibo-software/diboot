@@ -36,13 +36,13 @@ public class FileRecordDTO extends FileRecord {
     /**
      * 创建时间-起始
      */
-    @BindQuery(comparison = Comparison.GE, column = "create_time")
+    @BindQuery(comparison = Comparison.GE, field = "createTime")
     private LocalDateTime createTimeBegin;
 
     /**
      * 创建时间-截止
      */
-    @BindQuery(comparison = Comparison.LT, column = "create_time")
+    @BindQuery(comparison = Comparison.LT, field = "createTime")
     private LocalDateTime createTimeEnd;
 
     public FileRecord setCreateTimeEnd(LocalDateTime createTimeEnd) {

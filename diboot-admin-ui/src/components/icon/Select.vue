@@ -22,7 +22,7 @@ const selectIcon = (name?: string) => {
     <icon :name="modelValue" />
   </el-icon>
   <el-button text bg type="primary" @click="visible = true">
-    {{ modelValue ? $t('components.icon.reelect') : $t('components.icon.choose') }}</el-button
+    {{ modelValue ? $t('components.icon.reselect') : $t('components.icon.choose') }}</el-button
   >
   <el-button v-show="modelValue" text bg type="danger" @click="selectIcon()">
     {{ $t('components.icon.clear') }}

@@ -78,6 +78,6 @@ public class I18nCacheManager {
         }
         languageCached.putAll(languageValue);
         cacheManager.putCacheObj(Cons.CACHE_NAME_I18N, language, languageCached);
-        log.debug("语言环境{} {} 的数据已缓存", language, languageValue);
+        log.debug("语言环境 {} 的 {} 条数据已缓存", language, languageValue.size());
     }
 }

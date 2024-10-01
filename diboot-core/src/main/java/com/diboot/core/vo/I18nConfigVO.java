@@ -34,6 +34,9 @@ import lombok.experimental.Accessors;
 public class I18nConfigVO extends I18nConfig {
     private static final long serialVersionUID = 5679642618572762054L;
 
+    /**
+     * 国际化类型label
+     */
     @BindDict(field = "type", type = DICT_I18N_TYPE)
     private LabelValue typeLabel;
 }

@@ -34,7 +34,7 @@ import java.util.Map;
 @Slf4j
 public class HttpHelper {
 
-    /***
+    /**
      * 构建请求参数Map
      * @return
      */
@@ -71,7 +71,7 @@ public class HttpHelper {
 
     private static final String USER_AGENT_FLAG = "user-agent";
 
-    /***
+    /**
      * 获取user-agent
      * @param request
      * @return
@@ -83,7 +83,7 @@ public class HttpHelper {
     private static final String[] HEADER_IP_KEYWORDS = {"X-Forwarded-For", "Proxy-Client-IP",
             "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "X-Real-IP"};
 
-    /***
+    /**
      * 获取客户ip地址
      * @param request
      * @return

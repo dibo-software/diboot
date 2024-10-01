@@ -34,6 +34,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
  * 绑定注解的辅助类
@@ -131,6 +132,7 @@ public class ExcelBindAnnoHandler {
         if(V.isEmpty(nameList)){
             return Collections.emptyMap();
         }
+        nameList = nameList.stream().flatMap(e -> Stream.concat(Stream.of(S.split(e)), Stream.of(e))).filter(V::notEmpty).distinct().toList();
         BaseService service = ContextHolder.getBaseServiceByEntity(bindField.entity());
         String nameColumn = S.toSnakeCase(bindField.field());
         String idColumn = ContextHolder.getIdColumnName(bindField.entity());

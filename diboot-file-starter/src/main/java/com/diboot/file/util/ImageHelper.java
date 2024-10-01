@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
-/***
+/**
  *  图片操作辅助类
  * @author mazc@dibo.ltd
  * @version v2.0

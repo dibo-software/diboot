@@ -75,7 +75,7 @@ public class Cons {
      */
     public static final String ID_PREVENT_NULL = "0";
 
-    /***
+    /**
      * 常用字段名定义
      */
     public enum FieldName{
@@ -129,7 +129,7 @@ public class Cons {
         parentIdsPath
     }
 
-    /***
+    /**
      * 常用列名定义
      */
     public enum ColumnName{
