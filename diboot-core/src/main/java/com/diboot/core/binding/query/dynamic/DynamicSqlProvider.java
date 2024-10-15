@@ -128,8 +128,8 @@ public class DynamicSqlProvider {
                         page.orders().forEach(orderItem -> {
                             orderByList.add(S.format("%s %s", orderItem.getColumn(), orderItem.isAsc() ? "ASC" : "DESC"));
                         });
-                        if (orderByList.size() > 0) {
-                            String orderBySql = S.join(orderByList);
+                        if (!orderByList.isEmpty()) {
+                            String orderBySql = S.join(orderByList.stream().distinct());
                             ORDER_BY(orderBySql);
                         }
                     }
