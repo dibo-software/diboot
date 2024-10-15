@@ -17,7 +17,7 @@ const props = defineProps<{
   // 对话框宽度（默认 600px）
   width?: string
   // 类型
-  type?: string
+  type?: '' | 'default' | 'primary' | 'success' | 'warning' | 'info' | 'danger' | 'text'
   // 按钮标题（默认：导出）
   title?: string
 }>()
@@ -48,7 +48,7 @@ const handleCommand = (columns?: string[]) => {
         .get<TableHead[]>(props.tableHeadUrl)
         .then(res => {
           tableHeadList.value = res.data
-          const cache = localStorage.getItem(props.tableHeadUrl)
+          const cache = localStorage.getItem(`${props.tableHeadUrl}`)
           checkedList.value = cache ? JSON.parse(cache) : tableHeadList.value?.map(e => e.key)
           tableLoading.value = false
         })
@@ -64,7 +64,7 @@ const checkedList = ref<string[]>([])
 // 自定义表头确认导出
 const confirm = () => {
   if (!checkedList.value.length) return ElMessage.warning(i18n.t('components.excel.exportColumnNull'))
-  localStorage.setItem(props.tableHeadUrl, JSON.stringify(checkedList.value))
+  localStorage.setItem(`${props.tableHeadUrl}`, JSON.stringify(checkedList.value))
   handleCommand(checkedList.value)
   dialogVisible.value = false
 }

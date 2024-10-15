@@ -212,7 +212,9 @@ const multiple = inject<boolean | undefined>(
       :data-list="dataList"
       :multiple="multiple"
       :primary-key="primaryKey"
-      @row-dblclick="(row: Record<string, unknown>) => openDetail(row[primaryKey || 'id'])"
+      @row-dblclick="
+        (row: Record<string, unknown>) => detailPermission && openDetail(row[primaryKey || 'id'] as string)
+      "
       @selected-keys="(v: string[]) => (selectedKeys = v)"
       @order="orderBy"
     >

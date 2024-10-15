@@ -107,6 +107,6 @@ export const resetRouter = () => {
   router
     .getRoutes()
     .map(e => e.name as RouteRecordName)
-    .forEach(router.removeRoute)
+    .forEach(name => router.removeRoute(name as string | symbol))
   constantRoutes.forEach(router.addRoute)
 }

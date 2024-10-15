@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import type { I18nOptions } from 'vue-i18n'
 import I18nUtils from '@/utils/i18n'
 import type { App } from 'vue'
 
@@ -7,14 +8,14 @@ const locales = import.meta.glob('@/**/_locales/**', {
   eager: true
 })
 
-const messages: any = {}
+const messages: I18nOptions['messages'] = {}
 
 Object.keys(locales).forEach((path: string) => {
   const name = path.replace(/.*\/(.+)\.ts/, '$1').replace(/([a-z]+)([A-Z]+)/, '$1-$2')
   const localeData = messages[name]
 
   if (localeData) messages[name] = _.merge(localeData, locales[path])
-  else messages[name] = locales[path]
+  else messages[name] = locales[path] as any
   return messages
 })
 
