@@ -123,16 +123,6 @@ public class DynamicSqlProvider {
                     if(isDeletedCol != null && !QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection)){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
-                    if (page != null && V.notEmpty(page.orders())) {
-                        List<String> orderByList = new ArrayList<>(page.orders().size());
-                        page.orders().forEach(orderItem -> {
-                            orderByList.add(S.format("%s %s", orderItem.getColumn(), orderItem.isAsc() ? "ASC" : "DESC"));
-                        });
-                        if (!orderByList.isEmpty()) {
-                            String orderBySql = S.join(orderByList.stream().distinct());
-                            ORDER_BY(orderBySql);
-                        }
-                    }
                 }
                 // 存在联表且无where条件，
                 else if(V.notEmpty(annoJoinerList)){
