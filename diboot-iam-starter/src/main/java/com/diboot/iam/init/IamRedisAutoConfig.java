@@ -81,7 +81,7 @@ public class IamRedisAutoConfig {
      * @return
      */
     @Bean(name = "iamCacheManager")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "iamCacheManager")
     public BaseCacheManager iamCacheManager(){
         log.info("初始化 IAM Redis缓存: DynamicRedisCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
