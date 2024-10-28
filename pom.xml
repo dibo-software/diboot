@@ -13,7 +13,7 @@
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-root</artifactId>
-    <version>3.5.0</version>
+    <version>3.5.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -36,7 +36,7 @@
         <commons-io.version>2.17.0</commons-io.version>
         <easyexcel.version>4.0.3</easyexcel.version>
         <shiro.version>2.0.1</shiro.version>
-        <diboot.version>3.5.0</diboot.version>
+        <diboot.version>3.5.1</diboot.version>
     </properties>
 
     <dependencies>
