@@ -31,6 +31,7 @@ create table dbt_i18n_config
     content     varchar(1000)                         not null comment '内容',
     is_deleted  tinyint(1) default 0                  not null comment '逻辑删除',
     create_time datetime   default CURRENT_TIMESTAMP  not null comment '创建时间',
+    update_time datetime    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',
     PRIMARY KEY (`id`)
 ) comment '国际化配置';
 -- 创建索引
