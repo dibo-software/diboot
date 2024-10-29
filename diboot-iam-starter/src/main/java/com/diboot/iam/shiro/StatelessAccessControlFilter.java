@@ -58,7 +58,7 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        // 从header获取Token
+        // 从请求中获取Token
         String currentToken = TokenUtils.getRequestToken(httpRequest);
         if (V.isEmpty(currentToken)) {
             log.debug("token: {} 验证失败, uri={}", currentToken, httpRequest.getRequestURI());

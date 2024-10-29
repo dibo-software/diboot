@@ -29,6 +29,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Token相关操作类
  * @author Yangzhao
@@ -42,12 +44,19 @@ public class TokenUtils {
     public static final int EXPIRES_IN_MINUTES = getConfigIntValue("diboot.iam.token-expires-minutes", 60);
 
     /**
-     * 从请求头中获取客户端发来的token
+     * 从请求中获取客户端发来的token
      * @param request
      * @return
      */
     public static String getRequestToken(HttpServletRequest request) {
         String authtoken = request.getHeader(AUTH_HEADER);
+        if (authtoken == null) {
+            // 兼容参数携带token
+            String[] values = request.getParameterValues(AUTH_HEADER);
+            if (values != null && values.length > 0) {
+                authtoken = java.net.URLDecoder.decode(values[0], StandardCharsets.UTF_8);
+            }
+        }
         if(authtoken != null){
             if(authtoken.startsWith(Cons.TOKEN_PREFIX_BEARER)){
                 authtoken = authtoken.substring(Cons.TOKEN_PREFIX_BEARER.length());

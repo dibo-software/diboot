@@ -1,4 +1,5 @@
 import { isExternal } from './validate'
+import auth, { AUTH_HEADER_KEY } from '@/utils/auth'
 import qs from 'qs'
 
 /**
@@ -7,7 +8,7 @@ import qs from 'qs'
  * @param url
  */
 export const buildImgSrc = (url: string) => {
-  return isExternal(url) ? url : baseURL + url + '/image'
+  return isExternal(url) ? url : `${baseURL}${url}/image?${AUTH_HEADER_KEY}=${auth.getToken()}`
 }
 
 /**
