@@ -1,7 +1,8 @@
 import { createI18n } from 'vue-i18n'
-import type { I18nOptions } from 'vue-i18n'
+import type { I18nOptions, VueMessageType } from 'vue-i18n'
 import I18nUtils from '@/utils/i18n'
 import type { App } from 'vue'
+import type { LocaleMessage } from '@intlify/core-base'
 
 const locales = import.meta.glob('@/**/_locales/**', {
   import: 'default',
@@ -15,7 +16,7 @@ Object.keys(locales).forEach((path: string) => {
   const localeData = messages[name]
 
   if (localeData) messages[name] = _.merge(localeData, locales[path])
-  else messages[name] = locales[path] as any
+  else messages[name] = locales[path] as LocaleMessage<VueMessageType>
   return messages
 })
 

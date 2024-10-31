@@ -36,8 +36,8 @@ export function checkPermission(value: string | Array<string>, not = false, all 
     let _router = useRouter()
     if (_router == null) _router = router
     const permissions = routeName
-      ? _router.getRoutes().find(e => e.name === routeName)?.meta?.permissions ?? []
-      : _router.currentRoute.value.meta?.permissions ?? []
+      ? (_router.getRoutes().find(e => e.name === routeName)?.meta?.permissions ?? [])
+      : (_router.currentRoute.value.meta?.permissions ?? [])
     const permissionList = value instanceof Array ? value : [value]
     const findFn = (permission: string) => permissions.includes(permission)
     const exist = all ? permissionList.every(findFn) : permissionList.some(findFn)

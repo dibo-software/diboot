@@ -46,7 +46,7 @@ export default defineStore('auth', {
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
       } catch (e) {
-        throw new Error('获取登录用户信息异常')
+        throw new Error('获取登录用户信息异常', e)
       }
     },
     async logout() {
