@@ -8,7 +8,7 @@ defineProps<{ value?: string }>()
 
 <template>
   <editor
-    :model-value="(value || '').replaceAll('{{token}}', auth.getToken())"
+    :model-value="(value || '').replaceAll('{{token}}', (auth.getToken() || '') as string)"
     :default-config="{ readOnly: true, autoFocus: false }"
     style="height: auto"
   />

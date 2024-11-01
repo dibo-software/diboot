@@ -59,7 +59,7 @@ const emit = defineEmits<{
 }>()
 
 const handleChangeValue = (editor: IDomEditor) => {
-  emit('update:modelValue', editor.getHtml().replaceAll(`=${auth.getToken()}"`, '={{token}}"'))
+  emit('update:modelValue', editor.getHtml().replaceAll(`=${auth.getToken() || ''}"`, '={{token}}"'))
 }
 
 const handleChangeTitle = () => {
@@ -125,7 +125,7 @@ const editorConfig: IEditorConfig = {
       customUpload: customUpload<(url: string) => void>((file, insertFn) => {
         const url = isExternal(file.accessUrl)
           ? file.accessUrl
-          : `${baseURL}${file.accessUrl}?${AUTH_HEADER_KEY}=${auth.getToken()}`
+          : `${baseURL}${file.accessUrl}?${AUTH_HEADER_KEY}=${auth.getToken() || ''}`
         insertFn(url)
       })
     }
