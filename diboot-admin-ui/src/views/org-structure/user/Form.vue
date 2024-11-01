@@ -148,8 +148,10 @@ const rules: FormRules = {
               :placeholder="$t('user.placeholder.orgId')"
               class="tree-selector"
               :data="relatedData.orgTree"
-              :default-expand-all="true"
-              :check-strictly="true"
+              filterable
+              default-expand-all
+              check-strictly
+              clearable
             />
           </el-form-item>
         </el-col>
