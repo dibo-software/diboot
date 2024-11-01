@@ -42,7 +42,7 @@ watch(
   [() => props.title, () => props.modelValue],
   ([title, value]) => {
     titleValue.value = title
-    contentValue.value = value?.replaceAll('{{token}}', auth.getToken())
+    contentValue.value = value?.replaceAll('{{token}}', auth.getToken() ?? '')
   },
   { immediate: true }
 )

@@ -30,7 +30,7 @@ const en: Locale = {
     uploadErr: 'The upload file is abnormal, please try again later!'
   },
   select: {
-    keyword: 'Enter keyword',
+    key: 'Enter keyword',
     search: 'Search options',
     noOpt: 'No options'
   }

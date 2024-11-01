@@ -94,7 +94,7 @@ const resetFilter = () => {
       error-text="请求失败，点击重新加载"
       @load="onLoad"
     >
-      <van-swipe-cell v-for="item in list" :key="item">
+      <van-swipe-cell v-for="(item, idx) in list" :key="idx">
         <van-cell-group inset style="margin-top: 10px">
           <van-cell :border="false" :title="item.title" @click="$router.push({ name: 'DetailExample' })">
             <template #value>
