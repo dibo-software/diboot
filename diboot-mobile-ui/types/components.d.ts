@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    DiDynamicForm: typeof import('@/components/di/DynamicForm.vue')['default']
     DiInput: typeof import('@/components/di/Input.vue')['default']
     Icon: typeof import('@/components/icon/index.vue')['default']
     IconBranches: typeof import('@/components/icon/Branches.vue')['default']
@@ -18,8 +19,6 @@ declare module 'vue' {
     IconProcessTodo: typeof import('@/components/icon/process/Todo.vue')['default']
     IconTabbarDashboard: typeof import('@/components/icon/tabbar/Dashboard.vue')['default']
     IconTabbarDashboardActive: typeof import('@/components/icon/tabbar/DashboardActive.vue')['default']
-    IconTabbarHome: typeof import('@/components/icon/tabbar/Home.vue')['default']
-    IconTabbarHomeActive: typeof import('@/components/icon/tabbar/HomeActive.vue')['default']
     IconTabbarMine: typeof import('@/components/icon/tabbar/Mine.vue')['default']
     IconTabbarMineActive: typeof import('@/components/icon/tabbar/MineActive.vue')['default']
     IconTabbarStacking: typeof import('@/components/icon/tabbar/Stacking.vue')['default']
@@ -28,6 +27,7 @@ declare module 'vue' {
     RichRead: typeof import('@/components/rich/Read.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScanCode: typeof import('@/components/scan-code/index.vue')['default']
     Select: typeof import('@/components/select/index.vue')['default']
     SelectColumn: typeof import('@/components/select/Column.vue')['default']
     VanArea: typeof import('vant/es')['Area']
@@ -60,7 +60,6 @@ declare module 'vue' {
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTag: typeof import('vant/es')['Tag']
     VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
-    VanTimePicker: typeof import('vant/es')['TimePicker']
     VanUploader: typeof import('vant/es')['Uploader']
   }
 }
