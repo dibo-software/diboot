@@ -186,7 +186,7 @@ const zhCN = {
       routeMetaUrl: '请输入外部链接',
       permissionCodes: '点击聚焦后在权限列表中选择',
       componentName: '请输入组件名称',
-      componentPath: '路由组件路径（例: @/views/user/List.vue）',
+      componentPath: "路由组件路径（例: {'@'}/views/user/List.vue）",
       buttonPermissionConfig: {
         _customCode: '请输入按钮权限编码',
         resourceCode: '请选取当前按钮权限编码',
