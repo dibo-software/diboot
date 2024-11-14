@@ -973,7 +973,8 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 	public <FT> boolean exists(SFunction<T, FT> getterFn, Object value) {
 		QueryWrapper<T> queryWrapper = new QueryWrapper();
 		String column = this.getColumnByField(BeanUtils.convertSFunctionToFieldName(getterFn));
-		queryWrapper.select(column).eq(column, value);
+		String pk = ContextHolder.getIdFieldName(getEntityClass());
+		queryWrapper.select(column).eq(column, value).orderByDesc(pk);
 		return exists(queryWrapper);
 	}
 

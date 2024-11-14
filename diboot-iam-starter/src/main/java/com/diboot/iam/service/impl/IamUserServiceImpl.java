@@ -194,6 +194,7 @@ public class IamUserServiceImpl extends BaseServiceImpl<IamUserMapper, IamUser> 
         if (V.notEmpty(id)){
             wrapper.ne(IamUser::getId, id);
         }
+        wrapper.orderByDesc(IamUser::getId);
         return exists(wrapper);
     }
 

@@ -121,7 +121,8 @@ public class IamAccountServiceImpl extends BaseServiceImpl<IamAccountMapper, Iam
                 .eq(IamAccount::getAuthAccount, iamAccount.getAuthAccount())
                 .eq(IamAccount::getAuthType, iamAccount.getAuthType())
                 .eq(IamAccount::getUserType, iamAccount.getUserType())
-                .ne(V.notEmpty(iamAccount.getUserId()), IamAccount::getUserId, iamAccount.getUserId());
+                .ne(V.notEmpty(iamAccount.getUserId()), IamAccount::getUserId, iamAccount.getUserId())
+                .orderByDesc(IamAccount::getId);
         return exists(queryWrapper);
     }
 
