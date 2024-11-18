@@ -35,8 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * 文件操作辅助类
@@ -45,10 +44,16 @@ import java.util.List;
  */
 @Slf4j
 public class FileHelper{
+
 	/**
-	 * file验证
+	 * file 合法文件后缀
 	 */
-	public static final List<String> DANGER_FILE_SUFFIX = Arrays.asList("exe","bat","bin","dll","sh","php","pl","py","cgi","asp","aspx","jsp","php5","php4","php3","js","htm","html","go");
+	public static final List<String> DEFAULT_VALID_EXT_LIST = Arrays.asList(
+		"txt", "pdf", "xml",
+		"csv", "xls", "xlsx", "doc", "docx", "dot", "ppt", "pptx",
+		"bmp", "gif", "jpeg", "jpg", "png", "mp3", "avi", "wav", "wmf",
+		"zip","rar","gz", "bz2"
+	);
 
 	/**
 	 * excel格式
@@ -84,11 +89,22 @@ public class FileHelper{
 
 	/**
 	 * 是否为合法的文件类型
-	 * @param ext
+	 * @param fileName
 	 * @return
 	 */
-	public static boolean isValidFileExt(String ext){
-		return !DANGER_FILE_SUFFIX.contains(ext.toLowerCase());
+	public static boolean isValidFileExt(String fileName) {
+		return isValidFileExt(fileName, null);
+	}
+
+	/**
+	 * 是否为合法的文件类型
+	 * @param fileName
+	 * @param additionalValidExts 附加支持的文件后缀
+	 * @return
+	 */
+	public static boolean isValidFileExt(String fileName, List<String> additionalValidExts){
+		String ext = FileHelper.getFileExtByName(fileName).toLowerCase();
+		return DEFAULT_VALID_EXT_LIST.contains(ext) || (additionalValidExts != null && additionalValidExts.contains(ext));
 	}
 
 	/**
