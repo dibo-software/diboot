@@ -16,6 +16,7 @@
 package com.diboot.iam.data;
 
 import com.diboot.core.data.access.DataScopeManager;
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
@@ -73,8 +74,7 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
                 return buildUserIdsScope(currentUser);
             }
             else{
-                log.warn("数据权限未能识别该字段类型: {}", fieldName);
-                return Collections.emptyList();
+                throw new InvalidUsageException("默认数据权限: UserOrgDataAccessScopeManager 未能识别该字段类型: {}，检查是否需要重写isUserFieldName()/isOrgFieldName()", fieldName);
             }
         }
         // 处理岗位对应的数据范围权限
