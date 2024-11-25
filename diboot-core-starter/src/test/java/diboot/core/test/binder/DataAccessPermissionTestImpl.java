@@ -16,6 +16,8 @@
 package diboot.core.test.binder;
 
 import com.diboot.core.data.access.DataScopeManager;
+import diboot.core.test.binder.entity.CcCityInfo;
+import diboot.core.test.binder.entity.Department;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -44,6 +46,11 @@ public class DataAccessPermissionTestImpl implements DataScopeManager {
         }
         // ... 其他类型字段
         return accessibleIds;
+    }
+
+    @Override
+    public List<Class<?>> getEntityClasses() {
+        return List.of(CcCityInfo.class, Department.class);
     }
 
 }

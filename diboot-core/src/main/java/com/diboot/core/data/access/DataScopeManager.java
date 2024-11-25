@@ -82,12 +82,10 @@ public interface DataScopeManager {
     }
 
     /**
-     * 该数据权限涉及的实体类，默认null表示公用
+     * 该数据权限涉及的实体类，基于代码的数据权限必须指定
      * @return
      */
-    default List<Class<?>> getEntityClasses() {
-        return null;
-    }
+    List<Class<?>> getEntityClasses();
 
     /**
      * 显示标题

@@ -41,7 +41,7 @@ import java.util.List;
  * @date 2022/02/15
  */
 @Slf4j
-public class UserOrgDataAccessScopeManager implements DataScopeManager {
+public abstract class UserOrgDataAccessScopeManager implements DataScopeManager {
 
     @Override
     public String getTitle() {
@@ -124,6 +124,9 @@ public class UserOrgDataAccessScopeManager implements DataScopeManager {
             return Collections.emptyList();
         }
     }
+
+    @Override
+    public abstract List<Class<?>> getEntityClasses();
 
     /**
      * 未配置数据权限时的默认可见自己的
