@@ -72,8 +72,11 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
                     List<Class<?>> entityClasses = protectionHandler.getEntityClasses();
                     if(V.notEmpty(entityClasses)) {
                         for (Class<?> entityCls : entityClasses) {
+                            if(entityClassToPermissionMap.containsKey(entityCls)) {
+                                throw new InvalidUsageException("多个数据权限拦截实现类作用于Entity: {}，请检查！", entityCls.getName());
+                            }
                             entityClassToPermissionMap.put(entityCls, protectionHandler);
-                            log.info("识别到 Entity: {} 对应的数据权限拦截实现类：{}", entityCls.getName(), protectionHandler.getClass().getName());
+                            log.info("缓存 Entity: {} 与数据权限拦截实现类：{} 对应关系", entityCls.getName(), protectionHandler.getClass().getName());
                         }
                     }
                 }
