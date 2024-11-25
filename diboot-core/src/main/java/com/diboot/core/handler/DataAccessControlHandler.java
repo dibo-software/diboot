@@ -53,8 +53,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class DataAccessControlHandler implements MultiDataPermissionHandler {
     private static final Logger log = LoggerFactory.getLogger(DataAccessControlHandler.class);
-
-    private final Set<String> noCheckpointCache = new CopyOnWriteArraySet<>();
     /**
      * 获取全部自定义数据权限拦截器
      */
@@ -72,12 +70,10 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
             if(V.notEmpty(dataProtectionHandlers)) {
                 for (DataScopeManager protectionHandler : dataProtectionHandlers) {
                     List<Class<?>> entityClasses = protectionHandler.getEntityClasses();
-                    if(entityClasses == null) {
-                        entityClassToPermissionMap.put(AbstractEntity.class, protectionHandler);
-                    }
-                    else if(V.notEmpty(entityClasses)) {
+                    if(V.notEmpty(entityClasses)) {
                         for (Class<?> entityCls : entityClasses) {
                             entityClassToPermissionMap.put(entityCls, protectionHandler);
+                            log.info("识别到 Entity: {} 对应的数据权限拦截实现类：{}", entityCls.getName(), protectionHandler.getClass().getName());
                         }
                     }
                 }
@@ -92,9 +88,6 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
 
     @Override
     public Expression getSqlSegment(Table table, Expression where, String mappedStatementId) {
-        if (noCheckpointCache.contains(mappedStatementId)) {
-            return null;
-        }
         // 如果忽略此来源
         if (ThreadLocalHolder.ignoreInterceptor()) {
             return null;
@@ -102,8 +95,6 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(S.removeEsc(table.getName()));
         // 无权限检查点注解，不处理
         if (tableInfo == null || tableInfo.getEntityType() == null || !DataAccessAnnoCache.hasDataAccessCheckpoint(tableInfo.getEntityType())) {
-            if (!S.substringBeforeLast(mappedStatementId, ".").equals(DynamicQueryMapper.class.getName()))
-                noCheckpointCache.add(mappedStatementId);
             return null;
         }
         return buildDataAccessExpression(table, tableInfo.getEntityType());
