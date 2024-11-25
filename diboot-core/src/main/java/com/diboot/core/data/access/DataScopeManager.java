@@ -27,7 +27,7 @@ import java.util.List;
 public interface DataScopeManager {
 
     /**
-     * <h3>可访问的对象ID</h3>
+     * <h3>可访问的对象范围ID</h3>
      * <br/>
      * <table border="10">
      * <caption>添加条件规则</caption>
@@ -60,24 +60,12 @@ public interface DataScopeManager {
     List<? extends Serializable> getAccessibleIds(String fieldName);
 
     /**
-     * 已过期，since v3.4.1 替换为 getAccessibleIds(fieldName)
-     * @param entityClass
-     * @param fieldName
+     * 基于entityClass和字段名，返回可访问的范围ids
+     * @param entityClass 实体类
+     * @param fieldName 字段名
      * @return
      */
-    @Deprecated
     default List<? extends Serializable> getAccessibleIds(Class<?> entityClass, String fieldName) {
-        return getAccessibleIds(entityClass.getSimpleName(), fieldName);
-    }
-
-    /**
-     * 已过期，since v3.4.1 替换为 getAccessibleIds(fieldName)
-     * @param entityClassName
-     * @param fieldName
-     * @return
-     */
-    @Deprecated
-    default List<? extends Serializable> getAccessibleIds(String entityClassName, String fieldName) {
         return getAccessibleIds(fieldName);
     }
 

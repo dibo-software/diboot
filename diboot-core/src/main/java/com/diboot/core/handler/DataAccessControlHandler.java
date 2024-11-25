@@ -84,13 +84,7 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
             }
         }
         DataScopeManager dataScopeManager = entityClassToPermissionMap.get(entityClass);
-        if(dataScopeManager == null) {
-            dataScopeManager = entityClassToPermissionMap.get(AbstractEntity.class);
-            if(dataScopeManager != null) {
-                log.debug("获取到全局默认的数据范围控制实现 {}: {}", entityClass.getSimpleName(), dataScopeManager.getClass().getSimpleName());
-            }
-        }
-        else {
+        if(dataScopeManager != null) {
             log.debug("获取到 {} 类的数据范围控制实现: {}", entityClass.getSimpleName(), dataScopeManager.getClass().getSimpleName());
         }
         return dataScopeManager;
@@ -126,10 +120,10 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
         return DataAccessAnnoCache.getDataPermissionMap(entityClass).entrySet().stream().map(entry -> {
             DataScopeManager checkImpl = getDataScopeManager(entityClass);
             if (checkImpl == null) {
-                log.warn("未获取到 {} 类的数据范围控制实现，请检查DataScopeManager实现类是否正确实例化！", entityClass.getSimpleName());
+                log.warn("未获取到 {} 类的数据范围控制实现，请检查DataScopeManager实现类是否正确实例化并指定作用于此实体！", entityClass.getSimpleName());
                 throw new InvalidUsageException("exception.invalidUsage.dataAccessControlHandler.buildDataAccessExpression.message");
             }
-            List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entry.getKey());
+            List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
             if (idValues == null) {
                 return null;
             }
