@@ -42,11 +42,26 @@ import java.util.List;
  */
 @Slf4j
 public abstract class UserOrgDataAccessScopeManager implements DataScopeManager {
+    /**
+     * 用户 类型的字段名
+     */
+    private static final List<String> USER_FIELD_NAMES = Arrays.asList(Cons.FieldName.userId.name(), Cons.FieldName.createBy.name(), "user");
+    /**
+     * 部门 类型的字段名
+     */
+    private static final List<String> ORG_FIELD_NAMES = Arrays.asList(Cons.FieldName.orgId.name(), "org", "department");
 
     @Override
     public String getTitle() {
         return "基于用户组织的数据权限控制";
     }
+
+    /**
+     * 交由子类实现
+     * @return
+     */
+    @Override
+    public abstract List<Class<?>> getEntityClasses();
 
     @Override
     public List<? extends Serializable> getAccessibleIds(String fieldName) {
@@ -125,9 +140,6 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
         }
     }
 
-    @Override
-    public abstract List<Class<?>> getEntityClasses();
-
     /**
      * 未配置数据权限时的默认可见自己的
      * @param currentUser
@@ -160,7 +172,7 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
      * @return
      */
     protected boolean isUserFieldName(String fieldName){
-        return (Cons.FieldName.userId.name().equals(fieldName) || Cons.FieldName.createBy.name().equals(fieldName));
+        return USER_FIELD_NAMES.contains(fieldName);
     }
 
     /**
@@ -169,7 +181,7 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
      * @return
      */
     protected boolean isOrgFieldName(String fieldName){
-        return Cons.FieldName.orgId.name().equals(fieldName);
+        return ORG_FIELD_NAMES.contains(fieldName);
     }
 
 }
