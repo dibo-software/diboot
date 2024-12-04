@@ -322,8 +322,8 @@ public class MiddleTable {
         }}.toString();
     }
 
-    private String[] getSelectColumns(){
-        List<String> columns = new ArrayList<>(8);
+    private List<String> getSelectColumns(){
+        List<String> columns = new ArrayList<>();
         // select所需字段
         if(V.notEmpty(trunkObjColMapping)){
             for(Map.Entry<String, String> entry : trunkObjColMapping.entrySet()){
@@ -335,7 +335,7 @@ public class MiddleTable {
                 columns.add(entry.getKey());
             }
         }
-        return S.toStringArray(columns);
+        return columns;
     }
 
     private List<String> getSelectColumns4Count(boolean appendCount){
