@@ -40,6 +40,11 @@ const deletePermission = checkPermission('delete')
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="name" :label="$t('role.name')" />
       <el-table-column prop="code" :label="$t('role.code')" />
+      <el-table-column prop="userNameList" :label="$t('role.userList')">
+        <template #default="{ row }">
+          {{ row.userNameList?.join('、') }}
+        </template>
+      </el-table-column>
       <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="165" />
       <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" />
       <el-table-column :label="$t('operation.label')" width="160" fixed="right">

@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -32,11 +33,17 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 public class IamRoleFormDTO extends IamRole {
-
+    @Serial
     private static final long serialVersionUID = 1444823850258901617L;
 
     /**
      * 权限id列表
      */
     private List<String> permissionIdList;
+
+    /**
+     * 用户id列表
+     */
+    private List<String> userIdList;
+
 }

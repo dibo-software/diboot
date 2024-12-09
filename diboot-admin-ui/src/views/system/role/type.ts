@@ -4,6 +4,8 @@ export interface Role {
   id: string
   name: string
   code: string
+  userIdList?: string[]
+  userNameList?: string[]
   permissionList?: Resource[]
   description: string
   createTime: string

@@ -210,6 +210,7 @@ const en: Locale = {
   role: {
     name: 'Name',
     code: 'Code',
+    userList: 'User',
     description: 'Note',
     grantPermission: 'Authorize Permissions',
     permissionList: 'Role Authorization'

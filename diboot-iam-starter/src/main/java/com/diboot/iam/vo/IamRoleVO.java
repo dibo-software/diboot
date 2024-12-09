@@ -20,10 +20,12 @@ import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.IamResource;
 import com.diboot.iam.entity.IamRole;
+import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -36,6 +38,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 public class IamRoleVO extends IamRole {
+    @Serial
     private static final long serialVersionUID = -6778550575399070076L;
 
     // 字段关联：this.id=iam_role_resource.role_id AND iam_role_resource.resource_id=id
@@ -43,6 +46,19 @@ public class IamRoleVO extends IamRole {
     private List<IamResource> permissionList;
 
     private List<IamResourceListVO> permissionVOList;
+
+    @BindEntityList(entity = IamUser.class, condition = "this.id=dbt_iam_user_role.role_id and dbt_iam_user_role.user_id = id")
+    private List<IamUser> userList;
+
+    public List<String> getUserIdList() {
+        if (userList == null) return null;
+        return userList.stream().map(IamUser::getId).toList();
+    }
+
+    public List<String> getUserNameList() {
+        if (userList == null) return null;
+        return userList.stream().map(IamUser::getRealname).toList();
+    }
 
     /**
      * 是否为超级管理员

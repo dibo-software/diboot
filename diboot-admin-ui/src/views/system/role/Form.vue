@@ -3,7 +3,9 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { Resource } from '@/views/system/resource/type'
 import { checkValue } from '@/utils/validate-form'
+import type { Select } from '@/components/di/type'
 import { useI18n } from 'vue-i18n'
+
 const i18n = useI18n()
 const baseApi = '/iam/role'
 
@@ -89,7 +91,7 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" top="10vh">
+  <el-dialog v-model="visible" :title="title" top="10vh" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"
@@ -102,6 +104,34 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
       </el-form-item>
       <el-form-item prop="code" :label="$t('role.code')">
         <el-input v-model="model.code" />
+      </el-form-item>
+      <el-form-item prop="userIdList" :label="$t('role.userList')">
+        <di-selector
+          v-model="model.userIdList"
+          :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
+          :conditions="[{ field: 'status', value: 'A' }]"
+          :list="{
+            baseApi: '/iam/user',
+            relatedKey: 'orgId',
+            searchArea: {
+              propList: [
+                { prop: 'realname', label: $t('user.realname'), type: 'input' },
+                { prop: 'userNum', label: $t('user.userNum'), type: 'input' },
+                { prop: 'gender', label: $t('user.gender'), type: 'select', loader: 'GENDER' } as Select
+              ]
+            },
+            columns: [
+              { prop: 'userNum', label: $t('user.userNum') },
+              { prop: 'realname', label: $t('user.realname') },
+              { prop: 'genderLabel', label: $t('user.gender') },
+              { prop: 'mobilePhone', label: $t('user.mobilePhone') },
+              { prop: 'sortId', label: $t('user.sortId') }
+            ]
+          }"
+          multiple
+          data-type="IamUser"
+          data-label="realname"
+        />
       </el-form-item>
       <el-form-item prop="description" :label="$t('role.description')">
         <el-input v-model="model.description" type="textarea" />
