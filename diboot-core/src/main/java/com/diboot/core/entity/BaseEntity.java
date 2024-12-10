@@ -55,13 +55,4 @@ public abstract class BaseEntity<T extends Serializable> extends AbstractEntity<
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    /**
-     * Entity对象转为map
-     * @return
-     */
-    public Map<String, Object> toMap(){
-        String jsonStr = JSON.stringify(this);
-        return JSON.toMap(jsonStr);
-    }
-
 }
