@@ -15,12 +15,12 @@
  */
 package com.diboot.core.extension;
 
+import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.LabelValue;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,36 +28,34 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 序列号生成器的工厂类
- * @author mazc@dibo.ltd
- * @version v3.1.1
- * @date 2023/10/07
- * @see AutoFillHandlerFactory
+ * 自动赋值字段值处理类工厂类
+ * @author JerryMa
+ * @version v3.6.0
+ * @date 2024/12/10
  */
-@Deprecated
 @Slf4j
-public class SerialNumberGeneratorFactory {
+public class AutoFillHandlerFactory {
 
-    private static final Map<String, SerialNumberGenerator> GENERATOR_CACHE_MAP = new LinkedHashMap<>();
+    private static final Map<String, AutoFillHandler> HANDLER_CACHE_MAP = new LinkedHashMap<>();
 
     private static final List<LabelValue> DEFINITIONS = new ArrayList<>();
 
     /**
-     * 根据id标识获取generator实例
-     * @param generatorId 生成器标识
-     * @return SerialNumberGenerator
+     * 根据id标识获取handler实例
+     * @param handlerId 处理器标识
+     * @return AutoFillHandler
      */
-    public static SerialNumberGenerator getGenerator(String generatorId) {
+    public static AutoFillHandler getFillHandler(String handlerId) {
         initIfRequired();
-        SerialNumberGenerator generator = GENERATOR_CACHE_MAP.get(generatorId);
-        if (generator == null) {
-            log.warn("无法找到序列号生成器: {} 的实现类，请检查！", generatorId);
+        AutoFillHandler fillHandler = HANDLER_CACHE_MAP.get(handlerId);
+        if (fillHandler == null) {
+            throw new InvalidUsageException("未找到自动赋值处理器 AutoFillHandler: {} 的实现类，请检查！", handlerId);
         }
-        return generator;
+        return fillHandler;
     }
 
     /**
-     * 获取所有的生成器定义
+     * 获取所有的填充器定义
      * @return
      */
     public static List<LabelValue> getAllDefinitions() {
@@ -65,15 +63,17 @@ public class SerialNumberGeneratorFactory {
         return DEFINITIONS;
     }
 
+    /**
+     * 初次调用初始化缓存
+     */
     private static void initIfRequired() {
-        if (GENERATOR_CACHE_MAP.isEmpty()) {
+        if (HANDLER_CACHE_MAP.isEmpty()) {
             DEFINITIONS.clear();
-            List<SerialNumberGenerator> generatorList = ContextHolder.getBeans(SerialNumberGenerator.class);
-            if (V.notEmpty(generatorList)) {
-                generatorList.forEach(generator -> {
-                    Assert.notNull(generator.definition(), "definition接口返回值不可为空");
-                    GENERATOR_CACHE_MAP.put(S.valueOf(generator.definition().getValue()), generator);
-                    DEFINITIONS.add(generator.definition());
+            List<AutoFillHandler> fillHandlerList = ContextHolder.getBeans(AutoFillHandler.class);
+            if (V.notEmpty(fillHandlerList)) {
+                fillHandlerList.forEach(handler -> {
+                    HANDLER_CACHE_MAP.put(S.valueOf(handler.definition().getValue()), handler);
+                    DEFINITIONS.add(handler.definition());
                 });
             }
         }

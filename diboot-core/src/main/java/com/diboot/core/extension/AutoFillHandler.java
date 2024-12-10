@@ -15,37 +15,50 @@
  */
 package com.diboot.core.extension;
 
-import com.diboot.core.entity.BaseEntity;
+import com.diboot.core.entity.AbstractEntity;
 import com.diboot.core.vo.LabelValue;
 
 import java.util.Map;
 
 /**
- * 序列号生成器的接口定义
- * @author mazc@dibo.ltd
- * @version v3.1.1
- * @date 2023/10/07
- * @see AutoFillHandler
+ * 自动赋值字段值 处理类
+ * @author JerryMa
+ * @version v3.6.0
+ * @date 2024/12/10
  */
-@Deprecated
-public interface SerialNumberGenerator extends AutoFillHandler {
+public interface AutoFillHandler {
 
     /**
-     * 生成序列号
-     * @param entityData
+     * 处理器定义
      * @return
      */
-    default String generate(BaseEntity entityData) {
-        return generate(entityData.toMap());
+    default LabelValue definition() {
+        return new LabelValue(this.getClass().getSimpleName(), this.getClass().getName());
     }
 
     /**
-     * 生成序列号
+     * 是否需要更新，默认只新建不更新
+     * @return
+     */
+    default boolean requireUpdate() {
+        return false;
+    }
+
+    /**
+     * 构建填充值（传入entity对象）
+     * @param entityData
+     * @return
+     * @param <T>
+     */
+    default <T extends AbstractEntity> Object buildFillValue(T entityData) {
+        return buildFillValue(entityData.toMap());
+    }
+
+    /**
+     * 构建填充值（传入map对象）
      * @param entityDataMap
      * @return
      */
-    default String generate(Map<String, Object> entityDataMap) {
-        return (String)buildFillValue(entityDataMap);
-    }
+    Object buildFillValue(Map<String, Object> entityDataMap);
 
 }
