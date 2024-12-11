@@ -1,6 +1,7 @@
 const zhCN = {
   config: {
     propKey: '属性名',
+    propLabel: '属性标签',
     propValue: '属性值',
     category: '类别',
     dataType: '填写类型',

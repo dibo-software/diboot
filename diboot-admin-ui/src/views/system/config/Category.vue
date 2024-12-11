@@ -32,7 +32,7 @@ const save = () => {
 <template>
   <el-scrollbar>
     <el-form v-loading="loading" :disabled="!editable" label-width="150px" style="width: calc(100% - 150px)">
-      <el-form-item v-for="config in configList" :key="config.id" :label="config.propKey">
+      <el-form-item v-for="config in configList" :key="config.id" :label="config.propLabel">
         <el-input v-if="config.dataType === 'text'" v-model="config.propValue" />
         <el-input v-if="config.dataType === 'textarea'" v-model="config.propValue" type="textarea" />
         <el-input-number

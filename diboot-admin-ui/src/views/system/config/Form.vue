@@ -3,6 +3,7 @@ import type { FormInstance } from 'element-plus'
 import type { SystemConfig } from './type'
 import { checkValue } from '@/utils/validate-form'
 import { useI18n } from 'vue-i18n'
+import I18nSelector from '@/components/i18n/Selector.vue'
 const i18n = useI18n()
 const baseApi = '/system-config'
 
@@ -54,10 +55,12 @@ const checkPropKeyDuplicate = checkValue(
   () => model.value?.id,
   () => ({ category: model.value.category })
 )
+
+const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" width="900">
+  <el-dialog v-model="visible" :title="title" width="900" draggable>
     <el-form ref="formRef" v-loading="loading" :model="model" :label-width="$i18n.locale === 'en' ? '130px' : '80px'">
       <el-row>
         <el-col :span="12">
@@ -88,6 +91,19 @@ const checkPropKeyDuplicate = checkValue(
           </el-form-item>
         </el-col>
         <el-col :span="12">
+          <el-form-item
+            prop="propLabel"
+            :label="$t('config.propLabel')"
+            :rules="[{ required: true, message: i18n.t('rules.notnull'), whitespace: true }]"
+          >
+            <el-input v-model="model.propLabel">
+              <template v-if="enableI18n" #append>
+                <i18n-selector v-model="model.propLabelI18n" />
+              </template>
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
           <el-form-item prop="propValue" :label="$t('config.propValue')">
             <el-input v-if="model.dataType === 'text'" v-model="model.propValue" />
             <el-input v-if="model.dataType === 'textarea'" v-model="model.propValue" type="textarea" />

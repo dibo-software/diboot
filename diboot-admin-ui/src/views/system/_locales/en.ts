@@ -2,6 +2,7 @@ import type { Locale } from './zhCN'
 const en: Locale = {
   config: {
     propKey: 'Property Name',
+    propLabel: 'Property Label',
     propValue: 'Property Value',
     category: 'Category',
     dataType: 'Data Type',

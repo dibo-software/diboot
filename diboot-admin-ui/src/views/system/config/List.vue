@@ -44,6 +44,7 @@ const refresh = () => {
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="propKey" :label="$t('config.propKey')" show-overflow-tooltip />
+      <el-table-column prop="propLabel" :label="$t('config.propLabel')" show-overflow-tooltip />
       <el-table-column prop="propValue" :label="$t('config.propValue')" show-overflow-tooltip />
       <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="185" />
       <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="185" />
