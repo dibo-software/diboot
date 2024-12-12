@@ -77,7 +77,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: '/personal',
-        name: 'Personal',
+        name: 'PersonalPage',
         component: () => import('@/views/personal/index.vue'),
         meta: { title: i18n.global.t('router.personal'), hidden: true }
       }
