@@ -14,7 +14,7 @@ defineExpose({
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw" draggable>
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item :label="$t('operationLog.userRealname')">
         {{ model.userRealname }}
@@ -45,7 +45,9 @@ defineExpose({
         {{ model.requestParams }}
       </el-descriptions-item>
       <el-descriptions-item :label="$t('operationLog.errorMsg')" :span="2" class-name="long-text">
-        {{ model.errorMsg }}
+        <el-scrollbar max-height="300px" style="white-space: pre-line">
+          {{ model.errorMsg }}
+        </el-scrollbar>
       </el-descriptions-item>
     </el-descriptions>
     <template #footer>

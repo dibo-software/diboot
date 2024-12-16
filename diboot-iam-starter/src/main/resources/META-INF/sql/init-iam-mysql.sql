@@ -144,7 +144,7 @@ create table dbt_iam_operation_log
   request_params    varchar(1000)                  null comment '请求参数',
   request_ip   varchar(50) null comment 'IP',
   status_code   smallint   default 0   not null comment '状态码',
-  error_msg     varchar(1000)                  null comment '异常信息',
+  error_msg     text                  null comment '异常信息',
   is_deleted       tinyint(1)  null comment '删除标记',
   create_time      datetime   default CURRENT_TIMESTAMP null comment '创建时间'
 )
