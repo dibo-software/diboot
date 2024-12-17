@@ -64,7 +64,10 @@ public class IamProperties {
      * oauth2 客户端配置
      */
     private Oauth2ClientProperties oauth2Client;
-
+    /**
+     * 是否开启异常堆栈记录（生产环境方便查看异常日志）
+     */
+    private boolean saveExceptionStackTrace = false;
     /**
      * oauth2 客户端 SSO 配置项
      */

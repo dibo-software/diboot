@@ -15,14 +15,18 @@
  */
 package com.diboot.core.handler;
 
+import com.diboot.core.event.ExceptionEvent;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
+import com.diboot.core.util.HttpHelper;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -46,11 +50,14 @@ import java.util.Map;
 public class DefaultExceptionHandler {
     private final static Logger log = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
+    @Autowired(required = false)
+    private ApplicationEventPublisher applicationEventPublisher;
+
     /**
      * 统一处理校验错误 BindResult
      */
     @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
-    public Object validExceptionHandler(Exception ex){
+    public Object validExceptionHandler(HttpServletRequest request, Exception ex){
         BindingResult br = null;
         if(ex instanceof BindException){
             br = ((BindException)ex).getBindingResult();
@@ -60,8 +67,16 @@ public class DefaultExceptionHandler {
             map.put("code", Status.FAIL_VALIDATION.code());
             String validateErrorMsg = V.getBindingError(br);
             map.put("msg", validateErrorMsg);
-            map.put("ok", false);
             log.warn("数据校验失败, {}: {}", br.getObjectName(), validateErrorMsg);
+        }
+        if(applicationEventPublisher != null) {
+            if(request != null) {
+                map.put("requestIp", HttpHelper.getRequestIp(request));
+                map.put("requestUri", request.getRequestURI());
+                map.put("requestMethod", request.getMethod());
+                map.put("requestParams", request.getParameterMap());
+            }
+            applicationEventPublisher.publishEvent(new ExceptionEvent(map, ex));
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
@@ -93,9 +108,15 @@ public class DefaultExceptionHandler {
             map.put("code", status.value());
             String msg = buildMsg(status, e);
             map.put("msg", msg);
-            map.put("ok", false);
         }
         log.warn("请求处理异常", e);
+        if(applicationEventPublisher != null) {
+            map.put("requestIp", HttpHelper.getRequestIp(request));
+            map.put("requestUri", request.getRequestURI());
+            map.put("requestMethod", request.getMethod());
+            map.put("requestParams", request.getParameterMap());
+            applicationEventPublisher.publishEvent(new ExceptionEvent(map, e));
+        }
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 

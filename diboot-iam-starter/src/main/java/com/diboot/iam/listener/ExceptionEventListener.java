@@ -22,6 +22,7 @@ import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.service.IamOperationLogService;
 import com.diboot.iam.util.IamSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
  * 系统异常事件监听器
  */
 @Component
+@ConditionalOnProperty(name = "diboot.iam.save-exception-stack-trace", havingValue = "true")
 public class ExceptionEventListener implements ApplicationListener<ExceptionEvent> {
 
     @Autowired
@@ -42,6 +44,8 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         }
         catch (Exception e){}
         IamOperationLog operationLog = new IamOperationLog();
+        event.getMsgMap().remove("msg");
+        event.getMsgMap().remove("code");
         BeanUtils.bindProperties(operationLog, event.getMsgMap());
         if(user != null) {
             operationLog.setUserType(user.getClass().getSimpleName())
@@ -50,7 +54,6 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         else {
             operationLog.setUserType("-").setUserId("-1").setUserRealname("-");
         }
-
         Exception exception = (Exception) event.getSource();
         operationLog
                 .setBusinessObj("Exception").setOperation("异常")
