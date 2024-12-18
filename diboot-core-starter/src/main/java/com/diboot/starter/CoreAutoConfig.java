@@ -27,6 +27,8 @@ import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
 import com.diboot.core.data.protect.DefaultDataMaskHandler;
+import com.diboot.core.sequence.ICounter;
+import com.diboot.core.sequence.MemoryCounter;
 import com.diboot.core.serial.deserializer.LocalDateTimeDeserializer;
 import com.diboot.core.config.CoreProperties;
 import com.diboot.core.config.GlobalProperties;
@@ -283,6 +285,15 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     public MessageSourceBeanPostProcessor messageSourceBeanPostProcessor() {
         return new MessageSourceBeanPostProcessor();
+    }
+
+    /**
+     * 计数器
+     */
+    @Bean
+    @ConditionalOnMissingBean(ICounter.class)
+    public ICounter memoryCacheCounter() {
+        return new MemoryCounter();
     }
 
 }
