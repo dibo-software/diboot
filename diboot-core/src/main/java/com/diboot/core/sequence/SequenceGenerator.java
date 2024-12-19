@@ -52,7 +52,7 @@ public abstract class SequenceGenerator {
         String key = S.substringAfterLast(this.toString(), ".");
         String date = S.valueOf(getDate());
         if (!counter.checkValidity(key, date))
-            counter.setValue(key, date, getInitValue());
+            counter.setValue(key, date, this::getInitValue);
         return counter.increment(key);
     }
 

@@ -15,6 +15,8 @@
  */
 package com.diboot.core.sequence;
 
+import java.util.function.Supplier;
+
 /**
  * 计数器
  *
@@ -29,9 +31,9 @@ public interface ICounter {
      *
      * @param key   KEY
      * @param date  日期
-     * @param value 值
+     * @param value 值的提供者
      */
-    void setValue(String key, String date, long value);
+    void setValue(String key, String date, Supplier<Long> value);
 
     /**
      * 检查有效性

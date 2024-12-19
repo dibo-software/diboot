@@ -20,6 +20,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * Redis 计数器
@@ -34,9 +35,9 @@ public class RedisCounter implements ICounter {
     protected final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public synchronized void setValue(String key, String date, long value) {
+    public synchronized void setValue(String key, String date, Supplier<Long> value) {
         if (checkValidity(key, date)) return;
-        redisTemplate.opsForValue().set(key + ":value", value, 7, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(key + ":value", value.get(), 7, TimeUnit.DAYS);
         redisTemplate.opsForValue().set(key + ":date", date,7, TimeUnit.DAYS);
     }
 

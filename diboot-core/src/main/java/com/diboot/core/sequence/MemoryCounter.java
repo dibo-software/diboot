@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 /**
  * 内存计数器
@@ -33,9 +34,9 @@ public class MemoryCounter implements ICounter {
     protected final Map<String, AtomicLong> cache = new ConcurrentHashMap<>();
 
     @Override
-    public synchronized void setValue(String key, String date, long value) {
+    public synchronized void setValue(String key, String date, Supplier<Long> value) {
         if (checkValidity(key, date)) return;
-        cache.put(key, new AtomicLong(value));
+        cache.put(key, new AtomicLong(value.get()));
         cacheTime.put(key, date);
     }
 
