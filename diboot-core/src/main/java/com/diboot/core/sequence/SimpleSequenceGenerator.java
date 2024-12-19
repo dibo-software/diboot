@@ -15,22 +15,26 @@
  */
 package com.diboot.core.sequence;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
-import com.diboot.core.util.BeanUtils;
-import com.diboot.core.util.D;
-import com.diboot.core.util.S;
-import com.diboot.core.util.SqlExecutor;
+import com.diboot.core.util.*;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.lang.invoke.SerializedLambda;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 简单的序列生成
+ * 简单的序列生成器
  *
  * @author wind
  * @version v3.5.1
@@ -41,13 +45,13 @@ import java.util.Map;
 public class SimpleSequenceGenerator extends SequenceGenerator {
 
     /**
-     * 表名
+     * 实体类型
      */
-    private final String table;
+    private final Class<?> entityClass;
     /**
      * 列名
      */
-    private final String column;
+    private final String fieldName;
     /**
      * 前缀
      */
@@ -64,37 +68,21 @@ public class SimpleSequenceGenerator extends SequenceGenerator {
     @SneakyThrows
     public <T> SimpleSequenceGenerator(ICounter counter, SFunction<T, ?> entityGetter) {
         super(counter);
-
-        SerializedLambda serializedLambda = BeanUtils.getSerializedLambda(entityGetter);
-
-        String methodName = serializedLambda.getImplMethodName();
-        if (!methodName.startsWith("is") && !methodName.startsWith("get")) {
-            throw new RuntimeException("get方法名称: " + methodName + ", 不符合java bean规范");
-        }
-        // get方法开头为 is 或者 get，将方法名 去除is或者get，然后首字母小写，就是属性名
-        int prefixLen = methodName.startsWith("is") ? 2 : 3;
-        String fieldName = S.uncapFirst(methodName.substring(prefixLen));
-
-        Class<?> entityClass = Class.forName(serializedLambda.getImplClass().replaceAll("/", "."));
-        EntityInfoCache entityInfo = new EntityInfoCache(entityClass, null);
-
-        this.table = entityInfo.getTableName();
-        this.column = entityInfo.getPropInfo().getColumnByField(fieldName);
-    }
-
-    public SimpleSequenceGenerator(ICounter counter, String table, String column) {
-        super(counter);
-        this.table = table;
-        this.column = column;
+        SerializedLambda lambda = BeanUtils.getSerializedLambda(entityGetter);
+        this.fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+        this.entityClass = Class.forName(lambda.getImplClass().replaceAll("/", "."));
     }
 
     @Override
     @SneakyThrows
     protected long getInitValue() {
+        EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(entityClass);
+        BaseMapper<?> mapper = entityInfo.getBaseMapper();
         // SELECT MAX(code) AS max FROM table WHERE create_time > 'yyyy-MM-dd'
-        String select = "SELECT MAX(" + column + ") AS max FROM " + table;
-        String date = getDate();
-        List<Map<String, Object>> list = SqlExecutor.executeQuery(date == null ? select : select + " WHERE create_time > '" + date + "'");
+        QueryWrapper<?> queryWrapper = Wrappers.query().select("MAX(" + entityInfo.getPropInfo().getColumnByField(fieldName) + ") AS max");
+        LocalDate date = getDate();
+        queryWrapper.gt(date != null, "create_time", date);
+        List<Map<String, Object>> list = mapper.selectMaps((Wrapper) queryWrapper);
         long value = 0L;
         if (list != null && !list.isEmpty() && list.get(0) != null && list.get(0).get("max") != null) {
             int beginIndex = dateFormat.length() + prefix.length();

@@ -15,16 +15,16 @@
  */
 package com.diboot.core.sequence;
 
-import com.diboot.core.util.D;
 import com.diboot.core.util.S;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 /**
- * 序列生成
+ * 序列生成器
  * <p>
  * 支持 流水号 接力、重置
  *
@@ -50,17 +50,17 @@ public abstract class SequenceGenerator {
 
     public Long incrementAndGet() {
         String key = S.substringAfterLast(this.toString(), ".");
-        String date = getDate();
+        String date = S.valueOf(getDate());
         if (!counter.checkValidity(key, date))
             counter.setValue(key, date, getInitValue());
         return counter.increment(key);
     }
 
-    protected String getDate() {
+    protected LocalDate getDate() {
         return switch (rule) {
-            case YEAR -> D.now("yyyy-01-01");
-            case MONTH -> D.now("yyyy-MM-01");
-            case DAY -> D.now("yyyy-MM-dd");
+            case YEAR -> LocalDate.now().withDayOfYear(1);
+            case MONTH -> LocalDate.now().withDayOfMonth(1);
+            case DAY -> LocalDate.now();
             case NONE -> null;
         };
     }
