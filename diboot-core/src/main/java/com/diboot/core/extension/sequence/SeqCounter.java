@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.sequence;
-
-import java.util.function.Supplier;
+package com.diboot.core.extension.sequence;
 
 /**
  * 计数器
@@ -24,7 +22,7 @@ import java.util.function.Supplier;
  * @version v3.5.1
  * @date 2024/12/18
  */
-public interface ICounter {
+public interface SeqCounter {
 
     /**
      * 设置起始值
@@ -33,7 +31,7 @@ public interface ICounter {
      * @param date  日期
      * @param value 值的提供者
      */
-    void setValue(String key, String date, Supplier<Long> value);
+    void setValue(String key, String date, Long value);
 
     /**
      * 检查有效性

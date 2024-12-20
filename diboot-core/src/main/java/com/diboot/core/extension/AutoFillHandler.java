@@ -33,7 +33,7 @@ public interface AutoFillHandler {
      * @return
      */
     default LabelValue definition() {
-        return new LabelValue(this.getClass().getSimpleName(), this.getClass().getName());
+        return new LabelValue(this.getClass().getSimpleName(), this.getClass().getSimpleName());
     }
 
     /**

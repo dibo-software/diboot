@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.sequence;
+package com.diboot.core.extension.sequence;
 
 import com.diboot.core.util.S;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public abstract class SequenceGenerator {
 
-    private final ICounter counter;
+    private final SeqCounter counter;
 
     protected ResetRule rule = ResetRule.NONE;
 
@@ -52,7 +52,7 @@ public abstract class SequenceGenerator {
         String key = S.substringAfterLast(this.toString(), ".");
         String date = S.valueOf(getDate());
         if (!counter.checkValidity(key, date))
-            counter.setValue(key, date, this::getInitValue);
+            counter.setValue(key, date, this.getInitValue());
         return counter.increment(key);
     }
 

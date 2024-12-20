@@ -19,8 +19,8 @@ import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.config.Cons;
-import com.diboot.core.sequence.ICounter;
-import com.diboot.core.sequence.RedisCounter;
+import com.diboot.core.extension.sequence.SeqCounter;
+import com.diboot.core.extension.sequence.cache.RedisCacheSeqCounter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -133,9 +133,9 @@ public class CoreRedisAutoConfig {
      * 计数器
      */
     @Bean
-    @ConditionalOnMissingBean(ICounter.class)
-    public ICounter counter(RedisTemplate<String, Object> redisTemplate) {
-        return new RedisCounter(redisTemplate);
+    @ConditionalOnMissingBean(SeqCounter.class)
+    public SeqCounter redisCacheSeqCounter(RedisTemplate<String, Object> redisTemplate) {
+        return new RedisCacheSeqCounter(redisTemplate);
     }
 
 }

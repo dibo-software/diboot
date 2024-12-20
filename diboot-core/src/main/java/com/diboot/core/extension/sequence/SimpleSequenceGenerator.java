@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.sequence;
+package com.diboot.core.extension.sequence;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,7 +22,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.EntityInfoCache;
-import com.diboot.core.util.*;
+import com.diboot.core.util.BeanUtils;
+import com.diboot.core.util.D;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -66,7 +67,7 @@ public class SimpleSequenceGenerator extends SequenceGenerator {
     private int serialNumberLength = 3;
 
     @SneakyThrows
-    public <T> SimpleSequenceGenerator(ICounter counter, SFunction<T, ?> entityGetter) {
+    public <T> SimpleSequenceGenerator(SeqCounter counter, SFunction<T, ?> entityGetter) {
         super(counter);
         SerializedLambda lambda = BeanUtils.getSerializedLambda(entityGetter);
         this.fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());

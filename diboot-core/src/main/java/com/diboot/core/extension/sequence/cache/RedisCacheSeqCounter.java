@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.sequence;
+package com.diboot.core.extension.sequence.cache;
 
+import com.diboot.core.extension.sequence.SeqCounter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * Redis 计数器
@@ -30,25 +30,25 @@ import java.util.function.Supplier;
  * @date 2024/12/18
  */
 @RequiredArgsConstructor
-public class RedisCounter implements ICounter {
+public class RedisCacheSeqCounter implements SeqCounter {
 
     protected final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public synchronized void setValue(String key, String date, Supplier<Long> value) {
+    public synchronized void setValue(String key, String date, Long value) {
         if (checkValidity(key, date)) return;
-        redisTemplate.opsForValue().set(key + ":value", value.get(), 7, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(key + ":value", value, 7, TimeUnit.DAYS);
         redisTemplate.opsForValue().set(key + ":date", date,7, TimeUnit.DAYS);
     }
 
     @Override
-    public boolean checkValidity(String key, String date) {
+    public synchronized boolean checkValidity(String key, String date) {
         String k = key + ":date";
         return redisTemplate.hasKey(k) && Objects.equals(date, redisTemplate.opsForValue().get(k));
     }
 
     @Override
-    public Long increment(String key) {
+    public synchronized Long increment(String key) {
         return redisTemplate.opsForValue().increment(key + ":value");
     }
 
