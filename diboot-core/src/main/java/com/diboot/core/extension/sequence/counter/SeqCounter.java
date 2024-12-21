@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.extension.sequence;
+package com.diboot.core.extension.sequence.counter;
 
 /**
  * 计数器
@@ -29,18 +29,18 @@ public interface SeqCounter {
      *
      * @param key   KEY
      * @param date  日期
-     * @param value 值的提供者
+     * @param value 初始计数值
      */
-    void setValue(String key, String date, Long value);
+    void initCounter(String key, String date, Long value);
 
     /**
-     * 检查有效性
+     * 是否有当前日期段的计数器
      *
      * @param key  KEY
      * @param date 日期
-     * @return true 有效，false 无效
+     * @return true 有，false 无
      */
-    boolean checkValidity(String key, String date);
+    boolean hasCounter(String key, String date);
 
     /**
      * 获取加1后的值

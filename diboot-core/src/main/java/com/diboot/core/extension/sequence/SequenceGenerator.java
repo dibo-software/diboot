@@ -15,13 +15,14 @@
  */
 package com.diboot.core.extension.sequence;
 
+import com.diboot.core.extension.AutoFillHandler;
+import com.diboot.core.extension.sequence.counter.SeqCounter;
 import com.diboot.core.util.S;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 /**
  * 序列生成器
@@ -35,11 +36,9 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @RequiredArgsConstructor
-public abstract class SequenceGenerator {
+public abstract class SequenceGenerator implements AutoFillHandler {
 
-    private final SeqCounter counter;
-
-    protected ResetRule rule = ResetRule.NONE;
+    private final SeqCounter seqCounter;
 
     /**
      * 获取初始数值
@@ -48,41 +47,15 @@ public abstract class SequenceGenerator {
      */
     protected abstract long getInitValue();
 
-    public Long incrementAndGet() {
-        String key = S.substringAfterLast(this.toString(), ".");
-        String date = S.valueOf(getDate());
-        if (!counter.checkValidity(key, date))
-            counter.setValue(key, date, this.getInitValue());
-        return counter.increment(key);
+    public synchronized Long incrementAndGet() {
+        String key = this.getClass().getName();
+        String date = getCurrentDate();
+        if (!seqCounter.hasCounter(key, date)) {
+            seqCounter.initCounter(key, date, this.getInitValue());
+        }
+        return seqCounter.increment(key);
     }
 
-    protected LocalDate getDate() {
-        return switch (rule) {
-            case YEAR -> LocalDate.now().withDayOfYear(1);
-            case MONTH -> LocalDate.now().withDayOfMonth(1);
-            case DAY -> LocalDate.now();
-            case NONE -> null;
-        };
-    }
+    protected abstract String getCurrentDate();
 
-    /**
-     * 构建序列值
-     *
-     * @param formData 表单数据
-     * @return 序列值
-     */
-    public abstract Object buildFillValue(Map<String, Object> formData);
-
-    /**
-     * 重置规则
-     */
-    public enum ResetRule {
-        YEAR,
-        MONTH,
-        DAY,
-        /**
-         * 不重置
-         */
-        NONE;
-    }
 }

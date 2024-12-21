@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.extension.sequence.cache;
+package com.diboot.core.extension.sequence.counter;
 
-import com.diboot.core.extension.sequence.SeqCounter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -35,14 +34,14 @@ public class RedisCacheSeqCounter implements SeqCounter {
     protected final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public synchronized void setValue(String key, String date, Long value) {
-        if (checkValidity(key, date)) return;
+    public synchronized void initCounter(String key, String date, Long value) {
+        if (hasCounter(key, date)) return;
         redisTemplate.opsForValue().set(key + ":value", value, 7, TimeUnit.DAYS);
         redisTemplate.opsForValue().set(key + ":date", date,7, TimeUnit.DAYS);
     }
 
     @Override
-    public synchronized boolean checkValidity(String key, String date) {
+    public synchronized boolean hasCounter(String key, String date) {
         String k = key + ":date";
         return redisTemplate.hasKey(k) && Objects.equals(date, redisTemplate.opsForValue().get(k));
     }

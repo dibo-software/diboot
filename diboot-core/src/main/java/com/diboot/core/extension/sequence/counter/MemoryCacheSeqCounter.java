@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.extension.sequence.cache;
-
-import com.diboot.core.extension.sequence.SeqCounter;
+package com.diboot.core.extension.sequence.counter;
 
 import java.util.Map;
 import java.util.Objects;
@@ -35,14 +33,14 @@ public class MemoryCacheSeqCounter implements SeqCounter {
     protected final Map<String, AtomicLong> cache = new ConcurrentHashMap<>();
 
     @Override
-    public synchronized void setValue(String key, String date, Long value) {
-        if (checkValidity(key, date)) return;
+    public synchronized void initCounter(String key, String date, Long value) {
+        if (hasCounter(key, date)) return;
         cache.put(key, new AtomicLong(value));
         cacheTime.put(key, date);
     }
 
     @Override
-    public synchronized boolean checkValidity(String key, String date) {
+    public synchronized boolean hasCounter(String key, String date) {
         return cacheTime.containsKey(key) && Objects.equals(date, cacheTime.get(key));
     }
 
