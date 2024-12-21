@@ -15,6 +15,8 @@
  */
 package com.diboot.core.extension.sequence.counter;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version v3.5.1
  * @date 2024/12/18
  */
+@Slf4j
 public class MemoryCacheSeqCounter implements SeqCounter {
 
     protected final Map<String, String> cacheTime = new ConcurrentHashMap<>();
@@ -37,6 +40,7 @@ public class MemoryCacheSeqCounter implements SeqCounter {
         if (hasCounter(key, date)) return;
         cache.put(key, new AtomicLong(value));
         cacheTime.put(key, date);
+        log.info("初始化内存计数器: key={}, date={}, value={}", key, date, value);
     }
 
     @Override

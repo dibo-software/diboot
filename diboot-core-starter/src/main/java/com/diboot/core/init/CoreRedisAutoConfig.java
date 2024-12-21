@@ -135,6 +135,7 @@ public class CoreRedisAutoConfig {
     @Bean
     @ConditionalOnMissingBean(SeqCounter.class)
     public SeqCounter redisCacheSeqCounter(RedisTemplate<String, Object> redisTemplate) {
+        log.info("初始化 流水号计数器 Redis缓存: RedisCacheSeqCounter");
         return new RedisCacheSeqCounter(redisTemplate);
     }
 

@@ -16,6 +16,7 @@
 package com.diboot.core.extension.sequence.counter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Objects;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @version v3.5.1
  * @date 2024/12/18
  */
+@Slf4j
 @RequiredArgsConstructor
 public class RedisCacheSeqCounter implements SeqCounter {
 
@@ -38,6 +40,7 @@ public class RedisCacheSeqCounter implements SeqCounter {
         if (hasCounter(key, date)) return;
         redisTemplate.opsForValue().set(key + ":value", value, 7, TimeUnit.DAYS);
         redisTemplate.opsForValue().set(key + ":date", date,7, TimeUnit.DAYS);
+        log.info("初始化Redis计数器: key={}, date={}, value={}", key, date, value);
     }
 
     @Override

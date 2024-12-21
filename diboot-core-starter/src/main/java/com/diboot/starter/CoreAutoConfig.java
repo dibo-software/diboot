@@ -293,6 +293,7 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(SeqCounter.class)
     public SeqCounter memoryCacheSeqCounter() {
+        log.info("初始化 流水号计数器 内存缓存: MemoryCacheSeqCounter");
         return new MemoryCacheSeqCounter();
     }
 
