@@ -44,8 +44,9 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         }
         catch (Exception e){}
         IamOperationLog operationLog = new IamOperationLog();
-        event.getMsgMap().remove("msg");
+        int code = (Integer)event.getMsgMap().get("code");
         event.getMsgMap().remove("code");
+        event.getMsgMap().remove("msg");
         BeanUtils.bindProperties(operationLog, event.getMsgMap());
         if(user != null) {
             operationLog.setUserType(user.getClass().getSimpleName())
@@ -58,7 +59,7 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         operationLog
                 .setBusinessObj("Exception").setOperation("异常")
                 .setErrorMsg(extractStackTrace(exception))
-                .setStatusCode((int)(event.getMsgMap().get("code")));
+                .setStatusCode(code);
         operationLogService.createEntity(operationLog);
     }
 

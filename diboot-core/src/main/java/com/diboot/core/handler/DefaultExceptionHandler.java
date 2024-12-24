@@ -19,6 +19,7 @@ import com.diboot.core.event.ExceptionEvent;
 import com.diboot.core.exception.BusinessException;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.HttpHelper;
+import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import com.diboot.core.vo.Status;
 import jakarta.servlet.http.HttpServletRequest;
@@ -114,7 +115,7 @@ public class DefaultExceptionHandler {
             map.put("requestIp", HttpHelper.getRequestIp(request));
             map.put("requestUri", request.getRequestURI());
             map.put("requestMethod", request.getMethod());
-            map.put("requestParams", request.getParameterMap());
+            map.put("requestParams", JSON.stringify(request.getParameterMap()));
             applicationEventPublisher.publishEvent(new ExceptionEvent(map, e));
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
