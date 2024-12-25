@@ -214,7 +214,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         dictVO
                 .setIsDeletable(oldDictionary.getIsDeletable())
                 .setIsEditable(oldDictionary.getIsEditable());
-        if(!super.updateEntity(dictVO)){
+        if(!updateEntity(oldDictionary.getItemName(), dictVO)){
             log.warn("更新数据字典定义失败，type={}", dictVO.getType());
             return false;
         }
@@ -235,7 +235,8 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
                     .setIsEditable(dictVO.getIsEditable());
                 if(V.notEmpty(dict.getId())){
                     dictItemIds.add(dict.getId());
-                    if(!super.updateEntity(dict)){
+                    Optional<Dictionary> oldDictOpt = oldDictList.stream().filter(d->d.getId().equals(dict.getId())).findFirst();
+                    if(oldDictOpt.isPresent() && !updateEntity(oldDictOpt.get().getItemName(), dict)){
                         log.warn("更新字典子项失败，itemName={}", dict.getItemName());
                         throw new BusinessException(Status.FAIL_EXCEPTION, "exception.business.dictionaryService.updateItem");
                     }
@@ -259,6 +260,22 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
             }
         }
         return true;
+    }
+
+    /**
+     * 更新i18n国际化
+     * @param oldDictItemName
+     * @param newDict
+     * @return
+     */
+    private boolean updateEntity(String oldDictItemName, Dictionary newDict){
+        if(i18nConfigService != null) {
+            if(V.notEquals(oldDictItemName, newDict.getItemName())) {
+                i18nConfigService.updateI18nContent("zh_CN", newDict.getItemNameI18n(), newDict.getItemName());
+                log.debug("字典 {} 的国际化中文内容已更改为 {}", oldDictItemName, newDict.getItemName());
+            }
+        }
+        return super.updateEntity(newDict);
     }
 
     /**
