@@ -7,7 +7,9 @@ import Mine from '@/components/icon/tabbar/Mine.vue'
 import MineActive from '@/components/icon/tabbar/MineActive.vue'
 import useAuthStore from '@/stores/auth'
 
-useAuthStore().getInfo()
+const auth = useAuthStore()
+auth.getInfo()
+
 const route = useRoute()
 const firstLevelPath = route.fullPath.split('/')[1]
 console.log(firstLevelPath)
@@ -28,7 +30,7 @@ const active = ref<string>(
       backgroundColor: 'var(--van-gray-1)'
     }"
   >
-    <transition name="custom" mode="in-out">
+    <transition :key="`${auth.realname}`" name="custom" mode="in-out">
       <RouterView />
     </transition>
   </div>

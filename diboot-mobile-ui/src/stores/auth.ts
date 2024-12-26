@@ -5,6 +5,7 @@ export interface IAuthStore {
   realname: string
   avatar?: string
   roles: Array<any>
+  permissions: Array<string>
   info?: any
 }
 
@@ -14,6 +15,7 @@ export default defineStore('auth', {
       realname: '',
       avatar: undefined,
       roles: [],
+      permissions: [],
       info: undefined
     }
   },
@@ -36,11 +38,15 @@ export default defineStore('auth', {
     },
     getInfo: async function (refresh = false) {
       try {
-        const res = await api.get<{ info: any; roles: Array<any> }>('/auth/user-info', { refresh })
+        const res = await api.get<{ info: any; roles: Array<any>; permissions: string[] }>('/auth/user-info', {
+          refresh,
+          module: 'mobile'
+        })
         this.info = res.data?.info
         if (this.info?.avatarUrl) this.avatar = 'buildImgSrc(this.info?.avatarUrl)'
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
+        this.permissions = res.data?.permissions ?? []
       } catch (e) {
         throw new Error('获取登录用户信息异常')
       }

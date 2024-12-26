@@ -15,7 +15,7 @@ onBeforeUnmount(() => erd.uninstall(document.body))
 
 const baseApi = '/iam/resource'
 
-const props = defineProps<{ formValue?: Resource }>()
+const props = defineProps<{ formValue?: Resource; lendHeight?: string }>()
 
 const model = ref<Resource>()
 
@@ -131,7 +131,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
       <el-row :gutter="5" style="width: 100%">
         <el-col :md="24" :lg="10">
           <div style="margin: 8px; zoom: 1.1">{{ $t('resource.menuConfig') }}</div>
-          <el-scrollbar :style="clientWidth >= 1200 ? { height: 'calc(100vh - 168px)' } : {}">
+          <el-scrollbar :style="clientWidth >= 1200 ? { height: `calc(100vh - 168px - ${lendHeight ?? '0px'})` } : {}">
             <el-form
               v-if="model"
               ref="formRef"
@@ -187,6 +187,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
                   v-model="model.resourceCode"
                   :placeholder="$t('resource.placeholder.resourceCode')"
                   clearable
+                  @change="formRef?.validateField('resourceCode')"
                 />
               </el-form-item>
               <el-form-item
@@ -370,7 +371,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
           </el-scrollbar>
         </el-col>
         <el-col :md="24" :lg="14">
-          <div :style="clientWidth >= 1200 ? { height: 'calc(100vh - 126px)' } : {}">
+          <div :style="clientWidth >= 1200 ? { height: `calc(100vh - 130px - ${lendHeight ?? '0px'})` } : {}">
             <permission-select
               ref="permissionSelectRef"
               v-model:permission-codes="configResource.permissionCodes"
