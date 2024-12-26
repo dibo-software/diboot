@@ -91,7 +91,7 @@ public class HttpHelper {
     public static String getRequestIp(HttpServletRequest request) {
         for (String header : HEADER_IP_KEYWORDS) {
             String ipAddresses = request.getHeader(header);
-            if (ipAddresses == null || ipAddresses.length() == 0 || "unknown".equalsIgnoreCase(ipAddresses)) {
+            if (V.isEmpty(ipAddresses) || "unknown".equalsIgnoreCase(ipAddresses)) {
                 continue;
             }
             if (V.notEmpty(ipAddresses)) {

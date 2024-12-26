@@ -62,7 +62,7 @@ public class IamRedisAutoConfig {
     private RedisTemplate<String, Object> redisTemplate;
 
     public IamRedisAutoConfig() {
-        log.info("初始化 IAM 组件 redis 自动配置");
+        log.info("初始化 IAM 组件 Redis 自动配置");
     }
 
     /**
