@@ -31,17 +31,20 @@ const sortI18n = () => {
   if (rest && rest.length > 0) rest.forEach(item => arr.push(item))
   model.list = arr
 }
+
+const suffix = inject<() => string | undefined>('i18n-suffix', () => void 0)
+
 defineExpose({
-  open: (code?: string) => {
-    model.i18nCode = code
+  open: (code?: string, newCodePrefix?: string) => {
     formRef.value?.resetFields()
     if (code) {
+      model.i18nCode = code
       loading.value = true
       api
         .get<I18nConfig[]>(`${baseApi}/${code}`)
         .then(res => {
           if (res.data) model.list = res.data
-          else model.list = initData
+          else model.list = _.cloneDeep(initData)
           const type = model.list.length ? model.list[0]?.type : undefined
           Array.of(...locales)
             .filter(locale => !model.list.some(e => e?.language === locale))
@@ -54,13 +57,18 @@ defineExpose({
         })
         .catch(err => {
           ElNotification.error({
-            title: i18n.t('i18nConfig.fetchDataListError'),
+            title: i18n.t('components.i18nConfig.fetchDataListError'),
             message: err.msg || err.message || err
           })
         })
         .finally(() => (loading.value = false))
     } else {
-      model.list = initData
+      if (newCodePrefix) {
+        const codeSuffix = suffix()
+        if (codeSuffix) model.i18nCode = newCodePrefix + (newCodePrefix.endsWith('.') ? '' : '.') + codeSuffix
+        else model.i18nCode = newCodePrefix
+      }
+      model.list = _.cloneDeep(initData)
       sortI18n()
     }
     visible.value = true
@@ -106,7 +114,7 @@ const checkCodeDuplicate = (rule: unknown, value: unknown, callback: (error?: st
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="$t('i18nConfig.internationalTranslation')">
+  <el-dialog v-model="visible" :title="$t('i18nConfig.internationalTranslation')" draggable>
     <el-form ref="formRef" v-loading="loading" :model="model" :label-width="$i18n.locale === 'en' ? '150px' : '100px'">
       <el-form-item
         prop="i18nCode"
@@ -133,9 +141,9 @@ const checkCodeDuplicate = (rule: unknown, value: unknown, callback: (error?: st
 
     <template #footer>
       <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
-      <el-button type="primary" :loading="submitting" @click="submitPost(model.list, formRef)">{{
-        $t('button.save')
-      }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="submitPost(model.list, formRef)">
+        {{ $t('button.save') }}
+      </el-button>
     </template>
   </el-dialog>
 </template>

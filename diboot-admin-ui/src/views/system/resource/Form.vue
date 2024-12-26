@@ -161,7 +161,7 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
               >
                 <el-input v-model="model.displayName" :placeholder="$t('resource.placeholder.displayName')" clearable>
                   <template v-if="enableI18n" #append>
-                    <i18n-selector v-model="model.displayNameI18n" />
+                    <i18n-selector v-model="model.displayNameI18n" :group="model.displayNameI18n" />
                   </template>
                 </el-input>
               </el-form-item>
