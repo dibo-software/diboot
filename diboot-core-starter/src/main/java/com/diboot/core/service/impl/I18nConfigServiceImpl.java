@@ -230,11 +230,10 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
                         .eq(I18nConfig::getLanguage, language)
                         .eq(I18nConfig::getCode, code);
         updateEntity(updateWrapper);
-        Map<String, String> languageCached = i18nCacheManager.getLanguageCached(language);
-        if(V.notEmpty(languageCached)){
-            languageCached.put(code, newContent);
-            log.debug("I18N {}:{} 的缓存已被更新为: {}", language, code, newContent);
-        }
+        Map<String, String> i18nItemCache = new HashMap<>();
+        i18nItemCache.put(code, newContent);
+        i18nCacheManager.cacheLanguage(language, i18nItemCache);
+        log.debug("I18N {}:{} 的缓存已被更新为: {}", language, code, newContent);
     }
 
 }
