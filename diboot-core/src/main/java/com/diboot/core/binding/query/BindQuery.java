@@ -59,9 +59,15 @@ public @interface BindQuery {
     String condition() default "";
 
     /**
-     * 忽略该字段
+     * 构建查询条件时忽略该字段
      */
     boolean ignore() default false;
+
+    /**
+     * 忽略select查询该字段，用于构建查询时剔除Entity中的大字段，避免Oracle等构建DISTINCT查询时报错
+     * @return
+     */
+    boolean ignoreSelect() default false;
 
     /**
      * 查询处理策略：默认忽略空字符串
