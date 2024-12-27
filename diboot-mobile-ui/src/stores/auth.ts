@@ -1,5 +1,6 @@
 import auth from '@/utils/auth'
 import router from '@/router'
+import i18n from '@/i18n'
 
 export interface IAuthStore {
   realname: string
@@ -47,6 +48,13 @@ export default defineStore('auth', {
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
         this.permissions = res.data?.permissions ?? []
+
+        if (import.meta.env.VITE_APP_ENABLE_I18N === 'true') {
+          api
+            .get('/i18n-config/all')
+            .then(res => i18n.global.mergeLocaleMessage(unref(i18n.global.locale), res.data ?? {}))
+            .catch(err => console.error(err.msg || err.message))
+        }
       } catch (e) {
         throw new Error('获取登录用户信息异常')
       }
