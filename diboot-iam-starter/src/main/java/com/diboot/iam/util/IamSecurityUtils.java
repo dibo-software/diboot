@@ -79,7 +79,7 @@ public class IamSecurityUtils extends SecurityUtils {
                 log.warn("缓存中不存在的无效token: {}", accessToken);
             }
         } else {
-            throw new InvalidUsageException("exception.invalidUsage.iamSecurityUtils.getLoginUserByToken.message");
+            throw new InvalidUsageException("无法获取登录用户缓存，请检查依赖环境！");
         }
         return null;
     }

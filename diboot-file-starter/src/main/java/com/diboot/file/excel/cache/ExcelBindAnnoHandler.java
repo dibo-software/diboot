@@ -108,7 +108,7 @@ public class ExcelBindAnnoHandler {
             }
             DictionaryServiceExtProvider bindDictService = ContextHolder.getBean(DictionaryServiceExtProvider.class);
             if(bindDictService == null){
-                throw new InvalidUsageException("exception.invalidUsage.excelBindAnnoHandler.convertToNameValueMap.message");
+                throw new InvalidUsageException("DictionaryService未实现，无法使用ExcelBindDict注解！");
             }
             List<LabelValue> list = bindDictService.getLabelValueList(dictType);
             return convertLabelValueListToMap(list);

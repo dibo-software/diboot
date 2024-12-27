@@ -161,7 +161,7 @@ public class MiddleTable {
      */
     public Map<String, Long> executeOneToManyCountQuery(Map<String, List> trunkObjCol2ValuesMap){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
-            throw new InvalidUsageException("exception.invalidUsage.middleTable.nonFilterCondition");
+            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
         }
         //user_id //role_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);
@@ -193,7 +193,7 @@ public class MiddleTable {
      */
     public Map<String, List> executeOneToManyQuery(Map<String, List> trunkObjCol2ValuesMap){
         if(V.isEmpty(trunkObjCol2ValuesMap)){
-            throw new InvalidUsageException("exception.invalidUsage.middleTable.nonFilterCondition");
+            throw new InvalidUsageException("不合理的中间表查询：无过滤条件！");
         }
         //user_id //role_id
         EntityInfoCache linkage = BindingCacheManager.getEntityInfoByTable(table);

@@ -117,7 +117,7 @@ public class OAuth2SSOServiceImpl extends BaseAuthServiceImpl {
      */
     protected void parseCode(AuthCredential credential) {
         if(restTemplate == null){
-            throw new InvalidUsageException("exception.invalidUsage.userService.initRestTemplate");
+            throw new InvalidUsageException("请初始化 RestTemplate");
         }
         OAuth2SSOCredential ssoCredential = (OAuth2SSOCredential) credential;
         IamProperties.Oauth2ClientProperties oauth2Client = iamProperties.getOauth2Client();

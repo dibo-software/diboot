@@ -78,7 +78,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
         MessageChannel channel = typeToChannelMap.get(message.getChannel());
         if (V.isEmpty(channel)) {
             log.error("[获取发送通道失败]，当前发送通道为：{}", message.getChannel());
-            throw new InvalidUsageException("exception.invalidUsage.messageService.fetchChannelFailed", message.getChannel());
+            throw new InvalidUsageException("获取发送通道 {} 失败", message.getChannel());
         }
         String content = message.getContent();
         if (message.hasTemplate()) {

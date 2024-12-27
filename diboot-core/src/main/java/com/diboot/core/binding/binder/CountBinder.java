@@ -54,7 +54,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            throw new InvalidUsageException("exception.invalidUsage.binder.parseConditionFailed");
+            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
         Map<String, Long> valueListCountMap;
         if(middleTable == null){

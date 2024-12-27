@@ -508,7 +508,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
                                                   SFunction<R, ?> followerIdGetter, Collection<? extends Serializable> followerIdList,
                                                   Consumer<QueryWrapper<R>> queryConsumer, Consumer<R> setConsumer) {
 		if (driverId == null) {
-			throw new InvalidUsageException("exception.invalidUsage.baseService.nullDriverId");
+			throw new InvalidUsageException("主动ID值不能为空！");
 		}
 		if (followerIdList == null) {
 			log.debug("从动对象ID集合为null，不做关联关系更新处理");
@@ -519,7 +519,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		Class<R> middleTableClass = (Class<R>) lambdaMeta.getInstantiatedClass();
 		EntityInfoCache entityInfo = BindingCacheManager.getEntityInfoByClass(middleTableClass);
 		if (entityInfo == null) {
-			throw new InvalidUsageException("exception.invalidUsage.baseService.nonServiceOrMapper", middleTableClass.getName());
+			throw new InvalidUsageException("未找到 {} 的 Service 或 Mapper 定义！", middleTableClass.getName());
 		}
 		boolean isExistPk = entityInfo.getIdColumn() != null;
 
@@ -911,7 +911,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 			query = ((LambdaQueryWrapper) queryWrapper);
 		}
 		else {
-			throw new InvalidUsageException("exception.invalidUsage.baseService.notSupportWrapper", (queryWrapper == null ? "null" : queryWrapper.getClass().getSimpleName()));
+			throw new InvalidUsageException("不支持的Wrapper类型：{}", (queryWrapper == null ? "null" : queryWrapper.getClass().getSimpleName()));
 		}
 		// 如果是动态join，则调用JoinsBinder
 		query.select(getterFn);
@@ -1049,7 +1049,7 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 		String sqlSelect = queryWrapper.getSqlSelect();
 		// 最少2个属性：label, value , (ext , parentId)
 		if(V.isEmpty(sqlSelect) || S.countMatches(sqlSelect, Cons.SEPARATOR_COMMA) < 1){
-			throw new InvalidUsageException("exception.invalidUsage.baseService.callGetLabelValueListFailed");
+			throw new InvalidUsageException("调用错误: getLabelValueList必须用select依次指定返回的 label,value(,ext)键值字段，如: new QueryWrapper<Dictionary>().lambda().select(Dictionary::getItemName, Dictionary::getItemValue)");
 		}
 		List<T> entityList = getEntityList(queryWrapper);
 		if(entityList == null){

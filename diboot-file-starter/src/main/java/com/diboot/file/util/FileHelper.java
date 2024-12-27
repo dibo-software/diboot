@@ -248,7 +248,7 @@ public class FileHelper{
 		if(fileStorageDirectory == null){
 			fileStorageDirectory = PropertiesUtils.get(FILE_STORAGE_DIRECTORY);
 			if(fileStorageDirectory == null){
-				throw new InvalidUsageException("exception.invalidUsage.fileHelper.getFileStorageDirectory.message", FILE_STORAGE_DIRECTORY);
+				throw new InvalidUsageException("文件存储路径参数 {} 未配置.", FILE_STORAGE_DIRECTORY);
 			}
 		}
 		return fileStorageDirectory;

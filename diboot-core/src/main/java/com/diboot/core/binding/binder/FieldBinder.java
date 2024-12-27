@@ -98,10 +98,10 @@ public class FieldBinder<T> extends BaseBinder<T> {
             return;
         }
         if(V.isEmpty(refObjJoinCols)){
-            throw new InvalidUsageException("exception.invalidUsage.binder.parseConditionFailed");
+            throw new InvalidUsageException("调用错误：无法从condition中解析出字段关联.");
         }
         if(referencedGetterFieldNameList == null){
-            throw new InvalidUsageException("exception.invalidUsage.binder.bindField.nonField");
+            throw new InvalidUsageException("调用错误：字段绑定必须指定字段field");
         }
         // 直接关联
         if(middleTable == null){

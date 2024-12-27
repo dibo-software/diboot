@@ -91,7 +91,7 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
     public void putCacheObj(String cacheName, Object objKey, Object obj) {
         Cache cache = redisCacheManager.getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
         if(log.isDebugEnabled()){
             log.debug("缓存: {} 新增-> {}", cacheName, objKey);
@@ -103,7 +103,7 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
     public void removeCacheObj(String cacheName, Object objKey) {
         Cache cache = redisCacheManager.getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
         if(log.isDebugEnabled()){
             log.debug("缓存: {} 移除-> {}", cacheName, objKey);

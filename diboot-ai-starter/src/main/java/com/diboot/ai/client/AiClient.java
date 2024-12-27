@@ -63,7 +63,7 @@ public class AiClient {
      */
     public void executeStream(AiRequest aiRequest, EventSourceListener listener) throws Exception {
         if (V.isEmpty(this.modelProviders)) {
-            throw new InvalidUsageException("exception.invalidUsage.aiClient.executeStream.unenabledModelService");
+            throw new InvalidUsageException("尚未启用模型服务");
         }
         for (ModelProvider modelProvider : this.modelProviders) {
             if (!modelProvider.supports(aiRequest.getModel())) {
@@ -72,7 +72,7 @@ public class AiClient {
             modelProvider.executeStream(aiRequest, listener);
             return;
         }
-        throw new InvalidUsageException("exception.invalidUsage.aiClient.executeStream.noModelService", aiRequest.getModel());
+        throw new InvalidUsageException("{} 无对应模型服务，请选择其他模型", aiRequest.getModel());
     }
 
 }

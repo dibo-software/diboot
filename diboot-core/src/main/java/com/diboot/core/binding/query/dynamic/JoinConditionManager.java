@@ -46,7 +46,7 @@ public class JoinConditionManager extends BaseConditionManager {
         List<Expression> expressionList = getExpressionList(joiner.getCondition());
         if(V.isEmpty(expressionList)){
             log.warn("无法解析注解条件: {} ", joiner.getCondition());
-            throw new InvalidUsageException("exception.invalidUsage.joinConditionManager.parseJoinCondition.message", joiner.getCondition());
+            throw new InvalidUsageException("无法解析注解条件: {}", joiner.getCondition());
         }
         // 解析中间表关联
         String tableName = extractMiddleTableName(expressionList, joiner.getJoin());

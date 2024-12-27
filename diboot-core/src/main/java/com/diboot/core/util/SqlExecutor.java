@@ -60,7 +60,7 @@ public class SqlExecutor {
             JdbcTemplate jdbcTemplate = getJdbcTemplate();
             DataSource dataSource = jdbcTemplate.getDataSource();
             if(dataSource == null) {
-                throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.getDatabase.message");
+                throw new InvalidUsageException("当前运行环境无获取数据源配置");
             }
             try {
                 Connection connection = dataSource.getConnection();
@@ -98,7 +98,7 @@ public class SqlExecutor {
             }
         }
         else {
-            throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.fetchJdbcTemplateFailed");
+            throw new InvalidUsageException("无法获取JdbcTemplate实例");
         }
     }
 
@@ -127,7 +127,7 @@ public class SqlExecutor {
             }
         }
         else {
-            throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.fetchJdbcTemplateFailed");
+            throw new InvalidUsageException("无法获取JdbcTemplate实例");
         }
     }
 
@@ -158,7 +158,7 @@ public class SqlExecutor {
             }
         }
         else {
-            throw new InvalidUsageException("exception.invalidUsage.sqlExecutor.fetchJdbcTemplateFailed");
+            throw new InvalidUsageException("无法获取JdbcTemplate实例");
         }
     }
 

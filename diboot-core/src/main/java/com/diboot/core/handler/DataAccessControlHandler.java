@@ -115,7 +115,7 @@ public class DataAccessControlHandler implements MultiDataPermissionHandler {
             DataScopeManager checkImpl = getDataScopeManager(entityClass);
             if (checkImpl == null) {
                 log.warn("未获取到 {} 类的数据范围控制实现，请检查DataScopeManager实现类是否正确实例化并指定作用于此实体！", entityClass.getSimpleName());
-                throw new InvalidUsageException("exception.invalidUsage.dataAccessControlHandler.buildDataAccessExpression.message");
+                throw new InvalidUsageException("无法从上下文中获取数据权限的接口实现：DataScopeManager");
             }
             List<? extends Serializable> idValues = checkImpl.getAccessibleIds(entityClass, entry.getKey());
             if (idValues == null) {
