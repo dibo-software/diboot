@@ -75,7 +75,9 @@ public class DefaultExceptionHandler {
                 map.put("requestIp", HttpHelper.getRequestIp(request));
                 map.put("requestUri", request.getRequestURI());
                 map.put("requestMethod", request.getMethod());
-                map.put("requestParams", request.getParameterMap());
+                if(V.notEmpty(request.getParameterMap())) {
+                    map.put("requestParams", JSON.stringify(request.getParameterMap()));
+                }
             }
             applicationEventPublisher.publishEvent(new ExceptionEvent(map, ex));
         }
@@ -115,7 +117,9 @@ public class DefaultExceptionHandler {
             map.put("requestIp", HttpHelper.getRequestIp(request));
             map.put("requestUri", request.getRequestURI());
             map.put("requestMethod", request.getMethod());
-            map.put("requestParams", JSON.stringify(request.getParameterMap()));
+            if(V.notEmpty(request.getParameterMap())) {
+                map.put("requestParams", JSON.stringify(request.getParameterMap()));
+            }
             applicationEventPublisher.publishEvent(new ExceptionEvent(map, e));
         }
         return new ResponseEntity<>(map, HttpStatus.OK);

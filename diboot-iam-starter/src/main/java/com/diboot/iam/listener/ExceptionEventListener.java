@@ -45,8 +45,6 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         catch (Exception e){}
         IamOperationLog operationLog = new IamOperationLog();
         int code = (Integer)event.getMsgMap().get("code");
-        event.getMsgMap().remove("code");
-        event.getMsgMap().remove("msg");
         BeanUtils.bindProperties(operationLog, event.getMsgMap());
         if(user != null) {
             operationLog.setUserType(user.getClass().getSimpleName())
@@ -63,6 +61,11 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         operationLogService.createEntity(operationLog);
     }
 
+    /**
+     * 提取异常堆栈信息
+     * @param e
+     * @return
+     */
     private String extractStackTrace(Exception e) {
         StringBuilder sb = new StringBuilder(e.getClass().getName()).append(": ").append(e.getMessage());
         for (StackTraceElement element : e.getStackTrace()) {
@@ -74,4 +77,5 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         }
         return sb.toString();
     }
+
 }
