@@ -26,6 +26,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * 系统异常事件监听器
  */
@@ -44,8 +46,12 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
         }
         catch (Exception e){}
         IamOperationLog operationLog = new IamOperationLog();
-        int code = (Integer)event.getMsgMap().get("code");
-        BeanUtils.bindProperties(operationLog, event.getMsgMap());
+        Map<String, Object> msgMap = event.getMsgMap();
+        int code = (Integer)msgMap.get("code");
+        String msg = (String)msgMap.get("msg");
+        msgMap.remove("code");
+        msgMap.remove("msg");
+        BeanUtils.bindProperties(operationLog, msgMap);
         if(user != null) {
             operationLog.setUserType(user.getClass().getSimpleName())
                     .setUserId(user.getId()).setUserRealname(user.getRealname());
@@ -59,6 +65,8 @@ public class ExceptionEventListener implements ApplicationListener<ExceptionEven
                 .setErrorMsg(extractStackTrace(exception))
                 .setStatusCode(code);
         operationLogService.createEntity(operationLog);
+        event.getMsgMap().put("code", code);
+        event.getMsgMap().put("msg", msg);
     }
 
     /**

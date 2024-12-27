@@ -80,6 +80,9 @@ public class DefaultExceptionHandler {
                 }
             }
             applicationEventPublisher.publishEvent(new ExceptionEvent(map, ex));
+            map.remove("requestIp");
+            map.remove("requestUri");
+            map.remove("requestMethod");
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
@@ -121,6 +124,9 @@ public class DefaultExceptionHandler {
                 map.put("requestParams", JSON.stringify(request.getParameterMap()));
             }
             applicationEventPublisher.publishEvent(new ExceptionEvent(map, e));
+            map.remove("requestIp");
+            map.remove("requestUri");
+            map.remove("requestMethod");
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
