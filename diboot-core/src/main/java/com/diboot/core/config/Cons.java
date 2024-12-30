@@ -308,4 +308,9 @@ public class Cons {
      */
     public static String CACHE_NAME_I18N = "diboot:i18n";
 
+    /**
+     * 系统配置缓存
+     */
+    public static String CACHE_NAME_SYSTEM_CONFIG = "diboot:system-config";
+
 }

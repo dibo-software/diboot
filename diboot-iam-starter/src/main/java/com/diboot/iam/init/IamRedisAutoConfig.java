@@ -17,6 +17,8 @@ package com.diboot.iam.init;
 
 import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
+import com.diboot.core.cache.I18nCacheManager;
+import com.diboot.iam.cache.SystemConfigCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.redis.ShiroRedisCacheManager;
 import com.diboot.iam.config.IamProperties;
@@ -89,6 +91,20 @@ public class IamRedisAutoConfig {
                 put(Cons.CACHE_CAPTCHA, 5);
         }};
         return new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
+    }
+
+    /**
+     * 系统配置数据缓存管理器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public SystemConfigCacheManager systemConfigCacheManager() {
+        log.info("初始化 SystemConfig Redis缓存: DynamicRedisCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(com.diboot.core.config.Cons.CACHE_NAME_SYSTEM_CONFIG, 24*60);
+        }};
+        DynamicRedisCacheManager memoryCacheManager = new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
+        return new SystemConfigCacheManager(memoryCacheManager);
     }
 
 }

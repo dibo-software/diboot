@@ -15,19 +15,25 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
+import com.diboot.iam.cache.SystemConfigCacheManager;
 import com.diboot.iam.entity.SystemConfig;
 import com.diboot.iam.mapper.SystemConfigMapper;
 import com.diboot.iam.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,16 +47,25 @@ import java.util.stream.Collectors;
 @Service
 public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper, SystemConfig> implements SystemConfigService {
 
+    @Autowired
+    private SystemConfigCacheManager cacheManager;
+
     @Override
     public <T> T findConfigValue(String category, String propKey) {
-        SystemConfig info = this.getSingleEntity(buildQueryWrapper(category).eq(SystemConfig::getPropKey, propKey));
-        return info == null ? null : (T) value4Type(info);
+        return (T) getConfigMapByCategory(category).get(propKey);
     }
 
     @Override
     public Map<String, Object> getConfigMapByCategory(String category) {
-        return getEntityList(buildQueryWrapper(category).select(SystemConfig::getPropKey, SystemConfig::getPropValue))
-                .stream().collect(Collectors.toMap(SystemConfig::getPropKey, this::value4Type));
+        Map<String, SystemConfig> languageCached = cacheManager.getLanguageCached(category);
+        Collection<SystemConfig> list;
+        if (V.notEmpty(languageCached)) {
+            list = languageCached.values();
+        } else {
+            list = getEntityList(buildQueryWrapper(category).select(SystemConfig::getPropKey, SystemConfig::getPropValue, SystemConfig::getDataType));
+            cacheManager.cacheLanguage(category, list);
+        }
+        return list.stream().collect(Collectors.toMap(SystemConfig::getPropKey, this::value4Type));
     }
 
     protected LambdaQueryWrapper<SystemConfig> buildQueryWrapper(String category) {
@@ -77,4 +92,20 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
         return propValue;
     }
 
+    @Override
+    protected void beforeCreate(SystemConfig entity) {
+        cacheManager.removeCachedItems(entity.getCategory());
+    }
+
+    @Override
+    protected void beforeUpdate(SystemConfig entity) {
+        cacheManager.removeCachedItems(entity.getCategory());
+    }
+
+    @Override
+    protected void beforeDelete(Object entityIds) {
+        Collection<?> ids = entityIds instanceof Collection ? (Collection<?>) entityIds : List.of(entityIds);
+        Wrapper<SystemConfig> query = Wrappers.<SystemConfig>lambdaQuery().select(SystemConfig::getCategory).in(SystemConfig::getId, ids);
+        getEntityList(query).stream().map(e -> e == null ? null : e.getCategory()).distinct().forEach(cacheManager::removeCachedItems);
+    }
 }
