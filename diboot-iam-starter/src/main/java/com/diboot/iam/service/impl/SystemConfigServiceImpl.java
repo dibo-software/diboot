@@ -33,7 +33,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -57,13 +56,13 @@ public class SystemConfigServiceImpl extends BaseServiceImpl<SystemConfigMapper,
 
     @Override
     public Map<String, Object> getConfigMapByCategory(String category) {
-        Map<String, SystemConfig> languageCached = cacheManager.getLanguageCached(category);
+        Map<String, SystemConfig> languageCached = cacheManager.getCachedConfig(category);
         Collection<SystemConfig> list;
         if (V.notEmpty(languageCached)) {
             list = languageCached.values();
         } else {
             list = getEntityList(buildQueryWrapper(category).select(SystemConfig::getPropKey, SystemConfig::getPropValue, SystemConfig::getDataType));
-            cacheManager.cacheLanguage(category, list);
+            cacheManager.cacheConfig(category, list);
         }
         return list.stream().collect(Collectors.toMap(SystemConfig::getPropKey, this::value4Type));
     }

@@ -57,7 +57,7 @@ public class SystemConfigCacheManager {
      * @param category
      * @return
      */
-    public Map<String, SystemConfig> getLanguageCached(String category) {
+    public Map<String, SystemConfig> getCachedConfig(String category) {
         if (cacheManager == null) {
             return null;
         }
@@ -70,15 +70,15 @@ public class SystemConfigCacheManager {
      * @param category
      * @param configList
      */
-    public void cacheLanguage(String category, Collection<SystemConfig> configList) {
+    public void cacheConfig(String category, Collection<SystemConfig> configList) {
         if (cacheManager == null) {
             return;
         }
-        Map<String, SystemConfig> languageCached = new HashMap<>(configList.size());
+        Map<String, SystemConfig> cachedConfig = new HashMap<>(configList.size());
         for (SystemConfig config : configList) {
-            languageCached.put(config.getPropKey(), config);
+            cachedConfig.put(config.getPropKey(), config);
         }
-        cacheManager.putCacheObj(Cons.CACHE_NAME_SYSTEM_CONFIG, handle(category), languageCached);
+        cacheManager.putCacheObj(Cons.CACHE_NAME_SYSTEM_CONFIG, handle(category), cachedConfig);
         log.debug("系统配置组 {} 的 {} 条数据已缓存", category, configList.size());
     }
 
