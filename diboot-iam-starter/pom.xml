@@ -24,7 +24,6 @@
             <groupId>com.diboot</groupId>
             <artifactId>diboot-core-spring-boot-starter</artifactId>
             <version>${diboot.version}</version>
-
         </dependency>
 
         <dependency>
