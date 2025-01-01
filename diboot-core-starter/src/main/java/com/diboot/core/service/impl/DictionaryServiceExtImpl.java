@@ -420,7 +420,7 @@ public class DictionaryServiceExtImpl extends BaseServiceImpl<DictionaryMapper, 
         }
         else {
             // i18n 翻译
-            List<String> itemI18nMap = dictList.stream().map(Dictionary::getItemNameI18n).collect(Collectors.toList());
+            List<String> itemI18nMap = dictList.stream().map(Dictionary::getItemNameI18n).filter(V::notEmpty).collect(Collectors.toList());
             Map<String, String> i18nKeyValMap = i18nConfigService.translate(itemI18nMap);
             List<LabelValue> items = new ArrayList<>(dictList.size());
             for(Dictionary dictionary : dictList){
