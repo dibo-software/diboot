@@ -16,7 +16,7 @@
     <description>diboot mobile starter project</description>
 
     <properties>
-        <weixin.java.version>4.6.0</weixin.java.version>
+        <weixin.java.version>4.7.0</weixin.java.version>
     </properties>
 
     <dependencies>
