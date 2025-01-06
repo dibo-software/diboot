@@ -15,9 +15,9 @@
  */
 package com.diboot.file.excel.cache;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.config.BaseConfig;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.service.BaseService;
 import com.diboot.core.service.DictionaryServiceExtProvider;
@@ -29,6 +29,7 @@ import com.diboot.core.vo.LabelValue;
 import com.diboot.file.excel.annotation.ExcelBindDict;
 import com.diboot.file.excel.annotation.ExcelBindField;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -136,8 +137,10 @@ public class ExcelBindAnnoHandler {
         BaseService service = ContextHolder.getBaseServiceByEntity(bindField.entity());
         String nameColumn = S.toSnakeCase(bindField.field());
         String idColumn = ContextHolder.getIdColumnName(bindField.entity());
-        QueryWrapper queryWrapper = Wrappers.query().select(nameColumn, idColumn).in(nameColumn, nameList);
-        List<LabelValue> list = service.getLabelValueList(queryWrapper);
+        List<LabelValue> list = new LinkedList<>();
+        ListUtils.partition(nameList, BaseConfig.getBatchSize()).forEach(subList -> {
+            list.addAll(service.getLabelValueList(Wrappers.query().select(nameColumn, idColumn).in(nameColumn, subList)));
+        });
         return convertLabelValueListToMap(list);
     }
 
