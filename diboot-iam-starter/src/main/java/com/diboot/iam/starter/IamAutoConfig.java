@@ -22,6 +22,7 @@ import com.diboot.core.util.V;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.data.DataAccessPermissionUserOrgImpl;
 import com.diboot.iam.shiro.IamAuthorizingRealm;
+import com.diboot.iam.shiro.ShiroContextTaskDecorator;
 import com.diboot.iam.shiro.StatelessAccessControlFilter;
 import com.diboot.iam.shiro.StatelessSubjectFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,14 @@ import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
@@ -226,6 +230,14 @@ public class IamAutoConfig {
     @ConditionalOnMissingBean
     public DataAccessInterface dataAccessInterface(){
         return new DataAccessPermissionUserOrgImpl();
+    }
+
+    @Configuration
+    private class ThreadPoolTaskExecutorConfig {
+        public ThreadPoolTaskExecutorConfig(@Qualifier("applicationTaskExecutor") ObjectProvider<ThreadPoolTaskExecutor> taskExecutorObjectProvider) {
+            log.info("初始化: ThreadPoolTaskExecutor 指定子线程传递用户信息");
+            taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextTaskDecorator()));
+        }
     }
 
 }
