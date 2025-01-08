@@ -85,6 +85,39 @@ public class JoinsBinder {
     }
 
     /**
+     * 关联查询符合条件的数据数量
+     * @param queryWrapper 调用QueryBuilder.to*QueryWrapper得到的实例
+     * @param entityClazz 返回结果entity/vo类
+     * @return
+     * @throws Exception
+     */
+    public static <DTO,T> Long queryCount(QueryWrapper<DTO> queryWrapper, Class<T> entityClazz){
+        // 非动态查询，走BaseService
+        if(!(queryWrapper instanceof DynamicJoinQueryWrapper)){
+            IService iService = ContextHolder.getIServiceByEntity(entityClazz);
+            if(iService != null){
+                return iService.count(queryWrapper);
+            }
+            else{
+                throw new InvalidUsageException("单表查询对象无BaseService/IService实现: {}", entityClazz.getSimpleName());
+            }
+        }
+        long begin = System.currentTimeMillis();
+        // 转换为queryWrapper
+        DynamicJoinQueryWrapper dynamicJoinWrapper = (DynamicJoinQueryWrapper)queryWrapper;
+        dynamicJoinWrapper.setMainEntityClass(entityClazz);
+        Page page = new Page<>(1, 1);
+        page.setSearchCount(true);
+        IPage<Map<String, Object>> pageResult = getDynamicQueryMapper().queryForListWithPage(page, dynamicJoinWrapper);
+        long totalCount = pageResult.getTotal();
+        long ms = (System.currentTimeMillis() - begin);
+        if(ms > 5000){
+            log.warn("{} 动态Join查询总数执行耗时 {} ms，建议优化", dynamicJoinWrapper.getDtoClass().getSimpleName(), ms);
+        }
+        return totalCount;
+    }
+
+    /**
      * 关联查询（分页）
      * @param queryWrapper 调用QueryBuilder.to*QueryWrapper得到的实例
      * @param entityClazz 返回结果entity/vo类

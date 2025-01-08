@@ -34,6 +34,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.binding.JoinsBinder;
 import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.helper.ServiceAdaptor;
 import com.diboot.core.binding.helper.WrapperHelper;
@@ -835,6 +836,11 @@ public class BaseServiceImpl<M extends BaseCrudMapper<T>, T> extends ServiceImpl
 
 	@Override
 	public long getEntityListCount(Wrapper queryWrapper) {
+		// 如果是动态join，则调用JoinsBinder
+		if(queryWrapper instanceof DynamicJoinQueryWrapper) {
+			Class<?> entityClass = getEntityClass();
+			return JoinsBinder.queryCount((DynamicJoinQueryWrapper)queryWrapper, entityClass);
+		}
 		return super.count(queryWrapper);
 	}
 
