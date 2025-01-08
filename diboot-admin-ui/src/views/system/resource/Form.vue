@@ -147,9 +147,9 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
               </el-form-item>
               <el-form-item :label="$t('resource.displayType')" prop="displayType">
                 <el-radio-group v-model="model.displayType">
-                  <el-radio-button label="CATALOGUE">{{ $t('resource.displayTypeOptions.catalogue') }}</el-radio-button>
-                  <el-radio-button label="MENU">{{ $t('resource.displayTypeOptions.menu') }}</el-radio-button>
-                  <el-radio-button label="OUTSIDE_URL">{{
+                  <el-radio-button value="CATALOGUE">{{ $t('resource.displayTypeOptions.catalogue') }}</el-radio-button>
+                  <el-radio-button value="MENU">{{ $t('resource.displayTypeOptions.menu') }}</el-radio-button>
+                  <el-radio-button value="OUTSIDE_URL">{{
                     $t('resource.displayTypeOptions.outsideUrl')
                   }}</el-radio-button>
                 </el-radio-group>
@@ -261,8 +261,8 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
                 <el-checkbox
                   :key="`${reloadFormItem}`"
                   v-model="model.status"
-                  true-label="A"
-                  false-label="I"
+                  true-value="A"
+                  false-value="I"
                   :label="$t('resource.status')"
                 />
                 <el-checkbox

@@ -71,10 +71,10 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
         <el-col :span="12">
           <el-form-item prop="dataType" :label="$t('config.dataType')">
             <el-radio-group v-model="model.dataType">
-              <el-radio-button label="text">{{ $t('config.dataTypeOptions.text') }}</el-radio-button>
-              <el-radio-button label="textarea">{{ $t('config.dataTypeOptions.textarea') }}</el-radio-button>
-              <el-radio-button label="number">{{ $t('config.dataTypeOptions.number') }}</el-radio-button>
-              <el-radio-button label="boolean">{{ $t('config.dataTypeOptions.boolean') }}</el-radio-button>
+              <el-radio-button value="text">{{ $t('config.dataTypeOptions.text') }}</el-radio-button>
+              <el-radio-button value="textarea">{{ $t('config.dataTypeOptions.textarea') }}</el-radio-button>
+              <el-radio-button value="number">{{ $t('config.dataTypeOptions.number') }}</el-radio-button>
+              <el-radio-button value="boolean">{{ $t('config.dataTypeOptions.boolean') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>

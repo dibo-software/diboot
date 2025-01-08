@@ -193,7 +193,7 @@ const headerDragend = (newWidth: number, oldWidth: number, column: { property: s
   >
     <el-table-column v-if="multiple === false" type="index" width="55" fixed>
       <template #default="{ row }">
-        <el-radio v-model="single" :label="row[primaryKey]" @click.prevent.self><span /></el-radio>
+        <el-radio v-model="single" :value="row[primaryKey]" @click.prevent.self><span /></el-radio>
       </template>
     </el-table-column>
     <el-table-column v-else-if="multiple" type="selection" width="55" fixed />

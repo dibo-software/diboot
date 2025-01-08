@@ -8,6 +8,7 @@ import auth, { AUTH_HEADER_KEY } from '@/utils/auth'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
+
 interface PropsType {
   // 模型值
   modelValue?: string
@@ -23,7 +24,7 @@ interface PropsType {
 
 const props = withDefaults(defineProps<PropsType>(), {
   modelValue: '',
-  // placeholder: i18n.t('components.rich.placeholder'),
+  placeholder: void 0,
   mode: 'simple',
   doc: false,
   title: ''

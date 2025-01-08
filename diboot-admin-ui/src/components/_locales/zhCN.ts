@@ -37,7 +37,10 @@ const zhCN = {
       fetchFileFailed: '获取文件失败',
       emptyContent: '文件内容为空'
     },
-    download: '下载',
+    download: {
+      previewTheFile: '预览该文件',
+      filePreview: '文件预览'
+    },
     excel: {
       dataUpload: '数据上传',
       uploadData: '上传数据',

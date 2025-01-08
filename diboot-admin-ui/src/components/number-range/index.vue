@@ -14,6 +14,8 @@ const props = withDefaults(
   }>(),
   {
     modelValue: undefined,
+    startPlaceholder: undefined,
+    endPlaceholder: undefined,
     min: undefined,
     max: undefined,
     precision: undefined,
