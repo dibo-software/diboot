@@ -17,6 +17,7 @@ package diboot.core.test.binder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.binding.Binder;
+import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.util.JSON;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
@@ -99,6 +100,21 @@ public class TestDeepBinder {
             }
             System.out.println(JSON.stringify(vo));
         }
+    }
+
+    @Test
+    public void testDeepBinderPerformance() {
+        // 加载测试数据
+        LambdaQueryWrapper<Department> queryWrapper = new LambdaQueryWrapper<>();
+        List<Department> entityList = departmentService.list(queryWrapper);
+        // 自动绑定
+        long start = System.currentTimeMillis();
+        List<DeepBindVO> voList = RelationsBinder.convertAndBind(entityList, DeepBindVO.class);
+        long end = System.currentTimeMillis();
+        long takes = end - start;
+        Assert.assertTrue(V.notEmpty(voList) && voList.get(1).getParentDept().getOrganizationVO() != null);
+        System.out.println("主线程执行耗时: " + takes + " ms");
+        Assert.assertTrue(takes < 150);
     }
 
 }
