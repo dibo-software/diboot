@@ -25,12 +25,6 @@
             <artifactId>diboot-core-spring-boot-starter</artifactId>
             <version>${diboot.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
-        </dependency>
         <!-- 依赖shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
