@@ -86,7 +86,7 @@ const initI18nData = () => {
     >
       <el-table-column v-if="select" fixed width="36px">
         <template #default="{ row }">
-          <el-radio v-model="single" :label="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>
+          <el-radio v-model="single" :value="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>
         </template>
       </el-table-column>
       <el-table-column prop="code" :label="$t('i18nConfig.i18nCode')" fixed show-overflow-tooltip min-width="180px">
@@ -157,7 +157,7 @@ const initI18nData = () => {
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 15, 20, 30, 50, 100]"
-      small
+      size="small"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"

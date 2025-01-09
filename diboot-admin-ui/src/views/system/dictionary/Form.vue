@@ -152,7 +152,6 @@ defineExpose({ open })
               </th>
             </tr>
           </thead>
-          <div style="height: 10px" />
           <draggable
             v-model="model.children"
             tag="tbody"

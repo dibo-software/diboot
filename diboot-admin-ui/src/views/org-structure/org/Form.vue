@@ -128,8 +128,8 @@ defineExpose({ open })
         <el-col :md="12" :sm="24">
           <el-form-item prop="type" :label="$t('org.type')">
             <el-radio-group v-model="model.type">
-              <el-radio label="COMP">{{ $t('org.comp') }}</el-radio>
-              <el-radio label="DEPT">{{ $t('org.dept') }}</el-radio>
+              <el-radio value="COMP">{{ $t('org.comp') }}</el-radio>
+              <el-radio value="DEPT">{{ $t('org.dept') }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>

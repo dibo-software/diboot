@@ -3,7 +3,7 @@ import * as Element from '@element-plus/icons-vue'
 /**
  * 加载 @/assets/icon 目录下所有图标（svg|vue）
  */
-const iconSvgFiles = import.meta.glob('@/assets/icon/**/*.svg', { as: 'raw', eager: true })
+const iconSvgFiles = import.meta.glob('@/assets/icon/**/*.svg', { query: '?raw', import: 'default', eager: true })
 const iconVueFiles = import.meta.glob<Record<string, unknown>>('@/assets/icon/**/*.vue', {
   import: 'default',
   eager: true

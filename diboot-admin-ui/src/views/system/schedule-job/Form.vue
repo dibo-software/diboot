@@ -125,16 +125,16 @@ const jobChange = (jobKey: string) => {
         <el-col :span="12">
           <el-form-item prop="jobStatus" :label="$t('scheduleJob.jobStatus')">
             <el-radio-group v-model="model.jobStatus" size="small">
-              <el-radio-button label="A">{{ $t('scheduleJob.open') }}</el-radio-button>
-              <el-radio-button label="I">{{ $t('scheduleJob.close') }}</el-radio-button>
+              <el-radio-button value="A">{{ $t('scheduleJob.open') }}</el-radio-button>
+              <el-radio-button value="I">{{ $t('scheduleJob.close') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item prop="saveLog" :label="$t('scheduleJob.saveLog')">
             <el-radio-group v-model="model.saveLog" size="small">
-              <el-radio-button :label="true">{{ $t('scheduleJob.open') }}</el-radio-button>
-              <el-radio-button :label="false">{{ $t('scheduleJob.close') }}</el-radio-button>
+              <el-radio-button :value="true">{{ $t('scheduleJob.open') }}</el-radio-button>
+              <el-radio-button :value="false">{{ $t('scheduleJob.close') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-col>

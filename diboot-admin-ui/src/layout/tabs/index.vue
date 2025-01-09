@@ -139,7 +139,7 @@ provide('update-tab-title', (title: string) => title && viewTabsStore.updateTabT
                   :class="{ 'is-active': $route.name === element.name }"
                   @click="$router.push(element.fullPath)"
                 >
-                  {{ $t(element.meta.title) }}
+                  {{ element.meta.title }}
                   <el-icon v-show="allowClose(element)" :size="15" @click.stop="closeTab(element)">
                     <Close />
                   </el-icon>
