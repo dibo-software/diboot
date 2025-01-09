@@ -75,7 +75,7 @@ public class CountBinder<T> extends EntityListBinder<T> {
                 // 远程调用获取
                 countMapList = RemoteBindingManager.fetchMapList(module, remoteBindDTO);
             }
-            if(V.notEmpty(countMapList)){
+            if(countMapList != null){
                 valueListCountMap = this.buildMatchKey2ListCountMap(countMapList);
                 ResultAssembler.bindCountPropValue(annoObjectField, super.getMatchedAnnoObjectList(), getAnnoObjJoinFlds(), valueListCountMap);
             }
@@ -87,9 +87,6 @@ public class CountBinder<T> extends EntityListBinder<T> {
             // 提取注解条件中指定的对应的列表
             Map<String, List> trunkObjCol2ValuesMap = super.buildTrunkObjCol2ValuesMap();
             Map<String, Long> middleTableCountResultMap = middleTable.executeOneToManyCountQuery(trunkObjCol2ValuesMap);
-            if(V.isEmpty(middleTableCountResultMap)){
-                return;
-            }
             valueListCountMap = new HashMap<>();
             for(Map.Entry<String, Long> entry : middleTableCountResultMap.entrySet()){
                 // count <roleId>
