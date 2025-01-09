@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * String 操作类
@@ -309,6 +310,20 @@ public class S extends StringUtils{
 			return input;
 		}
 		return input.trim().replaceAll(" +", " ");
+	}
+
+	/**
+	 * 移除html标签，保留文字
+	 * @param htmlStr
+	 * @return
+	 */
+	public static String removeHtmlTags(String htmlStr) {
+		if (htmlStr == null) {
+			return null;
+		}
+		String regEx = "<[^>]+>";
+		Pattern p = Pattern.compile(regEx);
+		return p.matcher(htmlStr).replaceAll("");
 	}
 
     /**
