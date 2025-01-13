@@ -15,6 +15,7 @@
  */
 package com.diboot.iam.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
@@ -24,10 +25,11 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
- * 客户端配置
+ * 三方客户端
  */
 @Getter
 @Setter
@@ -37,20 +39,44 @@ public class Client extends BaseLoginUser {
     @Serial
     private static final long serialVersionUID = 8928160569300882231L;
 
+    /**
+     * 租户ID
+     */
     private String tenantId;
 
+    /**
+     * 名称
+     */
     private String name;
 
+    /**
+     * 应用Key
+     */
     @NotNull(message = "{validation.clientCredential.appKey.NotNull.message}")
     private String appKey;
 
+    /**
+     * 应用密钥
+     */
     @NotNull(message = "{validation.clientCredential.appSecret.NotNull.message}")
     private String appSecret;
 
+    /**
+     * 状态
+     */
     private String status;
 
+    /**
+     * 权限
+     */
     @TableField(typeHandler = JacksonTypeHandler.class)
     private Set<String> permissions;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
 
     @Override
     public String getDisplayName() {

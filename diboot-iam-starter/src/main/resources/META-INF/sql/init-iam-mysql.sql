@@ -227,3 +227,21 @@ CREATE TABLE `dbt_system_config`
     `update_time`     datetime     NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) COMMENT = '系统配置';
 create index idx_dbt_system_config on dbt_system_config (`category`, `prop_key`);
+
+
+-- 客户端配置表
+CREATE TABLE `dbt_client`
+(
+    `id`          varchar(32) NOT NULL COMMENT 'ID' primary key,
+    `tenant_id`   varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
+    `name`        varchar(50) NOT NULL COMMENT '名称',
+    `app_key`     varchar(50) NOT NULL COMMENT 'AppKey',
+    `app_secret`  varchar(50) NOT NULL COMMENT 'AppSecret',
+    `status`      varchar(10)          DEFAULT 'A' COMMENT '状态',
+    `permissions` varchar(500) COMMENT '权限',
+    `is_deleted`  tinyint(1)  NOT NULL DEFAULT 0 COMMENT '删除标记',
+    `create_time` datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT = '三方客户端配置表';
+
+create index idx_dbt_client_key on dbt_client (`app_key`);

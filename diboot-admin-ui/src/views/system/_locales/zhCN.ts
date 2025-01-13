@@ -1,4 +1,10 @@
 const zhCN = {
+  client: {
+    name: '名称',
+    status: '状态',
+    permissions: '权限',
+    permissionsCreate: '输入创建选项'
+  },
   config: {
     propKey: '属性名',
     propLabel: '属性标签',

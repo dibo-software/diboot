@@ -1,5 +1,11 @@
 import type { Locale } from './zhCN'
 const en: Locale = {
+  client: {
+    name: 'Name',
+    status: 'Status',
+    permissions: 'Permissions',
+    permissionsCreate: 'Enter create options'
+  },
   config: {
     propKey: 'Property Name',
     propLabel: 'Property Label',

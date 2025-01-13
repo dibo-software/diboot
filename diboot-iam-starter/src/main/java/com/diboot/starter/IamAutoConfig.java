@@ -209,6 +209,8 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/token", "anon");
         filterChainMap.put("/auth/2step-code", "anon");
 
+        filterChainMap.put("/client/login", "anon");
+
         Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
             for (String url : anonUrls) {
