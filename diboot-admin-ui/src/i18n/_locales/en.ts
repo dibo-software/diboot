@@ -87,6 +87,11 @@ const en: Locale = {
     confirmDeleteNode: 'Confirm deletion of node?',
     sortSuccess: 'Sorting successful'
   },
+  copy: {
+    label: 'Copy',
+    success: 'Copy success',
+    error: 'Failed to write to clipboard, please manually select Copy'
+  },
   utils: {
     request: {
       expiredLogin: 'Login expired, please log in again',

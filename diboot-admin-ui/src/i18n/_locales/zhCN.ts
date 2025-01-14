@@ -85,6 +85,11 @@ const zhCN = {
     confirmDeleteNode: '确认删除节点吗？',
     sortSuccess: '排序成功'
   },
+  copy: {
+    label: '复制',
+    success: '复制成功',
+    error: '写入剪切板失败，请手动选中复制'
+  },
   utils: {
     request: {
       expiredLogin: '登录过期，请重新登录',
