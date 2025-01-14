@@ -216,7 +216,7 @@ const zhCN = {
   role: {
     name: '名称',
     code: '编码',
-    userList: '用户',
+    userList: '角色用户',
     description: '备注',
     grantPermission: '授权权限',
     permissionList: '角色授权'
