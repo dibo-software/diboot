@@ -38,7 +38,7 @@ public class ClientVO extends Client {
     @Serial
     private static final long serialVersionUID = 8928260369300882232L;
 
-    @BindDict(type = "USER_STATUS", field = "status")
+    @BindDict(type = "ACCOUNT_STATUS", field = "status")
     private LabelValue statusLabel;
 
 }
