@@ -17,13 +17,11 @@ const type = ref('PC')
 
 <template>
   <div style="height: 100%; display: flex; flex-direction: column">
-    <div :key="type" style="margin: 5px 5px 0">
-      <el-button round size="default" type="success" :plain="type !== 'PC'" @click="type = 'PC'">
-        PC 菜单管理
-      </el-button>
-      <el-button round size="default" type="warning" :plain="type !== 'mobile'" @click="type = 'mobile'">
-        移动端菜单管理
-      </el-button>
+    <div :key="type" style="margin: 5px 0 0 5px; border-bottom: 1px solid #e1e1e1">
+      <el-radio-group v-model="type" size="small" style="width: 100%">
+        <el-radio-button label="主菜单资源" value="PC" />
+        <el-radio-button label="移动端菜单资源" value="mobile" />
+      </el-radio-group>
     </div>
 
     <MobileList v-if="type === 'mobile'" />
