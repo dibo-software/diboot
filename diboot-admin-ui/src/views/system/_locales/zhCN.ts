@@ -150,6 +150,8 @@ const zhCN = {
     }
   },
   resource: {
+    main: '主菜单资源',
+    mobile: '移动端菜单资源',
     newButtonPermission: '新按钮权限',
     parentId: '上级目录',
     parentId0: '顶级目录',

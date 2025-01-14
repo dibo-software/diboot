@@ -151,6 +151,8 @@ const en: Locale = {
     }
   },
   resource: {
+    main: 'Main menu resources',
+    mobile: 'Mobile menu resources',
     newButtonPermission: 'New Button Permission',
     parentId: 'Parent Directory',
     parentId0: 'Top-Level Directory',

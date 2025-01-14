@@ -19,8 +19,8 @@ const type = ref('PC')
   <div style="height: 100%; display: flex; flex-direction: column">
     <div :key="type" style="margin: 5px 0 0 5px; border-bottom: 1px solid #e1e1e1">
       <el-radio-group v-model="type" size="small" style="width: 100%">
-        <el-radio-button label="主菜单资源" value="PC" />
-        <el-radio-button label="移动端菜单资源" value="mobile" />
+        <el-radio-button :label="$t('resource.main')" value="PC" />
+        <el-radio-button :label="$t('resource.mobile')" value="mobile" />
       </el-radio-group>
     </div>
 
