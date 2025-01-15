@@ -1,0 +1,50 @@
+spring:
+  profiles:
+    active:
+      - dev
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+server:
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 4096
+
+logging:
+  level:
+    org:
+      apache: info
+      hibernate:
+        validator: info
+      springframework: info
+    _org:
+      springframework: info
+    sun:
+      net:
+        www: info
+    jdk:
+      event:
+        security: info
+    com:
+      diboot:
+        lcdp: info
+      zaxxer:
+        hikari: info
+
+# mybatis config
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+diboot:
+  #i18n: true #启用国际化，默认false
+  tenant:
+    platform-code: "00000" #多租户平台端编码
+  login-encrypt:
+    rsa-private-key: MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDM/LVRzDOBFPx1FSkBbQd7JW8iLiJyqLB0FkyuHzn60kRn8BeMQtHOXz2bZkqgwd+gwORqOjEl5ovkhX1SlSX7VGpa9aqBgvSvzn0XIN42D2SIwB8CnIijCoWpy0PHuTvuMOikG9xfwXSyGXpJS0RW73q1zv4WuM/g4bBcl4H5vTg7ZIJXiYfGzxNGftiwugDXSaM82exfROJiTNIZQ/8Tk4Ri3+LE3A7+ULpN0Uz09dFpOMXvp7mofDqSwlTviZvcD39lAJvifNXDXnFPEhoCcNfv4WqcKCm7brJcwu1VfIRroJS8GMssGV4n9zIe5SKvsZi61/kvK4gQk8RaCdkHAgMBAAECggEBAKX28MMSZpzbJe+Ru0p5QPZWf50X5zIYHA1RRLIxfBr0hQf2HsqkCwRgnhukfUWc0ndv1T+gb8x01cymu6nSMhdD6HxOrMcBBSUWNLc2GFOCsO37RuAxZntC+KdZeD5LXhdip+i+2fT5R4cvE5AmDWWprRtoRNaWuVAkykqdLFHKio0ztfCqbkWmeRyGL6ImlP8EaeLvOO4NdS0/FHxHSuPRthc2VhLUjx6HLngaouuawSnYBdptuL/CvFaQs6tbWYkPj2ohOQqO5G8F+2yAHJzh3T5ol1jxDmw8jylzB4H0CamlSYV9uNPSHcUktrpjO3qpIKjyBAufa/bzOQFnDOkCgYEA+BzZ+rtTmED7pXrOREUp9KTjicexpkXzRV31ppNz2Fl+0l4dk837YcN6+T2l0fVDmBqtcMTSTEiDtk7weAFHWPgRhEY6O4nqCEiSNNhwDsy57XmtOaPDsiROd/dDK/Ok4wFYAd/SXH9guA5lqtf2YwQbHgVgdtaEQrcnzm5HYtUCgYEA04DmU8+jtzgHpaaGL1eo91eG+ZgVE8bQzxak2RKhfJD2X3vhzWNo22pniQ12dIce1lEepkqYqPxaqyekykYHTMiwZMf+9XeGGDfw2SLk3oiiG0ph650TGky9X81FbjrMeRZqxlNuzGtpE/1GQ8Uxiqchufbci/aq6SEhvRfmYmsCgYEAg2/VUew2xqt2JB3Ac44oQb+wAmdVhv37d73kyo/GiNAwTQUqqgguqYXC+ZJc67MAUe2f/+NkfKDVlZiP7yLORyVzMh1579yJrEW1nmUiR9TQkispRyWoIBD3uLm2TexOZytpEeUeLX4VIKwP08eAcMfWDbtPdOUDP8yDO+pTytkCgYEAjDD0erk3G0rYRsSKTPcd2FT78pUL43/1CE9KFVh0Ec1EgSXsFee+qTFuTznNOpAVsJk0Z6Uqa1haAPjWEf04+XxM74BhTvNavtLVoheu/JI0YUJ8hWAoOVaEb+vwCZCP1/Mz8yF6X6USkV1gJaufmvgNMuaeaWenAcAkTOJ6ouECgYA6mUjax2Kv7cFj0L4XcghiAsLVWmCdx8rK9BbV7ZWw1Y0CWtvRIDgaT88QDD2bhszgaB9kM1xNqIfizUUz2Oks7sKKe3O7bYW7zjOwJg1VfvLfWLlnUVVdQjEhBl9z/qOxEiAk4/+I9H+RckgGsg5z2hXOQgqtp26knoJY+/N6bQ==
