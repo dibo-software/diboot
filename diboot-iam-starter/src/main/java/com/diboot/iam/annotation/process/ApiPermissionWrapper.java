@@ -19,6 +19,7 @@ import com.diboot.core.util.V;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.List;
  * Copyright © diboot.com
  */
 @Getter @Setter
+@Accessors(chain = true)
 public class ApiPermissionWrapper implements Serializable {
     private static final long serialVersionUID = 7795636645748631729L;
 
@@ -50,6 +52,11 @@ public class ApiPermissionWrapper implements Serializable {
      * 类别标题
       */
     private String code;
+
+    /**
+     * 开放接口 （可分配给第三方应用访问）
+     */
+    private boolean openApi = false;
 
     /**
      * 子节点权限码集合

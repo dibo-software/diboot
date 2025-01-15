@@ -6,6 +6,7 @@ import { getElementAbsoluteLocation } from '@/utils/document'
 
 // props
 const props = defineProps<{
+  openApi?: boolean
   appModule?: string
   menuType?: string
   menuCode?: string
@@ -37,7 +38,7 @@ const moduleList = computed(() => Object.keys(moduleRestPermissionMap.value))
 watch(moduleList, value => emits('moduleList', value))
 
 api
-  .get<RestPermission[] | Record<string, RestPermission[]>>('/iam/resource/api-list')
+  .get<RestPermission[] | Record<string, RestPermission[]>>('/iam/resource/api-list', { openApi: props.openApi })
   .then(res => {
     isRestPermissionArray.value = Array.isArray(res.data)
     if (isRestPermissionArray.value) restPermissions.push(...res.data)

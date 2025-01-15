@@ -3,6 +3,8 @@ import type { FormInstance } from 'element-plus'
 import type { Client } from './type'
 import { checkValue } from '@/utils/validate-form'
 import { useI18n } from 'vue-i18n'
+import { uuid } from '@/utils/tools'
+import PermissionSelect from '@/views/system/resource/components/PermissionSelect.vue'
 
 const i18n = useI18n()
 
@@ -32,8 +34,11 @@ const validate = (
     .then((arr: (boolean | undefined)[]) => arr.every(e => e))
     .catch(() => false)
 
+const permissionSelectRef = ref<InstanceType<typeof PermissionSelect>>()
+
 defineExpose({
   init: (id?: string, refresh = true, initData?: Record<string, unknown>) => {
+    permissionSelectRef.value?.relocation()
     // 初始化选项
     initRelatedData()
     if (model.value.id === id && !refresh) return
@@ -53,7 +58,10 @@ defineExpose({
 
     return data
   },
-  submit: () => submit(model.value, formRef.value),
+  submit: () => {
+    if (!model.value.appSecret) model.value.appSecret = uuid()
+    return submit(model.value, formRef.value)
+  },
   reset: () => {
     formRef.value?.resetFields()
     model.value.id = void 0
@@ -67,6 +75,9 @@ const checkAppKeyDuplicate = checkValue(
   () => model.value?.id,
   () => ({ field: 'appKey' })
 )
+
+const appModule = ref<string>()
+const moduleList = ref<string[]>([])
 </script>
 
 <template>
@@ -101,28 +112,36 @@ const checkAppKeyDuplicate = checkValue(
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item
-          prop="appSecret"
-          label="AppSecret"
-          :rules="{ required: true, message: $t('rules.notnull'), whitespace: true }"
-        >
-          <el-input v-model="model.appSecret" clearable />
+        <el-form-item prop="appSecret" label="AppSecret">
+          <el-input v-model="model.appSecret" clearable disabled />
         </el-form-item>
       </el-col>
       <el-col :span="24">
         <el-form-item prop="permissions" :label="$t('client.permissions')">
-          <el-select
-            v-model="model.permissions"
-            :no-data-text="$t('client.permissionsCreate')"
-            multiple
-            filterable
-            allow-create
-            default-first-option
-            clearable
-          />
+          <div style="display: flex; width: 100%">
+            <el-select
+              v-if="moduleList?.length"
+              v-model="appModule"
+              :placeholder="$t('resource.appModule')"
+              clearable
+              style="width: 120px !important; margin-right: 3px"
+            >
+              <el-option v-for="item in moduleList" :key="item" :label="item" :value="item" />
+            </el-select>
+            <el-select v-model="model.permissions" multiple clearable popper-class="hide" style="flex: 1" />
+          </div>
         </el-form-item>
       </el-col>
     </el-row>
+    <permission-select
+      ref="permissionSelectRef"
+      v-model:permission-codes="model.permissions"
+      :app-module="appModule"
+      open-api
+      menu-type="MENU"
+      style="height: calc(100vh - 390px)"
+      @module-list="value => (moduleList = value)"
+    />
   </el-form>
 </template>
 

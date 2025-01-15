@@ -3,7 +3,10 @@ import { Search } from '@element-plus/icons-vue'
 import type { OperationLog } from './type'
 import Detail from '@/views/system/operation-log/Detail.vue'
 
-const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<OperationLog>({
+const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<
+  OperationLog,
+  OperationLog & { filterType?: string }
+>({
   baseApi: '/iam/operation-log'
 })
 getList()
@@ -24,11 +27,34 @@ const openDetail = (id: string) => {
 const getTagType = (val: string, map: Record<string, unknown>) => {
   return map[val as keyof typeof map] as 'success' | 'warning' | 'info' | 'primary' | 'danger' | undefined
 }
+
+const CONDITIONS = {
+  business: { type: 'primary' },
+  tripartite: { type: 'primary' },
+  exception: { type: 'warning' }
+}
+
+const filter = (key: string) => {
+  queryParam.filterType = queryParam.filterType === key ? void 0 : key
+  onSearch()
+}
 </script>
 
 <template>
   <div class="list-page">
     <el-space wrap class="list-operation">
+      <div>
+        <el-button
+          v-for="(item, key) in CONDITIONS"
+          :key
+          :type="item.type as ''"
+          round
+          :plain="queryParam.filterType !== key"
+          @click="filter(key)"
+        >
+          {{ $t('operationLog.' + key) }}
+        </el-button>
+      </div>
       <el-space>
         <el-input
           v-model="queryParam.businessObj"

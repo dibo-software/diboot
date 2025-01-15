@@ -3,7 +3,7 @@ const zhCN = {
     name: '名称',
     status: '状态',
     permissions: '权限',
-    permissionsCreate: '输入创建选项'
+    updateKey: '重新生成密钥'
   },
   config: {
     propKey: '属性名',
@@ -133,6 +133,9 @@ const zhCN = {
     addVariable: '添加此变量'
   },
   operationLog: {
+    business: '业务操作日志',
+    tripartite: '三方应用日志',
+    exception: '系统异常日志',
     userRealname: '用户姓名',
     userTypeAndId: '用户类型:ID',
     userType: '用户类型',

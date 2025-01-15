@@ -11,7 +11,7 @@ import com.diboot.core.vo.Pagination;
 import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.Log;
 import com.diboot.iam.annotation.OperationCons;
-import com.diboot.iam.cache.IamCacheManager;
+import com.diboot.iam.cache.IamPermissionCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamResourceDTO;
 import com.diboot.iam.entity.IamResource;
@@ -153,8 +153,8 @@ public class ResourceController extends BaseCrudRestController<IamResource> {
      * @throws Exception
      */
     @GetMapping("/api-list")
-    public JsonResult apiList() throws Exception {
-        return JsonResult.OK(IamCacheManager.getApiPermissionVoList());
+    public JsonResult apiList(boolean openApi) throws Exception {
+        return JsonResult.OK(IamPermissionCacheManager.getApiPermissionVoList(openApi));
     }
 
     /**

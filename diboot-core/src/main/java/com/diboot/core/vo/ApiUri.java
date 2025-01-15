@@ -47,6 +47,11 @@ public class ApiUri implements Serializable {
      */
     private String label;
 
+    /**
+     * 开放接口 （可分配给第三方应用访问）
+     */
+    private boolean openApi = false;
+
     @JsonIgnore
     public boolean isEmpty(){
         return method == null || uri == null;

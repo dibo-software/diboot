@@ -4,7 +4,7 @@ const en: Locale = {
     name: 'Name',
     status: 'Status',
     permissions: 'Permissions',
-    permissionsCreate: 'Enter create options'
+    updateKey: 'Regenerate key'
   },
   config: {
     propKey: 'Property Name',
@@ -134,6 +134,9 @@ const en: Locale = {
     addVariable: 'Add This Variable'
   },
   operationLog: {
+    business: 'Business operation logs',
+    tripartite: 'Third-party application logs',
+    exception: 'System exception logs',
     userRealname: 'User Name',
     userTypeAndId: 'User Type: ID',
     userType: 'User Type',
