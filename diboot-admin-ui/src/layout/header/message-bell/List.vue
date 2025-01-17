@@ -54,7 +54,7 @@ const loadData = (reset = false) => {
 loadData()
 
 // Message 自动刷新的时间间隔（分钟）
-const MESSAGE_REFRESH_EXPIRE = 5
+const MESSAGE_REFRESH_EXPIRE = 9
 // 自动刷新计时器
 let refreshTimer: NodeJS.Timeout
 resetRefreshTimer()
