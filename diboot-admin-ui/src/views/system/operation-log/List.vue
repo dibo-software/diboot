@@ -3,11 +3,14 @@ import { Search } from '@element-plus/icons-vue'
 import type { OperationLog } from './type'
 import Detail from '@/views/system/operation-log/Detail.vue'
 
+const props = defineProps<{ userId?: string; userType?: string }>()
+
 const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter } = useList<
   OperationLog,
   OperationLog & { filterType?: string }
 >({
-  baseApi: '/iam/operation-log'
+  baseApi: '/iam/operation-log',
+  initQueryParam: props.userId ? { userType: props.userType, userId: props.userId } : void 0
 })
 getList()
 
@@ -43,7 +46,7 @@ const filter = (key: string) => {
 <template>
   <div class="list-page">
     <el-space wrap class="list-operation">
-      <div>
+      <div v-if="!userId">
         <el-button
           v-for="(item, key) in CONDITIONS"
           :key

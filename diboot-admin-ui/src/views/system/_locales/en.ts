@@ -4,7 +4,8 @@ const en: Locale = {
     name: 'Name',
     status: 'Status',
     permissions: 'Permissions',
-    updateKey: 'Regenerate key'
+    updateKey: 'Regenerate key',
+    viewLogs: 'View logs'
   },
   config: {
     propKey: 'Property Name',

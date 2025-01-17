@@ -3,7 +3,8 @@ const zhCN = {
     name: '名称',
     status: '状态',
     permissions: '权限',
-    updateKey: '重新生成密钥'
+    updateKey: '重新生成密钥',
+    viewLogs: '查看日志'
   },
   config: {
     propKey: '属性名',
