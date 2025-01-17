@@ -136,7 +136,7 @@ const vDrag: Directive<HTMLElement> = {
             </el-menu>
           </div>
           <div v-if="oneLevel?.children?.length" class="submenu">
-            <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children">
+            <app-menu :key="oneLevel.path" v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children">
               <template #title>
                 <strong class="title">{{ oneLevel?.meta?.title }}</strong>
               </template>
@@ -176,7 +176,7 @@ const vDrag: Directive<HTMLElement> = {
     </el-header>
     <el-container>
       <el-aside v-if="oneLevel?.children?.length" :width="isMenuCollapse ? '64px' : '220px'">
-        <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children" />
+        <app-menu :key="oneLevel.path" v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children" />
       </el-aside>
       <el-container>
         <el-main style="padding: 0">

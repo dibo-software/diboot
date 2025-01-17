@@ -6,6 +6,7 @@ import Form from './Form.vue'
 import { checkPermission } from '@/utils/permission'
 import { useI18n } from 'vue-i18n'
 import { uuid } from '@/utils/tools'
+import LogList from '@/views/system/operation-log/List.vue'
 
 const i18n = useI18n()
 
@@ -145,6 +146,8 @@ const activated = () => {
 }
 
 router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
+
+const viewClientIdLogs = ref()
 </script>
 
 <template>
@@ -214,7 +217,7 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
       </el-table-column>
       <el-table-column :label="$t('baseField.createBy')" prop="createByLabel" show-overflow-tooltip />
       <el-table-column :label="$t('baseField.updateTime')" prop="updateTime" show-overflow-tooltip />
-      <el-table-column :label="$t('operation.label')" fixed="right" :width="200">
+      <el-table-column :label="$t('operation.label')" fixed="right" :width="280">
         <template #default="{ row }: { row: Client }">
           <el-space>
             <el-button
@@ -226,6 +229,9 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
               @click="handleOperation('updateKey', row.id)"
             >
               {{ $t('client.updateKey') }}
+            </el-button>
+            <el-button v-has-permission="'viewLogs'" text bg size="small" @click="viewClientIdLogs = row.id">
+              {{ $t('client.viewLogs') }}
             </el-button>
             <el-dropdown
               v-has-permission="['detail', 'update', 'delete']"
@@ -300,6 +306,21 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
           {{ $t('operation.update') }}
         </el-button>
         <el-button @click="closeDetail">{{ $t('button.close') }}</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      :model-value="!!viewClientIdLogs"
+      :title="$t('client.viewLogs')"
+      top="5vh"
+      width="80%"
+      draggable
+      @close="viewClientIdLogs = void 0"
+    >
+      <LogList v-if="viewClientIdLogs" :user-id="viewClientIdLogs" user-type="Client" style="height: 73vh" />
+
+      <template #footer>
+        <el-button @click="viewClientIdLogs = void 0">{{ $t('button.close') }}</el-button>
       </template>
     </el-dialog>
   </div>
