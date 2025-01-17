@@ -152,7 +152,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
             if(isExpired(cacheName, entry.getKey())){
                 cache.evict(entry.getKey());
                 count++;
-                log.debug("清理已过期的缓存: {}.{}", cacheName, entry.getKey());
+                log.debug("清理已过期的缓存: {}.{}->{}", cacheName, entry.getKey(), entry.getValue());
             }
         }
         log.debug("清理完成已过期缓存数据: {} 共 {} 条", cacheName, count);

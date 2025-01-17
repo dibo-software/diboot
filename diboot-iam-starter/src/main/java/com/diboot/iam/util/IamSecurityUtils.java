@@ -120,7 +120,7 @@ public class IamSecurityUtils extends SecurityUtils {
             if (userTypeAndId.equals(user.getUserTypeAndId())) {
                 cacheManager.getCache(Cons.AUTHENTICATION_CAHCE_NAME).remove(authInfo.getCredentials());
                 TokenUtils.removeAccessTokens(principalCollection.toString());
-                log.info("强制退出用户: {}", userTypeAndId);
+                log.info("强制退出用户: {} ，token: {} 失效", userTypeAndId, principalCollection);
                 try {
                     iamLoginTraceService.updateLogoutInfo(user.getAuthToken(), user.getClass().getSimpleName(), user.getId());
                 } catch (Exception e) {
