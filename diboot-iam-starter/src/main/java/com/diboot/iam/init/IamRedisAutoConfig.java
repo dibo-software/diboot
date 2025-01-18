@@ -88,6 +88,7 @@ public class IamRedisAutoConfig {
         log.info("初始化 IAM Redis缓存: DynamicRedisCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
                 put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
+                put(Cons.CACHE_TOKEN_REFRESH, 10);
                 put(Cons.CACHE_CAPTCHA, 5);
         }};
         return new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);

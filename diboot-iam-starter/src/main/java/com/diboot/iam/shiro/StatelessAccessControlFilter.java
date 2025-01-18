@@ -74,7 +74,7 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
             log.debug("token: {} 保活完成, uri={}", currentToken, httpRequest.getRequestURI());
         }
         // 如果临近过期，则生成新的token返回，并记录到登录日志中
-        String refreshToken = TokenUtils.responseNewTokenIfRequired(response, cachedUserInfo);
+        String refreshToken = TokenUtils.responseNewTokenIfRequired(response, currentToken, cachedUserInfo);
         if (V.notEmpty(refreshToken)) {
             IamLoginTraceService iamLoginTraceService = ContextHolder.getBean(IamLoginTraceService.class);
             if (iamLoginTraceService != null) {

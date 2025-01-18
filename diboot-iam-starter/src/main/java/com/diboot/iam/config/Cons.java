@@ -160,6 +160,10 @@ public class Cons extends com.diboot.core.config.Cons {
     /**
      * token-用户信息 缓存
      */
-    public static final String CACHE_TOKEN_USERINFO = "TOKEN_USERINFO";
+    public static final String CACHE_TOKEN_USERINFO = "token-userinfo";
+    /**
+     * 访问token-刷新token 缓存
+     */
+    public static final String CACHE_TOKEN_REFRESH = "token-refresh";
 
 }
