@@ -1,10 +1,10 @@
 import type { Locale } from './zhCN'
 const en: Locale = {
   client: {
-    name: 'Name',
+    name: 'Client Name',
     status: 'Status',
-    permissions: 'Permissions',
-    updateKey: 'Regenerate key',
+    permissions: 'API Permissions',
+    updateKey: 'Regenerate secret',
     viewLogs: 'View logs'
   },
   config: {

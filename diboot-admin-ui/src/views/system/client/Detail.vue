@@ -21,12 +21,12 @@ defineExpose({ init: loadData })
         {{ model.statusLabel?.label }}
       </el-tag>
     </el-descriptions-item>
-    <el-descriptions-item label="AppKey" label-class-name="item-label" label-align="right">
+    <el-descriptions-item label="App Key" label-class-name="item-label" label-align="right">
       <span class="txt-short">
         {{ model.appKey }}
       </span>
     </el-descriptions-item>
-    <el-descriptions-item label="AppSecret" label-class-name="item-label" label-align="right">
+    <el-descriptions-item label="App Secret" label-class-name="item-label" label-align="right">
       <span class="txt-short">
         {{ model.appSecret }}
       </span>

@@ -207,7 +207,6 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
         filterChainMap.put("/auth/token", "anon");
-        filterChainMap.put("/auth/2step-code", "anon");
 
         filterChainMap.put("/client/login", "anon");
 

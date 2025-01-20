@@ -48,7 +48,7 @@ public class ApiUri implements Serializable {
     private String label;
 
     /**
-     * 开放接口 （可分配给第三方应用访问）
+     * 开放接口 （可分配给第三方应用访问的接口服务）
      */
     private boolean openApi = false;
 

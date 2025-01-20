@@ -1,10 +1,10 @@
 const zhCN = {
   client: {
-    name: '名称',
+    name: '客户端名称',
     status: '状态',
-    permissions: '权限',
+    permissions: '接口权限',
     updateKey: '重新生成密钥',
-    viewLogs: '查看日志'
+    viewLogs: '访问日志'
   },
   config: {
     propKey: '属性名',
@@ -135,7 +135,7 @@ const zhCN = {
   },
   operationLog: {
     business: '业务操作日志',
-    tripartite: '三方应用日志',
+    tripartite: '接口服务日志',
     exception: '系统异常日志',
     userRealname: '用户姓名',
     userTypeAndId: '用户类型:ID',

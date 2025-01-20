@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 三方应用 相关rest接口
+ * 三方应用接口服务 相关rest接口
  *
  * @author JerryMa
  * @version 1.0
@@ -79,7 +79,6 @@ public class ClientController extends BaseCrudRestController<Client> {
     public JsonResult<ClientVO> getDetailVOMapping(@PathVariable("id") String id) throws Exception {
         return super.getViewObject(id, ClientVO.class);
     }
-
 
     /**
      * 创建资源对象数据
