@@ -138,6 +138,7 @@ const en: Locale = {
     business: 'Business operation logs',
     tripartite: 'Third-party application logs',
     exception: 'System exception logs',
+    user: 'User',
     userRealname: 'User Name',
     userTypeAndId: 'User Type: ID',
     userType: 'User Type',

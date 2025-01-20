@@ -1,7 +1,8 @@
 <script setup lang="ts" name="OperationLog">
 import { Search } from '@element-plus/icons-vue'
 import type { OperationLog } from './type'
-import Detail from '@/views/system/operation-log/Detail.vue'
+import type { Select } from '@/components/di/type'
+import Detail from './Detail.vue'
 
 const props = defineProps<{ userId?: string; userType?: string }>()
 
@@ -59,6 +60,33 @@ const filter = (key: string) => {
         </el-button>
       </div>
       <el-space>
+        <di-selector
+          v-model="queryParam.userId"
+          :placeholder="$t('operationLog.user')"
+          :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
+          :conditions="[{ field: 'status', value: 'A' }]"
+          :list="{
+            baseApi: '/iam/user',
+            relatedKey: 'orgId',
+            searchArea: {
+              propList: [
+                { prop: 'realname', label: $t('user.realname'), type: 'input' },
+                { prop: 'userNum', label: $t('user.userNum'), type: 'input' },
+                { prop: 'gender', label: $t('user.gender'), type: 'select', loader: 'GENDER' } as Select
+              ]
+            },
+            columns: [
+              { prop: 'userNum', label: $t('user.userNum') },
+              { prop: 'realname', label: $t('user.realname') },
+              { prop: 'genderLabel', label: $t('user.gender') },
+              { prop: 'mobilePhone', label: $t('user.mobilePhone') },
+              { prop: 'sortId', label: $t('user.sortId') }
+            ]
+          }"
+          data-type="IamUser"
+          data-label="realname"
+          @change="onSearch"
+        />
         <el-input
           v-model="queryParam.businessObj"
           :placeholder="$t('operationLog.businessObj')"
