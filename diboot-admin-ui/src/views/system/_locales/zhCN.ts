@@ -1,6 +1,6 @@
 const zhCN = {
   client: {
-    name: '客户端名称',
+    name: '客户端名',
     status: '状态',
     permissions: '接口权限',
     updateKey: '重新生成密钥',
@@ -222,7 +222,7 @@ const zhCN = {
   role: {
     name: '名称',
     code: '编码',
-    userList: '角色用户',
+    userList: '角色人员',
     description: '备注',
     grantPermission: '授权权限',
     permissionList: '角色授权'
