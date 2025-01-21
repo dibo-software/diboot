@@ -47,7 +47,7 @@ const openDetail = (id: string) => {
 </script>
 
 <template>
-  <el-drawer v-model="visible" :title="$t('scheduleJobLog.title')" size="850px">
+  <el-drawer v-model="visible" :title="$t('scheduleJobLog.title')" size="800px">
     <div class="list-page">
       <el-header>
         <el-space wrap class="list-operation">
@@ -75,17 +75,8 @@ const openDetail = (id: string) => {
           </el-space>
         </el-space>
       </el-header>
-
       <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
         <el-row :gutter="18">
-          <el-col :md="12" :sm="24">
-            <el-form-item :label="$t('scheduleJobLog.triggerMode')">
-              <el-select v-model="queryParam.triggerMode" clearable @change="onSearch">
-                <el-option :label="$t('scheduleJobLog.triggerModeOptions.auto')" value="AUTO" />
-                <el-option :label="$t('scheduleJobLog.triggerModeOptions.manual')" value="MANUAL" />
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :md="12" :sm="24">
             <el-form-item :label="$t('scheduleJobLog.startTimeAlias')">
               <date-range
@@ -111,7 +102,6 @@ const openDetail = (id: string) => {
         <el-table-column prop="startTime" :label="$t('scheduleJobLog.startTimeAlias')" width="160" />
         <el-table-column prop="endTime" :label="$t('scheduleJobLog.endTime')" width="160" />
         <el-table-column prop="elapsedSeconds" :label="$t('scheduleJobLog.elapsedSeconds')" align="right" width="90" />
-        <el-table-column prop="triggerModeLabel" :label="$t('scheduleJobLog.triggerMode')" />
         <el-table-column prop="runStatus" :label="$t('scheduleJobLog.runStatus')">
           <template #default="{ row }">
             <el-tag v-if="row.runStatus === 'S'">{{ $t('scheduleJobLog.success') }}</el-tag>
