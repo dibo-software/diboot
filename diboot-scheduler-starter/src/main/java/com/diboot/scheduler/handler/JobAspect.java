@@ -46,7 +46,7 @@ public class JobAspect {
     @Autowired
     private SchedulerAsyncWorker schedulerAsyncWorker;
 
-    private static final int MAX_LENGTH = 500;
+    private static final int MAX_LENGTH = 1000;
 
     /**
      * 切面
