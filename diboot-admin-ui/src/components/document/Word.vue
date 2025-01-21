@@ -22,7 +22,7 @@ const wordPreview = async (file: Blob | ArrayBuffer) =>
     () =>
       new Promise<HTMLElement>(resolve =>
         // 延时，等待图片渲染
-        setTimeout(() => resolve((contextDom.value = container.value?.querySelector('div')?.children[0])), 100)
+        setTimeout(() => resolve((contextDom.value = container.value?.querySelector('div')?.children)), 100)
       )
   )
 
@@ -59,7 +59,7 @@ defineExpose({
     if (value) {
       dispaly.value = false
       wordInit(value).then(print)
-    } else contextDom.value && print(contextDom.value)
+    } else contextDom.value && print(...contextDom.value)
   },
   download: (filename?: string) => {
     if (!context.value) return ElMessage.error(i18n.t('components.document.emptyContent'))
