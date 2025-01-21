@@ -25,11 +25,15 @@ logging:
     _org:
       springframework: info
     sun:
-      net:
-        www: info
+      net: info
+      rmi: error
     jdk:
       event:
         security: info
+    javax:
+      management:
+        remote:
+          rmi: info
     com:
       diboot:
         lcdp: info
