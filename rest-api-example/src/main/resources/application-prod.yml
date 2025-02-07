@@ -39,6 +39,7 @@ diboot:
     # 文件存储路径（本地存储方式）
     storage-directory: /temp/playground
   iam:
+    save-exception-stack-trace: true # 记录系统异常堆栈，方便线上排查
     # token-expires-minutes: 60
     # Shiro的匿名urls，用逗号分隔
     anon-urls:
