@@ -172,6 +172,7 @@ CREATE TABLE `region` (
 
 CREATE TABLE `problem` (
    `id` varchar(32) NOT NULL COMMENT 'ID',
+   `sn` varchar(20) DEFAULT NULL,
    `title` varchar(20) DEFAULT NULL,
    `remark` varchar(500) DEFAULT NULL,
    `is_deleted` tinyint(1) DEFAULT '0',

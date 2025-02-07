@@ -15,10 +15,11 @@
  */
 package com.diboot.core.extension.sequence;
 
+import com.diboot.core.util.D;
 import com.diboot.core.util.S;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * 编号片段生成
@@ -34,7 +35,8 @@ public class PartGenerator {
             return part.getValue();
         }
         if("date".equals(part.getType())) {
-            return generateDatePart(part.getValue());
+            Date date = new Date();
+            return D.convert2FormatString(date, part.getValue());
         }
         if("random".equals(part.getType())) {
             return S.newRandomNum(part.getLength());
@@ -42,21 +44,4 @@ public class PartGenerator {
         return null;
     }
 
-    private static String generateDatePart(String format) {
-        LocalDate now = LocalDate.now();
-        String currentDate = "";
-        if(format.contains("YYYY")) {
-            currentDate += now.getYear();
-        }
-        else if(format.contains("YY")) {
-            currentDate += S.substring(S.valueOf(now.getYear()), 2);
-        }
-        if(format.contains("MM")) {
-            currentDate += now.getMonthValue();
-        }
-        if(format.contains("DD")) {
-            currentDate += now.getDayOfMonth();
-        }
-        return currentDate;
-    }
 }

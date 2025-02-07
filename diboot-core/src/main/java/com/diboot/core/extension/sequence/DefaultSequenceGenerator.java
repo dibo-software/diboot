@@ -73,7 +73,7 @@ public class DefaultSequenceGenerator<T> extends SequenceGenerator {
         IService<T> entityService = entityInfo.getService();
         QueryWrapper<T> queryWrapper = new QueryWrapper<T>().select(entityInfo.getPropInfo().getColumnByField(fieldName))
                 .orderByDesc(entityInfo.getPropInfo().getIdColumn()); //如果id非有序，可换成 create_time
-        T entity = entityService.getOne(queryWrapper);
+        T entity = entityService.getOne(queryWrapper, false);
         if(entity == null) {
             return 0;
         }
