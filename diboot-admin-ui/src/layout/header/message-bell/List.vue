@@ -46,7 +46,7 @@ const loadData = (reset = false) => {
       total.value = res.page?.totalCount ? Number(res.page.totalCount) : 0
     })
     .catch(err => {
-      ElMessage.error(i18n.t('layout.messageBell.fetchListError') + (err.msg || err.message || err))
+      ElMessage.error(i18n.t('layout.messageBell.fetchListError') + ': ' + (err.msg || err.message || err))
     })
     .finally(() => (loading.value = false))
 }
