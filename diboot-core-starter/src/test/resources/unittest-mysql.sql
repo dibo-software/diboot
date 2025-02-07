@@ -253,9 +253,9 @@ VALUES(10000081, 10000074, '111', 'L9vrF7wJBKbbLRZChI33WA=='),
       (10000091, 10000075, '112', 'BqAefnSadfixkCebXakUDg=='),
       (10000093, 10000075, '114', 'A2Y6CZ4tv0V7QxPbq9EYkg==');
 
-INSERT INTO problem (id, title, remark, create_time)
-VALUES  ('1', '问题1', '问题1秒杀失效', '2023-12-29 12:40:44'),
-        ('2', '问题2', '问题2提款失败', '2023-12-29 12:40:44');
+INSERT INTO problem (id, sn, title, remark, create_time)
+VALUES  ('1', 'No.202502070001','问题1', '问题1秒杀失效', '2023-12-29 12:40:44'),
+        ('2', 'No.202502070002','问题2', '问题2提款失败', '2023-12-29 12:40:44');
 
 INSERT INTO status_info (id, user_id, problem_id, remark, create_time)
 VALUES('1', '1001', '1', '状态备注1', '2023-12-29 12:42:14'),
