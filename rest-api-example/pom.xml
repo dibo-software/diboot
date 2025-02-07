@@ -114,11 +114,6 @@
             <artifactId>diboot-ai-spring-boot-starter</artifactId>
             <version>${diboot.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
-            <version>4.3.1</version>
-        </dependency>
         <!-- 默认的验证码组件，可按需替换 -->
         <dependency>
             <groupId>com.pig4cloud.plugin</groupId>
