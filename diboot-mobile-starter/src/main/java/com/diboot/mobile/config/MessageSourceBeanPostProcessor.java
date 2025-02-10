@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.core.config;
+package com.diboot.mobile.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -29,13 +29,13 @@ import org.springframework.stereotype.Component;
  * @Date 2024/6/13
  */
 @Slf4j
-@Component("coreMessageSourceBeanPostProcessor")
+@Component("mobileMessageSourceBeanPostProcessor")
 public class MessageSourceBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof ResourceBundleMessageSource messageSource) {
-            messageSource.addBasenames("messages", "core_messages");
+            messageSource.addBasenames("mobile_messages");
             log.info("国际化资源文件添加完成，basenames = {}", messageSource.getBasenameSet());
         }
         return bean;

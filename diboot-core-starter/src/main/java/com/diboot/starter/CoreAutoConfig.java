@@ -22,7 +22,6 @@ import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.config.Cons;
-import com.diboot.core.config.MessageSourceBeanPostProcessor;
 import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
@@ -274,17 +273,6 @@ public class CoreAutoConfig implements WebMvcConfigurer {
         OrderedRequestContextFilter orderedRequestContextFilter = new OrderedRequestContextFilter();
         orderedRequestContextFilter.setThreadContextInheritable(true);
         return orderedRequestContextFilter;
-    }
-
-    /**
-     * 国际化文件配置
-     *
-     * @return
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public MessageSourceBeanPostProcessor messageSourceBeanPostProcessor() {
-        return new MessageSourceBeanPostProcessor();
     }
 
     /**
