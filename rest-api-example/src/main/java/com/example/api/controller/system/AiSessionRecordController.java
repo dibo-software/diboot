@@ -7,6 +7,7 @@ import com.diboot.ai.common.request.AiChatRequest;
 import com.diboot.ai.common.request.AiEnum;
 import com.diboot.ai.common.response.AiChatResponse;
 import com.diboot.ai.common.response.AiChoice;
+import com.diboot.ai.config.AiConfiguration;
 import com.diboot.ai.entity.AiSessionRecord;
 import com.diboot.ai.service.AiSessionRecordService;
 import com.diboot.ai.vo.AiSessionRecordVO;
@@ -99,6 +100,20 @@ public class AiSessionRecordController extends BaseCrudRestController<AiSessionR
     @PostMapping()
     public JsonResult<?> createModelMapping(@RequestBody AiSessionRecord aiSessionRecord) throws Exception {
         return JsonResult.OK(aiSessionRecordService.createEntity(aiSessionRecord));
+    }
+
+    /**
+     * 获取模型列表
+     */
+    @GetMapping("/models")
+    public JsonResult<?> getAiModels() {
+        List<String> list = new ArrayList<>();
+        AiConfiguration config = client.getConfiguration();
+        if (config.getQwen() != null) list.add("qwen");
+        if (config.getKimi() != null) list.add("kimi");
+        if (config.getWenxin() != null) list.add("wenxin");
+        if (config.getDeepseek() != null) list.add("deepseek");
+        return JsonResult.OK(list);
     }
 
     /**

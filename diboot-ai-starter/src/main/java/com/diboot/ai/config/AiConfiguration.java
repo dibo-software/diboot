@@ -16,6 +16,8 @@
 package com.diboot.ai.config;
 
 import com.diboot.ai.models.ModelProvider;
+import com.diboot.ai.models.deepseek.DeepSeekChatModelProvider;
+import com.diboot.ai.models.deepseek.DeepSeekConfig;
 import com.diboot.ai.models.kimi.KimiChatModelProvider;
 import com.diboot.ai.models.kimi.KimiConfig;
 import com.diboot.ai.models.qwen.QwenChatModelProvider;
@@ -58,6 +60,10 @@ public class AiConfiguration {
      * Kimi 配置
      */
     private KimiConfig kimi;
+    /**
+     * DeepSeek 配置
+     */
+    private DeepSeekConfig deepseek;
 
     // ====== 模型配置 end=====
 
@@ -113,6 +119,7 @@ public class AiConfiguration {
         modelProviders.add(new QwenChatModelProvider(this));
         modelProviders.add(new WenXinChatModelProvider(this));
         modelProviders.add(new KimiChatModelProvider(this));
+        modelProviders.add(new DeepSeekChatModelProvider(this));
     }
 
     /**

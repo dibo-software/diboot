@@ -15,6 +15,7 @@
  */
 package com.diboot.ai.config;
 
+import com.diboot.ai.models.deepseek.DeepSeekConfig;
 import com.diboot.ai.models.kimi.KimiConfig;
 import com.diboot.ai.models.qwen.QwenConfig;
 import com.diboot.ai.models.wenxin.WenXinConfig;
@@ -78,4 +79,9 @@ public class AiProperties {
     @NestedConfigurationProperty
     private WenXinConfig wenxin;
 
+    /**
+     * DeepSeek模型配置
+     */
+    @NestedConfigurationProperty
+    private DeepSeekConfig deepseek;
 }
