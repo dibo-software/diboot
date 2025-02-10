@@ -5,7 +5,12 @@ const en: Locale = {
     status: 'Status',
     permissions: 'API Permissions',
     updateKey: 'Regenerate secret',
-    viewLogs: 'View logs'
+    viewLogs: 'View logs',
+    namePlaceholder: 'Please enter client name',
+    statusPlaceholder: 'Please select status',
+    appKeyPlaceholder: 'Please enter the AppKey',
+    appSecretPlaceholder: 'Automatically generated AppSecret',
+    permissionsPlaceholder: 'Please select an interface permission'
   },
   config: {
     propKey: 'Property Name',
@@ -157,7 +162,15 @@ const en: Locale = {
   },
   resource: {
     main: 'Main menu resources',
-    mobile: 'Mobile menu resources',
+    mobile: {
+      title: 'Mobile menu resources',
+      parentId: 'Superior',
+      parentPlaceholder: 'Please select Superior',
+      displayName: 'Name',
+      displayNamePlaceholder: 'Please enter name',
+      resourceCode: 'Code',
+      resourceCodePlaceholder: 'Please enter the code'
+    },
     newButtonPermission: 'New Button Permission',
     parentId: 'Parent Directory',
     parentId0: 'Top-Level Directory',

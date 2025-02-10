@@ -142,7 +142,12 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
 
         <el-space>
           <span class="search">
-            <el-input v-model="queryParam.displayName" placeholder="名称" clearable @change="onSearch" />
+            <el-input
+              v-model="queryParam.displayName"
+              :placeholder="$t('resource.mobile.displayName')"
+              clearable
+              @change="onSearch"
+            />
           </span>
           <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
           <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
@@ -160,10 +165,10 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
         style="border-top: 1px solid var(--el-border-color-lighter)"
         @sort-change="sortChange"
       >
-        <el-table-column label="上级" prop="parentDisplayName" show-overflow-tooltip />
-        <el-table-column label="名称" prop="displayName" show-overflow-tooltip />
-        <el-table-column label="编码" prop="resourceCode" show-overflow-tooltip />
-        <el-table-column label="更新时间" prop="updateTime" show-overflow-tooltip />
+        <el-table-column :label="$t('resource.mobile.parentId')" prop="parentDisplayName" show-overflow-tooltip />
+        <el-table-column :label="$t('resource.mobile.displayName')" prop="displayName" show-overflow-tooltip />
+        <el-table-column :label="$t('resource.mobile.resourceCode')" prop="resourceCode" show-overflow-tooltip />
+        <el-table-column :label="$t('baseField.updateTime')" prop="updateTime" show-overflow-tooltip />
         <el-table-column :label="$t('operation.label')" fixed="right" :width="180">
           <template #default="{ row }: { row: Resource }">
             <el-space>

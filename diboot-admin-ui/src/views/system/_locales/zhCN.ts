@@ -4,7 +4,12 @@ const zhCN = {
     status: '状态',
     permissions: '接口权限',
     updateKey: '重新生成密钥',
-    viewLogs: '访问日志'
+    viewLogs: '访问日志',
+    namePlaceholder: '请输入客户端名',
+    statusPlaceholder: '请选择状态',
+    appKeyPlaceholder: '请输入 AppKey',
+    appSecretPlaceholder: '自动生成 AppSecret',
+    permissionsPlaceholder: '请选择接口权限'
   },
   config: {
     propKey: '属性名',
@@ -156,7 +161,15 @@ const zhCN = {
   },
   resource: {
     main: '主菜单资源',
-    mobile: '移动端菜单资源',
+    mobile: {
+      title: '移动端菜单资源',
+      parentId: '上级',
+      parentPlaceholder: '请选择上级',
+      displayName: '名称',
+      displayNamePlaceholder: '请输入名称',
+      resourceCode: '编码',
+      resourceCodePlaceholder: '请输入编码'
+    },
     newButtonPermission: '新按钮权限',
     parentId: '上级目录',
     parentId0: '顶级目录',

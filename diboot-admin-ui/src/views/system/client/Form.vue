@@ -81,7 +81,7 @@ const moduleList = ref<string[]>([])
 </script>
 
 <template>
-  <el-form ref="formRef" v-loading="loading" :model="model" label-width="90px">
+  <el-form ref="formRef" v-loading="loading" :model="model" label-width="120px">
     <el-row :gutter="18">
       <el-col :span="12">
         <el-form-item
@@ -89,12 +89,12 @@ const moduleList = ref<string[]>([])
           :label="$t('client.name')"
           :rules="{ required: true, message: $t('rules.notnull'), whitespace: true }"
         >
-          <el-input v-model="model.name" clearable />
+          <el-input v-model="model.name" clearable :placeholder="$t('client.namePlaceholder')" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item prop="status" :label="$t('client.status')">
-          <el-select v-model="model.status" filterable clearable>
+          <el-select v-model="model.status" filterable clearable :placeholder="$t('client.statusPlaceholder')">
             <el-option v-for="item in relatedData.accountStatusOptions" :key="item.value" v-bind="item" />
           </el-select>
         </el-form-item>
@@ -108,12 +108,12 @@ const moduleList = ref<string[]>([])
             { validator: checkAppKeyDuplicate, trigger: 'blur' }
           ]"
         >
-          <el-input v-model="model.appKey" clearable />
+          <el-input v-model="model.appKey" clearable :placeholder="$t('client.appKeyPlaceholder')" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item prop="appSecret" label="AppSecret">
-          <el-input v-model="model.appSecret" clearable disabled />
+          <el-input v-model="model.appSecret" clearable disabled :placeholder="$t('client.appSecretPlaceholder')" />
         </el-form-item>
       </el-col>
       <el-col :span="24">
@@ -128,7 +128,14 @@ const moduleList = ref<string[]>([])
             >
               <el-option v-for="item in moduleList" :key="item" :label="item" :value="item" />
             </el-select>
-            <el-select v-model="model.permissions" multiple clearable popper-class="hide" style="flex: 1" />
+            <el-select
+              v-model="model.permissions"
+              multiple
+              clearable
+              popper-class="hide"
+              style="flex: 1"
+              :placeholder="$t('client.permissionsPlaceholder')"
+            />
           </div>
         </el-form-item>
       </el-col>

@@ -76,7 +76,7 @@ defineExpose({
 
 <template>
   <el-form ref="formRef" v-loading="loading" :model="model" label-width="90px">
-    <el-form-item prop="parentId" label="上级">
+    <el-form-item prop="parentId" :label="$t('resource.mobile.parentId')">
       <el-tree-select
         v-model="model.parentId"
         :data="relatedData.parentIdOptions"
@@ -84,21 +84,22 @@ defineExpose({
         default-expand-all
         check-strictly
         clearable
+        :placeholder="$t('resource.mobile.parentPlaceholder')"
       />
     </el-form-item>
     <el-form-item
       prop="displayName"
-      label="名称"
+      :label="$t('resource.mobile.displayName')"
       :rules="{ required: true, message: $t('rules.notnull'), whitespace: true }"
     >
-      <el-input v-model="model.displayName" clearable />
+      <el-input v-model="model.displayName" clearable :placeholder="$t('resource.mobile.displayNamePlaceholder')" />
     </el-form-item>
     <el-form-item
       prop="resourceCode"
-      label="编码"
+      :label="$t('resource.mobile.resourceCode')"
       :rules="[{ required: true, message: $t('rules.notnull'), whitespace: true }]"
     >
-      <el-input v-model="model.resourceCode" clearable />
+      <el-input v-model="model.resourceCode" clearable :placeholder="$t('resource.mobile.resourceCodePlaceholder')" />
     </el-form-item>
   </el-form>
 </template>
