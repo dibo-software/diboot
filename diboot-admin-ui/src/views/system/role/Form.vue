@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { Resource } from '@/views/system/resource/type'
@@ -27,7 +28,7 @@ const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeC
 })
 const treeProps = {
   label: 'displayName',
-  class: flatTreeNodeClass
+  class: (data: TreeNodeData) => ({ ...flatTreeNodeClass(data), mobile: data.appModule === 'mobile' })
 }
 getTree()
 
@@ -135,4 +136,10 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
   </el-dialog>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.el-tree {
+  :deep(.mobile) {
+    color: var(--el-color-primary);
+  }
+}
+</style>

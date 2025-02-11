@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -76,7 +77,9 @@ public class ResourceController extends BaseCrudRestController<IamResource> {
         LambdaQueryWrapper<IamResource> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.orderByAsc(IamResource::getSortId).orderByAsc(IamResource::getId);
         List<IamResourceListVO> list = iamResourceService.getViewObjectList(queryWrapper, null, IamResourceListVO.class);
-        return JsonResult.OK(BeanUtils.buildTree(list, Cons.TREE_ROOT_ID));
+        List<IamResourceListVO> tree = BeanUtils.buildTree(list, Cons.TREE_ROOT_ID);
+        tree.sort(Comparator.comparing(IamResource::getAppModule, Comparator.nullsFirst(Comparator.naturalOrder())));
+        return JsonResult.OK(tree);
     }
 
     /**
