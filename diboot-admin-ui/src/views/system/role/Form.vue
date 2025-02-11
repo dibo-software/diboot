@@ -139,7 +139,7 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
 <style scoped lang="scss">
 .el-tree {
   :deep(.mobile) {
-    color: var(--el-color-primary);
+    color: var(--el-color-primary-dark-2);
   }
 }
 </style>

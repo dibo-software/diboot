@@ -53,6 +53,7 @@ const filter = (key: string) => {
           :key
           :type="item.type as ''"
           round
+          size="small"
           :plain="queryParam.filterType !== key"
           @click="filter(key)"
         >

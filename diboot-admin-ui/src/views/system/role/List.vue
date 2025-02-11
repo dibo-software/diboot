@@ -75,11 +75,11 @@ const changeRoleUser = (userIds?: string[] | string) => {
         <template #default="{ row }">
           <el-space v-if="row.superAdmin === true"> - </el-space>
           <el-space v-else>
-            <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
-              {{ $t('operation.detail') }}
-            </el-button>
             <el-button v-has-permission="'roleUser'" text bg type="primary" size="small" @click="editRoleUser(row)">
               {{ $t('role.userList') }}
+            </el-button>
+            <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
+              {{ $t('operation.detail') }}
             </el-button>
             <el-dropdown v-has-permission="['update', 'delete']">
               <el-button text bg type="primary" size="small">
