@@ -323,7 +323,7 @@ public class S extends StringUtils{
 		}
 		String regEx = "<[^>]+>";
 		Pattern p = Pattern.compile(regEx);
-		return p.matcher(htmlStr).replaceAll("");
+		return p.matcher(htmlStr).replaceAll("").replaceAll("&nbsp;", " ");
 	}
 
     /**

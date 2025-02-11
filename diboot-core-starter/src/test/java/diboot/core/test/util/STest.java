@@ -52,4 +52,10 @@ public class STest {
         Assert.assertEquals(S.uncapFirst("HelloWorld"), text);
     }
 
+    @Test
+    public void testRemoveHtml() {
+        String text = "<p><span>测试html内容&nbsp;111</span></p>";
+        Assert.assertEquals(S.removeHtmlTags(text), "测试html内容 111");
+    }
+
 }
