@@ -60,7 +60,7 @@ const open = (val = true) => {
   if (val) visible.value = val
 }
 
-const confirm = () => {
+const changeValue = () => {
   selectedList.value = _.clone(selectedRows.value)
   if (!selectedList.value?.length) {
     selectedKeys.value = props.multiple ? [] : undefined
@@ -69,6 +69,10 @@ const confirm = () => {
   } else {
     selectedKeys.value = selectedList.value[0].value
   }
+}
+
+const confirm = () => {
+  changeValue()
   visible.value = false
 }
 
@@ -115,18 +119,18 @@ watch(
         const list = buildList()
         if (list) {
           selectedRows.value = list
-          confirm()
+          changeValue()
         } else {
           selected.conditions = [{ field: config.list?.primaryKey || 'id', comparison: 'IN', value: values }]
           loadRelatedData(selected).then(list => {
             selectedRows.value = list.sort((e1, e2) => values.indexOf(e1.value) - values.indexOf(e2.value))
-            confirm()
+            changeValue()
           })
         }
       })
     } else {
       selectedRows.value.length = 0
-      confirm()
+      changeValue()
     }
   },
   { immediate: true }

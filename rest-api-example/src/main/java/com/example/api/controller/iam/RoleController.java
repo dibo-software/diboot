@@ -16,6 +16,7 @@ import com.diboot.iam.annotation.OperationCons;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.dto.IamRoleFormDTO;
 import com.diboot.iam.entity.IamRole;
+import com.diboot.iam.entity.IamUser;
 import com.diboot.iam.entity.IamUserRole;
 import com.diboot.iam.service.IamRoleResourceService;
 import com.diboot.iam.service.IamRoleService;
@@ -123,6 +124,23 @@ public class RoleController extends BaseCrudRestController<IamRole> {
     @PutMapping("/{id}")
     public JsonResult updateEntityMapping(@PathVariable("id") String id, @Valid @RequestBody IamRoleFormDTO roleFormDTO) throws Exception {
         return super.updateEntity(id, roleFormDTO);
+    }
+
+    /**
+     * 更新角色用户
+     *
+     * @param id 角色ID
+     * @param userIds 对应用户id列表
+     * @return
+     */
+    @Log(operation = "更新角色用户")
+    @BindPermission(name = "更新角色用户", code = OperationCons.CODE_WRITE)
+    @PutMapping("/{id}/user")
+    public JsonResult<?> updateRoleUserMapping(@PathVariable("id") String id, @RequestBody List<String> userIds) {
+        boolean success = iamUserRoleService.createOrUpdateN2NRelations(IamUserRole::getRoleId,id, IamUserRole::getUserId, userIds,
+                query -> query.lambda().eq(IamUserRole::getUserType, IamUser.class.getSimpleName()),
+                e -> e.setUserType(IamUser.class.getSimpleName()));
+        return new JsonResult<>(success);
     }
 
     /**

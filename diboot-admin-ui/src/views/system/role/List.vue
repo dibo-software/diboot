@@ -1,12 +1,15 @@
 <script setup lang="ts" name="Role">
 import { Search, ArrowDown, Plus } from '@element-plus/icons-vue'
+import type { Select } from '@/components/di/type'
 import type { Role } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
+import { useI18n } from 'vue-i18n'
 
-const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove } = useList<Role>({
-  baseApi: '/iam/role'
-})
+const i18n = useI18n()
+const baseApi = '/iam/role'
+
+const { queryParam, onSearch, resetFilter, getList, loading, dataList, pagination, remove } = useList<Role>({ baseApi })
 
 getList()
 
@@ -21,6 +24,27 @@ const openDetail = (id: string) => {
 
 const updatePermission = checkPermission('update')
 const deletePermission = checkPermission('delete')
+
+const model = ref<Partial<Role>>({})
+const userListRef = ref()
+
+const editRoleUser = (data: Role) => {
+  model.value = data
+  userListRef.value?.open()
+}
+
+const changeRoleUser = (userIds?: string[] | string) => {
+  if ((userIds as string[]).join() != (model.value.userIdList?.join() ?? '')) {
+    api
+      .put(`${baseApi}/${model.value.id}/user`, userIds)
+      .then(res => {
+        ElMessage.success(res.msg)
+        getList()
+      })
+      .catch(err => ElMessage.error(err.msg || err.message || i18n.t('personal.updateFailed')))
+    model.value = {}
+  }
+}
 </script>
 
 <template>
@@ -47,12 +71,15 @@ const deletePermission = checkPermission('delete')
       </el-table-column>
       <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="165" />
       <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="165" />
-      <el-table-column :label="$t('operation.label')" width="160" fixed="right">
+      <el-table-column :label="$t('operation.label')" width="230" fixed="right">
         <template #default="{ row }">
           <el-space v-if="row.superAdmin === true"> - </el-space>
           <el-space v-else>
             <el-button v-has-permission="'detail'" text bg type="primary" size="small" @click="openDetail(row.id)">
               {{ $t('operation.detail') }}
+            </el-button>
+            <el-button v-has-permission="'roleUser'" text bg type="primary" size="small" @click="editRoleUser(row)">
+              {{ $t('role.userList') }}
             </el-button>
             <el-dropdown v-has-permission="['update', 'delete']">
               <el-button text bg type="primary" size="small">
@@ -92,6 +119,37 @@ const deletePermission = checkPermission('delete')
 
     <Detail ref="detailRef" />
     <Form ref="formRef" @complete="getList()" />
+
+    <di-selector
+      ref="userListRef"
+      :model-value="model.userIdList"
+      :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
+      :conditions="[{ field: 'status', value: 'A' }]"
+      :list="{
+        baseApi: '/iam/user',
+        relatedKey: 'orgId',
+        searchArea: {
+          propList: [
+            { prop: 'realname', label: $t('user.realname'), type: 'input' },
+            { prop: 'userNum', label: $t('user.userNum'), type: 'input' },
+            { prop: 'gender', label: $t('user.gender'), type: 'select', loader: 'GENDER' } as Select
+          ]
+        },
+        columns: [
+          { prop: 'userNum', label: $t('user.userNum') },
+          { prop: 'realname', label: $t('user.realname') },
+          { prop: 'genderLabel', label: $t('user.gender') },
+          { prop: 'mobilePhone', label: $t('user.mobilePhone') },
+          { prop: 'sortId', label: $t('user.sortId') }
+        ]
+      }"
+      multiple
+      data-type="IamUser"
+      data-label="realname"
+      @change="changeRoleUser"
+    >
+      <div />
+    </di-selector>
   </div>
 </template>
 
