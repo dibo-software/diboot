@@ -14,6 +14,7 @@ const { loadData, loading, model } = useDetail<
     userPositionList?: UserPosition[]
     isSysAccount?: boolean
     hidePassword?: boolean
+    primaryPosition: Partial<UserPosition>
   }
 >(baseApi, { roleIdList: [] })
 
@@ -58,7 +59,11 @@ defineExpose({
   open: async (id?: string) => {
     title.value = id ? i18n.t('title.update') : i18n.t('title.create')
     visible.value = true
-    await loadData(id)
+    await loadData(id).then(() => {
+      const index = model.value.userPositionList?.findIndex(e => e.isPrimaryPosition)
+      if (index == null || index < 0) model.value.primaryPosition = {}
+      else model.value.primaryPosition = model.value.userPositionList!.splice(index, 1)[0]
+    })
     if (model.value.roleList) model.value.roleIdList = model.value.roleList.map(e => e.id as string)
     model.value.username = await loadAccountInfo('authAccount', id)
     // 判定是否属于系统用户
@@ -76,7 +81,7 @@ const formRef = ref<FormInstance>()
 watch(visible, value => {
   if (!value) {
     formRef.value?.resetFields()
-    userPositionTableForm.value?.clearDataList()
+    userPositionTableFormRef.value?.clearDataList()
   }
 })
 
@@ -84,17 +89,29 @@ const emit = defineEmits<{
   (e: 'complete', id?: string): void
 }>()
 
-const userPositionTableForm = ref()
+const userPositionTableFormRef = ref()
 const { submitting, submit } = useForm({
   baseApi,
   async afterValidate() {
-    await userPositionTableForm.value?.validate()
+    await userPositionTableFormRef.value?.validate()
   },
   successCallback(id) {
     emit('complete', id)
     visible.value = false
   }
 })
+const visiblePosition = ref(false)
+
+const onSubmit = () => {
+  const data = _.cloneDeep(model.value)
+  if (data.primaryPosition?.positionId) {
+    if (!data.userPositionList) data.userPositionList = []
+    const primaryPosition = data.primaryPosition
+    if (!data.primaryPosition.id) primaryPosition.orgId = model.value.orgId
+    data.userPositionList.splice(0, 0, primaryPosition as UserPosition)
+  } else data.userPositionList = []
+  submit(data, formRef.value)
+}
 
 const checkUsernameDuplicate = checkValue(`${baseApi}/check-username-duplicate`, 'username', () => model.value?.id)
 const checkUserNumDuplicate = checkValue(`${baseApi}/check-user-num-duplicate`, 'userNum', () => model.value?.id)
@@ -229,7 +246,43 @@ const rules: FormRules = {
             </el-select>
           </el-form-item>
         </el-col>
-
+        <el-col :md="12" :sm="24">
+          <el-form-item prop="mobilePhone" :label="$t('position.label')">
+            <div style="flex: 1">
+              <di-selector
+                v-if="model.primaryPosition"
+                v-model="model.primaryPosition.positionId"
+                :list="{
+                  baseApi: '/iam/position',
+                  searchArea: {
+                    propList: [
+                      { prop: 'name', label: $t('position.name'), type: 'input' },
+                      { prop: 'code', label: $t('position.code'), type: 'input' }
+                    ]
+                  },
+                  columns: [
+                    { prop: 'name', label: $t('position.name') },
+                    { prop: 'code', label: $t('position.code') },
+                    { prop: 'gradeValue', label: $t('position.gradeValue') },
+                    { prop: 'gradeName', label: $t('position.gradeNameAlias') },
+                    { prop: 'createTime', label: $t('baseField.createTime') }
+                  ]
+                }"
+                data-type="IamPosition"
+                :placeholder="$t('position.placeholder.label')"
+              />
+            </div>
+            <el-badge
+              v-if="model.primaryPosition?.positionId"
+              :value="model.userPositionList?.length"
+              :show-zero="false"
+              :offset="[0, 9]"
+              color="green"
+            >
+              <el-button @click="visiblePosition = true">{{ $t('position.deputy') }}</el-button>
+            </el-badge>
+          </el-form-item>
+        </el-col>
         <el-col :md="12" :sm="24">
           <el-form-item prop="gender" :label="$t('user.gender')">
             <el-radio-group v-model="model.gender">
@@ -277,18 +330,23 @@ const rules: FormRules = {
         </el-col>
       </el-row>
     </el-form>
-    <UserPositionTableForm
-      ref="userPositionTableForm"
-      v-model="model.userPositionList"
-      :org-tree="relatedData.orgTree"
-      :user-id="model.id"
-      :org-id="model.orgId"
-    />
+    <el-dialog v-model="visiblePosition" :title="$t('position.deputy')" width="600" append-to-body>
+      <UserPositionTableForm
+        ref="userPositionTableFormRef"
+        v-model="model.userPositionList"
+        :org-tree="relatedData.orgTree"
+        :user-id="model.id"
+        :org-id="model.orgId"
+      />
+      <template #footer>
+        <el-button @click="visiblePosition = false">{{ $t('button.close') }}</el-button>
+      </template>
+    </el-dialog>
     <template #footer>
       <el-button @click="visible = false">{{ $t('button.cancel') }}</el-button>
-      <el-button type="primary" :loading="submitting" @click="submit(model, formRef)">{{
-        $t('button.save')
-      }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="onSubmit">
+        {{ $t('button.save') }}
+      </el-button>
     </template>
   </el-dialog>
 </template>

@@ -17,7 +17,9 @@ export interface UserPosition {
   userType?: string
   userId: string
   positionId: string
+  positionName?: string
   orgId: string
+  orgName?: string
   isPrimaryPosition: boolean
   createTime?: string
 }

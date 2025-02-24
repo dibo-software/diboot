@@ -22,6 +22,8 @@ const en: Locale = {
     gradeValue: 'Grade Value',
     gradeNameAlias: 'Grade Title',
     label: 'Position',
+    main: 'Main post',
+    deputy: 'Deputy post',
     placeholder: {
       name: 'Enter name',
       code: 'Enter code',

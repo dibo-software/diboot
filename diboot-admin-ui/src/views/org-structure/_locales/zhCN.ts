@@ -21,6 +21,8 @@ const zhCN = {
     gradeValue: '职级',
     gradeNameAlias: '职级头衔',
     label: '岗位',
+    main: '主岗',
+    deputy: '兼职岗',
     placeholder: {
       name: '请输入名称',
       code: '请输入编码',

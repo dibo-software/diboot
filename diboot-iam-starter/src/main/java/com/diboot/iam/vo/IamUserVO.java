@@ -49,8 +49,8 @@ public class IamUserVO extends IamUser {
     @BindEntityList(entity = IamRole.class, condition = "this.id=dbt_iam_user_role.user_id AND dbt_iam_user_role.role_id=id AND dbt_iam_user_role.user_type = 'IamUser'")
     private List<IamRole> roleList;
 
-    @BindEntityList(entity = IamUserPosition.class, condition = "this.id = user_id AND user_type = 'IamUser'")
-    private List<IamUserPosition> userPositionList;
+    @BindEntityList(entity = IamUserPosition.class, condition = "this.id = user_id AND user_type = 'IamUser'", deepBind = true)
+    private List<IamUserPositionVO> userPositionList;
 
     @BindField(entity = IamAccount.class, field = "status", condition = "this.id = user_id AND user_type = 'IamUser'")
     private String accountStatus;
