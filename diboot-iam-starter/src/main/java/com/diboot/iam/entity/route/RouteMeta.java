@@ -26,10 +26,6 @@ public class RouteMeta implements Serializable {
      */
     private String icon;
     /**
-     * 图表
-     */
-    private String chart;
-    /**
      * 模型
      */
     private String model;
@@ -86,4 +82,16 @@ public class RouteMeta implements Serializable {
      * 是否隐藏面包屑
      */
     private Boolean hideBreadcrumb;
+    /**
+     * 图表
+     */
+    private String chart;
+    /**
+     * 页面id
+     */
+    private String pageId;
+    /**
+     * 页面类型
+     */
+    private String pageType;
 }
