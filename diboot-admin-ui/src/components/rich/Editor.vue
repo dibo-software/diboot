@@ -175,6 +175,10 @@ const editorConfig: IEditorConfig = {
   display: flex;
   flex-direction: column;
 
+  &.w-e-full-screen-container {
+    z-index: 99999;
+  }
+
   .editor-border {
     border: 1px solid var(--el-border-color-lighter);
   }
