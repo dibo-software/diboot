@@ -2,6 +2,7 @@ package com.example.api.excel.model;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.HeadFontStyle;
 import com.alibaba.excel.annotation.write.style.HeadStyle;
 import com.alibaba.excel.enums.poi.FillPatternTypeEnum;
 import com.diboot.file.excel.BaseExcelModel;
@@ -26,21 +27,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @ExcelIgnoreUnannotated
-@HeadStyle(fillPatternType = FillPatternTypeEnum.SOLID_FOREGROUND, fillForegroundColor = 1)
+@HeadFontStyle(fontHeightInPoints = 14)
+@HeadStyle(fillPatternType = FillPatternTypeEnum.NO_FILL, fillForegroundColor = 1)
 public class UserImportModel extends BaseExcelModel {
 
     @NotNull(message = "姓名不能为空")
-    @HeadStyle(fillForegroundColor = 13)
+    @HeadStyle(fillForegroundColor = 43)
     @ExcelProperty(value = "姓名")
     private String realname;
 
     @NotNull(message = "用户编号不能为空")
-    @HeadStyle(fillForegroundColor = 13)
+    @HeadStyle(fillForegroundColor = 43)
     @ExcelProperty(value = "用户编号")
     private String userNum;
 
     @NotNull(message = "性别不能为空")
-    @HeadStyle(fillForegroundColor = 13)
+    @HeadStyle(fillForegroundColor = 43)
     @ExcelOption(dict = "GENDER")
     @ExcelBindDict(type = "GENDER")
     @ExcelProperty(value = "性别")
