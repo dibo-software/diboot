@@ -14,5 +14,5 @@ interface ImportMetaEnv {
   readonly VITE_APP_ENABLE_TENANT: string
   readonly VITE_APP_ENABLE_I18N: string
   readonly VITE_IFRAME_ORIGIN_LIST: string
-  readonly VITE_APP_SUBMENU_SWITCHES_AUTO: string
+  readonly VITE_APP_SUBMENU_AUTO_OPEN: string
 }

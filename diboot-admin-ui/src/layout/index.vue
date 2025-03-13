@@ -24,7 +24,7 @@ const openOneLevel = (menu: RouteRecordRaw) => {
   const oldOneLevel = oneLevel.value
   oneLevel.value = menu
   if (menu.children?.length) {
-    if (!!menu.children[0].beforeEnter || import.meta.env.VITE_APP_SUBMENU_SWITCHES_AUTO === 'false') return
+    if (!!menu.children[0].beforeEnter || import.meta.env.VITE_APP_SUBMENU_AUTO_OPEN === 'false') return
   }
   if (router.currentRoute.value.name !== menu.name)
     router.push(menu.path).then(navigationFailure => {
