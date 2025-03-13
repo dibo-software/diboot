@@ -34,7 +34,7 @@ import java.util.*;
  * @date 2019-10-9
  */
 @Slf4j
-public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map<Integer, String>> {
+public class DynamicHeadExcelListener extends AnalysisEventListener<Map<Integer, String>> {
     // 表头
     Map<Integer, String> headMap = new HashMap<>();
     /**
@@ -93,16 +93,13 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
         this.headMap.clear();
         fieldNameMap.clear();
         headNameMap.clear();
-        ExcelReadHeadProperty excelReadHeadProperty = context.currentReadHolder().excelReadHeadProperty();
-        for (Map.Entry<Integer, Head> entry : excelReadHeadProperty.getHeadMap().entrySet()) {
+        for (Map.Entry<Integer, ReadCellData<?>> entry : headMap.entrySet()) {
             Integer index = entry.getKey();
-            Head head = entry.getValue();
-            String fieldName = head.getFieldName();
-            List<String> headNameList = head.getHeadNameList();
-            String name = headNameList.get(headNameList.size() - 1);
-            this.headMap.put(index, name);
+            ReadCellData<?> headCell = entry.getValue();
+            String cellName = headCell.getStringValue();
+            this.headMap.put(index, cellName);
             fieldNameMap.put(index, index.toString());
-            headNameMap.put(index, headNameList);
+            headNameMap.put(index, Collections.singletonList(cellName));
         }
     }
 
@@ -175,6 +172,7 @@ public abstract class DynamicHeadExcelListener extends AnalysisEventListener<Map
     /**
      * 保存数据
      */
-    protected abstract void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList, Map<String, Object> requestParams);
+    protected void saveData(Map<Integer, String> headMap, List<Map<Integer, String>> dataList, Map<String, Object> requestParams) {
+    }
 
 }
