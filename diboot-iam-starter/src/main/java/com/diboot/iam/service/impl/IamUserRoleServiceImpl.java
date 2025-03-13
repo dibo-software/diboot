@@ -29,7 +29,6 @@ import com.diboot.iam.entity.*;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamRoleMapper;
 import com.diboot.iam.mapper.IamUserRoleMapper;
-import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
@@ -58,8 +57,6 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
     private IamRoleService iamRoleService;
     @Autowired
     private IamRoleMapper iamRoleMapper;
-    @Autowired
-    private IamAccountService iamAccountService;
     @Autowired
     private IamResourceService iamResourceService;
 
