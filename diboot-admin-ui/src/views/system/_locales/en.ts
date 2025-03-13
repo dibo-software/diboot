@@ -141,7 +141,7 @@ const en: Locale = {
   },
   operationLog: {
     business: 'Business operation logs',
-    tripartite: 'Third-party application logs',
+    client: 'Third-party application logs',
     exception: 'System exception logs',
     user: 'User',
     userRealname: 'User Name',

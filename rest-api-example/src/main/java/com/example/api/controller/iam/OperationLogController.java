@@ -50,7 +50,7 @@ public class OperationLogController extends BaseCrudRestController<IamOperationL
                 case "business":
                     queryWrapper.lambda().eq(IamOperationLog::getUserType, IamUser.class.getSimpleName());
                     break;
-                case "tripartite":
+                case "client":
                     queryWrapper.lambda().eq(IamOperationLog::getUserType, Client.class.getSimpleName());
                     break;
                 case "exception":

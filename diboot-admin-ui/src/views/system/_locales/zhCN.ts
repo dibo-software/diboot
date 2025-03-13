@@ -140,7 +140,7 @@ const zhCN = {
   },
   operationLog: {
     business: '业务操作日志',
-    tripartite: '接口服务日志',
+    client: '接口服务日志',
     exception: '系统异常日志',
     user: '用户',
     userRealname: '用户姓名',

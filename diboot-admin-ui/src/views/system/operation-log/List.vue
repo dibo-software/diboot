@@ -34,7 +34,7 @@ const getTagType = (val: string, map: Record<string, unknown>) => {
 
 const CONDITIONS = {
   business: { type: 'primary' },
-  tripartite: { type: 'primary' },
+  client: { type: 'primary' },
   exception: { type: 'warning' }
 }
 
