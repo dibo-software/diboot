@@ -54,7 +54,14 @@ const refresh = () => {
             <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
               {{ $t('operation.update') }}
             </el-button>
-            <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)">
+            <el-button
+              v-has-permission="'delete'"
+              text
+              bg
+              type="danger"
+              size="small"
+              @click="remove(row.id, row.propKey)"
+            >
               {{ $t('operation.delete') }}
             </el-button>
           </el-space>

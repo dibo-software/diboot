@@ -121,7 +121,7 @@ function rowClick(row: DictionaryTableExpand) {
                     <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                       {{ $t('operation.update') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="deletePermission" @click="remove(row.id)">
+                    <el-dropdown-item v-if="deletePermission" @click="remove(row.id, row.itemName)">
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>

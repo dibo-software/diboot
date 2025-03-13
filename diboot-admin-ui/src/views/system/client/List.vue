@@ -99,7 +99,7 @@ const closeDetailAndOpenForm = () => {
   openForm(dataId.value)
 }
 
-const handleOperation = (code: string, value?: string | string[]) => {
+const handleOperation = (code: string, value?: string | string[], row?: Client) => {
   switch (code) {
     case 'detail':
       openDetail(value as string)
@@ -109,7 +109,7 @@ const handleOperation = (code: string, value?: string | string[]) => {
       openForm(value as string)
       break
     case 'remove':
-      remove(value as string)
+      remove(value as string, row?.name)
       break
     case 'batchRemove':
       batchRemove(value as string[])
@@ -235,7 +235,7 @@ const viewClientIdLogs = ref()
             </el-button>
             <el-dropdown
               v-has-permission="['detail', 'update', 'delete']"
-              @command="(code: string) => handleOperation(code, row.id)"
+              @command="(code: string) => handleOperation(code, row.id, row)"
             >
               <el-button text bg type="primary" size="small">
                 {{ $t('operation.more') }}

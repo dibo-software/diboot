@@ -42,9 +42,9 @@ getList().then(() => {
   }
 })
 
-const removeData = (id: string) => {
+const removeData = (id: string, title?: string) => {
   const currentKey = treeRef.value?.getCurrentKey()
-  remove(id).then(result => {
+  remove(id, title).then(result => {
     if (result) setTreeCurrentKey(currentKey as string)
   })
 }
@@ -168,7 +168,7 @@ const treeNodeClass = (data: Resource) => {
                     :icon="Delete"
                     type="danger"
                     link
-                    @click.stop="removeData(data.id)"
+                    @click.stop="removeData(data.id, node.label)"
                   />
                 </el-tooltip>
               </span>

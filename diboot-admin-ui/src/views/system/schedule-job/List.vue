@@ -82,7 +82,7 @@ const logListPermission = checkPermission('logList')
                     <el-dropdown-item v-if="logListPermission" @click="openLog(item.id)">
                       {{ $t('scheduleJobLog.title') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="deletePermission" divided @click="remove(item.id)">
+                    <el-dropdown-item v-if="deletePermission" divided @click="remove(item.id, item.jobName)">
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>

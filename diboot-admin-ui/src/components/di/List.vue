@@ -261,7 +261,10 @@ const multiple = inject<boolean | undefined>(
                     <el-dropdown-item v-if="operation?.update && updatePermission" @click="openForm(row.id)">
                       {{ $t('operation.update') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="operation?.remove && deletePermission" @click="remove(row.id)">
+                    <el-dropdown-item
+                      v-if="operation?.remove && deletePermission"
+                      @click="remove(row.id, row[columns[0].prop])"
+                    >
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>

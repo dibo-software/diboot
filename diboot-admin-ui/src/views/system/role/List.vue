@@ -93,7 +93,7 @@ const changeRoleUser = (userIds?: string[] | string) => {
                   <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                     {{ $t('operation.update') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="deletePermission" @click="remove(row.id)">
+                  <el-dropdown-item v-if="deletePermission" @click="remove(row.id, row.name)">
                     {{ $t('operation.delete') }}
                   </el-dropdown-item>
                 </el-dropdown-menu>

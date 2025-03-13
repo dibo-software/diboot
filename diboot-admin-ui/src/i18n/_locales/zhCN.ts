@@ -69,6 +69,7 @@ const zhCN = {
     saveFailed: '保存失败',
     fetchListFailed: '获取列表数据失败',
     confirmDelete: '确认删除该数据吗？',
+    confirmDelete0: '确认删除“ {0} ”吗？',
     delete: '删除',
     deleteFailed: '删除失败',
     deleteSuccess: '删除成功',

@@ -71,6 +71,7 @@ const en: Locale = {
     saveFailed: 'Save failed',
     fetchListFailed: 'Failed to retrieve list data',
     confirmDelete: 'Confirm deletion of this data?',
+    confirmDelete0: 'Confirm the deletion of "{0}"?',
     delete: 'Delete',
     deleteFailed: 'Deletion failed',
     deleteSuccess: 'Deletion successful',

@@ -141,11 +141,14 @@ export const useDelete = (option: DeleteOption) => {
    * 删除数据
    *
    * @param id
+   * @param title 数据标题
    */
-  const remove = (id: string) => {
-    return ElMessageBox.confirm(i18n.global.t('hooks.confirmDelete'), i18n.global.t('hooks.delete'), {
-      type: 'warning'
-    })
+  const remove = (id: string, title?: string) => {
+    return ElMessageBox.confirm(
+      i18n.global.t(title ? 'hooks.confirmDelete0' : 'hooks.confirmDelete', [title]),
+      i18n.global.t('hooks.delete'),
+      { type: 'warning' }
+    )
       .then(() => {
         return api
           .delete(`${option.baseApi}${option.deleteApiPrefix ?? ''}/${id}`)

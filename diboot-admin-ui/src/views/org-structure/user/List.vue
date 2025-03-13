@@ -180,7 +180,7 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('ã€
                   <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                     {{ $t('operation.update') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="deletePermission && row.status === 'I'" @click="remove(row.id)">
+                  <el-dropdown-item v-if="deletePermission && row.status === 'I'" @click="remove(row.id, row.userNum)">
                     {{ $t('operation.delete') }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
