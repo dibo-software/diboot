@@ -77,6 +77,15 @@ public class S extends StringUtils{
 	}
 
 	/**
+	 * 将list拼接成string，默认分隔符:,
+	 * @param stringList
+	 * @return
+	 */
+	public static String joinWith(String separator, Iterable<?> stringList){
+		return StringUtils.join(stringList, separator);
+	}
+
+	/**
 	 * 按,拆分字符串
 	 * @param joinedStr
 	 * @return
