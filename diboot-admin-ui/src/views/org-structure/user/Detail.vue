@@ -11,8 +11,6 @@ defineExpose({
     visible.value = true
   }
 })
-
-const getPrimaryPositionId = () => model.value.userPositionList!.find(e => e.isPrimaryPosition)!.positionId
 </script>
 
 <template>
