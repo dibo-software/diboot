@@ -9,6 +9,8 @@ export interface ListOption<D> {
   rebuildQuery?: (query: Partial<D>) => Partial<D>
   // 列表数据加载成功后执行函数
   loadSuccess?: () => void
+  // 单页条数
+  pageSize?: number
 }
 
 export interface Pagination {
@@ -27,6 +29,9 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
   // 标记加载状态
   const loading = ref(false)
 
+  // 标记刷新状态
+  const refreshing = ref(false)
+
   const dataList: Array<T> = reactive([])
 
   const pagination: Partial<Pagination> = reactive({})
@@ -42,7 +47,7 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     const tempQueryParam: Record<string, unknown> = _.cloneDeep(queryParam)
     // 合并分页、排序参数
     tempQueryParam.pageIndex = pagination.current
-    tempQueryParam.pageSize = pagination.pageSize
+    tempQueryParam.pageSize = option.pageSize ? option.pageSize : pagination.pageSize
     tempQueryParam.orderBy = pagination.orderBy
     // 合并日期范围查询参数
     for (const [key, value] of Object.entries(dateRangeQuery)) {
@@ -92,6 +97,16 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     getList(true)
   }, 300)
 
+  // 处理刷新数据
+  const refreshList = async () => {
+    refreshing.value = true
+    try {
+      await onSearch()
+    } finally {
+      refreshing.value = false
+    }
+  }
+
   /**
    * 下一页
    */
@@ -124,6 +139,8 @@ export default <T, D = T>(option: ListOption<D> & DeleteOption) => {
     loading,
     dataList,
     pagination,
+    refreshing,
+    refreshList,
     ...del
   }
 }
