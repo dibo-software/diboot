@@ -1,7 +1,6 @@
 package com.example.api.controller.system;
 
 import com.diboot.core.util.S;
-import com.diboot.core.util.V;
 import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.file.entity.FileRecord;
@@ -115,25 +114,6 @@ public class FileController {
         }
         fileStorageService.download(fileRecord, response);
         return null;
-    }
-
-    /**
-     * 批量下载文件
-     *
-     * @param fileIds
-     * @param response
-     * @return
-     * @throws Exception
-     */
-    @PostMapping
-    public JsonResult<?> batchDownload(@RequestBody List<String> fileIds, HttpServletResponse response) throws Exception {
-        List<FileRecord> fileRecords = fileRecordService.getEntityListByIds(fileIds);
-        if (V.isEmpty(fileRecords)) {
-            log.warn("文件不存在:{}", fileIds);
-            return new JsonResult<>(Status.FAIL_VALIDATION, "文件不存在");
-        }
-//        fileStorageService.download(fileRecord, response);
-        return JsonResult.FAIL_VALIDATION("批量下载未实现");
     }
 
     /**
