@@ -128,7 +128,12 @@ const sendMessage = async (message: string, model: string) => {
       const { pattern, choices } = JSON.parse(ev.data)
       const choice = choices[0]
       const answerMessage = currentMessages.value[currentMessages.value.length - 1]
-      answerMessage.role = choice.message.role
+      if (choice.message.role) answerMessage.role = choice.message.role
+
+      // 思考过程
+      if (!answerMessage.reasoningContent) answerMessage.reasoningContent = ''
+      answerMessage.reasoningContent += choice.message.reasoning_content || ''
+
       if (pattern !== 'REPLACE') {
         if (!answerMessage.originContent) answerMessage.originContent = ''
         answerMessage.originContent += choice.message.content || ''
@@ -169,12 +174,13 @@ const sendMessage = async (message: string, model: string) => {
 <template>
   <el-main class="chat-ai-main">
     <el-scrollbar ref="chatScrollbarRef">
-      <div v-if="currentMessages.length > 0" ref="chatContentRef">
+      <div v-if="currentMessages?.length" ref="chatContentRef">
         <chat-item
           v-for="(message, index) in currentMessages"
           :key="`message_${index}`"
           :role="message.role"
           :message="message.content"
+          :reasoning="message.reasoningContent"
         />
       </div>
       <div v-else>

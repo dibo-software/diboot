@@ -4,6 +4,7 @@ import { UserFilled } from '@element-plus/icons-vue'
 const props = defineProps<{
   role: string
   message: string
+  reasoning?: string
 }>()
 
 const classNames = computed(() => ['chat-item', `chat-item-${props.role}`].join(' '))
@@ -15,7 +16,13 @@ const classNames = computed(() => ['chat-item', `chat-item-${props.role}`].join(
       <el-icon><UserFilled /></el-icon>
     </div>
     <div v-else class="chat-icon">AI</div>
-    <div class="chat-message" v-html="message" />
+    <div class="chat-message">
+      <div v-if="reasoning" class="reasoning">
+        <div class="line" />
+        <div v-text="reasoning" />
+      </div>
+      <div v-html="message" />
+    </div>
   </div>
 </template>
 
@@ -48,6 +55,24 @@ const classNames = computed(() => ['chat-item', `chat-item-${props.role}`].join(
     box-sizing: border-box;
     border-radius: 10px;
     overflow: auto;
+
+    .reasoning {
+      color: #8b8b8b;
+      white-space: pre-wrap;
+      padding: 0 0 0 13px;
+      line-height: 26px;
+      position: relative;
+      margin: 20px 0;
+
+      .line {
+        border-left: 2px solid #e5e5e5;
+        height: calc(100% - 10px);
+        margin-top: 5px;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    }
   }
   &-user {
     .chat-icon {

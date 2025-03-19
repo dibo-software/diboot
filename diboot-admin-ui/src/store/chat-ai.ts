@@ -5,6 +5,7 @@ type RoleType = 'system' | 'user' | 'assistant'
 type AiMessage = {
   role: RoleType
   content: string
+  reasoningContent?: string
 }
 
 export interface AiSession {
