@@ -165,12 +165,12 @@ onMounted(() => {
             $t('login.submit')
           }}</el-button>
         </el-form-item>
-        <el-form-item v-if="authorizeInfoMap['CAS_SERVER']">
+        <el-form-item v-if="enableSso && authorizeInfoMap['CAS_SERVER']">
           <el-button style="width: 100%" type="primary" @click="redirectTo('CAS_SERVER')">{{
             $t('login.cas')
           }}</el-button>
         </el-form-item>
-        <el-form-item v-if="authorizeInfoMap['OAuth2']">
+        <el-form-item v-if="enableSso && authorizeInfoMap['OAuth2']">
           <el-button style="width: 100%" type="primary" @click="redirectTo('OAuth2')">{{
             $t('login.oauth2')
           }}</el-button>
