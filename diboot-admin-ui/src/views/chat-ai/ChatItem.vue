@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UserFilled } from '@element-plus/icons-vue'
+import { UserFilled, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 
 const props = defineProps<{
   role: string
@@ -8,6 +8,8 @@ const props = defineProps<{
 }>()
 
 const classNames = computed(() => ['chat-item', `chat-item-${props.role}`].join(' '))
+
+const collapse = ref(true)
 </script>
 
 <template>
@@ -18,8 +20,15 @@ const classNames = computed(() => ['chat-item', `chat-item-${props.role}`].join(
     <div v-else class="chat-icon">AI</div>
     <div class="chat-message">
       <div v-if="reasoning" class="reasoning">
-        <div class="line" />
-        <div v-text="reasoning" />
+        <el-button round @click="collapse = !collapse">
+          已深度思考
+          <el-icon v-if="collapse"><ArrowUp /></el-icon>
+          <el-icon v-else><ArrowDown /></el-icon>
+        </el-button>
+        <div v-if="reasoning && collapse" class="content">
+          <div class="line" />
+          <div v-text="reasoning" />
+        </div>
       </div>
       <div v-html="message" />
     </div>
@@ -57,20 +66,24 @@ const classNames = computed(() => ['chat-item', `chat-item-${props.role}`].join(
     overflow: auto;
 
     .reasoning {
-      color: #8b8b8b;
-      white-space: pre-wrap;
-      padding: 0 0 0 13px;
-      line-height: 26px;
-      position: relative;
       margin: 20px 0;
 
-      .line {
-        border-left: 2px solid #e5e5e5;
-        height: calc(100% - 10px);
-        margin-top: 5px;
-        position: absolute;
-        left: 0;
-        top: 0;
+      .content {
+        color: #8b8b8b;
+        white-space: pre-wrap;
+        padding: 0 0 0 13px;
+        line-height: 26px;
+        position: relative;
+        font-size: 13px;
+
+        .line {
+          border-left: 2px solid #e5e5e5;
+          height: calc(100% - 10px);
+          margin-top: 5px;
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
       }
     }
   }

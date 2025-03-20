@@ -132,7 +132,7 @@ public class AiSessionRecordController extends BaseCrudRestController<AiSessionR
         response.setCharacterEncoding(Cons.CHARSET_UTF8);
         response.setHeader(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue());
 
-        SseEmitter sseEmitter = new SseEmitter();
+        SseEmitter sseEmitter = new SseEmitter(120_000L);
         try {
             client.executeStream(aiChatRequest, new EventSourceListener() {
                 @Override
