@@ -67,6 +67,8 @@ const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
 
 const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 
+const enableSso = import.meta.env.VITE_APP_ENABLE_SSO === 'true'
+
 // 单点登录集成
 const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
   callback: (token: string) => {
@@ -77,7 +79,10 @@ const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
 })
 
 onMounted(() => {
-  initSsoParams()
+  auth.clearToken()
+  if (enableSso) {
+    initSsoParams()
+  }
 })
 </script>
 
