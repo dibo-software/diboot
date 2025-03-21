@@ -12,5 +12,4 @@
 这篇教程将带你用15分钟完成：项目创建、初始化、以及一个完整的功能开发，而且是**不写一行代码**。
 
 ### 2. Devtools老用户：
-可以自行从playground项目中下载devtools jar包自行配置使用
-[下载 devtools jar](https://gitee.com/dibo_software/playground/tree/master-v3/demo/libs)。
+可以自行从`rest-api-example/libs`中下载 `diboot-lcdp-devtools-*jar` 包自行配置使用
