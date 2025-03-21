@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
+        <version>3.4.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -153,7 +153,7 @@
         <!-- devtools 代码生成工具 及其相关依赖 begin ，开发环境依赖使用，部署环境需剔除依赖-->
         <dependency>
             <groupId>com.diboot</groupId>
-            <artifactId>lcdp-devtools</artifactId>
+            <artifactId>diboot-lcdp-devtools</artifactId>
             <version>3.6.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/diboot-lcdp-devtools-3.6.0.jar</systemPath>
