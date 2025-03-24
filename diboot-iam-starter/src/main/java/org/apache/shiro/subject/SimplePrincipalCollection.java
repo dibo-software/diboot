@@ -48,7 +48,8 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
     private Map<String, Set> realmPrincipals;
 
-    private transient String cachedToString; //cached toString() result, as this can be printed many times in logging
+    //cached toString() result, as this can be printed many times in logging
+    private transient String cachedToString;
 
     public SimplePrincipalCollection() {
     }
@@ -86,7 +87,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * no principals yet.
      * <p/>
      * The 'first available principal' is interpreted as the principal that would be returned by
-     * <code>{@link #iterator() iterator()}.{@link java.util.Iterator#next() next()}.</code>
+     * <code>{@link #iterator() iterator()}.{@link Iterator#next() next()}.</code>
      *
      * @inheritDoc
      */
@@ -230,7 +231,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
         if (o instanceof SimplePrincipalCollection) {
             SimplePrincipalCollection other = (SimplePrincipalCollection) o;
-            return this.realmPrincipals != null ? this.realmPrincipals.equals(other.realmPrincipals) : other.realmPrincipals == null;
+            return Objects.equals(this.realmPrincipals, other.realmPrincipals);
         }
         return false;
     }
