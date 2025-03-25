@@ -29,6 +29,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Token相关操作类
  * @author Yangzhao
@@ -42,12 +44,19 @@ public class TokenUtils {
     public static final int EXPIRES_IN_MINUTES = getConfigIntValue("diboot.iam.token-expires-minutes", 60);
 
     /**
-     * 从请求头中获取客户端发来的token
+     * 从请求中获取客户端发来的token
      * @param request
      * @return
      */
     public static String getRequestToken(HttpServletRequest request) {
         String authtoken = request.getHeader(AUTH_HEADER);
+        if (authtoken == null) {
+            // 兼容参数携带token
+            String[] values = request.getParameterValues(AUTH_HEADER);
+            if (values != null && values.length > 0) {
+                authtoken = java.net.URLDecoder.decode(values[0], StandardCharsets.UTF_8);
+            }
+        }
         if(authtoken != null){
             if(authtoken.startsWith(Cons.TOKEN_PREFIX_BEARER)){
                 authtoken = authtoken.substring(Cons.TOKEN_PREFIX_BEARER.length());
@@ -59,7 +68,6 @@ public class TokenUtils {
             return null;
         }
         if(!isActiveAccessToken(authtoken)){
-            log.warn("已过期或非系统颁发的token: {}", authtoken);
             return null;
         }
         return authtoken;
@@ -78,11 +86,10 @@ public class TokenUtils {
      * @param cachedUserInfo
      * @return
      */
-    public static synchronized String responseNewTokenIfRequired(ServletResponse response, String cachedUserInfo) {
+    public static synchronized String responseNewTokenIfRequired(ServletResponse response, String currentToken, String cachedUserInfo) {
         if(isCloseToExpired(cachedUserInfo)){
             //将刷新的token放入response header
-            String refreshToken = generateToken();
-            cacheRefreshToken(refreshToken, cachedUserInfo);
+            String refreshToken = getRefreshToken(currentToken, cachedUserInfo);
             ((HttpServletResponse)response).setHeader(AUTH_HEADER, refreshToken);
             log.debug("写回刷新token :{}", refreshToken);
             return refreshToken;
@@ -115,7 +122,7 @@ public class TokenUtils {
     public static String getCachedUserInfoStr(String accessToken) {
         String userInfoStr = getIamCacheManager().getCacheString(Cons.CACHE_TOKEN_USERINFO, accessToken);
         if(userInfoStr == null){
-            log.info("token {} 缓存信息不存在", accessToken);
+            log.debug("token {} 缓存信息不存在，已过期或无效", accessToken);
         }
         return userInfoStr;
     }
@@ -128,13 +135,33 @@ public class TokenUtils {
     public static boolean isActiveAccessToken(String accessToken) {
         String userInfoStr = getCachedUserInfoStr(accessToken);
         if(V.isEmpty(userInfoStr)){
+            log.warn("无效的token: {}", accessToken);
             return false;
         }
         if(isExpired(userInfoStr)){
+            log.warn("token已过期: {}，用户: {} 需重新登录后方可操作", accessToken, userInfoStr);
             IamSecurityUtils.logoutByToken(accessToken);
             return false;
         }
         return true;
+    }
+
+    /**
+     * 获取刷新token（先从缓存中读取）
+     * @param accessToken
+     */
+    public synchronized static String getRefreshToken(String accessToken, String userInfoStr) {
+        String refreshToken = getIamCacheManager().getCacheString(Cons.CACHE_TOKEN_REFRESH, accessToken);
+        if(refreshToken == null) {
+            refreshToken = generateToken();
+            cacheRefreshToken(refreshToken, userInfoStr);
+            getIamCacheManager().putCacheObj(Cons.CACHE_TOKEN_REFRESH, accessToken, refreshToken);
+            log.debug("生成 token: {} 的 refresh-token: {}", accessToken, refreshToken);
+        }
+        else {
+            log.debug("从缓存中获取 token: {} 的 refresh-token: {}", accessToken, refreshToken);
+        }
+        return refreshToken;
     }
 
     /**
@@ -196,9 +223,6 @@ public class TokenUtils {
     private static BaseCacheManager getIamCacheManager() {
         if(iamCacheManager == null) {
             iamCacheManager = (BaseCacheManager)ContextHolder.getBean("iamCacheManager");
-            if(iamCacheManager == null) {
-                throw new InvalidUsageException("exception.invalidUsage.tokenUtils.getIamCacheManager.message");
-            }
         }
         return iamCacheManager;
     }

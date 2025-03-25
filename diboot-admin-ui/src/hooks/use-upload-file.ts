@@ -10,10 +10,8 @@ export default (setValue: (fileIds?: string) => void, getFileList: () => FileRec
     if (value)
       uploadFileList.value.push(
         ...value.map(e => ({
-          id: e.id,
           url: imageBindSrc(e).src,
           name: e.fileName,
-          accessUrl: e.accessUrl,
           ...e
         }))
       )

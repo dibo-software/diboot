@@ -141,7 +141,9 @@ export default ({
         )
         .then(res => resolve(res.data))
         .catch(err => {
-          ElNotification.error(err?.msg || err?.message || (err?.length ? err : i18n.t('hooks.fetchOptionFailed')))
+          ElNotification.error(
+            err?.msg || err?.message || (err?.length ? err : i18n.global.t('hooks.fetchOptionFailed'))
+          )
           resolve(empty)
         })
         .finally(() => (asyncLoading.value = false))

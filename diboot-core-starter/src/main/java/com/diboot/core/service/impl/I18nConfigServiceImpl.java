@@ -17,6 +17,7 @@ package com.diboot.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.cache.I18nCacheManager;
@@ -219,6 +220,20 @@ public class I18nConfigServiceImpl extends BaseServiceImpl<I18nConfigMapper, I18
         i18nTranslateMap.putAll(i18nMap);
         // 返回全部结果
         return i18nTranslateMap;
+    }
+
+    @Override
+    public void updateI18nContent(String language, String code, String newContent) {
+        LambdaUpdateWrapper<I18nConfig> updateWrapper =
+                Wrappers.<I18nConfig>lambdaUpdate()
+                        .set(I18nConfig::getContent, newContent)
+                        .eq(I18nConfig::getLanguage, language)
+                        .eq(I18nConfig::getCode, code);
+        updateEntity(updateWrapper);
+        Map<String, String> i18nItemCache = new HashMap<>();
+        i18nItemCache.put(code, newContent);
+        i18nCacheManager.cacheLanguage(language, i18nItemCache);
+        log.debug("I18N {}:{} 的缓存已被更新为: {}", language, code, newContent);
     }
 
 }

@@ -22,7 +22,10 @@ const en: Locale = {
       }
     },
     document: { fetchFileFailed: 'Failed to fetch the file', emptyContent: 'File content is empty' },
-    download: 'Download',
+    download: {
+      previewTheFile: 'Preview the file',
+      filePreview: 'File preview'
+    },
     excel: {
       dataUpload: 'Data Upload',
       uploadData: 'Upload Data',

@@ -47,9 +47,26 @@ defineExpose({
         </el-tag>
       </el-descriptions-item>
       <el-descriptions-item :label="$t('position.label')">
-        <el-tag v-for="item in model.positionList" :key="item.id" type="success" effect="plain">
-          {{ item.name }}
-        </el-tag>
+        <template v-if="model.userPositionList?.length === 1">
+          <el-tag v-for="item in model.userPositionList" :key="item.id" type="success" effect="plain">
+            {{ item.positionName }}
+          </el-tag>
+        </template>
+        <template v-else-if="model.userPositionList?.length ?? 0 > 1">
+          <span style="font-size: 12px">{{ $t('position.main') }}：</span>
+          <template v-for="item in model.userPositionList" :key="item.id">
+            <el-tag v-if="item.isPrimaryPosition" type="success" effect="plain">
+              {{ item.positionName }}
+            </el-tag>
+          </template>
+          <br />
+          <span style="font-size: 12px">{{ $t('position.deputy') }}：</span>
+          <template v-for="item in model.userPositionList" :key="item.id">
+            <el-tag v-if="!item.isPrimaryPosition" type="warning" effect="plain">
+              {{ item.positionName }} ({{ item.orgName }})
+            </el-tag>
+          </template>
+        </template>
       </el-descriptions-item>
       <el-descriptions-item :label="$t('user.sortId')">
         {{ model.sortId }}

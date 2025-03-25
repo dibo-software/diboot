@@ -9,7 +9,7 @@ const i18n = useI18n()
 const locale = ref()
 // 初始化自定义主题色
 onMounted(() => {
-  appStore.colorPrimary && (colorPrimary.value = appStore.colorPrimary)
+  if (appStore.colorPrimary) colorPrimary.value = appStore.colorPrimary
   isSmall.value = appStore.globalSize === 'small'
 })
 watch(
@@ -24,7 +24,7 @@ watch(
     if (locale.value == null) {
       locale.value = Object.values(locales).find(e => e.name === i18n.fallbackLocale.value)
     }
-    oldValue && oldValue !== value && window.location.reload()
+    if (oldValue && oldValue !== value) window.location.reload()
   },
   {
     immediate: true

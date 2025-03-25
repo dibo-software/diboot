@@ -22,11 +22,12 @@ import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.config.Cons;
-import com.diboot.core.config.MessageSourceBeanPostProcessor;
 import com.diboot.core.data.protect.DataEncryptHandler;
 import com.diboot.core.data.protect.DataMaskHandler;
 import com.diboot.core.data.protect.DefaultDataEncryptHandler;
 import com.diboot.core.data.protect.DefaultDataMaskHandler;
+import com.diboot.core.extension.sequence.counter.SeqCounter;
+import com.diboot.core.extension.sequence.counter.MemoryCacheSeqCounter;
 import com.diboot.core.serial.deserializer.LocalDateTimeDeserializer;
 import com.diboot.core.config.CoreProperties;
 import com.diboot.core.config.GlobalProperties;
@@ -275,14 +276,13 @@ public class CoreAutoConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 国际化文件配置
-     *
-     * @return
+     * 计数器
      */
     @Bean
-    @ConditionalOnMissingBean
-    public MessageSourceBeanPostProcessor messageSourceBeanPostProcessor() {
-        return new MessageSourceBeanPostProcessor();
+    @ConditionalOnMissingBean(SeqCounter.class)
+    public SeqCounter memoryCacheSeqCounter() {
+        log.info("初始化 流水号计数器 内存缓存: MemoryCacheSeqCounter");
+        return new MemoryCacheSeqCounter();
     }
 
 }

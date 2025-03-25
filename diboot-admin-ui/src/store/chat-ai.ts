@@ -5,6 +5,7 @@ type RoleType = 'system' | 'user' | 'assistant'
 type AiMessage = {
   role: RoleType
   content: string
+  reasoningContent?: string
 }
 
 export interface AiSession {
@@ -64,11 +65,11 @@ export default defineStore('chatAi', {
     getSessions() {
       return new Promise((resolve, reject) => {
         api
-          .get<AiSession>('/ai-session/list')
+          .get<AiSession[]>('/ai-session/list')
           .then(res => {
             this.sessions = res.data || []
           })
-          .catch(err => {
+          .catch(() => {
             reject()
           })
       })
@@ -77,9 +78,9 @@ export default defineStore('chatAi', {
      * 创建session会话
      */
     async createSession(title: string) {
-      return new Promise((resolve, reject) => {
+      return new Promise<AiSession>((resolve, reject) => {
         api
-          .post<string>('/ai-session', {
+          .post<AiSession>('/ai-session', {
             title
           })
           .then(res => {
@@ -88,7 +89,7 @@ export default defineStore('chatAi', {
               resolve(res.data)
             } else reject()
           })
-          .catch(err => {
+          .catch(() => {
             reject()
           })
       })
@@ -121,7 +122,7 @@ export default defineStore('chatAi', {
         // 含有代码，最后统一刷新高亮
         const blocks = document.querySelectorAll('pre code')
         blocks.forEach(block => {
-          hljs.highlightBlock(block)
+          hljs.highlightBlock(block as HTMLElement)
         })
       }
     }

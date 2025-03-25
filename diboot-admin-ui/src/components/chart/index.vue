@@ -31,7 +31,7 @@ onMounted(() => {
   )
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   erd.uninstall(chartDom.value as HTMLElement)
   chart.dispose()
 })

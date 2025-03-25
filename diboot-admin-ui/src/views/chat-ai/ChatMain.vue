@@ -16,17 +16,26 @@ const { currentMessages, currentSession } = storeToRefs(chatAiStore)
 const inputMessage = ref('')
 // 模型
 const currentModel = ref<string>('qwen-turbo')
-const modelOptions: LabelValue[] = [
-  { label: '通义千问：qwen-turbo', value: 'qwen-turbo' },
-  { label: '通义千问：qwen-plus', value: 'qwen-plus' },
-  { label: '通义千问：qwen-max', value: 'qwen-max' },
-  { label: '文心一言：Yi-34B-Chat', value: 'Yi-34B-Chat' },
-  { label: 'Kimi：moonshot-v1-8k', value: 'moonshot-v1-8k' },
-  { label: 'Kimi：moonshot-v1-32k', value: 'moonshot-v1-32k' },
-  { label: 'Kimi：moonshot-v1-128k', value: 'moonshot-v1-128k' }
+const modelOptions = [
+  { label: '通义千问：qwen-turbo', value: 'qwen-turbo', group: 'qwen' },
+  { label: '通义千问：qwen-plus', value: 'qwen-plus', group: 'qwen' },
+  { label: '通义千问：qwen-max', value: 'qwen-max', group: 'qwen' },
+  { label: '文心一言：Yi-34B-Chat', value: 'Yi-34B-Chat', group: 'wenxin' },
+  { label: 'Kimi：moonshot-v1-8k', value: 'moonshot-v1-8k', group: 'kimi' },
+  { label: 'Kimi：moonshot-v1-32k', value: 'moonshot-v1-32k', group: 'kimi' },
+  { label: 'Kimi：moonshot-v1-128k', value: 'moonshot-v1-128k', group: 'kimi' },
+  { label: 'DeepSeek：deepseek-chat', value: 'deepseek-chat', group: 'deepseek' },
+  { label: 'DeepSeek：deepseek-reasoner', value: 'deepseek-reasoner', group: 'deepseek' }
 ]
 // 切换模型
 const changeModel = (val: string) => (currentModel.value = val)
+
+const aiModels = ref<string[]>([])
+api.get<string[]>('/ai-session-record/models').then(res => {
+  aiModels.value = res.data ?? []
+  const model = modelOptions.find(e => e.group === res.data[0])
+  if (model != null) changeModel(model.value)
+})
 
 // 例子
 const exampleList: { title: string; content: string }[] = [
@@ -119,7 +128,12 @@ const sendMessage = async (message: string, model: string) => {
       const { pattern, choices } = JSON.parse(ev.data)
       const choice = choices[0]
       const answerMessage = currentMessages.value[currentMessages.value.length - 1]
-      answerMessage.role = choice.message.role
+      if (choice.message.role) answerMessage.role = choice.message.role
+
+      // 思考过程
+      if (!answerMessage.reasoningContent) answerMessage.reasoningContent = ''
+      answerMessage.reasoningContent += choice.message.reasoning_content || ''
+
       if (pattern !== 'REPLACE') {
         if (!answerMessage.originContent) answerMessage.originContent = ''
         answerMessage.originContent += choice.message.content || ''
@@ -160,12 +174,13 @@ const sendMessage = async (message: string, model: string) => {
 <template>
   <el-main class="chat-ai-main">
     <el-scrollbar ref="chatScrollbarRef">
-      <div v-if="currentMessages.length > 0" ref="chatContentRef">
+      <div v-if="currentMessages?.length" ref="chatContentRef">
         <chat-item
           v-for="(message, index) in currentMessages"
           :key="`message_${index}`"
           :role="message.role"
           :message="message.content"
+          :reasoning="message.reasoningContent"
         />
       </div>
       <div v-else>
@@ -185,7 +200,13 @@ const sendMessage = async (message: string, model: string) => {
     <div class="chat-model">
       <span>{{ $t('chatAi.model') }}：</span>
       <el-select v-model="useModel" :placeholder="`${$t('placeholder.select')}`" @change="changeModel">
-        <el-option v-for="item in modelOptions" :key="item.value" :label="item.label" :value="item.value" />
+        <el-option
+          v-for="item in modelOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          :disabled="!aiModels.includes(item.group)"
+        />
       </el-select>
     </div>
     <div class="chat-input">

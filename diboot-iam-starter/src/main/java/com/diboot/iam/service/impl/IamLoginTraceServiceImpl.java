@@ -73,21 +73,18 @@ public class IamLoginTraceServiceImpl extends BaseServiceImpl<IamLoginTraceMappe
     @Override
     public void saveTokenRefreshTrace(String refreshToken, String oldToken) {
         String oldSignature = Encryptor.encrypt(oldToken);
-        LambdaQueryWrapper<IamLoginTrace> queryWrapper = new LambdaQueryWrapper<>();
         BaseLoginUser user = IamSecurityUtils.getCurrentUser();
+        String newSignature = Encryptor.encrypt(refreshToken);
+        LambdaUpdateWrapper<IamLoginTrace> updateWrapper = new LambdaUpdateWrapper<IamLoginTrace>()
+                .set(IamLoginTrace::getSignature, newSignature)
+                .set(IamLoginTrace::getSignType, IamLoginTrace.SIGN_TYPE.REFRESH_TOKEN.name())
+                .eq(IamLoginTrace::getSignature, oldSignature);
         if(user != null){
-            queryWrapper.eq(IamLoginTrace::getUserType, user.getUserType())
+            updateWrapper.eq(IamLoginTrace::getUserType, user.getUserType())
                     .eq(IamLoginTrace::getUserId, user.getId())
                     .eq(IamLoginTrace::getIsSuccess, true);
         }
-        queryWrapper.eq(IamLoginTrace::getSignature, oldSignature).orderByDesc(IamLoginTrace::getId);
-        IamLoginTrace loginTrace = this.getSingleEntity(queryWrapper);
-        if (loginTrace == null) {
-            return;
-        }
-        String signature = Encryptor.encrypt(refreshToken);
-        loginTrace.setSignature(signature).setSignType(IamLoginTrace.SIGN_TYPE.REFRESH_TOKEN.name()).setId(null);
-        this.createEntity(loginTrace);
+        this.updateEntity(updateWrapper);
     }
 
     @Override

@@ -51,6 +51,7 @@ public class D extends DateUtils{
 	public static final String FORMAT_TIME_HHmm = "HH:mm";
 	public static final String FORMAT_TIME_HHmmss = "HH:mm:ss";
 	public static final String FORMAT_DATE_Y4MD = "yyyy-MM-dd";
+	public static final String FORMAT_DATE_Y4M = "yyyy-MM";
 	public static final String FORMAT_DATETIME_Y4MDHM = "yyyy-MM-dd HH:mm";
 	public static final String FORMAT_DATETIME_Y4MDHMS = "yyyy-MM-dd HH:mm:ss";
 	public static final String FORMAT_DATE_SLASH_Y4MD = "yyyy/MM/dd";

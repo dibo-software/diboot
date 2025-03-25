@@ -139,7 +139,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
     public synchronized void clearOutOfDateData(String cacheName) {
         Cache cache = getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
         ConcurrentMap<Object, Object> cacheMap = (ConcurrentMap<Object, Object>)cache.getNativeCache();
         if(V.isEmpty(cacheMap)){
@@ -152,7 +152,7 @@ public class DynamicMemoryCacheManager extends BaseMemoryCacheManager implements
             if(isExpired(cacheName, entry.getKey())){
                 cache.evict(entry.getKey());
                 count++;
-                log.debug("清理已过期的缓存: {}.{}", cacheName, entry.getKey());
+                log.debug("清理已过期的缓存: {}.{}->{}", cacheName, entry.getKey(), entry.getValue());
             }
         }
         log.debug("清理完成已过期缓存数据: {} 共 {} 条", cacheName, count);

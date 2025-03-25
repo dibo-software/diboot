@@ -17,6 +17,8 @@ package com.diboot.iam.init;
 
 import com.diboot.core.cache.BaseCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
+import com.diboot.core.cache.I18nCacheManager;
+import com.diboot.iam.cache.SystemConfigCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.redis.ShiroRedisCacheManager;
 import com.diboot.iam.config.IamProperties;
@@ -62,7 +64,7 @@ public class IamRedisAutoConfig {
     private RedisTemplate<String, Object> redisTemplate;
 
     public IamRedisAutoConfig() {
-        log.info("初始化 IAM 组件 redis 自动配置");
+        log.info("初始化 IAM 组件 Redis 自动配置");
     }
 
     /**
@@ -81,14 +83,29 @@ public class IamRedisAutoConfig {
      * @return
      */
     @Bean(name = "iamCacheManager")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "iamCacheManager")
     public BaseCacheManager iamCacheManager(){
         log.info("初始化 IAM Redis缓存: DynamicRedisCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>(){{
                 put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
+                put(Cons.CACHE_TOKEN_REFRESH, 10);
                 put(Cons.CACHE_CAPTCHA, 5);
         }};
         return new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
+    }
+
+    /**
+     * 系统配置数据缓存管理器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public SystemConfigCacheManager systemConfigCacheManager() {
+        log.info("初始化 SystemConfig Redis缓存: DynamicRedisCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(com.diboot.core.config.Cons.CACHE_NAME_SYSTEM_CONFIG, 24*60);
+        }};
+        DynamicRedisCacheManager memoryCacheManager = new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
+        return new SystemConfigCacheManager(memoryCacheManager);
     }
 
 }

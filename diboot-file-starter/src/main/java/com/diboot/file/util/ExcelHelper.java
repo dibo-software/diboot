@@ -29,6 +29,7 @@ import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.diboot.core.exception.BusinessException;
 import com.diboot.core.util.I18n;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
@@ -36,6 +37,7 @@ import com.diboot.core.vo.JsonResult;
 import com.diboot.core.vo.Status;
 import com.diboot.file.excel.BaseExcelModel;
 import com.diboot.file.excel.TableHead;
+import com.diboot.file.excel.listener.FixedHeadExcelListener;
 import com.diboot.file.excel.write.ColorWriteHandler;
 import com.diboot.file.excel.write.CommentWriteHandler;
 import com.diboot.file.excel.write.MergeWriteHandler;
@@ -44,10 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -95,6 +94,34 @@ public class ExcelHelper {
      */
     public static <T> void read(InputStream inputStream, ExcelTypeEnum excelType, ReadListener<T> listener, Class<T> headClazz) {
         EasyExcel.read(inputStream).excelType(excelType).registerReadListener(listener).head(headClazz).sheet().doRead();
+    }
+
+    /**
+     * 从指定本地文件中读取excel数据
+     * @param localFilePath
+     * @param listener
+     * @return
+     * @param <T>
+     */
+    public static <T extends BaseExcelModel> void read(String localFilePath, FixedHeadExcelListener<T> listener) {
+        // 本地读excel文件
+        File excelFile = new File(localFilePath);
+        if (!excelFile.exists()) {
+            throw new BusinessException("exception.business.file.nonexist");
+        }
+        try {
+            EasyExcel.read(new FileInputStream(excelFile)).excelType(null)
+                    .registerReadListener(listener).head(listener.getExcelModelClass()).sheet().doRead();
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        catch (Exception ex) {
+            throw ex;
+        }
+        if (V.notEmpty(listener.getErrorMsgs())) {
+            throw new BusinessException(S.join(listener.getErrorMsgs()));
+        }
     }
 
     /**

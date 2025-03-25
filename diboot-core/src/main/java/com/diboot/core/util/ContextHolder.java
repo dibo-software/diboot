@@ -87,7 +87,7 @@ public class ContextHolder implements ApplicationContextAware, ApplicationListen
         }
         if(APPLICATION_CONTEXT == null){
             log.warn("无法获取ApplicationContext，请确保ComponentScan扫描路径包含com.diboot包路径，并在Spring初始化之后调用接口!");
-            new InvalidUsageException("exception.invalidUsage.contextHolder.getApplicationContext.message").printStackTrace();
+            new InvalidUsageException("检查调用时机").printStackTrace();
         }
         return APPLICATION_CONTEXT;
     }

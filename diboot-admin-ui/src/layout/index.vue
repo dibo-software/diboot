@@ -23,7 +23,9 @@ const oneLevel = ref<RouteRecordRaw>()
 const openOneLevel = (menu: RouteRecordRaw) => {
   const oldOneLevel = oneLevel.value
   oneLevel.value = menu
-  if (menu.children?.length && menu.children[0].beforeEnter) return
+  if (menu.children?.length) {
+    if (!!menu.children[0].beforeEnter || import.meta.env.VITE_APP_SUBMENU_AUTO_OPEN === 'false') return
+  }
   if (router.currentRoute.value.name !== menu.name)
     router.push(menu.path).then(navigationFailure => {
       if (navigationFailure) oneLevel.value = oldOneLevel
@@ -135,8 +137,8 @@ const vDrag: Directive<HTMLElement> = {
               </el-menu-item>
             </el-menu>
           </div>
-          <div v-show="oneLevel?.children?.length" class="submenu">
-            <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel?.children">
+          <div v-if="oneLevel?.children?.length" class="submenu">
+            <app-menu :key="oneLevel.path" v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children">
               <template #title>
                 <strong class="title">{{ oneLevel?.meta?.title }}</strong>
               </template>
@@ -175,8 +177,8 @@ const vDrag: Directive<HTMLElement> = {
       </app-header>
     </el-header>
     <el-container>
-      <el-aside v-show="oneLevel?.children?.length" :width="isMenuCollapse ? '64px' : '220px'">
-        <app-menu v-model:collapse="isMenuCollapse" :menu-tree="oneLevel?.children" />
+      <el-aside v-if="oneLevel?.children?.length" :width="isMenuCollapse ? '64px' : '220px'">
+        <app-menu :key="oneLevel.path" v-model:collapse="isMenuCollapse" :menu-tree="oneLevel.children" />
       </el-aside>
       <el-container>
         <el-main style="padding: 0">
@@ -267,7 +269,7 @@ const vDrag: Directive<HTMLElement> = {
 
     .el-sub-menu.is-active,
     .el-menu-item.is-active {
-      background-color: #3a4979 !important;
+      background-color: var(--menu-active-background-color) !important;
     }
 
     // 分栏一级菜单配色调整 -- end （dark配色位于dark.scss）

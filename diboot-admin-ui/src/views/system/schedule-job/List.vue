@@ -62,7 +62,7 @@ const logListPermission = checkPermission('logList')
             <el-tag v-else type="info"> {{ $t('scheduleJob.close') }}</el-tag>
 
             <div style="margin-left: auto">
-              <el-popconfirm :title="$t('scheduleJob.immediately')" @confirm="executeOnce(item.id)">
+              <el-popconfirm :title="$t('scheduleJob.immediately')" width="240px" @confirm="executeOnce(item.id)">
                 <template #reference>
                   <el-button v-has-permission="'executeOnce'" circle :icon="CaretRight" type="primary" />
                 </template>
@@ -82,7 +82,7 @@ const logListPermission = checkPermission('logList')
                     <el-dropdown-item v-if="logListPermission" @click="openLog(item.id)">
                       {{ $t('scheduleJobLog.title') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="deletePermission" divided @click="remove(item.id)">
+                    <el-dropdown-item v-if="deletePermission" divided @click="remove(item.id, item.jobName)">
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>

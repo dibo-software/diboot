@@ -25,14 +25,10 @@ import java.util.Map;
  * @author mazc@dibo.ltd
  * @version v3.1.1
  * @date 2023/10/07
+ * @see AutoFillHandler
  */
-public interface SerialNumberGenerator {
-
-    /**
-     * 系列号生成器
-     * @return
-     */
-    LabelValue definition();
+@Deprecated
+public interface SerialNumberGenerator extends AutoFillHandler {
 
     /**
      * 生成序列号
@@ -48,6 +44,8 @@ public interface SerialNumberGenerator {
      * @param entityDataMap
      * @return
      */
-    String generate(Map<String, Object> entityDataMap);
+    default String generate(Map<String, Object> entityDataMap) {
+        return (String)buildFillValue(entityDataMap);
+    }
 
 }

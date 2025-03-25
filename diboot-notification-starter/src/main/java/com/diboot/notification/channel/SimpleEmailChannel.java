@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.exception.InvalidUsageException;
 import com.diboot.core.util.ContextHolder;
 import com.diboot.core.util.JSON;
+import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import com.diboot.notification.config.Cons;
 import com.diboot.notification.entity.Message;
@@ -59,7 +60,7 @@ public class SimpleEmailChannel implements MessageChannel {
         String status = Cons.MESSAGE_STATUS.DELIVERY.name();
         JavaMailSender javaMailSender = ContextHolder.getBean(JavaMailSender.class);
         if(javaMailSender == null) {
-            throw new InvalidUsageException("exception.invalidUsage.simpleEmailChannel.send.message");
+            throw new InvalidUsageException("邮件无法发送：无JavaMailSender实例，请检查相关配置及依赖环境。");
         }
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -94,7 +95,7 @@ public class SimpleEmailChannel implements MessageChannel {
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
             log.error("[发送邮件失败]：信息为： {} , 异常", message, e);
-            result = e.getMessage();
+            result = S.cut(e.getMessage(), 200);
             status = Cons.MESSAGE_STATUS.FAILED.name();
         }
         // 更新结果

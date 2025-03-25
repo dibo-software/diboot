@@ -50,7 +50,7 @@ const getIcon = (val: string) => {
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw" top="10vh">
+  <el-dialog v-model="visible" :title="$t('title.detail')" width="65vw" top="10vh" draggable>
     <el-descriptions v-loading="loading" :column="2" class="margin-top" border>
       <el-descriptions-item :label="$t('role.name')">
         {{ model.name }}
@@ -58,8 +58,13 @@ const getIcon = (val: string) => {
       <el-descriptions-item :label="$t('role.code')">
         {{ model.code }}
       </el-descriptions-item>
+      <el-descriptions-item :label="$t('role.userList')" :span="2">
+        {{ model.userNameList?.join('、') }}
+      </el-descriptions-item>
       <el-descriptions-item :label="$t('role.description')" :span="2">
-        {{ model.description }}
+        <div style="white-space: break-spaces">
+          {{ model.description }}
+        </div>
       </el-descriptions-item>
       <el-descriptions-item :label="$t('role.grantPermission')" :span="2">
         <el-scrollbar height="calc(80vh - 300px)">
@@ -76,7 +81,7 @@ const getIcon = (val: string) => {
                 <el-icon>
                   <component :is="getIcon(data.displayType)" />
                 </el-icon>
-                <span>{{ node.label }} </span>
+                <span style="padding-left: 5px">{{ node.label }} </span>
               </span>
             </template>
           </el-tree>

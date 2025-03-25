@@ -7,7 +7,7 @@ import auth from '@/utils/auth'
 const authStore = useAuthStore()
 const positions = ref()
 if (authStore.info) {
-  positions.value = authStore.info.positionList?.map(position => position.name).toString()
+  positions.value = authStore.info.positionList?.map((position: { name: string }) => position.name).toString()
 }
 
 const login = () => {

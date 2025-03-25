@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.diboot.core.binding.RelationsBinder;
 import com.diboot.core.exception.BusinessException;
+import com.diboot.core.service.I18nConfigService;
 import com.diboot.core.service.impl.BaseServiceImpl;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.V;
@@ -32,6 +33,7 @@ import com.diboot.iam.mapper.IamResourceMapper;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.vo.IamResourceListVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +51,24 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class IamResourceServiceImpl extends BaseServiceImpl<IamResourceMapper, IamResource> implements IamResourceService {
+
+    @Autowired(required = false)
+    private I18nConfigService i18nConfigService;
+
+    /**
+     * 更新了名称则更新i18n中的中文名
+     */
+    @Override
+    protected void beforeUpdate(IamResource entity) {
+        if(i18nConfigService != null) {
+            String oldDisplayName = getValueOfField(entity.getId(), IamResource::getDisplayName);
+            if(V.notEquals(oldDisplayName, entity.getDisplayName())) {
+                i18nConfigService.updateI18nContent("zh_CN", entity.getDisplayNameI18n(), entity.getDisplayName());
+                log.debug("菜单 {} 的国际化中文内容已更改为 {}", oldDisplayName, entity.getDisplayName());
+            }
+        }
+        super.beforeUpdate(entity);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

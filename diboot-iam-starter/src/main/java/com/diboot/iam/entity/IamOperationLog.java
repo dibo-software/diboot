@@ -119,12 +119,11 @@ public class IamOperationLog extends BaseEntity<String> {
      * 状态码
      */
     @TableField()
-    private int statusCode;
+    private Integer statusCode;
 
     /**
      * 异常信息
      */
-    @Length(max = 1000, message = "{validation.iamOperationLog.errorMsg.Length.message}")
     @TableField()
     private String errorMsg;
 

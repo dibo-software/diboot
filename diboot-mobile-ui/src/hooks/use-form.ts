@@ -27,10 +27,16 @@ export default (option: FormOption) => {
    */
   const submit = async (data: Record<string, unknown>, formEl?: FormInstance) => {
     const { baseApi, primaryKey = 'id', createApi, updateApiPrefix, afterValidate, successCallback } = option
+    submitting.value = true
     try {
-      submitting.value = true
       await formEl?.validate()
       if (afterValidate) await afterValidate()
+    } catch (e: any) {
+      submitting.value = false
+      showNotify({ type: 'danger', message: e?.msg || e?.message || '校验失败' })
+      throw e
+    }
+    try {
       const id = data[primaryKey]
       let res
       if (id) {
@@ -38,7 +44,7 @@ export default (option: FormOption) => {
       } else {
         res = await api.post<string>(createApi ? createApi : baseApi, data)
       }
-      showNotify({ type: 'success', message:res.msg })
+      showNotify({ type: 'success', message: res.msg })
       successCallback(res.data ?? (id as string))
       return true
     } catch (e: any) {
@@ -62,7 +68,7 @@ export default (option: FormOption) => {
       await formEl?.validate()
       if (afterValidate) await afterValidate()
       const res = await api.post<string>(baseApi, data)
-      showNotify({ type: 'success', message:res.msg })
+      showNotify({ type: 'success', message: res.msg })
       successCallback(res.data)
       return true
     } catch (e: any) {

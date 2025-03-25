@@ -58,7 +58,7 @@ public abstract class BaseTranslator {
                 otherStatements.addAll(this.translateInsertValues(stmt));
             }
             else if(V.notEmpty(stmt)){
-                throw new InvalidUsageException("exception.invalidUsage.baseTranslator.notSupportTranslator", stmt);
+                throw new InvalidUsageException("暂不支持该SQL翻译：{}", stmt);
             }
         });
         log.debug("转换初始化SQL：{}", otherStatements);

@@ -40,29 +40,24 @@ import java.util.List;
 @DisallowConcurrentExecution
 @CollectThisJob(name = "清除过期操作日志", paramJson = "{\"daysBefore\":30}", cron = "0 0 1 * * ?")
 public class ClearOperationLogJob extends QuartzJobBean {
-    /**
-     * 清理过期日志的SQL示例
-     */
-    private static final String SQL = "DELETE FROM dbt_iam_operation_log WHERE create_time <= ?";
-    private static final String PARAM_KEY_DAYS_BEFORE = "daysBefore";
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         // 获取参数
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
         int days = 30;
-        if (jobDataMap.containsKey(PARAM_KEY_DAYS_BEFORE)) {
-            days = jobDataMap.getInt(PARAM_KEY_DAYS_BEFORE);
+        if (jobDataMap.containsKey("daysBefore")) {
+            days = jobDataMap.getInt("daysBefore");
         }
-        List<Object> params = new ArrayList<>(1);
-        params.add(LocalDateTime.now().minusDays(days));
+        LocalDateTime beginDateTime = LocalDateTime.now().minusDays(days);
+        String SQL = "DELETE FROM dbt_iam_operation_log WHERE create_time <= ?";
         try {
-            SqlExecutor.executeUpdate(SQL, params);
+            SqlExecutor.executeUpdate(SQL, beginDateTime);
         } catch (Exception e) {
             log.error("ClearOperationLogJob执行异常", e);
             throw new JobExecutionException(e);
         }
-        log.info("ClearOperationLogJob成功清理{}天之前的操作日志", days);
+        log.info("ClearOperationLogJob成功清理 {}天 之前的操作日志", days);
     }
 
 }

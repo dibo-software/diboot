@@ -16,8 +16,10 @@
 package com.diboot.starter;
 
 import com.diboot.core.cache.BaseCacheManager;
+import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicMemoryCacheManager;
 import com.diboot.core.util.V;
+import com.diboot.iam.cache.SystemConfigCacheManager;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.config.IamProperties;
 import com.diboot.iam.init.IamRedisAutoConfig;
@@ -205,8 +207,8 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
         filterChainMap.put("/auth/token", "anon");
-        filterChainMap.put("/auth/2step-code", "anon");
-        filterChainMap.put("/file/*/image", "anon");
+
+        filterChainMap.put("/client/login", "anon");
 
         Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {
@@ -239,11 +241,12 @@ public class IamAutoConfig {
      * @return
      */
     @Bean(name = "iamCacheManager")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "iamCacheManager")
     public BaseCacheManager iamCacheManager() {
         log.info("初始化 IAM 内存缓存: DynamicMemoryCacheManager");
         Map<String, Integer> cacheName2ExpireMap = new HashMap<String, Integer>() {{
             put(Cons.CACHE_TOKEN_USERINFO, iamProperties.getTokenExpiresMinutes());
+            put(Cons.CACHE_TOKEN_REFRESH, 10);
             put(Cons.CACHE_CAPTCHA, 5);
         }};
         return new DynamicMemoryCacheManager(cacheName2ExpireMap);
@@ -255,6 +258,20 @@ public class IamAutoConfig {
             log.info("初始化: ThreadPoolTaskExecutor 指定子线程传递用户信息");
             taskExecutorObjectProvider.ifAvailable(taskExecutor -> taskExecutor.setTaskDecorator(new ShiroContextTaskDecorator()));
         }
+    }
+
+    /**
+     * 系统配置数据缓存管理器
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public SystemConfigCacheManager systemConfigCacheManager() {
+        log.info("初始化 SystemConfig 内存缓存: DynamicMemoryCacheManager");
+        Map<String, Integer> cacheName2ExpireMap = new HashMap<>() {{
+            put(com.diboot.core.config.Cons.CACHE_NAME_SYSTEM_CONFIG, 24 * 60);
+        }};
+        DynamicMemoryCacheManager memoryCacheManager = new DynamicMemoryCacheManager(cacheName2ExpireMap);
+        return new SystemConfigCacheManager(memoryCacheManager);
     }
 
 }

@@ -1,0 +1,75 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  #datasource config
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/playground?currentSchema=public
+    username: system
+    password: system
+    hikari:
+      maximum-pool-size: 10
+      max-lifetime: 60000 # 连接的最大生命周期
+
+# Redis config
+#  redis:
+#    database: 0
+#    port: 6379
+#    host: localhost
+#    password:
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  global-config:
+    db-config:
+      logic-delete-value: true
+      logic-not-delete-value: false
+
+logging:
+  level:
+    root: debug
+    org:
+      springframework: info
+    _org:
+      springframework: info
+
+# Diboot Configuration
+diboot:
+  init-sql: true #自动初始化SQL，开发环境下初次启动开启，初始化后可关闭
+  file:
+    # 文件存储路径（本地存储方式）
+    storage-directory: D:/temp/playground
+  iam:
+    # token-expires-minutes: 60
+    # Shiro的匿名urls
+    anon-urls:
+      - /swagger**/**
+      - /webjars/**
+      - /v3/**
+      - /doc.html
+      - /diboot-devtools/** # 允许devtools直接访问
+      - /auth/sso/** # 单点登录集成需打开该注释
+#    以下为单点登录配置示例：
+#    cas-server:
+#      auth-center-url: https://cas.server.com:8443/cas
+#      login-url: https://cas.server.com:8443/cas/login
+#      logout-url: https://cas.server.com:8443/cas/logout
+#      callback: http://localhost:5173/login
+#    oauth2:
+#      client-id: client-id
+#      client-secret: client-secret
+#      auth-center-url: http://127.0.0.1:8000/auth-center
+#      access-token-uri: http://127.0.0.1:8000/auth-center/oauth2/token
+#      user-info-uri: http://127.0.0.1:8000/user-center/oauth2/user-info
+#      callback: http://127.0.0.1:5173/login
+  lcdp:
+    #tenant: false 是否开启多租户
+    devtools:
+      codes-author: MyName
+      codes-copyright: MyCorp
+      codes-version: 1.0
+      output-path: rest-api/src/main/java/com/example/demo/
+      output-path-admin-ui: diboot-admin-ui/

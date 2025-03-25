@@ -4,6 +4,7 @@ import { buildImgSrc } from '@/utils/file'
 import type { UserModel } from '@/views/org-structure/user/type'
 import type { Role } from '@/views/system/role/type'
 import useViewTabs from './view-tabs'
+import i18n from '@/i18n'
 
 export interface IAuthStore {
   realname: string
@@ -45,8 +46,15 @@ export default defineStore('auth', {
         if (this.info?.avatarUrl) this.avatar = buildImgSrc(this.info?.avatarUrl)
         this.realname = `${this.info?.realname}`
         this.roles = res.data?.roles ?? []
+
+        if (import.meta.env.VITE_APP_ENABLE_I18N === 'true') {
+          api
+            .get('/i18n-config/all')
+            .then(res => i18n.global.mergeLocaleMessage(unref(i18n.global.locale), res.data ?? {}))
+            .catch(err => console.error(err.msg || err.message))
+        }
       } catch (e) {
-        throw new Error('获取登录用户信息异常')
+        throw new Error('获取登录用户信息异常', e)
       }
     },
     async logout() {

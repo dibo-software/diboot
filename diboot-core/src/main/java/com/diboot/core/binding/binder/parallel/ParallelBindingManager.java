@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 并行绑定Manager
+ * 并行绑定Manager（已废弃）
+ * @see com.diboot.core.binding.helper.RelationsBindingManager
  * @author JerryMa
  * @version v2.4.0
  * @date 2021/11/16
  * Copyright © diboot.com
  */
+@Deprecated
 @Slf4j
 @Component
 public class ParallelBindingManager {

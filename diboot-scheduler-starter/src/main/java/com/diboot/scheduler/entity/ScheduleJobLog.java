@@ -118,7 +118,7 @@ public class ScheduleJobLog extends BaseEntity<String> {
     /**
      * 执行结果信息
      */
-    @Length(max = 500, message = "{validation.scheduleJobLog.executeMsg.Length.message}")
+    @Length(max = 1000, message = "{validation.scheduleJobLog.executeMsg.Length.message}")
     @TableField()
     private String executeMsg;
 }

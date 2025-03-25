@@ -57,4 +57,12 @@ public interface I18nConfigService extends BaseService<I18nConfig> {
      */
     Map<String, String> translate(List<String> i18nKeys);
 
+    /**
+     * 更新i18n的文本内容
+     * @param language
+     * @param code
+     * @param newContent
+     */
+    void updateI18nContent(String language, String code, String newContent);
+
 }

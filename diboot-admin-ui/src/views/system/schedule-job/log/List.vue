@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowUp, ArrowDown, Search } from '@element-plus/icons-vue'
+import { ArrowUp, ArrowDown, Search, Delete } from '@element-plus/icons-vue'
 import type { ScheduleJobLog } from '../type'
 import Detail from './Detail.vue'
 
@@ -47,17 +47,18 @@ const openDetail = (id: string) => {
 </script>
 
 <template>
-  <el-drawer v-model="visible" :title="$t('scheduleJobLog.title')" size="850px">
+  <el-drawer v-model="visible" :title="$t('scheduleJobLog.title')" size="800px">
     <div class="list-page">
       <el-header>
         <el-space wrap class="list-operation">
-          <el-button v-has-permission="'logDelete'" @click="batchRemove(selectedKeys)">{{
+          <el-button v-has-permission="'logDelete'" :icon="Delete" @click="batchRemove(selectedKeys)">{{
             $t('operation.batchDelete')
           }}</el-button>
           <el-space>
             <el-select
               v-model="queryParam.runStatus"
               :label="$t('scheduleJobLog.runStatus')"
+              :placeholder="$t('scheduleJobLog.runStatus')"
               clearable
               @change="onSearch"
             >
@@ -74,17 +75,8 @@ const openDetail = (id: string) => {
           </el-space>
         </el-space>
       </el-header>
-
       <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
         <el-row :gutter="18">
-          <el-col :md="12" :sm="24">
-            <el-form-item :label="$t('scheduleJobLog.triggerMode')">
-              <el-select v-model="queryParam.triggerMode" clearable @change="onSearch">
-                <el-option :label="$t('scheduleJobLog.triggerModeOptions.auto')" value="AUTO" />
-                <el-option :label="$t('scheduleJobLog.triggerModeOptions.manual')" value="MANUAL" />
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :md="12" :sm="24">
             <el-form-item :label="$t('scheduleJobLog.startTimeAlias')">
               <date-range
@@ -107,22 +99,21 @@ const openDetail = (id: string) => {
         @selection-change="(arr: ScheduleJobLog[]) => (selectedKeys = arr.map(e => e.id))"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="startTime" :label="$t('scheduleJobLog.startTimeAlias')" align="center" width="140" />
-        <el-table-column prop="endTime" :label="$t('scheduleJobLog.endTime')" align="center" width="140" />
-        <el-table-column prop="elapsedSeconds" :label="$t('scheduleJobLog.elapsedSeconds')" align="right" width="120" />
-        <el-table-column prop="triggerModeLabel" align="center" :label="$t('scheduleJobLog.triggerMode')" />
-        <el-table-column prop="runStatus" align="center" :label="$t('scheduleJobLog.runStatus')">
+        <el-table-column prop="startTime" :label="$t('scheduleJobLog.startTimeAlias')" width="160" />
+        <el-table-column prop="endTime" :label="$t('scheduleJobLog.endTime')" width="160" />
+        <el-table-column prop="elapsedSeconds" :label="$t('scheduleJobLog.elapsedSeconds')" align="right" width="90" />
+        <el-table-column prop="runStatus" :label="$t('scheduleJobLog.runStatus')">
           <template #default="{ row }">
             <el-tag v-if="row.runStatus === 'S'">{{ $t('scheduleJobLog.success') }}</el-tag>
             <el-tag v-else type="danger">{{ $t('scheduleJobLog.fail') }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('operation.label')" align="center" width="130" fixed="right">
+        <el-table-column :label="$t('operation.label')" width="130" fixed="right">
           <template #default="{ row }">
             <el-button text bg type="primary" size="small" @click="openDetail(row.id)"
               >{{ $t('title.detail') }}
             </el-button>
-            <el-button v-has-permission="'logDelete'" text bg type="primary" size="small" @click="remove(row.id)">
+            <el-button v-has-permission="'logDelete'" text bg size="small" @click="remove(row.id)">
               {{ $t('operation.delete') }}
             </el-button>
           </template>
@@ -133,7 +124,7 @@ const openDetail = (id: string) => {
         v-model:current-page="pagination.current"
         v-model:page-size="pagination.pageSize"
         :page-sizes="[10, 15, 20, 30, 50, 100]"
-        small
+        size="small"
         background
         layout="total, sizes, prev, pager, next, jumper"
         :total="pagination.total"

@@ -15,6 +15,7 @@
  */
 package com.diboot.ai.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -43,4 +44,8 @@ public class AiMessage implements Serializable {
 
     // role为tool时不能省略
     private String name;
+
+    // 推理内容
+    @JsonProperty("reasoning_content")
+    private String reasoningContent;
 }

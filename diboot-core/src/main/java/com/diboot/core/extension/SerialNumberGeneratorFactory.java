@@ -32,7 +32,9 @@ import java.util.Map;
  * @author mazc@dibo.ltd
  * @version v3.1.1
  * @date 2023/10/07
+ * @see AutoFillHandlerFactory
  */
+@Deprecated
 @Slf4j
 public class SerialNumberGeneratorFactory {
 

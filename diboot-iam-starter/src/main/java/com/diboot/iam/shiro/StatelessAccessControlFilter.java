@@ -58,7 +58,7 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        // 从header获取Token
+        // 从请求中获取Token
         String currentToken = TokenUtils.getRequestToken(httpRequest);
         if (V.isEmpty(currentToken)) {
             log.debug("token: {} 验证失败, uri={}", currentToken, httpRequest.getRequestURI());
@@ -74,7 +74,7 @@ public class StatelessAccessControlFilter extends BasicHttpAuthenticationFilter 
             log.debug("token: {} 保活完成, uri={}", currentToken, httpRequest.getRequestURI());
         }
         // 如果临近过期，则生成新的token返回，并记录到登录日志中
-        String refreshToken = TokenUtils.responseNewTokenIfRequired(response, cachedUserInfo);
+        String refreshToken = TokenUtils.responseNewTokenIfRequired(response, currentToken, cachedUserInfo);
         if (V.notEmpty(refreshToken)) {
             IamLoginTraceService iamLoginTraceService = ContextHolder.getBean(IamLoginTraceService.class);
             if (iamLoginTraceService != null) {

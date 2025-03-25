@@ -13,7 +13,7 @@ import pinia from './store'
 import directives from './directives'
 import { i18nInstall } from './i18n'
 
-import { initFunction } from './utils/initFunction'
+// import { initFunction } from './utils/initFunction'
 
 const app = createApp(AppView)
 app.use(router)

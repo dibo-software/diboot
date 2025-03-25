@@ -29,7 +29,6 @@ import com.diboot.iam.entity.*;
 import com.diboot.iam.exception.PermissionException;
 import com.diboot.iam.mapper.IamRoleMapper;
 import com.diboot.iam.mapper.IamUserRoleMapper;
-import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamResourceService;
 import com.diboot.iam.service.IamRoleService;
 import com.diboot.iam.service.IamUserRoleService;
@@ -58,8 +57,6 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
     private IamRoleService iamRoleService;
     @Autowired
     private IamRoleMapper iamRoleMapper;
-    @Autowired
-    private IamAccountService iamAccountService;
     @Autowired
     private IamResourceService iamResourceService;
 
@@ -168,10 +165,11 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
         }
         String superAdminRoleId = getSuperAdminRoleId();
         // 给用户赋予了超级管理员，需确保当前用户为超级管理员权限
+        LambdaQueryWrapper<IamUserRole> queryWrapper = Wrappers.<IamUserRole>lambdaQuery()
+                .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
+                .eq(IamUserRole::getRoleId, superAdminRoleId).orderByDesc(IamUserRole::getId);
         if (superAdminRoleId != null && (
-                roleIds.contains(superAdminRoleId) || this.exists(Wrappers.<IamUserRole>lambdaQuery()
-                        .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
-                        .eq(IamUserRole::getRoleId, superAdminRoleId))
+                roleIds.contains(superAdminRoleId) || this.exists(queryWrapper)
         )) {
             checkSuperAdminIdentity();
         }
@@ -189,9 +187,10 @@ public class IamUserRoleServiceImpl extends BaseServiceImpl<IamUserRoleMapper, I
     public boolean deleteUserRoleRelations(String userType, String userId) {
         String superAdminRoleId = getSuperAdminRoleId();
         // 删除超级管理员，需确保当前用户为超级管理员权限
-        if (superAdminRoleId != null &&  this.exists(Wrappers.<IamUserRole>lambdaQuery()
-                        .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
-                        .eq(IamUserRole::getRoleId, superAdminRoleId))
+        LambdaQueryWrapper<IamUserRole> queryWrapper = Wrappers.<IamUserRole>lambdaQuery()
+                .eq(IamUserRole::getUserType, userType).eq(IamUserRole::getUserId, userId)
+                .eq(IamUserRole::getRoleId, superAdminRoleId).orderByDesc(IamUserRole::getId);
+        if (superAdminRoleId != null &&  this.exists(queryWrapper)
         ) {
             if(!iamCustomize.checkCurrentUserHasRole(Cons.ROLE_SUPER_ADMIN)){
                 throw new PermissionException("exception.permission.userRoleService.deleteUserRoleRelations.noPermission");

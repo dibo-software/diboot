@@ -122,7 +122,7 @@ export const getMenuTree = () => {
     if (!name) return
     const index = routeTree.findIndex(e => e.name === name)
     const find = index > -1 ? routeTree.splice(index, 1)[0] : routes.find(e => e.name === name)
-    find && arr.push(find)
+    if (find) arr.push(find)
   }
 
   for (const route of routes) {
@@ -152,7 +152,7 @@ export const getMenuTree = () => {
         routes.push(child)
       } else {
         route.children = filterMenu(route.children)
-        route.children.length && routes.push(route)
+        if (route.children.length) routes.push(route)
       }
     }
     return routes

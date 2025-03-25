@@ -137,6 +137,7 @@ public class ApiPermissionExtractor {
                 apiPermissions.add(apiPermission);
             }
             apiUriCombo.setLabel(name);
+            apiUriCombo.setOpenApi(bindPermission.openApi());
             // 提取请求url-permission code的关系
             buildApiPermission(apiPermission, urlPrefix, apiUriCombo);
         }
@@ -154,6 +155,7 @@ public class ApiPermissionExtractor {
      */
     private static void buildApiPermission(ApiPermission apiPermission, String urlPrefix, ApiUri apiUriCombo){
         String requestMethod = apiUriCombo.getMethod(), url = apiUriCombo.getUri();
+        boolean openApi = apiUriCombo.isOpenApi();
         List<ApiUri> apiUriList = apiPermission.getApiUriList();
         for(String m : requestMethod.split(Cons.SEPARATOR_COMMA)){
             for(String u : url.split(Cons.SEPARATOR_COMMA)){
@@ -162,6 +164,7 @@ public class ApiPermissionExtractor {
                     uri = urlPrefix + u;
                 }
                 ApiUri apiUri = new ApiUri(m, uri, apiUriCombo.getLabel());
+                apiUri.setOpenApi(openApi);
                 apiUriList.add(apiUri);
             }
         }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Html5Qrcode } from 'html5-qrcode'
+import type { QrDimensions } from 'html5-qrcode/src/core'
 
 const props = withDefaults(
   defineProps<{
@@ -40,7 +41,10 @@ const getCameras = async () => {
       { facingMode: 'environment' },
       {
         fps: 2, // 可选，每秒帧扫描二维码
-        qrbox: props.squareLength > 0 ? { width: props.squareLength, height: props.squareLength } : void 0, // 可选，如果你想要有界框UI
+        qrbox:
+          (props.squareLength || 0) > 0
+            ? ({ width: props.squareLength, height: props.squareLength } as QrDimensions)
+            : void 0, // 可选，如果你想要有界框UI
         aspectRatio: props.aspectRatio // 可选，视频馈送需要的纵横比，(4:3--1.333334, 16:9--1.777778, 1:1--1.0)传递错误的纵横比会导致视频不显示
       },
       (decodedText: string) => {

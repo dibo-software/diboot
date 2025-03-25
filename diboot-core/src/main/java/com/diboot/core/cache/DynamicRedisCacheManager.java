@@ -59,7 +59,7 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
         redisCacheManager = builder.transactionAware().build();
         redisCacheManager.initializeCaches();
         super.afterPropertiesSet();
-        log.info("redisCacheManager 初始化完成");
+        log.info("RedisCacheManager 初始化完成");
     }
 
     @Override
@@ -91,10 +91,10 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
     public void putCacheObj(String cacheName, Object objKey, Object obj) {
         Cache cache = redisCacheManager.getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
         if(log.isDebugEnabled()){
-            log.debug("缓存: {} 新增-> {}", cacheName, objKey);
+            log.debug("缓存 {}: 新增 {}->{}", cacheName, objKey, obj);
         }
         cache.put(objKey, obj);
     }
@@ -103,10 +103,10 @@ public class DynamicRedisCacheManager extends SimpleCacheManager implements Base
     public void removeCacheObj(String cacheName, Object objKey) {
         Cache cache = redisCacheManager.getCache(cacheName);
         if(cache == null) {
-            throw new InvalidUsageException("exception.invalidUsage.cacheManager.nonCacheInit", cacheName);
+            throw new InvalidUsageException("无法获取cache：{}，请检查是否初始化", cacheName);
         }
         if(log.isDebugEnabled()){
-            log.debug("缓存: {} 移除-> {}", cacheName, objKey);
+            log.debug("缓存 {}: 移除 {}->{}", cacheName, objKey, cache.get(objKey));
         }
         cache.evict(objKey);
     }

@@ -4,8 +4,11 @@ import type { IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/edit
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { buildImgSrc } from '@/utils/file'
 import { isExternal } from '@/utils/validate'
+import auth, { AUTH_HEADER_KEY } from '@/utils/auth'
 import { useI18n } from 'vue-i18n'
+
 const i18n = useI18n()
+
 interface PropsType {
   // 模型值
   modelValue?: string
@@ -21,7 +24,7 @@ interface PropsType {
 
 const props = withDefaults(defineProps<PropsType>(), {
   modelValue: '',
-  // placeholder: i18n.t('components.rich.placeholder'),
+  placeholder: void 0,
   mode: 'simple',
   doc: false,
   title: ''
@@ -39,13 +42,17 @@ const handleCreated = (editor: IDomEditor) => {
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => editorRef.value?.destroy())
 
-const titleValue = ref(props.title)
-const contentValue = ref(props.modelValue)
+const titleValue = ref('')
+const contentValue = ref('')
 
-watch([() => props.title, () => props.modelValue], ([title, value]) => {
-  titleValue.value = title
-  contentValue.value = value
-})
+watch(
+  [() => props.title, () => props.modelValue],
+  ([title, value]) => {
+    titleValue.value = title
+    contentValue.value = value?.replaceAll('{{token}}', auth.getToken() ?? '')
+  },
+  { immediate: true }
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', modelValue: string): void
@@ -53,7 +60,7 @@ const emit = defineEmits<{
 }>()
 
 const handleChangeValue = (editor: IDomEditor) => {
-  emit('update:modelValue', editor.getHtml())
+  emit('update:modelValue', editor.getHtml().replaceAll(`=${auth.getToken() || ''}"`, '={{token}}"'))
 }
 
 const handleChangeTitle = () => {
@@ -117,7 +124,9 @@ const editorConfig: IEditorConfig = {
     },
     uploadVideo: {
       customUpload: customUpload<(url: string) => void>((file, insertFn) => {
-        const url = isExternal(file.accessUrl) ? file.accessUrl : baseURL + file.accessUrl
+        const url = isExternal(file.accessUrl)
+          ? file.accessUrl
+          : `${baseURL}${file.accessUrl}?${AUTH_HEADER_KEY}=${auth.getToken() || ''}`
         insertFn(url)
       })
     }
@@ -165,6 +174,10 @@ const editorConfig: IEditorConfig = {
   min-height: 300px;
   display: flex;
   flex-direction: column;
+
+  &.w-e-full-screen-container {
+    z-index: 99999;
+  }
 
   .editor-border {
     border: 1px solid var(--el-border-color-lighter);

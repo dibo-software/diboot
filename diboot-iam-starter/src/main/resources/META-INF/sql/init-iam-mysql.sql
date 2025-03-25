@@ -144,7 +144,7 @@ create table dbt_iam_operation_log
   request_params    varchar(1000)                  null comment '请求参数',
   request_ip   varchar(50) null comment 'IP',
   status_code   smallint   default 0   not null comment '状态码',
-  error_msg     varchar(1000)                  null comment '异常信息',
+  error_msg     text                  null comment '异常信息',
   is_deleted       tinyint(1)  null comment '删除标记',
   create_time      datetime   default CURRENT_TIMESTAMP null comment '创建时间'
 )
@@ -214,14 +214,34 @@ create index idx_dbt_iam_user_position_2 on dbt_iam_user_position (org_id, posit
 -- 系统配置表
 CREATE TABLE `dbt_system_config`
 (
+    `id`              varchar(32)  NOT NULL COMMENT 'ID' primary key,
+    `tenant_id`       varchar(32)  NOT NULL DEFAULT '0' COMMENT '租户ID',
+    `category`        varchar(50)  NULL COMMENT '类别',
+    `prop_key`        varchar(50)  NOT NULL COMMENT '属性名',
+    `prop_label`      varchar(100)  NOT NULL COMMENT '属性标签',
+    `prop_label_i18n` varchar(100)  NULL COMMENT '属性标签国际化资源标识',
+    `prop_value`      varchar(255) NULL COMMENT '属性值',
+    `data_type`       varchar(50)  NULL     DEFAULT 'text' COMMENT '数据类型',
+    `is_deleted`      tinyint(1)   NOT NULL DEFAULT 0 COMMENT '删除标记',
+    `create_time`     datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`     datetime     NULL     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT = '系统配置';
+create index idx_dbt_system_config on dbt_system_config (`category`, `prop_key`);
+
+
+-- 客户端配置表
+CREATE TABLE `dbt_client`
+(
     `id`          varchar(32) NOT NULL COMMENT 'ID' primary key,
     `tenant_id`   varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
-    `category`    varchar(50) NULL COMMENT '类别',
-    `prop_key`    varchar(50) NOT NULL COMMENT '属性名',
-    `prop_value`  varchar(255) NULL COMMENT '属性值',
-    `data_type`   varchar(50) NULL DEFAULT 'text' COMMENT '数据类型',
-    `is_deleted`  tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标记',
+    `name`        varchar(50) NOT NULL COMMENT '名称',
+    `app_key`     varchar(100) NOT NULL COMMENT 'AppKey',
+    `app_secret`  varchar(100) NOT NULL COMMENT 'AppSecret',
+    `status`      varchar(10)          DEFAULT 'A' COMMENT '状态',
+    `permissions` varchar(2000) COMMENT '权限',
+    `is_deleted`  tinyint(1)  NOT NULL DEFAULT 0 COMMENT '删除标记',
     `create_time` datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-)COMMENT = '系统配置';
-create index idx_dbt_system_config on dbt_system_config (`category`, `prop_key`);
+    `update_time` datetime             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT = '三方客户端配置表';
+
+create index idx_dbt_client_key on dbt_client (`app_key`);

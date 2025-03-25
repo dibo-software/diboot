@@ -44,6 +44,7 @@ const refresh = () => {
 
     <el-table ref="tableRef" v-loading="loading" class="list-body" :data="dataList" stripe height="100%">
       <el-table-column prop="propKey" :label="$t('config.propKey')" show-overflow-tooltip />
+      <el-table-column prop="propLabel" :label="$t('config.propLabel')" show-overflow-tooltip />
       <el-table-column prop="propValue" :label="$t('config.propValue')" show-overflow-tooltip />
       <el-table-column prop="createTime" :label="$t('baseField.createTime')" width="185" />
       <el-table-column prop="updateTime" :label="$t('baseField.updateTime')" width="185" />
@@ -53,7 +54,14 @@ const refresh = () => {
             <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
               {{ $t('operation.update') }}
             </el-button>
-            <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)">
+            <el-button
+              v-has-permission="'delete'"
+              text
+              bg
+              type="danger"
+              size="small"
+              @click="remove(row.id, row.propKey)"
+            >
               {{ $t('operation.delete') }}
             </el-button>
           </el-space>

@@ -6,6 +6,7 @@ import { getElementAbsoluteLocation } from '@/utils/document'
 
 // props
 const props = defineProps<{
+  openApi?: boolean
   appModule?: string
   menuType?: string
   menuCode?: string
@@ -23,10 +24,11 @@ const loading = ref(true)
 const restPermissions: RestPermission[] = reactive([])
 // 后端权限资源，基于appModule对后端权限分组
 const moduleRestPermissionMap = ref<Record<string, RestPermission[]>>({})
-
+const isRestPermissionArray = ref(false)
 watch(
   () => props.appModule,
   module => {
+    if (isRestPermissionArray.value) return restPermissions
     restPermissions.length = 0
     restPermissions.push(...(moduleRestPermissionMap.value[module ?? ''] || []))
   }
@@ -36,9 +38,10 @@ const moduleList = computed(() => Object.keys(moduleRestPermissionMap.value))
 watch(moduleList, value => emits('moduleList', value))
 
 api
-  .get<RestPermission[] | Record<string, RestPermission[]>>('/iam/resource/api-list')
+  .get<RestPermission[] | Record<string, RestPermission[]>>('/iam/resource/api-list', { openApi: props.openApi })
   .then(res => {
-    if (Array.isArray(res.data)) restPermissions.push(...res.data)
+    isRestPermissionArray.value = Array.isArray(res.data)
+    if (isRestPermissionArray.value) restPermissions.push(...res.data)
     else moduleRestPermissionMap.value = res.data ?? {}
   })
   .catch(err => {
@@ -180,7 +183,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
 </script>
 <template>
   <el-skeleton v-if="loading" :rows="10" animated />
-  <div v-else>
+  <div v-else style="height: 100%">
     <div v-if="menuType !== 'MENU'" style="padding: 8px">
       <el-alert :title="$t('resource.permissionSelect.title')" type="warning" :closable="false" />
     </div>
@@ -213,7 +216,7 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
         type="success"
         :closable="false"
       />
-      <el-scrollbar ref="permissionGroupsScrollbarRef" height="calc(100vh - 223px)">
+      <el-scrollbar ref="permissionGroupsScrollbarRef" :height="`calc(100% - 10px)`">
         <div id="permissionGroups" class="permission-groups">
           <el-descriptions
             v-for="(restPermission, index) in restPermissions"
@@ -267,6 +270,12 @@ const goScrollIntoView = async (value?: string, allowHighLight = true) => {
 <style scoped lang="scss" rel="stylesheet/scss">
 .permission-list-container {
   width: 100%;
+  height: 100%;
+
+  :deep(.el-space__item:last-child) {
+    height: calc(100% - 100px);
+  }
+
   .permission-groups {
     &__head {
       margin-bottom: 10px;

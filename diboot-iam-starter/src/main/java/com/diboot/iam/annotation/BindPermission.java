@@ -40,4 +40,9 @@ public @interface BindPermission {
      * @return
      */
     String code() default  "";
+
+    /**
+     * 开放接口 （可分配给第三方应用访问）
+     */
+    boolean openApi() default false;
 }

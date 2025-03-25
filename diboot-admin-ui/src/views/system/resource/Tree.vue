@@ -4,6 +4,7 @@ import type { ElTreeInstanceType } from 'element-plus'
 import type { Resource } from './type'
 import type { WatchStopHandle } from 'vue'
 import { useI18n } from 'vue-i18n'
+
 const i18n = useI18n()
 const baseApi = '/iam/resource'
 
@@ -41,9 +42,9 @@ getList().then(() => {
   }
 })
 
-const removeData = (id: string) => {
+const removeData = (id: string, title?: string) => {
   const currentKey = treeRef.value?.getCurrentKey()
-  remove(id).then(result => {
+  remove(id, title).then(result => {
     if (result) setTreeCurrentKey(currentKey as string)
   })
 }
@@ -62,14 +63,14 @@ const searchWord = ref('')
 watch(searchWord, val => {
   treeRef.value?.filter(val)
 })
-const filterNode = (value: string, data: Record<string, any>) => !value || data.displayName?.includes(value)
+const filterNode = (value: string, data: Partial<Resource>) => !value || data.displayName?.includes(value)
 
 /**
  * 添加子菜单
  */
 const addChildNode = (parent?: Resource) => {
   treeRef.value?.setCurrentKey()
-  const children = parent ? parent.children ?? [] : dataList
+  const children = parent ? (parent.children ?? []) : dataList
   clickNode({
     parentId: parent?.id ?? '0',
     parentDisplayName: parent?.displayName,
@@ -88,6 +89,9 @@ defineExpose({
     setTreeCurrentKey(id)
   }
 })
+// 设置滚动距离
+const scrollTop = ref(0)
+const treeScrollbar = ref()
 
 const { nodeDrag } = useSort({
   sortApi: `${baseApi}/sort`,
@@ -95,10 +99,14 @@ const { nodeDrag } = useSort({
     const currentKey = treeRef.value?.getCurrentKey()
     await getList()
     setTreeCurrentKey(currentKey)
+    const time = setTimeout(() => {
+      clearTimeout(time)
+      treeScrollbar.value?.setScrollTop(scrollTop.value)
+    }, 1000)
   }
 })
 
-const treeNodeClass = (data: Record<string, any>) => {
+const treeNodeClass = (data: Resource) => {
   if (data.status !== 'A') {
     // 非可用
     return 'through'
@@ -120,7 +128,7 @@ const treeNodeClass = (data: Record<string, any>) => {
         </el-button>
         <el-input v-model="searchWord" :placeholder="$t('placeholder.filter')" clearable :prefix-icon="Search" />
       </div>
-      <el-scrollbar height="calc(100vh - 139px)">
+      <el-scrollbar>
         <el-tree
           ref="treeRef"
           :data="dataList"
@@ -160,7 +168,7 @@ const treeNodeClass = (data: Record<string, any>) => {
                     :icon="Delete"
                     type="danger"
                     link
-                    @click.stop="removeData(data.id)"
+                    @click.stop="removeData(data.id, node.label)"
                   />
                 </el-tooltip>
               </span>
@@ -177,14 +185,24 @@ const treeNodeClass = (data: Record<string, any>) => {
   height: 100%;
   position: relative;
   border-right: 1px solid var(--el-border-color-lighter);
+
+  .el-space {
+    height: 100%;
+
+    .tree-search {
+      display: flex;
+      padding: 5px 5px 0;
+    }
+
+    :deep(.el-space__item:last-child) {
+      height: calc(100% - 50px);
+    }
+  }
+
   .custom-tree-node {
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .tree-search {
-    display: flex;
-    padding: 5px 5px 0;
   }
 
   .hidden,

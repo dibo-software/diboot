@@ -20,18 +20,20 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.binding.QueryBuilder;
+import com.diboot.core.binding.cache.BindingCacheManager;
 import com.diboot.core.binding.parser.ParserCache;
+import com.diboot.core.binding.parser.PropInfo;
+import com.diboot.core.binding.query.BindQuery;
 import com.diboot.core.config.BaseConfig;
 import com.diboot.core.config.Cons;
+import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.SQL;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * 动态SQL构建Provider
@@ -75,7 +77,7 @@ public class DynamicSqlProvider {
     private <DTO> String buildDynamicSql(Page<?> page, QueryWrapper<DTO> ew){
         DynamicJoinQueryWrapper wrapper = (DynamicJoinQueryWrapper)ew;
         return new SQL() {{
-            SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), page));
+            SELECT_DISTINCT(formatSqlSelect(ew.getSqlSelect(), wrapper.getMainEntityClass(), page));
             FROM(wrapper.getEntityTable()+" self");
             //提取字段，根据查询条件中涉及的表，动态join
             List<AnnoJoiner> annoJoinerList = wrapper.getAnnoJoiners();
@@ -123,16 +125,6 @@ public class DynamicSqlProvider {
                     if(isDeletedCol != null && !QueryBuilder.checkHasColumn(segments.getNormal(), isDeletedSection)){
                         WHERE(isDeletedSection+ " = " +BaseConfig.getActiveFlagValue());
                     }
-                    if (page != null && V.notEmpty(page.orders())) {
-                        List<String> orderByList = new ArrayList<>(page.orders().size());
-                        page.orders().forEach(orderItem -> {
-                            orderByList.add(S.format("%s %s", orderItem.getColumn(), orderItem.isAsc() ? "ASC" : "DESC"));
-                        });
-                        if (orderByList.size() > 0) {
-                            String orderBySql = S.join(orderByList);
-                            ORDER_BY(orderBySql);
-                        }
-                    }
                 }
                 // 存在联表且无where条件，
                 else if(V.notEmpty(annoJoinerList)){
@@ -152,31 +144,37 @@ public class DynamicSqlProvider {
      * @param sqlSelect
      * @return
      */
-    private String formatSqlSelect(String sqlSelect, Page<?> page){
-        Set<String> columnSets = null;
+    private String formatSqlSelect(String sqlSelect, Class<?> entityClass, Page<?> page){
+        List<String> columnList = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        if(V.isEmpty(sqlSelect)){
-            sb.append("self.*");
-        }
-        else {
-            String[] columns = S.split(sqlSelect);
-            for(int i=0; i<columns.length; i++){
-                String column = S.removeDuplicateBlank(columns[i]).trim();
-                if(i>0){
-                    sb.append(Cons.SEPARATOR_COMMA);
+        PropInfo propInfo = BindingCacheManager.getPropInfoByClass(entityClass);
+        if(V.isEmpty(sqlSelect)) {
+            for(Field field : BeanUtils.extractAllFields(entityClass)){
+                String column = propInfo.getColumnByField(field.getName());
+                if(V.isEmpty(column)){
+                    continue;
                 }
-                sb.append("self.").append(column);
-                if(columnSets == null) {
-                    columnSets = new HashSet<>();
+                BindQuery bindQuery = field.getAnnotation(BindQuery.class);
+                if((bindQuery == null || !bindQuery.ignoreSelect()) && !V.equals(column, propInfo.getDeletedColumn())) {
+                    columnList.add("self." + column);
                 }
-                columnSets.add("self."+column);
             }
         }
+        else {
+            for(String column : S.split(sqlSelect)){
+                column = S.removeDuplicateBlank(column).trim();
+                String fieldName = propInfo.getFieldByColumn(column);
+                Field field = BeanUtils.extractField(entityClass, fieldName);
+                BindQuery bindQuery = field.getAnnotation(BindQuery.class);
+                if(bindQuery == null || !bindQuery.ignoreSelect()) {
+                    columnList.add("self." + column);
+                }
+            }
+        }
+        sb.append(S.join(columnList));
         if(page != null && page.orders() != null) {
             for(OrderItem orderItem : page.orders()){
-                if((V.isEmpty(sqlSelect) && !S.startsWith(orderItem.getColumn(), "self."))
-                    || (columnSets != null && !columnSets.contains(orderItem.getColumn()))
-                ){
+                if(!columnList.contains(orderItem.getColumn())) {
                     sb.append(Cons.SEPARATOR_COMMA).append(orderItem.getColumn()).append(" AS ").append(S.replace(orderItem.getColumn(), ".", "_")).append(PLACEHOLDER_COLUMN_FLAG);
                 }
             }

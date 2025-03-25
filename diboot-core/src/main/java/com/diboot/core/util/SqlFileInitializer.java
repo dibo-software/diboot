@@ -107,7 +107,7 @@ public class SqlFileInitializer {
             return new SqliteTranslator().translate(sqlStatements);
         }
         else {
-            throw new InvalidUsageException("exception.invalidUsage.sqlFileInitializer.notSupportDbInit", dbType);
+            throw new InvalidUsageException("暂不支持 {} 数据库自动初始化", dbType);
         }
     }
 

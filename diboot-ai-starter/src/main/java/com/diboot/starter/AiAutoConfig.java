@@ -76,6 +76,7 @@ public class AiAutoConfig implements WebMvcConfigurer {
         aiConfiguration.setQwen(aiProperties.getQwen());
         aiConfiguration.setKimi(aiProperties.getKimi());
         aiConfiguration.setWenxin(aiProperties.getWenxin());
+        aiConfiguration.setDeepseek(aiProperties.getDeepseek());
         return new AiClient(aiConfiguration);
     }
 

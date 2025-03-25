@@ -9,19 +9,22 @@ const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilte
   I18nConfig
 >({ baseApi: '/i18n-config' })
 pagination.orderBy = 'code:ASC'
-getList()
 
 const formRef = ref()
 const openForm = (code?: string) => {
-  formRef.value?.open(code)
+  formRef.value?.open(code, queryParam.code)
 }
 
 // 用于选择
 const props = defineProps<{ modelValue?: string; select?: boolean; tableHeight?: string }>()
+
 const emits = defineEmits<{
   (e: 'update:modelValue', code: string): void
   (e: 'change', list: Array<I18nConfig>): void
 }>()
+
+if (!props.select) getList()
+
 const single = ref(props.modelValue)
 if (props.select) {
   watch(
@@ -34,6 +37,13 @@ const singleRow = (row: Array<I18nConfig>) => {
   emits('update:modelValue', single.value as string)
   emits('change', row)
 }
+
+defineExpose({
+  refresh: (code?: string) => {
+    if (code) queryParam.code = code
+    getList()
+  }
+})
 
 // 国际化
 const i18n = useI18n()
@@ -76,7 +86,7 @@ const initI18nData = () => {
     >
       <el-table-column v-if="select" fixed width="36px">
         <template #default="{ row }">
-          <el-radio v-model="single" :label="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>
+          <el-radio v-model="single" :value="row[0].code" @change="singleRow(row)">{{ '' }}</el-radio>
         </template>
       </el-table-column>
       <el-table-column prop="code" :label="$t('i18nConfig.i18nCode')" fixed show-overflow-tooltip min-width="180px">
@@ -111,25 +121,31 @@ const initI18nData = () => {
         </template>
       </el-table-column>
       <el-table-column
-        v-if="!select"
-        v-has-permission="['update', 'delete']"
+        v-has-permission:I18nConfig="['update', 'delete']"
         :label="$t('operation.label')"
-        width="160px"
+        width="150px"
         header-align="center"
         fixed="right"
       >
         <template #default="{ row }">
-          <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row[0].code)">
+          <el-button
+            v-has-permission:I18nConfig="'update'"
+            text
+            bg
+            type="primary"
+            size="small"
+            @click.stop="openForm(row[0].code)"
+          >
             {{ $t('operation.update') }}
           </el-button>
           <el-button
-            v-if="!row.some((e: I18nConfig) => e.type === 'SYSTEM')"
-            v-has-permission="'delete'"
+            v-if="!row.some((e: I18nConfig) => e.type === 'SYSTEM') && !select"
+            v-has-permission:I18nConfig="'delete'"
             text
             bg
             type="danger"
             size="small"
-            @click="batchRemove(row.map((e: I18nConfig) => e.id))"
+            @click.stop="batchRemove(row.map((e: I18nConfig) => e.id))"
           >
             {{ $t('operation.delete') }}
           </el-button>
@@ -141,7 +157,7 @@ const initI18nData = () => {
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 15, 20, 30, 50, 100]"
-      small
+      size="small"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"
@@ -149,6 +165,6 @@ const initI18nData = () => {
       @current-change="getList()"
     />
 
-    <Form ref="formRef" @complete="getList()" />
+    <Form ref="formRef" @complete="code => (select ? emits('update:modelValue', code) : getList())" />
   </div>
 </template>

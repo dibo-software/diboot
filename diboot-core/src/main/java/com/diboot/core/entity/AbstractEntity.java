@@ -20,12 +20,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.diboot.core.config.Cons;
 import com.diboot.core.util.BeanUtils;
 import com.diboot.core.util.ContextHolder;
+import com.diboot.core.util.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Entity抽象父类
@@ -66,5 +68,14 @@ public abstract class AbstractEntity<T extends Serializable> implements Serializ
     @Override
     public String toString(){
         return this.getClass().getName()+ ":"+this.getId();
+    }
+
+    /**
+     * Entity对象转为map
+     * @return
+     */
+    public Map<String, Object> toMap(){
+        String jsonStr = JSON.stringify(this);
+        return JSON.toMap(jsonStr);
     }
 }

@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class SnowflakeIdGenerator implements SerialNumberGenerator {
+public class SnowflakeIdGenerator implements AutoFillHandler {
 
     @Override
     public LabelValue definition() {
@@ -38,7 +38,7 @@ public class SnowflakeIdGenerator implements SerialNumberGenerator {
     }
 
     @Override
-    public String generate(Map<String, Object> entityDataMap) {
+    public String buildFillValue(Map<String, Object> entityDataMap) {
         return IdGenerator.nextIdStr();
     }
 

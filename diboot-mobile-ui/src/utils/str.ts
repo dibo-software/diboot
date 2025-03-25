@@ -21,3 +21,13 @@ export const line2Hump = (value: string, between = '_') =>
  * @param value
  */
 export const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1)
+
+/**
+ * 插入字符
+ *
+ * @param str 原字符串
+ * @param char 插入字符
+ * @param index 插入位置
+ */
+export const insertCharacter = (str: string, char: string, index: number) =>
+  str.slice(0, index) + (str.length > index ? char + str.slice(index) : '')

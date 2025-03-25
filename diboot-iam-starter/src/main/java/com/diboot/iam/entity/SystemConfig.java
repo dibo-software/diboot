@@ -18,6 +18,7 @@ package com.diboot.iam.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.diboot.core.binding.annotation.BindI18n;
 import com.diboot.core.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,6 +54,17 @@ public class SystemConfig extends BaseEntity<String> {
      * 属性名
      */
     private String propKey;
+
+    /**
+     * 属性标签
+     */
+    @BindI18n("propLabelI18n")
+    private String propLabel;
+
+    /**
+     * 属性标签国际化资源标识
+     */
+    private String propLabelI18n;
 
     /**
      * 属性值

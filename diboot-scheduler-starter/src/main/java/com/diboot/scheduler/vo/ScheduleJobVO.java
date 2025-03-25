@@ -15,6 +15,7 @@
  */
 package com.diboot.scheduler.vo;
 
+import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.config.Cons;
 import com.diboot.iam.entity.IamUser;
@@ -42,6 +43,9 @@ public class ScheduleJobVO extends ScheduleJob {
      public String getJobStatusLabel(){
         return Cons.ENABLE_STATUS.getLabel(this.getJobStatus());
      }
+
+     @BindDict(type = "INIT_STRATEGY")
+     private String initStrategyLabel;
 
      /**
       * 创建人姓名

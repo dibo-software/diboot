@@ -76,7 +76,7 @@ const onFormComplete = () => {
           <el-button v-has-permission="'update'" text bg type="primary" size="small" @click="openForm(row.id)">
             {{ $t('operation.update') }}
           </el-button>
-          <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id)">
+          <el-button v-has-permission="'delete'" text bg type="danger" size="small" @click="remove(row.id, row.name)">
             {{ $t('operation.delete') }}
           </el-button>
         </template>
@@ -88,7 +88,7 @@ const onFormComplete = () => {
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 15, 20, 30, 50, 100]"
-      small
+      size="small"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"

@@ -15,6 +15,8 @@ interface ListProps extends /* @vue-ignore */ ListConfig {
   parent?: string
   // 不自动加载列表数据
   notLoadAuto?: boolean
+  // 初始查询条件
+  initQueryParam?: Record<string, any>
   // 隐藏操作列
   hiddenActionColumn?: boolean
 
@@ -55,7 +57,7 @@ const {
   buildQueryParam,
   remove,
   batchRemove
-} = useList<Record<string, unknown>>({ baseApi: props.baseApi })
+} = useList<Record<string, unknown>>({ baseApi: props.baseApi, initQueryParam: props.initQueryParam })
 
 if (!props.notLoadAuto) getList()
 
@@ -212,7 +214,9 @@ const multiple = inject<boolean | undefined>(
       :data-list="dataList"
       :multiple="multiple"
       :primary-key="primaryKey"
-      @row-dblclick="(row: Record<string, unknown>) => openDetail(row[primaryKey || 'id'])"
+      @row-dblclick="
+        (row: Record<string, unknown>) => detailPermission && openDetail(row[primaryKey || 'id'] as string)
+      "
       @selected-keys="(v: string[]) => (selectedKeys = v)"
       @order="orderBy"
     >
@@ -257,7 +261,10 @@ const multiple = inject<boolean | undefined>(
                     <el-dropdown-item v-if="operation?.update && updatePermission" @click="openForm(row.id)">
                       {{ $t('operation.update') }}
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="operation?.remove && deletePermission" @click="remove(row.id)">
+                    <el-dropdown-item
+                      v-if="operation?.remove && deletePermission"
+                      @click="remove(row.id, row[columns[0].prop])"
+                    >
                       {{ $t('operation.delete') }}
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -274,7 +281,7 @@ const multiple = inject<boolean | undefined>(
           v-model:current-page="pagination.current"
           v-model:page-size="pagination.pageSize"
           :page-sizes="[10, 15, 20, 30, 50, 100]"
-          small
+          size="small"
           background
           layout="total, sizes, prev, pager, next, jumper"
           :total="pagination.total"

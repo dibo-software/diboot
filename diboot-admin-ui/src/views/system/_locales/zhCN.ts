@@ -1,6 +1,19 @@
 const zhCN = {
+  client: {
+    name: '客户端名',
+    status: '状态',
+    permissions: '接口权限',
+    updateKey: '重新生成密钥',
+    viewLogs: '访问日志',
+    namePlaceholder: '请输入客户端名',
+    statusPlaceholder: '请选择状态',
+    appKeyPlaceholder: '请输入 AppKey',
+    appSecretPlaceholder: '自动生成 AppSecret',
+    permissionsPlaceholder: '请选择接口权限'
+  },
   config: {
     propKey: '属性名',
+    propLabel: '属性标签',
     propValue: '属性值',
     category: '类别',
     dataType: '填写类型',
@@ -126,6 +139,10 @@ const zhCN = {
     addVariable: '添加此变量'
   },
   operationLog: {
+    business: '业务操作日志',
+    client: '接口服务日志',
+    exception: '系统异常日志',
+    user: '用户',
     userRealname: '用户姓名',
     userTypeAndId: '用户类型:ID',
     userType: '用户类型',
@@ -143,6 +160,16 @@ const zhCN = {
     }
   },
   resource: {
+    main: '主菜单资源',
+    mobile: {
+      title: '移动端菜单资源',
+      parentId: '上级',
+      parentPlaceholder: '请选择上级',
+      displayName: '名称',
+      displayNamePlaceholder: '请输入名称',
+      resourceCode: '编码',
+      resourceCodePlaceholder: '请输入编码'
+    },
     newButtonPermission: '新按钮权限',
     parentId: '上级目录',
     parentId0: '顶级目录',
@@ -186,7 +213,7 @@ const zhCN = {
       routeMetaUrl: '请输入外部链接',
       permissionCodes: '点击聚焦后在权限列表中选择',
       componentName: '请输入组件名称',
-      componentPath: '路由组件路径（例: @/views/user/List.vue）',
+      componentPath: "路由组件路径（例: {'@'}/views/user/List.vue）",
       buttonPermissionConfig: {
         _customCode: '请输入按钮权限编码',
         resourceCode: '请选取当前按钮权限编码',
@@ -209,6 +236,7 @@ const zhCN = {
   role: {
     name: '名称',
     code: '编码',
+    userList: '角色人员',
     description: '备注',
     grantPermission: '授权权限',
     permissionList: '角色授权'

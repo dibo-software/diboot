@@ -43,7 +43,7 @@ public class ResultAssembler {
      * @param <E>
      */
     public static <E> void bindCountPropValue(String setterFieldName, List<E> fromList, String[] getterFields, Map valueMatchMap){
-        if(V.isEmpty(fromList) || V.isEmpty(valueMatchMap)){
+        if(V.isEmpty(fromList)){
             return;
         }
         try{

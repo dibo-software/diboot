@@ -34,7 +34,7 @@ create table dbt_schedule_job_log
   elapsed_seconds int        comment '耗时(s)',
   run_status       varchar(10)   default 'A'  not null comment '运行状态',
   data_count int        comment '数据计数',
-  execute_msg  varchar(500)  not null comment '执行结果信息',
+  execute_msg  varchar(1000)  not null comment '执行结果信息',
   is_deleted   tinyint(1)   default 0                 not null comment '是否删除',
   create_time  datetime    default CURRENT_TIMESTAMP not null comment '创建时间'
 )

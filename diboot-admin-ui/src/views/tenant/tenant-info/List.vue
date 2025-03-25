@@ -131,7 +131,7 @@ const deletePermission = checkPermission('delete')
                   <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                     {{ $t('operation.update') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="deletePermission" @click="remove(row.id)">
+                  <el-dropdown-item v-if="deletePermission" @click="remove(row.id, row.name)">
                     {{ $t('operation.delete') }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -146,7 +146,7 @@ const deletePermission = checkPermission('delete')
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 15, 20, 30, 50, 100]"
-      small
+      size="small"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"

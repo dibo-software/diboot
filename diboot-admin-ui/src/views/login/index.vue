@@ -67,6 +67,8 @@ const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
 
 const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
 
+const enableSso = import.meta.env.VITE_APP_ENABLE_SSO === 'true'
+
 // 单点登录集成
 const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
   callback: (token: string) => {
@@ -77,7 +79,10 @@ const { authorizeInfoMap, ssoLoading, initSsoParams, redirectTo } = useSso({
 })
 
 onMounted(() => {
-  initSsoParams()
+  auth.clearToken()
+  if (enableSso) {
+    initSsoParams()
+  }
 })
 </script>
 
@@ -160,12 +165,12 @@ onMounted(() => {
             $t('login.submit')
           }}</el-button>
         </el-form-item>
-        <el-form-item v-if="authorizeInfoMap['CAS_SERVER']">
+        <el-form-item v-if="enableSso && authorizeInfoMap['CAS_SERVER']">
           <el-button style="width: 100%" type="primary" @click="redirectTo('CAS_SERVER')">{{
             $t('login.cas')
           }}</el-button>
         </el-form-item>
-        <el-form-item v-if="authorizeInfoMap['OAuth2']">
+        <el-form-item v-if="enableSso && authorizeInfoMap['OAuth2']">
           <el-button style="width: 100%" type="primary" @click="redirectTo('OAuth2')">{{
             $t('login.oauth2')
           }}</el-button>
@@ -182,7 +187,8 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
 
-  background-image: radial-gradient(closest-side, rgb(120, 142, 225), rgba(248, 192, 147, 0)),
+  background-image:
+    radial-gradient(closest-side, rgb(120, 142, 225), rgba(248, 192, 147, 0)),
     radial-gradient(closest-side, rgb(168, 178, 220), rgba(170, 142, 245, 0)),
     radial-gradient(closest-side, rgb(143, 173, 210), rgba(235, 105, 78, 0)),
     radial-gradient(closest-side, rgb(129, 199, 211), rgba(243, 11, 164, 0)),

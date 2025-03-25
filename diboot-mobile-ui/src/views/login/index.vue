@@ -17,7 +17,7 @@ const authStore = useAuthStore()
 const loading = ref(false)
 const PROCESS_USERNAME = ''
 const PASSWORD = ''
-const model = reactive({ username: PROCESS_USERNAME, password: PASSWORD, captcha: '', traceId: '' })
+const model = reactive({ tenantCode: void 0, username: PROCESS_USERNAME, password: PASSWORD, captcha: '', traceId: '' })
 
 const refreshTraceId = () => {
   model.traceId = Math.random().toString(36).slice(-8) + +new Date()
@@ -68,6 +68,7 @@ const selectI18n = (data: any) => {
   i18n.locale.value = data.locale
 }
 const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
+const enableTenant = import.meta.env.VITE_APP_ENABLE_TENANT === 'true'
 </script>
 
 <template>
@@ -82,6 +83,14 @@ const enableI18n = import.meta.env.VITE_APP_ENABLE_I18N === 'true'
             </template>
           </van-popover>
         </div>
+        <van-field
+          v-if="enableTenant"
+          v-model="model.tenantCode"
+          name="tenantCode"
+          :label="$t('login.tenantCode')"
+          :placeholder="$t('login.tenantCode')"
+          :rules="[{ required: true, message: $t('login.rules.tenantCode') }]"
+        />
         <van-field
           v-model="model.username"
           name="username"

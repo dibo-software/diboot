@@ -19,6 +19,8 @@ import com.diboot.core.cache.DictionaryCacheManager;
 import com.diboot.core.cache.DynamicRedisCacheManager;
 import com.diboot.core.cache.I18nCacheManager;
 import com.diboot.core.config.Cons;
+import com.diboot.core.extension.sequence.counter.SeqCounter;
+import com.diboot.core.extension.sequence.counter.RedisCacheSeqCounter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -125,6 +127,16 @@ public class CoreRedisAutoConfig {
         }};
         DynamicRedisCacheManager memoryCacheManager = new DynamicRedisCacheManager(redisTemplate, cacheName2ExpireMap);
         return new I18nCacheManager(memoryCacheManager);
+    }
+
+    /**
+     * 计数器
+     */
+    @Bean
+    @ConditionalOnMissingBean(SeqCounter.class)
+    public SeqCounter redisCacheSeqCounter(RedisTemplate<String, Object> redisTemplate) {
+        log.info("初始化 流水号计数器 Redis缓存: RedisCacheSeqCounter");
+        return new RedisCacheSeqCounter(redisTemplate);
     }
 
 }

@@ -22,7 +22,9 @@ import com.diboot.core.util.JSON;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 import diboot.core.test.StartupApplication;
+import diboot.core.test.binder.entity.Department;
 import diboot.core.test.config.SpringMvcConfig;
+import org.apache.commons.collections4.ListUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -154,4 +156,16 @@ public class VTest {
         Assert.assertTrue(V.notContainsIgnoreCase(IGNORE_FIELDS, "DELETED"));
     }
 
+    @Test
+    public void testModifyBatchItem() {
+        List<Department> departments = new ArrayList<>();
+        for(int i = 1; i<= 100; i++) {
+            departments.add(new Department().setName("部门"+i));
+        }
+        List<List<Department>> allBatchList = ListUtils.partition(departments, 10);
+        for(List<Department> batchList : allBatchList) {
+            batchList.forEach(dept -> dept.setName("修改后的: " + dept.getName()));
+        }
+        Assert.assertEquals(departments.get(5), allBatchList.get(0).get(5));
+    }
 }

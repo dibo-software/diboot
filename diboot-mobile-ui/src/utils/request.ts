@@ -4,6 +4,7 @@ import auth, { AUTH_HEADER_KEY } from './auth'
 import router from '@/router'
 import qs from 'qs'
 import i18n, { LANGUAGE } from '@/utils/i18n'
+import { insertCharacter } from '@/utils/str'
 
 // baseURL
 const BASE_URL = import.meta.env.VITE_APP_BASE_URL
@@ -16,7 +17,7 @@ const service = axios.create({
 
 // 添加请求拦截器
 service.interceptors.request.use(config => {
-  ;(config.headers as AxiosRequestHeaders)[LANGUAGE] = i18n.get()
+  ;(config.headers as AxiosRequestHeaders)[LANGUAGE] = insertCharacter(i18n.get(), '-', 2)
   // 让每个请求携带自定义 token 请根据实际情况自行修改
   const token = auth.getToken()
   if (token) (config.headers as AxiosRequestHeaders)[AUTH_HEADER_KEY] = token

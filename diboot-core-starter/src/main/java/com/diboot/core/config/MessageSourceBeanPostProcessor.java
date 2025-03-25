@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.stereotype.Component;
 
 /**
  * 自动添加国际化文件
@@ -28,12 +29,13 @@ import org.springframework.context.support.ResourceBundleMessageSource;
  * @Date 2024/6/13
  */
 @Slf4j
+@Component("coreMessageSourceBeanPostProcessor")
 public class MessageSourceBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof ResourceBundleMessageSource messageSource) {
-            messageSource.addBasenames("messages", "core_messages", "file_messages", "iam_messages", "mobile_messages", "notification_messages", "tenant_messages", "scheduler_messages", "ai_messages");
+            messageSource.addBasenames("messages", "core_messages");
             log.info("国际化资源文件添加完成，basenames = {}", messageSource.getBasenameSet());
         }
         return bean;

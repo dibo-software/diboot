@@ -1,6 +1,6 @@
 <script setup lang="ts" name="DiListSelector">
 import type { Input, ListConfig, ListSelector, TreeConfig } from '@/components/di/type'
-import type { RelatedData } from '@/hooks/use-option'
+import type { ConditionItem, RelatedData } from '@/hooks/use-option'
 
 type ModelValue = string | string[]
 
@@ -8,6 +8,8 @@ interface ListSelectorProps extends /* @vue-ignore */ Omit<ListSelector, keyof O
   modelValue?: ModelValue
   placeholder?: string
   disabled?: boolean
+  // 列表数据过滤条件
+  conditions?: Array<ConditionItem>
 
   // vue语法限制导致只能在当前文件中再次定义
   // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
@@ -24,6 +26,10 @@ const props = defineProps<ListSelectorProps>()
 const config = { tree: props.tree, list: props.list }
 
 const specifyRootNode = () => {
+  if (config.list?.searchArea?.propList.length && props.conditions?.length) {
+    const ignoreSearchProps = props.conditions.map(e => e.field)
+    config.list.searchArea.propList = config.list.searchArea.propList.filter(e => !ignoreSearchProps.includes(e.prop))
+  }
   if (!config.tree || !props.rootId) return
   const tree = (config.tree = _.cloneDeep(config.tree))
   ;(tree.conditions ?? (tree.conditions = [])).push({ field: tree.parent, value: props.rootId })
@@ -54,7 +60,7 @@ const open = (val = true) => {
   if (val) visible.value = val
 }
 
-const confirm = () => {
+const changeValue = () => {
   selectedList.value = _.clone(selectedRows.value)
   if (!selectedList.value?.length) {
     selectedKeys.value = props.multiple ? [] : undefined
@@ -63,6 +69,10 @@ const confirm = () => {
   } else {
     selectedKeys.value = selectedList.value[0].value
   }
+}
+
+const confirm = () => {
+  changeValue()
   visible.value = false
 }
 
@@ -109,18 +119,18 @@ watch(
         const list = buildList()
         if (list) {
           selectedRows.value = list
-          confirm()
+          changeValue()
         } else {
           selected.conditions = [{ field: config.list?.primaryKey || 'id', comparison: 'IN', value: values }]
           loadRelatedData(selected).then(list => {
             selectedRows.value = list.sort((e1, e2) => values.indexOf(e1.value) - values.indexOf(e2.value))
-            confirm()
+            changeValue()
           })
         }
       })
     } else {
       selectedRows.value.length = 0
-      confirm()
+      changeValue()
     }
   },
   { immediate: true }
@@ -184,6 +194,7 @@ const clickNode = (id?: string) => (parent.value = id ?? props.rootId)
       <di-list
         v-if="config.list"
         hidden-action-column
+        :init-query-param="conditions?.length ? { _conditions: JSON.stringify(conditions) } : {}"
         :base-api="config.list.baseApi as string"
         :primary-key="config.list.primaryKey"
         :related-key="config.list.relatedKey"

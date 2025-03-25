@@ -1,24 +1,29 @@
 import type { UploaderFileListItem } from 'vant'
 import { imageBindSrc } from '@/utils/file'
-import type { UploaderAfterRead } from 'vant/es/uploader/types'
 
 export type UploaderFileItem = UploaderFileListItem & { id?: string; accessUrl?: string }
 
 export default (setValue: (fileIds?: string) => void, getFileList: () => FileRecord[] | undefined) => {
   const fileList = ref<UploaderFileItem[]>([])
 
-  watch(getFileList, value => {
-    fileList.value.length = 0
-    if (value)
-      fileList.value.push(
-        ...value.map(e => ({
-          id: e.id,
-          url: imageBindSrc(e).src,
-          file: { name: e.fileName } as any,
-          accessUrl: e.accessUrl
-        }))
-      )
-  })
+  watch(
+    getFileList,
+    value => {
+      fileList.value.length = 0
+      if (value)
+        fileList.value.push(
+          ...value.map(e => ({
+            id: e.id,
+            url: imageBindSrc(e).src,
+            file: { name: e.fileName } as any,
+            accessUrl: e.accessUrl
+          }))
+        )
+    },
+    {
+      immediate: true
+    }
+  )
 
   const getFileIds = () =>
     fileList.value

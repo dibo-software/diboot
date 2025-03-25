@@ -6,17 +6,17 @@
     <parent>
         <artifactId>diboot-root</artifactId>
         <groupId>com.diboot</groupId>
-        <version>3.5.0</version>
+        <version>3.6.0</version>
     </parent>
 
     <groupId>com.diboot</groupId>
     <artifactId>diboot-mobile-spring-boot-starter</artifactId>
-    <version>3.5.0</version>
+    <version>3.6.0</version>
     <packaging>jar</packaging>
     <description>diboot mobile starter project</description>
 
     <properties>
-        <weixin.java.version>4.6.0</weixin.java.version>
+        <weixin.java.version>4.7.0</weixin.java.version>
     </properties>
 
     <dependencies>

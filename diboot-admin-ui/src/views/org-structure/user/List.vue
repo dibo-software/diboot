@@ -65,7 +65,12 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('ã€
       <el-button v-has-permission="'create'" :icon="Plus" type="primary" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
-      <excel-import :excel-base-api="`${baseApi}/excel`" :attach="() => ({ orgId })" @complete="onSearch" />
+      <excel-import
+        v-has-permission="'import'"
+        :excel-base-api="`${baseApi}/excel`"
+        :attach="() => ({ orgId })"
+        @complete="onSearch"
+      />
       <excel-export
         v-has-permission="'export'"
         :build-param="buildQueryParam"
@@ -99,8 +104,8 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('ã€
         <el-col :lg="8" :sm="12">
           <el-form-item :label="$t('user.status')">
             <el-radio-group v-model="queryParam.status" @change="onSearch">
-              <el-radio label="A">{{ $t('user.onJob') }}</el-radio>
-              <el-radio label="I">{{ $t('user.dimission') }}</el-radio>
+              <el-radio value="A">{{ $t('user.onJob') }}</el-radio>
+              <el-radio value="I">{{ $t('user.dimission') }}</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
@@ -175,7 +180,7 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('ã€
                   <el-dropdown-item v-if="updatePermission" @click="openForm(row.id)">
                     {{ $t('operation.update') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="deletePermission && row.status === 'I'" @click="remove(row.id)">
+                  <el-dropdown-item v-if="deletePermission && row.status === 'I'" @click="remove(row.id, row.realname)">
                     {{ $t('operation.delete') }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -190,7 +195,7 @@ const buildRoleList = (roleList?: Role[]) => roleList?.map(e => e.name).join('ã€
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
       :page-sizes="[10, 15, 20, 30, 50, 100]"
-      small
+      size="small"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"

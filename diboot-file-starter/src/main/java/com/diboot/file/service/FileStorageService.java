@@ -72,7 +72,7 @@ public interface FileStorageService {
      * @throws Exception
      */
     default FileRecord save(String diskFilePath, String fileName) throws Exception {
-        throw new InvalidUsageException("exception.invalidUsage.fileStorageService.save.message");
+        throw new InvalidUsageException("当前存储实现暂不支持该方法");
     }
 
     /**

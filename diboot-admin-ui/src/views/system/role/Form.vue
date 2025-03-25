@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { TreeNodeData } from 'element-plus/es/components/tree/src/tree.type'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Role } from './type'
 import type { Resource } from '@/views/system/resource/type'
 import { checkValue } from '@/utils/validate-form'
 import { useI18n } from 'vue-i18n'
+
 const i18n = useI18n()
 const baseApi = '/iam/role'
 
@@ -21,12 +23,12 @@ const transformField = {
 }
 const { treeRef, treeDataList, selectedIdList, getTree, checkNode, flatTreeNodeClass } = useTreeCrud<Resource>({
   baseApi: '/iam/resource',
-  treeApi: '',
+  treeApi: '/tree',
   transformField
 })
 const treeProps = {
   label: 'displayName',
-  class: flatTreeNodeClass
+  class: (data: TreeNodeData) => ({ ...flatTreeNodeClass(data), mobile: data.appModule === 'mobile' })
 }
 getTree()
 
@@ -89,7 +91,7 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" top="10vh">
+  <el-dialog v-model="visible" :title="title" top="10vh" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"
@@ -134,4 +136,10 @@ const handleCheckNode = (currentNode: Resource, data: { checkedKeys: string[] })
   </el-dialog>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.el-tree {
+  :deep(.mobile) {
+    color: var(--el-color-primary-dark-2);
+  }
+}
+</style>

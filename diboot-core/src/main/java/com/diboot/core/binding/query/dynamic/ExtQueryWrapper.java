@@ -65,7 +65,7 @@ public class ExtQueryWrapper<T> extends QueryWrapper<T> {
             return ServiceAdaptor.getSingleEntity(iService, this);
         }
         else{
-            throw new InvalidUsageException("exception.invalidUsage.extQueryWrapper.nonServiceImpl",this.mainEntityClass.getSimpleName());
+            throw new InvalidUsageException("查询对象无BaseService/IService实现: {}",this.mainEntityClass.getSimpleName());
         }
     }
 
@@ -81,7 +81,7 @@ public class ExtQueryWrapper<T> extends QueryWrapper<T> {
             return ServiceAdaptor.queryList(iService, this);
         }
         else{
-            throw new InvalidUsageException("exception.invalidUsage.extQueryWrapper.nonServiceImpl",entityClazz.getSimpleName());
+            throw new InvalidUsageException("查询对象无BaseService/IService实现: {}",entityClazz.getSimpleName());
         }
     }
 
@@ -97,7 +97,7 @@ public class ExtQueryWrapper<T> extends QueryWrapper<T> {
             return ServiceAdaptor.queryList(iService, this, pagination, entityClazz);
         }
         else{
-            throw new InvalidUsageException("exception.invalidUsage.extQueryWrapper.nonServiceImpl", entityClazz.getSimpleName());
+            throw new InvalidUsageException("查询对象无BaseService/IService实现: {}", entityClazz.getSimpleName());
         }
     }
 
