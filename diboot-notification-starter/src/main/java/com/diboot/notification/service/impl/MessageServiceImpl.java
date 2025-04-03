@@ -97,7 +97,7 @@ public class MessageServiceImpl extends BaseServiceImpl<MessageMapper, Message> 
                     } else {
                         log.error("[获取模版失败] 模版id为：{} ，模版code为：{}", message.getTemplateId(), message.getTemplateCode());
                     }
-                    throw new BusinessException(Status.FAIL_OPERATION, "exception.business.messageService.fetchTempFailed");
+                    throw new BusinessException(Status.FAIL_OPERATION, "exception.business.messageService.fetchTempFailed", message.getTemplateCode());
                 }
                 message.setTemplateId(messageTemplate.getId());
                 content = messageTemplate.getContent();
