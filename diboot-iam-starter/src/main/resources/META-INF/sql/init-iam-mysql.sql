@@ -83,7 +83,7 @@ create table dbt_iam_resource
     display_name_i18n varchar(200) null comment '显示名称国际化资源标识',
     route_path        varchar(200) null comment '路由地址',
     resource_code     varchar(100)                          not null comment '前端资源编码',
-    permission_code   varchar(200) null comment '接口权限编码',
+    permission_code   varchar(300) null comment '接口权限编码',
     meta              varchar(300) null comment 'meta配置',
     sort_id           bigint      not null default 0 comment '排序号',
     status            varchar(10) default 'A'               not null comment '状态',
