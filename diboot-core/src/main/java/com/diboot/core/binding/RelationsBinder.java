@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,32 @@ public class RelationsBinder {
             return;
         }
         // 获取VO类
-        Class<?> voClass = voList.get(0).getClass();
+        List<Class<?>> uniqueClassesList = new ArrayList<>();
+        uniqueClassesList.add(voList.get(0).getClass());
+        voList.forEach(vo -> {
+            if(!uniqueClassesList.contains(vo.getClass())){
+                uniqueClassesList.add(vo.getClass());
+            }
+        });
+        if(uniqueClassesList.size() == 1) {
+            bind(uniqueClassesList.get(0), voList, enableDeepBind);
+        }
+        else {
+            for(Class<?> voClazz : uniqueClassesList){
+                bind(voClazz, voList.stream().filter(vo->vo.getClass().equals(voClazz)).toList(), enableDeepBind);
+            }
+        }
+    }
+
+    /**
+     * 自动绑定多个VO集合的关联对象
+     * @param voList 需要注解绑定的对象集合
+     * @param enableDeepBind
+     * @return
+     * @throws Exception
+     */
+    private static <VO> void bind(Class<?> voClass, List<VO> voList, boolean enableDeepBind){
+        // 获取VO类
         BindAnnotationGroup bindAnnotationGroup = ParserCache.getBindAnnotationGroup(voClass);
         if(bindAnnotationGroup.isEmpty()){
             return;
