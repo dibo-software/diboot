@@ -36,6 +36,10 @@ public class PartGenerator {
         }
         if("date".equals(part.getType())) {
             Date date = new Date();
+            // 临时替换格式，3.6+后续版本移除
+            if(part.getValue().endsWith("MMDD")){
+                part.setValue(part.getValue().replaceAll("MMDD", "MMdd"));
+            }
             return D.convert2FormatString(date, part.getValue());
         }
         if("random".equals(part.getType())) {
@@ -43,5 +47,4 @@ public class PartGenerator {
         }
         return null;
     }
-
 }

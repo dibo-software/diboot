@@ -1,6 +1,7 @@
 package diboot.core.test.util;
 
 import com.diboot.core.extension.sequence.Part;
+import com.diboot.core.extension.sequence.PartGenerator;
 import com.diboot.core.extension.sequence.SequenceGenerator;
 import com.diboot.core.util.D;
 import diboot.core.test.StartupApplication;
@@ -39,12 +40,19 @@ public class TestSequence {
     public void testBuildPart(){
         List<Part> parts =
                 Part.cons("No.")
-                .append(Part.date("YYYYMMDD"))
+                .append(Part.date(Part.DATE_FORMAT.yyyyMMdd))
                 .append(Part.seq(5))
                 .append(Part.random(4))
                 .append(Part.field("type", 4))
                 .build();
         Assert.assertEquals(parts.size(), 5);
+
+        System.out.println(PartGenerator.generate(Part.date(Part.DATE_FORMAT.yy)));
+        System.out.println(PartGenerator.generate(Part.date(Part.DATE_FORMAT.yyyy)));
+        System.out.println(PartGenerator.generate(Part.date(Part.DATE_FORMAT.yyMM)));
+        System.out.println(PartGenerator.generate(Part.date(Part.DATE_FORMAT.yyyyMM)));
+        System.out.println(PartGenerator.generate(Part.date(Part.DATE_FORMAT.yyMMdd)));
+        System.out.println(PartGenerator.generate(Part.date(Part.DATE_FORMAT.yyyyMMdd)));
     }
 
     @Test

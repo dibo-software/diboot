@@ -40,13 +40,13 @@ public class Part implements Serializable {
      * 日期格式
      */
     public enum DATE_FORMAT {
-        YYYY,
-        YY,
-        YYYYMM,
-        YYMM,
-        YYYYMMDD,
-        YYMMDD,
-        MMDD
+        yyyy,
+        yy,
+        yyyyMM,
+        yyMM,
+        yyyyMMdd,
+        yyMMdd,
+        MMdd
     }
 
     @JsonIgnore
