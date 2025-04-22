@@ -190,4 +190,21 @@ public class JSON {
         }
         return (LinkedHashMap<K, T>)toJavaObject(jsonStr, LinkedHashMap.class);
     }
+
+    /**
+     * 转换对象
+     * @param fromValue
+     * @param toValueType
+     * @return
+     * @param <T>
+     */
+    public static <T> T convert(Object fromValue, Class<T> toValueType) {
+        try {
+            return getObjectMapper().convertValue(fromValue, toValueType);
+        }
+        catch (Exception e) {
+            log.error("convertValue异常", e);
+            throw new BusinessException("exception.business.JSON.parseArray.message");
+        }
+    }
 }
