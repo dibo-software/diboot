@@ -198,7 +198,7 @@ public class JSON {
      * @return
      * @param <T>
      */
-    public static <T> T convert(Object fromValue, Class<T> toValueType) {
+    public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
         try {
             return getObjectMapper().convertValue(fromValue, toValueType);
         }
