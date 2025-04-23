@@ -20,6 +20,7 @@ import com.diboot.core.config.Cons;
 import com.diboot.core.util.S;
 import com.diboot.core.util.V;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * @version v2.0
  * @date 2019/01/01
  */
-public class PagingJsonResult<T> extends JsonResult<T> {
+public class PagingJsonResult<T> extends JsonResult<T> implements Serializable {
     private static final long serialVersionUID = 1002L;
 
     /**
@@ -79,7 +80,7 @@ public class PagingJsonResult<T> extends JsonResult<T> {
         this.data(data);
     }
 
-    public PagingJsonResult setPage(Pagination pagination){
+    public PagingJsonResult<T> setPage(Pagination pagination){
         this.page = pagination;
         return this;
     }
