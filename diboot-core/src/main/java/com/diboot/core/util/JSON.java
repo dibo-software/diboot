@@ -49,7 +49,8 @@ public class JSON {
         }
         objectMapper = ContextHolder.getBean(ObjectMapper.class);
         if(objectMapper == null){
-            throw new InvalidUsageException("未找到 ObjectMapper实例，请检查配置类");
+            log.warn("未找到 ObjectMapper实例，请检查配置类！");
+            return new ObjectMapper();
         }
         return objectMapper;
     }
