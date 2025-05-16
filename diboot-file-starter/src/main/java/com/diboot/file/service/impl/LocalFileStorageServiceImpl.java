@@ -53,7 +53,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
                .setFileType(ext)
                .setFileSize(file.getSize())
                .setStoragePath(fileFullPath)
-               .setAccessUrl(buildAccessUrl(fileUid,ext));
+               .setAccessUrl(buildAccessUrl(fileUid,""));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
                 .setFileType(ext)
                 .setFileSize(size)
                 .setStoragePath(fileFullPath)
-                .setAccessUrl(buildAccessUrl(fileUid,ext));
+                .setAccessUrl(buildAccessUrl(fileUid,""));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
                 .setFileType(ext)
                 .setFileSize(file.length())
                 .setStoragePath(diskFilePath)
-                .setAccessUrl(buildAccessUrl(fileUid, ext));
+                .setAccessUrl(buildAccessUrl(fileUid, ""));
     }
 
     @Override
