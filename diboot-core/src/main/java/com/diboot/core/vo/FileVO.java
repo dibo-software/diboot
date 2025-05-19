@@ -43,6 +43,11 @@ public class FileVO implements Serializable {
     private String fileName;
 
     /**
+     * 文件类型/后缀
+     */
+    private String fileType;
+
+    /**
      * 文件下载/访问url
      */
     private String accessUrl;
