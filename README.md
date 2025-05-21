@@ -19,6 +19,15 @@
     <a href="https://mvnrepository.com/artifact/com.diboot" target="_blank">
         <img src="https://img.shields.io/maven-central/v/com.diboot/diboot-core-spring-boot-starter">
     </a>
+    <a href="http://gitee.com/dibo_software/diboot" target="_blank" title="Gitee 仓库 - 开源不易，star鼓励">
+        <img src="http://gitee.com/dibo_software/diboot/badge/star.svg?theme=gvp" />
+    </a>
+    <a href="http://github.com/dibo-software/diboot" target="_blank" title="Github 仓库 - 开源不易，star鼓励">
+        <img src="https://img.shields.io/github/stars/dibo-software/diboot.svg?style=social&label=Stars" />
+    </a>
+    <a href="https://gitcode.com/DiboSoftware/diboot/" target="_blank" title="Gitcode 仓库 - 开源不易，star鼓励" >
+        <img src="https://gitcode.com/DiboSoftware/diboot/star/badge.svg" />
+    </a>
 </p>
 
 > 设计目标: 为开发人员打造的低代码开发平台，将复杂的工作简单化、重复的工作自动化，提高质量、效率、可维护性。
@@ -58,9 +67,16 @@
   * Diboot及Devtools完全公益化运营，如您想要支持我们，可通过捐助 或者 顺手点个star，感谢每一份信任与鼓励!
   <img src="https://www.diboot.com/wechat_donate.png" width="240">
   
-### 使用过程中，如遇相关技术问题，欢迎加群交流：
+### 使用过程中，如遇相关技术问题，欢迎提交issue或加群交流：
+
+  * 仓库地址（提交pr及issue）：
+    * [Gitee 仓库](http://gitee.com/dibo_software/diboot)
+    * [Github 仓库](http://github.com/dibo-software/diboot)
+    * [Gitcode 仓库](https://gitcode.com/DiboSoftware/diboot/)
+
 
   * 技术交流QQ群: [731690096]()
+
 
   * 技术交流微信群 加微信 [wx20201024] (备注diboot): 
   * <img src="https://www.diboot.com/add_wechat.png" width="240">
