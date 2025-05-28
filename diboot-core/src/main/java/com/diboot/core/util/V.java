@@ -309,6 +309,25 @@ public class V {
     }
 
     /**
+     * 集合中是否包含指定元素列表中的任意一个
+     *
+     * @param collection 集合
+     * @param searchList 查找元素list
+     * @return 集合为空或者不包含元素，则返回false
+     */
+    public static <T> boolean containsAny(Collection<T> collection, Collection<T> searchList) {
+        if(collection == null) {
+            return searchList == null;
+        }
+        for (T target : searchList) {
+            if (collection.contains(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 集合中是否不包含指定元素
      *
      * @param collection 集合
