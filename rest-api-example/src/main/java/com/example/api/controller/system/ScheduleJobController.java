@@ -51,8 +51,8 @@ public class ScheduleJobController extends BaseCrudRestController<ScheduleJob> {
     @Log(operation = OperationCons.LABEL_LIST)
     @BindPermission(name = OperationCons.LABEL_LIST, code = OperationCons.CODE_READ)
     @GetMapping
-    public JsonResult getJobVOListMapping(ScheduleJob entity, Pagination pagination) throws Exception {
-        return super.getViewObjectList(entity, pagination, ScheduleJobVO.class);
+    public JsonResult getJobVOListMapping(ScheduleJob entity) throws Exception {
+        return super.getViewObjectList(entity, null, ScheduleJobVO.class);
     }
 
     /**
