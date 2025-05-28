@@ -43,4 +43,11 @@ public interface IamGroupService extends BaseService<IamGroup> {
      */
     List<LabelValue> getGroupListByIds(List<String> groupIds);
 
+    /**
+     * 获取用户ids所属的组
+     * @param userIds
+     * @return
+     */
+    List<IamGroup> getGroupListByUserIds(List<String> userIds);
+
 }

@@ -65,4 +65,24 @@ public class IamGroupServiceImpl extends BaseServiceImpl<IamGroupMapper, IamGrou
         return groupList;
     }
 
+    @Override
+    public List<IamGroup> getGroupListByUserIds(List<String> userIds) {
+        LambdaQueryWrapper<IamGroup> queryWrapper = new LambdaQueryWrapper<IamGroup>();
+        for (String userId : userIds) {
+            queryWrapper.or().like(IamGroup::getMembers, userId);
+        }
+        // 筛选过滤结果
+        List<IamGroup> groupList = getEntityList(queryWrapper);
+        if (V.notEmpty(groupList)) {
+            List<IamGroup> newGroupList = new ArrayList<>();
+            for (IamGroup group : groupList) {
+                if(V.containsAny(group.getMembers(), userIds)) {
+                    newGroupList.add(group);
+                }
+            }
+            return newGroupList;
+        }
+        return Collections.emptyList();
+    }
+
 }
