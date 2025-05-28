@@ -15,12 +15,20 @@
  */
 package com.diboot.iam.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.diboot.core.service.impl.BaseServiceImpl;
+import com.diboot.core.util.V;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamGroup;
 import com.diboot.iam.mapper.IamGroupMapper;
 import com.diboot.iam.service.IamGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户组相关Service实现
@@ -31,5 +39,30 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class IamGroupServiceImpl extends BaseServiceImpl<IamGroupMapper, IamGroup> implements IamGroupService {
+
+    @Override
+    public List<String> getUserIdsByGroup(List<String> groupIds) {
+        LambdaQueryWrapper<IamGroup> queryWrapper = new LambdaQueryWrapper<IamGroup>()
+                .select(IamGroup::getMembers)
+                .in(IamGroup::getId, groupIds);
+        List<IamGroup> groupList = getEntityList(queryWrapper);
+        if (V.notEmpty(groupList)) {
+            List<String> groupMembers = new ArrayList<>();
+            for (IamGroup group : groupList) {
+                groupMembers.addAll(group.getMembers());
+            }
+            return groupMembers.stream().distinct().collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<LabelValue> getGroupListByIds(List<String> groupIds) {
+        LambdaQueryWrapper<IamGroup> queryWrapper = new LambdaQueryWrapper<IamGroup>()
+                .select(IamGroup::getName, IamGroup::getId)
+                .in(IamGroup::getId, groupIds);
+        List<LabelValue> groupList = getLabelValueList(queryWrapper);
+        return groupList;
+    }
 
 }

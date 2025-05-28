@@ -16,7 +16,10 @@
 package com.diboot.iam.service;
 
 import com.diboot.core.service.BaseService;
+import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamGroup;
+
+import java.util.List;
 
 /**
  * 用户组相关Service
@@ -25,5 +28,19 @@ import com.diboot.iam.entity.IamGroup;
  * @date 2025/05/28
  */
 public interface IamGroupService extends BaseService<IamGroup> {
+
+    /**
+     * 获取指定用户组下的成员ids
+     * @param groupIds
+     * @return
+     */
+    List<String> getUserIdsByGroup(List<String> groupIds);
+
+    /**
+     * 获取指定用户组的id-名称列表
+     * @param groupIds
+     * @return
+     */
+    List<LabelValue> getGroupListByIds(List<String> groupIds);
 
 }
