@@ -178,23 +178,19 @@ public abstract class BaseAuthServiceImpl implements AuthService {
                 .eq(IamLoginTrace::getAuthType, latestAccount.getAuthType())
                 .eq(IamLoginTrace::getAuthAccount, latestAccount.getAuthAccount())
                 .gt(IamLoginTrace::getCreateTime, LocalDateTime.now().minusDays(1))
-                .eq(V.notEmpty(latestAccount.getTenantId()) ,IamLoginTrace::getTenantId, latestAccount.getTenantId());
+                .eq(V.notEmpty(latestAccount.getTenantId()) ,IamLoginTrace::getTenantId, latestAccount.getTenantId())
+                .orderByDesc(IamLoginTrace::getId);
         // 检查是否超出最大次数
         int maxLoginAttempts = iamProperties.getMaxLoginAttempts();
         List<IamLoginTrace> loginList = loginTraceService.getEntityListLimit(queryWrapper, maxLoginAttempts);
         if(V.notEmpty(loginList) && loginList.size() >= maxLoginAttempts) {
-            int failCount = 0;
-            for(IamLoginTrace loginTrace : loginList) {
-                if(loginTrace.getIsSuccess()) {
-                    break;
-                }
-                failCount++;
+            boolean hasSuccessRecord = loginList.stream().anyMatch(IamLoginTrace::getIsSuccess);
+            if(hasSuccessRecord) {
+                return;
             }
-            if(failCount >= maxLoginAttempts) {
-                latestAccount.setStatus(Cons.DICTCODE_ACCOUNT_STATUS.L.name());
-                log.warn("用户登录失败次数超过最大限值，账号 {} 已被锁定！", latestAccount.getAuthAccount());
-                accountService.updateAccountStatus(latestAccount.getId(), Cons.DICTCODE_ACCOUNT_STATUS.L.name());
-            }
+            latestAccount.setStatus(Cons.DICTCODE_ACCOUNT_STATUS.L.name());
+            log.warn("用户登录失败次数超过最大限值，账号 {} 已被锁定！", latestAccount.getAuthAccount());
+            accountService.updateAccountStatus(latestAccount.getId(), Cons.DICTCODE_ACCOUNT_STATUS.L.name());
         }
     }
 }
