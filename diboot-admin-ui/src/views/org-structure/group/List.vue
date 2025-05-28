@@ -1,9 +1,10 @@
 <script setup lang="ts" name="Group">
-import { Plus, Edit, Search, ArrowDown } from '@element-plus/icons-vue'
+import { Plus, Edit, Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue'
 import type { Group } from './type'
 import Detail from './Detail.vue'
 import Form from './Form.vue'
 
+import type { Select } from '@/components/di/type'
 import { checkPermission } from '@/utils/permission'
 import { useI18n } from 'vue-i18n'
 
@@ -115,6 +116,8 @@ const refreshData = (haveNewData?: boolean) => {
   haveNewData ? onSearch() : getList()
 }
 
+const searchState = ref(false)
+
 const router = useRouter()
 
 const activated = () => {
@@ -140,12 +143,52 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
 
       <el-space>
         <span class="search">
-          <el-input v-model="queryParam.name" placeholder="名称" clearable @change="onSearch" />
+          <el-input v-model="queryParam.name" :placeholder="$t('group.name')" clearable @change="onSearch" />
         </span>
         <el-button :icon="Search" type="primary" @click="onSearch">{{ $t('operation.search') }}</el-button>
         <el-button :title="$t('title.reset')" @click="resetFilter">{{ $t('operation.reset') }}</el-button>
+        <el-button
+          :icon="searchState ? ArrowUp : ArrowDown"
+          :title="searchState ? $t('searchState.up') : $t('searchState.down')"
+          @click="searchState = !searchState"
+        />
       </el-space>
     </el-space>
+
+    <el-form v-show="searchState" label-width="80px" class="list-search" @submit.prevent>
+      <el-row :gutter="18">
+        <el-col :lg="8" :sm="12">
+          <el-form-item :label="$t('group.members')">
+            <di-selector
+              v-model="queryParam.members"
+              data-type="IamUser"
+              data-label="realname"
+              :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
+              :list="{
+                baseApi: '/iam/user',
+                relatedKey: 'orgId',
+                searchArea: {
+                  propList: [
+                    { prop: 'realname', label: $t('user.realname'), type: 'input' },
+                    { prop: 'userNum', label: $t('user.userNum'), type: 'input' },
+                    { prop: 'gender', label: $t('user.gender'), type: 'select', loader: 'GENDER' } as Select
+                  ]
+                },
+                columns: [
+                  { prop: 'userNum', label: $t('user.userNum') },
+                  { prop: 'realname', label: $t('user.realname') },
+                  { prop: 'genderLabel', label: $t('user.gender') },
+                  { prop: 'mobilePhone', label: $t('user.mobilePhone') },
+                  { prop: 'sortId', label: $t('user.sortId') }
+                ]
+              }"
+              multiple
+              @change="onSearch"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
 
     <el-table
       ref="tableRef"
@@ -159,15 +202,15 @@ router.currentRoute.value.meta.keepAlive ? onActivated(activated) : activated()
       @row-dblclick="(row: Group) => checkPermission('detail') && handleOperation('detail', row.id)"
       @sort-change="sortChange"
     >
-      <el-table-column :label="$t('group.name')" prop="name" show-overflow-tooltip />
-      <el-table-column :label="$t('group.members')" prop="members" show-overflow-tooltip>
+      <el-table-column :label="$t('group.name')" prop="name" show-overflow-tooltip :min-width="100" />
+      <el-table-column :label="$t('group.members')" prop="members" show-overflow-tooltip :min-width="180">
         <template #default="{ row }: { row: Group }">
           {{ row.membersLabel?.join('、') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('group.description')" prop="description" show-overflow-tooltip />
-      <el-table-column :label="$t('baseField.createTime')" prop="createTime" show-overflow-tooltip />
-      <el-table-column :label="$t('baseField.updateTime')" prop="updateTime" show-overflow-tooltip />
+      <el-table-column :label="$t('group.description')" prop="description" show-overflow-tooltip :min-width="130" />
+      <el-table-column :label="$t('baseField.createTime')" prop="createTime" show-overflow-tooltip :width="165" />
+      <el-table-column :label="$t('baseField.updateTime')" prop="updateTime" show-overflow-tooltip :width="165" />
       <el-table-column :label="$t('operation.label')" fixed="right" :width="180">
         <template #default="{ row }: { row: Group }">
           <el-space>

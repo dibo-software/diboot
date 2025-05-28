@@ -67,6 +67,7 @@ public class IamGroup extends BaseEntity<String>{
      */
     @NotNull(message = "{validation.iamGroup.members.NotNull.message}")
     @TableField(typeHandler = JacksonTypeHandler.class)
+    @BindQuery(comparison = Comparison.CONTAINS)
     private List<String> members;
 
     /**
