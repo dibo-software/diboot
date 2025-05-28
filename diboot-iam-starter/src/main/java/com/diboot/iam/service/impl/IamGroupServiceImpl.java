@@ -67,7 +67,8 @@ public class IamGroupServiceImpl extends BaseServiceImpl<IamGroupMapper, IamGrou
 
     @Override
     public List<IamGroup> getGroupListByUserIds(List<String> userIds) {
-        LambdaQueryWrapper<IamGroup> queryWrapper = new LambdaQueryWrapper<IamGroup>();
+        LambdaQueryWrapper<IamGroup> queryWrapper = new LambdaQueryWrapper<IamGroup>()
+            .select(IamGroup::getId, IamGroup::getName, IamGroup::getMembers);
         for (String userId : userIds) {
             queryWrapper.or().like(IamGroup::getMembers, userId);
         }
