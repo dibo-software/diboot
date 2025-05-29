@@ -1,6 +1,7 @@
 import type { RouteRecord, RouteRecordName, RouteRecordRaw } from 'vue-router'
 import type { DefineComponent, VNode } from 'vue'
 import { h } from 'vue'
+import useAppStore from '@/store/app'
 import useViewTabs from '@/store/view-tabs'
 const Layout = () => import('@/layout/index.vue')
 // 加载所有组件
@@ -34,6 +35,8 @@ const routeSort = (e1: RouteRecordRaw, e2: RouteRecordRaw) => (e1.meta?.sort ?? 
  * @param asyncRoutes
  */
 export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
+  const appStore = useAppStore()
+
   // 构建完整路径
   const buildFullPath = (path: string, parentPath = '/') =>
     /^\//.exec(path) ? path : `${parentPath === '/' ? '' : parentPath}/${path}`
@@ -104,6 +107,8 @@ export const buildAsyncRoutes = (asyncRoutes: RouteRecordRaw[]) => {
           route.meta = undefined
         }
       }
+      // 未开启tabs关闭所有页面缓存
+      if (route.meta && route.meta.keepAlive && !appStore.enableTabs) route.meta.keepAlive = false
       return true
     })
   }
