@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.5.0</version>
         <relativePath/>
     </parent>
 
@@ -29,13 +29,13 @@
     </modules>
 
     <properties>
-        <hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
+        <hibernate-validator.version>9.0.0.Final</hibernate-validator.version>
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <aspectjweaver.version>1.9.23</aspectjweaver.version>
-        <commons-io.version>2.18.0</commons-io.version>
+        <aspectjweaver.version>1.9.24</aspectjweaver.version>
+        <commons-io.version>2.19.0</commons-io.version>
         <easyexcel.version>4.0.3</easyexcel.version>
-        <shiro.version>2.0.2</shiro.version>
+        <shiro.version>2.0.4</shiro.version>
         <diboot.version>3.6.1</diboot.version>
     </properties>
 
@@ -44,13 +44,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.36</version>
+            <version>1.18.38</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.2.0</version>
+            <version>9.3.0</version>
             <scope>provided</scope>
         </dependency>
 
