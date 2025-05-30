@@ -286,6 +286,7 @@ public class RelationsBinder {
                 }
             }
             bindingExecutor.shutdown();
+            log.debug("虚拟线程执行关联绑定完成 <-=");
         }
         // 深度绑定
         if(enableDeepBind){

@@ -51,6 +51,9 @@ public class VirtualThreadExecutor {
                 isSupportVirtualThread = false;
             }
         }
+        if (isSupportVirtualThread) {
+            log.info("当前环境支持虚拟线程，将启用虚拟线程执行关联绑定。");
+        }
         return isSupportVirtualThread;
     }
 
@@ -61,7 +64,7 @@ public class VirtualThreadExecutor {
         try {
             ExecutorService executorService = (ExecutorService)
                     Executors.class.getMethod("newVirtualThreadPerTaskExecutor").invoke(null);
-            log.info("启用虚拟线程执行关联绑定.");
+            log.debug("启用虚拟线程执行关联绑定 =->");
             return executorService;
         }
         catch (Exception e) {
