@@ -63,7 +63,7 @@ public class JobAspect {
     @Around(value = "pointCut()")
     public void afterHandler(ProceedingJoinPoint joinPoint) {
         ScheduleJobLog jobLog = new ScheduleJobLog();
-        jobLog.setJobId(Long.valueOf(((JobExecutionContext) joinPoint.getArgs()[0]).getJobDetail().getKey().getName()));
+        jobLog.setJobId(((JobExecutionContext) joinPoint.getArgs()[0]).getJobDetail().getKey().getName());
         try {
             jobLog.setStartTime(LocalDateTime.now());
             joinPoint.proceed(joinPoint.getArgs());

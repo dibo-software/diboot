@@ -56,7 +56,7 @@ public class ScheduleJobLog extends BaseEntity<String> {
      */
     @NotNull(message = "{validation.scheduleJobLog.jobId.NotNull.message}")
     @TableField()
-    private Long jobId;
+    private String jobId;
 
     @TableField(exist = false)
     private String jobKey;
