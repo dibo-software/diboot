@@ -16,6 +16,7 @@
 package com.diboot.core.converter;
 
 import com.diboot.core.converter.annotation.CollectThisConvertor;
+import com.diboot.core.util.D;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class Date2LocalDateConverter implements Converter<Date, LocalDate> {
 
     @Override
     public LocalDate convert(Date source) {
-        ZonedDateTime zonedDateTime = source.toInstant().atZone(ZoneId.systemDefault());
+        ZonedDateTime zonedDateTime = source.toInstant().atZone(D.DEFAULT_ZONE_ID);
         return zonedDateTime.toLocalDate();
     }
 }

@@ -328,7 +328,7 @@ public class BeanUtils {
             if (dateVal == null) {
                 return null;
             }
-            ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(ZoneId.systemDefault());
+            ZonedDateTime zonedDateTime = dateVal.toInstant().atZone(D.DEFAULT_ZONE_ID);
             return LocalDateTime.class.equals(fieldType) ? zonedDateTime.toLocalDateTime() : zonedDateTime.toLocalDate();
         } else if (Serializable.class.isAssignableFrom(fieldType)) {
             if(value instanceof String) {
