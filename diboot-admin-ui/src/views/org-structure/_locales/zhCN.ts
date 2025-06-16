@@ -1,6 +1,7 @@
 const zhCN = {
   group: {
     name: '名称',
+    orgId: '组织',
     members: '成员',
     description: '备注'
   },

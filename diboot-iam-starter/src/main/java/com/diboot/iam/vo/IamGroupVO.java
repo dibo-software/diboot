@@ -15,10 +15,10 @@
  */
 package com.diboot.iam.vo;
 
-import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindField;
 import com.diboot.core.binding.annotation.BindFieldList;
-import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamGroup;
+import com.diboot.iam.entity.IamOrg;
 import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +39,10 @@ import java.util.List;
 public class IamGroupVO extends IamGroup {
     @Serial
     private static final long serialVersionUID = 3511203861636398030L;
+
+    // 关联组织
+    @BindField(entity = IamOrg.class, condition = "this.org_id = id", field = "name")
+    private String orgLabel;
 
     // 字典关联
     @BindFieldList(entity = IamUser.class, condition = "this.members = id", field = "realname")

@@ -63,6 +63,11 @@ public class IamGroup extends BaseEntity<String>{
     private String name;
 
     /**
+     * 组织ID
+     */
+    private String orgId;
+
+    /**
      * 成员
      */
     @NotNull(message = "{validation.iamGroup.members.NotNull.message}")

@@ -6,6 +6,9 @@ export interface Group {
   id: string
   // 名称
   name: string
+  // 组织
+  orgId?: string
+  orgLabel?: string
   // 成员
   members: string[]
   membersLabel?: string[]

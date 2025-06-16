@@ -23,6 +23,12 @@ const emit = defineEmits<{
   (e: 'submitting', submitting: boolean): void
 }>()
 
+const { relatedData, initRelatedData } = useOption({
+  load: {
+    orgIdOptions: { type: 'IamOrg', label: 'name', parent: 'parentId', lazyChild: false }
+  }
+})
+
 const { loadData, loading, model } = useDetail<Group>(baseApi)
 
 const { submitting, submit } = useForm({ baseApi, successCallback: (id, isNew) => emit('complete', id, isNew) })
@@ -40,6 +46,7 @@ const validate = (
 
 defineExpose({
   init: (id?: string, refresh = true, initData?: Record<string, unknown>) => {
+    initRelatedData()
     if (model.value.id === id && !refresh) return
     // 加载数据
     loadData(id).then(() => {
@@ -79,6 +86,19 @@ const checkNameDuplicate = checkValue(`${baseApi}/check-name-duplicate`, 'name',
           <el-input v-model="model.name" :disabled="disabledProps?.includes('name')" clearable />
         </el-form-item>
       </el-col>
+      <el-col v-if="!invisibleProps?.includes('orgId')" :span="24">
+        <el-form-item prop="orgId" :label="$t('group.orgId')">
+          <el-tree-select
+            v-model="model.orgId"
+            :data="relatedData.orgIdOptions"
+            filterable
+            default-expand-all
+            check-strictly
+            :disabled="disabledProps?.includes('orgId')"
+            clearable
+          />
+        </el-form-item>
+      </el-col>
       <el-col v-if="!invisibleProps?.includes('members')" :span="24">
         <el-form-item
           prop="members"
@@ -114,7 +134,13 @@ const checkNameDuplicate = checkValue(`${baseApi}/check-name-duplicate`, 'name',
       </el-col>
       <el-col v-if="!invisibleProps?.includes('description')" :span="24">
         <el-form-item prop="description" :label="$t('group.description')">
-          <el-input v-model="model.description" :disabled="disabledProps?.includes('description')" clearable />
+          <el-input
+            v-model="model.description"
+            type="textarea"
+            autosize
+            :disabled="disabledProps?.includes('description')"
+            clearable
+          />
         </el-form-item>
       </el-col>
     </el-row>

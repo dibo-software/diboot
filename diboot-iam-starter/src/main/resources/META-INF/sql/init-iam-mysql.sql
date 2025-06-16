@@ -234,6 +234,7 @@ CREATE TABLE `dbt_iam_group`
     `id`          varchar(32) NOT NULL COMMENT 'ID' primary key,
     `tenant_id`   varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
     `name`        varchar(100) NOT NULL COMMENT '名称',
+    `org_id`      varchar(32) NOT NULL COMMENT '组织ID',
     `members`     text NOT NULL COMMENT '成员',
     `description`      varchar(200)  COMMENT '备注',
     `is_deleted`  tinyint(1)  NOT NULL DEFAULT 0 COMMENT '删除标记',

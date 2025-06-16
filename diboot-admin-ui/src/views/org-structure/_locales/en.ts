@@ -2,6 +2,7 @@ import type { Locale } from './zhCN'
 const en: Locale = {
   group: {
     name: 'Name',
+    orgId: 'Organize',
     members: 'Members',
     description: 'Description'
   },

@@ -16,6 +16,11 @@ defineExpose({ init: loadData })
         {{ model.name }}
       </span>
     </el-descriptions-item>
+    <el-descriptions-item :label="$t('group.orgId')" label-class-name="item-label" label-align="right">
+      <span class="txt-short">
+        {{ model.orgLabel }}
+      </span>
+    </el-descriptions-item>
     <el-descriptions-item :label="$t('group.members')" label-class-name="item-label" label-align="right">
       <span class="txt-short">
         {{ model.membersLabel?.join('、') }}
