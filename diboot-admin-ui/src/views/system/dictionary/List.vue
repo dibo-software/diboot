@@ -137,7 +137,6 @@ function rowClick(row: DictionaryTableExpand) {
       v-if="pagination.total"
       v-model:current-page="pagination.current"
       v-model:page-size="pagination.pageSize"
-      :page-sizes="[10, 15, 20, 30, 50, 100]"
       size="small"
       background
       layout="total, sizes, prev, pager, next, jumper"

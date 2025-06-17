@@ -15,6 +15,10 @@ import { i18nInstall } from './i18n'
 
 // import { initFunction } from './utils/initFunction'
 
+import { ElDialog, ElPagination } from 'element-plus'
+ElDialog.props.closeOnClickModal.default = false
+ElPagination.props.pageSizes.default = [10, 15, 20, 30, 50, 100]
+
 const app = createApp(AppView)
 app.use(router)
 app.use(pinia)
