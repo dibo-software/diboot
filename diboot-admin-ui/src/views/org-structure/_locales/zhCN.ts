@@ -21,6 +21,7 @@ const zhCN = {
   position: {
     name: '名称',
     code: '编码',
+    user: '用户',
     gradeName: '职级',
     dataPermissionType: '数据权限',
     isVirtual: '虚拟岗位',
