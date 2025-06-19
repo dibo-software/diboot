@@ -65,6 +65,10 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
 
     @Override
     public List<? extends Serializable> getAccessibleIds(String fieldName) {
+        return getAccessibleIds(fieldName, isUserFieldName(fieldName), isOrgFieldName(fieldName));
+    }
+
+    public List<? extends Serializable> getAccessibleIds(String fieldName, boolean isUserFieldName, boolean isOrgFieldName) {
         // 获取当前登录用户
         IamUser currentUser;
         try {
@@ -100,7 +104,7 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
         }
         // 本人数据
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isUserFieldName(fieldName)){
+            if(isUserFieldName){
                 return buildUserIdsScope(currentUser);
             }
             else{// 忽略无关字段
@@ -109,7 +113,7 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
         }
         // 按user过滤，本人及下属
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.SELF_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isUserFieldName(fieldName)){
+            if(isUserFieldName){
                 return positionDataScope.getAccessibleUserIds();
             }
             else{// 忽略无关字段
@@ -118,7 +122,7 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
         }
         // 按部门过滤，本部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isOrgFieldName(fieldName)){
+            if(isOrgFieldName){
                 return Collections.singletonList(positionDataScope.getOrgId());
             }
             else{// 忽略无关字段
@@ -127,7 +131,7 @@ public abstract class UserOrgDataAccessScopeManager implements DataScopeManager 
         }
         // 按部门过滤，本部门及下属部门
         else if(Cons.DICTCODE_DATA_PERMISSION_TYPE.DEPT_AND_SUB.name().equalsIgnoreCase(positionDataScope.getDataPermissionType())){
-            if(isOrgFieldName(fieldName)){
+            if(isOrgFieldName){
                 return positionDataScope.getAccessibleOrgIds();
             }
             else{// 忽略无关字段
