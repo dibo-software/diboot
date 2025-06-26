@@ -16,11 +16,15 @@
 package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
+import com.diboot.core.binding.annotation.BindFieldList;
 import com.diboot.core.vo.LabelValue;
 import com.diboot.iam.entity.IamPosition;
+import com.diboot.iam.entity.IamUser;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * 岗位 VO定义
@@ -38,4 +42,7 @@ public class IamPositionVO extends IamPosition {
     @BindDict(type="DATA_PERMISSION_TYPE", field = "dataPermissionType")
     private LabelValue dataPermissionTypeLabel;
 
+    // 关联用户
+    @BindFieldList(entity = IamUser.class, condition = "this.id = dbt_iam_user_position.position_id and dbt_iam_user_position.user_id = id and dbt_iam_user_position.user_type = 'IamUser'", field = "realname")
+    private List<String> userNames;
 }

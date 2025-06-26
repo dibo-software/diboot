@@ -1,6 +1,6 @@
 {
   "name": "diboot-mobile-ui",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -16,38 +16,46 @@
     "@vant/use": "^1.6.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
-    "axios": "^1.7.7",
+    "axios": "^1.10.0",
     "html5-qrcode": "^2.3.8",
     "jsencrypt": "^3.3.2",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "pinia": "^2.2.5",
+    "pinia": "^3.0.3",
     "pinia-plugin-persist": "^1.0.0",
-    "qs": "^6.13.0",
-    "vant": "^4.9.8",
-    "vue": "^3.5.12",
-    "vue-i18n": "^10.0.4",
-    "vue-router": "^4.4.5"
+    "qs": "^6.14.0",
+    "vant": "^4.9.20",
+    "vue": "^3.5.17",
+    "vue-i18n": "^11.1.6",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.10.4",
-    "@types/lodash": "^4.17.13",
-    "@types/node": "^22.8.5",
-    "@types/qs": "^6.9.16",
+    "@rushstack/eslint-patch": "^1.11.0",
+    "@types/lodash": "^4.17.18",
+    "@types/node": "^24.0.3",
+    "@types/qs": "^6.14.0",
     "@vicons/utils": "^0.1.4",
-    "@vitejs/plugin-vue": "^5.1.4",
-    "@vue/eslint-config-prettier": "~9.0.0",
-    "@vue/eslint-config-typescript": "~13.0.0",
-    "@vue/tsconfig": "^0.5.1",
-    "eslint": "~8.57.1",
-    "eslint-plugin-vue": "~9.30.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/eslint-config-prettier": "~10.2.0",
+    "@vue/eslint-config-typescript": "~14.5.1",
+    "@vue/tsconfig": "^0.7.0",
+    "eslint": "~9.29.0",
+    "eslint-plugin-vue": "~10.2.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.3.3",
-    "sass": "~1.72.0",
-    "typescript": "~5.4.5",
-    "unplugin-auto-import": "~0.12.2",
-    "unplugin-vue-components": "~0.26.0",
-    "vite": "^5.4.10",
-    "vue-tsc": "^2.1.10"
+    "prettier": "^3.5.3",
+    "sass": "~1.89.2",
+    "typescript": "~5.8.3",
+    "unplugin-auto-import": "~19.3.0",
+    "unplugin-vue-components": "~28.7.0",
+    "vite": "^6.3.5",
+    "vue-tsc": "^2.2.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "es5-ext",
+      "esbuild",
+      "vue-demi"
+    ]
   }
 }

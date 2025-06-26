@@ -22,6 +22,9 @@ defineExpose({
       <el-descriptions-item :label="$t('position.code')">
         {{ model.code }}
       </el-descriptions-item>
+      <el-descriptions-item :label="$t('position.user')">
+        {{ [...new Set(model.userNames ?? [])].join('、') }}
+      </el-descriptions-item>
       <el-descriptions-item :label="$t('position.gradeName')">
         {{ model.gradeName }}
       </el-descriptions-item>
