@@ -298,7 +298,7 @@ public class FileHelper{
 		}
 		int index = (int) (Math.floor(Math.log(bytes) / Math.log(1024)));
 		double size = bytes / Math.pow(1024, index);
-		size = Double.valueOf(new DecimalFormat("#.0").format(size));
+		size = Double.parseDouble(new DecimalFormat("#.0").format(size));
 		if(index > SIZE_UNIT.length -1) {
 			return "?PB";
 		}

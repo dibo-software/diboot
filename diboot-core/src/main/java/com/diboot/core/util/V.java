@@ -770,7 +770,7 @@ public class V {
      *
      * @return 违法约束的集合
      */
-    public static <T> Set<ConstraintViolation<T>> validateBean(T obj, Class<?>... groups) {
+    public synchronized static <T> Set<ConstraintViolation<T>> validateBean(T obj, Class<?>... groups) {
         if (VALIDATOR == null) {
             VALIDATOR = Validation.byProvider(HibernateValidator.class).configure().failFast(false).buildValidatorFactory().getValidator();
         }

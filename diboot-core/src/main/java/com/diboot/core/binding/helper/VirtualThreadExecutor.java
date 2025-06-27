@@ -68,6 +68,7 @@ public class VirtualThreadExecutor {
             return executorService;
         }
         catch (Exception e) {
+            log.debug("当前环境JDK版本不支持虚拟线程");
             return null;
         }
     }

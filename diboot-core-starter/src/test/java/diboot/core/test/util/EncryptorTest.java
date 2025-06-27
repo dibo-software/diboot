@@ -54,6 +54,14 @@ public class EncryptorTest {
         Assert.assertTrue(encryptText.length() >= 24);
         // 解密
         Assert.assertTrue(Encryptor.decrypt(encryptText, seed).equals(text));
+
+        text = "测试";
+        encryptText = Encryptor.encrypt(text, seed);
+        System.out.println(encryptText);
+        // 加密后长度
+        Assert.assertTrue(encryptText.length() >= 24);
+        // 解密
+        Assert.assertTrue(Encryptor.decrypt(encryptText, seed).equals(text));
     }
 
 }

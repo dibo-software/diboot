@@ -56,6 +56,8 @@ public class OperationLogController extends BaseCrudRestController<IamOperationL
                 case "exception":
                     queryWrapper.lambda().in(IamOperationLog::getStatusCode, 500, 5000);
                     break;
+                default:
+                    log.warn("未知的 filterType:{}", filterType);
             }
         }
         return super.getEntityListWithPaging(queryWrapper, pagination);

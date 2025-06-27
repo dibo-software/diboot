@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -124,8 +125,9 @@ public class AuthTokenController extends BaseController {
             // RSA解密
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, priKey);
-            return new String(cipher.doFinal(decode));
+            return new String(cipher.doFinal(decode), StandardCharsets.UTF_8);
         } catch (Exception e) {
+            log.warn("解密数据失败: {} : {}", content, e.getMessage());
             throw new BusinessException(Status.FAIL_OPERATION, "解密数据失败！");
         }
     }
