@@ -19,11 +19,11 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,7 +40,6 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
     private RedisTemplate redisTemplate;
     private String cacheName;
 
-    private static final String SUFFIX_KEYS = "_KEYS";
     private int tokenExpireMinutes;
 
     public ShiroRedisCache(String cacheName, RedisTemplate redisTemplate, int tokenExpireMinutes) {
@@ -68,9 +67,6 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
         String key = this.getKey(k.toString());
         log.debug("put key : {}, value: {}", key, v);
         redisTemplate.opsForValue().set(key, v, tokenExpireMinutes, TimeUnit.MINUTES);
-        // 添加keys
-        redisTemplate.opsForSet().add(this.cacheName + SUFFIX_KEYS, key);
-        log.debug("redis缓存新增key：{}", key);
         return v;
     }
 
@@ -83,15 +79,13 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
         V value = get(k);
         log.debug("remove key : {}", key);
         redisTemplate.delete(key);
-        // 从keys缓存中移除
-        redisTemplate.opsForSet().remove(this.cacheName + SUFFIX_KEYS, key);
-        log.debug("redis缓存移除key：{}", key);
         return value;
     }
 
     @Override
     public void clear() throws CacheException {
         redisTemplate.delete(this.keys());
+        log.debug("clear {}", this.cacheName);
     }
 
     @Override
@@ -101,19 +95,29 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public Set<K> keys() {
-        return (Set<K>) redisTemplate.opsForSet().members(this.cacheName + SUFFIX_KEYS);
+        Set<K> keys = new HashSet<>();
+        redisTemplate.execute(connection -> {
+            ScanOptions options = ScanOptions.scanOptions().match(this.cacheName+":*").count(500).build();
+            Cursor<byte[]> cursor = connection.scan(options);
+            while (cursor.hasNext()) {
+                keys.add((K)new String(cursor.next()));
+            }
+            return null;
+        }, true);
+        if (keys.isEmpty()) {
+            return Collections.emptySet();
+        }
+        log.debug("keys size: {}", keys.size());
+        return keys;
     }
 
     @Override
     public Collection<V> values() {
         Set<K> keys = keys();
-        Set<V> values = new HashSet<>(keys.size());
-        for (K key: keys) {
-            V value = (V)redisTemplate.opsForValue().get(key);
-            if(value != null){
-                values.add(value);
-            }
+        if (keys.isEmpty()) {
+            return Collections.emptySet();
         }
-        return values;
+        return new HashSet<V>(redisTemplate.opsForValue().multiGet(keys));
     }
+
 }
