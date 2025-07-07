@@ -207,8 +207,7 @@ public class IamAutoConfig {
         filterChainMap.put("/auth/captcha", "anon");
         filterChainMap.put("/auth/login", "anon");
         filterChainMap.put("/auth/token", "anon");
-
-        filterChainMap.put("/client/login", "anon");
+        filterChainMap.put("/auth/client-login", "anon");
 
         Set<String> anonUrls = iamProperties.getAnonUrls();
         if (V.notEmpty(anonUrls)) {

@@ -14,6 +14,7 @@ import com.diboot.iam.annotation.BindPermission;
 import com.diboot.iam.annotation.Log;
 import com.diboot.iam.auth.AuthServiceFactory;
 import com.diboot.iam.config.Cons;
+import com.diboot.iam.dto.ClientCredential;
 import com.diboot.iam.dto.PwdCredential;
 import com.diboot.iam.entity.*;
 import com.diboot.iam.entity.route.RouteRecord;
@@ -184,6 +185,17 @@ public class AuthTokenController extends BaseController {
             }
         }
         return JsonResult.OK(data);
+    }
+
+    /**
+     * 客户端登录获取token
+     *
+     * @param credential 登录凭证
+     * @return 响应（troken）
+     */
+    @PostMapping("/client-login")
+    public JsonResult<String> login(@RequestBody ClientCredential credential) {
+        return JsonResult.OK(AuthServiceFactory.getAuthService(ClientCredential.AUTH_TYPE).applyToken(credential));
     }
 
     /**
