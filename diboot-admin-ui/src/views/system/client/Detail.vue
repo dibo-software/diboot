@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Client } from './type'
 
-const baseApi = '/client'
+const baseApi = '/iam/client'
 
 const { loadData, loading, model } = useDetail<Client>(baseApi)
 

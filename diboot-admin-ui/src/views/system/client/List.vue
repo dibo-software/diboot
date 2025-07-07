@@ -10,7 +10,7 @@ import LogList from '@/views/system/operation-log/List.vue'
 
 const i18n = useI18n()
 
-const baseApi = '/client'
+const baseApi = '/iam/client'
 
 const { queryParam, loading, dataList, pagination, getList, onSearch, resetFilter, remove, batchRemove } =
   useList<Client>({ baseApi, initQueryParam: {} })
