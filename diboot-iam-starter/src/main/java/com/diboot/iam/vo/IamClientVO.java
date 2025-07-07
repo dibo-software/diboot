@@ -17,7 +17,7 @@ package com.diboot.iam.vo;
 
 import com.diboot.core.binding.annotation.BindDict;
 import com.diboot.core.vo.LabelValue;
-import com.diboot.iam.entity.Client;
+import com.diboot.iam.entity.IamClient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -34,7 +34,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ClientVO extends Client {
+public class IamClientVO extends IamClient {
     @Serial
     private static final long serialVersionUID = 8928260369300882232L;
 

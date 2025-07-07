@@ -13,24 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.service.impl;
+package com.diboot.iam.service;
 
-import com.diboot.core.service.impl.BaseServiceImpl;
-import com.diboot.iam.entity.Client;
-import com.diboot.iam.mapper.ClientMapper;
-import com.diboot.iam.service.ClientService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.diboot.core.service.BaseService;
+import com.diboot.iam.entity.IamClient;
 
 /**
- * 客户端相关Service实现
+ * 客户端相关Service
  *
  * @author wind
  * @version 3.5.1
  * @date 2025/1/9
  */
-@Service
-@Slf4j
-public class ClientServiceImpl extends BaseServiceImpl<ClientMapper, Client> implements ClientService {
+public interface IamClientService extends BaseService<IamClient> {
 
 }

@@ -228,7 +228,7 @@ CREATE TABLE `dbt_system_config`
 ) COMMENT = '系统配置';
 create index idx_dbt_system_config on dbt_system_config (`category`, `prop_key`);
 
-CREATE TABLE dbt_client(
+CREATE TABLE dbt_iam_client(
     `id`        varchar(32) NOT NULL COMMENT 'ID' primary key,
     `tenant_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '租户ID',
     `name`      varchar(50) NOT NULL COMMENT '名称',

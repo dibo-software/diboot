@@ -15,7 +15,7 @@
  */
 package com.diboot.iam.dto;
 
-import com.diboot.iam.entity.Client;
+import com.diboot.iam.entity.IamClient;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,7 +43,7 @@ public class ClientCredential extends AuthCredential {
 
     public ClientCredential() {
         this.setAuthType(AUTH_TYPE);
-        this.setUserTypeClass(Client.class);
+        this.setUserTypeClass(IamClient.class);
     }
 
     public ClientCredential(String appKey, String appSecret) {

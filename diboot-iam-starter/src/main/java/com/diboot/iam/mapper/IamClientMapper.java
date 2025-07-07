@@ -13,18 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.diboot.iam.service;
+package com.diboot.iam.mapper;
 
-import com.diboot.core.service.BaseService;
-import com.diboot.iam.entity.Client;
+import com.diboot.core.mapper.BaseCrudMapper;
+import com.diboot.iam.entity.IamClient;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 客户端相关Service
+ * 客户端Mapper
  *
  * @author wind
  * @version 3.5.1
  * @date 2025/1/9
  */
-public interface ClientService extends BaseService<Client> {
+@Mapper
+public interface IamClientMapper extends BaseCrudMapper<IamClient> {
 
 }
+

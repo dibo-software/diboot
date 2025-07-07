@@ -34,8 +34,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName(value = "dbt_client", autoResultMap = true)
-public class Client extends BaseLoginUser {
+@TableName(value = "dbt_iam_client", autoResultMap = true)
+public class IamClient extends BaseLoginUser {
     @Serial
     private static final long serialVersionUID = 8928160569300882231L;
 
@@ -85,6 +85,6 @@ public class Client extends BaseLoginUser {
 
     @Override
     public String getUserType() {
-        return Client.class.getSimpleName();
+        return IamClient.class.getSimpleName();
     }
 }

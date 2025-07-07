@@ -26,7 +26,7 @@ import com.diboot.iam.auth.IamExtensible;
 import com.diboot.iam.auth.IamTenantPermission;
 import com.diboot.iam.config.Cons;
 import com.diboot.iam.entity.BaseLoginUser;
-import com.diboot.iam.entity.Client;
+import com.diboot.iam.entity.IamClient;
 import com.diboot.iam.entity.IamAccount;
 import com.diboot.iam.entity.IamRole;
 import com.diboot.iam.service.IamRoleResourceService;
@@ -130,9 +130,9 @@ public class IamAuthorizingRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         BaseLoginUser currentUser = (BaseLoginUser) principals.getPrimaryPrincipal();
 
-        if (currentUser instanceof Client) {
+        if (currentUser instanceof IamClient) {
             // 加载三方应用接口权限
-            authorizationInfo.setStringPermissions(((Client) currentUser).getPermissions());
+            authorizationInfo.setStringPermissions(((IamClient) currentUser).getPermissions());
             log.debug("获取授权信息完成 : {}", currentUser.getDisplayName());
             return authorizationInfo;
         }
