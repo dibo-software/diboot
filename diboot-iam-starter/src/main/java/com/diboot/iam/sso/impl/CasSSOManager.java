@@ -70,7 +70,7 @@ public class CasSSOManager implements SSOManager {
             Assertion assertion = ticketValidator.validate(ticket, this.callback);
             String username = assertion.getPrincipal().getName();
             // 登录认证后获取token
-            System.out.println("User logged in: " + username);
+            log.debug("User logged in: {}", username);
             // 在这里可以完成用户登录逻辑，例如设置用户会话等
             CasCredential credential = new CasCredential();
             credential.setAuthAccount(username).setUserType(IamUser.class.getSimpleName()).setAuthType(Cons.DICTCODE_AUTH_TYPE.CAS_SERVER.name());

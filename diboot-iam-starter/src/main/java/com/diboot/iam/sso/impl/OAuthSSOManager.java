@@ -15,7 +15,6 @@ import com.diboot.iam.service.IamAccountService;
 import com.diboot.iam.service.IamUserService;
 import com.diboot.iam.sso.credential.OAuth2Credential;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Random;
 
@@ -144,7 +144,7 @@ public class OAuthSSOManager implements SSOManager {
         }
 
         byte[] authorization = (clientId + ":" + clientSecret).getBytes(StandardCharsets.UTF_8);
-        String base64Auth = Base64.encodeBase64String(authorization);
+        String base64Auth = Base64.getEncoder().encodeToString(authorization);
         headers.add(HttpHeaders.AUTHORIZATION, "Basic " + base64Auth);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(param, headers);

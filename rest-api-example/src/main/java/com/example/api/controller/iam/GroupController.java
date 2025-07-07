@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/iam/group")
 @BindPermission(name = "用户组")
-public class IamGroupController extends BaseCrudRestController<IamGroup> {
+public class GroupController extends BaseCrudRestController<IamGroup> {
 
     /**
      * 查询ViewObject的分页数据

@@ -40,8 +40,6 @@ import com.diboot.iam.util.HttpHelper;
 import com.diboot.iam.util.IamSecurityUtils;
 import com.diboot.iam.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
