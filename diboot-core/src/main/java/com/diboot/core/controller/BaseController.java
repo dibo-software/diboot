@@ -289,8 +289,15 @@ public class BaseController {
 					return Collections.emptyList();
 				}
 				String parentPath = S.valueOf(BeanUtils.getProperty(rootNode, relatedDataDTO.getParentPath()));
+				String parentIdsPathVal;
+				if(V.notEmpty(parentPath)) {
+					parentIdsPathVal = S.endsWith(parentPath, Cons.SEPARATOR_COMMA)? parentPath + rootId : parentPath + Cons.SEPARATOR_COMMA + rootId;
+				}
+				else {
+					parentIdsPathVal = S.valueOf(rootId);
+				}
 				queryWrapper.and(query -> {
-					query.likeRight(parentPathColumn, V.isEmpty(parentPath) ? S.valueOf(rootId) : parentPath + Cons.SEPARATOR_COMMA + rootId);
+					query.likeRight(parentPathColumn, parentIdsPathVal);
 					query.or().eq(idColumn, rootId);
 				});
 			}
