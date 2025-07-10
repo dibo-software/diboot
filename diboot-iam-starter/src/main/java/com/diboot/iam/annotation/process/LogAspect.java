@@ -59,7 +59,7 @@ public class LogAspect {
     @Autowired
     private IamAsyncWorker iamAsyncWorker;
 
-    private static int maxLength = 1000;
+    private static final int maxLength = 1000;
 
     /**
      * 注解切面
@@ -153,7 +153,7 @@ public class LogAspect {
         Method method = signature.getMethod();
         Log logAnno = AnnotationUtils.getAnnotation(method, Log.class);
         // 保存requestBody数据
-        if(logAnno.saveRequestData()){
+        if(logAnno != null && logAnno.saveRequestData()){
             Object[] bodyParams = joinPoint.getArgs();
             if(V.notEmpty(bodyParams)){
                 for(Object arg : bodyParams){
