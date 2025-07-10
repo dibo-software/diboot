@@ -14,7 +14,7 @@ defineExpose({
 })
 </script>
 <template>
-  <el-dialog v-model="visible" :width="650" :title="$t('title.detail')">
+  <el-dialog v-model="visible" :width="650" :title="$t('title.detail')" draggable>
     <el-descriptions v-if="model" v-loading="loading" class="margin-top" :column="2" border>
       <el-descriptions-item :label="$t('dictionary.itemName')"> {{ model.itemName }} </el-descriptions-item>
       <el-descriptions-item :label="$t('dictionary.type')"> {{ model.type }} </el-descriptions-item>

@@ -168,7 +168,7 @@ const treeNodeClass = (data: Resource) => {
                     :icon="Delete"
                     type="danger"
                     link
-                    @click.stop="removeData(data.id, node.label)"
+                    @click.stop="removeData(data.id, data.displayName)"
                   />
                 </el-tooltip>
               </span>

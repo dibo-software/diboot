@@ -26,6 +26,9 @@ defineExpose({
         <el-tag v-if="model.runStatus === 'S'">{{ $t('scheduleJobLog.success') }}</el-tag>
         <el-tag v-else type="danger">{{ $t('scheduleJobLog.fail') }}</el-tag>
       </el-descriptions-item>
+      <el-descriptions-item :label="$t('scheduleJobLog.triggerMode')">
+        {{ model.triggerModeLabel }}
+      </el-descriptions-item>
       <el-descriptions-item :label="$t('scheduleJobLog.elapsedSeconds')">
         {{ model.elapsedSeconds }} s
       </el-descriptions-item>

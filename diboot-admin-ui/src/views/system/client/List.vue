@@ -99,18 +99,8 @@ const closeDetailAndOpenForm = () => {
   openForm(dataId.value)
 }
 
-const handleOperation = (code: string, value?: string | string[], row?: Client) => {
+const handleOperation = (code: string, value?: string | string[]) => {
   switch (code) {
-    case 'detail':
-      openDetail(value as string)
-      break
-    case 'create':
-    case 'update':
-      openForm(value as string)
-      break
-    case 'remove':
-      remove(value as string, row?.name)
-      break
     case 'batchRemove':
       batchRemove(value as string[])
       break
@@ -153,7 +143,7 @@ const viewClientIdLogs = ref()
 <template>
   <div class="list-page">
     <el-space wrap class="list-operation">
-      <el-button v-has-permission="'create'" type="primary" :icon="Plus" @click="handleOperation('create')">
+      <el-button v-has-permission="'create'" type="primary" :icon="Plus" @click="openForm()">
         {{ $t('operation.create') }}
       </el-button>
 
@@ -197,7 +187,7 @@ const viewClientIdLogs = ref()
       stripe
       row-key="id"
       style="border-top: 1px solid var(--el-border-color-lighter)"
-      @row-dblclick="(row: Client) => checkPermission('detail') && handleOperation('detail', row.id)"
+      @row-dblclick="(row: Client) => checkPermission('detail') && openDetail(row.id)"
       @sort-change="sortChange"
     >
       <el-table-column :label="$t('client.name')" prop="name" show-overflow-tooltip />
@@ -215,7 +205,7 @@ const viewClientIdLogs = ref()
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('baseField.createBy')" prop="createByLabel" show-overflow-tooltip />
+      <el-table-column :label="$t('baseField.createTime')" prop="createTime" show-overflow-tooltip />
       <el-table-column :label="$t('baseField.updateTime')" prop="updateTime" show-overflow-tooltip />
       <el-table-column :label="$t('operation.label')" fixed="right" :width="280">
         <template #default="{ row }: { row: Client }">
@@ -233,10 +223,7 @@ const viewClientIdLogs = ref()
             <el-button v-has-permission="'viewLogs'" text bg size="small" @click="viewClientIdLogs = row.id">
               {{ $t('client.viewLogs') }}
             </el-button>
-            <el-dropdown
-              v-has-permission="['detail', 'update', 'delete']"
-              @command="(code: string) => handleOperation(code, row.id, row)"
-            >
+            <el-dropdown v-has-permission="['detail', 'update', 'delete']">
               <el-button text bg type="primary" size="small">
                 {{ $t('operation.more') }}
                 <el-icon :size="16" style="margin-left: 5px">
@@ -245,13 +232,13 @@ const viewClientIdLogs = ref()
               </el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="checkPermission('detail')" command="detail">
+                  <el-dropdown-item v-if="checkPermission('detail')" @click="openDetail(row.id)">
                     <el-button link>{{ $t('operation.detail') }}</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="checkPermission('update')" command="update">
+                  <el-dropdown-item v-if="checkPermission('update')" @click="openForm(row.id)">
                     <el-button link>{{ $t('operation.update') }}</el-button>
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="checkPermission('delete')" command="remove">
+                  <el-dropdown-item v-if="checkPermission('delete')" @click="remove(row.id, row.name)">
                     <el-button link type="danger">{{ $t('operation.delete') }}</el-button>
                   </el-dropdown-item>
                 </el-dropdown-menu>

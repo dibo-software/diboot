@@ -34,7 +34,7 @@ const { submitting, submit } = useForm({
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="$t('fileRecord.editDescription')">
+  <el-dialog v-model="visible" :title="$t('fileRecord.editDescription')" draggable>
     <el-form ref="formRef" v-loading="loading" :model="model" label-width="80px">
       <el-form-item :label="$t('fileRecord.description')">
         <el-input

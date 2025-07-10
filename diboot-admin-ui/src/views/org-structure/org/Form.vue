@@ -103,7 +103,7 @@ defineExpose({ open })
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title">
+  <el-dialog v-model="visible" :title="title" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"
@@ -148,6 +148,7 @@ defineExpose({ open })
             <di-selector
               v-model="model.managerId"
               :tree="{ type: 'IamOrg', label: 'name', parent: 'parentId', parentPath: 'parentIdsPath' }"
+              :conditions="[{ field: 'status', value: 'A' }]"
               :list="{
                 baseApi: '/iam/user',
                 relatedKey: 'orgId',
@@ -167,6 +168,7 @@ defineExpose({ open })
                 ]
               }"
               data-type="IamUser"
+              data-label="realname"
             />
           </el-form-item>
         </el-col>

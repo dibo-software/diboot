@@ -91,7 +91,7 @@ const getPickAvatar = () => {
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" :before-close="handleClose" :title="$t('personal.avatarSetting')">
+  <el-dialog v-model="dialogVisible" :before-close="handleClose" :title="$t('personal.avatarSetting')" draggable>
     <div class="cropperBox">
       <vue-cropper
         ref="cropper"

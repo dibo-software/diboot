@@ -133,7 +133,7 @@ const en: Locale = {
     placeholder: {
       title: "Message template name, such as: 'Reminder for Follow-up'",
       code: "Unique template code, such as: 'CBTX'",
-      appModule: 'Please choose the message state',
+      appModule: 'Enter a business module name',
       content: 'Send Date'
     },
     selectableVariables: 'Selectable Variables',

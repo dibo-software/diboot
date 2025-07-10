@@ -62,7 +62,7 @@ const appendVariable = (variable?: string) => {
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title">
+  <el-dialog v-model="visible" :title="title" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"

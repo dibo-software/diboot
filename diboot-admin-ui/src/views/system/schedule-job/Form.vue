@@ -67,7 +67,7 @@ const jobChange = (jobKey: string) => {
 </script>
 
 <template>
-  <el-dialog v-model="visible" :title="title" top="10vh" width="65vw">
+  <el-dialog v-model="visible" :title="title" top="10vh" width="65vw" draggable>
     <el-form
       ref="formRef"
       v-loading="loading"

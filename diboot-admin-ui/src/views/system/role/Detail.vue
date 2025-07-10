@@ -81,7 +81,7 @@ const getIcon = (val: string) => {
                 <el-icon>
                   <component :is="getIcon(data.displayType)" />
                 </el-icon>
-                <span style="padding-left: 5px">{{ node.label }} </span>
+                <span>{{ node.label }} </span>
               </span>
             </template>
           </el-tree>
