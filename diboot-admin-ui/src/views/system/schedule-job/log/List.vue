@@ -51,7 +51,7 @@ const openDetail = (id: string) => {
     <div class="list-page">
       <el-header>
         <el-space wrap class="list-operation">
-          <el-button v-has-permission="'logDelete'" @click="batchRemove(selectedKeys)">{{
+          <el-button :icon="Delete" v-has-permission="'logDelete'" @click="batchRemove(selectedKeys)">{{
             $t('operation.batchDelete')
           }}</el-button>
           <el-space>
